@@ -1,0 +1,157 @@
+<div id="annotation-form">
+  <%= form_with model: @annotation do |f| %>
+    <p>
+      <strong><%= t('admin.annotation.time') %></strong>
+      &nbsp
+      <%= TimeStamp.new(total_seconds: @total_seconds).hms_colon_string %>
+    </p>
+
+    <!--- HIDDEN FIELDS -->
+    <%= f.hidden_field :medium_id, value: @medium_id %>
+    <%= f.hidden_field :total_seconds, value: @total_seconds %>
+    <div hidden>
+      <div id="annotation_id">
+        <%= @annotation.id %>
+      </div>
+       <!--- for prefilling the edit form -->
+      <div id="annotation_subcategory">
+        <%= @annotation.subcategory %>
+      </div>
+    </div>
+
+    <!--- COMMENT TEXT AREA -->
+    <b><%= t('admin.annotation.comment') %></b>
+    <%= f.text_area :comment, class: 'form-control' %>
+
+    <!--- PREVIEW TOGGLE -->
+    <div class="form-check form-switch pt-2" id="preview-toggle">
+      <input id="preview-toggle-check"
+            class="form-check-input" type="checkbox" role="switch" checked>
+      <label class="form-check-label" for="preview-toggle-check">
+        <%= t('admin.remark.preview') %>
+      </label>
+    </div>
+
+    <!--- COLOR SELECTION -->
+    <div class="pt-3 pb-3" id="annotation-color-picker"
+        role="radiogroup" aria-label="Color picker">
+      <% colors = Annotation.colors %>
+      <% for i in 1..15 do %>
+        <%= f.radio_button :color,
+                           colors[i],
+                           id: "annotation_color#{i}" %>
+        <%= f.label :color,
+                    "annotation_color#{i}",
+                    for: "annotation_color#{i}" do %>
+            <span class="annotation_color<%=i%>"
+                  style="background: <%= colors[i] %>;"></span>
+          <% end %>
+      <% end %>
+    </div>
+
+    <!--- CATEGORY RADIO BUTTON -->
+    <b><%= t('admin.annotation.category') %></b>
+    <%= helpdesk(t('admin.annotation.category_tooltip'), false) %>
+    <div class="form-row ml-2", id="category-radios">
+      <div class="form-check form-check-inline",
+           title="<%= t('admin.annotation.note_tooltip') %>">
+        <%= f.radio_button :category,
+                           :note,
+                           class: 'form-check-input' %>
+        <%= f.label :category,
+                    t('admin.annotation.note'),
+                    value: :note,
+                    class: 'form-check-label' %>
+      </div>
+      <div class="form-check form-check-inline",
+           title="<%= t('admin.annotation.content_tooltip') %>">
+        <%= f.radio_button :category,
+                           :content,
+                           class: 'form-check-input' %>
+        <%= f.label :category,
+                    t('admin.annotation.content'),
+                    value: :content,
+                    class: 'form-check-label' %>
+      </div>
+      <div class="form-check form-check-inline",
+           title="<%= t('admin.annotation.mistake_tooltip') %>">
+        <%= f.radio_button :category,
+                           :mistake,
+                           class: 'form-check-input' %>
+        <%= f.label :category,
+                    t('admin.annotation.mistake'),
+                    value: :mistake,
+                    class: 'form-check-label' %>
+      </div>
+      <div class="form-check form-check-inline",
+           title="<%= t('admin.annotation.presentation_tooltip') %>">
+        <%= f.radio_button :category,
+                           :presentation,
+                           class: 'form-check-input' %>
+        <%= f.label :category,
+                    t('admin.annotation.presentation'),
+                    value: :presentation,
+                    class: 'form-check-label' %>
+      </div>
+    </div>
+
+    <div class="pb-3" id="annotation-category-specific">
+      <!--- SPECIFIC CONTENT, DEPENDING ON THE SELECTED CATEGORY, IS INSERTED HERE -->
+    </div>
+
+    <!--- VISIBLE FOR TEACHER CHECKBOX -->
+    <% annotations_status = Medium.find_by(id: @medium_id).get_annotations_status %>
+    <% if annotations_status == 1 %>
+      <div class="form-check">
+        <%= f.check_box :visible_for_teacher, class: "form-check-input" %>
+        <%= f.label :visible_for_teacher,
+            t('admin.annotation.visible_for_teacher'),
+            class: "form-check-label" %>
+        <%= helpdesk(t('admin.annotation.visible_for_teacher_helpdesk'), false) %>
+      </div>
+    <% else %>
+      <%= f.hidden_field :visible_for_teacher, value: false %>
+    <% end %>
+
+    <!--- POST AS COMMENT CHECKBOX -->
+    <div class="form-check">
+      <%= f.check_box :post_as_comment, class: "form-check-input" %>
+      <%= f.label :post_as_comment,
+          t('admin.annotation.post_as_comment'),
+          class: "form-check-label" %>
+      <%= helpdesk(t('admin.annotation.post_as_comment_helpdesk'), false) %>
+    </div>
+
+    <div class="alert alert-warning hidden" role="alert" id="annotation-comment-warning">
+    </div>
+
+    <div class="modal-footer">
+      <!-- SAVE BUTTON -->
+      <%= f.button nil,
+        id: "annotation-modal-submit-button",
+        class: "btn btn-primary" do %>
+        <i class="fas fa-save"></i>
+        <%= t('buttons.save') %>
+      <% end %>
+
+      <!-- DELETE BUTTON -->
+      <% if @annotation.id %>
+        <button type="button"
+                id="annotation-delete-button"
+                class="btn btn-outline-danger"
+                data-bs-dismiss="modal"
+                data-sure-to-delete="<%= t('admin.annotation.warning_message.sure_to_delete') %>">
+          <i class="fas fa-trash-alt"></i>
+          <%= t('buttons.delete') %>
+        </button>
+      <% end %>
+
+      <!-- CANCEL BUTTON -->
+      <button type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  <% end %>
+</div>

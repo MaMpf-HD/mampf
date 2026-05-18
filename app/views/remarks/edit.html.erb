@@ -1,13 +1,13 @@
 <div class="row p-2 mb-3">
   <div class="col-8">
     <h4 class="p-2">
-      <span class="badge badge-secondary">
+      <span class="badge bg-secondary">
         <%= t('basics.remark') %>
       </span>
       <%= @remark.label %>
     </h4>
   </div>
-  <div class="col-4 text-right">
+  <div class="col-4 text-end">
     <%= link_to t('buttons.parent_medium'),
                 edit_medium_path(@remark),
                 class: 'btn btn-sm btn-primary' %>

@@ -5,7 +5,7 @@
     <div class="col-2">
       <%= assignment.title %>
     </div>
-    <div class="col-2">
+    <div class="col-3">
       <% if assignment.deadline %>
         <%= I18n.l(assignment.deadline, format: :long) %>
       <% end %>
@@ -26,7 +26,7 @@
         <%= I18n.l(assignment.deletion_date, format: :long) %>
       <% end %>
     </div>
-    <div class="col-2">
+    <div class="col-1">
       <% if assignment.persisted? %>
         <%= link_to edit_assignment_path(assignment),
                     class: 'text-dark',
@@ -35,7 +35,7 @@
                     style: 'text-decoration: none;',
                     title: t('buttons.edit'),
                     remote: true do %>
-          <i class="far fa-lg fa-edit mr-2">
+          <i class="far fa-lg fa-edit me-2">
           </i>
         <% end %>
         <% if assignment.destructible? %>
@@ -59,7 +59,7 @@
                             placement: 'botttom' },
                     style: 'text-decoration: none;',
                     title: t('buttons.edit') do %>
-          <i class="far fa-lg fa-edit mr-2">
+          <i class="far fa-lg fa-edit me-2">
           </i>
         <% end %>
         <%= helpdesk(t('assignment.info.scheduled_assignment'), false) %>

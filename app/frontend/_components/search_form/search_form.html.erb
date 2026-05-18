@@ -1,0 +1,17 @@
+<%= form_with url: url,
+              scope: scope,
+              method: method,
+              remote: remote,
+              html: { 
+                role: "search",
+                data: { controller: "search-form" } } do |f| %>
+  <div class="<%= container_class %>">
+    <% fields.each do |field| %>
+      <%= render field.with_form(f) %>
+    <% end %>
+  </div>
+
+  <% hidden_fields.each do |name, value| %>
+    <%= f.hidden_field name, value: value %>
+  <% end %>
+<% end %>

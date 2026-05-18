@@ -1,0 +1,54 @@
+// adapted from
+// https://jamesalvarez.co.uk/blog/how-to-make-responsive-likert-scales-in-css-(like-qualtrics)/
+
+.likert {
+    --likert-rows: 4;
+    display: inline-grid;
+    max-width: 900px;
+    grid-auto-rows: 1fr;
+    gap: 1em;
+    grid-template-columns: repeat(var(--likert-rows), minmax(0, 1fr));
+}
+
+@media only screen and (max-width: 620px) {
+    .likert {
+        grid-template-columns: minmax(0, 400px);
+        justify-content: center;
+    }
+}
+
+.likert input {
+    max-width: 250px;
+    position: fixed;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.likert span {
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    cursor: pointer;
+    background: #dcdcdc;
+    transition: background 180ms ease-in-out;
+}
+
+.likert input:checked+span {
+    outline: black auto 1px;
+    background: transparent;
+}
+
+.likert input:focus+span {
+    outline: -webkit-focus-ring-color auto 1px;
+}
+
+.likert span:hover {
+    background: #f1f1f1;
+    outline: lightgrey auto 0.5px;
+}

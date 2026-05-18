@@ -1,0 +1,168 @@
+<%= turbo_frame_tag campaign_header_frame_id(campaign) do %>
+  <div class="card-header registration-campaign-card-header position-relative">
+    <div class="registration-campaign-header-actions d-flex gap-1">
+      <%= link_to edit_registration_campaign_path(campaign),
+                  class: "btn btn-sm btn-outline-secondary",
+                  data: { turbo_frame: campaign_header_frame_id(campaign) },
+                  title: t("basics.edit"),
+                  aria: { label: t("basics.edit") } do %>
+        <i class="bi bi-pencil"></i>
+      <% end %>
+
+      <% if campaign.can_be_deleted? %>
+        <%= button_to registration_campaign_path(campaign),
+                      method: :delete,
+                      form: { class: "d-inline" },
+                      data: {
+                        turbo_confirm: t("registration.campaign.confirm_delete"),
+                        turbo_stream: true
+                      },
+                      class: "btn btn-sm btn-outline-danger",
+                      title: t("buttons.delete"),
+                      aria: { label: t("buttons.delete") } do %>
+          <i class="bi bi-trash"></i>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="mb-3 pe-5">
+      <h6 class="mb-0 fw-semibold">
+        <%= campaign.description.presence || "-" %>
+      </h6>
+    </div>
+
+    <div class="row g-2 align-items-start text-start">
+      <div class="col-6 col-md-3">
+        <small class="d-block text-muted fw-normal">
+          <%= t("registration.campaign.index.columns.mode") %>
+        </small>
+
+        <div>
+          <%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <small class="d-block text-muted fw-normal">
+          <%= t("registration.campaign.index.columns.deadline") %>
+        </small>
+
+        <div>
+          <%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <small class="d-block text-muted fw-normal">
+          <%= t("registration.campaign.index.columns.registrations") %>
+        </small>
+
+        <div>
+          <% if campaign.draft? %>
+            <span class="text-muted">&mdash;</span>
+          <% else %>
+            <%= campaign.total_registrations_count %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <small class="d-block text-muted fw-normal">
+          <%= t("basics.status") %>
+        </small>
+
+        <div>
+          <span class="<%= class_names("badge", "bg-#{campaign_badge_color(campaign)}") %>">
+            <%= t("registration.campaign.status.#{campaign.status}") %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-2">
+      <small class="text-muted fw-normal">
+        <%= t("registration.policy.index.title") %>:
+      </small>
+
+      <% draft = campaign.draft? %>
+      <% policies = campaign.registration_policies.order(:position) %>
+
+      <div
+        class="d-inline policy-badges-container"
+        <% if draft && policies.size > 1 %>
+          data-controller="sortable-policies"
+        <% end %>
+      >
+        <% if draft && policies.size > 1 %>
+          <%= form_with url: reorder_registration_campaign_policies_path(campaign),
+                        method: :patch,
+                        class: "d-none",
+                        data: { sortable_policies_target: "form" } do %>
+            <div data-ids></div>
+          <% end %>
+        <% end %>
+
+        <% policies.each do |policy| %>
+          <div
+            class="<%= class_names("badge bg-light text-dark border me-1 d-inline-block policy-badge", "policy-badge--draft": draft) %>"
+            data-policy-id="<%= policy.id %>"
+            <% unless draft %>
+              title="<%= t("registration.policy.hint.locked") %>"
+            <% end %>
+          >
+            <%= t("registration.policy.kinds.#{policy.kind}") %>
+
+            <small class="text-muted">
+              (<%= t("registration.policy.phases.#{policy.phase}") %>)
+            </small>
+
+            <% if policy.config_summary.present? %>
+              <small class="text-muted">
+                &middot; <%= policy.config_summary %>
+              </small>
+            <% end %>
+
+            <% if draft %>
+              <span class="policy-badge-actions">
+                <%= link_to edit_registration_campaign_policy_path(campaign, policy),
+                            class: "policy-badge-action text-secondary",
+                            data: { turbo_frame: campaign_policy_form_frame_id(campaign) },
+                            title: t("basics.edit") do %>
+                  <i class="bi bi-pencil-fill"></i>
+                <% end %>
+
+                <%= button_to registration_campaign_policy_path(campaign, policy),
+                              method: :delete,
+                              class: "policy-badge-action text-danger",
+                              form: { class: "d-inline" },
+                              data: { turbo_confirm: t("registration.policy.confirm_delete"), turbo_stream: true },
+                              title: t("buttons.delete") do %>
+                  <i class="bi bi-x-circle-fill"></i>
+                <% end %>
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if draft %>
+          <%= link_to new_registration_campaign_policy_path(campaign),
+                      class: "policy-add-link btn btn-sm btn-link text-secondary p-0",
+                      title: t("registration.policy.index.add"),
+                      data: { turbo_frame: campaign_policy_form_frame_id(campaign) } do %>
+            <i class="bi bi-plus-circle"></i>
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if policies.empty? && !draft %>
+        <small class="text-muted">
+          <%= t("registration.policy.index.none") %>
+        </small>
+      <% end %>
+
+      <% if draft %>
+        <%= turbo_frame_tag campaign_policy_form_frame_id(campaign) %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

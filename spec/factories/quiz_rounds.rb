@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :quiz_round do
     transient do
@@ -9,7 +7,7 @@ FactoryBot.define do
       question { Question.find(quiz.vertices[progress][:id]) }
       answer_shuffle { question.answers.pluck(:id) }
       crosses { answer_shuffle.select { rand(2).zero? } }
-      session_id { Faker::Crypto.md5 }
+      attempt_token { Faker::Crypto.md5 }
     end
 
     initialize_with do
@@ -18,7 +16,7 @@ FactoryBot.define do
                     progress: progress,
                     counter: counter,
                     answer_shuffle: answer_shuffle.to_s,
-                    session_id: session_id } })
+                    attempt_token: attempt_token } })
     end
   end
 

@@ -1,0 +1,27 @@
+<%= vite_stylesheet_tag "registration/allocations/allocation.css" %>
+<%= vite_stylesheet_tag "roster/roster.scss" %>
+
+<% show_allocation_dashboard = campaign.closed? || campaign.processing? ||
+  campaign.completed? %>
+
+<% dashboard = Registration::AllocationDashboard.new(campaign) if show_allocation_dashboard %>
+<% has_violators = dashboard&.policy_violations&.present? %>
+
+<%= render "registration/campaigns/card_body_actions",
+           campaign: campaign, has_violators: has_violators %>
+
+<% if show_allocation_dashboard %>
+  <% if campaign.preference_based? && !dashboard.allocation_run? %>
+    <%= render "registration/allocations/pre_allocation_demand",
+               campaign: campaign,
+               dashboard: dashboard,
+               embedded: true %>
+  <% else %>
+    <%= render "registration/allocations/dashboard",
+                 campaign: campaign,
+                 dashboard: dashboard,
+                 embedded: true %>
+  <% end %>
+<% else %>
+  <%= render "registration/campaigns/card_body_items", campaign: campaign %>
+<% end %>

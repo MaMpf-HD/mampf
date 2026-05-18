@@ -1,12 +1,12 @@
 <!doctype html>
 <html>
   <head>
+    <link rel="manifest" href="/manifest.json">
+
     <%= csrf_meta_tags %>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha256-YLGeXaapI0/5IgZopewRJcFXomhRMlYYjugPLSyNjTY=" crossorigin="anonymous" />
     <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/katex.min.css"
@@ -22,7 +22,7 @@
       integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"
       crossorigin="anonymous">
       </script>
-      <%= javascript_include_tag :geogebra_assets %>
+  <%= vite_javascript_tag "js/geogebra.coffee" %>
   </head>
   <body>
     <div class="container-fluid">

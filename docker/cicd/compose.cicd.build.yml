@@ -1,0 +1,18 @@
+services:
+  # Remove services that we don't need for CI
+  app: !reset null
+  nginx: !reset null
+  pgadmin: !reset null
+  mailcatcher: !reset null
+  dockergen: !reset null
+
+  app-test:
+    build:
+      context: ../..
+      dockerfile: docker/development/Dockerfile
+      args:
+        CI_BUILD: "true"      
+    image: mampftest:image
+    volumes:
+      # Anonymous volume for the public folder where the assets are compiled to
+      - "/workspaces/mampf/public/"

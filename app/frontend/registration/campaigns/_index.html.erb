@@ -1,0 +1,9 @@
+<%= vite_stylesheet_tag "roster/roster.scss" %>
+
+<div id="campaigns_container">
+  <%= render "registration/campaigns/card_body_index",
+             lecture: lecture,
+             new_campaign: local_assigns[:new_campaign],
+             expanded_campaign_id: local_assigns[:expanded_campaign_id],
+             tab: local_assigns[:tab] %>
+</div>

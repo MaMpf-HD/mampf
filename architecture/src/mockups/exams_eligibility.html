@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midterm Exam — Eligibility Overview</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .small-width {
+      max-width: 1400px;
+    }
+    .lecture-pane {
+      background-color: white;
+      padding: 1.5em;
+      margin-bottom: 6em;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+      border: gray 1px solid;
+      border-radius: 0.4em;
+    }
+    h3.lecture-pane-header {
+      color: #838383;
+      font-size: 1.3em;
+    }
+    .workflow-badge {
+      background-color: #17a2b8;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    .student-row { cursor: pointer; }
+    .student-row:hover { background-color: #f8f9fa; }
+  </style>
+</head>
+<body>
+  <div class="container small-width mt-4">
+    <!-- Lecture Header -->
+    <div class="mb-3">
+      <h1 class="h3 mb-1">Linear Algebra I</h1>
+      <p class="text-muted mb-0">WS 2024/25</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Content</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Preferences</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">People & Tutorials</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Orga</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Communication</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="assessments_index.html">Assessments</a>
+      </li>
+    </ul>
+
+    <!-- Exam Detail -->
+    <div class="lecture-pane">
+      <!-- Workflow Indicator -->
+      <div class="workflow-badge">
+        <i class="fas fa-clipboard-check me-2"></i>Pre-Registration: Eligibility Verification
+      </div>
+
+      <!-- Header -->
+      <div class="mb-3">
+        <h3 class="lecture-pane-header mb-2">Midterm Exam</h3>
+        <div>
+          <span class="badge bg-info text-dark me-2">Registration Open</span>
+          <span class="text-muted small">December 15, 2024</span>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert alert-info d-flex align-items-center mb-4">
+        <i class="fas fa-info-circle me-2"></i>
+        <div>
+          <strong>Eligibility Overview:</strong> This view shows eligibility status for all 150 lecture students based on assignment performance. Registration campaign is currently open.
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-3" id="assessmentTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="overview-tab" data-bs-toggle="tab" 
+                  data-bs-target="#overview" type="button" role="tab">
+            Overview
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="settings-tab" data-bs-toggle="tab" 
+                  data-bs-target="#settings" type="button" role="tab">
+            Settings
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tasks-tab" data-bs-toggle="tab" 
+                  data-bs-target="#tasks" type="button" role="tab">
+            Tasks
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link disabled" id="grading-tab" data-bs-toggle="tab" 
+                  data-bs-target="#grading" type="button" role="tab"
+                  aria-disabled="true" title="Available after exam">
+            Grading
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link disabled" id="grade-scheme-tab" data-bs-toggle="tab" 
+                  data-bs-target="#grade-scheme" type="button" role="tab" 
+                  aria-disabled="true" title="Available after grading">
+            Grade Scheme
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="exam-logistics-tab" data-bs-toggle="tab" 
+                  data-bs-target="#exam-logistics" type="button" role="tab">
+            Exam Logistics
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="assessmentTabsContent">
+        <!-- Exam Logistics Tab -->
+        <div class="tab-pane fade show active" id="exam-logistics" role="tabpanel">
+          
+          <!-- Sub-tabs for Exam Logistics -->
+          <ul class="nav nav-pills mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="eligibility-subtab" data-bs-toggle="pill" 
+                      data-bs-target="#eligibility-content" type="button" role="tab">
+                <i class="fas fa-clipboard-check me-1"></i> Eligibility
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="roster-subtab" data-bs-toggle="pill" 
+                      data-bs-target="#roster-content" type="button" role="tab">
+                <i class="fas fa-users me-1"></i> Roster
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="rooms-subtab" data-bs-toggle="pill" 
+                      data-bs-target="#rooms-content" type="button" role="tab">
+                <i class="fas fa-door-open me-1"></i> Room Assignments
+              </button>
+            </li>
+          </ul>
+
+          <!-- Sub-tab Content -->
+          <div class="tab-content">
+            <!-- Eligibility Content -->
+            <div class="tab-pane fade show active" id="eligibility-content" role="tabpanel">
+              
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Eligibility Overview — All Lecture Students</h5>
+                <button class="btn btn-outline-secondary btn-sm">
+                  <i class="fas fa-download me-1"></i>
+                  Export List
+                </button>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Eligibility Overview — All Lecture Students</h5>
+                <button class="btn btn-outline-secondary btn-sm">
+                  <i class="fas fa-download me-1"></i>
+                  Export List
+                </button>
+              </div>
+
+  <!-- Summary Cards -->
+  <div class="row g-3 mb-3">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-users fs-4 me-2" style="color: #6c757d;"></i>
+            <div class="small">
+              <div class="text-muted">Total Students</div>
+              <div class="fw-bold fs-5" id="totalCount">150</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle fs-4 me-2" style="color: #198754;"></i>
+            <div class="small">
+              <div class="text-muted">Eligible</div>
+              <div class="fw-bold fs-5" id="eligibleCount">126</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-times-circle fs-4 me-2" style="color: #6c757d;"></i>
+            <div class="small">
+              <div class="text-muted">Not Eligible</div>
+              <div class="fw-bold fs-5" id="notEligibleCount">22</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-hand-point-up fs-4 me-2" style="color: #0dcaf0;"></i>
+            <div class="small">
+              <div class="text-muted">Manual Overrides</div>
+              <div class="fw-bold fs-5" id="overrideCount">2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Eligibility Threshold Info -->
+  <div class="alert alert-light border py-2 mb-3">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-info-circle me-2"></i>
+      <small>
+        <strong>Eligibility threshold:</strong> Students need at least 50% of assignment points (120/240 points) to be eligible for this exam.
+      </small>
+    </div>
+  </div>
+
+  <!-- Filter & Search -->
+  <div class="card mb-3">
+    <div class="card-body py-2">
+      <div class="row align-items-center">
+        <div class="col-md-4">
+          <div class="btn-group btn-group-sm w-100" role="group">
+            <input type="radio" class="btn-check" name="eligibility" id="filter-all" checked>
+            <label class="btn btn-outline-secondary" for="filter-all">All (<span id="filterAllCount">150</span>)</label>
+            
+            <input type="radio" class="btn-check" name="eligibility" id="filter-eligible">
+            <label class="btn btn-outline-secondary" for="filter-eligible">Eligible (<span id="filterEligibleCount">126</span>)</label>
+            
+            <input type="radio" class="btn-check" name="eligibility" id="filter-not">
+            <label class="btn btn-outline-secondary" for="filter-not">Not Eligible (<span id="filterNotCount">22</span>)</label>
+            
+            <input type="radio" class="btn-check" name="eligibility" id="filter-override">
+            <label class="btn btn-outline-secondary" for="filter-override">Overrides (<span id="filterOverrideCount">2</span>)</label>
+          </div>
+        </div>
+        <div class="col-md-4 mt-2 mt-md-0">
+          <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Search by name or matriculation...">
+        </div>
+        <div class="col-md-4 mt-2 mt-md-0">
+          <select class="form-select form-select-sm" id="tutorialFilter">
+            <option value="">All Tutorial Groups</option>
+            <option value="Tutorial A">Tutorial A</option>
+            <option value="Tutorial B">Tutorial B</option>
+            <option value="Tutorial C">Tutorial C</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Eligibility Table -->
+  <div class="card">
+    <div class="card-header bg-light">
+      <h6 class="mb-0">
+        <i class="bi bi-table me-2"></i>
+        Student Eligibility Status
+      </h6>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead>
+            <tr>
+              <th style="width: 20%;">Student</th>
+              <th style="width: 12%;">Matriculation</th>
+              <th style="width: 13%;">Tutorial Group</th>
+              <th style="width: 10%;">Points / 240</th>
+              <th style="width: 10%;">Percentage</th>
+              <th style="width: 15%;">Status</th>
+              <th style="width: 20%;" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody">
+            <!-- Students will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer bg-light py-2">
+      <div class="d-flex justify-content-between align-items-center small">
+        <div class="text-muted" id="showingInfo">Showing students</div>
+        <nav>
+          <ul class="pagination pagination-sm mb-0" id="pagination">
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Override Modal -->
+<div class="modal fade" id="overrideModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Override Eligibility</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3"><strong>Student:</strong> Bob Mueller (1234568)</p>
+        <p class="mb-3"><strong>Current Status:</strong> <span class="badge bg-warning">Not Eligible (98/240 points, 41%)</span></p>
+        
+        <div class="alert alert-warning py-2">
+          <small>
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            This student is below the 50% threshold. You can manually grant eligibility with a reason.
+          </small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small">Reason for Override</label>
+          <textarea class="form-control" rows="3" placeholder="e.g., Medical exemption, special circumstances..."></textarea>
+        </div>
+
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="confirmOverride">
+          <label class="form-check-label small" for="confirmOverride">
+            I confirm this student should be eligible for the exam
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm">Grant Eligibility</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Student data
+const students = [
+  { name: "Alice Schmidt", matric: "1234567", tutorial: "Tutorial C", points: 173, status: "eligible" },
+  { name: "Bob Mueller", matric: "1234568", tutorial: "Tutorial A", points: 98, status: "not-eligible" },
+  { name: "Carol Weber", matric: "1234569", tutorial: "Tutorial B", points: 85, status: "override", reason: "Medical exemption" },
+  { name: "David Fischer", matric: "1234570", tutorial: "Tutorial C", points: 156, status: "eligible" },
+  { name: "Emma Wagner", matric: "1234571", tutorial: "Tutorial A", points: 115, status: "not-eligible" },
+  { name: "Frank Bauer", matric: "1234572", tutorial: "Tutorial B", points: 142, status: "eligible" },
+  { name: "Greta Hoffmann", matric: "1234573", tutorial: "Tutorial C", points: 189, status: "eligible" },
+  { name: "Hans Schulz", matric: "1234574", tutorial: "Tutorial A", points: 92, status: "not-eligible" },
+  { name: "Iris Koch", matric: "1234575", tutorial: "Tutorial B", points: 167, status: "eligible" },
+  { name: "Jan Richter", matric: "1234576", tutorial: "Tutorial C", points: 134, status: "eligible" },
+  { name: "Klara Neumann", matric: "1234577", tutorial: "Tutorial A", points: 108, status: "not-eligible" },
+  { name: "Lars Klein", matric: "1234578", tutorial: "Tutorial B", points: 178, status: "eligible" },
+  { name: "Maria Schwarz", matric: "1234579", tutorial: "Tutorial C", points: 145, status: "eligible" },
+  { name: "Nina Braun", matric: "1234580", tutorial: "Tutorial A", points: 103, status: "not-eligible" },
+  { name: "Otto Zimmermann", matric: "1234581", tutorial: "Tutorial B", points: 161, status: "eligible" },
+  { name: "Paula Krueger", matric: "1234582", tutorial: "Tutorial C", points: 198, status: "eligible" },
+  { name: "Quentin Wolf", matric: "1234583", tutorial: "Tutorial A", points: 87, status: "not-eligible" },
+  { name: "Rita Schroeder", matric: "1234584", tutorial: "Tutorial B", points: 152, status: "eligible" },
+  { name: "Stefan Hartmann", matric: "1234585", tutorial: "Tutorial C", points: 129, status: "eligible" },
+  { name: "Tina Lange", matric: "1234586", tutorial: "Tutorial A", points: 114, status: "not-eligible" },
+  { name: "Ulrich Schmitt", matric: "1234587", tutorial: "Tutorial B", points: 143, status: "eligible" },
+  { name: "Vera Werner", matric: "1234588", tutorial: "Tutorial C", points: 181, status: "eligible" },
+  { name: "Walter Krause", matric: "1234589", tutorial: "Tutorial A", points: 96, status: "not-eligible" },
+  { name: "Xenia Meier", matric: "1234590", tutorial: "Tutorial B", points: 169, status: "eligible" },
+  { name: "Yves Fischer", matric: "1234591", tutorial: "Tutorial C", points: 137, status: "eligible" },
+  { name: "Zoe Becker", matric: "1234592", tutorial: "Tutorial A", points: 110, status: "not-eligible" },
+  { name: "Anton Mueller", matric: "1234593", tutorial: "Tutorial B", points: 155, status: "eligible" },
+  { name: "Bettina Schmidt", matric: "1234594", tutorial: "Tutorial C", points: 101, status: "not-eligible" },
+  { name: "Christian Weber", matric: "1234595", tutorial: "Tutorial A", points: 147, status: "eligible" },
+  { name: "Diana Wagner", matric: "1234596", tutorial: "Tutorial B", points: 88, status: "override", reason: "Special circumstances" },
+  { name: "Erik Hoffmann", matric: "1234597", tutorial: "Tutorial C", points: 174, status: "eligible" },
+  { name: "Franziska Koch", matric: "1234598", tutorial: "Tutorial A", points: 126, status: "eligible" },
+  { name: "Georg Richter", matric: "1234599", tutorial: "Tutorial B", points: 118, status: "not-eligible" },
+  { name: "Helena Klein", matric: "1234600", tutorial: "Tutorial C", points: 162, status: "eligible" },
+  { name: "Igor Neumann", matric: "1234601", tutorial: "Tutorial A", points: 139, status: "eligible" },
+  { name: "Julia Schwarz", matric: "1234602", tutorial: "Tutorial B", points: 104, status: "not-eligible" },
+  { name: "Klaus Braun", matric: "1234603", tutorial: "Tutorial C", points: 183, status: "eligible" },
+  { name: "Laura Krueger", matric: "1234604", tutorial: "Tutorial A", points: 95, status: "not-eligible" },
+  { name: "Martin Wolf", matric: "1234605", tutorial: "Tutorial B", points: 158, status: "eligible" },
+  { name: "Nadine Hartmann", matric: "1234606", tutorial: "Tutorial C", points: 141, status: "eligible" }
+];
+
+// Add more students to reach 150
+for (let i = 41; i <= 150; i++) {
+  const points = Math.floor(Math.random() * 200) + 40;
+  const tutorials = ["Tutorial A", "Tutorial B", "Tutorial C"];
+  const tutorial = tutorials[i % 3];
+  students.push({
+    name: `Student ${i}`,
+    matric: `123${4606 + i}`,
+    tutorial: tutorial,
+    points: points,
+    status: points >= 120 ? "eligible" : "not-eligible"
+  });
+}
+
+let currentFilter = "all";
+let currentSearch = "";
+let currentTutorial = "";
+let currentPage = 1;
+const studentsPerPage = 15;
+
+function renderStudents() {
+  const tbody = document.getElementById("studentTableBody");
+  tbody.innerHTML = "";
+  
+  const filtered = students.filter(s => {
+    if (currentFilter === "eligible" && s.status !== "eligible") return false;
+    if (currentFilter === "not-eligible" && s.status !== "not-eligible") return false;
+    if (currentFilter === "override" && s.status !== "override") return false;
+    
+    if (currentSearch) {
+      const search = currentSearch.toLowerCase();
+      if (!s.name.toLowerCase().includes(search) && !s.matric.includes(search)) return false;
+    }
+    
+    if (currentTutorial && s.tutorial !== currentTutorial) return false;
+    
+    return true;
+  });
+  
+  const totalPages = Math.ceil(filtered.length / studentsPerPage);
+  const startIdx = (currentPage - 1) * studentsPerPage;
+  const endIdx = startIdx + studentsPerPage;
+  const paginatedStudents = filtered.slice(startIdx, endIdx);
+  
+  paginatedStudents.forEach(s => {
+    const tr = document.createElement("tr");
+    tr.className = "student-row";
+    if (s.status === "override") tr.classList.add("table-light");
+    
+    const percentage = Math.round((s.points / 240) * 100);
+    
+    let statusBadge = "";
+    let actionBtn = "";
+    
+    if (s.status === "eligible") {
+      statusBadge = `<span class="badge bg-success">Eligible</span>`;
+      actionBtn = `<button class="btn btn-outline-secondary btn-sm" title="View details"><i class="fas fa-eye"></i></button>`;
+    } else if (s.status === "not-eligible") {
+      statusBadge = `<span class="badge bg-secondary">Not Eligible</span>`;
+      actionBtn = `<button class="btn btn-outline-primary btn-sm" title="Override eligibility"><i class="fas fa-hand-point-up"></i></button>`;
+    } else if (s.status === "override") {
+      statusBadge = `<span class="badge" style="background-color: #0dcaf0; color: white;">Override</span>`;
+      actionBtn = `<button class="btn btn-outline-danger btn-sm" title="Remove override"><i class="fas fa-times"></i></button>`;
+    }
+    
+    const nameCell = s.reason 
+      ? `<div class="small fw-semibold">${s.name}</div><small class="text-muted fst-italic">${s.reason}</small>`
+      : `<div class="small fw-semibold">${s.name}</div>`;
+    
+    tr.innerHTML = `
+      <td>${nameCell}</td>
+      <td class="small">${s.matric}</td>
+      <td class="small">${s.tutorial}</td>
+      <td class="small">${s.points}</td>
+      <td class="small">${percentage}%</td>
+      <td>${statusBadge}</td>
+      <td class="text-end">${actionBtn}</td>
+    `;
+    
+    tbody.appendChild(tr);
+  });
+  
+  document.getElementById("showingInfo").textContent = 
+    `Showing ${startIdx + 1}-${Math.min(endIdx, filtered.length)} of ${filtered.length} students`;
+  
+  renderPagination(totalPages, filtered.length);
+}
+
+function renderPagination(totalPages, totalFiltered) {
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+  
+  if (totalFiltered === 0) return;
+  
+  const prevLi = document.createElement("li");
+  prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
+  prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+  prevLi.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (currentPage > 1) {
+      currentPage--;
+      renderStudents();
+    }
+  });
+  pagination.appendChild(prevLi);
+  
+  const maxButtons = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+  let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+  
+  if (endPage - startPage < maxButtons - 1) {
+    startPage = Math.max(1, endPage - maxButtons + 1);
+  }
+  
+  if (startPage > 1) {
+    const li = document.createElement("li");
+    li.className = "page-item";
+    li.innerHTML = `<a class="page-link" href="#">1</a>`;
+    li.addEventListener("click", (e) => {
+      e.preventDefault();
+      currentPage = 1;
+      renderStudents();
+    });
+    pagination.appendChild(li);
+    
+    if (startPage > 2) {
+      const dots = document.createElement("li");
+      dots.className = "page-item disabled";
+      dots.innerHTML = `<span class="page-link">...</span>`;
+      pagination.appendChild(dots);
+    }
+  }
+  
+  for (let i = startPage; i <= endPage; i++) {
+    const li = document.createElement("li");
+    li.className = `page-item ${i === currentPage ? "active" : ""}`;
+    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+    li.addEventListener("click", (e) => {
+      e.preventDefault();
+      currentPage = i;
+      renderStudents();
+    });
+    pagination.appendChild(li);
+  }
+  
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) {
+      const dots = document.createElement("li");
+      dots.className = "page-item disabled";
+      dots.innerHTML = `<span class="page-link">...</span>`;
+      pagination.appendChild(dots);
+    }
+    
+    const li = document.createElement("li");
+    li.className = "page-item";
+    li.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
+    li.addEventListener("click", (e) => {
+      e.preventDefault();
+      currentPage = totalPages;
+      renderStudents();
+    });
+    pagination.appendChild(li);
+  }
+  
+  const nextLi = document.createElement("li");
+  nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
+  nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
+  nextLi.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderStudents();
+    }
+  });
+  pagination.appendChild(nextLi);
+}
+
+function updateCounts() {
+  const eligible = students.filter(s => s.status === "eligible").length;
+  const notEligible = students.filter(s => s.status === "not-eligible").length;
+  const override = students.filter(s => s.status === "override").length;
+  
+  document.getElementById("eligibleCount").textContent = eligible;
+  document.getElementById("notEligibleCount").textContent = notEligible;
+  document.getElementById("overrideCount").textContent = override;
+  document.getElementById("totalCount").textContent = students.length;
+  
+  document.getElementById("filterAllCount").textContent = students.length;
+  document.getElementById("filterEligibleCount").textContent = eligible;
+  document.getElementById("filterNotCount").textContent = notEligible;
+  document.getElementById("filterOverrideCount").textContent = override;
+}
+
+document.getElementById("filter-all").addEventListener("change", () => {
+  currentFilter = "all";
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("filter-eligible").addEventListener("change", () => {
+  currentFilter = "eligible";
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("filter-not").addEventListener("change", () => {
+  currentFilter = "not-eligible";
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("filter-override").addEventListener("change", () => {
+  currentFilter = "override";
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  currentSearch = e.target.value;
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("tutorialFilter").addEventListener("change", (e) => {
+  currentTutorial = e.target.value;
+  currentPage = 1;
+  renderStudents();
+});
+
+updateCounts();
+renderStudents();
+</script>
+
+            </div>
+            <!-- End Eligibility Content -->
+
+            <!-- Roster Content Placeholder -->
+            <div class="tab-pane fade" id="roster-content" role="tabpanel">
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                The roster will be populated after the registration campaign closes and registrations are materialized. 
+                See <a href="exam_roster.html">exam_roster.html</a> for the full roster view.
+              </div>
+            </div>
+
+            <!-- Room Assignments Content Placeholder -->
+            <div class="tab-pane fade" id="rooms-content" role="tabpanel">
+              <div class="alert alert-secondary">
+                <i class="fas fa-door-open me-2"></i>
+                Room assignments will be available after registration closes.
+              </div>
+            </div>
+          </div>
+          <!-- End Sub-tab Content -->
+
+        </div>
+        <!-- End Exam Logistics Tab -->
+      </div>
+      <!-- End Tab Content -->
+    </div>
+    <!-- End Lecture Pane -->
+  </div>
+  <!-- End Container -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

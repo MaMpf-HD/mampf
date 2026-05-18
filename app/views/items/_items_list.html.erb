@@ -2,7 +2,7 @@
   <% content.each_with_index do |c,i| %>
     <% if c.present? %>
       <p>
-        <%= c&.html_safe %>
+        <%= sanitize(c) %>
       </p>
     <% end %>
     <% unless i == content.length - 1 %>
@@ -34,7 +34,7 @@
                          locals: { item: i } %>
             <% end %>
             <% i.related_items.each do |j| %>
-              <span class="mr-2">
+              <span class="me-2">
               </span>
               <% if j.medium.visible? %>
                 <%= render partial: 'items/item_links',
@@ -44,7 +44,7 @@
           </div>
         </div>
       </li>
-    <% end%>
+    <% end %>
   </ul>
 <% end %>
 <% if (content.nil? || (content - ['']).blank?) && !items.any? %>

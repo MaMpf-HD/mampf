@@ -1,6 +1,6 @@
 <div class="action-box">
   <%= form_with model: referral  do |f|%>
-    <div class="form-group form-row">
+    <div class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= t('admin.referral.start_time') %>
         <%= helpdesk(t('admin.referral.info.start_time'), false) %>
@@ -17,7 +17,7 @@
       </div>
       <div class="col-1 col-form-label">
         <i class="material-icons clickable timer"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            data-placement="right"
            title="<%= t('admin.referral.take_time') %>"
            data-timer="referral_start_time">
@@ -25,7 +25,7 @@
         </i>
       </div>
     </div>
-    <div class="form-group form-row">
+    <div class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= t('admin.referral.end_time') %>
         <%= helpdesk(t('admin.referral.info.end_time'), false) %>
@@ -42,7 +42,7 @@
       </div>
       <div class="col-1 col-form-label">
         <i class="material-icons clickable timer"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            data-placement="right"
            title="<%= t('admin.referral.take_time') %>"
            data-timer="referral_end_time">
@@ -51,10 +51,11 @@
       </div>
     </div>
     <div id="teachable_selector"
-         class="form-group form-row">
+         class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= f.label :teachable,
-                    t('admin.referral.preselection') %>
+                    t('admin.referral.preselection'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.referral.info.end_time'), false) %>
       </div>
       <div class="col-9">
@@ -69,10 +70,11 @@
                                          .can?(:create, Item.new) } } %>
       </div>
     </div>
-    <div id="item_select" class="form-group form-row">
+    <div id="item_select" class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= f.label :item_id,
-                    t('admin.referral.item') %>
+                    t('admin.referral.item'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.referral.info.item'), false) %>
       </div>
       <div class="col-9">
@@ -84,7 +86,7 @@
       <div class="col-1 col-form-label">
         <i id="create_external_link"
            class="material-icons clickable"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            data-placement="left"
            title="<%= t('admin.item.create_external') %>"
            style="display: <%= show(referral.item&.sort == 'link') %>">
@@ -94,15 +96,16 @@
     </div>
     <div id="link_details" style="display: <%= show(show_link(referral)) %>">
       <div id="referral_description_field"
-           class="form-group form-row">
+           class="mb-3 row">
         <div class="col-2 col-form-label">
           <%= f.label :description,
-                      t('basics.title') %>
+                      t('basics.title'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.referral.info.description'), true) %>
           <i id="link_reappearance_title"
              class="fas fa-exclamation-circle"
              style="display: <%= show_inline(referral.reappears) %>"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              data-placement="left"
              title="<%= t('admin.item.info.title_warning') %>">
           </i>
@@ -118,15 +121,16 @@
         </div>
       </div>
       <div id="referral_link_field"
-           class="form-group form-row">
+           class="mb-3 row">
         <div class="col-2 col-form-label">
           <%= f.label :link,
-                      t('basics.link') %>
+                      t('basics.link'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.referral.info.link'), true) %>
           <i id="link_reappearance_link"
              class="fas fa-exclamation-circle"
              style="display: <%= show_inline(referral.reappears) %>"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              data-placement="left"
              title="<%= t('admin.item.info.link_warning') %>">
           </i>
@@ -156,10 +160,11 @@
     </div>
     <div id="explanation_details"
          style="display: <%= show(show_explanation(referral)) %>;">
-      <div class="form-group form-row">
+      <div class="mb-3 row">
         <div class="col-2 col-form-label">
           <%= f.label :explanation,
-                      t('admin.referral.explanation') %>
+                      t('admin.referral.explanation'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.referral.info.explanation'), true) %>
         </div>
         <div class="col-8">
@@ -179,7 +184,7 @@
     <%= f.submit t('buttons.save'),
                  class: 'btn btn-sm btn-primary' %>
     <button id="cancel-item"
-            class="btn btn-sm btn-secondary ml-3"
+            class="btn btn-sm btn-secondary ms-3"
             type="button">
       <%= t('buttons.cancel') %>
     </button>
@@ -190,7 +195,7 @@
                   remote: true,
                   data: { confirm: t('confirmation.generic') },
                   id: 'delete-item',
-                  class: 'btn btn-sm btn-danger mr-2' %>
+                  class: 'btn btn-sm btn-danger me-2' %>
     <% end %>
   <% end %>
 </div>

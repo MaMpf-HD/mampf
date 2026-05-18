@@ -1,6 +1,7 @@
 <%= form_with url: validate_certificate_path,
               method: :post do |f| %>
-  <%= f.label :code, t('basics.code') %>
+  <%= f.label :code, t('basics.code'),
+              class: "form-label" %>
   <%= helpdesk(t('tutorial.certificate_check_info'), false) %>
   <%= f.text_field :code,
                    { class: 'form-control' } %>
@@ -10,7 +11,7 @@
                    class: 'btn btn-sm btn-primary' %>
       <button type="button"
               class="btn btn-sm btn-secondary"
-              data-dismiss="modal">
+              data-bs-dismiss="modal">
         <%= t('buttons.cancel') %>
       </button>
     </div>

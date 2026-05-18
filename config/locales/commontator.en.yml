@@ -108,7 +108,7 @@ en:
           subscribe: >
             You will be notified by email if a new comment is posted in this
             discussion.
-          unscubscribe: >
+          unsubscribe: >
             You will no longer be notified by email if a comment is posted in
             this discussion.
       errors:

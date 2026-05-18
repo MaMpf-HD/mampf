@@ -56,13 +56,13 @@
   <% end %>
   <% if manuscript.unmatched_mampf_chapters.any? %>
     <li>
-      <span class="badge badge-info">
+      <span class="badge bg-info">
         <%= t('basics.note') %>
       </span>
       <%= t('manuscript.unmatched_chapters') %>
       <div class="row mb-3">
         <% manuscript.unmatched_mampf_chapters.each do |c| %>
-          <div class="col-12 ml-3">
+          <div class="col-12 ms-3">
             <%= c.to_label %>
           </div>
         <% end %>
@@ -71,13 +71,13 @@
   <% end %>
   <% if manuscript.unmatched_mampf_sections.any? %>
     <li>
-      <span class="badge badge-info">
+      <span class="badge bg-info">
         <%= t('basics.note') %>
       </span>
       <%= t('manuscript.unmatched_sections') %>
       <div class="row">
         <% manuscript.unmatched_mampf_sections.each do |s| %>
-          <div class="col-12 ml-3">
+          <div class="col-12 ms-3">
             <%= s.to_label %>
           </div>
         <% end %>

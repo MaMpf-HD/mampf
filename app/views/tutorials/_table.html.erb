@@ -20,7 +20,7 @@
         <% end %>
       </div>
     </li>
-    <div class="tutorialTableContent">
+    <div class="tutorialTableContent" data-cy="tutorial-submissions-table">
       <%= render partial: 'tutorials/rows',
                  collection: stack,
                  as: :submission %>

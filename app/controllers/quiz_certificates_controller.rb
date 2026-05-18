@@ -17,36 +17,40 @@ class QuizCertificatesController < ApplicationController
   def validate
     authorize! :validate, QuizCertificate.new
     code = certificate_params[:code]
-    @certificate = QuizCertificate.find_by_code(code)
+    @certificate = QuizCertificate.find_by(code: code)
   end
 
   private
 
-  def set_certificate
-    @certificate = QuizCertificate.find_by_id(params[:id])
-    return if @certificate.present?
-    redirect_to :root, alert: I18n.t('controllers.no_certificate')
-  end
+    def set_certificate
+      @certificate = QuizCertificate.find_by(id: params[:id])
+      return if @certificate.present?
 
-  def check_if_claimed
-    return unless @certificate.user
-    redirect_to :root, alert: I18n.t('controllers.certificate_already_claimed')
-  end
+      redirect_to :root, alert: I18n.t("controllers.no_certificate")
+    end
 
-  def certificate_params
-    params.permit(:code, :lecture_id)
-  end
+    def check_if_claimed
+      return unless @certificate.user
 
-  def set_locale_by_quiz
-    return unless @certificate
-    quiz_locale = @certificate.quiz.locale_with_inheritance
-    I18n.locale = quiz_locale || current_user.locale ||
+      redirect_to :root,
+                  alert: I18n.t("controllers.certificate_already_claimed")
+    end
+
+    def certificate_params
+      params.permit(:code, :lecture_id)
+    end
+
+    def set_locale_by_quiz
+      return unless @certificate
+
+      quiz_locale = @certificate.quiz.locale_with_inheritance
+      I18n.locale = quiz_locale || current_user.locale ||
                     I18n.default_locale
-  end
+    end
 
-  def set_locale_by_lecture
-    @lecture = Lecture.find_by_id(certificate_params[:lecture_id])
-    I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
+    def set_locale_by_lecture
+      @lecture = Lecture.find_by(id: certificate_params[:lecture_id])
+      I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
                     I18n.default_locale
-  end
+    end
 end

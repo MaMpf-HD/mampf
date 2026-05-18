@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign – Show (Draft with Incomplete Certifications)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+      .reg-table-container { max-height: 360px; overflow: auto; }
+      .table-sticky thead th { position: sticky; top: 0; background: #f8f9fa; z-index: 1; }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="./campaigns_index.html">Campaigns</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Exam Registration – Final</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-3">
+        <div>
+          <h1 class="h4 mb-1">Exam Registration – Final <span class="badge text-bg-secondary">Draft</span></h1>
+          <div class="text-muted small">Linear Algebra I · WS 2025/26</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-primary">Open now</button>
+          <button class="btn btn-outline-danger">Delete</button>
+        </div>
+      </div>
+
+      <!-- Pre-flight Check Warning Banner -->
+      <div class="alert alert-warning mb-3" role="alert">
+        <div class="d-flex align-items-start">
+          <i class="bi bi-exclamation-triangle-fill fs-4 me-3 mt-1"></i>
+          <div class="flex-grow-1">
+            <div class="fw-bold mb-1">Incomplete certifications</div>
+            <p class="mb-2 small">
+              <strong>24 students</strong> have pending or missing lecture performance certifications.
+              You must complete all certifications before opening this exam registration campaign.
+            </p>
+            <div class="d-flex gap-2 flex-wrap">
+              <a href="#" class="btn btn-sm btn-outline-warning">
+                <i class="bi bi-award me-1"></i>View Certification Dashboard
+              </a>
+              <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#certDetails">
+                <i class="bi bi-info-circle me-1"></i>Show details
+              </button>
+            </div>
+            <div class="collapse mt-3" id="certDetails">
+              <div class="card card-body bg-light border-warning">
+                <div class="small">
+                  <div class="fw-semibold mb-2">Certification breakdown:</div>
+                  <ul class="mb-0">
+                    <li><strong>18 students:</strong> Pending review (meet requirements but not yet approved)</li>
+                    <li><strong>6 students:</strong> Missing certification (no decision recorded)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Mode</div>
+                  <div class="fw-semibold">First-Come-First-Serve</div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Window</div>
+                  <div class="fw-semibold">Opens Jan 20, 08:00<br/>Closes Feb 1, 12:00</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Items</div>
+                  <div class="fw-semibold">1</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Policies</div>
+                  <div class="fw-semibold">2</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div class="fw-semibold">Registrations</div>
+                <span class="badge rounded-pill text-bg-secondary">0</span>
+              </div>
+              <div class="small text-muted mb-2">Campaign not yet opened</div>
+              <div class="progress" style="height:6px;">
+                <div class="progress-bar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs" id="campaignTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Overview</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button" role="tab" aria-controls="items" aria-selected="false">Items</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="false">Policies</button>
+        </li>
+      </ul>
+
+      <div class="tab-content bg-white border border-top-0 rounded-bottom p-3" id="campaignTabsContent">
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-lg-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Details</div>
+                  <dl class="row mb-0">
+                    <dt class="col-sm-4">Title</dt>
+                    <dd class="col-sm-8">Exam Registration – Final</dd>
+                    <dt class="col-sm-4">Lecture</dt>
+                    <dd class="col-sm-8">Linear Algebra I (WS 2025/26)</dd>
+                    <dt class="col-sm-4">Mode</dt>
+                    <dd class="col-sm-8">First-Come-First-Serve</dd>
+                    <dt class="col-sm-4">Window</dt>
+                    <dd class="col-sm-8">Jan 20, 08:00 → Feb 1, 12:00</dd>
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8"><span class="badge text-bg-secondary">Draft</span></dd>
+                  </dl>
+              </div>
+            </div>
+          </div>
+            <div class="col-12 col-lg-6">
+              <div class="card h-100 border-warning">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">
+                    <i class="bi bi-exclamation-triangle text-warning me-1"></i>
+                    Pre-flight Checks
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-start px-0">
+                      <div class="flex-grow-1">
+                        <div class="fw-semibold small">Lecture Performance Certifications</div>
+                        <div class="text-muted small">All students must have approved certifications</div>
+                      </div>
+                      <span class="badge text-bg-warning">24 incomplete</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-start px-0">
+                      <div class="flex-grow-1">
+                        <div class="fw-semibold small">Campaign Configuration</div>
+                        <div class="text-muted small">Items and policies configured</div>
+                      </div>
+                      <span class="badge text-bg-success">OK</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-start px-0">
+                      <div class="flex-grow-1">
+                        <div class="fw-semibold small">Registration Window</div>
+                        <div class="text-muted small">Valid dates and times</div>
+                      </div>
+                      <span class="badge text-bg-success">OK</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-xl-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-3">Campaign settings</div>
+                  <form>
+                    <div class="mb-3">
+                      <label class="form-label">Title</label>
+                      <input type="text" class="form-control" value="Exam Registration – Final" />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Lecture</label>
+                      <input type="text" class="form-control" value="Linear Algebra I (WS 2025/26)" disabled />
+                      <div class="form-text">Lecture is fixed for the campaign.</div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Mode</label>
+                      <select class="form-select">
+                        <option selected>First-Come-First-Serve</option>
+                        <option>Preference-Based</option>
+                      </select>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <div class="fw-semibold">Registration window</div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Opens</label>
+                        <div class="input-group">
+                          <input type="date" class="form-control" value="2026-01-20" />
+                          <input type="time" class="form-control" value="08:00" />
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Closes</label>
+                        <div class="input-group">
+                          <input type="date" class="form-control" value="2026-02-01" />
+                          <input type="time" class="form-control" value="12:00" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <hr />
+                    <div class="d-flex justify-content-end gap-2">
+                      <button type="button" class="btn btn-outline-secondary">Cancel</button>
+                      <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="items" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Capacity</th>
+                  <th scope="col">Notes</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Final Exam</td>
+                  <td>Unlimited</td>
+                  <td class="text-muted small">FCFS registration</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="policies" role="tabpanel" aria-labelledby="policies-tab" tabindex="0">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Policy</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Phase</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Institutional email required</td>
+                  <td>Email Domain</td>
+                  <td><span class="badge text-bg-info">Registration</span></td>
+                  <td><span class="badge rounded-pill text-bg-success">Active</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                  </td>
+                </tr>
+                <tr class="table-warning">
+                  <td>
+                    <div class="fw-semibold">Lecture performance certification</div>
+                    <div class="small text-muted mt-1">Linear Algebra I (WS 2025/26)</div>
+                    <div class="small text-muted">Students must have approved certification from lecture</div>
+                  </td>
+                  <td>Certification</td>
+                  <td>
+                    <span class="badge text-bg-warning">Finalization</span>
+                    <div class="small text-muted mt-1">Verified before roster materialization</div>
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill text-bg-warning"><i class="bi bi-exclamation-triangle me-1"></i>24 incomplete</span>
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small text-muted mt-2">
+            <i class="bi bi-info-circle me-1"></i>
+            The highlighted policy requires all students to have approved certifications before registration.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>

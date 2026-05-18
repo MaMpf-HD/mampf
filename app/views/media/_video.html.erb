@@ -1,12 +1,12 @@
 <div class="row">
   <div class="col-4">
     <%= t('video.video') %>
-    <span class="badge badge-secondary">
+    <span class="badge bg-secondary">
       mp4
     </span>
     <%= helpdesk(t('admin.medium.info.video'), false) %>
   </div>
-  <div class="col-2 text-right"
+  <div class="col-2 text-end"
        id="video-uploadButton"
        data-choosefiles="<%= t('basics.file') %>">
     <button id="video-uploadButton-button"
@@ -30,23 +30,28 @@
           <%= t('buttons.upload') %>
   </div>
   </div>
-  <div class="col-6 text-right">
+  <div class="col-6 text-end">
     <% if medium.screenshot.present? %>
       <button type="button"
               class="btn btn-sm btn-outline-secondary"
-              data-toggle="modal"
-              data-target="#screenshotModal">
+              data-bs-toggle="modal"
+              data-bs-target="#screenshotModal">
         <%= t('basics.screenshot') %>
       </button>
     <% end %>
     <% if medium.video.present? %>
       <%= link_to t('basics.thyme_editor'),
                   enrich_medium_path(medium),
-                  class: 'btn btn-sm btn-outline-secondary' %>
+                  class: 'btn btn-sm btn-outline-secondary',
+                  "data-turbo": false %>
+      <%= link_to 'Feedback',
+                  feedback_medium_path(medium),
+                  class: 'btn btn-sm btn-outline-secondary',
+                  target: "_blank" %>
       <%= link_to t('basics.thyme'),
                   play_medium_path(medium),
                   class: 'btn btn-outline-secondary btn-sm',
-                  target: :blank %>
+                  target: "_blank" %>
     <% end %>
   </div>
 </div>

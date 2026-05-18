@@ -1,6 +1,6 @@
 <% if @talks.any? %>
   <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
-              row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6">
+              row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6">
     <% @talks.each do |t| %>
       <div class="col mb-4">
         <%= render partial: 'main/start/talk_card',

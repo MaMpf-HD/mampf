@@ -1,0 +1,12 @@
+<div class="container">
+  <div class="blockquote text-start">
+    <h3>
+      <%= t('mailer.pending_deletion_subject',
+            num_days_until_deletion: @num_days_until_deletion) %>
+    </h3>
+    <p>
+      <%= t('mailer.pending_deletion_body_html',
+            num_days_until_deletion: @num_days_until_deletion) %>
+    </p>
+  </div>
+</div>

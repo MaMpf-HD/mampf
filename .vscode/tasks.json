@@ -1,0 +1,57 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start MaMpf app",
+			"type": "shell",
+			"command": "just up",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear": true,
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Seed MaMpf database",
+			"type": "shell",
+			"command": "just seed",
+			"isBackground": false,
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear":  true,
+			},
+			"problemMatcher": [],
+		},
+		{
+			"label": "Start Architecture Book Server",
+			"type": "shell",
+			"command": "just muesli",
+			"isBackground": false,
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear": true,
+			},
+			"problemMatcher": [],
+		},
+		{
+			"label": "Launch Playwright UI",
+			"type": "shell",
+			"command": "just playwright-ui",
+			"isBackground": false,
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear": true,
+			},
+			"problemMatcher": [],
+		}
+	]
+}

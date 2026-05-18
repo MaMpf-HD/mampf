@@ -1,0 +1,15 @@
+<div class="modal fade" id="talkModal" tabindex="-1" aria-labelledby="talkModalLabel" aria-hidden="true"
+     data-controller="modal"
+     data-modal-show-on-connect-value="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="talkModalLabel">
+          <%= talk.new_record? ? t('buttons.create_talk') : t('buttons.edit_talk') %>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <%= render "talks/roster_modal_form", talk: talk %>
+    </div>
+  </div>
+</div>

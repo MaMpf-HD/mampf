@@ -1,0 +1,44 @@
+<b><%= t('admin.annotation.whats_the_problem') %></b>
+
+<div class="form-row ml-2", id="content-category-radios">
+  <div class="form-check form-check-inline",
+       title="<%= t('admin.annotation.definition_tooltip') %>">
+    <input id="content-category-definition"
+           class="form-check-input"
+           type="radio"
+           value="definition"
+           name="annotation[subcategory]">
+    <label class="form-check-label"
+           for="content-category-definition">
+      <%= t('admin.annotation.definition') %>
+    </label>
+  </div>
+  <div class="form-check form-check-inline",
+       title="<%= t('admin.annotation.argument_tooltip') %>">
+    <input id="content-category-argument"
+           class="form-check-input"
+           type="radio"
+           value="argument"
+           name="annotation[subcategory]">
+    <label class="form-check-label"
+           for="content-category-argument">
+      <%= t('admin.annotation.argument') %>
+    </label>
+  </div>
+  <div class="form-check form-check-inline",
+       title="<%= t('admin.annotation.strategy_tooltip') %>">
+    <input id="content-category-strategy"
+           class="form-check-input"
+           type="radio"
+           value="strategy"
+           name="annotation[subcategory]">
+    <label class="form-check-label"
+           for="content-category-strategy">
+      <%= t('admin.annotation.strategy') %>
+    </label>
+  </div>
+</div>
+
+<div id="content-specific">
+  <!--- SPECIFIC CONTENT, DEPENDING ON THE SELECTED CONTENT CATEGORY, IS INSERTED HERE -->
+</div>

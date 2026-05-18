@@ -5,7 +5,7 @@ class Watchlist < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :user_id }
 
-  def owned_by?(otherUser)
-    user == otherUser
+  def owned_by?(other_user)
+    user == other_user
   end
 end

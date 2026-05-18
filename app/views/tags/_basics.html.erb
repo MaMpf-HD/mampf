@@ -19,8 +19,8 @@
   </div>
   <div id="titlesInput">
     <%= f.fields_for :notions do |n| %>
-      <div class="form-row">
-        <div class="form-group col-11">
+      <div class="row">
+        <div class="mb-3 col-11">
           <div class="input-group">
             <div class="input-group-prepend">
               <div class="input-group-text">
@@ -33,10 +33,10 @@
           </div>
         </div>
         <% unless new_tag %>
-          <div class="form-group col-1">
+          <div class="mb-3 col-1">
             <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
             <i class="fas fa-trash-alt text-dark"
-               data-toggle="tooltip"
+               data-bs-toggle="tooltip"
                title="<%= t('buttons.delete') %>">
             </i>
           </div>
@@ -52,8 +52,8 @@
       </div>
     </div>
     <%= f.fields_for :aliases do |n| %>
-      <div class="form-row">
-        <div class="form-group col-11">
+      <div class="row">
+        <div class="mb-3 col-11">
           <div class="input-group">
             <div class="input-group-prepend">
               <%= n.select :locale,
@@ -61,7 +61,7 @@
                                                   .map { |l| [l.to_s, l.to_s] },
                                               n.object.locale.to_s),
                            {},
-                           { class: 'form-control' } %>
+                           { class: 'form-select' } %>
             </div>
             <%= n.text_field :title, class: 'form-control',
                                      data: { id: tag.id.to_i,
@@ -69,10 +69,10 @@
           </div>
         </div>
         <% unless new_tag %>
-          <div class="form-group col-1">
+          <div class="mb-3 col-1">
             <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
             <i class="fas fa-trash-alt text-dark"
-               data-toggle="tooltip"
+               data-bs-toggle="tooltip"
                title="<%= t('buttons.delete') %>">
             </i>
           </div>
@@ -81,8 +81,9 @@
     <% end %>
   </div>
   <% if new_tag %>
-    <div class="form-group">
-      <%= f.label :related_tag_ids, t('admin.tag.related_tags') %>
+    <div class="mb-3">
+      <%= f.label :related_tag_ids, t('admin.tag.related_tags'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.tag.info.related_tags'), false) %>
       <%= f.select :related_tag_ids,
                    [[]],
@@ -103,10 +104,11 @@
       </div>
     </div>
   <% end %>
-  <div class="form-row">
-  <div class="form-group col-12">
+  <div class="row">
+  <div class="mb-3 col-12">
     <%= f.label :course_ids,
-                t('basics.courses') %>
+                t('basics.courses'),
+                class: "form-label" %>
     <%= helpdesk(t('admin.tag.info.courses'), false) %>
     <%= f.select :course_ids,
                  options_for_select(Course.select_by_title,

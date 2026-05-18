@@ -13,7 +13,7 @@
 					<% end %>
 				</h5>
 			</div>
-			<div class="col-2 text-right">
+			<div class="col-2 text-end">
 				<%= submission_status(submission, assignment) %>
 			</div>
 			<div class="col-12">
@@ -27,7 +27,7 @@
 		</div>
 	</div>
 	<% if assignment&.medium&.visible_for_user?(current_user) &&
-  	      (assignment.medium.tags.present? || assignment.has_documents?) %>
+  	      (assignment.medium.tags.present? || assignment.documents?) %>
   	<ul class="list-group list-group-flush">
     	<li class="list-group-item submissionSubHeader">
     		<div class="row">
@@ -37,14 +37,14 @@
           			<% assignment.medium.tags.each do |t| %>
             			<%= link_to t.title,
               	  		        t,
-                	    		    class: 'badge badge-light',
+                	    		    class: 'badge text-dark lecture-tag',
                   	      		style: 'background-color: #f8f9fa;' %>
           			<% end %>
         			</div>
       			<% end %>
       		</div>
       		<div class="col-12">
-      			<% if assignment.has_documents? %>
+      			<% if assignment.documents? %>
         			<div class="flexdiv mt-2">
           			<%= render partial: 'media/medium/buttons',
             	  		       locals: { medium: assignment.medium,

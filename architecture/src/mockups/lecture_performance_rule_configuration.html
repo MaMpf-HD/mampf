@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Performance Rule Configuration - Lecture Settings</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container-fluid py-4">
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Lectures</a></li>
+          <li class="breadcrumb-item"><a href="#">Linear Algebra I (WS 2025/26)</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Settings</li>
+        </ol>
+      </nav>
+
+      <h4 class="mb-3">Lecture Settings</h4>
+
+      <!-- Other settings sections would be here (General, Roster, etc.) -->
+
+      <div class="card mb-3">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Performance Certification Rule</h5>
+          <p class="text-muted small mb-0">
+            Define criteria for automatic certification proposals. Teachers review and approve in the
+            <a href="lecture_performance_certifications_index.html">Certification Dashboard</a>.
+          </p>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            Changing these criteria will regenerate proposals for all students. Existing manual overrides are preserved.
+            You must review updated proposals in the Certification Dashboard.
+          </div>
+
+          <ul class="nav nav-tabs mb-3" id="ruleTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="percentage-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#percentage"
+                type="button"
+                role="tab"
+              >
+                Percentage-based (Recommended)
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="absolute-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#absolute"
+                type="button"
+                role="tab"
+              >
+                Absolute Points
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="ruleTabContent">
+            <div class="tab-pane fade show active" id="percentage" role="tabpanel">
+              <form>
+                <div class="row g-3 mb-3">
+                  <div class="col-12 col-md-4">
+                    <label for="minPercentage" class="form-label fw-bold">
+                      Minimum Percentage <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="minPercentage"
+                        value="50"
+                        min="0"
+                        max="100"
+                        step="1"
+                        required
+                      />
+                      <span class="input-group-text">%</span>
+                    </div>
+                    <div class="form-text">
+                      Students must achieve at least this percentage of total assessment points
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-8">
+                    <label class="form-label fw-bold">Required Achievements</label>
+                    <div class="border rounded p-3 bg-light">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="achievement1" checked />
+                        <label class="form-check-label" for="achievement1">
+                          <strong>Blackboard Presentation</strong>
+                          <span class="badge text-bg-secondary ms-2">Boolean</span>
+                          <div class="small text-muted">At least one blackboard presentation completed</div>
+                        </label>
+                      </div>
+                      <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="achievement2" checked />
+                        <label class="form-check-label" for="achievement2">
+                          <strong>Lab Participation</strong>
+                          <span class="badge text-bg-secondary ms-2">Percentage ≥65%</span>
+                          <div class="small text-muted">Active participation in lab sessions</div>
+                        </label>
+                      </div>
+                      <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="achievement3" checked />
+                        <label class="form-check-label" for="achievement3">
+                          <strong>Attendance</strong>
+                          <span class="badge text-bg-secondary ms-2">Count ≥11/15</span>
+                          <div class="small text-muted">Attended at least 11 of 15 tutorial sessions</div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="form-text">
+                      Students must complete ALL selected achievements. Unchecked achievements are optional.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="border-top pt-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                      <strong>Current rule:</strong> 50% points AND all 3 achievements
+                    </div>
+                    <div class="d-flex gap-2">
+                      <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#previewModal">
+                        <i class="bi bi-eye me-1"></i>Preview Impact
+                      </button>
+                      <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>Save Rule
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="tab-pane fade" id="absolute" role="tabpanel">
+              <form>
+                <div class="alert alert-warning" role="alert">
+                  <i class="bi bi-exclamation-triangle me-2"></i>
+                  <strong>Note:</strong> Absolute points are less flexible when assessment plans change.
+                  Percentage-based rules automatically adapt to total available points.
+                </div>
+
+                <div class="row g-3 mb-3">
+                  <div class="col-12 col-md-4">
+                    <label for="minPointsAbsolute" class="form-label fw-bold">
+                      Minimum Points <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="minPointsAbsolute"
+                        value="120"
+                        min="0"
+                        step="1"
+                        required
+                      />
+                      <span class="input-group-text">pts</span>
+                    </div>
+                    <div class="form-text">
+                      Current maximum available: <strong>240 points</strong>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-8">
+                    <label class="form-label fw-bold">Required Achievements</label>
+                    <div class="border rounded p-3 bg-light">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="achievement1abs" />
+                        <label class="form-check-label" for="achievement1abs">
+                          <strong>Blackboard Presentation</strong>
+                          <span class="badge text-bg-secondary ms-2">Boolean</span>
+                        </label>
+                      </div>
+                      <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="achievement2abs" />
+                        <label class="form-check-label" for="achievement2abs">
+                          <strong>Lab Participation</strong>
+                          <span class="badge text-bg-secondary ms-2">Percentage ≥65%</span>
+                        </label>
+                      </div>
+                      <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="achievement3abs" />
+                        <label class="form-check-label" for="achievement3abs">
+                          <strong>Attendance</strong>
+                          <span class="badge text-bg-secondary ms-2">Count ≥11/15</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="form-text">
+                      Students must complete ALL selected achievements.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="border-top pt-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                      <strong>Current rule:</strong> 50% points AND all 3 achievements (percentage-based)
+                    </div>
+                    <div class="d-flex gap-2">
+                      <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#previewModal">
+                        <i class="bi bi-eye me-1"></i>Preview Impact
+                      </button>
+                      <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>Save Rule
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other settings sections would continue here -->
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="previewModalLabel">Rule Change Impact Preview</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-info" role="alert">
+              <i class="bi bi-info-circle me-2"></i>
+              This preview shows how the new rule would affect current proposals. No certifications are changed until you save.
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6 col-md-3">
+                <div class="card border-success">
+                  <div class="card-body text-center">
+                    <div class="h4 text-success mb-0">126</div>
+                    <div class="small text-muted">Would Pass</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="card border-danger">
+                  <div class="card-body text-center">
+                    <div class="h4 text-danger mb-0">24</div>
+                    <div class="small text-muted">Would Fail</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="card border-info">
+                  <div class="card-body text-center">
+                    <div class="h4 text-info mb-0">8</div>
+                    <div class="small text-muted">No Change</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="card border-warning">
+                  <div class="card-body text-center">
+                    <div class="h4 text-warning mb-0">0</div>
+                    <div class="small text-muted">Status Flip</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-success" role="alert">
+              <strong>No students would change status.</strong> The new rule produces identical results to the current rule.
+            </div>
+
+            <p class="small text-muted mb-2">
+              <strong>New rule:</strong> 50% points AND all 3 achievements (Blackboard Presentation, Lab Participation ≥65%, Attendance ≥11/15)
+            </p>
+            <p class="small text-muted">
+              For a detailed breakdown of affected students, see the
+              <a href="#" data-bs-dismiss="modal">Rule Change Preview</a> after saving.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

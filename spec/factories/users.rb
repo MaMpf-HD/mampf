@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :user, aliases: [:teacher] do
     email { Faker::Internet.email }
@@ -19,9 +17,19 @@ FactoryBot.define do
       after(:create, &:confirm)
     end
 
+    trait :with_confirmation_sent_date do
+      transient do
+        confirmation_sent_date { Time.zone.now }
+      end
+
+      after(:create) do |user, context|
+        user.update(confirmation_sent_at: context.confirmation_sent_date)
+      end
+    end
+
     trait :consented do
       after(:create) do |user|
-        user.update(consents: true, consented_at: Time.now)
+        user.update(consents: true, consented_at: Time.zone.now)
       end
     end
 
@@ -37,5 +45,11 @@ FactoryBot.define do
     factory :confirmed_user, traits: [:skip_confirmation_notification,
                                       :auto_confirmed,
                                       :consented]
+
+    factory :confirmed_user_en, traits: [:skip_confirmation_notification,
+                                         :auto_confirmed,
+                                         :consented] do
+      locale { "en" }
+    end
   end
 end

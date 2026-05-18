@@ -1,0 +1,10 @@
+$mampf-link-blue: #1d6fd1;
+$mampf-link-focus: #2f64a3;
+
+a {
+  color: $mampf-link-blue;
+
+  &:hover {
+    color: $mampf-link-focus;
+  }
+}

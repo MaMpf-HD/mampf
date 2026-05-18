@@ -1,0 +1,43 @@
+<% dashboard = local_assigns[:dashboard] %>
+<% campaign = local_assigns[:campaign] %>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <span class="fw-medium">
+      <%= dashboard.stats.total_registrations %>
+      <%= t("registration.allocation.stats.total_registrations") %>
+    </span>
+
+    <span class="mx-1 text-muted">·</span>
+
+    <span class="text-success fw-medium">
+      <%= dashboard.stats.assigned_users %>
+      <%= t("registration.allocation.stats.assigned").downcase %>
+      (<%= number_to_percentage(dashboard.stats.assigned_percentage, precision: 0) %>)
+    </span>
+
+    <span class="mx-1 text-muted">·</span>
+
+    <span class="<%= dashboard.stats.unassigned_users > 0 ? 'text-danger' : 'text-muted' %> fw-medium">
+      <%= dashboard.stats.unassigned_users %>
+      <%= t("registration.allocation.stats.unassigned").downcase %>
+    </span>
+  </div>
+
+  <% if campaign.last_allocation_calculated_at %>
+    <small class="text-muted">
+      <%= t("registration.allocation.dashboard.last_updated",
+            time: l(campaign.last_allocation_calculated_at, format: :short)) %>
+    </small>
+  <% end %>
+</div>
+
+<small class="text-muted d-block mb-4">
+  <i class="bi bi-info-circle me-1"></i>
+
+  <% if campaign.first_come_first_served? %>
+    <%= t("registration.allocation.dashboard.workflow_info_fcfs") %>
+  <% else %>
+    <%= t("registration.allocation.dashboard.workflow_info") %>
+  <% end %>
+</small>

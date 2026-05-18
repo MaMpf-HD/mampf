@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registrations — Student Index (Tabs)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      .table thead th { position: sticky; top: 0; background: #fff; z-index: 1; }
+      .table-wrap { max-height: 520px; overflow: auto; border: 1px solid #dee2e6; border-radius: .5rem; }
+      .badge-subtle-primary { background: #e7f1ff; color: #084298; }
+      .badge-subtle-success { background: #e8f5e9; color: #1b5e20; }
+      .badge-subtle-warning { background: #fff8e1; color: #795600; }
+      .badge-subtle-secondary { background: #f1f3f5; color: #495057; }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container py-4">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h1 class="h3 mb-0">Registrations</h1>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <form class="row g-3 align-items-start">
+            <div class="col-md-3">
+              <label class="form-label">Filter</label>
+              <input type="search" class="form-control" id="searchInput" placeholder="Filter by title or lecture" />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Status</label>
+              <select class="form-select">
+                <option selected>Open</option>
+                <option>Closed</option>
+                <option>All</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Registration</label>
+              <select class="form-select">
+                <option selected>All</option>
+                <option>Registered</option>
+                <option>Not registered</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Semester</label>
+              <div class="row g-2">
+                <div class="col-12">
+                  <div class="d-flex flex-wrap gap-3">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="semCurrent" checked>
+                      <label class="form-check-label" for="semCurrent">Current (WS25/26)</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="semPrevious" checked>
+                      <label class="form-check-label" for="semPrevious">Previous (SS25)</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="semOther">
+                      <label class="form-check-label" for="semOther">Other</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12" id="olderSelectContainer" style="display: none;">
+                  <select id="olderSelect" class="form-select form-select-sm" multiple style="height: 45px;">
+                    <option>WS24/25</option>
+                    <option>SS24</option>
+                    <option>WS23/24</option>
+                    <option>SS23</option>
+                  </select>
+                  <div class="form-text">Select additional terms</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-1">
+              <label class="form-label">Reset</label>
+              <button type="button" class="btn btn-outline-secondary w-100" id="resetFiltersBtn">
+                <i class="bi bi-arrow-repeat"></i>
+              </button>
+            </div>
+          </form>
+          <div class="row mt-2">
+            <div class="col">
+              <div class="small text-muted" id="crossHint"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs" id="regTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="courses-tab" data-bs-toggle="tab" data-bs-target="#courses" type="button" role="tab" aria-controls="courses" aria-selected="true">
+            Courses &amp; seminars <span class="badge bg-secondary ms-1" id="coursesCount"></span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="exams-tab" data-bs-toggle="tab" data-bs-target="#exams" type="button" role="tab" aria-controls="exams" aria-selected="false">
+            Exams <span class="badge bg-secondary ms-1" id="examsCount"></span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content pt-3">
+        <div class="tab-pane fade show active" id="courses" role="tabpanel" aria-labelledby="courses-tab">
+
+          <h2 class="h6 mb-2">Open registrations</h2>
+          
+          <h3 class="h6 text-muted mb-2">WS25/26</h3>
+          <div class="table-wrap mb-3 term-group" data-term="WS25/26">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Lecture</th>
+                  <th>Mode</th>
+                  <th>Closes</th>
+                  <th>Eligibility</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tutorial Registration</td>
+                  <td>Linear Algebra I</td>
+                  <td><span class="badge badge-subtle-primary">Preference-based</span></td>
+                  <td>Oct 20, 23:59</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs_exam.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+                <tr>
+                  <td>Seminar Enrollment</td>
+                  <td>Formal Math (Seminar)</td>
+                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
+                  <td>Oct 19, 12:00</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+                <tr>
+                  <td>Tutorial Registration</td>
+                  <td>Analysis I</td>
+                  <td><span class="badge badge-subtle-primary">Preference-based</span></td>
+                  <td>Oct 21, 12:00</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs_exam.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+                <tr>
+                  <td>Tutorial Registration</td>
+                  <td>Discrete Mathematics</td>
+                  <td><span class="badge badge-subtle-primary">Preference-based</span></td>
+                  <td>Oct 20, 12:00</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs_exam.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+                <tr>
+                  <td>Tutorial Registration</td>
+                  <td>Partial Differential Equations</td>
+                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
+                  <td>Oct 22, 14:00</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs_tutorials.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="small text-muted">Showing 1–5 of 240</div>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item disabled"><span class="page-link">Prev</span></li>
+                <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><span class="page-link">…</span></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+              </ul>
+            </nav>
+          </div>
+
+          <div class="accordion mb-3" id="closedRegisteredCourses">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="crc-heading">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#crc-body" aria-expanded="true" aria-controls="crc-body">
+                  Closed (you registered)
+                </button>
+              </h2>
+              <div id="crc-body" class="accordion-collapse collapse show" aria-labelledby="crc-heading" data-bs-parent="#closedRegisteredCourses">
+                <div class="accordion-body p-0">
+                  <table class="table mb-0">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Lecture</th>
+                        <th>Term</th>
+                        <th>Status</th>
+                        <th>Your status</th>
+                        <th class="text-end">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr data-term="WS25/26">
+                        <td>Tutorial Registration</td>
+                        <td>Analysis II</td>
+                        <td>WS25/26</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Registered</td>
+                        <td class="text-end"><a href="student_registration_confirmation.html" class="btn btn-sm btn-outline-primary">View result</a></td>
+                      </tr>
+                      <tr data-term="SS25">
+                        <td>Seminar Enrollment</td>
+                        <td>Graph Theory</td>
+                        <td>SS25</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Registered</td>
+                        <td class="text-end"><a href="student_registration_confirmation_seminar.html" class="btn btn-sm btn-outline-primary">View result</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion mb-4" id="closedNotRegisteredCourses">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="cnrc-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cnrc-body" aria-expanded="false" aria-controls="cnrc-body">
+                  Closed (not registered)
+                </button>
+              </h2>
+              <div id="cnrc-body" class="accordion-collapse collapse" aria-labelledby="cnrc-heading" data-bs-parent="#closedNotRegisteredCourses">
+                <div class="accordion-body p-0">
+                  <table class="table mb-0">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Lecture</th>
+                        <th>Term</th>
+                        <th>Status</th>
+                        <th>Your status</th>
+                        <th class="text-end">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr data-term="WS25/26">
+                        <td>Seminar Enrollment</td>
+                        <td>Graph Theory</td>
+                        <td>WS25/26</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Not registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                      </tr>
+                      <tr data-term="SS25">
+                        <td>Tutorial Registration</td>
+                        <td>Numerical Methods</td>
+                        <td>SS25</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Not registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+  </div>
+
+  <!-- Exams tab pane starts here -->
+
+        <div class="tab-pane fade" id="exams" role="tabpanel" aria-labelledby="exams-tab">
+
+          <h2 class="h6 mb-2">Open registrations</h2>
+
+          <h3 class="h6 text-muted mb-2">SS25</h3>
+          <div class="table-wrap mb-3 term-group" data-term="SS25">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Exam</th>
+                  <th>Lecture</th>
+                  <th>Mode</th>
+                  <th>Closes</th>
+                  <th>Eligibility</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Written Exam (Final)</td>
+                  <td>Linear Algebra I</td>
+                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
+                  <td>Oct 01, 12:00</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs_exam.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+                <tr>
+                  <td>Written Exam (second date)</td>
+                  <td>Analysis II</td>
+                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
+                  <td>Oct 02, 10:00</td>
+                  <td><span class="badge badge-subtle-warning">Action required</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs_exam_action_required_email.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+                <tr>
+                  <td>Written Exam (second date)</td>
+                  <td>Algebra I</td>
+                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
+                  <td>Sep 30, 09:00</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs_exam.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+                <tr>
+                  <td>Written Exam</td>
+                  <td>Probability</td>
+                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
+                  <td>Oct 03, 09:00</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs_exam.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+                <tr>
+                  <td>Oral Exam</td>
+                  <td>Functional Analysis</td>
+                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
+                  <td>Oct 01, 14:00</td>
+                  <td><span class="badge badge-subtle-warning">Action required</span></td>
+                  <td class="text-end"><a href="student_registration_fcfs_exam_action_required_email.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="h6 text-muted mb-2">WS25/26</h3>
+          <div class="table-wrap mb-3 term-group" data-term="WS25/26">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Exam</th>
+                  <th>Lecture</th>
+                  <th>Mode</th>
+                  <th>Closes</th>
+                  <th>Eligibility</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Written Exam</td>
+                  <td>Discrete Mathematics</td>
+                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
+                  <td>Nov 15, 12:00</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
+                  <td class="text-end"><a href="student_registration.html" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="accordion mb-3" id="closedRegisteredExams">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="cre-heading">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#cre-body" aria-expanded="true" aria-controls="cre-body">
+                  Closed (you registered)
+                </button>
+              </h2>
+              <div id="cre-body" class="accordion-collapse collapse show" aria-labelledby="cre-heading" data-bs-parent="#closedRegisteredExams">
+                <div class="accordion-body p-0">
+                  <table class="table mb-0">
+                    <thead>
+                      <tr>
+                        <th>Exam</th>
+                        <th>Lecture</th>
+                        <th>Term</th>
+                        <th>Status</th>
+                        <th>Your status</th>
+                        <th class="text-end">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr data-term="SS25">
+                        <td>Written Exam (Final)</td>
+                        <td>Analysis II</td>
+                        <td>SS25</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                      </tr>
+                      <tr data-term="SS25">
+                        <td>Written Exam (second date)</td>
+                        <td>Algebra I</td>
+                        <td>SS25</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion mb-4" id="closedNotRegisteredExams">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="cnre-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cnre-body" aria-expanded="false" aria-controls="cnre-body">
+                  Closed (not registered)
+                </button>
+              </h2>
+              <div id="cnre-body" class="accordion-collapse collapse" aria-labelledby="cnre-heading" data-bs-parent="#closedNotRegisteredExams">
+                <div class="accordion-body p-0">
+                  <table class="table mb-0">
+                    <thead>
+                      <tr>
+                        <th>Exam</th>
+                        <th>Lecture</th>
+                        <th>Term</th>
+                        <th>Status</th>
+                        <th>Your status</th>
+                        <th class="text-end">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr data-term="SS25">
+                        <td>Written Exam (Final)</td>
+                        <td>Linear Algebra I</td>
+                        <td>SS25</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Not registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                      </tr>
+                      <tr data-term="WS25/26">
+                        <td>Written Exam</td>
+                        <td>Discrete Mathematics</td>
+                        <td>WS25/26</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Not registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var tabs = document.getElementById('regTabs');
+        var searchInput = document.getElementById('searchInput');
+        var filtersForm = searchInput.closest('form');
+        var coursesCountBadge = document.getElementById('coursesCount');
+        var examsCountBadge = document.getElementById('examsCount');
+        var crossHint = document.getElementById('crossHint');
+        var resetBtn = document.getElementById('resetFiltersBtn');
+        var semCurrentCheck = document.getElementById('semCurrent');
+        var semPreviousCheck = document.getElementById('semPrevious');
+        var semOtherCheck = document.getElementById('semOther');
+        var olderSelect = document.getElementById('olderSelect');
+        var olderSelectContainer = document.getElementById('olderSelectContainer');
+
+        function getSelectedSemesters() {
+          var semesters = [];
+          if (semCurrentCheck && semCurrentCheck.checked) semesters.push('WS25/26');
+          if (semPreviousCheck && semPreviousCheck.checked) semesters.push('SS25');
+          if (olderSelect && semOtherCheck && semOtherCheck.checked) {
+            for (var i = 0; i < olderSelect.options.length; i++) {
+              if (olderSelect.options[i].selected) {
+                semesters.push(olderSelect.options[i].value);
+              }
+            }
+          }
+          return semesters;
+        }
+
+        function getActivePaneIdFromTabId(tabId) {
+          if (tabId === 'courses-tab') return 'courses';
+          if (tabId === 'exams-tab') return 'exams';
+          return null;
+        }
+
+        function filterRowsInPane(paneId) {
+          var pane = document.getElementById(paneId);
+          if (!pane) return 0;
+          var q = (searchInput.value || '').toLowerCase().trim();
+          var selectedSemesters = getSelectedSemesters();
+          var matches = 0;
+
+          // Filter term groups
+          var termGroups = pane.querySelectorAll('.term-group');
+          termGroups.forEach(function(group) {
+            var term = group.getAttribute('data-term');
+            var shouldShowGroup = selectedSemesters.length === 0 || selectedSemesters.indexOf(term) !== -1;
+            if (shouldShowGroup) {
+              group.style.display = '';
+              group.previousElementSibling.style.display = ''; // Show heading
+            } else {
+              group.style.display = 'none';
+              group.previousElementSibling.style.display = 'none'; // Hide heading
+              return;
+            }
+
+            // Filter rows within visible groups
+            var rows = group.querySelectorAll('table tbody tr');
+            rows.forEach(function(tr) {
+              if (!q) {
+                tr.classList.remove('d-none');
+                matches += 1;
+                return;
+              }
+              var text = tr.textContent.toLowerCase();
+              if (text.indexOf(q) !== -1) {
+                tr.classList.remove('d-none');
+                matches += 1;
+              } else {
+                tr.classList.add('d-none');
+              }
+            });
+          });
+
+          // Filter accordion rows by semester
+          var accordions = pane.querySelectorAll('.accordion tbody tr');
+          accordions.forEach(function(tr) {
+            var term = tr.getAttribute('data-term');
+            var shouldShow = selectedSemesters.length === 0 || selectedSemesters.indexOf(term) !== -1;
+            if (!shouldShow) {
+              tr.style.display = 'none';
+              return;
+            }
+            tr.style.display = '';
+            if (!q) {
+              tr.classList.remove('d-none');
+              return;
+            }
+            var text = tr.textContent.toLowerCase();
+            if (text.indexOf(q) !== -1) {
+              tr.classList.remove('d-none');
+            } else {
+              tr.classList.add('d-none');
+            }
+          });
+
+          return matches;
+        }
+
+        function updateBadges(coursesMatches, examsMatches) {
+          if (coursesCountBadge) coursesCountBadge.textContent = coursesMatches;
+          if (examsCountBadge) examsCountBadge.textContent = examsMatches;
+        }
+
+        function updateCrossHint(activePane, coursesMatches, examsMatches) {
+          if (!crossHint) return;
+          var otherPane = activePane === 'courses' ? 'exams' : 'courses';
+          var otherCount = otherPane === 'courses' ? coursesMatches : examsMatches;
+          var activeCount = activePane === 'courses' ? coursesMatches : examsMatches;
+          if (activeCount === 0 && otherCount > 0) {
+            var otherLabel = otherPane === 'courses' ? 'Courses & seminars' : 'Exams';
+            crossHint.innerHTML = 'No results here. Also found ' + otherCount + ' in ' + otherLabel + ' — <a href="#" id="switchLink">switch</a>';
+            var link = document.getElementById('switchLink');
+            if (link) link.onclick = function(e) {
+              e.preventDefault();
+              var targetTabId = otherPane === 'courses' ? 'courses-tab' : 'exams-tab';
+              var tabEl = document.getElementById(targetTabId);
+              if (tabEl && window.bootstrap && window.bootstrap.Tab) {
+                new window.bootstrap.Tab(tabEl).show();
+              } else if (tabEl) {
+                tabEl.click();
+              }
+            };
+          } else {
+            crossHint.textContent = '';
+          }
+        }
+
+        function filterAllAndUpdate() {
+          var coursesMatches = filterRowsInPane('courses');
+          var examsMatches = filterRowsInPane('exams');
+          updateBadges(coursesMatches, examsMatches);
+          var activeTab = document.querySelector('#regTabs .nav-link.active');
+          var activePane = getActivePaneIdFromTabId(activeTab ? activeTab.id : 'courses-tab');
+          updateCrossHint(activePane, coursesMatches, examsMatches);
+          return { coursesMatches: coursesMatches, examsMatches: examsMatches, activePane: activePane };
+        }
+
+        // Persist search across tabs and prevent form submission
+        if (filtersForm) {
+          filtersForm.addEventListener('submit', function(e) { e.preventDefault(); });
+        }
+
+        if (searchInput) {
+          searchInput.addEventListener('input', function() {
+            filterAllAndUpdate();
+          });
+          searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              var res = filterAllAndUpdate();
+              var otherPane = res.activePane === 'courses' ? 'exams' : 'courses';
+              var otherCount = otherPane === 'courses' ? res.coursesMatches : res.examsMatches;
+              var activeCount = res.activePane === 'courses' ? res.coursesMatches : res.examsMatches;
+              if (activeCount === 0 && otherCount > 0) {
+                var targetTabId = otherPane === 'courses' ? 'courses-tab' : 'exams-tab';
+                var tabEl = document.getElementById(targetTabId);
+                if (tabEl && window.bootstrap && window.bootstrap.Tab) {
+                  new window.bootstrap.Tab(tabEl).show();
+                } else if (tabEl) {
+                  tabEl.click();
+                }
+              }
+            }
+          });
+        }
+
+        // Semester filter changes
+        if (semCurrentCheck) semCurrentCheck.addEventListener('change', filterAllAndUpdate);
+        if (semPreviousCheck) semPreviousCheck.addEventListener('change', filterAllAndUpdate);
+        if (semOtherCheck) {
+          semOtherCheck.addEventListener('change', function() {
+            if (semOtherCheck.checked) {
+              olderSelectContainer.style.display = '';
+            } else {
+              olderSelectContainer.style.display = 'none';
+              // Clear selections when hiding
+              for (var i = 0; i < olderSelect.options.length; i++) {
+                olderSelect.options[i].selected = false;
+              }
+            }
+            filterAllAndUpdate();
+          });
+        }
+        if (olderSelect) olderSelect.addEventListener('change', filterAllAndUpdate);
+
+        tabs.addEventListener('shown.bs.tab', function(event) {
+          filterAllAndUpdate();
+        });
+
+        // Ensure full list on initial load regardless of restored values
+        if (searchInput) searchInput.value = '';
+        // Initial compute for counts and hint
+        filterAllAndUpdate();
+
+        // Reset button clears filters and reapplies defaults
+        if (resetBtn) {
+          resetBtn.addEventListener('click', function() {
+            if (searchInput) searchInput.value = '';
+            if (semCurrentCheck) semCurrentCheck.checked = true;
+            if (semPreviousCheck) semPreviousCheck.checked = true;
+            if (semOtherCheck) {
+              semOtherCheck.checked = false;
+              olderSelectContainer.style.display = 'none';
+            }
+            if (olderSelect) {
+              for (var i = 0; i < olderSelect.options.length; i++) {
+                olderSelect.options[i].selected = false;
+              }
+            }
+            filterAllAndUpdate();
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

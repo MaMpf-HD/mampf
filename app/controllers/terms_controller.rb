@@ -1,9 +1,7 @@
-# TermsController
 class TermsController < ApplicationController
-  before_action :set_term, except: [:index, :new, :create, :cancel, :set_active]
-  layout 'administration'
-  authorize_resource except: [:index, :new, :create, :cancel, :set_active]
-  layout 'administration'
+  before_action :set_term, except: [:index, :new, :create, :set_active]
+  authorize_resource except: [:index, :new, :create, :set_active]
+  layout "administration"
 
   def current_ability
     @current_ability ||= TermAbility.new(current_user)
@@ -11,49 +9,61 @@ class TermsController < ApplicationController
 
   def index
     authorize! :index, Term.new
-    @terms = Term.order(:year, :season).reverse_order.page params[:page]
-  end
-
-  def destroy
-    @term.destroy
-    redirect_to terms_path
+    @pagy, @terms = pagy(Term.order(:year, :season).reverse_order)
   end
 
   def new
     @term = Term.new
     authorize! :new, @term
+    render_term_form
+  end
+
+  def edit
+    render_term_form
   end
 
   def create
     @term = Term.new(term_params)
     authorize! :create, @term
-    @term.save
-    if @term.valid?
-      redirect_to terms_path
-      return
+    if @term.save
+      respond_to do |format|
+        format.html { redirect_to terms_path }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.prepend(:terms, @term),
+            turbo_stream.update(Term.new, "")
+          ]
+        end
+      end
+    else
+      render_term_form(status: :unprocessable_content)
     end
-    @errors = @term.errors[:season].join(', ')
-    render :update
-  end
-
-  def edit
   end
 
   def update
-    @term.update(term_params)
-    @errors = @term.errors[:season].join(', ') unless @term.valid?
+    if @term.update(term_params)
+      respond_to do |format|
+        format.html { redirect_to terms_path }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(@term, @term)
+        end
+      end
+    else
+      render_term_form(status: :unprocessable_content)
+    end
   end
 
-  def cancel
-    @id = params[:id]
-    @term = Term.find_by_id(@id)
-    authorize! :cancel, @term
-    @new_action = params[:new] == 'true'
+  def destroy
+    @term.destroy
+    respond_to do |format|
+      format.html { redirect_to terms_path }
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@term) }
+    end
   end
 
   def set_active
     authorize! :set_active, Term.new
-    new_active_term = Term.find_by_id(active_term_params[:active_term])
+    new_active_term = Term.find_by(id: active_term_params[:active_term])
     old_active_term = Term.active
     if old_active_term && new_active_term && new_active_term != old_active_term
       old_active_term.update(active: false)
@@ -66,18 +76,26 @@ class TermsController < ApplicationController
 
   private
 
-  def set_term
-    @id = params[:id]
-    @term = Term.find_by_id(@id)
-    return if @term
-    redirect_to terms_path, alert: I18n.t('controllers.no_term')
-  end
+    def render_term_form(status: nil)
+      render template: "terms/_form",
+             locals: { term: @term },
+             layout: turbo_frame_request? ? "turbo_frame" : "administration",
+             **(status ? { status: status } : {})
+    end
 
-  def term_params
-    params.require(:term).permit(:year, :season)
-  end
+    def set_term
+      @id = params[:id]
+      @term = Term.find_by(id: @id)
+      return if @term
 
-  def active_term_params
-    params.permit(:active_term)
-  end
+      redirect_to terms_path, alert: I18n.t("controllers.no_term")
+    end
+
+    def term_params
+      params.expect(term: [:year, :season])
+    end
+
+    def active_term_params
+      params.permit(:active_term)
+    end
 end

@@ -5,7 +5,4 @@ class Ability
   # See the wiki for details:
   # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   include CanCan::Ability
-
-  def initialize(user)
-  end
 end

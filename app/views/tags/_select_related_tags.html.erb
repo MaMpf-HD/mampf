@@ -1,10 +1,11 @@
-<div class="form-group">
+<div class="mb-3">
   <%= f.label :related_tag_ids,
-              t('basics.related_tags') %>
+              t('basics.related_tags'),
+              class: "form-label" %>
   <%= helpdesk(t('admin.tag.info.related_tags'), false) %>
   <a class="fas fa-plus-circle clickable text-dark"
        id="new-tag-button"
-       data-toggle="tooltip"
+       data-bs-toggle="tooltip"
        title="<%= t('buttons.create_tag') %>"
        data-tag="<%= tag.id %>"
        data-from="tag">

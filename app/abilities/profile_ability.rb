@@ -1,7 +1,7 @@
 class ProfileAbility
   include CanCan::Ability
 
-  def initialize(user)
+  def initialize(_user)
     clear_aliased_actions
 
     can [:edit, :update, :check_for_consent, :add_consent,

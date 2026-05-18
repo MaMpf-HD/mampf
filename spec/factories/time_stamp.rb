@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :time_stamp do
     transient do
@@ -12,7 +10,7 @@ FactoryBot.define do
     # FactoryBot.build(:time_stamp_by_string, time_string: '1:17:29.745')
     factory :time_stamp_by_string do
       transient do
-        time_string { '0:00:00.000' }
+        time_string { "0:00:00.000" }
       end
       initialize_with { new(time_string: time_string) }
     end

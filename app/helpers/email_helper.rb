@@ -1,6 +1,6 @@
 module EmailHelper
-  def email_image_tag(image, **options)
-    attachments.inline[image] = File.read(Rails.root.join("public/#{image}"))
-    image_tag attachments[image].url, **options
+  def email_image_tag(image, **)
+    attachments.inline[image] = Rails.root.join("public/#{image}").read
+    image_tag(attachments[image].url, **)
   end
 end

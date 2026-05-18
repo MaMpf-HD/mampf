@@ -27,24 +27,31 @@ class Solution
     @content.class.name
   end
 
-  def nerd
-    @content.nerd
-  end
+  delegate :nerd, to: :@content
 
   def tex
-    return '' unless @content.tex
-    '$$' + @content.tex + '$$'
+    return "" unless @content.tex
+
+    "$$#{@content.tex}$$"
   end
 
   def tex_mc_answer
-    return '' unless @content.tex
-    '$' + @content.tex + '$'
+    return "" unless @content.tex
+
+    "$#{@content.tex}$"
   end
 
   def self.from_hash(solution_type, content)
-    return unless solution_type.in?(['MampfExpression', 'MampfMatrix',
-                                     'MampfTuple', 'MampfSet'])
-    solution = Solution.new(solution_type.constantize.from_hash(content))
+    allowed_types = {
+      "MampfExpression" => MampfExpression,
+      "MampfMatrix" => MampfMatrix,
+      "MampfTuple" => MampfTuple,
+      "MampfSet" => MampfSet
+    }
+
+    return unless allowed_types.key?(solution_type)
+
+    solution = Solution.new(allowed_types[solution_type].from_hash(content))
     solution.explanation = content[:explanation]
     solution
   end

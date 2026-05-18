@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+set -e
+
+JUST_INSTALL_DIR="$HOME/bin"
+JUST_BINARY="$JUST_INSTALL_DIR/just"
+
+show_usage() {
+  cat << EOF
+Usage: ./bin/just-install <command>
+
+Commands:
+  install    Install just to ~/bin
+  update     Update just by removing and reinstalling
+  remove     Remove just from ~/bin (interactive)
+  help       Show this help message
+
+EOF
+}
+
+install_just() {
+  if [ -f "$JUST_BINARY" ]; then
+    echo "⚠️  Warning: just is already installed at $JUST_BINARY"
+    echo ""
+    echo "To update just, run:"
+    echo "  ./bin/just-install update"
+    echo ""
+    return 0
+  fi
+
+  echo "Installing just to $JUST_INSTALL_DIR..."
+  curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to "$JUST_INSTALL_DIR"
+  
+  echo ""
+  echo "✅ just has been installed successfully!"
+  echo "(!) Make sure to restart your current shell or run: source ~/.bashrc"
+}
+
+update_just() {
+  if [ ! -f "$JUST_BINARY" ]; then
+    echo "just is not installed at $JUST_BINARY"
+    echo "Installing it instead..."
+    echo ""
+    install_just
+    return 0
+  fi
+
+  echo "Removing existing installation from $JUST_BINARY..."
+  rm -f "$JUST_BINARY"
+  
+  echo "Installing latest version..."
+  curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to "$JUST_INSTALL_DIR"
+  
+  echo ""
+  echo "✅ just has been updated successfully!"
+}
+
+remove_just() {
+  if [ ! -f "$JUST_BINARY" ]; then
+    echo "just is not installed at $JUST_BINARY"
+    return 1
+  fi
+
+  rm -i "$JUST_BINARY"
+  echo "just has been removed."
+}
+
+case "${1:-}" in
+  install)
+    install_just
+    ;;
+  update)
+    update_just
+    ;;
+  remove)
+    remove_just
+    ;;
+  help|--help|-h)
+    show_usage
+    ;;
+  "")
+    echo "Error: No command specified"
+    echo ""
+    show_usage
+    exit 1
+    ;;
+  *)
+    echo "Error: Unknown command '${1}'"
+    echo ""
+    show_usage
+    exit 1
+    ;;
+esac

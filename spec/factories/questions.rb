@@ -1,8 +1,6 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
-  factory :question, parent: :medium, class: 'Question' do
-    sort { 'Question' }
+  factory :question, parent: :medium, class: "Question" do
+    sort { "Question" }
 
     transient do
       teachable_sort { :course }
@@ -13,7 +11,7 @@ FactoryBot.define do
       text { Faker::Lorem.question }
       hint { Faker::Lorem.sentence }
       level { [0, 1, 2].sample }
-      question_sort { 'mc' }
+      question_sort { "mc" }
       independent { true }
     end
 

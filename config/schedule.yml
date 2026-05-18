@@ -14,6 +14,28 @@ cache_cleaner_job:
   queue: critical
 
 user_cleaner_job:
-  cron: "0 4 * * 1,4"
+  # at 4:00 AM, every day
+  # This job has to run every day such that users will receive
+  # respective warning emails (about their accounts being deleted) on time.
+  cron: "0 4 * * *" 
   class: "UserCleanerJob"
   queue: critical
+
+altcha_solutions_cleaner_job:
+  # at midnight, every 2 days
+  cron: "0 0 */2 * *"
+  class: "AltchaSolutionsCleaner"
+  queue: critical
+
+roster_superset_checker:
+  # at 3:00 AM, every day
+  cron: "0 3 * * *"
+  class: "RosterSupersetCheckerJob"
+  queue: default
+  description: "Validates roster superset invariant nightly"
+
+campaign_status_worker:
+  cron: "*/1 * * * *"
+  class: "CampaignStatusWorker"
+  queue: critical
+  description: "Auto-closes campaigns based on their scheduled dates"

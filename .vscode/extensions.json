@@ -1,0 +1,18 @@
+{
+    // 🎹 keep this in sync with devcontainer.json
+    "recommendations": [
+        "ms-azuretools.vscode-containers",
+        "ms-vscode.remote-explorer",
+        "docker.docker",
+        "Shopify.ruby-lsp",
+        "dbaeumer.vscode-eslint",
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-german",
+        "nefrob.vscode-just-syntax",
+        "timonwong.shellcheck",
+        "github.copilot-chat",
+        "github.vscode-pull-request-github",
+        "ms-playwright.playwright",
+        "marcoroth.herb-lsp"
+    ]
+}

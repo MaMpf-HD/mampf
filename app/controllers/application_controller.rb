@@ -1,39 +1,46 @@
-# ApplicationController
 class ApplicationController < ActionController::Base
+  # TODO: Change to `prepend_view_path` once the majority of view files
+  # live somewhere in app/frontend/ instead of app/views/
+  append_view_path "app/frontend/"
+
+  include Turbo::Redirection
+  include Pagy::Method
+  include Flash
+
   before_action :store_user_location!, if: :storable_location?
   # The callback which stores the current location must be added before you
   # authenticate the user as `authenticate_user!` (or whatever your resource is)
   # will halt the filter chain and redirect before the location can be stored.
+  before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
-  before_action :set_locale
-  after_action :store_interaction, if: :user_signed_in?
+  before_action :set_current_user
 
-  etag { current_user.try :id }
+  include LocaleSetter
+
+  etag { current_user.try(:id) }
 
   def current_user
-    unless controller_name == 'administration' &&  action_name == 'index'
-      return super
-    end
+    return super unless controller_name == "administration" && action_name == "index"
+
     @current_user ||= super.tap do |user|
       ::ActiveRecord::Associations::Preloader.new(records: [user],
                                                   associations:
                                                     [:lectures,
                                                      :edited_media,
-                                                     :clickers,
-                                                     edited_courses:
+                                                     { edited_courses:
                                                        [:editors,
-                                                        lectures: [:term,
-                                                                   :teacher]],
-                                                     edited_lectures:
+                                                        { lectures: [:term,
+                                                                     :teacher] }],
+                                                       edited_lectures:
                                                        [:course,
                                                         :term,
                                                         :teacher],
-                                                     given_lectures:
+                                                       given_lectures:
                                                       [:course,
                                                        :term,
                                                        :teacher],
-                                                     notifications:
-                                                       [:notifiable]]).call
+                                                       notifications:
+                                                       [:notifiable] }]).call
     end
   end
 
@@ -44,7 +51,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken do
     redirect_to main_app.root_url,
-      alert: I18n.t('controllers.session_expired')
+                alert: I18n.t("controllers.session_expired")
   end
 
   # determine where to send the user after login
@@ -65,60 +72,65 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "Mon, 01 Jan 1990 00:00:00 GMT"
   end
 
+  # Helper to refresh the campaigns tab content via Turbo Stream
+  # NOTE: This should be moved to a better place once we refactor the
+  # whole streaming logic for campaigns and rosters (e.g. the StreamOrchestrator,
+  # see the docs).
+  def refresh_campaigns_index_stream(lecture)
+    return nil unless lecture
+
+    turbo_stream.update("campaigns_container",
+                        partial: "registration/campaigns/card_body_index",
+                        locals: { lecture: lecture })
+  end
+
+  protected
+
+    def configure_permitted_parameters
+      # add additional paramters to registration
+      devise_parameter_sanitizer.permit(:sign_up, keys: [:locale, :consents])
+    end
+
   private
 
-  # It's important that the location is NOT stored if:
-  # - The request method is not GET (non idempotent)
-  # - The request is handled by a Devise controller such as
-  #   Devise::SessionsController as that could cause an
-  #   infinite redirect loop.
-  # - The request is an Ajax request as this can lead to very
-  #   unexpected behaviour.
-  def storable_location?
-    request.get? && is_navigational_format? && !devise_controller? &&
-      !request.xhr?
-  end
-
-  def store_user_location!
-    # :user is the scope we are authenticating
-    store_location_for(:user, request.fullpath)
-  end
-
-  def set_locale
-    I18n.locale = current_user.try(:locale) || locale_param ||
-                    cookie_locale_param || I18n.default_locale
-    unless user_signed_in?
-      cookies[:locale] = I18n.locale
+    # It's important that the location is NOT stored if:
+    # - The request method is not GET (non idempotent)
+    # - The request is handled by a Devise controller such as
+    #   Devise::SessionsController as that could cause an
+    #   infinite redirect loop.
+    # - The request is an Ajax request as this can lead to very
+    #   unexpected behaviour.
+    def storable_location?
+      request.get? && is_navigational_format? && !devise_controller? &&
+        !request.xhr?
     end
-  end
 
-  def store_interaction
-    return if controller_name.in?(['sessions', 'administration', 'users',
-                                   'events', 'interactions', 'profile',
-                                   'clickers', 'clicker_votes', 'registrations'])
-    return if controller_name == 'main' && action_name == 'home'
-    return if controller_name == 'tags' && action_name.in?(['fill_tag_select', 'fill_course_tags'])
-    study_participant = current_user.anonymized_id if current_user.study_participant
-    # as of Rack 2.0.8, the session_id is wrapped in a class of its own
-    # it is not a string anymore
-    # see https://github.com/rack/rack/issues/1433
-    InteractionSaver.perform_async(request.session_options[:id].public_id,
-                                   request.original_fullpath,
-                                   request.referrer,
-                                   study_participant)
-  end
+    def store_user_location!
+      # :user is the scope we are authenticating
+      store_location_for(:user, request.fullpath)
+    end
 
-  def locale_param
-    return unless params[:locale].in?(available_locales)
-    params[:locale]
-  end
+    # https://stackoverflow.com/a/69313330/
+    def set_current_user
+      Current.user = current_user
+    end
 
-  def cookie_locale_param
-    return unless cookies[:locale].in?(available_locales)
-    cookies[:locale]
-  end
+    # Ensures that the current request is a Turbo Frame request.
+    # If not, sets a flash message and redirects to the root path.
+    #
+    # Usage:
+    # (1) call this method at the beginning of your action
+    # > require_turbo_frame
+    # > return if performed?
+    #
+    # OR
+    #
+    # (2) Use it as a before_action filter
+    # > before_action :require_turbo_frame, only: [:your_action]
+    def require_turbo_frame
+      return if turbo_frame_request?
 
-  def available_locales
-    I18n.available_locales.map(&:to_s)
-  end
+      flash.keep[:alert] = I18n.t("controllers.no_page")
+      redirect_to root_path
+    end
 end

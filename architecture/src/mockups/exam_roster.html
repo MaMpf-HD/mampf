@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midterm Exam — Exam Roster</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .small-width {
+      max-width: 1400px;
+    }
+    .lecture-pane {
+      background-color: white;
+      padding: 1.5em;
+      margin-bottom: 6em;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+      border: gray 1px solid;
+      border-radius: 0.4em;
+    }
+    h3.lecture-pane-header {
+      color: #838383;
+      font-size: 1.3em;
+    }
+    .workflow-badge {
+      background-color: #198754;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    .student-row { cursor: pointer; }
+    .student-row:hover { background-color: #f8f9fa; }
+  </style>
+</head>
+<body>
+  <div class="container small-width mt-4">
+    <!-- Lecture Header -->
+    <div class="mb-3">
+      <h1 class="h3 mb-1">Linear Algebra I</h1>
+      <p class="text-muted mb-0">WS 2024/25</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Content</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Preferences</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">People & Tutorials</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Orga</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Communication</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="assessments_index.html">Assessments</a>
+      </li>
+    </ul>
+
+    <!-- Exam Detail -->
+    <div class="lecture-pane">
+      <!-- Workflow Indicator -->
+      <div class="workflow-badge">
+        <i class="fas fa-users me-2"></i>Post-Registration: Exam Administration
+      </div>
+
+      <!-- Header -->
+      <div class="mb-3">
+        <h3 class="lecture-pane-header mb-2">Midterm Exam</h3>
+        <div>
+          <span class="badge bg-success me-2">Registration Closed</span>
+          <span class="text-muted small">December 15, 2024</span>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert alert-success d-flex align-items-center mb-4">
+        <i class="fas fa-check-circle me-2"></i>
+        <div>
+          <strong>Exam Roster:</strong> Registration closed. This view shows the 85 students who successfully registered for the exam. Use this list for exam administration and grading.
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-3" id="assessmentTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="overview-tab" data-bs-toggle="tab" 
+                  data-bs-target="#overview" type="button" role="tab">
+            Overview
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="settings-tab" data-bs-toggle="tab" 
+                  data-bs-target="#settings" type="button" role="tab">
+            Settings
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tasks-tab" data-bs-toggle="tab" 
+                  data-bs-target="#tasks" type="button" role="tab">
+            Tasks
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link disabled" id="grading-tab" data-bs-toggle="tab" 
+                  data-bs-target="#grading" type="button" role="tab"
+                  aria-disabled="true" title="Available after exam">
+            Grading
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link disabled" id="grade-scheme-tab" data-bs-toggle="tab" 
+                  data-bs-target="#grade-scheme" type="button" role="tab" 
+                  aria-disabled="true" title="Available after grading">
+            Grade Scheme
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="exam-logistics-tab" data-bs-toggle="tab" 
+                  data-bs-target="#exam-logistics" type="button" role="tab">
+            Exam Logistics
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="assessmentTabsContent">
+        <!-- Exam Logistics Tab -->
+        <div class="tab-pane fade show active" id="exam-logistics" role="tabpanel">
+          
+          <!-- Sub-tabs for Exam Logistics -->
+          <ul class="nav nav-pills mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="eligibility-subtab" data-bs-toggle="pill" 
+                      data-bs-target="#eligibility-content" type="button" role="tab">
+                <i class="fas fa-clipboard-check me-1"></i> Eligibility
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="roster-subtab" data-bs-toggle="pill" 
+                      data-bs-target="#roster-content" type="button" role="tab">
+                <i class="fas fa-users me-1"></i> Roster
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="rooms-subtab" data-bs-toggle="pill" 
+                      data-bs-target="#rooms-content" type="button" role="tab">
+                <i class="fas fa-door-open me-1"></i> Room Assignments
+              </button>
+            </li>
+          </ul>
+
+          <!-- Sub-tab Content -->
+          <div class="tab-content">
+            <!-- Eligibility Content Placeholder -->
+            <div class="tab-pane fade" id="eligibility-content" role="tabpanel">
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                To view eligibility status for all lecture students, see 
+                <a href="exams_eligibility.html">exams_eligibility.html</a>.
+              </div>
+            </div>
+
+            <!-- Roster Content -->
+            <div class="tab-pane fade show active" id="roster-content" role="tabpanel">
+              
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Exam Roster — Registered Students Only</h5>
+                <div>
+                  <button class="btn btn-outline-secondary btn-sm me-2">
+                    <i class="fas fa-download me-1"></i>
+                    Export Roster
+                  </button>
+                  <button class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-pencil-alt me-1"></i>
+                    Enter Grades
+                  </button>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Exam Roster — Registered Students Only</h5>
+                <div>
+                  <button class="btn btn-outline-secondary btn-sm me-2">
+                    <i class="fas fa-download me-1"></i>
+                    Export Roster
+                  </button>
+                  <button class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-pencil-alt me-1"></i>
+                    Enter Grades
+                  </button>
+                </div>
+              </div>
+
+  <!-- Summary Cards -->
+  <div class="row g-3 mb-3">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-users fs-4 me-2" style="color: #0d6efd;"></i>
+            <div class="small">
+              <div class="text-muted">Registered Students</div>
+              <div class="fw-bold fs-5" id="totalCount">85</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-door-open fs-4 me-2" style="color: #198754;"></i>
+            <div class="small">
+              <div class="text-muted">Room Assigned</div>
+              <div class="fw-bold fs-5" id="roomAssignedCount">85</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle fs-4 me-2" style="color: #198754;"></i>
+            <div class="small">
+              <div class="text-muted">Graded</div>
+              <div class="fw-bold fs-5" id="gradedCount">52</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-hourglass-half fs-4 me-2" style="color: #ffc107;"></i>
+            <div class="small">
+              <div class="text-muted">Pending Grades</div>
+              <div class="fw-bold fs-5" id="pendingCount">33</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exam Info -->
+  <div class="alert alert-light border py-2 mb-3">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-info-circle me-2"></i>
+      <small>
+        <strong>Exam details:</strong> Auditorium A (Room 101) & Auditorium B (Room 102) • 85 students registered of 126 eligible • Registration closed
+      </small>
+    </div>
+  </div>
+
+  <!-- Filter & Search -->
+  <div class="card mb-3">
+    <div class="card-body py-2">
+      <div class="row align-items-center">
+        <div class="col-md-4">
+          <div class="btn-group btn-group-sm w-100" role="group">
+            <input type="radio" class="btn-check" name="grading" id="filter-all" checked>
+            <label class="btn btn-outline-secondary" for="filter-all">All (<span id="filterAllCount">85</span>)</label>
+            
+            <input type="radio" class="btn-check" name="grading" id="filter-graded">
+            <label class="btn btn-outline-secondary" for="filter-graded">Graded (<span id="filterGradedCount">52</span>)</label>
+            
+            <input type="radio" class="btn-check" name="grading" id="filter-pending">
+            <label class="btn btn-outline-secondary" for="filter-pending">Pending (<span id="filterPendingCount">33</span>)</label>
+          </div>
+        </div>
+        <div class="col-md-3 mt-2 mt-md-0">
+          <input type="text" class="form-control form-control-sm" id="searchInput" placeholder="Search by name or matriculation...">
+        </div>
+        <div class="col-md-3 mt-2 mt-md-0">
+          <select class="form-select form-select-sm" id="tutorialFilter">
+            <option value="">All Tutorial Groups</option>
+            <option value="Tutorial A">Tutorial A</option>
+            <option value="Tutorial B">Tutorial B</option>
+            <option value="Tutorial C">Tutorial C</option>
+          </select>
+        </div>
+        <div class="col-md-2 mt-2 mt-md-0">
+          <select class="form-select form-select-sm" id="roomFilter">
+            <option value="">All Rooms</option>
+            <option value="Room 101">Room 101</option>
+            <option value="Room 102">Room 102</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roster Table -->
+  <div class="card">
+    <div class="card-header bg-light">
+      <h6 class="mb-0">
+        <i class="bi bi-table me-2"></i>
+        Registered Students
+      </h6>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead>
+            <tr>
+              <th style="width: 20%;">Student</th>
+              <th style="width: 12%;">Matriculation</th>
+              <th style="width: 13%;">Tutorial Group</th>
+              <th style="width: 15%;">Room / Seat</th>
+              <th style="width: 12%;">Exam Points</th>
+              <th style="width: 10%;">Grade</th>
+              <th style="width: 18%;" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody">
+            <!-- Students will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer bg-light py-2">
+      <div class="d-flex justify-content-between align-items-center small">
+        <div class="text-muted" id="showingInfo">Showing students</div>
+        <nav>
+          <ul class="pagination pagination-sm mb-0" id="pagination">
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Grade Entry Modal -->
+<div class="modal fade" id="gradeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Enter Grade</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3"><strong>Student:</strong> Alice Schmidt (1234567)</p>
+        <p class="mb-3"><strong>Exam:</strong> Midterm Exam - Dec 15, 2024</p>
+
+        <div class="mb-3">
+          <label class="form-label small">Exam Points (out of 100)</label>
+          <input type="number" class="form-control" min="0" max="100" step="0.5" value="87.5">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small">Grade</label>
+          <select class="form-select">
+            <option value="">Not calculated yet</option>
+            <option value="1.0">1.0 (Excellent)</option>
+            <option value="1.3" selected>1.3 (Very Good+)</option>
+            <option value="1.7">1.7 (Very Good)</option>
+            <option value="2.0">2.0 (Good+)</option>
+            <option value="2.3">2.3 (Good)</option>
+            <option value="2.7">2.7 (Good-)</option>
+            <option value="3.0">3.0 (Satisfactory+)</option>
+            <option value="3.3">3.3 (Satisfactory)</option>
+            <option value="3.7">3.7 (Satisfactory-)</option>
+            <option value="4.0">4.0 (Pass)</option>
+            <option value="5.0">5.0 (Fail)</option>
+          </select>
+          <small class="text-muted">Grade will be auto-calculated from points using grade scheme</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small">Notes (optional)</label>
+          <textarea class="form-control" rows="2" placeholder="e.g., Partial credit for question 3..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm">Save Grade</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Student data - only registered students (85 of 126 eligible)
+const students = [
+  { name: "Alice Schmidt", matric: "1234567", tutorial: "Tutorial C", room: "Room 101", seat: "A12", points: 87.5, grade: "1.3", status: "graded" },
+  { name: "Carol Weber", matric: "1234569", tutorial: "Tutorial B", room: "Room 101", seat: "A15", points: 72, grade: "2.7", status: "graded" },
+  { name: "David Fischer", matric: "1234570", tutorial: "Tutorial C", room: "Room 102", seat: "B03", points: 91, grade: "1.0", status: "graded" },
+  { name: "Frank Bauer", matric: "1234572", tutorial: "Tutorial B", room: "Room 101", seat: "A23", points: 68.5, grade: "3.0", status: "graded" },
+  { name: "Greta Hoffmann", matric: "1234573", tutorial: "Tutorial C", room: "Room 102", seat: "B08", points: 94, grade: "1.0", status: "graded" },
+  { name: "Iris Koch", matric: "1234575", tutorial: "Tutorial B", room: "Room 101", seat: "A31", points: null, grade: null, status: "pending" },
+  { name: "Jan Richter", matric: "1234576", tutorial: "Tutorial C", room: "Room 102", seat: "B12", points: 78.5, grade: "2.0", status: "graded" },
+  { name: "Lars Klein", matric: "1234578", tutorial: "Tutorial B", room: "Room 102", seat: "B18", points: 85, grade: "1.7", status: "graded" },
+  { name: "Maria Schwarz", matric: "1234579", tutorial: "Tutorial C", room: "Room 101", seat: "A45", points: null, grade: null, status: "pending" },
+  { name: "Otto Zimmermann", matric: "1234581", tutorial: "Tutorial B", room: "Room 102", seat: "B25", points: 76, grade: "2.3", status: "graded" },
+  { name: "Paula Krueger", matric: "1234582", tutorial: "Tutorial C", room: "Room 101", seat: "A52", points: 96, grade: "1.0", status: "graded" },
+  { name: "Rita Schroeder", matric: "1234584", tutorial: "Tutorial B", room: "Room 102", seat: "B31", points: 81, grade: "1.7", status: "graded" },
+  { name: "Stefan Hartmann", matric: "1234585", tutorial: "Tutorial C", room: "Room 101", seat: "A58", points: null, grade: null, status: "pending" },
+  { name: "Ulrich Schmitt", matric: "1234587", tutorial: "Tutorial B", room: "Room 102", seat: "B38", points: 73.5, grade: "2.3", status: "graded" },
+  { name: "Vera Werner", matric: "1234588", tutorial: "Tutorial C", room: "Room 101", seat: "A64", points: 89, grade: "1.3", status: "graded" },
+  { name: "Xenia Meier", matric: "1234590", tutorial: "Tutorial B", room: "Room 102", seat: "B42", points: 79, grade: "2.0", status: "graded" },
+  { name: "Yves Fischer", matric: "1234591", tutorial: "Tutorial C", room: "Room 102", seat: "B47", points: null, grade: null, status: "pending" },
+  { name: "Anton Mueller", matric: "1234593", tutorial: "Tutorial B", room: "Room 101", seat: "A72", points: 84, grade: "1.7", status: "graded" },
+  { name: "Christian Weber", matric: "1234595", tutorial: "Tutorial A", room: "Room 101", seat: "A78", points: 75.5, grade: "2.3", status: "graded" },
+  { name: "Erik Hoffmann", matric: "1234597", tutorial: "Tutorial C", room: "Room 102", seat: "B55", points: 88.5, grade: "1.3", status: "graded" }
+];
+
+// Add more students to reach 85
+for (let i = 21; i <= 85; i++) {
+  const points = Math.random() < 0.6 ? Math.floor(Math.random() * 40) + 60 : null;
+  const grades = ["1.0", "1.3", "1.7", "2.0", "2.3", "2.7", "3.0", "3.3", "3.7", "4.0"];
+  const grade = points ? grades[Math.floor(points / 10) - 6] || "2.0" : null;
+  const tutorials = ["Tutorial A", "Tutorial B", "Tutorial C"];
+  const tutorial = tutorials[i % 3];
+  const rooms = ["Room 101", "Room 102"];
+  const room = rooms[i % 2];
+  const seatLetter = room === "Room 101" ? "A" : "B";
+  const seatNum = (i % 50) + 10;
+  
+  students.push({
+    name: `Student ${i}`,
+    matric: `123${4606 + i}`,
+    tutorial: tutorial,
+    room: room,
+    seat: `${seatLetter}${seatNum}`,
+    points: points,
+    grade: grade,
+    status: points !== null ? "graded" : "pending"
+  });
+}
+
+let currentFilter = "all";
+let currentSearch = "";
+let currentTutorial = "";
+let currentRoom = "";
+let currentPage = 1;
+const studentsPerPage = 15;
+
+function renderStudents() {
+  const tbody = document.getElementById("studentTableBody");
+  tbody.innerHTML = "";
+  
+  const filtered = students.filter(s => {
+    if (currentFilter === "graded" && s.status !== "graded") return false;
+    if (currentFilter === "pending" && s.status !== "pending") return false;
+    
+    if (currentSearch) {
+      const search = currentSearch.toLowerCase();
+      if (!s.name.toLowerCase().includes(search) && !s.matric.includes(search)) return false;
+    }
+    
+    if (currentTutorial && s.tutorial !== currentTutorial) return false;
+    if (currentRoom && s.room !== currentRoom) return false;
+    
+    return true;
+  });
+  
+  const totalPages = Math.ceil(filtered.length / studentsPerPage);
+  const startIdx = (currentPage - 1) * studentsPerPage;
+  const endIdx = startIdx + studentsPerPage;
+  const paginatedStudents = filtered.slice(startIdx, endIdx);
+  
+  paginatedStudents.forEach(s => {
+    const tr = document.createElement("tr");
+    tr.className = "student-row";
+    
+    let pointsCell = "";
+    let gradeCell = "";
+    let actionBtn = "";
+    
+    if (s.status === "graded") {
+      pointsCell = `<span class="small">${s.points}</span>`;
+      gradeCell = `<span class="badge bg-success">${s.grade}</span>`;
+      actionBtn = `<button class="btn btn-outline-secondary btn-sm me-1" title="Edit grade"><i class="fas fa-edit"></i></button>
+                   <button class="btn btn-outline-secondary btn-sm" title="View details"><i class="fas fa-eye"></i></button>`;
+    } else {
+      pointsCell = `<span class="small text-muted">—</span>`;
+      gradeCell = `<span class="badge bg-warning text-dark">Pending</span>`;
+      actionBtn = `<button class="btn btn-primary btn-sm me-1" title="Enter grade"><i class="fas fa-pencil-alt"></i> Enter</button>
+                   <button class="btn btn-outline-secondary btn-sm" title="View details"><i class="fas fa-eye"></i></button>`;
+    }
+    
+    tr.innerHTML = `
+      <td><div class="small fw-semibold">${s.name}</div></td>
+      <td class="small">${s.matric}</td>
+      <td class="small">${s.tutorial}</td>
+      <td class="small">${s.room} / ${s.seat}</td>
+      <td>${pointsCell}</td>
+      <td>${gradeCell}</td>
+      <td class="text-end">${actionBtn}</td>
+    `;
+    
+    tbody.appendChild(tr);
+  });
+  
+  document.getElementById("showingInfo").textContent = 
+    `Showing ${startIdx + 1}-${Math.min(endIdx, filtered.length)} of ${filtered.length} students`;
+  
+  renderPagination(totalPages, filtered.length);
+}
+
+function renderPagination(totalPages, totalFiltered) {
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+  
+  if (totalFiltered === 0) return;
+  
+  const prevLi = document.createElement("li");
+  prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
+  prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+  prevLi.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (currentPage > 1) {
+      currentPage--;
+      renderStudents();
+    }
+  });
+  pagination.appendChild(prevLi);
+  
+  const maxButtons = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+  let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+  
+  if (endPage - startPage < maxButtons - 1) {
+    startPage = Math.max(1, endPage - maxButtons + 1);
+  }
+  
+  if (startPage > 1) {
+    const li = document.createElement("li");
+    li.className = "page-item";
+    li.innerHTML = `<a class="page-link" href="#">1</a>`;
+    li.addEventListener("click", (e) => {
+      e.preventDefault();
+      currentPage = 1;
+      renderStudents();
+    });
+    pagination.appendChild(li);
+    
+    if (startPage > 2) {
+      const dots = document.createElement("li");
+      dots.className = "page-item disabled";
+      dots.innerHTML = `<span class="page-link">...</span>`;
+      pagination.appendChild(dots);
+    }
+  }
+  
+  for (let i = startPage; i <= endPage; i++) {
+    const li = document.createElement("li");
+    li.className = `page-item ${i === currentPage ? "active" : ""}`;
+    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+    li.addEventListener("click", (e) => {
+      e.preventDefault();
+      currentPage = i;
+      renderStudents();
+    });
+    pagination.appendChild(li);
+  }
+  
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) {
+      const dots = document.createElement("li");
+      dots.className = "page-item disabled";
+      dots.innerHTML = `<span class="page-link">...</span>`;
+      pagination.appendChild(dots);
+    }
+    
+    const li = document.createElement("li");
+    li.className = "page-item";
+    li.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
+    li.addEventListener("click", (e) => {
+      e.preventDefault();
+      currentPage = totalPages;
+      renderStudents();
+    });
+    pagination.appendChild(li);
+  }
+  
+  const nextLi = document.createElement("li");
+  nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
+  nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
+  nextLi.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderStudents();
+    }
+  });
+  pagination.appendChild(nextLi);
+}
+
+function updateCounts() {
+  const graded = students.filter(s => s.status === "graded").length;
+  const pending = students.filter(s => s.status === "pending").length;
+  
+  document.getElementById("totalCount").textContent = students.length;
+  document.getElementById("roomAssignedCount").textContent = students.length;
+  document.getElementById("gradedCount").textContent = graded;
+  document.getElementById("pendingCount").textContent = pending;
+  
+  document.getElementById("filterAllCount").textContent = students.length;
+  document.getElementById("filterGradedCount").textContent = graded;
+  document.getElementById("filterPendingCount").textContent = pending;
+}
+
+document.getElementById("filter-all").addEventListener("change", () => {
+  currentFilter = "all";
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("filter-graded").addEventListener("change", () => {
+  currentFilter = "graded";
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("filter-pending").addEventListener("change", () => {
+  currentFilter = "pending";
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  currentSearch = e.target.value;
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("tutorialFilter").addEventListener("change", (e) => {
+  currentTutorial = e.target.value;
+  currentPage = 1;
+  renderStudents();
+});
+
+document.getElementById("roomFilter").addEventListener("change", (e) => {
+  currentRoom = e.target.value;
+  currentPage = 1;
+  renderStudents();
+});
+
+updateCounts();
+renderStudents();
+</script>
+
+            </div>
+            <!-- End Roster Content -->
+
+            <!-- Room Assignments Content Placeholder -->
+            <div class="tab-pane fade" id="rooms-content" role="tabpanel">
+              <div class="alert alert-secondary">
+                <i class="fas fa-door-open me-2"></i>
+                Detailed room assignment management interface (assign specific seats, manage room capacity, etc.)
+              </div>
+            </div>
+          </div>
+          <!-- End Sub-tab Content -->
+
+        </div>
+        <!-- End Exam Logistics Tab -->
+      </div>
+      <!-- End Tab Content -->
+    </div>
+    <!-- End Lecture Pane -->
+  </div>
+  <!-- End Container -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

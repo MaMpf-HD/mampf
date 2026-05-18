@@ -1,10 +1,7 @@
-# frozen_string_literal: true
+require "rails_helper"
 
-require 'rails_helper'
-
-RSpec.describe MediaController, type: :controller do
+RSpec.describe(MediaController, type: :controller) do
   # NEEDS TO BE REFACTORED
-
 
   # describe '#index' do
   #   before do
@@ -39,15 +36,15 @@ RSpec.describe MediaController, type: :controller do
   #     it 'redirects to the given module if deactivated for lecture' do
   #       sign_in @user
   #       course = FactoryBot.create(:course)
-  #       get :index, params: { course_id: course.id.to_s, project: 'kaviar' }
+  #       get :index, params: { course_id: course.id.to_s, project: 'lesson_material' }
   #       expect(response).to redirect_to root_path
   #     end
 
   #     it 'returns a 200 response if lecture_id and module_id make sense' do
   #       sign_in @user
   #       course = FactoryBot.create(:course)
-  #       FactoryBot.create(:medium, teachable: course, sort: 'Kaviar')
-  #       get :index, params: { course_id: course.id.to_s, project: 'kaviar' }
+  #       FactoryBot.create(:medium, teachable: course, sort: 'LessonMaterial')
+  #       get :index, params: { course_id: course.id.to_s, project: 'lesson_material' }
   #       expect(response).to have_http_status '200'
   #     end
   #   end

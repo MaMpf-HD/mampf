@@ -1,0 +1,100 @@
+<% campaign = local_assigns[:campaign] %>
+<% dashboard = local_assigns[:dashboard] %>
+<% embedded = local_assigns.fetch(:embedded, false) %>
+
+<div class="<%= embedded ? "" : "container mt-4" %>" id="allocation-dashboard">
+  <% unless embedded %>
+    <div class="mb-3">
+      <%= link_to registration_campaign_path(campaign),
+                class: "btn btn-sm btn-outline-secondary",
+                role: "button",
+                data: { turbo_stream: true } do %>
+        <i class="bi bi-arrow-left"></i>
+        <%= t("back") %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <span class="fw-medium">
+        <%= dashboard.stats.total_registrations %>
+        <%= t("registration.allocation.stats.total_registrations") %>
+      </span>
+
+      <span class="mx-1 text-muted">·</span>
+
+      <span class="text-muted fw-medium">
+        <%= dashboard.demand_per_item.size %>
+
+        <%= t("registration.allocation.demand.items_count",
+              default: "Items") %>
+      </span>
+    </div>
+  </div>
+
+  <small class="text-muted d-block mb-4">
+    <i class="bi bi-info-circle me-1"></i>
+    <%= t("registration.allocation.demand.info") %>
+  </small>
+
+  <h6 class="text-muted fw-semibold small text-uppercase mb-2">
+    <%= t("registration.allocation.demand.title") %>
+  </h6>
+
+  <div class="table-responsive mb-4">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th><%= t("basics.title") %></th>
+
+          <th class="text-end">
+            <%= t("registration.allocation.demand.first_choice") %>
+          </th>
+
+          <th class="text-end">
+            <%= t("registration.allocation.demand.second_choice") %>
+          </th>
+
+          <th class="text-end">
+            <%= t("registration.allocation.demand.third_plus") %>
+          </th>
+
+          <th class="text-end">
+            <%= t("registration.allocation.stats.capacity") %>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% dashboard.demand_per_item.each do |data| %>
+          <% hot = data[:capacity] && data[:first] > data[:capacity] %>
+
+          <tr class="<%= 'table-warning' if hot %>">
+            <td><%= data[:item].title %></td>
+
+            <td class="text-end">
+              <span class="<%= 'fw-semibold text-success' if data[:first] > 0 %>">
+                <%= data[:first] %>
+              </span>
+            </td>
+
+            <td class="text-end">
+              <span class="<%= 'text-primary' if data[:second] > 0 %>">
+                <%= data[:second] %>
+              </span>
+            </td>
+
+            <td class="text-end text-muted">
+              <%= data[:third] + data[:rest] %>
+            </td>
+
+            <td class="text-end">
+              <%= data[:capacity] || "∞" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

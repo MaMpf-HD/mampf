@@ -1,1 +1,1 @@
-Dir[File.join(Rails.root, "lib", "core_ext", "*.rb")].each {|l| require l }
+Dir[Rails.root.join("lib/core_ext/*.rb").to_s].each { |l| require l }

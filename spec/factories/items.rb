@@ -1,8 +1,8 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :item do
-    sort { ['remark', 'example', 'theorem', 'definition'].sample }
+    # rubocop:disable Performance/CollectionLiteralInLoop
+    sort { ["remark", "example", "theorem", "definition"].sample }
+    # rubocop:enable Performance/CollectionLiteralInLoop
 
     transient do
       starting_time { Faker::Number.decimal(l_digits: 4, r_digits: 3) }

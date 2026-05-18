@@ -1,6 +1,5 @@
-# AnnouncementsController
 class AnnouncementsController < ApplicationController
-  layout 'administration'
+  layout "administration"
   before_action :set_announcement, except: [:new, :create, :index]
   authorize_resource except: [:new, :create, :index]
 
@@ -10,14 +9,14 @@ class AnnouncementsController < ApplicationController
 
   def index
     authorize! :index, Announcement.new
-    @announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
-                                                         .order(:created_at)
-                                                         .reverse)
-                             .page(params[:page]).per(10)
+    announcements_scope = Announcement.where(lecture: nil)
+                                      .order(:created_at)
+                                      .reverse_order
+    @pagy, @announcements = pagy(announcements_scope, limit: 10)
   end
 
   def new
-    @lecture = Lecture.find_by_id(params[:lecture])
+    @lecture = Lecture.find_by(id: params[:lecture])
     @announcement = Announcement.new(announcer: current_user, lecture: @lecture)
     authorize! :new, @announcement
   end
@@ -33,14 +32,14 @@ class AnnouncementsController < ApplicationController
       # send notification email
       send_notification_email
       # redirection depending from where the announcement was created
-      unless @announcement.lecture.present?
+      if @announcement.lecture.blank?
         redirect_to announcements_path
         return
       end
-      redirect_to edit_lecture_path(@announcement.lecture)
+      redirect_to "#{edit_lecture_path(@announcement.lecture)}?tab=communication"
       return
     end
-    @errors = @announcement.errors[:details].join(', ')
+    @errors = @announcement.errors[:details].join(", ")
   end
 
   def propagate
@@ -55,49 +54,50 @@ class AnnouncementsController < ApplicationController
 
   private
 
-  def announcement_params
-    params.require(:announcement).permit(:details, :lecture_id, :on_main_page)
-  end
-
-  def create_notifications
-    users_to_notify = if @announcement.lecture.present?
-                        @announcement.lecture.users
-                      else
-                        User
-                      end
-    notifications = []
-    users_to_notify.update_all(updated_at: Time.now)
-    users_to_notify.find_each do |u|
-      notifications << Notification.new(recipient: u,
-                                        notifiable_id: @announcement.id,
-                                        notifiable_type: 'Announcement',
-                                        action: 'create')
+    def announcement_params
+      params.expect(announcement: [:details, :lecture_id, :on_main_page])
     end
-    # use activerecord-import gem to use only one SQL instruction
-    Notification.import notifications
-  end
 
-  def send_notification_email
-    recipients = if @announcement.lecture.present?
-                   @announcement.lecture.users
-                                .where(email_for_announcement: true)
-                 else
-                   User.where(email_for_news: true)
-                 end
-    I18n.available_locales.each do |l|
-      local_recipients = recipients.where(locale: l)
-      if local_recipients.any?
+    def create_notifications
+      users_to_notify = if @announcement.lecture.present?
+        @announcement.lecture.users
+      else
+        User
+      end
+      notifications = []
+      users_to_notify.touch_all
+      users_to_notify.find_each do |u|
+        notifications << Notification.new(recipient: u,
+                                          notifiable_id: @announcement.id,
+                                          notifiable_type: "Announcement",
+                                          action: "create")
+      end
+      # use activerecord-import gem to use only one SQL instruction
+      Notification.import notifications
+    end
+
+    def send_notification_email
+      recipients = if @announcement.lecture.present?
+        @announcement.lecture.users
+                     .where(email_for_announcement: true)
+      else
+        User.where(email_for_news: true)
+      end
+      I18n.available_locales.each do |l|
+        local_recipients = recipients.where(locale: l)
+        next unless local_recipients.any?
+
         NotificationMailer.with(recipients: local_recipients.pluck(:id),
                                 locale: l,
                                 announcement: @announcement)
                           .announcement_email.deliver_later
       end
     end
-  end
 
-  def set_announcement
-    @announcement = Announcement.find_by_id(params[:id])
-    return if @announcement.present?
-    redirect_to :root, alert: I18n.t('controllers.no_announcement')
-  end
+    def set_announcement
+      @announcement = Announcement.find_by(id: params[:id])
+      return if @announcement.present?
+
+      redirect_to :root, alert: I18n.t("controllers.no_announcement")
+    end
 end

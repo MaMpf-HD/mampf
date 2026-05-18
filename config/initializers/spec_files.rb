@@ -1,1 +1,1 @@
-SPEC_FILES = "spec/cypress/fixtures/files"
+SPEC_FILES = "spec/cypress/fixtures/files".freeze

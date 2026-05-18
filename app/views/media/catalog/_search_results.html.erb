@@ -1,13 +1,13 @@
-<% if total.positive? %>
+<% if pagy.count.positive? %>
   <div class="row mx-2 py-3">
     <div class="col-2">
       <strong>
       <%= t('basics.hits') %>:
     </strong>
-      <%= total %>
+      <%= pagy.count %>
     </div>
     <div class="<%= purpose == 'media' ? 'col-10' : 'col-7' %>">
-      <%= paginate media, remote: true %>
+      <%== pagy_series_nav(pagy, anchor_string: 'data-remote="true"') %>
     </div>
   </div>
   <div class="row">
@@ -38,7 +38,7 @@
         </div>
       </div>
       <div id="mediaTable"
-           class="mx-2 pl-2">
+           class="mx-2 ps-2">
         <% media.each do |m| %>
           <%# cache [m, purpose] do %>
             <div class="row border-bottom mx-2"
@@ -69,7 +69,7 @@
                 <% m.tags.each do |t| %>
                   <%= link_to t.short_title,
                               edit_tag_path(t),
-                              class:'badge badge-light',
+                              class:'badge text-dark lecture-tag',
                               data: { toggle: 'tooltip', placement: 'top'},
                               title: t.title %>
                 <% end %>
@@ -92,7 +92,7 @@
         <% end %>
       </div>
     </div>
-    <% if purpose.in?(['media', 'clicker']) %>
+    <% if purpose == 'media' %>
       <div class="<%= purpose == 'media' ? 'col-3' : 'col-4' %>">
         <div class="row bg-mdb-color-lighten-5 mb-2 py-2">
           <div class="col-12">
@@ -117,7 +117,7 @@
       </div>
     <% else %>
       <div class="col-4">
-        <div class="row bg-mdb-color-lighten-5 ml-2 py-2 mb-3">
+        <div class="row bg-mdb-color-lighten-5 ms-2 py-2 mb-3">
           <div class="col-12">
             <strong>
               <%= t('basics.selection') %>

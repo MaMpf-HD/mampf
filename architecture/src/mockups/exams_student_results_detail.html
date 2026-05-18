@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Exam Results - Linear Algebra WS 2024/25</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    .points-display {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .grade-display {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">
+      <i class="bi bi-mortarboard-fill me-2"></i>
+      MaMpf - Exam Results
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="#">Linear Algebra WS 2024/25</a></li>
+      <li class="breadcrumb-item"><a href="#">My Results</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Final Exam</li>
+    </ol>
+  </nav>
+
+  <!-- Back Button -->
+  <div class="mb-3">
+    <a href="#" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>
+      Back to All Results
+    </a>
+  </div>
+
+  <!-- Exam Header Card -->
+  <div class="card mb-3">
+    <div class="card-header bg-light">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+          <i class="bi bi-clipboard-check me-2"></i>
+          Final Exam
+        </h5>
+        <span class="badge bg-success">
+          <i class="bi bi-check-circle me-1"></i>
+          Graded
+        </span>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="row g-2">
+            <div class="col-md-6 small">
+              <i class="bi bi-calendar3 text-muted me-1"></i>
+              <strong>Date:</strong> Feb 15, 2025
+            </div>
+            <div class="col-md-6 small">
+              <i class="bi bi-geo-alt text-muted me-1"></i>
+              <strong>Location:</strong> Room HS 101
+            </div>
+            <div class="col-md-6 small">
+              <i class="bi bi-check-circle text-muted me-1"></i>
+              <strong>Graded:</strong> Feb 28, 2025
+            </div>
+            <div class="col-md-6 small">
+              <i class="bi bi-person text-muted me-1"></i>
+              <strong>Graded by:</strong> Prof. Müller
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="text-center bg-light rounded p-3 border">
+            <div class="text-muted small mb-1">Your Score</div>
+            <div class="points-display mb-2">55.0 / 60</div>
+            <div class="text-muted small mb-2">92%</div>
+            <div class="grade-display text-success">1.3</div>
+            <div class="mt-2">
+              <span class="badge bg-success px-3 py-2">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                Passed
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Info -->
+  <div class="card mb-3">
+    <div class="card-body py-2">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="small">
+          <i class="bi bi-card-checklist me-1 text-muted"></i>
+          <strong>Registration:</strong> Tutorial A (Mon 10:00) • Registered on Jan 15, 2025
+        </div>
+        <span class="badge bg-info-subtle text-info">Confirmed</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Left Column: Tasks & Files -->
+    <div class="col-lg-8">
+
+      <!-- Task Breakdown -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-list-task me-2"></i>
+            Points Breakdown
+          </h6>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-sm mb-0">
+            <thead>
+              <tr>
+                <th style="width: 60%;">Task</th>
+                <th class="text-center" style="width: 20%;">Points</th>
+                <th class="text-center" style="width: 20%;">Max</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Task 1: Linear Systems</td>
+                <td class="text-center">10</td>
+                <td class="text-center text-muted">10</td>
+              </tr>
+              <tr>
+                <td>Task 2: Vector Spaces</td>
+                <td class="text-center">14</td>
+                <td class="text-center text-muted">15</td>
+              </tr>
+              <tr>
+                <td>Task 3: Eigenvalues</td>
+                <td class="text-center">18</td>
+                <td class="text-center text-muted">20</td>
+              </tr>
+              <tr>
+                <td>Task 4: Diagonalization</td>
+                <td class="text-center">13</td>
+                <td class="text-center text-muted">15</td>
+              </tr>
+            </tbody>
+            <tfoot class="table-light">
+              <tr class="fw-bold">
+                <td>Total</td>
+                <td class="text-center">55.0</td>
+                <td class="text-center">60</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Grading Scheme -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-bar-chart-steps me-2"></i>
+            Grading Scheme
+          </h6>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-sm mb-0">
+            <thead>
+              <tr>
+                <th>Grade</th>
+                <th>Points Required</th>
+                <th>Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="table-success">
+                <td><strong>1.0</strong></td>
+                <td>57.0 - 60.0</td>
+                <td>95% - 100%</td>
+              </tr>
+              <tr class="table-success">
+                <td><strong>1.3</strong> ← Your grade</td>
+                <td>54.0 - 56.9</td>
+                <td>90% - 94%</td>
+              </tr>
+              <tr>
+                <td><strong>1.7</strong></td>
+                <td>51.0 - 53.9</td>
+                <td>85% - 89%</td>
+              </tr>
+              <tr>
+                <td><strong>2.0</strong></td>
+                <td>48.0 - 50.9</td>
+                <td>80% - 84%</td>
+              </tr>
+              <tr>
+                <td><strong>2.3</strong></td>
+                <td>45.0 - 47.9</td>
+                <td>75% - 79%</td>
+              </tr>
+              <tr>
+                <td><strong>2.7</strong></td>
+                <td>42.0 - 44.9</td>
+                <td>70% - 74%</td>
+              </tr>
+              <tr>
+                <td><strong>3.0</strong></td>
+                <td>39.0 - 41.9</td>
+                <td>65% - 69%</td>
+              </tr>
+              <tr>
+                <td><strong>3.3</strong></td>
+                <td>36.0 - 38.9</td>
+                <td>60% - 64%</td>
+              </tr>
+              <tr>
+                <td><strong>3.7</strong></td>
+                <td>33.0 - 35.9</td>
+                <td>55% - 59%</td>
+              </tr>
+              <tr>
+                <td><strong>4.0</strong></td>
+                <td>27.0 - 32.9</td>
+                <td>45% - 54%</td>
+              </tr>
+              <tr class="table-danger">
+                <td><strong>5.0</strong></td>
+                <td>0 - 26.9</td>
+                <td>0% - 44%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light py-2">
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Pass threshold: 27.0 points (45%)
+          </small>
+        </div>
+      </div>
+
+      <!-- Optional: Tutor Comment -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-chat-text me-2"></i>
+            Grader Comment
+          </h6>
+        </div>
+        <div class="card-body py-2">
+          <p class="mb-0 small text-muted fst-italic">
+            Excellent work! Strong understanding of all core concepts. Minor calculation error in Task 3.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Overall Context -->
+    <div class="col-lg-4">
+
+      <!-- Performance Context -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-graph-up me-2"></i>
+            Exam Statistics
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small text-muted">Class Average</span>
+              <span class="fw-bold">45.5 / 60</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-secondary" role="progressbar" style="width: 76%"></div>
+            </div>
+            <div class="small text-muted mt-1">76% (Grade: 2.3)</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small text-muted">Your Score</span>
+              <span class="fw-bold text-success">55.0 / 60</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: 92%"></div>
+            </div>
+            <div class="small text-success mt-1">92% (Grade: 1.3)</div>
+          </div>
+
+          <hr class="my-2">
+
+          <div class="small">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted">Highest Score:</span>
+              <span>58.0 (97%)</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted">Lowest Score:</span>
+              <span>12.0 (20%)</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted">Pass Rate:</span>
+              <span>82 of 85 (96%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lecture Performance Status -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-award me-2"></i>
+            Lecture Performance
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small text-muted">Assignment Points</span>
+              <span class="fw-bold">192 / 240</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-primary" role="progressbar" style="width: 80%"></div>
+            </div>
+            <div class="small text-muted mt-1">80% (3/3 achievements)</div>
+          </div>
+
+          <div class="alert alert-success py-2 mb-0 mt-3">
+            <small>
+              <i class="bi bi-check-circle-fill me-1"></i>
+              <strong>Certification: Passed</strong><br>
+              You met all requirements for exam eligibility.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-list-check me-2"></i>
+            Next Steps
+          </h6>
+        </div>
+        <div class="card-body py-2">
+          <div class="small">
+            <p class="mb-2">
+              <i class="bi bi-check-circle-fill text-success me-1"></i>
+              Your grade has been officially recorded.
+            </p>
+            <p class="mb-0">
+              <i class="bi bi-info-circle text-primary me-1"></i>
+              Certificate available for download after semester end.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="d-flex gap-2 mb-4">
+    <a href="#" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>
+      Back to All Results
+    </a>
+    <a href="#" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-download me-1"></i>
+      Download Certificate
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

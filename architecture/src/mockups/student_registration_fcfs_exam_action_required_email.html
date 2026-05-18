@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Student Registration – Analysis II Exam (Action required: institutional email)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="./student_registration_index_tabs.html">Registrations</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Analysis II (Exam)</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <h1 class="h4 mb-1">Analysis II – Exam Registration <span class="badge text-bg-warning">Action required</span></h1>
+          <div class="text-muted small">SS 2025 · Exam code: AN2-S25</div>
+        </div>
+        <div class="text-end">
+          <div class="text-muted small mb-1">Campaign: Exam seat registration</div>
+          <span class="badge text-bg-danger">Closes: Oct 02, 10:00</span>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12 col-lg-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="h5">Your Eligibility</h2>
+              <p class="mb-2 small text-muted">Status: <span class="badge rounded-pill text-bg-success">Eligible</span></p>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-semibold">Exam eligibility</div>
+                    <small class="text-muted">Prerequisites satisfied</small>
+                  </div>
+                  <span class="badge rounded-pill text-bg-success">Passed</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="h5">Complete requirements</h2>
+              <div class="alert alert-warning d-flex align-items-start gap-2 py-2 mb-3" id="reqAlert">
+                <div>
+                  <div class="fw-semibold">Institutional email required</div>
+                  <div class="small">Your account email must be from an allowed university domain to register.</div>
+                </div>
+              </div>
+              <div class="row g-2 align-items-center mb-2">
+                <div class="col-12 col-md-7 small">
+                  Current account email: <span class="fw-semibold" id="currentEmail">—</span>
+                  <div class="text-muted">Allowed: <code>uni-heidelberg.de</code>, <code>stud.uni-heidelberg.de</code></div>
+                </div>
+                <div class="col-12 col-md-5 d-flex justify-content-md-end gap-2">
+                  <a class="btn btn-outline-primary btn-sm" href="./student_account_data.html" id="accountLink">Open account settings</a>
+                </div>
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-12 col-md-8 small text-muted" id="reqHint">Update your email in account settings, then return to register.</div>
+                <div class="col-12 col-md-4 d-flex justify-content-md-end">
+                  <div class="small" id="saveStatus"></div>
+                </div>
+              </div>
+
+              <h2 class="h6">Your Registration</h2>
+              <div class="row g-2 mb-2">
+                <div class="col-12 col-md-7 small text-muted">
+                  Date & time: Thu, Oct 02, 10:00–12:00 · Location: INF 205, HS2
+                </div>
+              </div>
+              <div id="statusPanel" class="mb-3">
+                <span class="badge rounded-pill text-bg-secondary" id="regState">Not registered</span>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-primary btn-sm" id="registerBtn" disabled>Register now</button>
+                <button type="button" class="btn btn-outline-danger btn-sm d-none" id="withdrawBtn">Withdraw</button>
+              </div>
+              <div id="saveAlert" class="alert alert-success py-1 px-2 d-none mt-3" role="alert">Updated</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <h2 class="h5">Details</h2>
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold">Mode</div>
+                <small class="text-muted">First-come, first-served</small>
+              </div>
+              <span class="badge rounded-pill text-bg-secondary">FCFS</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold">Seat capacity</div>
+                <small class="text-muted">Hall-limited seats (example)</small>
+              </div>
+              <span class="badge rounded-pill text-bg-info" id="capacityInfo">—</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+  const ALLOWED = ['uni-heidelberg.de', 'stud.uni-heidelberg.de']
+  const ACCOUNT_EMAIL_KEY = 'account:email'
+      const REG_KEY = 'fcfs:EXAM:AN2-S25:reg'
+      const REG_TS = 'fcfs:EXAM:AN2-S25:reg_ts'
+
+  const currentEmailEl = document.getElementById('currentEmail')
+      const saveStatus = document.getElementById('saveStatus')
+      const saveAlert = document.getElementById('saveAlert')
+  const reqAlert = document.getElementById('reqAlert')
+  const reqHint = document.getElementById('reqHint')
+
+      const registerBtn = document.getElementById('registerBtn')
+      const withdrawBtn = document.getElementById('withdrawBtn')
+      const regState = document.getElementById('regState')
+      const capacityInfo = document.getElementById('capacityInfo')
+
+      let isSaving = false
+
+      function domainOf(val) {
+        const at = val.indexOf('@')
+        return at === -1 ? '' : val.slice(at + 1).toLowerCase()
+      }
+
+      function setSaving(text) {
+        saveStatus.innerHTML = text ? `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>${text}` : ''
+        saveStatus.className = text ? 'small text-muted' : 'small'
+      }
+
+      function accountEmailValid() {
+        const v = (localStorage.getItem(ACCOUNT_EMAIL_KEY) || '').trim()
+        currentEmailEl.textContent = v || '—'
+        const d = domainOf(v)
+        const ok = !!v && ALLOWED.includes(d)
+        reqAlert.classList.toggle('alert-warning', !ok)
+        reqAlert.classList.toggle('alert-success', ok)
+        reqAlert.innerHTML = ok
+          ? '<div><div class="fw-semibold">All requirements met</div><div class="small">Your account email matches an allowed domain.</div></div>'
+          : '<div><div class="fw-semibold">Institutional email required</div><div class="small">Your account email must be from an allowed university domain to register.</div></div>'
+        reqHint.textContent = ok ? 'You may now register for the exam.' : 'Update your email in account settings, then return to register.'
+        return ok
+      }
+
+      function updateRegUI(registered) {
+        regState.textContent = registered ? 'Registered' : 'Not registered'
+        regState.className = registered ? 'badge rounded-pill text-bg-success' : 'badge rounded-pill text-bg-secondary'
+        registerBtn.classList.toggle('d-none', registered)
+        withdrawBtn.classList.toggle('d-none', !registered)
+        const base = 180
+        const filled = base + (registered ? 1 : 0)
+        capacityInfo.textContent = `${filled}/300 filled`
+      }
+
+      function maybeEnableRegister() {
+        const ready = accountEmailValid()
+        registerBtn.disabled = !ready
+      }
+
+      function saveRegistration(registered) {
+        if (isSaving) return
+        isSaving = true
+        setSaving('Saving…')
+        setTimeout(() => {
+          localStorage.setItem(REG_KEY, registered ? '1' : '0')
+          localStorage.setItem(REG_TS, String(Date.now()))
+          isSaving = false
+          saveAlert.classList.remove('d-none')
+          setTimeout(() => saveAlert.classList.add('d-none'), 1500)
+          setSaved(REG_TS)
+          updateRegUI(registered)
+        }, 600)
+      }
+
+      registerBtn.addEventListener('click', () => saveRegistration(true))
+      withdrawBtn.addEventListener('click', () => saveRegistration(false))
+
+      ;(function init() {
+        const registered = localStorage.getItem(REG_KEY) === '1'
+        maybeEnableRegister()
+        updateRegUI(registered)
+      })()
+    </script>
+  </body>
+</html>

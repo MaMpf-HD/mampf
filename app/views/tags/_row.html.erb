@@ -14,13 +14,13 @@
   <% tag.related_tags.each do |t| %>
     <%= link_to t.title,
                 edit_tag_path(t),
-                class:'badge badge-light' %>
+                class:'badge text-dark lecture-tag' %>
   <% end %>
 </div>
 <div class="col-1">
   <a href="<%= edit_tag_path(tag) %>"
      class="text-dark"
-     data-toggle="tooltip"
+     data-bs-toggle="tooltip"
      style="text-decoration: none;"
      data-placement="bottom"
      title="<%= t('buttons.edit') %>">

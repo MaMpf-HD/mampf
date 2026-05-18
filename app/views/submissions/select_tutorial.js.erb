@@ -1,38 +1,17 @@
 $('.submission-actions[data-id="<%= @submission.id %>"]').empty()
-  .append('<%= j render partial: "submissions/select_tutorial",
+  .append("<%= j render partial: "submissions/select_tutorial",
                         locals: { submission: @submission,
                                   lecture: @lecture,
-                                  tutorial: @tutorial } %>');
+                                  tutorial: @tutorial } %>");
 
-new TomSelect('#submission_tutorial_id-<%= @submission.id %>', {
+new TomSelect("#submission_tutorial_id-<%= @submission.id %>", {
   sortField: {
-    field: 'text',
-    direction: 'asc'
-  },
-  dropdownParent: document.body,
-  onInitialize:function(){
-    this.popper = Popper.createPopper(this.control,this.dropdown, {
-    placement: "bottom-start",
-    modifiers: [
-      {
-        name: "sameWidth",
-        enabled: true,
-        fn: ({ state }) => {
-          state.styles.popper.width = `${state.rects.reference.width}px`;
-        },
-        phase: "beforeWrite",
-        requires: ["computeStyles"],
-        }
-      ]
-
-  });
-  },
-  onDropdownOpen:function(){
-    this.popper.update();
+    field: "text",
+    direction: "asc",
   },
   render: {
-    no_results: function(data, escape) {
+    no_results: function (_data, _escape) {
       return '<div class="no-results"><%= t("basics.no_results") %></div>';
-    }
-  }
+    },
+  },
 });

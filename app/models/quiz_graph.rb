@@ -2,6 +2,7 @@
 # represents the quizzes' internal logic as is stored in active record
 class QuizGraph
   include ActiveModel::Model
+
   attr_accessor :vertices, :edges, :root, :default_table, :hide_solution
 
   def self.load(text)
@@ -17,7 +18,8 @@ class QuizGraph
   end
 
   def update_vertex(vertex_id, branching, hide)
-    return if @vertices[vertex_id][:type] == 'Remark'
+    return if @vertices[vertex_id][:type] == "Remark"
+
     remove_edges_from!(vertex_id)
     update_edges_for_question!(vertex_id, branching)
     update_hide_solutions!(vertex_id, hide)
@@ -27,6 +29,7 @@ class QuizGraph
   def create_vertex(quizzable)
     return self if quizzable.blank?
     return self if quizzable.invalid?
+
     id = new_vertex_id
     @vertices[id] = { type: quizzable.class.to_s, id: quizzable.id }
     @default_table[id] = 0
@@ -47,11 +50,10 @@ class QuizGraph
   end
 
   def delete_edge!(source, target)
-    if @default_table[source] == target
-      @default_table[source] = 0
-    end
-    answers = @edges[[source,target]]
+    @default_table[source] = 0 if @default_table[source] == target
+    answers = @edges[[source, target]]
     return unless answers
+
     @edges.delete([source, target])
     affected_hide_solution = @hide_solution.select do |h|
       h.first == source && h.second.in?(answers)
@@ -67,10 +69,12 @@ class QuizGraph
   # by COPIES.
 
   def replace_reference!(old_quizzable, new_quizzable, answer_map = {})
-    return self unless old_quizzable.class == new_quizzable.class
+    return self unless old_quizzable.instance_of?(new_quizzable.class)
+
     affected_vertices = referencing_vertices(old_quizzable)
     affected_vertices.each { |v| @vertices[v][:id] = new_quizzable.id }
-    return self unless new_quizzable.class.to_s == 'Question'
+    return self unless new_quizzable.instance_of?(::Question)
+
     affected_vertices.each do |v|
       bend_edges_rereferencing!(edges_from(v), answer_map)
       bend_hide_solution_rereferencing!(v, answer_map)
@@ -85,24 +89,36 @@ class QuizGraph
   end
 
   def find_errors
-    return [I18n.t('admin.quiz.no_vertices')] unless @vertices.present?
-    branch_undef = @default_table.values.include?(0)
-    no_end = default_table.values.exclude?(-1) && @edges.select { |e| e[1] == -1 }.blank?
+    return [I18n.t("admin.quiz.no_vertices")] if @vertices.blank?
+
+    branch_undef = @default_table.value?(0)
+    no_end = default_table.values.exclude?(-1) && @edges.select do |e|
+      e[1] == -1
+    end.blank?
     no_root = @root.blank? || @root.zero?
     messages = []
-    messages.push(I18n.t('admin.quiz.undefined_targets')) if branch_undef
-    messages.push(I18n.t('admin.quiz.no_end')) if no_end
-    messages.push(I18n.t('admin.quiz.no_start')) if no_root
+    messages.push(I18n.t("admin.quiz.undefined_targets")) if branch_undef
+    messages.push(I18n.t("admin.quiz.no_end")) if no_end
+    messages.push(I18n.t("admin.quiz.no_start")) if no_root
     messages
   end
 
   def warnings
-    return I18n.t('admin.quiz.unreleased_vertices') if unreleased_vertices?
+    I18n.t("admin.quiz.unreleased_vertices") if unreleased_vertices?
   end
 
   def quizzable(id)
     return unless id.in?(@vertices.keys)
-    @vertices[id][:type].constantize.find_by_id(@vertices[id][:id])
+
+    allowed_types = {
+      "Question" => Question,
+      "Remark" => Remark
+    }
+
+    type = @vertices[id][:type]
+    return unless allowed_types.key?(type)
+
+    allowed_types[type].find_by(id: @vertices[id][:id])
   end
 
   def visible?(id)
@@ -151,7 +167,7 @@ class QuizGraph
 
   def update_edges_for_question!(vertex_id, branching)
     new_hash = Hash.new { |h, k| h[k] = [] }
-    new_edges = branching.each_with_object(new_hash) { |(k, v), h| h[v] << k }
+    branching.each_with_object(new_hash) { |(k, v), h| h[v] << k }
     default_edge = [vertex_id, @default_table[vertex_id]]
     @edges.merge!(new_hash.except(default_edge))
   end
@@ -187,11 +203,11 @@ class QuizGraph
   end
 
   def incoming(id)
-    edges_to(id).map { |e| e[0] }
+    edges_to(id).pluck(0)
   end
 
   def neighbours(id)
-    edges_from_plus_default(id).map { |e| e[1] }
+    edges_from_plus_default(id).pluck(1)
   end
 
   def referencing_vertices(quizzable)
@@ -202,19 +218,21 @@ class QuizGraph
   end
 
   def new_vertex_id
-    return 1 unless @vertices.present?
+    return 1 if @vertices.blank?
+
     @vertices.keys.max + 1
   end
 
   def edge_color_for_cytoscape(edge)
-    @default_table[edge[0]] == edge[1] ? '#32cd32' : '#f00'
+    @default_table[edge[0]] == edge[1] ? "#32cd32" : "#f00"
   end
 
   def border_color_for_cytoscape(id)
     quizzable = quizzable(id)
-    return 'orange' unless quizzable.visible?
-    return 'chocolate' if quizzable.restricted?
-    '#222'
+    return "orange" unless quizzable.visible?
+    return "chocolate" if quizzable.restricted?
+
+    "#222"
   end
 
   def linearize!
@@ -234,11 +252,11 @@ class QuizGraph
     edges = {}
     default_table = {}
     size = question_ids.size
-    question_ids.each_with_index do |q,i|
+    question_ids.each_with_index do |q, i|
       j = i + 1
       k =   j < size ? j + 1 : -1
-      question = Question.find_by_id(q)
-      vertices[j] = { type: 'Question', id: q }
+      Question.find_by(id: q)
+      vertices[j] = { type: "Question", id: q }
       default_table[j] = k
     end
     QuizGraph.new(vertices: vertices, edges: edges, root: 1,
@@ -247,32 +265,32 @@ class QuizGraph
 
   def to_cytoscape
     result = []
-    result.push(data: { id: '-2',
-                        label: I18n.t('admin.quiz.start'),
-                        color: '#000',
-                        background: 'yellowgreen',
-                        borderwidth: '0',
-                        bordercolor: 'grey',
-                        shape: 'diamond' } )
+    result.push(data: { id: "-2",
+                        label: I18n.t("admin.quiz.start"),
+                        color: "#000",
+                        background: "yellowgreen",
+                        borderwidth: "0",
+                        bordercolor: "grey",
+                        shape: "diamond" })
     # add vertices
-    @vertices.keys.each do |v|
+    @vertices.each_key do |v|
       result.push(data: cytoscape_vertex(v))
     end
-    result.push(data: { id: '-1',
-                        label: I18n.t('admin.quiz.end'),
-                        color: '#000',
-                        background: 'yellowgreen',
-                        borderwidth: '0',
-                        bordercolor: '#f4a460',
-                        shape: 'diamond' } )
+    result.push(data: { id: "-1",
+                        label: I18n.t("admin.quiz.end"),
+                        color: "#000",
+                        background: "yellowgreen",
+                        borderwidth: "0",
+                        bordercolor: "#f4a460",
+                        shape: "diamond" })
     # add edges
     if @root.in?(@vertices.keys)
       result.push(data: { id: "-2-#{@root}",
                           source: -2,
                           target: @root,
-                          color: '#aaa'} )
+                          color: "#aaa" })
     end
-    @vertices.keys.each do |v|
+    @vertices.each_key do |v|
       edges_from_plus_default(v).each do |e|
         result.push(data: cytoscape_edge(e))
       end
@@ -288,11 +306,11 @@ class QuizGraph
   def cytoscape_vertex(id)
     { id: id.to_s,
       label: quizzable(id).description,
-      color: '#000',
-      background: @vertices[id][:type] == 'Question' ? '#e1f5fe' : '#f9fbe7',
-      borderwidth: '2',
+      color: "#000",
+      background: @vertices[id][:type] == "Question" ? "#e1f5fe" : "#f9fbe7",
+      borderwidth: "2",
       bordercolor: border_color_for_cytoscape(id),
-      shape: @vertices[id][:type] == 'Question' ? 'ellipse' : 'rectangle',
+      shape: @vertices[id][:type] == "Question" ? "ellipse" : "rectangle",
       defaulttarget: @default_table[id] }
   end
 
@@ -306,11 +324,12 @@ class QuizGraph
   end
 
   def questions_count
-    @vertices.values.select { |v| v[:type] == 'Question'}.count
+    @vertices.values.count { |v| v[:type] == "Question" }
   end
 
   def default?(edge)
     return false unless @default_table[edge.first]
+
     @default_table[edge.first] == edge.second
   end
 end

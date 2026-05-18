@@ -1,150 +1,102 @@
 source "https://rubygems.org"
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+# We only pin versions to specific Git commits when they are "problem childs"
+# and we want to review each commit before updating to the latest version.
 
-ruby '3.1.2'
+ruby "3.4.7"
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 7.0.2.3"
-# Use dalli for caching to memcached in production
-gem "dalli", ">= 2.7"
-# Ruby wrapper for UglifyJS JavaScript compressor
-gem "uglifier"
-# Use nulldb adapter for assets precompilation in production
-gem "activerecord-nulldb-adapter"
-# Use sqlite3 as the database for Active Record
-gem "sqlite3", "~> 1.4"
-# Use Puma as the app server
-gem "puma", "~> 4.1"
-# Use SCSS for stylesheets
-gem "sass-rails", ">= 6"
-# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-# gem 'webpacker', '~> 4.0'
-# Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
-gem "turbolinks", "~> 5"
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem "jbuilder"
-# Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
-# Use Active Model has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-
-# Use Active Storage variant
-# gem 'image_processing', '~> 1.2'
-
-# Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", ">= 1.4.2", require: false
-gem "rack"
-gem "active_model_serializers"
-# Use CoffeeScript for .coffee assets and views
-gem "coffee-rails", "~> 5.0.0"
-
-# Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 3.0'
-gem "shrine"
-gem "fastimage"
-gem "streamio-ffmpeg"
-gem "pdf-reader"
-gem "mini_magick"
-gem "image_processing"
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-gem "filesize"
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-gem "rgl"
-gem "responders"
-gem "pg"
-gem "devise"
-gem "erubis"
-gem "cancancan"
-gem "jquery-rails"
-gem "jquery-ui-rails"
-gem "js-routes", '1.4.9'
-gem "bootstrap", "~>4"
-gem "bootstrap_form"
-gem "devise-bootstrap-views"
-gem "fuzzy-string-match"
-gem "coveralls", require: false
-gem "kaminari"
-gem "acts_as_list"
-gem "acts_as_tree"
-gem "activerecord-import",
-  git: "https://github.com/zdennis/activerecord-import.git",
-  branch: "master"
-gem "thredded",
-  git: "https://github.com/MaMpf-HD/thredded.git",
-  branch: "master"
-gem "kramdown-parser-gfm"
+gem "active_model_serializers", "~> 0.10"
+gem "activerecord-import", "~>1.7"
+gem "activerecord-nulldb-adapter", "~> 1.0" # for assets precompilation in production
+gem "active_storage_validations", "~> 2.0.2"
+gem "acts_as_list", "~> 1.2"
+gem "acts_as_tree", "~> 2.9"
+gem "acts_as_votable", "~> 0.14"
+gem "altcha-rails", "~> 0.0.6"
+gem "barby", "~> 0.6"
+gem "bootsnap", "~> 1.18", require: false # reduces boot times through caching
+gem "bootstrap_form", "~> 5.4"
+gem "cancancan", "~> 3.6"
+gem "coffee-rails", "~> 5.0"
+gem "commontator", "~> 7.0.1"
+gem "connection_pool", "~> 3.0"
+gem "coveralls", "~> 0.7", require: false
+gem "csv", "~> 3.3", require: false
+gem "dalli", "~> 5.0"
+gem "devise", "~> 5.0"
+gem "devise-bootstrap-views", "~> 1.1"
+gem "erubis", "~> 2.7"
+gem "exception_handler", "~> 0.8.0.0", "~> 0.8.0"
+gem "fastimage", "~> 2.3"
+gem "filesize", "~> 0.2"
+gem "flipper", "~> 1.4"
+gem "flipper-active_record", "~> 1.4"
+gem "image_processing", "~> 1.13"
+gem "jbuilder", "~> 2.12" # build JSON APIs easily
+gem "js-routes", "~> 2.3"
+gem "kramdown-parser-gfm", "~> 1.1"
+gem "mini_magick", "~> 4.13"
+gem "mobility", "~> 1.2"
+gem "net-smtp", "~> 0.5"
+gem "or-tools", "~> 0.17"
+gem "pagy", "~> 43.2"
+gem "pdf-reader", "~> 2.12"
+gem "pg", "~> 1.5"
+gem "pg_search", "~> 2.3"
+gem "progress_bar", "~> 1.3"
+gem "prometheus_exporter", "~> 2.1"
+gem "puma", "~> 7.2"
+gem "rack", "~> 3.1"
+gem "rails", "~> 8.0.2"
+gem "rails-i18n", "~> 8.0"
+gem "responders", "~> 3.1"
+gem "rgl", "~> 0.6"
+gem "rqrcode", "~> 2.2"
+gem "rubyzip", "~> 2.3"
+gem "sass-rails", "~> 6.0"
+gem "shrine", "~> 3.6"
+gem "sidekiq", "~> 8.1"
+gem "sidekiq-cron", "~> 2.3"
+gem "sprockets-rails", "~>3.5"
+gem "streamio-ffmpeg", "~> 3.0"
+gem "terser", "~> 1.2" # Ruby wrapper for UglifyJS JavaScript compressor
+gem "thredded", git: "https://github.com/thredded/thredded.git",
+                ref: "566100f6a020ccc390aa60689d58b007a55506d2"
 gem "thredded-markdown_katex",
-  github: "thredded/thredded-markdown_katex",
-  branch: "master"
-gem "rails-i18n"
-gem "kaminari-i18n"
-gem "trix-rails", require: "trix"
-gem "sunspot_rails",
-  github: 'sunspot/sunspot',
-  glob: 'sunspot_rails/*.gemspec'
-gem "sunspot_solr"
-gem "progress_bar"
-gem "barby"
-gem "rqrcode"
-gem "sidekiq"
-gem "sidekiq-cron", "~> 1.1"
-gem "faraday", "~> 1.8"
-gem "globalize"
-gem "globalize-accessors"
-gem "commontator",
-  git: "https://github.com/MaMpf-HD/commontator.git",
-  branch: "main"
-gem "acts_as_votable"
-gem "sprockets-rails",
-  git: "https://github.com/rails/sprockets-rails",
-  branch: "master"
-gem "premailer-rails"
-gem "clipboard-rails"
-gem "rubyzip", "~> 2.3.0"
-gem "exception_handler", "~> 0.8.0.0"
-gem 'webpacker', '~> 5.x'
-gem 'net-smtp'
+    git: "https://github.com/thredded/thredded-markdown_katex.git",
+    ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
+gem "trix-rails", "~> 2.4", require: "trix"
+gem "turbo-rails", "~> 2.0"
+gem "view_component", "~> 4.0"
+gem "vite_rails", "~> 3.0", ">= 3.0.17"
+# for now, pin vite_ruby, see https://github.com/ElMassimo/vite_ruby/issues/592
+gem "vite_ruby", "3.9.2"
 
-group :development, :docker_development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
-  gem "rspec-rails"
-  gem "factory_bot_rails"
-end
-
-group :development, :docker_development do
-  # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem "web-console", ">= 3.3.0"
-  gem "listen", ">= 3.0.5", "< 3.2"
-  gem "rails-erd"
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem "spring"
-  gem "spring-watcher-listen", "~> 2.0.0"
-  gem "rubocop", "~> 0.93", require: false
-  gem "rubocop-packaging", require: false
-  gem "rubocop-performance", require: false
-  gem "rubocop-rails", require: false
-  gem "erb_lint", require: false
-  gem "pgreset"
-  gem "marcel"
-  #  gem 'bullet'
+group :development do
+  gem "listen", "~> 3.9"
+  gem "marcel", "~> 1.0"
+  gem "pgreset", "~> 0.4"
+  gem "rails-erd", "~> 1.7"
+  gem "rubocop", "1.81.7", require: false
+  gem "rubocop-performance", "~> 1.21", require: false
+  gem "rubocop-rails", "2.34.3", require: false
+  gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
+  gem "spring-watcher-listen", "~> 2.0"
+  gem "web-console", "~> 4.2" # interactive console on exception pages
 end
 
 group :test do
-  # Adds support for Capybara system testing and selenium driver
-  gem "selenium-webdriver"
-  # Easy installation and use of web drivers to run system tests with browsers
-  gem 'webdrivers'
-  gem 'faker'
-  gem 'database_cleaner'
-  gem 'launchy'
-  gem 'simplecov', require: false
+  gem "database_cleaner-active_record", "~> 2.2" # clean up database between tests
+  gem "faker", "~> 3.4"
+  gem "simplecov", "~> 0.22", require: false
+  gem "timecop", "~> 0.9.10"
 end
 
-group :test, :development, :docker_development do
-  gem 'cypress-on-rails', '~> 1.0'
-  gem 'simplecov-cobertura'
+group :development, :test do
+  gem "debug", "~> 1.8"
+  gem "factory_bot_rails", "~> 6.4"
+  gem "i18n-tasks", "~> 1.1"
+  gem "rspec-github", "~> 3.0"
+  gem "rspec-rails", "~> 8.0"
+  gem "ruby-lsp-rspec", "~> 0.1.28", require: false
+  gem "simplecov-cobertura", "~> 3.1"
 end
-gem 'prometheus_exporter'

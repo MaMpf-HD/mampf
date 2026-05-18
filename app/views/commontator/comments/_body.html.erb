@@ -1,6 +1,11 @@
-<%#
-  Views that use this partial must provide the following variable:
-  comment
-%>
-
 <%= commontator_simple_format comment.body %>
+
+<!--- Show timestamps in comments that have a linked annotation --->
+<% annotation = comment.annotation %>
+<% unless annotation.nil? %>
+  <% medium = annotation.medium %>
+  <% timestamp = annotation.timestamp %>
+  <br>
+  Timestamp:
+  <%= link_to timestamp.hms_colon_string, video_link_timed(medium, timestamp) %>
+<% end %>

@@ -1,3 +1,6 @@
+# https://stackoverflow.com/a/36227664/
+oldScrollPos = Math.max(document.body.scrollTop, document.documentElement.scrollTop)
+
 $('#mediumPreview').empty()
   .append '<%= j render partial: "quizzes/edit/vertex_status",
                         locals: { quizzable: @quizzable } %>'
@@ -28,3 +31,5 @@ renderMathInElement mediumPreview,
     }
   ]
   throwOnError: false
+
+window.scrollTo(0, oldScrollPos)

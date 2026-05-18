@@ -6,7 +6,7 @@
           <%= t('admin.quiz.graph') %>
         </h5>
       </div>
-      <div class="col-10 text-left">
+      <div class="col-10 text-start">
         <div id="quiz_buttons">
           <%= link_to t('buttons.create_vertex'),
                       new_quiz_vertex_path(quiz_id: quiz.id),
@@ -37,44 +37,44 @@
           </button>
         </div>
         <span id="quizLevelForm">
-          <span class="mr-4">
+          <span class="me-4">
             <%= t('basics.level') %>
           </span>
-          <div class="custom-control custom-radio custom-control-inline">
+          <div class="form-check form-check-inline">
             <input type="radio"
                    id="quiz_easy"
                    name="quizLevel"
                    <%= quiz.level == 0 ? 'checked ' : '' %>
-                   class="custom-control-input quiz-level"
+                   class="form-check-input quiz-level"
                    data-quiz="<%= quiz.id %>"
                    data-level="0">
-            <label class="custom-control-label"
+            <label class="form-check-label"
                    for="quiz_easy">
               <%= t('basics.level_easy') %>
             </label>
           </div>
-          <div class="custom-control custom-radio custom-control-inline">
+          <div class="form-check form-check-inline">
             <input type="radio"
                    id="quiz_medium"
                    name="quizLevel"
                    <%= quiz.level == 1 ? 'checked ' : '' %>
-                   class="custom-control-input quiz-level"
+                   class="form-check-input quiz-level"
                    data-quiz="<%= quiz.id %>"
                    data-level="1">
-            <label class="custom-control-label"
+            <label class="form-check-label"
                    for="quiz_medium">
               <%= t('basics.level_medium') %>
             </label>
           </div>
-          <div class="custom-control custom-radio custom-control-inline">
+          <div class="form-check form-check-inline">
             <input type="radio"
                    id="quiz_hard"
                    name="quizLevel"
                    <%= quiz.level == 2 ? 'checked ' : '' %>
-                   class="custom-control-input quiz-level"
+                   class="form-check-input quiz-level"
                    data-quiz="<%= quiz.id %>"
                    data-level="2">
-            <label class="custom-control-label"
+            <label class="form-check-label"
                    for="quiz_hard">
               <%= t('basics.level_hard') %>
             </label>

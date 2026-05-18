@@ -1,0 +1,256 @@
+<%= helpers.vite_stylesheet_tag "roster/roster.scss" %>
+
+<aside
+  id="tutorial-roster-side-panel"
+  class="card tutorial-roster-side-panel"
+  data-tutorial-roster-panel-target="panelCard"
+  <% if drag_controller? %>
+    data-controller="roster-drag"
+    data-roster-drag-source-type-value="<%= drag_source_type %>"
+    data-roster-drag-source-id-value="<%= drag_source_id %>"
+    data-roster-drag-move-path-value="<%= move_member_path_template unless unassigned? %>"
+    data-roster-drag-overbooking-warning-value="<%= overbooking_warning %>"
+  <% end %>
+>
+  <div class="p-3 border-bottom d-flex justify-content-between align-items-start gap-2">
+    <div>
+      <h5 class="mb-1"><%= panel_title %></h5>
+
+      <% if unassigned? && campaign %>
+        <div class="text-muted small">
+          <span>
+            <%= campaign.description.presence || "Campaign ##{campaign.id}" %>
+          </span>
+
+          <span class="mx-1">·</span>
+
+          <span>
+            <%= "#{students.size} " +
+                t("registration.item.columns.registrations",
+                  default: "Registrations") %>
+          </span>
+        </div>
+      <% elsif registerable %>
+        <div class="text-muted small">
+          <span><%= registerable.title %></span>
+
+          <% unless registerable.is_a?(Talk) %>
+            <span class="mx-1">·</span>
+            <span><%= tutors_text %></span>
+          <% end %>
+
+          <span class="badge text-bg-secondary ms-2">
+            <% if allocated? %>
+              <%= "#{students.size} " +
+                  t("registration.user_registration.index.allocated_count",
+                    default: "allocated") %>
+            <% elsif preference_based_campaign? %>
+              <%= "#{students.size} " +
+                  t("registration.item.badge.first_choice",
+                    default: "First Choice") %>
+            <% elsif campaign %>
+              <%= "#{students.size} " +
+                  t("registration.item.columns.registrations",
+                    default: "Registrations") %>
+            <% else %>
+              <%= "#{students.size} " +
+                  t("basics.participants") %>
+            <% end %>
+          </span>
+        </div>
+        <% if allocated? && allocated_choice_pills.any? %>
+          <div class="d-flex flex-wrap gap-1 mt-1">
+            <% allocated_choice_pills.each do |pill| %>
+              <span class="badge <%= pill[:color] %> roster-badge-sm">
+                <%= pill[:count] %>× <%= pill[:label] %>
+              </span>
+            <% end %>
+          </div>
+        <% elsif preference_based_campaign? && !allocated? %>
+          <div class="text-muted small mt-1">
+            <%= further_choice_summary %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-secondary tutorial-roster-close-btn"
+      data-action="click->tutorial-roster-panel#close"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="card-body border-0">
+    <% if registerable || unassigned? %>
+      <% if show_add_form? %>
+        <div class="mb-3">
+          <%= form_with url: add_member_path,
+                        method: :post,
+                        data: {
+                          turbo: true,
+                          turbo_confirm: (overbooking_warning if registerable.full?)
+                        },
+                        class: "d-flex flex-column flex-sm-row gap-2" do |f| %>
+            <%= f.label :email,
+                        t("roster.actions.add_student_label"),
+                        class: "visually-hidden" %>
+
+            <%= f.email_field :email,
+                              class: "form-control form-control-sm",
+                              placeholder: t("roster.actions.add_student_placeholder"),
+                              required: true,
+                              autocomplete: "on" %>
+
+            <%= f.button type: "submit",
+                         class: "btn btn-sm btn-primary text-nowrap" do %>
+              <i class="bi bi-plus-lg me-1"></i>
+              <%= t("roster.actions.add") %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <div class="mb-3">
+        <label class="visually-hidden" for="tutorial-roster-filter">
+          <%= t("roster.actions.search", default: "Filter students") %>
+        </label>
+
+        <input
+          id="tutorial-roster-filter"
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="<%= t('roster.actions.filter_placeholder') %>"
+          data-action="input->tutorial-roster-panel#filter"
+          data-tutorial-roster-panel-target="filterInput"
+          autocomplete="off"
+        >
+      </div>
+      <div
+        class="d-grid gap-2"
+        data-tutorial-roster-panel-target="list"
+        data-roster-drag-target="studentList"
+      >
+        <% students.each do |student| %>
+          <div
+            class="tutorial-roster-student card rounded-3"
+            data-student-search="<%= "#{student_display_name(student)} #{student.email}".downcase %>"
+            data-user-id="<%= student.id %>"
+          >
+            <div
+              class="
+                card-body border-0 py-2 px-3 d-flex gap-2 pe-5
+                position-relative
+              "
+            >
+              <div>
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="fw-semibold">
+                    <%= student_display_name(student) %>
+                  </div>
+
+                  <% if allocated? %>
+                    <% rank = preference_rank_for(student) %>
+                    <span class="badge <%= rank_badge_color(rank) %> ms-2 flex-shrink-0 roster-badge-sm">
+                      <%= rank_badge_label(rank) %>
+                    </span>
+                  <% end %>
+                </div>
+
+                <div class="text-muted small">
+                  <i class="bi bi-envelope me-1"></i>
+                  <%= student.email %>
+                </div>
+
+                <% if show_campaign_wishes?(student) %>
+                  <div
+                    class="
+                      small text-truncate mt-1 text-secondary
+                      tutorial-roster-wishes
+                    "
+                  >
+                    <%= t("roster.columns.preferences") %>:
+                    <%= campaign_wishes(student) %>
+                  </div>
+                <% end %>
+              </div>
+
+              <% if show_remove_button? %>
+                <% path = remove_member_path(student) %>
+                <% if path %>
+                  <%= button_to path,
+                                method: :delete,
+                                class: "btn btn-sm btn-outline-danger " \
+                                       "tutorial-roster-student-remove",
+                                form: {
+                                  class: "mb-0 d-flex h-100
+                                          position-absolute top-50 end-0
+                                          translate-middle-y",
+                                  data: {
+                                    turbo_confirm:
+                                      t("roster.warnings.confirm_kick_from_group")
+                                  }
+                                } do %>
+                    <i class="bi bi-trash"></i>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div
+        class="small text-muted d-none"
+        data-tutorial-roster-panel-target="noResults"
+      >
+        <%= t("roster.details.empty_filtered") %>
+      </div>
+    <% else %>
+      <div class="tutorial-roster-empty">
+        <i class="bi bi-info-circle me-1"></i>
+        <%= empty_state_text %>
+      </div>
+    <% end %>
+  </div>
+
+  <% unless read_only? || registerable.nil? %>
+    <dialog
+      class="roster-drag-choice-dialog"
+      data-roster-drag-target="choiceDialog"
+    >
+      <p class="fw-semibold mb-3">
+        <%= t("roster.drag.choice_title") %>
+        <span data-role="target-name" class="text-primary"></span>
+      </p>
+
+      <div class="d-flex gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          data-action="click->roster-drag#cancelChoice"
+        >
+          <%= t("buttons.cancel") %>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          data-action="click->roster-drag#chooseAdd"
+        >
+          <i class="bi bi-plus-lg me-1"></i>
+          <%= t("roster.drag.add_only") %>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-primary"
+          data-action="click->roster-drag#chooseMove"
+        >
+          <i class="bi bi-arrow-right me-1"></i>
+          <%= t("roster.drag.move") %>
+        </button>
+      </div>
+    </dialog>
+  <% end %>
+</aside>

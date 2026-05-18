@@ -1,14 +1,13 @@
 <div id="<%= @quiz_round.round_id %>"
-     class="quiz_round <%= hide_as_class(hidden) %>">
+     class="quiz_round <%= hide_as_class(hidden) %>
+     row d-flex justify-content-center">
 <% if @quiz_round.vertex.present? %>
-<div class="row justify-content-center px-2">
-  <div class="col-sm-12 col-md-12 col-lg-10">
-    <% if @quiz_round.vertex[:type] == 'Remark' %>
-      <%= render partial: 'quizzes/remark' %>
-    <% else %>
-      <%= render partial: 'quizzes/question' %>
-    <% end %>
-  </div>
+<div class="col-sm-12 col-md-12 col-lg-10">
+  <% if @quiz_round.vertex[:type] == 'Remark' %>
+    <%= render partial: 'quizzes/remark' %>
+  <% else %>
+    <%= render partial: 'quizzes/question' %>
+  <% end %>
 </div>
 <% else %>
   <%= render partial: 'quizzes/error' %>

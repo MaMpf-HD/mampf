@@ -1,0 +1,46 @@
+<li class="nav-item dropdown">
+  <button
+    class="nav-link bi bi-people btn btn-link p-0"
+    type="button"
+    data-bs-toggle="dropdown"
+    data-bs-auto-close="outside"
+    aria-label="Switch user (dev only)"
+    title="Switch user (dev only)"
+    onclick="setTimeout(() => { this.parentElement.querySelector('.dropdown-menu input[type=text]').focus(); }, 0);"
+  ></button>
+
+  <div class="dropdown-menu dropdown-menu-end p-0">
+    <div
+      class="p-2 border-bottom bg-white"
+      style="position: sticky; top: 0; z-index: 1; border-radius: 1px;"
+    >
+      <input
+        type="text"
+        class="form-control form-control-sm"
+        placeholder="Search..."
+        autocomplete="off"
+        oninput="
+          const q = this.value.toLowerCase();
+          this.closest('.dropdown-menu')
+              .querySelectorAll('li[data-username]')
+              .forEach(li => {
+                li.style.display =
+                  li.dataset.username.includes(q) ? '' : 'none';
+              });
+        "
+      >
+    </div>
+
+    <ul class="list-unstyled mb-0" style="max-height: 400px; overflow-y: auto;">
+      <% all_users_for_impersonation.each do |id, name| %>
+        <li data-username="<%= name.downcase %>">
+          <%= link_to name,
+                      dev_impersonate_path(id),
+                      class: "dropdown-item",
+                      method: :post,
+                      data: { turbo: false } %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</li>

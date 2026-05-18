@@ -1,20 +1,30 @@
 # Talk class
 class Talk < ApplicationRecord
+  include Registration::Registerable
+  include Rosters::Rosterable
+
   belongs_to :lecture, touch: true
 
   has_many :speaker_talk_joins, dependent: :destroy
   has_many :speakers, through: :speaker_talk_joins
+  # Alias for Rosterable compatibility (enables efficient SQL joins in Campaign#unassigned_users)
+  has_many :members, through: :speaker_talk_joins, source: :speaker
+
+  has_many :claims, as: :claimable, dependent: :destroy
+
   validates :title, presence: true
+  validate :lecture_must_be_seminar
 
   # being a teachable (course/lecture/lesson), a talk has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable,
-           dependent: :destroy
+                                                 dependent: :destroy,
+                                                 inverse_of: :teachable
 
   # a talk has many tags
   has_many :talk_tag_joins, dependent: :destroy
   has_many :tags, through: :talk_tag_joins
 
-  after_save :remove_duplicate_dates
+  before_save :remove_duplicate_dates
   after_save :touch_lecture
 
   # the talks of a lecture form an ordered list
@@ -31,7 +41,17 @@ class Talk < ApplicationRecord
   end
 
   def to_label
-    I18n.t('talk', number: position, title: title)
+    I18n.t("talk", number: position, title: title)
+  end
+
+  def to_label_with_speakers
+    return to_label unless speakers.any?
+
+    "#{to_label} (#{speakers.map(&:tutorial_name).join(", ")})"
+  end
+
+  def registration_title
+    to_label_with_speakers
   end
 
   def long_title
@@ -52,7 +72,7 @@ class Talk < ApplicationRecord
 
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
-      lecture.title_for_viewers + ', ' + to_label
+      "#{lecture.title_for_viewers}, #{to_label}"
     end
   end
 
@@ -76,7 +96,7 @@ class Talk < ApplicationRecord
   end
 
   def compact_title
-    lecture.compact_title + '.V' + position.to_s
+    "#{lecture.compact_title}.V#{position}"
   end
 
   def number
@@ -92,11 +112,27 @@ class Talk < ApplicationRecord
   end
 
   def proper_media
-    media.where.not(sort: ['Question', 'Remark'])
+    media.where.not(sort: ["Question", "Remark"])
   end
 
   def editors_with_inheritance
     (speakers + lecture.editors_with_inheritance).uniq
+  end
+
+  def add_speaker(speaker)
+    speakers << speaker unless speaker.in?(speakers)
+  end
+
+  def roster_entries
+    speaker_talk_joins
+  end
+
+  def roster_user_id_column
+    :speaker_id
+  end
+
+  def roster_association_name
+    :speaker_talk_joins
   end
 
   private
@@ -111,6 +147,13 @@ class Talk < ApplicationRecord
     end
 
     def remove_duplicate_dates
-      update_columns(dates: dates.uniq)
+      dates.uniq! # TODO: replace dates array by a set to avoid this
+    end
+
+    def lecture_must_be_seminar
+      return unless lecture
+      return if lecture.seminar?
+
+      errors.add(:lecture, :must_be_seminar)
     end
 end

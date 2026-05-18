@@ -1,0 +1,65 @@
+module Registration
+  class Policy
+    class PrerequisiteCampaignHandler < Handler
+      def evaluate(user)
+        if campaign_id.blank?
+          return fail_result(:configuration_error,
+                             I18n.t("registration.policy.errors.prerequisite_not_configured"))
+        end
+        unless campaign
+          return fail_result(:prerequisite_campaign_not_found,
+                             I18n.t("registration.policy.errors.prerequisite_missing"))
+        end
+
+        confirmed = if @confirmed_user_ids
+          @confirmed_user_ids.include?(user.id)
+        else
+          campaign.user_registration_confirmed?(user)
+        end
+
+        if confirmed
+          pass_result(:prerequisite_met)
+        else
+          fail_result(:prerequisite_not_met,
+                      I18n.t("registration.policy.errors.prerequisite_not_met"))
+        end
+      end
+
+      def batch_prepare(user_ids)
+        return if campaign_id.blank? || campaign.nil?
+
+        @confirmed_user_ids = campaign
+                              .user_registrations
+                              .where(status: :confirmed, user_id: user_ids)
+                              .pluck(:user_id)
+                              .to_set
+      end
+
+      def validate
+        if campaign_id.blank?
+          policy.errors.add(:prerequisite_campaign_id,
+                            I18n.t("registration.policy.errors.missing_prerequisite_campaign"))
+        elsif !Registration::Campaign.exists?(campaign_id)
+          policy.errors.add(:prerequisite_campaign_id,
+                            I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
+        end
+      end
+
+      def summary
+        campaign&.description
+      end
+
+      private
+
+        def campaign_id
+          config["prerequisite_campaign_id"]
+        end
+
+        def campaign
+          return @campaign if defined?(@campaign)
+
+          @campaign = Registration::Campaign.find_by(id: campaign_id)
+        end
+    end
+  end
+end

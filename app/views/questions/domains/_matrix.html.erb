@@ -1,43 +1,44 @@
-<div class="form-group"
+<div class="mb-3"
      id="matrixRowCount"
      data-count="<%= content.row_count %>">
-  <span class="mr-2">
+  <span class="me-2">
     <%= "#{t('math.number_of_rows')}:" %>
   </span>
   <% (1..4).each do |i| %>
-    <div class="custom-control custom-control-inline custom-radio">
-      <%= f.radio_button 'solution_content[row_count]',
+    <div class="form-check form-check-inline">
+      <%= solution_content_fields.radio_button :row_count,
                          i,
-                         class: 'custom-control-input rowCount',
+                         class: 'form-check-input rowCount',
                          checked: content.row_count == i,
                          data: { count: i } %>
-      <%= f.label 'solution_content[row_count]',
+      <%= solution_content_fields.label :row_count,
                   "#{i}",
                   value: i,
-                  class: 'custom-control-label' %>
+                  class: 'form-check-label' %>
     </div>
   <% end %>
 </div>
-<div class="form-group"
+<div class="mb-3"
      id="matrixColumnCount"
      data-count="<%= content.column_count %>">
-  <span class="mr-2">
+  <span class="me-2">
     <%= "#{t('math.number_of_columns')}:" %>
   </span>
   <% (1..4).each do |i| %>
-    <div class="custom-control custom-control-inline custom-radio">
-      <%= f.radio_button 'solution_content[column_count]',
+    <div class="form-check form-check-inline">
+      <%= solution_content_fields.radio_button :column_count,
                          i,
-                         class: 'custom-control-input columnCount',
+                         class: 'form-check-input columnCount',
                          checked: content.column_count == i,
                          data: { count: i } %>
-      <%= f.label 'solution_content[column_count]',
+      <%= solution_content_fields.label :column_count,
                   "#{i}",
                   value: i,
-                  class: 'custom-control-label' %>
+                  class: 'form-check-label' %>
     </div>
   <% end %>
 </div>
+
 <% (1..4).each do |i| %>
   <div class="row mb-2">
     <% (1..4).each do |j| %>
@@ -46,9 +47,9 @@
            data-row="<%= i %>"
            data-column="<%= j %>">
         <%= render partial: 'questions/domains/expression',
-                   locals: { f: f,
+                   locals: { solution_content_fields: solution_content_fields,
                              value: content.entry(i,j),
-                             counter: "[#{i},#{j}]",
+                             counter: "#{i},#{j}",
                              type: 'MampfExpression' } %>
       </div>
     <% end %>

@@ -4,8 +4,8 @@
               html: { id: 'talk-form' } do |f|%>
   <div class="row py-2 mt-2">
     <div class="col-12 col-lg-4">
-      <h4 class="pl-2">
-        <span class="badge badge-secondary">
+      <h4 class="ps-2">
+        <span class="badge bg-secondary">
           <%= t('basics.talk') %>
         </span>
         <%= @talk.to_label %>
@@ -24,13 +24,13 @@
         <%= f.submit t('buttons.save'),
                      class: 'btn btn-sm btn-primary' %>
         <button type="button"
-                class="btn btn-sm btn-secondary ml-2"
+                class="btn btn-sm btn-secondary ms-2"
                 id="cancel-talk-assemble">
           <%= t('buttons.discard') %>
         </button>
       </div>
     </div>
-    <div class="col-12 col-lg-4 text-right">
+    <div class="col-12 col-lg-4 text-end">
       <%= link_to t('buttons.parent_lecture'),
                   lecture_path(@talk.lecture),
                   class: 'btn btn-sm btn-outline-primary mb-2' %>

@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Roster Maintenance — Seminar Overview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="#">Administration</a></li>
+          <li class="breadcrumb-item"><a href="#">Seminar: Advanced Topics</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Roster overview</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h1 class="mb-0">Seminar — Talks (WS 2025/26)</h1>
+      </div>
+      <div class="small text-muted mb-3" id="context"></div>
+
+      <div class="row g-3">
+        <div class="col-12 col-lg-8">
+          <div class="card">
+            <div class="card-body">
+              <div class="row g-2 align-items-center mb-2">
+                <div class="col-12 col-md-6">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">Search</span>
+                    <input type="search" class="form-control" id="q" placeholder="Title, tutor, time or place…" />
+                  </div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <select id="status" class="form-select form-select-sm">
+                    <option value="all" selected>All</option>
+                    <option value="full">Full</option>
+                    <option value="has_seats">Has seats</option>
+                  </select>
+                </div>
+                <div class="col-12 col-md-2 text-md-end">
+                  <span class="small text-muted" id="meta">—</span>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-sm align-middle" id="tbl">
+                  <thead>
+                    <tr>
+                      <th scope="col">Title</th>
+                      <th scope="col">Tutor</th>
+                      <th scope="col">Time</th>
+                      <th scope="col">Place</th>
+                      <th scope="col" class="text-end">Filled</th>
+                      <th scope="col" style="width:200px">Utilization</th>
+                      <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="card" id="candidates">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h6 mb-0">Unassigned candidates from campaign</h2>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge text-bg-secondary" id="candBadge">0</span>
+                  <button class="btn btn-sm btn-outline-primary" id="addManualBtn">Add student (manual)</button>
+                </div>
+              </div>
+              <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text">Search</span>
+                <input type="search" class="form-control" id="candSearch" placeholder="Name or matric…" />
+              </div>
+              <div id="candAlert" class="alert alert-danger py-1 px-2 d-none" role="alert"></div>
+              <div id="candList" class="list-group list-group-flush small"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer">
+      <div id="appToast" class="toast align-items-center text-bg-dark border-0" role="status" aria-live="polite" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body" id="toastBody">Done</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function makeTalks(n) {
+        const arr = []
+        const SUPERVISORS = [
+          'Prof. Adler', 'Dr. Bauer', 'Dr. Chen', 'Prof. Dorn', 'Dr. Engel',
+          'Prof. Fischer', 'Dr. Gu', 'Prof. Hansen'
+        ]
+        const TIMES = [
+          'Mon 10:00–11:00', 'Mon 11:00–12:00', 'Tue 10:00–11:00',
+          'Tue 11:00–12:00', 'Wed 10:00–11:00', 'Wed 11:00–12:00',
+          'Thu 10:00–11:00', 'Thu 11:00–12:00'
+        ]
+        const ROOMS = ['SR1','SR2','SR3','SR4','SR5','SR6','SR7','SR8']
+        const EMPTY_TALKS = new Set(['3','6','9'])
+        for (let i = 0; i < n; i++) {
+          const idx = i + 1
+          const cap = 1
+          const id = String(idx)
+          let filled = EMPTY_TALKS.has(id) ? 0 : 1
+          arr.push({
+            id,
+            title: `Talk ${idx}`,
+            tutor: SUPERVISORS[i % SUPERVISORS.length],
+            time: TIMES[i % TIMES.length],
+            place: ROOMS[i % ROOMS.length],
+            capacity: cap,
+            filled
+          })
+        }
+        return arr
+      }
+
+      const GROUPS = makeTalks(12)
+      const CANDIDATES = [
+        { id: 201, name: 'Alice Bauer', matric: 'S12345', prefs: ['Talk 1','Talk 3','Talk 5'] },
+        { id: 202, name: 'Ben Conrad', matric: 'S23456', prefs: ['Talk 2','Talk 4','Talk 6'] },
+        { id: 203, name: 'Chen Dong', matric: 'S34567', prefs: ['Talk 3','Talk 1','Talk 9'] },
+        { id: 204, name: 'Dana Engel', matric: 'S45678', prefs: ['Talk 4','Talk 2','Talk 8'] },
+        { id: 205, name: 'Efe Gül', matric: 'S56789', prefs: ['Talk 7','Talk 8','Talk 9'] },
+      ]
+
+      function pct(filled, capacity) {
+        return Math.min(100, Math.round((filled / capacity) * 100))
+      }
+
+      function capClass(filled, capacity) {
+        const p = filled / capacity
+        if (p >= 1) return 'bg-danger'
+        if (p >= 0.85) return 'bg-warning'
+        return 'bg-success'
+      }
+
+      function render() {
+        const q = document.getElementById('q').value.trim().toLowerCase()
+        const status = document.getElementById('status').value
+        const tb = document.getElementById('tbody')
+        const meta = document.getElementById('meta')
+        tb.innerHTML = ''
+        let shown = 0
+        GROUPS.forEach(g => {
+          const statusFlag = g.filled >= g.capacity ? 'full' : 'has_seats'
+          if (status !== 'all' && status !== statusFlag) return
+          if (q) {
+            const hay = `${g.title} ${g.tutor} ${g.time} ${g.place}`.toLowerCase()
+            if (!hay.includes(q)) return
+          }
+          const tr = document.createElement('tr')
+          tr.innerHTML = `
+            <td>${g.title}</td>
+            <td>${g.tutor}</td>
+            <td>${g.time}</td>
+            <td>${g.place}</td>
+            <td class="text-end">${g.filled}/${g.capacity}</td>
+            <td>
+              <div class="progress" role="progressbar" aria-label="Capacity" aria-valuenow="${g.filled}" aria-valuemin="0" aria-valuemax="${g.capacity}">
+                <div class="progress-bar ${capClass(g.filled, g.capacity)}" style="width: ${pct(g.filled, g.capacity)}%"></div>
+              </div>
+            </td>
+            <td class="text-end">
+              <div class="d-inline-flex gap-2">
+                <a class="btn btn-link btn-sm p-0 text-secondary" href="./roster_detail_seminar.html?g=${encodeURIComponent(g.id)}" title="Manage roster" aria-label="Manage roster">
+                  <i class="bi bi-tools"></i>
+                  <span class="visually-hidden">Manage</span>
+                </a>
+                ${g.filled === 0 ? `<button class="btn btn-link btn-sm p-0 text-danger" data-action="delete" data-id="${g.id}" title="Delete empty talk" aria-label="Delete empty talk"><i class="bi bi-trash"></i><span class="visually-hidden">Delete</span></button>` : ``}
+              </div>
+            </td>
+          `
+          tb.appendChild(tr)
+          shown++
+        })
+        meta.textContent = `${shown} talks`
+
+        tb.querySelectorAll('[data-action="delete"]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault()
+            const id = btn.getAttribute('data-id')
+            if (!id) return
+            if (!confirm(`Delete talk ${id}? This cannot be undone in the mockup.`)) return
+            const idx = GROUPS.findIndex(g => g.id === id)
+            if (idx >= 0) {
+              GROUPS.splice(idx, 1)
+              showToast(`Talk ${id} deleted`)
+              render()
+            }
+          })
+        })
+
+        renderCandidates()
+      }
+
+      function renderCandidates() {
+        const q = document.getElementById('candSearch')?.value.trim().toLowerCase() || ''
+        const list = document.getElementById('candList')
+        if (!list) return
+        const pool = CANDIDATES.filter(c => {
+          const hay = `${c.name} ${c.matric}`.toLowerCase()
+          return !q || hay.includes(q)
+        })
+        document.getElementById('candBadge').textContent = String(pool.length)
+        list.innerHTML = pool.map(c => {
+          const top3 = c.prefs.slice(0,3).join(', ')
+          return `
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="fw-semibold">${c.name} <span class="text-muted">(${c.matric})</span></div>
+                  <div class="text-muted">Top preferences: ${top3} <a href="#" data-action="prefs" data-id="${c.id}">View all</a></div>
+                </div>
+                <div class="text-end" style="min-width:170px">
+                  <button class="btn btn-sm btn-outline-primary mb-2" data-action="assign" data-id="${c.id}">Assign to…</button>
+                  <select class="form-select form-select-sm" data-action="select" data-id="${c.id}">
+                    ${GROUPS.map(g => `<option value="${g.id}">${g.title}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+            </div>`
+        }).join('')
+
+        list.querySelectorAll('[data-action="assign"]').forEach(btn => btn.addEventListener('click', () => assignSelected(btn.getAttribute('data-id'))))
+        list.querySelectorAll('[data-action="prefs"]').forEach(a => a.addEventListener('click', (e) => { e.preventDefault(); viewPrefs(a.getAttribute('data-id')) }))
+      }
+
+      function setCandAlert(msg) {
+        const el = document.getElementById('candAlert')
+        if (!el) return
+        if (!msg) { el.classList.add('d-none'); el.textContent = ''; return }
+        el.classList.remove('d-none')
+        el.textContent = msg
+      }
+
+      function showToast(msg) {
+        const body = document.getElementById('toastBody')
+        if (!body) return
+        body.textContent = msg
+        if (window.bootstrap && bootstrap.Toast) {
+          const t = new bootstrap.Toast(document.getElementById('appToast'))
+          t.show()
+        }
+      }
+
+      function assignCore(candId, targetId) {
+        const idNum = Number(candId)
+        const g = GROUPS.find(x => x.id === targetId)
+        if (!g) return
+        if (g.filled >= g.capacity) {
+          setCandAlert('Target is full')
+          return
+        }
+        const idx = CANDIDATES.findIndex(c => c.id === idNum)
+        const c = idx >= 0 ? CANDIDATES[idx] : null
+        if (idx >= 0) CANDIDATES.splice(idx, 1)
+        g.filled += 1
+        setCandAlert('')
+        if (c) showToast(`${c.name} assigned to ${g.title}`)
+        render()
+      }
+
+      function assignSelected(candId) {
+        const list = document.getElementById('candList')
+        const sel = list.querySelector(`select[data-action="select"][data-id="${candId}"]`)
+        if (!sel) return
+        assignCore(candId, sel.value)
+      }
+
+      function viewPrefs(candId) {
+        const idNum = Number(candId)
+        const c = CANDIDATES.find(x => x.id === idNum)
+        if (!c) return
+        alert(`Preferences:\n${c.prefs.join(', ')}`)
+      }
+
+      function openManual() {
+        const sel = document.getElementById('manualGroup')
+        if (sel) {
+          sel.innerHTML = GROUPS.map(g => `<option value="${g.id}">${g.title}</option>`).join('')
+        }
+        const form = document.getElementById('manualForm')
+        if (form) form.reset()
+        const alertEl = document.getElementById('manualAlert')
+        if (alertEl) { alertEl.classList.add('d-none'); alertEl.textContent = '' }
+        if (window.bootstrap && bootstrap.Modal) {
+          const m = new bootstrap.Modal(document.getElementById('manualModal'))
+          m.show()
+        }
+      }
+
+      function submitManual(ev) {
+        ev.preventDefault()
+        const name = document.getElementById('manualName').value.trim()
+        const matric = document.getElementById('manualMatric').value.trim()
+        const gid = document.getElementById('manualGroup').value
+        const alertEl = document.getElementById('manualAlert')
+        if (!name || !matric || !gid) {
+          alertEl.textContent = 'Please fill all fields'
+          alertEl.classList.remove('d-none')
+          return
+        }
+        const g = GROUPS.find(x => x.id === gid)
+        if (!g) return
+        if (g.filled >= g.capacity) {
+          alertEl.textContent = `${g.title} is full`
+          alertEl.classList.remove('d-none')
+          return
+        }
+        g.filled += 1
+        showToast(`${name} added to ${g.title}`)
+        const modalEl = document.getElementById('manualModal')
+        if (window.bootstrap && bootstrap.Modal) {
+          const m = bootstrap.Modal.getInstance(modalEl)
+          if (m) m.hide()
+        }
+        render()
+      }
+
+      document.getElementById('q').addEventListener('input', render)
+      document.getElementById('status').addEventListener('change', render)
+      document.getElementById('candSearch').addEventListener('input', renderCandidates)
+      const addBtn = document.getElementById('addManualBtn')
+      if (addBtn) addBtn.addEventListener('click', openManual)
+      const manualForm = document.getElementById('manualForm')
+      if (manualForm) manualForm.addEventListener('submit', submitManual)
+
+      render()
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <div class="modal fade" id="manualModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add student (manual)</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="manualForm">
+            <div class="modal-body">
+              <div id="manualAlert" class="alert alert-danger py-1 px-2 d-none" role="alert"></div>
+              <div class="mb-2">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-control" id="manualName" />
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Matric</label>
+                <input type="text" class="form-control" id="manualMatric" />
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Assign to talk</label>
+                <select class="form-select" id="manualGroup"></select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary btn-sm">Add student</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,23 +1,25 @@
-# frozen_string_literal: true
+require "rails_helper"
 
-require 'rails_helper'
+RSpec.describe(Lecture, type: :model) do
+  describe "Rosters::Rosterable" do
+    it_behaves_like "a rosterable model"
+  end
 
-RSpec.describe Lecture, type: :model do
-  it 'has a valid factory' do
+  it "has a valid factory" do
     expect(FactoryBot.build(:lecture)).to be_valid
   end
 
   # Test validations  -- SOME ARE MISSING
 
-  it 'is invalid without a course' do
+  it "is invalid without a course" do
     lecture = FactoryBot.build(:lecture, course: nil)
     expect(lecture).to be_invalid
   end
-  it 'is invalid without a teacher' do
+  it "is invalid without a teacher" do
     lecture = FactoryBot.build(:lecture, teacher: nil)
     expect(lecture).to be_invalid
   end
-  it 'is invalid if duplicate combination of course, teacher and term' do
+  it "is invalid if duplicate combination of course, teacher and term" do
     course = FactoryBot.create(:course)
     teacher = FactoryBot.create(:confirmed_user)
     term = FactoryBot.create(:term)
@@ -29,62 +31,131 @@ RSpec.describe Lecture, type: :model do
 
   # Test traits
 
-  describe 'lecture with organizational stuff' do
-    before :all do
+  describe "lecture with organizational stuff" do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :with_organizational_stuff)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@lecture).to be_valid
     end
-    it 'has organizational flag set to true' do
-      expect(@lecture.organizational).to be true
+    it "has organizational flag set to true" do
+      expect(@lecture.organizational).to be(true)
     end
-    it 'has an organizational concept' do
+    it "has an organizational concept" do
       expect(@lecture.organizational_concept).to be_truthy
     end
   end
-  describe 'lecture which is released for all' do
-    before :all do
+  describe "lecture which is released for all" do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :released_for_all)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@lecture).to be_valid
     end
-    it 'is released for all' do
-      expect(@lecture.released).to eq 'all'
+    it "is released for all" do
+      expect(@lecture.released).to eq("all")
     end
   end
-  describe 'term independent lecture' do
-    before :all do
+  describe "term independent lecture" do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :term_independent)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@lecture).to be_valid
     end
-    it 'has no associated term' do
+    it "has no associated term" do
       expect(@lecture.term).to be_nil
     end
   end
-  describe 'with table of contents' do
-    before :all do
+  describe "with table of contents" do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :with_toc)
     end
-    it 'has 3 chapters' do
-      expect(@lecture.chapters.size).to eq 3
+    it "has 3 chapters" do
+      expect(@lecture.chapters.size).to eq(3)
     end
-    it 'has 3 sections in each chapter' do
-      expect(@lecture.chapters.map { |c| c.sections.size }).to eq [3, 3, 3]
+    it "has 3 sections in each chapter" do
+      expect(@lecture.chapters.map { |c| c.sections.size }).to eq([3, 3, 3])
     end
   end
-  describe 'with sparse table of contents' do
-    before :all do
+  describe "with sparse table of contents" do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :with_sparse_toc)
     end
-    it 'has one chapter' do
-      expect(@lecture.chapters.size).to eq 1
+    it "has one chapter" do
+      expect(@lecture.chapters.size).to eq(1)
     end
-    it 'has one sections in each chapter' do
-      expect(@lecture.chapters.map { |c| c.sections.size }).to eq [1]
+    it "has one sections in each chapter" do
+      expect(@lecture.chapters.map { |c| c.sections.size }).to eq([1])
+    end
+  end
+
+  describe "#stale?" do
+    context "when there is no active term" do
+      it "returns false" do
+        lecture = FactoryBot.build(:lecture)
+        expect(lecture.stale?).to be(false)
+      end
+    end
+
+    context "when there is an active term" do
+      let(:year) { 2024 }
+
+      before(:each) do
+        FactoryBot.create(:term, :summer, :active, year: year)
+      end
+
+      context "and there is no term associated with the lecture" do
+        it "returns true" do
+          lecture = FactoryBot.build(:lecture, :term_independent)
+          expect(lecture.stale?).to be(true)
+        end
+      end
+
+      context "and the lecture term begin date is before the active term" \
+              "begin date minus 1 year" do
+        let(:lecture_term) { FactoryBot.build(:term, :summer, year: year - 1) }
+
+        it "returns true" do
+          lecture = FactoryBot.build(:lecture, term: lecture_term)
+          expect(lecture.stale?).to be(true)
+        end
+      end
+
+      context "when the lecture term begin date is not older than the" \
+              "active term begin date minus 1 year" do
+        let(:lecture_term) { FactoryBot.build(:term, :winter, year: year - 1) }
+
+        it "returns false" do
+          lecture = FactoryBot.build(:lecture, term: lecture_term)
+          expect(lecture.stale?).to be(false)
+        end
+      end
+    end
+  end
+
+  describe "#active_voucher_of_role" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:role) { :tutor }
+
+    context "when there is an active voucher of the specified role" do
+      let!(:active_voucher) do
+        FactoryBot.create(:voucher, role: role, lecture: lecture)
+      end
+
+      it "returns the voucher" do
+        expect(lecture.active_voucher_of_role(role)).to eq(active_voucher)
+      end
+    end
+
+    context "when there is no active voucher of the specified role" do
+      let!(:inactive_voucher) do
+        FactoryBot.create(:voucher, :expired, role: role, lecture: lecture)
+      end
+
+      it "returns nil" do
+        expect(lecture.active_voucher_of_role(role)).to be(nil)
+      end
     end
   end
 
@@ -156,4 +227,48 @@ RSpec.describe Lecture, type: :model do
   #                                                     term.to_label })
   #   end
   # end
+
+  describe "Registration::Campaignable" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    it "has many registration_campaigns" do
+      expect(lecture).to respond_to(:registration_campaigns)
+    end
+
+    it "can create a registration_campaign" do
+      campaign = lecture.registration_campaigns.create(
+        description: "Test Campaign",
+        allocation_mode: :first_come_first_served,
+        status: :draft,
+        registration_deadline: 1.week.from_now
+      )
+
+      expect(campaign).to be_persisted
+      expect(campaign.campaignable).to eq(lecture)
+    end
+  end
+
+  describe "#ensure_roster_membership!" do
+    let(:lecture) { create(:lecture) }
+    let(:users) { create_list(:confirmed_user, 3) }
+
+    it "adds users to the roster" do
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureMembership, :count).by(3)
+
+      expect(lecture.members).to include(*users)
+    end
+
+    it "respects idempotency (does not duplicate or screw up)" do
+      lecture.ensure_roster_membership!([users.first.id])
+
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureMembership, :count).by(2) # Only 2 new ones
+
+      expect(lecture.members).to include(*users)
+      expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
+    end
+  end
 end

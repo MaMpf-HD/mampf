@@ -1,0 +1,7 @@
+<!-- later with Stimulus: -->
+<!-- https://jonathanyeong.com/rails-stimulus-dynamic-nested-form/ -->
+<template id="talk-date-template">
+  <%= f.fields_for :dates, index: "NEW_RECORD" do |date_form| %>
+    <%= render partial: "date_field", locals: { date_form: date_form, date: nil } %>
+  <% end %>
+</template>

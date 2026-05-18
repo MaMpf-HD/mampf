@@ -14,7 +14,7 @@ class AnnouncementAbility
 
     can :create, Announcement do |announcement|
       user.admin? ||
-      (announcement.lecture.present? && user.can_edit?(announcement.lecture))
+        (announcement.lecture.present? && user.can_edit?(announcement.lecture))
     end
   end
 end

@@ -13,4 +13,3 @@ class TagAbility
     end
   end
 end
-

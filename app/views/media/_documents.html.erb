@@ -6,7 +6,7 @@
           <%= t('basics.documents') %>
         </h5>
       </div>
-      <div class="col-6 text-right">
+      <div class="col-6 text-end">
         <button type="button"
                 class="btn btn-sm btn-outline-secondary"
                 id="showMediaStatistics"
@@ -44,7 +44,7 @@
       <%= render partial: 'media/external_link',
                  locals: { f: f } %>
     <% end %>
-    <% if medium.sort.in?(['Sesam', 'Remark']) %>
+    <% if medium.sort.in?(['WorkedExample', 'Remark']) %>
       <%= render partial: 'media/geogebra',
                  locals: { medium: medium,
                            f: f } %>

@@ -1,0 +1,121 @@
+require "rails_helper"
+
+RSpec.describe(Search::Sorters::SearchSorter) do
+  let(:initial_scope) { instance_spy(ActiveRecord::Relation, "InitialScope") }
+  let(:model_class) { Course }
+  let(:search_params) { {} }
+
+  subject(:ordered_scope) do
+    described_class.sort(
+      scope: initial_scope,
+      model_class: model_class,
+      search_params: search_params
+    )
+  end
+
+  describe "#sort" do
+    context "when performing a full-text search" do
+      let(:search_params) { { fulltext: "search term" } }
+
+      it "returns the original scope without modification" do
+        expect(ordered_scope).to eq(initial_scope)
+        expect(initial_scope).not_to have_received(:order)
+      end
+    end
+
+    context "when the model is not orderable" do
+      context "because it does not respond to default_search_order" do
+        let(:unorderable_model) { Class.new }
+
+        it "returns the original scope" do
+          result = described_class.sort(scope: initial_scope, model_class: unorderable_model,
+                                        search_params: search_params)
+          expect(result).to eq(initial_scope)
+        end
+      end
+
+      context "because default_search_order is blank" do
+        before { allow(model_class).to receive(:default_search_order).and_return("") }
+
+        it "returns the original scope" do
+          expect(ordered_scope).to eq(initial_scope)
+        end
+      end
+    end
+
+    context "when applying the default order" do
+      let(:order_expression) { "title DESC, created_at ASC" }
+
+      before do
+        allow(model_class).to receive(:respond_to?) do |method_name, *args|
+          case method_name
+          when :default_search_order
+            true
+          when :default_search_order_joins
+            false
+          else
+            # Call the original respond_to? implementation, bypassing the stub
+            Course.method(:respond_to?).super_method.call(method_name, *args)
+          end
+        end
+        allow(model_class).to receive(:default_search_order).and_return(order_expression)
+        allow(model_class).to receive(:arel_table).and_return(Course.arel_table)
+      end
+
+      it "applies the select and order clauses to the original scope" do
+        selected_scope = instance_spy(ActiveRecord::Relation)
+        allow(initial_scope).to receive(:select).and_return(selected_scope)
+
+        ordered_scope
+
+        expect(initial_scope).to have_received(:select) do |arel_star, sql_literal|
+          expect(arel_star).to be_a(Arel::Attributes::Attribute)
+          expect(arel_star.relation.name).to eq("courses")
+          expect(arel_star.name).to eq("*")
+          expect(sql_literal).to be_a(Arel::Nodes::SqlLiteral)
+          expect(sql_literal.to_s).to eq("title, created_at")
+        end
+        expect(selected_scope).to have_received(:order).with(order_expression)
+      end
+
+      it "does not attempt to join" do
+        ordered_scope
+        expect(initial_scope).not_to have_received(:left_outer_joins)
+      end
+
+      context "and the model requires extra joins" do
+        let(:joins) { :editors }
+        let(:joined_scope) { instance_spy(ActiveRecord::Relation, "JoinedScope") }
+        let(:selected_scope) { instance_spy(ActiveRecord::Relation, "SelectedScope") }
+
+        before do
+          allow(model_class).to receive(:respond_to?).with(:default_search_order_joins,
+                                                           any_args).and_return(true)
+          allow(model_class).to receive(:default_search_order_joins).and_return(joins)
+          allow(initial_scope).to receive(:left_outer_joins).with(joins).and_return(joined_scope)
+          allow(joined_scope).to receive(:select).and_return(selected_scope)
+        end
+
+        it "applies joins first, then select, then order" do
+          ordered_scope
+
+          expect(initial_scope).to have_received(:left_outer_joins).with(joins)
+          expect(joined_scope).to have_received(:select) do |arel_star, sql_literal|
+            expect(arel_star).to be_a(Arel::Attributes::Attribute)
+            expect(arel_star.relation.name).to eq("courses")
+            expect(arel_star.name).to eq("*")
+            expect(sql_literal).to be_a(Arel::Nodes::SqlLiteral)
+            expect(sql_literal.to_s).to eq("title, created_at")
+          end
+          expect(selected_scope).to have_received(:order).with(order_expression)
+        end
+
+        it "returns the final ordered scope" do
+          final_scope = double("FinalScope")
+          allow(selected_scope).to receive(:order).and_return(final_scope)
+          expect(ordered_scope).to eq(final_scope)
+        end
+      end
+    end
+  end
+end

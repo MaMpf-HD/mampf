@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign – Show (Registration Interest, Draft)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+      .reg-table-container { max-height: 360px; overflow: auto; }
+      .table-sticky thead th { position: sticky; top: 0; background: #f8f9fa; z-index: 1; }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="./campaigns_index.html">Campaigns</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Registration Interest (Draft)</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-3">
+        <div>
+          <h1 class="h4 mb-1">Registration Interest (Draft)
+            <span class="badge bg-secondary-subtle text-secondary-emphasis">Draft</span>
+            <span class="badge bg-info-subtle text-info-emphasis">Planning-only</span>
+          </h1>
+          <div class="text-muted small">Linear Algebra I · WS 2025/26</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-primary">Open now</button>
+          <button class="btn btn-outline-danger">Delete</button>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Mode</div>
+                  <div class="fw-semibold">First-Come-First-Serve</div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Window</div>
+                  <div class="fw-semibold">Not opened</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Items</div>
+                  <div class="fw-semibold">1</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Policies</div>
+                  <div class="fw-semibold">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div class="fw-semibold">Registrations</div>
+                <span class="badge rounded-pill text-bg-secondary">0</span>
+              </div>
+              <div class="small text-muted mb-2">Pending 0 · Confirmed 0 · Rejected 0</div>
+              <div class="progress" style="height:6px;">
+                <div class="progress-bar bg-secondary" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs" id="campaignTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Overview</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button" role="tab" aria-controls="items" aria-selected="false">Items</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="false">Policies</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="registrations-tab" data-bs-toggle="tab" data-bs-target="#registrations" type="button" role="tab" aria-controls="registrations" aria-selected="false">Registrations</button>
+        </li>
+        
+      </ul>
+
+  <div class="tab-content bg-white border border-top-0 rounded-bottom p-3" id="campaignTabsContent">
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-lg-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Details</div>
+                  <dl class="row mb-0">
+                    <dt class="col-sm-4">Title</dt>
+                    <dd class="col-sm-8">Registration Interest (Draft)</dd>
+                    <dt class="col-sm-4">Lecture</dt>
+                    <dd class="col-sm-8">Linear Algebra I (WS 2025/26)</dd>
+                    <dt class="col-sm-4">Mode</dt>
+                    <dd class="col-sm-8">First-Come-First-Serve</dd>
+                    <dt class="col-sm-4">Window</dt>
+                    <dd class="col-sm-8">—</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Guidance</div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Use Settings to set title and window, then Open when ready.</li>
+                    <li class="list-group-item">Use a single, very-high-capacity item (the Lecture) to capture demand; no allocation is required.</li>
+                    <li class="list-group-item">Finalize is not applicable to planning-only campaigns.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-xl-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-3">Edit settings</div>
+                  <form>
+                    <div class="mb-3">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="planningOnly" checked />
+                        <label class="form-check-label" for="planningOnly">Planning-only (no finalization/materialization)</label>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Title</label>
+                      <input type="text" class="form-control" value="Registration Interest (Draft)" />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Lecture</label>
+                      <input type="text" class="form-control" value="Linear Algebra I (WS 2025/26)" disabled />
+                      <div class="form-text">Lecture is fixed for the campaign.</div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Mode</label>
+                      <select class="form-select" disabled>
+                        <option selected>First-Come-First-Serve</option>
+                        <option>Preference-Based</option>
+                      </select>
+                      <div class="form-text">Mode cannot be changed after creation. Planning-only means no finalization/materialization.</div>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <div class="fw-semibold">Registration window</div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Opens</label>
+                        <div class="input-group">
+                          <input type="date" class="form-control" />
+                          <input type="time" class="form-control" />
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Closes</label>
+                        <div class="input-group">
+                          <input type="date" class="form-control" />
+                          <input type="time" class="form-control" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-text">Times are in Europe/Berlin.</div>
+                      </div>
+                    </div>
+
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-primary">Open now</button>
+                        <button type="button" class="btn btn-outline-secondary" disabled>Reopen</button>
+                        <button type="button" class="btn btn-outline-secondary" disabled>Close now</button>
+                      </div>
+                      <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary">Cancel</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="items" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Items</div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="fw-semibold mb-2">Add item</div>
+              <form class="row g-2 align-items-end">
+                <div class="col-12 col-md-5">
+                  <label class="form-label">Item</label>
+                  <input type="text" class="form-control" placeholder="Lecture (demand signal)" />
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label">Capacity</label>
+                  <input type="text" class="form-control" placeholder="Very high" />
+                </div>
+                <div class="col-12 col-md-4 d-flex gap-2">
+                  <button type="button" class="btn btn-outline-secondary flex-fill">Cancel</button>
+                  <button type="button" class="btn btn-primary flex-fill">Add</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Item</th>
+                  <th>Capacity</th>
+                  <th>Confirmed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Lecture (demand signal)</td>
+                  <td>Very high</td>
+                  <td>0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="policies" role="tabpanel" aria-labelledby="policies-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Policies</div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="fw-semibold mb-2">Add policy</div>
+              <form class="row g-2 align-items-end">
+                <div class="col-12 col-md-4">
+                  <label class="form-label">Type</label>
+                  <select class="form-select">
+                    <option selected>institutional_email</option>
+                    <option>prerequisite_campaign</option>
+                    <option>custom_script</option>
+                  </select>
+                  <div class="form-text">Fields change by type; no JSON required.</div>
+                </div>
+                <div class="col-12 col-md-5">
+                  <label class="form-label">Allowed domains</label>
+                  <textarea class="form-control" rows="1" placeholder="uni.edu, math.uni.edu"></textarea>
+                  <div class="form-text">Comma or space separated; normalized to lowercase.</div>
+                </div>
+                <div class="col-6 col-md-1">
+                  <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="policyActiveInterest" checked />
+                    <label class="form-check-label" for="policyActiveInterest">Active</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-2 d-flex gap-2">
+                  <button type="button" class="btn btn-outline-secondary flex-fill">Cancel</button>
+                  <button type="button" class="btn btn-primary flex-fill">Add</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="alert alert-light border mb-0">No active policies.</div>
+        </div>
+
+        <div class="tab-pane fade" id="registrations" role="tabpanel" aria-labelledby="registrations-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Registrations</div>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label small mb-0">Rows per page</label>
+                <select class="form-select form-select-sm" style="width:auto">
+                  <option selected>20</option>
+                  <option>50</option>
+                  <option>100</option>
+                </select>
+              </div>
+              <div class="btn-group btn-group-sm" role="group" aria-label="Density">
+                <button type="button" class="btn btn-secondary">Default</button>
+                <button type="button" class="btn btn-outline-secondary" disabled>Compact</button>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary" disabled>Export</button>
+              <button class="btn btn-sm btn-outline-secondary" disabled>Refresh</button>
+            </div>
+          </div>
+          <div class="alert alert-light border mb-0">No registrations yet.</div>
+        </div>
+
+        
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>

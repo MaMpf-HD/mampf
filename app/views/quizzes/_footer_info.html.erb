@@ -15,8 +15,8 @@
     <% question = Question.find_by_id(question_id) %>
     <% if question&.video %>
         <a href="<%= play_medium_path(question) %>"
-           class="no-deco ml-3 fas fa-play fa-2x text-info"
-           data-toggle="tooltip"
+           class="no-deco ms-3 fas fa-play fa-2x text-info"
+           data-bs-toggle="tooltip"
            data-placement="bottom"
            title="<%= t('admin.quiz.video_info') %>"
            style="position: relative; top: 6px;"
@@ -25,8 +25,8 @@
     <% end %>
     <% if question.manuscript %>
       <a href="<%= display_medium_path(question) %>"
-         class="no-deco ml-3 far fa-file-pdf fa-2x text-info"
-         data-toggle="tooltip"
+         class="no-deco ms-3 far fa-file-pdf fa-2x text-info"
+         data-bs-toggle="tooltip"
          data-placement="bottom"
          title="<%= t('admin.quiz.manuscript_info') %>"
          style="position: relative; top: 6px;"

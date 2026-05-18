@@ -1,10 +1,8 @@
-# frozen_string_literal: true
-
 # Course class
 class Course < ApplicationRecord
-  include ApplicationHelper
-
   has_many :lectures, dependent: :destroy
+
+  has_many :notifications, as: :notifiable, dependent: :destroy
 
   # tags are notions that treated in the course
   # e.g.: vector space, linear map are tags for the course 'Linear Algebra 1'
@@ -14,7 +12,9 @@ class Course < ApplicationRecord
            after_remove: :touch_tag,
            after_add: :touch_tag
 
-  has_many :media, -> { order(position: :asc) }, as: :teachable
+  has_many :media, -> { order(position: :asc) },
+           as: :teachable,
+           inverse_of: :teachable
 
   # in a course, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
@@ -47,21 +47,28 @@ class Course < ApplicationRecord
   # this makes use of the shrine gem
   include ScreenshotUploader[:image]
 
-  searchable do
-    text :title
-    integer :program_ids, multiple: true do
-      divisions.pluck(:program_id).uniq
-    end
-    integer :editor_ids, multiple: true
-    boolean :term_independent
-    # this is for ordering
-    string :sort_title do
-      ActiveSupport::Inflector.transliterate(course.title).downcase
-    end
+  include ApplicationHelper
+
+  include PgSearch::Model
+
+  pg_search_scope :search_by_title,
+                  against: [:title, :short_title],
+                  using: {
+                    tsearch: { prefix: true, any_word: true },
+                    trigram: { word_similarity: true,
+                               threshold: 0.3 }
+                  }
+
+  def self.default_search_order
+    Arel.sql("LOWER(unaccent(courses.title))")
   end
 
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
+
+  def self.default_search_order_joins
+    []
+  end
 
   def course
     self
@@ -79,7 +86,7 @@ class Course < ApplicationRecord
   end
 
   def selector_value
-    'Course-' + id.to_s
+    "Course-#{id}"
   end
 
   def to_label
@@ -123,12 +130,8 @@ class Course < ApplicationRecord
     return lectures.published unless user.edited_lectures.any? || user.teacher?
 
     lectures.left_outer_joins(:editable_user_joins)
-            .where('released IS NOT NULL OR editable_user_joins.user_id = ?'\
-                   ' OR teacher_id = ?', user.id, user.id).distinct
-  end
-
-  def restricted?
-    false
+            .where("released IS NOT NULL OR editable_user_joins.user_id = ? " \
+                   "OR teacher_id = ?", user.id, user.id).distinct
   end
 
   def lectures_by_date
@@ -279,71 +282,43 @@ class Course < ApplicationRecord
   def image_filename
     return unless image
 
-    image.metadata['filename']
+    image.metadata["filename"]
   end
 
   def image_size
     return unless image
 
-    image.metadata['size']
+    image.metadata["size"]
   end
 
   def image_resolution
     return unless image
 
-    "#{image.metadata['width']}x#{image.metadata['height']}"
-  end
-
-  # returns all titles of courses whose title is close to the given search
-  # string wrt to the JaroWinkler metric
-  def self.similar_courses(search_string)
-    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
-    titles = Course.pluck(:title)
-    titles.select do |t|
-      jarowinkler.getDistance(t.downcase, search_string.downcase) > 0.8
-    end
-  end
-
-  def self.search_by(search_params, page)
-    editor_ids = search_params[:editor_ids]
-    editor_ids = [] if search_params[:all_editors] == '1'
-    program_ids = search_params[:program_ids] || []
-    program_ids = [] if search_params[:all_programs] == '1'
-    search = Sunspot.new_search(Course)
-    search.build do
-      with(:editor_ids, editor_ids)
-      with(:program_ids, program_ids) unless program_ids.empty?
-      with(:term_independent, true) if search_params[:term_independent] == '1'
-      fulltext search_params[:fulltext] if search_params[:fulltext].present?
-      order_by(:sort_title, :asc)
-      paginate page: page, per_page: search_params[:per]
-    end
-    search
+    "#{image.metadata["width"]}x#{image.metadata["height"]}"
   end
 
   private
 
     def touch_media
-      media_with_inheritance.update_all(updated_at: Time.now)
+      media_with_inheritance.touch_all
     end
 
     def touch_tag(tag)
       tag.touch
-      Sunspot.index! tag
     end
 
     def touch_lectures_and_lessons
-      lectures.update_all(updated_at: Time.now)
-      Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
+      lectures.touch_all
+      Lesson.where(lecture: lectures).touch_all
     end
 
     def create_quiz_by_questions!(question_ids)
       quiz_graph = QuizGraph.build_from_questions(question_ids)
-      Quiz.create(description: "#{I18n.t('categories.randomquiz.singular')} "\
-                               "#{course.title} #{Time.now}",
+      Quiz.create(description: "#{I18n.t("categories.random_quiz.singular")} " \
+                               "#{course.title} #{Time.current}",
                   level: 1,
                   quiz_graph: quiz_graph,
-                  sort: 'RandomQuiz',
+                  sort: "RandomQuiz",
                   locale: locale)
     end
 
@@ -351,7 +326,7 @@ class Course < ApplicationRecord
       return questions_w_inheritance.pluck(:id).sample(count) unless tags.any?
 
       tagged_questions = questions(tags)
-      question_ids = if tagged_questions.count > count
+      if tagged_questions.count > count
         QuestionSampler.new(tagged_questions, tags, count).sample!
       else
         tagged_questions.map(&:id).shuffle

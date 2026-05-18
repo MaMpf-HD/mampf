@@ -5,7 +5,7 @@ class Term < ApplicationRecord
 
   # season can only be SS/WS, and there can be only one of this type each year
   validates :season, presence: true,
-                     inclusion: { in: %w[SS WS] },
+                     inclusion: { in: ["SS", "WS"] },
                      uniqueness: { scope: :year }
   # a year >=2000 needs to be present
   validates :year, presence: true,
@@ -13,14 +13,12 @@ class Term < ApplicationRecord
                                    greater_than_or_equal_to: 2000 }
 
   # only one term can be active
-  validates_uniqueness_of :active, if: :active
+  validates :active, uniqueness: { if: :active }
 
   # some information about lectures, lessons and media are cached
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_lectures_and_lessons
   after_save :touch_media
-
-  paginates_per 8
 
   def self.active
     Term.find_by(active: true)
@@ -31,22 +29,23 @@ class Term < ApplicationRecord
   end
 
   def begin_date
-    season == 'SS' ? Date.new(year, 4, 1) : Date.new(year, 10, 1)
+    season == "SS" ? Date.new(year, 4, 1) : Date.new(year, 10, 1)
   end
 
   def end_date
-    season == 'SS' ? Date.new(year, 9, 30) : Date.new(year + 1, 3, 31)
+    season == "SS" ? Date.new(year, 9, 30) : Date.new(year + 1, 3, 31)
   end
 
   # label contains season and year(s) with all digits
   def to_label
-    return unless season.present?
-    season + ' ' + year_corrected
+    return if season.blank?
+
+    "#{season} #{year_corrected}"
   end
 
   # short label contains season and year(s) with two digits
   def to_label_short
-    season + ' ' + year_corrected_short
+    "#{season} #{year_corrected_short}"
   end
 
   def compact_title
@@ -54,9 +53,15 @@ class Term < ApplicationRecord
   end
 
   def previous
-    previous_year = season == 'WS' ? year : year - 1
-    previous_season = season == 'WS' ? 'SS' : 'WS'
+    previous_year = season == "WS" ? year : year - 1
+    previous_season = season == "WS" ? "SS" : "WS"
     Term.find_by(year: previous_year, season: previous_season)
+  end
+
+  def next
+    next_year = season == "SS" ? year : year + 1
+    next_season = season == "SS" ? "WS" : "SS"
+    Term.find_by(year: next_year, season: next_season)
   end
 
   def assignments
@@ -101,43 +106,50 @@ class Term < ApplicationRecord
   end
 
   def self.possible_deletion_dates_localized
-    possible_deletion_dates.map { |d| d.strftime(I18n.t('date.formats.concise')) }
+    possible_deletion_dates.map do |d|
+      d.strftime(I18n.t("date.formats.concise"))
+    end
   end
 
   # array of all terms together with their ids for use in options_for_select
-  def self.select_terms(independent = false)
-    return ['bla', nil] if independent
-    Term.all.sort_by(&:begin_date).reverse.map { |t| [t.to_label, t.id] }
+  def self.select_terms(independent: false)
+    return ["bla", nil] if independent
+
+    Term.select(:id, :season, :year)
+        .sort_by(&:begin_date)
+        .reverse
+        .map { |t| [t.to_label, t.id] }
   end
 
   def self.previous_by_date(date)
-    season = date.month.in?((4..9)) ? 'SS' : 'WS'
+    season = date.month.in?(4..9) ? "SS" : "WS"
     year = date.year
-    previous_year = season == 'WS' ? year : year - 1
-    previous_season = season == 'WS' ? 'SS' : 'WS'
+    previous_year = season == "WS" ? year : year - 1
+    previous_season = season == "WS" ? "SS" : "WS"
     Term.find_by(year: previous_year, season: previous_season)
   end
 
   private
 
-  def year_corrected
-    return year.to_s unless season == 'WS'
-    year.to_s + '/' + ((year % 100) + 1).to_s
-  end
+    def year_corrected
+      return year.to_s unless season == "WS"
 
-  def year_corrected_short
-    return (year % 100).to_s unless season == 'WS'
-    (year % 100).to_s + '/' + ((year % 100) + 1).to_s
-  end
+      "#{year}/#{(year % 100) + 1}"
+    end
 
-  def touch_lectures_and_lessons
-    lectures.update_all(updated_at: Time.now)
-    Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
-  end
+    def year_corrected_short
+      return (year % 100).to_s unless season == "WS"
 
-  def touch_media
-    Medium.where(teachable: lectures).update_all(updated_at: Time.now)
-    Medium.where(teachable: Lesson.where(lecture: lectures))
-          .update_all(updated_at: Time.now)
-  end
+      "#{year % 100}/#{(year % 100) + 1}"
+    end
+
+    def touch_lectures_and_lessons
+      lectures.touch_all
+      Lesson.where(lecture: lectures).touch_all
+    end
+
+    def touch_media
+      Medium.where(teachable: lectures).touch_all
+      Medium.where(teachable: Lesson.where(lecture: lectures)).touch_all
+    end
 end

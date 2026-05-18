@@ -7,10 +7,11 @@
   <div class="card-body">
     <% if lesson.lecture.content_mode == 'manuscript' %>
       <div class="form-group">
-        <div class="form-row">
+        <div class="row">
           <div class="col-6">
             <%= f.label :start_destination,
-                        t('admin.lesson.start_item') %>
+                        t('admin.lesson.start_item'),
+                        class: "form-label" %>
             <%= helpdesk(t('admin.lesson.info.start_item'), false) %>
             <%= f.select :start_destination,
                          options_for_select(select_script_items(lesson.lecture),
@@ -20,7 +21,8 @@
           </div>
           <div class="col-6">
             <%= f.label :end_destination,
-                        t('admin.lesson.end_item') %>
+                        t('admin.lesson.end_item'),
+                        class: "form-label" %>
             <%= helpdesk(t('admin.lesson.info.end_item'), false) %>
             <%= f.select :end_destination,
                          options_for_select(select_script_items(lesson.lecture),

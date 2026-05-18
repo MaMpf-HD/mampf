@@ -1,24 +1,24 @@
-<div class="card <%= notification_color(notification) %>">
-  <div class="card-header">
+<div class="card <%= notification_color(notification) %>" data-cy="notification-card">
+  <div class="card-header" data-cy="notification-header">
     <div class="row">
       <div class="col-6">
         <h5>
           <%= notification_header(notification) %>
         </h5>
       </div>
-      <div class="col-4 text-right">
+      <div class="col-4 text-end">
         <span class="smaller-font">
           <%= human_readable_date(notification.created_at) %>
         </span>
       </div>
-      <div class="col-2 text-right">
+      <div class="col-2 text-end">
         <a href="<%= notification_path(notification) %>"
            data-method="delete"
            data-remote="true"
            class="removeNotification no-deco"
            data-id="<%= notification.id %>">
           <i class="far fa-times-circle fa-lg text-dark"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              data-placement="bottom"
              title="<%= t('notifications.check') %>">
           </i>
@@ -26,7 +26,7 @@
       </div>
     </div>
   </div>
-  <div class="card-body">
+  <div class="card-body" data-cy="notification-body">
     <%= simple_format(notification_text(notification)) %>
     <%= simple_format(notification_link(notification)) %>
   </div>

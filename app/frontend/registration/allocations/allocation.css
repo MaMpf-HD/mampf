@@ -1,0 +1,46 @@
+.allocation-capacity-editor summary {
+    list-style: none;
+}
+
+.allocation-capacity-editor summary::-webkit-details-marker {
+    display: none;
+}
+
+.allocation-capacity-editor[open] > summary {
+    display: none;
+}
+
+.allocation-capacity-editor form {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.allocation-item-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.allocation-item-row:hover > td {
+    background-color: var(--bs-light, #f8f9fa) !important;
+}
+
+.allocation-item-row.tutorial-gtile--selected > td {
+    background-color: var(--bs-primary-bg-subtle, #cfe2ff) !important;
+}
+
+.allocation-pct-label {
+    width: 3.5rem;
+}
+
+.allocation-bar-col {
+    width: 40%;
+}
+
+.allocation-capacity-input {
+    width: 4.5rem;
+}
+
+.allocation-check-icon {
+    font-size: 1.5rem;
+}

@@ -1,20 +1,25 @@
-# ApplicationHelper module
 module ApplicationHelper
-
-  #returns the path that is associated to the MaMpf brand in the navbar
+  # returns the path that is associated to the MaMpf brand in the navbar
   def home_path
     return start_path if user_signed_in?
-    root_path(params: { locale: I18n.locale})
+
+    root_path(params: { locale: I18n.locale })
   end
 
   # get current lecture from session object
   def current_lecture
-    Lecture.find_by_id(cookies[:current_lecture_id])
+    Lecture.find_by(id: cookies[:current_lecture_id])
   end
 
   # Returns the complete url for the media upload folder if in production
   def host
-    Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['INSTANCE_NAME'] : ''
+    if Rails.env.production?
+      # rubocop:disable Style/StringConcatenation
+      ENV.fetch("MEDIA_SERVER") + "/" + ENV.fetch("INSTANCE_NAME")
+      # rubocop:enable Style/StringConcatenation
+    else
+      ""
+    end
   end
 
   # The HTML download attribute only works for files within the domain of
@@ -23,14 +28,15 @@ module ApplicationHelper
   # the actual media server.
   # This is used for the download buttons for videos and manuscripts.
   def download_host
-    Rails.env.production? ? ENV['DOWNLOAD_LOCATION'] : ''
+    Rails.env.production? ? ENV.fetch("DOWNLOAD_LOCATION") : ""
   end
 
   # Returns the full title on a per-page basis.
-  def full_title(page_title = '')
-    return page_title if action_name == 'play' && controller_name == 'media'
-    return 'Quiz' if action_name == 'take' && controller_name == 'quizzes'
-    base_title = 'MaMpf'
+  def full_title(page_title = "")
+    return page_title if action_name == "play" && controller_name == "media"
+    return "Quiz" if action_name == "take" && controller_name == "quizzes"
+
+    base_title = "MaMpf"
     if user_signed_in? && current_user.notifications.any?
       base_title += " (#{current_user.notifications.size})"
     end
@@ -39,92 +45,141 @@ module ApplicationHelper
 
   # next methods are service methods for the display status of HTML elmements
   def hide(value)
-    value ? 'none;' : 'block;'
+    value ? "none;" : "block;"
+  end
+
+  # rubocop:disable Metrics/ParameterLists
+  def progress_bar(value, max, classification: :neutral, label: nil,
+                   height: "1.5rem", show_label: true,
+                   container_class: "progress mb-2", style: nil)
+    # rubocop:enable Metrics/ParameterLists
+    clamped_value = value.to_i.clamp(0, max.to_i)
+    # rubocop:disable Style/FloatDivision
+    percentage = max.to_i.positive? ? (value.to_f / max.to_f * 100).clamp(0, 100) : 0
+    # rubocop:enable Style/FloatDivision
+
+    color_class = case classification
+                  when :utilization
+                    utilization_color(percentage)
+                  when :time
+                    "bg-info"
+                  when :neutral
+                    "bg-primary"
+                  else
+                    "bg-#{classification}"
+    end
+
+    tag.div(class: container_class, style: [style, "height: #{height}"].compact.join("; ")) do
+      tag.div(class: "progress-bar #{color_class}",
+              role: "progressbar",
+              style: "width: #{percentage}%",
+              "aria-valuenow": clamped_value,
+              "aria-valuemin": 0,
+              "aria-valuemax": max) do
+        label || "#{percentage.round}%" if show_label
+      end
+    end
+  end
+
+  def utilization_color(percentage)
+    if percentage >= 100
+      "bg-danger"
+    elsif percentage >= 80
+      "bg-warning"
+    else
+      "bg-success"
+    end
   end
 
   def show(value)
-    value ? 'block;' : 'none;'
+    value ? "block;" : "none;"
   end
 
   def show_inline(value)
-    value ? 'inline;' : 'none;'
+    value ? "inline;" : "none;"
   end
 
   def show_no_block(value)
-    value ? '' : 'none;'
+    value ? "" : "none;"
   end
 
   # active attribute for navs
   def active(value)
-    value ? 'active' : ''
+    value ? "active" : ""
   end
 
   # show/collapse attributes for collapses and accordions
   def show_collapse(value)
-    value ? 'show collapse' : 'collapse'
+    value ? "show collapse" : "collapse"
   end
 
   def show_tab(value)
-    value ? 'show active' : ''
+    value ? "show active" : ""
   end
 
   def text_dark(value)
-    value ? '' : 'text-dark'
+    value ? "" : "text-dark"
   end
 
   def text_dark_link(value)
-    value ? 'text-primary' : 'text-dark'
+    value ? "text-primary" : "text-dark"
   end
 
   # media_sort -> database fields
   def media_types
-    { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],
-      'keks' => ['Quiz'],
-      'kiwi' => ['Kiwi'],
-      'erdbeere' => ['Erdbeere'], 'nuesse' => ['Nuesse'],
-      'script' => ['Script'], 'questions' => ['Question'],
-      'remarks' => ['Remark'], 'reste' => ['Reste'] }
+    { "lesson_material" => ["LessonMaterial"],
+      "worked_example" => ["WorkedExample"],
+      "quiz" => ["Quiz"],
+      "repetition" => ["Repetition"],
+      "exercise" => ["Exercise"],
+      "script" => ["Script"],
+      "questions" => ["Question"],
+      "remarks" => ["Remark"],
+      "miscellaneous" => ["Miscellaneous"] }
   end
 
   # media_sorts
-  def media_sorts
-    ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'nuesse', 'script',
-     'questions', 'remarks', 'reste']
+  def media_sorts(lecture = nil)
+    if lecture && lecture.sort == "vignettes"
+      ["miscellaneous"]
+    else
+      ["lesson_material", "worked_example", "quiz", "repetition",
+       "exercise", "script", "questions", "remarks", "miscellaneous"]
+    end
   end
 
   # media_sort -> acronym
   def media_names
-    { 'kaviar' => t('categories.kaviar.plural'),
-      'sesam' => t('categories.sesam.plural'),
-      'keks' => t('categories.quiz.plural'),
-      'kiwi' => t('categories.kiwi.singular'),
-      'erdbeere' => t('categories.erdbeere.singular'),
-      'nuesse' => t('categories.exercises.plural'),
-      'script' => t('categories.script.singular'),
-      'questions' => t('categories.question.plural'),
-      'remarks' => t('categories.remark.plural'),
-      'reste' => t('categories.reste.singular') }
+    { "lesson_material" => t("categories.lesson_material.plural"),
+      "worked_example" => t("categories.worked_example.plural"),
+      "quiz" => t("categories.quiz.plural"),
+      "repetition" => t("categories.repetition.singular"),
+      "exercise" => t("categories.exercise.plural"),
+      "script" => t("categories.script.singular"),
+      "questions" => t("categories.question.plural"),
+      "remarks" => t("categories.remark.plural"),
+      "miscellaneous" => t("categories.miscellaneous.singular") }
   end
 
   # Selects all media associated to lectures and lessons from a given list
   # of media
   def lecture_media(media)
-    media.where(teachable_type: ['Lecture', 'Lesson'] )
+    media.where(teachable_type: ["Lecture", "Lesson"])
   end
 
   # Selects all media associated to courses from a given list of media
   def course_media(media)
-    media.where(teachable_type: 'Course')
+    media.where(teachable_type: "Course")
   end
 
   # For a given list of media, returns the array of courses and lectures
   # the given media are associated to.
   def lecture_course_teachables(media)
     teachables = media.pluck(:teachable_type, :teachable_id).uniq
-    course_ids = teachables.select { |t| t.first == 'Course'}.map(&:second)
-    lecture_ids = teachables.select { |t| t.first == 'Lecture'}.map(&:second)
-    lesson_ids = teachables.select { |t| t.first == 'Lesson'}.map(&:second)
-    talk_ids = teachables.select { |t| t.first == 'Talk'}.map(&:second)
+    course_ids = teachables.select { |t| t.first == "Course" }.map(&:second)
+    lecture_ids = teachables.select { |t| t.first == "Lecture" }.map(&:second)
+    lesson_ids = teachables.select { |t| t.first == "Lesson" }.map(&:second)
+    talk_ids = teachables.select { |t| t.first == "Talk" }.map(&:second)
     lecture_ids += Lesson.where(id: lesson_ids).pluck(:lecture_id).uniq
     lecture_ids += Talk.where(id: talk_ids).pluck(:lecture_id).uniq
     Course.where(id: course_ids) + Lecture.where(id: lecture_ids.uniq)
@@ -136,11 +191,10 @@ module ApplicationHelper
   # (b) associated to the given lecture or a lesson associated to the given
   # lecture
   def relevant_media(teachable, media, limit)
-    result = []
-    if teachable.class == Course
+    if teachable.instance_of?(Course)
       return media.where(teachable: teachable).order(:created_at)
-                                              .reverse_order
-                                              .first(limit)
+                  .reverse_order
+                  .first(limit)
     end
     media_ids = (teachable.media_with_inheritance.pluck(:id) & media.pluck(:id))
     Medium.where(id: media_ids).order(:created_at).reverse_order.first(limit)
@@ -148,10 +202,11 @@ module ApplicationHelper
 
   # splits an array into smaller parts
   def split_list(list, pieces = 4)
-    group_size = (list.count / pieces) != 0 ? list.count / pieces : 1
+    group_size = (list.count / pieces).zero? ? 1 : list.count / pieces
     groups = list.in_groups_of(group_size)
     diff = groups.count - pieces
     return groups if diff <= 0
+
     tail = groups.pop(diff).first(diff).flatten
     groups.last.concat(tail)
     groups
@@ -159,45 +214,34 @@ module ApplicationHelper
 
   # returns true for 'media#enrich' action
   def enrich?(controller, action)
-    return true if controller == 'media' && action == 'enrich'
+    return true if controller == "media" && action == "enrich"
+
     false
   end
 
   # cuts off a given string so that a given number of letters is not exceeded
   # string is given ... as ending if it is too long
   def shorten(title, max_letters)
-    return '' unless title.present?
+    return "" if title.blank?
     return title unless title.length > max_letters
-    title[0, max_letters - 3] + '...'
+
+    "#{title[0, max_letters - 3]}..."
   end
 
   # Returns the grouped list of all courses/lectures/references together
   # with their ids. Is used in grouped_options_for_select in form helpers.
   def grouped_teachable_list
     list = []
-    Course.all.each do |c|
-      lectures = [[c.short_title + ' (' + t('basics.all') + ')', 'Course-' + c.id.to_s]]
-      c.lectures.includes(:term).each do |l|
-        lectures.push [l.short_title_release, 'Lecture-' + l.id.to_s]
+    Course.find_each do |c|
+      lectures = [["#{c.short_title} (#{t("basics.all")})",
+                   "Course-#{c.id}"]]
+      c.lectures.includes(:term).find_each do |l|
+        lectures.push([l.short_title_release, "Lecture-#{l.id}"])
       end
-      list.push [c.title, lectures]
+      list.push([c.title, lectures])
     end
-    list.push [t('admin.referral.external_references'),
-               [[t('admin.referral.external_all'), 'external-0']]]
-  end
-
-  # Returns the grouped list of all courses/lectures together with their ids.
-  # Is used in grouped_options_for_select in form helpers
-  def grouped_teachable_list_alternative
-    list = []
-    Course.all.each do |c|
-      lectures = [[c.short_title + ' Modul', 'Course-' + c.id.to_s]]
-      c.lectures.includes(:term).each do |l|
-        lectures.push [l.short_title, 'Lecture-' + l.id.to_s]
-      end
-      list.push [c.title, lectures]
-    end
-    list
+    list.push([t("admin.referral.external_references"),
+               [[t("admin.referral.external_all"), "external-0"]]])
   end
 
   # Returns the path for the show or edit action of a given lecture,
@@ -206,6 +250,7 @@ module ApplicationHelper
   # can edit all lectures associated to the course.
   def edit_or_show_lecture_path(lecture)
     return edit_lecture_path(lecture) if current_user.can_edit?(lecture)
+
     lecture_path(lecture)
   end
 
@@ -217,6 +262,7 @@ module ApplicationHelper
        medium.editors_with_inheritance.include?(current_user)
       return edit_medium_path(medium)
     end
+
     inspect_medium_path(medium)
   end
 
@@ -224,63 +270,108 @@ module ApplicationHelper
   # anything older than today or yesterday gets reduced to the day.month.year
   # yesterday's/today's dates are return as 'gestern/heute' plus hour:mins
   def human_readable_date(date)
-    return t('today')+ ', ' + date.strftime('%H:%M') if date.to_date == Date.today
-    if date.to_date == Date.yesterday
-      return t('yesterday') + ', ' + date.strftime('%H:%M')
-    end
-    I18n.localize date, format: :concise
+    return "#{t("today")}, #{date.strftime("%H:%M")}" if date.to_date == Time.zone.today
+    return "#{t("yesterday")}, #{date.strftime("%H:%M")}" if date.to_date == Date.yesterday
+
+    I18n.l(date, format: :concise)
   end
 
   # prepend a select prompt to selection for options_for_select
   def add_prompt(selection)
-    [[t('basics.select'), '']] + selection
+    [[t("basics.select"), ""]] + selection
   end
 
   def quizzable_color(type)
-    'bg-' + type.downcase
+    "bg-#{type.downcase}"
   end
 
   def questioncolor(value)
-    value ? 'bg-question' : ''
+    value ? "bg-question" : ""
   end
 
   def vertex_label(quiz, vertex_id)
-    vertex_id.to_s + ' ' + quiz.quizzable(vertex_id)&.label.to_s
+    "#{vertex_id} #{quiz.quizzable(vertex_id)&.label}"
   end
 
   def ballot_box(correctness)
-    raw(correctness ? '&#x2612;' : '&#x2610;')
+    raw(correctness ? "&#x2612;" : "&#x2610;") # rubocop:disable Rails/OutputSafety
   end
 
   def boxcolor(correctness)
-    correctness ? 'correct' : 'incorrect'
+    correctness ? "correct" : "incorrect"
   end
 
   def bgcolor(correctness)
-    correctness ? 'bg-correct' : 'bg-incorrect'
+    correctness ? "bg-correct" : "bg-incorrect"
   end
 
   def hide_as_class(value)
-    value ? 'no_display' : ''
+    value ? "no_display" : ""
   end
 
-  def helpdesk(text, html)
-    tag.i class: 'far fa-question-circle helpdesk ml-2',
-                  tabindex: -1,
-                  data: { toggle: 'popover',
-                          trigger: 'focus',
-                          content: text,
-                          html: html },
-                  title: t('info')
-  end
-
-  def realization_path(realization)
-    "/#{realization.first.downcase.pluralize}/#{realization.second}"
+  def helpdesk(text, html, title = t("info"))
+    tag.i(class: "far fa-question-circle helpdesk ms-2",
+          tabindex: -1,
+          data: {
+            controller: "bs-popover",
+            "bs-toggle": "popover",
+            "bs-trigger": "focus",
+            "bs-content": text,
+            "bs-html": html
+          },
+          title: title)
   end
 
   def first_course_independent?
     current_user.administrated_courses
                 .natural_sort_by(&:title)
-               &.first&.term_independent
+                &.first&.term_independent
+  end
+
+  def main_page_announcements
+    megaphone_icon_str = '<i class="bi bi-megaphone p-2"></i>'
+    separator_str = "<hr class=\"my-3 w-100\">#{megaphone_icon_str}"
+    Announcement.active_on_main
+                .pluck(:details)
+                .join(separator_str)
+                .prepend(megaphone_icon_str)
+  end
+
+  # Navbar items styling based on which page we are on
+  # https://gist.github.com/mynameispj/5692162
+  ACTIVE_CSS_CLASS = "active-item".freeze
+
+  def get_class_for_project(project)
+    request.params["project"] == project ? ACTIVE_CSS_CLASS : ""
+  end
+
+  def get_class_for_path(path)
+    request.path == path ? ACTIVE_CSS_CLASS : ""
+  end
+
+  def get_class_for_path_startswith(path)
+    request.path.starts_with?(path) ? ACTIVE_CSS_CLASS : ""
+  end
+
+  def get_class_for_any_path(paths)
+    paths.include?(request.path) ? ACTIVE_CSS_CLASS : ""
+  end
+
+  def get_class_for_any_path_startswith(paths)
+    paths.any? { |path| request.path.starts_with?(path) } ? ACTIVE_CSS_CLASS : ""
+  end
+
+  def truncate_result(result, length = 40)
+    result.first(length).tap do |truncated|
+      return truncated.length < length ? truncated : "#{truncated}..."
+    end
+  end
+
+  def format_talk_dates(dates)
+    return "" if dates.blank?
+
+    safe_join(dates.sort.map do |date|
+      tag.span(l(date, format: :long), class: "badge bg-light text-dark border me-1")
+    end)
   end
 end

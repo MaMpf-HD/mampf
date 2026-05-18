@@ -17,8 +17,8 @@
     <button id="button-reassign"
             type="button"
             class="btn btn-sm btn-secondary"
-            data-toggle="modal"
-            data-target="#reassignModal"
+            data-bs-toggle="modal"
+            data-bs-target="#reassignModal"
             data-id="<%= @quizzable.id %>"
             data-type="<%= @quizzable.type %>"
             data-rights="none"
@@ -43,7 +43,7 @@
             data-quiz="<%= quiz.id %>"
             data-vertex="<%= vertex_id %>"
             <%= quizzable.answers.count > 4 ? 'disabled ' : '' %>
-            data-toggle="tooltip"
+            data-bs-toggle="tooltip"
             title="<%= quizzable.answers.count <= 4 ? t('admin.quiz.info.ramification') : t('admin.quiz.info.too_many_answers') %>">
       <%= t('buttons.ramification') %>
     </button>

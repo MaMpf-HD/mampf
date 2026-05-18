@@ -1,0 +1,25 @@
+services:
+  # Remove services that we don't need for CI
+  app: !reset null
+  nginx: !reset null
+  pgadmin: !reset null
+  mailcatcher: !reset null
+  dockergen: !reset null
+
+  app-test:
+    image: ghcr.io/mampf-hd/mampftest:image
+    # only used when Cypress is running tests in CI, NOT for unit tests. For unit
+    # tests, we overwrite the entrypoint to the empty string.
+    command: "CI=true RUBY_DEBUG_ENABLE=0 DISABLE_VITE_IN_CI=true /workspaces/mampf/docker/development/init-and-run.sh"
+    volumes:
+      # see compose.cicd.build.yml
+      - "/workspaces/mampf/public/"
+    healthcheck:
+      # see https://docs.docker.com/compose/how-tos/startup-order/#reference-information
+      # and https://docs.docker.com/reference/compose-file/services/#healthcheck
+      # and https://docs.docker.com/reference/dockerfile/#healthcheck
+      test: curl --fail http://localhost:3145 || exit 1
+      interval: 5s
+      retries: 10
+      start_period: 10s
+      timeout: 10s

@@ -1,9 +1,9 @@
 class Subject < ApplicationRecord
-	has_many :programs
+  has_many :programs
+  extend Mobility
+  extend I18nLocaleAccessors
 
-	translates :name
-	globalize_accessors locales: I18n.available_locales,
-											attributes: translated_attribute_names
+  translates :name
 
   def deletable?
     programs.none?

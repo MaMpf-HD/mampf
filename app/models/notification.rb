@@ -4,24 +4,17 @@ class Notification < ApplicationRecord
   include ActionDispatch::Routing::PolymorphicRoutes
   include Rails.application.routes.url_helpers
 
-  belongs_to :recipient, class_name: 'User', touch: true
+  belongs_to :recipient, class_name: "User", touch: true
   belongs_to :notifiable, polymorphic: true, optional: true
-
-  paginates_per 12
-
-# retrieve notifiable defined by notifiable_type and notifiable_id
-#  def notifiable
-#    return unless notifiable_type.in?(Notification.allowed_notifiable_types) &&
-#                  notifiable_id.present?
-#    notifiable_type.constantize.find_by_id(notifiable_id)
-#  end
 
   # returns the lecture associated to a notification of type announcement,
   # and teachable for a notification of type medium, nil otherwise
   def teachable
-    return unless notifiable.present?
-    return if notifiable_type.in?(['Lecture', 'Course'])
-    return notifiable.lecture if notifiable_type == 'Announcement'
+    return if notifiable.blank?
+    return if lecture_or_course?
+    return notifiable.lecture if announcement?
+    return notifiable.voucher.lecture if redemption?
+
     # notifiable will be a medium, so return its teachable
     notifiable.teachable
   end
@@ -32,42 +25,43 @@ class Notification < ApplicationRecord
   # news path for general announcements
   # all other cases: notifiable path
   def path(user)
-    return unless notifiable.present?
-    return edit_profile_path if notifiable_type.in?(['Course', 'Lecture'])
-    if notifiable_type == 'Announcement'
-      return notifiable.lecture.path(user) if notifiable.lecture.present?
-      return news_path
-    end
-    if notifiable_type == 'Medium' && notifiable.sort == 'Quiz'
-      return medium_path(notifiable)
-    end
-    polymorphic_url(notifiable, only_path: true)
-  end
+    return if notifiable.blank?
 
-  def self.allowed_notifiable_types
-    ['Medium', 'Course', 'Lecture', 'Announcement']
+    if redemption?
+      edit_lecture_path(notifiable.voucher.lecture, anchor: "people")
+    elsif lecture_or_course?
+      edit_profile_path
+    elsif lecture_announcement?
+      notifiable.lecture.path(user)
+    elsif generic_announcement?
+      news_path
+    elsif quiz?
+      medium_path(notifiable)
+    else
+      polymorphic_url(notifiable, only_path: true)
+    end
   end
 
   # the next methods are for the determination which kind of notification it is
 
   def medium?
-    return unless notifiable.present?
-    notifiable_type == 'Medium'
+    notifiable.is_a?(Medium)
   end
 
   def course?
-    return unless notifiable.present?
-    notifiable.class.to_s == 'Course'
+    notifiable.is_a?(Course)
   end
 
   def lecture?
-    return unless notifiable.present?
-    notifiable.class.to_s == 'Lecture'
+    notifiable.is_a?(Lecture)
+  end
+
+  def redemption?
+    notifiable.is_a?(Redemption)
   end
 
   def announcement?
-    return unless notifiable.present?
-    notifiable.class.to_s == 'Announcement'
+    notifiable.is_a?(Announcement)
   end
 
   def generic_announcement?
@@ -77,4 +71,14 @@ class Notification < ApplicationRecord
   def lecture_announcement?
     announcement? && notifiable.lecture.present?
   end
+
+  def quiz?
+    medium? && notifiable.sort == "Quiz"
+  end
+
+  private
+
+    def lecture_or_course?
+      notifiable_type.in?(["Lecture", "Course"])
+    end
 end

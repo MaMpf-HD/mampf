@@ -1,0 +1,33 @@
+<%= link_to lecture, class: "lecture-search-result-link",
+                     "data-testid": "lecture-search-result-card" do %>
+  <div class="lecture-search-result glass row g-0">
+
+    <div class="col-md-3">
+      <%= image_tag(lecture.course.normalized_image_url_with_host ||
+                      "/no_course_information.png",
+                    class: "lecture-search-result-image",
+                    alt: lecture.title_no_term) %>
+    </div>
+
+    <div class="col-md-9">
+      <div class="lecture-search-result-body">
+        <h5 class="lecture-search-result-title">
+          <%= lecture.title_no_term %>
+        </h5>
+        <div class="lecture-search-result-info">
+          <% if lecture.term %>
+            <span class="lecture-search-result-term">
+              <%= lecture.term.to_label_short %>
+            </span>
+          <% end %>
+          <% unless lecture.disable_teacher_display %>
+            <span class="lecture-search-result-teacher">
+              <%= lecture.teacher.name %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+<% end %>

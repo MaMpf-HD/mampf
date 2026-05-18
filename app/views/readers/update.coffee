@@ -5,7 +5,7 @@ newSize = parseInt($size.data('size')) - 1
 $size.empty().append('(' + newSize + ')').data('size', newSize)
 $('.mediaCommentsDecoration').remove() if newSize == 0
 <% unless @anything_left %>
-$('#commentsIcon').removeClass('text-primary').addClass('text-light')
+$('#commentsIcon').removeClass('new-comment')
 $('#noCommentsAlert').show()
 <% end %>
 <% end %>

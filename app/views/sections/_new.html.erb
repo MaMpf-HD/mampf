@@ -1,8 +1,9 @@
 <%= form_with model: section do |f| %>
-  <div class="form-row">
-    <div class="col-12 form-group">
+  <div class="row">
+    <div class="col-12 mb-3">
       <%= f.label :title,
-                  t('basics.title') %>
+                  t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.lecture.info.section_title'), false) %>
       <%= f.text_field :title,
                        { class: 'form-control',
@@ -12,9 +13,10 @@
       </div>
     </div>
     <% if chapter.sections.exists? %>
-      <div class="col-12 form-group">
+      <div class="col-12 mb-3">
         <%= f.label :predecessor,
-                    t('admin.lecture.insert_after_section') %>
+                    t('admin.lecture.insert_after_section'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.insert_after_section'), false) %>
         </i>
         <%= f.select :predecessor,
@@ -22,7 +24,7 @@
                                         chapter.last_section_by_position
                                                .position),
                      {},
-                     { class: 'form-control' } %>
+                     { class: 'form-select' } %>
       </div>
     <% end %>
   </div>
@@ -35,7 +37,7 @@
                    class: 'btn btn-sm btn-primary' %>
       <button type="button"
               data-chapter="<%= chapter.id %>"
-              data-dismiss="modal"
+              data-bs-dismiss="modal"
               class="btn btn-sm btn-secondary">
         <%= t('buttons.cancel') %>
       </button>

@@ -1,0 +1,10 @@
+services:
+  cypress:
+    entrypoint: ["/workspaces/mampf/open-cypress-interactive.sh"]
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    depends_on:
+      xpra:
+        condition: service_started
+      app-test:
+        condition: service_started

@@ -1,82 +1,68 @@
-require 'net/http'
-require 'uri'
-require 'json'
+require "net/http"
+require "uri"
+require "json"
 # RegistrationsController
 class RegistrationsController < Devise::RegistrationsController
   prepend_before_action :check_registration_limit, only: [:create]
 
-  def verify_captcha
-    return true unless ENV['USE_CAPTCHA_SERVICE']
-    begin
-      uri = URI.parse(ENV['CAPTCHA_VERIFY_URL'])
-      data = { message:params["frc-captcha-solution"],
-               application_token:ENV['CAPTCHA_APPLICATION_TOKEN'] }
-      header = { 'Content-Type': 'text/json' }
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true if ENV['CAPTCHA_VERIFY_URL'].include?('https')
-      request = Net::HTTP::Post.new(uri.request_uri, header)
-      request.body = data.to_json
-
-      # Send the request
-      response = http.request(request)
-      answer =  JSON.parse(response.body)
-      return true if answer["message"] == "verified"
-    rescue
-    end
-    return false
-  end
-
   def create
-    if verify_captcha
+    altcha_param = params.permit(:altcha)[:altcha]
+    if altcha_param.present? && AltchaSolution.verify_and_save(altcha_param)
       super
     else
-      build_resource(sign_up_params)
+      build_resource(devise_parameter_sanitizer.sanitize(:sign_up))
       clean_up_passwords(resource)
-      set_flash_message :alert, :captcha_error
-      render :new
+      flash.now[:alert] = I18n.t("devise.registrations.user.captcha_error")
+      render_flash
     end
   end
 
   def destroy
     password_correct = resource.valid_password?(deletion_params[:password])
-    if !password_correct
-      set_flash_message :alert, :password_incorrect
-      respond_with_navigational(resource){ redirect_to after_sign_up_path_for(resource_name) }
+    unless password_correct
+      set_flash_message(:alert, :password_incorrect)
+      respond_with_navigational(resource) do
+        redirect_to after_sign_up_path_for(resource_name)
+      end
       return
     end
     success = resource.archive_and_destroy(deletion_params[:archive_name])
-    if !success
-      set_flash_message :alert, :not_destroyed
-      respond_with_navigational(resource){ redirect_to after_sign_up_path_for(resource_name) }
+    unless success
+      set_flash_message(:alert, :not_destroyed)
+      respond_with_navigational(resource) do
+        redirect_to after_sign_up_path_for(resource_name)
+      end
       return
     end
     Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
-    set_flash_message :notice, :destroyed
-    yield resource if block_given?
-    respond_with_navigational(resource){ redirect_to after_sign_out_path_for(resource_name) }
+    set_flash_message(:notice, :destroyed)
+    yield(resource) if block_given?
+    respond_with_navigational(resource) do
+      redirect_to after_sign_out_path_for(resource_name)
+    end
   end
 
-  def after_sign_up_path_for(resource)
+  def after_sign_up_path_for(_resource)
     edit_profile_path
   end
 
   private
 
-  def check_registration_limit
-    if User.where("users.confirmed_at is NULL and users.created_at > '#{(DateTime.now()-(ENV['MAMPF_REGISTRATION_TIMEFRAME']||15).to_i.minutes)}'").count > (ENV['MAMPF_MAX_REGISTRATION_PER_TIMEFRAME'] || 40).to_i
-      self.resource = resource_class.new sign_up_params
+    def check_registration_limit
+      timeframe = (ENV.fetch("MAMPF_REGISTRATION_TIMEFRAME", 15).to_i.minutes.ago..)
+      num_new_registrations = User.where(confirmed_at: nil, created_at: timeframe).count
+      max_registrations = ENV.fetch("MAMPF_MAX_REGISTRATION_PER_TIMEFRAME", 40).to_i
+      return if num_new_registrations <= max_registrations
+
+      # Current number of new registrations is too high
+      self.resource = resource_class.new(devise_parameter_sanitizer.sanitize(:sign_up))
       resource.validate # Look for any other validation errors besides reCAPTCHA
-      set_flash_message :alert, :too_many_registrations
+      set_flash_message(:alert, :too_many_registrations)
       set_minimum_password_length
       respond_with_navigational(resource) { render :new }
     end
-  end
-  def sign_up_params
-    params.require(:user).permit(:email, :password, :password_confirmation,
-                                 :locale, :consents)
-  end
 
-  def deletion_params
-    params.permit(:archive_name, :password)
-  end
+    def deletion_params
+      params.permit(:archive_name, :password)
+    end
 end

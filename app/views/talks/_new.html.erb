@@ -1,7 +1,9 @@
-<%= form_with model: talk do |f| %>
-  <div class="form-row">
-    <div class="col-12 form-group">
-      <%= f.label :title, t('basics.title') %>
+<%= form_with model: talk, html: { data: { cy: 'talk-form' } } do |f| %>
+
+  <div class="row">
+    <div class="col-12 mb-3">
+      <%= f.label :title, t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.lecture.info.chapter_title'),
                    false) %>
       <%= f.text_field :title, { class: 'form-control',
@@ -10,45 +12,38 @@
            id="new-talk-title-error">
       </div>
     </div>
+
+    <!-- 📅 Dates -->
     <div class="col-12">
       <%= f.label :date, t('basics.date') %>
       <a class="fas fa-plus-circle clickable text-dark"
          id="new-talk-date-button"
-         data-toggle="tooltip"
-         data-count="1"
+         data-bs-toggle="tooltip"
+         data-index="1"
          title="<%= t('admin.tag.create') %>">
       </a>
     </div>
-    <div class="col-12" id="talk-date-picker">
-      <div id="talk_dates_0">
-        <input type="date" name="talk[dates[0]]">
-      </div>
+
+    <div class="col-12" id="talk-dates">
+      <%= f.fields_for :dates, index: 0 do |date_form| %>
+        <%= render partial: "date_field", locals: { date_form: date_form, date: nil } %>
+      <% end %>
+      <%= render partial: "date_field_template", locals: { f: f } %>
     </div>
+    
     <div class="col-12 mb-3">
-      <div class="invalid-feedback" id="talk-date-error">
-      </div>
+      <div class="invalid-feedback" id="talk-date-error"></div>
     </div>
-    <div class="col-12 mb-3">
-      <%= f.label :speaker_ids,
-                  t('admin.talk.speakers') %>
-      <%= f.select :speaker_ids,
-                   [[]],
-                   {},
-                   { class: 'selectize',
-                     style: 'display: none;',
-                     multiple: true,
-                     data: { ajax: true,
-                             filled: false,
-                             model: 'user',
-                             placeholder: t('basics.enter_two_letters'),
-                             no_results: t('basics.no_results'),
-                             modal: true } } %>
+
+    <div class="col-12 mb-3" data-cy="speaker-select-div">
+      <%= speaker_select(f, talk, with_preselection=false) %>
     </div>
     <% if lecture.talks.exists? %>
-      <div class="col-12 form-group">
+      <div class="col-12 mb-3">
         <%= f.label :predecessor,
                     t('admin.lecture.insert_after_chapter',
-                      chapter_name: t("basics.talk")) %>
+                    chapter_name: t("basics.talk")),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.insert_after_chapter',
                        chapter_name: t("basics.talk")),
                      false) %>
@@ -56,7 +51,7 @@
                      options_for_select([[t('basics.at_the_beginning'), 0]] +
                                         lecture.select_talks,
                                         lecture.last_talk_by_position.position) ,
-                                 {}, { class: 'form-control' } %>
+                                 {}, { class: 'form-select' } %>
       </div>
     <% end %>
   </div>
@@ -85,7 +80,7 @@
       <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
       <button type="button"
               class="btn btn-sm btn-secondary"
-              data-dismiss="modal">
+              data-bs-dismiss="modal">
         <%= t('buttons.cancel') %>
       </button>
     </div>

@@ -1,0 +1,14 @@
+<div id="lecture-search-results-wrapper">
+  <div id="lecture-search-results" data-testid="lecture-search-results">
+    <% if @lectures.any? %>
+      <%= render partial: "lectures/search/lecture", collection: @lectures %>
+    <% else %>
+      <div class="text-center text-muted my-4">
+      <%= t("lecture.search.no_results") %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render partial: "lectures/search/nav", locals: { pagy: @pagy } %>
+  <div data-lecture-search-target="scrollObserver"></div>
+</div>

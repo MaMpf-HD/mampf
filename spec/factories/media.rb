@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-require 'faker'
+require "faker"
 
 FactoryBot.define do
   factory :medium do
@@ -48,50 +46,74 @@ FactoryBot.define do
 
     trait :with_manuscript do
       after(:build) do |m|
-        m.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", 'rb')
+        m.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
       end
     end
     trait :released do
       after(:build) do |m|
         # first release the lecture
-        l= m.teachable.lecture
-        l.released = 'all'
+        l = m.teachable.lecture
+        l.released = "all"
         l.save
-        m.released = 'all'
-        m.released_at = Time.now
+        m.released = "all"
+        m.released_at = Time.zone.now
         m.save!
       end
     end
 
     trait :with_video do
       after(:build) do |m|
-        m.video = File.open("#{SPEC_FILES}/talk.mp4", 'rb')
+        m.video = File.open("#{SPEC_FILES}/talk.mp4", "rb")
+      end
+    end
+
+    trait :with_toc_item do
+      after(:create) do |m|
+        m.items.create!(
+          sort: "remark",
+          description: "Test Remark",
+          start_time: TimeStamp.new(total_seconds: 10.5)
+        )
       end
     end
 
     factory :lesson_medium,
             traits: [:with_description, :with_teachable] do
-      sort { 'Kaviar' }
+      sort { "LessonMaterial" }
       teachable_sort { :valid_lesson }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
+
+      trait :with_lesson_by_id do
+        transient do
+          lesson_id { nil }
+        end
+        teachable { Lesson.find(lesson_id) }
+      end
     end
 
     factory :lecture_medium,
             traits: [:with_description, :with_teachable],
             aliases: [:valid_medium] do
-      sort { 'Sesam' }
+      sort { "WorkedExample" }
       after(:build) { |m| m.editors << m.teachable.teacher }
+
+      trait :with_lecture_by_id do
+        transient do
+          lecture_id { nil }
+        end
+        teachable { Lecture.find(lecture_id) }
+      end
     end
 
     factory :course_medium,
             traits: [:with_description, :with_teachable, :with_editors] do
-      sort { 'Sesam' }
+      sort { "WorkedExample" }
       teachable_sort { :course }
     end
 
     factory :talk_medium,
             traits: [:with_description, :with_teachable] do
-      sort { 'Kaviar' }
+      sort { "LessonMaterial" }
       teachable_sort { :valid_talk_with_speaker }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
     end

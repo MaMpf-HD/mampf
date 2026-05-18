@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= render partial: 'layouts/head' %>
+  </head>
+
+  <body class="d-flex flex-column min-vh-100"
+        data-locale="<%= I18n.locale %>" style="overflow-y: scroll;">
+
+    <%= render partial: "flash/messages" %>
+    <%= render partial: "shared/navbar" %>
+
+    <div class="subtle-background">
+      <main class="pt-3">
+        <%= yield %>
+      </main>
+    </div>
+
+    <div id="modal-container"></div>
+
+    <footer class="mt-auto">
+      <%= render partial: 'shared/footer' %>
+    </footer>
+
+  </body>
+</html>

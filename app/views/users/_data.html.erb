@@ -8,19 +8,19 @@
               <%= t('basics.basics') %>
             <h5>
           </div>
-          <div class="col-6 text-right">
+          <div class="col-6 text-end">
             <% if user.admin? %>
-              <span class="badge badge-info">
+              <span class="badge bg-info">
                 <%= t('basics.administrator_short') %>
               </span>
             <% end %>
             <% if user.editor? %>
-              <span class="badge badge-info">
+              <span class="badge bg-info">
                 <%= t('basics.editor') %>
               </span>
             <% end %>
             <% if user.teacher? %>
-              <span class="badge badge-info">
+              <span class="badge bg-info">
                 <%= t('basics.teacher') %>
               </span>
             <% end %>
@@ -44,7 +44,7 @@
       </div>
       <div class="card-body">
         <% if user.edited_courses.any? || user.edited_lectures.any? ||
-              user.given_lectures.any? %>
+              user.given_lectures.any? || user.edited_media.any? %>
           <%= render partial: 'users/content',
                      locals: { user: user,
                                f: f } %>

@@ -12,9 +12,7 @@
             id="watchlistModalTitle">
           <%= t('watchlist.add') %>
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body"
            id="watchlistModalBody">
@@ -31,7 +29,7 @@
                 type="submit"
                 form="watchlistSelectForm"
                 <%= "disabled" if Watchlist.where(user: current_user).empty? %>><%= t('watchlist.add') %></button>
-        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal"><%= t('watchlist.close') %></button>
+        <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal"><%= t('watchlist.close') %></button>
       </div>
     </div>
   </div>

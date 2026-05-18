@@ -1,0 +1,44 @@
+<p data-cy="redeem-voucher-text">
+  <%= t('profile.become_speaker_html', seminar: voucher.lecture.title) %>
+</p>
+
+<% if current_user.in?(voucher.lecture.speakers) %>
+  <p>
+    <%= t('profile.already_speaker_html',
+      talks: talks_with_titles(current_user, voucher)) %>
+  </p>
+<% end %>
+
+<% if voucher.lecture.talks_without_speaker(current_user).any? %>
+
+  <p>
+    <%= t('profile.talks_available') %>
+  </p>
+  <%= render partial: "vouchers/voucher_redemption_form", locals: { voucher: voucher } %>
+
+<% elsif voucher.lecture.talks.any? %>
+
+  <p>
+    <%= t('profile.all_talks_taken') %>
+    <%= cancel_voucher_button %>
+  </p>
+
+<% else %>
+
+  <% if current_user.in?(Redemption.speakers_by_redemption_in(voucher.lecture)) %>
+
+    <p>
+      <%= t('profile.already_speaker_by_redemption') %>
+      <%= cancel_voucher_button %>
+    </p>
+
+  <% else %>
+
+    <p>
+      <%= t('profile.no_talks_redemption') %>
+      <%= redeem_voucher_button(voucher) %>
+      <%= cancel_voucher_button %>
+    </p>
+
+  <% end %>
+<% end %>

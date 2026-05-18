@@ -1,0 +1,44 @@
+<div class="row py-3 mt-4 bg-white">
+  <div class="col-9 d-flex align-content-center">
+    <h4 class="mb-0 fw-bold">
+      <span class="badge bg-secondary">
+        <%= lecture.sort_localized %>
+      </span>
+      <% unless lecture.published? %>
+        <span class="badge bg-warning">
+          <%= t('access.unpublished') %>
+        </span>
+      <% end %>
+      <%= lecture.title_with_teacher_no_type %>
+      <%= link_to '',
+                  lecture_path(lecture),
+                  class: 'fas fa-eye text-dark d-contents',
+                  data: { toggle: 'tooltip',
+                          placement: 'bottom' },
+                  title: t('buttons.show'),
+                  style: 'text-decoration: none;' %>
+    </h4>
+  </div>
+  <div class="col-3 text-end align-content-center">
+    <% if current_user.admin || lecture.course.edited_by?(current_user) %>
+      <%= link_to t('buttons.parent_course'),
+                  edit_course_path(lecture.course),
+                  class: 'btn btn-sm btn-outline-primary' %>
+    <% end %>
+    <% unless lecture.published? %>
+      <button type="button"
+              class="btn btn-sm btn-outline-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#publishLectureModal">
+        <%= t('buttons.publish') %>
+      </button>
+    <% end %>
+    <% if lecture_deletable?(lecture) %>
+      <%= link_to t('buttons.delete'),
+                  lecture_path,
+                  method: :delete,
+                  data: { confirm: t('confirmation.generic') },
+                  class: 'btn btn-sm btn-outline-danger' %>
+    <% end %>
+  </div>
+</div>

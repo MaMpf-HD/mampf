@@ -1,0 +1,189 @@
+{
+    "editor.formatOnSave": false, // autosave configured via options below
+    //////////////////////////////////////
+    // ESLint: JS (and TS)
+    //////////////////////////////////////
+    // https://eslint.style/guide/faq#how-to-auto-format-on-save
+    // https://github.com/microsoft/vscode-eslint#settings-options
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "eslint.format.enable": true,
+    "eslint.options": {
+        "overrideConfigFile": ".config/eslint.mjs"
+    },
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+    ],
+    "[javascript]": {
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
+    },
+    // Disable VSCode-native JS validation since our JS files might include
+    // ERB syntax, that would otherwise be flagged as invalid
+    "js/ts.validate.enabled": false,
+    //////////////////////////////////////
+    // HTML & ERB
+    //////////////////////////////////////
+    "languageServerHerb.linter.enabled": true,
+    "languageServerHerb.formatter.enabled": true,
+    "[erb]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "marcoroth.herb-lsp",
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
+    },
+    //////////////////////////////////////
+    // Ruby (RuboCop)
+    //////////////////////////////////////
+    "[ruby]": {
+        "editor.defaultFormatter": "Shopify.ruby-lsp",
+        "editor.formatOnSave": true
+    },
+    "rubyLsp.formatter": "rubocop",
+    // https://shopify.github.io/ruby-lsp/version-managers.html#custom-activation
+    "rubyLsp.rubyVersionManager": {
+        "identifier": "custom"
+    },
+    "rubyLsp.rubyExecutablePath": "/usr/local/bin/ruby",
+    "rubyLsp.enabledFeatures": {
+        "codeActions": true,
+        "diagnostics": true,
+        "documentHighlights": true,
+        "documentLink": true,
+        "documentSymbols": true,
+        "foldingRanges": true,
+        "formatting": true,
+        "hover": true,
+        "inlayHint": true,
+        "onTypeFormatting": true,
+        "selectionRanges": true,
+        "semanticHighlighting": true,
+        "completion": true,
+        "codeLens": true,
+        "definition": true
+    },
+    //////////////////////////////////////
+    // Ruby Test Explorer
+    //////////////////////////////////////
+    "rubyLsp.featureFlags": {
+        "fullTestDiscovery": true,
+    },
+    "rubyLsp.addonSettings": {
+        "Ruby LSP RSpec": {
+            "rspecCommand": "env VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec --format documentation"
+        }
+    },
+    "testing.coverageToolbarEnabled": true,
+    //////////////////////////////////////
+    // Files
+    //////////////////////////////////////
+    "files.exclude": {
+        "node_modules/": true,
+        "pdfcomprezzor/": true,
+        "coverage/": true,
+        ".docker/": true
+    },
+    "files.associations": {
+        "*.js.erb": "javascript",
+        "*.html.erb": "erb"
+    },
+    //////////////////////////////////////
+    // Editor
+    //////////////////////////////////////
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 100, // toggle via Alt + Z shortcut
+    "editor.mouseWheelZoom": true,
+    "editor.rulers": [
+        {
+            "column": 80, // soft limit
+            "color": "#e5e5e5"
+        },
+        {
+            "column": 100, // hard limit
+            "color": "#c9c9c9"
+        }
+    ],
+    //////////////////////////////////////
+    // Terminal
+    //////////////////////////////////////
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    //////////////////////////////////////
+    // Container
+    //////////////////////////////////////
+    "containers.containers.description": [
+        "Image",
+        "Status"
+    ],
+    "containers.containers.label": "ContainerName",
+    //////////////////////////////////////
+    // Git
+    //////////////////////////////////////
+    "git.inputValidation": true,
+    "git.inputValidationSubjectLength": 50,
+    "git.inputValidationLength": 72,
+    //////////////////////////////////////
+    // Spell Checker
+    //////////////////////////////////////
+    "cSpell.enabled": true,
+    "cSpell.diagnosticLevel": "Hint",
+    "cSpell.maxNumberOfProblems": 10000,
+    "cSpell.ignorePaths": [
+        "node_modules",
+        ".git"
+    ],
+    "cSpell.language": "en,de",
+    "cSpell.words": [
+        "activerecord",
+        "ajax",
+        "buildcache",
+        "cicd",
+        "clipboardpopup",
+        "codenames",
+        "commontator",
+        "cospeaker",
+        "cospeakers",
+        "datetime",
+        "dockerfiles",
+        "factorybot",
+        "Fulltext",
+        "helpdesk",
+        "hotwired",
+        "imap",
+        "javascripts",
+        "justfile",
+        "katex",
+        "lightgray",
+        "likert",
+        "localroot",
+        "mailcatcher",
+        "mampf",
+        "mampftest",
+        "pagy",
+        "Pagy",
+        "pdfcomprezzor",
+        "pgadmin",
+        "preseed",
+        "preseeds",
+        "preselection",
+        "psql",
+        "realpath",
+        "rubocop",
+        "RuboCop",
+        "selectize",
+        "stylesheet",
+        "Timecop",
+        "tomselect",
+        "trix",
+        "turbo",
+        "uncached",
+        "Unsets",
+        "vite",
+        "Vite",
+        "webpacker",
+        "whitespaces"
+    ],
+}

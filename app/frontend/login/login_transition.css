@@ -1,0 +1,35 @@
+::view-transition-old(root) {
+    animation: fade-old 700ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+::view-transition-new(root) {
+    animation: reveal-new 700ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes fade-old {
+    0% {
+        opacity: 1;
+        filter: none;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0.3;
+        filter: blur(8px);
+        transform: scale(1.06);
+    }
+}
+
+@keyframes reveal-new {
+    0% {
+        opacity: 0;
+        filter: blur(8px);
+        transform: scale(0.94);
+    }
+
+    100% {
+        opacity: 1;
+        filter: none;
+        transform: scale(1);
+    }
+}

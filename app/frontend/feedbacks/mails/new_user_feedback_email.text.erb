@@ -1,0 +1,13 @@
+# Title (optional)
+<%= @feedback.title %>
+
+# Feedback
+<%= @feedback.feedback %>
+
+
+-----
+<% if @feedback.can_contact %>
+Reply to this mail to contact the user.
+<% else %>
+User did not give permission to contact them regarding their feedback, so we cannot reply to this mail.
+<% end %>

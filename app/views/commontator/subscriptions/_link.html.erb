@@ -14,7 +14,7 @@
             remote: true %>
 <%= tag.i class: 'far fa-question-circle helpdesk subscriptionInfo',
           tabindex: -1,
-          data: { toggle: 'popover',
-                  trigger: 'focus',
-                  content: t("commontator.subscription.actions.info.#{sub_string}") },
+          'data-bs-toggle': 'popover',
+          'data-bs-trigger': 'focus',
+          'data-bs-content': t("commontator.subscription.actions.info.#{sub_string}"),
           title: t('info') %>

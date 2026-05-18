@@ -3,6 +3,7 @@
 <%= t('profile.confirm_account_deletion') %>
 <%= f.password_field :password,
                      class: 'form-control my-2',
+                     "data-cy": "delete-account-pwd-field",
                      required: true %>
 <% if current_user.contributor? %>
   <div class="row mt-2">
@@ -57,7 +58,8 @@
 <div class="row mt-3">
   <div class="col-12 text-center">
     <%= f.submit t('profile.delete_account'),
-                 class: "btn btn-danger mb-2" %>
+                 class: "btn btn-danger mb-2",
+                 "data-cy": "delete-account-confirm-btn" %>
   </div>
 </div>
 <% end %>

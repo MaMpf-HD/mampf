@@ -1,41 +1,15 @@
 # Contributing
 
-To ensure a smooth experience for contributions, please first open an issue about the change you wish to make or contact
-an active developer in some other way before making a change.
+We are a small dev team centered around [Denis Vogel](https://www.mathi.uni-heidelberg.de/~vogel/), the creator of MaMpf. He started the project on June 4, 2017 out of frustration with the existing tools and their shortcomings when it comes to teaching mathematics and uploading recorded lectures to the web. He has since been the main developer and maintainer of the project and added tons of functionality throughout the years. MaMpf is now used every day by the mathematics department at Heidelberg University to host their lectures. It is constantly being improved and extended.
 
-## Braches
-We have the following branches:
-- *production*
-- *main*
-- *mampf-next*
-- feature-branches (names vary)
-- *experimental*
+Denis Vogel was joined by many students along the way working on the project in the role of a payed HiWis (German abbreviation for "Hilsfwissenschaftler", research assistants) at Heidelberg University. They have contributed to the project in various ways, such as implementing new features, fixing bugs, testing the software and improving the documentation.
 
-### *production*
-contains the actual version deployed on [mampf](mampf.mathi.uni-heidelberg.de).
+The idea of MaMpf is to provide free material online to the whole world. In that spirit, the source code for MaMpf is open-source and licensed under the very permissive MIT license, so your university can host their own instance of MaMpf if they want to.
 
-### *main*
-is usually equal to *production*. Hotfixes are tested here before being merged to *production*.
+---
 
-### *mampf-next*
-is the next intended version for mampf. This version is automatically deployed on
-[mampf-dev](mampf-dev.mathi.uni-heidelberg.de). Features should be developed in feature branches and merged here.
+**While we welcome contributions from everyone, please keep in mind that we are a very small team and currently cannot provide extensive mentoring or guidance to new external contributors.** If you are a HiWi at Heidelberg University, that's of course a different story, but unfortunately, right now we don't have too much time to onboard new developers form the outside. Knowledge transfer is often easier in persona than having to write down everything online. We have done such efforts in our [Wiki](https://github.com/MaMpf-HD/mampf/wiki) and continue to improve it as living document but don't expect it to be fully self-contained.
+Also note that due to MaMpf being very specific to our needs at Heidelberg University, we might reject contributions that are not in line with our vision for the project or too general (or too specific to another university) to be useful for us. Therefore, **please open an issue before starting to work on a pull request to discuss your idea with us**.
 
-### feature branches
-Collaborators may create a branch for each improvement they would like to integrate in *mampf-next*. If you do not have
-collaborator access yet, feel free to instead fork this repository and open a pull request targeted on the *mampf-next*
-branch.
-
-### *experimental*
-is used as a playground and for test deployments. Do **not** put important work here. This branch is intended to be
-force-pushed by any collaborator. If you ever want to deploy a version in a production-like environment, feel free to
-do
-
-> git checkout experimental
->
-> git reset --hard <version>
->
-> git push -f
-
-If you are not a collaborator, feel free to open a pull-request on experimental with a note, that you are aware of this
-policy and would just like to try out a change.
+> [!tip]
+> Check out our [**Wiki**](https://github.com/MaMpf-HD/mampf/wiki) if you are a new MaMpf developer and want to get started with setting up your own local Docker instance and get to know our development workflow and the code structure.
