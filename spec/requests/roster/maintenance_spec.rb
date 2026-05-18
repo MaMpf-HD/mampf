@@ -123,6 +123,18 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { tutorial.members.count }.by(1)
       end
 
+      it "sends an email when a user is successfully added tot tutorial" do
+        expect do
+          post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_added_to_group_email_subject",
+                 rosterable_title: tutorial.title)
+        )
+      end
+
       it "propagates tutorial roster additions to the lecture roster" do
         expect do
           post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
@@ -181,6 +193,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(flash[:alert]).to include(I18n.t("roster.errors.item_locked"))
           expect(tutorial.members).not_to include(new_student)
         end
+
+        it "does not send an email" do
+          expect do
+            post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
       end
     end
 
@@ -196,6 +214,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect do
           post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
         end.not_to(change { tutorial.members.count })
+      end
+
+      it "does not send an email" do
+        expect do
+          post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
+        end.not_to(change { ActionMailer::Base.deliveries.count })
       end
     end
   end
@@ -213,6 +237,18 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect do
           delete(remove_member_tutorial_path(tutorial, user_id: member.id))
         end.to change { tutorial.members.count }.by(-1)
+      end
+
+      it "sends an email when a user is successfully removed from tutorial" do
+        expect do
+          delete(remove_member_tutorial_path(tutorial, user_id: member.id))
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_removed_to_group_email_subject",
+                 rosterable_title: tutorial.title)
+        )
       end
 
       it "does not remove the user from the lecture roster" do
@@ -243,6 +279,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(flash[:alert]).to include(I18n.t("roster.errors.item_locked"))
           expect(tutorial.members).to include(member)
         end
+
+        it "does not send an email" do
+          expect do
+            delete(remove_member_tutorial_path(tutorial, user_id: member.id))
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
       end
     end
 
@@ -258,6 +300,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect do
           delete(remove_member_tutorial_path(tutorial, user_id: member.id))
         end.not_to(change { tutorial.members.count })
+      end
+
+      it "does not send an email" do
+        expect do
+          delete(remove_member_tutorial_path(tutorial, user_id: member.id))
+        end.not_to(change { ActionMailer::Base.deliveries.count })
       end
     end
   end
@@ -278,6 +326,20 @@ RSpec.describe("Roster::Maintenance", type: :request) do
                 params: { target_id: target.id })
         end.to change { source.members.count }.by(-1)
                                               .and(change { target.members.count }.by(1))
+      end
+
+      it "sends an email when a user is successfully moved" do
+        expect do
+          patch(move_member_tutorial_path(source, user_id: member.id),
+                params: { target_id: target.id })
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
+                 rosterable_title: tutorial.title)
+        )
       end
 
       it "keeps lecture roster membership when moving within tutorials" do
@@ -313,6 +375,13 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(source.members).to include(member)
           expect(target.members).not_to include(member)
         end
+
+        it "does not send an email" do
+          expect do
+            patch(move_member_tutorial_path(source, user_id: member.id),
+                  params: { target_id: target.id })
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
       end
     end
 
@@ -332,6 +401,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.not_to(change { source.members.count })
         expect(target.members.count).to eq(0)
       end
+
     end
   end
 
@@ -390,6 +460,19 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { lecture.members.count }.by(-1)
       end
 
+      it "sends an email when a user is successfully removed" do
+        expect do
+          delete(remove_member_lecture_path(lecture, user_id: member.id))
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_removed_from_lecture_email_subject",
+                 rosterable_title: tutorial.title)
+        )
+      end
+
       it "returns turbo stream response" do
         delete remove_member_lecture_path(lecture, user_id: member.id), as: :turbo_stream
         expect(response.media_type).to eq(Mime[:turbo_stream])
@@ -436,6 +519,20 @@ RSpec.describe("Roster::Maintenance", type: :request) do
                 params: { target_id: target_tutorial.id, target_type: "Tutorial" })
         end.to change { tutorial.members.count }.by(-1)
                                                 .and(change { target_tutorial.members.count }.by(1))
+      end
+
+      it "sends an email when a user is successfully moved" do
+        expect do
+          patch(move_member_lecture_path(lecture, user_id: member.id),
+                params: { target_id: target_tutorial.id, target_type: "Tutorial" })
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
+                 rosterable_title: tutorial.title)
+        )
       end
 
       it "keeps lecture membership when moving between tutorials" do
@@ -590,6 +687,19 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect do
           delete(remove_member_cohort_path(cohort, user_id: member.id))
         end.to change { cohort.members.count }.by(-1)
+      end
+
+      it "sends an email when a user is successfully removed" do
+        expect do
+          delete(remove_member_cohort_path(cohort, user_id: member.id))
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_removed_from_group_email_subject",
+                 rosterable_title: cohort.title)
+        )
       end
     end
 
