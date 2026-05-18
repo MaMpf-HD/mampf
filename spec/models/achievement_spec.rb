@@ -146,6 +146,15 @@ RSpec.describe(Achievement, type: :model) do
         participation.update!(grade_text: "5")
         expect(achievement.student_met_threshold?(user)).to be(false)
       end
+
+      it "returns true when a decimal grade_text meets a decimal threshold" do
+        achievement.update!(threshold: 12.5)
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+        participation.update!(grade_text: "12.6")
+        expect(achievement.student_met_threshold?(user)).to be(true)
+      end
     end
 
     context "when percentage" do

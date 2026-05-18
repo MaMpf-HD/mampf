@@ -155,6 +155,16 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
       expect(component.met?(above)).to be(true)
       expect(component.met?(below)).to be(false)
     end
+
+    it "preserves decimal values in the display and comparison" do
+      achievement.update!(threshold: 12.5)
+      decimal = create(:assessment_participation,
+                       assessment: assessment,
+                       grade_text: "12.6")
+
+      expect(component.value_display(decimal)).to eq("12.6 / 12.5")
+      expect(component.met?(decimal)).to be(true)
+    end
   end
 
   context "with a percentage achievement" do

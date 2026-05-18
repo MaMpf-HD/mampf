@@ -33,13 +33,19 @@ class Achievement < ApplicationRecord
     when "boolean"
       participation.grade_text == "pass"
     when "numeric"
-      participation.grade_text.to_i >= threshold
+      numeric_value(participation.grade_text) >= threshold
     when "percentage"
       participation.grade_text.to_f >= threshold
     end
   end
 
   private
+
+    def numeric_value(value)
+      BigDecimal(value.to_s)
+    rescue ArgumentError
+      BigDecimal("0")
+    end
 
     def threshold_or_type_changed?
       saved_change_to_threshold? || saved_change_to_value_type?

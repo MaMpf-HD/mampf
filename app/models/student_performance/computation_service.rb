@@ -114,7 +114,7 @@ module StudentPerformance
 
           case a.value_type
           when "boolean"    then gt == "pass"
-          when "numeric"    then gt.to_i >= a.threshold
+          when "numeric"    then numeric_value(gt) >= a.threshold
           when "percentage" then gt.to_f >= a.threshold
           end
         end.map(&:id)
@@ -160,6 +160,12 @@ module StudentPerformance
         return nil if points_max.nil? || points_max.zero?
 
         (points_total / points_max * 100).round(2)
+      end
+
+      def numeric_value(value)
+        BigDecimal(value.to_s)
+      rescue ArgumentError
+        BigDecimal("0")
       end
 
       def build_row(user_id, stats, achievements_met_ids,

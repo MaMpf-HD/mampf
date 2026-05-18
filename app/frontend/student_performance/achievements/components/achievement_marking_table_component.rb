@@ -18,9 +18,9 @@ class AchievementMarkingTableComponent < ViewComponent::Base
 
     case achievement.value_type
     when "numeric"
-      return "#{participation.grade_text.to_i} / \u2014" if threshold.blank?
+      return "#{format_numeric(participation.grade_text)} / \u2014" if threshold.blank?
 
-      "#{participation.grade_text.to_i} / #{threshold.to_i}"
+      "#{format_numeric(participation.grade_text)} / #{format_numeric(threshold)}"
     when "percentage"
       return "#{format_percentage(participation.grade_text.to_f)} / \u2014" if threshold.blank?
 
@@ -36,7 +36,7 @@ class AchievementMarkingTableComponent < ViewComponent::Base
     when "boolean"
       participation.grade_text == "pass"
     when "numeric"
-      participation.grade_text.to_i >= threshold
+      numeric_value(participation.grade_text) >= threshold
     when "percentage"
       participation.grade_text.to_f >= threshold
     end
@@ -73,5 +73,15 @@ class AchievementMarkingTableComponent < ViewComponent::Base
 
     def format_percentage(value)
       "#{format("%.1f", value.to_f)}%"
+    end
+
+    def format_numeric(value)
+      numeric_value(value).to_s("F").sub(/\.0+\z/, "").sub(/(\.\d*?)0+\z/, "\\1")
+    end
+
+    def numeric_value(value)
+      BigDecimal(value.to_s)
+    rescue ArgumentError
+      BigDecimal("0")
     end
 end

@@ -436,6 +436,21 @@ RSpec.describe(StudentPerformance::ComputationService) do
                    .find_by(lecture: lecture, user: user)
           expect(record.achievements_met_ids).not_to include(achievement.id)
         end
+
+        it "includes met achievement when decimal value meets decimal threshold" do
+          achievement.update!(threshold: 12.5)
+          participation = achievement.assessment
+                                     .assessment_participations
+                                     .find_by(user: user)
+          participation.update!(grade_text: "12.6")
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_met_ids).to include(achievement.id)
+        end
       end
 
       context "with unmarked achievement" do
