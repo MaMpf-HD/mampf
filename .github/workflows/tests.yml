@@ -210,6 +210,8 @@ jobs:
           logs app-test
 
   # Brakeman security scan
+  # We put this here and not in a separate workflow such that we only have to
+  # approve the workflow once (for the pull request).
   brakeman-scan:
     name: Brakeman Scan
     environment: testing-review
