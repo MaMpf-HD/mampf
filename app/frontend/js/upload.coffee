@@ -549,7 +549,15 @@ window.userManuscriptUpload = (fileInput) ->
     if merged != undefined && result == undefined
       result = merged
     if result== undefined || newFile
-      result =document.getElementById('upload-userManuscript').files[0]
+      selectedFiles = document.getElementById('upload-userManuscript').files
+      if selectedFiles.length != 1
+        message = if selectedFiles.length > 1
+          $('#multiple-files-selected').text().trim()
+        else
+          $('#userManuscript-uploadButton-call').data('tr-failure')
+        alert(message)
+        return
+      result = selectedFiles[0]
     if $("#file-permission-checkbox").is(":checked")
       #Upload blob
       formData = new FormData()
