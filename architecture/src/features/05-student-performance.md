@@ -26,7 +26,7 @@ We use a factual materialization + teacher certification + phased policy checks:
 - **Service-Based Computation:** `StudentPerformance::Service` aggregates points and achievements and upserts the factual `StudentPerformance::Record`.
 - **Evaluator (Teacher Tool):** `StudentPerformance::Evaluator` is a teacher-facing tool that interprets factual records to generate bulk certification proposals and show rule change impact. It is never called during registration/finalization runtime.
 - **Achievement Tracking:** A top-level `Achievement` model records qualitative accomplishments (e.g., blackboard presentations).
-- **Recomputation Triggers:** Background jobs and on-demand triggers keep the data fresh and guarantee correctness.
+- **Recomputation Triggers:** Synchronous `after_commit` callbacks on 6 models keep records current automatically whenever grades or enrollments change. Just-in-time recomputation at registration guarantees 100% correctness.
 - **Audit Trail:** Certification provides the authoritative decision and audit (who, when, source, rule snapshot). The Record stays facts-only.
 
 ## Information Architecture
@@ -200,7 +200,7 @@ its internal logic. For the canonical dispatcher, see Registration →
 
 ### Usage Scenarios
 
-- **After coursework completion:** A background job runs `StudentPerformance::Service.new(lecture: ...).compute_and_upsert_all_records!`. Alice's record is created with `points_total_materialized: 58`, `percentage_materialized: 58`. The record itself does not say if she passed.
+- **After coursework completion:** When a tutor grades Alice's submission, an `after_commit` callback on `Assessment::Participation` automatically calls `StudentPerformance::ComputationService.new(lecture: ...).compute_and_upsert_record_for(alice)`. Alice's record is updated with `points_total_materialized: 58`, `percentage_materialized: 58`. The record itself does not say if she passed.
 
 - **Teacher certification workflow:** The teacher opens the Certification UI, which uses the `Evaluator` to generate proposals for all students. The teacher reviews and creates `Certification` rows (pending/passed/failed). Manual edge cases are set with `source: :manual`.
 
@@ -240,20 +240,21 @@ An assessable type that tracks qualitative student accomplishments during a lect
 
 | Type         | Threshold Meaning                        | Participation Grade Encoding           | Example                          |
 |--------------|------------------------------------------|----------------------------------------|----------------------------------|
-| `boolean`    | Not used (always pass/fail)              | `"Pass"` or `"Fail"`                   | Blackboard presentation (yes/no) |
-| `numeric`    | Required count                           | Integer count as `grade_value`         | Attendance: 12 of 15             |
-| `percentage` | Required percentage (0-100)              | Percentage as `grade_value`            | Lab participation: 75%           |
+| `boolean`    | Not used (always pass/fail)              | `grade_text`: `"pass"` or `"fail"`     | Blackboard presentation (yes/no) |
+| `numeric`    | Required count                           | `grade_text`: integer as string (`"12"`) | Attendance: 12 of 15             |
+| `percentage` | Required percentage (0-100)              | `grade_text`: percentage as string (`"75.0"`) | Lab participation: 75%           |
 
 ### Behavior Highlights
 
-- **Assessable Integration:** Each Achievement has one `Assessment::Assessment` record where `assessable_type = "Achievement"` and `assessable_id = achievement.id`
-- **Participation Seeding:** When created, participations are seeded for all students in the lecture roster
+- **Assessable Integration:** Each Achievement has one `Assessment::Assessment` record where `assessable_type = "Achievement"` and `assessable_id = achievement.id`. The assessment callback is gated by the `:assessment_grading` feature flag, while the CRUD UI is gated by `:student_performance`. When only `:student_performance` is enabled, achievements exist as lightweight entities without assessment infrastructure.
+- **Participation Seeding:** When created (and `:assessment_grading` is enabled), participations are seeded for all members of the lecture
 - **Tutor Grading:** Tutors mark achievement completion via existing `Assessment::Participation` editing UI:
-  - Boolean: Check/uncheck "Completed" → sets `grade_value: "Pass"/"Fail"`
-  - Numeric: Enter count → sets `grade_value: <count>`
-  - Percentage: Enter percentage → sets `grade_value: <percentage>`
+  - Boolean: Check/uncheck "Completed" → sets `grade_text: "pass"/"fail"`
+  - Numeric: Enter count → sets `grade_text: "<count>"`
+  - Percentage: Enter percentage → sets `grade_text: "<percentage>"`
+- **Grade Storage:** Uses the existing `grade_text` column on `Assessment::Participation` (see [Grade Fields: Numeric vs Text](04-assessments-and-grading.md#participation-model)). Values are written programmatically by the service layer, not user-typed — the Achievement model's `value_type` determines which encoding to use and how to parse it back.
 - **No Tasks/Submissions:** Achievements do not use `Assessment::Task` (no per-task breakdown) and do not require file uploads (`requires_submission: false`)
-- **Eligibility Checking:** StudentPerformance::Service reads participation `grade_value` to determine if student meets threshold
+- **Eligibility Checking:** StudentPerformance::Service reads participation `grade_text` to determine if student meets threshold
 - **Deletion Protection:** Cannot delete achievement if referenced by any rule (`dependent: :restrict_with_error`). Database FK constraint provides additional layer (`on_delete: :restrict`)
 
 ### Example Implementation
@@ -292,15 +293,15 @@ class Achievement < ApplicationRecord
 
   def student_met_threshold?(user)
     participation = assessment.participations.find_by(user: user)
-    return false unless participation&.grade_value.present?
+    return false unless participation&.grade_text.present?
 
     case value_type
     when "boolean"
-      participation.grade_value == "Pass"
+      participation.grade_text == "pass"
     when "numeric"
-      participation.grade_value.to_i >= threshold
+      participation.grade_text.to_i >= threshold
     when "percentage"
-      participation.grade_value.to_f >= threshold
+      participation.grade_text.to_f >= threshold
     end
   end
 end
@@ -310,9 +311,9 @@ end
 
 - **Teacher creates achievement:** Navigate to Lecture → Assessments → New Assessment → select "Achievement". Enter title ("Blackboard Presentation"), choose value_type ("boolean"). System creates Achievement + Assessment + Participations for all students.
 
-- **Tutor marks completion:** In tutorial roster view, tutor sees participation list for "Blackboard Presentation" achievement. Checks box next to Emma's name → `participation.grade_value = "Pass"`.
+- **Tutor marks completion:** In tutorial roster view, tutor sees participation list for "Blackboard Presentation" achievement. Checks box next to Emma's name → `participation.update(grade_text: "pass")`.
 
-- **Eligibility computation:** StudentPerformance::Service calls `achievement.student_met_threshold?(emma)` which checks if Emma's participation has `grade_value: "Pass"`.
+- **Eligibility computation:** StudentPerformance::Service calls `achievement.student_met_threshold?(emma)` which checks if Emma's participation has `grade_text: "pass"`.
 
 ---
 
@@ -334,14 +335,15 @@ A configuration record that defines the criteria a student must meet to be eligi
 | `lecture_id`                   | DB column (FK)   | The lecture this rule applies to                               |
 | `min_percentage`               | DB column        | Minimum percentage of points (0-100), mutually exclusive with `min_points_absolute` |
 | `min_points_absolute`          | DB column        | Minimum absolute points, mutually exclusive with `min_percentage` |
-| `active`                       | DB column (Bool) | Whether this rule is currently in effect                       |
+| `active`                       | DB column (Bool) | Whether this rule is currently in effect (see note below)      |
 | `rule_achievements`            | Association      | Join records linking to required achievements                  |
 | `required_achievements`        | Association      | Achievement records that must be completed (via `rule_achievements`) |
 
 ### Behavior Highlights
 
 - Stored as a database record (not just JSONB config) for better querying and validation
-- One lecture can have one active rule at a time
+- One lecture can have one active rule at a time (enforced by partial unique index on `active = true`)
+- The `active` column currently has no user-facing toggle. Rules are always set to `active: true` on save. The column exists as infrastructure for future rule versioning (deactivate old rule, create new one, certifications keep FK to historical rule). See [Future Extensions - Section 5](../features/10-future-extensions.md#5-student-performance--certification).
 - References multiple achievements via join table (`student_performance_rule_achievements`)
 - Database-level integrity prevents deletion of achievements still referenced by rules
 - Enforces mutual exclusivity of percentage vs absolute point thresholds
@@ -415,7 +417,7 @@ end
 
 ---
 
-## StudentPerformance::Service (Service Object)
+## StudentPerformance::ComputationService (Service Object)
 **_Performance Computer_**
 
 ```admonish info "What it represents"
@@ -442,17 +444,21 @@ The "performance calculator" that gathers all the data and stamps it into a stud
 
 ### Recomputation Triggers
 
-The service is invoked in several scenarios to keep performance records accurate:
-1.  **After coursework grading:** A background job can trigger a full recomputation.
-2.  **After achievement changes:** When tutors record or correct lecture achievements for a user.
-3.  **Just-in-Time:** The `Registration::Policy` triggers a recomputation for a single user at the moment of an exam registration attempt to guarantee 100% correctness.
-4.  **On-demand by staff:** Manual trigger via an admin interface for debugging or corrections.
+The service is called synchronously via `after_commit` callbacks, covering all mutation points:
+1.  **`Assessment::Participation` (per-user):** Changes to `status`, `submitted_at`, or `grade_text` (for achievement participations) trigger `compute_and_upsert_record_for(user)`.
+2.  **`Assessment::TaskPoint` (per-user):** Changes to `points` trigger `compute_and_upsert_record_for(user)`.
+3.  **`Achievement` (full-lecture):** Changes to `threshold` or `value_type` trigger `compute_and_upsert_all_records!`.
+4.  **`Assessment::Assessment` (full-lecture):** Assignment-type create/destroy, or `total_points` change, trigger `compute_and_upsert_all_records!`.
+5.  **`Assessment::Task` (full-lecture):** Create/destroy or `max_points` change trigger `compute_and_upsert_all_records!` (skipped when no participations exist yet, e.g. during initial assignment setup).
+6.  **`LectureMembership` (enrollment):** Student joining calls `compute_and_upsert_record_for(user)`; student leaving deletes the record.
+
+All callbacks are gated by the `:assessment_grading` Flipper flag (except `TaskPoint`, where the flag is implicitly enforced because task points only exist when the flag is on).
 
 ### Example Implementation
 
 ```ruby
 module StudentPerformance
-  class Service
+  class ComputationService
     def initialize(lecture:)
       @lecture = lecture
       @rule = lecture.student_performance_rule
@@ -828,11 +834,8 @@ flowchart TD
 **Computation Phase:**
 
 1. Semester progresses, students submit homework, tutors grade.
-2. After final homework deadline, a background job runs:
-   ```ruby
-   StudentPerformance::Service.new(lecture: linear_algebra).compute_and_upsert_all_records!
-   ```
-3. System creates `StudentPerformance::Record` entries:
+2. Throughout the semester, every time a tutor grades a submission or marks an achievement, `after_commit` callbacks automatically update performance records. After all grading is complete, records already reflect the final state.
+3. System has `StudentPerformance::Record` entries:
     - Alice: 58/100 points (58%), achievements_met_ids: [1, 2]
     - Bob: 42/100 points (42%), achievements_met_ids: []
     - Carol: 65/100 points (65%), achievements_met_ids: [1]

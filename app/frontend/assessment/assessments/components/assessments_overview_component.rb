@@ -5,8 +5,7 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   def initialize(lecture:, active_tab: nil)
     super()
     @lecture = lecture
-    tab = active_tab&.to_sym
-    @active_tab = tab == :assessments ? tab : :assessments
+    @active_tab = resolve_tab(active_tab)
   end
 
   attr_reader :lecture, :active_tab
@@ -16,14 +15,42 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   end
 
   def assessments_tab_label
-    I18n.t("assessment.tabs.assignments")
+    if lecture.seminar?
+      I18n.t("assessment.tabs.talks")
+    else
+      I18n.t("assessment.tabs.assignments")
+    end
+  end
+
+  def performance_enabled?
+    student_performance_enabled?
+  end
+
+  def achievements_enabled?
+    student_performance_enabled?
   end
 
   def single_tab?
-    true
+    visible_tabs.size == 1
   end
 
   def visible_tabs
-    [:assessments]
+    tabs = [:assessments]
+    tabs << :achievements if achievements_enabled?
+    tabs << :performance if performance_enabled?
+    tabs
   end
+
+  private
+
+    def student_performance_enabled?
+      Flipper.enabled?(:student_performance) && !lecture.seminar?
+    end
+
+    def resolve_tab(tab)
+      key = tab&.to_sym
+      return key if key.in?(visible_tabs)
+
+      :assessments
+    end
 end

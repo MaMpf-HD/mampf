@@ -2,12 +2,13 @@ module Demo
   module SetupSupport
     extend self
     extend Demo::AssessmentSetupSupport
+    extend Demo::PerformanceSetupSupport
 
     LECTURE_CAMPAIGN_DESCRIPTION = "Demo Lecture Roster Campaign".freeze
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
     SEMINAR_COURSE_TITLE = "Demo Roster Seminar".freeze
     ROSTER_ENABLED_FLAGS = ["roster_maintenance", "registration_campaigns"].freeze
-    ASSESSMENT_ENABLED_FLAGS = ["assessment_grading"].freeze
+    PERFORMANCE_ENABLED_FLAGS = ["assessment_grading", "student_performance"].freeze
     LECTURE_TUTORIAL_CAPACITIES = [10, 8, 8, 6].freeze
     LECTURE_TUTORIAL_TITLES = [
       "Demo Tutorial 1",
@@ -20,7 +21,7 @@ module Demo
     def setup_flags!
       ensure_non_production!
       configure_feature_flags!(
-        enabled: ROSTER_ENABLED_FLAGS + ASSESSMENT_ENABLED_FLAGS
+        enabled: (ROSTER_ENABLED_FLAGS + PERFORMANCE_ENABLED_FLAGS).uniq
       )
     end
 
@@ -42,6 +43,7 @@ module Demo
     def setup!
       setup_rosters!
       setup_assessment!
+      setup_performance!
     end
 
     private

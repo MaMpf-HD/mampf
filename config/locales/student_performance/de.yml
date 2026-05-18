@@ -1,0 +1,48 @@
+de:
+  student_performance:
+    errors:
+      no_lecture: "Veranstaltung nicht gefunden."
+      no_record: "Leistungsdatensatz nicht gefunden."
+      no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
+    records:
+      tooltip_points: "Punkte"
+      columns:
+        student: "Studierende/r"
+        email: "E-Mail"
+        points: "Punkte"
+        percentage: "Prozent"
+        assessments: "Bewertungen"
+        reviewed: "Bewertet"
+        graded: "bewertet"
+        pending_grading: "Noch nicht bewertet"
+        not_submitted: "Nicht abgegeben"
+        absent: "Abwesend"
+        exempt: "Befreit"
+        achievement_met: "Erfüllt"
+        achievement_not_met: "Nicht erfüllt"
+        achievement_ungraded: "Noch nicht bewertet"
+      index:
+        subtitle: "Faktische Leistungsdaten, berechnet aus Bewertungen."
+        generate_proposals: "Vorschläge generieren"
+        all_tutorials: "Alle Übungsgruppen"
+        empty: "Es wurden noch keine Leistungsdaten berechnet."
+        details: "Details"
+        showing: "%{from}–%{to} von %{count} Studierenden"
+      show:
+        back: "Zurück zur Übersicht"
+        recompute: "Neu berechnen"
+        total_points: "Gesamtpunkte"
+        out_of: "von %{max} möglichen"
+        percentage: "Prozent"
+        achievements_met: "Erfüllte Zusatzkriterien"
+        assessment_breakdown: "Übungsblätter im Detail"
+        assignment: "Übungsblatt"
+        status: "Status"
+        max_points: "Max"
+        files: "Dateien"
+        view_manuscript: "Abgabe ansehen"
+        view_correction: "Korrektur ansehen"
+        total_row: "Gesamt"
+        last_computed: "Zuletzt berechnet vor %{time}."
+      recompute:
+        single: "Neuberechnung für diese/n Studierende/n abgeschlossen."

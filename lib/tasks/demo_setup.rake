@@ -19,6 +19,11 @@ namespace :demo do
     Demo::SetupSupport.setup_assessment!
   end
 
+  desc "Create demo achievements and performance records"
+  task performance: :environment do
+    Demo::SetupSupport.setup_performance!
+  end
+
   desc "Create the maximum available demo data for the current slice"
   task setup: :environment do
     Demo::SetupSupport.setup!

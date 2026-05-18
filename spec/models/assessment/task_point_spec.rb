@@ -78,4 +78,28 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
       expect(task_point).to be_valid
     end
   end
+
+  describe "performance record recomputation" do
+    let(:task_point) { FactoryBot.create(:assessment_task_point) }
+    let(:participation) { task_point.assessment_participation }
+    let(:service) do
+      instance_double(StudentPerformance::ComputationService,
+                      compute_and_upsert_record_for: true)
+    end
+
+    before do
+      allow(StudentPerformance::ComputationService)
+        .to receive(:new)
+        .with(lecture: participation.assessment.lecture)
+        .and_return(service)
+    end
+
+    it "is gated by the assessment_grading flag" do
+      Flipper.disable(:assessment_grading)
+
+      task_point.send(:recompute_performance_record)
+
+      expect(service).not_to have_received(:compute_and_upsert_record_for)
+    end
+  end
 end

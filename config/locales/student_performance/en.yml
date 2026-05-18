@@ -1,0 +1,48 @@
+en:
+  student_performance:
+    errors:
+      no_lecture: "Lecture not found."
+      no_record: "Performance record not found."
+      no_member: "User is not a member of this lecture."
+    records:
+      tooltip_points: "points"
+      columns:
+        student: "Student"
+        email: "Email"
+        points: "Points"
+        percentage: "Percentage"
+        assessments: "Assessments"
+        reviewed: "Reviewed"
+        graded: "graded"
+        pending_grading: "Pending Grading"
+        not_submitted: "Not Submitted"
+        absent: "Absent"
+        exempt: "Exempt"
+        achievement_met: "Met"
+        achievement_not_met: "Not met"
+        achievement_ungraded: "Not yet graded"
+      index:
+        subtitle: "Factual performance data computed from assessments."
+        generate_proposals: "Generate Proposals"
+        all_tutorials: "All Tutorial Groups"
+        empty: "No performance records have been computed yet."
+        details: "Details"
+        showing: "Showing %{from}–%{to} of %{count} students"
+      show:
+        back: "Back to records"
+        recompute: "Recompute"
+        total_points: "Total Points"
+        out_of: "out of %{max} possible"
+        percentage: "Percentage"
+        achievements_met: "Achievements Met"
+        assessment_breakdown: "Assignment Breakdown"
+        assignment: "Assignment"
+        status: "Status"
+        max_points: "Max"
+        files: "Files"
+        view_manuscript: "View submission"
+        view_correction: "View correction"
+        total_row: "Total"
+        last_computed: "Last computed %{time} ago."
+      recompute:
+        single: "Recomputation for this student completed."

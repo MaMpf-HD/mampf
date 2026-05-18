@@ -220,19 +220,24 @@ add_foreign_key :student_performance_certifications,
 ### Recommended Background Jobs
 
 ```admonish tip "Implementation placement"
-`PerformanceRecordUpdateJob` and `CertificationStaleCheckJob` are
+`CertificationStaleCheckJob` is
 implemented as part of Step 10 (Student Performance). The remaining
 jobs listed here are implemented alongside the features they support
 (e.g., `RecountAssignedJob` in Step 5, `ParticipationTotalsJob` in
 Step 8). An admin integrity dashboard for monitoring these jobs is a
 future extension.
+
+Performance record recomputation does **not** require a background job:
+`after_commit` callbacks on grading models (`Assessment::Participation`,
+`Assessment::TaskPoint`, `Achievement`, `Assessment::Assessment`,
+`Assessment::Task`, `LectureMembership`) call `ComputationService`
+synchronously.
 ```
 
 | Job | Purpose | Frequency |
 |-----|---------|-----------|
 | `RecountAssignedJob` | Recompute `assigned_count` from confirmed submissions | Hourly |
 | `ParticipationTotalsJob` | Verify `total_points` matches sum of task points | Daily |
-| `PerformanceRecordUpdateJob` | Recompute Records after grade changes | After grade changes |
 | `CertificationStaleCheckJob` | Flag certifications for review when Records change | After record updates |
 | `OrphanTaskPointsJob` | Detect task points with missing participation/task | Weekly |
 | `RosterIntegrityJob` | Check roster user counts vs. capacities | Daily |
