@@ -208,3 +208,33 @@ jobs:
           -f ./compose.yml
           -f ../cicd/compose.cicd.yml
           logs app-test
+
+  # Brakeman security scan
+  brakeman-scan:
+    name: Brakeman Scan
+    environment: testing-review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.4.7
+        bundler-cache: true
+
+    - name: Install Brakeman
+      run: gem install brakeman
+
+    - name: Scan
+      continue-on-error: true
+      run: brakeman -f sarif -o results.sarif.json .
+
+    - name: Upload SARIF
+      uses: github/codeql-action/upload-sarif@v4
+      with:
+        sarif_file: results.sarif.json
