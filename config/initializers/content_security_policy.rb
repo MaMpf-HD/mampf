@@ -6,8 +6,6 @@
 
 Rails.application.configure do
   config.content_security_policy do |policy|
-    media_src = [:self, :blob, ENV.fetch("MEDIA_SERVER", nil)].compact
-
     policy.default_src(:self)
     policy.base_uri(:self)
     policy.font_src(:self,
@@ -21,7 +19,9 @@ Rails.application.configure do
                    :blob,
                    :data,
                    :https)
-    policy.media_src(*media_src)
+    policy.media_src(:self,
+                     :blob,
+                     "https://media.mathi.uni-heidelberg.de")
     policy.object_src(:none)
     policy.script_src(:self,
                       :unsafe_inline,
