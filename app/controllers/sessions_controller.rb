@@ -33,7 +33,7 @@ class SessionsController < Devise::SessionsController
       message = request.env["warden"]&.message ||
                 request.env["warden.options"]&.[](:message)
       return :last_attempt if last_attempt_warning?
-      return :locked if message.to_sym == :invalid && user&.access_locked?
+      return :locked if message&.to_sym == :invalid && user&.access_locked?
       return message if message.present?
       return :locked if user&.access_locked?
 
