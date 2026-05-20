@@ -5,6 +5,10 @@ module Extensions
     # the same medium. We keep this patch so those normal interactions remain
     # possible while still preserving a narrower guard against accidental
     # double posts.
+    #
+    # Furthermore, this patch adds a has_one association from Commontator::Comment
+    # to Annotation, so that the annotation UI can access the comment's medium and
+    # thread for rendering and timestamp navigation.
     module CommentPatch
       module_function
 
