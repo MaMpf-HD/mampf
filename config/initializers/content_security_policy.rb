@@ -23,6 +23,7 @@ Rails.application.configure do
                      :blob)
     policy.object_src(:none)
     policy.script_src(:self,
+                      :unsafe_inline,
                       "https://cdn.jsdelivr.net",
                       "https://cdnjs.cloudflare.com",
                       "https://www.geogebra.org",
@@ -32,27 +33,34 @@ Rails.application.configure do
                      "https://cdn.jsdelivr.net",
                      "https://cdnjs.cloudflare.com")
     policy.connect_src(:self,
+                       "https://cdn.jsdelivr.net",
+                       "https://cdnjs.cloudflare.com",
                        "https://www.geogebra.org",
                        "https://*.geogebra.org")
     policy.form_action(:self)
 
     if Rails.env.development?
       vite_host = ViteRuby.config.host_with_port
+      vite_port = vite_host.split(":").last
+      vite_http_sources = [
+        "http://#{vite_host}",
+        "http://localhost:#{vite_port}",
+        "http://127.0.0.1:#{vite_port}"
+      ].uniq
+      vite_ws_sources = [
+        "ws://#{vite_host}",
+        "ws://localhost:#{vite_port}",
+        "ws://127.0.0.1:#{vite_port}"
+      ].uniq
 
       policy.script_src(*policy.script_src,
                         :unsafe_eval,
-                        "http://#{vite_host}")
+                        *vite_http_sources)
       policy.style_src(*policy.style_src,
-                       "http://#{vite_host}")
+                       *vite_http_sources)
       policy.connect_src(*policy.connect_src,
-                         "http://#{vite_host}",
-                         "ws://#{vite_host}")
+                         *vite_http_sources,
+                         *vite_ws_sources)
     end
   end
-
-  config.content_security_policy_nonce_generator = lambda { |request|
-    request.session.id.to_s
-  }
-  config.content_security_policy_nonce_directives = ["script-src"]
-  config.content_security_policy_report_only = true
 end
