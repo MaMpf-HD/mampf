@@ -136,4 +136,29 @@ RSpec.describe(Commontator::Comment, type: :model) do
     expect(duplicate_comment).to be_invalid
     expect(duplicate_comment.errors[:body]).to include(double_posted_error)
   end
+
+  it "allows reposting the same reply after the original is soft-deleted" do
+    parent = described_class.create!(
+      creator: creator,
+      thread: thread,
+      body: "Parent"
+    )
+    original_reply = described_class.create!(
+      creator: creator,
+      thread: thread,
+      parent: parent,
+      body: "Yes"
+    )
+
+    original_reply.update_column(:deleted_at, Time.zone.now) # rubocop:disable Rails/SkipsModelValidations
+
+    replacement_reply = described_class.new(
+      creator: creator,
+      thread: thread,
+      parent: parent,
+      body: "Yes"
+    )
+
+    expect(replacement_reply).to be_valid
+  end
 end
