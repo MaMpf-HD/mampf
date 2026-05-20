@@ -1,12 +1,19 @@
 require "rails_helper"
 
 RSpec.describe("Auth sessions", type: :request) do
-  let(:user) { create(:confirmed_user) }
+  let(:password) { "Password123!" }
+  let(:user) { create(:confirmed_user, password: password) }
+  let(:unlock_in_words) do
+    ActionController::Base.helpers.distance_of_time_in_words(
+      Time.current,
+      Time.current + Devise.unlock_in
+    )
+  end
 
   describe "POST /users/sign_in" do
     it "redirects confirmed users to the start page" do
       post user_session_path, params: {
-        user: { email: user.email, password: user.password }
+        user: { email: user.email, password: password }
       }
 
       expect(response).to redirect_to(start_path)
@@ -17,7 +24,7 @@ RSpec.describe("Auth sessions", type: :request) do
       expect(response).to redirect_to(new_user_session_path)
 
       post user_session_path, params: {
-        user: { email: user.email, password: user.password }
+        user: { email: user.email, password: password }
       }
 
       expect(response).to redirect_to(news_path)
@@ -41,12 +48,39 @@ RSpec.describe("Auth sessions", type: :request) do
       expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
       expect(response.body).to include(I18n.t("devise.failure.invalid"))
     end
+
+    it "renders a Turbo Stream flash for the last attempt before lockout" do
+      user.update!(failed_attempts: 3)
+
+      post user_session_path,
+           params: { user: { email: user.email, password: "wrong-password" } },
+           as: :turbo_stream
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+      expect(response.body).to include(I18n.t("devise.failure.last_attempt"))
+    end
+
+    it "renders a Turbo Stream flash for locked accounts" do
+      user.lock_access!
+
+      post user_session_path,
+           params: { user: { email: user.email, password: password } },
+           as: :turbo_stream
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+      expect(response.body).to include(
+        I18n.t("devise.failure.locked_with_email_and_time",
+               unlock_in: unlock_in_words)
+      )
+    end
   end
 
   describe "sign out" do
     before do
       post user_session_path, params: {
-        user: { email: user.email, password: user.password }
+        user: { email: user.email, password: password }
       }
     end
 
