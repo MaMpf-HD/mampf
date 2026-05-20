@@ -38,8 +38,6 @@ coverage
 
 # Ignore environment variables
 /public/uploads.zip
-/public/pdfcomprezzor/pdfcomprezzor.wasm
-/public/pdfcomprezzor/wasm_exec.js
 
 
 /cypress/videos

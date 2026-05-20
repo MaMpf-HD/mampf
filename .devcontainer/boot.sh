@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-git submodule update --init --recursive
-
 echo "🚀 Install Just"
 ./bin/just-install install
 
