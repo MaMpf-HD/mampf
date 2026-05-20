@@ -78,6 +78,23 @@ RSpec.describe("Auth sessions", type: :request) do
                unlock_in: unlock_in_words)
       )
     end
+
+    it "renders a locked message even at the last-attempt threshold" do
+      user.update!(failed_attempts: user.class.maximum_attempts - 1)
+      user.lock_access!
+
+      post user_session_path,
+           params: { user: { email: user.email, password: password } },
+           as: :turbo_stream
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+      expect(response.body).to include(
+        I18n.t("devise.failure.locked_with_email_and_time",
+               unlock_in: unlock_in_words)
+      )
+      expect(response.body).not_to include(I18n.t("devise.failure.last_attempt"))
+    end
   end
 
   describe "sign out" do
