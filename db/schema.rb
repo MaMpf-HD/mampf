@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -216,6 +216,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_24_000000) do
     t.index ["short_title"], name: "index_courses_on_short_title_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["term_independent"], name: "index_courses_on_term_independent"
     t.index ["title"], name: "index_courses_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "csp_violation_reports", force: :cascade do |t|
+    t.text "document_uri"
+    t.text "referrer"
+    t.string "violated_directive"
+    t.string "effective_directive"
+    t.text "original_policy"
+    t.string "disposition"
+    t.text "blocked_uri"
+    t.integer "status_code"
+    t.text "source_file"
+    t.integer "line_number"
+    t.integer "column_number"
+    t.text "script_sample"
+    t.string "ip_address"
+    t.text "user_agent"
+    t.jsonb "raw_report", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_csp_violation_reports_on_created_at"
+    t.index ["effective_directive"], name: "index_csp_violation_reports_on_effective_directive"
   end
 
   create_table "division_course_joins", force: :cascade do |t|

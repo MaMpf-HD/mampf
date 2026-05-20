@@ -156,6 +156,7 @@ de:
       boards: 'Foren'
       stats: 'Zugriffsstatistik'
       export_stats: 'Statistiken exportieren'
+      csp_violation_reports: 'CSP-Verletzungen'
       users: 'Nutzerverwaltung'
       course: 'Modul'
       profile: 'Mein Profil'
@@ -180,6 +181,18 @@ de:
     classification:
       programs: 'Studiengänge'
       divisions: 'Teilbereiche'
+    csp_violation_reports:
+      title: 'CSP-Verletzungen'
+      summary: 'Zeige die neuesten %{shown} von %{total} Meldungen.'
+      received_at: 'Empfangen'
+      directive: 'Direktive'
+      blocked_uri: 'Blockierte URI'
+      document_uri: 'Dokument-URI'
+      status_code: 'Status'
+      source: 'Quelle'
+      raw_report: 'Rohdaten'
+      show_raw: 'Anzeigen'
+      empty: 'Es wurden noch keine CSP-Verletzungen aufgezeichnet.'
     main:
       my_lectures: 'Meine Veranstaltungen'
       type: 'Typ'

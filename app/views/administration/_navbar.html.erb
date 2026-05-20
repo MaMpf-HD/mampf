@@ -85,6 +85,13 @@
                   title: t('admin.navbar.stats'),
                   target: :_blank %>
         </li>
+        <li>
+          <%= link_to '', csp_violation_reports_path,
+                  class: 'nav-link bi bi-shield-exclamation ' +
+                    get_class_for_path(csp_violation_reports_path()),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('admin.navbar.csp_violation_reports') %>
+        </li>
       <% end %>
     </ul>
 

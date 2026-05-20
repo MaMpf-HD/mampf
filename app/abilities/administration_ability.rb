@@ -11,5 +11,9 @@ class AdministrationAbility
     can :classification, :administration do
       user.admin?
     end
+
+    can :csp_violation_reports, :administration do
+      user.admin?
+    end
   end
 end

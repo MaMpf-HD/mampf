@@ -25,6 +25,11 @@ class AdministrationController < ApplicationController
     @subjects = Subject.includes(programs: [:divisions]).all
   end
 
+  def csp_violation_reports
+    @csp_violation_report_count = CspViolationReport.count
+    @csp_violation_reports = CspViolationReport.recent.limit(200)
+  end
+
   def search
     @tags = params[:sort] == "tag"
   end

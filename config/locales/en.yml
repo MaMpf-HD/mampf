@@ -143,6 +143,7 @@ en:
       boards: 'Messageboards'
       stats: 'Access statistics'
       export_stats: 'Export statistics'
+      csp_violation_reports: 'CSP violation reports'
       users: 'User administration'
       course: 'Course'
       profile: 'My Profile'
@@ -164,6 +165,18 @@ en:
     classification:
       programs: 'Study Paths'
       divisions: 'Divisions'
+    csp_violation_reports:
+      title: 'CSP violation reports'
+      summary: 'Showing the latest %{shown} of %{total} reports.'
+      received_at: 'Received'
+      directive: 'Directive'
+      blocked_uri: 'Blocked URI'
+      document_uri: 'Document URI'
+      status_code: 'Status'
+      source: 'Source'
+      raw_report: 'Raw report'
+      show_raw: 'Show'
+      empty: 'No CSP violation reports have been recorded yet.'
     main:
       my_lectures: 'My event series'
       type: 'type'

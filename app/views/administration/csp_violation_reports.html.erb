@@ -1,0 +1,65 @@
+<div class="row mt-3 p-2">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <%= t("admin.csp_violation_reports.title") %>
+      </div>
+      <div class="card-body">
+        <p>
+          <%= t("admin.csp_violation_reports.summary",
+                shown: @csp_violation_reports.size,
+                total: @csp_violation_report_count) %>
+        </p>
+
+        <% if @csp_violation_reports.any? %>
+          <div class="table-responsive">
+            <table class="table table-sm table-striped align-middle">
+              <thead>
+                <tr>
+                  <th><%= t("admin.csp_violation_reports.received_at") %></th>
+                  <th><%= t("admin.csp_violation_reports.directive") %></th>
+                  <th><%= t("admin.csp_violation_reports.blocked_uri") %></th>
+                  <th><%= t("admin.csp_violation_reports.document_uri") %></th>
+                  <th><%= t("admin.csp_violation_reports.status_code") %></th>
+                  <th><%= t("admin.csp_violation_reports.source") %></th>
+                  <th><%= t("admin.csp_violation_reports.raw_report") %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @csp_violation_reports.each do |report| %>
+                  <tr>
+                    <td><%= l(report.created_at, format: :short) %></td>
+                    <td>
+                      <span class="badge bg-secondary">
+                        <%= report.effective_directive.presence ||
+                            report.violated_directive.presence || "-" %>
+                      </span>
+                    </td>
+                    <td>
+                      <%= truncate(report.blocked_uri.presence || "-", length: 80) %>
+                    </td>
+                    <td>
+                      <%= truncate(report.document_uri.presence || "-", length: 80) %>
+                    </td>
+                    <td><%= report.status_code || "-" %></td>
+                    <td>
+                      <%= truncate(report.source_file.presence || "-", length: 80) %>
+                    </td>
+                    <td>
+                      <details>
+                        <summary><%= t("admin.csp_violation_reports.show_raw") %></summary>
+                        <pre class="mt-2 mb-0"><%= JSON.pretty_generate(report.raw_report) %></pre>
+                      </details>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <p class="mb-0"><%= t("admin.csp_violation_reports.empty") %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

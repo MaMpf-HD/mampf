@@ -56,6 +56,14 @@ Rails.application.routes.draw do
       to: "administration#classification",
       as: "classification"
 
+  get "/administration/csp-violation-reports",
+      to: "administration#csp_violation_reports",
+      as: "csp_violation_reports"
+
+  post "/csp-violation-report-endpoint",
+       to: "csp_violation_reports#create",
+       as: "csp_violation_report_endpoint"
+
   # annotation routes
   get "annotations/update_annotations",
       to: "annotations#update_annotations",

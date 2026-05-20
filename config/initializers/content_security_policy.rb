@@ -5,6 +5,10 @@
 # https://guides.rubyonrails.org/security.html#content-security-policy-header
 
 Rails.application.configure do
+  # TODO: right now we only report CSP violations,
+  # but we should enforce it in production
+  config.content_security_policy_report_only = true
+
   config.content_security_policy do |policy|
     policy.default_src(:self)
     policy.base_uri(:self)
@@ -25,8 +29,6 @@ Rails.application.configure do
     policy.object_src(:none)
     policy.script_src(:self,
                       :unsafe_inline,
-                      "https://cdn.jsdelivr.net",
-                      "https://cdnjs.cloudflare.com",
                       "https://www.geogebra.org",
                       "https://*.geogebra.org")
     policy.style_src(:self,
@@ -39,6 +41,7 @@ Rails.application.configure do
                        "https://www.geogebra.org",
                        "https://*.geogebra.org")
     policy.form_action(:self)
+    policy.report_uri("/csp-violation-report-endpoint")
 
     if Rails.env.development?
       vite_host = ViteRuby.config.host_with_port
