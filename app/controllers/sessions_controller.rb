@@ -1,77 +1,80 @@
 class SessionsController < Devise::SessionsController
   # Removes the flash message that Devise sets on successful sign in
   def create
-    return create_for_turbo_stream if request.format.turbo_stream?
-
     super
     session[:show_login_transition] = true
     flash.clear
   end
 
-  private
-
-    def create_for_turbo_stream
-      self.resource = warden.authenticate(auth_options)
-
-      if resource.present?
-        session[:show_login_transition] = true
-        flash.clear
-        sign_in(resource_name, resource)
-        respond_with(resource, location: after_sign_in_path_for(resource))
-        return
-      end
-
-      self.resource = resource_class.new(sign_in_params)
-      flash.now[:alert] = failure_message
-      render turbo_stream: stream_flash, status: :unprocessable_content
+  # Renders login failure messages as flash messages via Turbo Streams
+  #
+  # In the future, we might also want to rework other Devise pages, such that
+  # no entire page reloads are necessary. In case we need a lot of customization,
+  # we might want to consider using a custom authentication system instead of
+  # Devise, see issue #887.
+  def respond_with(resource, _opts = {})
+    if action_name != "new" && action_name != "create"
+      super
+      return
     end
 
+    if request.post? && request.format.turbo_stream? && !signed_in?(resource_name)
+      flash.now[:alert] = failure_message
+      render turbo_stream: stream_flash, status: :unprocessable_content
+    else
+      super
+    end
+  end
+
+  private
+
     def failure_message_key
+      user = attempted_user
       message = request.env["warden"]&.message ||
                 request.env["warden.options"]&.[](:message)
       return :last_attempt if last_attempt_warning?
-      return :locked if message.to_sym == :invalid && attempted_user&.access_locked?
+      return :locked if message.to_sym == :invalid && user&.access_locked?
       return message if message.present?
-      return :locked if attempted_user&.access_locked?
+      return :locked if user&.access_locked?
 
       :invalid
     end
 
     def failure_message
-      return I18n.t("devise.failure.#{failure_message_key}") unless failure_message_key == :locked
+      key = failure_message_key
+      return I18n.t("devise.failure.#{key}") unless key == :locked
 
-      I18n.t("devise.failure.#{locked_message_key}", unlock_in: unlock_in_words)
+      lock_key = case Devise.unlock_strategy
+                 when :email
+                   :locked_with_email
+                 when :time
+                   :locked_with_time
+                 else
+                   :locked_with_email_and_time
+      end
+
+      I18n.t(
+        "devise.failure.#{lock_key}",
+        unlock_in: helpers.distance_of_time_in_words(0, Devise.unlock_in)
+      )
     end
 
     def attempted_user
-      authentication_hash = sign_in_params.to_h.slice(*authentication_keys)
-      return if authentication_hash.empty?
+      return @attempted_user if defined?(@attempted_user)
 
-      resource_class.find_for_database_authentication(authentication_hash)
-    end
-
-    def authentication_keys
-      Array(resource_class.authentication_keys).map(&:to_s)
+      authentication_hash = sign_in_params.to_h.slice(
+        *Array(resource_class.authentication_keys).map(&:to_s)
+      )
+      @attempted_user = if authentication_hash.empty?
+        nil
+      else
+        resource_class.find_for_database_authentication(authentication_hash)
+      end
     end
 
     def last_attempt_warning?
       return false unless Devise.last_attempt_warning
 
       attempted_user&.failed_attempts == resource_class.maximum_attempts - 1
-    end
-
-    def locked_message_key
-      case Devise.unlock_strategy
-      when :email
-        :locked_with_email
-      when :time
-        :locked_with_time
-      else
-        :locked_with_email_and_time
-      end
-    end
-
-    def unlock_in_words
-      helpers.distance_of_time_in_words(Time.current, Time.current + Devise.unlock_in)
     end
 end
