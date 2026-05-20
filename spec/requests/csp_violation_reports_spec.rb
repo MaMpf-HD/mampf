@@ -58,7 +58,7 @@ RSpec.describe("CSP violation reports", type: :request) do
              headers: { "CONTENT_TYPE" => "application/csp-report" })
       end.not_to have_enqueued_job(CspViolationReportJob)
 
-      expect(response).to have_http_status(:payload_too_large)
+      expect(response).to have_http_status(:content_too_large)
     end
   end
 
