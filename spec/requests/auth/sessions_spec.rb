@@ -3,6 +3,9 @@ require "rails_helper"
 RSpec.describe("Auth sessions", type: :request) do
   let(:password) { "Password123!" }
   let(:user) { create(:confirmed_user, password: password) }
+  let(:failed_attempts_before_last_warning) do
+    user.class.maximum_attempts - 2
+  end
   let(:unlock_in_words) do
     ActionController::Base.helpers.distance_of_time_in_words(
       Time.current,
@@ -50,7 +53,7 @@ RSpec.describe("Auth sessions", type: :request) do
     end
 
     it "renders a Turbo Stream flash for the last attempt before lockout" do
-      user.update!(failed_attempts: 3)
+      user.update!(failed_attempts: failed_attempts_before_last_warning)
 
       post user_session_path,
            params: { user: { email: user.email, password: "wrong-password" } },
