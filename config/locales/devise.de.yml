@@ -135,6 +135,7 @@ de:
       expired: "ist abgelaufen, bitte neu anfordern"
       not_found: "nicht gefunden"
       not_locked: "ist nicht gesperrt"
+      password_too_common: "ist zu häufig verwendet"
       not_saved:
         one: "Konnte %{resource} nicht speichern: Es ist ein Fehler aufgetreten."
         other: "Konnte %{resource} nicht speichern: Es sind %{count} Fehler aufgetreten."

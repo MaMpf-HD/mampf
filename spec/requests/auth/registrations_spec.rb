@@ -11,8 +11,8 @@ RSpec.describe("Auth registrations", type: :request) do
       {
         user: {
           email: email,
-          password: "password",
-          password_confirmation: "password",
+          password: "valid-password-123",
+          password_confirmation: "valid-password-123",
           consents: "1",
           locale: "en"
         }

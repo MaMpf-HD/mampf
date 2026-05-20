@@ -19,6 +19,20 @@ RSpec.describe(User, type: :model) do
     expect(user).not_to be_valid
   end
 
+  it "is invalid with a password shorter than 12 characters" do
+    user = FactoryBot.build(:user, password: "short-pass1")
+    expect(user).not_to be_valid
+    expect(user.errors[:password]).to be_present
+  end
+
+  it "is invalid with a denylisted password" do
+    user = FactoryBot.build(:user,
+                            password: "password12345",
+                            password_confirmation: "password12345")
+    expect(user).not_to be_valid
+    expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_common"))
+  end
+
   # test traits and subfactories
 
   describe "confirmed user" do
