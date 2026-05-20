@@ -1,5 +1,10 @@
 module Extensions
   module Commontator
+    # Commontator rejects repeated comment bodies by the same author within one
+    # thread, which blocks legitimate replies like repeated acknowledgements on
+    # the same medium. We keep this patch so those normal interactions remain
+    # possible while still preserving a narrower guard against accidental
+    # double posts.
     module CommentPatch
       module_function
 
