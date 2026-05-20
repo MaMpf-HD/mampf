@@ -29,6 +29,8 @@ Rails.application.configure do
     policy.object_src(:none)
     policy.script_src(:self,
                       :unsafe_inline,
+                      "https://cdn.jsdelivr.net",
+                      "https://cdnjs.cloudflare.com",
                       "https://www.geogebra.org",
                       "https://*.geogebra.org")
     policy.style_src(:self,
