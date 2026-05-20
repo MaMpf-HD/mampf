@@ -58,6 +58,8 @@ Rails.application.configure do
                         *vite_http_sources)
       policy.font_src(*policy.font_src,
                       *vite_http_sources)
+      policy.img_src(*policy.img_src,
+                     *vite_http_sources)
       policy.style_src(*policy.style_src,
                        *vite_http_sources)
       policy.connect_src(*policy.connect_src,
