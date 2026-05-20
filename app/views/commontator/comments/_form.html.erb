@@ -75,10 +75,10 @@
     </label>
     <%= ApplicationController.helpers.helpdesk(t("commontator.comment.actions.preview"), true) %>
   </div>
-    <div id='<%= new_record ?
+  <div id='<%= new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-preview" :
                               "commontator-comment-#{comment.parent.id}-reply-preview" :
-      "commontator-comment-#{comment.id}-edit-body-preview" %>'
+        "commontator-comment-#{comment.id}-edit-body-preview" %>'
        class="border p-2 comment-field"
        style="display: none; min-height: 3em;">
     <%= commontator_simple_format comment.body %>
