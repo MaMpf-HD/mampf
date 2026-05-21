@@ -7,7 +7,8 @@ import * as zxcvbnDePackage from "@zxcvbn-ts/language-de";
 let configuredLanguage;
 
 function setupZxcvbnOptions() {
-  const language = document.documentElement.lang === "de" ? "de" : "en";
+  const locale = document.body?.dataset.locale || document.documentElement.lang || "en";
+  const language = locale.toLowerCase().startsWith("de") ? "de" : "en";
 
   if (configuredLanguage === language) return;
 
