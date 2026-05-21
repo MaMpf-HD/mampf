@@ -2,10 +2,14 @@
 require "zxcvbn"
 
 class PasswordStrengthValidator < ActiveModel::EachValidator
+  LOCAL_IDENTIFIERS = ["mampf", "muesli", "heidelberg", "uni-heidelberg",
+                       "mathi", "mathinf", "mathematische",
+                       "medienplattform"].freeze
+
   def validate_each(record, attribute, value)
     return if value.blank?
 
-    user_inputs = [record.email, record.name].compact
+    user_inputs = [record.email, record.name, *LOCAL_IDENTIFIERS].compact
     score = Zxcvbn.test(value, user_inputs).score
 
     return unless score < 3

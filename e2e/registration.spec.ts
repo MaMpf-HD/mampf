@@ -47,6 +47,10 @@ test("enforces password strength on sign up", async ({ page }) => {
   await page.getByLabel("Password", { exact: true }).fill("password12345");
   await expect(page.getByText("Very weak")).toBeVisible();
 
+  // Test app-specific identifiers
+  await page.getByLabel("Password", { exact: true }).fill("mampf-media-platform");
+  await expect(page.getByText("Very weak")).toBeVisible();
+
   // Test strong password
   await page.getByLabel("Password", { exact: true }).fill("correct-horse-battery-staple");
   await expect(page.getByText(/^Strong$/)).toBeVisible();

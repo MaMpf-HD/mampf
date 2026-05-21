@@ -32,6 +32,7 @@ export default class extends Controller {
     fairText: { type: String, default: "Fair" },
     goodText: { type: String, default: "Good" },
     strongText: { type: String, default: "Strong" },
+    localIdentifiers: Array,
     minLength: { type: Number, default: 12 },
     tooShortText: { type: String, default: "Must be at least 12 characters" },
   };
@@ -61,6 +62,9 @@ export default class extends Controller {
     }
     if (this.hasNameTarget && this.nameTarget.value) {
       userInputs.push(this.nameTarget.value);
+    }
+    if (this.hasLocalIdentifiersValue) {
+      userInputs.push(...this.localIdentifiersValue);
     }
 
     const result = zxcvbn(password, userInputs);

@@ -33,6 +33,14 @@ RSpec.describe(User, type: :model) do
     expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
   end
 
+  it "is invalid with a password using local identifiers" do
+    user = FactoryBot.build(:user,
+                            password: "mampf-media-platform",
+                            password_confirmation: "mampf-media-platform")
+    expect(user).not_to be_valid
+    expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
+  end
+
   # test traits and subfactories
 
   describe "confirmed user" do
