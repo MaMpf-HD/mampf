@@ -12,7 +12,10 @@
       <%= f.label :email, t('devise.edit.email'),
                   class: "form-label" %>
       <%= f.email_field :email, autofocus: true, class: 'form-control',
-                        data: { "password-strength-target": "email" } %>
+                        data: {
+                          "password-strength-target": "email",
+                          "action": "input->password-strength#check"
+                        } %>
     </div>
     <div class="mb-3">
       <%= f.label :current_password, t('devise.edit.current_password'),

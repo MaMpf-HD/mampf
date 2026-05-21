@@ -1,7 +1,7 @@
 module Cypress
   # Creates a user for use in Playwright tests.
   class UserCreatorPlaywrightController < CypressController
-    PASSWORD = "playwright1234".freeze
+    PASSWORD = "playwright-correct-horse-battery".freeze
 
     def create
       unless params[:role].is_a?(String)

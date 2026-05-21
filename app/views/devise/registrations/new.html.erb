@@ -18,7 +18,10 @@
     <div class="form-floating mb-3">
       <%= f.email_field :email, autofocus: true, required: true,
                         class: "form-control", placeholder: "",
-                        data: { "password-strength-target": "email" } %>
+                        data: {
+                          "password-strength-target": "email",
+                          "action": "input->password-strength#check"
+                        } %>
       <%= f.label :email, t('.email') %>
     </div>
 

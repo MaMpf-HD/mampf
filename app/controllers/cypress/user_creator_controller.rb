@@ -1,7 +1,7 @@
 module Cypress
   # Creates a user for use in Cypress tests.
   class UserCreatorController < CypressController
-    CYPRESS_PASSWORD = "cypress12345".freeze
+    CYPRESS_PASSWORD = "cypress-correct-horse-battery".freeze
 
     def create
       unless params[:role].is_a?(String)

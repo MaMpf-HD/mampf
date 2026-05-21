@@ -14,6 +14,13 @@
        data-password-strength-strong-text-value="<%= t('devise.passwords_strength.strong', default: 'Strong') %>"
        data-password-strength-too-short-text-value="<%= t('devise.passwords_strength.too_short') %>">
     
+    <% if resource.email.present? %>
+      <input type="hidden" data-password-strength-target="email" value="<%= resource.email %>">
+    <% end %>
+    <% if resource.name.present? %>
+      <input type="hidden" data-password-strength-target="name" value="<%= resource.name %>">
+    <% end %>
+
     <div class="form-group mb-3">
       <%= f.label :password,
                   t('.new_password'),
