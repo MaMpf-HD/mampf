@@ -4,6 +4,27 @@ import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 import * as zxcvbnEnPackage from "@zxcvbn-ts/language-en";
 import * as zxcvbnDePackage from "@zxcvbn-ts/language-de";
 
+let configuredLanguage;
+
+function setupZxcvbnOptions() {
+  const language = document.documentElement.lang === "de" ? "de" : "en";
+
+  if (configuredLanguage === language) return;
+
+  const languagePackage = language === "de" ? zxcvbnDePackage : zxcvbnEnPackage;
+
+  zxcvbnOptions.setOptions({
+    translations: languagePackage.translations,
+    graphs: languagePackage.adjacencyGraphs,
+    dictionary: {
+      ...zxcvbnCommonPackage.dictionary,
+      ...languagePackage.dictionary,
+    },
+  });
+
+  configuredLanguage = language;
+}
+
 export default class extends Controller {
   static targets = ["password", "email", "name", "meter", "feedback"];
   static values = {
@@ -11,30 +32,13 @@ export default class extends Controller {
     fairText: { type: String, default: "Fair" },
     goodText: { type: String, default: "Good" },
     strongText: { type: String, default: "Strong" },
-    tooWeakText: { type: String, default: "is too weak" },
     minLength: { type: Number, default: 12 },
     tooShortText: { type: String, default: "Must be at least 12 characters" },
   };
 
   connect() {
-    this.setupZxcvbnOptions();
+    setupZxcvbnOptions();
     this.check();
-  }
-
-  setupZxcvbnOptions() {
-    const isGerman = document.documentElement.lang === "de";
-    const languagePackage = isGerman ? zxcvbnDePackage : zxcvbnEnPackage;
-
-    const options = {
-      translations: languagePackage.translations,
-      graphs: languagePackage.adjacencyGraphs,
-      dictionary: {
-        ...zxcvbnCommonPackage.dictionary,
-        ...languagePackage.dictionary,
-      },
-    };
-
-    zxcvbnOptions.setOptions(options);
   }
 
   check() {
@@ -60,14 +64,11 @@ export default class extends Controller {
     }
 
     const result = zxcvbn(password, userInputs);
-    let score = result.score; // 0 to 4
+    let score = result.score;
     let warning = result.feedback ? result.feedback.warning : "";
 
-    // Enforce minimum length visually
     if (password.length < this.minLengthValue) {
-      // Cap the score at 2 (Fair/Weak) so it never turns green
       score = Math.min(score, 2);
-      // Provide actionable feedback instead of zxcvbn's default
       warning = this.tooShortTextValue;
     }
 
