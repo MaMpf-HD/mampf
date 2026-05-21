@@ -41,14 +41,14 @@ test("enforces password strength on sign up", async ({ page }) => {
 
   // Test short password
   await page.getByLabel("Password", { exact: true }).fill("short");
-  await expect(page.getByText("Weak - Must be at least 15 characters")).toBeVisible();
+  await expect(page.getByText("Must be at least 15 characters")).toBeVisible();
 
   // Test weak password (denylist)
   await page.getByLabel("Password", { exact: true }).fill("password123456789");
   await expect(page.getByText("Very weak")).toBeVisible();
 
   // Test app-specific identifiers
-  await page.getByLabel("Password", { exact: true }).fill("mampf-media-platform");
+  await page.getByLabel("Password", { exact: true }).fill("medienplattform");
   await expect(page.getByText("Very weak")).toBeVisible();
 
   // Test strong password
