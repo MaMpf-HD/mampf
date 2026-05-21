@@ -16,7 +16,7 @@ function setupZxcvbnOptions() {
 
   zxcvbnOptions.setOptions({
     translations: languagePackage.translations,
-    graphs: languagePackage.adjacencyGraphs,
+    graphs: zxcvbnCommonPackage.adjacencyGraphs,
     dictionary: {
       ...zxcvbnCommonPackage.dictionary,
       ...languagePackage.dictionary,
