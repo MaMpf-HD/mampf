@@ -35,6 +35,9 @@ window.Stimulus.register("vignettes-number", VignettesNumberController);
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
 
+import PasswordStrengthController from "~/registration/password_strength.controller.js";
+window.Stimulus.register("password-strength", PasswordStrengthController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

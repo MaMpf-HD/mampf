@@ -8,22 +8,40 @@
                        url: registration_path(resource_name),
                        html: { role: 'form' }) do |f| %>
 
-  <div class="form-floating mb-3">
-    <%= f.email_field :email, autofocus: true, required: true,
-                      class: "form-control", placeholder: "" %>
-    <%= f.label :email, t('.email') %>
-  </div>
+  <div data-controller="password-strength"
+       data-password-strength-weak-text-value="<%= t('devise.passwords_strength.weak', default: 'Very weak') %>"
+       data-password-strength-fair-text-value="<%= t('devise.passwords_strength.fair', default: 'Weak') %>"
+       data-password-strength-good-text-value="<%= t('devise.passwords_strength.good', default: 'Good') %>"
+       data-password-strength-strong-text-value="<%= t('devise.passwords_strength.strong', default: 'Strong') %>"
+       data-password-strength-too-short-text-value="<%= t('devise.passwords_strength.too_short') %>">
+    
+    <div class="form-floating mb-3">
+      <%= f.email_field :email, autofocus: true, required: true,
+                        class: "form-control", placeholder: "",
+                        data: { "password-strength-target": "email" } %>
+      <%= f.label :email, t('.email') %>
+    </div>
 
-  <div class="form-floating mb-3">
-    <%= f.password_field :password, required: true,
-                         class: "form-control", placeholder: "" %>
-    <%= f.label :password, t('.password') %>
-  </div>
+    <div class="form-floating mb-3">
+      <%= f.password_field :password, required: true,
+                           class: "form-control", placeholder: "",
+                           data: {
+                             "password-strength-target": "password",
+                             "action": "input->password-strength#check"
+                           } %>
+      <%= f.label :password, t('.password') %>
+      
+      <div class="progress mt-2" style="height: 5px;">
+        <div class="progress-bar" role="progressbar" style="width: 0%;" data-password-strength-target="meter"></div>
+      </div>
+      <div class="form-text" data-password-strength-target="feedback"></div>
+    </div>
 
-  <div class="form-floating mb-3">
-    <%= f.password_field :password_confirmation, required: true,
-                         class: "form-control", placeholder: "" %>
-    <%= f.label :password_confirmation, t('.password_confirm') %>
+    <div class="form-floating mb-3">
+      <%= f.password_field :password_confirmation, required: true,
+                           class: "form-control", placeholder: "" %>
+      <%= f.label :password_confirmation, t('.password_confirm') %>
+    </div>
   </div>
 
   <div class="form-check mb-3">

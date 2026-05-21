@@ -1,28 +1,45 @@
 <h2><%= t('devise.edit.title') %></h2>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <div class="mb-3">
-    <%= f.label :email, t('devise.edit.email'),
-                class: "form-label" %>
-    <%= f.email_field :email, autofocus: true, class: 'form-control' %>
-  </div>
-  <div class="mb-3">
-    <%= f.label :current_password, t('devise.edit.current_password'),
-                class: "form-label" %>
-    <%= helpdesk(t('devise.edit.need_password'), true) %>
-    <%= f.password_field :current_password, class: 'form-control' %>
-  </div>
-  <div class="mb-3">
-    <%= f.label :password, t('devise.edit.new_password'),
-                class: "form-label" %>
-    <%= helpdesk(t('devise.edit.no_change'), true) %>
-    <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
-  </div>
-  <div class="mb-3">
-    <%= f.label :password_confirmation, t('devise.edit.confirm_new_password'),
-                class: "form-label" %>
-    <%= helpdesk(t('devise.edit.no_change'), true) %>
-    <%= f.password_field :password_confirmation, class: 'form-control'  %>
+  <div data-controller="password-strength"
+       data-password-strength-weak-text-value="<%= t('devise.passwords_strength.weak', default: 'Very weak') %>"
+       data-password-strength-fair-text-value="<%= t('devise.passwords_strength.fair', default: 'Weak') %>"
+       data-password-strength-good-text-value="<%= t('devise.passwords_strength.good', default: 'Good') %>"
+       data-password-strength-strong-text-value="<%= t('devise.passwords_strength.strong', default: 'Strong') %>"
+       data-password-strength-too-short-text-value="<%= t('devise.passwords_strength.too_short') %>">
+    
+    <div class="mb-3">
+      <%= f.label :email, t('devise.edit.email'),
+                  class: "form-label" %>
+      <%= f.email_field :email, autofocus: true, class: 'form-control',
+                        data: { "password-strength-target": "email" } %>
+    </div>
+    <div class="mb-3">
+      <%= f.label :current_password, t('devise.edit.current_password'),
+                  class: "form-label" %>
+      <%= helpdesk(t('devise.edit.need_password'), true) %>
+      <%= f.password_field :current_password, class: 'form-control' %>
+    </div>
+    <div class="mb-3">
+      <%= f.label :password, t('devise.edit.new_password'),
+                  class: "form-label" %>
+      <%= helpdesk(t('devise.edit.no_change'), true) %>
+      <%= f.password_field :password, autocomplete: "off", class: 'form-control',
+                           data: {
+                             "password-strength-target": "password",
+                             "action": "input->password-strength#check"
+                           } %>
+      <div class="progress mt-2" style="height: 5px;">
+        <div class="progress-bar" role="progressbar" style="width: 0%;" data-password-strength-target="meter"></div>
+      </div>
+      <div class="form-text" data-password-strength-target="feedback"></div>
+    </div>
+    <div class="mb-3">
+      <%= f.label :password_confirmation, t('devise.edit.confirm_new_password'),
+                  class: "form-label" %>
+      <%= helpdesk(t('devise.edit.no_change'), true) %>
+      <%= f.password_field :password_confirmation, class: 'form-control'  %>
+    </div>
   </div>
 
   <div class="mb-3">

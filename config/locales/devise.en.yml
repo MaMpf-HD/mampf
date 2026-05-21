@@ -2,6 +2,12 @@
 
 en:
   devise:
+    passwords_strength:
+      weak: "Very weak"
+      fair: "Weak"
+      good: "Good"
+      strong: "Strong"
+      too_short: "Must be at least 12 characters"
     confirmations:
       confirmed: "Your email address has been successfully confirmed. Please take aminute to complete your profile."
       confirmed_and_signed_in: "Thank you for registering. You are now signed in."

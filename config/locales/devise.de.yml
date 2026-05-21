@@ -2,6 +2,12 @@
 
 de:
   devise:
+    passwords_strength:
+      weak: "Sehr schwach"
+      fair: "Schwach"
+      good: "Gut"
+      strong: "Stark"
+      too_short: "Muss mindestens 12 Zeichen lang sein"
     confirmations:
       confirmed: "Vielen Dank für Deine Registrierung. Bitte nimm Dir eine Minute, um Dein Profil zu vervollständigen."
       confirmed_and_signed_in: "Vielen Dank für Deine Registrierung. Du bist jetzt angemeldet."
