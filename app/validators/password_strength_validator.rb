@@ -1,3 +1,4 @@
+# Validates the strength of a password using the zxcvbn library.
 require "zxcvbn"
 
 class PasswordStrengthValidator < ActiveModel::EachValidator
