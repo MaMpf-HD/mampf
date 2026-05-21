@@ -25,12 +25,12 @@ RSpec.describe(User, type: :model) do
     expect(user.errors[:password]).to be_present
   end
 
-  it "is invalid with a denylisted password" do
+  it "is invalid with a weak password" do
     user = FactoryBot.build(:user,
                             password: "password12345",
                             password_confirmation: "password12345")
     expect(user).not_to be_valid
-    expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_common"))
+    expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
   end
 
   # test traits and subfactories

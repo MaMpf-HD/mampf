@@ -102,7 +102,7 @@ class User < ApplicationRecord
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) },
                      if: :locale?
 
-  validates :password, password_denylist: true, allow_blank: true
+  validates :password, password_strength: true, allow_blank: true
 
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
