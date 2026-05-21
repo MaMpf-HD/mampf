@@ -1,13 +1,7 @@
 <h2><%= t('devise.edit.title') %></h2>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <div data-controller="password-strength"
-       data-password-strength-weak-text-value="<%= t('devise.passwords_strength.weak', default: 'Very weak') %>"
-       data-password-strength-fair-text-value="<%= t('devise.passwords_strength.fair', default: 'Weak') %>"
-       data-password-strength-good-text-value="<%= t('devise.passwords_strength.good', default: 'Good') %>"
-       data-password-strength-strong-text-value="<%= t('devise.passwords_strength.strong', default: 'Strong') %>"
-       data-password-strength-too-short-text-value="<%= t('devise.passwords_strength.too_short') %>">
-
+  <%= render layout: "devise/shared/password_strength_wrapper" do %>
     <% if resource.name.present? %>
       <input type="hidden" data-password-strength-target="name" value="<%= resource.name %>">
     <% end %>
@@ -47,7 +41,7 @@
       <%= helpdesk(t('devise.edit.no_change'), true) %>
       <%= f.password_field :password_confirmation, class: 'form-control'  %>
     </div>
-  </div>
+  <% end %>
 
   <div class="mb-3">
     <%= f.submit t('devise.edit.update'), class: 'btn btn-primary' %>

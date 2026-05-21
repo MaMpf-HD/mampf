@@ -7,13 +7,7 @@
                        html: { method: :put, role: 'form' }) do |f| %>
   <%= f.hidden_field :reset_password_token %>
 
-  <div data-controller="password-strength"
-       data-password-strength-weak-text-value="<%= t('devise.passwords_strength.weak', default: 'Very weak') %>"
-       data-password-strength-fair-text-value="<%= t('devise.passwords_strength.fair', default: 'Weak') %>"
-       data-password-strength-good-text-value="<%= t('devise.passwords_strength.good', default: 'Good') %>"
-       data-password-strength-strong-text-value="<%= t('devise.passwords_strength.strong', default: 'Strong') %>"
-       data-password-strength-too-short-text-value="<%= t('devise.passwords_strength.too_short') %>">
-    
+  <%= render layout: "devise/shared/password_strength_wrapper" do %>
     <% if resource.email.present? %>
       <input type="hidden" data-password-strength-target="email" value="<%= resource.email %>">
     <% end %>
@@ -43,7 +37,7 @@
                   t('.confirm_new_password') %>
       <%= f.password_field :password_confirmation, class: 'form-control' %>
     </div>
-  </div>
+  <% end %>
   
   <div class="mb-3">
     <%= f.submit t('.change_password'),

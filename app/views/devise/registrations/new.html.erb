@@ -7,14 +7,7 @@
 <%= form_for(resource, as: resource_name,
                        url: registration_path(resource_name),
                        html: { role: 'form' }) do |f| %>
-
-  <div data-controller="password-strength"
-       data-password-strength-weak-text-value="<%= t('devise.passwords_strength.weak', default: 'Very weak') %>"
-       data-password-strength-fair-text-value="<%= t('devise.passwords_strength.fair', default: 'Weak') %>"
-       data-password-strength-good-text-value="<%= t('devise.passwords_strength.good', default: 'Good') %>"
-       data-password-strength-strong-text-value="<%= t('devise.passwords_strength.strong', default: 'Strong') %>"
-       data-password-strength-too-short-text-value="<%= t('devise.passwords_strength.too_short') %>">
-    
+  <%= render layout: "devise/shared/password_strength_wrapper" do %>
     <div class="form-floating mb-3">
       <%= f.email_field :email, autofocus: true, required: true,
                         class: "form-control", placeholder: "",
@@ -45,7 +38,7 @@
                            class: "form-control", placeholder: "" %>
       <%= f.label :password_confirmation, t('.password_confirm') %>
     </div>
-  </div>
+  <% end %>
 
   <div class="form-check mb-3">
     <%= f.check_box :consents, required: true,
