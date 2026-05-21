@@ -237,9 +237,11 @@ describe("User & Redemption deletion", () => {
     cy.getBySelector("delete-account-btn").click();
     cy.getBySelector("delete-account-pwd-field").type(this.user.password);
 
-    cy.intercept("/users*").as("deleteUserRequest");
+    cy.intercept("DELETE", "/users").as("deleteUserRequest");
     cy.getBySelector("delete-account-confirm-btn").click();
-    cy.wait("@deleteUserRequest");
+    cy.wait("@deleteUserRequest").then(({ response }) => {
+      expect(response.statusCode).to.be.oneOf([302, 303]);
+    });
     cy.visit("/profile/edit");
     cy.getBySelector("login-form").should("be.visible");
 
