@@ -19,7 +19,7 @@ RSpec.describe(User, type: :model) do
     expect(user).not_to be_valid
   end
 
-  it "is invalid with a password shorter than 12 characters" do
+  it "is invalid with a password shorter than 15 characters" do
     user = FactoryBot.build(:user, password: "short-pass1")
     expect(user).not_to be_valid
     expect(user.errors[:password]).to be_present
@@ -27,16 +27,16 @@ RSpec.describe(User, type: :model) do
 
   it "is invalid with a weak password" do
     user = FactoryBot.build(:user,
-                            password: "password12345",
-                            password_confirmation: "password12345")
+                            password: "password123456789",
+                            password_confirmation: "password123456789")
     expect(user).not_to be_valid
     expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
   end
 
   it "is invalid with a password using local identifiers" do
     user = FactoryBot.build(:user,
-                            password: "mampf-media-platform",
-                            password_confirmation: "mampf-media-platform")
+                            password: "mampf-uni-heidelberg",
+                            password_confirmation: "mampf-uni-heidelberg")
     expect(user).not_to be_valid
     expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
   end

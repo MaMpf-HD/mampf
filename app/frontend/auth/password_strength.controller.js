@@ -33,8 +33,8 @@ export default class extends Controller {
     goodText: { type: String, default: "Good" },
     strongText: { type: String, default: "Strong" },
     localIdentifiers: Array,
-    minLength: { type: Number, default: 12 },
-    tooShortText: { type: String, default: "Must be at least 12 characters" },
+    minLength: { type: Number, default: 15 },
+    tooShortText: { type: String, default: "Must be at least 15 characters" },
   };
 
   connect() {

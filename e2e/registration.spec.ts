@@ -41,10 +41,10 @@ test("enforces password strength on sign up", async ({ page }) => {
 
   // Test short password
   await page.getByLabel("Password", { exact: true }).fill("short");
-  await expect(page.getByText("Weak - Must be at least 12 characters")).toBeVisible();
+  await expect(page.getByText("Weak - Must be at least 15 characters")).toBeVisible();
 
   // Test weak password (denylist)
-  await page.getByLabel("Password", { exact: true }).fill("password12345");
+  await page.getByLabel("Password", { exact: true }).fill("password123456789");
   await expect(page.getByText("Very weak")).toBeVisible();
 
   // Test app-specific identifiers
@@ -56,8 +56,8 @@ test("enforces password strength on sign up", async ({ page }) => {
   await expect(page.getByText(/^Strong$/)).toBeVisible();
 
   // Attempt to submit with a weak password
-  await page.getByLabel("Password", { exact: true }).fill("password12345");
-  await page.getByLabel("Password confirmation").fill("password12345");
+  await page.getByLabel("Password", { exact: true }).fill("password123456789");
+  await page.getByLabel("Password confirmation").fill("password123456789");
   await page.getByLabel(/I consent/).check();
   await signUpPage.solveCaptcha();
   await signUpPage.submit();

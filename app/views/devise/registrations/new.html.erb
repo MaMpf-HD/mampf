@@ -15,7 +15,7 @@
                           "password-strength-target": "email",
                           "action": "input->password-strength#check"
                         } %>
-      <%= f.label :email, t('.email') %>
+      <%= f.label :email, t('devise.registrations.new.email') %>
     </div>
 
     <div class="form-floating mb-3">
@@ -25,7 +25,7 @@
                              "password-strength-target": "password",
                              "action": "input->password-strength#check"
                            } %>
-      <%= f.label :password, t('.password') %>
+      <%= f.label :password, t('devise.registrations.new.password') %>
       
       <div class="progress mt-2" style="height: 5px;">
         <div class="progress-bar" role="progressbar" style="width: 0%;" data-password-strength-target="meter"></div>
@@ -36,7 +36,8 @@
     <div class="form-floating mb-3">
       <%= f.password_field :password_confirmation, required: true,
                            class: "form-control", placeholder: "" %>
-      <%= f.label :password_confirmation, t('.password_confirm') %>
+      <%= f.label :password_confirmation,
+                  t('devise.registrations.new.password_confirm') %>
     </div>
   <% end %>
 
