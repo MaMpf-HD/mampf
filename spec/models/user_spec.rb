@@ -1,6 +1,13 @@
 require "rails_helper"
 
 RSpec.describe(User, type: :model) do
+  around do |example|
+    Current.password_strength_validation_enabled = true
+    example.run
+  ensure
+    Current.reset
+  end
+
   it "has a valid factory" do
     expect(FactoryBot.build(:user)).to be_valid
   end

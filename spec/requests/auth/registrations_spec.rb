@@ -1,6 +1,13 @@
 require "rails_helper"
 
 RSpec.describe("Auth registrations", type: :request) do
+  around do |example|
+    Current.password_strength_validation_enabled = true
+    example.run
+  ensure
+    Current.reset
+  end
+
   before do
     ActionMailer::Base.deliveries.clear
   end
