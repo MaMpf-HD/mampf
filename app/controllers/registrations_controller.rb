@@ -3,6 +3,8 @@ require "uri"
 require "json"
 # RegistrationsController
 class RegistrationsController < Devise::RegistrationsController
+  prepend_before_action :enable_password_strength_validation,
+                        only: [:create, :update]
   prepend_before_action :check_registration_limit, only: [:create]
 
   def create
@@ -47,6 +49,12 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   private
+
+    def enable_password_strength_validation
+      return unless Rails.env.test?
+
+      Current.password_strength_validation_enabled = true
+    end
 
     def check_registration_limit
       timeframe = (ENV.fetch("MAMPF_REGISTRATION_TIMEFRAME", 15).to_i.minutes.ago..)
