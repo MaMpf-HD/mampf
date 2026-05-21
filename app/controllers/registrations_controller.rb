@@ -19,6 +19,10 @@ class RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  def update
+    super
+  end
+
   def destroy
     password_correct = resource.valid_password?(deletion_params[:password])
     unless password_correct
