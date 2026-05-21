@@ -13,8 +13,8 @@ export class SignUpPage {
 
   async fillForm(email: string) {
     await this.page.getByLabel("Email").fill(email);
-    await this.page.getByLabel("Password", { exact: true }).fill("valid-password-123");
-    await this.page.getByLabel("Password confirmation").fill("valid-password-123");
+    await this.page.getByLabel("Password", { exact: true }).fill("correct-horse-battery-staple");
+    await this.page.getByLabel("Password confirmation").fill("correct-horse-battery-staple");
     await this.page.getByLabel(/I consent/).check();
   }
 

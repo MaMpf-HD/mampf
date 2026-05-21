@@ -7,7 +7,7 @@ import { LoginPage } from "./page-objects/login_page";
 test("can reset the password via the mailed reset link", async ({ page, request }) => {
   const user = await callBackend(request, "user_creator_playwright",
     { role: "password-reset" }) as User;
-  const newPassword = "playwright-new-password";
+  const newPassword = "super-secure-horse-battery-staple";
 
   await page.goto("/users/password/new?locale=en");
   await page.getByLabel("Email").fill(user.email);
