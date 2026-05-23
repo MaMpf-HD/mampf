@@ -34,6 +34,26 @@ RSpec.describe("Auth passwords", type: :request) do
     end
   end
 
+  describe "GET /users/password/restart" do
+    it "signs out stale users and redirects them to the reset form" do
+      user = create(:confirmed_user_en)
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      sign_in user
+
+      get restart_user_password_path(locale: :de)
+
+      expect(response).to redirect_to(new_user_password_path(locale: :de))
+
+      follow_redirect!
+
+      expect(response).to have_http_status(:ok)
+
+      get edit_user_registration_path
+
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
+
   describe "PUT /users/password" do
     it "updates the password from a valid reset token" do
       user = create(:confirmed_user_en)

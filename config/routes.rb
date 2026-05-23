@@ -892,6 +892,9 @@ Rails.application.routes.draw do
   # Allow /login besides /users/sign_in
   devise_scope :user do
     get "/login" => "devise/sessions#new"
+    get "/users/password/restart",
+        to: "passwords#restart",
+        as: :restart_user_password
   end
 
   get "error",

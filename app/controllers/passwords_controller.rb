@@ -1,5 +1,12 @@
 class PasswordsController < Devise::PasswordsController
+  skip_before_action :require_no_authentication, only: :restart
   prepend_before_action :enable_password_strength_validation, only: [:update]
+
+  def restart
+    sign_out(resource_name) if user_signed_in?
+
+    redirect_to new_user_password_path(locale: params[:locale])
+  end
 
   def update
     super
