@@ -27,7 +27,12 @@
       <%= f.label :current_password, t('devise.edit.current_password'),
                   class: "form-label" %>
       <%= helpdesk(t(password_change_required ? 'devise.edit.password_change_required_help' : 'devise.edit.need_password'), true) %>
-      <%= f.password_field :current_password, autofocus: password_change_required, class: 'form-control' %>
+      <%= f.password_field :current_password,
+                           autofocus: password_change_required,
+                           class: 'form-control',
+                           data: {
+                             "action": "input->password-strength#clearFieldError"
+                           } %>
     </div>
     <div class="mb-3">
       <%= f.label :password, t('devise.edit.new_password'),
@@ -59,7 +64,7 @@
   <div class="mb-3">
     <%= f.submit t('devise.edit.update'), class: 'btn btn-primary' %>
     <% unless password_change_required %>
-      <%= link_to t('back'), :back, class: 'btn btn-secondary' %>
+      <%= link_to t('back'), edit_profile_path, class: 'btn btn-secondary' %>
     <% end %>
   </div>
 <% end %>

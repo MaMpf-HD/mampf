@@ -2,7 +2,7 @@
 <html>
   <head>
     <% if controller.controller_name == "sessions" && controller.action_name == "new" %>
-      <meta name="view-transition" content="same-origin" />
+      <meta name="view-transition" content="same-origin">
       <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
     <% end %>
 
@@ -41,7 +41,7 @@
             <div id="language-switch" title="language switch">
                 <% I18n.available_locales.each do |l| %>
                   <% unless l == I18n.locale %>
-                    <%= link_to l.to_s, { locale: l } %>
+                    <%= link_to l.to_s, devise_locale_switch_path(l) %>
                   <% end %>
                 <% end %>
             </div>
@@ -62,7 +62,7 @@
                 <%= yield %>
               </div>
 
-            </div> 
+            </div>
           </div>
         </div>
       </div>

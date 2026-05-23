@@ -144,4 +144,28 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response.body).not_to include(I18n.t("devise.edit.email"))
     end
   end
+
+  describe "GET /users/edit" do
+    it "renders stable back and language switch links" do
+      user = create(:confirmed_user_en)
+      sign_in user
+
+      get edit_user_registration_path(locale: :en)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(edit_profile_path)
+      expect(response.body).to include(edit_user_registration_path(locale: :de))
+    end
+
+    it "switches locale for signed-in users when a locale param is provided" do
+      user = create(:confirmed_user_en)
+      sign_in user
+
+      get edit_user_registration_path(locale: :de)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.with_locale(:de) { I18n.t("devise.edit.title") })
+      expect(user.reload.locale).to eq("en")
+    end
+  end
 end
