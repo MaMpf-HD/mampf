@@ -2,6 +2,8 @@
 class User < ApplicationRecord
   include ApplicationHelper
 
+  CURRENT_PASSWORD_POLICY_VERSION = 1
+
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
@@ -109,6 +111,8 @@ class User < ApplicationRecord
   validates :name, presence: true, if: :persisted?
 
   # set some default values before saving if they are not set
+  before_validation :set_current_password_policy, on: :create
+  before_save :track_password_change
   before_save :set_defaults
 
   # add timestamp for DSGVO consent
@@ -142,6 +146,10 @@ class User < ApplicationRecord
     return true unless Rails.env.test?
 
     Current.password_strength_validation_enabled
+  end
+
+  def password_change_required?
+    password_policy_version < CURRENT_PASSWORD_POLICY_VERSION
   end
 
   # Scopes for usage in the UserCleaner
@@ -808,6 +816,20 @@ class User < ApplicationRecord
   end
 
   private
+
+    def set_current_password_policy
+      self.password_policy_version ||= CURRENT_PASSWORD_POLICY_VERSION
+      return if password_changed_at.present? || encrypted_password.blank?
+
+      self.password_changed_at = Time.zone.now
+    end
+
+    def track_password_change
+      return unless will_save_change_to_encrypted_password?
+
+      self.password_policy_version = CURRENT_PASSWORD_POLICY_VERSION
+      self.password_changed_at = Time.zone.now
+    end
 
     def set_defaults
       self.subscription_type ||= 1

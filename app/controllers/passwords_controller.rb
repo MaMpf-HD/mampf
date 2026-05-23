@@ -5,6 +5,13 @@ class PasswordsController < Devise::PasswordsController
     super
   end
 
+  def after_resetting_password_path_for(resource)
+    return super unless session[:enforce_password_change]
+
+    session.delete(:enforce_password_change)
+    stored_location_for(resource_name).presence || start_path
+  end
+
   private
 
     def enable_password_strength_validation

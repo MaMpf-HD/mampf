@@ -48,6 +48,38 @@ RSpec.describe(User, type: :model) do
     expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
   end
 
+  it "marks newly created users as compliant with the current password policy" do
+    user = FactoryBot.create(:confirmed_user)
+
+    expect(user.password_policy_version).to eq(User::CURRENT_PASSWORD_POLICY_VERSION)
+    expect(user.password_changed_at).to be_present
+  end
+
+  it "marks users as compliant and records when their password changes" do
+    user = FactoryBot.create(:confirmed_user)
+    user.update_columns(password_policy_version: 0, password_changed_at: nil)
+
+    before_update = Time.zone.now
+    user.update!(password: "updated-super-secure-passphrase",
+                 password_confirmation: "updated-super-secure-passphrase")
+    after_update = Time.zone.now
+
+    expect(user.reload.password_policy_version)
+      .to eq(User::CURRENT_PASSWORD_POLICY_VERSION)
+    expect(user.password_changed_at).to be_between(before_update, after_update)
+  end
+
+  it "does not change password policy metadata on unrelated updates" do
+    user = FactoryBot.create(:confirmed_user)
+    original_password_changed_at = user.password_changed_at
+
+    user.update!(name: "Updated Name")
+
+    expect(user.reload.password_policy_version)
+      .to eq(User::CURRENT_PASSWORD_POLICY_VERSION)
+    expect(user.password_changed_at).to eq(original_password_changed_at)
+  end
+
   # test traits and subfactories
 
   describe "confirmed user" do

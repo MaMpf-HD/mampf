@@ -23,6 +23,32 @@ RSpec.describe("Auth sessions", type: :request) do
       expect(response).to redirect_to(news_path)
     end
 
+    it "redirects stale users to the password change form before restoring their target" do
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      get news_path
+      expect(response).to redirect_to(new_user_session_path)
+
+      post user_session_path, params: {
+        user: { email: user.email, password: user.password }
+      }
+
+      expect(response).to redirect_to(edit_user_registration_path)
+
+      put user_registration_path, params: {
+        user: {
+          email: user.email,
+          current_password: user.password,
+          password: "updated-super-secure-passphrase",
+          password_confirmation: "updated-super-secure-passphrase"
+        }
+      }
+
+      expect(response).to redirect_to(news_path)
+      expect(user.reload.password_change_required?).to be(false)
+    end
+
     it "does not sign in users with invalid credentials" do
       post user_session_path, params: {
         user: { email: user.email, password: "wrong-password" }
@@ -57,6 +83,16 @@ RSpec.describe("Auth sessions", type: :request) do
 
       get news_path
       expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "allows stale users to sign out" do
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+
+      delete destroy_user_session_path
+
+      expect(response).to redirect_to(root_path)
     end
   end
 end

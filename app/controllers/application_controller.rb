@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
   before_action :set_current_user
+  before_action :enforce_password_change
 
   include LocaleSetter
 
@@ -58,6 +59,11 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(resource_or_scope)
     # see https://github.com/heartcombo/devise/wiki/How-To:-Redirect-back-to-current-page-after-sign-in,-sign-out,-sign-up,-update
     # see https://www.rubydoc.info/github/plataformatec/devise/Devise%2FControllers%2FHelpers:after_sign_in_path_for
+    if password_change_required_for?(resource_or_scope)
+      session[:enforce_password_change] = true
+      return edit_user_registration_path
+    end
+
     stored = stored_location_for(resource_or_scope)
     if stored.present? && stored != super
       stored
@@ -96,6 +102,35 @@ class ApplicationController < ActionController::Base
     def store_user_location!
       # :user is the scope we are authenticating
       store_location_for(:user, request.fullpath)
+    end
+
+    def enforce_password_change
+      return unless user_signed_in?
+      return unless current_user.password_change_required?
+      return if password_change_request_allowed?
+
+      session[:enforce_password_change] = true
+      redirect_to edit_user_registration_path
+    end
+
+    def password_change_request_allowed?
+      return true if controller_name == "registrations" &&
+                     action_name.in?(["edit", "update"])
+      return true if controller_name == "passwords"
+
+      controller_name == "sessions" && action_name == "destroy"
+    end
+
+    def password_change_required_for?(resource_or_scope)
+      resource = current_resource_from_scope(resource_or_scope)
+      resource&.password_change_required?
+    end
+
+    def current_resource_from_scope(resource_or_scope)
+      return resource_or_scope if resource_or_scope.respond_to?(:password_change_required?)
+      return unless resource_or_scope.is_a?(Symbol)
+
+      public_send("current_#{resource_or_scope}")
     end
 
     # https://stackoverflow.com/a/69313330/

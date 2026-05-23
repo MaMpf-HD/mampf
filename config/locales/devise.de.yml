@@ -127,6 +127,10 @@ de:
         resend_unlock_instructions: "Anleitung zum Entsperren erneut senden"
     edit:
       title: "Zugangsdaten ändern"
+      password_change_required_title: "Passwort ändern"
+      password_change_required: "Da MaMpf die Integration von Muesli-Funktionalität vorbereitet, erhöhen wir unsere Standards für die Kontosicherheit. Bitte ändere Dein Passwort, bevor Du fortfährst."
+      password_change_required_help: "Gib Dein aktuelles Passwort ein, um die erforderliche Passwortänderung zu bestätigen."
+      password_change_required_password_help: "Wähle ein neues Passwort, um fortzufahren."
       email: "Emailaddresse"
       current_password: "Aktuelles Passwort"
       need_password: "Wir benötigen Dein aktuelles Passwort, um die Änderung zu bestätigen."

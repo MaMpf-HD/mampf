@@ -1,30 +1,38 @@
-<h2><%= t('devise.edit.title') %></h2>
+<% password_change_required = resource.password_change_required? %>
+
+<h2><%= t(password_change_required ? 'devise.edit.password_change_required_title' : 'devise.edit.title') %></h2>
+
+<% if password_change_required %>
+  <p><%= t('devise.edit.password_change_required') %></p>
+<% end %>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= render layout: "devise/shared/password_strength_wrapper" do %>
     <% if resource.name.present? %>
       <input type="hidden" data-password-strength-target="name" value="<%= resource.name %>">
     <% end %>
-    
-    <div class="mb-3">
-      <%= f.label :email, t('devise.edit.email'),
-                  class: "form-label" %>
-      <%= f.email_field :email, autofocus: true, class: 'form-control',
-                        data: {
-                          "password-strength-target": "email",
-                          "action": "input->password-strength#check"
-                        } %>
-    </div>
+
+    <% unless password_change_required %>
+      <div class="mb-3">
+        <%= f.label :email, t('devise.edit.email'),
+                    class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, class: 'form-control',
+                          data: {
+                            "password-strength-target": "email",
+                            "action": "input->password-strength#check"
+                          } %>
+      </div>
+    <% end %>
     <div class="mb-3">
       <%= f.label :current_password, t('devise.edit.current_password'),
                   class: "form-label" %>
-      <%= helpdesk(t('devise.edit.need_password'), true) %>
-      <%= f.password_field :current_password, class: 'form-control' %>
+      <%= helpdesk(t(password_change_required ? 'devise.edit.password_change_required_help' : 'devise.edit.need_password'), true) %>
+      <%= f.password_field :current_password, autofocus: password_change_required, class: 'form-control' %>
     </div>
     <div class="mb-3">
       <%= f.label :password, t('devise.edit.new_password'),
                   class: "form-label" %>
-      <%= helpdesk(t('devise.edit.no_change'), true) %>
+      <%= helpdesk(t(password_change_required ? 'devise.edit.password_change_required_password_help' : 'devise.edit.no_change'), true) %>
       <%= f.password_field :password, autocomplete: "off", class: 'form-control',
                            data: {
                              "password-strength-target": "password",
@@ -39,12 +47,18 @@
       <%= f.label :password_confirmation, t('devise.edit.confirm_new_password'),
                   class: "form-label" %>
       <%= helpdesk(t('devise.edit.no_change'), true) %>
-      <%= f.password_field :password_confirmation, class: 'form-control'  %>
+      <%= f.password_field :password_confirmation, class: 'form-control' %>
     </div>
   <% end %>
 
   <div class="mb-3">
     <%= f.submit t('devise.edit.update'), class: 'btn btn-primary' %>
-    <%= link_to t('back'), :back, class: 'btn btn-secondary' %>
+    <% unless password_change_required %>
+      <%= link_to t('back'), :back, class: 'btn btn-secondary' %>
+    <% end %>
   </div>
+<% end %>
+
+<% if password_change_required %>
+  <p><%= link_to t('devise.shared.links.forgot_password'), new_user_password_path %></p>
 <% end %>

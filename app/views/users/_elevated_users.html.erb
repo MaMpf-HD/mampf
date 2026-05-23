@@ -19,6 +19,11 @@
     </div>
   </div>
   <div class="card-body">
+    <p>
+      <%= t('admin.user.password_policy_progress',
+            current: password_policy_current_count,
+            total: password_policy_total_count) %>
+    </p>
     <div class="row bg-mdb-color-lighten-2 py-3">
       <div class="col-2 text-light">
         <strong>
@@ -50,7 +55,7 @@
       <div class="row border-bottom"
            id="row-user-<%= u.id %>">
         <%= render partial: 'users/row',
-                   locals: { user: u }%>
+                   locals: { user: u } %>
       </div>
     <% end %>
   </div>

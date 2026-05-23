@@ -37,6 +37,7 @@ RSpec.describe("Auth passwords", type: :request) do
   describe "PUT /users/password" do
     it "updates the password from a valid reset token" do
       user = create(:confirmed_user_en)
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
 
       post user_password_path, params: { user: { email: user.email } }
       token = devise_mail_token(ActionMailer::Base.deliveries.last,
@@ -51,6 +52,9 @@ RSpec.describe("Auth passwords", type: :request) do
       }
 
       expect(response).to redirect_to(start_path)
+      expect(user.reload.password_policy_version)
+        .to eq(User::CURRENT_PASSWORD_POLICY_VERSION)
+      expect(user.password_changed_at).to be_present
 
       delete destroy_user_session_path
       post user_session_path,

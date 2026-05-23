@@ -117,5 +117,31 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(user.unconfirmed_email).to eq(new_email)
       expect(ActionMailer::Base.deliveries.last.to).to include(new_email)
     end
+
+    it "redirects stale users away from authenticated pages until their password changes" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get news_path
+
+      expect(response).to redirect_to(edit_user_registration_path)
+    end
+
+    it "shows the forced password change prompt for stale users" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get edit_user_registration_path
+
+      expect(response.body)
+        .to include(I18n.t("devise.edit.password_change_required"))
+      expect(response.body).not_to include(I18n.t("devise.edit.email"))
+    end
   end
 end

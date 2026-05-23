@@ -130,6 +130,10 @@ en:
         resend_unlock_instructions: "Resend unlock instructions"
     edit:
       title: "Change login data"
+      password_change_required_title: "Change your password"
+      password_change_required: "As MaMpf prepares to integrate Muesli functionality, we are raising our account security standards. Please change your password before you continue."
+      password_change_required_help: "Enter your current password to confirm the required password change."
+      password_change_required_password_help: "Choose a new password to continue."
       email: "Email address"
       current_password: "Current password"
       need_password: "We need your current password to confirm these changes."
