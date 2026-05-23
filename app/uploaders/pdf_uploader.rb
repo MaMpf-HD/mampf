@@ -111,6 +111,8 @@ class PdfUploader < Shrine
                                       pgroup: true)
       _pid, status = Timeout.timeout(PDFTK_TIMEOUT) { Process.wait2(pid) }
       status.success?
+    rescue SystemCallError
+      false
     rescue Timeout::Error
       terminate_process_group(pid)
       false

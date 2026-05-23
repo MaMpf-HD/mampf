@@ -88,6 +88,14 @@ RSpec.describe(PdfUploader) do
 
       expect(uploader.send(:run_pdftk, "input.pdf", "dump_data_utf8")).to be(false)
     end
+
+    it "returns false when pdftk cannot be spawned" do
+      uploader = described_class.new(:store)
+
+      allow(Process).to receive(:spawn).and_raise(Errno::ENOENT)
+
+      expect(uploader.send(:run_pdftk, "input.pdf", "dump_data_utf8")).to be(false)
+    end
   end
 
   describe "unpacked structure validation" do
