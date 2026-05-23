@@ -47,6 +47,12 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect(response).to have_http_status(:ok)
         expect(response.body).to include(I18n.t("roster.errors.item_locked"))
       end
+
+      it "does not send an email" do
+        expect do
+          post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
 
     context "when RosterFullError" do
@@ -110,6 +116,12 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
                  group: conflicting_group.title)
         )
       end
+
+      it "does not send an email" do
+        expect do
+          post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
 
     context "when rendering the updated registration page state" do
@@ -142,6 +154,20 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         )
       end
     end
+
+    context "when self-add succeeds and should send email" do
+      before do
+        allow_any_instance_of(Rosters::SelfMaterializationService)
+          .to receive(:self_add!)
+        allow(RosterMailer).to receive_message_chain(:self_added, :deliver_now)
+      end
+
+      it "sends an email" do
+        expect do
+          post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+    end
   end
 
   describe "DELETE /tutorials/:id/roster/self_remove" do
@@ -167,6 +193,12 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect(response).to have_http_status(:ok)
         expect(response.body).to include(I18n.t("roster.errors.item_locked"))
       end
+
+      it "does not send an email" do
+        expect do
+          delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
 
     context "when SelfRemoveNotAllowedError" do
@@ -181,6 +213,25 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect(response.body).to include(
           I18n.t("roster.errors.self_remove_not_allowed", type: "Tutorial")
         )
+      end
+
+      it "does not send an email" do
+        expect do
+          delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
+    end
+
+    context "when self-remove succeeds and should send email" do
+      before do
+        allow_any_instance_of(Rosters::SelfMaterializationService)
+          .to receive(:self_remove!)
+        allow(RosterMailer).to receive_message_chain(:self_removed, :deliver_now)
+      end
+      it "sends an email" do
+        expect do
+          delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
     end
   end
