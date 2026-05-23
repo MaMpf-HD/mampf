@@ -29,6 +29,52 @@ RSpec.describe(PdfUploader) do
     ensure
       file.close!
     end
+
+    it "returns nil pages when pdftk output omits NumberOfPages" do
+      uploader = described_class.new(:store)
+      file = Tempfile.new(["manuscript", ".pdf"])
+      file.binmode
+      file.write(File.binread("#{SPEC_FILES}/manuscript.pdf"))
+      file.rewind
+
+      allow(uploader).to receive(:run_pdftk) do |*args|
+        File.write(args[3], "InfoKey: Title\n") if args[1] == "dump_data_utf8"
+        true
+      end
+
+      metadata = uploader.send(:extract_metadata, file, action: :upload)
+
+      expect(metadata["pages"]).to be_nil
+    ensure
+      file.close!
+    end
+
+    it "skips malformed MaMpf-Label rows" do
+      uploader = described_class.new(:store)
+      file = Tempfile.new(["manuscript", ".pdf"])
+      file.binmode
+      file.write(File.binread("#{SPEC_FILES}/manuscript.pdf"))
+      file.rewind
+
+      allow(uploader).to receive(:run_pdftk) do |*args|
+        if args[1] == "dump_data_utf8"
+          File.write(args[3], "NumberOfPages: 7\n")
+        else
+          File.write(File.join(args[3], "structure.mampf"),
+                     "MaMpf-Label|broken\n" \
+                     "MaMpf-Label|dest|Sort|1.1|Desc|1|1.1|1.1.0|7\n")
+        end
+        true
+      end
+
+      metadata = uploader.send(:extract_metadata, file, action: :upload)
+
+      expect(metadata["bookmarks"].size).to eq(1)
+      expect(metadata["bookmarks"].first["destination"]).to eq("dest")
+      expect(metadata["bookmarks"].first["counter"]).to eq(0)
+    ensure
+      file.close!
+    end
   end
 
   describe "pdftk execution" do

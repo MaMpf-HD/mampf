@@ -36,7 +36,8 @@ class PdfUploader < Shrine
             if exit_status
               meta = File.read(temp_file)
               # extract number of pages from pdftk output
-              pages = /NumberOfPages: (\d*)/.match(meta)[1].to_i
+              page_match = /NumberOfPages: (\d*)/.match(meta)
+              pages = page_match[1].to_i if page_match
               # extract lines that correspond to MaMpf-Label entries from LaTEX
               # package mampf.sty
               structure = if File.file?(structure_path)
@@ -47,16 +48,18 @@ class PdfUploader < Shrine
               structure ||= ""
               bookmarks = structure.scan(/MaMpf-Label\|(.*?)\n/).flatten
               result = []
-              bookmarks.each_with_index do |b, i|
+              bookmarks.each do |b|
                 # extract bookmark data
                 # line may look like this:
                 # defn:erster-Tag|Definition|1.1|Erster Tag|1
                 data = /(.*?)\|(.*?)\|(.*?)\|(.*?)\|(.*)\|(.*)\|(.*)\|(.*)/.match(b)
+                next unless data
+
                 details = { "destination" => data[1], "sort" => data[2],
                             "label" => data[3], "description" => data[4],
                             "chapter" => data[5], "section" => data[6],
                             "subsection" => data[7], "page" => data[8],
-                            "counter" => i }
+                            "counter" => result.length }
                 details["sort"] = "Markierung" if details["sort"].blank?
                 result.push(details)
               end
