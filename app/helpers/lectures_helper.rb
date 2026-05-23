@@ -4,7 +4,7 @@ module LecturesHelper
     return false unless lecture && user_signed_in?
     return false unless Flipper.enabled?(:registration_campaigns)
 
-    RegistrationUserRegistrationAbility.new(current_user).can?(:enroll, lecture)
+    RegistrationUserRegistrationAbility.new(current_user).can?(:index, lecture)
   end
 
   # is the current user allowed to delete the given lecture and is it

@@ -8,7 +8,7 @@ class RegistrationUserRegistrationAbility
       user.can_edit?(registration.registration_campaign.campaignable)
     end
 
-    can [:enroll], Lecture do |lecture|
+    can [:index, :create, :destroy, :add], Lecture do |lecture|
       !user.in?(lecture.tutors) && (user != lecture.teacher) && !user.can_edit?(lecture)
     end
   end

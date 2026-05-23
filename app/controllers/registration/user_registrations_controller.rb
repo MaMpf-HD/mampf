@@ -26,6 +26,8 @@ module Registration
     end
 
     def index
+      authorize! :index, @lecture
+
       @campaigns_details = ::UserRegistrations::LectureCampaignsService
                            .new(@lecture, current_user)
                            .call
@@ -39,6 +41,8 @@ module Registration
     end
 
     def create
+      authorize! :create, @item.registration_campaign.campaignable
+
       result = ::UserRegistrations::LectureFcfsEditService
                .new(@campaign, current_user).register!(@item)
       respond_to_student_registration(result,
@@ -47,6 +51,8 @@ module Registration
     end
 
     def destroy
+      authorize! :destroy, @item.registration_campaign.campaignable
+
       result = ::UserRegistrations::LectureFcfsEditService
                .new(@campaign, current_user).withdraw!(@item)
       respond_to_student_registration(result,
@@ -55,6 +61,8 @@ module Registration
 
     def add
       @campaign = @item.registration_campaign
+      authorize! :add, @campaign.campaignable
+
       pref_items = ::UserRegistrations::PreferencesHandler
                    .new.pref_item_build_with_rank(@campaign, current_user,
                                                   params[:item_id], params[:rank])

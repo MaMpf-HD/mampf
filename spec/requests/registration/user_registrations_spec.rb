@@ -159,6 +159,16 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         )
       end
     end
+
+    context "when the user is not allowed to enroll" do
+      let(:lecture) { create(:lecture, teacher: user) }
+
+      it "redirects to root" do
+        get lecture_user_registrations_path(lecture_id: lecture.id)
+
+        expect(response).to redirect_to(root_path)
+      end
+    end
   end
 
   context "fcfs tutorial campaign" do
@@ -177,6 +187,22 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         follow_redirect!
         expect(response.body).to include(I18n.t("registration.user_registration.messages." \
                                                 "registration_success"))
+      end
+
+      context "when the user is not allowed to enroll" do
+        let(:lecture) { create(:lecture, teacher: user) }
+        let(:campaign) do
+          create(:registration_campaign, :open, :first_come_first_served,
+                 campaignable: lecture)
+        end
+
+        it "rejects the request before invoking the service" do
+          expect(UserRegistrations::LectureFcfsEditService).not_to receive(:new)
+
+          post register_item_path(campaign_id: campaign.id, item_id: item.id)
+
+          expect(response).to redirect_to(root_path)
+        end
       end
     end
 
@@ -199,6 +225,22 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         delete withdraw_item_path(campaign_id: campaign.id, item_id: item.id)
 
         expect(response).to have_http_status(:found)
+      end
+
+      context "when the user is not allowed to enroll" do
+        let(:lecture) { create(:lecture, teacher: user) }
+        let(:campaign) do
+          create(:registration_campaign, :open, :first_come_first_served,
+                 campaignable: lecture)
+        end
+
+        it "rejects the request before invoking the service" do
+          expect(UserRegistrations::LectureFcfsEditService).not_to receive(:new)
+
+          delete withdraw_item_path(campaign_id: campaign.id, item_id: item.id)
+
+          expect(response).to redirect_to(root_path)
+        end
       end
     end
   end
@@ -236,6 +278,23 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
           post add_preference_path(item), params: { rank: 1 }
           expect(response).to have_http_status(:found)
+        end
+
+        context "when the user is not allowed to enroll" do
+          let(:lecture) { create(:lecture, teacher: user) }
+          let(:campaign) do
+            create(:registration_campaign, :open, :preference_based,
+                   campaignable: lecture)
+          end
+
+          it "rejects the request before invoking the service" do
+            expect(UserRegistrations::PreferencesHandler).not_to receive(:new)
+            expect(UserRegistrations::LecturePreferenceEditService).not_to receive(:new)
+
+            post add_preference_path(item), params: { rank: 1 }
+
+            expect(response).to redirect_to(root_path)
+          end
         end
       end
     end
