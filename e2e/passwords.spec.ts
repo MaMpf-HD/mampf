@@ -75,6 +75,34 @@ test("clears stale validation errors after correcting a rejected password", asyn
   await expect(feedback).not.toContainText("Must be at least 15 characters");
 });
 
+test("keeps helpdesk popovers working after a rejected account password change", async ({ page, request }) => {
+  const user = await callBackend(request, "user_creator_playwright",
+    { role: "password-change" }) as User;
+
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login(user.email, user.password);
+  await expect(page).toHaveURL(/\/main\/start/);
+
+  await page.goto("/users/edit?locale=en");
+
+  const currentPasswordHelpdesk = page.locator('[data-bs-toggle="popover"]').first();
+  await currentPasswordHelpdesk.click();
+  await expect(page.locator(".popover")).toContainText("current password");
+
+  await page.locator("body").click({ position: { x: 0, y: 0 } });
+
+  await page.getByLabel("Current password").fill("wrong-password");
+  await page.getByLabel("New password", { exact: true }).fill("super-secure-horse-battery-staple");
+  await page.getByLabel("Confirm new password", { exact: true }).fill("super-secure-horse-battery-staple");
+  await page.getByRole("button", { name: "Update" }).click();
+
+  await expect(page).toHaveURL(/\/users/);
+
+  await currentPasswordHelpdesk.click();
+  await expect(page.locator(".popover")).toContainText("current password");
+});
+
 test("clears stale current password errors after correcting an account password change", async ({ page, request }) => {
   const user = await callBackend(request, "user_creator_playwright",
     { role: "password-change" }) as User;
