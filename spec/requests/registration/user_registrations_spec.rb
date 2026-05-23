@@ -242,6 +242,26 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           expect(response).to redirect_to(root_path)
         end
       end
+
+      context "when the route campaign does not match the item's campaign" do
+        let(:campaign) do
+          create(:registration_campaign, :closed, :first_come_first_served)
+        end
+        let(:open_campaign) do
+          create(:registration_campaign, :open, :first_come_first_served)
+        end
+
+        it "uses the item's campaign for withdrawal validation" do
+          expect do
+            delete withdraw_item_path(campaign_id: open_campaign.id, item_id: item.id)
+          end.not_to change(Registration::UserRegistration, :count)
+
+          expect(response).to redirect_to(lecture_user_registrations_path(campaign.campaignable))
+          expect(flash[:alert]).to eq(
+            I18n.t("registration.user_registration.messages.campaign_not_opened")
+          )
+        end
+      end
     end
   end
 

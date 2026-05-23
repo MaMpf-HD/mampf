@@ -51,7 +51,8 @@ module Registration
     end
 
     def destroy
-      authorize! :destroy, @item.registration_campaign.campaignable
+      @campaign = @item.registration_campaign
+      authorize! :destroy, @campaign.campaignable
 
       result = ::UserRegistrations::LectureFcfsEditService
                .new(@campaign, current_user).withdraw!(@item)
