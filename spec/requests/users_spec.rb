@@ -16,10 +16,13 @@ RSpec.describe("Users administration", type: :request) do
       get users_path
 
       expect(response).to have_http_status(:ok)
+      expected_current_count = 2
+      expected_total_count = 3
+
       expect(response.body)
         .to include(I18n.t("admin.user.password_policy_progress",
-                           current: User.confirmed.where(password_policy_version: User::CURRENT_PASSWORD_POLICY_VERSION..).count,
-                           total: User.confirmed.count))
+                           current: expected_current_count,
+                           total: expected_total_count))
     end
   end
 end
