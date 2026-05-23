@@ -1,4 +1,4 @@
-class AddPasswordPolicyFieldsToUsers < ActiveRecord::Migration[7.0]
+class AddPasswordPolicyFieldsToUsers < ActiveRecord::Migration[8.0]
   def change
     add_column :users,
                :password_policy_version,
