@@ -31,14 +31,19 @@
       </div>
       <div class="form-text" data-password-strength-target="feedback"></div>
     </div>
-  
+
     <div class="mb-3">
       <%= f.label :password_confirmation,
                   t('devise.passwords.edit.confirm_new_password') %>
-      <%= f.password_field :password_confirmation, class: 'form-control' %>
+      <%= f.password_field :password_confirmation,
+                           class: 'form-control',
+                           data: {
+                             "password-strength-target": "passwordConfirmation",
+                             "action": "input->password-strength#check"
+                           } %>
     </div>
   <% end %>
-  
+
   <div class="mb-3">
     <%= f.submit t('.change_password'),
                  class: 'btn btn-primary' %>

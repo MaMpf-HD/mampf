@@ -27,7 +27,7 @@ function setupZxcvbnOptions() {
 }
 
 export default class extends Controller {
-  static targets = ["password", "email", "name", "meter", "feedback"];
+  static targets = ["password", "passwordConfirmation", "email", "name", "meter", "feedback"];
   static values = {
     weakText: { type: String, default: "Weak" },
     fairText: { type: String, default: "Fair" },
@@ -40,10 +40,14 @@ export default class extends Controller {
 
   connect() {
     setupZxcvbnOptions();
-    this.check();
   }
 
   check() {
+    this.clearFieldError(this.passwordTarget);
+    if (this.hasPasswordConfirmationTarget) {
+      this.clearFieldError(this.passwordConfirmationTarget);
+    }
+
     const password = this.hasPasswordTarget ? this.passwordTarget.value : "";
 
     if (!password) {
@@ -79,6 +83,16 @@ export default class extends Controller {
 
     this.updateMeter(score);
     this.updateFeedback(score, warning);
+  }
+
+  clearFieldError(field) {
+    if (!field) return;
+
+    field.classList.remove("is-invalid");
+    const nextElement = field.nextElementSibling;
+    if (nextElement?.classList.contains("invalid-feedback")) {
+      nextElement.remove();
+    }
   }
 
   updateMeter(score) {
