@@ -20,9 +20,10 @@ class PdfUploader < Shrine
         temp_file = Tempfile.new
         temp_folder = Dir.mktmpdir
         structure_path = "#{temp_folder}/structure.mampf"
-        cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path} && " \
-              "pdftk #{file.path} unpack_files output #{temp_folder}"
-        exit_status = system(cmd)
+        exit_status = system("pdftk", file.path, "dump_data_utf8", "output",
+                             temp_file.path) &&
+                      system("pdftk", file.path, "unpack_files", "output",
+                             temp_folder)
         if exit_status
           meta = File.read(temp_file)
           # extract number of pages from pdftk output
