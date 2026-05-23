@@ -34,7 +34,7 @@ RSpec.describe("Auth passwords", type: :request) do
     end
   end
 
-  describe "GET /users/password/restart" do
+  describe "POST /users/password/restart" do
     it "signs out stale users and redirects them to the reset form" do
       user = create(:confirmed_user_en)
       # rubocop:disable Rails/SkipsModelValidations
@@ -42,7 +42,7 @@ RSpec.describe("Auth passwords", type: :request) do
       # rubocop:enable Rails/SkipsModelValidations
       sign_in user
 
-      get restart_user_password_path(locale: :de)
+      post restart_user_password_path(locale: :de)
 
       expect(response).to redirect_to(new_user_password_path(locale: :de))
 

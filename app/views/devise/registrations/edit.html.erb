@@ -70,5 +70,8 @@
 <% end %>
 
 <% if password_change_required %>
-  <p><%= link_to t('devise.shared.links.forgot_password'), restart_user_password_path(locale: I18n.locale) %></p>
+  <%= button_to t('devise.shared.links.forgot_password'),
+                restart_user_password_path(locale: I18n.locale),
+                method: :post,
+                class: 'btn btn-link p-0' %>
 <% end %>
