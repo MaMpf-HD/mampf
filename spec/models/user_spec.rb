@@ -57,8 +57,9 @@ RSpec.describe(User, type: :model) do
 
   it "marks users as compliant and records when their password changes" do
     user = FactoryBot.create(:confirmed_user)
+    # rubocop:disable Rails/SkipsModelValidations
     user.update_columns(password_policy_version: 0, password_changed_at: nil)
-
+    # rubocop:enable Rails/SkipsModelValidations
     before_update = Time.zone.now
     user.update!(password: "updated-super-secure-passphrase",
                  password_confirmation: "updated-super-secure-passphrase")
