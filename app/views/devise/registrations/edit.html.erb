@@ -19,7 +19,11 @@
       <%= f.label :current_password, t('devise.edit.current_password'),
                   class: "form-label" %>
       <%= helpdesk(t('devise.edit.need_password'), true) %>
-      <%= f.password_field :current_password, class: 'form-control' %>
+      <%= f.password_field :current_password,
+                           class: 'form-control',
+                           data: {
+                             "action": "input->password-strength#clearFieldError"
+                           } %>
     </div>
     <div class="mb-3">
       <%= f.label :password, t('devise.edit.new_password'),

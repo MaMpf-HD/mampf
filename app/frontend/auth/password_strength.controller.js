@@ -85,7 +85,8 @@ export default class extends Controller {
     this.updateFeedback(score, warning);
   }
 
-  clearFieldError(field) {
+  clearFieldError(fieldOrEvent) {
+    const field = fieldOrEvent?.target || fieldOrEvent;
     if (!field) return;
 
     field.classList.remove("is-invalid");

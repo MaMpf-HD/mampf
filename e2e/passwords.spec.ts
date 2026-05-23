@@ -74,3 +74,29 @@ test("clears stale validation errors after correcting a rejected password", asyn
   await expect(feedback).toHaveText(/Good|Strong/);
   await expect(feedback).not.toContainText("Must be at least 15 characters");
 });
+
+test("clears stale current password errors after correcting an account password change", async ({ page, request }) => {
+  const user = await callBackend(request, "user_creator_playwright",
+    { role: "password-change" }) as User;
+  const newPassword = "super-secure-horse-battery-staple";
+
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login(user.email, user.password);
+  await expect(page).toHaveURL(/\/main\/start/);
+
+  await page.goto("/users/edit?locale=en");
+  await page.getByLabel("Current password").fill("wrong-password");
+  await page.getByLabel("New password", { exact: true }).fill(newPassword);
+  await page.getByLabel("Confirm new password", { exact: true }).fill(newPassword);
+  await page.getByRole("button", { name: "Update" }).click();
+
+  await expect(page).toHaveURL(/\/users/);
+  await expect(page.locator("#user_current_password")).toHaveClass(/is-invalid/);
+  await expect(page.locator("#user_current_password + .invalid-feedback")).toHaveCount(1);
+
+  await page.getByLabel("Current password").fill(user.password);
+
+  await expect(page.locator("#user_current_password")).not.toHaveClass(/is-invalid/);
+  await expect(page.locator("#user_current_password + .invalid-feedback")).toHaveCount(0);
+});
