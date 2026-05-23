@@ -639,6 +639,18 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { cohort.members.count }.by(1)
       end
 
+      it "sends an email when a user is successfully added to the cohort" do
+        expect do
+          post(add_member_cohort_path(cohort), params: { email: new_student.email })
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_added_to_group_email_subject",
+                 rosterable_title: cohort.title)
+        )
+      end
+
       it "does not add the user to the lecture roster by default" do
         expect do
           post(add_member_cohort_path(cohort), params: { email: new_student.email })
@@ -735,6 +747,19 @@ RSpec.describe("Roster::Maintenance", type: :request) do
                 params: { target_id: target.id })
         end.to change { source.members.count }.by(-1)
                                               .and(change { target.members.count }.by(1))
+      end
+
+      it "sends an email when a user is successfully moved" do
+        expect do
+          patch(move_member_cohort_path(source, user_id: member.id),
+                params: { target_id: target.id })
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        email = ActionMailer::Base.deliveries.last
+        expect(email.subject).to eq(
+          I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
+                 rosterable_title: target.title)
+        )
       end
     end
 
