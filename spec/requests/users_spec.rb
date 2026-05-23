@@ -6,8 +6,10 @@ RSpec.describe("Users administration", type: :request) do
       admin = create(:confirmed_user, admin: true)
       create(:confirmed_user)
       stale_user = create(:confirmed_user)
+      # rubocop:disable Rails/SkipsModelValidations
       stale_user.update_columns(password_policy_version: 0,
                                 password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
 
       sign_in admin
 
@@ -16,10 +18,7 @@ RSpec.describe("Users administration", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(response.body)
         .to include(I18n.t("admin.user.password_policy_progress",
-                           current: User.confirmed.where(
-                             "password_policy_version >= ?",
-                             User::CURRENT_PASSWORD_POLICY_VERSION
-                           ).count,
+                           current: User.confirmed.where(password_policy_version: User::CURRENT_PASSWORD_POLICY_VERSION..).count,
                            total: User.confirmed.count))
     end
   end
