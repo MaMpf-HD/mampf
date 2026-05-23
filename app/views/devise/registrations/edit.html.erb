@@ -5,7 +5,7 @@
     <% if resource.name.present? %>
       <input type="hidden" data-password-strength-target="name" value="<%= resource.name %>">
     <% end %>
-    
+
     <div class="mb-3">
       <%= f.label :email, t('devise.edit.email'),
                   class: "form-label" %>
@@ -39,7 +39,12 @@
       <%= f.label :password_confirmation, t('devise.edit.confirm_new_password'),
                   class: "form-label" %>
       <%= helpdesk(t('devise.edit.no_change'), true) %>
-      <%= f.password_field :password_confirmation, class: 'form-control'  %>
+      <%= f.password_field :password_confirmation,
+                           class: 'form-control',
+                           data: {
+                             "password-strength-target": "passwordConfirmation",
+                             "action": "input->password-strength#check"
+                           } %>
     </div>
   <% end %>
 
