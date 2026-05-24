@@ -6,6 +6,7 @@ de:
       no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
     records:
       tooltip_points: "Punkte"
+      percentage_unavailable: "Prozent nicht verfügbar"
       columns:
         student: "Studierende/r"
         email: "E-Mail"

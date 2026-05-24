@@ -6,6 +6,7 @@ en:
       no_member: "User is not a member of this lecture."
     records:
       tooltip_points: "points"
+      percentage_unavailable: "Percentage unavailable"
       columns:
         student: "Student"
         email: "Email"

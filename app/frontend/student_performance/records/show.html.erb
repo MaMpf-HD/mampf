@@ -53,7 +53,15 @@
         <div class="col-12 col-md-4">
           <div class="text-center p-3 border rounded bg-light">
             <div class="display-6 fw-bold">
-              <%= number_to_percentage(@record.percentage_materialized.to_f, precision: 0) %>
+              <% if @record.percentage_materialized.nil? %>
+                <span class="text-muted" aria-hidden="true">&mdash;</span>
+                <span class="visually-hidden">
+                  <%= t("student_performance.records.percentage_unavailable") %>
+                </span>
+              <% else %>
+                <%= number_to_percentage(@record.percentage_materialized,
+                                         precision: 0) %>
+              <% end %>
             </div>
 
             <div class="text-muted small">

@@ -42,6 +42,21 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(response.body).not_to include(other_user.tutorial_name)
       end
 
+      it "renders a dash when percentage is unavailable" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture,
+                          percentage_materialized: nil,
+                          points_total_materialized: 0,
+                          points_max_materialized: 0)
+
+        get lecture_student_performance_records_path(lecture)
+
+        expect(response.body).to include(
+          I18n.t("student_performance.records.percentage_unavailable")
+        )
+        expect(response.body).not_to include(">0%</span>")
+      end
+
       context "with achievements" do
         before { Flipper.enable(:assessment_grading) }
 
@@ -201,6 +216,19 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(response).to redirect_to(
           lecture_student_performance_records_path(lecture)
         )
+      end
+
+      it "renders a dash when percentage is unavailable" do
+        record.update!(percentage_materialized: nil,
+                       points_total_materialized: 0,
+                       points_max_materialized: 0)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body).to include(
+          I18n.t("student_performance.records.percentage_unavailable")
+        )
+        expect(response.body).not_to include(">0%</div>")
       end
     end
 
