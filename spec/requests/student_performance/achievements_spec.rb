@@ -24,6 +24,18 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
         get lecture_student_performance_achievements_path(lecture)
         expect(response).to have_http_status(:success)
       end
+
+      it "renders percentage thresholds in fixed-point notation" do
+        create(:achievement,
+               :percentage,
+               lecture: lecture,
+               threshold: BigDecimal("0.75e2"))
+
+        get lecture_student_performance_achievements_path(lecture)
+
+        expect(response.body).to include("75.0%")
+        expect(response.body).not_to include("0.75e2%")
+      end
     end
 
     context "as a student" do
