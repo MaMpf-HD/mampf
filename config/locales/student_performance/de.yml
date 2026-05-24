@@ -31,7 +31,8 @@ de:
         showing: "%{from}–%{to} von %{count} Studierenden"
       show:
         back: "Zurück zur Übersicht"
-        recompute: "Neu berechnen"
+        recompute: "Datensatz neu berechnen"
+        recompute_hint: "Nur als Fallback: Verwende dies, wenn die angezeigten Daten veraltet oder fehlerhaft wirken."
         total_points: "Gesamtpunkte"
         out_of: "von %{max} möglichen"
         percentage: "Prozent"

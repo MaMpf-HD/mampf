@@ -31,7 +31,8 @@ en:
         showing: "Showing %{from}–%{to} of %{count} students"
       show:
         back: "Back to records"
-        recompute: "Recompute"
+        recompute: "Recompute record"
+        recompute_hint: "Fallback only: use this if the displayed data seems out of date or incorrect."
         total_points: "Total Points"
         out_of: "out of %{max} possible"
         percentage: "Percentage"
