@@ -918,7 +918,6 @@ Rails.application.routes.draw do
     mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
     mount SubmissionUploader.upload_endpoint(:submission_cache) => "/submissions/upload"
     mount CorrectionUploader.upload_endpoint(:submission_cache) => "/corrections/upload"
-    mount ZipUploader.upload_endpoint(:submission_cache) => "/packages/upload"
   end
 
   # thredded routes

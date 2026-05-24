@@ -8,8 +8,7 @@ RSpec.describe("UploadRoutes", type: :request) do
     "/pdfs/upload",
     "/ggbs/upload",
     "/submissions/upload",
-    "/corrections/upload",
-    "/packages/upload"
+    "/corrections/upload"
   ].each do |path|
     it "redirects anonymous requests for #{path}" do
       post path
