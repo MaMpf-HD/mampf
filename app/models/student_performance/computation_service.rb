@@ -14,8 +14,9 @@ module StudentPerformance
       return unless lecture.members.exists?(id: user.id)
 
       stats = aggregate_points(user)
-      met_ids = achievement_ids_met_by_id(user.id)
-      ungraded_ids = achievement_ids_ungraded_by_id(user.id)
+      grade_texts = achievement_grade_texts_for(user.id)
+      met_ids = achievement_ids_met(grade_texts)
+      ungraded_ids = achievement_ids_ungraded(grade_texts)
 
       upsert_records([build_row(user.id, stats, met_ids, ungraded_ids)])
     end
@@ -32,8 +33,9 @@ module StudentPerformance
       rows = user_ids.map do |uid|
         parts = participations_by_user.fetch(uid, [])
         stats = aggregate_from_prefetched(parts, points_by_participation)
-        met_ids = achievement_ids_met_by_id(uid)
-        ungraded_ids = achievement_ids_ungraded_by_id(uid)
+        grade_texts = achievement_participations_cache.fetch(uid, {})
+        met_ids = achievement_ids_met(grade_texts)
+        ungraded_ids = achievement_ids_ungraded(grade_texts)
         build_row(uid, stats, met_ids, ungraded_ids)
       end
 
@@ -102,11 +104,8 @@ module StudentPerformance
                                   .includes(:assessment)
       end
 
-      def achievement_ids_met_by_id(user_id)
+      def achievement_ids_met(grade_texts)
         return [] if lecture_achievements.empty?
-
-        grade_texts = achievement_participations_cache
-                      .fetch(user_id, {})
 
         lecture_achievements.select do |a|
           next false unless a.assessment
@@ -122,18 +121,26 @@ module StudentPerformance
         end.map(&:id)
       end
 
-      def achievement_ids_ungraded_by_id(user_id)
+      def achievement_ids_ungraded(grade_texts)
         return [] if lecture_achievements.empty?
 
-        graded_assessment_ids = achievement_participations_cache
-                                .fetch(user_id, {})
-                                .keys
-                                .to_set
+        graded_assessment_ids = grade_texts.keys.to_set
 
         lecture_achievements.reject do |a|
           a.assessment.nil? ||
             graded_assessment_ids.include?(a.assessment.id)
         end.map(&:id)
+      end
+
+      def achievement_grade_texts_for(user_id)
+        a_ids = lecture_achievements.filter_map { |a| a.assessment&.id }
+        return {} if a_ids.empty?
+
+        Assessment::Participation
+          .where(assessment_id: a_ids, user_id: user_id)
+          .where.not(grade_text: [nil, ""])
+          .pluck(:assessment_id, :grade_text)
+          .to_h
       end
 
       def achievement_participations_cache

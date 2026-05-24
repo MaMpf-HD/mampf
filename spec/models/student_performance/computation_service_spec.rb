@@ -384,6 +384,17 @@ RSpec.describe(StudentPerformance::ComputationService) do
           FactoryBot.create(:achievement, :boolean, lecture: lecture)
         end
 
+        it "filters single-user achievement lookups to the requested user" do
+          allow(Assessment::Participation).to receive(:where).and_call_original
+          expect(Assessment::Participation)
+            .to receive(:where)
+            .with(assessment_id: [achievement.assessment.id], user_id: user.id)
+            .and_call_original
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+        end
+
         it "includes met achievement id when grade_text is pass" do
           participation = achievement.assessment
                                      .assessment_participations
