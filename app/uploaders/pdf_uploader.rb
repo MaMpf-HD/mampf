@@ -13,7 +13,7 @@ class PdfUploader < Shrine
   # shrine plugins
   plugin :upload_endpoint, max_size: MAX_FILE_SIZE
   plugin :add_metadata
-  plugin :determine_mime_type
+  plugin :determine_mime_type, analyzer: :marcel
   plugin :validation_helpers
   plugin :pretty_location
   plugin :derivatives, versions_compatibility: true
