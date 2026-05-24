@@ -37,9 +37,14 @@ module Assessment
                     assessment_participation_id: assessment_participation_id
                   )
                   .sum(:points)
-        ::Assessment::Participation
-          .find_by(id: assessment_participation_id)
-          &.update(points_total: sum)
+        participation = ::Assessment::Participation
+                        .find_by(id: assessment_participation_id)
+        return unless participation
+
+        # points_total mirrors committed task points and must stay in sync
+        # rubocop:disable Rails/SkipsModelValidations
+        participation.update_columns(points_total: sum, updated_at: Time.current)
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       def recompute_performance_record

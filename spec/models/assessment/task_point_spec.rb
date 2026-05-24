@@ -101,5 +101,17 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
 
       expect(service).not_to have_received(:compute_and_upsert_record_for)
     end
+
+    it "refreshes points_total even when participation validations are closed" do
+      # rubocop:disable Rails/SkipsModelValidations
+      participation.update_column(:points_total, nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      allow_any_instance_of(Assessment::Assessment)
+        .to receive(:grading_open?).and_return(false)
+
+      task_point.send(:refresh_participation_points_total)
+
+      expect(participation.reload.points_total).to eq(task_point.points)
+    end
   end
 end
