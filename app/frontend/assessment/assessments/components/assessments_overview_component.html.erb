@@ -9,6 +9,7 @@
           data-bs-target="#assessments-list-pane"
           type="button"
           role="tab"
+          aria-selected="<%= tab_active?(:assessments) %>"
         >
           <%= assessments_tab_label %>
         </button>
@@ -23,6 +24,7 @@
             data-bs-target="#assessments-achievements-pane"
             type="button"
             role="tab"
+            aria-selected="<%= tab_active?(:achievements) %>"
           >
             <%= t("assessment.tabs.achievements") %>
           </button>
@@ -38,6 +40,7 @@
             data-bs-target="#assessments-performance-pane"
             type="button"
             role="tab"
+            aria-selected="<%= tab_active?(:performance) %>"
           >
             <%= t("assessment.tabs.performance") %>
           </button>
