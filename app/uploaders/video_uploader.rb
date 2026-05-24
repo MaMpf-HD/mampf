@@ -8,7 +8,7 @@ class VideoUploader < Shrine
   # shrine plugins
   plugin :upload_endpoint, max_size: MAX_SIZE # 4 GB
   plugin :add_metadata
-  plugin :determine_mime_type, analyzer: :file
+  plugin :determine_mime_type, analyzer: :marcel
   plugin :validation_helpers
   plugin :pretty_location
   plugin :refresh_metadata

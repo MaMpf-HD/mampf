@@ -12,7 +12,7 @@ class GeogebraUploader < Shrine
   THUMBNAIL_ENTRY = "geogebra_thumbnail.png".freeze
 
   plugin :upload_endpoint, max_size: MAX_SIZE
-  plugin :determine_mime_type
+  plugin :determine_mime_type, analyzer: :marcel
   plugin :validation_helpers
   plugin :derivatives
 

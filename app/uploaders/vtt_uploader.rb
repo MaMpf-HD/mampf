@@ -3,7 +3,7 @@ class VttUploader < Shrine
   MAX_SIZE = 1 * 1024 * 1024
 
   plugin :pretty_location
-  plugin :determine_mime_type
+  plugin :determine_mime_type, analyzer: :marcel
   plugin :validation_helpers
 
   Attacher.validate do
