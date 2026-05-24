@@ -4,14 +4,17 @@ class UserRowComponent < ViewComponent::Base
     @user = user
     @assignment = assignment
     @tutorial = tutorial
-  end
-
-  def participation
     @participation ||= @user.assessment_participation_in_assignment(@assignment)
   end
 
+  # Determines if grading is enabled for the current assignment
   def grading_enabled?
     Flipper.enabled?(:assessment_grading) && @assignment.assessable?
+  end
+
+  # Determines if grading is allowed for the current assignment
+  def allow_grading?
+    !@assignment.active?
   end
 
   def extract_task_points_participation(assessment_task)

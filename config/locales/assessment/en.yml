@@ -93,6 +93,11 @@ en:
       correction: 'Correction'
       max_points: 'pts'
       no_submissions: 'No submissions for this assignment.'
+      no_submission_zone: 'No submissions'
+      no_submission_badge: 'no submission'
+      participated: 'participated'
+      mark_as_participated: 'Mark as participated'
+      confirm_unsaved_changes: 'Unsaved changes in the grading table will be lost. Continue?'
     grading_overview:
       submission_progress: "Submissions"
       submitted: "Submitted"

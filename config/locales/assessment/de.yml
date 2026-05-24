@@ -93,6 +93,11 @@ de:
       correction: 'Korrektur'
       max_points: 'Pkt'
       no_submissions: 'Keine Abgaben für diese Hausaufgabe.'
+      no_submission_zone: 'Keine Abgaben'
+      no_submission_badge: 'nicht abgegeben'
+      participated: 'teilgenommen'
+      mark_as_participated: 'Als teilgenommen markieren'
+      confirm_unsaved_changes: 'Ungespeicherte Änderungen in der Punktetabelle gehen verloren. Fortfahren?'
     grading_overview:
       submission_progress: "Abgaben"
       submitted: "Abgegeben"

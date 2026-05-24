@@ -3212,8 +3212,7 @@ de:
       Eigene Tutorien
     other_tutorials: 'Sonstige Tutorien'
     deadline_warning: >
-      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Abgabefrist
-      können Korrekturen hochgeladen werden.
+      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Frist kann der Bewertungsprozess erfolgen und die Korrekturen können von den Tutoren hochgeladen werden.
     grace_period_warning: >
       Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich

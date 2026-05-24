@@ -1,139 +1,169 @@
-<tr id="<%= row_id %>"
-    is="turbo-frame"
-    class="submission-row <%= helpers.submission_late_color(@submission) %>"
-    data-id="<%= @submission.id %>"
-    data-controller="submission-row"
-    data-submission-row-id="<%= @submission.id %>"
-    data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean">
-
+<tr
+  id="<%= row_id %>"
+  is="turbo-frame"
+  class="submission-row <%= helpers.submission_late_color(@submission) %>"
+  data-id="<%= @submission.id %>"
+  data-controller="submission-row"
+  data-submission-row-id="<%= @submission.id %>"
+  data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
+>
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
     <%= @submission.users.map(&:tutorial_name).join(', ') %>
 
-    <i class="clipboardpopup far fa-copy clickable
-              text-secondary clipboard-btn ms-3 clipboard-button"
-        data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
-        data-bs-toggle="tooltip"
+    <i
+      class="
+        clipboardpopup bi bi-clipboard clickable
+        text-secondary clipboard-btn ms-3 clipboard-button
+      "
+      data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
+      data-bs-toggle="tooltip"
+      data-id="<%= @submission.id %>"
+      title="<%= t('buttons.copy_email_to_clipboard') %>"
+    >
+      <span
+        class="clipboardpopuptext token-clipboard-popup"
         data-id="<%= @submission.id %>"
-        title="<%= t('buttons.copy_email_to_clipboard') %>">
-      <span class="clipboardpopuptext token-clipboard-popup"
-            data-id="<%= @submission.id %>">
+      >
         <%= t('basics.emails_copied_to_clipboard') %>
       </span>
     </i>
 
     <% if @submission.too_late? %>
-      <i class="fas fa-exclamation-triangle"
-          data-bs-toggle="tooltip"
-          title="<%= late_submission_info(@submission, @submission.tutorial) %>">
-      </i>
+      <i
+        class="fas fa-exclamation-triangle"
+        data-bs-toggle="tooltip"
+        title="<%= late_submission_info(@submission, @submission.tutorial) %>"
+      ></i>
     <% end %>
   </td>
-
 
   <% if grading_enabled? %>
     <!-- batch of columns 2: grade zone -->
     <!-- support point by task -->
     <% for assignment_task in @assignment.assessment.tasks %>
       <td class="sticky-col task-col">
-        <input type="number"
-              autocomplete="off"
-              name="task_points[<%= assignment_task.id %>]"
-              value="<%= extract_task_points(assignment_task) %>"
-              step="0.5"
-              min="0"
-              max="<%= assignment_task.max_points %>"
-              data-submission-row-target="input"
-              data-task-id="<%= assignment_task.id %>"
-              data-action="change->submission-row#markDirty input->submission-row#markDirty"
-              class="form-control">
+        <input
+          type="number"
+          autocomplete="off"
+          name="task_points[<%= assignment_task.id %>]"
+          value="<%= extract_task_points(assignment_task) %>"
+          step="0.5"
+          min="0"
+          max="<%= assignment_task.max_points %>"
+          data-submission-row-target="input"
+          data-task-id="<%= assignment_task.id %>"
+          data-action="change->submission-row#markDirty input->submission-row#markDirty"
+          class="form-control"
+          disabled="<%= !allow_grading? %>"
+        >
       </td>
     <% end %>
-
     <!-- Column 3: Total Points -->
     <td class="text-center sticky-col total-col">
       <span data-submission-row-target="totalPoints">0</span>
     </td>
-
     <!-- Column 4: Status -->
     <td class="text-center sticky-col status-col">
       <% if @submission&.participations %>
         <% status = @submission&.participations.first&.status %>
-        <span class="badge rounded-pill bg-<%= badge_status_participation_color(status) %>"
-          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;">
+        <span
+          class="badge rounded-pill bg-<%= badge_status_participation_color(status) %>"
+          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
+        >
           <%= status %>
         </span>
       <% end %>
     </td>
   <% end %>
 
-
   <!-- Column 5: Actions buttons -->
-  <td class="text-center sticky-col action-col" data-id="<%= @submission.id %>">
+  <td class="text-end sticky-col action-col" data-id="<%= @submission.id %>">
     <div class="d-inline-flex align-items-center flex-nowrap gap-1">
-    <!-- Download-->
-    <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
+      <!-- Download -->
+      <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
                 class: "btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
                 data: { bs_toggle: "tooltip", turbo: false },
                 title: t('buttons.download') do %>
-      <span class="material-icons" style="font-size: 16px;">download</span>
-    <% end %>
-    <!-- Show -->
-    <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
-      <%= link_to show_submission_manuscript_path(@submission),
+        <i class="bi bi-download"></i>
+      <% end %>
+
+      <!-- Show -->
+      <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
+        <%= link_to show_submission_manuscript_path(@submission),
                   class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
                   data: { bs_toggle: "tooltip", turbo: false },
                   title: t('buttons.show') do %>
-        <span class="material-icons" style="font-size: 16px;">visibility</span>
+          <i class="bi bi-eye"></i>
+        <% end %>
       <% end %>
-    <% end %>
 
-    <!--Save and refresh -->
-    <% if helpers.current_user.in?(@submission.tutorial.tutors) && grading_enabled? %>
-      <!-- Hidden form for this row to submit-->
-      <%= form_with url: point_submission_tutorial_path(@submission, type: "Tutorial"),
+      <!-- Save and refresh -->
+      <% if helpers.current_user.in?(@submission.tutorial.tutors) && grading_enabled? %>
+        <!-- Hidden form for this row to submit -->
+        <%= form_with url: point_submission_tutorial_path(@submission, type: "Tutorial"),
                     method: :patch,
                     data: { turbo: true, submission_row_target: "form" },
                     html: { style: "display:none;" } do %>
-        <input type="hidden" name="task_points" data-submission-row-target="payload">
-      <% end %>
-      <!-- Save row -->
-      <button type="button"
-              class="btn btn-sm btn-success d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1"
-              data-bs-toggle="tooltip"
-              title="<%= t('buttons.save') %>"
-              data-action="click->submission-row#saveRow">
-        <span class="material-icons" style="font-size: 16px;">save</span>
-      </button>
+          <input
+            type="hidden"
+            name="task_points"
+            data-submission-row-target="payload"
+          >
+        <% end %>
+        <!-- Save row -->
+        <button
+          type="button"
+          class="
+            btn btn-sm btn-success d-inline-flex align-items-center
+            justify-content-center text-nowrap px-2 py-1 lh-1
+          "
+          data-bs-toggle="tooltip"
+          title="<%= t('buttons.save') %>"
+          data-action="click->submission-row#saveRow"
+          disabled="<%= !allow_grading? %>"
+        >
+          <i class="bi bi-save"></i>
+        </button>
 
-      <!-- Refresh row -->
-      <%= form_with url: refresh_point_submission_tutorial_path(@submission, type: "Tutorial"),
+        <!-- Refresh row -->
+        <%= form_with url: refresh_point_submission_tutorial_path(@submission, type: "Tutorial"),
                     method: :patch,
                     data: { turbo: true, submission_row_target: "refreshForm" },
                     html: { style: "display:none;" } do %>
-        <input type="hidden" name="task_points" data-submission-row-target="payload">
+          <input
+            type="hidden"
+            name="task_points"
+            data-submission-row-target="payload"
+          >
+        <% end %>
+        <!-- refresh row -->
+        <button
+          type="button"
+          class="
+            btn btn-sm btn-outline-secondary d-inline-flex
+            align-items-center justify-content-center text-nowrap px-2 py-1
+            lh-1
+          "
+          data-bs-toggle="tooltip"
+          title="<%= t('buttons.refresh') %>"
+          data-action="click->submission-row#refreshRow"
+          disabled="<%= !allow_grading? %>"
+        >
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
       <% end %>
-      <!-- refresh row -->
-      <button type="button"
-              class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1"
-              data-bs-toggle="tooltip"
-              title="<%= t('buttons.refresh') %>"
-              data-action="click->submission-row#refreshRow">
-        <span class="material-icons" style="font-size: 16px;">refresh</span>
-      </button>
-    <% end %>
 
-    <!-- accept / reject late submissions -->
-    <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
-      <%= render partial: 'submissions/other_actions',
+      <!-- accept / reject late submissions -->
+      <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+        <%= render partial: 'submissions/other_actions',
                   locals: { submission: @submission } %>
-    <% end %>
+      <% end %>
     </div>
   </td>
 
   <!-- Column 6: Correction or download partial -->
-  <td class="sticky-col correction-col"
-      data-id="<%= @submission.id %>">
+  <td class="sticky-col correction-col" data-id="<%= @submission.id %>">
     <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
       <%= render partial: 'submissions/correction_column',
                   locals: { submission: @submission } %>
@@ -142,5 +172,4 @@
                   locals: { submission: @submission } %>
     <% end %>
   </td>
-
 </tr>

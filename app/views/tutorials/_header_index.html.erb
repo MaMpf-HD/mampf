@@ -96,7 +96,7 @@
       <!-- Save bulk changes -->
       <% if grading_enabled?(@assignment) %>
         <button class="btn btn-success btn-sm"
-                disabled
+                <%= @assignment.active? ? 'disabled' : '' %>
                 data-submission-table-target="bulkSave"
                 data-action="click->submission-table#submitAll">
           <i class="bi bi-save me-1"></i>

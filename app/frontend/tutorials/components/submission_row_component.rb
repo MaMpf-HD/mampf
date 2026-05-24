@@ -6,8 +6,14 @@ class SubmissionRowComponent < ViewComponent::Base
     @tutorial = tutorial
   end
 
+  # Determines if grading is enabled for the current assignment
   def grading_enabled?
     Flipper.enabled?(:assessment_grading) && @assignment.assessable?
+  end
+
+  # Determines if grading is allowed for the current assignment
+  def allow_grading?
+    !@assignment.active?
   end
 
   def tasks

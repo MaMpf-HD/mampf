@@ -2975,8 +2975,7 @@ en:
       Own Tutorials
     other_tutorials: 'Other Tutorials'
     deadline_warning: >
-      The deadline for submission is still %{deadline}. Only after the deadline
-      corrections can be uploaded.
+      The deadline for submission is still %{deadline}. Only after the deadline, the grading process can take place and the corrections can be uploaded by the tutors.
     grace_period_warning: >
       The grace period lasts until %{friendly_deadline}. Within the grace
       period, submisions and retrospective changes by the students are possible
