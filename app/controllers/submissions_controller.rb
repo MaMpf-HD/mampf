@@ -263,8 +263,14 @@ class SubmissionsController < ApplicationController
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace(
             "submission-row-#{@submission.id}",
-            partial: "tutorials/rows_single",
-            locals: { submission: @submission, assignment: @assignment }
+            html: render_to_string(
+              SubmissionRowComponent.new(
+                submission: @submission,
+                assignment: @assignment,
+                tutorial: @tutorial,
+                current_user: current_user
+              )
+            )
           )
         end
       end

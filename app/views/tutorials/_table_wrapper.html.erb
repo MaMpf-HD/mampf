@@ -1,9 +1,6 @@
-<%= turbo_frame_tag "grading-table" do %>
-  <%= render partial: 'assessment/assessments/components/tutorial_grading_content',
-            locals: {
-              assignment: @assignment,
-              tutorial: @tutorial,
-              stack: @stack,
-              non_submitters: @non_submitters
-            } %>
-<% end %>
+<%= render(TutorialGradingTableComponent.new(
+  assignment: assignment,
+  tutorial: tutorial,
+  stack: stack,
+  non_submitters: non_submitters
+)) %>
