@@ -11,6 +11,8 @@ module StudentPerformance
     end
 
     def compute_and_upsert_record_for(user)
+      return unless lecture.members.exists?(id: user.id)
+
       stats = aggregate_points(user)
       met_ids = achievement_ids_met_by_id(user.id)
       ungraded_ids = achievement_ids_ungraded_by_id(user.id)

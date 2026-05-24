@@ -37,6 +37,17 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
     end
 
+    context "when user is no longer a lecture member" do
+      before do
+        lecture.lecture_memberships.where(user: user).delete_all
+      end
+
+      it "does not recreate a performance record" do
+        expect { compute }
+          .not_to change(StudentPerformance::Record, :count)
+      end
+    end
+
     context "when user has participations with task points" do
       let(:assignment) do
         FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
