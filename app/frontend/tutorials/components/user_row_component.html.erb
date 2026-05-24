@@ -51,7 +51,8 @@
     <td class="text-center sticky-col status-col">
       <% if @participation %>
         <% status = @participation.status %>
-        <span class="badge bg-<%= badge_status_participation_color(status) %>">
+        <span class="badge rounded-pill bg-<%= badge_status_participation_color(status) %>"
+          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;">
           <%= status %>
         </span>
       <% end %>
@@ -82,7 +83,20 @@
       </button>
 
       <!-- Refresh row -->
+      <%= form_with url: refresh_point_user_tutorial_path(@participation, type: "Tutorial"),
+                    method: :patch,
+                    data: { turbo: true, submission_row_target: "refreshForm" },
+                    html: { style: "display:none;" } do %>
+        <input type="hidden" name="task_points" data-submission-row-target="payload">
+      <% end %>
       <!-- refresh row -->
+      <button type="button"
+              class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1"
+              data-bs-toggle="tooltip"
+              title="<%= t('buttons.refresh') %>"
+              data-action="click->submission-row#refreshRow">
+        <span class="material-icons fs-6 lh-1">refresh</span>
+      </button>
       <!--TODO-->
     <% end %>
 

@@ -67,20 +67,29 @@ module Assessment
 
       case params[:type]
       when "Tutorial"
-        participation = Participation.find_by(id: params[:id])
+        @participation = Participation.find_by(id: params[:id])
         SubmissionGraderService.score_tasks_by_participation!(
-          participation,
+          @participation,
           task_points,
           scorer
         )
-        head :ok
+        @user = @participation.user
+        rerender_user_row
       end
     end
 
-    def refresh
+    def refresh_submission
       @submission = Submission.find_by(id: params[:id])
       @assignment = @submission.assignment
       rerender_submission_row
+    end
+
+    def refresh_user
+      @participation = Participation.find_by(id: params[:id])
+      @user = @participation.user
+      @assignment = @participation.assignment
+      @tutorial = @participation.tutorial
+      rerender_user_row
     end
 
     def mark_as_participated
@@ -107,6 +116,23 @@ module Assessment
                 submission: @submission,
                 assignment: @assignment,
                 tutorial: @tutorial
+              )
+            )
+          end
+        end
+      end
+
+      def rerender_user_row
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              "user-row-#{@user.id}",
+              html: render_to_string(
+                UserRowComponent.new(
+                  user: @user,
+                  assignment: @assignment,
+                  tutorial: @tutorial
+                )
               )
             )
           end

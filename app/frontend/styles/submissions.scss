@@ -69,11 +69,11 @@
 /* Highlight dirty submission rows */
 .row-dirty,
 .row-dirty td {
-  background-color: #ffffa5 !important;
+  background-color: #fffbeb !important;
 }
 table.table tbody tr.row-dirty,
 table.table tbody tr.row-dirty td {
-    background-color: #ffffa5 !important;
+    background-color: #fffbeb !important;
 }
 
 .sticky-col {
@@ -150,7 +150,43 @@ table.table tbody tr.row-dirty td {
 }
 
 .table-overflow {
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: visible;
   width: 100%;
+}
+
+.table-wrapper {
+  position: relative;
+}
+
+.table-wrapper::before,
+.table-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.2s;
+}
+
+.table-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, white, transparent);
+  opacity: 0; /* hidden at start, no scroll yet */
+}
+
+.table-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, white, transparent);
+}
+
+.grade-th {
+  font-size: 11px; 
+  text-transform: uppercase; 
+  letter-spacing: 0.04em; 
+  color: #888; 
+  font-weight: 500; 
+  padding: 10px 12px;
 }

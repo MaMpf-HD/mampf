@@ -59,7 +59,8 @@
     <td class="text-center sticky-col status-col">
       <% if @submission&.participations %>
         <% status = @submission&.participations.first&.status %>
-        <span class="badge bg-<%= badge_status_participation_color(status) %>">
+        <span class="badge rounded-pill bg-<%= badge_status_participation_color(status) %>"
+          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;">
           <%= status %>
         </span>
       <% end %>
@@ -75,7 +76,7 @@
                 class: "btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
                 data: { bs_toggle: "tooltip", turbo: false },
                 title: t('buttons.download') do %>
-      <span class="material-icons fs-6 lh-1">download</span>
+      <span class="material-icons" style="font-size: 16px;">download</span>
     <% end %>
     <!-- Show -->
     <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
@@ -83,7 +84,7 @@
                   class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
                   data: { bs_toggle: "tooltip", turbo: false },
                   title: t('buttons.show') do %>
-        <span class="material-icons fs-6 lh-1">visibility</span>
+        <span class="material-icons" style="font-size: 16px;">visibility</span>
       <% end %>
     <% end %>
 
@@ -102,7 +103,7 @@
               data-bs-toggle="tooltip"
               title="<%= t('buttons.save') %>"
               data-action="click->submission-row#saveRow">
-        <span class="material-icons fs-6 lh-1">save</span>
+        <span class="material-icons" style="font-size: 16px;">save</span>
       </button>
 
       <!-- Refresh row -->
@@ -118,7 +119,7 @@
               data-bs-toggle="tooltip"
               title="<%= t('buttons.refresh') %>"
               data-action="click->submission-row#refreshRow">
-        <span class="material-icons fs-6 lh-1">refresh</span>
+        <span class="material-icons" style="font-size: 16px;">refresh</span>
       </button>
     <% end %>
 
