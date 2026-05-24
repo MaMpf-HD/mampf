@@ -25,6 +25,15 @@ RSpec.describe(SubmissionUploader) do
     end
   end
 
+  def oversized_fixture(source_name, extension, max_size)
+    Tempfile.new(["upload", extension]).tap do |file|
+      file.binmode
+      file.write(Rails.root.join(SPEC_FILES, source_name).binread)
+      file.truncate(max_size + 1)
+      file.rewind
+    end
+  end
+
   it "accepts pdf submissions" do
     submission = build(:valid_submission)
     file = fixture_file("manuscript.pdf")
@@ -68,6 +77,18 @@ RSpec.describe(SubmissionUploader) do
              mime_type: "video/mp4",
              accepted_mime_types: "application/pdf")
     )
+  ensure
+    file&.close!
+  end
+
+  it "rejects oversized submissions" do
+    submission = build(:valid_submission)
+    file = oversized_fixture("manuscript.pdf", ".pdf", SubmissionUploader::MAX_SIZE)
+
+    submission.manuscript = file
+
+    expect(submission).not_to be_valid
+    expect(submission.errors[:manuscript]).to include(I18n.t("package.too_big"))
   ensure
     file&.close!
   end

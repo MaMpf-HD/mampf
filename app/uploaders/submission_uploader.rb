@@ -2,9 +2,11 @@ require "image_processing/mini_magick"
 
 # SubmissionUploader Class
 class SubmissionUploader < Shrine
+  MAX_SIZE = 20 * 1024 * 1024
+
   # shrine plugins
   plugin :determine_mime_type, analyzer: :marcel
-  plugin :upload_endpoint, max_size: 20 * 1024 * 1024 # 20 MB
+  plugin :upload_endpoint, max_size: MAX_SIZE
   plugin :default_storage, cache: :submission_cache, store: :submission_store
   plugin :restore_cached_data
   plugin :validation_helpers
@@ -46,6 +48,7 @@ class SubmissionUploader < Shrine
     # Reject empty file uploads
     # at least 1 byte
     validate_min_size 1, message: I18n.t("submission.upload_failure_empty_file")
+    validate_max_size MAX_SIZE, message: I18n.t("package.too_big")
 
     filename = file.metadata["filename"]
     extension = SubmissionUploader.extension_for(filename)

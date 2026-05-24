@@ -2,6 +2,7 @@ require "image_processing/mini_magick"
 
 # UserPdfUploader Class
 class CorrectionUploader < Shrine
+  MAX_SIZE = 30 * 1024 * 1024
   TEXT_EXTENSIONS = [".cc", ".hh", ".m", ".txt"].freeze
   ZIP_EXTENSIONS = [".mlx", ".zip"].freeze
   ALLOWED_EXTENSIONS = (TEXT_EXTENSIONS + ZIP_EXTENSIONS + [".pdf"]).freeze
@@ -12,7 +13,7 @@ class CorrectionUploader < Shrine
 
   # shrine plugins
   plugin :determine_mime_type, analyzer: :marcel
-  plugin :upload_endpoint, max_size: 30 * 1024 * 1024 # 30 MB
+  plugin :upload_endpoint, max_size: MAX_SIZE
   plugin :default_storage, cache: :submission_cache, store: :submission_store
   plugin :validation_helpers
 
@@ -57,6 +58,7 @@ class CorrectionUploader < Shrine
     # Reject empty file uploads
     # at least 1 byte
     validate_min_size 1, message: I18n.t("submission.upload_failure_empty_file")
+    validate_max_size MAX_SIZE, message: I18n.t("package.too_big")
 
     filename = file.metadata["filename"]
     extension = File.extname(filename.to_s)

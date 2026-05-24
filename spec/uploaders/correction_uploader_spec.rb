@@ -21,6 +21,15 @@ RSpec.describe(CorrectionUploader) do
     end
   end
 
+  def oversized_fixture(source_name, extension, max_size)
+    Tempfile.new(["upload", extension]).tap do |file|
+      file.binmode
+      file.write(Rails.root.join(SPEC_FILES, source_name).binread)
+      file.truncate(max_size + 1)
+      file.rewind
+    end
+  end
+
   it "accepts pdf corrections" do
     submission = build(:valid_submission)
     file = fixture_file("manuscript.pdf")
@@ -58,6 +67,18 @@ RSpec.describe(CorrectionUploader) do
              mime_type: "application/pdf",
              accepted_mime_types: CorrectionUploader::ZIP_MIME_TYPES.join(", "))
     )
+  ensure
+    file&.close!
+  end
+
+  it "rejects oversized corrections" do
+    submission = build(:valid_submission)
+    file = oversized_fixture("manuscript.pdf", ".pdf", CorrectionUploader::MAX_SIZE)
+
+    submission.correction = file
+
+    expect(submission).not_to be_valid
+    expect(submission.errors[:correction]).to include(I18n.t("package.too_big"))
   ensure
     file&.close!
   end
