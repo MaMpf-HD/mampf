@@ -835,7 +835,7 @@ class Lecture < ApplicationRecord
     new_user_ids = user_ids.uniq
     return if new_user_ids.empty?
 
-    achievements.includes(:assessment).each do |achievement|
+    achievements.includes(:assessment).find_each do |achievement|
       achievement.assessment&.seed_participations_from!(
         user_ids: new_user_ids,
         recompute: false
