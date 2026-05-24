@@ -148,6 +148,7 @@
                   <% if submission&.manuscript %>
                     <%= link_to show_submission_manuscript_path(submission),
                                 target: "_blank",
+                                rel: "noopener",
                                 class: "text-decoration-none",
                                 title: t("student_performance.records.show.view_manuscript") do %>
                       <i class="bi bi-file-earmark-text"></i>
@@ -157,6 +158,7 @@
                   <% if submission&.correction %>
                     <%= link_to show_correction_path(submission),
                                 target: "_blank",
+                                rel: "noopener",
                                 class: "text-decoration-none ms-2",
                                 title: t("student_performance.records.show.view_correction") do %>
                       <i class="bi bi-file-earmark-check text-success"></i>

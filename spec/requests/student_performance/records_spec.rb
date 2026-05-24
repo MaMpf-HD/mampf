@@ -247,6 +247,35 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         )
       end
 
+      it "adds noopener to manuscript and correction links" do
+        assignment = FactoryBot.create(:assignment,
+                                       :with_lecture,
+                                       lecture: lecture)
+        FactoryBot.create(:assessment,
+                          :with_points,
+                          assessable: assignment,
+                          lecture: lecture)
+        submission = FactoryBot.create(:valid_submission,
+                                       :with_manuscript,
+                                       :with_correction,
+                                       lecture: lecture,
+                                       assignment: assignment)
+        FactoryBot.create(:user_submission_join,
+                          user: record.user,
+                          submission: submission)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body).to include(
+          %(href="#{show_submission_manuscript_path(submission)}")
+        )
+        expect(response.body).to include(
+          %(href="#{show_correction_path(submission)}")
+        )
+        expect(response.body.scan(%(target="_blank" rel="noopener")).size)
+          .to eq(2)
+      end
+
       it "renders a dash when percentage is unavailable" do
         record.update!(percentage_materialized: nil,
                        points_total_materialized: 0,
