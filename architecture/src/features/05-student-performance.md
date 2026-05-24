@@ -433,7 +433,7 @@ The "performance calculator" that gathers all the data and stamps it into a stud
 | Method | Purpose |
 |--------|---------|
 | `initialize(lecture:)` | Sets up the service with the lecture whose rule will be used. |
-| `compute_and_upsert_record_for(user)` | Computes performance for a single user and upserts their `StudentPerformance::Record`. Returns the fresh record. |
+| `compute_and_upsert_record_for(user)` | Computes performance for a single user and upserts their `StudentPerformance::Record`. |
 | `compute_and_upsert_all_records!` | Computes performance for all students in the lecture. |
 
 ### Behavior Highlights
