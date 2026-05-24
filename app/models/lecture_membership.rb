@@ -5,17 +5,13 @@ class LectureMembership < ApplicationRecord
   belongs_to :lecture
   belongs_to :source_campaign, class_name: "Registration::Campaign", optional: true
 
-  after_commit :recompute_performance_record, on: :create
+  after_commit :sync_student_performance, on: :create
   after_commit :delete_performance_record, on: :destroy
 
   private
 
-    def recompute_performance_record
-      return unless Flipper.enabled?(:assessment_grading)
-
-      StudentPerformance::ComputationService
-        .new(lecture: lecture)
-        .compute_and_upsert_record_for(user)
+    def sync_student_performance
+      lecture.sync_student_performance_for_members!([user_id])
     end
 
     def delete_performance_record

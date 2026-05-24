@@ -826,7 +826,21 @@ class Lecture < ApplicationRecord
     )
     # rubocop:enable Rails/SkipsModelValidations
 
+    sync_student_performance_for_members!(new_user_ids)
+  end
+
+  def sync_student_performance_for_members!(user_ids)
     return unless Flipper.enabled?(:assessment_grading)
+
+    new_user_ids = user_ids.uniq
+    return if new_user_ids.empty?
+
+    achievements.includes(:assessment).each do |achievement|
+      achievement.assessment&.seed_participations_from!(
+        user_ids: new_user_ids,
+        recompute: false
+      )
+    end
 
     service = StudentPerformance::ComputationService.new(lecture: self)
     User.where(id: new_user_ids).find_each do |user|

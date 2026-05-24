@@ -40,7 +40,8 @@ module Assessment
                  on: [:destroy, :update],
                  if: :should_recompute_performance_records?
 
-    def seed_participations_from!(user_ids:, tutorial_mapping: {})
+    def seed_participations_from!(user_ids:, tutorial_mapping: {},
+                                  recompute: true)
       existing = assessment_participations.pluck(:user_id).to_set
       new_user_ids = user_ids.reject { |uid| existing.include?(uid) }
 
@@ -67,7 +68,7 @@ module Assessment
       )
       # rubocop:enable Rails/SkipsModelValidations
 
-      recompute_all_performance_records
+      recompute_all_performance_records if recompute
     end
 
     private

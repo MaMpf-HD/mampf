@@ -280,6 +280,18 @@ RSpec.describe(Lecture, type: :model) do
     ensure
       Flipper.disable(:assessment_grading)
     end
+
+    it "seeds existing achievement participations for new roster members" do
+      Flipper.enable(:assessment_grading)
+      achievement = create(:achievement, lecture: lecture)
+
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(achievement.assessment.assessment_participations, :count)
+        .by(3)
+    ensure
+      Flipper.disable(:assessment_grading)
+    end
   end
 
   describe "#supported_assessable_types" do
