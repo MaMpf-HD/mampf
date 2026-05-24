@@ -16,7 +16,7 @@ module TutorialsHelper
     lecture.tutorials.map { |t| [t.title_with_tutors, t.id] }
   end
 
-  def gradding_enabled?(assignment)
+  def grading_enabled?(assignment)
     Flipper.enabled?(:assessment_grading) && assignment.assessable?
   end
 
