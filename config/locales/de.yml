@@ -2395,6 +2395,9 @@ de:
     size: 'Größe'
   image:
     resolution: 'Abmessungen'
+    too_large_dimensions: >
+      Die Bildabmessungen sind zu groß. Erlaubt sind höchstens
+      %{max_width}x%{max_height}.
   manuscript:
     manuscript: 'Manuskript'
     no_manuscript: 'Es gibt kein Manuskript.'

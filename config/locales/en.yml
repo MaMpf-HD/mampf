@@ -2232,6 +2232,9 @@ en:
     size: 'Size'
   image:
     resolution: 'Resolution'
+    too_large_dimensions: >
+      The image dimensions are too large. Maximum allowed dimensions are
+      %{max_width}x%{max_height}.
   manuscript:
     manuscript: 'Manuscript'
     no_manuscript: 'There is no manuscript present.'
