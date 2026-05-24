@@ -76,8 +76,8 @@ class GeogebraUploader < Shrine
     Shrine.with_file(original) do |file|
       Zip::File.open(file.path) do |zip_file|
         thumbnail_entry = zip_file.find_entry(THUMBNAIL_ENTRY)
-        return if thumbnail_entry.nil? || thumbnail_entry.directory?
-        return if thumbnail_entry.size.to_i > MAX_THUMBNAIL_SIZE
+        next if thumbnail_entry.nil? || thumbnail_entry.directory?
+        next if thumbnail_entry.size.to_i > MAX_THUMBNAIL_SIZE
 
         Tempfile.create(["geogebra-thumbnail", ".png"]) do |thumbnail_file|
           thumbnail_file.binmode
@@ -87,7 +87,7 @@ class GeogebraUploader < Shrine
           thumbnail_file.rewind
 
           derivative = validated_thumbnail_file(thumbnail_file.path)
-          return derivative if derivative
+          break derivative if derivative
         end
       end
     end
