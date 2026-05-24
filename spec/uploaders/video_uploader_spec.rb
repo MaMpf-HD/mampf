@@ -13,6 +13,15 @@ RSpec.describe(VideoUploader) do
     end
   end
 
+  def oversized_fixture(source_name, extension, max_size)
+    Tempfile.new(["upload", extension]).tap do |file|
+      file.binmode
+      file.write(Rails.root.join(SPEC_FILES, source_name).binread)
+      file.truncate(max_size + 1)
+      file.rewind
+    end
+  end
+
   it "accepts mp4 uploads" do
     medium = build(:valid_medium)
     file = fixture_file("talk.mp4")
@@ -32,7 +41,19 @@ RSpec.describe(VideoUploader) do
     medium.video = file
 
     expect(medium).not_to be_valid
-    expect(medium.errors[:video]).to include("wrong type")
+    expect(medium.errors[:video]).to include(VideoUploader::WRONG_TYPE_MESSAGE)
+  ensure
+    file&.close!
+  end
+
+  it "rejects oversized mp4 uploads" do
+    medium = build(:valid_medium)
+    file = oversized_fixture("talk.mp4", ".mp4", VideoUploader::MAX_SIZE)
+
+    medium.video = file
+
+    expect(medium).not_to be_valid
+    expect(medium.errors[:video]).to include(I18n.t("package.too_big"))
   ensure
     file&.close!
   end

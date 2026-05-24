@@ -2,8 +2,11 @@ require "streamio-ffmpeg"
 
 # VideoUploader class
 class VideoUploader < Shrine
+  MAX_SIZE = 4 * 1024 * 1024 * 1024
+  WRONG_TYPE_MESSAGE = "wrong type".freeze
+
   # shrine plugins
-  plugin :upload_endpoint, max_size: 4 * 1024 * 1024 * 1024 # 4 GB
+  plugin :upload_endpoint, max_size: MAX_SIZE # 4 GB
   plugin :add_metadata
   plugin :determine_mime_type, analyzer: :file
   plugin :validation_helpers
@@ -23,8 +26,8 @@ class VideoUploader < Shrine
   end
 
   Attacher.validate do
-    validate_mime_type_inclusion ["video/mp4"], message: "wrong type"
-    validate_max_size 4 * 1024 * 1024 * 1024,
+    validate_mime_type_inclusion ["video/mp4"], message: WRONG_TYPE_MESSAGE
+    validate_max_size MAX_SIZE,
                       message: I18n.t("package.too_big")
   end
 end
