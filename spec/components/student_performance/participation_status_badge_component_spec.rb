@@ -56,6 +56,10 @@ RSpec.describe(
                       status: :pending_grading, variant: :compact
                     ))
       expect(rendered_content).to include("text-warning")
+      expect(rendered_content).to include("visually-hidden")
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.pending_grading")
+      )
     end
 
     it "renders not_submitted as cross mark" do
@@ -63,6 +67,10 @@ RSpec.describe(
                       status: :not_submitted, variant: :compact
                     ))
       expect(rendered_content).to include("text-muted")
+      expect(rendered_content).to include("aria-hidden=\"true\"")
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.not_submitted")
+      )
     end
   end
 
