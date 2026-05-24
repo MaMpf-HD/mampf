@@ -9,8 +9,8 @@ module Assessment
       case params[:type]
       when "Tutorial"
         records = JSON.parse(params[:submissions])
-        @tutorial = Tutorial.find_by(param["tutorial_id"])
-        @assignment = Assignment.find_by(param["assignment_id"])
+        @tutorial = Tutorial.find_by(id: params["tutorial_id"])
+        @assignment = Assignment.find_by(id: params["assignment_id"])
 
         records.each do |entry|
           if entry["target"] == "submission"
@@ -103,8 +103,11 @@ module Assessment
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
               "submission-row-#{@submission.id}",
-              partial: "tutorials/rows_single",
-              locals: { submission: @submission, assignment: @assignment, tutorial: @tutorial }
+              SubmissionRowComponent.new(
+                submission: @submission,
+                assignment: @assignment,
+                tutorial: @tutorial
+              )
             )
           end
         end
@@ -115,9 +118,14 @@ module Assessment
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
               "grading-table",
-              partial: "tutorials/tutorial_grading_content",
-              locals: { assignment: @assignment, tutorial: @tutorial,
-                        stack: @stack, non_submitters: @non_submitters }
+              html: render_to_string(
+                TutorialGradingTableComponent.new(
+                  assignment: @assignment,
+                  tutorial: @tutorial,
+                  stack: @stack,
+                  non_submitters: @non_submitters
+                )
+              )
             )
           end
         end

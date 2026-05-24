@@ -1,3 +1,4 @@
+# app/components/tutorial_grading_table_component.rb
 class TutorialGradingTableComponent < ViewComponent::Base
   def initialize(assignment:, tutorial:, stack:, non_submitters:)
     super()
@@ -8,10 +9,14 @@ class TutorialGradingTableComponent < ViewComponent::Base
   end
 
   def grading_enabled?
-    @assignment.assessment.present?
+    Flipper.enabled?(:assessment_grading) && @assignment.assessable?
   end
 
   def tasks
     @assignment.assessment.tasks
+  end
+
+  def total_max_points
+    tasks.map(&:max_points).compact.sum
   end
 end
