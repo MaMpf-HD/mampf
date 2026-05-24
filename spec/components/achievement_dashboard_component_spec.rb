@@ -26,6 +26,20 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
     it "renders the settings form" do
       expect(rendered_content).to include("achievement[title]")
     end
+
+    it "renders the original threshold value in fixed-point notation" do
+      achievement.update!(value_type: :percentage,
+                          threshold: BigDecimal("0.8e2"))
+
+      render_inline(component)
+
+      expect(rendered_content).to include(
+        %(data-achievement-form-original-threshold-value="80.0")
+      )
+      expect(rendered_content).not_to include(
+        %(data-achievement-form-original-threshold-value="0.8e2")
+      )
+    end
   end
 
   describe "#grading_enabled?" do

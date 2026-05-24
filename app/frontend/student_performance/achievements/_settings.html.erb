@@ -10,7 +10,7 @@
                 achievement_form_original_value_type_value:
                   original_achievement.value_type.to_s,
                 achievement_form_original_threshold_value:
-                  original_achievement.threshold.to_s,
+                  original_achievement.threshold&.to_s("F").to_s,
                 achievement_form_original_description_value:
                   original_achievement.description.to_s,
                 achievement_form_has_errors_value: achievement.errors.any?
