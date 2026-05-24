@@ -3,9 +3,9 @@ require "streamio-ffmpeg"
 # VideoUploader class
 class VideoUploader < Shrine
   # shrine plugins
-  plugin :upload_endpoint
+  plugin :upload_endpoint, max_size: 4 * 1024 * 1024 * 1024 # 4 GB
   plugin :add_metadata
-  plugin :determine_mime_type, analyzer: :file if Rails.env.test?
+  plugin :determine_mime_type, analyzer: :file
   plugin :validation_helpers
   plugin :pretty_location
   plugin :refresh_metadata
@@ -24,5 +24,7 @@ class VideoUploader < Shrine
 
   Attacher.validate do
     validate_mime_type_inclusion ["video/mp4"], message: "wrong type"
+    validate_max_size 4 * 1024 * 1024 * 1024,
+                      message: I18n.t("package.too_big")
   end
 end

@@ -167,10 +167,20 @@ class Submission < ApplicationRecord
     end
     file_name = metadata["filename"]
     file_type = File.extname(file_name)
-    unless file_type.in?([".cc", ".hh", ".m", ".mlx", ".pdf", ".zip", ".txt"])
+    unless CorrectionUploader.allowed_extension?(file_name)
       errors.push(I18n.t("submission.wrong_file_type",
                          file_type: file_type,
-                         accepted_file_type: assignment.accepted_file_type))
+                         accepted_file_type:
+                           CorrectionUploader.accepted_extension_list))
+    end
+    if !errors.present? &&
+       !CorrectionUploader.allowed_mime_type?(filename: file_name,
+                                              mime_type: metadata["mime_type"])
+      errors.push(I18n.t("submission.wrong_mime_type",
+                         mime_type: metadata["mime_type"],
+                         accepted_mime_types:
+                           CorrectionUploader.accepted_mime_types_for(file_name)
+                                             .join(", ")))
     end
     return {} if errors.blank?
 
