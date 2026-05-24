@@ -18,9 +18,9 @@ class Achievement < ApplicationRecord
   after_create :setup_assessment,
                if: -> { Flipper.enabled?(:assessment_grading) }
 
-  after_update_commit :invalidate_performance_records,
-                      if: :threshold_or_type_changed?
-  after_destroy_commit :invalidate_performance_records
+  after_commit :invalidate_performance_records,
+               on: [:update, :destroy],
+               if: :should_invalidate_performance_records?
 
   def student_met_threshold?(user)
     return false unless assessment
@@ -49,6 +49,10 @@ class Achievement < ApplicationRecord
 
     def threshold_or_type_changed?
       saved_change_to_threshold? || saved_change_to_value_type?
+    end
+
+    def should_invalidate_performance_records?
+      destroyed? || threshold_or_type_changed?
     end
 
     def invalidate_performance_records
