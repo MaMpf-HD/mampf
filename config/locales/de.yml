@@ -2485,6 +2485,7 @@ de:
     app_name: Applet-Typ
     view: Geogebra-Applet im Browser ansehen
     size: Größe
+    invalid_archive: Ungueltiges GeoGebra-Archiv.
     attribution_html: >
       Dieses Applet wurde mit %{geogebra_link} erstellt, die obige Animation
       verwendet die GeoGebra JavaScript API.
