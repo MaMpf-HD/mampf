@@ -77,6 +77,9 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
           expect(response.body).to include("bi-check-circle-fill")
+          expect(response.body).to include(
+            %(aria-label="#{I18n.t("student_performance.records.columns.achievement_met")}")
+          )
         end
 
         it "renders not-met icon for unmet achievements" do
@@ -97,6 +100,32 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
           expect(response.body).to include("bi-x-circle")
+          expect(response.body).to include(
+            %(aria-label="#{I18n.t("student_performance.records.columns.achievement_not_met")}")
+          )
+        end
+
+        it "renders an accessible label for ungraded achievements" do
+          user = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership,
+                            lecture: lecture, user: user)
+          achievement = FactoryBot.create(:achievement, :boolean,
+                                          lecture: lecture)
+          # rubocop:disable Rails/SkipsModelValidations
+          StudentPerformance::Record
+            .where(lecture: lecture, user: user)
+            .update_all(
+              achievements_met_ids: [],
+              achievements_ungraded_ids: [achievement.id]
+            )
+          # rubocop:enable Rails/SkipsModelValidations
+
+          get lecture_student_performance_records_path(lecture)
+          expect(response.body).to include(achievement.title)
+          expect(response.body).to include("bi-question-circle")
+          expect(response.body).to include(
+            %(aria-label="#{I18n.t("student_performance.records.columns.achievement_ungraded")}")
+          )
         end
       end
 

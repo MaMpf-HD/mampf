@@ -110,7 +110,15 @@
 
               <td class="text-end">
                 <span class="fw-semibold">
-                  <%= number_to_percentage(record.percentage_materialized.to_f, precision: 0) %>
+                  <% if record.percentage_materialized.nil? %>
+                    <span class="text-muted" aria-hidden="true">&mdash;</span>
+                    <span class="visually-hidden">
+                      <%= t("student_performance.records.percentage_unavailable") %>
+                    </span>
+                  <% else %>
+                    <%= number_to_percentage(record.percentage_materialized,
+                                             precision: 0) %>
+                  <% end %>
                 </span>
               </td>
 
@@ -147,11 +155,23 @@
                   title="<%= achievement.title %>: <%= status_text %>"
                 >
                   <% if met %>
-                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <i
+                      class="bi bi-check-circle-fill text-success"
+                      role="img"
+                      aria-label="<%= status_text %>"
+                    ></i>
                   <% elsif ungraded %>
-                    <i class="bi bi-question-circle text-amber"></i>
+                    <i
+                      class="bi bi-question-circle text-amber"
+                      role="img"
+                      aria-label="<%= status_text %>"
+                    ></i>
                   <% else %>
-                    <i class="bi bi-x-circle text-danger"></i>
+                    <i
+                      class="bi bi-x-circle text-danger"
+                      role="img"
+                      aria-label="<%= status_text %>"
+                    ></i>
                   <% end %>
                 </td>
               <% end %>
