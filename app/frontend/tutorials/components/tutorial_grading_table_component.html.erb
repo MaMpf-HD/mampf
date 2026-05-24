@@ -1,12 +1,10 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <%# ── ZONE 1: has submission ── %>
   <% if @stack.any? %>
-    <div
-      class="table-wrapper"
-      data-controller="table-fade"
-      data-table-fade-inner-outlet=".table-overflow"
-    >
-      <div class="table-overflow">
+    <div class="table-wrapper"
+        data-controller="table-fade">
+      <div class="table-overflow"
+          data-table-fade-target="inner">
         <table
           class="table table-striped align-middle my-3"
           data-cy="tutorial-submissions-table"
@@ -117,22 +115,23 @@
               </td>
 
               <td class="text-center sticky-col action-col">
-                <span style="margin-left: 6px; font-size: 11px; color: #6366f1; background: #ede9fe; padding: 1px 6px; border-radius: 4px;">
+                <span
+                  style="margin-left: 6px; font-size: 11px; color: #6366f1; background: #ede9fe; padding: 1px 6px; border-radius: 4px;"
+                >
                   no submission
                 </span>
               </td>
 
               <td>
-                <%= link_to "Mark as participated",
-                          mark_user_as_participated_path(
-                            user_id: user.id,
-                            tutorial_id: tutorial.id,
-                            assignment_id: assignment.id
-                          ),
-                          method: :patch,
-                          style: "display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; border:1px solid #e0e0e0; background:#fff; font-size:12px; color:#555; text-decoration:none;",
-                          data: { confirm: "Unsaved changes in the grading table will be lost. Continue?" } do %>
-                  ✓ Mark as participated
+                <%= link_to mark_user_as_participated_path(
+                    user_id: user.id,
+                    tutorial_id: @tutorial.id,
+                    assignment_id: @assignment.id
+                  ),
+                  style: "display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; border:1px solid #e0e0e0; background:#fff; font-size:12px; color:#555; text-decoration:none;",
+                  data: { turbo_method: :patch, confirm: "Unsaved changes in the grading table will be lost. Continue?" } do %>
+                  <span class="material-icons" style="font-size: 14px;">check</span>
+                  Mark as participated
                 <% end %>
               </td>
             </tr>

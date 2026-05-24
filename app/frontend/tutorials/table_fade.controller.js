@@ -1,3 +1,4 @@
+// app/javascript/controllers/table_fade_controller.js
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
@@ -14,7 +15,16 @@ export default class extends Controller {
 
   updateFades() {
     const { scrollLeft, scrollWidth, clientWidth } = this.innerTarget;
-    this.element.style.setProperty("--fade-left", scrollLeft > 0 ? "1" : "0");
-    this.element.style.setProperty("--fade-right", scrollLeft + clientWidth < scrollWidth ? "1" : "0");
+    const hasOverflow = scrollWidth > clientWidth + 5;
+
+    if (hasOverflow) {
+      this.innerTarget.setAttribute("data-overflowing", "");
+    }
+    else {
+      this.innerTarget.removeAttribute("data-overflowing");
+    }
+
+    this.element.style.setProperty("--fade-left", hasOverflow && scrollLeft > 0 ? "1" : "0");
+    this.element.style.setProperty("--fade-right", hasOverflow && scrollLeft + clientWidth < scrollWidth - 5 ? "1" : "0");
   }
 }

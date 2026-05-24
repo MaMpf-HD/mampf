@@ -65,7 +65,7 @@
     <div class="d-inline-flex align-items-center flex-nowrap gap-1">
 
     <!--Save and refresh -->
-    <% if helpers.current_user.in?(tutorial.tutors) && grading_enabled? && @participation %>
+    <% if helpers.current_user.in?(@tutorial.tutors) && grading_enabled? && @participation %>
       <!-- Hidden form for this row to submit-->
       <%= form_with url: point_user_tutorial_path(@participation, type: "Tutorial"),
                     method: :patch,

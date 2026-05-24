@@ -153,6 +153,15 @@ table.table tbody tr.row-dirty td {
   overflow-x: auto;
   overflow-y: visible;
   width: 100%;
+
+  > table {
+    width: 100%;
+    border-collapse: collapse; // fix for horizontal scrollbar appearing when table has no content
+  }
+  &:not([data-overflowing]) {
+    overflow-x: hidden;
+  }
+
 }
 
 .table-wrapper {
@@ -164,7 +173,7 @@ table.table tbody tr.row-dirty td {
   content: '';
   position: absolute;
   top: 0;
-  width: 40px;
+  width: 48px;
   height: 100%;
   pointer-events: none;
   z-index: 3;
@@ -172,14 +181,17 @@ table.table tbody tr.row-dirty td {
 }
 
 .table-wrapper::before {
-  left: 0;
+  left: 200px;
   background: linear-gradient(to right, white, transparent);
-  opacity: 0; /* hidden at start, no scroll yet */
+  opacity: var(--fade-left, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
 .table-wrapper::after {
-  right: 0;
+  right: 600px;
   background: linear-gradient(to left, white, transparent);
+  opacity: var(--fade-right, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
 .grade-th {
