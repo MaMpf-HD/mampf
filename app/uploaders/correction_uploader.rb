@@ -4,6 +4,7 @@ require "image_processing/mini_magick"
 class CorrectionUploader < Shrine
   MAX_SIZE = 30 * 1024 * 1024
   TEXT_EXTENSIONS = [".cc", ".hh", ".m", ".txt"].freeze
+  TEXT_MIME_TYPES = ["text/*", "application/octet-stream"].freeze
   ZIP_EXTENSIONS = [".mlx", ".zip"].freeze
   ALLOWED_EXTENSIONS = (TEXT_EXTENSIONS + ZIP_EXTENSIONS + [".pdf"]).freeze
   ZIP_MIME_TYPES = ["application/zip", "application/x-zip",
@@ -22,21 +23,16 @@ class CorrectionUploader < Shrine
   end
 
   def self.allowed_mime_type?(filename:, mime_type:)
-    extension = File.extname(filename.to_s)
+    accepted_mime_types = accepted_mime_types_for(filename)
 
-    return mime_type == "application/pdf" if extension == ".pdf"
-    return mime_type.in?(ZIP_MIME_TYPES) if extension.in?(ZIP_EXTENSIONS)
+    return false if accepted_mime_types.empty?
 
-    if extension.in?([".cc", ".hh", ".m"])
-      return mime_type == "application/octet-stream" ||
-             mime_type.to_s.start_with?("text/")
-    end
-    if extension.in?(TEXT_EXTENSIONS)
+    if accepted_mime_types.include?("text/*")
       return mime_type == "application/octet-stream" ||
              mime_type.to_s.start_with?("text/")
     end
 
-    false
+    mime_type.in?(accepted_mime_types)
   end
 
   def self.accepted_extension_list
@@ -48,8 +44,7 @@ class CorrectionUploader < Shrine
 
     return ["application/pdf"] if extension == ".pdf"
     return ZIP_MIME_TYPES if extension.in?(ZIP_EXTENSIONS)
-    return ["text/*", "application/octet-stream"] if extension.in?([".cc", ".hh", ".m"])
-    return ["text/*", "application/octet-stream"] if extension == ".txt"
+    return TEXT_MIME_TYPES if extension.in?(TEXT_EXTENSIONS)
 
     []
   end
