@@ -173,7 +173,7 @@ class Submission < ApplicationRecord
                          accepted_file_type:
                            CorrectionUploader.accepted_extension_list))
     end
-    if !errors.present? &&
+    if errors.blank? &&
        !CorrectionUploader.allowed_mime_type?(filename: file_name,
                                               mime_type: metadata["mime_type"])
       errors.push(I18n.t("submission.wrong_mime_type",

@@ -84,10 +84,12 @@ RSpec.describe(GeogebraUploader) do
 
   it "rejects archives with oversized thumbnail entries" do
     medium = build(:valid_medium)
-    file = geogebra_archive(entries: {
-                              "geogebra.xml" => "<geogebra />",
-                              "geogebra_thumbnail.png" => "A" * (GeogebraUploader::MAX_THUMBNAIL_SIZE + 1)
-                            })
+    file =
+      geogebra_archive(entries: {
+                         "geogebra.xml" => "<geogebra />",
+                         "geogebra_thumbnail.png" =>
+                           "A" * (GeogebraUploader::MAX_THUMBNAIL_SIZE + 1)
+                       })
 
     medium.geogebra = file
 
