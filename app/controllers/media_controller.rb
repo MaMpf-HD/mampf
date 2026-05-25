@@ -296,7 +296,14 @@ class MediaController < ApplicationController
 
   def download
     download_sort = validated_download_sort!
-    file = @medium.public_send(download_sort)
+    file = case download_sort
+    when "video"
+      @medium.video
+    when "manuscript"
+      @medium.manuscript
+    when "geogebra"
+      @medium.geogebra
+    end
     if file.nil?
       redirect_to :root,
                   alert: I18n.t("controllers.no_#{download_sort}")
