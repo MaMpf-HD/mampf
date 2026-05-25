@@ -435,10 +435,6 @@ Rails.application.routes.draw do
        to: "media#update_tags",
        as: "update_tags"
 
-  post "media/:id/register_download",
-       to: "media#register_download",
-       as: "register_download"
-
   get "media/:id/statistics",
       to: "media#statistics",
       as: "statistics"

@@ -17,7 +17,7 @@ class MediaController < ApplicationController
   before_action :set_teachable, only: [:new]
   before_action :check_for_consent, except: [:play, :display, :download]
   after_action :store_access, only: [:play, :display]
-  after_action :store_download, only: [:register_download, :download]
+  after_action :store_download, only: [:download]
   authorize_resource except: [:index, :new, :create, :search,
                               :fill_teachable_select, :fill_media_select,
                               :fill_medium_preview, :render_medium_actions,
@@ -407,10 +407,6 @@ class MediaController < ApplicationController
 
     @medium.tags = Tag.where(id: params[:tag_ids])
     @medium.touch
-  end
-
-  def register_download
-    head :ok
   end
 
   def statistics
