@@ -149,10 +149,10 @@ class SubmissionsController < ApplicationController
 
   def show_manuscript
     if @submission&.manuscript
-      send_file(@submission.manuscript.to_io,
-                type: @submission.manuscript_mime_type,
-                disposition: @disposition,
-                filename: @submission.manuscript_filename)
+      send_submission_file(@submission.manuscript,
+                           type: @submission.manuscript_mime_type,
+                           disposition: @disposition,
+                           fallback: "manuscript")
     elsif @submission
       redirect_to :start, alert: t("submission.no_manuscript_yet")
     else
@@ -162,10 +162,10 @@ class SubmissionsController < ApplicationController
 
   def show_correction
     if @submission&.correction
-      send_file(@submission.correction.to_io,
-                type: @submission.correction_mime_type,
-                disposition: @disposition,
-                filename: @submission.correction_filename)
+      send_submission_file(@submission.correction,
+                           type: @submission.correction_mime_type,
+                           disposition: @disposition,
+                           fallback: "correction")
     elsif @submission
       redirect_to :start, alert: t("submission.no_correction_yet")
     else
@@ -461,5 +461,24 @@ class SubmissionsController < ApplicationController
       return unless accepted.in?(Assignment.non_inline_file_types)
 
       @disposition = "attachment"
+    end
+
+    def send_submission_file(file, type:, disposition:, fallback:)
+      send_file(submission_file_path(file),
+                type: type,
+                disposition: disposition,
+                filename: sanitized_submission_filename(file, fallback))
+    end
+
+    def submission_file_path(file)
+      return file.storage.path(file.id) if file.storage.respond_to?(:path)
+
+      file.to_io.path
+    end
+
+    def sanitized_submission_filename(file, fallback)
+      filename = File.basename(file.metadata["filename"].to_s.tr("\\", "/"))
+
+      ActiveStorage::Filename.wrap(filename.presence || fallback).sanitized
     end
 end
