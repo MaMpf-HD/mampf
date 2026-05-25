@@ -1,6 +1,8 @@
 # MediaController
 class MediaController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:play, :display, :inline, :download]
+  skip_before_action :authenticate_user!, only: [:play, :display, :inline,
+                                                 :geogebra, :inline_geogebra,
+                                                 :download]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
                                       :fill_media_select,
@@ -12,7 +14,9 @@ class MediaController < ApplicationController
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :check_for_consent, except: [:play, :display, :inline, :download]
+  before_action :check_for_consent, except: [:play, :display, :inline,
+                                             :geogebra, :inline_geogebra,
+                                             :download]
   after_action :store_access, only: [:play, :display]
   authorize_resource except: [:index, :new, :create, :search,
                               :fill_teachable_select, :fill_media_select,
@@ -300,6 +304,24 @@ class MediaController < ApplicationController
     end
     I18n.locale = @medium.locale_with_inheritance
     render layout: "geogebra"
+    prevent_caching unless @medium.free?
+  end
+
+  def inline_geogebra
+    if @medium.geogebra.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_geogebra")
+      return
+    end
+
+    options = {
+      disposition: "inline",
+      filename: @medium.geogebra.metadata["filename"]
+    }
+    mime_type = @medium.geogebra.metadata["mime_type"]
+    options[:type] = mime_type if mime_type.present?
+
+    send_file(@medium.geogebra.to_io, **options)
+    prevent_caching unless @medium.free?
   end
 
   def download

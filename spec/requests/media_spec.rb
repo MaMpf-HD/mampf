@@ -184,4 +184,90 @@ RSpec.describe("Media", type: :request) do
       expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
     end
   end
+
+  describe "GET /media/:id/geogebra" do
+    let(:restricted_medium) do
+      create(:lecture_medium, geogebra_app_name: "classic")
+    end
+    let(:free_medium) do
+      create(:lecture_medium, :released, geogebra_app_name: "classic")
+    end
+    let(:fake_geogebra) do
+      instance_double(
+        "Shrine::UploadedFile",
+        to_io: File.join(SPEC_FILES, "manuscript.pdf"),
+        metadata: {
+          "filename" => "demo.ggb",
+          "mime_type" => "application/zip"
+        }
+      )
+    end
+
+    before do
+      allow_any_instance_of(Medium).to receive(:geogebra).and_return(fake_geogebra)
+    end
+
+    it "renders the geogebra page with a Rails-served inline asset" do
+      get geogebra_medium_path(restricted_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/html")
+      expect(response.body)
+        .to include("data-filename=\"#{inline_geogebra_medium_path(restricted_medium)}\"")
+      expect(response.headers["Cache-Control"]).to include("no-store")
+      expect(response.headers["Pragma"]).to eq("no-cache")
+      expect(response.headers["Expires"])
+        .to eq("Mon, 01 Jan 1990 00:00:00 GMT")
+    end
+
+    it "allows guest access to the geogebra page for free media" do
+      sign_out user
+
+      get geogebra_medium_path(free_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to include("data-filename=\"#{inline_geogebra_medium_path(free_medium)}\"")
+      expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
+    end
+  end
+
+  describe "GET /media/:id/geogebra/inline" do
+    let(:restricted_medium) { create(:lecture_medium) }
+    let(:free_medium) { create(:lecture_medium, :released) }
+    let(:fake_geogebra) do
+      instance_double(
+        "Shrine::UploadedFile",
+        to_io: File.join(SPEC_FILES, "manuscript.pdf"),
+        metadata: {
+          "filename" => "demo.ggb",
+          "mime_type" => "application/zip"
+        }
+      )
+    end
+
+    before do
+      allow_any_instance_of(Medium).to receive(:geogebra).and_return(fake_geogebra)
+    end
+
+    it "serves the geogebra file inline through Rails" do
+      get inline_geogebra_medium_path(restricted_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("application/zip")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Content-Disposition"]).to include("demo.ggb")
+      expect(response.headers["Cache-Control"]).to eq("no-cache, no-store")
+    end
+
+    it "allows guest inline geogebra access for free media" do
+      sign_out user
+
+      get inline_geogebra_medium_path(free_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
+    end
+  end
 end

@@ -427,10 +427,6 @@ class Medium < ApplicationRecord
     geogebra.metadata["size"]
   end
 
-  def geogebra_url_with_host
-    geogebra_url(host: host)
-  end
-
   def geogebra_screenshot_url
     return "" if geogebra.blank?
 
