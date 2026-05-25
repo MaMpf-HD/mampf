@@ -387,6 +387,10 @@ Rails.application.routes.draw do
       to: "media#display",
       as: "display_medium"
 
+  get "media/:id/inline",
+      to: "media#inline",
+      as: "inline_medium"
+
   get "media/:id/geogebra",
       to: "media#geogebra",
       as: "geogebra_medium"

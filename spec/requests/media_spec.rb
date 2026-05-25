@@ -122,4 +122,66 @@ RSpec.describe("Media", type: :request) do
       expect(flash[:alert]).to eq(I18n.t("controllers.invalid_download"))
     end
   end
+
+  describe "GET /media/:id/display" do
+    let(:restricted_medium) { create(:lecture_medium, :with_manuscript) }
+    let(:free_medium) { create(:lecture_medium, :with_manuscript, :released) }
+
+    it "renders a compatibility page that points to the inline manuscript" do
+      get display_medium_path(restricted_medium), params: { page: "17" }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/html")
+      expect(response.body)
+        .to include("src=\"#{inline_medium_path(restricted_medium)}#page=17\"")
+      expect(response.headers["Cache-Control"]).to include("no-store")
+      expect(response.headers["Pragma"]).to eq("no-cache")
+      expect(response.headers["Expires"])
+        .to eq("Mon, 01 Jan 1990 00:00:00 GMT")
+    end
+
+    it "preserves named destinations in the inline manuscript fragment" do
+      get display_medium_path(restricted_medium), params: { destination: "Theorem 1" }
+
+      expect(response.body)
+        .to include("src=\"#{inline_medium_path(restricted_medium)}#Theorem%201\"")
+    end
+
+    it "allows guest access to the compatibility page for free media" do
+      sign_out user
+
+      get display_medium_path(free_medium), params: { page: "3" }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to include("src=\"#{inline_medium_path(free_medium)}#page=3\"")
+      expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
+    end
+  end
+
+  describe "GET /media/:id/inline" do
+    let(:restricted_medium) { create(:lecture_medium, :with_manuscript) }
+    let(:free_medium) { create(:lecture_medium, :with_manuscript, :released) }
+
+    it "serves the manuscript inline through Rails" do
+      get inline_medium_path(restricted_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("application/pdf")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Content-Disposition"])
+        .to include(restricted_medium.manuscript_filename)
+      expect(response.headers["Cache-Control"]).to eq("no-cache, no-store")
+    end
+
+    it "allows guest inline access for free media" do
+      sign_out user
+
+      get inline_medium_path(free_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
+    end
+  end
 end

@@ -437,12 +437,6 @@ class Medium < ApplicationRecord
     geogebra_url(:screenshot, host: host)
   end
 
-  def manuscript_url_with_host
-    return "#{manuscript_url(host: host)}/#{manuscript_filename}" if ENV["REWRITE_ENABLED"] == "1"
-
-    manuscript_url(host: host)
-  end
-
   def manuscript_filename
     return if manuscript.blank?
 

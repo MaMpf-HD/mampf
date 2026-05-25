@@ -1,6 +1,6 @@
 # MediaController
 class MediaController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:play, :display, :download]
+  skip_before_action :authenticate_user!, only: [:play, :display, :inline, :download]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
                                       :fill_media_select,
@@ -12,7 +12,7 @@ class MediaController < ApplicationController
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :check_for_consent, except: [:play, :display, :download]
+  before_action :check_for_consent, except: [:play, :display, :inline, :download]
   after_action :store_access, only: [:play, :display]
   authorize_resource except: [:index, :new, :create, :search,
                               :fill_teachable_select, :fill_media_select,
@@ -269,17 +269,27 @@ class MediaController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_manuscript")
       return
     end
-    if params[:destination].present?
-      redirect_to "#{@medium.manuscript_url_with_host}##{params[:destination]}",
-                  allow_other_host: true
-      return
-    elsif params[:page].present?
-      redirect_to "#{@medium.manuscript_url_with_host}#page=#{params[:page]}",
-                  allow_other_host: true
+
+    @manuscript_inline_url = inline_medium_path(@medium) + manuscript_fragment
+    render layout: false
+    prevent_caching unless @medium.free?
+  end
+
+  def inline
+    if @medium.manuscript.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_manuscript")
       return
     end
-    redirect_to @medium.manuscript_url_with_host,
-                allow_other_host: true
+
+    options = {
+      disposition: "inline",
+      filename: @medium.manuscript.metadata["filename"]
+    }
+    mime_type = @medium.manuscript.metadata["mime_type"]
+    options[:type] = mime_type if mime_type.present?
+
+    send_file(@medium.manuscript.to_io, **options)
+    prevent_caching unless @medium.free?
   end
 
   # run the geogebra applet using Geogebra's Javascript API
@@ -638,6 +648,16 @@ class MediaController < ApplicationController
 
     def lecture_media_search_params
       params.permit(:project, :visibility, :reverse, :id, :all, :page, :per)
+    end
+
+    def manuscript_fragment
+      if params[:destination].present?
+        "##{ERB::Util.url_encode(params[:destination])}"
+      elsif params[:page].present?
+        "#page=#{ERB::Util.url_encode(params[:page])}"
+      else
+        ""
+      end
     end
 
     # destroy all notifications related to this medium
