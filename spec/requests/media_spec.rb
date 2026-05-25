@@ -62,6 +62,10 @@ RSpec.describe("Media", type: :request) do
         .to include("attachment")
       expect(response.headers["Content-Disposition"])
         .to include(restricted_medium.manuscript_filename)
+      expect(response.headers["Cache-Control"]).to eq("no-cache, no-store")
+      expect(response.headers["Pragma"]).to eq("no-cache")
+      expect(response.headers["Expires"])
+        .to eq("Mon, 01 Jan 1990 00:00:00 GMT")
     end
 
     it "allows guest downloads for free media" do
@@ -72,6 +76,7 @@ RSpec.describe("Media", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Disposition"])
         .to include(free_medium.manuscript_filename)
+      expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
     end
 
     it "serves a video attachment through Rails" do

@@ -318,6 +318,7 @@ class MediaController < ApplicationController
     options[:type] = mime_type if mime_type.present?
 
     send_file(file.to_io, **options)
+    prevent_caching unless @medium.free?
     ConsumptionSaver.perform_async(@medium.id, "download", download_sort)
   end
 
