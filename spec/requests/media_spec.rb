@@ -51,6 +51,7 @@ RSpec.describe("Media", type: :request) do
   describe "GET /media/:id/download/:sort" do
     let(:restricted_medium) { create(:lecture_medium, :with_manuscript) }
     let(:free_medium) { create(:lecture_medium, :with_manuscript, :released) }
+    let(:video_medium) { create(:lecture_medium, :with_video) }
 
     it "serves a manuscript attachment through Rails" do
       get download_medium_path(restricted_medium, sort: "manuscript")
@@ -71,6 +72,31 @@ RSpec.describe("Media", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Disposition"])
         .to include(free_medium.manuscript_filename)
+    end
+
+    it "serves a video attachment through Rails" do
+      get download_medium_path(video_medium, sort: "video")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("video/mp4")
+      expect(response.headers["Content-Disposition"])
+        .to include("attachment")
+      expect(response.headers["Content-Disposition"])
+        .to include(video_medium.video_filename)
+    end
+
+    it "rejects guest downloads for restricted media" do
+      sign_out user
+
+      get download_medium_path(restricted_medium, sort: "manuscript")
+
+      expect(response).to redirect_to(root_url)
+    end
+
+    it "rejects invalid download sorts" do
+      get download_medium_path(restricted_medium, sort: "invalid")
+
+      expect(response).to redirect_to(root_url)
     end
   end
 end
