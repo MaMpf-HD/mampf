@@ -288,14 +288,8 @@ class MediaController < ApplicationController
       return
     end
 
-    options = {
-      disposition: "inline",
-      filename: @medium.manuscript.metadata["filename"]
-    }
-    mime_type = @medium.manuscript.metadata["mime_type"]
-    options[:type] = mime_type if mime_type.present?
-
-    send_file(@medium.manuscript.to_io, **options)
+    send_stored_file(@medium.manuscript, disposition: "inline",
+                                         fallback: "manuscript")
     prevent_caching unless @medium.free?
   end
 
@@ -316,14 +310,8 @@ class MediaController < ApplicationController
       return
     end
 
-    options = {
-      disposition: "inline",
-      filename: @medium.geogebra.metadata["filename"]
-    }
-    mime_type = @medium.geogebra.metadata["mime_type"]
-    options[:type] = mime_type if mime_type.present?
-
-    send_file(@medium.geogebra.to_io, **options)
+    send_stored_file(@medium.geogebra, disposition: "inline",
+                                       fallback: "geogebra")
     prevent_caching unless @medium.free?
   end
 
@@ -347,18 +335,7 @@ class MediaController < ApplicationController
       return
     end
 
-    filename = File.basename(file.metadata["filename"].to_s.tr("\\", "/"))
-
-    options = {
-      disposition: "attachment",
-      filename: ActiveStorage::Filename.wrap(
-        filename.presence || download_sort
-      ).sanitized
-    }
-    mime_type = file.metadata["mime_type"]
-    options[:type] = mime_type if mime_type.present?
-
-    send_file(download_path(file), **options)
+    send_stored_file(file, disposition: "attachment", fallback: download_sort)
     prevent_caching unless @medium.free?
     enqueue_consumption(@medium.id, "download", download_sort)
   end
@@ -683,6 +660,23 @@ class MediaController < ApplicationController
       return file.storage.path(file.id) if file.storage.respond_to?(:path)
 
       file.to_io.path
+    end
+
+    def send_stored_file(file, disposition:, fallback:)
+      options = {
+        disposition: disposition,
+        filename: stored_filename(file, fallback)
+      }
+      mime_type = file.metadata["mime_type"]
+      options[:type] = mime_type if mime_type.present?
+
+      send_file(download_path(file), **options)
+    end
+
+    def stored_filename(file, fallback)
+      filename = File.basename(file.metadata["filename"].to_s.tr("\\", "/"))
+
+      ActiveStorage::Filename.wrap(filename.presence || fallback).sanitized
     end
 
     def manuscript_fragment

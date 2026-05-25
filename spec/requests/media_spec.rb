@@ -199,6 +199,24 @@ RSpec.describe("Media", type: :request) do
       expect(response.headers["Cache-Control"]).to eq("no-cache, no-store")
     end
 
+    it "sanitizes the inline filename from uploaded metadata" do
+      allow_any_instance_of(PdfUploader::UploadedFile).to receive(:metadata)
+        .and_wrap_original do |original, *args|
+          original.call(*args).merge("filename" => "../evil\r\nname.pdf")
+        end
+
+      get inline_manuscript_medium_path(restricted_medium)
+
+      content_disposition = response.headers["Content-Disposition"]
+
+      expect(response).to have_http_status(:ok)
+      expect(content_disposition).to include("inline")
+      expect(content_disposition).to include("evil")
+      expect(content_disposition).to include("name.pdf")
+      expect(content_disposition).not_to include("../")
+      expect(content_disposition).not_to match(/[\r\n]/)
+    end
+
     it "allows guest inline access for free media" do
       sign_out user
 
@@ -220,7 +238,8 @@ RSpec.describe("Media", type: :request) do
     let(:fake_geogebra) do
       instance_double(
         "Shrine::UploadedFile",
-        to_io: File.join(SPEC_FILES, "manuscript.pdf"),
+        to_io: File.open(File.join(SPEC_FILES, "manuscript.pdf")),
+        storage: double("storage"),
         metadata: {
           "filename" => "demo.ggb",
           "mime_type" => "application/zip"
@@ -263,7 +282,8 @@ RSpec.describe("Media", type: :request) do
     let(:fake_geogebra) do
       instance_double(
         "Shrine::UploadedFile",
-        to_io: File.join(SPEC_FILES, "manuscript.pdf"),
+        to_io: File.open(File.join(SPEC_FILES, "manuscript.pdf")),
+        storage: double("storage"),
         metadata: {
           "filename" => "demo.ggb",
           "mime_type" => "application/zip"
@@ -283,6 +303,31 @@ RSpec.describe("Media", type: :request) do
       expect(response.headers["Content-Disposition"]).to include("inline")
       expect(response.headers["Content-Disposition"]).to include("demo.ggb")
       expect(response.headers["Cache-Control"]).to eq("no-cache, no-store")
+    end
+
+    it "sanitizes the inline geogebra filename from uploaded metadata" do
+      hostile_geogebra = instance_double(
+        "Shrine::UploadedFile",
+        to_io: File.open(File.join(SPEC_FILES, "manuscript.pdf")),
+        storage: double("storage"),
+        metadata: {
+          "filename" => "../demo\r\nfile.ggb",
+          "mime_type" => "application/zip"
+        }
+      )
+      allow_any_instance_of(Medium).to receive(:geogebra)
+        .and_return(hostile_geogebra)
+
+      get inline_geogebra_medium_path(restricted_medium)
+
+      content_disposition = response.headers["Content-Disposition"]
+
+      expect(response).to have_http_status(:ok)
+      expect(content_disposition).to include("inline")
+      expect(content_disposition).to include("demo")
+      expect(content_disposition).to include("file.ggb")
+      expect(content_disposition).not_to include("../")
+      expect(content_disposition).not_to match(/[\r\n]/)
     end
 
     it "allows guest inline geogebra access for free media" do
