@@ -12,12 +12,10 @@ class MediaController < ApplicationController
                                       :render_import_vertex,
                                       :cancel_import_media,
                                       :cancel_import_vertex]
-  before_action :set_download_sort, only: [:download]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :check_for_consent, except: [:play, :display, :download]
   after_action :store_access, only: [:play, :display]
-  after_action :store_download, only: [:download]
   authorize_resource except: [:index, :new, :create, :search,
                               :fill_teachable_select, :fill_media_select,
                               :fill_medium_preview, :render_medium_actions,
@@ -297,10 +295,11 @@ class MediaController < ApplicationController
   end
 
   def download
-    file = @medium.public_send(@download_sort)
+    download_sort = validated_download_sort!
+    file = @medium.public_send(download_sort)
     if file.nil?
       redirect_to :root,
-                  alert: I18n.t("controllers.no_#{@download_sort}")
+                  alert: I18n.t("controllers.no_#{download_sort}")
       return
     end
 
@@ -312,6 +311,7 @@ class MediaController < ApplicationController
     options[:type] = mime_type if mime_type.present?
 
     send_file(file.to_io, **options)
+    ConsumptionSaver.perform_async(@medium.id, "download", download_sort)
   end
 
   # add a toc item for the video
@@ -597,9 +597,9 @@ class MediaController < ApplicationController
       @teachable = allowed_types[params[:teachable_type]].find_by(id: params[:teachable_id])
     end
 
-    def set_download_sort
-      @download_sort = params[:sort]
-      return if @download_sort.in?(DOWNLOADABLE_MEDIA_SORTS)
+    def validated_download_sort!
+      download_sort = params[:sort]
+      return download_sort if download_sort.in?(DOWNLOADABLE_MEDIA_SORTS)
 
       raise(CanCan::AccessDenied, I18n.t("unauthorized.default"))
     end
@@ -659,12 +659,5 @@ class MediaController < ApplicationController
       mode = action_name == "play" ? "thyme" : "pdf_view"
       sort = action_name == "play" ? "video" : "manuscript"
       ConsumptionSaver.perform_async(@medium.id, mode, sort)
-    end
-
-    def store_download
-      return unless response.ok?
-      return unless params[:sort].in?(DOWNLOADABLE_MEDIA_SORTS)
-
-      ConsumptionSaver.perform_async(@medium.id, "download", params[:sort])
     end
 end
