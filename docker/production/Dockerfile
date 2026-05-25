@@ -7,7 +7,7 @@ ENV RAILS_ENV=production
 EXPOSE 3000
 EXPOSE 9394
 
-ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
+ENTRYPOINT ["/usr/src/app/docker/production/entrypoint-app.sh"]
 
 # use "--login" option, so that .bashrc is sourced in new shells
 SHELL ["/bin/bash", "--login", "-c"]

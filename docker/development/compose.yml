@@ -26,12 +26,15 @@ services:
     environment:
       - RAILS_ENV=development
       - NODE_ENV=development
-      - MAMPF_PORT=3000
+      - MAMPF_PORT=3001
+      - ACTION_DISPATCH_X_SENDFILE_HEADER=X-Sendfile
+      - THRUSTER_HTTP_PORT=3000
+      - THRUSTER_TARGET_PORT=3001
+      - THRUSTER_STORAGE_PATH=/cache/thruster
+      - THRUSTER_GZIP_COMPRESSION_DISABLE_ON_AUTH=true
     ports:
+      - 3000:3000
       - 3036:3036 # Vite server
-    labels:
-      # see nginx.tmpl, which is serving mampf on port 30
-      de.uni-heidelberg.mathi.mampf.container-type: worker
 
   app-test:
     <<: *app-base
@@ -42,18 +45,6 @@ services:
     ports:
       - 3145:3145 # Rails app for Cypress tests (no nginx used here)
       - 3037:3037 # Vite server
-
-  nginx:
-    image: openresty/openresty:alpine
-    # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
-    container_name: mampf-docker-nginx
-    ports:
-      - 3000:80
-    volumes:
-      - "nginx-conf-d:/etc/nginx/conf.d"
-      # Submissions are served by nginx but are still authenticated by MaMpf. (accel_redirect)
-      - "submissions:/private/submissions:ro,nocopy"
-      - ../../public:/public
 
   db:
     image: postgres:17-bookworm
@@ -109,20 +100,8 @@ services:
       - MAIL_ADDRESS=mampf@localhost
       - MAIL_PASS=mampf
 
-  dockergen:
-    build:
-      context: ./../..
-      dockerfile: docker/Dockerfile.dockergen
-    command: -notify-sighup mampf-docker-nginx -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
-    restart: always
-    volumes:
-      - "nginx-conf-d:/etc/nginx/conf.d"
-      - "../nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl"
-      - "/var/run/docker.sock:/tmp/docker.sock"
 
 volumes:
-  nginx-conf-d:
-  submissions:
   db-data:
   pgadmin:
   sprockets-cache:

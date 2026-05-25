@@ -64,6 +64,7 @@ gem "thredded", git: "https://github.com/thredded/thredded.git",
 gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
+gem "thruster"
 gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbo-rails", "~> 2.0"
 gem "view_component", "~> 4.0"
