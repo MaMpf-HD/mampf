@@ -3633,6 +3633,7 @@ en:
     no_video: 'There is no video for this medium.'
     no_manuscript: 'There is no manuscript for this medium.'
     no_geogebra: 'There is no Geogebra applet for this medium.'
+    invalid_download: 'The requested download is invalid.'
     no_medium: 'There is no medium with this id.'
     contradiction: 'Contradictory request.'
     no_notification: 'There is no notification with this id.'

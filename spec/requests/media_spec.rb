@@ -98,10 +98,11 @@ RSpec.describe("Media", type: :request) do
       expect(response).to redirect_to(root_url)
     end
 
-    it "rejects invalid download sorts" do
+    it "redirects invalid download sorts with a specific alert" do
       get download_medium_path(restricted_medium, sort: "invalid")
 
       expect(response).to redirect_to(root_url)
+      expect(flash[:alert]).to eq(I18n.t("controllers.invalid_download"))
     end
   end
 end

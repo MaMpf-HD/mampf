@@ -3845,6 +3845,7 @@ de:
     no_video: 'Zu diesem Medium existiert kein Video.'
     no_manuscript: 'Zu diesem Medium existiert kein Manuskript.'
     no_geogebra: 'Zu diesem Medium existiert kein Geogebra-Applet.'
+    invalid_download: 'Der angeforderte Download ist ungültig.'
     no_medium: 'Ein Medium mit der angeforderten id existiert nicht.'
     contradiction: 'Widersprüchliche Suchanfrage.'
     no_notification: >

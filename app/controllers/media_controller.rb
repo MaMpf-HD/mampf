@@ -302,7 +302,9 @@ class MediaController < ApplicationController
            when "geogebra"
              @medium.geogebra
            else
-             raise(CanCan::AccessDenied, I18n.t("unauthorized.default"))
+             redirect_to :root,
+                         alert: I18n.t("controllers.invalid_download")
+             return
     end
     if file.nil?
       redirect_to :root,
