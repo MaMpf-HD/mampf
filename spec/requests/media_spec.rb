@@ -136,6 +136,8 @@ RSpec.describe("Media", type: :request) do
         .to include(
           "src=\"#{inline_manuscript_medium_path(restricted_medium)}#page=17\""
         )
+      expect(response.body)
+        .to include("title=\"#{restricted_medium.manuscript_filename}\"")
       expect(response.headers["Cache-Control"]).to include("no-store")
       expect(response.headers["Pragma"]).to eq("no-cache")
       expect(response.headers["Expires"])

@@ -20,6 +20,7 @@
     </style>
   </head>
   <body>
-    <iframe src="<%= @manuscript_inline_url %>"></iframe>
+    <iframe src="<%= @manuscript_inline_url %>"
+            title="<%= @medium.manuscript_filename || "PDF" %>"></iframe>
   </body>
 </html>
