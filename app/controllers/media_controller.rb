@@ -347,14 +347,18 @@ class MediaController < ApplicationController
       return
     end
 
+    filename = File.basename(file.metadata["filename"].to_s.tr("\\", "/"))
+
     options = {
       disposition: "attachment",
-      filename: file.metadata["filename"]
+      filename: ActiveStorage::Filename.wrap(
+        filename.presence || download_sort
+      ).sanitized
     }
     mime_type = file.metadata["mime_type"]
     options[:type] = mime_type if mime_type.present?
 
-    send_file(file.to_io, **options)
+    send_file(download_path(file), **options)
     prevent_caching unless @medium.free?
     enqueue_consumption(@medium.id, "download", download_sort)
   end
@@ -673,6 +677,12 @@ class MediaController < ApplicationController
 
     def lecture_media_search_params
       params.permit(:project, :visibility, :reverse, :id, :all, :page, :per)
+    end
+
+    def download_path(file)
+      return file.storage.path(file.id) if file.storage.respond_to?(:path)
+
+      file.to_io.path
     end
 
     def manuscript_fragment

@@ -85,6 +85,23 @@ RSpec.describe("Media", type: :request) do
         .to include(restricted_medium.manuscript_filename)
     end
 
+    it "sanitizes the attachment filename from uploaded metadata" do
+      allow_any_instance_of(PdfUploader::UploadedFile).to receive(:metadata)
+        .and_wrap_original do |original, *args|
+          original.call(*args).merge("filename" => "../evil\r\nname.pdf")
+        end
+
+      get download_medium_path(restricted_medium, sort: "manuscript")
+      content_disposition = response.headers["Content-Disposition"]
+
+      expect(response).to have_http_status(:ok)
+      expect(content_disposition).to include("attachment")
+      expect(content_disposition).to include("evil")
+      expect(content_disposition).to include("name.pdf")
+      expect(content_disposition).not_to include("../")
+      expect(content_disposition).not_to match(/[\r\n]/)
+    end
+
     it "allows guest downloads for free media" do
       sign_out user
 
