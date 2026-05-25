@@ -7,7 +7,7 @@ de:
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
       destroyed: "Anmeldeverfahren erfolgreich gelöscht."
       cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
-      confirm_delete: "Bist Du sicher, dass Du dieses Anmeldeverfahren löschen möchtest?"
+      confirm_delete: "Bist Du sicher, dass Du dieses Anmeldeverfahren löschen möchtest? Die zugehörigen Gruppen werden nicht gelöscht und können danach manuell verwaltet werden."
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
@@ -151,6 +151,8 @@ de:
       confirm_delete: "Bist Du sicher, dass Du diese Richtlinie löschen möchtest?"
       not_found: "Registrierungsrichtlinie nicht gefunden."
       errors:
+        duplicate_institutional_email: "Pro Anmeldeverfahren ist nur eine Richtlinie für institutionelle E-Mails erlaubt."
+        invalid_domain_format: "Ungültiges Domain-Format: '%{domain}'. Bitte eine einfache Domain eingeben, z.B. 'uni-heidelberg.de'."
         missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
         missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."
         prerequisite_campaign_not_found: "Das ausgewählte vorausgesetzte Anmeldeverfahren existiert nicht."
@@ -165,6 +167,7 @@ de:
         lecture_id: "Veranstaltung"
       hints:
         allowed_domains: "z.B. uni-heidelberg.de (erlaubt auch stud.uni-heidelberg.de)"
+        select_prerequisite: "— Anmeldeverfahren auswählen —"
       kinds:
         institutional_email: "Institutionelle E-Mail"
         prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
@@ -216,14 +219,14 @@ de:
         lecture: "Vorlesung"
         lecture_signup: "Vorlesungseinschreibung"
       actions:
-        remove_from_campaign: "Aus Anmeldeverfahren entfernen"
+        remove_from_campaign: "Gruppe löschen"
       created: "Element erfolgreich hinzugefügt."
-      destroyed: "Element erfolgreich entfernt."
+      destroyed: "Gruppe erfolgreich gelöscht."
       updated: "Element erfolgreich aktualisiert."
       invalid_type: "Ungültiger Typ."
       cannot_destroy: "Element kann nicht entfernt werden, da das Anmeldeverfahren nicht im Entwurfsmodus ist."
       confirm_delete: "Bist Du sicher, dass Du dieses Element entfernen möchtest?"
-      confirm_remove: "Bist Du sicher, dass Du dieses Element aus dem Anmeldeverfahren entfernen möchtest?"
+      confirm_remove: "Bist Du sicher, dass Du diese Gruppe endgültig löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
       select_type: "Gruppenart auswählen..."
       attributes:
         capacity_optional: "Kapazität (optional)"
@@ -316,7 +319,7 @@ de:
               no_items: "Das Anmeldeverfahren kann nicht geöffnet werden, da keine Einträge hinzugefügt wurden."
               already_has_real_campaign: "Es existiert bereits ein reguläres Anmeldeverfahren für diesen Kontext. Es ist nur ein reguläres Verfahren erlaubt."
             registration_deadline:
-              must_be_in_future: "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"
+              must_be_in_future: "muss in der Zukunft liegen"
             status:
               cannot_revert_to_draft: "kann nicht in den Entwurfsmodus zurückgesetzt werden, sobald es geöffnet wurde"
             allocation_mode:

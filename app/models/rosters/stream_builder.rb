@@ -100,7 +100,8 @@ module Rosters
             "tutorial-roster-side-panel",
             html: RosterSidePanelComponent.new(
               registerable: @rosterable,
-              students: @rosterable.members.order(:name)
+              students: @rosterable.members.order(:name),
+              read_only: @rosterable.locked?
             ).render_in(@view_context)
           )
         end
@@ -120,7 +121,8 @@ module Rosters
           "tutorial-roster-side-panel",
           html: RosterSidePanelComponent.new(
             registerable: @rosterable,
-            students: @rosterable.members.order(:name)
+            students: @rosterable.members.order(:name),
+            read_only: @rosterable.locked?
           ).render_in(@view_context)
         )
 

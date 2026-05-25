@@ -22,6 +22,20 @@ RSpec.describe(Cohort, type: :model) do
       cohort = build(:cohort, capacity: nil)
       expect(cohort).to be_valid
     end
+
+    it "is invalid with duplicate title in the same context" do
+      cohort = create(:cohort)
+      duplicate = build(:cohort, context: cohort.context, title: cohort.title)
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:title]).to be_present
+    end
+
+    it "allows the same title in different contexts" do
+      cohort = create(:cohort)
+      other_context = create(:lecture)
+      other_cohort = build(:cohort, context: other_context, title: cohort.title)
+      expect(other_cohort).to be_valid
+    end
   end
 
   describe "propagate_to_lecture immutability" do
