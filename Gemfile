@@ -22,7 +22,7 @@ gem "connection_pool", "~> 3.0"
 gem "coveralls", "~> 0.7", require: false
 gem "csv", "~> 3.3", require: false
 gem "dalli", "~> 5.0"
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 gem "devise-bootstrap-views", "~> 1.1"
 gem "erubis", "~> 2.7"
 gem "exception_handler", "~> 0.8.0.0", "~> 0.8.0"

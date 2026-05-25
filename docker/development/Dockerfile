@@ -1,14 +1,6 @@
 # https://docs.docker.com/build/checks/#fail-build-on-check-violations
 # check=error=true
 
-# First build the PDF compressor Web assembly binary
-# this is adapted from https://github.com/henrixapp/pdfcomprezzor/blob/master/Dockerfile
-FROM golang:1.20 AS build-pdfcomprezzor
-WORKDIR /go/src
-COPY pdfcomprezzor/go.mod pdfcomprezzor/go.sum pdfcomprezzor/main.go ./
-RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
-RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
-
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
 FROM ruby:3.4.7-bookworm
@@ -102,8 +94,6 @@ USER $USERNAME
 RUN which node && node --version && which yarn && yarn --version
 
 COPY --chown=$USERNAME Gemfile Gemfile.lock package.json yarn.lock /workspaces/mampf/
-COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /workspaces/mampf/public/pdfcomprezzor/
-COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
 ARG CI_BUILD
 RUN if [ "$CI_BUILD" = "true" ]; then \
