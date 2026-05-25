@@ -59,16 +59,18 @@
 <div class="media-download-buttons">
   <% if medium.video.present? %>
     <a href="<%= download_medium_path(medium, sort: "video") %>"
-      class="download-button btn btn-outline-secondary" role="button"
-      title="<%= t('video.download') %>">
+       class="download-button btn btn-outline-secondary" role="button"
+       data-turbo="false"
+       title="<%= t('video.download') %>">
       &darr;mp4
     </a>
   <% end %>
 
   <% if medium.manuscript.present? %>
     <a href="<%= download_medium_path(medium, sort: "manuscript") %>"
-      class="download-button btn btn-outline-secondary" role="button"
-      title="<%= t('manuscript.download') %>">
+       class="download-button btn btn-outline-secondary" role="button"
+       data-turbo="false"
+       title="<%= t('manuscript.download') %>">
       &darr;pdf
     </a>
   <% end %>
