@@ -110,7 +110,15 @@ class QuizGraph
   def quizzable(id)
     return unless id.in?(@vertices.keys)
 
-    @vertices[id][:type].constantize.find_by(id: @vertices[id][:id])
+    allowed_types = {
+      "Question" => Question,
+      "Remark" => Remark
+    }
+
+    type = @vertices[id][:type]
+    return unless allowed_types.key?(type)
+
+    allowed_types[type].find_by(id: @vertices[id][:id])
   end
 
   def visible?(id)

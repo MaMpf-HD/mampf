@@ -258,24 +258,24 @@ module Vignettes
     private
 
       def set_questionnaire
-        if Questionnaire.exists?(params[:id])
-          @questionnaire = Questionnaire.find(params[:id])
-          return
-        end
+        @questionnaire = Questionnaire.find_by(id: params[:id])
+
+        return if @questionnaire
 
         redirect_to :root, alert: t("vignettes.not_found")
       end
 
       def set_lecture
-        if Lecture.exists?(params[:lecture_id])
-          @lecture = Lecture.find(params[:lecture_id])
-          if @lecture.sort != "vignettes"
-            redirect_to :root, alert: t("vignettes.not_vignettes_lecture")
-          end
+        @lecture = Lecture.find_by(id: params[:lecture_id])
+
+        unless @lecture
+          redirect_to :root, alert: t("vignettes.no_lecture")
           return
         end
 
-        redirect_to :root, alert: t("vignettes.no_lecture")
+        return if @lecture.sort == "vignettes"
+
+        redirect_to :root, alert: t("vignettes.not_vignettes_lecture")
       end
 
       def check_take_accessibility
