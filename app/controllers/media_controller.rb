@@ -1,7 +1,5 @@
 # MediaController
 class MediaController < ApplicationController
-  DOWNLOADABLE_MEDIA_SORTS = ["video", "manuscript", "geogebra"].freeze
-
   skip_before_action :authenticate_user!, only: [:play, :display, :download]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
@@ -295,7 +293,7 @@ class MediaController < ApplicationController
   end
 
   def download
-    download_sort = validated_download_sort!
+    download_sort = params[:sort]
     file = case download_sort
            when "video"
              @medium.video
@@ -303,6 +301,8 @@ class MediaController < ApplicationController
              @medium.manuscript
            when "geogebra"
              @medium.geogebra
+           else
+             raise(CanCan::AccessDenied, I18n.t("unauthorized.default"))
     end
     if file.nil?
       redirect_to :root,
@@ -602,13 +602,6 @@ class MediaController < ApplicationController
       return unless params[:teachable_id].present? && allowed_types.key?(params[:teachable_type])
 
       @teachable = allowed_types[params[:teachable_type]].find_by(id: params[:teachable_id])
-    end
-
-    def validated_download_sort!
-      download_sort = params[:sort]
-      return download_sort if download_sort.in?(DOWNLOADABLE_MEDIA_SORTS)
-
-      raise(CanCan::AccessDenied, I18n.t("unauthorized.default"))
     end
 
     def detach_components
