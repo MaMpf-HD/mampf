@@ -391,6 +391,10 @@ Rails.application.routes.draw do
       to: "media#geogebra",
       as: "geogebra_medium"
 
+  get "media/:id/download/:sort",
+      to: "media#download",
+      as: "download_medium"
+
   get "media/:id/add_item",
       to: "media#add_item",
       as: "add_item"

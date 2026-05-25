@@ -385,10 +385,6 @@ class Medium < ApplicationRecord
     video.url(host: host)
   end
 
-  def video_download_url
-    video.url(host: download_host)
-  end
-
   def video_filename
     return if video.blank?
 
@@ -435,10 +431,6 @@ class Medium < ApplicationRecord
     geogebra_url(host: host)
   end
 
-  def geogebra_download_url
-    geogebra_url(host: download_host)
-  end
-
   def geogebra_screenshot_url
     return "" if geogebra.blank?
 
@@ -449,10 +441,6 @@ class Medium < ApplicationRecord
     return "#{manuscript_url(host: host)}/#{manuscript_filename}" if ENV["REWRITE_ENABLED"] == "1"
 
     manuscript_url(host: host)
-  end
-
-  def manuscript_download_url
-    manuscript_url(host: download_host)
   end
 
   def manuscript_filename

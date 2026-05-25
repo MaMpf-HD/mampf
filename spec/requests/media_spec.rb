@@ -47,4 +47,30 @@ RSpec.describe("Media", type: :request) do
       expect(response.body).not_to include(medium_python.description)
     end
   end
+
+  describe "GET /media/:id/download/:sort" do
+    let(:restricted_medium) { create(:lecture_medium, :with_manuscript) }
+    let(:free_medium) { create(:lecture_medium, :with_manuscript, :released) }
+
+    it "serves a manuscript attachment through Rails" do
+      get download_medium_path(restricted_medium, sort: "manuscript")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("application/pdf")
+      expect(response.headers["Content-Disposition"])
+        .to include("attachment")
+      expect(response.headers["Content-Disposition"])
+        .to include(restricted_medium.manuscript_filename)
+    end
+
+    it "allows guest downloads for free media" do
+      sign_out user
+
+      get download_medium_path(free_medium, sort: "manuscript")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Disposition"])
+        .to include(free_medium.manuscript_filename)
+    end
+  end
 end

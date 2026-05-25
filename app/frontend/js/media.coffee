@@ -315,17 +315,6 @@ $(document).on 'turbo:load', ->
         throwOnError: false
       return
 
-  $(document).on 'click', '.triggerDownload', ->
-    mediumId = $(this).data('medium')
-    sort = $(this).data('sort')
-    $.ajax Routes.register_download_path(mediumId, { sort: sort }),
-      type: 'POST'
-      dataType: 'script'
-      data: {
-        sort:  sort
-      }
-    return
-
   $(document).on 'click', '#showMediaStatistics', ->
     mediumId = $(this).data('medium')
     $.ajax Routes.statistics_path(mediumId),
@@ -365,6 +354,5 @@ $(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#cancel-medium-actions'
   $(document).off 'click', '#editMediumTags'
   $(document).off 'click', '#cancelMediumTags'
-  $(document).off 'click', '.triggerDownload'
   $(document).off 'click', '#showMediaStatistics'
   return
