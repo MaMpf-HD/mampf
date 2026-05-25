@@ -321,7 +321,7 @@ class MediaController < ApplicationController
 
     send_file(file.to_io, **options)
     prevent_caching unless @medium.free?
-    ConsumptionSaver.perform_async(@medium.id, "download", download_sort)
+    enqueue_consumption(@medium.id, "download", download_sort)
   end
 
   # add a toc item for the video
@@ -661,6 +661,6 @@ class MediaController < ApplicationController
     def store_access
       mode = action_name == "play" ? "thyme" : "pdf_view"
       sort = action_name == "play" ? "video" : "manuscript"
-      ConsumptionSaver.perform_async(@medium.id, mode, sort)
+      enqueue_consumption(@medium.id, mode, sort)
     end
 end

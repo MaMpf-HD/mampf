@@ -68,6 +68,23 @@ RSpec.describe("Media", type: :request) do
         .to eq("Mon, 01 Jan 1990 00:00:00 GMT")
     end
 
+    it "still serves the download when consumption enqueue fails" do
+      expect(Rails.logger).to receive(:error).with(include(
+                                                     "medium_id=#{restricted_medium.id}",
+                                                     "mode=download",
+                                                     "sort=manuscript",
+                                                     "redis down"
+                                                   ))
+      allow(ConsumptionSaver).to receive(:perform_async)
+        .and_raise(StandardError, "redis down")
+
+      get download_medium_path(restricted_medium, sort: "manuscript")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Disposition"])
+        .to include(restricted_medium.manuscript_filename)
+    end
+
     it "allows guest downloads for free media" do
       sign_out user
 

@@ -115,6 +115,13 @@ class ApplicationController < ActionController::Base
       Current.user = current_user
     end
 
+    def enqueue_consumption(medium_id, mode, sort)
+      ConsumptionSaver.perform_async(medium_id, mode, sort)
+    rescue StandardError => e
+      Rails.logger.error("Failed to enqueue consumption " \
+                         "medium_id=#{medium_id} mode=#{mode} sort=#{sort}: #{e.message}")
+    end
+
     # Ensures that the current request is a Turbo Frame request.
     # If not, sets a flash message and redirects to the root path.
     #
