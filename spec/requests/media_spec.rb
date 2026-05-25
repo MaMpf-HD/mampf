@@ -133,7 +133,9 @@ RSpec.describe("Media", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(response.media_type).to eq("text/html")
       expect(response.body)
-        .to include("src=\"#{inline_medium_path(restricted_medium)}#page=17\"")
+        .to include(
+          "src=\"#{inline_manuscript_medium_path(restricted_medium)}#page=17\""
+        )
       expect(response.headers["Cache-Control"]).to include("no-store")
       expect(response.headers["Pragma"]).to eq("no-cache")
       expect(response.headers["Expires"])
@@ -144,7 +146,9 @@ RSpec.describe("Media", type: :request) do
       get display_medium_path(restricted_medium), params: { destination: "Theorem 1" }
 
       expect(response.body)
-        .to include("src=\"#{inline_medium_path(restricted_medium)}#Theorem%201\"")
+        .to include(
+          "src=\"#{inline_manuscript_medium_path(restricted_medium)}#Theorem%201\""
+        )
     end
 
     it "allows guest access to the compatibility page for free media" do
@@ -154,17 +158,19 @@ RSpec.describe("Media", type: :request) do
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
-        .to include("src=\"#{inline_medium_path(free_medium)}#page=3\"")
+        .to include(
+          "src=\"#{inline_manuscript_medium_path(free_medium)}#page=3\""
+        )
       expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
     end
   end
 
-  describe "GET /media/:id/inline" do
+  describe "GET /media/:id/manuscript/inline" do
     let(:restricted_medium) { create(:lecture_medium, :with_manuscript) }
     let(:free_medium) { create(:lecture_medium, :with_manuscript, :released) }
 
     it "serves the manuscript inline through Rails" do
-      get inline_medium_path(restricted_medium)
+      get inline_manuscript_medium_path(restricted_medium)
 
       expect(response).to have_http_status(:ok)
       expect(response.media_type).to eq("application/pdf")
@@ -177,7 +183,7 @@ RSpec.describe("Media", type: :request) do
     it "allows guest inline access for free media" do
       sign_out user
 
-      get inline_medium_path(free_medium)
+      get inline_manuscript_medium_path(free_medium)
 
       expect(response).to have_http_status(:ok)
       expect(response.headers["Content-Disposition"]).to include("inline")

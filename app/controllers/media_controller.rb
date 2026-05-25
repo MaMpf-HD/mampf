@@ -1,6 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:play, :display, :inline,
+  skip_before_action :authenticate_user!, only: [:play, :display,
+                                                 :inline_manuscript,
                                                  :geogebra, :inline_geogebra,
                                                  :download]
   before_action :set_medium, except: [:index, :new, :create, :search,
@@ -14,7 +15,8 @@ class MediaController < ApplicationController
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :check_for_consent, except: [:play, :display, :inline,
+  before_action :check_for_consent, except: [:play, :display,
+                                             :inline_manuscript,
                                              :geogebra, :inline_geogebra,
                                              :download]
   after_action :store_access, only: [:play, :display]
@@ -274,12 +276,13 @@ class MediaController < ApplicationController
       return
     end
 
-    @manuscript_inline_url = inline_medium_path(@medium) + manuscript_fragment
+    @manuscript_inline_url = inline_manuscript_medium_path(@medium) +
+                             manuscript_fragment
     render layout: false
     prevent_caching unless @medium.free?
   end
 
-  def inline
+  def inline_manuscript
     if @medium.manuscript.nil?
       redirect_to :root, alert: I18n.t("controllers.no_manuscript")
       return
