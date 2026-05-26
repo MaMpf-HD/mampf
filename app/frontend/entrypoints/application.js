@@ -47,14 +47,15 @@ import "~/js/quizzes.coffee";
 import "~/js/referrals.coffee";
 import "~/js/remarks.coffee";
 import "~/js/sections.coffee";
-import "~/js/submissions.coffee";
 import "~/js/tags.coffee";
 import "~/js/tex_preview.coffee";
 import "~/js/tutorials.coffee";
-import "~/js/upload.coffee";
 import "~/js/users.coffee";
 import "~/js/vertices.coffee";
 import "~/js/watchlists.coffee";
+
+import "@uppy/core/css/style.min.css";
+import "@uppy/dashboard/css/style.min.css";
 
 // Rails UJS
 // https://github.com/rails/rails/issues/49499#issuecomment-1749086834

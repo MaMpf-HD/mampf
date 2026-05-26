@@ -77,6 +77,12 @@ window.Stimulus.register("capacity-editor", CapacityEditorController);
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 
+import UppyUploadController from "~/controllers/uppy_upload.controller.js";
+window.Stimulus.register("uppy-upload", UppyUploadController);
+
+import SubmissionUploadController from "~/controllers/submission_upload.controller.js";
+window.Stimulus.register("submission-upload", SubmissionUploadController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
