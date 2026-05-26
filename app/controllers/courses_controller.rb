@@ -94,7 +94,8 @@ class CoursesController < ApplicationController
     file = image_file_for(@course, params[:variant])
     return head :not_found if file.nil?
 
-    send_stored_file(file, disposition: "inline", fallback: @course.image_filename || "course-image")
+    send_stored_file(file, disposition: "inline",
+                           fallback: @course.image_filename || "course-image")
   end
 
   private

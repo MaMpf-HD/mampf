@@ -44,9 +44,7 @@ class Referral < ApplicationRecord
         manuscript = item.related_items&.first&.manuscript_link
       end
     else
-      if item.related_items_visible?(user)
-        script = item.related_items&.first&.manuscript_link
-      end
+      script = item.related_items&.first&.manuscript_link if item.related_items_visible?(user)
       manuscript = item.manuscript_link
       video = item.video_link
     end

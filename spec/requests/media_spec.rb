@@ -199,12 +199,12 @@ RSpec.describe("Media", type: :request) do
     let(:lecture) { create(:lecture, :released_for_all) }
     let(:free_medium) do
       create(:lecture_medium, :with_video, teachable: lecture,
-                              released: "all", released_at: Time.zone.now)
+                                           released: "all", released_at: Time.zone.now)
     end
     let(:restricted_reference_medium) do
       create(:lecture_medium, :with_video, teachable: lecture,
-                              released: "subscribers",
-                              released_at: Time.zone.now)
+                                           released: "subscribers",
+                                           released_at: Time.zone.now)
     end
     let!(:referral) do
       create(:referral,
