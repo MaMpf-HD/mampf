@@ -178,7 +178,7 @@
         </div>
       <div id="video-preview-area">
         <video id="video-preview" controls
-               src="<%= @medium.video_url %>">
+               src="<%= stream_video_medium_path(@medium) %>">
         </video>
       </div>
       <% else %>

@@ -3,7 +3,7 @@
 <div id="thyme-edit" data-medium="<%= @medium.id %>">
   <div id="video-area-edit">
     <video id="video-edit" crossorigin="anonymous">
-      <source src="<%= @medium.video_url %>">
+      <source src="<%= stream_video_medium_path(@medium) %>">
     </video>
     <div id="video-controlBar-edit">
       <div id="video-controls-edit">

@@ -379,12 +379,6 @@ class Medium < ApplicationRecord
     screenshot_url(:normalized, host: host)
   end
 
-  def video_url
-    return if video.blank?
-
-    video.url(host: host)
-  end
-
   def video_filename
     return if video.blank?
 

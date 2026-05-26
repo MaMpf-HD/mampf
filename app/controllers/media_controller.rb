@@ -1,6 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display,
+                                                 :stream_video,
                                                  :inline_manuscript,
                                                  :geogebra, :inline_geogebra,
                                                  :download]
@@ -16,6 +17,7 @@ class MediaController < ApplicationController
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :check_for_consent, except: [:play, :display,
+                                             :stream_video,
                                              :inline_manuscript,
                                              :geogebra, :inline_geogebra,
                                              :download]
@@ -267,6 +269,16 @@ class MediaController < ApplicationController
     @vtt_container = @medium.create_vtt_container!
     @time = params[:time]
     render layout: "thyme"
+  end
+
+  def stream_video
+    if @medium.video.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_video")
+      return
+    end
+
+    send_stored_file(@medium.video, disposition: "inline", fallback: "video")
+    prevent_caching unless @medium.free?
   end
 
   # show the pdf, optionally at specified page or named destination

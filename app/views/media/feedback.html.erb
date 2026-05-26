@@ -9,7 +9,7 @@
       <div id="video-container">
 
         <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
-          <source src="<%= @medium.video.url(host: host) %>">
+          <source src="<%= stream_video_medium_path(@medium) %>">
         </video>
 
         <div id="video-controlBar">

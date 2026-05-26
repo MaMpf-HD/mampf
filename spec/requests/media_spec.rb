@@ -48,6 +48,47 @@ RSpec.describe("Media", type: :request) do
     end
   end
 
+  describe "GET /media/:id/play" do
+    let(:restricted_medium) { create(:lecture_medium, :with_video) }
+
+    it "renders the thyme player with a Rails-streamed video source" do
+      get play_medium_path(restricted_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to include("src=\"#{stream_video_medium_path(restricted_medium)}\"")
+    end
+  end
+
+  describe "GET /media/:id/video/stream" do
+    let(:restricted_medium) { create(:lecture_medium, :with_video) }
+    let(:free_medium) { create(:lecture_medium, :with_video, :released) }
+
+    it "serves a video inline through Rails" do
+      get stream_video_medium_path(restricted_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("video/mp4")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Content-Disposition"])
+        .to include(restricted_medium.video_filename)
+      expect(response.headers["Cache-Control"]).to eq("no-cache, no-store")
+      expect(response.headers["Pragma"]).to eq("no-cache")
+      expect(response.headers["Expires"])
+        .to eq("Mon, 01 Jan 1990 00:00:00 GMT")
+    end
+
+    it "allows guest access for free videos" do
+      sign_out user
+
+      get stream_video_medium_path(free_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
+    end
+  end
+
   describe "GET /media/:id/download/:sort" do
     let(:restricted_medium) { create(:lecture_medium, :with_manuscript) }
     let(:free_medium) { create(:lecture_medium, :with_manuscript, :released) }
