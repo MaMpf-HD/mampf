@@ -376,10 +376,14 @@ class Medium < ApplicationRecord
     end
   end
 
-  def screenshot_url_with_host
-    return screenshot_url(host: host) unless screenshot(:normalized)
+  def video_screenshot_file
+    screenshot(:normalized) || screenshot
+  end
 
-    screenshot_url(:normalized, host: host)
+  def screenshot_url_with_host
+    return unless video_screenshot_file
+
+    Rails.application.routes.url_helpers.screenshot_medium_path(id, sort: "video")
   end
 
   def video_filename
@@ -424,10 +428,17 @@ class Medium < ApplicationRecord
     geogebra.metadata["size"]
   end
 
-  def geogebra_screenshot_url
-    return "" if geogebra.blank?
+  def geogebra_screenshot_file
+    return if geogebra.blank?
 
-    geogebra_url(:screenshot, host: host)
+    geogebra(:screenshot)
+  end
+
+  def geogebra_screenshot_url
+    return "" if geogebra_screenshot_file.blank?
+
+    Rails.application.routes.url_helpers.screenshot_medium_path(id,
+                                                                sort: "geogebra")
   end
 
   def manuscript_filename
@@ -448,10 +459,17 @@ class Medium < ApplicationRecord
     manuscript.metadata["pages"]
   end
 
-  def manuscript_screenshot_url
-    return "" if manuscript.blank?
+  def manuscript_screenshot_file
+    return if manuscript.blank?
 
-    manuscript_url(:screenshot, host: host)
+    manuscript(:screenshot)
+  end
+
+  def manuscript_screenshot_url
+    return "" if manuscript_screenshot_file.blank?
+
+    Rails.application.routes.url_helpers.screenshot_medium_path(id,
+                                                                sort: "manuscript")
   end
 
   def manuscript_destinations

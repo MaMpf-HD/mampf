@@ -1,6 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:play, :chapters_vtt,
+  skip_before_action :authenticate_user!, only: [:play, :screenshot,
+                                                 :chapters_vtt,
                                                  :references_vtt, :display,
                                                  :stream_video,
                                                  :inline_manuscript,
@@ -17,7 +18,8 @@ class MediaController < ApplicationController
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :check_for_consent, except: [:play, :chapters_vtt,
+  before_action :check_for_consent, except: [:play, :screenshot,
+                                             :chapters_vtt,
                                              :references_vtt, :display,
                                              :stream_video,
                                              :inline_manuscript,
@@ -270,6 +272,15 @@ class MediaController < ApplicationController
     I18n.locale = @medium.locale_with_inheritance
     @time = params[:time]
     render layout: "thyme"
+  end
+
+  def screenshot
+    file = screenshot_file_for(params[:sort])
+    return head :not_found if file.nil?
+
+    send_stored_file(file, disposition: "inline",
+                           fallback: "#{params[:sort]}-screenshot")
+    prevent_caching unless @medium.free?
   end
 
   def chapters_vtt
@@ -712,6 +723,17 @@ class MediaController < ApplicationController
                 type: "text/vtt; charset=utf-8",
                 disposition: "inline",
                 filename: "medium-#{@medium.id}-#{fallback}.vtt")
+    end
+
+    def screenshot_file_for(sort)
+      case sort
+      when "video"
+        @medium.video_screenshot_file
+      when "manuscript"
+        @medium.manuscript_screenshot_file
+      when "geogebra"
+        @medium.geogebra_screenshot_file
+      end
     end
 
     def stored_filename(file, fallback)

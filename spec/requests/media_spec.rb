@@ -64,6 +64,122 @@ RSpec.describe("Media", type: :request) do
     end
   end
 
+  describe "GET /media/:id/screenshot/:sort" do
+    let(:restricted_medium) { create(:lecture_medium) }
+    let(:free_medium) { create(:lecture_medium, :released) }
+    let(:fake_screenshot) do
+      instance_double(
+        "Shrine::UploadedFile",
+        to_io: File.open(File.join(SPEC_FILES, "image.png")),
+        storage: double("storage"),
+        metadata: {
+          "filename" => "preview.png",
+          "mime_type" => "image/png"
+        }
+      )
+    end
+
+    before do
+      allow_any_instance_of(Medium).to receive(:video_screenshot_file)
+        .and_return(fake_screenshot)
+      allow_any_instance_of(Medium).to receive(:manuscript_screenshot_file)
+        .and_return(fake_screenshot)
+      allow_any_instance_of(Medium).to receive(:geogebra_screenshot_file)
+        .and_return(fake_screenshot)
+    end
+
+    it "serves a screenshot preview inline through Rails" do
+      get screenshot_medium_path(restricted_medium, sort: "video")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("image/png")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Cache-Control"]).to eq("no-cache, no-store")
+      expect(response.headers["Pragma"]).to eq("no-cache")
+    end
+
+    it "allows guest access to free screenshot previews" do
+      sign_out user
+
+      get screenshot_medium_path(free_medium, sort: "video")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
+    end
+
+    it "returns not found for missing previews" do
+      allow_any_instance_of(Medium).to receive(:video_screenshot_file)
+        .and_return(nil)
+
+      get screenshot_medium_path(restricted_medium, sort: "video")
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "GET /media/:id/inspect" do
+    let(:restricted_medium) do
+      create(:lecture_medium, :with_manuscript).tap do |medium|
+        medium.update!(screenshot: File.open(File.join(SPEC_FILES, "image.png"), "rb"))
+      end
+    end
+    let(:fake_screenshot) do
+      instance_double(
+        "Shrine::UploadedFile",
+        to_io: File.open(File.join(SPEC_FILES, "image.png")),
+        storage: double("storage"),
+        metadata: {
+          "filename" => "preview.png",
+          "mime_type" => "image/png"
+        }
+      )
+    end
+
+    before do
+      allow_any_instance_of(Medium).to receive(:manuscript_screenshot_file)
+        .and_return(fake_screenshot)
+    end
+
+    it "renders video and manuscript previews through Rails routes" do
+      get inspect_medium_path(restricted_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to include("src=\"#{screenshot_medium_path(restricted_medium, sort: "video")}\"")
+      expect(response.body)
+        .to include("src=\"#{screenshot_medium_path(restricted_medium, sort: "manuscript")}\"")
+    end
+  end
+
+  describe "GET /media/:id/edit" do
+    let(:restricted_medium) { create(:lecture_medium) }
+    let(:fake_screenshot) do
+      instance_double(
+        "Shrine::UploadedFile",
+        to_io: File.open(File.join(SPEC_FILES, "image.png")),
+        storage: double("storage"),
+        metadata: {
+          "filename" => "preview.png",
+          "mime_type" => "image/png"
+        }
+      )
+    end
+
+    before do
+      allow_any_instance_of(Medium).to receive(:geogebra_screenshot_file)
+        .and_return(fake_screenshot)
+    end
+
+    it "renders the geogebra preview through a Rails route" do
+      get edit_medium_path(restricted_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body)
+        .to include("src=\"#{screenshot_medium_path(restricted_medium, sort: "geogebra")}\"")
+    end
+  end
+
   describe "GET /media/:id/vtt/chapters" do
     let(:free_medium) { create(:lecture_medium, :with_video, :with_toc_item, :released) }
 

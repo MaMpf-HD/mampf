@@ -383,6 +383,10 @@ Rails.application.routes.draw do
       to: "media#play",
       as: "play_medium"
 
+  get "media/:id/screenshot/:sort",
+      to: "media#screenshot",
+      as: "screenshot_medium"
+
   get "media/:id/vtt/chapters",
       to: "media#chapters_vtt",
       as: "chapters_vtt_medium"
