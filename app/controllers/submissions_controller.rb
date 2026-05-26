@@ -149,10 +149,9 @@ class SubmissionsController < ApplicationController
 
   def show_manuscript
     if @submission&.manuscript
-      send_file(@submission.manuscript.to_io,
-                type: @submission.manuscript_mime_type,
-                disposition: @disposition,
-                filename: @submission.manuscript_filename)
+      send_stored_file(@submission.manuscript,
+                       disposition: @disposition,
+                       fallback: @submission.manuscript_filename || "manuscript")
     elsif @submission
       redirect_to :start, alert: t("submission.no_manuscript_yet")
     else
@@ -162,10 +161,9 @@ class SubmissionsController < ApplicationController
 
   def show_correction
     if @submission&.correction
-      send_file(@submission.correction.to_io,
-                type: @submission.correction_mime_type,
-                disposition: @disposition,
-                filename: @submission.correction_filename)
+      send_stored_file(@submission.correction,
+                       disposition: @disposition,
+                       fallback: @submission.correction_filename || "correction")
     elsif @submission
       redirect_to :start, alert: t("submission.no_correction_yet")
     else

@@ -271,24 +271,10 @@ class Course < ApplicationRecord
     image
   end
 
-  def image_url_with_host
-    return unless original_image_file
-
-    Rails.application.routes.url_helpers.image_course_path(self,
-                                                           variant: "original")
-  end
-
   def normalized_image_file
     return unless image && image(:normalized)
 
     image(:normalized)
-  end
-
-  def normalized_image_url_with_host
-    return unless normalized_image_file
-
-    Rails.application.routes.url_helpers.image_course_path(self,
-                                                           variant: "normalized")
   end
 
   def image_filename

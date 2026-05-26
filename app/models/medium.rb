@@ -380,12 +380,6 @@ class Medium < ApplicationRecord
     screenshot(:normalized) || screenshot
   end
 
-  def screenshot_url_with_host
-    return unless video_screenshot_file
-
-    Rails.application.routes.url_helpers.screenshot_medium_path(id, sort: "video")
-  end
-
   def video_filename
     return if video.blank?
 

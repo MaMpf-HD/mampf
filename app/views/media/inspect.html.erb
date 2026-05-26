@@ -189,7 +189,7 @@
           <%= t('basics.screenshot') %>
         </div>
         <img id="screenshot-preview" class="img-fluid mb-3"
-             src="<%= @medium.screenshot_url_with_host %>">
+             src="<%= screenshot_medium_path(@medium, sort: "video") %>">
       <% end %>
     </div>
   </div>

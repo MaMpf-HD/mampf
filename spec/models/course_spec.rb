@@ -817,39 +817,6 @@ RSpec.describe(Course, type: :model) do
       @course = FactoryBot.create(:course, :with_image)
     end
 
-    describe "#image_url_with_host" do
-      it "returns nil if there is no image" do
-        course = FactoryBot.create(:course)
-        expect(course.image_url_with_host).to be_nil
-      end
-
-      it "returns the Rails image route" do
-        course = FactoryBot.create(:course, :with_image)
-        expect(course.image_url_with_host)
-          .to eq(Rails.application.routes.url_helpers
-          .image_course_path(course, variant: "original"))
-      end
-    end
-
-    describe "#normalized_image_url_with_host" do
-      it "returns nil if there is no image" do
-        course = FactoryBot.create(:course)
-        expect(course.normalized_image_url_with_host).to be_nil
-      end
-
-      it "returns nil if there is no normalized image" do
-        course = FactoryBot.create(:course, :with_image)
-        expect(course.normalized_image_url_with_host).to be_nil
-      end
-
-      it "returns the Rails normalized image route" do
-        course = FactoryBot.create(:course, :with_image_and_normalization)
-        expect(course.normalized_image_url_with_host)
-          .to eq(Rails.application.routes.url_helpers
-          .image_course_path(course, variant: "normalized"))
-      end
-    end
-
     describe "#image_filename" do
       it "returns nil if there is no image" do
         course = FactoryBot.create(:course)
