@@ -15,8 +15,9 @@ RSpec.describe("Courses", type: :request) do
     let(:fake_image) do
       instance_double(
         "Shrine::UploadedFile",
-        to_io: File.open(File.join(SPEC_FILES, "image.png")),
-        storage: double("storage"),
+        id: "course-image",
+        to_io: StringIO.new(File.binread(File.join(SPEC_FILES, "image.png"))),
+        storage: double("storage", path: File.join(SPEC_FILES, "image.png")),
         metadata: {
           "filename" => "course.png",
           "mime_type" => "image/png"
