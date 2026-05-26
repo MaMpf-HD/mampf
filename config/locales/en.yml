@@ -3635,6 +3635,7 @@ en:
     no_geogebra: 'There is no Geogebra applet for this medium.'
     invalid_download: 'The requested download is invalid.'
     no_medium: 'There is no medium with this id.'
+    no_user: 'There is no user with this id.'
     contradiction: 'Contradictory request.'
     no_notification: 'There is no notification with this id.'
     no_question: 'There is no question with this id.'

@@ -3847,6 +3847,7 @@ de:
     no_geogebra: 'Zu diesem Medium existiert kein Geogebra-Applet.'
     invalid_download: 'Der angeforderte Download ist ungültig.'
     no_medium: 'Ein Medium mit der angeforderten id existiert nicht.'
+    no_user: 'Ein(e) BenutzerIn mit der angeforderten id existiert nicht.'
     contradiction: 'Widersprüchliche Suchanfrage.'
     no_notification: >
       Eine Benachrichtigung mit der angeforderten id existiert nicht.

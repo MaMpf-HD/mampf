@@ -1,7 +1,7 @@
 # UsersController
 class UsersController < ApplicationController
   before_action :set_elevated_users, only: [:index, :list_generic_users]
-  before_action :set_user, only: [:edit, :update, :destroy, :image]
+  before_action :set_user, only: [:edit, :update, :destroy]
 
   layout "administration"
 
@@ -75,6 +75,9 @@ class UsersController < ApplicationController
   end
 
   def image
+    @user = User.find_by(id: params[:id])
+    return head :not_found if @user.nil?
+
     authorize! :image, @user
 
     file = image_file_for(@user, params[:variant])
@@ -122,7 +125,7 @@ class UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       return unless @user.nil?
 
-      redirect_to :root, alert: I18n.t("controllers.no_medium")
+      redirect_to :root, alert: I18n.t("controllers.no_user")
     end
 
     def set_elevated_users

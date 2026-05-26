@@ -32,6 +32,12 @@ RSpec.describe("Users", type: :request) do
       expect(response.media_type).to eq("image/png")
       expect(response.headers["Content-Disposition"]).to include("inline")
     end
+
+    it "returns not found for missing users" do
+      get image_user_path(id: teacher_user.id + 1000, variant: "original")
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   describe "GET /users/teacher/:teacher_id" do
