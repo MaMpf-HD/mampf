@@ -357,11 +357,6 @@ class Medium < ApplicationRecord
     vtt_content_from_file(references_to_vtt(user))
   end
 
-  def create_vtt_container!
-    VttContainer.create(table_of_contents: toc_to_vtt,
-                        references: references_to_vtt)
-  end
-
   # some plain methods for items and referrals
 
   def proper_items
