@@ -296,7 +296,7 @@ class Item < ApplicationRecord
   def related_items_visible?(user = nil)
     related_medium = related_items&.first&.medium
     return false if related_medium.nil?
-    return !related_medium.published?.nil? && !related_medium.locked? if user.nil?
+    return related_medium.free? if user.nil? || !user.persisted?
 
     related_medium.visible_for_user?(user)
   end

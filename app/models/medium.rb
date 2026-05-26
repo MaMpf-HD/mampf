@@ -991,7 +991,9 @@ class Medium < ApplicationRecord
     end
 
     def referral_visible_for_vtt?(referral, user)
-      return referral.item_published? && !referral.item_locked? if user.nil?
+      if user.nil? || !user.persisted?
+        return referral.item&.medium.nil? || referral.item.medium.free?
+      end
       return true if referral.item&.medium.nil?
 
       referral.item.medium.visible_for_user?(user)

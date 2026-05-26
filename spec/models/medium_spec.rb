@@ -124,6 +124,35 @@ RSpec.describe(Medium, type: :model) do
     end
   end
 
+  describe "#references_vtt_content" do
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let(:medium) do
+      create(:lecture_medium, :with_video, teachable: lecture,
+                                           released: "all",
+                                           released_at: Time.zone.now)
+    end
+    let(:guest_user) { User.new }
+
+    it "filters users-only references for guests" do
+      restricted_medium = create(:lecture_medium, :with_video,
+                                 teachable: lecture,
+                                 released: "users",
+                                 released_at: Time.zone.now)
+      create(:referral,
+             medium: medium,
+             item: restricted_medium.items.find_by(sort: "self"),
+             start_time: TimeStamp.new(total_seconds: 5),
+             end_time: TimeStamp.new(total_seconds: 10))
+      restricted_medium_path = Rails.application.routes.url_helpers
+                                    .play_medium_path(restricted_medium)
+
+      expect(medium.references_vtt_content(nil))
+        .not_to include(restricted_medium_path)
+      expect(medium.references_vtt_content(guest_user))
+        .not_to include(restricted_medium_path)
+    end
+  end
+
   describe "course medium" do
     before :each do
       @medium = FactoryBot.build(:course_medium)
