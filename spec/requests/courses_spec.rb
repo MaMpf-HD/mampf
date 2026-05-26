@@ -12,12 +12,19 @@ RSpec.describe("Courses", type: :request) do
 
   describe "GET /courses/:id/image/:variant" do
     let(:course) { create(:course) }
+    let(:storage) do
+      double("storage").tap do |fake_storage|
+        allow(fake_storage).to receive(:path)
+          .with("course-image")
+          .and_return(File.join(SPEC_FILES, "image.png"))
+      end
+    end
     let(:fake_image) do
       instance_double(
         "Shrine::UploadedFile",
         id: "course-image",
         to_io: StringIO.new(File.binread(File.join(SPEC_FILES, "image.png"))),
-        storage: double("storage", path: File.join(SPEC_FILES, "image.png")),
+        storage: storage,
         metadata: {
           "filename" => "course.png",
           "mime_type" => "image/png"
