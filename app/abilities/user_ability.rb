@@ -4,7 +4,7 @@ class UserAbility
   def initialize(user)
     clear_aliased_actions
 
-    can [:delete_account, :teacher], User
+    can [:delete_account, :teacher, :image], User
 
     can [:index, :elevate, :destroy, :edit], User do
       user.admin?

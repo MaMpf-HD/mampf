@@ -823,9 +823,11 @@ RSpec.describe(Course, type: :model) do
         expect(course.image_url_with_host).to be_nil
       end
 
-      it "returns a string with the correct ending" do
+      it "returns the Rails image route" do
         course = FactoryBot.create(:course, :with_image)
-        expect(course.image_url_with_host.end_with?(course.image.id)).to be(true)
+        expect(course.image_url_with_host)
+          .to eq(Rails.application.routes.url_helpers
+          .image_course_path(course, variant: "original"))
       end
     end
 
@@ -840,10 +842,11 @@ RSpec.describe(Course, type: :model) do
         expect(course.normalized_image_url_with_host).to be_nil
       end
 
-      it "returns a string with the correct ending" do
+      it "returns the Rails normalized image route" do
         course = FactoryBot.create(:course, :with_image_and_normalization)
-        expect(course.normalized_image_url_with_host
-                     .end_with?(course.image(:normalized).id)).to be(true)
+        expect(course.normalized_image_url_with_host)
+          .to eq(Rails.application.routes.url_helpers
+          .image_course_path(course, variant: "normalized"))
       end
     end
 

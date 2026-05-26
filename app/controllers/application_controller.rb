@@ -93,6 +93,29 @@ class ApplicationController < ActionController::Base
 
   private
 
+    def download_path(file)
+      return file.storage.path(file.id) if file.storage.respond_to?(:path)
+
+      file.to_io.path
+    end
+
+    def send_stored_file(file, disposition:, fallback:)
+      options = {
+        disposition: disposition,
+        filename: stored_filename(file, fallback)
+      }
+      mime_type = file.metadata["mime_type"]
+      options[:type] = mime_type if mime_type.present?
+
+      send_file(download_path(file), **options)
+    end
+
+    def stored_filename(file, fallback)
+      filename = File.basename(file.metadata["filename"].to_s.tr("\\", "/"))
+
+      ActiveStorage::Filename.wrap(filename.presence || fallback).sanitized
+    end
+
     # It's important that the location is NOT stored if:
     # - The request method is not GET (non idempotent)
     # - The request is handled by a Devise controller such as

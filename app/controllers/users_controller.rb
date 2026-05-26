@@ -1,7 +1,7 @@
 # UsersController
 class UsersController < ApplicationController
   before_action :set_elevated_users, only: [:index, :list_generic_users]
-  before_action :set_user, only: [:edit, :update, :destroy]
+  before_action :set_user, only: [:edit, :update, :destroy, :image]
 
   layout "administration"
 
@@ -74,6 +74,15 @@ class UsersController < ApplicationController
                 alert: I18n.t("controllers.no_teacher")
   end
 
+  def image
+    authorize! :image, @user
+
+    file = image_file_for(@user, params[:variant])
+    return head :not_found if file.nil?
+
+    send_stored_file(file, disposition: "inline", fallback: @user.image_filename || "user-image")
+  end
+
   def fill_user_select
     authorize! :fill_user_select, User.new
     if params[:q]
@@ -91,6 +100,15 @@ class UsersController < ApplicationController
   end
 
   private
+
+    def image_file_for(user, variant)
+      case variant
+      when "original"
+        user.original_image_file
+      when "normalized"
+        user.normalized_image_file
+      end
+    end
 
     def elevate_params
       params.expect(generic_user: [:id, :admin, :editor, :teacher, :name])

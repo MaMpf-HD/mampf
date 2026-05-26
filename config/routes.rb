@@ -133,6 +133,10 @@ Rails.application.routes.draw do
       to: "courses#search",
       as: "search_courses"
 
+  get "courses/:id/image/:variant",
+      to: "courses#image",
+      as: "image_course"
+
   resources :courses, except: [:index, :show, :new]
 
   # divisions routes
@@ -975,6 +979,10 @@ Rails.application.routes.draw do
   get "users/delete_account",
       to: "users#delete_account",
       as: "delete_account"
+
+  get "users/:id/image/:variant",
+      to: "users#image",
+      as: "image_user"
 
   resources :users, only: [:index, :edit, :update, :destroy]
 

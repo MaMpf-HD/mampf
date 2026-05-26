@@ -701,23 +701,6 @@ class MediaController < ApplicationController
       params.permit(:project, :visibility, :reverse, :id, :all, :page, :per)
     end
 
-    def download_path(file)
-      return file.storage.path(file.id) if file.storage.respond_to?(:path)
-
-      file.to_io.path
-    end
-
-    def send_stored_file(file, disposition:, fallback:)
-      options = {
-        disposition: disposition,
-        filename: stored_filename(file, fallback)
-      }
-      mime_type = file.metadata["mime_type"]
-      options[:type] = mime_type if mime_type.present?
-
-      send_file(download_path(file), **options)
-    end
-
     def send_vtt(content, fallback)
       send_data(content,
                 type: "text/vtt; charset=utf-8",
@@ -734,12 +717,6 @@ class MediaController < ApplicationController
       when "geogebra"
         @medium.geogebra_screenshot_file
       end
-    end
-
-    def stored_filename(file, fallback)
-      filename = File.basename(file.metadata["filename"].to_s.tr("\\", "/"))
-
-      ActiveStorage::Filename.wrap(filename.presence || fallback).sanitized
     end
 
     def manuscript_fragment
