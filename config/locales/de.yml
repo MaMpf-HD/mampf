@@ -2388,6 +2388,9 @@ de:
     size: 'Größe'
   image:
     resolution: 'Abmessungen'
+    too_large_dimensions: >
+      Die Bildabmessungen sind zu groß. Erlaubt sind höchstens
+      %{max_width}x%{max_height}.
   manuscript:
     manuscript: 'Manuskript'
     no_manuscript: 'Es gibt kein Manuskript.'
@@ -2475,6 +2478,7 @@ de:
     app_name: Applet-Typ
     view: Geogebra-Applet im Browser ansehen
     size: Größe
+    invalid_archive: Ungültiges GeoGebra-Archiv.
     attribution_html: >
       Dieses Applet wurde mit %{geogebra_link} erstellt, die obige Animation
       verwendet die GeoGebra JavaScript API.
