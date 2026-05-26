@@ -51,12 +51,74 @@ RSpec.describe("Media", type: :request) do
   describe "GET /media/:id/play" do
     let(:restricted_medium) { create(:lecture_medium, :with_video) }
 
-    it "renders the thyme player with a Rails-streamed video source" do
+    it "renders the thyme player with Rails-served media sources" do
       get play_medium_path(restricted_medium)
 
       expect(response).to have_http_status(:ok)
       expect(response.body)
         .to include("src=\"#{stream_video_medium_path(restricted_medium)}\"")
+      expect(response.body)
+        .to include("src=\"#{chapters_vtt_medium_path(restricted_medium)}\"")
+      expect(response.body)
+        .to include("src=\"#{references_vtt_medium_path(restricted_medium)}\"")
+    end
+  end
+
+  describe "GET /media/:id/vtt/chapters" do
+    let(:free_medium) { create(:lecture_medium, :with_video, :with_toc_item, :released) }
+
+    it "serves chapters as VTT through Rails" do
+      sign_out user
+
+      get chapters_vtt_medium_path(free_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/vtt")
+      expect(response.body).to include("WEBVTT")
+      expect(response.body).to include("Test Remark")
+    end
+  end
+
+  describe "GET /media/:id/vtt/references" do
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let(:free_medium) do
+      create(:lecture_medium, :with_video, teachable: lecture,
+                              released: "all", released_at: Time.zone.now)
+    end
+    let(:restricted_reference_medium) do
+      create(:lecture_medium, :with_video, teachable: lecture,
+                              released: "subscribers",
+                              released_at: Time.zone.now)
+    end
+    let!(:referral) do
+      create(:referral,
+             medium: free_medium,
+             item: restricted_reference_medium.items.find_by(sort: "self"),
+             start_time: TimeStamp.new(total_seconds: 5),
+             end_time: TimeStamp.new(total_seconds: 10))
+    end
+
+    it "includes visible references for the current viewer" do
+      get references_vtt_medium_path(free_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/vtt")
+      expect(response.body).to include(play_medium_path(restricted_reference_medium))
+      expect(response.headers["Cache-Control"]).to include("no-store")
+      expect(response.headers["Pragma"]).to eq("no-cache")
+    end
+
+    it "filters restricted references for guests" do
+      sign_out user
+
+      get references_vtt_medium_path(free_medium)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/vtt")
+      expect(response.body).to include("WEBVTT")
+      expect(response.body).not_to include(play_medium_path(restricted_reference_medium))
+      expect(response.headers["Cache-Control"]).to include("no-store")
+      expect(response.headers["Pragma"]).to eq("no-cache")
     end
   end
 

@@ -293,9 +293,12 @@ class Item < ApplicationRecord
     Referral.where(item: self).map(&:medium)
   end
 
-  def related_items_visible?
-    !related_items&.first&.medium&.published?.nil? &&
-      !related_items&.first&.medium&.locked?
+  def related_items_visible?(user = nil)
+    related_medium = related_items&.first&.medium
+    return false if related_medium.nil?
+    return !related_medium.published?.nil? && !related_medium.locked? if user.nil?
+
+    related_medium.visible_for_user?(user)
   end
 
   private

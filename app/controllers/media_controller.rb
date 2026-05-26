@@ -1,6 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:play, :display,
+  skip_before_action :authenticate_user!, only: [:play, :chapters_vtt,
+                                                 :references_vtt, :display,
                                                  :stream_video,
                                                  :inline_manuscript,
                                                  :geogebra, :inline_geogebra,
@@ -16,7 +17,8 @@ class MediaController < ApplicationController
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :check_for_consent, except: [:play, :display,
+  before_action :check_for_consent, except: [:play, :chapters_vtt,
+                                             :references_vtt, :display,
                                              :stream_video,
                                              :inline_manuscript,
                                              :geogebra, :inline_geogebra,
@@ -266,9 +268,29 @@ class MediaController < ApplicationController
       return
     end
     I18n.locale = @medium.locale_with_inheritance
-    @vtt_container = @medium.create_vtt_container!
     @time = params[:time]
     render layout: "thyme"
+  end
+
+  def chapters_vtt
+    if @medium.video.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_video")
+      return
+    end
+
+    send_vtt(@medium.toc_vtt_content, "chapters")
+    prevent_caching unless @medium.free?
+  end
+
+  def references_vtt
+    if @medium.video.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_video")
+      return
+    end
+
+    send_vtt(@medium.references_vtt_content(current_user || User.new),
+             "references")
+    prevent_caching
   end
 
   def stream_video
@@ -683,6 +705,13 @@ class MediaController < ApplicationController
       options[:type] = mime_type if mime_type.present?
 
       send_file(download_path(file), **options)
+    end
+
+    def send_vtt(content, fallback)
+      send_data(content,
+                type: "text/vtt; charset=utf-8",
+                disposition: "inline",
+                filename: "medium-#{@medium.id}-#{fallback}.vtt")
     end
 
     def stored_filename(file, fallback)

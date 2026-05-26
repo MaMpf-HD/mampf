@@ -335,18 +335,26 @@ class Medium < ApplicationRecord
     file
   end
 
+  def toc_vtt_content
+    vtt_content_from_file(toc_to_vtt)
+  end
+
   # creates a .vtt file (and returns it), which contains
   # all data needed by the thyme player to realize references
   # Note: Only references to unlocked media will be incorporated.
-  def references_to_vtt
+  def references_to_vtt(user = nil)
     file = Tempfile.new(["ref-", ".vtt"], encoding: "UTF-8")
     file.write(vtt_start)
-    referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
+    referrals_by_time.select { |r| referral_visible_for_vtt?(r, user) }
                      .each do |r|
       file.write(r.vtt_time_span)
-      file.write("#{JSON.pretty_generate(r.vtt_properties)}\n\n")
+      file.write("#{JSON.pretty_generate(r.vtt_properties(user))}\n\n")
     end
     file
+  end
+
+  def references_vtt_content(user)
+    vtt_content_from_file(references_to_vtt(user))
   end
 
   def create_vtt_container!
@@ -973,6 +981,20 @@ class Medium < ApplicationRecord
 
     def vtt_start
       "WEBVTT\n\n"
+    end
+
+    def referral_visible_for_vtt?(referral, user)
+      return referral.item_published? && !referral.item_locked? if user.nil?
+      return true if referral.item&.medium.nil?
+
+      referral.item.medium.visible_for_user?(user)
+    end
+
+    def vtt_content_from_file(file)
+      file.rewind
+      file.read
+    ensure
+      file.close!
     end
 
     def belongs_to_course?(lecture)

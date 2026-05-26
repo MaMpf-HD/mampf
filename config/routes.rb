@@ -383,6 +383,14 @@ Rails.application.routes.draw do
       to: "media#play",
       as: "play_medium"
 
+  get "media/:id/vtt/chapters",
+      to: "media#chapters_vtt",
+      as: "chapters_vtt_medium"
+
+  get "media/:id/vtt/references",
+      to: "media#references_vtt",
+      as: "references_vtt_medium"
+
   get "media/:id/video/stream",
       to: "media#stream_video",
       as: "stream_video_medium"
