@@ -1,13 +1,13 @@
 if Rails.env.development? || Rails.env.local?
   class UploadDebugLogging
-    UPLOAD_PATHS = %w[
-      /screenshots/upload
-      /profile_image/upload
-      /videos/upload
-      /pdfs/upload
-      /ggbs/upload
-      /submissions/upload
-      /corrections/upload
+    UPLOAD_PATHS = [
+      "/screenshots/upload",
+      "/profile_image/upload",
+      "/videos/upload",
+      "/pdfs/upload",
+      "/ggbs/upload",
+      "/submissions/upload",
+      "/corrections/upload"
     ].freeze
 
     def initialize(app)
@@ -44,7 +44,7 @@ if Rails.env.development? || Rails.env.local?
 
       def upload_response_log(request, status, headers)
         "[upload-debug] response path=#{request.path} status=#{status} " \
-          "location=#{headers['Location'].inspect} content_type=#{headers['Content-Type'].inspect} " \
+          "location=#{headers["Location"].inspect} content_type=#{headers["Content-Type"].inspect} " \
           "request_id=#{request.request_id}"
       end
 
@@ -58,12 +58,12 @@ if Rails.env.development? || Rails.env.local?
       end
   end
 
-  Rails.application.config.middleware.use UploadDebugLogging
+  Rails.application.config.middleware.use(UploadDebugLogging)
 
   Shrine.subscribe(:metadata) do |event|
     Rails.logger.info(
       "[upload-debug] shrine event=metadata uploader=#{event[:uploader].name} " \
-        "storage=#{event[:storage]} io_class=#{event[:io].class} duration=#{event.duration.round(1)}"
+      "storage=#{event[:storage]} io_class=#{event[:io].class} duration=#{event.duration.round(1)}"
     )
   end
 
@@ -72,9 +72,9 @@ if Rails.env.development? || Rails.env.local?
 
     Rails.logger.info(
       "[upload-debug] shrine event=upload uploader=#{event[:uploader].name} " \
-        "storage=#{event[:storage]} location=#{event[:location].inspect} " \
-        "filename=#{metadata['filename'].inspect} mime_type=#{metadata['mime_type'].inspect} " \
-        "size=#{metadata['size'].inspect} duration=#{event.duration.round(1)}"
+      "storage=#{event[:storage]} location=#{event[:location].inspect} " \
+      "filename=#{metadata["filename"].inspect} mime_type=#{metadata["mime_type"].inspect} " \
+      "size=#{metadata["size"].inspect} duration=#{event.duration.round(1)}"
     )
   end
 end
