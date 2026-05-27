@@ -1,16 +1,21 @@
 import { Uppy } from "@uppy/core";
 import Dashboard from "@uppy/dashboard";
 import XHRUpload from "@uppy/xhr-upload";
+import de_DE from "@uppy/locales/lib/de_DE";
+import en_US from "@uppy/locales/lib/en_US";
 
 export function buildUppy({
   target,
   endpoint,
   autoProceed = true,
+  hideUploadButton = autoProceed,
   allowMultipleFiles = false,
   allowedFileTypes = [],
   maxFileSize = null,
   note = null,
   onBeforeUpload,
+  dashboardLocale,
+  debugLabel = endpoint,
 }) {
   const restrictions = {};
 
@@ -26,23 +31,43 @@ export function buildUppy({
     restrictions.maxFileSize = maxFileSize;
   }
 
-  const uppy = new Uppy({
+  const uppyOptions = {
     autoProceed,
     allowMultipleUploadBatches: false,
+    locale: uppyLocale(),
     restrictions,
-    onBeforeUpload,
+  };
+
+  if (typeof onBeforeUpload === "function") {
+    uppyOptions.onBeforeUpload = onBeforeUpload;
+  }
+
+  const uppy = new Uppy(uppyOptions);
+
+  debugLog(debugLabel, "create", {
+    autoProceed,
+    allowMultipleFiles,
+    allowedFileTypes,
+    maxFileSize,
+    note,
   });
 
-  uppy.use(Dashboard, {
+  const dashboardOptions = {
     inline: true,
     target,
     proudlyDisplayPoweredByUppy: false,
     showProgressDetails: true,
-    hideUploadButton: autoProceed,
+    hideUploadButton,
     width: "100%",
     height: 300,
     note,
-  });
+  };
+
+  if (dashboardLocale) {
+    dashboardOptions.locale = dashboardLocale;
+  }
+
+  uppy.use(Dashboard, dashboardOptions);
 
   uppy.use(XHRUpload, {
     endpoint,
@@ -50,6 +75,12 @@ export function buildUppy({
     fieldName: "file",
     headers: uploadHeaders(),
     getResponseData(xhr) {
+      debugLog(debugLabel, "response", {
+        status: xhr.status,
+        statusText: xhr.statusText,
+        responseText: xhr.responseText,
+      });
+
       return JSON.parse(xhr.responseText);
     },
   });
@@ -59,6 +90,10 @@ export function buildUppy({
 
 export function clearUppyFiles(uppy) {
   uppy.getFiles().forEach(file => uppy.removeFile(file.id));
+}
+
+export function debugLog(label, event, payload = {}) {
+  console.info(`[uppy-debug] ${label} ${event}`, payload);
 }
 
 export function extractErrorMessage(error) {
@@ -103,5 +138,20 @@ function uploadHeaders() {
     headers["X-CSRF-Token"] = token;
   }
 
+  debugLog("headers", "resolved", {
+    hasCsrfToken: Boolean(token),
+    headers,
+  });
+
   return headers;
+}
+
+function uppyLocale() {
+  const locale = document.body?.dataset?.locale || "en";
+
+  if (locale.startsWith("de")) {
+    return de_DE;
+  }
+
+  return en_US;
 }

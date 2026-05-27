@@ -3,6 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 import {
   buildUppy,
   clearUppyFiles,
+  debugLog,
   formatBytes,
   joinErrorMessage,
 } from "~/uploads/uppy_utils";
@@ -163,38 +164,101 @@ export default class extends Controller {
 
   connect() {
     this.config = CONFIG[this.kindValue];
+    this.autoUpload = Boolean(this.config?.autoProceed);
+    this.uploadPending = false;
     this.hiddenInputElement = this.hasHiddenInputTarget
       ? this.hiddenInputTarget
       : this.resolve(this.hiddenInputSelectorValue);
 
     if (!this.config || !this.hasDashboardTarget || !this.hiddenInputElement) {
+      debugLog(this.kindValue || "unknown", "connect-skipped", {
+        hasConfig: Boolean(this.config),
+        hasDashboardTarget: this.hasDashboardTarget,
+        hasHiddenInput: Boolean(this.hiddenInputElement),
+      });
       return;
     }
+
+    debugLog(this.kindValue, "connect", {
+      endpoint: this.endpointValue,
+      hiddenInputId: this.hiddenInputElement.id,
+      autoProceed: this.config.autoProceed,
+    });
 
     this.uppy = buildUppy({
       target: this.dashboardTarget,
       endpoint: this.endpointValue,
-      autoProceed: this.config.autoProceed,
+      autoProceed: false,
+      hideUploadButton: this.autoUpload,
       allowMultipleFiles: this.config.allowMultipleFiles,
       allowedFileTypes: this.config.allowedFileTypes,
       maxFileSize: this.config.maxFileSize,
       note: this.noteValue || null,
+      debugLabel: this.kindValue,
     });
 
-    this.uppy.on("file-added", () => {
+    this.uppy.on("file-added", (file) => {
+      debugLog(this.kindValue, "file-added", {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      });
       this.hiddenInputElement.value = "";
       this.config.onFileAdded?.(this);
     });
 
+    this.uppy.on("files-added", (files) => {
+      debugLog(this.kindValue, "files-added", {
+        files: files.map(file => ({ name: file.name, type: file.type, size: file.size })),
+        autoUpload: this.autoUpload,
+      });
+
+      if (this.autoUpload) {
+        this.startUpload("files-added");
+      }
+    });
+
+    this.uppy.on("upload", (uploadId, files) => {
+      debugLog(this.kindValue, "upload-start", {
+        uploadId,
+        files: files.map(file => ({ name: file.name, type: file.type, size: file.size })),
+      });
+    });
+
+    this.uppy.on("upload-success", (file, response) => {
+      debugLog(this.kindValue, "upload-success", {
+        file: { name: file.name, type: file.type, size: file.size },
+        response,
+      });
+    });
+
     this.uppy.on("restriction-failed", (_file, error) => {
+      debugLog(this.kindValue, "restriction-failed", { error });
       this.showError(error.message || error);
     });
 
-    this.uppy.on("upload-error", (_file, error) => {
+    this.uppy.on("upload-error", (file, error, response) => {
+      debugLog(this.kindValue, "upload-error", {
+        file: file && { name: file.name, type: file.type, size: file.size },
+        error,
+        response,
+      });
       this.showError(error);
     });
 
     this.uppy.on("complete", (result) => {
+      this.uploadPending = false;
+      debugLog(this.kindValue, "complete", {
+        successful: result.successful.map(file => ({
+          name: file.name,
+          response: file.response,
+        })),
+        failed: result.failed.map(file => ({
+          name: file.name,
+          error: file.error,
+        })),
+      });
+
       if (result.failed.length) {
         this.showError(result.failed[0].error);
         clearUppyFiles(this.uppy);
@@ -216,17 +280,48 @@ export default class extends Controller {
       const success = this.config.onSuccess?.(this, payload, files);
 
       if (success === false) {
+        debugLog(this.kindValue, "success-handler-returned-false", { payload });
         clearUppyFiles(this.uppy);
         return;
       }
 
       this.hiddenInputElement.value = JSON.stringify(payload);
+      debugLog(this.kindValue, "hidden-input-updated", {
+        hiddenInputId: this.hiddenInputElement.id,
+        value: this.hiddenInputElement.value,
+      });
+      this.notifyFieldChanged(this.hiddenInputElement);
       clearUppyFiles(this.uppy);
     });
   }
 
   disconnect() {
+    debugLog(this.kindValue || "unknown", "disconnect");
     this.uppy?.destroy();
+  }
+
+  startUpload(reason) {
+    if (this.uploadPending) {
+      debugLog(this.kindValue, "upload-skip-already-pending", { reason });
+      return;
+    }
+
+    this.uploadPending = true;
+    debugLog(this.kindValue, "upload-requested", { reason });
+
+    this.uppy.upload().catch((error) => {
+      this.uploadPending = false;
+      debugLog(this.kindValue, "upload-request-failed", { reason, error });
+      this.showError(error);
+    });
+  }
+
+  notifyFieldChanged(element) {
+    if (!element) {
+      return;
+    }
+
+    element.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   disableSubmitButton() {
@@ -288,6 +383,8 @@ export default class extends Controller {
   }
 
   showError(error) {
+    this.uploadPending = false;
+    debugLog(this.kindValue || "unknown", "show-error", { error });
     alert(joinErrorMessage(this.failureMessageValue, error));
   }
 }

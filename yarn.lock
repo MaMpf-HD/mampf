@@ -832,6 +832,13 @@
     preact "^10.26.10"
     shallow-equal "^3.0.0"
 
+"@uppy/locales@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@uppy/locales/-/locales-5.1.1.tgz#375a17cfeea48921cd7785f26421a518cc773918"
+  integrity sha512-zSbDU27JzfdssRJoa5/xmGOsrEtS+2Z9j41weaoCa/NoK4wqZzkFNQ0Z44etbTg3PDVFakZVDu/Z+c+vsJCfdQ==
+  dependencies:
+    "@uppy/utils" "^7.1.5"
+
 "@uppy/provider-views@^5.2.2":
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/@uppy/provider-views/-/provider-views-5.2.2.tgz#81e66f6983121e115d5d385c8a649f3721e9e10d"

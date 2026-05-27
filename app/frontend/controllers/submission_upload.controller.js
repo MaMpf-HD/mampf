@@ -3,6 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 import {
   buildUppy,
   clearUppyFiles,
+  debugLog,
   formatBytes,
   joinErrorMessage,
 } from "~/uploads/uppy_utils";
@@ -12,6 +13,7 @@ export default class extends Controller {
     "dashboard",
     "hiddenInput",
     "permission",
+    "permissionField",
     "metadata",
     "noMetadata",
     "removeButton",
@@ -27,12 +29,24 @@ export default class extends Controller {
     failureMessage: String,
     missingConsentMessage: String,
     note: String,
+    uploadButtonLabel: String,
   };
 
   connect() {
     if (!this.hasDashboardTarget || !this.hasHiddenInputTarget) {
+      debugLog("submission", "connect-skipped", {
+        hasDashboardTarget: this.hasDashboardTarget,
+        hasHiddenInputTarget: this.hasHiddenInputTarget,
+      });
       return;
     }
+
+    debugLog("submission", "connect", {
+      endpoint: this.endpointValue,
+      hiddenInputId: this.hiddenInputTarget.id,
+      acceptedFileTypes: this.acceptedFileTypes(),
+      maxFileSize: this.maxFileSizeValue,
+    });
 
     this.uppy = buildUppy({
       target: this.dashboardTarget,
@@ -41,7 +55,12 @@ export default class extends Controller {
       allowedFileTypes: this.acceptedFileTypes(),
       maxFileSize: this.maxFileSizeValue,
       note: this.noteValue || null,
+      dashboardLocale: this.dashboardLocale(),
       onBeforeUpload: () => {
+        debugLog("submission", "before-upload", {
+          permissionChecked: this.permissionTarget.checked,
+        });
+
         if (this.permissionTarget.checked) {
           return true;
         }
@@ -49,25 +68,68 @@ export default class extends Controller {
         alert(this.missingConsentMessageValue);
         return false;
       },
+      debugLabel: "submission",
     });
 
-    this.uppy.on("file-added", () => {
+    if (this.hasUploadedFile()) {
+      this.showUploadedState({ pendingSave: false });
+    }
+    else {
+      this.showChooserState();
+    }
+
+    this.uppy.on("file-added", (file) => {
+      debugLog("submission", "file-added", {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      });
       this.hiddenInputTarget.value = "";
       this.setDetachValue("false");
-      this.show(this.pendingNoticeTarget);
-      this.hide(this.uploadedNoticeTarget);
+      this.showChooserState({ fileSelected: true });
       this.disableSave();
     });
 
+    this.uppy.on("upload", (uploadId, files) => {
+      debugLog("submission", "upload-start", {
+        uploadId,
+        files: files.map(file => ({ name: file.name, type: file.type, size: file.size })),
+      });
+    });
+
+    this.uppy.on("upload-success", (file, response) => {
+      debugLog("submission", "upload-success", {
+        file: { name: file.name, type: file.type, size: file.size },
+        response,
+      });
+    });
+
     this.uppy.on("restriction-failed", (_file, error) => {
+      debugLog("submission", "restriction-failed", { error });
       this.showError(error.message || error);
     });
 
-    this.uppy.on("upload-error", (_file, error) => {
+    this.uppy.on("upload-error", (file, error, response) => {
+      debugLog("submission", "upload-error", {
+        file: file && { name: file.name, type: file.type, size: file.size },
+        error,
+        response,
+      });
       this.showError(error);
     });
 
     this.uppy.on("complete", (result) => {
+      debugLog("submission", "complete", {
+        successful: result.successful.map(file => ({
+          name: file.name,
+          response: file.response,
+        })),
+        failed: result.failed.map(file => ({
+          name: file.name,
+          error: file.error,
+        })),
+      });
+
       if (result.failed.length) {
         this.showError(result.failed[0].error);
         clearUppyFiles(this.uppy);
@@ -83,13 +145,14 @@ export default class extends Controller {
       }
 
       this.hiddenInputTarget.value = JSON.stringify(response);
+      debugLog("submission", "hidden-input-updated", {
+        hiddenInputId: this.hiddenInputTarget.id,
+        value: this.hiddenInputTarget.value,
+      });
+      this.notifyFieldChanged(this.hiddenInputTarget);
       this.metadataTarget.textContent
         = `${response.metadata.filename} (${formatBytes(response.metadata.size)})`;
-      this.show(this.metadataTarget, "inline");
-      this.hide(this.noMetadataTarget);
-      this.show(this.removeButtonTarget, "inline-block");
-      this.hide(this.pendingNoticeTarget);
-      this.show(this.uploadedNoticeTarget);
+      this.showUploadedState({ pendingSave: true });
       this.enableSave();
       this.setDetachValue("false");
       clearUppyFiles(this.uppy);
@@ -97,18 +160,21 @@ export default class extends Controller {
   }
 
   disconnect() {
+    debugLog("submission", "disconnect");
     this.uppy?.destroy();
   }
 
   remove(event) {
     event.preventDefault();
+    debugLog("submission", "remove-clicked", {
+      hiddenInputId: this.hiddenInputTarget.id,
+      previousValue: this.hiddenInputTarget.value,
+    });
     this.hiddenInputTarget.value = "";
     this.setDetachValue("true");
-    this.hide(this.metadataTarget);
-    this.show(this.noMetadataTarget, "inline");
-    this.hide(this.removeButtonTarget);
-    this.hide(this.pendingNoticeTarget);
-    this.hide(this.uploadedNoticeTarget);
+    this.notifyFieldChanged(this.hiddenInputTarget);
+    this.metadataTarget.textContent = "";
+    this.showChooserState();
     this.enableSave();
     clearUppyFiles(this.uppy);
   }
@@ -118,6 +184,23 @@ export default class extends Controller {
       .split(",")
       .map(value => value.trim())
       .filter(Boolean);
+  }
+
+  dashboardLocale() {
+    if (!this.hasUploadButtonLabelValue || !this.uploadButtonLabelValue) {
+      return null;
+    }
+
+    return {
+      strings: {
+        uploadXFiles: {
+          0: this.uploadButtonLabelValue,
+        },
+        uploadXNewFiles: {
+          0: this.uploadButtonLabelValue,
+        },
+      },
+    };
   }
 
   disableSave() {
@@ -140,6 +223,57 @@ export default class extends Controller {
     }
   }
 
+  notifyFieldChanged(element) {
+    if (!element) {
+      return;
+    }
+
+    element.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  hasUploadedFile() {
+    return this.hiddenInputTarget.value.trim() !== "" || this.isVisible(this.metadataTarget);
+  }
+
+  isVisible(element) {
+    return Boolean(element) && getComputedStyle(element).display !== "none";
+  }
+
+  showChooserState({ fileSelected = false } = {}) {
+    this.show(this.dashboardTarget);
+    this.show(this.permissionFieldTarget);
+    this.permissionTarget.checked = false;
+    this.hide(this.metadataTarget);
+    this.show(this.noMetadataTarget, "inline");
+    this.hide(this.removeButtonTarget);
+
+    if (fileSelected) {
+      this.show(this.pendingNoticeTarget);
+    }
+    else {
+      this.hide(this.pendingNoticeTarget);
+    }
+
+    this.hide(this.uploadedNoticeTarget);
+  }
+
+  showUploadedState({ pendingSave }) {
+    this.hide(this.dashboardTarget);
+    this.hide(this.permissionFieldTarget);
+    this.permissionTarget.checked = false;
+    this.show(this.metadataTarget, "inline");
+    this.hide(this.noMetadataTarget);
+    this.show(this.removeButtonTarget, "inline-block");
+    this.hide(this.pendingNoticeTarget);
+
+    if (pendingSave) {
+      this.show(this.uploadedNoticeTarget);
+    }
+    else {
+      this.hide(this.uploadedNoticeTarget);
+    }
+  }
+
   show(element, display = "") {
     if (element) {
       element.style.display = display;
@@ -153,6 +287,7 @@ export default class extends Controller {
   }
 
   showError(error) {
+    debugLog("submission", "show-error", { error });
     alert(joinErrorMessage(this.failureMessageValue, error));
   }
 }

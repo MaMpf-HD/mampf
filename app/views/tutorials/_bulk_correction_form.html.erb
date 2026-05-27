@@ -14,6 +14,7 @@
   <div class="row mt-3">
     <div class="col-12">
       <%= f.hidden_field :files,
+                         name: 'cached_files',
                          id: 'upload-bulk-correction-hidden',
                          data: { uppy_upload_target: 'hiddenInput' } %>
       <div data-uppy-upload-target="dashboard"></div>

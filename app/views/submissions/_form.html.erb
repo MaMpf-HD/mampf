@@ -4,7 +4,8 @@
                               submission_upload_accepted_file_types_value: assignment.accepted_for_file_input,
                               submission_upload_max_file_size_value: 10 * 1024 * 1024,
                               submission_upload_failure_message_value: t('submission.upload_failure'),
-                              submission_upload_missing_consent_message_value: t('submission.missing_consent') } } do |f| %>
+                              submission_upload_missing_consent_message_value: t('submission.missing_consent'),
+                              submission_upload_upload_button_label_value: t('submission.upload_file') } } do |f| %>
   <div class="card-body submissionBody"
        data-id="<%= assignment.id %>">
     <div class="row mb-3">
@@ -79,7 +80,9 @@
       </div>
       <div class="col-12 mt-2"
            id="userManuscript-status">
-        <div class="col-12 my-1" id="file-permission-field">
+        <div class="col-12 my-1"
+             id="file-permission-field"
+             data-submission-upload-target="permissionField">
           <div class="form-check">
             <input class="form-check-input"
                    type="checkbox"
