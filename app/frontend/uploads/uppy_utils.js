@@ -15,7 +15,6 @@ export function buildUppy({
   note = null,
   onBeforeUpload,
   dashboardLocale,
-  debugLabel = endpoint,
 }) {
   const restrictions = {};
 
@@ -44,14 +43,6 @@ export function buildUppy({
 
   const uppy = new Uppy(uppyOptions);
 
-  debugLog(debugLabel, "create", {
-    autoProceed,
-    allowMultipleFiles,
-    allowedFileTypes,
-    maxFileSize,
-    note,
-  });
-
   const dashboardOptions = {
     inline: true,
     target,
@@ -75,12 +66,6 @@ export function buildUppy({
     fieldName: "file",
     headers: uploadHeaders(),
     getResponseData(xhr) {
-      debugLog(debugLabel, "response", {
-        status: xhr.status,
-        statusText: xhr.statusText,
-        responseText: xhr.responseText,
-      });
-
       return JSON.parse(xhr.responseText);
     },
   });
@@ -90,10 +75,6 @@ export function buildUppy({
 
 export function clearUppyFiles(uppy) {
   uppy.getFiles().forEach(file => uppy.removeFile(file.id));
-}
-
-export function debugLog(label, event, payload = {}) {
-  console.info(`[uppy-debug] ${label} ${event}`, payload);
 }
 
 export function extractErrorMessage(error) {
@@ -137,11 +118,6 @@ function uploadHeaders() {
   if (token) {
     headers["X-CSRF-Token"] = token;
   }
-
-  debugLog("headers", "resolved", {
-    hasCsrfToken: Boolean(token),
-    headers,
-  });
 
   return headers;
 }
