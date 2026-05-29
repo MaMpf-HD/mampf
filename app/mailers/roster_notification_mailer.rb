@@ -51,6 +51,11 @@ class RosterNotificationMailer < ApplicationMailer
     email("moved_between_groups")
   end
 
+  def added_to_lecture_email
+    prepare_data(params)
+    email("added_to_lecture")
+  end
+
   def removed_from_lecture_email
     prepare_data(params)
     email("removed_from_lecture")
@@ -95,13 +100,11 @@ class RosterNotificationMailer < ApplicationMailer
       when Lecture
         lecture_url(rosterable)
       when Tutorial
-        # TODO: replace with tutorial details page when it exists
-        lecture_campaign_registrations_url(rosterable.lecture)
+        nil
       when Talk
         talk_url(rosterable)
       when Cohort
-        # TODO: replace with cohort details page when it exists
-        lecture_campaign_registrations_url(rosterable.lecture)
+        nil
       else
         raise(ArgumentError,
               "Unknown rosterable type: #{rosterable.class.name}")

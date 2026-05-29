@@ -314,6 +314,16 @@ en:
           This grant you access to the corresponding lecture %{lecture_title} and its materials.
         </p>
       roster_added_to_group_email_subject: 'Added to group %{rosterable_title}'
+      roster_added_to_lecture_email_body: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been added to the lecture roster of
+          <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          This grant you access to the lecture %{lecture_title} and its materials.
+        </p>
+      roster_added_to_lecture_email_subject: 'Added to lecture %{lecture_title}'
       roster_removed_from_group_email_body: |
         <p>Hello %{name},</p>
         <p>
