@@ -2,6 +2,9 @@ module Assessment
   class TaskPointsController < ApplicationController
     before_action :set_assessment, except: [:mark_as_participated, :update_user]
     before_action :set_locale
+    # before_action :authorize_assessment_access!
+
+    
 
     def update_team_multi
       scorer = current_user
@@ -15,7 +18,7 @@ module Assessment
         records.each do |entry|
           if entry["target"] == "submission"
             submission = Submission.find(entry["id"])
-            SubmissionGraderService.score_tasks!(
+            SubmissionGraderService.score_tasks_by_submission!(
               submission,
               entry["task_points"],
               scorer
@@ -47,7 +50,7 @@ module Assessment
       case params[:type]
       when "Tutorial"
         submission = Submission.find_by(id: params[:id])
-        SubmissionGraderService.score_tasks!(
+        SubmissionGraderService.score_tasks_by_submission!(
           submission,
           task_points,
           scorer
@@ -79,7 +82,7 @@ module Assessment
     end
 
     def refresh_submission
-      @submission = Submission.find_by(id: params[:id])
+      @submission = Submission.find_by(id: params[:submission_id])
       @assignment = @submission.assignment
       rerender_submission_row
     end
@@ -162,17 +165,23 @@ module Assessment
       end
 
       def set_assessment
-        is_multi_update = params[:id].nil? && params[:submissions].present?
-        submission = if is_multi_update
-          Submission.find_by(id: JSON.parse(params[:submissions]).first["id"])
-        else
-          Submission.find_by(id: params[:id])
-        end
-        @assessment = submission&.assessment
+        @assessment = find_assessment
         return if @assessment
 
         render json: { error: "Assessment not found" }, status: :not_found
-        nil
+      end
+
+      def find_assessment
+        if params[:submissions].present? && params[:id].nil?
+          submission = Submission.find_by(id: JSON.parse(params[:submissions]).first["id"])
+          submission&.assessment
+        elsif params[:id].present?
+          submission = Submission.find_by(id: params[:id])
+          submission&.assessment ||
+            Participation.find_by(id: params[:id])&.assessment
+        elsif params[:assignment_id].present?
+          Assignment.find_by(id: params[:assignment_id])&.assessment
+        end
       end
 
       def set_locale

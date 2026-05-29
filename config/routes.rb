@@ -779,7 +779,7 @@ Rails.application.routes.draw do
         to: "assessment/task_points#mark_as_participated",
         as: "mark_user_as_participated"
 
-  patch "submissions/:id/point_submission",
+  patch "submissions/:submission_id/point_submission",
         to: "assessment/task_points#update_team",
         as: "point_submission_tutorial",
         defaults: { type: "Tutorial" }

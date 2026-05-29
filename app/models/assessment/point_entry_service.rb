@@ -1,8 +1,9 @@
 module Assessment
   class PointEntryService
     # must ensure participation and task valid before calling this method
+    # task_points is a Hash of task_id => points, points potentially nil and string
     def self.enter_points(participation,
-                          task_points, # Hash of task_id => points, points potentially nil and string
+                          task_points,
                           grader,
                           submission = nil)
       assessment = participation.assessment
