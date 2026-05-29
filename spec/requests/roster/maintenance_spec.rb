@@ -156,7 +156,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
       context "when user is already in this tutorial" do
         before { create(:tutorial_membership, tutorial: tutorial, user: new_student) }
-        
 
         it "includes user name and group name in the already-member flash" do
           post add_member_tutorial_path(tutorial), params: { email: new_student.email }
@@ -247,7 +246,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
         email = ActionMailer::Base.deliveries.last
         expect(email.subject).to eq(
-          I18n.t("roster.mailer.roster_removed_to_group_email_subject",
+          I18n.t("roster.mailer.roster_removed_from_group_email_subject",
                  rosterable_title: tutorial.title)
         )
       end
@@ -339,7 +338,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
         expect(email.subject).to eq(
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
-                 rosterable_title: tutorial.title)
+                 rosterable_title: target.title)
         )
       end
 
@@ -470,7 +469,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
         expect(email.subject).to eq(
           I18n.t("roster.mailer.roster_removed_from_lecture_email_subject",
-                 rosterable_title: tutorial.title)
+                 lecture_title: lecture.title)
         )
       end
 
@@ -532,7 +531,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
         expect(email.subject).to eq(
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
-                 rosterable_title: tutorial.title)
+                 rosterable_title: target_tutorial.title)
         )
       end
 
