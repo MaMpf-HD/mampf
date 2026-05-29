@@ -311,7 +311,7 @@ en:
           <strong>%{rosterable_title}</strong>.
         </p>
         <p>
-          This grant you access to the corresponding lecture %{lecture_title} and its materials.
+          This grants you access to the corresponding lecture %{lecture_title} and its materials.
         </p>
       roster_added_to_group_email_subject: 'Added to group %{rosterable_title}'
       roster_added_to_lecture_email_body: |
