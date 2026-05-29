@@ -325,6 +325,16 @@ de:
           Dies gewährt Ihnen Zugriff auf die entsprechende Vorlesung %{lecture_title} und deren Materialien.
         </p>
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} hinzugefügt'
+      roster_added_to_lecture_email_body: |
+        <p>Hallo %{name},</p>
+        <p>
+          Sie wurden der Vorlesungsliste von
+          <strong>%{lecture_title}</strong> hinzugefügt.
+        </p>
+        <p>
+          Dies gewährt Ihnen Zugriff auf die Vorlesung %{lecture_title} und deren Materialien.
+        </p>
+      roster_added_to_lecture_email_subject: 'Zur Vorlesung %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body: |
         <p>Hallo %{name},</p>
         <p>
