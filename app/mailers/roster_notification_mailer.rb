@@ -99,7 +99,7 @@ class RosterNotificationMailer < ApplicationMailer
       case rosterable
       when Lecture
         lecture_url(rosterable)
-      when Tutorial || Cohort
+      when Tutorial, Cohort
         nil
       when Talk
         talk_url(rosterable)
