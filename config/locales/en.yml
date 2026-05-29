@@ -2767,7 +2767,7 @@ en:
       is empty.
       Please make sure that the file is not corrupted.
     file_size_too_big: The filesize exceeds the limit, nevertheless it is uploadable.
-    file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
+    file_size_way_too_big: The filesize exceeds the limit. Please reduce it outside MaMpf and upload the smaller file.
     optimization_help_html: >
       <b>Optimizing:</b> Use this button to optimize your file with your browser.
       This process takes about 1-2 minutes. We strongly suggest downloading the resulting
