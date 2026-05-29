@@ -869,8 +869,8 @@ class Lecture < ApplicationRecord
 
   def roster_eligible_tutorials?
     tutorials.joins(:tutorial_memberships).exists? ||
-      tutorials.in_campaign.exists? ||
-      tutorials.exists?(self_materialization_mode_disabled: false)
+      tutorials.joins(:registration_items).exists? ||
+      tutorials.where.not(self_materialization_mode: "disabled").exists?
   end
 
   private
