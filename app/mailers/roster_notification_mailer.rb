@@ -99,12 +99,10 @@ class RosterNotificationMailer < ApplicationMailer
       case rosterable
       when Lecture
         lecture_url(rosterable)
-      when Tutorial
+      when Tutorial || Cohort
         nil
       when Talk
         talk_url(rosterable)
-      when Cohort
-        nil
       else
         raise(ArgumentError,
               "Unknown rosterable type: #{rosterable.class.name}")
