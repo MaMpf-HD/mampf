@@ -126,7 +126,8 @@ RSpec.describe(Tutorial, type: :model) do
   end
 
   describe "#roster_eligible?" do
-    let(:tutorial) { create(:tutorial) }
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
 
     it "returns true if tutorial has any memberships" do
       create(:tutorial_membership, tutorial: tutorial)
@@ -134,7 +135,8 @@ RSpec.describe(Tutorial, type: :model) do
     end
 
     it "returns true if tutorial is in a campaign" do
-      allow(tutorial).to receive(:in_campaign?).and_return(true)
+      campaign = create(:registration_campaign, campaignable: lecture)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
       expect(tutorial.roster_eligible?).to eq(true)
     end
 
