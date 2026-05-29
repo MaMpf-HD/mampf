@@ -70,7 +70,7 @@ class Tutorial < ApplicationRecord
     end
   end
 
-  def rosterized?
+  def roster_eligible?
     tutorial_memberships.exists? ||
       in_campaign? ||
       !self_materialization_mode_disabled?

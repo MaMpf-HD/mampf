@@ -867,8 +867,10 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
-  def has_rosterized_tutorials?
-    tutorials.any? { |t| t.rosterized? }
+  def roster_eligible_tutorials?
+    tutorials.joins(:tutorial_memberships).exists? ||
+      tutorials.in_campaign.exists? ||
+      tutorials.exists?(self_materialization_mode_disabled: false)
   end
 
   private
