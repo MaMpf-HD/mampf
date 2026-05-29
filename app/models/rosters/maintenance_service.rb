@@ -5,13 +5,14 @@ module Rosters
     class CapacityExceededError < StandardError; end
 
     def add_user!(user, rosterable, force: false, source_campaign_id: nil)
-      rosterable.with_lock do
+      added = rosterable.with_lock do
         add_user_without_lock!(user,
                                rosterable,
                                force: force,
                                source_campaign_id: source_campaign_id)
       end
-      RosterNotificationMailer.added(user, rosterable)
+      RosterNotificationMailer.added(user, rosterable) if added
+      added
     end
 
     def remove_user!(user, rosterable)

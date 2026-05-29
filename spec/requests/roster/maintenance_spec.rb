@@ -401,7 +401,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.not_to(change { source.members.count })
         expect(target.members.count).to eq(0)
       end
-
     end
   end
 
