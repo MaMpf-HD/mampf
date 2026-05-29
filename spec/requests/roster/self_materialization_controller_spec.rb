@@ -77,7 +77,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           post(self_add_tutorial_path(tutorial), as: :turbo_stream)
         end.not_to(change { tutorial.members.count })
       end
-
     end
 
     context "when the tutorial is locked" do
@@ -115,7 +114,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           post(self_add_tutorial_path(tutorial), as: :turbo_stream)
         end.not_to(change { tutorial.members.count })
       end
-
     end
 
     context "when the tutorial is full" do
@@ -194,7 +192,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
     end
 
     context "when the tutorial is locked" do
-
       it "returns a locked error flash" do
         delete self_remove_tutorial_path(camp_tutorial), as: :turbo_stream
 
@@ -207,7 +204,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           delete(self_remove_tutorial_path(camp_tutorial), as: :turbo_stream)
         end.not_to(change { camp_tutorial.members.count })
       end
-
     end
 
     context "when self-remove is not allowed" do
@@ -230,7 +226,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
         end.not_to(change { tutorial.members.count })
       end
-
     end
   end
 end
