@@ -41,6 +41,18 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       )
     end
 
+    it "sends an email when successfully added" do
+      expect do
+        post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+      email = ActionMailer::Base.deliveries.last
+      expect(email.subject).to eq(
+        I18n.t("roster.mailer.roster_added_to_group_email_subject",
+               rosterable_title: tutorial.title)
+      )
+    end
+
     it "updates the rosterized entries turbo frame" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 
@@ -77,6 +89,12 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           post(self_add_tutorial_path(tutorial), as: :turbo_stream)
         end.not_to(change { tutorial.members.count })
       end
+
+      it "does not send an email" do
+        expect do
+          post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
 
     context "when the tutorial is locked" do
@@ -91,6 +109,12 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect do
           post(self_add_tutorial_path(camp_tutorial), as: :turbo_stream)
         end.not_to(change { camp_tutorial.members.count })
+      end
+
+      it "does not send an email" do
+        expect do
+          post(self_add_tutorial_path(camp_tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
       end
     end
 
@@ -113,6 +137,12 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect do
           post(self_add_tutorial_path(tutorial), as: :turbo_stream)
         end.not_to(change { tutorial.members.count })
+      end
+
+      it "does not send an email" do
+        expect do
+          post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
       end
     end
 
@@ -175,20 +205,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         )
       end
     end
-
-    context "when self-add succeeds and should send email" do
-      before do
-        allow_any_instance_of(Rosters::SelfMaterializationService)
-          .to receive(:self_add!)
-        allow(RosterMailer).to receive_message_chain(:self_added, :deliver_now)
-      end
-
-      it "sends an email" do
-        expect do
-          post(self_add_tutorial_path(tutorial), as: :turbo_stream)
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
-      end
-    end
   end
 
   describe "DELETE /tutorials/:id/roster/self_remove" do
@@ -202,6 +218,18 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(
         I18n.t("roster.messages.user_removed", user: user.info)
+      )
+    end
+
+    it "sends an email when successfully removed" do
+      expect do
+        delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+      email = ActionMailer::Base.deliveries.last
+      expect(email.subject).to eq(
+        I18n.t("roster.mailer.roster_removed_from_group_email_subject",
+               rosterable_title: tutorial.title)
       )
     end
 
@@ -224,6 +252,12 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           delete(self_remove_tutorial_path(camp_tutorial), as: :turbo_stream)
         end.not_to(change { camp_tutorial.members.count })
       end
+
+      it "does not send an email" do
+        expect do
+          delete(self_remove_tutorial_path(camp_tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
 
     context "when self-remove is not allowed" do
@@ -245,6 +279,12 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect do
           delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
         end.not_to(change { tutorial.members.count })
+      end
+
+      it "does not send an email" do
+        expect do
+          delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
       end
     end
   end
