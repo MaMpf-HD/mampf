@@ -13,7 +13,7 @@ class RosterNotificationMailer < ApplicationMailer
         rosterable: rosterable,
         recipient: user,
         sender: DefaultSetting::PROJECT_EMAIL
-      ).public_send(template).deliver_now
+      ).public_send(template).deliver_later
     end
 
     def removed(user, rosterable)
@@ -23,7 +23,7 @@ class RosterNotificationMailer < ApplicationMailer
         rosterable: rosterable,
         recipient: user,
         sender: DefaultSetting::PROJECT_EMAIL
-      ).public_send(template).deliver_now
+      ).public_send(template).deliver_later
     end
 
     def moved(user, old_rosterable, new_rosterable)
@@ -32,7 +32,7 @@ class RosterNotificationMailer < ApplicationMailer
         new_rosterable: new_rosterable,
         recipient: user,
         sender: DefaultSetting::PROJECT_EMAIL
-      ).moved_between_groups_email.deliver_now
+      ).moved_between_groups_email.deliver_later
     end
   end
 
