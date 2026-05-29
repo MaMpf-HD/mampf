@@ -123,7 +123,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { tutorial.members.count }.by(1)
       end
 
-      it "sends an email when a user is successfully added tot tutorial" do
+      it "sends an email when a user is successfully added to tutorial" do
         expect do
           post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
@@ -156,6 +156,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
       context "when user is already in this tutorial" do
         before { create(:tutorial_membership, tutorial: tutorial, user: new_student) }
+        
 
         it "includes user name and group name in the already-member flash" do
           post add_member_tutorial_path(tutorial), params: { email: new_student.email }
