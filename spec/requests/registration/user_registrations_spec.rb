@@ -253,7 +253,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
         it "uses the item's campaign for withdrawal validation" do
           expect do
-            delete withdraw_item_path(campaign_id: open_campaign.id, item_id: item.id)
+            delete(withdraw_item_path(campaign_id: open_campaign.id, item_id: item.id))
           end.not_to change(Registration::UserRegistration, :count)
 
           expect(response).to redirect_to(lecture_user_registrations_path(campaign.campaignable))
