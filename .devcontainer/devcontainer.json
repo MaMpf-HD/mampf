@@ -19,6 +19,10 @@
     ],
     "service": "app",
     // https://github.com/orgs/community/discussions/15506
+    "mounts": [
+    "source=${localWorkspaceFolder}/../mampf-infra,target=/workspaces/mampf-infra,type=bind",
+    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+    ],    
     "workspaceFolder": "/workspaces/mampf/",
     // https://containers.dev/features
     "features": {
@@ -38,6 +42,7 @@
         // in the container itself, we then install zsh
         // (this just serves as a fallback)
         "SHELL": "/bin/bash",
+        "SSH_AUTH_SOCK": "/ssh-agent",
         "VNC_RESOLUTION": "1920x1080x24",
         "VNC_DPI": "144"
     },
