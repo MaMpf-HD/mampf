@@ -12,17 +12,7 @@ echo "🚀 Install MdBook"
 
 if [ -d /workspaces/mampf-infra ]; then
   echo "🚀 Set up Ansible for mampf-infra"
-  if ! python3 -m venv --help >/dev/null 2>&1; then
-    sudo apt-get update
-    sudo apt-get install -y python3-venv
-  fi
-  python3 -m venv /workspaces/mampf-infra/.venv
-  . /workspaces/mampf-infra/.venv/bin/activate
-  pip install --upgrade pip
-  pip install ansible
-  ansible-galaxy collection install \
-    -r /workspaces/mampf-infra/collections/requirements.yml \
-    -p /workspaces/mampf-infra/collections
+  ./.devcontainer/install-ansible.sh
 fi
 
 echo -e "👋 Welcome to the MaMpf DevContainer.
