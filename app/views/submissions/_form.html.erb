@@ -1,3 +1,6 @@
+<% roster_eligible = Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials? %>
+<% enrolled_tutorial = roster_eligible && current_user.tutorial_rosterized(lecture) %>
+
 <%= form_with model: submission do |f| %>
   <div class="card-body submissionBody"
        data-id="<%= assignment.id %>">
@@ -5,20 +8,18 @@
       <div class="col-12">
         <%= f.label :tutorial_id,
                     t('basics.tutorial') %>
-        <!-- if roster maintenance is enabled and current lecture has rosterized tutorials, retrieve data automatically-->
-        <% if Flipper.enabled?(:roster_maintenance) && lecture.has_rosterized_tutorials? %>
-          <% if current_user.tutorial_rosterized(lecture) %>
+        <% if roster_eligible %>
+          <% if enrolled_tutorial %>
             <p>
-              <%= current_user.tutorial_rosterized(lecture)&.title_with_tutors %>
+              <%= enrolled_tutorial.title_with_tutors %>
             </p>
           <% else %>
-          <!-- if not, require student to enroll first-->
             <p>
               <%= t('submission.enroll_first') %>
             </p>
+            <%= link_to t('basics.enroll'), lecture_enrollment_path(lecture), class: 'btn btn-primary' %>
           <% end %>
         <% else %>
-        <!-- if roster maintenance is not enabled or current lecture does not have rosterized tutorials, enable manual selection of tutorial -->
           <%= f.select :tutorial_id,
                      options_for_select(tutorials_selection(lecture),
                                         submission.tutorial&.id ||
@@ -163,9 +164,11 @@
   </div>
   <div class="card-footer submissionFooter text-center p-2"
        data-id="<%= assignment.id %>">
-    <%= f.submit t('buttons.save'),
-                  class: 'btn btn-primary',
-                  "data-cy": "save-submission" %>
+    <% unless roster_eligible && !enrolled_tutorial %>
+      <%= f.submit t('buttons.save'),
+                    class: 'btn btn-primary',
+                    "data-cy": "save-submission" %>
+    <% end %>
     <%= link_to t('buttons.cancel'),
                 cancel_editing_submission_path(submission),
                 class: 'btn btn-secondary',

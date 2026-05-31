@@ -293,7 +293,7 @@ class SubmissionsController < ApplicationController
       assignment = Assignment.find_by(id: assignment_id)
       lecture = assignment&.lecture
 
-      if Flipper.enabled?(:roster_maintenance) && lecture&.has_rosterized_tutorials?
+      if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
         permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
       end
       permitted
@@ -303,7 +303,7 @@ class SubmissionsController < ApplicationController
     def submission_update_params
       permitted = params.expect(submission: [:tutorial_id])
       lecture = @submission.assignment.lecture
-      if Flipper.enabled?(:roster_maintenance) && lecture&.has_rosterized_tutorials?
+      if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
         permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
       end
       permitted

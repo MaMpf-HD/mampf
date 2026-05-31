@@ -125,26 +125,28 @@ RSpec.describe(Tutorial, type: :model) do
     end
   end
 
-  describe "#rosterized?" do
-    let(:tutorial) { create(:tutorial) }
+  describe "#roster_eligible?" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
 
     it "returns true if tutorial has any memberships" do
       create(:tutorial_membership, tutorial: tutorial)
-      expect(tutorial.rosterized?).to eq(true)
+      expect(tutorial.roster_eligible?).to eq(true)
     end
 
     it "returns true if tutorial is in a campaign" do
-      allow(tutorial).to receive(:in_campaign?).and_return(true)
-      expect(tutorial.rosterized?).to eq(true)
+      campaign = create(:registration_campaign, campaignable: lecture)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      expect(tutorial.roster_eligible?).to eq(true)
     end
 
     it "returns true if self_materialization_mode is set and not 'disabled'" do
       tutorial.self_materialization_mode = "add_and_remove"
-      expect(tutorial.rosterized?).to eq(true)
+      expect(tutorial.roster_eligible?).to eq(true)
     end
 
     it "returns false if none of the above applies" do
-      expect(tutorial.rosterized?).to eq(false)
+      expect(tutorial.roster_eligible?).to eq(false)
     end
   end
 end
