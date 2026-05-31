@@ -1,5 +1,5 @@
 <% roster_eligible = Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials? %>
-<% enrolled_tutorial = roster_eligible && current_user.tutorial_rosterized(lecture) %>
+<% enrolled_tutorial = current_user.tutorial_rosterized(lecture) %>
 
 <%= form_with model: submission do |f| %>
   <div class="card-body submissionBody"
