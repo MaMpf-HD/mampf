@@ -15,6 +15,12 @@ RSpec.describe(Assessment::Participation, type: :model) do
     it "creates a pending participation" do
       participation = FactoryBot.create(:assessment_participation, :pending)
       expect(participation.status).to eq("pending")
+      expect(participation.submitted_at).to be_nil
+    end
+
+    it "creates a submitted participation" do
+      participation = FactoryBot.create(:assessment_participation, :submitted)
+      expect(participation.status).to eq("pending")
       expect(participation.submitted_at).to be_present
     end
 

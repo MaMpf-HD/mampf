@@ -1,4 +1,5 @@
 module Assessment
+  # Represents the common interface for any model that can be assessed.
   module Assessable
     extend ActiveSupport::Concern
 
@@ -14,6 +15,12 @@ module Assessment
       a.lecture ||= try(:lecture)
       a.save! if a.changed?
       a
+    end
+
+    # By default, grading is always open unless the specific assessable
+    # (like Assignment) overrides this.
+    def grading_open?
+      true
     end
   end
 end

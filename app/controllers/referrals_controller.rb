@@ -59,11 +59,19 @@ class ReferralsController < ApplicationController
   def list_items
     authorize! :list_items, Referral.new
     teachable_id = params[:teachable_id].to_s.split("-")
+
+    allowed_types = {
+      "Course" => Course,
+      "Lecture" => Lecture,
+      "Lesson" => Lesson,
+      "Talk" => Talk
+    }
+
     if teachable_id[0] == "external"
       result = Item.where(medium: nil).pluck(:description, :id)
-    else
-      @teachable = teachable_id[0].constantize.find_by(id: teachable_id[1])
-      result = @teachable.media_items_with_inheritance
+    elsif allowed_types.key?(teachable_id[0])
+      @teachable = allowed_types[teachable_id[0]].find_by(id: teachable_id[1])
+      result = @teachable&.media_items_with_inheritance
     end
     result ||= Item.none
     render json: result.map { |i| { value: i.second, text: i.first } }

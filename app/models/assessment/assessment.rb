@@ -1,7 +1,11 @@
 module Assessment
+  # Represents a specific instance of a user participating in an assessment.
+  # It tracks the user's status, points, and grading information for that assessment.
   class Assessment < ApplicationRecord
     belongs_to :assessable, polymorphic: true
     belongs_to :lecture
+
+    delegate :grading_open?, to: :assessable, allow_nil: true
 
     has_many :tasks, dependent: :destroy, class_name: "Assessment::Task",
                      inverse_of: :assessment

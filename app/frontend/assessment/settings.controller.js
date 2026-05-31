@@ -57,7 +57,11 @@ export default class extends Controller {
     this.hideSubmitElements();
   }
 
-  resetAfterSave() {
+  resetAfterSave(event) {
+    if (!event.detail.success) {
+      return;
+    }
+
     this.storeOriginalValues();
     this.hideSubmitElements();
   }

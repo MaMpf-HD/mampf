@@ -568,11 +568,16 @@ class MediaController < ApplicationController
     end
 
     def set_teachable
-      if params[:teachable_type].in?(["Course", "Lecture", "Lesson", "Talk"]) &&
-         params[:teachable_id].present?
-        @teachable = params[:teachable_type].constantize
-                                            .find_by(id: params[:teachable_id])
-      end
+      allowed_types = {
+        "Course" => Course,
+        "Lecture" => Lecture,
+        "Lesson" => Lesson,
+        "Talk" => Talk
+      }
+
+      return unless params[:teachable_id].present? && allowed_types.key?(params[:teachable_type])
+
+      @teachable = allowed_types[params[:teachable_type]].find_by(id: params[:teachable_id])
     end
 
     def detach_components

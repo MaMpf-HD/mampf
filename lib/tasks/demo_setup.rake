@@ -1,7 +1,12 @@
 namespace :demo do
-  desc "Run the legacy registration and roster demo flow"
-  task verify: :environment do
-    Demo::SetupSupport.verify!
+  desc "Set the feature flags relevant for the current slice"
+  task flags: :environment do
+    Demo::SetupSupport.setup_flags!
+  end
+
+  desc "Create reusable campaign playground scenarios"
+  task campaigns: :environment do
+    Demo::SetupSupport.setup_campaigns!
   end
 
   desc "Create finalized lecture and seminar rosters for the assessment demo"
@@ -14,7 +19,7 @@ namespace :demo do
     Demo::SetupSupport.setup_assessment!
   end
 
-  desc "Create rosters and assessment demo data in one pass"
+  desc "Create the maximum available demo data for the current slice"
   task setup: :environment do
     Demo::SetupSupport.setup!
   end

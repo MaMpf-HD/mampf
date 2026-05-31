@@ -1,4 +1,5 @@
 module Assessment
+  # Represents a specific task within an assessment, which can have points assigned to it.
   class Task < ApplicationRecord
     belongs_to :assessment, class_name: "Assessment::Assessment",
                             inverse_of: :tasks

@@ -8,7 +8,7 @@ FactoryBot.define do
     grade_numeric { nil }
     grade_text { nil }
     status { :pending }
-    submitted_at { Time.current }
+    submitted_at { nil }
     graded_at { nil }
     results_published_at { nil }
     published { false }
@@ -20,7 +20,7 @@ FactoryBot.define do
 
     trait :pending do
       status { :pending }
-      submitted_at { 1.day.ago }
+      submitted_at { nil }
     end
 
     trait :submitted do
@@ -29,6 +29,7 @@ FactoryBot.define do
     end
 
     trait :reviewed do
+      association :assessment, factory: [:assessment, :for_expired_assignment]
       status { :reviewed }
       submitted_at { 2.days.ago }
       graded_at { 1.day.ago }

@@ -432,6 +432,10 @@ stateDiagram-v2
 
 Assignment participations are **lazy** — created on first interaction (submission or grading). After the deadline, a backfill job seeds remaining roster students.
 
+```admonish warning "Strict Grading & Clean Slate"
+In `Assignment` lifecycles (unlike Talks or Exams), grading is completely locked while the assignment is inside its upload timeframe (`Assessment::Assessable#grading_open?` validation). If a deadline is subsequently extended *after* initial grading, and the student submits a new file, their participation state triggers a "clean slate" reset: bumping it back to *pending* and wiping previously entered granular points and metadata unconditionally.
+```
+
 ```mermaid
 stateDiagram-v2
     direction LR
@@ -446,6 +450,7 @@ stateDiagram-v2
     none --> pending_sub : Student uploads file<br/>(submitted_at set)
     none --> exempt : Tutor marks excused
     pending_sub --> reviewed : Tutor enters points
+    reviewed --> pending_sub : Deadline extended & <br/>student uploads new file
     none --> pending_bf : Deadline backfill job<br/>(submitted_at = nil)
     pending_bf --> reviewed : Tutor enters points<br/>(e.g. paper handed in)
     pending_bf --> exempt : Tutor marks excused

@@ -97,7 +97,6 @@
             "onAutoForward": "openBrowser"
         }
     },
-    "initializeCommand": "git submodule update --init --recursive",
     "postCreateCommand": ".devcontainer/boot.sh",
     "customizations": {
         "vscode": {

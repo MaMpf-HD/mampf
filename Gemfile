@@ -22,7 +22,7 @@ gem "connection_pool", "~> 3.0"
 gem "coveralls", "~> 0.7", require: false
 gem "csv", "~> 3.3", require: false
 gem "dalli", "~> 5.0"
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 gem "devise-bootstrap-views", "~> 1.1"
 gem "erubis", "~> 2.7"
 gem "exception_handler", "~> 0.8.0.0", "~> 0.8.0"
@@ -78,7 +78,7 @@ group :development do
   gem "rails-erd", "~> 1.7"
   gem "rubocop", "1.81.7", require: false
   gem "rubocop-performance", "~> 1.21", require: false
-  gem "rubocop-rails", "~> 2.24", require: false
+  gem "rubocop-rails", "2.34.3", require: false
   gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
   gem "spring-watcher-listen", "~> 2.0"
   gem "web-console", "~> 4.2" # interactive console on exception pages
