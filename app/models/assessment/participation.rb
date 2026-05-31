@@ -52,10 +52,20 @@ module Assessment
       update!(points_total: task_points.sum(:points))
     end
 
-    def check_if_all_scored!
-      return if task_points.where(points: nil).exists?
+    # absent and exempt -> no change
+    # pending -> reviewed if all tasks scored, otherwise remains pending
+    # reviewed -> pending if any task points are changed to nil, otherwise remains reviewed
+    def update_status_if_all_scored!
+      return if absent? || exempt?
 
-      update!(status: :reviewed)
+      if pending? && !task_points.exists?(points: nil)
+        update!(status: :reviewed)
+        return
+      end
+
+      return unless reviewed? && task_points.exists?(points: nil)
+
+      update!(status: :pending)
     end
 
     def graded_tasks_points

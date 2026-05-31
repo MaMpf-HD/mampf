@@ -40,7 +40,7 @@ module Assessment
         end
 
         participation.recompute_points_total!
-        participation.check_if_all_scored!
+        participation.update_status_if_all_scored!
       end
 
       participation
