@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-image_repository="${MAMPF_IMAGE_REPOSITORY:-ghcr.io/mampf-hd/mampf}"
+image_repository="${MAMPF_IMAGE_REPOSITORY:-ghcr.io/mampf-hd/mampf-deploy}"
 image_tag="${MAMPF_IMAGE_TAG:-$(git rev-parse --short=12 HEAD)}"
 image_platform="${MAMPF_IMAGE_PLATFORM:-linux/amd64}"
 image_progress="${MAMPF_IMAGE_PROGRESS:-auto}"
@@ -16,7 +16,7 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   echo "Usage: bin/build-production-image"
   echo ""
   echo "Environment overrides:"
-  echo "  MAMPF_IMAGE_REPOSITORY   default: ghcr.io/mampf-hd/mampf"
+  echo "  MAMPF_IMAGE_REPOSITORY   default: ghcr.io/mampf-hd/mampf-deploy"
   echo "  MAMPF_IMAGE_TAG          default: current git short SHA"
   echo "  MAMPF_IMAGE_PLATFORM     default: linux/amd64"
   echo "  MAMPF_IMAGE_PROGRESS     default: auto (set to plain for line-by-line logs)"

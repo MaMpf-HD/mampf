@@ -23,7 +23,7 @@ jobs:
       contents: read
       packages: write
     env:
-      IMAGE_REPOSITORY: ${{ inputs.image_repository || 'ghcr.io/mampf-hd/mampf' }}
+      IMAGE_REPOSITORY: ${{ inputs.image_repository || 'ghcr.io/mampf-hd/mampf-deploy' }}
       IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
     outputs:
       image: ${{ steps.image.outputs.image }}
