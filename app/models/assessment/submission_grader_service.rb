@@ -50,6 +50,7 @@ module Assessment
                                            points_by_task_id,
                                            scorer)
       assignment = participation&.assessment&.assessable
+      return if assignment.nil?
       return if assignment.active?
 
       PointEntryService.enter_points(

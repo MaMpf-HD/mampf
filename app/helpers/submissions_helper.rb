@@ -112,14 +112,14 @@ module SubmissionsHelper
     submission_points = submission.graded_tasks_points
     submission_points.find do |sp|
       sp.task_id == assessment_task.id
-    end&.points || nil
+    end&.points
   end
 
   def extract_task_points_participation(participation, assessment_task)
     submission_points = participation.graded_tasks_points
     submission_points.find do |sp|
       sp.task_id == assessment_task.id
-    end&.points || nil
+    end&.points
   end
 
   def submission_late_color(submission)

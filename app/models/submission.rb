@@ -29,7 +29,7 @@ class Submission < ApplicationRecord
   def graded_tasks_points
     return unless assignment.assessable?
 
-    Assessment::TaskPoint.where(submission: self).distinct(:task_id)
+    Assessment::TaskPoint.where(submission: self)
   end
 
   def partners_of_user(user)
