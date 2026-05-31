@@ -72,6 +72,10 @@ en:
     no_assignments_yet: "No assignments created yet."
     no_assessables_yet: "No assessments created yet."
     submission_settings: "Submission Settings"
+    task_points:
+      submission:
+        message: 
+          update: "Task points updated successfully."
     errors:
       no_assessable: "Assignment not found."
       no_assessment: "Assessment not found for this item."

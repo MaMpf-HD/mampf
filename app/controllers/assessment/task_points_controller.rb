@@ -1,27 +1,20 @@
 module Assessment
   class TaskPointsController < ApplicationController
-    before_action :set_assessment, except: [:mark_as_participated, :update_user]
+    before_action :set_assignment_resource,
+                  only: [:update_team_multi, :update_team,
+                         :update_user, :refresh_submission,
+                         :refresh_user, :mark_as_participated]
     before_action :set_locale
-    # before_action :authorize_assessment_access!
-
-    
 
     def update_team_multi
-      scorer = current_user
-
       case params[:type]
       when "Tutorial"
         records = JSON.parse(params[:submissions])
-        @tutorial = Tutorial.find_by(id: params["tutorial_id"])
-        @assignment = Assignment.find_by(id: params["assignment_id"])
-
         records.each do |entry|
           if entry["target"] == "submission"
             submission = Submission.find(entry["id"])
             SubmissionGraderService.score_tasks_by_submission!(
-              submission,
-              entry["task_points"],
-              scorer
+              submission, entry["task_points"], current_user
             )
           end
 
@@ -29,10 +22,7 @@ module Assessment
 
           user = User.find(entry["id"])
           SubmissionGraderService.score_tasks_by_user!(
-            user,
-            @assignment,
-            entry["task_points"],
-            scorer
+            user, @assignment, entry["task_points"], current_user
           )
         end
 
@@ -44,64 +34,63 @@ module Assessment
     end
 
     def update_team
-      scorer = current_user
       task_points = JSON.parse(params[:task_points] || "{}")
-
       case params[:type]
       when "Tutorial"
-        submission = Submission.find_by(id: params[:id])
         SubmissionGraderService.score_tasks_by_submission!(
-          submission,
-          task_points,
-          scorer
+          submission, task_points, current_user
         )
         @submission = submission.reload
         @assignment = @submission.assignment
         @tutorial = @submission.tutorial
-        rerender_submission_row
+        render_task_points_update(
+          turbo_stream.replace(
+            "submission-row-#{@submission.id}",
+            SubmissionRowComponent.new(
+              submission: @submission,
+              assignment: @assignment,
+              tutorial: @tutorial
+            )
+          )
+        )
       end
     end
 
     def update_user
-      scorer = current_user
       task_points = JSON.parse(params[:task_points] || "{}")
-      @assignment = Assignment.find_by(id: params[:assignment_id])
-      @tutorial = Tutorial.find_by(id: params[:tutorial_id])
-
       case params[:type]
       when "Tutorial"
-        @participation = Participation.find_by(id: params[:id])
         SubmissionGraderService.score_tasks_by_participation!(
-          @participation,
-          task_points,
-          scorer
+          @participation, task_points, current_user
         )
         @user = @participation.user
-        rerender_user_row
+        render_task_points_update(
+          turbo_stream.replace(
+            "user-row-#{@user.id}",
+            html: render_to_string(
+              UserRowComponent.new(
+                user: @user,
+                assignment: @assignment,
+                tutorial: @tutorial
+              )
+            )
+          )
+        )
       end
     end
 
     def refresh_submission
-      @submission = Submission.find_by(id: params[:submission_id])
-      @assignment = @submission.assignment
       rerender_submission_row
     end
 
     def refresh_user
-      @participation = Participation.find_by(id: params[:id])
       @user = @participation.user
-      @assignment = @participation.assignment
-      @tutorial = @participation.tutorial
       rerender_user_row
     end
 
     def mark_as_participated
       user = User.find_by(id: params[:user_id])
-      @tutorial = Tutorial.find_by(id: params[:tutorial_id])
-      @assignment = Assignment.find_by(id: params[:assignment_id])
-      @assessment = @assignment.assessment
       SubmissionGraderService.init_participation(@assessment, user)
-
       @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                           &.order(:last_modification_by_users_at)
       @non_submitters = @assignment.non_submitters(@tutorial)
@@ -142,6 +131,11 @@ module Assessment
         end
       end
 
+      def render_task_points_update(*streams)
+        flash.now[:notice] = t("assessment.task_points.submission.message.update")
+        render turbo_stream: streams.flatten.compact + [stream_flash].compact
+      end
+
       def rerender_submission_table
         respond_to do |format|
           format.turbo_stream do
@@ -160,32 +154,52 @@ module Assessment
         end
       end
 
+      def set_assignment_resource
+        if params[:submissions]
+          @tutorial = Tutorial.find_by(id: params["tutorial_id"])
+          @assignment = Assignment.find_by(id: params["assignment_id"])
+          @assessment = @assignment.assessment
+          return if @tutorial && @assignment && @assessment
+
+          respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+
+        elsif params[:submission_id]
+          @submission = Submission.find_by(id: params[:submission_id])
+          @assignment = @submission.assignment
+          @assessment = @assignment.assessment
+          @tutorial = @submission.tutorial
+          return if @submission && @assignment && @assessment && @tutorial
+
+          respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+
+        elsif params[:participation_id]
+          @participation = Participation.find_by(id: params[:participation_id])
+          @assignment = @participation.assignment
+          @assessment = @assignment.assessment
+          @tutorial = @participation.tutorial
+
+          return if @participation && @assignment && @assessment && @tutorial
+
+          respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+
+        elsif params[:assignment_id] && params[:tutorial_id]
+          @assignment = Assignment.find_by(id: params[:assignment_id])
+          @tutorial = Tutorial.find_by(id: params[:tutorial_id])
+          @assessment = @assignment.assessment
+          return if @assignment && @tutorial && @assessment
+
+          respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+        end
+      end
+
       def current_ability
         @current_ability ||= AssessmentAbility.new(current_user)
       end
 
-      def set_assessment
-        @assessment = find_assessment
-        return if @assessment
-
-        render json: { error: "Assessment not found" }, status: :not_found
-      end
-
-      def find_assessment
-        if params[:submissions].present? && params[:id].nil?
-          submission = Submission.find_by(id: JSON.parse(params[:submissions]).first["id"])
-          submission&.assessment
-        elsif params[:id].present?
-          submission = Submission.find_by(id: params[:id])
-          submission&.assessment ||
-            Participation.find_by(id: params[:id])&.assessment
-        elsif params[:assignment_id].present?
-          Assignment.find_by(id: params[:assignment_id])&.assessment
-        end
-      end
-
       def set_locale
-        I18n.locale = @assessment&.assessable&.lecture&.locale_with_inheritance ||
+        I18n.locale = @lecture&.locale_with_inheritance ||
+                      @assessable&.lecture&.locale_with_inheritance ||
+                      @assessment&.assessable&.lecture&.locale_with_inheritance ||
                       current_user.locale ||
                       I18n.default_locale
       end

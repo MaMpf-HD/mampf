@@ -785,7 +785,7 @@ Rails.application.routes.draw do
         as: "point_submission_tutorial",
         defaults: { type: "Tutorial" }
 
-  patch "participations/:id/point_user",
+  patch "participations/:participation_id/point_user",
         to: "assessment/task_points#update_user",
         as: "point_user_tutorial",
         defaults: { type: "Tutorial" }
@@ -795,12 +795,12 @@ Rails.application.routes.draw do
         as: "point_multi_submissions_tutorial",
         defaults: { type: "Tutorial" }
 
-  patch "submissions/:id/refresh_point_submission",
+  patch "submissions/:submission_id/refresh_point_submission",
         to: "assessment/task_points#refresh_submission",
         as: "refresh_point_submission_tutorial",
         defaults: { type: "Tutorial" }
 
-  patch "participations/:id/refresh_point_user",
+  patch "participations/:participation_id/refresh_point_user",
         to: "assessment/task_points#refresh_user",
         as: "refresh_point_user_tutorial",
         defaults: { type: "Tutorial" }

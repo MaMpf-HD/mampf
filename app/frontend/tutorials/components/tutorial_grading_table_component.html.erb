@@ -1,11 +1,8 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
-
   <%# ── ZONE 1: has submission ── %>
   <% if @stack.any? %>
-    <div class="table-wrapper"
-        data-controller="table-fade">
-      <div class="table-overflow"
-          data-table-fade-target="inner">
+    <div class="table-wrapper" data-controller="table-fade">
+      <div class="table-overflow" data-table-fade-target="inner">
         <table
           class="table table-striped align-middle my-3"
           data-cy="tutorial-submissions-table"
@@ -19,11 +16,11 @@
               <% if grading_enabled? %>
                 <!-- support point by task -->
                 <% for assessment_task in tasks %>
-                  <th class="text-center sticky-col task-col grade-th">
+                  <th class="text-center sticky-col task-col grade-th"> <%# herb:disable html-no-duplicate-attributes %>
                     <%= t('assessment.grading_tutorial.task') %> <%= assessment_task.position %>
                     <br>
 
-                    <small class="text-muted">
+                    <small class="text-muted"> <%# herb:disable html-no-duplicate-attributes %>
                       (<%= assessment_task.max_points || 0 %>
                       <%= t('assessment.grading_tutorial.max_points') %>)
                     </small>
@@ -88,19 +85,19 @@
     <div>
       <table class="table table-striped align-middle my-3">
         <thead style="background: #fafafa;">
-            <tr>
-              <th class="grade-th">
-                <%= t('basics.user') %>
-              </th>
+          <tr>
+            <th class="grade-th">
+              <%= t('basics.user') %>
+            </th>
 
-              <th class="text-center grade-th">
-                <%= t('basics.status') %>
-              </th>
+            <th class="text-center grade-th">
+              <%= t('basics.status') %>
+            </th>
 
-              <th class="text-end grade-th">
-                <%= t('assessment.grading_tutorial.actions') %>
-              </th>
-            </tr>
+            <th class="text-end grade-th">
+              <%= t('assessment.grading_tutorial.actions') %>
+            </th>
+          </tr>
         </thead>
 
         <tbody>
@@ -108,6 +105,7 @@
             <tr>
               <td class="sticky-col team-col">
                 <%= user.tutorial_name %>
+
                 <i
                   class="
                     clipboardpopup bi bi-clipboard clickable
@@ -124,16 +122,18 @@
               </td>
 
               <td class="text-center sticky-col action-col">
-                <span class="badge rounded-pill bg-light text-muted" style="font-size: 11px;">
+                <span
+                  class="badge rounded-pill bg-light text-muted"
+                  style="font-size: 11px;"
+                >
                   <%= t('assessment.grading_tutorial.no_submission_badge') %>
                 </span>
-
               </td>
 
               <td class="text-end">
                 <% if !user.assessment_participation_in_assignment(@assignment) %>
                   <%= t('assessment.grading_tutorial.participated') %>
-                <% else%>
+                <% else %>
                   <%= link_to mark_user_as_participated_path(
                     user_id: user.id,
                     tutorial_id: @tutorial.id,
@@ -141,9 +141,12 @@
                   ),
                   style: "display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; border:1px solid #e0e0e0; background:#fff; font-size:12px; color:#555; text-decoration:none;",
                   data: { turbo_method: :patch, confirm: t('assessment.grading_tutorial.confirm_unsaved_changes') } do %>
-                  <span class="material-icons" style="font-size: 14px;">check</span>
-                  <%= t('assessment.grading_tutorial.mark_as_participated') %>
-                <% end %>
+                    <span class="material-icons" style="font-size: 14px;">
+                      check
+                    </span>
+
+                    <%= t('assessment.grading_tutorial.mark_as_participated') %>
+                  <% end %>
                 <% end %>
               </td>
             </tr>

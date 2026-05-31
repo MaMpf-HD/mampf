@@ -43,4 +43,55 @@ class SubmissionRowComponent < ViewComponent::Base
       absent: "info"
     }[status&.to_sym]
   end
+
+  def badge_status_participation_class(status)
+    "badge rounded-pill bg-#{badge_status_participation_color(status)}"
+  end
+
+  def task_points_input(assignment_task, allow_grading)
+    tag.input(
+      type: "number",
+      autocomplete: "off",
+      name: "task_points[#{assignment_task.id}]",
+      value: extract_task_points(assignment_task),
+      step: 0.5,
+      min: 0,
+      max: assignment_task.max_points,
+      data: {
+        submission_row_target: "input",
+        task_id: assignment_task.id,
+        action: "change->submission-row#markDirty input->submission-row#markDirty"
+      },
+      class: "form-control",
+      disabled: !allow_grading
+    )
+  end
+
+  def save_row_button(allow_grading)
+    class_name = "btn btn-sm btn-success d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+
+    tag.button(type: "button",
+               class: class_name,
+               data: { bs_toggle: "tooltip" },
+               title: helpers.t("buttons.save"),
+               data_action: "click->submission-row#saveRow",
+               disabled: !allow_grading) do
+      tag.i(class: "bi bi-save")
+    end
+  end
+
+  def refresh_row_button(allow_grading)
+    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+
+    tag.button(type: "button",
+               class: class_name,
+               data: { bs_toggle: "tooltip" },
+               title: helpers.t("buttons.refresh"),
+               data_action: "click->submission-row#refreshRow",
+               disabled: !allow_grading) do
+      tag.i(class: "bi bi-arrow-clockwise")
+    end
+  end
 end

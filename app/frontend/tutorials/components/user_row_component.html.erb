@@ -6,7 +6,6 @@
   data-user-row-id="<%= @user.id %>"
   data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
 >
-
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
     <%= @user.tutorial_name %>
@@ -29,23 +28,8 @@
   <% if grading_enabled? %>
     <!-- batch of columns 2: grade zone -->
     <!-- support point by task -->
-    <% for assignment_task in @assignment.assessment.tasks %>
-      <td class="sticky-col task-col">
-        <input
-          type="number"
-          autocomplete="off"
-          name="task_points[<%= assignment_task.id %>]"
-          value="<%= extract_task_points_participation(assignment_task) %>"
-          step="0.5"
-          min="0"
-          max="<%= assignment_task.max_points %>"
-          data-submission-row-target="input"
-          data-task-id="<%= assignment_task.id %>"
-          data-action="change->submission-row#markDirtyUser input->submission-row#markDirtyUser"
-          class="form-control"
-          disabled="<%= !allow_grading? %>"
-        >
-      </td>
+    <% @assignment.assessment.tasks.each do |assignment_task| %>
+      <%= task_points_participation_cell(assignment_task, allow_grading?) %>
     <% end %>
     <!-- Column 3: Total Points -->
     <td class="text-center sticky-col total-col">
@@ -56,7 +40,7 @@
       <% if @participation %>
         <% status = @participation.status %>
         <span
-          class="badge rounded-pill bg-<%= badge_status_participation_color(status) %>"
+          class="<%= badge_status_participation_class(status) %>"
           style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
         >
           <%= status %>
@@ -82,19 +66,7 @@
           >
         <% end %>
         <!-- Save row -->
-        <button
-          type="button"
-          class="
-            btn btn-sm btn-success d-inline-flex align-items-center
-            justify-content-center text-nowrap px-2 py-1 lh-1
-          "
-          data-bs-toggle="tooltip"
-          title="<%= t('buttons.save') %>"
-          data-action="click->submission-row#saveRow"
-          disabled="<%= allow_grading? %>"
-        >
-          <i class="bi bi-save"></i>
-        </button>
+        <%= save_row_button(allow_grading?) %>
 
         <!-- Refresh row -->
         <%= form_with url: refresh_point_user_tutorial_path(@participation, type: "Tutorial"),
@@ -108,20 +80,7 @@
           >
         <% end %>
         <!-- refresh row -->
-        <button
-          type="button"
-          class="
-            btn btn-sm btn-outline-secondary d-inline-flex
-            align-items-center justify-content-center text-nowrap px-2 py-1
-            lh-1
-          "
-          data-bs-toggle="tooltip"
-          title="<%= t('buttons.refresh') %>"
-          data-action="click->submission-row#refreshRow"
-          disabled="<%= allow_grading? %>"
-        >
-          <i class="bi bi-arrow-clockwise"></i>
-        </button>
+        <%= refresh_row_button(allow_grading?) %>
         <!-- TODO -->
       <% end %>
     </div>
