@@ -1,26 +1,33 @@
 #!/bin/bash
 set -e
 
-create_infra_venv() {
-  rm -rf /workspaces/mampf-infra/.venv
-  python3 -m venv /workspaces/mampf-infra/.venv
+infra_root=/workspaces/mampf-infra
+uv_bin="$HOME/.local/bin/uv"
+
+ensure_uv() {
+  if [ ! -x "$uv_bin" ]; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+  fi
 }
 
-if ! create_infra_venv; then
-  python_minor="$(python3 - <<'PY'
-import sys
-print(f"{sys.version_info.major}.{sys.version_info.minor}")
-PY
-)"
-  sudo apt-get update
-  sudo apt-get install -y python3-venv || true
-  sudo apt-get install -y "python${python_minor}-venv" || true
-  create_infra_venv
-fi
+ensure_python_312() {
+  "$uv_bin" python install 3.12
+}
 
-. /workspaces/mampf-infra/.venv/bin/activate
+create_infra_venv() {
+  rm -rf "$infra_root/.venv"
+  python_312="$("$uv_bin" python find 3.12)"
+  "$python_312" -m venv "$infra_root/.venv"
+}
+
+ensure_uv
+ensure_python_312
+create_infra_venv
+
+cd "$infra_root"
+. .venv/bin/activate
 pip install --upgrade pip
-pip install ansible
+pip install -r requirements.txt
 ansible-galaxy collection install \
-  -r /workspaces/mampf-infra/collections/requirements.yml \
-  -p /workspaces/mampf-infra/collections
+  -r collections/requirements.yml \
+  -p collections
