@@ -73,6 +73,9 @@ RUN yarn install --frozen-lockfile
 
 COPY --chown=app:app . /usr/src/app
 
+RUN chmod 755 /usr/src/app/docker/production/entrypoint-app.sh \
+    /usr/src/app/docker/production/entrypoint-sidekiq.sh
+
 # The command ". ./docker-dummy.env" will source our dummy docker env file.
 # So why do we need this?
 #
