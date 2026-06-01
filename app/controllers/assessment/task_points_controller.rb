@@ -38,9 +38,9 @@ module Assessment
       case params[:type]
       when "Tutorial"
         SubmissionGraderService.score_tasks_by_submission!(
-          submission, task_points, current_user
+          @submission, task_points, current_user
         )
-        @submission = submission.reload
+        @submission = @submission.reload
         @assignment = @submission.assignment
         @tutorial = @submission.tutorial
         render_task_points_update(

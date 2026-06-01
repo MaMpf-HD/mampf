@@ -267,8 +267,7 @@ class SubmissionsController < ApplicationController
               SubmissionRowComponent.new(
                 submission: @submission,
                 assignment: @assignment,
-                tutorial: @tutorial,
-                current_user: current_user
+                tutorial: @tutorial
               )
             )
           )
