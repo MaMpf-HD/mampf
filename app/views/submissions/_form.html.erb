@@ -1,4 +1,4 @@
-<% roster_eligible = Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials? %>
+<% roster_eligible = enabled_roster_for_lecture?(lecture) %>
 <% enrolled_tutorial = current_user.tutorial_rosterized(lecture) %>
 
 <%= form_with model: submission do |f| %>
