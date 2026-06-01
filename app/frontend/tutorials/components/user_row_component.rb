@@ -72,9 +72,8 @@ class UserRowComponent < ViewComponent::Base
 
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip" },
+               data: { bs_toggle: "tooltip", action: "click->submission-row#saveRow" },
                title: helpers.t("buttons.save"),
-               data_action: "click->submission-row#saveRow",
                disabled: !allow_grading) do
       tag.i(class: "bi bi-save")
     end
@@ -86,9 +85,8 @@ class UserRowComponent < ViewComponent::Base
 
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip" },
+               data: { bs_toggle: "tooltip", action: "click->submission-row#refreshRow" },
                title: helpers.t("buttons.refresh"),
-               data_action: "click->submission-row#refreshRow",
                disabled: !allow_grading) do
       tag.i(class: "bi bi-arrow-clockwise")
     end
