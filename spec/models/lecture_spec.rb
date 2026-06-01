@@ -137,17 +137,31 @@ RSpec.describe(Lecture, type: :model) do
   describe "#roster_eligible_tutorials?" do
     let(:lecture) { create(:lecture) }
 
-    it "returns true if any tutorial is rosterized" do
-      tut1 = create(:tutorial, lecture: lecture, self_materialization_mode: "add_and_remove")
-      tut2 = create(:tutorial, lecture: lecture, self_materialization_mode: "disabled")
-      allow(tut1).to receive(:roster_eligible?).and_return(true)
-      allow(tut2).to receive(:roster_eligible?).and_return(false)
+    it "returns true if any tutorial has memberships" do
+      tutorial = create(:tutorial, lecture: lecture, skip_campaigns: true,
+                                   self_materialization_mode: "add_and_remove")
+      other_tutorial = create(:tutorial, lecture: lecture, skip_campaigns: false)
+      create(:tutorial_membership, tutorial: tutorial)
       expect(lecture.roster_eligible_tutorials?).to eq(true)
     end
 
-    it "returns false if no tutorials are roster_eligible" do
-      allow_any_instance_of(Tutorial).to receive(:roster_eligible?).and_return(false)
-      create(:tutorial, lecture: lecture, self_materialization_mode: "disabled")
+    it "returns true if any tutorial has registration items" do
+      tutorial = create(:tutorial, lecture: lecture)
+      other_tutorial = create(:tutorial, lecture: lecture)
+      campaign = create(:registration_campaign, campaignable: lecture)
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial)
+
+      expect(lecture.roster_eligible_tutorials?).to eq(true)
+    end
+
+    it "returns true if any tutorial has self_materialization_mode enabled" do
+      create(:tutorial, lecture: lecture, self_materialization_mode: "add_and_remove")
+      expect(lecture.roster_eligible_tutorials?).to eq(true)
+    end
+
+    it "returns false if no tutorials meet any condition" do
       create(:tutorial, lecture: lecture, self_materialization_mode: "disabled")
       expect(lecture.roster_eligible_tutorials?).to eq(false)
     end
