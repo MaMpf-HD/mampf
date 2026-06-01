@@ -140,14 +140,14 @@ RSpec.describe(Lecture, type: :model) do
     it "returns true if any tutorial has memberships" do
       tutorial = create(:tutorial, lecture: lecture, skip_campaigns: true,
                                    self_materialization_mode: "add_and_remove")
-      other_tutorial = create(:tutorial, lecture: lecture, skip_campaigns: false)
+      create(:tutorial, lecture: lecture, skip_campaigns: false)
       create(:tutorial_membership, tutorial: tutorial)
       expect(lecture.roster_eligible_tutorials?).to eq(true)
     end
 
     it "returns true if any tutorial has registration items" do
       tutorial = create(:tutorial, lecture: lecture)
-      other_tutorial = create(:tutorial, lecture: lecture)
+      create(:tutorial, lecture: lecture)
       campaign = create(:registration_campaign, campaignable: lecture)
       create(:registration_item,
              registration_campaign: campaign,
