@@ -867,6 +867,8 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
+  # Mirrors Tutorial#roster_eligible? logic at the SQL level for performance.
+  # If eligibility conditions change, update both methods.
   def roster_eligible_tutorials?
     tutorials.joins(:tutorial_memberships).exists? ||
       tutorials.joins(:registration_items).exists? ||
