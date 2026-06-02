@@ -29,6 +29,7 @@ jobs:
       image: ${{ steps.image.outputs.image }}
       image_tag: ${{ steps.image.outputs.image_tag }}
       image_repository: ${{ steps.image.outputs.image_repository }}
+      image_digest: ${{ steps.build.outputs.digest }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -51,6 +52,7 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Build and push deploy image
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -59,6 +61,26 @@ jobs:
           tags: ${{ steps.image.outputs.image }}
           cache-from: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache,mode=max
+
+      - name: Write deploy image metadata
+        run: |
+          cat > deploy-image-metadata.json <<EOF
+          {
+            "image_repository": "${{ steps.image.outputs.image_repository }}",
+            "tag": "${{ steps.image.outputs.image_tag }}",
+            "image": "${{ steps.image.outputs.image }}",
+            "digest": "${{ steps.build.outputs.digest }}",
+            "digest_image": "${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}",
+            "head_sha": "${{ github.sha }}",
+            "run_id": "${{ github.run_id }}"
+          }
+          EOF
+
+      - name: Upload deploy image metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-image-metadata
+          path: deploy-image-metadata.json
 
       - name: Print image reference
         run: |
@@ -69,4 +91,6 @@ jobs:
             echo "Image: \`${{ steps.image.outputs.image }}\`"
             echo
             echo "Tag: \`${{ steps.image.outputs.image_tag }}\`"
+            echo
+            echo "Digest: \`${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
