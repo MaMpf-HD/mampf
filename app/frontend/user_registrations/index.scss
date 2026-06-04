@@ -7,6 +7,20 @@
   background: #d9e7dd;
 }
 
+.student-registration-rosterized-notice--negative {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1rem;
+  border-color: rgba(150, 44, 44, 0.24);
+  background: linear-gradient(180deg, #fff1f1, #f8e5e5);
+  color: #a12f2f;
+  font-size: 0.94rem;
+  font-weight: 700;
+  line-height: 1.35;
+  box-shadow: 0 12px 24px rgba(34, 62, 98, 0.08);
+}
+
 .student-registration-rosterized-shell {
   position: relative;
   display: flex;
@@ -124,6 +138,10 @@
 }
 
 @media (min-width: 768px) {
+  .student-registration-rosterized-notice--negative {
+    padding: 1.1rem;
+  }
+
   .student-registration-rosterized-shell {
     padding: 1.1rem;
   }

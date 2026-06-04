@@ -11,6 +11,9 @@
                locals: { rosterized_entries: @rosterized_entries } %>
   </div>
 
+  <%= render partial: "user_registrations/unallocated_preference_campaigns",
+             locals: { results: @unallocated_preference_results } %>
+
   <div class="campaign-list d-flex flex-column gap-4">
     <% if direct_enrollment_available %>
       <%= turbo_frame_tag "self_materialization_zone" do %>

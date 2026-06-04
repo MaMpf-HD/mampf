@@ -247,6 +247,7 @@ en:
       index:
         title: "Registrations"
         confirmed_cases: "Your registration is confirmed for"
+        unallocated_preference_notice: "Unfortunately, your registration for %{campaign} could not be considered because there were more registrations than available places. We received your preferences: %{preferences}."
         unknown_tutor: "A tutor has not been assigned yet."
         first_choice_title: "1st Choice Registrations"
         allocated_title: "Allocated Students"

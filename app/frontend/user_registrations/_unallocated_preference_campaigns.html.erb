@@ -1,0 +1,16 @@
+<% if results.present? %>
+  <div
+    class="
+      student-registration-rosterized-notice
+      student-registration-rosterized-notice--negative mb-4
+    "
+  >
+    <% results.each do |result| %>
+      <p class="mb-0">
+        <%= t("registration.user_registration.index.unallocated_preference_notice",
+              campaign: student_registration_campaign_title(result[:campaign]),
+              preferences: result[:preferences].join(", ")) %>
+      </p>
+    <% end %>
+  </div>
+<% end %>

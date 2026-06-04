@@ -34,6 +34,10 @@ module Registration
       @rosterized_entries = Rosters::StudentMaterializedResultResolver
                             .new(current_user)
                             .all_rosterized_for_lecture(@lecture)
+      @unallocated_preference_results = unallocated_preference_results_for(
+        @lecture,
+        current_user
+      )
       @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user)
                                                          .call
       render template: "user_registrations/index",
@@ -105,6 +109,56 @@ module Registration
             result.errors.join(", "),
             fallback_location: lecture_user_registrations_path(@campaign.campaignable)
           )
+        end
+      end
+
+      def unallocated_preference_results_for(lecture, user)
+        campaigns = unallocated_preference_campaigns_for(lecture, user)
+        campaign_ids = campaigns.map(&:id)
+        registrations_by_campaign = Registration::UserRegistration
+                                    .rejected
+                                    .where(user_id: user.id,
+                                           registration_campaign_id: campaign_ids)
+                                    .includes(registration_item: :registerable)
+                                    .order(:preference_rank)
+                                    .group_by(&:registration_campaign_id)
+
+        campaigns.map do |campaign|
+          {
+            campaign: campaign,
+            preferences: unallocated_preference_labels(
+              registrations_by_campaign[campaign.id] || []
+            )
+          }
+        end
+      end
+
+      def unallocated_preference_campaigns_for(lecture, user)
+        confirmed_campaign_ids = Registration::UserRegistration
+                                 .confirmed
+                                 .where(user_id: user.id)
+                                 .select(:registration_campaign_id)
+
+        Registration::Campaign
+          .where(campaignable: lecture,
+                 allocation_mode: :preference_based,
+                 status: :completed)
+          .joins(:user_registrations)
+          .where(user_registrations: { user_id: user.id,
+                                       status: :rejected })
+          .where.not(id: confirmed_campaign_ids)
+          .distinct
+          .order(updated_at: :desc)
+      end
+
+      def unallocated_preference_labels(registrations)
+        registrations.map do |registration|
+          rank_label = I18n.t(
+            "registration.user_registration.preference_rank_options." \
+            "#{registration.preference_rank}",
+            default: registration.preference_rank.to_s
+          )
+          "#{rank_label} #{registration.registration_item.title}"
         end
       end
 

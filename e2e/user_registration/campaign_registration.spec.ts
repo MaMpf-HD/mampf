@@ -140,4 +140,106 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Assigned Tutorial")).toBeVisible();
     await expect(student.page.getByText("Late tutorial registration")).toBeVisible();
   });
+
+  test("shows when preference campaigns could not allocate the student", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const campaign = await factory.create(
+      "registration_campaign",
+      ["completed", "preference_based"],
+      {
+        allocation_mode: "preference_based",
+        campaignable_type: "Lecture",
+        campaignable_id: lecture.id,
+        description: "Overbooked tutorial registration",
+      },
+    );
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Popular Tutorial",
+      capacity: 1,
+    });
+    const secondPreferenceTutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Early Morning Tutorial",
+      capacity: 1,
+    });
+
+    const item = await factory.create("registration_item", [], {
+      registration_campaign_id: campaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: tutorial.id,
+    });
+    const secondPreferenceItem = await factory.create("registration_item", [], {
+      registration_campaign_id: campaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: secondPreferenceTutorial.id,
+    });
+
+    await factory.create("registration_user_registration", [], {
+      user_id: student.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: item.id,
+      preference_rank: 1,
+      status: "rejected",
+    });
+    await factory.create("registration_user_registration", [], {
+      user_id: student.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: secondPreferenceItem.id,
+      preference_rank: 2,
+      status: "rejected",
+    });
+
+    const secondCampaign = await factory.create(
+      "registration_campaign",
+      ["completed", "preference_based"],
+      {
+        allocation_mode: "preference_based",
+        campaignable_type: "Lecture",
+        campaignable_id: lecture.id,
+        description: "Backup tutorial registration",
+      },
+    );
+    const secondTutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Quiet Tutorial",
+      capacity: 1,
+    });
+    const secondItem = await factory.create("registration_item", [], {
+      registration_campaign_id: secondCampaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: secondTutorial.id,
+    });
+    await factory.create("registration_user_registration", [], {
+      user_id: student.user.id,
+      registration_campaign_id: secondCampaign.id,
+      registration_item_id: secondItem.id,
+      preference_rank: 1,
+      status: "rejected",
+    });
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    const notice = student.page.locator(".student-registration-rosterized-notice");
+    await expect(notice).toHaveCount(1);
+    await expect(notice.locator(".student-registration-rosterized-message")).toHaveCount(2);
+
+    // first campaign
+    await expect(notice).toContainText("Overbooked tutorial registration");
+    await expect(notice).toContainText(
+      "1st Popular Tutorial, 2nd Early Morning Tutorial",
+    );
+    // second campaign
+    await expect(notice).toContainText("Backup tutorial registration");
+    await expect(notice).toContainText("1st Quiet Tutorial");
+
+    await expect(student.page.getByText("Registration result")).toHaveCount(0);
+    await expect(student.page.getByText(
+      "There are currently no tutorials or groups available for registration.",
+    )).toHaveCount(0);
+  });
 });
