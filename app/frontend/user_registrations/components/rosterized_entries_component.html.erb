@@ -1,13 +1,10 @@
 <% if rosterized_entries.present? %>
-  <% notice_messages = rosterized_entry_notice_messages(rosterized_entries, current_user) %>
-  <% default_notice = t("registration.user_registration.index.confirmed_cases") %>
-  <% custom_notice = notice_messages != [default_notice] %>
   <div class="student-registration-rosterized-notice mb-4">
     <div class="student-registration-rosterized-shell">
-      <div class="student-registration-rosterized-kicker <%= "student-registration-rosterized-kicker--message" if custom_notice %>">
-        <% if custom_notice %>
+      <div class="student-registration-rosterized-kicker <%= "student-registration-rosterized-kicker--message" if custom_notice? %>">
+        <% if custom_notice? %>
           <% notice_messages.each do |message| %>
-            <p class="mb-0">
+            <p class="student-registration-rosterized-message mb-0">
               <%= message %>
             </p>
           <% end %>
@@ -20,21 +17,21 @@
         <% rosterized_entries.each do |rosterized_entry| %>
           <article class="student-registration-rosterized-entry">
             <div class="student-registration-rosterized-type">
-              <%= rosterized_entry_type(rosterized_entry) %>
+              <%= entry_type(rosterized_entry) %>
             </div>
 
             <h5 class="student-registration-rosterized-title mb-0">
               <%= rosterized_entry.title %>
             </h5>
 
-            <% if rosterized_entry_description(rosterized_entry).present? %>
+            <% if entry_description(rosterized_entry).present? %>
               <p class="student-registration-rosterized-description mb-0">
-                <%= rosterized_entry_description(rosterized_entry) %>
+                <%= entry_description(rosterized_entry) %>
               </p>
             <% end %>
 
             <div class="student-registration-rosterized-meta-list">
-              <% rosterized_entry_metadata_rows(rosterized_entry).each do |row| %>
+              <% entry_metadata_rows(rosterized_entry).each do |row| %>
                 <div class="student-registration-rosterized-meta-pill">
                   <i class="bi <%= row[:icon] %>" aria-hidden="true"></i>
 
@@ -54,5 +51,22 @@
         <% end %>
       </div>
     </div>
+  </div>
+<% end %>
+
+<% if unallocated_results.present? %>
+  <div
+    class="
+      student-registration-rosterized-notice
+      student-registration-rosterized-notice--negative mb-4
+    "
+  >
+    <% unallocated_results.each do |result| %>
+      <p class="student-registration-rosterized-message mb-0">
+        <%= t("registration.user_registration.index.unallocated_preference_notice",
+              campaign: campaign_title(result[:campaign]),
+              preferences: result[:preferences].join(", ")) %>
+      </p>
+    <% end %>
   </div>
 <% end %>

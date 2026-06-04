@@ -81,12 +81,13 @@ module Roster
               stream_flash,
               turbo_stream.update(
                 "student_registration_rosterized_entries",
-                partial: "user_registrations/rosterized_entries",
-                locals: {
+                html: RosterizedEntriesComponent.new(
                   rosterized_entries: Rosters::StudentMaterializedResultResolver
                                        .new(current_user)
-                                       .all_rosterized_for_lecture(@lecture)
-                }
+                                       .all_rosterized_for_lecture(@lecture),
+                  lecture: @lecture,
+                  user: current_user
+                ).render_in(view_context)
               ),
               turbo_stream.update(
                 "self_materialization_zone",
