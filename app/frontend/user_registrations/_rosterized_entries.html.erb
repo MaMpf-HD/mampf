@@ -1,8 +1,19 @@
 <% if rosterized_entries.present? %>
+  <% notice_messages = rosterized_entry_notice_messages(rosterized_entries, current_user) %>
+  <% default_notice = t("registration.user_registration.index.confirmed_cases") %>
+  <% custom_notice = notice_messages != [default_notice] %>
   <div class="student-registration-rosterized-notice mb-4">
     <div class="student-registration-rosterized-shell">
-      <div class="student-registration-rosterized-kicker">
-        <%= t("registration.user_registration.index.confirmed_cases") %>
+      <div class="student-registration-rosterized-kicker <%= "student-registration-rosterized-kicker--message" if custom_notice %>">
+        <% if custom_notice %>
+          <% notice_messages.each do |message| %>
+            <p class="mb-0">
+              <%= message %>
+            </p>
+          <% end %>
+        <% else %>
+          <%= default_notice %>
+        <% end %>
       </div>
 
       <div class="student-registration-rosterized-list">

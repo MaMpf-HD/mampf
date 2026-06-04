@@ -247,6 +247,12 @@ en:
       index:
         title: "Registrations"
         confirmed_cases: "Your registration is confirmed for"
+        fulfilled_preference_notice: "We could fulfill your %{rank} preference."
+        fulfilled_preference_ranks:
+          "1": "1st"
+          "2": "2nd"
+          "3": "3rd"
+        unfulfilled_preferences_notice: "Unfortunately, your preferences (%{preferences}) could not be fulfilled."
         unallocated_preference_notice: "Unfortunately, your registration for %{campaign} could not be considered because there were more registrations than available places. We received your preferences: %{preferences}."
         unknown_tutor: "A tutor has not been assigned yet."
         first_choice_title: "1st Choice Registrations"

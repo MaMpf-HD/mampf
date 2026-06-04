@@ -247,6 +247,12 @@ de:
       index:
         title: "Anmeldungen"
         confirmed_cases: "Deine Anmeldung ist bestätigt für"
+        fulfilled_preference_notice: "Wir konnten Deinen %{rank}-Wunsch erfüllen."
+        fulfilled_preference_ranks:
+          "1": "Erst"
+          "2": "Zweit"
+          "3": "Dritt"
+        unfulfilled_preferences_notice: "Leider konnten Deine Wünsche (%{preferences}) nicht berücksichtigt werden."
         unallocated_preference_notice: "Leider konnte Deine Anmeldung für %{campaign} nicht berücksichtigt werden, weil es mehr Anmeldungen als Plätze gab. Deine ausgewählten Präferenzen sind bei uns angekommen: %{preferences}."
         unknown_tutor: "Ein:e Tutor:in wurde noch nicht zugewiesen."
         first_choice_title: "Erstwahl-Anmeldungen"

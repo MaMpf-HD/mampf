@@ -141,6 +141,142 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Late tutorial registration")).toBeVisible();
   });
 
+  test("explains whether a materialized assignment fulfilled preferences", async ({
+    factory,
+    student,
+    student2,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    await subscribeToLecture(factory, lecture, student2.user.id);
+    const campaign = await factory.create(
+      "registration_campaign",
+      ["completed", "preference_based"],
+      {
+        allocation_mode: "preference_based",
+        campaignable_type: "Lecture",
+        campaignable_id: lecture.id,
+        description: "Allocated tutorial registration",
+      },
+    );
+    const popularTutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Popular Tutorial",
+      capacity: 1,
+    });
+    const earlyTutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Early Morning Tutorial",
+      capacity: 1,
+    });
+    const lateTutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Late Tutorial",
+      capacity: 1,
+    });
+    const fallbackTutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Fallback Tutorial",
+      capacity: 1,
+    });
+    const popularItem = await factory.create("registration_item", [], {
+      registration_campaign_id: campaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: popularTutorial.id,
+    });
+    const earlyItem = await factory.create("registration_item", [], {
+      registration_campaign_id: campaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: earlyTutorial.id,
+    });
+    const lateItem = await factory.create("registration_item", [], {
+      registration_campaign_id: campaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: lateTutorial.id,
+    });
+    const fallbackItem = await factory.create("registration_item", [], {
+      registration_campaign_id: campaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: fallbackTutorial.id,
+    });
+
+    await factory.create("registration_user_registration", [], {
+      user_id: student.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: popularItem.id,
+      preference_rank: 1,
+      status: "rejected",
+    });
+    await factory.create("registration_user_registration", [], {
+      user_id: student.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: earlyItem.id,
+      preference_rank: 2,
+      status: "confirmed",
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: earlyTutorial.id,
+      user_id: student.user.id,
+      source_campaign_id: campaign.id,
+    });
+
+    await factory.create("registration_user_registration", [], {
+      user_id: student2.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: popularItem.id,
+      preference_rank: 1,
+      status: "rejected",
+    });
+    await factory.create("registration_user_registration", [], {
+      user_id: student2.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: earlyItem.id,
+      preference_rank: 2,
+      status: "rejected",
+    });
+    await factory.create("registration_user_registration", [], {
+      user_id: student2.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: lateItem.id,
+      preference_rank: 3,
+      status: "rejected",
+    });
+    await factory.create("registration_user_registration", [], {
+      user_id: student2.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: fallbackItem.id,
+      preference_rank: null,
+      status: "confirmed",
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: fallbackTutorial.id,
+      user_id: student2.user.id,
+      source_campaign_id: campaign.id,
+    });
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByText(
+      "We could fulfill your 2nd preference.",
+    )).toBeVisible();
+    await expect(student.page.getByRole("heading", {
+      name: "Early Morning Tutorial",
+    })).toBeVisible();
+    await expect(student.page.getByText("Your registration is confirmed for")).toHaveCount(0);
+
+    await new CampaignRegistrationPage(student2.page, lecture.id).goto();
+
+    const unfulfilledNotice = [
+      "Unfortunately, your preferences (1st Popular Tutorial, "
+      + "2nd Early Morning Tutorial, 3rd Late Tutorial) could not be fulfilled.",
+    ].join("");
+    await expect(student2.page.getByText(unfulfilledNotice)).toBeVisible();
+    await expect(student2.page.getByRole("heading", {
+      name: "Fallback Tutorial",
+    })).toBeVisible();
+    await expect(student2.page.getByText("Your registration is confirmed for")).toHaveCount(0);
+  });
+
   test("shows when preference campaigns could not allocate the student", async ({
     factory,
     student,

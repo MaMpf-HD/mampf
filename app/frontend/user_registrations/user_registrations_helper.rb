@@ -153,7 +153,64 @@ module UserRegistrationsHelper
      rosterized_entry_participants_row(rosterable)].compact
   end
 
+  def rosterized_entry_notice_messages(rosterables, user)
+    messages = rosterables.filter_map do |rosterable|
+      rosterized_preference_notice_message(rosterable, user)
+    end
+
+    messages.presence || [t("registration.user_registration.index.confirmed_cases")]
+  end
+
   private
+
+    def rosterized_preference_notice_message(rosterable, user)
+      membership = rosterized_entry_membership(rosterable, user)
+      campaign = membership&.source_campaign
+      return unless campaign&.preference_based?
+
+      registrations = rosterized_preference_registrations(campaign, user)
+      return if registrations.blank?
+
+      fulfilled_registration = registrations.find do |registration|
+        registration.registration_item.registerable == rosterable
+      end
+
+      if fulfilled_registration
+        t("registration.user_registration.index.fulfilled_preference_notice",
+          rank: rosterized_preference_rank_label(fulfilled_registration.preference_rank))
+      else
+        t("registration.user_registration.index.unfulfilled_preferences_notice",
+          preferences: rosterized_preference_labels(registrations))
+      end
+    end
+
+    def rosterized_entry_membership(rosterable, user)
+      rosterable.roster_entries
+                .includes(:source_campaign)
+                .find_by(rosterable.roster_user_id_column => user.id)
+    end
+
+    def rosterized_preference_registrations(campaign, user)
+      campaign.user_registrations
+              .includes(registration_item: :registerable)
+              .where(user_id: user.id)
+              .where.not(preference_rank: nil)
+              .order(:preference_rank)
+              .to_a
+    end
+
+    def rosterized_preference_labels(registrations)
+      registrations.map do |registration|
+        rank = t("registration.user_registration.preference_rank_options." \
+                 "#{registration.preference_rank}")
+        "#{rank} #{registration.registration_item.title}"
+      end.join(", ")
+    end
+
+    def rosterized_preference_rank_label(rank)
+      t("registration.user_registration.index.fulfilled_preference_ranks.#{rank}",
+        default: t("registration.user_registration.preference_rank_options.#{rank}"))
+    end
 
     def rosterized_entry_person_row(rosterable)
       case rosterable
