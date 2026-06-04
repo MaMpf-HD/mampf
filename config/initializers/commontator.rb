@@ -316,15 +316,17 @@ Commontator.configure do |config|
 end
 
 Rails.application.config.to_prepare do
-  # Load the Commontator extensions only if we are not in the assets:precompile
-  # step where no db connection is available. See the production Dockerfile.
+  # Apply the Commontator comment monkeypatch only if we are not in the
+  # assets:precompile step where no db connection is available. See the
+  # production Dockerfile.
   db_adapter = ENV.fetch("DATABASE_ADAPTER", nil)
   if db_adapter == "nulldb"
-    Rails.logger.info("DATABASE_ADAPTER env var is #{db_adapter}. Skipping Commontator extensions.")
+    Rails.logger.info(
+      "DATABASE_ADAPTER env var is #{db_adapter}. " \
+      "Skipping Commontator comment patch."
+    )
     next
   end
 
-  if ActiveRecord::Base.connection.table_exists?(:thredded_topics)
-    Commontator::Comment.include(Extensions::Commontator::Comment)
-  end
+  Extensions::Commontator::CommentPatch.apply!
 end
