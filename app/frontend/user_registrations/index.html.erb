@@ -32,7 +32,7 @@
                     } %>
         <% end %>
       <% end %>
-    <% elsif @rosterized_entries.blank? %>
+    <% elsif !registration_options_available && @rosterized_entries.blank? %>
       <p class="mb-0">
         <%= t("roster.self_enrollment.no_registration_options") %>
       </p>

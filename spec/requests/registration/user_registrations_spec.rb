@@ -145,6 +145,26 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
     end
 
+    context "when self-rosterization options are available without campaigns" do
+      before do
+        create(:tutorial,
+               lecture: lecture,
+               title: "Tutorial 7",
+               skip_campaigns: true,
+               self_materialization_mode: :add_only)
+      end
+
+      it "does not show the empty state message" do
+        get lecture_user_registrations_path(lecture_id: lecture.id)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body.squish).to include("Tutorial 7")
+        expect(response.body.squish).not_to include(
+          I18n.t("roster.self_enrollment.no_registration_options")
+        )
+      end
+    end
+
     context "when the user has submitted preferences but is not yet rosterized" do
       before do
         campaign = create(:registration_campaign, :preference_based, :open,
