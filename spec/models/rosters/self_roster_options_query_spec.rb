@@ -53,5 +53,23 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
         allocated_remove_only_tutorial
       )
     end
+
+    it "sorts registerable options before withdraw-only and full options" do
+      full_tutorial = create(:tutorial,
+                             lecture: lecture,
+                             skip_campaigns: true,
+                             self_materialization_mode: :add_only,
+                             capacity: 1)
+      full_tutorial.add_user_to_roster!(create(:confirmed_user))
+
+      result = described_class.new(lecture, user).call
+
+      expect(result.rosterables).to eq([
+                                         add_only_tutorial,
+                                         add_and_remove_tutorial,
+                                         allocated_remove_only_tutorial,
+                                         full_tutorial
+                                       ])
+    end
   end
 end
