@@ -136,8 +136,35 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_user_registrations_path(lecture_id: lecture.id)
 
         expect(response.body.squish).to include(
+          I18n.t("registration.user_registration.index.unassigned_notice")
+        )
+        expect(response.body).to include("student-registration-rosterized-notice--neutral")
+        expect(response.body.squish).to include(
           I18n.t("roster.self_enrollment.no_registration_options")
         )
+      end
+    end
+
+    context "when the user has submitted preferences but is not yet rosterized" do
+      before do
+        campaign = create(:registration_campaign, :preference_based, :open,
+                          campaignable: lecture)
+
+        create(:registration_user_registration,
+               user: user,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               preference_rank: 1,
+               status: :pending)
+      end
+
+      it "shows that they will be assigned after the registration period" do
+        get lecture_user_registrations_path(lecture_id: lecture.id)
+
+        expect(response.body.squish).to include(
+          I18n.t("registration.user_registration.index.pending_preference_notice")
+        )
+        expect(response.body).to include("student-registration-rosterized-notice--neutral")
       end
     end
 
@@ -154,6 +181,10 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           I18n.t("registration.user_registration.index.confirmed_cases")
         )
         expect(response.body.squish).to include("Tutorial 2")
+        expect(response.body).not_to include("student-registration-rosterized-notice--neutral")
+        expect(response.body.squish).not_to include(
+          I18n.t("registration.user_registration.index.unassigned_notice")
+        )
         expect(response.body.squish).not_to include(
           I18n.t("roster.self_enrollment.no_registration_options")
         )

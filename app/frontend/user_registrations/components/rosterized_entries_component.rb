@@ -10,15 +10,13 @@ class RosterizedEntriesComponent < ViewComponent::Base
     @user = user
   end
 
-  def render?
-    rosterized_entries.present? || unallocated_results.present?
-  end
-
   attr_reader :rosterized_entries, :lecture, :user
 
   # Messages shown in the confirmed-entries kicker. Falls back to the generic
   # "confirmed cases" notice when no preference-based messaging applies.
   def notice_messages
+    return [unassigned_notice] if rosterized_entries.blank?
+
     messages = rosterized_entries.filter_map do |rosterable|
       preference_notice_message(rosterable)
     end
@@ -27,7 +25,11 @@ class RosterizedEntriesComponent < ViewComponent::Base
   end
 
   def custom_notice?
-    notice_messages != [default_notice]
+    rosterized_entries.blank? || notice_messages != [default_notice]
+  end
+
+  def neutral_notice?
+    rosterized_entries.blank?
   end
 
   def default_notice
@@ -68,6 +70,14 @@ class RosterizedEntriesComponent < ViewComponent::Base
   end
 
   private
+
+    def unassigned_notice
+      if pending_preference_submissions?
+        t("registration.user_registration.index.pending_preference_notice")
+      else
+        t("registration.user_registration.index.unassigned_notice")
+      end
+    end
 
     def preference_notice_message(rosterable)
       membership = entry_membership(rosterable)
@@ -185,6 +195,22 @@ class RosterizedEntriesComponent < ViewComponent::Base
           .order(updated_at: :desc)
           .to_a
       end
+    end
+
+    def pending_preference_submissions?
+      @pending_preference_submissions ||= Registration::UserRegistration
+                                          .pending
+                                          .exists?(
+                                            user_id: user.id,
+                                            registration_campaign_id: preference_campaign_ids
+                                          )
+    end
+
+    def preference_campaign_ids
+      @preference_campaign_ids ||= Registration::Campaign
+                                   .where(campaignable: lecture,
+                                          allocation_mode: :preference_based)
+                                   .select(:id)
     end
 
     def rejected_registrations_by_campaign

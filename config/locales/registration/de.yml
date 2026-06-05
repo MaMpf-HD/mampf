@@ -247,6 +247,8 @@ de:
       index:
         title: "Anmeldungen"
         confirmed_cases: "Deine Anmeldung ist bestätigt für"
+        unassigned_notice: "Aktuell bist Du noch in keiner Gruppe eingetragen."
+        pending_preference_notice: "Aktuell bist Du noch in keiner Gruppe eingetragen. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
         fulfilled_preference_notice: "Wir konnten Deinen %{rank}-Wunsch erfüllen."
         fulfilled_preference_ranks:
           "1": "Erst"

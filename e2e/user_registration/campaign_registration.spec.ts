@@ -112,6 +112,56 @@ test.describe("campaign registration", () => {
       .toHaveCount(2);
   });
 
+  test("shows that the student is not assigned to any group yet", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Tutorial registration",
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByText(
+      "You are not registered in any group yet.",
+    )).toBeVisible();
+    await expect(student.page.getByText("Tutorial registration")).toBeVisible();
+  });
+
+  test("explains that pending preferences will be allocated after registration closes", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const { campaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "preference_based",
+      "Preference tutorial registration",
+    );
+
+    await factory.create("registration_user_registration", [], {
+      user_id: student.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: campaign.registration_items[0].id,
+      preference_rank: 1,
+      status: "pending",
+    });
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByText(
+      "You are not registered in any group yet. After the registration period ends, you will be assigned based on your preferences.",
+    )).toBeVisible();
+    await expect(student.page.getByText("Your registration is confirmed for")).toHaveCount(0);
+  });
+
   test("shows completed materialized assignments above remaining options", async ({
     factory,
     student,

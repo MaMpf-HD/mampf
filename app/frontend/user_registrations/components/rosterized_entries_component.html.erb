@@ -1,6 +1,6 @@
-<% if rosterized_entries.present? %>
-  <div class="student-registration-rosterized-notice mb-4">
-    <div class="student-registration-rosterized-shell">
+<% if notice_messages.present? %>
+  <div class="student-registration-rosterized-notice <%= "student-registration-rosterized-notice--neutral" if neutral_notice? %> mb-4">
+    <div class="student-registration-rosterized-shell <%= "student-registration-rosterized-shell--neutral" if neutral_notice? %>">
       <div class="student-registration-rosterized-kicker <%= "student-registration-rosterized-kicker--message" if custom_notice? %>">
         <% if custom_notice? %>
           <% notice_messages.each do |message| %>
@@ -13,43 +13,45 @@
         <% end %>
       </div>
 
-      <div class="student-registration-rosterized-list">
-        <% rosterized_entries.each do |rosterized_entry| %>
-          <article class="student-registration-rosterized-entry">
-            <div class="student-registration-rosterized-type">
-              <%= entry_type(rosterized_entry) %>
-            </div>
+      <% if rosterized_entries.present? %>
+        <div class="student-registration-rosterized-list">
+          <% rosterized_entries.each do |rosterized_entry| %>
+            <article class="student-registration-rosterized-entry">
+              <div class="student-registration-rosterized-type">
+                <%= entry_type(rosterized_entry) %>
+              </div>
 
-            <h5 class="student-registration-rosterized-title mb-0">
-              <%= rosterized_entry.title %>
-            </h5>
+              <h5 class="student-registration-rosterized-title mb-0">
+                <%= rosterized_entry.title %>
+              </h5>
 
-            <% if entry_description(rosterized_entry).present? %>
-              <p class="student-registration-rosterized-description mb-0">
-                <%= entry_description(rosterized_entry) %>
-              </p>
-            <% end %>
+              <% if entry_description(rosterized_entry).present? %>
+                <p class="student-registration-rosterized-description mb-0">
+                  <%= entry_description(rosterized_entry) %>
+                </p>
+              <% end %>
 
-            <div class="student-registration-rosterized-meta-list">
-              <% entry_metadata_rows(rosterized_entry).each do |row| %>
-                <div class="student-registration-rosterized-meta-pill">
-                  <i class="bi <%= row[:icon] %>" aria-hidden="true"></i>
+              <div class="student-registration-rosterized-meta-list">
+                <% entry_metadata_rows(rosterized_entry).each do |row| %>
+                  <div class="student-registration-rosterized-meta-pill">
+                    <i class="bi <%= row[:icon] %>" aria-hidden="true"></i>
 
-                  <div class="student-registration-rosterized-meta-copy">
-                    <div class="student-registration-rosterized-meta-label">
-                      <%= row[:label] %>
-                    </div>
+                    <div class="student-registration-rosterized-meta-copy">
+                      <div class="student-registration-rosterized-meta-label">
+                        <%= row[:label] %>
+                      </div>
 
-                    <div class="student-registration-rosterized-meta-value">
-                      <%= row[:value] %>
+                      <div class="student-registration-rosterized-meta-value">
+                        <%= row[:value] %>
+                      </div>
                     </div>
                   </div>
-                </div>
-              <% end %>
-            </div>
-          </article>
-        <% end %>
-      </div>
+                <% end %>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </div>
 <% end %>

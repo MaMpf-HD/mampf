@@ -7,6 +7,11 @@
   background: #d9e7dd;
 }
 
+.student-registration-rosterized-notice--neutral {
+  border-color: rgba(91, 103, 117, 0.22);
+  background: #e9edf1;
+}
+
 .student-registration-rosterized-notice--negative {
   display: flex;
   flex-direction: column;
@@ -33,12 +38,21 @@
   box-shadow: 0 12px 24px rgba(34, 62, 98, 0.08);
 }
 
+.student-registration-rosterized-shell--neutral {
+  background: linear-gradient(180deg, #f5f7f9, #e8edf2);
+  color: #33404d;
+}
+
 .student-registration-rosterized-kicker {
     font-size: 0.94rem;
   font-weight: 700;
   line-height: 1.35;
   letter-spacing: 0;
   color: #557361;
+}
+
+.student-registration-rosterized-shell--neutral .student-registration-rosterized-kicker {
+  color: #5a6672;
 }
 
 .student-registration-rosterized-list {
