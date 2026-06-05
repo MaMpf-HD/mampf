@@ -331,6 +331,17 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           expect(response).to have_http_status(:found)
         end
 
+        it "updates the rosterized notice box via turbo stream" do
+          post add_preference_path(item), params: { rank: 1 }, as: :turbo_stream
+
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+          expect(response.body).to include('target="student_registration_rosterized_entries"')
+          expect(response.body).to include(
+            I18n.t("registration.user_registration.index.pending_preference_notice")
+          )
+        end
+
         context "when the user is not allowed to enroll" do
           let(:lecture) { create(:lecture, teacher: user) }
           let(:campaign) do

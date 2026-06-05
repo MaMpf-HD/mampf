@@ -91,7 +91,8 @@ module Registration
                   view_context.dom_id(@campaign, :main_student_registration_campaign),
                   partial: "user_registrations/campaign_card",
                   locals: { details: @details, campaign: @campaign }
-                )
+                ),
+                rosterized_entries_stream
               ]
             end
             format.html do
@@ -106,6 +107,23 @@ module Registration
             fallback_location: lecture_user_registrations_path(@campaign.campaignable)
           )
         end
+      end
+
+      def rosterized_entries_stream
+        turbo_stream.update(
+          "student_registration_rosterized_entries",
+          html: RosterizedEntriesComponent.new(
+            rosterized_entries: Rosters::StudentMaterializedResultResolver
+                                 .new(current_user)
+                                 .all_rosterized_for_lecture(student_registration_lecture),
+            lecture: student_registration_lecture,
+            user: current_user
+          ).render_in(view_context)
+        )
+      end
+
+      def student_registration_lecture
+        @student_registration_lecture ||= @campaign.campaignable
       end
 
       def evaluate_turbo_stream_response
