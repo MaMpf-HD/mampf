@@ -6,7 +6,7 @@
   "
 >
   <% self_rosterables.rosterables.each do |rosterable| %>
-    <% metadata_rows = rosterable_tile_metadata_rows(rosterable) + [{
+    <% metadata_rows = self_rosterable_tile_metadata_rows(rosterable) + [{
          value: "#{rosterable.roster_entries_count} / #{nullable_capacity_display(rosterable.capacity)}"
        }] %>
 
@@ -24,7 +24,7 @@
                locals: {
                  registerable: rosterable,
                  tile_title: rosterable.title,
-                 tile_type: rosterable_display_type(rosterable),
+                 tile_type: self_rosterable_display_type(rosterable),
                  tile_metadata_rows: metadata_rows,
                  tile_variant_class: "tutorial-gtile--campaign",
                  tile_top_bar_class: "tutorial-gtile-top-bar--campaign",

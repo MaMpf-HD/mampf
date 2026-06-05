@@ -129,6 +129,27 @@ module UserRegistrationsHelper
     end
   end
 
+  def self_rosterable_display_type(rosterable)
+    case rosterable.class.name
+    when "Tutorial"
+      t("registration.item.types.tutorial")
+    when "Talk"
+      "#{t("registration.item.types.talk")} #{rosterable.position}"
+    when "Cohort"
+      t("registration.item.types.other_group")
+    end
+  end
+
+  def self_rosterable_tile_metadata_rows(rosterable)
+    TABLE_CONFIG[rosterable.class.name].map do |col|
+      {
+        label: metadata_label_for(col),
+        value: self_rosterable_metadata_value(col, rosterable),
+        icon: gtile_icon_for(col[:icon])
+      }
+    end
+  end
+
   def freely_registerable?(group_type)
     group_type == "Cohort"
   end
@@ -175,5 +196,22 @@ module UserRegistrationsHelper
       return if col[:header] == "basics.description"
 
       t(col[:header])
+    end
+
+    def self_rosterable_metadata_value(col, rosterable)
+      case col[:header]
+      when "basics.tutor"
+        rosterable.tutor_names
+      when "basics.location"
+        rosterable.location
+      when "basics.position"
+        rosterable.position
+      when "basics.description"
+        rosterable.description
+      when "basics.date"
+        rosterable.dates&.map do |date|
+          date.nil? ? "" : date.strftime("%b %d %Y")
+        end&.join(", ")
+      end
     end
 end
