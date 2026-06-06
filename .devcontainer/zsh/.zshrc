@@ -5,12 +5,6 @@ alias la='eza -al --group-directories-first'
 alias ll='eza -l --group-directories-first'
 alias ls="eza --group-directories-first"
 
-if [[ -S /ssh-agent ]]; then
-	export SSH_AUTH_SOCK=/ssh-agent
-else
-	unset SSH_AUTH_SOCK
-fi
-
 # zsh history
 HISTFILE=/workspaces/commandhistory/.zsh_history
 HISTSIZE=10000
