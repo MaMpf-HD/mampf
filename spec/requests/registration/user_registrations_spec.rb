@@ -384,6 +384,15 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           expect(response).to have_http_status(:found)
         end
 
+        it "returns bad request for scalar preferences payloads" do
+          expect(UserRegistrations::PreferencesHandler).not_to receive(:new)
+          expect(UserRegistrations::LecturePreferenceEditService).not_to receive(:new)
+
+          post save_preferences_path(campaign), params: { preferences: "foo" }
+
+          expect(response).to have_http_status(:bad_request)
+        end
+
         it "updates the rosterized notice box via turbo stream" do
           post save_preferences_path(campaign),
                params: { preferences: preferences },

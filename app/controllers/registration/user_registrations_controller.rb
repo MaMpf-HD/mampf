@@ -64,8 +64,9 @@ module Registration
     def save_preferences
       authorize! :add, @campaign.campaignable
 
+      ranked_preferences = preference_params
       pref_items = ::UserRegistrations::PreferencesHandler
-                   .new.pref_items_from_ranked_params(preference_params)
+                   .new.pref_items_from_ranked_params(ranked_preferences)
       result = ::UserRegistrations::LecturePreferenceEditService
                .new(@campaign, current_user).update!(pref_items)
       respond_to_student_registration(
@@ -122,11 +123,7 @@ module Registration
       end
 
       def preference_params
-        raw_preferences = params.fetch(:preferences, {})
-        allowed_keys = preference_param_keys
-        return raw_preferences.permit(*allowed_keys).to_h if raw_preferences.respond_to?(:permit)
-
-        raw_preferences.to_h.slice(*allowed_keys)
+        params.expect(preferences: preference_param_keys).to_h
       end
 
       def preference_param_keys
