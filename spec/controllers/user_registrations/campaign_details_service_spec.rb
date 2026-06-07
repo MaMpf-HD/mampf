@@ -19,29 +19,13 @@ RSpec.describe(UserRegistrations::CampaignDetailsService, type: :service) do
       allow(service).to receive(:eligibility).and_return(["ok"])
       allow(service).to receive(:items).and_return([item1, item2])
       allow(service).to receive(:item_preferences).and_return(:prefs)
-      allow(service).to receive(:results_roster).and_return(:roster)
 
       result = service.call
 
       expect(result.campaign).to eq(campaign)
-      expect(result.campaignable_host).to eq(lecture)
       expect(result.eligibility).to eq(["ok"])
       expect(result.items).to eq([item1, item2])
       expect(result.item_preferences).to eq(:prefs)
-      expect(result.results).to eq(:roster)
-    end
-  end
-
-  describe "#preferences_info" do
-    it "returns campaign, items, and item_preferences" do
-      allow(service).to receive(:items).and_return([item1, item2])
-      allow(service).to receive(:item_preferences).and_return(:prefs)
-
-      info = service.preferences_info
-
-      expect(info[:campaign]).to eq(campaign)
-      expect(info[:items]).to eq([item1, item2])
-      expect(info[:item_preferences]).to eq(:prefs)
     end
   end
 
@@ -100,51 +84,6 @@ RSpec.describe(UserRegistrations::CampaignDetailsService, type: :service) do
         expect(result.first[:config]["prerequisite_campaign"])
           .to eq(I18n.t("registration.campaign.not_found"))
       end
-    end
-  end
-
-  describe "#results_roster" do
-    let(:resolver) { instance_double(Rosters::StudentMaterializedResultResolver) }
-
-    before do
-      allow(Rosters::StudentMaterializedResultResolver)
-        .to receive(:new)
-        .with(user)
-        .and_return(resolver)
-    end
-
-    it "returns selected items, succeed items, and status hash" do
-      # User selects item1
-      Registration::UserRegistration.create!(
-        registration_campaign: campaign,
-        registration_item: item1,
-        user: user,
-        status: :pending,
-        preference_rank: 1
-      )
-      allow(resolver).to receive(:succeed_items).and_return([item1])
-
-      roster = service.results_roster
-
-      expect(roster[:items_selected]).to match_array([item1])
-      expect(roster[:items_succeed]).to eq([item1])
-      expect(roster[:status_items_selected]).to eq({ item1.id => "confirmed" })
-    end
-
-    it "marks dismissed items correctly" do
-      Registration::UserRegistration.create!(
-        registration_campaign: campaign,
-        registration_item: item1,
-        user: user,
-        status: :pending,
-        preference_rank: 1
-      )
-
-      allow(resolver).to receive(:succeed_items).and_return([])
-
-      roster = service.results_roster
-
-      expect(roster[:status_items_selected]).to eq({ item1.id => "dismissed" })
     end
   end
 end

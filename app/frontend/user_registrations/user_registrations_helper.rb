@@ -1,9 +1,4 @@
 module UserRegistrationsHelper
-  def single_mode?(registerable_type)
-    regist_type = registerable_type.downcase
-    ["lecture"].include?(regist_type)
-  end
-
   TABLE_CONFIG = {
     "Tutorial" => [
       { header: "basics.tutor",

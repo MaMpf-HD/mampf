@@ -87,7 +87,6 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   let(:lecture) { create(:lecture) }
   let(:seminar) { create(:lecture, :is_seminar) }
   let(:stub_success) { UserRegistrations::Handler::Result.new(true, []) }
-  let(:stub_succeed_items) { [item] }
 
   before do
     Flipper.enable(:registration_campaigns)

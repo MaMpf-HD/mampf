@@ -61,21 +61,12 @@ module Registration
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
 
-    def user_registrations_confirmed(user)
-      user_registrations.where(user_id: user.id, status: :confirmed)
-    end
-
     def title
       registerable&.registration_title || registerable&.title
     end
 
     def confirmed_user_ids
       user_registrations.confirmed.pluck(:user_id)
-    end
-
-    def preference_rank(user)
-      registration = user_registrations.find_by(user_id: user.id)
-      registration&.preference_rank
     end
 
     # Validates if a capacity change initiated by the registerable (e.g. on a Tutorial

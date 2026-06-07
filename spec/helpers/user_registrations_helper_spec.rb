@@ -1,11 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(UserRegistrationsHelper, type: :helper) do
-  describe "#single_mode?" do
-    it { expect(helper.single_mode?("Lecture")).to eq(true) }
-    it { expect(helper.single_mode?("Tutorial")).to eq(false) }
-  end
-
   describe "#student_registration_campaign_title" do
     it "returns the campaign description when present" do
       campaign = build(:registration_campaign, description: "Localized description")

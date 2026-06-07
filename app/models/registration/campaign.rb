@@ -73,21 +73,6 @@ module Registration
       open_for_registrations?
     end
 
-    def only_planning_cohort?
-      registration_items.exists? &&
-        registration_items.size == 1 &&
-        registration_items.first.registerable_type == "Cohort" &&
-        registration_items.first.registerable.propagate_to_lecture == false
-    end
-
-    def user_registrations_confirmed(user)
-      user_registrations.where(user_id: user.id, status: :confirmed)
-    end
-
-    def user_registrations_last_updated(user)
-      user_registrations.where(user_id: user.id).maximum(:updated_at)
-    end
-
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end

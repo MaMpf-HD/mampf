@@ -5,25 +5,6 @@ module Rosters
       @user = user
     end
 
-    def succeed_items(campaign)
-      registerables = campaign.registration_items.map(&:registerable).uniq
-
-      succeed_items = []
-      registerables.each do |registerable|
-        memberships = registerable.roster_entries
-                                  .where(source_campaign_id: campaign.id,
-                                         registerable.roster_user_id_column => @user.id)
-        next unless memberships.any?
-
-        succeed_items.concat(Registration::Item.where(
-                               registerable_type: registerable.class.name,
-                               registerable_id: registerable&.id,
-                               registration_campaign_id: campaign.id
-                             ))
-      end
-      succeed_items
-    end
-
     def all_rosterized_for_lecture(lecture)
       rosterables =
         lecture.tutorials
