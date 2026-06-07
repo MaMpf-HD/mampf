@@ -15,7 +15,6 @@ module Mampf
     backend_paths -= Rails.root.glob("app/models/vignettes/**/")
     backend_paths -= Rails.root.glob("app/models/registration/**/")
     backend_paths -= Rails.root.glob("app/models/rosters/**/")
-    backend_paths -= Rails.root.glob("app/models/user_registrations/**/")
     frontend_paths = Rails.root.glob("app/frontend/**/")
     # For ViewComponents to work correctly with namespaces, we only load the
     # main components directory, but not any subdirectories.

@@ -50,7 +50,6 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
     let(:lecture) { create(:lecture) }
     let(:seminar) { create(:seminar) }
     let(:tutorial) { create(:tutorial, lecture: lecture, location: "Room 101") }
-    let(:item_tutorial) { create(:registration_item, registerable: tutorial) }
     let(:talk) do
       create(:talk, lecture: seminar, position: 5, description: "Deep Learning Overview",
                     dates: [
@@ -58,11 +57,9 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
                       Time.zone.local(2026, 4, 11)
                     ])
     end
-    let(:item_talk) { create(:registration_item, registerable: talk) }
     let(:cohort) do
       create(:cohort, context: lecture, propagate_to_lecture: true, description: "Group A")
     end
-    let(:item_cohort) { create(:registration_item, registerable: cohort) }
 
     describe "Tutorial config" do
       it "defines two rows" do
@@ -79,7 +76,7 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
 
         expect(row2[:header]).to eq("basics.location")
         expect(row2[:icon]).to eq("location")
-        expect(row2[:field].call(item_tutorial)).to eq("Room 101")
+        expect(row2[:field].call(tutorial)).to eq("Room 101")
       end
     end
 
@@ -91,13 +88,13 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
       it "evaluates fields correctly" do
         pos_row, desc_row, date_row = config["Talk"]
         expect(pos_row[:header]).to eq("basics.position")
-        expect(pos_row[:field].call(item_talk)).to eq(5)
+        expect(pos_row[:field].call(talk)).to eq(5)
 
         expect(desc_row[:header]).to eq("basics.description")
-        expect(desc_row[:field].call(item_talk)).to eq("Deep Learning Overview")
+        expect(desc_row[:field].call(talk)).to eq("Deep Learning Overview")
 
         formatted = "Apr 10 2026, Apr 11 2026"
-        expect(date_row[:field].call(item_talk)).to eq(formatted)
+        expect(date_row[:field].call(talk)).to eq(formatted)
       end
     end
 
@@ -110,7 +107,7 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
         row = config["Cohort"].first
 
         expect(row[:header]).to eq("basics.description")
-        expect(row[:field].call(item_cohort)).to eq("Group A")
+        expect(row[:field].call(cohort)).to eq("Group A")
       end
     end
   end

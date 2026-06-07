@@ -4,7 +4,7 @@ module Roster
   class SelfMaterializationController < ApplicationController
     helper ::UserRegistrationsHelper, ::EligibilityHelper
     before_action :set_rosterable, only: [:self_add, :self_remove]
-    before_action :use_user_locale
+    before_action :set_user_locale
     before_action :authorize_lecture
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
@@ -92,7 +92,11 @@ module Roster
               turbo_stream.update(
                 "self_materialization_zone",
                 partial: "user_registrations/self_materialization_zone",
-                locals: { self_rosterables: Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call }
+                locals: {
+                  self_rosterables: Rosters::SelfRosterOptionsQuery
+                                    .new(@lecture, current_user)
+                                    .call
+                }
               )
             ]
           end
@@ -100,25 +104,18 @@ module Roster
       end
 
       def set_rosterable
-        klass = Rosters::Rosterable.class_for(params[:type])
-        unless klass
-          redirect_to root_path, alert: t("roster.errors.invalid_type")
-          return
-        end
-
-        param_key = "#{params[:type].underscore}_id"
-        id = params[param_key] || params[:id]
-        @rosterable = klass.find_by(id: id)
-        @lecture = @rosterable.lecture if @rosterable.respond_to?(:lecture)
+        @rosterable = Rosters::RosterableResolver.resolve(params)
+        @lecture = rosterable_lecture
 
         return if @rosterable && @lecture
 
         redirect_to root_path, alert: t("roster.errors.rosterable_not_found")
       end
 
-      def use_user_locale
-        locale = current_user&.locale.presence || I18n.default_locale
-        I18n.locale = locale
+      def rosterable_lecture
+        return @rosterable.lecture if @rosterable.respond_to?(:lecture)
+
+        @rosterable.context if @rosterable.respond_to?(:context)
       end
 
       def roster_message_user

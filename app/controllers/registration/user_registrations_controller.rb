@@ -5,7 +5,7 @@ module Registration
     before_action :set_lecture, only: [:index]
     before_action :set_campaign,
                   only: [:create, :destroy, :destroy_for_user, :save_preferences]
-    before_action :set_locale
+    before_action :set_user_locale
     before_action :set_item, only: [:create, :destroy]
 
     def current_ability
@@ -35,8 +35,7 @@ module Registration
       @rosterized_entries = Rosters::StudentMaterializedResultResolver
                             .new(current_user)
                             .all_rosterized_for_lecture(@lecture)
-      @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user)
-                                                         .call
+      @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call
       render template: "user_registrations/index",
              layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
@@ -179,10 +178,6 @@ module Registration
 
         respond_with_flash(:alert, t("registration.campaign.not_found"),
                            fallback_location: root_path)
-      end
-
-      def set_locale
-        I18n.locale = current_user&.locale.presence || I18n.default_locale
       end
 
       def campaign_completed?

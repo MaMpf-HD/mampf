@@ -3,7 +3,7 @@
 <!-- campaign list -->
 <div class="container-md small-width">
   <% visible_campaigns = sorted_student_visible_campaigns(@campaigns_details) %>
-  <% direct_enrollment_available = @self_rosterables&.rosterables&.any? %>
+  <% direct_enrollment_available = @self_rosterables&.any? %>
   <% registration_options_available = direct_enrollment_available || visible_campaigns.any? %>
 
   <div id="student_registration_rosterized_entries">

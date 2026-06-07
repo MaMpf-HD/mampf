@@ -52,7 +52,7 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
     it "returns joinable rosterables and withdraw-only rosterables the user can leave" do
       result = described_class.new(lecture, user).call
 
-      expect(result.rosterables).to contain_exactly(
+      expect(result).to contain_exactly(
         add_only_tutorial,
         add_and_remove_tutorial,
         allocated_remove_only_tutorial
@@ -70,12 +70,12 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
 
       result = described_class.new(lecture, user).call
 
-      expect(result.rosterables).to eq([
-                                         add_only_tutorial,
-                                         add_and_remove_tutorial,
-                                         allocated_remove_only_tutorial,
-                                         full_tutorial
-                                       ])
+      expect(result).to eq([
+                             add_only_tutorial,
+                             add_and_remove_tutorial,
+                             allocated_remove_only_tutorial,
+                             full_tutorial
+                           ])
     end
   end
 end

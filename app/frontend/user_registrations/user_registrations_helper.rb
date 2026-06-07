@@ -4,25 +4,25 @@ module UserRegistrationsHelper
       { header: "basics.tutor",
         cell_class: "text-start fw-semibold",
         icon: "person",
-        field: ->(item) { item.registerable.tutor_names } },
+        field: ->(rosterable) { rosterable.tutor_names } },
       { header: "basics.location",
         cell_class: "text-start fw-semibold",
         icon: "location",
-        field: ->(item) { item.registerable.location } }
+        field: ->(rosterable) { rosterable.location } }
     ],
     "Talk" => [
       { header: "basics.position",
         cell_class: "text-end",
         icon: "looks_one",
-        field: ->(item) { item.registerable.position } },
+        field: ->(rosterable) { rosterable.position } },
       { header: "basics.description",
         icon: "description",
         cell_class: "text-center",
-        field: ->(item) { item.registerable.description } },
+        field: ->(rosterable) { rosterable.description } },
       { header: "basics.date",
         icon: "event",
-        field: lambda { |item|
-          item.registerable.dates&.map do |d|
+        field: lambda { |rosterable|
+          rosterable.dates&.map do |d|
             d.nil? ? "" : d.strftime("%b %d %Y")
           end&.join(", ")
         } }
@@ -31,7 +31,7 @@ module UserRegistrationsHelper
       { header: "basics.description",
         icon: "description",
         cell_class: "text-center",
-        field: ->(item) { item.registerable.description } }
+        field: ->(rosterable) { rosterable.description } }
     ]
   }.freeze
 
@@ -114,13 +114,7 @@ module UserRegistrationsHelper
   end
 
   def item_tile_metadata_rows(item)
-    TABLE_CONFIG[item.registerable_type].map do |col|
-      {
-        label: metadata_label_for(col),
-        value: col[:field].call(item),
-        icon: gtile_icon_for(col[:icon])
-      }
-    end
+    metadata_rows_for(item.registerable_type, item.registerable)
   end
 
   def self_rosterable_display_type(rosterable)
@@ -135,13 +129,7 @@ module UserRegistrationsHelper
   end
 
   def self_rosterable_tile_metadata_rows(rosterable)
-    TABLE_CONFIG[rosterable.class.name].map do |col|
-      {
-        label: metadata_label_for(col),
-        value: self_rosterable_metadata_value(col, rosterable),
-        icon: gtile_icon_for(col[:icon])
-      }
-    end
+    metadata_rows_for(rosterable.class.name, rosterable)
   end
 
   def freely_registerable?(group_type)
@@ -196,20 +184,13 @@ module UserRegistrationsHelper
       t(col[:header])
     end
 
-    def self_rosterable_metadata_value(col, rosterable)
-      case col[:header]
-      when "basics.tutor"
-        rosterable.tutor_names
-      when "basics.location"
-        rosterable.location
-      when "basics.position"
-        rosterable.position
-      when "basics.description"
-        rosterable.description
-      when "basics.date"
-        rosterable.dates&.map do |date|
-          date.nil? ? "" : date.strftime("%b %d %Y")
-        end&.join(", ")
+    def metadata_rows_for(type, rosterable)
+      TABLE_CONFIG[type].map do |col|
+        {
+          label: metadata_label_for(col),
+          value: col[:field].call(rosterable),
+          icon: gtile_icon_for(col[:icon])
+        }
       end
     end
 end
