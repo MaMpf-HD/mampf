@@ -1,16 +1,4 @@
 module UserRegistrationsHelper
-  MODE_MAP = {
-    -1 => { mode_name: "Unknown", abbr: "UNK",
-            badge_class: "bg-grey-lighten-4 text-grey" },
-    0 => { mode_name: "First-come, first-served", abbr: "FCFS",
-           badge_class: "bg-light-blue-lighten-4 text-darkblue" },
-    1 => { mode_name: "Preference Based", abbr: "PB",
-           badge_class: "bg-mdb-color-lighten-3 text-white" }
-  }.freeze
-  def get_mode_info(mode)
-    MODE_MAP.fetch(mode, MODE_MAP[-1])
-  end
-
   def single_mode?(registerable_type)
     regist_type = registerable_type.downcase
     ["lecture"].include?(regist_type)

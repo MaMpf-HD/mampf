@@ -1,16 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(UserRegistrationsHelper, type: :helper) do
-  describe "#get_mode_info" do
-    it "returns known mode" do
-      expect(helper.get_mode_info(0)).to include(:mode_name, :abbr, :badge_class)
-    end
-
-    it "returns unknown mode for missing key" do
-      expect(helper.get_mode_info(999)).to eq(UserRegistrationsHelper::MODE_MAP[-1])
-    end
-  end
-
   describe "#single_mode?" do
     it { expect(helper.single_mode?("Lecture")).to eq(true) }
     it { expect(helper.single_mode?("Tutorial")).to eq(false) }
