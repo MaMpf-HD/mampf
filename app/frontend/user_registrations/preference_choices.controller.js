@@ -1,13 +1,17 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["button", "input", "podiumName", "podiumSpot", "saveButton"];
+  static targets = [
+    "button", "input", "podiumName", "podiumSpot", "saveButton", "savePrompt",
+  ];
+
   static values = {
     emptyLabel: String,
     readonly: Boolean,
   };
 
   connect() {
+    this.initialPreferences = this.preferenceFingerprint(this.preferences());
     this.refresh();
   }
 
@@ -68,6 +72,7 @@ export default class extends Controller {
 
   refresh() {
     const preferences = this.preferences();
+    const changed = this.changed(preferences);
 
     this.buttonTargets.forEach((button) => {
       const selected = preferences[Number(button.dataset.rank)] === button.dataset.itemId;
@@ -89,8 +94,13 @@ export default class extends Controller {
       );
     });
 
+    if (this.hasSavePromptTarget) {
+      this.savePromptTarget.hidden = !changed;
+    }
+
     if (this.hasSaveButtonTarget) {
-      this.saveButtonTarget.disabled = this.readonlyValue || !this.complete(preferences);
+      this.saveButtonTarget.disabled = this.readonlyValue || !changed
+        || !this.complete(preferences);
     }
   }
 
@@ -101,6 +111,14 @@ export default class extends Controller {
 
   complete(preferences) {
     return this.ranks().every(rank => preferences[rank]);
+  }
+
+  changed(preferences) {
+    return this.preferenceFingerprint(preferences) !== this.initialPreferences;
+  }
+
+  preferenceFingerprint(preferences) {
+    return this.ranks().map(rank => preferences[rank] || "").join("|");
   }
 
   ranks() {

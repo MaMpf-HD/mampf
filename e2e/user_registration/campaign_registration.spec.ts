@@ -113,19 +113,20 @@ test.describe("campaign registration", () => {
     const thirdTitle = await thirdTile.getByRole("heading").textContent();
 
     await expect(student.page.getByText("Rank 3 options.")).toBeVisible();
-    await expect(student.page.getByRole("button", { name: "Save choices" })).toBeDisabled();
+    const saveButton = student.page.getByRole("button", { name: "Save choices" });
+    await expect(saveButton).toBeHidden();
     await firstTile.getByRole("button", { name: "1st" }).click();
     expect(saveRequests).toBe(0);
     await expect(firstTile.getByRole("button", { name: "1st" })).toHaveClass(/btn-primary/);
     await expect(student.page.locator(".student-registration-podium")).toContainText(
       firstTitle || "",
     );
-    await expect(student.page.getByRole("button", { name: "Save choices" })).toBeDisabled();
+    await expect(saveButton).toBeDisabled();
 
     await secondTile.getByRole("button", { name: "2nd" }).click();
     await thirdTile.getByRole("button", { name: "3rd" }).click();
     expect(saveRequests).toBe(0);
-    await expect(student.page.getByRole("button", { name: "Save choices" })).toBeEnabled();
+    await expect(saveButton).toBeEnabled();
 
     await thirdTile.getByRole("button", { name: "1st" }).click();
 
@@ -135,9 +136,10 @@ test.describe("campaign registration", () => {
     await expect(student.page.locator(".student-registration-rank-button.btn-primary"))
       .toHaveCount(3);
 
-    await student.page.getByRole("button", { name: "Save choices" }).click();
+    await saveButton.click();
 
     await expect(student.page.getByText("Your preferences have been saved.")).toBeVisible();
+    await expect(saveButton).toBeHidden();
     expect(saveRequests).toBe(1);
     expect(submittedBody).toContain("preferences%5B1%5D");
     expect(submittedBody).toContain("preferences%5B2%5D");
@@ -179,7 +181,7 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Rank 2 options.")).toBeVisible();
     await expect(student.page.locator(".student-registration-podium-spot")).toHaveCount(2);
     await expect(student.page.getByRole("button", { name: "3rd" })).toHaveCount(0);
-    await expect(student.page.getByRole("button", { name: "Save choices" })).toBeDisabled();
+    await expect(student.page.getByRole("button", { name: "Save choices" })).toBeHidden();
 
     await firstTile.getByRole("button", { name: "1st" }).click();
     await secondTile.getByRole("button", { name: "2nd" }).click();

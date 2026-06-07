@@ -65,9 +65,13 @@
                          sorted_items: sorted_items,
                          ranks: ranks } %>
 
-    <div class="student-registration-preference-submit">
+    <div
+      class="student-registration-preference-submit"
+      data-preference-choices-target="savePrompt"
+      hidden
+    >
       <%= submit_tag t("registration.user_registration.save_choices"),
-                     class: "btn btn-primary btn-sm",
+                     class: "btn btn-warning w-100 text-wrap",
                      disabled: !campaign.open_for_registrations?,
                      data: { preference_choices_target: "saveButton" } %>
     </div>
