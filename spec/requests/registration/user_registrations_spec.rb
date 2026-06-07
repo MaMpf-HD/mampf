@@ -363,6 +363,27 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           expect(response).to have_http_status(:found)
         end
 
+        it "only permits preference rank keys" do
+          edit_service = instance_double(
+            UserRegistrations::LecturePreferenceEditService,
+            update!: stub_success
+          )
+
+          expect(UserRegistrations::PreferencesHandler).to receive(:new)
+            .and_return(service_double)
+          expect(service_double).to receive(:pref_items_from_ranked_params)
+            .with(preferences)
+            .and_return([])
+          expect(UserRegistrations::LecturePreferenceEditService).to receive(:new)
+            .with(campaign, user)
+            .and_return(edit_service)
+
+          post save_preferences_path(campaign),
+               params: { preferences: preferences.merge("4" => item.id, "admin" => "1") }
+
+          expect(response).to have_http_status(:found)
+        end
+
         it "updates the rosterized notice box via turbo stream" do
           post save_preferences_path(campaign),
                params: { preferences: preferences },

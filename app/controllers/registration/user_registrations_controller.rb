@@ -123,9 +123,14 @@ module Registration
 
       def preference_params
         raw_preferences = params.fetch(:preferences, {})
-        return raw_preferences.permit!.to_h if raw_preferences.respond_to?(:permit!)
+        allowed_keys = preference_param_keys
+        return raw_preferences.permit(*allowed_keys).to_h if raw_preferences.respond_to?(:permit)
 
-        raw_preferences.to_h
+        raw_preferences.to_h.slice(*allowed_keys)
+      end
+
+      def preference_param_keys
+        (1..::UserRegistrations::PreferencesHandler::MAX_PREFERENCES).map(&:to_s)
       end
 
       def student_registration_lecture
