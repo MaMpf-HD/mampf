@@ -25,12 +25,14 @@ export async function createTutorialItemsCampaign(
   allocationMode: "first_come_first_served" | "preference_based",
   description: string,
   status: "open" | "closed" = "open",
+  itemsCount = 3,
 ): Promise<{ campaign: FactoryBotObject }> {
   const campaign = await factory.create("registration_campaign", [status, allocationMode], {
     allocation_mode: allocationMode,
     campaignable_type: "Lecture",
     campaignable_id: lecture.id,
     description,
+    items_count: itemsCount,
   });
 
   return { campaign };

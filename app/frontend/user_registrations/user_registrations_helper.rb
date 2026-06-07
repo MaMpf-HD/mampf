@@ -65,14 +65,17 @@ module UserRegistrationsHelper
     t("registration.user_registration.campaign_main")
   end
 
-  def student_registration_instruction(campaign)
+  def student_registration_instruction(campaign, items = [])
     key = if campaign.first_come_first_served?
       "fcfs_instruction"
     else
       "preference_instruction"
     end
 
-    t("registration.user_registration.#{key}")
+    return t("registration.user_registration.#{key}") if campaign.first_come_first_served?
+
+    t("registration.user_registration.#{key}",
+      count: preference_rank_count(items))
   end
 
   def student_visible_campaign?(campaign)
@@ -107,6 +110,14 @@ module UserRegistrationsHelper
 
   def preference_rank_for(item, item_preferences)
     item_preferences.find { |pref| pref.item.id == item.id }&.rank
+  end
+
+  def preference_rank_count(items)
+    [Array(items).size, UserRegistrations::PreferencesHandler::MAX_PREFERENCES].min
+  end
+
+  def preference_ranks_for(items)
+    1..preference_rank_count(items)
   end
 
   def preference_rank_button_tooltip(rank)

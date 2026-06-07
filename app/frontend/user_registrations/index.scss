@@ -251,6 +251,53 @@
   row-gap: 1rem;
 }
 
+.student-registration-preference-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.student-registration-podium-spot {
+  display: grid;
+  align-content: end;
+  gap: 0.25rem;
+  min-height: 4.4rem;
+  height: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #d6dee5;
+  border-bottom-width: 0.35rem;
+  border-radius: var(--bs-border-radius);
+  background: linear-gradient(180deg, #fbfcfd, #eef3f6);
+  color: #5a6672;
+}
+
+.student-registration-podium-spot--filled {
+  border-color: #20496c;
+  background: linear-gradient(180deg, #ffffff, #eaf2f7);
+  color: #1f3242;
+}
+
+.student-registration-podium-rank {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: #20496c;
+}
+
+.student-registration-podium-name {
+  min-height: 1.35rem;
+  overflow-wrap: anywhere;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.student-registration-preference-submit {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .student-registration-tile-header {
   gap: 0.75rem;
 }

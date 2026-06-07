@@ -82,34 +82,113 @@ test.describe("campaign registration", () => {
     await expect(buttons.nth(2)).toBeDisabled();
   });
 
-  test("stores preference ranks immediately and keeps ranks unique", async ({
+  test("stages preference ranks locally and saves them in one request", async ({
     factory,
     student,
   }) => {
     const lecture = await createReleasedLecture(factory);
     await subscribeToLecture(factory, lecture, student.user.id);
-    await createTutorialItemsCampaign(
+    const { campaign } = await createTutorialItemsCampaign(
       factory,
       lecture,
       "preference_based",
       "Preference tutorial registration",
     );
+    let saveRequests = 0;
+    let submittedBody = "";
+    student.page.on("request", (request) => {
+      if (request.url().includes(`/campaign_registrations/${campaign.id}/preferences`)) {
+        saveRequests += 1;
+        submittedBody = request.postData() || "";
+      }
+    });
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    const firstTile = student.page.locator(".tutorial-gtile").nth(0);
+    const secondTile = student.page.locator(".tutorial-gtile").nth(1);
+    const thirdTile = student.page.locator(".tutorial-gtile").nth(2);
+    const firstTitle = await firstTile.getByRole("heading").textContent();
+    const secondTitle = await secondTile.getByRole("heading").textContent();
+    const thirdTitle = await thirdTile.getByRole("heading").textContent();
+
+    await expect(student.page.getByText("Rank 3 options.")).toBeVisible();
+    await expect(student.page.getByRole("button", { name: "Save choices" })).toBeDisabled();
+    await firstTile.getByRole("button", { name: "1st" }).click();
+    expect(saveRequests).toBe(0);
+    await expect(firstTile.getByRole("button", { name: "1st" })).toHaveClass(/btn-primary/);
+    await expect(student.page.locator(".student-registration-podium")).toContainText(
+      firstTitle || "",
+    );
+    await expect(student.page.getByRole("button", { name: "Save choices" })).toBeDisabled();
+
+    await secondTile.getByRole("button", { name: "2nd" }).click();
+    await thirdTile.getByRole("button", { name: "3rd" }).click();
+    expect(saveRequests).toBe(0);
+    await expect(student.page.getByRole("button", { name: "Save choices" })).toBeEnabled();
+
+    await thirdTile.getByRole("button", { name: "1st" }).click();
+
+    await expect(thirdTile.getByRole("button", { name: "1st" })).toHaveClass(/btn-primary/);
+    await expect(secondTile.getByRole("button", { name: "2nd" })).toHaveClass(/btn-primary/);
+    await expect(firstTile.getByRole("button", { name: "3rd" })).toHaveClass(/btn-primary/);
+    await expect(student.page.locator(".student-registration-rank-button.btn-primary"))
+      .toHaveCount(3);
+
+    await student.page.getByRole("button", { name: "Save choices" }).click();
+
+    await expect(student.page.getByText("Your preferences have been saved.")).toBeVisible();
+    expect(saveRequests).toBe(1);
+    expect(submittedBody).toContain("preferences%5B1%5D");
+    expect(submittedBody).toContain("preferences%5B2%5D");
+    expect(submittedBody).toContain("preferences%5B3%5D");
+    await expect(student.page.locator(".student-registration-podium")).toContainText(
+      thirdTitle || "",
+    );
+    await expect(student.page.locator(".student-registration-podium")).toContainText(
+      secondTitle || "",
+    );
+  });
+
+  test("limits preference campaigns with two tutorials to two ranks", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const { campaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "preference_based",
+      "Two tutorial preference registration",
+      "open",
+      2,
+    );
+    let submittedBody = "";
+    student.page.on("request", (request) => {
+      if (request.url().includes(`/campaign_registrations/${campaign.id}/preferences`)) {
+        submittedBody = request.postData() || "";
+      }
+    });
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
     const firstTile = student.page.locator(".tutorial-gtile").nth(0);
     const secondTile = student.page.locator(".tutorial-gtile").nth(1);
 
+    await expect(student.page.getByText("Rank 2 options.")).toBeVisible();
+    await expect(student.page.locator(".student-registration-podium-spot")).toHaveCount(2);
+    await expect(student.page.getByRole("button", { name: "3rd" })).toHaveCount(0);
+    await expect(student.page.getByRole("button", { name: "Save choices" })).toBeDisabled();
+
     await firstTile.getByRole("button", { name: "1st" }).click();
+    await secondTile.getByRole("button", { name: "2nd" }).click();
+    await student.page.getByRole("button", { name: "Save choices" }).click();
+
     await expect(student.page.getByText("Your preferences have been saved.")).toBeVisible();
-    await expect(firstTile.getByRole("button", { name: "1st" })).toHaveClass(/btn-primary/);
-
-    await secondTile.getByRole("button", { name: "1st" }).click();
-
-    await expect(secondTile.getByRole("button", { name: "1st" })).toHaveClass(/btn-primary/);
-    await expect(firstTile.getByRole("button", { name: "2nd" })).toHaveClass(/btn-primary/);
-    await expect(student.page.locator(".student-registration-rank-button.btn-primary"))
-      .toHaveCount(2);
+    expect(submittedBody).toContain("preferences%5B1%5D");
+    expect(submittedBody).toContain("preferences%5B2%5D");
+    expect(submittedBody).not.toContain("preferences%5B3%5D");
   });
 
   test("shows that the student is not assigned to any group yet", async ({

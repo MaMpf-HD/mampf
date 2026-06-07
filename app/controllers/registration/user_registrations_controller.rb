@@ -3,9 +3,10 @@ module Registration
     helper ::UserRegistrationsHelper, ::EligibilityHelper,
            ItemsHelper, CampaignsHelper
     before_action :set_lecture, only: [:index]
-    before_action :set_campaign, only: [:create, :destroy, :destroy_for_user]
+    before_action :set_campaign,
+            only: [:create, :destroy, :destroy_for_user, :save_preferences]
     before_action :set_locale
-    before_action :set_item, only: [:create, :destroy, :add]
+    before_action :set_item, only: [:create, :destroy]
 
     def current_ability
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
@@ -60,13 +61,11 @@ module Registration
                                       I18n.t("registration.user_registration.messages.withdrawn"))
     end
 
-    def add
-      @campaign = @item.registration_campaign
+    def save_preferences
       authorize! :add, @campaign.campaignable
 
       pref_items = ::UserRegistrations::PreferencesHandler
-                   .new.pref_item_build_with_rank(@campaign, current_user,
-                                                  params[:item_id], params[:rank])
+                   .new.pref_items_from_ranked_params(preference_params)
       result = ::UserRegistrations::LecturePreferenceEditService
                .new(@campaign, current_user).update!(pref_items)
       respond_to_student_registration(
@@ -120,6 +119,13 @@ module Registration
             user: current_user
           ).render_in(view_context)
         )
+      end
+
+      def preference_params
+        raw_preferences = params.fetch(:preferences, {})
+        return raw_preferences.permit!.to_h if raw_preferences.respond_to?(:permit!)
+
+        raw_preferences.to_h
       end
 
       def student_registration_lecture

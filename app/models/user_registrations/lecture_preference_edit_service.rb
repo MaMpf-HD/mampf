@@ -30,7 +30,7 @@ module UserRegistrations
       # 1. Check if user satisfies all policies (phase: registration and both)
       # 2. Check if items are valid for this campaign
       # 3. Check if campaign is in preference based mode
-      # 4. Check if number of preferences does not exceed 3
+      # 4. Check if submitted preferences exactly cover the available ranks
       def validate_update(pref_items)
         [
           check_preference_based_mode,
@@ -38,7 +38,7 @@ module UserRegistrations
           check_campaign_open_for_withdraw,
           check_policies,
           check_items(pref_items),
-          check_options_number(pref_items)
+          check_preferences(pref_items)
         ].compact
       end
 
@@ -48,10 +48,21 @@ module UserRegistrations
         I18n.t("registration.user_registration.messages.not_preference_based_mode")
       end
 
-      def check_options_number(pref_items)
-        return if pref_items.size <= 3
+      # Each available rank must be covered exactly once by a distinct item.
+      def check_preferences(pref_items)
+        ranks = pref_items.map(&:rank).sort
+        item_ids = pref_items.map(&:id)
+        return if ranks == (1..expected_preference_count).to_a &&
+                  item_ids.uniq.size == item_ids.size
 
-        I18n.t("registration.user_registration.messages.too_many_preferences")
+        I18n.t("registration.user_registration.messages.invalid_preferences")
+      end
+
+      def expected_preference_count
+        [
+          @campaign.registration_items.count,
+          UserRegistrations::PreferencesHandler::MAX_PREFERENCES
+        ].min
       end
   end
 end

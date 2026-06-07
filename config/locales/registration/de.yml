@@ -280,11 +280,17 @@ de:
       campaign_main: "Anmeldeverfahren"
       eligibility_title: "Berechtigung"
       fcfs_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
-      preference_instruction: "Ordne bis zu drei Optionen nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
+      preference_instruction:
+        one: "Ordne %{count} Option nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
+        other: "Ordne %{count} Optionen nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
       preference_rank_options:
         "1": "1."
         "2": "2."
         "3": "3."
+      preference_podium:
+        label: "Ausgewählte Präferenzstufen"
+        empty: "Option wählen"
+      save_choices: "Auswahl speichern"
       eligible: "Berechtigt"
       not_eligible: "Nicht berechtigt"
       prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
@@ -340,7 +346,7 @@ de:
         withdrawn: "Du hast Deine Registrierung zurückgezogen."
         dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
         not_preference_based_mode: "Dieses Anmeldeverfahren ist nicht im präferenzbasierten Modus. Präferenzen können hier nicht gespeichert werden."
-        too_many_preferences: "Du hast zu viele Präferenzen ausgewählt. Maximale Anzahl: 3"
+        invalid_preferences: "Bitte wähle genau eine Option für jede verfügbare Präferenzstufe."
         not_fcfs_mode: "Dieses Anmeldeverfahren ist nicht im First-Come-First-Served-Modus. Direkte Anmeldungen können hier nicht vorgenommen werden."
         cannot_secure_slot: "Leider konnte keine Deiner gewählten Optionen zugeteilt werden."
         course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wende Dich an den Kursadministrator, um Alternativen zu besprechen."

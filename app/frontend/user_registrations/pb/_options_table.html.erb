@@ -6,19 +6,21 @@
       student-registration-tile-grid
     "
   >
-    <% sorted_student_registration_items(campaign, items, current_user).each do |item| %>
+    <% sorted_items.each do |item| %>
       <% metadata_rows = item_tile_metadata_rows(item) + [{
            value: item_capacity_row(item)
          }] %>
 
       <% selected_rank = preference_rank_for(item, item_preferences) %>
+      <% tile_title = item.registerable.title %>
+      <% tile_type = item_display_type(item) %>
 
       <%= render partial: "user_registrations/group_tile",
                  locals: {
                    registerable: item.registerable,
                    item: item,
-                   tile_title: item.registerable.title,
-                   tile_type: item_display_type(item),
+                   tile_title: tile_title,
+                   tile_type: tile_type,
                    tile_metadata_rows: metadata_rows,
                    tile_variant_class: "tutorial-gtile--campaign",
                    tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
@@ -28,12 +30,10 @@
                        :div,
                        class: "d-flex gap-1 flex-nowrap student-registration-rank-actions"
                      ) do
-                       ranks = 1..UserRegistrations::PreferencesHandler::MAX_PREFERENCES
                        safe_join(ranks.map do |rank|
-                         button_to(
+                         button_tag(
                            t("registration.user_registration.preference_rank_options.#{rank}"),
-                           add_preference_path(item.id, rank: rank),
-                           method: :post,
+                           type: "button",
                            disabled: !campaign.open_for_registrations?,
                            class: class_names(
                              "btn btn-sm student-registration-rank-button",
@@ -41,7 +41,14 @@
                              "btn-outline-primary": selected_rank != rank
                            ),
                            title: preference_rank_button_tooltip(rank),
-                           form: { data: { turbo_stream: true } }
+                           aria: { pressed: selected_rank == rank },
+                           data: {
+                             action: "preference-choices#choose",
+                             preference_choices_target: "button",
+                             item_id: item.id,
+                             item_title: tile_title,
+                             rank: rank
+                           }
                          )
                        end)
                      end)

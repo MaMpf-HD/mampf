@@ -10,29 +10,28 @@ RSpec.describe(UserRegistrations::PreferencesHandler, type: :service) do
     let(:item2) { campaign.registration_items.second }
     let(:item3) { campaign.registration_items.third }
 
-    it "build with rank should preserve the selected rank" do
-      result = described_class.new.pref_item_build_with_rank(campaign, user,
-                                                             item.id, 3)
-      expect(result.first.id).to eq(item.id)
-      expect(result.first.rank).to eq(3)
-    end
-
-    it "build with rank should keep ranks unique" do
-      Registration::UserRegistration.create!(
-        registration_campaign: campaign,
-        registration_item: item2,
-        user: user,
-        status: :pending,
-        preference_rank: 1
+    it "builds simple preference items from ranked params" do
+      result = described_class.new.pref_items_from_ranked_params(
+        "3" => item3.id,
+        "1" => item.id,
+        "2" => item2.id
       )
 
-      result = described_class.new.pref_item_build_with_rank(campaign, user,
-                                                             item.id, 1)
-      expect(result.map(&:rank)).to contain_exactly(1, 2)
+      expect(result.map(&:id)).to eq([item.id, item2.id, item3.id])
+      expect(result.map(&:rank)).to eq([1, 2, 3])
     end
 
-    it "build with rank should replace an option at the preference limit" do
-      extra_item = create(:registration_item, registration_campaign: campaign)
+    it "ignores blank choices" do
+      result = described_class.new.pref_items_from_ranked_params(
+        "1" => item.id,
+        "2" => "",
+        "3" => item3.id
+      )
+
+      expect(result.map(&:rank)).to eq([1, 3])
+    end
+
+    it "returns persisted preferences ordered by rank" do
       [item2, item, item3].each_with_index do |registration_item, index|
         Registration::UserRegistration.create!(
           registration_campaign: campaign,
@@ -43,11 +42,10 @@ RSpec.describe(UserRegistrations::PreferencesHandler, type: :service) do
         )
       end
 
-      result = described_class.new.pref_item_build_with_rank(campaign, user,
-                                                             extra_item.id, 2)
-      expect(result.size).to eq(3)
-      expect(result.map(&:rank)).to contain_exactly(1, 2, 3)
-      expect(result.find { |pref| pref.id == extra_item.id }.rank).to eq(2)
+      result = described_class.new.preferences_info(campaign, user)
+
+      expect(result.map(&:item)).to eq([item2, item, item3])
+      expect(result.map(&:rank)).to eq([1, 2, 3])
     end
   end
 end

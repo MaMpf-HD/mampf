@@ -54,12 +54,13 @@ FactoryBot.define do
       transient do
         capacity { nil }
         for_cohorts { false }
+        items_count { 3 }
       end
       after(:create) do |campaign, evaluator|
         lecture = campaign.campaignable
 
         if evaluator.for_cohorts
-          cohorts = create_list(:cohort, 3, context: lecture)
+          cohorts = create_list(:cohort, evaluator.items_count, context: lecture)
           cohorts.each do |cohort|
             create(:registration_item,
                    registration_campaign: campaign,
@@ -67,7 +68,7 @@ FactoryBot.define do
                    registerable: cohort)
           end
         elsif lecture.seminar?
-          talks = create_list(:talk, 3, lecture: lecture)
+          talks = create_list(:talk, evaluator.items_count, lecture: lecture)
           talks.each do |talk|
             create(:registration_item,
                    registration_campaign: campaign,
@@ -76,7 +77,8 @@ FactoryBot.define do
           end
         else
           capacity = evaluator.capacity if evaluator.capacity
-          tutorials = create_list(:tutorial, 3, lecture: lecture, capacity: capacity)
+          tutorials = create_list(:tutorial, evaluator.items_count, lecture: lecture,
+                                  capacity: capacity)
           tutorials.each do |tutorial|
             create(:registration_item,
                    registration_campaign: campaign,

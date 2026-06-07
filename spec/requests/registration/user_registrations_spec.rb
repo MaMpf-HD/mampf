@@ -325,34 +325,48 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       )
     end
     let(:item) { campaign.registration_items.first }
+    let(:item2) { campaign.registration_items.second }
+    let(:item3) { campaign.registration_items.third }
+    let(:preferences) do
+      {
+        "1" => item.id,
+        "2" => item2.id,
+        "3" => item3.id
+      }
+    end
 
     describe "preference actions" do
       let(:service_double) { instance_double(UserRegistrations::PreferencesHandler) }
 
-      describe "POST #add" do
-        it "saves the selected preference rank" do
-          pref_items = [UserRegistrations::PreferencesHandler::SimpleItemPreference
-            .new(item.id, 1)]
+      describe "POST #save_preferences" do
+        it "saves all selected preference ranks" do
+          pref_items = [
+            UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item.id, 1),
+            UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item2.id, 2),
+            UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item3.id, 3)
+          ]
           edit_service = instance_double(
             UserRegistrations::LecturePreferenceEditService
           )
 
           expect(UserRegistrations::PreferencesHandler).to receive(:new)
             .and_return(service_double)
-          expect(service_double).to receive(:pref_item_build_with_rank)
-            .with(campaign, user, item.id.to_s, "1")
+          expect(service_double).to receive(:pref_items_from_ranked_params)
+            .with(preferences)
             .and_return(pref_items)
           expect(UserRegistrations::LecturePreferenceEditService).to receive(:new)
             .with(campaign, user)
             .and_return(edit_service)
           expect(edit_service).to receive(:update!).with(pref_items).and_return(stub_success)
 
-          post add_preference_path(item), params: { rank: 1 }
+          post save_preferences_path(campaign), params: { preferences: preferences }
           expect(response).to have_http_status(:found)
         end
 
         it "updates the rosterized notice box via turbo stream" do
-          post add_preference_path(item), params: { rank: 1 }, as: :turbo_stream
+          post save_preferences_path(campaign),
+               params: { preferences: preferences },
+               as: :turbo_stream
 
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
@@ -373,7 +387,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
             expect(UserRegistrations::PreferencesHandler).not_to receive(:new)
             expect(UserRegistrations::LecturePreferenceEditService).not_to receive(:new)
 
-            post add_preference_path(item), params: { rank: 1 }
+            post save_preferences_path(campaign), params: { preferences: preferences }
 
             expect(response).to redirect_to(root_path)
           end
@@ -436,29 +450,41 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       )
     end
     let(:item) { campaign.registration_items.first }
+    let(:item2) { campaign.registration_items.second }
+    let(:item3) { campaign.registration_items.third }
+    let(:preferences) do
+      {
+        "1" => item.id,
+        "2" => item2.id,
+        "3" => item3.id
+      }
+    end
 
     describe "preference actions" do
       let(:service_double) { instance_double(UserRegistrations::PreferencesHandler) }
 
-      describe "POST #add" do
-        it "saves the selected preference rank" do
-          pref_items = [UserRegistrations::PreferencesHandler::SimpleItemPreference
-            .new(item.id, 1)]
+      describe "POST #save_preferences" do
+        it "saves all selected preference ranks" do
+          pref_items = [
+            UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item.id, 1),
+            UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item2.id, 2),
+            UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item3.id, 3)
+          ]
           edit_service = instance_double(
             UserRegistrations::LecturePreferenceEditService
           )
 
           expect(UserRegistrations::PreferencesHandler).to receive(:new)
             .and_return(service_double)
-          expect(service_double).to receive(:pref_item_build_with_rank)
-            .with(campaign, user, item.id.to_s, "1")
+          expect(service_double).to receive(:pref_items_from_ranked_params)
+            .with(preferences)
             .and_return(pref_items)
           expect(UserRegistrations::LecturePreferenceEditService).to receive(:new)
             .with(campaign, user)
             .and_return(edit_service)
           expect(edit_service).to receive(:update!).with(pref_items).and_return(stub_success)
 
-          post add_preference_path(item), params: { rank: 1 }
+          post save_preferences_path(campaign), params: { preferences: preferences }
           expect(response).to have_http_status(:found)
         end
       end
