@@ -229,11 +229,21 @@ test.describe("campaign registration", () => {
       "preference_based",
       "Preference tutorial registration",
     );
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Pending Preference Tutorial",
+      capacity: 2,
+    });
+    const item = await factory.create("registration_item", [], {
+      registration_campaign_id: campaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: tutorial.id,
+    });
 
     await factory.create("registration_user_registration", [], {
       user_id: student.user.id,
       registration_campaign_id: campaign.id,
-      registration_item_id: campaign.registration_items[0].id,
+      registration_item_id: item.id,
       preference_rank: 1,
       status: "pending",
     });
@@ -494,22 +504,25 @@ test.describe("campaign registration", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
-    const notice = student.page.locator(".student-registration-rosterized-notice");
-    await expect(notice).toHaveCount(1);
-    await expect(notice.locator(".student-registration-rosterized-message")).toHaveCount(2);
+    const negativeNotice = student.page.locator(
+      ".student-registration-rosterized-notice--negative",
+    );
+    await expect(negativeNotice).toHaveCount(1);
+    await expect(negativeNotice.locator(".student-registration-rosterized-message"))
+      .toHaveCount(2);
 
     // first campaign
-    await expect(notice).toContainText("Overbooked tutorial registration");
-    await expect(notice).toContainText(
+    await expect(negativeNotice).toContainText("Overbooked tutorial registration");
+    await expect(negativeNotice).toContainText(
       "1st Popular Tutorial, 2nd Early Morning Tutorial",
     );
     // second campaign
-    await expect(notice).toContainText("Backup tutorial registration");
-    await expect(notice).toContainText("1st Quiet Tutorial");
+    await expect(negativeNotice).toContainText("Backup tutorial registration");
+    await expect(negativeNotice).toContainText("1st Quiet Tutorial");
 
     await expect(student.page.getByText("Registration result")).toHaveCount(0);
     await expect(student.page.getByText(
       "There are currently no tutorials or groups available for registration.",
-    )).toHaveCount(0);
+    )).toBeVisible();
   });
 });
