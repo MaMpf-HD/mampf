@@ -91,7 +91,7 @@ module EligibilityHelper
     end
 
     def policy_config_info(policy)
-      case policy[:kind]
+      case policy[:kind].to_s
       when "student_performance"
         policy.dig(:config, "certification_status").to_s.capitalize
       when "institutional_email"
