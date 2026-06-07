@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe("Roster::SelfMaterializationController", type: :request) do
   let(:user)    { create(:confirmed_user_en) }
-  let(:lecture) { create(:lecture) }
+  let(:lecture) { create(:lecture, :released_for_all) }
   let(:tutorial) do
     create(:tutorial,
            lecture: lecture,
@@ -22,6 +22,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
   end
 
   before do
+    create(:lecture_user_join, user: user, lecture: lecture)
     sign_in user
     Flipper.enable(:registration_campaigns)
     Flipper.enable(:roster_maintenance)

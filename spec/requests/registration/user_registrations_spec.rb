@@ -84,12 +84,14 @@ end
 
 RSpec.describe("Registration::UserRegistrations", type: :request) do
   let(:user) { create(:confirmed_user) }
-  let(:lecture) { create(:lecture) }
-  let(:seminar) { create(:lecture, :is_seminar) }
+  let(:lecture) { create(:lecture, :released_for_all) }
+  let(:seminar) { create(:lecture, :is_seminar, :released_for_all) }
   let(:stub_success) { UserRegistrations::Handler::Result.new(true, []) }
 
   before do
     Flipper.enable(:registration_campaigns)
+    create(:lecture_user_join, user: user, lecture: lecture)
+    create(:lecture_user_join, user: user, lecture: seminar)
     sign_in user
   end
 
@@ -222,7 +224,10 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   end
 
   context "fcfs tutorial campaign" do
-    let(:campaign) { create(:registration_campaign, :open, :first_come_first_served) }
+    let(:campaign) do
+      create(:registration_campaign, :open, :first_come_first_served,
+             campaignable: lecture)
+    end
     let(:item) { campaign.registration_items.first }
     describe "POST campaign_registrations/:campaign_id/items/:item_id/register" do
       it "creates a registration and redirects" do
@@ -295,7 +300,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
       context "when the route campaign does not match the item's campaign" do
         let(:campaign) do
-          create(:registration_campaign, :closed, :first_come_first_served)
+          create(:registration_campaign, :closed, :first_come_first_served,
+                 campaignable: lecture)
         end
         let(:open_campaign) do
           create(:registration_campaign, :open, :first_come_first_served)
@@ -320,7 +326,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       FactoryBot.create(
         :registration_campaign,
         :open,
-        :preference_based
+        :preference_based,
+        campaignable: lecture
       )
     end
     let(:item) { campaign.registration_items.first }
