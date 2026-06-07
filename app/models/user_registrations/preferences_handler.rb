@@ -19,17 +19,19 @@ module UserRegistrations
 
     # preferences info saved in DB
     def preferences_info(campaign, user)
-      user_registrations = campaign.user_registrations
-                                   .where(user_id: user.id)
-                                   .where(status: [:confirmed, :pending])
-      user_registrations.includes(:registration_item)
-                        .map(&:registration_item)
-                        .flatten
-                        .sort_by { |i| i.preference_rank(user) }
-                        .map do |item|
-        ItemPreference.new(item,
-                           item.preference_rank(user))
+      campaign.user_registrations
+              .where(user_id: user.id, status: [:confirmed, :pending])
+              .includes(:registration_item)
+              .sort_by { |registration| preference_sort_key(registration.preference_rank) }
+              .map do |registration|
+        ItemPreference.new(registration.registration_item, registration.preference_rank)
       end
     end
+
+    private
+
+      def preference_sort_key(rank)
+        [rank.nil? ? 1 : 0, rank || 0]
+      end
   end
 end

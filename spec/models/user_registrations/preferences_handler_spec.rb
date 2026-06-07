@@ -47,5 +47,34 @@ RSpec.describe(UserRegistrations::PreferencesHandler, type: :service) do
       expect(result.map(&:item)).to eq([item2, item, item3])
       expect(result.map(&:rank)).to eq([1, 2, 3])
     end
+
+    it "sorts forced assignments after ranked preferences" do
+      Registration::UserRegistration.create!(
+        registration_campaign: campaign,
+        registration_item: item3,
+        user: user,
+        status: :confirmed,
+        preference_rank: nil
+      )
+      Registration::UserRegistration.create!(
+        registration_campaign: campaign,
+        registration_item: item2,
+        user: user,
+        status: :pending,
+        preference_rank: 1
+      )
+      Registration::UserRegistration.create!(
+        registration_campaign: campaign,
+        registration_item: item,
+        user: user,
+        status: :pending,
+        preference_rank: 2
+      )
+
+      result = described_class.new.preferences_info(campaign, user)
+
+      expect(result.map(&:item)).to eq([item2, item, item3])
+      expect(result.map(&:rank)).to eq([1, 2, nil])
+    end
   end
 end
