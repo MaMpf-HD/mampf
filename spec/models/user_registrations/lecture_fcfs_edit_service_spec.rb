@@ -69,6 +69,28 @@ RSpec.describe(UserRegistrations::LectureFcfsEditService, type: :service) do
       expect(registration.status).to eq("confirmed")
     end
 
+    it "serializes concurrent registrations for the same user and campaign" do
+      item_ids = Queue.new
+      [item.id, item2.id].each { |item_id| item_ids << item_id }
+
+      values = run_concurrently do
+        service = described_class.new(
+          Registration::Campaign.find(campaign.id),
+          User.find(user.id)
+        )
+
+        service.register!(Registration::Item.find(item_ids.pop))
+      end
+
+      expect(values).to all(be_a(UserRegistrations::Handler::Result))
+      expect(values.map(&:success?)).to contain_exactly(true, false)
+      expect(values.find { |result| !result.success? }.errors).to include(
+        I18n.t("registration.user_registration.messages.already_registered")
+      )
+      expect(Registration::UserRegistration.where(registration_campaign: campaign,
+                                                  user: user).count).to eq(1)
+    end
+
     context "given preference based campaign" do
       let(:campaign_pb) do
         create(:registration_campaign, :open, allocation_mode: :preference_based)

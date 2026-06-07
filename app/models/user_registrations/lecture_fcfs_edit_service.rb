@@ -4,6 +4,7 @@ module UserRegistrations
   class LectureFcfsEditService < Handler
     def register!(item)
       ActiveRecord::Base.transaction do
+        @campaign.lock!
         item.lock!
         errors = validate_register(item)
         return Result.new(false, errors) unless errors.empty?
