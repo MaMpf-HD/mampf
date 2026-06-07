@@ -10,6 +10,9 @@
                 preference_choices_empty_label_value: t(
                   "registration.user_registration.preference_podium.empty"
                 ),
+                preference_choices_incomplete_tooltip_value: t(
+                  "registration.user_registration.save_choices_incomplete_tooltip"
+                ),
                 preference_choices_readonly_value: !campaign.open_for_registrations?
               } do %>
   <div class="student-registration-preference-workspace">
@@ -70,10 +73,17 @@
       data-preference-choices-target="savePrompt"
       hidden
     >
-      <%= submit_tag t("registration.user_registration.save_choices"),
-                     class: "btn btn-warning w-100 text-wrap",
-                     disabled: !campaign.open_for_registrations?,
-                     data: { preference_choices_target: "saveButton" } %>
+      <span
+        class="d-inline-block w-100"
+        data-bs-toggle="tooltip"
+        data-preference-choices-target="saveTooltip"
+        tabindex="-1"
+      >
+        <%= submit_tag t("registration.user_registration.save_choices"),
+                       class: "btn btn-warning w-100 text-wrap",
+                       disabled: !campaign.open_for_registrations?,
+                       data: { preference_choices_target: "saveButton" } %>
+      </span>
     </div>
   </div>
 <% end %>

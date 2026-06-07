@@ -291,6 +291,7 @@ de:
         label: "Ausgewählte Präferenzstufen"
         empty: "Option wählen"
       save_choices: "Auswahl speichern"
+      save_choices_incomplete_tooltip: "Wähle zuerst für jede Präferenzstufe eine Option."
       eligible: "Berechtigt"
       not_eligible: "Nicht berechtigt"
       prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"

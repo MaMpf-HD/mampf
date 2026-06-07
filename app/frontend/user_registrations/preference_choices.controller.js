@@ -3,10 +3,12 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = [
     "button", "input", "podiumName", "podiumSpot", "saveButton", "savePrompt",
+    "saveTooltip",
   ];
 
   static values = {
     emptyLabel: String,
+    incompleteTooltip: String,
     readonly: Boolean,
   };
 
@@ -73,6 +75,8 @@ export default class extends Controller {
   refresh() {
     const preferences = this.preferences();
     const changed = this.changed(preferences);
+    const complete = this.complete(preferences);
+    const showIncompleteTooltip = changed && !complete;
 
     this.buttonTargets.forEach((button) => {
       const selected = preferences[Number(button.dataset.rank)] === button.dataset.itemId;
@@ -98,9 +102,20 @@ export default class extends Controller {
       this.savePromptTarget.hidden = !changed;
     }
 
+    if (this.hasSaveTooltipTarget) {
+      this.saveTooltipTarget.tabIndex = showIncompleteTooltip ? 0 : -1;
+
+      if (showIncompleteTooltip) {
+        this.saveTooltipTarget.setAttribute("title", this.incompleteTooltipValue);
+      }
+      else {
+        this.saveTooltipTarget.removeAttribute("title");
+      }
+    }
+
     if (this.hasSaveButtonTarget) {
-      this.saveButtonTarget.disabled = this.readonlyValue || !changed
-        || !this.complete(preferences);
+      this.saveButtonTarget.disabled = this.readonlyValue || !changed || !complete;
+      this.saveButtonTarget.style.pointerEvents = showIncompleteTooltip ? "none" : "";
     }
   }
 

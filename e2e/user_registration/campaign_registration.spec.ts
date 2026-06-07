@@ -122,6 +122,9 @@ test.describe("campaign registration", () => {
       firstTitle || "",
     );
     await expect(saveButton).toBeDisabled();
+    await expect(
+      student.page.locator("[data-preference-choices-target='saveTooltip']"),
+    ).toHaveAttribute("title", "Choose an option for every rank before saving.");
 
     await secondTile.getByRole("button", { name: "2nd" }).click();
     await thirdTile.getByRole("button", { name: "3rd" }).click();

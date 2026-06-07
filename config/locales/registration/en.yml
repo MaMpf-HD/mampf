@@ -292,6 +292,7 @@ en:
         label: "Selected preference ranks"
         empty: "Choose an option"
       save_choices: "Save choices"
+      save_choices_incomplete_tooltip: "Choose an option for every rank before saving."
       eligible: "Eligible"
       not_eligible: "Not eligible"
       prerequisite_campaign: "Prerequisite registration process"
