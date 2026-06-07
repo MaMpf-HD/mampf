@@ -102,7 +102,7 @@
   <% if lecture %>
     <%# Müsli (external link) %>
     <li class="sidebar-item nav-link <%= !lecture.muesli ? "disabled" : ""%>">
-      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank">
+      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" rel="noopener noreferrer">
         <i class="bi bi-list-check"></i>
         <%= t('categories.muesli') %>
       </a>
