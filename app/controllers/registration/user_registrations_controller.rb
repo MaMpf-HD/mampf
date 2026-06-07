@@ -222,7 +222,7 @@ module Registration
       end
 
       def set_item
-        @item = Registration::Item.find(params[:item_id])
+        @item = Registration::Item.find_by(id: params[:item_id])
         return if @item
 
         respond_with_flash(:alert, t("registration.item.not_found"),
