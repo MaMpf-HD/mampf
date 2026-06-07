@@ -1,7 +1,11 @@
 require "rails_helper"
 
 RSpec.describe(UserRegistrations::LectureFcfsEditService, type: :service) do
-  let(:user) { FactoryBot.create(:user, email: "student@mampf.edu") }
+  around do |example|
+    I18n.with_locale(:en) { example.run }
+  end
+
+  let(:user) { FactoryBot.create(:user, email: "student@mampf.edu", locale: "en") }
   let(:lecture) { FactoryBot.create(:lecture) }
   let(:seminar) { FactoryBot.create(:seminar) }
 
@@ -74,12 +78,14 @@ RSpec.describe(UserRegistrations::LectureFcfsEditService, type: :service) do
       [item.id, item2.id].each { |item_id| item_ids << item_id }
 
       values = run_concurrently do
-        service = described_class.new(
-          Registration::Campaign.find(campaign.id),
-          User.find(user.id)
-        )
+        I18n.with_locale(:en) do
+          service = described_class.new(
+            Registration::Campaign.find(campaign.id),
+            User.find(user.id)
+          )
 
-        service.register!(Registration::Item.find(item_ids.pop))
+          service.register!(Registration::Item.find(item_ids.pop))
+        end
       end
 
       expect(values).to all(be_a(UserRegistrations::Handler::Result))
