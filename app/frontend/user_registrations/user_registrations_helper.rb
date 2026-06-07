@@ -188,6 +188,10 @@ module UserRegistrationsHelper
       case icon_name
       when "person"   then "bi-person"
       when "location" then "bi-geo-alt"
+      when "looks_one" then "bi-list-ol"
+      when "description" then "bi-card-text"
+      when "event" then "bi-calendar-event"
+      else "bi-tag"
       end
     end
 

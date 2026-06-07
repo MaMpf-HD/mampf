@@ -125,6 +125,24 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
     it { expect(helper.nullable_capacity_display(10)).to eq("10") }
   end
 
+  describe "metadata icons" do
+    let(:seminar) { create(:seminar) }
+    let(:talk) do
+      create(:talk, lecture: seminar, position: 5, description: "Deep Learning Overview",
+                    dates: [Time.zone.local(2026, 4, 10)])
+    end
+    let(:item_talk) { create(:registration_item, registerable: talk) }
+
+    it "maps talk metadata icons" do
+      expect(helper.item_tile_metadata_rows(item_talk).pluck(:icon))
+        .to eq(["bi-list-ol", "bi-card-text", "bi-calendar-event"])
+    end
+
+    it "falls back to a generic icon for unknown names" do
+      expect(helper.send(:gtile_icon_for, "unknown")).to eq("bi-tag")
+    end
+  end
+
   describe "#format_date" do
     let(:timestamp) { Time.zone.local(2026, 5, 2, 17, 45) }
 
