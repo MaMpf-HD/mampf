@@ -48,7 +48,9 @@
         </small>
 
         <div>
-          <%= l(campaign.registration_deadline, format: :short) %>
+          <% if campaign.registration_deadline.present? %>
+            <%= l(campaign.registration_deadline, format: :short) %>
+          <% end %>
         </div>
       </div>
 
