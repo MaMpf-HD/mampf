@@ -41,7 +41,7 @@ module UserRegistrations
           if campaign
             "#{campaign&.campaignable&.title}: #{campaign&.description}"
           else
-            I18n.t("registration.user_registration.messages.campaign_not_found")
+            I18n.t("registration.campaign.not_found")
           end
       end
       trace
