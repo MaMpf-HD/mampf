@@ -78,7 +78,7 @@ FactoryBot.define do
         else
           capacity = evaluator.capacity if evaluator.capacity
           tutorials = create_list(:tutorial, evaluator.items_count, lecture: lecture,
-                                  capacity: capacity)
+                                                                    capacity: capacity)
           tutorials.each do |tutorial|
             create(:registration_item,
                    registration_campaign: campaign,

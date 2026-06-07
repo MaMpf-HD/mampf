@@ -1023,9 +1023,9 @@ Rails.application.routes.draw do
              to: "user_registrations#destroy",
              as: :withdraw_item
 
-     post "campaign_registrations/:campaign_id/preferences",
-         to: "user_registrations#save_preferences",
-         as: :save_preferences
+      post "campaign_registrations/:campaign_id/preferences",
+           to: "user_registrations#save_preferences",
+           as: :save_preferences
     end
   end
 
