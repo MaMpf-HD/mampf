@@ -8,6 +8,7 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
     let!(:add_only_tutorial) do
       create(:tutorial,
              lecture: lecture,
+             title: "Tutorial A",
              skip_campaigns: true,
              self_materialization_mode: :add_only)
     end
@@ -15,6 +16,7 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
     let!(:add_and_remove_tutorial) do
       create(:tutorial,
              lecture: lecture,
+             title: "Tutorial B",
              skip_campaigns: true,
              self_materialization_mode: :add_and_remove)
     end
@@ -22,6 +24,7 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
     let!(:remove_only_tutorial) do
       create(:tutorial,
              lecture: lecture,
+             title: "Tutorial C",
              skip_campaigns: true,
              self_materialization_mode: :remove_only)
     end
@@ -29,6 +32,7 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
     let!(:allocated_remove_only_tutorial) do
       create(:tutorial,
              lecture: lecture,
+             title: "Tutorial D",
              skip_campaigns: true,
              self_materialization_mode: :remove_only)
     end
@@ -36,6 +40,7 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
     let!(:disabled_tutorial) do
       create(:tutorial,
              lecture: lecture,
+             title: "Tutorial E",
              skip_campaigns: true,
              self_materialization_mode: :disabled)
     end
@@ -57,6 +62,7 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
     it "sorts registerable options before withdraw-only and full options" do
       full_tutorial = create(:tutorial,
                              lecture: lecture,
+                             title: "Tutorial Z",
                              skip_campaigns: true,
                              self_materialization_mode: :add_only,
                              capacity: 1)
