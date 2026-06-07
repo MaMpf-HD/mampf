@@ -109,6 +109,24 @@ RSpec.describe(UserRegistrations::LecturePreferenceEditService, type: :service) 
         I18n.t("registration.user_registration.messages.invalid_preferences")
       )
     end
+
+    it "rejects preference items from another campaign" do
+      other_campaign = create(:registration_campaign, :preference_based, :open)
+      foreign_item = other_campaign.registration_items.first
+      foreign_pref_items = [
+        UserRegistrations::PreferencesHandler::SimpleItemPreference.new(foreign_item.id, 1),
+        pref_from_fe2,
+        pref_from_fe3
+      ]
+      service = described_class.new(campaign, user)
+
+      result = service.update!(foreign_pref_items)
+
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(
+        I18n.t("registration.user_registration.messages.invalid_options")
+      )
+    end
   end
 
   describe "campaign with only two options" do

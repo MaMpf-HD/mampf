@@ -9,7 +9,7 @@ module UserRegistrations
 
         @campaign.user_registrations.where(user_id: @user.id).destroy_all
         pref_items.each do |pref_item|
-          item = Registration::Item.find(pref_item.id)
+          item = @campaign.registration_items.find(pref_item.id)
           Registration::UserRegistration.create!(
             registration_campaign: @campaign,
             registration_item: item,
