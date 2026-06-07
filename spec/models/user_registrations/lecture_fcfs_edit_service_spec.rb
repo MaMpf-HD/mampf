@@ -180,11 +180,13 @@ RSpec.describe(UserRegistrations::LectureFcfsEditService, type: :service) do
         )
       end
 
-      it "raise error if incorrect item is given" do
+      it "returns an error if incorrect item is given" do
         service = described_class.new(campaign, user)
-        expect do
-          service.withdraw!(item)
-        end.to raise_error(ActiveRecord::RecordNotFound)
+
+        result = service.withdraw!(item)
+
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(I18n.t("registration.user_registration.none"))
       end
     end
   end

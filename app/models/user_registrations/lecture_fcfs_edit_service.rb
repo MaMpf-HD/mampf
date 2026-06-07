@@ -18,15 +18,18 @@ module UserRegistrations
       Result.new(true, [])
     end
 
-    # hard delete the result, or else cannot trace the "submitted options"
-    # the downside effect is that we cannot trace the withdraw time of user
     def withdraw!(item)
       ActiveRecord::Base.transaction do
         item.lock!
         errors = validate_withdraw
         return Result.new(false, errors) unless errors.empty?
 
-        registration = item.user_registrations.find_by!(user: @user, status: :confirmed)
+        registration = item.user_registrations.find_by(user: @user, status: :confirmed)
+        unless registration
+          return Result.new(false,
+                            [I18n.t("registration.user_registration.none")])
+        end
+
         registration.destroy!
       end
       Result.new(true, [])
