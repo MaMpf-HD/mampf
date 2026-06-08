@@ -46,7 +46,7 @@ module Assessment
       participation
     end
 
-    private_class_method
+    private_class_method :validate_points
 
     def self.validate_points(points, task_id)
       return if points.nil?

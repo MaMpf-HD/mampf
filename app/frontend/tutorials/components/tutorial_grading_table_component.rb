@@ -1,4 +1,3 @@
-# app/components/tutorial_grading_table_component.rb
 class TutorialGradingTableComponent < ViewComponent::Base
   def initialize(assignment:, tutorial:, stack:, non_submitters:)
     super()
@@ -17,6 +16,6 @@ class TutorialGradingTableComponent < ViewComponent::Base
   end
 
   def total_max_points
-    tasks.map(&:max_points).compact.sum
+    tasks.filter_map(&:max_points).sum
   end
 end

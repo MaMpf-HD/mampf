@@ -20,9 +20,10 @@ class User < ApplicationRecord
   has_many :cohort_memberships, dependent: :destroy
   has_many :cohorts, through: :cohort_memberships
 
-  has_many :assessment_participations, dependent: :destroy,
-                                      class_name: "Assessment::Participation",
-                                      inverse_of: :user
+  has_many :assessment_participations,
+           dependent: :destroy,
+           class_name: "Assessment::Participation",
+           inverse_of: :user
 
   # a user has many favorite lectures
   has_many :user_favorite_lecture_joins, dependent: :destroy

@@ -21,7 +21,6 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
     ctrl.instance_variable_set(:@submission, submission)
     ctrl
   end
-  
 
   before do
     create(:tutorial_membership, user: user, tutorial: tutorial)
@@ -162,7 +161,6 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
     before do
       allow_any_instance_of(User).to receive(:tutorial_rosterized).and_return(tutorial)
     end
-
 
     context "when feature flag roster_maintenance is enabled" do
       before do
