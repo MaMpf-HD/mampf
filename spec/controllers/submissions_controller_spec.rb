@@ -20,6 +20,11 @@ describe SubmissionsController do
       Flipper.enable(:registration_campaigns)
     end
 
+    after do
+      Flipper.disable(:roster_maintenance)
+      Flipper.disable(:registration_campaigns)
+    end
+
     context "when lecture has roster-eligible tutorials" do
       before do
         allow_any_instance_of(Lecture).to receive(:roster_eligible_tutorials?).and_return(true)
