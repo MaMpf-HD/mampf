@@ -677,6 +677,10 @@ class User < ApplicationRecord
     given_tutorials.any?
   end
 
+  def tutor_in?(tutorial)
+    given_tutorials.include?(tutorial)
+  end
+
   def editor_or_teacher_in?(lecture)
     in?(lecture.editors) || self == lecture.teacher
   end

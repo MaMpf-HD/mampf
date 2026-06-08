@@ -13,9 +13,8 @@ class AssessmentAbility
       lecture.present? && user.can_edit?(lecture)
     end
 
-    can :grade, Assessment::Assessment do |assessment|
-      lecture = assessment.assessable&.lecture
-      lecture.present? && user.can_edit?(lecture)
+    can :grade, Tutorial do |tutorial|
+      user.tutor_in?(tutorial) || user.can_edit_teachables?
     end
   end
 end
