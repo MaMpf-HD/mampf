@@ -162,6 +162,11 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       allow_any_instance_of(User).to receive(:tutorial_rosterized).and_return(tutorial)
     end
 
+    after do
+      Flipper.disable(:roster_maintenance)
+      Flipper.disable(:registration_campaigns)
+    end
+
     context "when feature flag roster_maintenance is enabled" do
       before do
         Flipper.enable(:roster_maintenance)
