@@ -140,6 +140,11 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
+input[type="file"] {
+  max-width: 100%;
+  min-width: 0;
+}
+
 .total-col {
   width: 100px;
   min-width: 100px;
