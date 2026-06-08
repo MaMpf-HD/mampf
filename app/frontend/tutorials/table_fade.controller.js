@@ -1,4 +1,3 @@
-// app/javascript/controllers/table_fade_controller.js
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
@@ -7,10 +6,14 @@ export default class extends Controller {
   connect() {
     this.updateFades();
     this.innerTarget.addEventListener("scroll", this.updateFades.bind(this));
+
+    this.resizeObserver = new ResizeObserver(this.updateFades.bind(this));
+    this.resizeObserver.observe(this.innerTarget);
   }
 
   disconnect() {
     this.innerTarget.removeEventListener("scroll", this.updateFades.bind(this));
+    this.resizeObserver?.disconnect();
   }
 
   updateFades() {
