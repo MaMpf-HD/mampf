@@ -46,8 +46,6 @@ module Assessment
       participation
     end
 
-    private_class_method :validate_points
-
     def self.validate_points(points, task_id)
       return if points.nil?
       return if points.is_a?(String) && points.empty?
@@ -62,5 +60,7 @@ module Assessment
         raise(ArgumentError, "Invalid points value for task #{task_id}")
       end
     end
+
+    private_class_method :validate_points
   end
 end
