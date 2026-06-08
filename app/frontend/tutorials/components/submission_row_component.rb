@@ -92,4 +92,11 @@ class SubmissionRowComponent < ViewComponent::Base
       tag.i(class: "bi bi-arrow-clockwise")
     end
   end
+
+  def late_submission_info(submission, tutorial)
+    text = t("submission.late")
+    return text unless submission.accepted.nil? && helpers.current_user.in?(tutorial.tutors)
+
+    "#{text} (#{t("tutorial.late_submission_decision")})"
+  end
 end
