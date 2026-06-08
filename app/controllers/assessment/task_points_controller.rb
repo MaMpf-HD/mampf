@@ -5,6 +5,16 @@ module Assessment
                          :update_user, :refresh_submission,
                          :refresh_user, :mark_as_participated]
     before_action :set_locale
+    before_action :authorize_assessment!, only: [:update_team_multi,
+                                                 :update_team,
+                                                 :update_user,
+                                                 :refresh_submission,
+                                                 :refresh_user,
+                                                 :mark_as_participated]
+
+    def authorize_assessment!
+      authorize! :grade, @assessment
+    end
 
     def update_team_multi
       case params[:type]
@@ -159,7 +169,7 @@ module Assessment
           @tutorial = Tutorial.find_by(id: params["tutorial_id"])
           @assignment = Assignment.find_by(id: params["assignment_id"])
           if @tutorial && @assignment
-          @assessment = @assignment.assessment
+            @assessment = @assignment.assessment
             return if @assessment
           end
           respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
@@ -167,10 +177,10 @@ module Assessment
         elsif params[:submission_id]
           @submission = Submission.find_by(id: params[:submission_id])
           if @submission
-          @assignment = @submission.assignment
+            @assignment = @submission.assignment
             @tutorial = @submission.tutorial
             if @assignment
-          @assessment = @assignment.assessment
+              @assessment = @assignment.assessment
               return if @assessment && @tutorial
             end
           end
@@ -180,7 +190,7 @@ module Assessment
           @participation = Participation.find_by(id: params[:participation_id])
           if @participation
             @assessment = @participation.assessment
-          @tutorial = @participation.tutorial
+            @tutorial = @participation.tutorial
             @assignment = @assessment.assessable if @assessment
           end
           return if @tutorial && @assessment
@@ -191,7 +201,7 @@ module Assessment
           @assignment = Assignment.find_by(id: params[:assignment_id])
           @tutorial = Tutorial.find_by(id: params[:tutorial_id])
           if @assignment && @tutorial
-          @assessment = @assignment.assessment
+            @assessment = @assignment.assessment
             return if @assessment
           end
           respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
