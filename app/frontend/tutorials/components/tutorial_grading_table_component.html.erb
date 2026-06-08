@@ -131,7 +131,7 @@
               </td>
 
               <td class="text-end">
-                <% if !user.assessment_participation_in_assignment(@assignment) %>
+                <% if user.assessment_participation_in_assignment(@assignment) %>
                   <%= t('assessment.grading_tutorial.participated') %>
                 <% else %>
                   <%= link_to mark_user_as_participated_path(
