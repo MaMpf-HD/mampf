@@ -5,12 +5,13 @@ module Assessment
   # after point entry (via PointEntryService)
   # validates that the task belongs to the submission's assessment
   # Wraps all operations in a database transaction for atomicity
+  # Only allows scoring if the assignment is inactive (after deadline)
   class SubmissionGraderService
     # Enters points of all tasks for all team members
     # points_by_task_id, Hash of task_id => points, points potentially nil and string
     def self.score_tasks_by_submission!(submission,
-                          points_by_task_id,
-                          scorer)
+                                        points_by_task_id,
+                                        scorer)
       assignment = submission&.assignment
       assessment = assignment&.assessment
       return if assessment.nil?

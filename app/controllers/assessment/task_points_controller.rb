@@ -158,36 +158,42 @@ module Assessment
         if params[:submissions]
           @tutorial = Tutorial.find_by(id: params["tutorial_id"])
           @assignment = Assignment.find_by(id: params["assignment_id"])
+          if @tutorial && @assignment
           @assessment = @assignment.assessment
-          return if @tutorial && @assignment && @assessment
-
+            return if @assessment
+          end
           respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
 
         elsif params[:submission_id]
           @submission = Submission.find_by(id: params[:submission_id])
+          if @submission
           @assignment = @submission.assignment
+            @tutorial = @submission.tutorial
+            if @assignment
           @assessment = @assignment.assessment
-          @tutorial = @submission.tutorial
-          return if @submission && @assignment && @assessment && @tutorial
-
+              return if @assessment && @tutorial
+            end
+          end
           respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
 
         elsif params[:participation_id]
           @participation = Participation.find_by(id: params[:participation_id])
-          @assignment = @participation.assignment
-          @assessment = @assignment.assessment
+          if @participation
+            @assessment = @participation.assessment
           @tutorial = @participation.tutorial
-
-          return if @participation && @assignment && @assessment && @tutorial
+            @assignment = @assessment.assessable if @assessment
+          end
+          return if @tutorial && @assessment
 
           respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
 
         elsif params[:assignment_id] && params[:tutorial_id]
           @assignment = Assignment.find_by(id: params[:assignment_id])
           @tutorial = Tutorial.find_by(id: params[:tutorial_id])
+          if @assignment && @tutorial
           @assessment = @assignment.assessment
-          return if @assignment && @tutorial && @assessment
-
+            return if @assessment
+          end
           respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
         end
       end

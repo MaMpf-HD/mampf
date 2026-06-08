@@ -73,6 +73,7 @@ en:
     no_assessables_yet: "No assessments created yet."
     submission_settings: "Submission Settings"
     task_points:
+      invalid_submission_params: "Invalid parameters for point entry."
       submission:
         message: 
           update: "Task points updated successfully."

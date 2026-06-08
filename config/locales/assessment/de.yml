@@ -73,6 +73,7 @@ de:
     no_assessables_yet: "Noch keine Bewertungen erstellt."
     submission_settings: "Abgabe-Einstellungen"
     task_points:
+      invalid_submission_params: "Ungültige Parameter für die Punkteeingabe."
       submission:
         message: 
           update: "Punkte erfolgreich aktualisiert."
