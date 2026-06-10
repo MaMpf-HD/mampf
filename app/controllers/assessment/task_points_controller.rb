@@ -28,11 +28,11 @@ module Assessment
             )
           end
 
-          next unless entry["target"] == "user"
+          next unless entry["target"] == "participation"
 
-          user = User.find(entry["id"])
-          SubmissionGraderService.score_tasks_by_user!(
-            user, @assignment, entry["task_points"], current_user
+          participation = Participation.find(entry["id"])
+          SubmissionGraderService.score_tasks_by_participation!(
+            participation, entry["task_points"], current_user
           )
         end
 
@@ -78,7 +78,7 @@ module Assessment
           turbo_stream.replace(
             "user-row-#{@user.id}",
             html: render_to_string(
-              UserRowComponent.new(
+              ParticipationRowComponent.new(
                 user: @user,
                 assignment: @assignment,
                 tutorial: @tutorial
@@ -100,7 +100,7 @@ module Assessment
 
     def mark_as_participated
       user = User.find_by(id: params[:user_id])
-      SubmissionGraderService.init_participation(@assessment, user)
+      SubmissionGraderService.init_participation(@assessment, user, @tutorial)
       @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                           &.order(:last_modification_by_users_at)
       @non_submitters = @assignment.non_submitters(@tutorial)
@@ -128,9 +128,9 @@ module Assessment
         respond_to do |format|
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
-              "user-row-#{@user.id}",
+              "participation-row-#{@participation.id}",
               html: render_to_string(
-                UserRowComponent.new(
+                ParticipationRowComponent.new(
                   user: @user,
                   assignment: @assignment,
                   tutorial: @tutorial

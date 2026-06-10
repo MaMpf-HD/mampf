@@ -1,12 +1,12 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
-  <%# ── ZONE 1: has submission ── %>
-  <% if @stack.any? %>
+  <%# ── ZONE 1: has grading records ── %>
+  <% if grading_records? %>
     <div class="table-wrapper" data-controller="table-fade">
       <div class="table-overflow" data-table-fade-target="inner">
         <table
           class="table table-striped align-middle my-3"
           data-cy="tutorial-submissions-table"
-        >
+        > <%# herb:disable html-no-duplicate-attributes %>
           <thead style="background: #fafafa;">
             <tr>
               <th class="sticky-col team-col grade-th">
@@ -16,11 +16,11 @@
               <% if grading_enabled? %>
                 <!-- support point by task -->
                 <% for assessment_task in tasks %>
-                  <th class="text-center sticky-col task-col grade-th"> <%# herb:disable html-no-duplicate-attributes %>
+                  <th class="text-center sticky-col task-col grade-th">
                     <%= t('assessment.grading_tutorial.task') %> <%= assessment_task.position %>
                     <br>
 
-                    <small class="text-muted"> <%# herb:disable html-no-duplicate-attributes %>
+                    <small class="text-muted">
                       (<%= assessment_task.max_points || 0 %>
                       <%= t('assessment.grading_tutorial.max_points') %>)
                     </small>
@@ -61,7 +61,7 @@
 
             <% @non_submitters.each do |user| %>
               <% if user.assessment_participation_in_assignment(@assignment) %>
-                <%= render(UserRowComponent.new(user: user, assignment: @assignment, tutorial: @tutorial)) %>
+                <%= render(ParticipationRowComponent.new(user: user, assignment: @assignment, tutorial: @tutorial)) %>
               <% end %>
             <% end %>
           </tbody>
@@ -114,7 +114,7 @@
                   data-clipboard-text="<%= user.email %>"
                   data-bs-toggle="tooltip"
                   title="<%= t('buttons.copy_email_to_clipboard') %>"
-                >
+                > <%# herb:disable html-no-duplicate-attributes %>
                   <span class="clipboardpopuptext token-clipboard-popup">
                     <%= t('basics.emails_copied_to_clipboard') %>
                   </span>

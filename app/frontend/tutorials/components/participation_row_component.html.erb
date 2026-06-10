@@ -1,9 +1,9 @@
 <tr
   id="<%= row_id %>"
   is="turbo-frame"
-  data-id="<%= @user.id %>"
+  data-id="<%= @participation.id %>"
   data-controller="submission-row"
-  data-user-row-id="<%= @user.id %>"
+  data-participation-row-id="<%= @participation.id %>"
   data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
 >
   <!-- Column 1: User names + copy emails + late icon -->

@@ -17,20 +17,21 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
 
   describe ".init_participation" do
     let!(:user) { FactoryBot.create(:confirmed_user) }
+    let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
 
     it "creates and persists a new participation when none exists" do
       expect do
-        described_class.init_participation(assessment_active, user)
+        described_class.init_participation(assessment_active, user, tutorial)
       end.to change(Assessment::Participation, :count).by(1)
     end
 
     it "returns a persisted participation" do
-      result = described_class.init_participation(assessment_active, user)
+      result = described_class.init_participation(assessment_active, user, tutorial)
       expect(result).to be_persisted
     end
 
     it "associates the participation with the correct assessment and user" do
-      result = described_class.init_participation(assessment_active, user)
+      result = described_class.init_participation(assessment_active, user, tutorial)
       expect(result.assessment_id).to eq(assessment_active.id)
       expect(result.user_id).to eq(user.id)
     end
@@ -38,16 +39,18 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     it "returns the existing participation when one already exists" do
       existing = FactoryBot.create(:assessment_participation,
                                    assessment: assessment_active,
-                                   user: user)
-      result = described_class.init_participation(assessment_active, user)
+                                   user: user,
+                                   tutorial: tutorial)
+      result = described_class.init_participation(assessment_active, user, tutorial)
       expect(result.id).to eq(existing.id)
     end
 
     it "does not create a duplicate when participation already exists" do
-      FactoryBot.create(:assessment_participation, assessment: assessment_active, user: user)
+      FactoryBot.create(:assessment_participation, assessment: assessment_active, user: user,
+                                                   tutorial: tutorial)
 
       expect do
-        described_class.init_participation(assessment_active, user)
+        described_class.init_participation(assessment_active, user, tutorial)
       end.not_to change(Assessment::Participation, :count)
     end
   end
@@ -145,112 +148,6 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       subject do
         described_class.score_tasks_by_participation!(participation, points_by_task_id, scorer)
       end
-      it "does not call PointEntryService" do
-        expect(Assessment::PointEntryService).not_to receive(:enter_points)
-        subject
-      end
-
-      it "does not create any participations" do
-        expect { subject }.not_to change(Assessment::Participation, :count)
-      end
-    end
-  end
-
-  describe ".score_tasks_by_user!" do
-    let!(:user) { FactoryBot.create(:confirmed_user) }
-
-    context "when assignment is inactive" do
-      before do
-        @assignment = FactoryBot.create(:assignment, :with_lecture, deadline: 1.hour.from_now)
-        @assessment = FactoryBot.create(:assessment,
-                                        requires_points: true,
-                                        assessable: @assignment,
-                                        lecture: @assignment.lecture)
-        @assignment.reload
-        @task = FactoryBot.create(:assessment_task, assessment: @assessment)
-        @points_by_task_id = { @task.id => "7" }
-        Timecop.travel(2.hours.from_now)
-      end
-      after { Timecop.return }
-
-      context "when assignment is nil" do
-        subject { described_class.score_tasks_by_user!(user, nil, @points_by_task_id, scorer) }
-
-        it "does not call PointEntryService" do
-          expect(Assessment::PointEntryService).not_to receive(:enter_points)
-          subject
-        end
-
-        it "does not create any participations" do
-          expect { subject }.not_to change(Assessment::Participation, :count)
-        end
-      end
-
-      context "when assignment has no assessment" do
-        before { allow(@assignment).to receive(:assessment).and_return(nil) }
-
-        subject do
-          described_class.score_tasks_by_user!(user, @assignment, @points_by_task_id, scorer)
-        end
-
-        it "does not call PointEntryService" do
-          expect(Assessment::PointEntryService).not_to receive(:enter_points)
-          subject
-        end
-
-        it "does not create any participations" do
-          expect { subject }.not_to change(Assessment::Participation, :count)
-        end
-      end
-
-      context "when submission and assignment are valid" do
-        subject do
-          described_class.score_tasks_by_user!(user, @assignment, @points_by_task_id, scorer)
-        end
-        it "calls PointEntryService.enter_points once for the given user" do
-          expect(Assessment::PointEntryService).to receive(:enter_points).once.with(
-            an_instance_of(Assessment::Participation),
-            @points_by_task_id,
-            scorer,
-            nil
-          )
-
-          subject
-        end
-
-        it "creates a participation for the user if none exists" do
-          allow(Assessment::PointEntryService).to receive(:enter_points)
-
-          expect do
-            subject
-          end.to change(Assessment::Participation, :count).by(1)
-        end
-
-        it "passes nil as submission" do
-          allow(Assessment::PointEntryService).to receive(:enter_points)
-
-          subject
-
-          expect(Assessment::PointEntryService).to have_received(:enter_points)
-            .with(anything, anything, anything, nil)
-        end
-      end
-    end
-
-    context "when assignment is active" do
-      let!(:participation) do
-        FactoryBot.create(
-          :assessment_participation,
-          assessment: assessment_active,
-          user: user,
-          status: :pending
-        )
-      end
-      subject do
-        described_class.score_tasks_by_user!(user, assignment_active,
-                                             { task_active.id => "7" }, scorer)
-      end
-
       it "does not call PointEntryService" do
         expect(Assessment::PointEntryService).not_to receive(:enter_points)
         subject

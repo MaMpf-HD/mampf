@@ -19,7 +19,7 @@ module Assessment
 
       users = submission.users
       users.each do |user|
-        participation = init_participation(assessment, user)
+        participation = init_participation(assessment, user, submission.tutorial)
         PointEntryService.enter_points(
           participation,
           points_by_task_id,
@@ -27,23 +27,6 @@ module Assessment
           submission
         )
       end
-    end
-
-    # Enters points of all tasks for 1 user
-    def self.score_tasks_by_user!(user, assignment,
-                                  points_by_task_id,
-                                  scorer)
-      assessment = assignment&.assessment
-      return if assessment.nil?
-      return if assignment.active?
-
-      participation = init_participation(assessment, user)
-      PointEntryService.enter_points(
-        participation,
-        points_by_task_id,
-        scorer,
-        nil
-      )
     end
 
     # Enters points of all tasks for a specific participation
@@ -62,12 +45,17 @@ module Assessment
       )
     end
 
-    def self.init_participation(assessment, user)
+    def self.init_participation(assessment, user, tutorial)
+      if tutorial.nil? || assessment.nil? || user.nil?
+        raise(ArgumentError, "Assessment, user, and tutorial must be present")
+      end
+
       participation = Participation.find_or_initialize_by(
         assessment_id: assessment.id,
         user_id: user.id
       )
       participation.save! if participation.new_record?
+      participation.update!(tutorial_id: tutorial.id) if participation.tutorial_id.nil?
       participation
     end
   end

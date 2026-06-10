@@ -18,4 +18,10 @@ class TutorialGradingTableComponent < ViewComponent::Base
   def total_max_points
     tasks.filter_map(&:max_points).sum
   end
+
+  def grading_records?
+    @stack.any? || @non_submitters.any? do |user|
+      user.assessment_participation_in_assignment(@assignment)
+    end
+  end
 end

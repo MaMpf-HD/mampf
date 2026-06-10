@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(UserRowComponent, type: :component) do
+RSpec.describe(ParticipationRowComponent, type: :component) do
   let(:lecture) { create(:lecture) }
   let(:tutorial) { create(:tutorial, lecture: lecture) }
   let(:student) { create(:confirmed_user) }

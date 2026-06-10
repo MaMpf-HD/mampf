@@ -1,4 +1,4 @@
-class UserRowComponent < ViewComponent::Base
+class ParticipationRowComponent < ViewComponent::Base
   def initialize(user:, assignment:, tutorial:)
     super()
     @user = user
@@ -38,7 +38,7 @@ class UserRowComponent < ViewComponent::Base
   end
 
   def row_id
-    "user-row-#{@user.id}"
+    "participation-row-#{@participation.id}"
   end
 
   def task_points_participation_input(assignment_task, allow_grading)
@@ -53,7 +53,7 @@ class UserRowComponent < ViewComponent::Base
       data: {
         submission_row_target: "input",
         task_id: assignment_task.id,
-        action: "change->submission-row#markDirtyUser input->submission-row#markDirtyUser"
+        action: "change->submission-row#markDirtyParticipation input->submission-row#markDirtyParticipation"
       },
       class: "form-control",
       disabled: !allow_grading

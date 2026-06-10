@@ -70,7 +70,7 @@ export default class extends Controller {
     }
   }
 
-  markDirtyUser() {
+  markDirtyParticipation() {
     const dirty = this.inputTargets.some((input, idx) => input.value != this.originalValues[idx]);
 
     if (dirty) {
@@ -79,8 +79,8 @@ export default class extends Controller {
         prefix: false,
         bubbles: true,
         detail: {
-          id: this.element.dataset.userRowId,
-          target: "user",
+          id: this.element.dataset.participationRowId,
+          target: "participation",
           task_points: this.extractTasksPoints(this.inputTargets),
         },
       });
@@ -92,8 +92,8 @@ export default class extends Controller {
       this.dispatch("clean", {
         prefix: false,
         bubbles: true,
-        detail: { id: this.element.dataset.userRowId,
-          target: "user" },
+        detail: { id: this.element.dataset.participationRowId,
+          target: "participation" },
       });
 
       if (this.hasSaveTarget) this.saveTarget.disabled = true;

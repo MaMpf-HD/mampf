@@ -67,9 +67,9 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
     end
 
-    context "with a user target" do
+    context "with a participation target" do
       let(:payload) do
-        [{ "target" => "user",
+        [{ "target" => "participation",
            "id" => student.id,
            "task_points" => { task.id => "5" } }].to_json
       end
