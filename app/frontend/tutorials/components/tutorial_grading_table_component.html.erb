@@ -6,7 +6,7 @@
         <table
           class="table table-striped align-middle my-3"
           data-cy="tutorial-submissions-table"
-        > <%# herb:disable html-no-duplicate-attributes %>
+        >
           <thead style="background: #fafafa;">
             <tr>
               <th class="sticky-col team-col grade-th">
@@ -16,11 +16,11 @@
               <% if grading_enabled? %>
                 <!-- support point by task -->
                 <% for assessment_task in tasks %>
-                  <th class="text-center sticky-col task-col grade-th">
+                  <th class="text-center sticky-col task-col grade-th"> <%# herb:disable html-no-duplicate-attributes %>
                     <%= t('assessment.grading_tutorial.task') %> <%= assessment_task.position %>
                     <br>
 
-                    <small class="text-muted">
+                    <small class="text-muted"> <%# herb:disable html-no-duplicate-attributes %>
                       (<%= assessment_task.max_points || 0 %>
                       <%= t('assessment.grading_tutorial.max_points') %>)
                     </small>
@@ -114,7 +114,7 @@
                   data-clipboard-text="<%= user.email %>"
                   data-bs-toggle="tooltip"
                   title="<%= t('buttons.copy_email_to_clipboard') %>"
-                > <%# herb:disable html-no-duplicate-attributes %>
+                >
                   <span class="clipboardpopuptext token-clipboard-popup">
                     <%= t('basics.emails_copied_to_clipboard') %>
                   </span>

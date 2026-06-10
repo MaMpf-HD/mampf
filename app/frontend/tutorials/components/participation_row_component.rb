@@ -53,7 +53,7 @@ class ParticipationRowComponent < ViewComponent::Base
       data: {
         submission_row_target: "input",
         task_id: assignment_task.id,
-        action: "change->submission-row#markDirtyParticipation input->submission-row#markDirtyParticipation"
+        action: "change->submission-row#markDirtyParticipation input->submission-row#markDirtyParticipation" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
       disabled: !allow_grading
