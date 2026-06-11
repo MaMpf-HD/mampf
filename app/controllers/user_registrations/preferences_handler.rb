@@ -7,7 +7,7 @@ module UserRegistrations
     SimpleItemPreference = Struct.new(:id, :rank)
 
     # struct for render preference items in FE
-    ItemPreference       = Struct.new(:item, :rank)
+    ItemPreference = Struct.new(:item, :rank)
 
     def pref_items_from_ranked_params(preferences)
       preferences.to_h.filter_map do |rank, item_id|
