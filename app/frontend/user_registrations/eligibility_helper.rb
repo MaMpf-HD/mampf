@@ -53,7 +53,8 @@ module EligibilityHelper
         ]
       when "configuration_error"
         [
-          "registration.user_registration.eligibility_failures.institutional_email_configuration_error", # rubocop:disable Layout/LineLength
+          "registration.user_registration.eligibility_failures." \
+          "institutional_email_configuration_error",
           {}
         ]
       else
