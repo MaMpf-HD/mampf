@@ -279,7 +279,7 @@ de:
       course_code: "Kurscode"
       campaign_main: "Anmeldeverfahren"
       eligibility_title: "Berechtigung"
-      fcfs_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
+      first_come_first_served_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
       preference_instruction:
         one: "Ordne %{count} Option nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
         other: "Ordne %{count} Optionen nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
@@ -320,14 +320,14 @@ de:
       status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"
       submitted_pref: "Deine eingereichte Auswahl"
       confirmed_assignment_pref: "Deine bestätigte %{type}-Zuweisung"
-      fcfs_columns:
+      first_come_first_served_columns:
         type: "Gruppenart"
         title: "Titel"
         details: "Details"
         seats: "Plätze"
         status: "Status"
         action: "Aktion"
-      pb_columns:
+      preference_based_columns:
         type: "Gruppenart"
         title: "Titel"
         details: "Details"
@@ -348,7 +348,7 @@ de:
         dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
         not_preference_based_mode: "Dieses Anmeldeverfahren ist nicht im präferenzbasierten Modus. Präferenzen können hier nicht gespeichert werden."
         invalid_preferences: "Bitte wähle genau eine Option für jede verfügbare Präferenzstufe."
-        not_fcfs_mode: "Dieses Anmeldeverfahren ist nicht im First-Come-First-Served-Modus. Direkte Anmeldungen können hier nicht vorgenommen werden."
+        not_first_come_first_served_mode: "Dieses Anmeldeverfahren ist nicht im First-Come-First-Served-Modus. Direkte Anmeldungen können hier nicht vorgenommen werden."
         cannot_secure_slot: "Leider konnte keine Deiner gewählten Optionen zugeteilt werden."
         course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wende Dich an den Kursadministrator, um Alternativen zu besprechen."
         campaign_not_found: "Anmeldeverfahren nicht gefunden."
@@ -364,7 +364,7 @@ de:
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
         workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Du kannst die Zuteilung auch direkt neu berechnen. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend manuell in Gruppen nachverteilt werden."
-        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
+        workflow_info_first_come_first_served: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
         item_capacities: "Auslastung"
       demand:
         title: "Anmeldenachfrage"

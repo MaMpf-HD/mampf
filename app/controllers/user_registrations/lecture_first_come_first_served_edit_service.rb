@@ -1,7 +1,7 @@
 module UserRegistrations
   # Service for handling user registration and withdrawal in lecture based registration campaign
-  # with FCFS policy.
-  class LectureFcfsEditService < Handler
+  # with first-come-first-served policy.
+  class LectureFirstComeFirstServedEditService < Handler
     def register!(item)
       ActiveRecord::Base.transaction do
         @campaign.lock!
@@ -40,7 +40,7 @@ module UserRegistrations
 
       def validate_register(item)
         [
-          check_fcfs_mode,
+          check_first_come_first_served_mode,
           check_campaign_open_for_registrations,
           check_already_registered_current_type(item),
           check_capacity(item),
@@ -51,16 +51,16 @@ module UserRegistrations
 
       def validate_withdraw
         [
-          check_fcfs_mode,
+          check_first_come_first_served_mode,
           check_campaign_open_for_withdraw,
           check_not_referenced_as_prerequisite
         ].compact
       end
 
-      def check_fcfs_mode
+      def check_first_come_first_served_mode
         return if @campaign.first_come_first_served?
 
-        I18n.t("registration.user_registration.messages.not_fcfs_mode")
+        I18n.t("registration.user_registration.messages.not_first_come_first_served_mode")
       end
   end
 end

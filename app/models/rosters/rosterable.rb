@@ -77,7 +77,7 @@ module Rosters
         self_materialization_mode_add_and_remove?
     end
 
-    # guard in FE for self-assignment possibility
+    # guard for self-assignment possibility
     def allow_self_add?(user)
       return false unless config_allow_self_add?
       return false if locked?
@@ -91,7 +91,7 @@ module Rosters
         self_materialization_mode_add_and_remove?
     end
 
-    # guard in FE for self-removal possibility
+    # guard for self-removal possibility
     def allow_self_remove?(user)
       return false unless config_allow_self_remove?
       return false if locked?

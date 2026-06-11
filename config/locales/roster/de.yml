@@ -98,7 +98,7 @@ de:
           title: "Anmeldeverfahren"
           description: "Zeitlich begrenzter Prozess mit Regeln"
           benefits:
-            - "Verteilung nach Präferenzen oder Eingang (FCFS)"
+            - "Verteilung nach Präferenzen oder Eingangsreihenfolge"
             - "Einhaltung von Zulassungsregeln (z.B. Testat)"
             - "Registrierungen vor Zuteilung prüfen"
             - "Aufnahme in Liste erst nach Abschluss"
@@ -106,7 +106,7 @@ de:
           title: "Anmeldeverfahren überspringen"
           description: "Sofortiger, direkter Zugang"
           benefits:
-            - "Nur direkter Beitritt (FCFS)"
+            - "Nur direkter Beitritt nach Eingangsreihenfolge"
             - "Keine Prüfung von Zulassungsregeln"
             - "Änderungen sind sofort wirksam"
             - "Sofortige Aufnahme in die Liste"

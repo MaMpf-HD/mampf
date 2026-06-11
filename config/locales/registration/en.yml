@@ -279,7 +279,7 @@ en:
       course_code: "Course code"
       campaign_main: "Registration process"
       eligibility_title: "Eligibility"
-      fcfs_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
+      first_come_first_served_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
       preference_instruction:
         one: "Rank %{count} option. Allocation is calculated after the deadline."
         other: "Rank %{count} options. Allocation is calculated after the deadline."
@@ -320,14 +320,14 @@ en:
       status_for_registration: "Current statuses of your submitted options"
       submitted_pref: "Your submitted choice(s)"
       confirmed_assignment_pref: "Your confirmed %{type} assignment"
-      fcfs_columns:
+      first_come_first_served_columns:
         type: "Group Type"
         title: "Title"
         details: "Details"
         seats: "Seats"
         status: "Status"
         action: "Action"
-      pb_columns:
+      preference_based_columns:
         type: "Group Type"
         title: "Title"
         details: "Details"
@@ -348,7 +348,7 @@ en:
         dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following registration processes are confirmed: %{names}"
         not_preference_based_mode: "This registration process is not in preference-based mode. Preferences cannot be saved here."
         invalid_preferences: "Please choose exactly one option for each available preference rank."
-        not_fcfs_mode: "This registration process is not in first-come-first-served mode. Direct registrations cannot be made here."
+        not_first_come_first_served_mode: "This registration process is not in first-come-first-served mode. Direct registrations cannot be made here."
         cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
         course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."
         campaign_not_found: "Registration process not found."
@@ -364,7 +364,7 @@ en:
         unassigned_students: "Unassigned Students"
         no_unassigned: "All students have been assigned!"
         workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned students can be manually distributed to groups afterwards."
-        workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
+        workflow_info_first_come_first_served: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
         item_capacities: "Group Capacities"
       demand:
         title: "Registration Demand"

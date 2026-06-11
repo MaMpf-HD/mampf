@@ -43,7 +43,7 @@ module Registration
     def create
       authorize! :create, @item.registration_campaign.campaignable
 
-      result = ::UserRegistrations::LectureFcfsEditService
+      result = ::UserRegistrations::LectureFirstComeFirstServedEditService
                .new(@campaign, current_user).register!(@item)
       respond_to_student_registration(result,
                                       I18n.t("registration.user_registration.messages." \
@@ -54,7 +54,7 @@ module Registration
       @campaign = @item.registration_campaign
       authorize! :destroy, @campaign.campaignable
 
-      result = ::UserRegistrations::LectureFcfsEditService
+      result = ::UserRegistrations::LectureFirstComeFirstServedEditService
                .new(@campaign, current_user).withdraw!(@item)
       respond_to_student_registration(result,
                                       I18n.t("registration.user_registration.messages.withdrawn"))

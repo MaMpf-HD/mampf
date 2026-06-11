@@ -16,7 +16,7 @@ module Registration
     # indexes in the UserRegistration table in the schema):
     # - in preference  mode,  the same preference_rank cannot be used twice by
     #   the same user in the same campaign.
-    # - in FCFS mode, the same user cannot register twice in the same campaign.
+    # - in first-come-first-served mode, the same user cannot register twice in the same campaign.
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
              dependent: :destroy,
@@ -101,7 +101,8 @@ module Registration
       # Users with at least one pending registration, but no confirmed registration.
       # This covers:
       # - Preference mode: All applicants before allocation (since none are confirmed).
-      # - FCFS mode: Users on the waitlist who haven't secured a spot elsewhere in this campaign.
+      # - first-come-first-served mode: Users on the waitlist who haven't secured
+      # a spot elsewhere in this campaign.
       user_registrations.pending
                         .where.not(user_id: user_registrations.confirmed.select(:user_id))
                         .distinct

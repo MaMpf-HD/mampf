@@ -6,7 +6,7 @@ module UserRegistrations
     # will be used in form
     SimpleItemPreference = Struct.new(:id, :rank)
 
-    # struct for render preference items in FE
+    # struct for render preference items in the frontend
     ItemPreference = Struct.new(:item, :rank)
 
     def pref_items_from_ranked_params(preferences)

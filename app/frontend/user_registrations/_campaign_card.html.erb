@@ -85,11 +85,12 @@
       <% end %>
 
       <% if campaign.first_come_first_served? %>
-        <%= render partial: 'user_registrations/fcfs/select_fcfs',
+        <%= render partial: "user_registrations/first_come_first_served/" \
+                           "select_first_come_first_served",
                      locals: { campaign: campaign,
                                items: items } %>
       <% else %>
-        <%= render partial: 'user_registrations/pb/select_preference',
+        <%= render partial: "user_registrations/preference_based/select_preference",
                      locals: { campaign: campaign,
                                item_preferences: item_preferences,
                                items: items } %>

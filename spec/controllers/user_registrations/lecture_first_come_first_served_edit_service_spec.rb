@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(UserRegistrations::LectureFcfsEditService, type: :service) do
+RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: :service) do
   around do |example|
     I18n.with_locale(:en) { example.run }
   end
@@ -107,7 +107,7 @@ RSpec.describe(UserRegistrations::LectureFcfsEditService, type: :service) do
         result = service.withdraw!(item)
         expect(result.success?).to be(false)
         expect(result.errors).to include(
-          I18n.t("registration.user_registration.messages.not_fcfs_mode")
+          I18n.t("registration.user_registration.messages.not_first_come_first_served_mode")
         )
       end
     end
@@ -166,7 +166,7 @@ RSpec.describe(UserRegistrations::LectureFcfsEditService, type: :service) do
         result = service.withdraw!(item)
         expect(result.success?).to be(false)
         expect(result.errors).to include(
-          I18n.t("registration.user_registration.messages.not_fcfs_mode")
+          I18n.t("registration.user_registration.messages.not_first_come_first_served_mode")
         )
       end
     end

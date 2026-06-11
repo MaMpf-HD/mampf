@@ -42,7 +42,7 @@ module Registration
               },
               if: -> { registration_campaign.preference_based? }
 
-    # FCFS campaigns: no rank allowed, one row per user+campaign
+    # first-come-first-served campaigns: no rank allowed, one row per user+campaign
     validates :preference_rank,
               absence: true,
               if: -> { registration_campaign.first_come_first_served? }
@@ -51,7 +51,7 @@ module Registration
     after_update :update_confirmed_counter
     after_destroy :decrement_confirmed_counter
 
-    # FCFS campaigns: one row per user+campaign for tutorial + talk items
+    # first-come-first-served campaigns: one row per user+campaign for tutorial + talk items
     # (exclusive_assignment == true)
     validates :user_id,
               uniqueness: {
@@ -60,7 +60,7 @@ module Registration
               },
               if: -> { exclusive_assignment && preference_rank.nil? }
 
-    # FCFS campaigns: one row per user + campaign + item
+    # first-come-first-served campaigns: one row per user + campaign + item
     validates :user_id,
               uniqueness: {
                 scope: [:registration_campaign_id, :registration_item_id]

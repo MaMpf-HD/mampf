@@ -400,7 +400,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    context "with FCFS campaign" do
+    context "with first-come-first-served campaign" do
       let(:campaign) { create(:registration_campaign, :with_items, :first_come_first_served) }
       let(:item1) { campaign.registration_items.first }
 

@@ -98,7 +98,7 @@ en:
           title: "Registration Processes"
           description: "Time-bounded process with rules"
           benefits:
-            - "Allocation via Preferences or FCFS"
+            - "Allocation via preferences or first come, first served"
             - "Enforce eligibility rules (e.g. grades)"
             - "Review registrations before allocation"
             - "Roster entry after deadline"
@@ -106,7 +106,7 @@ en:
           title: "Skip Registration Processes"
           description: "Immediate, direct access"
           benefits:
-            - "Direct join only (FCFS)"
+            - "Direct join only (first come, first served)"
             - "No eligibility checks"
             - "Changes take effect immediately"
             - "Immediate roster entry"

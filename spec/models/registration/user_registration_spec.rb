@@ -10,8 +10,9 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
         .to eq("first_come_first_served")
     end
 
-    it "creates a valid FCFS user registration" do
-      user_registration = FactoryBot.create(:registration_user_registration, :fcfs)
+    it "creates a valid first-come-first-served user registration" do
+      user_registration = FactoryBot.create(:registration_user_registration,
+                                            :first_come_first_served)
       expect(user_registration).to be_valid
       expect(user_registration.preference_rank).to be_nil
       expect(user_registration.status).to eq("confirmed")
@@ -210,7 +211,7 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
     end
   end
 
-  describe "validations for FCFS campaigns" do
+  describe "validations for first-come-first-served campaigns" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:campaign) do
       FactoryBot.create(:registration_campaign, :first_come_first_served, campaignable: lecture)
@@ -519,13 +520,13 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
   describe "counter cache callbacks" do
     let(:user) { FactoryBot.create(:user) }
 
-    context "with FCFS campaign (confirmed by default)" do
+    context "with first-come-first-served campaign (confirmed by default)" do
       let(:campaign) { FactoryBot.create(:registration_campaign, :first_come_first_served) }
       let(:item) { FactoryBot.create(:registration_item, registration_campaign: campaign) }
 
       it "increments counter on creation" do
         expect do
-          FactoryBot.create(:registration_user_registration, :fcfs,
+          FactoryBot.create(:registration_user_registration, :first_come_first_served,
                             registration_campaign: campaign,
                             registration_item: item,
                             user: user)
@@ -533,7 +534,7 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
       end
 
       it "decrements counter on destruction" do
-        registration = FactoryBot.create(:registration_user_registration, :fcfs,
+        registration = FactoryBot.create(:registration_user_registration, :first_come_first_served,
                                          registration_campaign: campaign,
                                          registration_item: item,
                                          user: user)
@@ -543,7 +544,7 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
       end
 
       it "decrements counter when status changes to rejected" do
-        registration = FactoryBot.create(:registration_user_registration, :fcfs,
+        registration = FactoryBot.create(:registration_user_registration, :first_come_first_served,
                                          registration_campaign: campaign,
                                          registration_item: item,
                                          user: user)

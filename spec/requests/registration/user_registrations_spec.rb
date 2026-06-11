@@ -96,7 +96,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   end
 
   describe "GET lectures/:lecture_id/campaign_registrations" do
-    context "open + fcfs tutorial campaign" do
+    context "open + first-come-first-served tutorial campaign" do
       let(:campaign) do
         FactoryBot.create(:registration_campaign,
                           :first_come_first_served,
@@ -223,7 +223,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     end
   end
 
-  context "fcfs tutorial campaign" do
+  context "first-come-first-served tutorial campaign" do
     let(:campaign) do
       create(:registration_campaign, :open, :first_come_first_served,
              campaignable: lecture)
@@ -231,8 +231,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     let(:item) { campaign.registration_items.first }
     describe "POST campaign_registrations/:campaign_id/items/:item_id/register" do
       it "creates a registration and redirects" do
-        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
-        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(UserRegistrations::LectureFirstComeFirstServedEditService)
+        expect(UserRegistrations::LectureFirstComeFirstServedEditService).to receive(:new)
           .with(campaign, an_instance_of(User))
           .and_return(service_double)
         expect(service_double).to receive(:register!).and_return(stub_success)
@@ -252,7 +252,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         end
 
         it "rejects the request before invoking the service" do
-          expect(UserRegistrations::LectureFcfsEditService).not_to receive(:new)
+          expect(UserRegistrations::LectureFirstComeFirstServedEditService).not_to receive(:new)
 
           post register_item_path(campaign_id: campaign.id, item_id: item.id)
 
@@ -272,8 +272,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
 
       it "withdraws the registration" do
-        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
-        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(UserRegistrations::LectureFirstComeFirstServedEditService)
+        expect(UserRegistrations::LectureFirstComeFirstServedEditService).to receive(:new)
           .with(campaign, user)
           .and_return(service_double)
         expect(service_double).to receive(:withdraw!).and_return(stub_success)
@@ -290,7 +290,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         end
 
         it "rejects the request before invoking the service" do
-          expect(UserRegistrations::LectureFcfsEditService).not_to receive(:new)
+          expect(UserRegistrations::LectureFirstComeFirstServedEditService).not_to receive(:new)
 
           delete withdraw_item_path(campaign_id: campaign.id, item_id: item.id)
 
@@ -432,15 +432,15 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     end
   end
 
-  context "fcfs talk campaign" do
+  context "first-come-first-served talk campaign" do
     let(:campaign) do
       create(:registration_campaign, :open, :first_come_first_served, campaignable: seminar)
     end
     let(:item) { campaign.registration_items.first }
     describe "POST campaign_registrations/:campaign_id/items/:item_id/register" do
       it "creates a registration and redirects" do
-        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
-        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(UserRegistrations::LectureFirstComeFirstServedEditService)
+        expect(UserRegistrations::LectureFirstComeFirstServedEditService).to receive(:new)
           .with(campaign, an_instance_of(User))
           .and_return(service_double)
         expect(service_double).to receive(:register!).and_return(stub_success)
@@ -464,8 +464,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
 
       it "withdraws the registration" do
-        service_double = instance_double(UserRegistrations::LectureFcfsEditService)
-        expect(UserRegistrations::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(UserRegistrations::LectureFirstComeFirstServedEditService)
+        expect(UserRegistrations::LectureFirstComeFirstServedEditService).to receive(:new)
           .with(campaign, user)
           .and_return(service_double)
         expect(service_double).to receive(:withdraw!).and_return(stub_success)

@@ -147,7 +147,7 @@ FactoryBot.define do
         item = campaign.registration_items.first
         user = User.find(evaluator.user_id) if evaluator.user_id
         create(:registration_user_registration,
-               :fcfs,
+               :first_come_first_served,
                registration_item: item,
                registration_campaign: campaign,
                user: user)
