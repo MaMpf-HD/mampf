@@ -38,13 +38,6 @@ module UserRegistrations
 
     private
 
-      # Validation for creating registration in lecture based registration
-      # 0. Check open for registration
-      # 1. Check if user has already registered for this campaign this group type
-      # 2. Check if item still has capacity
-      # 3. Check if user satisfies all policies (phase: registration and both)
-      # 4. Check if items are valid for this campaign
-      # 5. Check if campaign is in FCFS mode
       def validate_register(item)
         [
           check_fcfs_mode,
@@ -56,10 +49,6 @@ module UserRegistrations
         ].compact
       end
 
-      # Validation for withdrawing registration in lecture based registration
-      # 0. Check open to withdraw
-      # 1. Check if withdrawing current campaign may lead to fail in another "confirmed" campaign
-      # 2. Check if campaign is in FCFS mode
       def validate_withdraw
         [
           check_fcfs_mode,

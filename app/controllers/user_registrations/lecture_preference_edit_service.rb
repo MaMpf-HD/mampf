@@ -24,13 +24,6 @@ module UserRegistrations
 
     private
 
-      # Validation for creating registration in lecture based registration
-      # 0a. Check open for registration
-      # 0b. Check open for withdraw
-      # 1. Check if user satisfies all policies (phase: registration and both)
-      # 2. Check if items are valid for this campaign
-      # 3. Check if campaign is in preference based mode
-      # 4. Check if submitted preferences exactly cover the available ranks
       def validate_update(pref_items)
         [
           check_preference_based_mode,
