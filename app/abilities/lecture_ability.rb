@@ -1,5 +1,6 @@
 class LectureAbility
   include CanCan::Ability
+  include StudentRegistrationParticipant
 
   def initialize(user)
     clear_aliased_actions
@@ -39,14 +40,4 @@ class LectureAbility
       student_registration_participant?(user, lecture)
     end
   end
-
-  private
-
-    def student_registration_participant?(user, lecture)
-      lecture.visible_for_user?(user) &&
-        lecture.in?(user.lectures) &&
-        !user.in?(lecture.tutors) &&
-        user != lecture.teacher &&
-        !user.can_edit?(lecture)
-    end
 end
