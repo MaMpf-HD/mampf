@@ -92,14 +92,15 @@ module Registration
       def reject_registrations(registrations)
         registrations = registrations.where.not(status: :rejected).to_a
         count = registrations.size
-        reason_code, reason_label = rejection_reason
+        reason_code = rejection_reason
 
         Registration::UserRegistration.transaction do
           registrations.each do |registration|
             registration.reject!(
               reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
               reason_code: reason_code,
-              reason_label: reason_label
+              reason_label:
+              Registration::UserRegistration.built_in_rejection_reason_label(reason_code)
             )
           end
         end
@@ -117,15 +118,9 @@ module Registration
 
       def rejection_reason
         if params[:reason] == Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER
-          [
-            Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER,
-            t("registration.user_registration.reason_labels.deferred_due_to_blocker")
-          ]
+          Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER
         else
-          [
-            Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
-            t("registration.user_registration.reason_labels.withdrawn_by_teacher")
-          ]
+          Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER
         end
       end
   end

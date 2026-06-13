@@ -177,6 +177,14 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
     end
   end
 
+  describe ".built_in_rejection_reason_label" do
+    it "returns the centralized label for built-in reasons" do
+      expect(described_class.built_in_rejection_reason_label(
+               described_class::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER
+             )).to eq(I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher"))
+    end
+  end
+
   describe "rejection state helpers" do
     let(:registration) { FactoryBot.create(:registration_user_registration, :rejected) }
 

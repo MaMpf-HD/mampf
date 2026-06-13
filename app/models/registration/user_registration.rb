@@ -84,6 +84,16 @@ module Registration
       reason_label
     end
 
+    def self.built_in_rejection_reason_label(reason_code)
+      code = reason_code.to_s.presence
+      return if code.blank?
+
+      reason_key = "registration.user_registration.reason_labels.#{code}"
+      return unless I18n.exists?(reason_key)
+
+      I18n.t(reason_key)
+    end
+
     def reject!(reason_type:, reason_code:, reason_label:, rejected_at: Time.current)
       update!(
         status: :rejected,
