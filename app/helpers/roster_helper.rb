@@ -1,4 +1,6 @@
 module RosterHelper
+  include GtileIconHelper
+
   def roster_panel_path(registerable)
     public_send(
       "#{registerable.model_name.singular}_roster_path",
@@ -173,13 +175,6 @@ module RosterHelper
   end
 
   private
-
-    def gtile_icon_for(icon_name)
-      case icon_name
-      when "person"   then "bi-person"
-      when "location" then "bi-geo-alt"
-      end
-    end
 
     def roster_group_type_param(registerable)
       gt = registerable.roster_group_type

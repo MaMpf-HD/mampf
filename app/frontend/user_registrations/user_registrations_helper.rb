@@ -1,4 +1,6 @@
 module UserRegistrationsHelper
+  include GtileIconHelper
+
   TABLE_CONFIG = {
     "Tutorial" => [
       { header: "basics.tutor",
@@ -193,17 +195,6 @@ module UserRegistrationsHelper
         user,
         item.registerable_type
       )
-    end
-
-    def gtile_icon_for(icon_name)
-      case icon_name
-      when "person"   then "bi-person"
-      when "location" then "bi-geo-alt"
-      when "looks_one" then "bi-list-ol"
-      when "description" then "bi-card-text"
-      when "event" then "bi-calendar-event"
-      else "bi-tag"
-      end
     end
 
     def metadata_label_for(col)

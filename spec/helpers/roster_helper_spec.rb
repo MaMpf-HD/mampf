@@ -205,4 +205,30 @@ RSpec.describe(RosterHelper, type: :helper) do
       end
     end
   end
+
+  describe "metadata icons" do
+    let(:lecture) { create(:lecture) }
+    let(:seminar) { create(:seminar) }
+    let(:talk) do
+      create(:talk, lecture: seminar, position: 5, description: "Deep Learning Overview",
+                    dates: [Time.zone.local(2026, 4, 10)])
+    end
+    let(:cohort) do
+      create(:cohort, context: lecture, propagate_to_lecture: true, description: "Group A")
+    end
+
+    it "maps talk metadata icons" do
+      expect(helper.rosterable_tile_metadata_rows(talk).pluck(:icon))
+        .to eq(["bi-list-ol", "bi-card-text", "bi-calendar-event"])
+    end
+
+    it "maps cohort metadata icons" do
+      expect(helper.rosterable_tile_metadata_rows(cohort).pluck(:icon))
+        .to eq(["bi-card-text"])
+    end
+
+    it "falls back to a generic icon for unknown names" do
+      expect(helper.send(:gtile_icon_for, "unknown")).to eq("bi-tag")
+    end
+  end
 end
