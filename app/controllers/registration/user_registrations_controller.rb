@@ -4,7 +4,7 @@ module Registration
            ItemsHelper, CampaignsHelper
     before_action :set_lecture, only: [:index]
     before_action :set_campaign,
-                  only: [:create, :destroy, :destroy_for_user, :save_preferences]
+                  only: [:create, :destroy, :reject_for_user, :save_preferences]
     before_action :set_user_locale
     before_action :set_item, only: [:create, :destroy]
 
