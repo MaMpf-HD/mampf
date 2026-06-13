@@ -64,9 +64,6 @@ class Tutorial < ApplicationRecord
     tutorial_memberships
   end
 
-  # Overrides Rosters::Rosterable#add_user_to_roster! to translate a
-  # DB-level RecordNotUnique into a UserAlreadyInBundleError, maintaining
-  # the same error contract that callers of the concern expect.
   def add_user_to_roster!(user, source_campaign = nil)
     super
   rescue ActiveRecord::RecordNotUnique
@@ -81,27 +78,11 @@ class Tutorial < ApplicationRecord
       errors.add(:lecture_id, :immutable) if lecture_id_changed?
     end
 
-    # Overrides Rosters::Rosterable#add_missing_users! to inject lecture_id
-    # into the bulk insert and resolve conflicts on the (user_id, lecture_id)
-    # unique index with an upsert. The concern's default insert_all has no
-    # lecture_id and uses ON CONFLICT DO NOTHING, which would silently drop
-    # users already assigned to a sibling tutorial in the same lecture.
-    def add_missing_users!(target_ids, current_ids, campaign)
-      users_to_add = target_ids - current_ids
-      return if users_to_add.empty?
+    def extra_roster_entry_attributes(_user_id, _campaign)
+      { lecture_id: lecture_id }
+    end
 
-      scope_attrs = roster_entries.scope_attributes
-      now = Time.current
-      attributes = users_to_add.map do |uid|
-        {
-          user_id: uid,
-          lecture_id: lecture_id,
-          source_campaign_id: campaign.id,
-          created_at: now,
-          updated_at: now
-        }.merge(scope_attrs)
-      end
-
+    def persist_missing_roster_entries!(attributes)
       roster_entries.upsert_all( # rubocop:disable Rails/SkipsModelValidations
         attributes,
         unique_by: :index_tutorial_memberships_on_user_id_and_lecture_id,

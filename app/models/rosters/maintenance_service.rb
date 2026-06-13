@@ -1,13 +1,4 @@
 module Rosters
-  class UserAlreadyInBundleError < StandardError
-    attr_reader :conflicting_group
-
-    def initialize(conflicting_group)
-      @conflicting_group = conflicting_group
-      super
-    end
-  end
-
   class MaintenanceService
     # Manages manual roster operations (add, remove, move) while enforcing capacity
     # constraints and ensuring transactional integrity
