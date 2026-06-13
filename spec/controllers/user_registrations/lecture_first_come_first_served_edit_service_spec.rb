@@ -43,11 +43,15 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
     end
 
     it "fully deletes a registration on withdraw" do
+      campaign.update!(status: :open)
       service = described_class.new(campaign, user)
-      service.register!(item)
-      service.withdraw!(item)
-      registration = Registration::UserRegistration.first
-      expect(registration).to be_nil
+      register_result = service.register!(item)
+
+      expect(register_result.success?).to be(true)
+      expect(Registration::UserRegistration.first).to be_present
+      expect do
+        service.withdraw!(item)
+      end.to change { Registration::UserRegistration.count }.by(-1)
     end
   end
 
@@ -104,7 +108,7 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
 
       it "raises error if campaign is in preference based mode" do
         service = described_class.new(campaign_pb, user)
-        result = service.withdraw!(item)
+        result = service.register!(item)
         expect(result.success?).to be(false)
         expect(result.errors).to include(
           I18n.t("registration.user_registration.messages.not_first_come_first_served_mode")
