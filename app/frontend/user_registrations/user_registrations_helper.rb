@@ -154,21 +154,18 @@ module UserRegistrationsHelper
     t("registration.user_registration.blocked_tooltip")
   end
 
-  def registration_blocked_action
-    content_tag(
-      :span,
-      class: "d-inline-block",
-      tabindex: 0,
-      title: registration_blocked_tooltip,
-      data: { bs_toggle: "tooltip" }
-    ) do
-      button_tag(
-        t("registration.user_registration.registration_blocked"),
-        type: "button",
-        class: "btn btn-outline-secondary btn-sm",
-        disabled: true
+  def registration_blocked_tile_locals(blocked, tile_variant_class: "tutorial-gtile--campaign")
+    {
+      tile_tooltip_text: (registration_blocked_tooltip if blocked),
+      tile_variant_class: class_names(
+        tile_variant_class,
+        "tutorial-gtile--blocked": blocked
       )
-    end
+    }
+  end
+
+  def registration_blocked_action
+    render partial: "user_registrations/registration_blocked_action"
   end
 
   private

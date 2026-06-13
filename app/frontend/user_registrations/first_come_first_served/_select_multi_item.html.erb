@@ -2,8 +2,6 @@
   <% registration_blocked_by_unremovable_assignment =
        registration_blocked_by_unremovable_assignment?(campaign.campaignable) %>
 
-  <% blocked_tooltip = registration_blocked_tooltip %>
-
   <div>
     <div>
       <div
@@ -30,11 +28,12 @@
                        tile_title: item.registerable.title,
                        tile_type: item_display_type(item),
                        tile_metadata_rows: metadata_rows,
-                       tile_tooltip_text: (blocked_tooltip if item_blocked),
-                       tile_variant_class: class_names(
-                         "tutorial-gtile--campaign",
-                         "tutorial-gtile--full": item_full,
-                         "tutorial-gtile--blocked": item_blocked
+                       **registration_blocked_tile_locals(
+                         item_blocked,
+                         tile_variant_class: class_names(
+                           "tutorial-gtile--campaign",
+                           "tutorial-gtile--full": item_full
+                         )
                        ),
                        tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
                        tile_column_class: "registration-group-tile-col--student",

@@ -1,0 +1,13 @@
+<span
+  class="d-inline-block"
+  tabindex="0"
+  title="<%= registration_blocked_tooltip %>"
+  data-bs-toggle="tooltip"
+>
+  <%= button_tag(
+        t("registration.user_registration.registration_blocked"),
+        type: "button",
+        class: "btn btn-outline-secondary btn-sm",
+        disabled: true
+      ) %>
+</span>
