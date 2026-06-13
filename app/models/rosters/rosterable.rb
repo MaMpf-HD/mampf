@@ -277,7 +277,7 @@ module Rosters
           :created_at => now,
           :updated_at => now
         }.merge(scope_attrs)
-         .merge(extra_roster_entry_attributes(user_id, campaign))
+          .merge(extra_roster_entry_attributes(user_id, campaign))
       end
 
       def extra_roster_entry_attributes(_user_id, _campaign)
