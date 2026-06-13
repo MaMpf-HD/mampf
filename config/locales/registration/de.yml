@@ -95,7 +95,7 @@ de:
         reallocate: "Möchtest Du die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
         complete_planning: "Bist Du sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
         user_registration_reject_for_user: "Möchtest Du die Anmeldungen von %{email} ablehnen? Die Anmeldungen bleiben erhalten und können später erneut bearbeitet werden."
-        user_registration_defer_due_to_blocker: "Möchtest Du die Anmeldung von %{email} für jetzt manuell ablehnen? Die Anmeldung bleibt erhalten, erscheint in der Liste der abgelehnten Anmeldungen und kann später erneut bearbeitet werden."
+        user_registration_defer_due_to_blocker: "Möchtest Du die Anmeldung von %{email} vorerst manuell ablehnen? Die Anmeldung bleibt erhalten, erscheint in der Liste der abgelehnten Anmeldungen und kann später erneut bearbeitet werden."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
