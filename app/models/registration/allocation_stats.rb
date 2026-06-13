@@ -51,19 +51,19 @@ module Registration
 
       def calculate
         if @campaign.first_come_first_served?
-          calculate_fcfs
+          calculate_first_come_first_served
         else
           calculate_preference_based
         end
       end
 
-      def calculate_fcfs
+      def calculate_first_come_first_served
         @total_registrations = @campaign.total_registrations_count
         @assigned_users = @assignment.size
         @unassigned_users = @total_registrations - @assigned_users
 
-        # In FCFS, unassigned users are those who have registrations but are not
-        # in the assignment list (e.g. rejected or pending if any)
+        # In first-come-first-served mode, unassigned users are those who have
+        # registrations but are not in the assignment list (e.g. rejected or pending if any)
         all_user_ids = @campaign.user_registrations.distinct.pluck(:user_id)
         @unassigned_user_ids = all_user_ids - @assignment.keys
 
@@ -73,7 +73,7 @@ module Registration
         @percent_top_choice = 0
 
         @assignment.each_value do |item_id|
-          update_item_stats(item_id, :fcfs)
+          update_item_stats(item_id, :first_come_first_served)
         end
       end
 
@@ -119,8 +119,8 @@ module Registration
 
         if rank == :forced
           @items[item_id][:forced] += 1
-        elsif rank == :fcfs
-          # No rank stats for FCFS
+        elsif rank == :first_come_first_served
+          # No rank stats for first-come-first-served campaigns
         else
           @items[item_id][:sum_rank] += rank
         end

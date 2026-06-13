@@ -135,6 +135,10 @@ class Talk < ApplicationRecord
     :speaker_talk_joins
   end
 
+  def exclusive_assignment?
+    true
+  end
+
   private
 
     def touch_lecture

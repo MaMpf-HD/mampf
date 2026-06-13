@@ -16,6 +16,23 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
+  describe "rendering" do
+    it "adds tooltip attributes to student tiles" do
+      rendered = render_inline(
+        described_class.new(
+          registerable: tutorial,
+          student_tile: true,
+          tile_tooltip_text: "Blocked tooltip"
+        )
+      )
+      tile = rendered.css(".tutorial-gtile--student").first
+
+      expect(tile["title"]).to eq("Blocked tooltip")
+      expect(tile["data-bs-toggle"]).to eq("tooltip")
+      expect(tile["tabindex"]).to eq("0")
+    end
+  end
+
   describe "#dom_target" do
     it "returns registerable when no item" do
       expect(component.dom_target).to eq(tutorial)
