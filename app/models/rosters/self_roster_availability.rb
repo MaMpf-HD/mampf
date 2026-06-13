@@ -7,7 +7,7 @@ module Rosters
 
     def blocked_by_unremovable_assignment?
       rosterized_entries.any? do |rosterable|
-        rosterable.user_allocated?(@user) && rosterable.config_allow_self_add? &&
+        rosterable.user_allocated?(@user) &&
           !rosterable.config_allow_self_remove?
       end
     end
