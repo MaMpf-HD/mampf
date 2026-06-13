@@ -26,6 +26,7 @@
         row-cols-xxl-5
         student-registration-tile-grid student-registration-podium
       "
+      data-testid="preference-podium"
       aria-label="<%= t("registration.user_registration.preference_podium.label") %>"
     >
       <% ranks.each do |rank| %>
@@ -40,6 +41,7 @@
         >
           <div
             class="student-registration-podium-spot <%= "student-registration-podium-spot--filled" if selected_title.present? %>"
+            data-testid="preference-podium-spot"
             data-preference-choices-target="podiumSpot"
             data-rank="<%= rank %>"
           >
@@ -79,6 +81,7 @@
     >
       <span
         class="d-inline-block w-100"
+        data-testid="preference-save-tooltip"
         data-bs-toggle="tooltip"
         data-preference-choices-target="saveTooltip"
         tabindex="-1"

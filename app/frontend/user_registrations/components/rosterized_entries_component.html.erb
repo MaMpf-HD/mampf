@@ -68,9 +68,13 @@
       student-registration-rosterized-notice
       student-registration-rosterized-notice--negative mb-4
     "
+    data-testid="registration-unallocated-notice"
   >
     <% unallocated_results.each do |result| %>
-      <p class="student-registration-rosterized-message mb-0">
+      <p
+        class="student-registration-rosterized-message mb-0"
+        data-testid="registration-unallocated-message"
+      >
         <%= t("registration.user_registration.index.unallocated_preference_notice",
               campaign: campaign_title(result[:campaign]),
               preferences: result[:preferences].join(", ")) %>

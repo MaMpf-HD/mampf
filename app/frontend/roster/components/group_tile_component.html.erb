@@ -2,6 +2,7 @@
   <% if student_tile? %>
     <div
       class="<%= card_classes %>"
+      data-testid="registration-group-tile"
       <% if tile_tooltip_text.present? %>
         tabindex="0"
         title="<%= tile_tooltip_text %>"
