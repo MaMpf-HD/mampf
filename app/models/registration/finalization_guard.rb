@@ -1,4 +1,5 @@
-# Checks whether the registration campaign can be finalized and performs the necessary checks and screenings.
+# Checks whether the registration campaign can be finalized and performs the
+# necessary checks and screenings.
 module Registration
   class FinalizationGuard
     Result = Struct.new(:success?,
@@ -8,7 +9,7 @@ module Registration
                         :screening_result,
                         keyword_init: true) do
       def initialize(**attributes)
-        super(**attributes)
+        super
 
         self.screening_result ||= Registration::ScreeningService::Result.new(
           violations: Array(data)
@@ -20,13 +21,9 @@ module Registration
         screening_result.violations
       end
 
-      def blocker_violations
-        screening_result.blocker_violations
-      end
+      delegate :blocker_violations, to: :screening_result
 
-      def auto_reject_violations
-        screening_result.auto_reject_violations
-      end
+      delegate :auto_reject_violations, to: :screening_result
     end
 
     def initialize(campaign)
