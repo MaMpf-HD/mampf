@@ -25,7 +25,7 @@ module Registration
     # indexes in the UserRegistration table in the schema):
     # - in preference  mode,  the same preference_rank cannot be used twice by
     #   the same user in the same campaign.
-    # - in FCFS mode, the same user cannot register twice in the same campaign.
+    # - in first-come-first-served mode, the same user cannot register twice in the same campaign.
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
              dependent: :destroy,
@@ -78,8 +78,18 @@ module Registration
       open? && registration_deadline > Time.current
     end
 
+    def open_for_withdrawals?
+      open_for_registrations?
+    end
+
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registration_confirmed_for_group_type?(user, group_type)
+      user_registrations.joins(:registration_item)
+                        .where(user_id: user.id, status: :confirmed)
+                        .exists?(registration_items: { registerable_type: group_type })
     end
 
     def can_be_deleted?
@@ -100,7 +110,8 @@ module Registration
       # Users with at least one pending registration, but no confirmed registration.
       # This covers:
       # - Preference mode: All applicants before allocation (since none are confirmed).
-      # - FCFS mode: Users on the waitlist who haven't secured a spot elsewhere in this campaign.
+      # - first-come-first-served mode: Users on the waitlist who haven't secured
+      # a spot elsewhere in this campaign.
       user_registrations.pending
                         .where.not(user_id: user_registrations.confirmed.select(:user_id))
                         .distinct
@@ -435,7 +446,9 @@ module Registration
           return campaignable.public_send(assoc).flat_map(&:allocated_user_ids)
         end
 
-        klass = type.constantize
+        klass = Rosters::Rosterable.class_for(type)
+        return [] unless klass
+
         scope = fetch_scope_for_type(klass, type)
         fetch_ids_from_scope(klass, scope)
       end

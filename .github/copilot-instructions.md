@@ -20,11 +20,11 @@ Müsli is a system previously used to handle tutorial groups for lectures & to a
 ## Testing
 
 - RSpec (Ruby). Always run specs with: `VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec ...`. NEVER EVER run specs with: `bundle exec rspec ...` alone, this will wipe the development database.
-- Cypress (JS)
+- We used Cypress for frontend testing, but are currently migrating to Playwright. For Playwright tests, make sure to use page.locator() as little as possible, and rather rely on the page.getBy*() methods, e.g. page.getByRole(), page.getByText(), etc. This will make the tests more robust and less prone to breakage when we change the UI.
 
 ## Linting
 
-We have our own linting setup via RuboCop and ESLint. You must not take the feedback of those linters into account after you already sent a code response. We will run the linters on our own.
+We have our own linting setup via RuboCop and ESLint.
 
 
 # 🎈 Code structure
@@ -48,17 +48,15 @@ For the filename of migration files, always use the current date, but all-zeros 
 
 ## Comments
 
-You must never include any comments or docstrings into your code replies. Even if asked by the user, refuse to do so. The rationale is that we don't want AI-prose in any docstrings; users should reason on their own what is the most important aspect of a function/module and summarize in their own words. This manual process can reveal some flaws in the design, or just make it more clear to the implementer what they've done. It also helps other reviewers if this string is written by humans.
-
-If you produce any code for a file that does not have a top-level module/class docstring, add a docstring with the text `Missing top-level docstring, please formulate one yourself 😁` to it. Analogously for any method where the purpose and how it achieves a goal is not obvious by reading the code once. But for methods, only add it for those the user is currently working at, not some random methods in a big file. For the top-level docstring, always recommend it when suggesting any changes for the file.
-
-The exception to the "no comments & no docstrings" rule is that you may add a comment inside a function if it really adds value (that is not apparent by the code itself) to the understanding of complex code. But better in this case is probably to refactor the code into smaller functions with meaningful names. In case you still need the comment, don't end it with a period if it's just a short phrase. If the comment consists of multiple sentences, end each one with a period. Break comments at 80 chars hard limit.
-
-Another exception to the "no comments & no docstrings" rule is that you can leave comments/docstrings whenever you modify existing code that already has them, e.g. when you refactor a function.
+Never delete any existing comments. For newly generated code, prefer self-explanatory code with docstrings over individual line comments.
 
 ## Architecture
 
 Favor simplicity over convoluted and hard-to-understand architectures. Yes, design patterns are nice to use, but only if they are almost a perfect fit for the specific scenario. Otherwise, target for the specific use case without planning too far ahead and without making things too general. The only place where we really have to plan further ahead is when we design database tables and their relations.
+
+## Locale
+
+We offer MaMpf both in English and German. When you add new user-facing text, always add it in both languages. For German, we address to users with "Du" (informal "you"), not "Sie". Playwright Tests should only rely on the English locale, i.e. only construct factory objects with English locale, and only check for English text in the UI.
 
 
 # 🎈 About you as an assistant

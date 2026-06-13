@@ -23,6 +23,8 @@ en:
       cannot_reopen_completed: "Cannot reopen registration process because it has already been finalized."
       not_found: "Registration process not found."
       completed_title: "Registration Process Completed"
+      completed_campaign_title: "Completed registration processes"
+      active_campaign_title: "Active registration process"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the group management to make any adjustments."
       go_to_roster: "Go to Roster"
       dissolved_enrolled: "enrolled"
@@ -251,6 +253,18 @@ en:
       forced_assignment: "Forced Assignment"
       index:
         title: "Registrations"
+        confirmed_cases: "Your registration is confirmed for"
+        unassigned_notice: "You are not registered in any group yet."
+        pending_preference_notice: "You are not registered in any group yet. After the registration period ends, you will be assigned based on your preferences."
+        fulfilled_preference_notice: "We could fulfill your %{rank} preference."
+        fulfilled_preference_ranks:
+          "1": "1st"
+          "2": "2nd"
+          "3": "3rd"
+        unfulfilled_preferences_notice: "Unfortunately, your preferences (%{preferences}) could not be fulfilled."
+        unallocated_preference_notice: "Unfortunately, your registration for %{campaign} could not be considered because there were more registrations than available places. We received your preferences: %{preferences}."
+        unknown_tutor: "A tutor has not been assigned yet."
+        unremovable_assignment_notice: "You cannot leave this tutorial because the lecturer has set it up this way."
         first_choice_title: "1st Choice Registrations"
         allocated_title: "Allocated Students"
         rejected_title: "Rejected Registrations"
@@ -276,6 +290,89 @@ en:
       actions:
         reject_user: "Reject registrations"
         defer_due_to_blocker: "Reject for now"
+        rank_option_tooltip: "Set as %{rank} preference"
+      registrations: "Registrations"
+      title: "Your Registration"
+      planning: "Planning"
+      course_code: "Course code"
+      campaign_main: "Registration process"
+      eligibility_title: "Eligibility"
+      first_come_first_served_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
+      preference_instruction:
+        one: "Rank %{count} option. Allocation is calculated after the deadline."
+        other: "Rank %{count} options. Allocation is calculated after the deadline."
+      preference_rank_options:
+        "1": "1st"
+        "2": "2nd"
+        "3": "3rd"
+      preference_podium:
+        label: "Selected preference ranks"
+        empty: "Choose an option"
+      save_choices: "Save choices"
+      save_choices_incomplete_tooltip: "Choose an option for every rank before saving."
+      eligible: "Eligible"
+      not_eligible: "Not eligible"
+      prerequisite_campaign: "Prerequisite registration process"
+      seats_remaining: "Seats remaining"
+      registered: "Registered"
+      not_registered: "Not registered"
+      blocked_tooltip: "You cannot join this tutorial since you cannot leave your tutorial. This was set up by your lecturer this way."
+      register_now: "Register now"
+      registration_blocked: "Unavailable"
+      withdraw: "Withdraw"
+      closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
+      ineligible_notice:
+        title: "Registration unavailable"
+        description: "You cannot register for this campaign right now for the following reasons:"
+      readonly_notice:
+        title: "Registration closed"
+        description: "Your submitted choices stay visible here while the teacher reviews the registrations and finalizes the allocation. You can no longer make changes."
+      eligibility_failures:
+        institutional_email_mismatch_html: "Your email address does not match the required institutional domain (%{domains}). Go to your %{profile} and update it."
+        institutional_email_configuration_error: "The required institutional email domains are not configured for this campaign. Please contact the course administration."
+        prerequisite_not_met: "You need a confirmed registration in %{campaign} before you can register here. Contact the course administration if you think this is incorrect."
+        prerequisite_campaign_not_found: "The required prerequisite registration %{campaign} is currently unavailable. Please contact the course administration."
+        prerequisite_configuration_error: "This campaign depends on a prerequisite registration that is not configured correctly. Please contact the course administration."
+        student_performance_failed: "Your student performance status does not match the required status %{status}. Please contact the course administration if you think this is incorrect."
+        generic_html: "You do not currently meet the %{requirement} requirement. Please contact the course administration if you need help."
+      withdraw_first: "Withdraw first"
+      filter_placeholder: "Filter by weekday, time, tutor"
+      status_for_registration: "Current statuses of your submitted options"
+      submitted_pref: "Your submitted choice(s)"
+      confirmed_assignment_pref: "Your confirmed %{type} assignment"
+      first_come_first_served_columns:
+        type: "Group Type"
+        title: "Title"
+        details: "Details"
+        seats: "Seats"
+        status: "Status"
+        action: "Action"
+      preference_based_columns:
+        type: "Group Type"
+        title: "Title"
+        details: "Details"
+        seats: "Seats"
+        status: "Status"
+        action: "Action"
+      messages:
+        campaign_unavailable: "This registration process is not accessible right now."
+        campaign_not_opened: "Registration is not opened."
+        registration_success: "Registration completed successfully."
+        registration_failed: "Registration could not be completed."
+        already_registered: "You are already registered for this registration process."
+        no_slots: "No seats available."
+        requirements_not_met: "You do not meet the requirements."
+        unremovable_assignment: "You cannot register for another group because you cannot leave your current tutorial."
+        invalid_options: "Invalid options selected."
+        withdrawn: "You have withdrawn your registration."
+        preferences_saved: "Your preferences have been saved."
+        dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following registration processes are confirmed: %{names}"
+        not_preference_based_mode: "This registration process is not in preference-based mode. Preferences cannot be saved here."
+        invalid_preferences: "Please choose exactly one option for each available preference rank."
+        not_first_come_first_served_mode: "This registration process is not in first-come-first-served mode. Direct registrations cannot be made here."
+        cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
+        course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."
+        campaign_not_found: "Registration process not found."
     allocation:
       started: "Allocation has been calculated."
       conflicts:
@@ -291,7 +388,7 @@ en:
         current_registration_state: "Current Registration State"
         current_group_occupancy: "Current Group Occupancy"
         workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned or rejected students can be manually distributed to groups afterwards."
-        workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
+        workflow_info_first_come_first_served: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
         item_capacities: "Group Capacities"
         finalization_status:
           blocked_title: "Finalization currently not possible"
@@ -349,6 +446,19 @@ en:
       policy_summary:
         required_domain: "Required domain:"
         failed: "Allocation failed: %{error}"
+    student_campaigns:
+      index:
+        columns:
+          title: "Title"
+          lecture: "Lecture"
+          mode: "Mode"
+          closes: "Closes"
+          eligibility: "Eligibility"
+          action: "Action"
+          status: "Status"
+        view_details: "Details"
+    lecture:
+      not_found: "Lecture not found."
   activerecord:
     errors:
       models:
