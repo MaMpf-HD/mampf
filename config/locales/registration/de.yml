@@ -15,6 +15,8 @@ de:
       cannot_reopen_completed: "Anmeldung kann nicht wiederöffnet werden, da das Verfahren bereits abgeschlossen wurde."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
+      completed_campaign_title: "Abgeschlossene Kampagnen"
+      active_campaign_title: "Aktive Kampagnen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutze die Gruppenverwaltung, um Änderungen vorzunehmen."
       go_to_roster: "Zur Gruppenverwaltung"
       dissolved_enrolled: "zugeteilt"
@@ -244,6 +246,18 @@ de:
       forced_assignment: "Zwangszuweisung"
       index:
         title: "Anmeldungen"
+        confirmed_cases: "Deine Anmeldung ist bestätigt für"
+        unassigned_notice: "Aktuell bist Du noch in keiner Gruppe eingetragen."
+        pending_preference_notice: "Aktuell bist Du noch in keiner Gruppe eingetragen. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
+        fulfilled_preference_notice: "Wir konnten Deinen %{rank}-Wunsch erfüllen."
+        fulfilled_preference_ranks:
+          "1": "Erst"
+          "2": "Zweit"
+          "3": "Dritt"
+        unfulfilled_preferences_notice: "Leider konnten Deine Wünsche (%{preferences}) nicht berücksichtigt werden."
+        unallocated_preference_notice: "Leider konnte Deine Anmeldung für %{campaign} nicht berücksichtigt werden, weil es mehr Anmeldungen als Plätze gab. Deine ausgewählten Präferenzen sind bei uns angekommen: %{preferences}."
+        unknown_tutor: "Ein:e Tutor:in wurde noch nicht zugewiesen."
+        unremovable_assignment_notice: "Du kannst dieses Tutorium nicht verlassen, weil der Dozent es so eingerichtet hat."
         first_choice_title: "Erstwahl-Anmeldungen"
         allocated_title: "Zugeteilte Studierende"
         allocated_count: "zugeteilt"
@@ -259,6 +273,89 @@ de:
       preferences: "Präferenzen"
       actions:
         remove_user: "Benutzer aus Anmeldeverfahren entfernen"
+        rank_option_tooltip: "Als %{rank} Präferenz setzen"
+      registrations: "Anmeldungen"
+      title: "Deine Anmeldung"
+      planning: "Planung"
+      course_code: "Kurscode"
+      campaign_main: "Anmeldeverfahren"
+      eligibility_title: "Berechtigung"
+      first_come_first_served_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
+      preference_instruction:
+        one: "Ordne %{count} Option nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
+        other: "Ordne %{count} Optionen nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
+      preference_rank_options:
+        "1": "1."
+        "2": "2."
+        "3": "3."
+      preference_podium:
+        label: "Ausgewählte Präferenzstufen"
+        empty: "Option wählen"
+      save_choices: "Auswahl speichern"
+      save_choices_incomplete_tooltip: "Wähle zuerst für jede Präferenzstufe eine Option."
+      eligible: "Berechtigt"
+      not_eligible: "Nicht berechtigt"
+      prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
+      seats_remaining: "Verbleibende Plätze"
+      registered: "Registriert"
+      not_registered: "Nicht registriert"
+      blocked_tooltip: "Du kannst diesem Tutorium nicht beitreten, weil Du Dein Tutorium nicht verlassen kannst. Der Dozent hat das so eingerichtet."
+      register_now: "Jetzt registrieren"
+      registration_blocked: "Nicht verfügbar"
+      withdraw: "Austreten"
+      closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
+      ineligible_notice:
+        title: "Anmeldung derzeit nicht möglich"
+        description: "Du kannst Dich für dieses Anmeldeverfahren derzeit aus folgenden Gründen nicht anmelden:"
+      readonly_notice:
+        title: "Anmeldung geschlossen"
+        description: "Deine abgegebenen Auswahlentscheidungen bleiben hier sichtbar, während die Lehrperson die Anmeldungen prüft und die Zuteilung finalisiert. Änderungen sind nicht mehr möglich."
+      eligibility_failures:
+        institutional_email_mismatch_html: "Deine E-Mail-Adresse hat nicht die erforderliche institutionelle Domain (%{domains}). Gehe in Dein %{profile} und passe sie dort an."
+        institutional_email_configuration_error: "Die erforderlichen institutionellen E-Mail-Domains sind für dieses Anmeldeverfahren nicht korrekt konfiguriert. Bitte wende Dich an die Kursverwaltung."
+        prerequisite_not_met: "Du benötigst zuerst eine bestätigte Anmeldung im Anmeldeverfahren %{campaign}, bevor Du Dich hier anmelden kannst. Wende Dich an die Kursverwaltung, wenn das aus Deiner Sicht nicht stimmt."
+        prerequisite_campaign_not_found: "Das erforderliche vorausgesetzte Anmeldeverfahren %{campaign} ist derzeit nicht verfügbar. Bitte wende Dich an die Kursverwaltung."
+        prerequisite_configuration_error: "Dieses Anmeldeverfahren hängt von einem vorausgesetzten Anmeldeverfahren ab, das nicht korrekt konfiguriert ist. Bitte wende Dich an die Kursverwaltung."
+        student_performance_failed: "Dein Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status %{status}. Bitte wende Dich an die Kursverwaltung, wenn das aus Deiner Sicht nicht stimmt."
+        generic_html: "Du erfüllst die Voraussetzung %{requirement} derzeit nicht. Bitte wende Dich an die Kursverwaltung, wenn Du Hilfe brauchst."
+      withdraw_first: "Zuerst zurückziehen"
+      filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
+      status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"
+      submitted_pref: "Deine eingereichte Auswahl"
+      confirmed_assignment_pref: "Deine bestätigte %{type}-Zuweisung"
+      first_come_first_served_columns:
+        type: "Gruppenart"
+        title: "Titel"
+        details: "Details"
+        seats: "Plätze"
+        status: "Status"
+        action: "Aktion"
+      preference_based_columns:
+        type: "Gruppenart"
+        title: "Titel"
+        details: "Details"
+        seats: "Plätze"
+        status: "Status"
+        action: "Aktion"
+      messages:
+        campaign_unavailable: "Dieses Anmeldeverfahren ist derzeit nicht verfügbar."
+        campaign_not_opened: "Die Registrierung für dieses Anmeldeverfahren ist geschlossen."
+        registration_success: "Registrierung erfolgreich abgeschlossen."
+        registration_failed: "Registrierung konnte nicht abgeschlossen werden."
+        already_registered: "Du bist bereits für dieses Anmeldeverfahren registriert."
+        no_slots: "Keine Plätze verfügbar."
+        requirements_not_met: "Du erfüllst die Voraussetzungen nicht."
+        unremovable_assignment: "Du kannst Dich nicht für eine andere Gruppe anmelden, weil Du Dein aktuelles Tutorium nicht verlassen kannst."
+        invalid_options: "Ungültige Optionen ausgewählt."
+        preferences_saved: "Deine Einstellungen wurden gespeichert."
+        withdrawn: "Du hast Deine Registrierung zurückgezogen."
+        dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
+        not_preference_based_mode: "Dieses Anmeldeverfahren ist nicht im präferenzbasierten Modus. Präferenzen können hier nicht gespeichert werden."
+        invalid_preferences: "Bitte wähle genau eine Option für jede verfügbare Präferenzstufe."
+        not_first_come_first_served_mode: "Dieses Anmeldeverfahren ist nicht im First-Come-First-Served-Modus. Direkte Anmeldungen können hier nicht vorgenommen werden."
+        cannot_secure_slot: "Leider konnte keine Deiner gewählten Optionen zugeteilt werden."
+        course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wende Dich an den Kursadministrator, um Alternativen zu besprechen."
+        campaign_not_found: "Anmeldeverfahren nicht gefunden."
     allocation:
       started: "Zuteilung wurde berechnet."
       conflicts:
@@ -271,7 +368,7 @@ de:
         unassigned_students: "Nicht zugewiesene Studierende"
         no_unassigned: "Alle Studierenden wurden zugewiesen!"
         workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Du kannst die Zuteilung auch direkt neu berechnen. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene Studierende können anschließend manuell in Gruppen nachverteilt werden."
-        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
+        workflow_info_first_come_first_served: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
         item_capacities: "Auslastung"
       demand:
         title: "Anmeldenachfrage"
@@ -305,6 +402,19 @@ de:
       policy_summary:
         required_domain: "Erforderliche Domain:"
         failed: "Zuteilung fehlgeschlagen: %{error}"
+    student_campaigns:
+      index:
+        columns:
+          title: "Titel"
+          lecture: "Vortrag"
+          mode: "Format"
+          closes: "Endet am"
+          eligibility: "Teilnahmeberechtigung"
+          action: "Aktion"
+          status: "Status"
+        view_details: "Details"
+    lecture:
+      not_found: "Veranstaltung nicht gefunden."
   activerecord:
     errors:
       models:

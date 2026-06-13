@@ -13,7 +13,7 @@ module Registration
       end
 
       # 1. Status Check
-      # FCFS must be closed. Preference-based must be processing.
+      # first-come-first-served must be closed. Preference-based must be processing.
       if @campaign.preference_based?
         unless @campaign.processing?
           return failure(:wrong_status,

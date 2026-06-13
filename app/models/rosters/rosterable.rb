@@ -5,7 +5,18 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
-    TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
+    TYPE_CLASS_MAP = {
+      "Tutorial" => -> { Tutorial },
+      "Talk" => -> { Talk },
+      "Cohort" => -> { Cohort },
+      "Lecture" => -> { Lecture }
+    }.freeze
+
+    TYPES = TYPE_CLASS_MAP.keys.freeze
+
+    def self.class_for(type)
+      TYPE_CLASS_MAP[type]&.call
+    end
 
     # Models including this concern must:
     # - Implement #roster_entries (returns ActiveRecord::Relation)
@@ -59,6 +70,33 @@ module Rosters
       return false if skip_campaigns?
 
       !in_completed_campaign?
+    end
+
+    def config_allow_self_add?
+      self_materialization_mode_add_only? ||
+        self_materialization_mode_add_and_remove?
+    end
+
+    # guard for self-assignment possibility
+    def allow_self_add?(user)
+      return false unless config_allow_self_add?
+      return false if locked?
+      return false if user_allocated?(user)
+
+      !full?
+    end
+
+    def config_allow_self_remove?
+      self_materialization_mode_remove_only? ||
+        self_materialization_mode_add_and_remove?
+    end
+
+    # guard for self-removal possibility
+    def allow_self_remove?(user)
+      return false unless config_allow_self_remove?
+      return false if locked?
+
+      user_allocated?(user)
     end
 
     # Checks if skip_campaigns can be enabled (switched from false to true).
@@ -128,6 +166,14 @@ module Rosters
         roster_entries.map { |e| e.public_send(roster_user_id_column) }
       else
         roster_entries.pluck(roster_user_id_column)
+      end
+    end
+
+    def user_allocated?(user)
+      if roster_entries.loaded?
+        roster_entries.any? { |e| e.public_send(roster_user_id_column) == user.id }
+      else
+        roster_entries.exists?(roster_user_id_column => user.id)
       end
     end
 

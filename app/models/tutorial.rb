@@ -72,6 +72,10 @@ class Tutorial < ApplicationRecord
     raise(Rosters::UserAlreadyInBundleError, conflicting&.tutorial || self)
   end
 
+  def exclusive_assignment?
+    true
+  end
+
   private
 
     def lecture_id_immutable
