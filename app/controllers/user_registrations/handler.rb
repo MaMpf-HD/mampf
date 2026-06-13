@@ -45,6 +45,14 @@ module UserRegistrations
       I18n.t("registration.user_registration.messages.requirements_not_met")
     end
 
+    def check_unremovable_roster_assignment
+      return unless Rosters::SelfRosterAvailability
+                    .new(@campaign.campaignable, @user)
+                    .blocked_by_unremovable_assignment?
+
+      I18n.t("registration.user_registration.messages.unremovable_assignment")
+    end
+
     def check_items(pref_items)
       item_ids = pref_items.map(&:id)
       valid_ids = @campaign.registration_items.where(id: item_ids).pluck(:id)

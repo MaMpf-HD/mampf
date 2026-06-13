@@ -42,6 +42,7 @@ module UserRegistrations
         [
           check_first_come_first_served_mode,
           check_campaign_open_for_registrations,
+          check_unremovable_roster_assignment,
           check_already_registered_current_type(item),
           check_capacity(item),
           check_policies,

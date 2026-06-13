@@ -99,6 +99,22 @@ RSpec.describe(UserRegistrations::LecturePreferenceEditService, type: :service) 
       )
     end
 
+    it "rejects preferences when the user cannot leave their current tutorial" do
+      add_only_tutorial = create(:tutorial,
+                                 lecture: campaign.campaignable,
+                                 skip_campaigns: true,
+                                 self_materialization_mode: :add_only)
+      add_only_tutorial.add_user_to_roster!(user)
+      service = described_class.new(campaign, user)
+
+      result = service.update!(pref_items)
+
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(
+        I18n.t("registration.user_registration.messages.unremovable_assignment")
+      )
+    end
+
     it "rejects more ranks than available options" do
       extra = UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item3.id, 4)
       service = described_class.new(campaign, user)

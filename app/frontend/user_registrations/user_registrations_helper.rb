@@ -140,6 +140,37 @@ module UserRegistrationsHelper
     capacity.nil? ? "\u221E" : capacity.to_s
   end
 
+  def registration_blocked_by_unremovable_assignment?(lecture)
+    return false if lecture.blank?
+    return @registration_blocked_by_unremovable_assignment \
+      unless @registration_blocked_by_unremovable_assignment.nil?
+
+    @registration_blocked_by_unremovable_assignment =
+      Rosters::SelfRosterAvailability.new(lecture, current_user)
+                                     .blocked_by_unremovable_assignment?
+  end
+
+  def registration_blocked_tooltip
+    t("registration.user_registration.blocked_tooltip")
+  end
+
+  def registration_blocked_action
+    content_tag(
+      :span,
+      class: "d-inline-block",
+      tabindex: 0,
+      title: registration_blocked_tooltip,
+      data: { bs_toggle: "tooltip" }
+    ) do
+      button_tag(
+        t("registration.user_registration.registration_blocked"),
+        type: "button",
+        class: "btn btn-outline-secondary btn-sm",
+        disabled: true
+      )
+    end
+  end
+
   private
 
     def student_registration_readonly_changed_at(campaign)

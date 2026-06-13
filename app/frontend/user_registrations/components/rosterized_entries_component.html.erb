@@ -52,6 +52,12 @@
           <% end %>
         </div>
       <% end %>
+
+      <% if unremovable_assignment_notice? %>
+        <p class="student-registration-rosterized-lock-note mb-0">
+          <%= t("registration.user_registration.index.unremovable_assignment_notice") %>
+        </p>
+      <% end %>
     </div>
   </div>
 <% end %>

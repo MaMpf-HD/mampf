@@ -32,6 +32,10 @@ class RosterizedEntriesComponent < ViewComponent::Base
     rosterized_entries.blank?
   end
 
+  def unremovable_assignment_notice?
+    self_roster_availability.blocked_by_unremovable_assignment?
+  end
+
   def default_notice
     t("registration.user_registration.index.confirmed_cases")
   end
@@ -77,6 +81,10 @@ class RosterizedEntriesComponent < ViewComponent::Base
       else
         t("registration.user_registration.index.unassigned_notice")
       end
+    end
+
+    def self_roster_availability
+      @self_roster_availability ||= Rosters::SelfRosterAvailability.new(lecture, user)
     end
 
     def preference_notice_message(rosterable)

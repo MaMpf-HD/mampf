@@ -5,6 +5,11 @@
     student-registration-tile-grid
   "
 >
+  <% registration_blocked_by_unremovable_assignment =
+       registration_blocked_by_unremovable_assignment?(lecture) %>
+
+  <% blocked_tooltip = registration_blocked_tooltip %>
+
   <% self_rosterables.each do |rosterable| %>
     <% metadata_rows = self_rosterable_tile_metadata_rows(rosterable) + [{
          value: "#{rosterable.roster_entries_count} / #{nullable_capacity_display(rosterable.capacity)}"
@@ -26,7 +31,15 @@
                  tile_title: rosterable.title,
                  tile_type: self_rosterable_display_type(rosterable),
                  tile_metadata_rows: metadata_rows,
-                 tile_variant_class: "tutorial-gtile--campaign",
+                 tile_tooltip_text: (
+                   blocked_tooltip if registration_blocked_by_unremovable_assignment &&
+                     !rosterable.user_allocated?(current_user)
+                 ),
+                 tile_variant_class: class_names(
+                   "tutorial-gtile--campaign",
+                   "tutorial-gtile--blocked": registration_blocked_by_unremovable_assignment &&
+                     !rosterable.user_allocated?(current_user)
+                 ),
                  tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
                  tile_column_class: "registration-group-tile-col--student",
                  tile_actions_content: capture do
@@ -39,6 +52,8 @@
                          class: "btn btn-outline-danger btn-sm"
                        ))
                      end
+                   elsif registration_blocked_by_unremovable_assignment
+                     concat(registration_blocked_action)
                    elsif rosterable.allow_self_add?(current_user)
                      concat(button_to(
                        t("registration.user_registration.register_now"),

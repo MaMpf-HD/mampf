@@ -92,6 +92,15 @@
   color: #567060;
 }
 
+.student-registration-rosterized-lock-note {
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(71, 104, 84, 0.16);
+  color: #405b4b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
 .student-registration-rosterized-meta-list {
   display: flex;
   flex-wrap: wrap;
@@ -327,4 +336,20 @@
 .tutorial-gtile--student.tutorial-gtile--full:hover,
 .tutorial-gtile--student.tutorial-gtile--full:focus-within {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tutorial-gtile--student.tutorial-gtile--blocked {
+  border-color: #cfd7df;
+  background: linear-gradient(180deg, #ffffff, #f4f6f8);
+  color: #5b6670;
+
+  .tutorial-gtile-top-bar {
+    background: #8d99a6;
+  }
+
+  .tutorial-gtile-name,
+  .tutorial-gtile-type,
+  .student-registration-tile-meta {
+    color: #5b6670;
+  }
 }

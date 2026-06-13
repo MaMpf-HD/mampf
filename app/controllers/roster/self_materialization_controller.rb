@@ -77,25 +77,31 @@ module Roster
         flash.now[:notice] = message
         respond_to do |format|
           format.turbo_stream do
+            rosterized_entries = Rosters::StudentMaterializedResultResolver
+                                 .new(current_user)
+                                 .all_rosterized_for_lecture(@lecture)
             render turbo_stream: [
               stream_flash,
               turbo_stream.update(
                 "student_registration_rosterized_entries",
                 html: RosterizedEntriesComponent.new(
-                  rosterized_entries: Rosters::StudentMaterializedResultResolver
-                                       .new(current_user)
-                                       .all_rosterized_for_lecture(@lecture),
+                  rosterized_entries: rosterized_entries,
                   lecture: @lecture,
                   user: current_user
                 ).render_in(view_context)
               ),
               turbo_stream.update(
-                "self_materialization_zone",
-                partial: "user_registrations/self_materialization_zone",
+                "student_registration_options",
+                partial: "user_registrations/registration_options",
                 locals: {
+                  campaigns_details: ::UserRegistrations::LectureCampaignsService
+                                     .new(@lecture, current_user)
+                                     .call,
                   self_rosterables: Rosters::SelfRosterOptionsQuery
                                     .new(@lecture, current_user)
-                                    .call
+                                    .call,
+                  rosterized_entries: rosterized_entries,
+                  lecture: @lecture
                 }
               )
             ]

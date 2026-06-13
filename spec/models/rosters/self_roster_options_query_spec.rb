@@ -77,5 +77,17 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
                              full_tutorial
                            ])
     end
+
+    it "still returns visible options when the user is in a join-only tutorial" do
+      blocked_user = create(:confirmed_user)
+      add_only_tutorial.add_user_to_roster!(blocked_user)
+
+      result = described_class.new(lecture, blocked_user).call
+
+      expect(result).to contain_exactly(
+        add_only_tutorial,
+        add_and_remove_tutorial
+      )
+    end
   end
 end

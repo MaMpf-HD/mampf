@@ -1,4 +1,9 @@
 <div data-test="multi-item-first-come-first-served">
+  <% registration_blocked_by_unremovable_assignment =
+       registration_blocked_by_unremovable_assignment?(campaign.campaignable) %>
+
+  <% blocked_tooltip = registration_blocked_tooltip %>
+
   <div>
     <div>
       <div
@@ -15,6 +20,9 @@
 
           <% item_full = !item.still_has_capacity? && !item.user_registered?(current_user) %>
 
+          <% item_blocked = registration_blocked_by_unremovable_assignment &&
+                            !item.user_registered?(current_user) %>
+
           <%= render partial: "user_registrations/group_tile",
                      locals: {
                        registerable: item.registerable,
@@ -22,9 +30,11 @@
                        tile_title: item.registerable.title,
                        tile_type: item_display_type(item),
                        tile_metadata_rows: metadata_rows,
+                       tile_tooltip_text: (blocked_tooltip if item_blocked),
                        tile_variant_class: class_names(
                          "tutorial-gtile--campaign",
-                         "tutorial-gtile--full": item_full
+                         "tutorial-gtile--full": item_full,
+                         "tutorial-gtile--blocked": item_blocked
                        ),
                        tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
                        tile_column_class: "registration-group-tile-col--student",
@@ -37,6 +47,8 @@
                              disabled: !campaign.open_for_withdrawals?,
                              class: "btn btn-outline-danger btn-sm"
                            ))
+                         elsif item_blocked
+                           concat(registration_blocked_action)
                          elsif item_full
                            concat(content_tag(
                              :span,

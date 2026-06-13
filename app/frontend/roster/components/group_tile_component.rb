@@ -5,11 +5,14 @@ class GroupTileComponent < ViewComponent::Base
 
   attr_reader :registerable, :item, :tile_metadata_rows,
               :tile_status_content, :tile_footer_content,
-              :tile_actions_content
+              :tile_actions_content,
+              :tile_tooltip_text
 
   def initialize(registerable:, item: nil, lecture: nil, # rubocop:disable Metrics/ParameterLists
                  student_tile: false, tile_title: nil, tile_type: nil,
-                 tile_metadata_rows: [], tile_variant_class: nil,
+                 tile_metadata_rows: [],
+                 tile_tooltip_text: nil,
+                 tile_variant_class: nil,
                  tile_top_bar_class: nil, tile_status_content: nil,
                  tile_footer_content: nil, tile_actions_content: nil,
                  tile_column_class: nil)
@@ -21,6 +24,7 @@ class GroupTileComponent < ViewComponent::Base
     @tile_title = tile_title
     @tile_type = tile_type
     @tile_metadata_rows = tile_metadata_rows
+    @tile_tooltip_text = tile_tooltip_text
     @tile_variant_class = tile_variant_class
     @tile_top_bar_class = tile_top_bar_class
     @tile_status_content = tile_status_content

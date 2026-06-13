@@ -140,6 +140,22 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
         )
       end
 
+      it "rejects registration when the user cannot leave their current tutorial" do
+        add_only_tutorial = create(:tutorial,
+                                   lecture: campaign.campaignable,
+                                   skip_campaigns: true,
+                                   self_materialization_mode: :add_only)
+        add_only_tutorial.add_user_to_roster!(user)
+        service = described_class.new(campaign, user)
+
+        result = service.register!(item)
+
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.unremovable_assignment")
+        )
+      end
+
       it "raises error if item has no capacity" do
         item.registerable.update!(capacity: 0)
         service = described_class.new(campaign, user)

@@ -44,5 +44,32 @@ RSpec.describe(UserRegistrations::LectureCampaignsService, type: :service) do
 
       expect(result).to eq([details_open, details_completed])
     end
+
+    it "returns campaign details when a join-only tutorial blocks changes" do
+      tutorial = create(:tutorial,
+                        lecture: lecture,
+                        skip_campaigns: true,
+                        self_materialization_mode: :add_only)
+      tutorial.add_user_to_roster!(user)
+
+      details_open      = instance_double(UserRegistrations::CampaignDetailsService::Result)
+      details_completed = instance_double(UserRegistrations::CampaignDetailsService::Result)
+
+      expect(UserRegistrations::CampaignDetailsService)
+        .to receive(:new)
+        .with(campaign_open, user)
+        .and_return(instance_double(UserRegistrations::CampaignDetailsService,
+                                    call: details_open))
+
+      expect(UserRegistrations::CampaignDetailsService)
+        .to receive(:new)
+        .with(campaign_completed, user)
+        .and_return(instance_double(UserRegistrations::CampaignDetailsService,
+                                    call: details_completed))
+
+      result = service.call
+
+      expect(result).to eq([details_open, details_completed])
+    end
   end
 end

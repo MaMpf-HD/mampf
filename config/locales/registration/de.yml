@@ -257,6 +257,7 @@ de:
         unfulfilled_preferences_notice: "Leider konnten Deine Wünsche (%{preferences}) nicht berücksichtigt werden."
         unallocated_preference_notice: "Leider konnte Deine Anmeldung für %{campaign} nicht berücksichtigt werden, weil es mehr Anmeldungen als Plätze gab. Deine ausgewählten Präferenzen sind bei uns angekommen: %{preferences}."
         unknown_tutor: "Ein:e Tutor:in wurde noch nicht zugewiesen."
+        unremovable_assignment_notice: "Du kannst dieses Tutorium nicht verlassen, weil der Dozent es so eingerichtet hat."
         first_choice_title: "Erstwahl-Anmeldungen"
         allocated_title: "Zugeteilte Studierende"
         allocated_count: "zugeteilt"
@@ -298,7 +299,9 @@ de:
       seats_remaining: "Verbleibende Plätze"
       registered: "Registriert"
       not_registered: "Nicht registriert"
+      blocked_tooltip: "Du kannst diesem Tutorium nicht beitreten, weil Du Dein Tutorium nicht verlassen kannst. Der Dozent hat das so eingerichtet."
       register_now: "Jetzt registrieren"
+      registration_blocked: "Nicht verfügbar"
       withdraw: "Austreten"
       closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
       ineligible_notice:
@@ -342,6 +345,7 @@ de:
         already_registered: "Du bist bereits für dieses Anmeldeverfahren registriert."
         no_slots: "Keine Plätze verfügbar."
         requirements_not_met: "Du erfüllst die Voraussetzungen nicht."
+        unremovable_assignment: "Du kannst Dich nicht für eine andere Gruppe anmelden, weil Du Dein aktuelles Tutorium nicht verlassen kannst."
         invalid_options: "Ungültige Optionen ausgewählt."
         preferences_saved: "Deine Einstellungen wurden gespeichert."
         withdrawn: "Du hast Deine Registrierung zurückgezogen."

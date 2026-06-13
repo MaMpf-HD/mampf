@@ -3,6 +3,9 @@
 <% ranks = preference_ranks_for(sorted_items) %>
 <% preferences_by_rank = item_preferences.index_by(&:rank) %>
 
+<% registration_blocked_by_unremovable_assignment =
+     registration_blocked_by_unremovable_assignment?(campaign.campaignable) %>
+
 <%= form_with url: save_preferences_path(campaign), method: :post,
               data: {
                 controller: "preference-choices",
@@ -13,7 +16,8 @@
                 preference_choices_incomplete_tooltip_value: t(
                   "registration.user_registration.save_choices_incomplete_tooltip"
                 ),
-                preference_choices_readonly_value: !campaign.open_for_registrations?
+                preference_choices_readonly_value: !campaign.open_for_registrations? ||
+                  registration_blocked_by_unremovable_assignment
               } do %>
   <div class="student-registration-preference-workspace">
     <div
@@ -81,7 +85,8 @@
       >
         <%= submit_tag t("registration.user_registration.save_choices"),
                        class: "btn btn-warning w-100 text-wrap",
-                       disabled: !campaign.open_for_registrations?,
+                       disabled: !campaign.open_for_registrations? ||
+                         registration_blocked_by_unremovable_assignment,
                        data: { preference_choices_target: "saveButton" } %>
       </span>
     </div>

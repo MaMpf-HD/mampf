@@ -29,6 +29,7 @@ module UserRegistrations
           check_preference_based_mode,
           check_campaign_open_for_registrations,
           check_campaign_open_for_withdraw,
+          check_unremovable_roster_assignment,
           check_policies,
           check_items(pref_items),
           check_preferences(pref_items)

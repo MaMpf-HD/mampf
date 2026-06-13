@@ -257,6 +257,7 @@ en:
         unfulfilled_preferences_notice: "Unfortunately, your preferences (%{preferences}) could not be fulfilled."
         unallocated_preference_notice: "Unfortunately, your registration for %{campaign} could not be considered because there were more registrations than available places. We received your preferences: %{preferences}."
         unknown_tutor: "A tutor has not been assigned yet."
+        unremovable_assignment_notice: "You cannot leave this tutorial because the lecturer has set it up this way."
         first_choice_title: "1st Choice Registrations"
         allocated_title: "Allocated Students"
         allocated_count: "allocated"
@@ -298,7 +299,9 @@ en:
       seats_remaining: "Seats remaining"
       registered: "Registered"
       not_registered: "Not registered"
+      blocked_tooltip: "You cannot join this tutorial since you cannot leave your tutorial. This was set up by your lecturer this way."
       register_now: "Register now"
+      registration_blocked: "Unavailable"
       withdraw: "Withdraw"
       closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
       ineligible_notice:
@@ -342,6 +345,7 @@ en:
         already_registered: "You are already registered for this registration process."
         no_slots: "No seats available."
         requirements_not_met: "You do not meet the requirements."
+        unremovable_assignment: "You cannot register for another group because you cannot leave your current tutorial."
         invalid_options: "Invalid options selected."
         withdrawn: "You have withdrawn your registration."
         preferences_saved: "Your preferences have been saved."

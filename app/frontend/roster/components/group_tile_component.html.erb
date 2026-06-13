@@ -1,6 +1,13 @@
 <div class="<%= column_classes %>" id="<%= dom_id(dom_target) %>">
   <% if student_tile? %>
-    <div class="<%= card_classes %>">
+    <div
+      class="<%= card_classes %>"
+      <% if tile_tooltip_text.present? %>
+        tabindex="0"
+        title="<%= tile_tooltip_text %>"
+        data-bs-toggle="tooltip"
+      <% end %>
+    >
       <div class="tutorial-gtile-top-bar <%= top_bar_class %>"></div>
 
       <div class="card-body d-flex flex-column">

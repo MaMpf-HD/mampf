@@ -285,6 +285,77 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Late tutorial registration")).toBeVisible();
   });
 
+  test("disables registration options for a join-only assigned tutorial", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Join-Only Assigned Tutorial",
+      capacity: 2,
+      skip_campaigns: true,
+      self_materialization_mode: "add_only",
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id,
+      user_id: student.user.id,
+    });
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Alternative Self Enrollment Tutorial",
+      capacity: 2,
+      skip_campaigns: true,
+      self_materialization_mode: "add_only",
+    });
+    await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Late tutorial registration",
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    const assignedTutorialHeadings = student.page.getByRole("heading", {
+      name: "Join-Only Assigned Tutorial",
+    });
+    await expect(assignedTutorialHeadings.first()).toBeVisible();
+    await expect(student.page.getByText(
+      "You cannot leave this tutorial because the lecturer has set it up this way.",
+    )).toBeVisible();
+    await expect(assignedTutorialHeadings).toHaveCount(2);
+    await expect(student.page.getByText("Alternative Self Enrollment Tutorial")).toBeVisible();
+    await expect(student.page.getByText("Late tutorial registration")).toBeVisible();
+    await expect(student.page.getByRole("button", { name: "Register now" })).toHaveCount(0);
+
+    const blockedTooltip
+      = "You cannot join this tutorial since you cannot leave your tutorial. This was set up by your lecturer this way.";
+    const alternativeTutorial = student.page.getByRole("heading", {
+      name: "Alternative Self Enrollment Tutorial",
+    });
+    await expect.poll(() => alternativeTutorial.evaluate((element) => {
+      return element.closest(".tutorial-gtile")?.getAttribute("title") ?? null;
+    })).toBe(blockedTooltip);
+
+    const unavailableButtons = student.page.getByRole("button", {
+      name: "Unavailable",
+    });
+    await expect(unavailableButtons).toHaveCount(4);
+
+    for (let index = 0; index < 4; index += 1) {
+      const unavailableButton = unavailableButtons.nth(index);
+      await expect(unavailableButton).toBeDisabled();
+      await expect.poll(() => unavailableButton.evaluate((element) => {
+        return element.closest(".tutorial-gtile")?.getAttribute("title") ?? null;
+      })).toBe(blockedTooltip);
+      await expect.poll(() => unavailableButton.evaluate((element) => {
+        return element.parentElement?.getAttribute("title") ?? null;
+      })).toBe(blockedTooltip);
+    }
+  });
+
   test("explains whether a materialized assignment fulfilled preferences", async ({
     factory,
     student,
