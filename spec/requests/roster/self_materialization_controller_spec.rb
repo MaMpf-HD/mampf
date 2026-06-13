@@ -51,7 +51,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
     it "updates the self materialization zone turbo frame" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 
-      expect(response.body).to include('target="self_materialization_zone"')
+      expect(response.body).to include('target="student_registration_options"')
     end
 
     context "when user is already in another tutorial of the same lecture" do
