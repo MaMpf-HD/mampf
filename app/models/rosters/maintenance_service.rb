@@ -97,8 +97,8 @@ module Rosters
         return unless rosterable.is_a?(Tutorial)
 
         membership = TutorialMembership
-                     .where(lecture_id: rosterable.lecture_id, user_id: user.id)
-                     .where.not(tutorial_id: rosterable.id)
+                     .where(lecture: rosterable.lecture, user: user)
+                     .where.not(tutorial: rosterable)
                      .first
 
         return unless membership
