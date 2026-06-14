@@ -1,15 +1,12 @@
-# Now build the actual mampf application
-# https://hub.docker.com/_/ruby/
-FROM ruby:3.4.7-bookworm
+FROM ruby:3.4.7-bookworm AS build
 
-ENV RAILS_ENV=production
+ENV RAILS_ENV=production \
+    BUNDLE_DEPLOYMENT=1 \
+    BUNDLE_WITHOUT="development:test" \
+    BUNDLE_PATH=/usr/local/bundle
 
-EXPOSE 3000
-EXPOSE 9394
+ARG BUNDLER_VERSION=4.0.12
 
-ENTRYPOINT ["/usr/src/app/docker/production/entrypoint-app.sh"]
-
-# use "--login" option, so that .bashrc is sourced in new shells
 SHELL ["/bin/bash", "--login", "-c"]
 
 # Install Node.js
@@ -52,26 +49,20 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info libvips42
 
+RUN gem install bundler -v "${BUNDLER_VERSION}"
+
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
-# Manage users
-RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
-    mkdir /private /caches && chown app:app /private /caches
-
-
-# ============= Now switch to the app user
 WORKDIR /usr/src/app
-USER app
 
-# Log Node.js tooling versions that the `app` user uses
-RUN which node; node --version; which yarn; yarn --version
+RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app
 
-COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
+COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
 RUN yarn install --frozen-lockfile
 
-COPY --chown=app:app . /usr/src/app
+COPY . /usr/src/app
 
 RUN chmod 755 /usr/src/app/docker/production/entrypoint-app.sh \
     /usr/src/app/docker/production/entrypoint-sidekiq.sh
@@ -110,4 +101,49 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     SECRET_KEY_BASE="$(bundle exec rails secret)" \
     VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
     RAILS_ENV=production DATABASE_ADAPTER=nulldb \
-    bundle exec rails assets:precompile
+    bundle exec rails assets:precompile && \
+    rm -f ./docker-dummy.env && \
+    rm -rf node_modules tmp/cache && \
+    rm -rf /usr/local/bundle/cache /usr/local/bundle/ruby/*/cache && \
+    find /usr/local/bundle -name "*.gem" -delete
+
+FROM ruby:3.4.7-bookworm
+
+ENV RAILS_ENV=production \
+    BUNDLE_DEPLOYMENT=1 \
+    BUNDLE_WITHOUT="development:test" \
+    BUNDLE_PATH=/usr/local/bundle
+
+ARG BUNDLER_VERSION=4.0.12
+
+EXPOSE 3000
+EXPOSE 9394
+
+ENTRYPOINT ["/usr/src/app/docker/production/entrypoint-app.sh"]
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info libvips42 && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN gem install bundler -v "${BUNDLER_VERSION}"
+
+RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
+
+RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
+    mkdir -p /private/media /private/submissions /caches/thruster \
+      /usr/src/app/tmp/pids /usr/src/app/log && \
+    chown -R app:app /private /caches /usr/src/app
+
+WORKDIR /usr/src/app
+
+COPY --from=build /usr/local/bundle /usr/local/bundle
+COPY --from=build --chown=app:app /usr/src/app /usr/src/app
+
+RUN chown -R root:root /usr/local/bundle && \
+    chmod -R a=rX,u+w /usr/local/bundle
+
+USER app
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+    CMD ruby -rnet/http -e 'port = ENV.fetch("THRUSTER_HTTP_PORT", "3000"); uri = URI("http://127.0.0.1:#{port}/login"); response = Net::HTTP.start(uri.host, uri.port) { |http| http.get(uri.request_uri, {"X-Forwarded-Proto" => "https", "Host" => "localhost"}) }; exit(response.is_a?(Net::HTTPSuccess) ? 0 : 1)'

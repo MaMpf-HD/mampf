@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
+set -Eeuo pipefail
+
+umask 027
 cd /usr/src/app
 
-echo "Ensuring no stale server pid file is present"
+mkdir -p tmp/pids
 rm -f tmp/pids/server.pid
 
-echo "running mampf app"
-prometheus_exporter --label "{\"container\": \"${HOSTNAME}\"}" -b 0.0.0.0 -p 9394 -a lib/collectors/mampf_collector.rb > /usr/src/app/log/prometheus_exporter.log 2>&1 &
+bundle exec prometheus_exporter \
+  --label "{\"container\": \"${HOSTNAME:-unknown}\"}" \
+  -b 0.0.0.0 \
+  -p 9394 \
+  -a lib/collectors/mampf_collector.rb &
+prometheus_exporter_pid=$!
+
+cleanup() {
+  kill "$prometheus_exporter_pid" 2>/dev/null || true
+}
+
+trap cleanup EXIT INT TERM
 
 exec bundle exec thrust ./bin/rails server \
   -p "${THRUSTER_TARGET_PORT:-3001}" -b ::
