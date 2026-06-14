@@ -58,8 +58,7 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   def rank_badge_label(rank)
     if rank.nil?
-      t("registration.allocation.stats.forced_short",
-        default: "Assigned")
+      t("registration.allocation.stats.forced_short")
     else
       t("registration.allocation.stats.rank_label", rank: rank)
     end
@@ -80,8 +79,7 @@ class RosterSidePanelComponent < ViewComponent::Base
     rest = counts.select { |r, _| r.is_a?(Integer) && r > 3 }.values.sum
     if rest.positive?
       pills << { count: rest,
-                 label: t("registration.item.badge.other_choices",
-                          default: "Other"),
+                 label: t("registration.item.badge.other_choices"),
                  color: "bg-secondary" }
     end
     forced = counts[nil] || 0
@@ -96,25 +94,17 @@ class RosterSidePanelComponent < ViewComponent::Base
   def panel_title
     case @panel_kind
     when :rejected
-      t("registration.user_registration.index.rejected_title",
-        default: "Rejected Registrations")
+      t("registration.user_registration.index.rejected_title")
     when :unassigned
       t("roster.candidates.title")
     else
-      if allocated?
-        return t("registration.user_registration.index.allocated_title",
-                 default: "Allocated Students")
-      end
+      return t("registration.user_registration.index.allocated_title") if allocated?
 
       if read_only? && preference_based_campaign?
-        return t("registration.user_registration.index.first_choice_title",
-                 default: "1st Choice Registrations")
+        return t("registration.user_registration.index.first_choice_title")
       end
 
-      if read_only?
-        return t("registration.user_registration.index.title",
-                 default: "Registrations")
-      end
+      return t("registration.user_registration.index.title") if read_only?
 
       t("roster.details.participants")
     end
@@ -223,12 +213,11 @@ class RosterSidePanelComponent < ViewComponent::Base
   def campaign_panel_count_label
     case @panel_kind
     when :rejected
-      t("roster.candidates.rejected_short", default: "rejected")
+      t("roster.candidates.rejected_short")
     when :unassigned
-      t("roster.candidates.short_title", default: "unplaced")
+      t("roster.candidates.short_title")
     else
-      t("registration.item.columns.registrations",
-        default: "Registrations")
+      t("registration.item.columns.registrations")
     end
   end
 
