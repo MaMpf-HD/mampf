@@ -4,15 +4,16 @@ export default class extends Controller {
   static targets = ["inner"];
 
   connect() {
+    this.boundUpdateFades = this.updateFades.bind(this);
     this.updateFades();
-    this.innerTarget.addEventListener("scroll", this.updateFades.bind(this));
+    this.innerTarget.addEventListener("scroll", this.boundUpdateFades);
 
-    this.resizeObserver = new ResizeObserver(this.updateFades.bind(this));
+    this.resizeObserver = new ResizeObserver(this.boundUpdateFades);
     this.resizeObserver.observe(this.innerTarget);
   }
 
   disconnect() {
-    this.innerTarget.removeEventListener("scroll", this.updateFades.bind(this));
+    this.innerTarget.removeEventListener("scroll", this.boundUpdateFades);
     this.resizeObserver?.disconnect();
   }
 
