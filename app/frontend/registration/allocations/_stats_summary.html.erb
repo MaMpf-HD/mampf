@@ -1,76 +1,21 @@
 <% dashboard = local_assigns[:dashboard] %>
 <% campaign = local_assigns[:campaign] %>
 
-<% summary_items = [] %>
-
-<% summary_items << {
-     class: "fw-medium",
-     value: [
-       dashboard.stats.total_registrations,
-       t("registration.allocation.stats.total_registrations")
-     ].join(" ")
-   } %>
-
-<% if dashboard.current_registration_state? %>
-  <% summary_items << {
-       class: "text-success fw-medium",
-       value: [
-         dashboard.stats.assigned_users,
-         t("registration.allocation.stats.currently_confirmed_inline")
-       ].join(" ")
-     } %>
-  <% if dashboard.stats.rejected_users.positive? %>
-    <% summary_items << {
-         class: "text-danger fw-medium",
-         value: [
-           dashboard.stats.rejected_users,
-           t("registration.allocation.stats.currently_rejected_inline")
-         ].join(" ")
-       } %>
-  <% end %>
-<% else %>
-  <% summary_items << {
-       class: "fw-medium",
-       value: [
-         dashboard.stats.eligible_users,
-         t("registration.allocation.stats.eligible_inline")
-       ].join(" ")
-     } %>
-  <% summary_items << {
-       class: "text-success fw-medium",
-       value: [
-         dashboard.stats.assigned_users,
-         t("registration.allocation.stats.assigned_inline"),
-         "(#{number_to_percentage(dashboard.stats.assigned_percentage, precision: 0)})"
-       ].join(" ")
-     } %>
-  <% if dashboard.stats.rejected_users.positive? %>
-    <% summary_items << {
-         class: "text-danger fw-medium",
-         value: [
-           dashboard.stats.rejected_users,
-           t("registration.allocation.stats.rejected_inline")
-         ].join(" ")
-       } %>
-  <% end %>
-  <% summary_items << {
-       class: [
-         dashboard.stats.unassigned_users > 0 ? "text-danger" : "text-muted",
-         "fw-medium"
-       ].join(" "),
-       value: [
-         dashboard.stats.unassigned_users,
-         t("registration.allocation.stats.unassigned_inline")
-       ].join(" ")
-     } %>
-<% end %>
-
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
-    <% summary_items.each_with_index do |item, index| %>
-      <span class="<%= item[:class] %>"><%= item[:value] %></span>
+    <% dashboard.summary_items.each_with_index do |item, index| %>
+      <span class="<%= item[:css_class] %>">
+        <%= item[:count] %>
+        <%= t(item[:translation_key]) %>
 
-      <% unless index == summary_items.size - 1 %>
+        <% if item[:percentage] %>
+          (
+          <%= number_to_percentage(item[:percentage], precision: 0) %>
+          )
+        <% end %>
+      </span>
+
+      <% unless index == dashboard.summary_items.size - 1 %>
         <span class="mx-1 text-muted">·</span>
       <% end %>
     <% end %>

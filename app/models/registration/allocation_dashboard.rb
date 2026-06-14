@@ -84,6 +84,26 @@ module Registration
       @campaign.first_come_first_served? && !@campaign.completed?
     end
 
+    def summary_items
+      items = [
+        {
+          css_class: "fw-medium",
+          count: stats.total_registrations,
+          translation_key: "registration.allocation.stats.total_registrations"
+        }
+      ]
+
+      items.concat(
+        if current_registration_state?
+          current_registration_state_summary_items
+        else
+          allocation_summary_items
+        end
+      )
+
+      items
+    end
+
     def finalization_status
       return :blocked if blockers?
 
@@ -103,6 +123,61 @@ module Registration
     end
 
     private
+
+      def current_registration_state_summary_items
+        items = [
+          {
+            css_class: "text-success fw-medium",
+            count: stats.assigned_users,
+            translation_key: "registration.allocation.stats.currently_confirmed_inline"
+          }
+        ]
+
+        if stats.rejected_users.positive?
+          items << {
+            css_class: "text-danger fw-medium",
+            count: stats.rejected_users,
+            translation_key: "registration.allocation.stats.currently_rejected_inline"
+          }
+        end
+
+        items
+      end
+
+      def allocation_summary_items
+        items = [
+          {
+            css_class: "fw-medium",
+            count: stats.eligible_users,
+            translation_key: "registration.allocation.stats.eligible_inline"
+          },
+          {
+            css_class: "text-success fw-medium",
+            count: stats.assigned_users,
+            translation_key: "registration.allocation.stats.assigned_inline",
+            percentage: stats.assigned_percentage
+          }
+        ]
+
+        if stats.rejected_users.positive?
+          items << {
+            css_class: "text-danger fw-medium",
+            count: stats.rejected_users,
+            translation_key: "registration.allocation.stats.rejected_inline"
+          }
+        end
+
+        items << {
+          css_class: [
+            stats.unassigned_users.positive? ? "text-danger" : "text-muted",
+            "fw-medium"
+          ].join(" "),
+          count: stats.unassigned_users,
+          translation_key: "registration.allocation.stats.unassigned_inline"
+        }
+
+        items
+      end
 
       def calculate_conflicts
         return [] if @campaign.completed?
