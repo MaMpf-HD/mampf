@@ -187,14 +187,14 @@ input[type="file"] {
 
 .table-wrapper::before {
   left: 200px;
-  background: linear-gradient(to right, white, transparent);
+  background: linear-gradient(to right, #f8f9fa, transparent);
   opacity: var(--fade-left, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
 .table-wrapper::after {
   right: 600px;
-  background: linear-gradient(to left, white, transparent);
+  background: linear-gradient(to left, #f8f9fa, transparent);
   opacity: var(--fade-right, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }

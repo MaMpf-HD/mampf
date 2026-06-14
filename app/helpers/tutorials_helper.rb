@@ -47,4 +47,37 @@ module TutorialsHelper
       }
     end
   end
+
+  def overview_info(stack, non_submitters, assignment)
+    num_submissions = stack.size
+    num_submissions_with_points = stack.count do |s|
+      s.participations && s.participations.first&.status == "reviewed"
+    end
+    num_submissions_without_points = num_submissions - num_submissions_with_points
+
+    num_non_submitters = non_submitters.size
+    num_participated = non_submitters.count do |u|
+      u.assessment_participation_in_assignment(assignment)
+    end
+    num_not_participated = num_non_submitters - num_participated
+    num_participated_with_points = non_submitters.count do |u|
+      u.assessment_participation_in_assignment(assignment)&.status == "reviewed"
+    end
+    num_participated_without_points = num_participated - num_participated_with_points
+
+    {
+      submissions: {
+        total: num_submissions,
+        graded: num_submissions_with_points,
+        pending: num_submissions_without_points
+      },
+      non_submitters: {
+        total: num_non_submitters,
+        participated: num_participated,
+        graded: num_participated_with_points,
+        pending: num_participated_without_points,
+        not_marked: num_not_participated
+      }
+    }
+  end
 end

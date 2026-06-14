@@ -105,6 +105,17 @@ de:
       participated: 'teilgenommen'
       mark_as_participated: 'Als teilgenommen markieren'
       confirm_unsaved_changes: 'Ungespeicherte Änderungen in der Punktetabelle gehen verloren. Fortfahren?'
+      header_overview:
+        submission:
+          total: "Abgaben"
+          graded: "benotet"
+          pending: "ausstehend"
+        non_submitters:
+          total: "Personen haben nicht abgegeben"
+          participated: "teilgenommen"
+          not_participated: "nicht yet marked"
+          graded: "benotet"
+          pending: "ausstehend"
     grading_overview:
       submission_progress: "Abgaben"
       submitted: "Abgegeben"

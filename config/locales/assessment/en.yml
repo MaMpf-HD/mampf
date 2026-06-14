@@ -105,6 +105,17 @@ en:
       participated: 'participated'
       mark_as_participated: 'Mark as participated'
       confirm_unsaved_changes: 'Unsaved changes in the grading table will be lost. Continue?'
+      header_overview:
+        submission:
+          total: "submissions"
+          graded: "graded"
+          pending: "pending"
+        non_submitters:
+          total: "people have not submitted"
+          participated: "participated"
+          not_participated: "not yet marked"
+          graded: "graded"
+          pending: "pending"
     grading_overview:
       submission_progress: "Submissions"
       submitted: "Submitted"
