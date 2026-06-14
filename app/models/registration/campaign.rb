@@ -151,6 +151,9 @@ module Registration
             registrations: user_registrations.where.not(status: :rejected)
           ).call
 
+          # Finalization re-screens under lock because the UI pre-check does not
+          # lock campaign state. If blockers appear now, we stop before applying
+          # auto-rejections to avoid leaving a partially changed rejection state.
           raise(FinalizationBlockedError, screening) if screening.blocked?
 
           apply_rejections!(screening.auto_reject_violations)
