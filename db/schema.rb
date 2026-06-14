@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_24_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_14_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -632,12 +632,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_24_000001) do
     t.uuid "registration_campaign_id", null: false
     t.uuid "registration_item_id", null: false
     t.datetime "materialized_at"
+    t.boolean "exclusive_assignment", default: false, null: false
     t.string "rejection_reason_type"
     t.string "rejection_reason_code"
     t.string "rejection_reason_label"
     t.datetime "rejected_at"
     t.datetime "rejection_overridden_at"
-    t.boolean "exclusive_assignment", default: false, null: false
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
     t.index ["registration_campaign_id", "user_id", "registration_item_id"], name: "index_reg_user_regs_unique_item_user", unique: true
     t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_exclusive_assignment_unranked", unique: true, where: "((exclusive_assignment = true) AND (preference_rank IS NULL))"
