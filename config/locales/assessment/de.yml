@@ -74,9 +74,9 @@ de:
     submission_settings: "Abgabe-Einstellungen"
     task_points:
       invalid_submission_params: "Ungültige Parameter für die Punkteeingabe."
-      submission:
-        message: 
-          update: "Punkte erfolgreich aktualisiert."
+      update: "Punkte erfolgreich aktualisiert."
+      assessment_not_found: "Bewertung für diese Hausaufgabe nicht gefunden."
+      cannot_score_active_assignment: "Punkte können für aktive Hausaufgaben nicht eingetragen werden."
     errors:
       no_assessable: "Hausaufgabe nicht gefunden."
       no_assessment: "Bewertung für dieses Element nicht gefunden."

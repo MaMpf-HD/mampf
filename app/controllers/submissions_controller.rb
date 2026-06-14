@@ -246,12 +246,16 @@ class SubmissionsController < ApplicationController
 
   def accept
     @submission.update(accepted: true)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
     send_acceptance_email(@submission.users)
     rerender_submission_row
   end
 
   def reject
     @submission.update(accepted: false)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
     send_rejection_email(@submission.users)
     rerender_submission_row
   end

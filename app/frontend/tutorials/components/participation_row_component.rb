@@ -1,3 +1,4 @@
+# Renders a single participation row in the pointing table
 class ParticipationRowComponent < ViewComponent::Base
   def initialize(user:, assignment:, tutorial:)
     super()

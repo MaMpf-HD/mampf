@@ -56,7 +56,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
   end
 
   describe ".score_tasks_by_participation!" do
-    context "when assignment is inactive" do
+    context "when assignment is inactive (before deadline)" do
       before do
         @assignment = FactoryBot.create(:assignment, :with_lecture, deadline: 1.hour.from_now)
         @assessment = FactoryBot.create(:assessment,
@@ -73,23 +73,8 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       end
       after { Timecop.return }
 
-      context "when participation is nil" do
+      context "when participation is nil, should reject the request" do
         subject { described_class.score_tasks_by_participation!(nil, @points_by_task_id, scorer) }
-
-        it "does not call PointEntryService" do
-          expect(Assessment::PointEntryService).not_to receive(:enter_points)
-          subject
-        end
-
-        it "does not create any participations" do
-          expect { subject }.not_to change(Assessment::Participation, :count)
-        end
-      end
-
-      context "when assessable (assignment) is nil" do
-        # TODO: fix this
-        subject { described_class.score_tasks_by_participation!(nil, @points_by_task_id, scorer) }
-        before { allow(@assessment).to receive(:assessable).and_return(nil) }
 
         it "does not call PointEntryService" do
           expect(Assessment::PointEntryService).not_to receive(:enter_points)
@@ -148,13 +133,16 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       subject do
         described_class.score_tasks_by_participation!(participation, points_by_task_id, scorer)
       end
-      it "does not call PointEntryService" do
-        expect(Assessment::PointEntryService).not_to receive(:enter_points)
-        subject
+      it "raises SubmissionGraderError" do
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
 
       it "does not create any participations" do
-        expect { subject }.not_to change(Assessment::Participation, :count)
+        expect do
+          subject
+        rescue StandardError
+          nil
+        end.not_to change(Assessment::Participation, :count)
       end
     end
   end
@@ -189,13 +177,16 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       context "when submission is nil" do
         subject { described_class.score_tasks_by_submission!(nil, @points_by_task_id, scorer) }
 
-        it "does not call PointEntryService" do
-          expect(Assessment::PointEntryService).not_to receive(:enter_points)
-          subject
+        it "raises SubmissionGraderError" do
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
         end
 
         it "does not create any participations" do
-          expect { subject }.not_to change(Assessment::Participation, :count)
+          expect do
+            subject
+          rescue StandardError
+            nil
+          end.not_to change(Assessment::Participation, :count)
         end
       end
 
@@ -206,13 +197,16 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           described_class.score_tasks_by_submission!(@submission, @points_by_task_id, scorer)
         end
 
-        it "does not call PointEntryService" do
-          expect(Assessment::PointEntryService).not_to receive(:enter_points)
-          subject
+        it "raises SubmissionGraderError" do
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
         end
 
         it "does not create any participations" do
-          expect { subject }.not_to change(Assessment::Participation, :count)
+          expect do
+            subject
+          rescue StandardError
+            nil
+          end.not_to change(Assessment::Participation, :count)
         end
       end
 
@@ -223,13 +217,16 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           described_class.score_tasks_by_submission!(@submission, @points_by_task_id, scorer)
         end
 
-        it "does not call PointEntryService" do
-          expect(Assessment::PointEntryService).not_to receive(:enter_points)
-          subject
+        it "raises SubmissionGraderError" do
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
         end
 
         it "does not create any participations" do
-          expect { subject }.not_to change(Assessment::Participation, :count)
+          expect do
+            subject
+          rescue StandardError
+            nil
+          end.not_to change(Assessment::Participation, :count)
         end
       end
       context "when submission and assignment are valid" do
@@ -284,13 +281,16 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           described_class.score_tasks_by_submission!(submission_active, points_by_task_id, scorer)
         end
 
-        it "does not call PointEntryService" do
-          expect(Assessment::PointEntryService).not_to receive(:enter_points)
-          subject
+        it "raises SubmissionGraderError" do
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
         end
 
         it "does not create any participations" do
-          expect { subject }.not_to change(Assessment::Participation, :count)
+          expect do
+            subject
+          rescue StandardError
+            nil
+          end.not_to change(Assessment::Participation, :count)
         end
       end
     end

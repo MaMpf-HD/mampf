@@ -67,6 +67,7 @@ export default class extends Controller {
       });
 
       if (this.hasSaveTarget) this.saveTarget.disabled = true;
+      this.calculateTotalPoints();
     }
   }
 
@@ -97,6 +98,7 @@ export default class extends Controller {
       });
 
       if (this.hasSaveTarget) this.saveTarget.disabled = true;
+      this.calculateTotalPoints();
     }
   }
 

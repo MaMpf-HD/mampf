@@ -1,3 +1,6 @@
+# Pointing table component for the assignment of tutorials
+# This includes pointing rows for both by submission and by participation
+# Also includes the zone for non-submitters with the possibility to mark them as participated
 class TutorialGradingTableComponent < ViewComponent::Base
   def initialize(assignment:, tutorial:, stack:, non_submitters:)
     super()

@@ -7,15 +7,36 @@ module Assessment
   # Wraps all operations in a database transaction for atomicity
   # Only allows scoring if the assignment is inactive (after deadline)
   class SubmissionGraderService
-    # Enters points of all tasks for all team members
+    class SubmissionGraderError < StandardError; end
+
+    # Routes a bulk entry to the correct scoring method based on target type.
+    def self.score_tasks_by_types!(entry, scorer)
+      case entry["target"]
+      when "submission"
+        submission = Submission.find(entry["id"])
+        score_tasks_by_submission!(submission, entry["task_points"], scorer)
+      when "participation"
+        participation = Participation.find(entry["id"])
+        score_tasks_by_participation!(participation, entry["task_points"], scorer)
+      end
+    end
+
+    # Enters points of all tasks for all team members of a submission
     # points_by_task_id, Hash of task_id => points, points potentially nil and string
     def self.score_tasks_by_submission!(submission,
                                         points_by_task_id,
                                         scorer)
       assignment = submission&.assignment
       assessment = assignment&.assessment
-      return if assessment.nil?
-      return if assignment.active?
+      if assessment.nil?
+        raise(SubmissionGraderError,
+              I18n.t("assessment.task_points.assessment_not_found"))
+      end
+
+      if assignment.active?
+        raise(SubmissionGraderError,
+              I18n.t("assessment.task_points.cannot_score_active_assignment"))
+      end
 
       users = submission.users
       users.each do |user|
@@ -35,7 +56,11 @@ module Assessment
                                            scorer)
       assignment = participation&.assessment&.assessable
       return if assignment.nil?
-      return if assignment.active?
+
+      if assignment.active?
+        raise(SubmissionGraderError,
+              I18n.t("assessment.task_points.cannot_score_active_assignment"))
+      end
 
       PointEntryService.enter_points(
         participation,
@@ -47,7 +72,7 @@ module Assessment
 
     def self.init_participation(assessment, user, tutorial)
       if tutorial.nil? || assessment.nil? || user.nil?
-        raise(ArgumentError, "Assessment, user, and tutorial must be present")
+        raise(SubmissionGraderError, "Assessment, user, and tutorial must be present")
       end
 
       participation = Participation.find_or_initialize_by(

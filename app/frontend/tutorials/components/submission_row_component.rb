@@ -1,3 +1,4 @@
+# Renders a single submission row in the pointing table
 class SubmissionRowComponent < ViewComponent::Base
   def initialize(submission:, assignment:, tutorial:)
     super()
@@ -6,12 +7,13 @@ class SubmissionRowComponent < ViewComponent::Base
     @tutorial = tutorial
   end
 
-  # Determines if grading is enabled for the current assignment
+  # Feature guard: grading is only possible if the feature flag is enabled
+  # and the assignment supports assessment
   def grading_enabled?
     Flipper.enabled?(:assessment_grading) && @assignment.assessable?
   end
 
-  # Determines if grading is allowed for the current assignment
+  # Business rule: grading is only allowed once the assignment is no longer active
   def allow_grading?
     !@assignment.active?
   end

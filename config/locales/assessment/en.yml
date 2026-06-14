@@ -73,10 +73,10 @@ en:
     no_assessables_yet: "No assessments created yet."
     submission_settings: "Submission Settings"
     task_points:
+      update: "Task points updated successfully."
       invalid_submission_params: "Invalid parameters for point entry."
-      submission:
-        message: 
-          update: "Task points updated successfully."
+      assessment_not_found: "Assessment for this assignment not found."
+      cannot_score_active_assignment: "Points cannot be entered for active assignments."
     errors:
       no_assessable: "Assignment not found."
       no_assessment: "Assessment not found for this item."
