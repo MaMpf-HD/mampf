@@ -37,12 +37,39 @@ module Registration
       stats.preference_counts.sort_by { |k, _| k == :forced ? 999 : k }
     end
 
-    def rank_color(rank)
+    def allocation_progress_bar(value, max, bar_class:, height: "10px",
+                                show_label: false)
+      percentage = clamped_percentage(value, max)
+      clamped_value = clamped_progress_value(value, max)
+
+      tag.div(class: "progress", style: "height: #{height}") do
+        tag.div(class: ["progress-bar", "allocation-progress-bar", bar_class].join(" "),
+                role: "progressbar",
+                style: "width: #{percentage}%",
+                "aria-valuenow": clamped_value,
+                "aria-valuemin": 0,
+                "aria-valuemax": max) do
+          "#{percentage.round}%" if show_label
+        end
+      end
+    end
+
+    def allocation_rank_bar_class(rank)
       case rank
-      when :forced then :allocation_forced
-      when 1 then :allocation_first
-      when 2 then :allocation_second
-      else :allocation_other
+      when :forced then "allocation-progress-bar--forced"
+      when 1 then "allocation-progress-bar--first"
+      when 2 then "allocation-progress-bar--second"
+      else "allocation-progress-bar--other"
+      end
+    end
+
+    def allocation_utilization_bar_class(percentage)
+      if percentage >= 100
+        "allocation-progress-bar--utilization-high"
+      elsif percentage >= 80
+        "allocation-progress-bar--utilization-mid"
+      else
+        "allocation-progress-bar--utilization-low"
       end
     end
 

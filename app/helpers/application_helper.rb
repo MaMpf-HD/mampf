@@ -48,31 +48,32 @@ module ApplicationHelper
     value ? "none;" : "block;"
   end
 
+  def clamped_percentage(value, max)
+    return 0 if max.to_i <= 0
+
+    # rubocop:disable Style/FloatDivision
+    (value.to_f / max.to_f * 100).clamp(0, 100)
+    # rubocop:enable Style/FloatDivision
+  end
+
+  def clamped_progress_value(value, max)
+    upper_bound = [max.to_i, 0].max
+    value.to_i.clamp(0, upper_bound)
+  end
+
   # rubocop:disable Metrics/ParameterLists
   def progress_bar(value, max, classification: :neutral, label: nil,
                    height: "1.5rem", show_label: true,
                    container_class: "progress mb-2", style: nil)
     # rubocop:enable Metrics/ParameterLists
-    clamped_value = value.to_i.clamp(0, max.to_i)
-    # rubocop:disable Style/FloatDivision
-    percentage = max.to_i.positive? ? (value.to_f / max.to_f * 100).clamp(0, 100) : 0
-    # rubocop:enable Style/FloatDivision
+    clamped_value = clamped_progress_value(value, max)
+    percentage = clamped_percentage(value, max)
 
     color_class = case classification
-                  when :utilization
-                    utilization_color(percentage)
                   when :time
                     "bg-info"
                   when :neutral
                     "bg-primary"
-                  when :allocation_first
-                    "allocation-progress-bar allocation-progress-bar--first"
-                  when :allocation_second
-                    "allocation-progress-bar allocation-progress-bar--second"
-                  when :allocation_other
-                    "allocation-progress-bar allocation-progress-bar--other"
-                  when :allocation_forced
-                    "allocation-progress-bar allocation-progress-bar--forced"
                   else
                     "bg-#{classification}"
     end
@@ -86,16 +87,6 @@ module ApplicationHelper
               "aria-valuemax": max) do
         label || "#{percentage.round}%" if show_label
       end
-    end
-  end
-
-  def utilization_color(percentage)
-    if percentage >= 100
-      "allocation-progress-bar allocation-progress-bar--utilization-high"
-    elsif percentage >= 80
-      "allocation-progress-bar allocation-progress-bar--utilization-mid"
-    else
-      "allocation-progress-bar allocation-progress-bar--utilization-low"
     end
   end
 
