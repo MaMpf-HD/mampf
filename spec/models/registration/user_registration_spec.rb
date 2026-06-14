@@ -517,34 +517,52 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
     end
   end
 
-  describe ".localized_rejection_reason_label" do
+  describe ".resolve_rejection_reason_label" do
     it "prefers translations derived from the rejection code" do
       I18n.with_locale(:de) do
-        expect(described_class.localized_rejection_reason_label(
+        expect(described_class.resolve_rejection_reason_label(
                  reason_code: "prerequisite_not_met",
-                 reason_label: "Prerequisite registration process not completed."
+                 fallback_label: "Prerequisite registration process not completed."
                )).to eq("Vorausgesetztes Anmeldeverfahren nicht abgeschlossen.")
       end
     end
 
-    it "falls back to the stored label when no translation exists" do
-      expect(described_class.localized_rejection_reason_label(
-               reason_code: "custom_reason",
-               reason_label: "Custom reason"
-             )).to eq("Custom reason")
+    it "resolves aliased built-in codes centrally" do
+      expect(described_class.resolve_rejection_reason_label(
+               reason_code: "institutional_email_mismatch"
+             )).to eq(I18n.t("registration.policy.errors.email_domain_not_allowed"))
     end
-  end
 
-  describe ".built_in_rejection_reason_label" do
-    it "returns the centralized label for built-in reasons" do
-      expect(described_class.built_in_rejection_reason_label(
-               described_class::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER
-             )).to eq(I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher"))
+    it "falls back to the stored label when no translation exists" do
+      expect(described_class.resolve_rejection_reason_label(
+               reason_code: "custom_reason",
+               fallback_label: "Custom reason"
+             )).to eq("Custom reason")
     end
   end
 
   describe "rejection state helpers" do
     let(:registration) { FactoryBot.create(:registration_user_registration, :rejected) }
+
+    it "derives built-in labels from the reason code when rejecting" do
+      registration.reject!(
+        reason_type: described_class::REJECTION_REASON_TYPE_MANUAL,
+        reason_code: described_class::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER
+      )
+
+      expect(registration.reload.rejection_reason_label)
+        .to eq(I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher"))
+    end
+
+    it "persists the fallback label for unknown legacy reason codes" do
+      registration.reject!(
+        reason_type: described_class::REJECTION_REASON_TYPE_POLICY,
+        reason_code: "legacy_reason",
+        reason_label: "Legacy fallback label"
+      )
+
+      expect(registration.reload.rejection_reason_label).to eq("Legacy fallback label")
+    end
 
     it "clears rejection_overridden_at when clearing the rejection decision" do
       registration.update!(rejection_overridden_at: Time.current)

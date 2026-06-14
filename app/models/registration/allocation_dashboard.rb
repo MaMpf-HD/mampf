@@ -32,12 +32,7 @@ module Registration
 
     def rejection_reasons_for(student)
       Array(rejected_registrations_by_user[student.id])
-        .filter_map do |registration|
-          Registration::UserRegistration.localized_rejection_reason_label(
-            reason_code: registration.rejection_reason_code,
-            reason_label: registration.rejection_reason_label
-          )
-        end
+        .filter_map(&:resolved_rejection_reason_label)
         .uniq
         .join(", ")
     end

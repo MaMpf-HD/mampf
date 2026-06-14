@@ -206,9 +206,7 @@ module Registration
           registrations.each do |registration|
             registration.reject!(
               reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
-              reason_code: reason_code,
-              reason_label:
-              Registration::UserRegistration.built_in_rejection_reason_label(reason_code)
+              reason_code: reason_code
             )
           end
         end

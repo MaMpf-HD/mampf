@@ -27,6 +27,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       expect(registration.reload).to be_rejected
       expect(registration.rejection_reason_type).to eq("manual")
       expect(registration.rejection_reason_code).to eq("withdrawn_by_teacher")
+      expect(registration.rejection_reason_label)
+        .to eq(I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher"))
     end
 
     it "returns success via turbo stream" do

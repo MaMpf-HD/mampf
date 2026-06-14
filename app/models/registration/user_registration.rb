@@ -79,9 +79,9 @@ module Registration
               },
               if: -> { registration_campaign.first_come_first_served? }
 
-    def self.localized_rejection_reason_label(reason_code:, reason_label:)
+    def self.resolve_rejection_reason_label(reason_code:, fallback_label: nil)
       code = reason_code.to_s.presence
-      return reason_label if code.blank?
+      return fallback_label if code.blank?
 
       translated_code = REJECTION_REASON_CODE_TRANSLATION_ALIASES.fetch(code, code)
 
@@ -91,25 +91,19 @@ module Registration
       reason_key = "registration.user_registration.reason_labels.#{translated_code}"
       return I18n.t(reason_key) if I18n.exists?(reason_key)
 
-      reason_label
+      fallback_label
     end
 
-    def self.built_in_rejection_reason_label(reason_code)
-      code = reason_code.to_s.presence
-      return if code.blank?
-
-      reason_key = "registration.user_registration.reason_labels.#{code}"
-      return unless I18n.exists?(reason_key)
-
-      I18n.t(reason_key)
-    end
-
-    def reject!(reason_type:, reason_code:, reason_label:, rejected_at: Time.current)
+    def reject!(reason_type:, reason_code:, reason_label: nil,
+                rejected_at: Time.current)
       update!(
         status: :rejected,
         rejection_reason_type: reason_type,
         rejection_reason_code: reason_code,
-        rejection_reason_label: reason_label,
+        rejection_reason_label: self.class.resolve_rejection_reason_label(
+          reason_code: reason_code,
+          fallback_label: reason_label
+        ),
         rejected_at: rejected_at,
         rejection_overridden_at: nil
       )
@@ -125,10 +119,10 @@ module Registration
       )
     end
 
-    def localized_rejection_reason_label
-      self.class.localized_rejection_reason_label(
+    def resolved_rejection_reason_label
+      self.class.resolve_rejection_reason_label(
         reason_code: rejection_reason_code,
-        reason_label: rejection_reason_label
+        fallback_label: rejection_reason_label
       )
     end
 

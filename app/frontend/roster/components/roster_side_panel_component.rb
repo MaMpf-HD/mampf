@@ -215,12 +215,7 @@ class RosterSidePanelComponent < ViewComponent::Base
   def rejection_reasons(student)
     relevant_registrations(student)
       .select { |r| rejected_registration?(r) }
-      .filter_map do |registration|
-        Registration::UserRegistration.localized_rejection_reason_label(
-          reason_code: registration.rejection_reason_code,
-          reason_label: registration.rejection_reason_label
-        )
-      end
+      .filter_map(&:resolved_rejection_reason_label)
       .uniq
       .join(", ")
   end
