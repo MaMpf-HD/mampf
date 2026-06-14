@@ -17,7 +17,7 @@
             <p>
               <%= t('submission.enroll_first') %>
             </p>
-            <%= link_to t('basics.enroll'), lecture_enrollment_path(lecture), class: 'btn btn-primary' %>
+            <%= link_to t('submission.enroll'), lecture_enrollment_path(lecture), class: 'btn btn-primary' %>
           <% end %>
         <% else %>
           <%= f.select :tutorial_id,
