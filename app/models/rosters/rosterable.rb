@@ -227,19 +227,14 @@ module Rosters
       users_to_add = target_ids - current_ids
       return if users_to_add.empty?
 
-      # insert_all does not automatically apply the association scope (e.g. foreign keys).
-      # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
       scope_attrs = roster_entries.scope_attributes
+      now = Time.current
 
       attributes = users_to_add.map do |uid|
-        {
-          roster_user_id_column => uid,
-          :source_campaign_id => campaign.id,
-          :created_at => Time.current,
-          :updated_at => Time.current
-        }.merge(scope_attrs)
+        missing_roster_entry_attributes(uid, campaign, scope_attrs, now)
       end
-      roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
+
+      persist_missing_roster_entries!(attributes)
     end
 
     # Identifies users currently in the roster associated with this specific
@@ -274,6 +269,24 @@ module Rosters
     end
 
     private
+
+      def missing_roster_entry_attributes(user_id, campaign, scope_attrs, now)
+        {
+          roster_user_id_column => user_id,
+          :source_campaign_id => campaign.id,
+          :created_at => now,
+          :updated_at => now
+        }.merge(scope_attrs)
+          .merge(extra_roster_entry_attributes(user_id, campaign))
+      end
+
+      def extra_roster_entry_attributes(_user_id, _campaign)
+        {}
+      end
+
+      def persist_missing_roster_entries!(attributes)
+        roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
+      end
 
       def validate_skip_campaigns_switch
         return unless respond_to?(:skip_campaigns)

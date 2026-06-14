@@ -124,4 +124,76 @@ RSpec.describe(Tutorial, type: :model) do
       expect(TutorTutorialJoin.where(tutorial: tutorial, tutor: tutor).count).to eq(1)
     end
   end
+
+  describe "#add_user_to_roster!" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+    let(:user) { create(:confirmed_user) }
+
+    context "when the DB unique index fires under concurrency" do
+      before do
+        # Insert directly to simulate the state a concurrent transaction would
+        # leave: a conflicting membership that bypasses model validations.
+        # rubocop:disable Rails/SkipsModelValidations
+        TutorialMembership.insert_all([{
+                                        user_id: user.id,
+                                        tutorial_id: other_tutorial.id,
+                                        lecture_id: lecture.id,
+                                        created_at: Time.current,
+                                        updated_at: Time.current
+                                      }])
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      it "raises UserAlreadyInBundleError instead of RecordNotUnique" do
+        allow_any_instance_of(TutorialMembership)
+          .to receive(:unique_membership_per_lecture)
+
+        expect do
+          tutorial.add_user_to_roster!(user)
+        end.to raise_error(Rosters::UserAlreadyInBundleError)
+      end
+    end
+  end
+
+  describe "#add_missing_users! (via materialize_allocation!)" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial_a) { create(:tutorial, lecture: lecture) }
+    let(:tutorial_b) { create(:tutorial, lecture: lecture) }
+    let(:user) { create(:confirmed_user) }
+    let(:campaign) { create(:registration_campaign) }
+
+    it "updates updated_at when a user is moved to a new tutorial on conflict" do
+      # rubocop:disable Rails/SkipsModelValidations
+      TutorialMembership.insert_all([{
+                                      user_id: user.id,
+                                      tutorial_id: tutorial_a.id,
+                                      lecture_id: lecture.id,
+                                      created_at: 1.day.ago,
+                                      updated_at: 1.day.ago
+                                    }])
+      # rubocop:enable Rails/SkipsModelValidations
+
+      membership = TutorialMembership.find_by(user: user, lecture: lecture)
+      old_updated_at = membership.updated_at
+
+      tutorial_b.materialize_allocation!(user_ids: [user.id], campaign: campaign)
+
+      expect(membership.reload.tutorial_id).to eq(tutorial_b.id)
+      expect(membership.reload.updated_at).to be > old_updated_at
+    end
+  end
+
+  describe "lecture_id immutability" do
+    let(:tutorial) { create(:tutorial) }
+    let(:other_lecture) { create(:lecture) }
+
+    it "cannot be changed after creation" do
+      tutorial.lecture_id = other_lecture.id
+
+      expect(tutorial).to be_invalid
+      expect(tutorial.errors.added?(:lecture_id, :immutable)).to be(true)
+    end
+  end
 end

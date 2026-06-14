@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_01_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_13_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1008,8 +1008,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_01_000001) do
     t.uuid "source_campaign_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "lecture_id", null: false
     t.index ["source_campaign_id"], name: "index_tutorial_memberships_on_source_campaign_id"
     t.index ["tutorial_id"], name: "index_tutorial_memberships_on_tutorial_id"
+    t.index ["user_id", "lecture_id"], name: "index_tutorial_memberships_on_user_id_and_lecture_id", unique: true
     t.index ["user_id", "tutorial_id"], name: "index_tutorial_memberships_on_user_id_and_tutorial_id", unique: true
     t.index ["user_id"], name: "index_tutorial_memberships_on_user_id"
   end
@@ -1323,6 +1325,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_01_000001) do
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
   add_foreign_key "tutor_tutorial_joins", "tutorials"
   add_foreign_key "tutor_tutorial_joins", "users", column: "tutor_id"
+  add_foreign_key "tutorial_memberships", "lectures"
   add_foreign_key "tutorial_memberships", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "tutorial_memberships", "tutorials"
   add_foreign_key "tutorial_memberships", "users"
