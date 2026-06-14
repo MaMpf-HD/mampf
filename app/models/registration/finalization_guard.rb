@@ -5,16 +5,16 @@ module Registration
     Result = Struct.new(:success?,
                         :error_code,
                         :error_message,
-                        :data,
+                        :violations,
                         :screening_result,
                         keyword_init: true) do
       def initialize(**attributes)
         super
 
         self.screening_result ||= Registration::ScreeningService::Result.new(
-          violations: Array(data)
+          violations: Array(violations)
         )
-        self.data = screening_result.violations
+        self.violations = screening_result.violations
       end
 
       def policy_violations
@@ -68,19 +68,19 @@ module Registration
       Result.new(success?: true, screening_result: screening_result)
     end
 
-    def failure(code, message, screening_result_or_data = nil)
-      screening_result, data = if screening_result_or_data.is_a?(
+    def failure(code, message, screening_result_or_violations = nil)
+      screening_result, violations = if screening_result_or_violations.is_a?(
         Registration::ScreeningService::Result
       )
-        [screening_result_or_data, nil]
+        [screening_result_or_violations, nil]
       else
-        [nil, screening_result_or_data]
+        [nil, screening_result_or_violations]
       end
 
       Result.new(success?: false,
                  error_code: code,
                  error_message: message,
-                 data: data,
+                 violations: violations,
                  screening_result: screening_result)
     end
   end
