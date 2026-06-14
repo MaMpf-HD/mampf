@@ -32,6 +32,15 @@ module Registration
 
     enum :status, { pending: 0, confirmed: 1, rejected: 2 }
 
+    scope :with_open_rejection_reason, lambda {
+      where(rejection_reason_code: nil)
+        .or(
+          where.not(
+            rejection_reason_code: REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+          )
+        )
+    }
+
     before_validation :set_exclusive_assignment
 
     validates :status, presence: true

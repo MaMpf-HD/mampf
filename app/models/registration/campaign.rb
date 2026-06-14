@@ -275,16 +275,13 @@ module Registration
     end
 
     def open_rejected_registrations
+      active_user_ids = user_registrations.where(status: [:confirmed, :pending])
+                                          .select(:user_id)
+
       user_registrations.rejected
-                        .where(
-                          "rejection_reason_code IS NULL OR rejection_reason_code != ?",
-                          Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
-                        )
+                        .with_open_rejection_reason
                         .where(rejection_overridden_at: nil)
-                        .where.not(
-                          user_id: user_registrations.where(status: [:confirmed, :pending])
-                                                     .select(:user_id)
-                        )
+                        .where.not(user_id: active_user_ids)
     end
 
     def roster_group_type
