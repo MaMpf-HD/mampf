@@ -121,6 +121,7 @@ RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
 
 WORKDIR /usr/src/app
 
+COPY --from=node /usr/local/ /usr/local/
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build --chown=app:app /usr/src/app /usr/src/app
 
