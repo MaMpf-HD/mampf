@@ -3,10 +3,10 @@
     <% if !@assignment.active? %>
       <%= link_to t('buttons.upload'),
                   edit_correction_path(submission),
-                  class: "btn btn-sm btn-outline-secondary mb-2",
+                  class: "btn btn-sm btn-outline-secondary",
                   data: { turbo_stream: true } %>
     <% else %>
-      <button class="btn btn-sm btn-outline-secondary mb-2" disabled>
+      <button class="btn btn-sm btn-outline-secondary" disabled>
         <%= t('buttons.upload') %>
       </button>
     <% end %>
@@ -15,12 +15,12 @@
       <% if submission.correction %>
         <%= link_to correction_display_mode(submission),
                     show_correction_path(submission),
-                    class: "btn btn-sm btn-outline-secondary mb-2",
+                    class: "btn btn-sm btn-outline-secondary",
                     data: { turbo: false } %>
 
         <%= link_to t('buttons.delete'),
                     delete_correction_path(submission),
-                    class: "btn btn-sm btn-outline-secondary mb-2",
+                    class: "btn btn-sm btn-outline-secondary",
                     data: { turbo_method: :delete,
                             turbo_confirm: t('confirmation.generic'),
                             turbo_stream: true } %>
