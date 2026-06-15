@@ -106,6 +106,10 @@ en:
       participated: 'participated'
       mark_as_participated: 'Mark as participated'
       confirm_unsaved_changes: 'Unsaved changes in the grading table will be lost. Continue?'
+      filter_options:
+        filter_all: "All"
+        filter_pending: "Pending"
+        filter_reviewed: "Reviewed"
       header_overview:
         submission:
           total: "submissions"

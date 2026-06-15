@@ -2,17 +2,28 @@
   <%# ── ZONE 1: has grading records ── %>
   <% if grading_records? %>
     <div data-controller="status-filter">
-      <div class="d-flex gap-2 mb-3">
-        <% ["all", "pending", "reviewed"].each do |status| %>
-          <button
-            class="btn btn-sm <%= status == 'all' ? 'btn-dark' : 'btn-outline-secondary' %>"
-            data-action="click->status-filter#filter"
-            data-status-filter-value="<%= status %>"
+      <% if grading_enabled? %>
+        <div class="d-flex gap-2 mb-3">
+          <input
+            type="text"
+            class="form-control form-control-sm w-auto"
+            placeholder="<%= t('basics.search') %>"
+            autocomplete="off"
+            data-action="input->status-filter#search"
           >
-            Filter
-          </button>
-        <% end %>
-      </div>
+
+          <% ["all", "pending"].each do |status| %>
+            <button
+              class="btn btn-sm <%= status == 'all' ? 'btn-dark' : 'btn-outline-secondary' %>"
+              style="width: 4rem"
+              data-action="click->status-filter#filter"
+              data-status-filter-value="<%= status %>"
+            >
+              <%= t("assessment.grading_tutorial.filter_options.filter_#{status}") %>
+            </button>
+          <% end %>
+        </div>
+      <% end %>
 
       <div class="table-wrapper" data-controller="table-fade">
         <div class="table-overflow" data-table-fade-target="inner">
@@ -92,7 +103,7 @@
   <% if @non_submitters.present? && grading_enabled? %>
     <div
       style="display: flex; align-items: center; gap: 8px; margin: 20px 0 10px; font-size: 13px; font-weight: 500; color: #888;"
-    > <%# herb:disable html-no-duplicate-attributes %>
+    >
       <%= t('assessment.grading_tutorial.no_submission_zone') %>
       <span style="flex: 1; height: 1px; background: #e5e7eb; display: block;"></span>
     </div>
@@ -128,7 +139,7 @@
                   data-clipboard-text="<%= user.email %>"
                   data-bs-toggle="tooltip"
                   title="<%= t('buttons.copy_email_to_clipboard') %>"
-                > <%# herb:disable html-no-duplicate-attributes %>
+                >
                   <span class="clipboardpopuptext token-clipboard-popup">
                     <%= t('basics.emails_copied_to_clipboard') %>
                   </span>

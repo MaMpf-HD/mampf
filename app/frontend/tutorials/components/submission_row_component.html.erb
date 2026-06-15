@@ -6,7 +6,8 @@
   data-controller="submission-row"
   data-submission-row-id="<%= @submission.id %>"
   data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
-  data-status="<%= @submission&.participations.first&.status %>"
+  data-status-filter-status="<%= @submission&.participations&.first&.status %>"
+  data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
 >
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
@@ -21,7 +22,7 @@
       data-bs-toggle="tooltip"
       data-id="<%= @submission.id %>"
       title="<%= t('buttons.copy_email_to_clipboard') %>"
-    >
+    > <%# herb:disable html-no-duplicate-attributes %>
       <span
         class="clipboardpopuptext token-clipboard-popup"
         data-id="<%= @submission.id %>"
@@ -43,7 +44,7 @@
     <!-- batch of columns 2: grade zone -->
     <!-- support point by task -->
     <% for assignment_task in @assignment.assessment.tasks %>
-      <td class="sticky-col task-col"> <%# herb:disable html-no-duplicate-attributes %>
+      <td class="sticky-col task-col">
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
     <% end %>

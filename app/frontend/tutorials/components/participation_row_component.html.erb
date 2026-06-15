@@ -5,7 +5,8 @@
   data-controller="submission-row"
   data-participation-row-id="<%= @participation.id %>"
   data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
-  data-status="<%= @participation.status %>"
+  data-status-filter-status="<%= @participation.status %>"
+  data-status-filter-name="<%= @user.tutorial_name %>"
 >
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
@@ -68,7 +69,6 @@
         <% end %>
         <!-- Save row -->
         <%= save_row_button(allow_grading?) %>
-
         <!-- Refresh row -->
         <%= form_with url: refresh_point_user_tutorial_path(@participation, type: "Tutorial"),
                     method: :patch,
