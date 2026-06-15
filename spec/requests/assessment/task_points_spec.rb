@@ -407,5 +407,120 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response).to redirect_to(root_path)
       end
     end
+
+    context "when user is a tutor" do
+      let(:tutor) { create(:confirmed_user) }
+
+      before do
+        tutorial.tutors << tutor
+        sign_in tutor
+        Timecop.travel(2.hours.from_now)
+      end
+
+      after { Timecop.return }
+
+      it "allows point_submission" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+
+      it "allows point_user" do
+        participation = create(:assessment_participation, assessment: assessment, user: student,
+                                                          tutorial: tutorial)
+        patch point_user_tutorial_path(participation),
+              params: { task_points: { task.id => "6" }.to_json },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+
+      it "allows mark_as_participated" do
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                        user_id: student.id },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "when user is a teacher (lecture teacher)" do
+      let(:teacher) { create(:confirmed_user) }
+
+      before do
+        lecture.update(teacher: teacher)
+        sign_in teacher
+        Timecop.travel(2.hours.from_now)
+      end
+
+      after { Timecop.return }
+
+      it "allows point_submission" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+
+      it "allows point_user" do
+        participation = create(:assessment_participation, assessment: assessment, user: student,
+                                                          tutorial: tutorial)
+        patch point_user_tutorial_path(participation),
+              params: { task_points: { task.id => "6" }.to_json },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+
+      it "allows mark_as_participated" do
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                        user_id: student.id },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+
+      context "when user is a teacher (not lecture teacher)" do
+        let("teacher") { create(:confirmed_user) }
+        let(:other_teacher) { create(:confirmed_user) }
+
+        before do
+          lecture.update(teacher: teacher)
+          sign_in other_teacher
+          Timecop.travel(2.hours.from_now)
+        end
+
+        after { Timecop.return }
+
+        it "redirects point_submission to root" do
+          submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                           users: [student])
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json },
+                as: :turbo_stream
+          expect(response).to redirect_to(root_path)
+        end
+
+        it "redirects point_user to root" do
+          participation = create(:assessment_participation, assessment: assessment, user: student,
+                                                            tutorial: tutorial)
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json },
+                as: :turbo_stream
+          expect(response).to redirect_to(root_path)
+        end
+
+        it "redirects mark_as_participated to root" do
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                          user_id: student.id },
+                as: :turbo_stream
+          expect(response).to redirect_to(root_path)
+        end
+      end
+    end
   end
 end

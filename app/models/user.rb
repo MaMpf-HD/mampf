@@ -681,6 +681,10 @@ class User < ApplicationRecord
     given_tutorials.include?(tutorial)
   end
 
+  def teacher_in?(lecture)
+    given_lectures.include?(lecture)
+  end
+
   def editor_or_teacher_in?(lecture)
     in?(lecture.editors) || self == lecture.teacher
   end

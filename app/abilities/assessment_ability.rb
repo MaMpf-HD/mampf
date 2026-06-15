@@ -14,7 +14,7 @@ class AssessmentAbility
     end
 
     can :grade, Tutorial do |tutorial|
-      user.tutor_in?(tutorial) || user.can_edit_teachables?
+      user.tutor_in?(tutorial) || user.teacher_in?(tutorial.lecture)
     end
   end
 end
