@@ -36,7 +36,9 @@ module Assessment
         end
         ActiveRecord::Base.transaction do
           records.each do |entry|
-            SubmissionGraderService.score_tasks_by_types!(entry, current_user)
+            SubmissionGraderService.score_tasks_by_types!(entry, current_user,
+                                                          tutorial: @tutorial,
+                                                          assignment: @assignment)
           end
         end
 
@@ -48,7 +50,12 @@ module Assessment
     end
 
     def update_team
-      task_points = JSON.parse(params[:task_points] || "{}")
+      begin
+        task_points = JSON.parse(params[:task_points] || "{}")
+      rescue JSON::ParserError
+        respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+        return
+      end
       case params[:type]
       when "Tutorial"
         ActiveRecord::Base.transaction do
@@ -73,7 +80,12 @@ module Assessment
     end
 
     def update_user
-      task_points = JSON.parse(params[:task_points] || "{}")
+      begin
+        task_points = JSON.parse(params[:task_points] || "{}")
+      rescue JSON::ParserError
+        respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+        return
+      end
       case params[:type]
       when "Tutorial"
         ActiveRecord::Base.transaction do
@@ -106,6 +118,8 @@ module Assessment
 
     def mark_as_participated
       user = User.find_by(id: params[:user_id])
+      return respond_with_flash(:alert, t("assessment.task_points.user_not_found")) unless user
+
       SubmissionGraderService.init_participation(@assessment, user, @tutorial)
       @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                           &.order(:last_modification_by_users_at)

@@ -10,13 +10,16 @@ module Assessment
     class SubmissionGraderError < StandardError; end
 
     # Routes a bulk entry to the correct scoring method based on target type.
-    def self.score_tasks_by_types!(entry, scorer)
+    def self.score_tasks_by_types!(entry, scorer, tutorial:, assignment:)
       case entry["target"]
       when "submission"
-        submission = Submission.find(entry["id"])
+        submission = tutorial.submissions
+                             .find(entry["id"])
         score_tasks_by_submission!(submission, entry["task_points"], scorer)
       when "participation"
-        participation = Participation.find(entry["id"])
+        participation = assignment.assessment
+                                  .assessment_participations
+                                  .find(entry["id"])
         score_tasks_by_participation!(participation, entry["task_points"], scorer)
       end
     end

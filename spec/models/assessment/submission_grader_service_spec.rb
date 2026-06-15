@@ -295,4 +295,132 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       end
     end
   end
+
+  describe ".score_tasks_by_types!" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      @assignment = FactoryBot.create(:assignment, :with_lecture, deadline: 1.hour.from_now)
+      @tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
+      @assessment = FactoryBot.create(:assessment,
+                                      requires_points: true,
+                                      assessable: @assignment,
+                                      lecture: @assignment.lecture)
+      @assignment.reload
+      @task = FactoryBot.create(:assessment_task, assessment: @assessment)
+      @points_by_task_id = { @task.id => "7" }
+      @submission = FactoryBot.create(:submission, :with_manuscript,
+                                      assignment: @assignment,
+                                      tutorial: @tutorial,
+                                      users: [user])
+      @participation = FactoryBot.create(:assessment_participation,
+                                         assessment: @assignment.assessment,
+                                         user: user,
+                                         tutorial: @tutorial)
+      Timecop.travel(2.hours.from_now)
+    end
+    after { Timecop.return }
+
+    context "when target is submission" do
+      subject do
+        described_class.score_tasks_by_types!(
+          { "target" => "submission", "id" => @submission.id, "task_points" => @points_by_task_id },
+          scorer,
+          tutorial: @tutorial,
+          assignment: @assignment
+        )
+      end
+
+      it "delegates to score_tasks_by_submission!" do
+        expect(described_class).to receive(:score_tasks_by_submission!).once.with(
+          @submission,
+          @points_by_task_id,
+          scorer
+        )
+        subject
+      end
+
+      it "scopes submission lookup to the authorized tutorial and assignment" do
+        other_tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
+        other_submission = FactoryBot.create(:submission, :with_manuscript,
+                                             assignment: @assignment,
+                                             tutorial: other_tutorial,
+                                             users: [FactoryBot.create(:confirmed_user)])
+
+        entry = {
+          "target" => "submission",
+          "id" => other_submission.id,
+          "task_points" => @points_by_task_id
+        }
+
+        expect do
+          described_class.score_tasks_by_types!(entry, scorer,
+                                                tutorial: @tutorial,
+                                                assignment: @assignment)
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when target is participation" do
+      subject do
+        described_class.score_tasks_by_types!(
+          { "target" => "participation", "id" => @participation.id,
+            "task_points" => @points_by_task_id },
+          scorer,
+          tutorial: @tutorial,
+          assignment: @assignment
+        )
+      end
+
+      it "delegates to score_tasks_by_participation!" do
+        expect(described_class).to receive(:score_tasks_by_participation!).once.with(
+          @participation,
+          @points_by_task_id,
+          scorer
+        )
+        subject
+      end
+
+      it "scopes participation lookup to the authorized tutorial and assignment" do
+        other_tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
+        other_participation = FactoryBot.create(:assessment_participation,
+                                                assessment: @assessment,
+                                                user: FactoryBot.create(:confirmed_user),
+                                                tutorial: other_tutorial)
+
+        entry = {
+          "target" => "participation",
+          "id" => other_participation.id,
+          "task_points" => @points_by_task_id
+        }
+
+        expect do
+          described_class.score_tasks_by_types!(entry, scorer,
+                                                tutorial: @tutorial,
+                                                assignment: @assignment)
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when target is unknown" do
+      subject do
+        described_class.score_tasks_by_types!(
+          { "target" => "unknown", "id" => @submission.id, "task_points" => @points_by_task_id },
+          scorer,
+          tutorial: @tutorial,
+          assignment: @assignment
+        )
+      end
+
+      it "does not call score_tasks_by_submission!" do
+        expect(described_class).not_to receive(:score_tasks_by_submission!)
+        subject
+      end
+
+      it "does not call score_tasks_by_participation!" do
+        expect(described_class).not_to receive(:score_tasks_by_participation!)
+        subject
+      end
+    end
+  end
 end

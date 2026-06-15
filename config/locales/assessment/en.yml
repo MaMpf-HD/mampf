@@ -77,6 +77,7 @@ en:
       invalid_submission_params: "Invalid parameters for point entry."
       assessment_not_found: "Assessment for this assignment not found."
       cannot_score_active_assignment: "Points cannot be entered for active assignments."
+      user_not_found: "User not found."
     errors:
       no_assessable: "Assignment not found."
       no_assessment: "Assessment not found for this item."

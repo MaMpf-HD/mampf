@@ -26,7 +26,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
   describe "#row_id" do
     it "returns the correct row id" do
-      expect(component.row_id).to eq("user-row-#{student.id}")
+      expect(component.row_id).to eq("participation-row-#{participation.id}")
     end
   end
 
@@ -44,6 +44,8 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         Flipper.enable(:assessment_grading)
         allow(assignment).to receive(:assessable?).and_return(true)
       end
+
+      after { Flipper.disable(:assessment_grading) }
 
       it "returns true" do
         expect(component.grading_enabled?).to eq(true)

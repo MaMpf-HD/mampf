@@ -99,7 +99,7 @@ RSpec.describe(User, type: :model) do
     let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
 
     context "when user has participated in the assignment" do
-      let(:submission) do
+      let!(:submission) do
         FactoryBot.create(:submission, assignment: assignment,
                                        tutorial: tutorial,
                                        users: [user])

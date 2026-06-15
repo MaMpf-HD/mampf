@@ -77,6 +77,7 @@ de:
       update: "Punkte erfolgreich aktualisiert."
       assessment_not_found: "Bewertung für diese Hausaufgabe nicht gefunden."
       cannot_score_active_assignment: "Punkte können für aktive Hausaufgaben nicht eingetragen werden."
+      user_not_found: "Benutzer nicht gefunden."
     errors:
       no_assessable: "Hausaufgabe nicht gefunden."
       no_assessment: "Bewertung für dieses Element nicht gefunden."

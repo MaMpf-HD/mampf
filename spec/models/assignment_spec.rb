@@ -135,7 +135,7 @@ RSpec.describe(Assignment, type: :model) do
         expect(assignment.assessment.assessment_participations.count).to eq(0)
       end
 
-      it "assessabble? returns true" do
+      it "assessable? returns true" do
         assignment = FactoryBot.create(:assignment, lecture: lecture)
 
         expect(assignment.assessable?).to be(true)
@@ -159,7 +159,7 @@ RSpec.describe(Assignment, type: :model) do
         expect(assignment.lecture).to eq(lecture)
       end
 
-      it "assessabble? returns false" do
+      it "assessable? returns false" do
         assignment = FactoryBot.create(:assignment, lecture: lecture)
 
         expect(assignment.assessable?).to be(false)
