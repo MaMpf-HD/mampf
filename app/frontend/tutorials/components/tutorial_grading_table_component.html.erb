@@ -1,71 +1,85 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <%# ── ZONE 1: has grading records ── %>
   <% if grading_records? %>
-    <div class="table-wrapper" data-controller="table-fade">
-      <div class="table-overflow" data-table-fade-target="inner">
-        <table
-          class="table align-middle my-3"
-          data-cy="tutorial-submissions-table"
-        >
-          <thead style="background: #fafafa;">
-            <tr>
-              <th class="sticky-col team-col grade-th">
-                <%= t('basics.team') %>
-              </th>
+    <div data-controller="status-filter">
+      <div class="d-flex gap-2 mb-3">
+        <% ["all", "pending", "reviewed"].each do |status| %>
+          <button
+            class="btn btn-sm <%= status == 'all' ? 'btn-dark' : 'btn-outline-secondary' %>"
+            data-action="click->status-filter#filter"
+            data-status-filter-value="<%= status %>"
+          >
+            Filter
+          </button>
+        <% end %>
+      </div>
 
-              <% if grading_enabled? %>
-                <!-- support point by task -->
-                <% for assessment_task in tasks %>
-                  <th class="text-center sticky-col task-col grade-th"> <%# herb:disable html-no-duplicate-attributes %>
-                    <%= t('assessment.grading_tutorial.task') %> <%= assessment_task.position %>
+      <div class="table-wrapper" data-controller="table-fade">
+        <div class="table-overflow" data-table-fade-target="inner">
+          <table
+            class="table align-middle my-3"
+            data-cy="tutorial-submissions-table"
+          >
+            <thead style="background: #fafafa;">
+              <tr>
+                <th class="sticky-col team-col grade-th">
+                  <%= t('basics.team') %>
+                </th>
+
+                <% if grading_enabled? %>
+                  <!-- support point by task -->
+                  <% for assessment_task in tasks %>
+                    <th class="text-center sticky-col task-col grade-th">
+                      <%= t('assessment.grading_tutorial.task') %> <%= assessment_task.position %>
+                      <br>
+
+                      <small class="text-muted">
+                        (<%= assessment_task.max_points || 0 %>
+                        <%= t('assessment.grading_tutorial.max_points') %>)
+                      </small>
+                    </th>
+                  <% end %>
+                  <th class="text-center sticky-col total-col grade-th">
+                    <%= t('assessment.grading_tutorial.total_points') %>
                     <br>
 
-                    <small class="text-muted"> <%# herb:disable html-no-duplicate-attributes %>
-                      (<%= assessment_task.max_points || 0 %>
+                    <small class="text-muted">
+                      (<%= total_max_points %>
                       <%= t('assessment.grading_tutorial.max_points') %>)
                     </small>
                   </th>
+                  <th class="text-center sticky-col status-col grade-th">
+                    <%= t('assessment.grading_tutorial.status') %>
+                  </th>
                 <% end %>
-                <th class="text-center sticky-col total-col grade-th">
-                  <%= t('assessment.grading_tutorial.total_points') %>
-                  <br>
+
+                <th class="text-center sticky-col action-col grade-th">
+                  <%= t('assessment.grading_tutorial.actions') %>
+                </th>
+
+                <th class="text-center sticky-col correction-col grade-th">
+                  <%= t('basics.correction') %>
 
                   <small class="text-muted">
-                    (<%= total_max_points %>
-                    <%= t('assessment.grading_tutorial.max_points') %>)
+                    (<%= @assignment.accepted_file_type %>)
                   </small>
                 </th>
-                <th class="text-center sticky-col status-col grade-th">
-                  <%= t('assessment.grading_tutorial.status') %>
-                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @stack.each do |submission| %>
+                <%= render(SubmissionRowComponent.new(submission: submission, assignment: @assignment, tutorial: @tutorial)) %>
               <% end %>
 
-              <th class="text-center sticky-col action-col grade-th">
-                <%= t('assessment.grading_tutorial.actions') %>
-              </th>
-
-              <th class="text-center sticky-col correction-col grade-th">
-                <%= t('basics.correction') %>
-
-                <small class="text-muted">
-                  (<%= @assignment.accepted_file_type %>)
-                </small>
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <% @stack.each do |submission| %>
-              <%= render(SubmissionRowComponent.new(submission: submission, assignment: @assignment, tutorial: @tutorial)) %>
-            <% end %>
-
-            <% @non_submitters.each do |user| %>
-              <% if user.assessment_participation_in_assignment(@assignment) %>
-                <%= render(ParticipationRowComponent.new(user: user, assignment: @assignment, tutorial: @tutorial)) %>
+              <% @non_submitters.each do |user| %>
+                <% if user.assessment_participation_in_assignment(@assignment) %>
+                  <%= render(ParticipationRowComponent.new(user: user, assignment: @assignment, tutorial: @tutorial)) %>
+                <% end %>
               <% end %>
-            <% end %>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   <% else %>
@@ -78,7 +92,7 @@
   <% if @non_submitters.present? && grading_enabled? %>
     <div
       style="display: flex; align-items: center; gap: 8px; margin: 20px 0 10px; font-size: 13px; font-weight: 500; color: #888;"
-    >
+    > <%# herb:disable html-no-duplicate-attributes %>
       <%= t('assessment.grading_tutorial.no_submission_zone') %>
       <span style="flex: 1; height: 1px; background: #e5e7eb; display: block;"></span>
     </div>
@@ -114,7 +128,7 @@
                   data-clipboard-text="<%= user.email %>"
                   data-bs-toggle="tooltip"
                   title="<%= t('buttons.copy_email_to_clipboard') %>"
-                >
+                > <%# herb:disable html-no-duplicate-attributes %>
                   <span class="clipboardpopuptext token-clipboard-popup">
                     <%= t('basics.emails_copied_to_clipboard') %>
                   </span>

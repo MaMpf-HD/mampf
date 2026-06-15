@@ -6,6 +6,7 @@
   data-controller="submission-row"
   data-submission-row-id="<%= @submission.id %>"
   data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
+  data-status="<%= @submission&.participations.first&.status %>"
 >
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">

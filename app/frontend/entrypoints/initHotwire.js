@@ -98,6 +98,9 @@ window.Stimulus.register("submission-table", SubmissionTableController);
 import TableFadeController from "~/tutorials/table_fade.controller.js";
 window.Stimulus.register("table-fade", TableFadeController);
 
+import StatusFilterController from "~/tutorials/status_filter.controller.js";
+window.Stimulus.register("status-filter", StatusFilterController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
