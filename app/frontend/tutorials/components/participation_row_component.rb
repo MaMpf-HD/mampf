@@ -54,7 +54,7 @@ class ParticipationRowComponent < ViewComponent::Base
       data: {
         submission_row_target: "input",
         task_id: assignment_task.id,
-        action: "change->submission-row#markDirtyParticipation input->submission-row#markDirtyParticipation" # rubocop:disable Layout/LineLength
+        action: "change->submission-row#onPointParticipationChanged input->submission-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
       disabled: !allow_grading
@@ -73,7 +73,9 @@ class ParticipationRowComponent < ViewComponent::Base
 
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip", action: "click->submission-row#saveRow" },
+               data: { bs_toggle: "tooltip",
+                       submission_row_target: "save",
+                       action: "click->submission-row#saveRow" },
                title: helpers.t("buttons.save"),
                disabled: !allow_grading) do
       tag.i(class: "bi bi-save")

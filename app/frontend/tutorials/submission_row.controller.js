@@ -5,6 +5,9 @@ export default class extends Controller {
 
   connect() {
     this.originalValues = this.inputTargets.map(i => i.value);
+    if (this.hasSaveTarget) {
+      this.saveTarget.disabled = true;
+    }
     this.calculateTotalPoints();
   }
 
@@ -40,6 +43,58 @@ export default class extends Controller {
     }
   }
 
+  alertTotalPointsInvalid() {
+    if (this.hasTotalPointsTarget) {
+      this.totalPointsTarget.textContent = "Invalid points";
+    }
+  }
+
+  onPointSubmissionChanged(event) {
+    const valid = this.validateNewPoint(event);
+    if (valid) {
+      this.markDirty();
+      this.calculateTotalPoints();
+    }
+    else {
+      this.handleInvalidCase();
+    }
+  }
+
+  onPointParticipationChanged(event) {
+    const valid = this.validateNewPoint(event);
+    if (valid) {
+      this.markDirtyParticipation();
+      this.calculateTotalPoints();
+    }
+    else {
+      this.handleInvalidCase();
+    }
+  }
+
+  handleInvalidCase() {
+    this.alertTotalPointsInvalid();
+    if (this.hasSaveTarget) {
+      this.saveTarget.disabled = true;
+    }
+  }
+
+  validateNewPoint(event) {
+    const input = event.currentTarget;
+    const max = parseFloat(input.max);
+    const min = parseFloat(input.min);
+    const value = parseFloat(input.value);
+
+    if (value > max || value < min) {
+      input.setCustomValidity(`Must be between ${min} and ${max}`);
+      input.reportValidity();
+      return false;
+    }
+    else {
+      input.setCustomValidity(""); // clears the error
+      return true;
+    }
+  }
+
   markDirty() {
     const dirty = this.inputTargets.some((input, idx) => input.value != this.originalValues[idx]);
 
@@ -55,7 +110,6 @@ export default class extends Controller {
         },
       });
       if (this.hasSaveTarget) this.saveTarget.disabled = false;
-      this.calculateTotalPoints();
     }
     else {
       this.element.classList.remove("row-dirty");
@@ -67,7 +121,6 @@ export default class extends Controller {
       });
 
       if (this.hasSaveTarget) this.saveTarget.disabled = true;
-      this.calculateTotalPoints();
     }
   }
 
@@ -86,7 +139,6 @@ export default class extends Controller {
         },
       });
       if (this.hasSaveTarget) this.saveTarget.disabled = false;
-      this.calculateTotalPoints();
     }
     else {
       this.element.classList.remove("row-dirty");
@@ -98,7 +150,6 @@ export default class extends Controller {
       });
 
       if (this.hasSaveTarget) this.saveTarget.disabled = true;
-      this.calculateTotalPoints();
     }
   }
 

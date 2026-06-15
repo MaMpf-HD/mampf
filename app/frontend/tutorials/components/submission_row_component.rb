@@ -62,7 +62,7 @@ class SubmissionRowComponent < ViewComponent::Base
       data: {
         submission_row_target: "input",
         task_id: assignment_task.id,
-        action: "change->submission-row#markDirty input->submission-row#markDirty"
+        action: "change->submission-row#onPointSubmissionChanged input->submission-row#onPointSubmissionChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
       disabled: !allow_grading
@@ -75,7 +75,9 @@ class SubmissionRowComponent < ViewComponent::Base
 
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip", action: "click->submission-row#saveRow" },
+               data: { bs_toggle: "tooltip",
+                       submission_row_target: "save",
+                       action: "click->submission-row#saveRow" },
                title: helpers.t("buttons.save"),
                disabled: !allow_grading) do
       tag.i(class: "bi bi-save")
