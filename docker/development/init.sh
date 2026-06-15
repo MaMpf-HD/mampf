@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-set -e
+set -Eeuo pipefail
 cd /workspaces/mampf/
 
 check_for_preseeds() {
   echo "💾  Checking for preseeds (in development env)"
 
   # Database preseed
-  if [[ "${DB_SQL_PRESEED_URL}" ]]; then
+  if [[ -n "${DB_SQL_PRESEED_URL:-}" ]]; then
     if [[ -f "${DB_SQL_PRESEED_URL}" ]]; then
       echo "💾  Found DB preseed file: $DB_SQL_PRESEED_URL"
       latest=$DB_SQL_PRESEED_URL
@@ -14,18 +14,19 @@ check_for_preseeds() {
       echo "💾  Found DB preseed at URL: $DB_SQL_PRESEED_URL"
       mkdir -pv db/backups/development
       wget --content-disposition --directory-prefix=db/backups/development/ --timestamping $DB_SQL_PRESEED_URL
+      latest=""
       for file in db/backups/development/*.sql; do
-        [[ $file -nt $latest ]] && latest=$file
+        [[ -z "$latest" || $file -nt $latest ]] && latest=$file
       done
     fi
 
-    bundle exec rails db:restore pattern=$(echo $latest | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
+    bundle exec rails db:restore pattern="$(echo "$latest" | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)"
     bundle exec rails db:migrate
   fi
 
   # Files (uploads) preseed
-  if [[ "${UPLOADS_PRESEED_URL}" ]]; then
-    echo "💾  Found upload preseed at URL: $UPLOAD_PRESEED_URL"
+  if [[ -n "${UPLOADS_PRESEED_URL:-}" ]]; then
+    echo "💾  Found upload preseed at URL: $UPLOADS_PRESEED_URL"
     wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega $UPLOADS_PRESEED_URL
     mkdir -p public/uploads
     bsdtar -xvf public/uploads.zip -s'|[^/]*/||' -C public/uploads

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -Eeuo pipefail
 cd /workspaces/mampf/
 
 echo "RAILS_ENV: $RAILS_ENV"
@@ -8,7 +8,7 @@ echo "NODE_ENV: $NODE_ENV"
 
 echo "🧹 Cleaning up stale Vite/Debugger port processes..."
 ports_to_clean="3036 13254"
-if [ -n "$THRUSTER_HTTP_PORT" ]; then
+if [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
 	ports_to_clean="$ports_to_clean $THRUSTER_HTTP_PORT ${THRUSTER_TARGET_PORT:-3001}"
 fi
 if [ "$RAILS_ENV" = "test" ]; then
@@ -25,7 +25,7 @@ done
 
 bundle exec rake js:recompile_routes
 
-if [ "$DISABLE_VITE_IN_CI" != "true" ]; then
+if [ "${DISABLE_VITE_IN_CI:-}" != "true" ]; then
 	echo "💫  Starting Vite dev server (in background)"
 	bundle exec vite dev &
 else
@@ -44,9 +44,9 @@ bundle exec sidekiq &
 
 # https://shopify.github.io/ruby-lsp/vscode-extension.html#debugging-live-processes
 # https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg
-if [ -n "$THRUSTER_HTTP_PORT" ]; then
+if [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
 	echo "Starting Thruster on port $THRUSTER_HTTP_PORT with Rails on ${THRUSTER_TARGET_PORT:-3001}"
-	RUBY_DEBUG_ENABLE=$RUBY_DEBUG_ENABLE RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec thrust bin/rails s -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
+	RUBY_DEBUG_ENABLE="${RUBY_DEBUG_ENABLE:-}" RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec thrust bin/rails s -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
 else
-	RUBY_DEBUG_ENABLE=$RUBY_DEBUG_ENABLE RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec bin/rails s -p "$MAMPF_PORT" -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
+	RUBY_DEBUG_ENABLE="${RUBY_DEBUG_ENABLE:-}" RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec bin/rails s -p "$MAMPF_PORT" -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
 fi

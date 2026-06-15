@@ -8,6 +8,7 @@ FROM node:24.11.0-bookworm-slim AS node
 FROM ruby:3.4.7-bookworm
 
 ARG RAILS_DEVELOPMENT_HOSTS=".githubpreview.dev,.app.github.dev"
+ARG BUNDLER_VERSION=4.0.12
 ENV RAILS_DEVELOPMENT_HOSTS=${RAILS_DEVELOPMENT_HOSTS}
 
 # use "--login" option, so that .bashrc is sourced in new shells
@@ -34,7 +35,10 @@ RUN yarn set version "${YARN_VERSION}"
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
-        libarchive-tools wget wait-for-it graphviz libvips42 lsof
+        libarchive-tools wget wait-for-it graphviz libvips42 lsof \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN gem install bundler -v "${BUNDLER_VERSION}"
 
 # Playwright system dependencies
 RUN npx playwright install-deps chromium
@@ -45,7 +49,8 @@ RUN mkdir -p /usr/share/postgresql-common/pgdg \
     && . /etc/os-release \
     && sh -c "echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list" \
     && apt-get update \
-    && apt-get install -y postgresql-client-17
+    && apt-get install -y postgresql-client-17 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
@@ -67,7 +72,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && apt-get update \
     && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+    && chmod 0440 /etc/sudoers.d/$USERNAME \
+    && rm -rf /var/lib/apt/lists/*
 
 # 🎈 Finally, set up the app
 WORKDIR /workspaces/mampf/
