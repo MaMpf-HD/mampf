@@ -117,16 +117,15 @@ RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xm
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
     mkdir -p /private/media /private/submissions /caches/thruster \
       /usr/src/app/tmp/pids /usr/src/app/log && \
-    chown -R app:app /private /caches /usr/src/app
+    chown -R app:app /private /caches
 
 WORKDIR /usr/src/app
 
 COPY --from=node /usr/local/ /usr/local/
-COPY --from=build /usr/local/bundle /usr/local/bundle
-COPY --from=build --chown=app:app /usr/src/app /usr/src/app
+COPY --from=build --chown=root:root /usr/local/bundle /usr/local/bundle
+COPY --from=build --chown=root:root /usr/src/app /usr/src/app
 
-RUN chown -R root:root /usr/local/bundle && \
-    chmod -R a=rX,u+w /usr/local/bundle
+RUN chown -R app:app /usr/src/app/tmp /usr/src/app/log
 
 USER app
 
