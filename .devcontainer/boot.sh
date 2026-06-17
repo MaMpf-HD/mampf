@@ -11,6 +11,9 @@ echo "🚀 Install MdBook"
 ./.devcontainer/install-mdbook.sh
 
 if [ -d /workspaces/mampf-infra ]; then
+  echo "🚀 Install sops for mampf-infra"
+  (cd /workspaces/mampf-infra && just secrets install-tools)
+
   echo "🚀 Set up Ansible for mampf-infra"
   ./.devcontainer/install-ansible.sh
 fi
@@ -21,6 +24,8 @@ echo -e "👋 Welcome to the MaMpf DevContainer.
   For the latter, you can also use the shortcut 'Ctrl+Shift+B'.
 - This devcontainer is the preferred Ansible control machine for infra work.
 - For infra work here, run 'cd /workspaces/mampf-infra && . .venv/bin/activate'.
+- For secrets work, start the WSL-side SOPS keyservice before reopening or
+  rebuilding the container.
 - If you use a WSL-hosted YubiKey for infra secrets, start 'sops keyservice'
   in WSL before reopening or rebuilding the devcontainer.
 - See '/workspaces/mampf-infra/README.md' for the devcontainer and manual

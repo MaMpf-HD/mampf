@@ -11,6 +11,7 @@
     // https://github.com/orgs/community/discussions/15506
     "mounts": [
     "source=${localWorkspaceFolder}/../mampf-infra,target=/workspaces/mampf-infra,type=bind",
+    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind",
     "source=${localEnv:HOME}/.local/state/sops,target=/run/host-sops-keyservice,type=bind"
     ],    
     "workspaceFolder": "/workspaces/mampf/",
