@@ -20,6 +20,9 @@ de:
     script:
       singular: 'Skript'
       short: 'Skr'
+    enrollment:
+      singular: 'Einschreibung'
+      short: 'ESch'
     worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
@@ -2762,6 +2765,7 @@ de:
   time:
     formats:
       concise: '%d.%m.%Y'
+      student_registration: '%-d. %B, %Hh%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
     last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
   thyme:
@@ -3573,6 +3577,7 @@ de:
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
     answer_count: 'Anzahl der Antworten'
+    item_count: '%{count} Einträge'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'
@@ -3649,6 +3654,26 @@ de:
     voucher_for: Gutschein für %{role}
     speaker: Vortragender
     speakers: Vortragende
+    mode: "Zuteilungsmodus"
+    capacity: "Kapazität"
+    seats: "Sitze"
+    filled: "belegt"
+    across_group: "über die Gruppe hinweg"
+    closes: "Schließt"
+    passed: "Bestanden"
+    failed: "Nicht bestanden"
+    select_type: "Wählen Sie Präferenzen"
+    saved_at: "Gespeichert %{time}"
+    last_saved_at: "Zuletzt gespeichert %{time}"
+    available: "Verfügbar"
+    full: "Ausgebucht"
+    position: "Position"
+    room: "Raum"
+    confirmed: "Bestätigt"
+    rejected: Abgelehnt
+    pending: "Ausstehend"
+    assigned: "Zugewiesen"
+    dismissed: "Abgelehnt"
     unlimited: unbegrenzt
     personnel: Personal
   access:
@@ -3671,6 +3696,7 @@ de:
     discard_changes: "Änderungen verwerfen"
     cancel: 'Abbrechen'
     delete: 'Löschen'
+    add: 'Hinzufügen'
     move_up: 'Nach oben'
     move_down: 'Nach unten'
     publish: 'Veröffentlichen'
@@ -3769,6 +3795,10 @@ de:
     verify_voucher: 'Gutschein prüfen'
     edit_talk: 'Vortrag bearbeiten'
     invalidate: 'Für ungültig erklären'
+    self_register_talk: Für diesen Vortrag anmelden
+    self_remove_talk: Von diesem Vortrag abmelden
+    add_to_list: Zur Liste hinzufügen
+    remove_from_list: Aus der Liste entfernen
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -4135,6 +4165,8 @@ de:
           attributes:
             lecture:
               must_not_be_seminar: "Tutorien können nicht für Seminare erstellt werden."
+            lecture_id:
+              immutable: kann nach dem Erstellen des Tutoriums nicht mehr geändert werden.
             title:
               taken: >
                 Dieser Tutoriumstitel ist für diese Veranstaltung bereits
@@ -4147,6 +4179,8 @@ de:
               already_in_lecture_tutorial: >
                 Es existiert bereits eine Zuordnung zu einem Tutorium in dieser
                 Veranstaltung.
+            lecture:
+              does_not_match_tutorial: stimmt nicht mit der Veranstaltung des Tutoriums überein.
         user:
           attributes:
             courses:

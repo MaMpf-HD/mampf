@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_26_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_13_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -631,8 +631,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_26_000000) do
     t.uuid "registration_campaign_id", null: false
     t.uuid "registration_item_id", null: false
     t.datetime "materialized_at"
+    t.boolean "exclusive_assignment", default: false, null: false
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
-    t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_unranked", unique: true, where: "(preference_rank IS NULL)"
+    t.index ["registration_campaign_id", "user_id", "registration_item_id"], name: "index_reg_user_regs_unique_item_user", unique: true
+    t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_exclusive_assignment_unranked", unique: true, where: "((exclusive_assignment = true) AND (preference_rank IS NULL))"
     t.index ["registration_campaign_id"], name: "index_reg_user_regs_on_campaign_id"
     t.index ["registration_item_id"], name: "index_registration_user_registrations_on_registration_item_id"
     t.index ["status"], name: "index_registration_user_registrations_on_status"
@@ -1006,8 +1008,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_26_000000) do
     t.uuid "source_campaign_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "lecture_id", null: false
     t.index ["source_campaign_id"], name: "index_tutorial_memberships_on_source_campaign_id"
     t.index ["tutorial_id"], name: "index_tutorial_memberships_on_tutorial_id"
+    t.index ["user_id", "lecture_id"], name: "index_tutorial_memberships_on_user_id_and_lecture_id", unique: true
     t.index ["user_id", "tutorial_id"], name: "index_tutorial_memberships_on_user_id_and_tutorial_id", unique: true
     t.index ["user_id"], name: "index_tutorial_memberships_on_user_id"
   end
@@ -1314,6 +1318,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_26_000000) do
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
   add_foreign_key "tutor_tutorial_joins", "tutorials"
   add_foreign_key "tutor_tutorial_joins", "users", column: "tutor_id"
+  add_foreign_key "tutorial_memberships", "lectures"
   add_foreign_key "tutorial_memberships", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "tutorial_memberships", "tutorials"
   add_foreign_key "tutorial_memberships", "users"

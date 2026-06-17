@@ -98,7 +98,7 @@ de:
           title: "Anmeldeverfahren"
           description: "Zeitlich begrenzter Prozess mit Regeln"
           benefits:
-            - "Verteilung nach Präferenzen oder Eingang (FCFS)"
+            - "Verteilung nach Präferenzen oder Eingangsreihenfolge"
             - "Einhaltung von Zulassungsregeln (z.B. Testat)"
             - "Registrierungen vor Zuteilung prüfen"
             - "Aufnahme in Liste erst nach Abschluss"
@@ -106,7 +106,7 @@ de:
           title: "Anmeldeverfahren überspringen"
           description: "Sofortiger, direkter Zugang"
           benefits:
-            - "Nur direkter Beitritt (FCFS)"
+            - "Nur direkter Beitritt nach Eingangsreihenfolge"
             - "Keine Prüfung von Zulassungsregeln"
             - "Änderungen sind sofort wirksam"
             - "Sofortige Aufnahme in die Liste"
@@ -273,11 +273,14 @@ de:
       campaign_running: "kann nicht deaktiviert werden, während ein Anmeldeverfahren läuft."
       active_campaign_exists: 'Selbsteinschreibung kann nicht aktiviert werden, da bereits ein aktives Anmeldeverfahren läuft.'
       capacity_exceeded: "Gruppenkapazität überschritten."
+      lecture_has_other_roster_entry: 'Du bist bereits in einer anderen Gruppe dieser Veranstaltung eingeschrieben. Bitte verlasse zuerst die andere Gruppe, bevor Du dieser beitrittst.'
       target_not_found: "Zielgruppe nicht gefunden."
       target_locked: "Zielgruppe ist gesperrt."
       user_not_found: "Studierende/r nicht gefunden."
       user_already_in_bundle: "%{user} ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
+      self_add_not_allowed: "Die Selbstanmeldung zu diesem %{type} ist für Studierende nicht erlaubt."
+      self_remove_not_allowed: "Das selbstständige Verlassen dieses %{type} ist für Studierende nicht erlaubt."
       campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
@@ -298,3 +301,5 @@ de:
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
+    self_enrollment:
+      no_registration_options: "Derzeit sind keine Tutorien oder Gruppen zur Anmeldung verfügbar."

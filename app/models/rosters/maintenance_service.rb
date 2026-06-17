@@ -1,13 +1,4 @@
 module Rosters
-  class UserAlreadyInBundleError < StandardError
-    attr_reader :conflicting_group
-
-    def initialize(conflicting_group)
-      @conflicting_group = conflicting_group
-      super
-    end
-  end
-
   class MaintenanceService
     # Manages manual roster operations (add, remove, move) while enforcing capacity
     # constraints and ensuring transactional integrity
@@ -96,8 +87,10 @@ module Rosters
       def ensure_uniqueness!(user, rosterable)
         return unless rosterable.is_a?(Tutorial)
 
-        siblings = rosterable.lecture.tutorials.where.not(id: rosterable.id)
-        membership = TutorialMembership.where(tutorial: siblings, user: user).first
+        membership = TutorialMembership
+                     .where(lecture: rosterable.lecture, user: user)
+                     .where.not(tutorial: rosterable)
+                     .first
 
         return unless membership
 

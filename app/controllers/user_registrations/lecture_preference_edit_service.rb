@@ -1,0 +1,62 @@
+module UserRegistrations
+  # Service for handling user registration and withdrawal in lecture based registration campaign
+  # with preference policy.
+  class LecturePreferenceEditService < Handler
+    def update!(pref_items)
+      ActiveRecord::Base.transaction do
+        errors = validate_update(pref_items)
+        return Result.new(false, errors) unless errors.empty?
+
+        @campaign.user_registrations.where(user_id: @user.id).destroy_all
+        pref_items.each do |pref_item|
+          item = @campaign.registration_items.find(pref_item.id)
+          Registration::UserRegistration.create!(
+            registration_campaign: @campaign,
+            registration_item: item,
+            user: @user,
+            status: :pending,
+            preference_rank: pref_item.rank
+          )
+        end
+      end
+      Result.new(true, [])
+    end
+
+    private
+
+      def validate_update(pref_items)
+        [
+          check_preference_based_mode,
+          check_campaign_open_for_registrations,
+          check_campaign_open_for_withdraw,
+          check_unremovable_roster_assignment,
+          check_policies,
+          check_items(pref_items),
+          check_preferences(pref_items)
+        ].compact
+      end
+
+      def check_preference_based_mode
+        return if @campaign.preference_based?
+
+        I18n.t("registration.user_registration.messages.not_preference_based_mode")
+      end
+
+      # Each available rank must be covered exactly once by a distinct item.
+      def check_preferences(pref_items)
+        ranks = pref_items.map(&:rank).sort
+        item_ids = pref_items.map(&:id)
+        return if ranks == (1..expected_preference_count).to_a &&
+                  item_ids.uniq.size == item_ids.size
+
+        I18n.t("registration.user_registration.messages.invalid_preferences")
+      end
+
+      def expected_preference_count
+        [
+          @campaign.registration_items.count,
+          UserRegistrations::PreferencesHandler::MAX_PREFERENCES
+        ].min
+      end
+  end
+end
