@@ -90,6 +90,10 @@ module Registration
       Rosters::NoCampaignRegisterablesQuery.new(lecture).call
     end
 
+    def normalized_registration_section(section)
+      section.to_s.presence_in(["campaign", "no_campaign"])
+    end
+
     def section_toggle(label, target_id:, expanded:)
       button_tag(type: "button",
                  class: "btn p-0 text-decoration-none text-reset " \

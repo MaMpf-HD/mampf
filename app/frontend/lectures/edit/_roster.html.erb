@@ -1,7 +1,12 @@
 <% group_type ||= :all %>
+<% roster_params = { group_type: group_type } %>
+<% if params[:registration_section].present? %>
+  <% roster_params[:registration_section] = params[:registration_section] %>
+<% end %>
+
 <div class="col-12">
   <%= turbo_frame_tag roster_maintenance_frame_id(group_type),
-                      src: lecture_roster_path(lecture, group_type: group_type),
+                      src: lecture_roster_path(lecture, roster_params),
                       loading: "lazy" do %>
     <div class="text-center my-5">
       <div class="spinner-border" role="status">

@@ -45,6 +45,9 @@ de:
         sections:
           registration: "Anmeldeverfahren"
           no_campaign: "Ohne Anmeldeverfahren"
+        choice:
+          question: "Brauchst Du ein Anmeldeverfahren?"
+          hint: "Wenn Du unsicher bist, empfehlen wir Dir ein Anmeldeverfahren."
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"

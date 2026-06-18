@@ -1,0 +1,31 @@
+<section class="mb-3" data-testid="registration-section-choice">
+  <div class="registration-section-choice rounded border p-3">
+    <div class="d-flex flex-column flex-lg-row gap-3 align-items-lg-center">
+      <div class="flex-grow-1">
+        <h3 class="h6 mb-1">
+          <%= t("registration.campaign.index.choice.question") %>
+        </h3>
+
+        <p class="small text-muted mb-0">
+          <%= t("registration.campaign.index.choice.hint") %>
+        </p>
+      </div>
+
+      <div class="d-flex flex-column flex-sm-row gap-2">
+        <%= link_to t("registration.campaign.index.sections.registration"),
+                    edit_lecture_path(lecture,
+                                      tab: :groups,
+                                      registration_section: :campaign),
+                    class: "btn btn-sm btn-primary",
+                    data: { turbo_frame: "_top" } %>
+
+        <%= link_to t("registration.campaign.index.sections.no_campaign"),
+                    edit_lecture_path(lecture,
+                                      tab: :groups,
+                                      registration_section: :no_campaign),
+                    class: "btn btn-sm btn-outline-secondary",
+                    data: { turbo_frame: "_top" } %>
+      </div>
+    </div>
+  </div>
+</section>

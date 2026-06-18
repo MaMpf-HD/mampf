@@ -9,102 +9,111 @@
   <% no_campaign_groups = no_campaign_registerables(lecture) %>
   <% campaign_section_id = "registration_campaign_section_#{lecture.id}" %>
   <% no_campaign_section_id = "no_registration_campaign_section_#{lecture.id}" %>
-  <% collapse_campaign_section = campaigns.empty? && no_campaign_groups.any? %>
-  <% collapse_no_campaign_section = campaigns.any? && no_campaign_groups.empty? %>
+  <% selected_section = normalized_registration_section(params[:registration_section]) %>
+  <% show_section_choice = campaigns.empty? && no_campaign_groups.empty? &&
+    selected_section.blank? %>
+  <% collapse_campaign_section = selected_section == "no_campaign" ||
+    (campaigns.empty? && no_campaign_groups.any?) %>
+  <% collapse_no_campaign_section = selected_section == "campaign" ||
+    (campaigns.any? && no_campaign_groups.empty?) %>
   <div class="d-flex flex-column gap-2">
-    <section>
-      <% if campaigns.any? %>
-        <div class="d-flex justify-content-end mb-2">
-          <%= link_to new_lecture_registration_campaign_path(lecture),
+    <% if show_section_choice %>
+      <%= render "registration/campaigns/section_choice",
+                 lecture: lecture %>
+    <% else %>
+      <section>
+        <% if campaigns.any? %>
+          <div class="d-flex justify-content-end mb-2">
+            <%= link_to new_lecture_registration_campaign_path(lecture),
                       class: "btn btn-sm btn-outline-primary",
                       data: { turbo_stream: true } do %>
-            <i class="bi bi-plus-circle"></i>
-            <%= t("registration.campaign.index.new_campaign") %>
-          <% end %>
-        </div>
-        <% active_campaigns.each do |campaign| %>
-          <div class="card mb-3 campaign-section registration-campaign-card">
-            <%= render "registration/campaigns/card_header",
+              <i class="bi bi-plus-circle"></i>
+              <%= t("registration.campaign.index.new_campaign") %>
+            <% end %>
+          </div>
+          <% active_campaigns.each do |campaign| %>
+            <div class="card mb-3 campaign-section registration-campaign-card">
+              <%= render "registration/campaigns/card_header",
                        campaign: campaign %>
 
-            <div class="card-body">
-              <%= render "registration/campaigns/card_body_show",
+              <div class="card-body">
+                <%= render "registration/campaigns/card_body_show",
                          campaign: campaign %>
+              </div>
             </div>
-          </div>
-        <% end %>
-      <% else %>
-        <div
-          class="registration-campaign-ghost-zone rounded p-3 mb-3"
-          data-testid="registration-campaign-section"
-        >
-          <div class="d-flex align-items-center gap-2">
-            <%= section_toggle(
+          <% end %>
+        <% else %>
+          <div
+            class="registration-campaign-ghost-zone rounded p-3 mb-3"
+            data-testid="registration-campaign-section"
+          >
+            <div class="d-flex align-items-center gap-2">
+              <%= section_toggle(
                   t("registration.campaign.index.sections.registration"),
                   target_id: campaign_section_id,
                   expanded: !collapse_campaign_section
                 ) %>
-          </div>
+            </div>
 
-          <div
-            id="<%= campaign_section_id %>"
-            class="collapse <%= 'show' unless collapse_campaign_section %>"
-            data-testid="registration-campaign-section-body"
-          >
-            <div class="pt-3">
-              <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
-                <div class="col registration-group-tile-col">
-                  <%= render "registration/campaigns/add_group_tile",
+            <div
+              id="<%= campaign_section_id %>"
+              class="collapse <%= 'show' unless collapse_campaign_section %>"
+              data-testid="registration-campaign-section-body"
+            >
+              <div class="pt-3">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
+                  <div class="col registration-group-tile-col">
+                    <%= render "registration/campaigns/add_group_tile",
                              lecture: lecture,
                              section: :campaign %>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      <% end %>
-    </section>
-
-    <section class="mb-3" data-testid="registration-no-campaign-section">
-      <% completed_campaigns.each do |campaign| %>
-        <%= render "registration/campaigns/dissolved_footnote",
+        <% end %>
+      </section>
+      <section class="mb-3" data-testid="registration-no-campaign-section">
+        <% completed_campaigns.each do |campaign| %>
+          <%= render "registration/campaigns/dissolved_footnote",
                    campaign: campaign %>
-      <% end %>
+        <% end %>
 
-      <% if collapse_no_campaign_section %>
-        <div class="d-flex align-items-center gap-2">
-          <%= section_toggle(
+        <% if collapse_no_campaign_section %>
+          <div class="d-flex align-items-center gap-2">
+            <%= section_toggle(
                 t("registration.campaign.index.sections.no_campaign"),
                 target_id: no_campaign_section_id,
                 expanded: false
               ) %>
-        </div>
-      <% end %>
+          </div>
+        <% end %>
 
-      <div
-        id="<%= no_campaign_section_id %>"
-        class="<%= 'collapse' if collapse_no_campaign_section %>"
-        data-testid="registration-no-campaign-section-body"
-      >
-        <div class="<%= 'pt-3' if collapse_no_campaign_section %>">
-          <div
-            class="
-              row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3
-              registration-group-grid
-              <%= 'dissolved-campaign-ambient' if completed_campaigns.any? %>
-            "
-          >
-            <%= render GroupTileComponent.with_collection(
+        <div
+          id="<%= no_campaign_section_id %>"
+          class="<%= 'collapse' if collapse_no_campaign_section %>"
+          data-testid="registration-no-campaign-section-body"
+        >
+          <div class="<%= 'pt-3' if collapse_no_campaign_section %>">
+            <div
+              class="
+                row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3
+                registration-group-grid
+                <%= 'dissolved-campaign-ambient' if completed_campaigns.any? %>
+              "
+            >
+              <%= render GroupTileComponent.with_collection(
                        no_campaign_groups) %>
 
-            <div class="col registration-group-tile-col">
-              <%= render "registration/campaigns/add_group_tile",
+              <div class="col registration-group-tile-col">
+                <%= render "registration/campaigns/add_group_tile",
                          lecture: lecture,
                          section: :no_campaign %>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    <% end %>
   </div>
 <% end %>

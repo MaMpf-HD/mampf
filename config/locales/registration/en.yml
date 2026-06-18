@@ -45,6 +45,9 @@ en:
         sections:
           registration: "Registration Process"
           no_campaign: "Without Registration Process"
+        choice:
+          question: "Do you need a registration process?"
+          hint: "If you are unsure, we recommend choosing a registration process."
         columns:
           description: "Short description"
           type: "Type"
