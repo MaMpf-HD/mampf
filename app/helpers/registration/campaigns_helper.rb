@@ -1,7 +1,36 @@
 module Registration
   module CampaignsHelper
+    SUMMARY_ITEM_TRANSLATION_KEYS = {
+      total_registrations: "registration.allocation.stats.total_registrations",
+      currently_confirmed: "registration.allocation.stats.currently_confirmed_inline",
+      currently_rejected: "registration.allocation.stats.currently_rejected_inline",
+      eligible: "registration.allocation.stats.eligible_inline",
+      assigned: "registration.allocation.stats.assigned_inline",
+      rejected: "registration.allocation.stats.rejected_inline",
+      unassigned: "registration.allocation.stats.unassigned_inline"
+    }.freeze
+
+    SUMMARY_ITEM_CSS_CLASSES = {
+      total_registrations: "fw-medium",
+      currently_confirmed: "text-success fw-medium",
+      currently_rejected: "text-danger fw-medium",
+      eligible: "fw-medium",
+      assigned: "text-success fw-medium",
+      rejected: "text-danger fw-medium"
+    }.freeze
+
     def email_domain(email)
       email.to_s.split("@").last
+    end
+
+    def allocation_summary_item_translation_key(item)
+      SUMMARY_ITEM_TRANSLATION_KEYS.fetch(item.fetch(:kind))
+    end
+
+    def allocation_summary_item_css_class(item)
+      return unassigned_summary_item_css_class(item) if item[:kind] == :unassigned
+
+      SUMMARY_ITEM_CSS_CLASSES.fetch(item.fetch(:kind))
     end
 
     def campaign_badge_color(campaign)
@@ -143,5 +172,11 @@ module Registration
     def closed_early?(campaign)
       !campaign.open_for_registrations? && campaign.registration_deadline > Time.current
     end
+
+    private
+
+      def unassigned_summary_item_css_class(item)
+        [item[:count].positive? ? "text-danger" : "text-muted", "fw-medium"].join(" ")
+      end
   end
 end

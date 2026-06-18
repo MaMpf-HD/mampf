@@ -87,9 +87,8 @@ module Registration
     def summary_items
       items = [
         {
-          css_class: "fw-medium",
-          count: stats.total_registrations,
-          translation_key: "registration.allocation.stats.total_registrations"
+          kind: :total_registrations,
+          count: stats.total_registrations
         }
       ]
 
@@ -127,17 +126,15 @@ module Registration
       def current_registration_state_summary_items
         items = [
           {
-            css_class: "text-success fw-medium",
-            count: stats.assigned_users,
-            translation_key: "registration.allocation.stats.currently_confirmed_inline"
+            kind: :currently_confirmed,
+            count: stats.assigned_users
           }
         ]
 
         if stats.rejected_users.positive?
           items << {
-            css_class: "text-danger fw-medium",
-            count: stats.rejected_users,
-            translation_key: "registration.allocation.stats.currently_rejected_inline"
+            kind: :currently_rejected,
+            count: stats.rejected_users
           }
         end
 
@@ -147,33 +144,26 @@ module Registration
       def allocation_summary_items
         items = [
           {
-            css_class: "fw-medium",
-            count: stats.eligible_users,
-            translation_key: "registration.allocation.stats.eligible_inline"
+            kind: :eligible,
+            count: stats.eligible_users
           },
           {
-            css_class: "text-success fw-medium",
+            kind: :assigned,
             count: stats.assigned_users,
-            translation_key: "registration.allocation.stats.assigned_inline",
             percentage: stats.assigned_percentage
           }
         ]
 
         if stats.rejected_users.positive?
           items << {
-            css_class: "text-danger fw-medium",
-            count: stats.rejected_users,
-            translation_key: "registration.allocation.stats.rejected_inline"
+            kind: :rejected,
+            count: stats.rejected_users
           }
         end
 
         items << {
-          css_class: [
-            stats.unassigned_users.positive? ? "text-danger" : "text-muted",
-            "fw-medium"
-          ].join(" "),
-          count: stats.unassigned_users,
-          translation_key: "registration.allocation.stats.unassigned_inline"
+          kind: :unassigned,
+          count: stats.unassigned_users
         }
 
         items

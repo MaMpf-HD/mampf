@@ -185,19 +185,16 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
       it "returns current-state summary items" do
         expect(dashboard.summary_items).to eq([
                                                 {
-                                                  css_class: "fw-medium",
-                                                  count: 2,
-                                                  translation_key: "registration.allocation.stats.total_registrations"
+                                                  kind: :total_registrations,
+                                                  count: 2
                                                 },
                                                 {
-                                                  css_class: "text-success fw-medium",
-                                                  count: 1,
-                                                  translation_key: "registration.allocation.stats.currently_confirmed_inline"
+                                                  kind: :currently_confirmed,
+                                                  count: 1
                                                 },
                                                 {
-                                                  css_class: "text-danger fw-medium",
-                                                  count: 1,
-                                                  translation_key: "registration.allocation.stats.currently_rejected_inline"
+                                                  kind: :currently_rejected,
+                                                  count: 1
                                                 }
                                               ])
       end
@@ -231,25 +228,21 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
       it "returns allocation summary items including percentage and unassigned state" do
         expect(dashboard.summary_items).to eq([
                                                 {
-                                                  css_class: "fw-medium",
-                                                  count: 2,
-                                                  translation_key: "registration.allocation.stats.total_registrations"
+                                                  kind: :total_registrations,
+                                                  count: 2
                                                 },
                                                 {
-                                                  css_class: "fw-medium",
-                                                  count: 2,
-                                                  translation_key: "registration.allocation.stats.eligible_inline"
+                                                  kind: :eligible,
+                                                  count: 2
                                                 },
                                                 {
-                                                  css_class: "text-success fw-medium",
+                                                  kind: :assigned,
                                                   count: 1,
-                                                  translation_key: "registration.allocation.stats.assigned_inline",
                                                   percentage: 50.0
                                                 },
                                                 {
-                                                  css_class: "text-danger fw-medium",
-                                                  count: 1,
-                                                  translation_key: "registration.allocation.stats.unassigned_inline"
+                                                  kind: :unassigned,
+                                                  count: 1
                                                 }
                                               ])
       end
