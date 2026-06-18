@@ -21,6 +21,7 @@ class Tutorial < ApplicationRecord
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validate :lecture_must_not_be_seminar
+  validate :lecture_id_immutable, on: :update
 
   def title_with_tutors
     return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
@@ -63,11 +64,12 @@ class Tutorial < ApplicationRecord
     tutorial_memberships
   end
 
-  def materialize_allocation!(user_ids:, campaign:)
-    transaction do
-      enforce_lecture_uniqueness!(user_ids)
-      super
-    end
+  def add_user_to_roster!(user, source_campaign = nil)
+    super
+  rescue ActiveRecord::RecordNotUnique
+    conflicting = TutorialMembership
+                  .find_by(lecture_id: lecture_id, user_id: user.id)
+    raise(Rosters::UserAlreadyInBundleError, conflicting&.tutorial || self)
   end
 
   def exclusive_assignment?
@@ -76,15 +78,20 @@ class Tutorial < ApplicationRecord
 
   private
 
-    def enforce_lecture_uniqueness!(user_ids)
-      # Enforce uniqueness: A student can only be in one tutorial per lecture.
-      # If we are about to add a student to this tutorial, remove them from any other
-      # tutorial in the same lecture.
-      TutorialMembership.joins(:tutorial)
-                        .where(tutorials: { lecture_id: lecture_id })
-                        .where.not(tutorial_id: id)
-                        .where(user_id: user_ids)
-                        .delete_all
+    def lecture_id_immutable
+      errors.add(:lecture_id, :immutable) if lecture_id_changed?
+    end
+
+    def extra_roster_entry_attributes(_user_id, _campaign)
+      { lecture_id: lecture_id }
+    end
+
+    def persist_missing_roster_entries!(attributes)
+      roster_entries.upsert_all( # rubocop:disable Rails/SkipsModelValidations
+        attributes,
+        unique_by: :index_tutorial_memberships_on_user_id_and_lecture_id,
+        update_only: [:tutorial_id, :source_campaign_id]
+      )
     end
 
     def check_destructibility
