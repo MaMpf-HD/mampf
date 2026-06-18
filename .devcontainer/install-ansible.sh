@@ -4,6 +4,9 @@ set -e
 infra_root=/workspaces/mampf-infra
 uv_bin="$HOME/.local/bin/uv"
 
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ssh-askpass
+
 ensure_uv() {
   if [ ! -x "$uv_bin" ]; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
