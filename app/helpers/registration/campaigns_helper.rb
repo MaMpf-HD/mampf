@@ -90,6 +90,29 @@ module Registration
       Rosters::NoCampaignRegisterablesQuery.new(lecture).call
     end
 
+    def section_toggle(label, target_id:, expanded:)
+      button_tag(type: "button",
+                 class: "btn p-0 text-decoration-none text-reset " \
+                        "registration-campaign-section-toggle d-inline-flex " \
+                        "align-items-center gap-2",
+                 data: {
+                   bs_toggle: "collapse",
+                   bs_target: "##{target_id}"
+                 },
+                 aria: {
+                   expanded: expanded.to_s,
+                   controls: target_id
+                 }) do
+        safe_join([
+                    tag.span(label,
+                             class: "registration-campaign-ghost-label text-muted fw-semibold"),
+                    tag.i(class: "bi bi-chevron-down " \
+                                 "registration-campaign-section-toggle-icon",
+                          aria: { hidden: true })
+                  ])
+      end
+    end
+
     def campaign_open_confirmation(campaign)
       msg = t("registration.campaign.confirmations.open")
       if campaign.registration_items.any? { |i| i.capacity.nil? }

@@ -44,7 +44,7 @@ de:
         none: "Keine Anmeldeverfahren vorhanden."
         sections:
           registration: "Anmeldeverfahren"
-          no_campaign: "Kein Anmeldeverfahren"
+          no_campaign: "Ohne Anmeldeverfahren"
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"
