@@ -10,8 +10,7 @@
     "service": "app",
     // https://github.com/orgs/community/discussions/15506
     "mounts": [
-    "source=${localWorkspaceFolder}/../mampf-infra,target=/workspaces/mampf-infra,type=bind",
-    "source=${localEnv:HOME}/.local/state/sops,target=/run/host-sops-keyservice,type=bind"
+    "source=${localWorkspaceFolder}/../mampf-infra,target=/workspaces/mampf-infra,type=bind"
     ],    
     "workspaceFolder": "/workspaces/mampf/",
     // https://containers.dev/features
@@ -32,10 +31,6 @@
         // in the container itself, we then install zsh
         // (this just serves as a fallback)
         "SHELL": "/bin/bash",
-        "SOPS_ENABLE_LOCAL_KEYSERVICE": "false",
-        "SOPS_KEYSERVICE": "unix:///run/host-sops-keyservice/keyservice.sock",
-        "ANSIBLE_SOPS_ENABLE_LOCAL_KEYSERVICE": "false",
-        "ANSIBLE_SOPS_KEYSERVICE": "unix:///run/host-sops-keyservice/keyservice.sock",
         "VNC_RESOLUTION": "1920x1080x24",
         "VNC_DPI": "144"
     },
