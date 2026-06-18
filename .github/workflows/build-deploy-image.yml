@@ -22,6 +22,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
     env:
       IMAGE_REPOSITORY: ${{ inputs.image_repository || 'ghcr.io/mampf-hd/mampf-deploy' }}
       IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
@@ -61,6 +62,12 @@ jobs:
           tags: ${{ steps.image.outputs.image }}
           cache-from: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache,mode=max
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3.5.0
+
+      - name: Sign the published Docker image
+        run: cosign sign --yes "${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}"
 
       - name: Write deploy image metadata
         run: |
