@@ -1,12 +1,13 @@
 <% dashboard = local_assigns[:dashboard] %>
 <% campaign = local_assigns[:campaign] %>
+<% summary_items = dashboard.summary_items %>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
-    <% dashboard.summary_items.each_with_index do |item, index| %>
-      <span class="<%= item[:css_class] %>">
+    <% summary_items.each_with_index do |item, index| %>
+      <span class="<%= allocation_summary_item_css_class(item) %>">
         <%= item[:count] %>
-        <%= t(item[:translation_key]) %>
+        <%= t(allocation_summary_item_translation_key(item)) %>
 
         <% if item[:percentage] %>
           (
@@ -15,7 +16,7 @@
         <% end %>
       </span>
 
-      <% unless index == dashboard.summary_items.size - 1 %>
+      <% unless index == summary_items.size - 1 %>
         <span class="mx-1 text-muted">·</span>
       <% end %>
     <% end %>

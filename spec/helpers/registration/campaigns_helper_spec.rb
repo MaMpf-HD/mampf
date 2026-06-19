@@ -64,6 +64,28 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
+  describe "summary item helpers" do
+    it "maps summary item kinds to translation keys" do
+      expect(helper.allocation_summary_item_translation_key(kind: :assigned))
+        .to eq("registration.allocation.stats.assigned_inline")
+    end
+
+    it "maps summary item kinds to css classes" do
+      expect(helper.allocation_summary_item_css_class(kind: :currently_rejected, count: 1))
+        .to eq("text-danger fw-medium")
+    end
+
+    it "uses muted styling for zero unassigned users" do
+      expect(helper.allocation_summary_item_css_class(kind: :unassigned, count: 0))
+        .to eq("text-muted fw-medium")
+    end
+
+    it "uses danger styling for positive unassigned users" do
+      expect(helper.allocation_summary_item_css_class(kind: :unassigned, count: 1))
+        .to eq("text-danger fw-medium")
+    end
+  end
+
   describe "#allocation_progress_bar" do
     it "renders an allocation-specific progress bar" do
       html = helper.allocation_progress_bar(

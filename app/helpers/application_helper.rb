@@ -49,11 +49,10 @@ module ApplicationHelper
   end
 
   def clamped_percentage(value, max)
-    return 0 if max.to_i <= 0
+    max_value = max.to_f
+    return 0 if max_value <= 0
 
-    # rubocop:disable Style/FloatDivision
-    (value.to_f / max.to_f * 100).clamp(0, 100)
-    # rubocop:enable Style/FloatDivision
+    (value.to_f / max_value * 100).clamp(0, 100)
   end
 
   def clamped_progress_value(value, max)
