@@ -31,7 +31,7 @@ test.describe("lecture group registration sections", () => {
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByTestId("registration-section-choice")
-        .getByRole("link", { name: "Registration Process" }).click();
+        .getByRole("link", { name: "Registration Process", exact: true }).click();
 
       await expect(page).toHaveURL(/registration_section=campaign/);
 
@@ -54,7 +54,7 @@ test.describe("lecture group registration sections", () => {
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByTestId("registration-section-choice")
-        .getByRole("link", { name: "Without Registration Process" }).click();
+        .getByRole("link", { name: "Without Registration Process", exact: true }).click();
 
       await expect(page).toHaveURL(/registration_section=no_campaign/);
 
