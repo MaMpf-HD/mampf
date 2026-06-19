@@ -48,19 +48,27 @@ module ApplicationHelper
     value ? "none;" : "block;"
   end
 
+  def clamped_percentage(value, max)
+    max_value = max.to_f
+    return 0 if max_value <= 0
+
+    (value.to_f / max_value * 100).clamp(0, 100)
+  end
+
+  def clamped_progress_value(value, max)
+    upper_bound = [max.to_i, 0].max
+    value.to_i.clamp(0, upper_bound)
+  end
+
   # rubocop:disable Metrics/ParameterLists
   def progress_bar(value, max, classification: :neutral, label: nil,
                    height: "1.5rem", show_label: true,
                    container_class: "progress mb-2", style: nil)
     # rubocop:enable Metrics/ParameterLists
-    clamped_value = value.to_i.clamp(0, max.to_i)
-    # rubocop:disable Style/FloatDivision
-    percentage = max.to_i.positive? ? (value.to_f / max.to_f * 100).clamp(0, 100) : 0
-    # rubocop:enable Style/FloatDivision
+    clamped_value = clamped_progress_value(value, max)
+    percentage = clamped_percentage(value, max)
 
     color_class = case classification
-                  when :utilization
-                    utilization_color(percentage)
                   when :time
                     "bg-info"
                   when :neutral
@@ -78,16 +86,6 @@ module ApplicationHelper
               "aria-valuemax": max) do
         label || "#{percentage.round}%" if show_label
       end
-    end
-  end
-
-  def utilization_color(percentage)
-    if percentage >= 100
-      "bg-danger"
-    elsif percentage >= 80
-      "bg-warning"
-    else
-      "bg-success"
     end
   end
 

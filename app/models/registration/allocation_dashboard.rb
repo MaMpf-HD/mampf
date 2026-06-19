@@ -12,7 +12,13 @@ module Registration
                               .where(status: :confirmed)
                               .pluck(:user_id, :registration_item_id)
                               .to_h
-        Registration::AllocationStats.new(@campaign, assignment)
+        rejected_user_ids = @campaign.rejected_users.pluck(:id)
+
+        Registration::AllocationStats.new(
+          @campaign,
+          assignment,
+          rejected_user_ids: rejected_user_ids
+        )
       end
     end
 
@@ -20,27 +26,87 @@ module Registration
       @unassigned_students ||= User.where(id: stats.unassigned_user_ids).order(:email)
     end
 
-    def policy_violations
-      @policy_violations ||= begin
-        guard_result = Registration::FinalizationGuard.new(@campaign).check
-        guard_result.success? ? [] : (guard_result.data || [])
+    def rejected_students
+      @rejected_students ||= User.where(id: stats.rejected_user_ids).order(:email)
+    end
+
+    def rejection_reasons_for(student)
+      Array(rejected_registrations_by_user[student.id])
+        .filter_map(&:resolved_rejection_reason_label)
+        .uniq
+        .join(", ")
+    end
+
+    def guard_result
+      @guard_result ||= if @campaign.preference_based? && @campaign.allocation_decided_at.blank?
+        Registration::ScreeningService.new(
+          @campaign,
+          registrations: @campaign.user_registrations.where.not(status: :rejected)
+        ).call
+      else
+        Registration::FinalizationGuard.new(@campaign).check
       end
     end
 
-    def violations_by_user
-      @violations_by_user ||= policy_violations.group_by { |v| v[:user_id] }
+    def blocker_violations
+      @blocker_violations ||= guard_result.blocker_violations
     end
 
-    def violation_counts_by_policy
-      @violation_counts_by_policy ||=
-        policy_violations
-        .group_by { |v| v[:policy] }
-        .transform_values(&:size)
+    def policy_violations
+      blocker_violations
+    end
+
+    def blockers?
+      blocker_violations.present?
+    end
+
+    def blocker_user_count
+      blocker_violations.pluck(:user_id).uniq.size
     end
 
     def finalization_policies
       @finalization_policies ||=
         @campaign.registration_policies.active.for_phase(:finalization)
+    end
+
+    def projected_auto_rejection_count
+      return 0 unless @campaign.first_come_first_served?
+      return 0 if @campaign.completed?
+
+      @projected_auto_rejection_count ||= guard_result.auto_reject_violations.count
+    end
+
+    def projected_auto_rejections?
+      projected_auto_rejection_count.positive?
+    end
+
+    def current_registration_state?
+      @campaign.first_come_first_served? && !@campaign.completed?
+    end
+
+    def summary_items
+      items = [
+        {
+          kind: :total_registrations,
+          count: stats.total_registrations
+        }
+      ]
+
+      items.concat(
+        if current_registration_state?
+          current_registration_state_summary_items
+        else
+          allocation_summary_items
+        end
+      )
+
+      items
+    end
+
+    def finalization_status
+      return :blocked if blockers?
+
+      :auto_rejections if projected_auto_rejections?
     end
 
     def allocation_run?
@@ -56,6 +122,52 @@ module Registration
     end
 
     private
+
+      def current_registration_state_summary_items
+        items = [
+          {
+            kind: :currently_confirmed,
+            count: stats.assigned_users
+          }
+        ]
+
+        if stats.rejected_users.positive?
+          items << {
+            kind: :currently_rejected,
+            count: stats.rejected_users
+          }
+        end
+
+        items
+      end
+
+      def allocation_summary_items
+        items = [
+          {
+            kind: :eligible,
+            count: stats.eligible_users
+          },
+          {
+            kind: :assigned,
+            count: stats.assigned_users,
+            percentage: stats.assigned_percentage
+          }
+        ]
+
+        if stats.rejected_users.positive?
+          items << {
+            kind: :rejected,
+            count: stats.rejected_users
+          }
+        end
+
+        items << {
+          kind: :unassigned,
+          count: stats.unassigned_users
+        }
+
+        items
+      end
 
       def calculate_conflicts
         return [] if @campaign.completed?
@@ -113,6 +225,13 @@ module Registration
             capacity: item.capacity
           }
         end
+      end
+
+      def rejected_registrations_by_user
+        @rejected_registrations_by_user ||= @campaign.open_rejected_registrations
+                                                     .where(user_id: stats.rejected_user_ids)
+                                                     .to_a
+                                                     .group_by(&:user_id)
       end
   end
 end

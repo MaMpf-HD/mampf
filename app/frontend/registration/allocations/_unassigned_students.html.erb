@@ -4,7 +4,7 @@
   <%= t("registration.allocation.dashboard.unassigned_students") %>
 
   <% if dashboard.unassigned_students.any? %>
-    <span class="badge bg-danger ms-1">
+    <span class="badge allocation-count-badge ms-1">
       <%= dashboard.unassigned_students.size %>
     </span>
   <% end %>
@@ -33,6 +33,7 @@
 <% else %>
   <div class="py-3 text-center text-muted">
     <i class="bi bi-check-circle d-block mb-1 allocation-check-icon"></i>
+
     <small><%= t("registration.allocation.dashboard.no_unassigned") %></small>
   </div>
 <% end %>

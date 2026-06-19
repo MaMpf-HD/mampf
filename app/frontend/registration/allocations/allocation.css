@@ -44,3 +44,103 @@
 .allocation-check-icon {
     font-size: 1.5rem;
 }
+
+.allocation-action-primary {
+    color: var(--bs-danger-text-emphasis);
+    background: rgba(var(--bs-danger-rgb), 0.12);
+    border: 1px solid var(--bs-danger-border-subtle);
+
+    &:hover,
+    &:focus {
+        color: var(--bs-danger-text-emphasis);
+        background: rgba(var(--bs-danger-rgb), 0.2);
+        border-color: rgba(var(--bs-danger-rgb), 0.28);
+    }
+
+    &:disabled,
+    &.disabled {
+        color: var(--bs-danger-text-emphasis);
+        background: rgba(var(--bs-danger-rgb), 0.12);
+        border-color: var(--bs-danger-border-subtle);
+    }
+}
+
+.allocation-action-secondary {
+    color: var(--bs-emphasis-color);
+    background: rgba(201, 155, 139, 0.13);
+    border: 1px solid rgba(201, 155, 139, 0.26);
+
+    &:hover,
+    &:focus {
+        color: var(--bs-emphasis-color);
+        background: rgba(201, 155, 139, 0.22);
+        border-color: rgba(201, 155, 139, 0.34);
+    }
+
+    &:disabled,
+    &.disabled {
+        color: var(--bs-emphasis-color);
+        background: rgba(201, 155, 139, 0.13);
+        border-color: rgba(201, 155, 139, 0.26);
+    }
+}
+
+.allocation-status-panel {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    background: var(--bs-body-bg);
+    padding: 0.875rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.allocation-status-panel--warning {
+    border-color: var(--bs-warning-border-subtle);
+    background: var(--bs-warning-bg-subtle);
+}
+
+.allocation-status-panel--danger {
+    border-color: var(--bs-danger-border-subtle);
+    background: var(--bs-danger-bg-subtle);
+}
+
+.allocation-count-badge {
+    color: var(--bs-secondary-color);
+    background: var(--bs-light);
+    border: 1px solid var(--bs-border-color);
+}
+
+.allocation-demand-row--hot > td {
+    background-color: rgba(var(--bs-warning-rgb), 0.08);
+}
+
+.allocation-progress-bar {
+    background-image: none;
+}
+
+.allocation-progress-bar--first {
+    background-color: rgba(var(--bs-success-rgb), 0.62);
+}
+
+.allocation-progress-bar--second {
+    background-color: rgba(var(--bs-primary-rgb), 0.5);
+}
+
+.allocation-progress-bar--other {
+    background-color: rgba(var(--bs-secondary-rgb), 0.5);
+}
+
+.allocation-progress-bar--forced {
+    background-color: rgba(var(--bs-danger-rgb), 0.52);
+}
+
+.allocation-progress-bar--utilization-low {
+    background-color: rgba(var(--bs-success-rgb), 0.58);
+}
+
+.allocation-progress-bar--utilization-mid {
+    background-color: rgba(var(--bs-warning-rgb), 0.55);
+}
+
+.allocation-progress-bar--utilization-high {
+    background-color: rgba(var(--bs-danger-rgb), 0.58);
+}

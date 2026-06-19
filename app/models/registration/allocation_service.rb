@@ -1,5 +1,14 @@
 module Registration
   class AllocationService
+    class BlockedError < StandardError
+      attr_reader :screening_result
+
+      def initialize(screening_result)
+        @screening_result = screening_result
+        super("Allocation blocked by policy violations")
+      end
+    end
+
     def initialize(campaign, strategy: :min_cost_flow, **opts)
       @campaign = campaign
       @strategy = strategy
@@ -34,19 +43,16 @@ module Registration
           item.registerable.lock!
         end
 
-        # Clean up forced registrations from previous runs (idempotency)
-        # Only delete rank-less registrations if the user has other registrations,
-        # preserving manual single-assignments.
-        subquery = Registration::UserRegistration
-                   .select(:user_id)
-                   .where(registration_campaign_id: @campaign.id)
-                   .group(:user_id)
-                   .having("count(*) > 1")
+        prepare_for_allocation!
 
-        @campaign.user_registrations
-                 .where(preference_rank: nil)
-                 .where(user_id: subquery)
-                 .delete_all
+        screening = Registration::ScreeningService.new(
+          @campaign,
+          registrations: active_registrations
+        ).call
+
+        raise(BlockedError, screening) if screening.blocked?
+
+        apply_auto_rejections!(screening)
 
         solver =
           case @strategy
@@ -65,19 +71,26 @@ module Registration
 
       def save_allocation(allocation)
         Registration::Campaign.transaction do
-          reset_registrations
           process_allocations(allocation)
           update_item_counts
           update_campaign_status
         end
       end
 
-      def reset_registrations
-        # Reset all registrations to pending to clear previous runs
-        # This ensures idempotency if we run the solver multiple times.
+      def prepare_for_allocation!
+        @campaign.reset_registrations_for_allocation!
+
         # rubocop:disable Rails/SkipsModelValidations
-        @campaign.user_registrations.update_all(status: :pending, updated_at: Time.current)
+        @campaign.update_columns(allocation_decided_at: nil)
         # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      def active_registrations
+        @campaign.user_registrations.where.not(status: :rejected)
+      end
+
+      def apply_auto_rejections!(screening)
+        @campaign.apply_rejections!(screening.auto_reject_violations)
       end
 
       def process_allocations(allocation)
@@ -140,11 +153,9 @@ module Registration
       end
 
       def update_campaign_status
-        # Mark the campaign as having been allocated
         @campaign.touch(:last_allocation_calculated_at)
-
-        # Ensure campaign is in processing state (Allocation Run)
-        @campaign.update!(status: :processing) unless @campaign.processing?
+        @campaign.update!(status: :processing,
+                          allocation_decided_at: Time.current)
       end
   end
 end

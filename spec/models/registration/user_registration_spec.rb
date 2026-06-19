@@ -517,6 +517,66 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
     end
   end
 
+  describe ".resolve_rejection_reason_label" do
+    it "prefers translations derived from the rejection code" do
+      I18n.with_locale(:de) do
+        expect(described_class.resolve_rejection_reason_label(
+                 reason_code: "prerequisite_not_met",
+                 fallback_label: "Prerequisite registration process not completed."
+               )).to eq("Vorausgesetztes Anmeldeverfahren nicht abgeschlossen.")
+      end
+    end
+
+    it "resolves aliased built-in codes centrally" do
+      expect(described_class.resolve_rejection_reason_label(
+               reason_code: "institutional_email_mismatch"
+             )).to eq(I18n.t("registration.policy.errors.email_domain_not_allowed"))
+    end
+
+    it "falls back to the stored label when no translation exists" do
+      expect(described_class.resolve_rejection_reason_label(
+               reason_code: "custom_reason",
+               fallback_label: "Custom reason"
+             )).to eq("Custom reason")
+    end
+  end
+
+  describe "rejection state helpers" do
+    let(:registration) { FactoryBot.create(:registration_user_registration, :rejected) }
+
+    it "derives built-in labels from the reason code when rejecting" do
+      registration.reject!(
+        reason_type: described_class::REJECTION_REASON_TYPE_MANUAL,
+        reason_code: described_class::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER
+      )
+
+      expect(registration.reload.rejection_reason_label)
+        .to eq(I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher"))
+    end
+
+    it "persists the fallback label for unknown legacy reason codes" do
+      registration.reject!(
+        reason_type: described_class::REJECTION_REASON_TYPE_POLICY,
+        reason_code: "legacy_reason",
+        reason_label: "Legacy fallback label"
+      )
+
+      expect(registration.reload.rejection_reason_label).to eq("Legacy fallback label")
+    end
+
+    it "clears rejection_overridden_at when clearing the rejection decision" do
+      registration.update!(rejection_overridden_at: Time.current)
+
+      registration.clear_rejection_decision!
+
+      expect(registration.reload.rejection_reason_type).to be_nil
+      expect(registration.rejection_reason_code).to be_nil
+      expect(registration.rejection_reason_label).to be_nil
+      expect(registration.rejected_at).to be_nil
+      expect(registration.rejection_overridden_at).to be_nil
+    end
+  end
+
   describe "counter cache callbacks" do
     let(:user) { FactoryBot.create(:user) }
 

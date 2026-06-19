@@ -1,7 +1,12 @@
 require "rails_helper"
 
 RSpec.describe(Registration::FinalizationGuard, type: :model) do
-  let(:campaign) { build(:registration_campaign, :preference_based, status: :processing) }
+  let(:campaign) do
+    build(:registration_campaign,
+          :preference_based,
+          status: :processing,
+          allocation_decided_at: Time.current)
+  end
   let(:guard) { described_class.new(campaign) }
 
   describe "#check" do
@@ -9,6 +14,18 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
       it "returns success" do
         result = guard.check
         expect(result.success?).to be(true)
+      end
+    end
+
+    context "when preference campaign has no decided allocation" do
+      let(:campaign) do
+        build(:registration_campaign, :preference_based, status: :processing)
+      end
+
+      it "returns failure" do
+        result = guard.check
+        expect(result.success?).to be(false)
+        expect(result.error_code).to eq(:wrong_status)
       end
     end
 
@@ -41,6 +58,43 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
       end
     end
 
+    context "when a closed FCFS campaign has auto-reject violations" do
+      let(:lecture) { create(:lecture) }
+      let(:campaign) do
+        create(:registration_campaign, campaignable: lecture)
+      end
+      let(:item) do
+        create(:registration_item, registration_campaign: campaign)
+      end
+      let(:user) { create(:confirmed_user, email: "invalid@other.com") }
+
+      before do
+        create(:registration_policy, :institutional_email,
+               registration_campaign: campaign,
+               phase: :finalization,
+               config: { "allowed_domains" => "uni.edu" })
+
+        campaign.update!(status: :closed)
+
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: item,
+               user: user)
+      end
+
+      it "returns success and exposes projected auto rejections" do
+        result = described_class.new(campaign).check
+
+        expect(result.success?).to be(true)
+        expect(result.screening_result)
+          .to be_a(Registration::ScreeningService::Result)
+        expect(result.violations).to eq(result.screening_result.violations)
+        expect(result.blocker_violations).to be_empty
+        expect(result.auto_reject_violations.size).to eq(1)
+        expect(result.auto_reject_violations.first[:user_id]).to eq(user.id)
+      end
+    end
+
     context "with policies" do
       # Create as draft first to allow policy creation
       let(:campaign) do
@@ -56,7 +110,8 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
                config: { "allowed_domains" => "uni.edu" })
 
         # Now move to processing
-        campaign.update!(status: :processing)
+        campaign.update!(status: :processing,
+                         allocation_decided_at: Time.current)
 
         create(:registration_user_registration, :confirmed,
                registration_campaign: campaign,
@@ -69,7 +124,7 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
         expect(result.success?).to be(true)
       end
 
-      it "fails if a confirmed user violates policy" do
+      it "does not reevaluate policy failures after allocation was decided" do
         invalid_user = create(:confirmed_user, email: "invalid@other.com")
         create(:registration_user_registration, :confirmed,
                registration_campaign: campaign,
@@ -77,27 +132,17 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
                user: invalid_user)
 
         result = guard.check
-        expect(result.success?).to be(false)
-        expect(result.error_code).to eq(:policy_violation)
-        expect(result.data).to include(hash_including(user_id: invalid_user.id,
-                                                      policy: "institutional_email"))
+        expect(result.success?).to be(true)
       end
 
-      it "fails if a user becomes invalid after registration" do
-        # User starts valid (from let(:user))
+      it "does not reevaluate users who become invalid after allocation was decided" do
         expect(guard.check.success?).to be(true)
 
-        # User changes email to invalid
-        # We need to skip reconfirmation to ensure the email is updated immediately
-        # without waiting for the user to click a confirmation link
         user.skip_reconfirmation!
         user.update(email: "invalid@other.com")
 
         result = guard.check
-        expect(result.success?).to be(false)
-        expect(result.error_code).to eq(:policy_violation)
-        expect(result.data).to include(hash_including(user_id: user.id,
-                                                      policy: "institutional_email"))
+        expect(result.success?).to be(true)
       end
 
       it "ignores unconfirmed users" do

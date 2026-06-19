@@ -40,6 +40,7 @@ RSpec.describe(Registration::AllocationStats) do
 
       it "calculates total and unassigned users" do
         expect(stats.total_registrations).to eq(3)
+        expect(stats.eligible_users).to eq(3)
         expect(stats.assigned_users).to eq(2)
         expect(stats.unassigned_users).to eq(1)
       end
@@ -70,6 +71,35 @@ RSpec.describe(Registration::AllocationStats) do
         # Percent Top Choice:
         # 1 user got top choice out of 2 assigned.
         expect(stats.percent_top_choice).to eq(50.0)
+      end
+    end
+
+    context "when one user is already rejected" do
+      let(:assignment) do
+        {
+          user1.id => item1.id,
+          user2.id => item2.id
+        }
+      end
+
+      subject(:stats) do
+        described_class.new(campaign, assignment, rejected_user_ids: [user3.id])
+      end
+
+      before do
+        create(:registration_user_registration, user: user3, registration_campaign: campaign,
+                                                registration_item: item1, preference_rank: 1,
+                                                status: :rejected)
+      end
+
+      it "excludes rejected users from the unassigned bucket" do
+        expect(stats.total_registrations).to eq(3)
+        expect(stats.eligible_users).to eq(2)
+        expect(stats.assigned_users).to eq(2)
+        expect(stats.rejected_users).to eq(1)
+        expect(stats.unassigned_users).to eq(0)
+        expect(stats.assigned_percentage).to eq(100.0)
+        expect(stats.rejected_user_ids).to eq([user3.id])
       end
     end
 
