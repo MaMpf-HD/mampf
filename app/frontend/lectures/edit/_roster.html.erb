@@ -1,7 +1,8 @@
 <% group_type ||= :all %>
 <% roster_params = { group_type: group_type } %>
-<% if params[:registration_section].present? %>
-  <% roster_params[:registration_section] = params[:registration_section] %>
+<% selected_section = normalized_registration_section(params[:registration_section]) %>
+<% if selected_section.present? %>
+  <% roster_params[:registration_section] = selected_section %>
 <% end %>
 
 <div class="col-12">
