@@ -82,6 +82,7 @@ group :development do
   gem "rubocop-rails", "2.34.3", require: false
   gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
   gem "spring-watcher-listen", "~> 2.0"
+  gem "strong_migrations", ">= 2.8", "< 3.0", require: false
   gem "web-console", "~> 4.2" # interactive console on exception pages
 end
 

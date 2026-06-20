@@ -638,6 +638,8 @@ GEM
     streamio-ffmpeg (3.0.2)
       multi_json (~> 1.8)
     stringio (3.2.0)
+    strong_migrations (2.8.0)
+      activerecord (>= 7.2)
     sync (0.5.0)
     term-ansicolor (1.11.3)
       tins (~> 1)
@@ -789,6 +791,7 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0)
   sprockets-rails (~> 3.5)
   streamio-ffmpeg (~> 3.0)
+  strong_migrations (>= 2.8, < 3.0)
   terser (~> 1.2)
   thredded!
   thredded-markdown_katex!
