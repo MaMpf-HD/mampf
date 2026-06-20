@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-    get "up" => "rails/health#show", as: :rails_health_check
-    get "ready" => "readiness#show", as: :readiness_check
+  get "up" => "rails/health#show", as: :rails_health_check
+  get "ready" => "readiness#show", as: :readiness_check
 
   # mount sidekiq engine
 
@@ -930,7 +930,8 @@ Rails.application.routes.draw do
           delete "members/:user_id", action: :remove_member, as: :remove_member
           patch "members/:user_id/move", action: :move_member, as: :move_member
         end
-        scope "roster", controller: "roster/self_materialization", defaults: { type: "Tutorial" } do
+        scope "roster", controller: "roster/self_materialization",
+                        defaults: { type: "Tutorial" } do
           post "self_add", action: :self_add, as: :self_add
           delete "self_remove", action: :self_remove, as: :self_remove
         end

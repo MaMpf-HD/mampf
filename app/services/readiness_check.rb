@@ -13,9 +13,9 @@ class ReadinessCheck
 
     def dependency_status(name)
       yield ? "ok" : "error"
-    rescue StandardError => error
+    rescue StandardError => e
       Rails.logger.warn(
-        "Readiness check failed for #{name}: #{error.class}: #{error.message}"
+        "Readiness check failed for #{name}: #{e.class}: #{e.message}"
       )
       "error"
     end
