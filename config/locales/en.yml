@@ -2235,6 +2235,9 @@ en:
     size: 'Size'
   image:
     resolution: 'Resolution'
+    too_large_dimensions: >
+      The image dimensions are too large. Maximum allowed dimensions are
+      %{max_width}x%{max_height}.
   manuscript:
     manuscript: 'Manuscript'
     no_manuscript: 'There is no manuscript present.'
@@ -2319,6 +2322,7 @@ en:
     app_name: Applet Type
     view: View Geogebra Applet in Browser
     size: Size
+    invalid_archive: Invalid GeoGebra archive.
     attribution_html: >
       This applet as been created using %{geogebra_link}, the above animation
       uses the GeoGebra JavaScript API.

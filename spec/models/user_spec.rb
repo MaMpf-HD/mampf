@@ -1,8 +1,25 @@
 require "rails_helper"
 
 RSpec.describe(User, type: :model) do
+  def fixture_file(name)
+    Rails.root.join(SPEC_FILES, name).open("rb")
+  end
+
   it "has a valid factory" do
     expect(FactoryBot.build(:user)).to be_valid
+  end
+
+  it "uses the profile image uploader for user images" do
+    user = build(:user)
+    file = fixture_file("image.png")
+
+    user.image = file
+
+    expect(user.image_attacher).to be_a(ProfileimageUploader::Attacher)
+    expect(user).to be_valid
+    expect(user.image.metadata["mime_type"]).to eq("image/png")
+  ensure
+    file&.close
   end
 
   # test validations - SOME ARE MISSING
