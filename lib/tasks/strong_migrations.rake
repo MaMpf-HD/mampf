@@ -4,7 +4,9 @@ namespace :db do
     task :strong do
       rails_env = ENV.fetch("RAILS_ENV", "development")
 
-      abort "db:migrate:strong only supports RAILS_ENV=development" unless rails_env == "development"
+      unless rails_env == "development"
+        abort "db:migrate:strong only supports RAILS_ENV=development"
+      end
 
       success = system(
         {
