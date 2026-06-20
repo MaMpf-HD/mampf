@@ -36,6 +36,21 @@ RSpec.describe("Health", type: :request) do
       )
     end
 
+    it "does not depend on ApplicationController user callbacks" do
+      allow_any_instance_of(ApplicationController)
+        .to receive(:current_user)
+        .and_raise(ActiveRecord::ConnectionNotEstablished, "db unavailable")
+      allow(readiness_check).to receive(:call).and_return(
+        database: "ok",
+        redis: "ok",
+        memcached: "ok"
+      )
+
+      get "/ready"
+
+      expect(response).to have_http_status(:ok)
+    end
+
     it "returns service unavailable when a dependency is down" do
       allow(readiness_check).to receive(:call).and_return(
         database: "ok",
