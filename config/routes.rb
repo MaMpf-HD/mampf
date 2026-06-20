@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+    get "up" => "rails/health#show", as: :rails_health_check
+    get "ready" => "readiness#show", as: :readiness_check
+
   # mount sidekiq engine
 
   require "sidekiq/web"
