@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_13_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_14_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -590,6 +590,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_13_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "last_allocation_calculated_at"
+    t.datetime "allocation_decided_at"
     t.index ["allocation_mode"], name: "index_registration_campaigns_on_allocation_mode"
     t.index ["campaignable_type", "campaignable_id"], name: "index_registration_campaigns_on_campaignable"
     t.index ["status"], name: "index_registration_campaigns_on_status"
@@ -632,11 +633,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_13_000000) do
     t.uuid "registration_item_id", null: false
     t.datetime "materialized_at"
     t.boolean "exclusive_assignment", default: false, null: false
+    t.string "rejection_reason_type"
+    t.string "rejection_reason_code"
+    t.string "rejection_reason_label"
+    t.datetime "rejected_at"
+    t.datetime "rejection_overridden_at"
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
     t.index ["registration_campaign_id", "user_id", "registration_item_id"], name: "index_reg_user_regs_unique_item_user", unique: true
     t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_exclusive_assignment_unranked", unique: true, where: "((exclusive_assignment = true) AND (preference_rank IS NULL))"
     t.index ["registration_campaign_id"], name: "index_reg_user_regs_on_campaign_id"
     t.index ["registration_item_id"], name: "index_registration_user_registrations_on_registration_item_id"
+    t.index ["rejection_overridden_at"], name: "index_reg_user_regs_on_rejection_overridden_at"
     t.index ["status"], name: "index_registration_user_registrations_on_status"
     t.index ["user_id"], name: "index_registration_user_registrations_on_user_id"
   end

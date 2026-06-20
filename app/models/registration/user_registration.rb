@@ -3,6 +3,18 @@ module Registration
   # Tracks the status (pending/confirmed) and, for preference-based campaigns,
   # the specific ranking of an item.
   class UserRegistration < ApplicationRecord
+    REJECTION_REASON_TYPE_CAPACITY = "capacity".freeze
+    REJECTION_REASON_TYPE_MANUAL = "manual".freeze
+    REJECTION_REASON_TYPE_POLICY = "policy".freeze
+
+    REJECTION_REASON_CODE_SOLVER_UNASSIGNED = "solver_unassigned".freeze
+    REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER = "withdrawn_by_teacher".freeze
+    REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER = "deferred_due_to_blocker".freeze
+
+    REJECTION_REASON_CODE_TRANSLATION_ALIASES = {
+      "institutional_email_mismatch" => "email_domain_not_allowed"
+    }.freeze
+
     belongs_to :user
 
     belongs_to :registration_campaign,
@@ -19,6 +31,15 @@ module Registration
     attr_readonly :registration_item_id
 
     enum :status, { pending: 0, confirmed: 1, rejected: 2 }
+
+    scope :with_open_rejection_reason, lambda {
+      where(rejection_reason_code: nil)
+        .or(
+          where.not(
+            rejection_reason_code: REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+          )
+        )
+    }
 
     before_validation :set_exclusive_assignment
 
@@ -66,6 +87,53 @@ module Registration
                 scope: [:registration_campaign_id, :registration_item_id]
               },
               if: -> { registration_campaign.first_come_first_served? }
+
+    def self.resolve_rejection_reason_label(reason_code:, fallback_label: nil)
+      code = reason_code.to_s.presence
+      return fallback_label if code.blank?
+
+      translated_code = REJECTION_REASON_CODE_TRANSLATION_ALIASES.fetch(code, code)
+
+      policy_key = "registration.policy.errors.#{translated_code}"
+      return I18n.t(policy_key) if I18n.exists?(policy_key)
+
+      reason_key = "registration.user_registration.reason_labels.#{translated_code}"
+      return I18n.t(reason_key) if I18n.exists?(reason_key)
+
+      fallback_label
+    end
+
+    def reject!(reason_type:, reason_code:, reason_label: nil,
+                rejected_at: Time.current)
+      update!(
+        status: :rejected,
+        rejection_reason_type: reason_type,
+        rejection_reason_code: reason_code,
+        rejection_reason_label: self.class.resolve_rejection_reason_label(
+          reason_code: reason_code,
+          fallback_label: reason_label
+        ),
+        rejected_at: rejected_at,
+        rejection_overridden_at: nil
+      )
+    end
+
+    def clear_rejection_decision!
+      update!(
+        rejection_reason_type: nil,
+        rejection_reason_code: nil,
+        rejection_reason_label: nil,
+        rejected_at: nil,
+        rejection_overridden_at: nil
+      )
+    end
+
+    def resolved_rejection_reason_label
+      self.class.resolve_rejection_reason_label(
+        reason_code: rejection_reason_code,
+        fallback_label: rejection_reason_label
+      )
+    end
 
     private
 

@@ -69,6 +69,19 @@ RSpec.describe(Rosters::MaintenanceParams) do
       end
     end
 
+    context "with valid source 'rejected' and source_id" do
+      let(:campaign) do
+        create(:registration_campaign, :completed, campaignable: lecture)
+      end
+      let(:raw_params) { { source: "rejected", source_id: campaign.id.to_s } }
+
+      it "accepts the value" do
+        mp = described_class.new(params_hash, lecture: lecture)
+        expect(mp.source).to eq("rejected")
+        expect(mp).to be_rejected
+      end
+    end
+
     context "with invalid source" do
       let(:raw_params) { { source: "evil_source" } }
 

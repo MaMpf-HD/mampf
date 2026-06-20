@@ -23,7 +23,7 @@ module Registration
 
         # Load data
         # Fetch all registrations (preferences) for this campaign
-        @registrations = campaign.user_registrations.includes(:user)
+        @registrations = campaign.user_registrations.where.not(status: :rejected).includes(:user)
 
         # Identify unique users involved in the campaign
         @user_ids = @registrations.map(&:user_id).uniq

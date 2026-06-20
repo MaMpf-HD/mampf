@@ -27,6 +27,12 @@ RSpec.describe(Registration::Policy::InstitutionalEmailHandler, type: :model) do
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:institutional_email_mismatch)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_AUTO_REJECT)
+      expect(result[:reason_type]).to eq(Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY)
+      expect(result[:reason_code]).to eq(:institutional_email_mismatch)
+      expect(result[:reason_label])
+        .to eq(I18n.t("registration.policy.errors.email_domain_not_allowed"))
     end
 
     it "fails if email matches a partial domain suffix but not a subdomain" do
@@ -41,6 +47,10 @@ RSpec.describe(Registration::Policy::InstitutionalEmailHandler, type: :model) do
       result = handler.evaluate(user)
       expect(result[:pass]).to be(false)
       expect(result[:code]).to eq(:configuration_error)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_BLOCKER)
+      expect(result[:blocker_kind])
+        .to eq(Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION)
     end
   end
 

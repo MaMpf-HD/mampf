@@ -1,0 +1,36 @@
+<% dashboard = local_assigns[:dashboard] %>
+
+<% return unless dashboard.rejected_students.any? %>
+
+<h6 class="text-muted fw-semibold small text-uppercase mb-2">
+  <%= t("registration.allocation.dashboard.rejected_students") %>
+
+  <span class="badge allocation-count-badge ms-1">
+    <%= dashboard.rejected_students.size %>
+  </span>
+</h6>
+
+<div class="table-responsive mb-4">
+  <table class="table table-hover align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th><%= t("basics.display_name") %></th>
+        <th><%= t("basics.email") %></th>
+        <th><%= t("registration.user_registration.reason") %></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% dashboard.rejected_students.each do |student| %>
+        <tr>
+          <td><%= student.tutorial_name %></td>
+          <td class="text-muted"><%= student.email %></td>
+
+          <td class="text-muted">
+            <%= dashboard.rejection_reasons_for(student) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -4,7 +4,7 @@ module Registration
            ItemsHelper, CampaignsHelper
     before_action :set_lecture, only: [:index]
     before_action :set_campaign,
-                  only: [:create, :destroy, :destroy_for_user, :save_preferences]
+                  only: [:create, :destroy, :reject_for_user, :save_preferences]
     before_action :set_user_locale
     before_action :set_item, only: [:create, :destroy]
 
@@ -12,7 +12,7 @@ module Registration
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
     end
 
-    def destroy_for_user
+    def reject_for_user
       return if campaign_completed?
 
       @user = User.find(params[:user_id])
@@ -23,7 +23,7 @@ module Registration
       # Authorize based on the first registration (all belong to same campaign)
       authorize! :destroy, registrations.first
 
-      destroy_registrations(registrations)
+      reject_registrations(registrations)
     end
 
     def index
@@ -151,7 +151,7 @@ module Registration
               partial: "registration/campaigns/card_body_actions",
               locals: {
                 campaign: @campaign,
-                has_violators: @dashboard.policy_violations.present?
+                has_violators: @dashboard.blockers?
               }
             )
           else
@@ -197,19 +197,36 @@ module Registration
         true
       end
 
-      def destroy_registrations(registrations)
-        count = registrations.count
+      def reject_registrations(registrations)
+        registrations = registrations.where.not(status: :rejected).to_a
+        count = registrations.size
+        reason_code = rejection_reason
 
-        if registrations.destroy_all
-          respond_with_flash(:notice,
-                             t("registration.user_registration.destroyed_all_for_user",
-                               count: count),
-                             fallback_location: registration_campaign_path(@campaign)) do
-            evaluate_turbo_stream_response
+        Registration::UserRegistration.transaction do
+          registrations.each do |registration|
+            registration.reject!(
+              reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
+              reason_code: reason_code
+            )
           end
+        end
+
+        respond_with_flash(:notice,
+                           t("registration.user_registration.rejected_all_for_user",
+                             count: count),
+                           fallback_location: registration_campaign_path(@campaign)) do
+          evaluate_turbo_stream_response
+        end
+      rescue ActiveRecord::RecordInvalid
+        respond_with_flash(:alert, t("registration.user_registration.reject_failed"),
+                           fallback_location: registration_campaign_path(@campaign))
+      end
+
+      def rejection_reason
+        if params[:reason] == Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER
+          Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER
         else
-          respond_with_flash(:alert, t("registration.user_registration.destroy_failed"),
-                             fallback_location: registration_campaign_path(@campaign))
+          Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER
         end
       end
 

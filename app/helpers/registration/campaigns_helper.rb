@@ -1,7 +1,36 @@
 module Registration
   module CampaignsHelper
+    SUMMARY_ITEM_TRANSLATION_KEYS = {
+      total_registrations: "registration.allocation.stats.total_registrations",
+      currently_confirmed: "registration.allocation.stats.currently_confirmed_inline",
+      currently_rejected: "registration.allocation.stats.currently_rejected_inline",
+      eligible: "registration.allocation.stats.eligible_inline",
+      assigned: "registration.allocation.stats.assigned_inline",
+      rejected: "registration.allocation.stats.rejected_inline",
+      unassigned: "registration.allocation.stats.unassigned_inline"
+    }.freeze
+
+    SUMMARY_ITEM_CSS_CLASSES = {
+      total_registrations: "fw-medium",
+      currently_confirmed: "text-success fw-medium",
+      currently_rejected: "text-danger fw-medium",
+      eligible: "fw-medium",
+      assigned: "text-success fw-medium",
+      rejected: "text-danger fw-medium"
+    }.freeze
+
     def email_domain(email)
       email.to_s.split("@").last
+    end
+
+    def allocation_summary_item_translation_key(item)
+      SUMMARY_ITEM_TRANSLATION_KEYS.fetch(item.fetch(:kind))
+    end
+
+    def allocation_summary_item_css_class(item)
+      return unassigned_summary_item_css_class(item) if item[:kind] == :unassigned
+
+      SUMMARY_ITEM_CSS_CLASSES.fetch(item.fetch(:kind))
     end
 
     def campaign_badge_color(campaign)
@@ -37,12 +66,39 @@ module Registration
       stats.preference_counts.sort_by { |k, _| k == :forced ? 999 : k }
     end
 
-    def rank_color(rank)
+    def allocation_progress_bar(value, max, bar_class:, height: "10px",
+                                show_label: false)
+      percentage = clamped_percentage(value, max)
+      clamped_value = clamped_progress_value(value, max)
+
+      tag.div(class: "progress", style: "height: #{height}") do
+        tag.div(class: ["progress-bar", "allocation-progress-bar", bar_class].join(" "),
+                role: "progressbar",
+                style: "width: #{percentage}%",
+                "aria-valuenow": clamped_value,
+                "aria-valuemin": 0,
+                "aria-valuemax": max) do
+          "#{percentage.round}%" if show_label
+        end
+      end
+    end
+
+    def allocation_rank_bar_class(rank)
       case rank
-      when :forced then :danger
-      when 1 then :success
-      when 2 then :primary
-      else :secondary
+      when :forced then "allocation-progress-bar--forced"
+      when 1 then "allocation-progress-bar--first"
+      when 2 then "allocation-progress-bar--second"
+      else "allocation-progress-bar--other"
+      end
+    end
+
+    def allocation_utilization_bar_class(percentage)
+      if percentage >= 100
+        "allocation-progress-bar--utilization-high"
+      elsif percentage >= 80
+        "allocation-progress-bar--utilization-mid"
+      else
+        "allocation-progress-bar--utilization-low"
       end
     end
 
@@ -76,7 +132,7 @@ module Registration
     end
 
     def finalize_campaign_button(campaign, size: nil, disabled: false)
-      classes = ["btn", "btn-danger", size].compact.join(" ")
+      classes = ["btn", "allocation-action-primary", size].compact.join(" ")
 
       button_to(t("registration.campaign.actions.finalize"),
                 finalize_registration_campaign_allocation_path(campaign),
@@ -101,7 +157,7 @@ module Registration
         t("registration.campaign.actions.allocate")
       end
       confirm = has_allocation ? t("registration.campaign.confirmations.reallocate") : nil
-      classes = ["btn", "btn-primary", size].compact.join(" ")
+      classes = ["btn", "btn-outline-primary", size].compact.join(" ")
 
       form_data = { turbo_stream: true }
       form_data[:turbo_confirm] = confirm if confirm
@@ -116,5 +172,11 @@ module Registration
     def closed_early?(campaign)
       !campaign.open_for_registrations? && campaign.registration_deadline > Time.current
     end
+
+    private
+
+      def unassigned_summary_item_css_class(item)
+        [item[:count].positive? ? "text-danger" : "text-muted", "fw-medium"].join(" ")
+      end
   end
 end

@@ -20,16 +20,41 @@
       <span class="dissolved-campaign-pill-sep">&middot;</span>
 
       <span>
-        <%= campaign.confirmed_count %> /
         <%= campaign.total_registrations_count %>
+
+        <%= t("registration.item.columns.registrations") %>
+      </span>
+
+      <span class="dissolved-campaign-pill-sep">&middot;</span>
+
+      <span>
+        <%= campaign.confirmed_count %>
         <%= t("registration.campaign.dissolved_enrolled") %>
       </span>
 
       <% summary = policy_kinds_summary(campaign) %>
+      <% rejected = campaign.open_rejected_count %>
 
-      <% if summary.present? %>
+      <% if rejected > 0 %>
         <span class="dissolved-campaign-pill-sep">&middot;</span>
-        <span><%= summary %></span>
+        <span
+          role="button"
+          tabindex="0"
+          class="
+            p-0 text-decoration-none text-reset campaign-panel-trigger d-inline-flex
+            align-items-center gap-1
+          "
+          data-tutorial-roster-panel-target="tile"
+          data-roster-key="campaign_<%= campaign.id %>_rejected"
+          data-action="click->tutorial-roster-panel#openFromTile"
+          data-roster-panel-path="<%= rejected_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
+        >
+          <i class="bi bi-x-octagon-fill text-danger"></i>
+
+          <span>
+            <%= rejected %> <%= t("roster.candidates.rejected_short") %>
+          </span>
+        </span>
       <% end %>
 
       <% unassigned = campaign.unassigned_users.count %>
@@ -40,7 +65,7 @@
           role="button"
           tabindex="0"
           class="
-            p-0 text-decoration-none text-reset unassigned-warning-trigger
+            p-0 text-decoration-none text-reset campaign-panel-trigger
             d-inline-flex align-items-center gap-1
           "
           data-tutorial-roster-panel-target="tile"
@@ -49,8 +74,16 @@
           data-roster-panel-path="<%= unassigned_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
           <i class="bi bi-exclamation-triangle-fill text-warning"></i>
-          <span><%= unassigned %> <%= t('roster.candidates.title') %></span>
+
+          <span>
+            <%= unassigned %> <%= t('roster.candidates.short_title') %>
+          </span>
         </span>
+      <% end %>
+
+      <% if summary.present? %>
+        <span class="dissolved-campaign-pill-sep">&middot;</span>
+        <span><%= summary %></span>
       <% end %>
     </span>
   </div>
