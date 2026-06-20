@@ -264,7 +264,7 @@ module Assessment
         threshold_percentage
       )
 
-      GradeScheme::Applier.compute_grade(
+      Assessment::GradeSchemeApplier.compute_grade(
         mc_points,
         mc_task.max_points,
         adjusted_scheme
@@ -292,7 +292,7 @@ module Assessment
                           .sum(:points)
       max = regular_tasks.sum(:max_points)
 
-      GradeScheme::Applier.compute_grade(
+      Assessment::GradeSchemeApplier.compute_grade(
         total,
         max,
         @assessment.grade_scheme
@@ -310,7 +310,7 @@ end
 |------|--------|-------------------|
 | 1 | Create assessment | Staff creates `Assessment::Assessment` for the exam |
 | 2 | Create tasks | Staff creates tasks, marking one with `is_multiple_choice: true` |
-| 3 | Configure MC scheme | Staff creates and assigns a `GradeScheme::Scheme` to the MC task |
+| 3 | Configure MC scheme | Staff creates and assigns an `Assessment::GradeScheme` to the MC task |
 | 4 | Grade all tasks | Tutors grade MC questions and written problems normally |
 | 5 | Apply MC grader | Staff calls `Assessment::McGrader.new(assessment).apply_legal_scheme!` |
 | 6 | Results | Service computes threshold, checks eligibility, adjusts scheme, computes final grades |
@@ -400,9 +400,9 @@ assessment.tasks.create!(title: "Problem 2", max_points: 25)
 assessment.tasks.create!(title: "Problem 3", max_points: 25)
 
 mc_task = assessment.tasks.multiple_choice.first
-mc_scheme = GradeScheme::Scheme.create!(
+mc_scheme = Assessment::GradeScheme.create!(
   title: "MC Legal Scheme",
-  kind: :absolute,
+  kind: :banded,
   bands: [
     { min_percentage: 0.90, grade: 1.0 },
     { min_percentage: 0.80, grade: 2.0 },

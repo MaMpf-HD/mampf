@@ -29,6 +29,109 @@ We use a factual materialization + teacher certification + phased policy checks:
 - **Recomputation Triggers:** Background jobs and on-demand triggers keep the data fresh and guarantee correctness.
 - **Audit Trail:** Certification provides the authoritative decision and audit (who, when, source, rule snapshot). The Record stays facts-only.
 
+## Information Architecture
+
+```admonish tip "Where Performance Management Lives"
+Student Performance has three distinct use cases that span multiple UI contexts:
+1. **Configuration & Decision-Making** (Teacher manages rules and certifies students)
+2. **Verification & Enforcement** (System checks eligibility during registration/finalization)
+3. **Information Display** (Show status in various contexts)
+```
+
+### Primary Management Interface: Assessments Tab Subtabs
+
+The **primary home** for Student Performance management is in the Assessments tab at the lecture level, organized as sibling subtabs:
+
+```
+Lecture → Assessments Tab
+├── Assessments (list of assignments, exams, talks) ← default
+├── Performance (computed records + evaluator proposals)
+├── Rules (eligibility criteria configuration)
+└── Certifications (pass/fail dashboard) [PR 10.4]
+```
+
+**What teachers do in each subtab:**
+- **Assessments:** Create and grade assignments, exams, talks
+- **Performance:** View computed records, generate evaluator proposals
+- **Rules:** Configure eligibility criteria (50% points + 2 achievements); read-only in PR 10.3, editable in PR 10.4
+- **Certifications:** Make pass/fail decisions (bulk accept + manual overrides); added in PR 10.4
+
+**Rationale:**
+- Performance is computed from assessment data (points, grades)
+- The Assessments tab is the unified grading hub for the lecture
+- Rules as a sibling subtab keeps them discoverable and easy to navigate to from Performance or Certifications
+- Certification is a lecture-wide decision, not exam-specific
+- One certification can gate multiple exams in the same lecture
+- Keeping it here separates grading concerns (Assessments) from group management (Groups/Roster)
+
+### Secondary Contexts: Policy Setup & Verification
+
+**Campaign Tab: Policy Configuration**
+
+When creating/editing an exam registration campaign:
+
+```
+Campaign → Policies Tab
+└── Student Performance Policy ✓ Enabled
+    └── Phase: Registration | Finalization | Both
+```
+
+- Teachers enable the policy and select enforcement phase
+- Pre-flight validation warns if certifications are incomplete
+- Links to Assessments → Certifications for resolution
+- Finalization guard shows inline remediation or blocks with link
+
+**Exam Dashboard: Verification View**
+
+Exam detail page includes a Performance verification view:
+
+```
+Exam Dashboard → Logistics Tab → Eligibility Subtab
+```
+
+- **Read-only table** showing certification status of all registrants
+- Alerts if any registrants lack valid certification
+- Links to Assessments → Certifications for management
+- Useful for post-registration audit
+
+### Information Flow
+
+```
+┌────────────────────────────────────────────┐
+│ LECTURE LEVEL (Primary Management)         │
+│ Assessments Tab Subtabs:                   │
+│ • Performance: View records, proposals     │
+│ • Rules: Configure eligibility criteria    │
+│ • Certifications: Certify students         │
+└────────────────────────────────────────────┘
+                  ↓
+         Data flows to...
+                  ↓
+┌────────────────────────────────────────────┐
+│ CAMPAIGN LEVEL (Policy Enforcement)        │
+│ Campaign → Policies                        │
+│ • Enable performance policy                │
+│ • Pre-flight checks                        │
+│ • Finalization guards                      │
+└────────────────────────────────────────────┘
+                  ↓
+         Students register...
+                  ↓
+┌────────────────────────────────────────────┐
+│ EXAM LEVEL (Verification & Audit)          │
+│ Exam Dashboard → Logistics → Eligibility   │
+│ • View registrant cert status              │
+│ • Alert if issues detected                 │
+│ • Link to Assessments → Certifications     │
+└────────────────────────────────────────────┘
+```
+
+**Key principles:**
+1. **Single source of truth**: Assessments tab subtabs (Performance / Rules / Certifications) are where teachers work
+2. **Contextual read-only views**: Show relevant slices elsewhere
+3. **Link pattern**: "Manage in Assessments" links from Campaign and Exam contexts
+4. **Minimize duplication**: Don't recreate management UI in multiple places
+
 ---
 
 ## StudentPerformance::Record (ActiveRecord Model)
@@ -114,7 +217,7 @@ its internal logic. For the canonical dispatcher, see Registration →
 **_Qualitative Student Accomplishments (Assessable Type)_**
 
 ```admonish info "What it represents"
-An assessable type that tracks qualitative student accomplishments during a lecture (e.g., blackboard presentations, discussion participation). Unlike assignments or exams, achievements can be boolean (pass/fail), numeric (count-based), or percentage-based. They integrate with the Assessment infrastructure for participation tracking and tutor grading workflows.
+An assessable type that tracks qualitative student accomplishments during a lecture (e.g., blackboard presentations, discussion attendance). Unlike assignments or exams, achievements can be boolean (pass/fail), numeric (count-based), or percentage-based. They integrate with the Assessment infrastructure for activity tracking and tutor workflows.
 ```
 
 ```admonish tip "Think of it as"

@@ -1,0 +1,9 @@
+<%= turbo_frame_tag campaign_policy_form_frame_id(@campaign) do %>
+  <div class="policy-form-panel">
+    <small class="text-muted fw-semibold d-block mb-2">
+      <%= t("registration.policy.new.title") %>
+    </small>
+
+    <%= render "form", campaign: @campaign, policy: @policy %>
+  </div>
+<% end %>

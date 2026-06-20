@@ -17,19 +17,17 @@ service objects to the right endpoints.
 |-------------|----------------------------------------------------|---------------------------|
 | Registration| Campaigns, UserRegistrations, Policies, Allocation | Teacher/Editor UI, Student UI, Job |
 | Roster      | Maintenance                                        | Teacher/Editor UI         |
-| Assessment  | Assessments, Grading, Participations               | Teacher/Editor UI, Tutor UI |
+| Assessment  | Assessments, Grading, Participations, GradeSchemes | Teacher/Editor UI, Tutor UI |
 | StudentPerformance | Records, Certifications, Evaluator           | Teacher/Editor UI         |
 | Exam        | Exams                                              | Teacher/Editor UI         |
-| GradeScheme | Schemes                                            | Teacher/Editor UI         |
 | Dashboard   | Dashboard, Admin::Dashboard                        | Student UI, Teacher/Editor UI |
 
 Controllers are grouped into the following namespaces:
 - Registration: Campaign setup, student registration, allocation
 - Roster: Post-allocation roster maintenance
-- Assessment: Assessment setup, grading, result viewing
+- Assessment: Assessment setup, grading, result viewing, grade scheme configuration
 - StudentPerformance: Performance records, teacher certification, evaluator proposals
 - Exam: Exam management
-- GradeScheme: Grading scheme configuration
 - Dashboard: Student and teacher/editor views
 
 ```admonish tip "Turbo responses"
@@ -64,6 +62,9 @@ Manage registration campaigns for lectures.
 | edit    | Edit campaign settings (before allocation) |
 | update  | Update campaign |
 | destroy | Delete campaign (if no registrations exist) |
+| open    | Open campaign for registration |
+| close   | Close campaign (stop registration) |
+| reopen  | Reopen a closed campaign |
 
 ```admonish example "Responsibilities"
 - CRUD operations for campaigns
@@ -232,30 +233,60 @@ Configure assessments for lectures.
 - Control visibility lifecycle (publish/unpublish results)
 ```
 
-### `Assessment::GradingController`
+### `Assessment::GradesController`
 
 ```admonish info "Purpose"
-Enter and manage grades.
+RESTful controller for grade CRUD on Gradable assessments (exams, talks, oral exams).
 ```
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| Assessment::GradingController | Tutor UI, Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| Assessment::GradesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
 | Action | Purpose |
 |--------|---------|
-| show   | Grading interface for an assessment |
-| update | Bulk update grades for multiple students |
+| update | Save grade for a single participation |
+| mark_absent | Mark participation as absent |
+| mark_exempt | Mark participation as exempt (with optional note) |
 | export | Export grades as CSV |
 | import | Import grades from CSV |
 
 ```admonish example "Responsibilities"
-- Display grading table (filterable by roster/division)
-- Bulk grade entry
-- Validate grade values (0 to max_points)
-- Calculate derived metrics (percentages, pass/fail)
+- Inline grade entry on `GradeTableComponent`
+- Bulk absent/exempt marking
+- Validate grade format/range
+- Audit tracking (`graded_by_id`, `graded_at`)
+```
+
+### `Assessment::TaskPointsController`
+
+```admonish info "Purpose"
+Single controller for all point entry on Pointable assessments
+(assignments, task-based exams). Serves both the teacher's full point
+grid and the tutorial-scoped view — authorization determines scope.
+```
+
+| Controller | Primary callers | Responses |
+|------------|------------------|-----------|
+| Assessment::TaskPointsController | Teacher/Editor UI, Tutor UI | HTML, Turbo Frames/Streams |
+
+**Actions**
+
+| Action | Purpose |
+|--------|---------|
+| index  | List task points for an assessment (supports `?tutorial_id=` filter; tutors auto-scoped to own tutorial) |
+| update | Save points for a single task/participation cell |
+| update_team | Save points for one team (fan-out to individual TaskPoints via `TeamGradingService`) |
+
+```admonish example "Responsibilities"
+- Inline point entry on `PointGridComponent`
+- Tutorial-scoped view with team-based table, progress tracking, filters
+- Recalculate `participation.points_total` on save
+- Team grading via `Assessment::TeamGradingService`
+- For Pointable+Gradable (exams): optionally trigger grade scheme calculation
+- Authorization: teachers see all students; tutors scoped to own tutorial
 ```
 
 ### `Assessment::ParticipationsController`
@@ -400,9 +431,35 @@ Generate eligibility proposals using the Evaluator service.
 - **Does not create Certifications** - only generates proposals for teacher review
 ```
 
+### `StudentPerformance::RulesController`
+
+```admonish info "Purpose"
+Display and manage eligibility rules for a lecture (PR 10.3: read-only, PR 10.4: edit/update).
+```
+
+| Controller | Primary callers | Responses |
+|------------|------------------|-----------|
+| StudentPerformance::RulesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+
+**Actions**
+
+| Action | Purpose | PR |
+|--------|---------|-----|
+| show   | Display current eligibility rules (read-only) | 10.3 |
+| edit   | Rule editing form | 10.4 |
+| update | Save modified rules, trigger re-evaluation preview | 10.4 |
+
+```admonish example "Responsibilities"
+- Render current rule configuration for a lecture
+- Show which assignments count, thresholds, bonus rules
+- (PR 10.4) Provide editing form for rule parameters
+- (PR 10.4) Validate rule changes and save
+- (PR 10.4) Integrate with EvaluatorController preview on rule change
+```
+
 ## Grade Scheme Controllers
 
-### `GradeScheme::SchemesController`
+### `Assessment::GradeSchemesController`
 
 ```admonish info "Purpose"
 Configure grading schemes for courses.
@@ -410,7 +467,7 @@ Configure grading schemes for courses.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| GradeScheme::SchemesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| Assessment::GradeSchemesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 

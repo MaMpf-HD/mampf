@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe(Lecture, type: :model) do
+  describe "Rosters::Rosterable" do
+    it_behaves_like "a rosterable model"
+  end
+
   it "has a valid factory" do
     expect(FactoryBot.build(:lecture)).to be_valid
   end
@@ -233,7 +237,7 @@ RSpec.describe(Lecture, type: :model) do
 
     it "can create a registration_campaign" do
       campaign = lecture.registration_campaigns.create(
-        title: "Test Campaign",
+        description: "Test Campaign",
         allocation_mode: :first_come_first_served,
         status: :draft,
         registration_deadline: 1.week.from_now
@@ -244,9 +248,27 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
-  describe "Registration::Registerable" do
-    subject { FactoryBot.create(:lecture) }
+  describe "#ensure_roster_membership!" do
+    let(:lecture) { create(:lecture) }
+    let(:users) { create_list(:confirmed_user, 3) }
 
-    it_behaves_like "a registerable model"
+    it "adds users to the roster" do
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureMembership, :count).by(3)
+
+      expect(lecture.members).to include(*users)
+    end
+
+    it "respects idempotency (does not duplicate or screw up)" do
+      lecture.ensure_roster_membership!([users.first.id])
+
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureMembership, :count).by(2) # Only 2 new ones
+
+      expect(lecture.members).to include(*users)
+      expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
+    end
   end
 end

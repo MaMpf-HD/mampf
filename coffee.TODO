@@ -102,7 +102,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 6 ./app/views/media/new.coffee
 6 ./app/views/remarks/update.coffee
 6 ./app/views/submissions/move.coffee
-6 ./app/views/terms/edit.coffee
 
 7 ./app/views/assignments/destroy.coffee
 7 ./app/views/chapters/new.coffee
@@ -117,7 +116,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 8 ./app/views/submissions/cancel_new.coffee
 8 ./app/views/submissions/destroy.coffee
 8 ./app/views/submissions/leave.coffee
-8 ./app/views/terms/new.coffee
 
 9 ./app/views/lectures/import_media.coffee
 9 ./app/views/profile/unstar_lecture.coffee
@@ -130,11 +128,9 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 10 ./app/views/readers/update.coffee
 10 ./app/views/submissions/edit_correction.coffee
 10 ./app/views/talks/create.coffee
-10 ./app/views/terms/cancel.coffee
 11 ./app/views/chapters/_edit.coffee
 11 ./app/views/media/add_item.coffee
 11 ./app/views/profile/star_lecture.coffee
-11 ./app/views/terms/update.coffee
 12 ./app/views/referrals/edit.coffee
 12 ./app/views/sections/update.coffee
 12 ./app/views/talks/new.coffee
@@ -158,7 +154,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 19 ./app/views/lectures/update.coffee
 19 ./app/views/profile/unsubscribe_lecture.coffee
 
-20 ./app/assets/javascripts/terms.coffee
 20 ./app/views/courses/update.coffee
 21 ./app/views/media/render_import_media.coffee
 21 ./app/views/submissions/enter_invitees.coffee

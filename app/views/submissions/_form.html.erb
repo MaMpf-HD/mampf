@@ -50,7 +50,6 @@
                          class: 'form-control-file',
                          id: 'upload-userManuscript',
                          "data-cy": "choose-user-submission-file",
-                         multiple: assignment.accepted_file_type == '.pdf',
                          accept: assignment.accepted_for_file_input %>
         <%= f.hidden_field :detach_user_manuscript,
                            value: false %>
@@ -101,54 +100,6 @@
              id="file-size-way-too-big">
           <i class="fas fa-bomb"></i>
           <%=t('submission.file_size_way_too_big')%>
-        </div>
-        <div class="col-12 submission-initially-hidden"
-             id="files-merge">
-          <small id="merging-help-text">
-            <%= t("submission.merging_help_html")%>
-            <%= helpdesk(t('submission.merging_info'), true)%>
-          </small>
-          <div class="col-12 my-1">
-            <button id="userManuscript-merge-btn"
-                    class="btn btn-sm btn-primary"
-                    data-tr-working="<%= t('submission.working')%>"
-                    data-tr-failed="<%= t('submission.merging_failed')%>"
-            >
-              <%= t('submission.merge') %>
-            </button>
-          </div>
-          <div class="col-12">
-            <span id="log-merge-btn" class="badge text-dark lecture-tag clickable">
-              <%=t('submission.optimization_log')%>
-            </span>
-            <div id="userManuscript-merge-log"
-                 class="submission-initially-hidden border bg-light p-2">
-            </div>
-          </div>
-        </div>
-        <div class="col-12 submission-initially-hidden"
-             id="file-optimize">
-          <small id="optimization-help-text">
-            <%= t("submission.optimization_help_html")%>
-            <%= helpdesk(t('submission.optimization_info'), true)%>
-          </small>
-          <div class="col-12 my-1">
-            <button id="userManuscript-optimize-btn"
-                    class="btn btn-sm btn-primary"
-                    data-tr-working="<%= t('submission.working')%>"
-                    data-tr-failed="<%= t('submission.optimization_failed')%>"
-            >
-              <%= t('submission.optimize') %>
-            </button>
-          </div>
-          <div class="col-12">
-            <span id="log-btn" class="badge text-dark lecture-tag clickable">
-              <%=t('submission.optimization_log')%>
-            </span>
-            <div id="userManuscript-optimize-log"
-                 class="submission-initially-hidden border bg-light p-2">
-            </div>
-          </div>
         </div>
         <div class="col-12 my-1" id="file-permission-field">
           <div class="form-check">

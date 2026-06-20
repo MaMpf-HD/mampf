@@ -7,6 +7,13 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => "/sidekiq"
   end
 
+  if Rails.env.development?
+    namespace :dev do
+      post "impersonate/:id", to: "impersonate#create", as: :impersonate
+      post "teacher_login", to: "teacher_sessions#create", as: :teacher_login
+    end
+  end
+
   if Rails.env.test?
     namespace :cypress do
       resources :factories, only: :create
@@ -19,6 +26,8 @@ Rails.application.routes.draw do
       resources :user_creator_playwright, only: :create
       resources :mails_playwright, only: :create
       resources :i18n, only: :create
+      post "feature_flags/enable", to: "feature_flags#enable"
+      post "feature_flags/disable", to: "feature_flags#disable"
       post "timecop/travel", to: "timecop#travel"
       post "timecop/reset", to: "timecop#reset"
     end
@@ -283,7 +292,86 @@ Rails.application.routes.draw do
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  resources :lectures, except: [:index]
+  resources :lectures, except: [:index] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#index"
+      get "roster/participants", to: "roster/maintenance#participants"
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Lecture" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :roster_update_self_materialization
+          patch "bulk_self_materialization", action: :bulk_update_self_materialization,
+                                             as: :roster_bulk_update_self_materialization
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+      end
+    end
+
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      resources :campaigns,
+                controller: "registration/campaigns",
+                only: [:index, :new, :create],
+                as: :registration_campaigns
+    end
+
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      resources :registration, only: [:index],
+                               controller: "registration/user_registrations",
+                               as: :user_registrations,
+                               defaults: { project: "registration" }
+    end
+  end
+
+  constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+    resources :campaigns,
+              controller: "registration/campaigns",
+              only: [:show, :edit, :update, :destroy],
+              as: :registration_campaigns do
+      member do
+        patch :open
+        patch :close
+        patch :reopen
+        get :rejected
+        get :unassigned
+      end
+      resource :allocation,
+               controller: "registration/allocations",
+               only: [:show, :create] do
+        patch :finalize
+      end
+      resources :policies,
+                controller: "registration/policies",
+                only: [:new, :create, :edit, :update, :destroy] do
+        collection do
+          patch :reorder
+        end
+        member do
+          patch :move_up
+          patch :move_down
+        end
+      end
+
+      resources :items,
+                controller: "registration/items",
+                only: [:create, :destroy, :update] do
+        member do
+          get :roster
+        end
+      end
+
+      resources :registrations,
+                controller: "registration/user_registrations",
+                only: [] do
+        collection do
+          delete "user/:user_id/reject", to: "registration/user_registrations#reject_for_user",
+                                         as: :reject_for_user
+        end
+      end
+    end
+  end
 
   # lessons routes
 
@@ -757,7 +845,25 @@ Rails.application.routes.draw do
        to: "talks#modify",
        as: "modify_talk"
 
-  resources :talks, except: [:index]
+  resources :talks, except: [:index] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Talk" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Talk" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :update_self_materialization
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Talk" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
+      end
+    end
+  end
 
   # tutorials routes
 
@@ -789,7 +895,47 @@ Rails.application.routes.draw do
       to: "tutorials#export_teams",
       as: "export_teams_to_csv"
 
-  resources :tutorials, only: [:new, :edit, :create, :update, :destroy]
+  resources :tutorials, only: [:new, :edit, :create, :update, :destroy] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Tutorial" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Tutorial" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :update_self_materialization
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Tutorial" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
+      end
+    end
+  end
+
+  # cohorts routes
+
+  resources :cohorts, only: [:new, :create, :edit, :update, :destroy] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Cohort" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Cohort" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :update_self_materialization
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Cohort" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
+      end
+    end
+  end
 
   # sections routes
 
@@ -800,10 +946,6 @@ Rails.application.routes.draw do
   resources :sections, except: [:index]
 
   # terms routes
-
-  get "terms/cancel_term_edit",
-      to: "terms#cancel",
-      as: "cancel_term_edit"
 
   post "terms/set_active_term",
        to: "terms#set_active",
@@ -879,6 +1021,22 @@ Rails.application.routes.draw do
   resources :watchlists
 
   resources :watchlist_entries
+
+  # registration routes
+  scope module: "registration", path: "" do
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      post "campaign_registrations/:campaign_id/items/:item_id/register",
+           to: "user_registrations#create",
+           as: :register_item
+      delete "campaign_registrations/:campaign_id/items/:item_id/withdraw",
+             to: "user_registrations#destroy",
+             as: :withdraw_item
+
+      post "campaign_registrations/:campaign_id/preferences",
+           to: "user_registrations#save_preferences",
+           as: :save_preferences
+    end
+  end
 
   # main routes
 

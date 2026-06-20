@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_14_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -138,6 +138,34 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.datetime "updated_at", null: false
     t.index ["claimable_type", "claimable_id"], name: "index_claims_on_claimable"
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
+  end
+
+  create_table "cohort_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "cohort_id", null: false
+    t.uuid "source_campaign_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cohort_id"], name: "index_cohort_memberships_on_cohort_id"
+    t.index ["source_campaign_id"], name: "index_cohort_memberships_on_source_campaign_id"
+    t.index ["user_id", "cohort_id"], name: "index_cohort_memberships_on_user_id_and_cohort_id", unique: true
+    t.index ["user_id"], name: "index_cohort_memberships_on_user_id"
+  end
+
+  create_table "cohorts", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description"
+    t.integer "capacity"
+    t.string "context_type", null: false
+    t.bigint "context_id", null: false
+    t.boolean "propagate_to_lecture", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "skip_campaigns", default: false, null: false
+    t.integer "self_materialization_mode", default: 0, null: false
+    t.index ["context_type", "context_id", "title"], name: "index_cohorts_on_context_and_title_unique", unique: true
+    t.index ["context_type", "context_id"], name: "index_cohorts_on_context"
+    t.index ["self_materialization_mode"], name: "index_cohorts_on_self_materialization_mode"
   end
 
   create_table "commontator_comments", force: :cascade do |t|
@@ -284,6 +312,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.index ["user_id"], name: "index_feedbacks_on_user_id"
   end
 
+  create_table "flipper_features", force: :cascade do |t|
+    t.string "key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_flipper_features_on_key", unique: true
+  end
+
+  create_table "flipper_gates", force: :cascade do |t|
+    t.string "feature_key", null: false
+    t.string "key", null: false
+    t.text "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
@@ -333,11 +377,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.index ["section_id"], name: "index_items_on_section_id"
   end
 
+  create_table "lecture_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "lecture_id", null: false
+    t.uuid "source_campaign_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_lecture_memberships_on_lecture_id"
+    t.index ["source_campaign_id"], name: "index_lecture_memberships_on_source_campaign_id"
+    t.index ["user_id", "lecture_id"], name: "index_lecture_memberships_on_user_id_and_lecture_id", unique: true
+    t.index ["user_id"], name: "index_lecture_memberships_on_user_id"
+  end
+
   create_table "lecture_user_joins", force: :cascade do |t|
-    t.bigint "lecture_id"
-    t.bigint "user_id"
+    t.bigint "lecture_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.index ["lecture_id", "user_id"], name: "index_lecture_user_joins_on_lecture_id_and_user_id", unique: true
     t.index ["lecture_id"], name: "index_lecture_user_joins_on_lecture_id"
     t.index ["user_id"], name: "index_lecture_user_joins_on_user_id"
   end
@@ -367,7 +424,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
-    t.integer "capacity"
+    t.integer "self_materialization_mode", default: 0, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -548,13 +605,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
   create_table "registration_campaigns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "campaignable_type", null: false
     t.bigint "campaignable_id", null: false
-    t.string "title", null: false
+    t.string "description"
     t.integer "allocation_mode", default: 0, null: false
     t.integer "status", default: 0, null: false
-    t.boolean "planning_only", default: false, null: false
     t.datetime "registration_deadline", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_allocation_calculated_at"
+    t.datetime "allocation_decided_at"
     t.index ["allocation_mode"], name: "index_registration_campaigns_on_allocation_mode"
     t.index ["campaignable_type", "campaignable_id"], name: "index_registration_campaigns_on_campaignable"
     t.index ["status"], name: "index_registration_campaigns_on_status"
@@ -566,8 +624,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "registration_campaign_id", null: false
-    t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_registerable"
-    t.index ["registration_campaign_id", "registerable_type", "registerable_id"], name: "index_registration_items_uniqueness", unique: true
+    t.integer "confirmed_registrations_count", default: 0, null: false
+    t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_registerable", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end
 
@@ -583,7 +641,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.index ["active"], name: "index_registration_policies_on_active"
     t.index ["kind"], name: "index_registration_policies_on_kind"
     t.index ["phase"], name: "index_registration_policies_on_phase"
-    t.index ["registration_campaign_id", "position"], name: "index_registration_policies_uniqueness", unique: true
+    t.index ["registration_campaign_id", "position"], name: "index_registration_policies_position"
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
@@ -595,10 +653,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.datetime "updated_at", null: false
     t.uuid "registration_campaign_id", null: false
     t.uuid "registration_item_id", null: false
+    t.datetime "materialized_at"
+    t.boolean "exclusive_assignment", default: false, null: false
+    t.string "rejection_reason_type"
+    t.string "rejection_reason_code"
+    t.string "rejection_reason_label"
+    t.datetime "rejected_at"
+    t.datetime "rejection_overridden_at"
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
-    t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_unranked", unique: true, where: "(preference_rank IS NULL)"
+    t.index ["registration_campaign_id", "user_id", "registration_item_id"], name: "index_reg_user_regs_unique_item_user", unique: true
+    t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_exclusive_assignment_unranked", unique: true, where: "((exclusive_assignment = true) AND (preference_rank IS NULL))"
     t.index ["registration_campaign_id"], name: "index_reg_user_regs_on_campaign_id"
     t.index ["registration_item_id"], name: "index_registration_user_registrations_on_registration_item_id"
+    t.index ["rejection_overridden_at"], name: "index_reg_user_regs_on_rejection_overridden_at"
     t.index ["status"], name: "index_registration_user_registrations_on_status"
     t.index ["user_id"], name: "index_registration_user_registrations_on_user_id"
   end
@@ -642,7 +709,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.bigint "speaker_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "source_campaign_id"
+    t.index ["source_campaign_id"], name: "index_speaker_talk_joins_on_source_campaign_id"
     t.index ["speaker_id"], name: "index_speaker_talk_joins_on_speaker_id"
+    t.index ["talk_id", "speaker_id"], name: "index_speaker_talk_joins_on_talk_id_and_speaker_id", unique: true
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
   end
 
@@ -702,7 +772,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.text "description"
     t.boolean "display_description", default: false
     t.integer "capacity"
+    t.boolean "skip_campaigns", default: false, null: false
+    t.integer "self_materialization_mode", default: 0, null: false
     t.index ["lecture_id"], name: "index_talks_on_lecture_id"
+    t.index ["self_materialization_mode"], name: "index_talks_on_self_materialization_mode"
   end
 
   create_table "terms", force: :cascade do |t|
@@ -954,16 +1027,36 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["tutor_id"], name: "index_tutor_tutorial_joins_on_tutor_id"
+    t.index ["tutorial_id", "tutor_id"], name: "index_tutor_tutorial_joins_on_tutorial_id_and_tutor_id", unique: true
     t.index ["tutorial_id"], name: "index_tutor_tutorial_joins_on_tutorial_id"
   end
 
+  create_table "tutorial_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "tutorial_id", null: false
+    t.uuid "source_campaign_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "lecture_id", null: false
+    t.index ["source_campaign_id"], name: "index_tutorial_memberships_on_source_campaign_id"
+    t.index ["tutorial_id"], name: "index_tutorial_memberships_on_tutorial_id"
+    t.index ["user_id", "lecture_id"], name: "index_tutorial_memberships_on_user_id_and_lecture_id", unique: true
+    t.index ["user_id", "tutorial_id"], name: "index_tutorial_memberships_on_user_id_and_tutorial_id", unique: true
+    t.index ["user_id"], name: "index_tutorial_memberships_on_user_id"
+  end
+
   create_table "tutorials", force: :cascade do |t|
-    t.text "title"
+    t.text "title", null: false
     t.bigint "lecture_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "capacity"
+    t.boolean "skip_campaigns", default: false, null: false
+    t.integer "self_materialization_mode", default: 0, null: false
+    t.string "location"
+    t.index ["lecture_id", "title"], name: "index_tutorials_on_lecture_id_and_title_unique", unique: true
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
+    t.index ["self_materialization_mode"], name: "index_tutorials_on_self_materialization_mode"
   end
 
   create_table "user_favorite_lecture_joins", force: :cascade do |t|
@@ -1214,6 +1307,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assignments", "lectures"
   add_foreign_key "claims", "redemptions"
+  add_foreign_key "cohort_memberships", "cohorts"
+  add_foreign_key "cohort_memberships", "registration_campaigns", column: "source_campaign_id"
+  add_foreign_key "cohort_memberships", "users"
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
@@ -1223,6 +1319,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
+  add_foreign_key "lecture_memberships", "lectures"
+  add_foreign_key "lecture_memberships", "registration_campaigns", column: "source_campaign_id"
+  add_foreign_key "lecture_memberships", "users"
   add_foreign_key "lecture_user_joins", "lectures"
   add_foreign_key "lecture_user_joins", "users"
   add_foreign_key "links", "media"
@@ -1241,6 +1340,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
   add_foreign_key "registration_user_registrations", "registration_campaigns"
   add_foreign_key "registration_user_registrations", "registration_items"
   add_foreign_key "registration_user_registrations", "users"
+  add_foreign_key "speaker_talk_joins", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
   add_foreign_key "submissions", "assignments"
@@ -1254,6 +1354,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_000000) do
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
   add_foreign_key "tutor_tutorial_joins", "tutorials"
   add_foreign_key "tutor_tutorial_joins", "users", column: "tutor_id"
+  add_foreign_key "tutorial_memberships", "lectures"
+  add_foreign_key "tutorial_memberships", "registration_campaigns", column: "source_campaign_id"
+  add_foreign_key "tutorial_memberships", "tutorials"
+  add_foreign_key "tutorial_memberships", "users"
   add_foreign_key "tutorials", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"

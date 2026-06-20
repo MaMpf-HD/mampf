@@ -2,7 +2,7 @@
 class Lecture < ApplicationRecord
   include ApplicationHelper
   include Registration::Campaignable
-  include Registration::Registerable
+  include Rosters::Rosterable
 
   belongs_to :course
 
@@ -60,6 +60,10 @@ class Lecture < ApplicationRecord
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, -> { distinct }, through: :lecture_user_joins
 
+  # Roster associations
+  has_many :lecture_memberships, dependent: :destroy
+  has_many :members, through: :lecture_memberships, source: :user
+
   # a lecture has many users who have starred it (fans)
   has_many :user_favorite_lecture_joins, dependent: :destroy
   has_many :fans, -> { distinct }, through: :user_favorite_lecture_joins,
@@ -85,6 +89,8 @@ class Lecture < ApplicationRecord
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
+
+  has_many :cohorts, as: :context, dependent: :destroy
 
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
@@ -206,6 +212,10 @@ class Lecture < ApplicationRecord
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
       short_title
     end
+  end
+
+  def registration_title
+    title_for_viewers
   end
 
   def locale_with_inheritance
@@ -784,6 +794,26 @@ class Lecture < ApplicationRecord
     touch
   end
 
+  def ensure_roster_membership!(user_ids)
+    # Efficiently insert missing memberships (ignoring duplicates)
+    # Note: Requires a unique index on [:user_id, :lecture_id]
+    attributes = user_ids.map do |uid|
+      { user_id: uid, lecture_id: id }
+    end
+
+    return if attributes.empty?
+
+    # Rails handles timestamps automatically.
+    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
+    # created_at/updated_at for existing members.
+    # rubocop:disable Rails/SkipsModelValidations
+    LectureMembership.insert_all(
+      attributes,
+      unique_by: [:user_id, :lecture_id]
+    )
+    # rubocop:enable Rails/SkipsModelValidations
+  end
+
   def eligible_as_tutors
     (tutors + Redemption.tutors_by_redemption_in(self) + editors + [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
@@ -831,6 +861,10 @@ class Lecture < ApplicationRecord
 
   def vignettes?
     vignettes_questionnaires.any?
+  end
+
+  def roster_entries
+    lecture_memberships
   end
 
   private

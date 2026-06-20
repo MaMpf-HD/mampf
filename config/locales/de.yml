@@ -7,13 +7,6 @@ de:
       previous: "&lsaquo; Vorige"
       next: "Nächste &rsaquo;"
       truncate: "Abkürzen"
-  activerecord:
-    errors:
-      models:
-        lecture:
-          attributes:
-            teacher:
-              required: "Es muss ein(e) Dozent(in) angegeben werden."
   categories:
     lesson_material:
       singular: 'Lektion'
@@ -27,6 +20,9 @@ de:
     script:
       singular: 'Skript'
       short: 'Skr'
+    enrollment:
+      singular: 'Einschreibung'
+      short: 'ESch'
     worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
@@ -693,7 +689,7 @@ de:
         comments_disabled: >
           Standardmäßig sind Kommentare für neu veröffentlichte Medien erlaubt,
           Du kannst bei der Veröffentlichung aber Kommentare deaktivieren.
-          Hier kannst Du dises Verhaltenb umdrehen.
+          Hier kannst Du dieses Verhalten umdrehen.
         disable_teacher_display: >
           Wenn Du dieses Feld aktivierst, wird auf der Vorlesungs-Karten auf der
           Startseite und auf der Vorlesungsseite für generische Nutzer
@@ -2782,6 +2778,7 @@ de:
   time:
     formats:
       concise: '%d.%m.%Y'
+      student_registration: '%-d. %B, %Hh%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
     last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
   thyme:
@@ -2857,6 +2854,10 @@ de:
   announcements: 'Ankündigungen'
   main:
     media_platform: Mathematische Medienplattform der Universität Heidelberg
+    non_mampf_login_notice_html: >
+      Dies ist eine Testumgebung von MaMpf.
+      Deine Login-Daten funktionieren hier nicht.
+      Bitte nutze stattdessen die echte MaMpf-Website: %{app_link}
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'
@@ -2960,7 +2961,7 @@ de:
       ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
     file_size_too_big: Die Datei ist eigentlich zu groß, kann aber hochgeladen werden.
-    file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
+    file_size_way_too_big: Die Dateigröße überschreitet das Limit. Bitte verkleinere sie außerhalb von MaMpf und lade die kleinere Datei hoch.
     optimization_help_html: >
       <b>Optimieren:</b> Verwende diesen Knopf, um automatisch
       im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten. Wir
@@ -3459,8 +3460,13 @@ de:
     count: 'Anzahl'
     plays: 'Aufrufe'
   basics:
+    clear: "Löschen"
+    close: "Schließen"
+    capacity: 'Kapazität'
     division: 'Teilbereich'
+    location: 'Ort'
     error: Fehler
+    edit: "Bearbeiten"
     course: 'Modul'
     courses: 'Module'
     term: 'Semester'
@@ -3480,6 +3486,9 @@ de:
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
     mail_noun: 'E-Mail'
+    seats: 'Plätze'
+    add: 'Hinzufügen'
+    name: 'Name'
     email: 'E-Mail'
     preferences: 'Einstellungen'
     language: 'Sprache'
@@ -3495,7 +3504,9 @@ de:
     lessons: 'Sitzungen'
     details: 'Details'
     select: 'auswählen'
+    confirm: 'Sind Sie sicher?'
     basics: 'Basisdaten'
+    participants: 'Teilnehmende'
     action: 'Aktion'
     actions: 'Aktionen'
     search: 'Suche'
@@ -3579,11 +3590,14 @@ de:
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
     answer_count: 'Anzahl der Antworten'
+    item_count: '%{count} Einträge'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'
     parametrized: 'parametrisiert'
     synonyms: 'Synonyme'
+    details: 'Details'
+    settings: 'Einstellungen'
     status: 'Status'
     sponsors: 'Gefördert durch'
     since: 'seit'
@@ -3653,6 +3667,28 @@ de:
     voucher_for: Gutschein für %{role}
     speaker: Vortragender
     speakers: Vortragende
+    mode: "Zuteilungsmodus"
+    capacity: "Kapazität"
+    seats: "Sitze"
+    filled: "belegt"
+    across_group: "über die Gruppe hinweg"
+    closes: "Schließt"
+    passed: "Bestanden"
+    failed: "Nicht bestanden"
+    select_type: "Wählen Sie Präferenzen"
+    saved_at: "Gespeichert %{time}"
+    last_saved_at: "Zuletzt gespeichert %{time}"
+    available: "Verfügbar"
+    full: "Ausgebucht"
+    position: "Position"
+    room: "Raum"
+    confirmed: "Bestätigt"
+    rejected: Abgelehnt
+    pending: "Ausstehend"
+    assigned: "Zugewiesen"
+    dismissed: "Abgelehnt"
+    unlimited: unbegrenzt
+    personnel: Personal
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -3662,6 +3698,10 @@ de:
     referenced_from: 'referenziert in'
     irrelevant: 'egal'
   buttons:
+    create_tutorial: 'Tutorium erstellen'
+    edit_tutorial: 'Tutorium bearbeiten'
+    create_cohort: 'Gruppe erstellen'
+    edit_cohort: 'Gruppe bearbeiten'
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
@@ -3669,6 +3709,9 @@ de:
     discard_changes: "Änderungen verwerfen"
     cancel: 'Abbrechen'
     delete: 'Löschen'
+    add: 'Hinzufügen'
+    move_up: 'Nach oben'
+    move_down: 'Nach unten'
     publish: 'Veröffentlichen'
     parent_course: 'zum Modul'
     parent_lecture: 'zur Veranstaltung'
@@ -3765,6 +3808,10 @@ de:
     verify_voucher: 'Gutschein prüfen'
     edit_talk: 'Vortrag bearbeiten'
     invalidate: 'Für ungültig erklären'
+    self_register_talk: Für diesen Vortrag anmelden
+    self_remove_talk: Von diesem Vortrag abmelden
+    add_to_list: Zur Liste hinzufügen
+    remove_from_list: Aus der Liste entfernen
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -3772,6 +3819,7 @@ de:
       Achtung, es gibt ungespeicherte Änderungen!
   confirmation:
     generic: 'Bist Du sicher?'
+    delete_talk: 'Bist Du sicher, dass Du diesen Vortrag löschen möchtest?'
     delete_graph: >
       Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
       nicht das Medium.
@@ -3873,6 +3921,7 @@ de:
     no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
     no_division: 'Ein Teilbereich mit der angeforderten id existiert nicht.'
     no_tutorial: 'Ein Tutorium mit der angeforderten id existiert nicht.'
+    no_cohort: 'Eine Gruppe mit der angeforderten id existiert nicht.'
     no_submission: Eine Abgabe mit der angeforderten id existiert nicht.
     no_assignment: Eine Hausaufgabe mit der angeforderten id existiert nicht.
     no_lecture_given: Es wurde keine oder eine ungültige Vorlesung angegeben.
@@ -3894,11 +3943,26 @@ de:
     become_teacher_success: 'Dein DozentInnenstatus wurde geupdatet.'
     become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
     tutorials:
+      created: 'Tutorium erfolgreich erstellt.'
+      updated: 'Tutorium erfolgreich aktualisiert.'
+      destroyed: 'Tutorium erfolgreich gelöscht.'
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,
         dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen wurden.
       bulk_download_failed: >
         Es gab ein Problem beim Erstellen der Zip-Datei: %{message}
+      errors:
+        cannot_delete_with_submissions: 'Kann nicht gelöscht werden, da Abgaben existieren.'
+    cohorts:
+      created: 'Gruppe erfolgreich erstellt.'
+      updated: 'Gruppe erfolgreich aktualisiert.'
+      destroyed: 'Gruppe erfolgreich gelöscht.'
+      destruction_failed: 'Gruppe konnte nicht gelöscht werden.'
+    talks:
+      created: 'Vortrag erfolgreich erstellt.'
+      updated: 'Vortrag erfolgreich aktualisiert.'
+      destroyed: 'Vortrag erfolgreich gelöscht.'
+      destruction_failed: 'Vortrag konnte nicht gelöscht werden.'
     assignments:
       destruction_failed: >
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
@@ -3927,6 +3991,16 @@ de:
       Das MaMpf-Team hat eine Benachrichtigung über diesen Bug erhalten, wir
       werden versuchen, ihn so schnell wie möglich zu beheben.
   activerecord:
+    models:
+      tutorial:
+        one: Tutorium
+        other: Tutorien
+      talk:
+        one: Vortrag
+        other: Vorträge
+      cohort:
+        one: Gruppe
+        other: Gruppen
     errors:
       no_valid_url: 'Das ist keine gültige URL.'
       models:
@@ -3954,7 +4028,7 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
-        course:
+        cohort:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
@@ -4087,6 +4161,8 @@ de:
               invalid: 'Die Angaben sind ungültig.'
         talk:
           attributes:
+            lecture:
+              must_be_seminar: "Vorträge können nur für Seminare erstellt werden."
             title:
               blank: Es muss ein Titel angegeben werden.
         term:
@@ -4098,12 +4174,24 @@ de:
               taken: 'Dieses Semester existiert bereits.'
         tutorial:
           attributes:
+            lecture:
+              must_not_be_seminar: "Tutorien können nicht für Seminare erstellt werden."
+            lecture_id:
+              immutable: kann nach dem Erstellen des Tutoriums nicht mehr geändert werden.
             title:
               taken: >
                 Dieser Tutoriumstitel ist für diese Veranstaltung bereits
                 vergeben.
               blank: >
                 Es muss ein Titel angegeben werden.
+        tutorial_membership:
+          attributes:
+            base:
+              already_in_lecture_tutorial: >
+                Es existiert bereits eine Zuordnung zu einem Tutorium in dieser
+                Veranstaltung.
+            lecture:
+              does_not_match_tutorial: stimmt nicht mit der Veranstaltung des Tutoriums überein.
         user:
           attributes:
             courses:
