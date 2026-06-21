@@ -99,7 +99,7 @@ test.describe("campaign registration", () => {
 
     await expect(student.page.getByText("Registration unavailable")).toBeVisible();
     await expect(student.page.getByText(
-      "Your email address does not match the required institutional domain (example.com).",
+      "Your current email domain is play, but this registration process requires example.com",
     )).toBeVisible();
     await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
   });
