@@ -1,4 +1,13 @@
 <% group_type ||= :all %>
+<% roster_params = { group_type: group_type } %>
+<% selected_section =
+     RegistrationCampaignsCardBodyIndexComponent.normalize_registration_section(
+     params[:registration_section]
+   ) %>
+<% if selected_section.present? %>
+  <% roster_params[:registration_section] = selected_section %>
+<% end %>
+
 <div class="col-12">
     <div class="alert alert-warning d-flex align-items-start mb-3"
        role="alert">
@@ -8,7 +17,7 @@
   </div>
 
   <%= turbo_frame_tag roster_maintenance_frame_id(group_type),
-                      src: lecture_roster_path(lecture, group_type: group_type),
+                      src: lecture_roster_path(lecture, roster_params),
                       loading: "lazy" do %>
     <div class="text-center my-5">
       <div class="spinner-border" role="status">

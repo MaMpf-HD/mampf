@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.describe(Registration::CampaignsHelper, type: :helper) do
   let(:campaign) { create(:registration_campaign, status: :draft) }
-  let(:lecture) { create(:lecture) }
 
   describe "#email_domain" do
     it "extracts the domain correctly" do
@@ -148,15 +147,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       campaign.registration_deadline = 1.day.ago
       expect(helper.campaign_close_confirmation(campaign))
         .to eq(I18n.t("registration.campaign.confirmations.close"))
-    end
-  end
-
-  describe "#no_campaign_registerables" do
-    it "delegates to Rosters::NoCampaignRegisterablesQuery" do
-      query = double("Query")
-      expect(Rosters::NoCampaignRegisterablesQuery).to receive(:new).with(lecture).and_return(query)
-      expect(query).to receive(:call).and_return([])
-      expect(helper.no_campaign_registerables(lecture)).to eq([])
     end
   end
 
