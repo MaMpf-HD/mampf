@@ -47,6 +47,7 @@
     "rubyLsp.rubyVersionManager": {
         "identifier": "none"
     },
+    "rubyLsp.customRubyCommand": "export PATH=/usr/local/bin:$PATH",
     "rubyLsp.rubyExecutablePath": "/usr/local/bin/ruby",
     "rubyLsp.enabledFeatures": {
         "codeActions": true,
