@@ -147,8 +147,7 @@ de:
       add_only: 'Hinzufügen'
     cohorts:
       modal:
-        create_button: "Erstellen"
-        create_title: "Flexible Gruppe erstellen"
+        create_title: "Flexible Gruppe anlegen"
         edit_title: "Flexible Gruppe bearbeiten"
       kinds:
         with_enrollment: "Gruppe mit Einschreibung"
