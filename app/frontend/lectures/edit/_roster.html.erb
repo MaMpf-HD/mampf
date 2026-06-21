@@ -1,7 +1,10 @@
 <% group_type ||= :all %>
 <div class="col-12">
-  <div class="alert alert-info mb-3" role="alert">
-    <%= t("roster.banners.groups") %>
+    <div class="alert alert-info d-flex align-items-start mb-3"
+       role="alert">
+    <i class="bi bi-info-circle-fill flex-shrink-0 me-2 mt-1"
+       aria-hidden="true"></i>
+    <div><%= t("roster.banners.groups") %></div>
   </div>
 
   <%= turbo_frame_tag roster_maintenance_frame_id(group_type),
