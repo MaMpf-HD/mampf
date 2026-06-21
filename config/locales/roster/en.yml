@@ -49,6 +49,9 @@ en:
     filters:
       all: 'All'
       unassigned: 'Without group'
+    banners:
+      groups: 'MaMpf is integrating Müsli. Tutorials and groups will now be managed in this tab. Since registrations for the summer semester 2026 have not yet been carried out via MaMpf, the participant counts are currently 0, even if tutorials already exist. We recommend leaving this as is for this semester and, in particular, not starting any new registrations. Starting with winter semester 2026/27, registration for lectures and seminars can take place via MaMpf.'
+      participants: 'MaMpf is integrating Müsli. Since registrations for the summer semester 2026 have not yet been carried out via MaMpf, the participant list is empty. Starting with winter semester 2026/27, students will be able to register for lectures and seminars via MaMpf, and the participant list will fill automatically after registration.'
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
