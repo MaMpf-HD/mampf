@@ -44,6 +44,34 @@ class CardBodyIndexComponent < ViewComponent::Base
 
   private
 
+    def section_toggle(label, target_id:, expanded:)
+      helpers.button_tag(type: "button",
+                         class: "btn p-0 text-decoration-none text-reset " \
+                                "registration-campaign-section-toggle " \
+                                "d-inline-flex align-items-center gap-2",
+                         data: {
+                           bs_toggle: "collapse",
+                           bs_target: "##{target_id}"
+                         },
+                         aria: {
+                           expanded: expanded.to_s,
+                           controls: target_id
+                         }) do
+        helpers.safe_join([
+                            helpers.tag.span(
+                              label,
+                              class: "registration-campaign-ghost-label " \
+                                     "text-muted fw-semibold"
+                            ),
+                            helpers.tag.i(
+                              class: "bi bi-chevron-down " \
+                                     "registration-campaign-section-toggle-icon",
+                              aria: { hidden: true }
+                            )
+                          ])
+      end
+    end
+
     def campaigns
       @campaigns ||= lecture.registration_campaigns.order(created_at: :desc).to_a
     end

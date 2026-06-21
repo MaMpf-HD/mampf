@@ -38,7 +38,7 @@
             data-testid="registration-campaign-section"
           >
             <div class="d-flex align-items-center gap-2">
-              <%= helpers.section_toggle(
+              <%= section_toggle(
                   t("registration.campaign.index.sections.registration"),
                   target_id: campaign_section_id,
                   expanded: !collapse_campaign_section?
@@ -71,7 +71,7 @@
 
         <% if collapse_no_campaign_section? %>
           <div class="d-flex align-items-center gap-2">
-            <%= helpers.section_toggle(
+            <%= section_toggle(
                 t("registration.campaign.index.sections.no_campaign"),
                 target_id: no_campaign_section_id,
                 expanded: false
