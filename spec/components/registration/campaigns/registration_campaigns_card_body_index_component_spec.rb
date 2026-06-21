@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(CardBodyIndexComponent, type: :component) do
+RSpec.describe(RegistrationCampaignsCardBodyIndexComponent, type: :component) do
   describe ".normalize_registration_section" do
     it "keeps supported registration sections" do
       expect(described_class.normalize_registration_section("campaign"))

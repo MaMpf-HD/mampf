@@ -1,6 +1,7 @@
 <% group_type ||= :all %>
 <% roster_params = { group_type: group_type } %>
-<% selected_section = CardBodyIndexComponent.normalize_registration_section(
+<% selected_section =
+     RegistrationCampaignsCardBodyIndexComponent.normalize_registration_section(
      params[:registration_section]
    ) %>
 <% if selected_section.present? %>

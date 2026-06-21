@@ -1,4 +1,4 @@
-class CardBodyIndexComponent < ViewComponent::Base
+class RegistrationCampaignsCardBodyIndexComponent < ViewComponent::Base
   attr_reader :lecture, :new_campaign, :selected_section
 
   def self.normalize_registration_section(section)
