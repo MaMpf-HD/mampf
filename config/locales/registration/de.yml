@@ -46,7 +46,7 @@ de:
           registration: "Anmeldeverfahren"
           no_campaign: "Ohne Anmeldeverfahren"
         choice:
-          question: "Für Tutorien: benötigst Du ein Anmeldeverfahren?"
+          question: "Benötigst Du ein Anmeldeverfahren?"
           hint: >-
             Wenn Du unsicher bist, empfehlen wir Dir ein Anmeldeverfahren.
             Damit kannst Du ein klares Registrierungsfenster festlegen, die

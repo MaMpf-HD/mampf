@@ -46,7 +46,7 @@ en:
           registration: "Registration Process"
           no_campaign: "Without Registration Process"
         choice:
-          question: "For the tutorials, do you need a registration process?"
+          question: "Do you need a registration process?"
           hint: >-
             If you are unsure, we recommend choosing a registration process.
             It gives you a clear registration window, lets you review demand
