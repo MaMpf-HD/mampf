@@ -27,7 +27,7 @@ module UserRegistrations
           campaign = Registration::Campaign.find_by(id: id)
           config["prerequisite_campaign"] =
             if campaign
-              "#{campaign.campaignable&.title}: #{campaign.description}"
+              campaign.student_facing_title
             else
               I18n.t("registration.campaign.not_found")
             end
