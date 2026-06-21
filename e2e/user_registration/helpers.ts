@@ -26,14 +26,19 @@ export async function createTutorialItemsCampaign(
   description: string,
   status: "open" | "closed" = "open",
   itemsCount = 3,
+  extraTraits: string[] = [],
 ): Promise<{ campaign: FactoryBotObject }> {
-  const campaign = await factory.create("registration_campaign", [status, allocationMode], {
-    allocation_mode: allocationMode,
-    campaignable_type: "Lecture",
-    campaignable_id: lecture.id,
-    description,
-    items_count: itemsCount,
-  });
+  const campaign = await factory.create(
+    "registration_campaign",
+    [status, allocationMode, ...extraTraits],
+    {
+      allocation_mode: allocationMode,
+      campaignable_type: "Lecture",
+      campaignable_id: lecture.id,
+      description,
+      items_count: itemsCount,
+    },
+  );
 
   return { campaign };
 }

@@ -120,6 +120,13 @@ FactoryBot.define do
       end
     end
 
+    trait :with_finalization_policy do
+      after(:build) do |campaign|
+        create(:registration_policy, :institutional_email, :for_finalization,
+               registration_campaign: campaign)
+      end
+    end
+
     trait :with_prerequisite_policy do
       transient do
         parent_campaign { nil }

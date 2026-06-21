@@ -82,6 +82,67 @@ test.describe("campaign registration", () => {
     await expect(buttons.nth(2)).toBeDisabled();
   });
 
+  test("explains policies checked during registration", async ({ factory, student }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Email restricted tutorial registration",
+      "open",
+      1,
+      ["with_policies"],
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByText("Registration unavailable")).toBeVisible();
+    await expect(student.page.getByText(
+      "Your email address does not match the required institutional domain (example.com).",
+    )).toBeVisible();
+    await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
+  });
+
+  test("explains finalization policies and policy rejections", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const { campaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Email checked tutorial registration",
+      "open",
+      1,
+      ["with_finalization_policy"],
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByText("Registration may be rejected")).toBeVisible();
+    await expect(student.page.getByText(
+      "Your email address does not match the required institutional domain (example.com).",
+    )).toBeVisible();
+
+    await student.page.getByRole("button", { name: "Register now" }).click();
+    await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
+
+    await campaign.__call("finalize!");
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByTestId("registration-policy-rejection-notice"))
+      .toContainText(
+        "Your registration for Email checked tutorial registration was rejected because: "
+        + "Email domain not allowed.",
+      );
+    await expect(student.page.getByText(
+      "You are not registered in any group yet.",
+    )).toHaveCount(0);
+  });
+
   test("stages preference ranks locally and saves them in one request", async ({
     factory,
     student,
