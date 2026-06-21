@@ -5,58 +5,6 @@ RSpec.describe(EligibilityHelper, type: :helper) do
     I18n.with_locale(:en) { example.run }
   end
 
-  describe "#eligible_for_registration?" do
-    it "returns true when all policies pass" do
-      eligibility = [
-        { kind: "institutional_email", outcome: { pass: true } },
-        { kind: "prerequisite_campaign", outcome: { pass: true } }
-      ]
-
-      expect(helper.eligible_for_registration?(eligibility)).to be(true)
-    end
-
-    it "returns false when one policy fails" do
-      eligibility = [
-        { kind: "institutional_email", outcome: { pass: true } },
-        { kind: "prerequisite_campaign", outcome: { pass: false } }
-      ]
-
-      expect(helper.eligible_for_registration?(eligibility)).to be(false)
-    end
-  end
-
-  describe "#student_registration_ineligible?" do
-    let(:eligibility) do
-      [{ kind: "institutional_email", outcome: { pass: false } }]
-    end
-
-    it "returns true for an incomplete campaign with failed eligibility" do
-      campaign = build(:registration_campaign, status: :open)
-
-      expect(helper.student_registration_ineligible?(campaign, eligibility))
-        .to be(true)
-    end
-
-    it "returns false for completed campaigns" do
-      campaign = build(:registration_campaign, :completed)
-
-      expect(helper.student_registration_ineligible?(campaign, eligibility))
-        .to be(false)
-    end
-  end
-
-  describe "#failed_eligibility_policies" do
-    it "returns only the failing policies" do
-      eligibility = [
-        { kind: "institutional_email", outcome: { pass: true } },
-        { kind: "prerequisite_campaign", outcome: { pass: false } }
-      ]
-
-      expect(helper.failed_eligibility_policies(eligibility))
-        .to eq([eligibility.last])
-    end
-  end
-
   describe "#eligibility_failure_message" do
     it "renders advice for institutional email mismatches" do
       policy = {

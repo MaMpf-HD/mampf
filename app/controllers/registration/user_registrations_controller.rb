@@ -1,6 +1,6 @@
 module Registration
   class UserRegistrationsController < ApplicationController
-    helper ::UserRegistrationsHelper, ::EligibilityHelper,
+    helper ::UserRegistrationsHelper,
            ItemsHelper, CampaignsHelper
     before_action :set_lecture, only: [:index]
     before_action :set_campaign,

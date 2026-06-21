@@ -1,18 +1,6 @@
 module EligibilityHelper
   POLICY_CONFIG_UNAVAILABLE = "No configuration available".freeze
 
-  def eligible_for_registration?(eligibility)
-    eligibility.all? { |policy| policy.dig(:outcome, :pass) }
-  end
-
-  def student_registration_ineligible?(campaign, eligibility)
-    campaign.status != "completed" && !eligible_for_registration?(eligibility)
-  end
-
-  def failed_eligibility_policies(eligibility)
-    eligibility.reject { |policy| policy.dig(:outcome, :pass) }
-  end
-
   def eligibility_failure_message(policy)
     key, options = eligibility_failure_translation(policy)
 
