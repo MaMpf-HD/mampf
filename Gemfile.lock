@@ -149,6 +149,7 @@ GEM
     bigdecimal (3.3.1)
     bindex (0.8.1)
     bootsnap (1.24.6)
+    bootsnap (1.24.6)
       msgpack (~> 1.2)
     bootstrap_form (5.6.1)
       actionpack (>= 7.2)
@@ -422,6 +423,7 @@ GEM
       options (~> 2.3.0)
     prometheus_exporter (2.3.1)
       webrick
+    psych (5.4.0)
     psych (5.4.0)
       date
       stringio
