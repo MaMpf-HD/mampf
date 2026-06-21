@@ -1,5 +1,9 @@
 <% group_type ||= :all %>
 <div class="col-12">
+  <div class="alert alert-info mb-3" role="alert">
+    <%= t("roster.banners.groups") %>
+  </div>
+
   <%= turbo_frame_tag roster_maintenance_frame_id(group_type),
                       src: lecture_roster_path(lecture, group_type: group_type),
                       loading: "lazy" do %>
