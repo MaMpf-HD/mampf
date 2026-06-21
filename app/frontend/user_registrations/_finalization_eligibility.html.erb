@@ -1,0 +1,21 @@
+<div
+  class="
+    p-3 pb-4 rounded
+    student-registration-campaign-notice
+    student-registration-campaign-notice--ineligible
+  "
+>
+  <div class="student-registration-campaign-notice-title">
+    <%= t("registration.user_registration.finalization_policy_notice.title") %>
+  </div>
+
+  <p class="student-registration-campaign-notice-body mb-2">
+    <%= t("registration.user_registration.finalization_policy_notice.description") %>
+  </p>
+
+  <ul class="student-registration-campaign-notice-body mb-0 ps-3">
+    <% failed_policies.each do |policy| %>
+      <li class="mb-1"><%= eligibility_failure_message(policy) %></li>
+    <% end %>
+  </ul>
+</div>

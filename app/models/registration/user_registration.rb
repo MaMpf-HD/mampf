@@ -41,6 +41,14 @@ module Registration
         )
     }
 
+    scope :with_capacity_or_legacy_rejection_reason, lambda {
+      where(rejection_reason_type: [nil, REJECTION_REASON_TYPE_CAPACITY])
+    }
+
+    scope :with_policy_rejection_reason, lambda {
+      where(rejection_reason_type: REJECTION_REASON_TYPE_POLICY)
+    }
+
     before_validation :set_exclusive_assignment
 
     validates :status, presence: true

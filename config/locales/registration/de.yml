@@ -263,6 +263,8 @@ de:
           "3": "Dritt"
         unfulfilled_preferences_notice: "Leider konnten Deine Wünsche (%{preferences}) nicht berücksichtigt werden."
         unallocated_preference_notice: "Leider konnte Deine Anmeldung für %{campaign} nicht berücksichtigt werden, weil es mehr Anmeldungen als Plätze gab. Deine ausgewählten Präferenzen sind bei uns angekommen: %{preferences}."
+        policy_rejection_notice: >-
+          Deine Anmeldung für %{campaign} wurde abgelehnt, weil: %{reasons}
         unknown_tutor: "Ein:e Tutor:in wurde noch nicht zugewiesen."
         unremovable_assignment_notice: "Du kannst dieses Tutorium nicht verlassen, weil der Dozent es so eingerichtet hat."
         first_choice_title: "Erstwahl-Anmeldungen"
@@ -327,6 +329,11 @@ de:
       readonly_notice:
         title: "Anmeldung geschlossen"
         description: "Deine abgegebenen Auswahlentscheidungen bleiben hier sichtbar, während die Lehrperson die Anmeldungen prüft und die Zuteilung finalisiert. Änderungen sind nicht mehr möglich."
+      finalization_policy_notice:
+        title: "Anmeldung kann abgelehnt werden"
+        description: >-
+          Beim Finalisieren dieses Anmeldeverfahrens wird Deine Anmeldung
+          anhand folgender Regeln geprüft:
       eligibility_failures:
         institutional_email_mismatch_html: "Deine E-Mail-Adresse hat nicht die erforderliche institutionelle Domain (%{domains}). Gehe in Dein %{profile} und passe sie dort an."
         institutional_email_configuration_error: "Die erforderlichen institutionellen E-Mail-Domains sind für dieses Anmeldeverfahren nicht korrekt konfiguriert. Bitte wende Dich an die Kursverwaltung."

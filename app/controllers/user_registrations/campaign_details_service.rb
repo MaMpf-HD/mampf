@@ -1,6 +1,7 @@
 module UserRegistrations
   class CampaignDetailsService
     Result = Struct.new(:campaign, :eligibility, :items, :item_preferences,
+                        :finalization_eligibility,
                         keyword_init: true)
 
     def initialize(campaign, user)
@@ -13,27 +14,17 @@ module UserRegistrations
         campaign: @campaign,
         eligibility: eligibility,
         items: items,
-        item_preferences: item_preferences
+        item_preferences: item_preferences,
+        finalization_eligibility: finalization_eligibility
       )
     end
 
     def eligibility
-      trace = Registration::PolicyEngine.new(@campaign)
-                                        .full_trace_with_config_for(@user,
-                                                                    phase: :registration)
-      trace.each do |policy_result|
-        next unless policy_result[:kind] == "prerequisite_campaign"
+      eligibility_for(:registration)
+    end
 
-        id = policy_result[:config]["prerequisite_campaign_id"]
-        campaign = Registration::Campaign.find_by(id: id)
-        policy_result[:config]["prerequisite_campaign"] =
-          if campaign
-            "#{campaign&.campaignable&.title}: #{campaign&.description}"
-          else
-            I18n.t("registration.campaign.not_found")
-          end
-      end
-      trace
+    def finalization_eligibility
+      eligibility_for(:finalization)
     end
 
     def items
@@ -45,5 +36,26 @@ module UserRegistrations
 
       UserRegistrations::PreferencesHandler.new.preferences_info(@campaign, @user)
     end
+
+    private
+
+      def eligibility_for(phase)
+        trace = Registration::PolicyEngine.new(@campaign)
+                                          .full_trace_with_config_for(@user,
+                                                                      phase: phase)
+        trace.each do |policy_result|
+          next unless policy_result[:kind] == "prerequisite_campaign"
+
+          id = policy_result[:config]["prerequisite_campaign_id"]
+          campaign = Registration::Campaign.find_by(id: id)
+          policy_result[:config]["prerequisite_campaign"] =
+            if campaign
+              "#{campaign&.campaignable&.title}: #{campaign&.description}"
+            else
+              I18n.t("registration.campaign.not_found")
+            end
+        end
+        trace
+      end
   end
 end

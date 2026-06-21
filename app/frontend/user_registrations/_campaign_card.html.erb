@@ -1,11 +1,17 @@
 <% eligibility = details.eligibility %>
+<% finalization_eligibility = details.finalization_eligibility %>
 <% items = details.items %>
 <% item_preferences = details.item_preferences %>
 <% readonly = student_registration_readonly?(campaign) %>
-
 <% ineligible = student_registration_ineligible?(campaign, eligibility) %>
+
+<% failed_finalization_policies =
+  ineligible ? [] : failed_eligibility_policies(finalization_eligibility) %>
+
+<% finalization_policy_warning = failed_finalization_policies.any? %>
+
 <% main_disabled = readonly || ineligible %>
-<% notices_present = readonly || ineligible %>
+<% notices_present = readonly || ineligible || finalization_policy_warning %>
 
 <div>
   <% if notices_present %>
@@ -31,6 +37,13 @@
       <% if ineligible %>
         <%= render partial: "user_registrations/eligibility",
                    locals: { eligibility: eligibility } %>
+      <% end %>
+
+      <% if finalization_policy_warning %>
+        <%= render partial: "user_registrations/finalization_eligibility",
+                   locals: {
+                     failed_policies: failed_finalization_policies
+                   } %>
       <% end %>
     </div>
   <% end %>

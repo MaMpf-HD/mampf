@@ -263,6 +263,8 @@ en:
           "3": "3rd"
         unfulfilled_preferences_notice: "Unfortunately, your preferences (%{preferences}) could not be fulfilled."
         unallocated_preference_notice: "Unfortunately, your registration for %{campaign} could not be considered because there were more registrations than available places. We received your preferences: %{preferences}."
+        policy_rejection_notice: >-
+          Your registration for %{campaign} was rejected because: %{reasons}
         unknown_tutor: "A tutor has not been assigned yet."
         unremovable_assignment_notice: "You cannot leave this tutorial because the lecturer has set it up this way."
         first_choice_title: "1st Choice Registrations"
@@ -327,6 +329,11 @@ en:
       readonly_notice:
         title: "Registration closed"
         description: "Your submitted choices stay visible here while the teacher reviews the registrations and finalizes the allocation. You can no longer make changes."
+      finalization_policy_notice:
+        title: "Registration may be rejected"
+        description: >-
+          When this registration process is finalized, your registration will be checked
+          against the following rules:
       eligibility_failures:
         institutional_email_mismatch_html: "Your email address does not match the required institutional domain (%{domains}). Go to your %{profile} and update it."
         institutional_email_configuration_error: "The required institutional email domains are not configured for this campaign. Please contact the course administration."

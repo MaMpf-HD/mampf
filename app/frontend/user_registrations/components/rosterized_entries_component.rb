@@ -15,6 +15,7 @@ class RosterizedEntriesComponent < ViewComponent::Base
   # Messages shown in the confirmed-entries kicker. Falls back to the generic
   # "confirmed cases" notice when no preference-based messaging applies.
   def notice_messages
+    return [] if rosterized_entries.blank? && policy_rejection_results.present?
     return [unassigned_notice] if rosterized_entries.blank?
 
     messages = rosterized_entries.filter_map do |rosterable|
@@ -65,6 +66,18 @@ class RosterizedEntriesComponent < ViewComponent::Base
         preferences: unallocated_labels(
           rejected_registrations_by_campaign[campaign.id] || []
         )
+      }
+    end
+  end
+
+  def policy_rejection_results
+    @policy_rejection_results ||= policy_rejected_campaigns.map do |campaign|
+      registrations = policy_rejected_registrations_by_campaign[campaign.id] || []
+      reasons = registrations.filter_map(&:resolved_rejection_reason_label).uniq
+
+      {
+        campaign: campaign,
+        reasons: reasons.presence || [t("registration.user_registration.status.rejected")]
       }
     end
   end
@@ -196,8 +209,11 @@ class RosterizedEntriesComponent < ViewComponent::Base
                  allocation_mode: :preference_based,
                  status: :completed)
           .joins(:user_registrations)
-          .where(user_registrations: { user_id: user.id,
-                                       status: :rejected })
+          .merge(
+            Registration::UserRegistration.rejected
+                                         .with_capacity_or_legacy_rejection_reason
+                                         .where(user_id: user.id)
+          )
           .where.not(id: confirmed_campaign_ids)
           .distinct
           .order(updated_at: :desc)
@@ -225,10 +241,46 @@ class RosterizedEntriesComponent < ViewComponent::Base
       @rejected_registrations_by_campaign ||=
         Registration::UserRegistration
         .rejected
+        .with_capacity_or_legacy_rejection_reason
         .where(user_id: user.id,
                registration_campaign_id: unallocated_campaigns.map(&:id))
         .includes(registration_item: :registerable)
         .order(:preference_rank)
+        .group_by(&:registration_campaign_id)
+    end
+
+    def policy_rejected_campaigns
+      @policy_rejected_campaigns ||= begin
+        active_campaign_ids = Registration::UserRegistration
+                              .where(user_id: user.id,
+                                     status: [:confirmed, :pending])
+                              .select(:registration_campaign_id)
+
+        Registration::Campaign
+          .where(campaignable: lecture, status: :completed)
+          .joins(:user_registrations)
+          .merge(
+            Registration::UserRegistration.rejected
+                                         .with_policy_rejection_reason
+                                         .where(user_id: user.id)
+          )
+          .where.not(id: active_campaign_ids)
+          .distinct
+          .order(updated_at: :desc)
+          .to_a
+      end
+    end
+
+    def policy_rejected_registrations_by_campaign
+      @policy_rejected_registrations_by_campaign ||=
+        Registration::UserRegistration
+        .rejected
+        .with_policy_rejection_reason
+        .where(
+          user_id: user.id,
+          registration_campaign_id: policy_rejected_campaigns.map(&:id)
+        )
+        .includes(:registration_item)
         .group_by(&:registration_campaign_id)
     end
 
