@@ -28,4 +28,20 @@ RSpec.describe(RegistrationCampaignsCardBodyIndexComponent, type: :component) do
       expect(component.no_campaign_groups).to eq([])
     end
   end
+
+  describe "collapse state" do
+    it "keeps the no-campaign section open when only completed campaigns remain" do
+      lecture = create(:lecture)
+      create(:registration_campaign, :completed, campaignable: lecture)
+      tutorial = create(:tutorial, lecture: lecture)
+
+      component = described_class.new(lecture: lecture,
+                                      registration_section: "campaign")
+
+      allow(component).to receive(:no_campaign_groups).and_return([tutorial])
+
+      expect(component.collapse_campaign_section?).to be(true)
+      expect(component.collapse_no_campaign_section?).to be(false)
+    end
+  end
 end

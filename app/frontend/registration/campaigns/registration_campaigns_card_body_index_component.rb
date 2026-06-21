@@ -44,7 +44,7 @@ class RegistrationCampaignsCardBodyIndexComponent < ViewComponent::Base
   end
 
   def collapse_no_campaign_section?
-    selected_section == "campaign" ||
+    selected_campaign_section? ||
       (campaigns.any? && no_campaign_groups.empty?)
   end
 
@@ -80,5 +80,9 @@ class RegistrationCampaignsCardBodyIndexComponent < ViewComponent::Base
 
     def campaigns
       @campaigns ||= lecture.registration_campaigns.order(created_at: :desc).to_a
+    end
+
+    def selected_campaign_section?
+      selected_section == "campaign" && active_campaigns.any?
     end
 end
