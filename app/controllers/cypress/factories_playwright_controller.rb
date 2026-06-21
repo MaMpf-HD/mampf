@@ -16,7 +16,7 @@ module Cypress
     # the method name and the method arguments to be passed to the instance method.
     def call_instance_method
       factory_name = validate_factory_name(params["factory_name"])
-      id = params["instance_id"].to_i
+      id = params["instance_id"]
       method_name = params["method_name"]
       method_args = []
 

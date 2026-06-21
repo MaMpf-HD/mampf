@@ -88,8 +88,10 @@ module Registration
                 turbo_stream.replace("flash-messages", partial: "flash/messages"),
                 turbo_stream.update(
                   view_context.dom_id(@campaign, :main_student_registration_campaign),
-                  partial: "user_registrations/campaign_card",
-                  locals: { details: @details, campaign: @campaign }
+                  html: CampaignCardComponent.new(
+                    details: @details,
+                    campaign: @campaign
+                  ).render_in(view_context)
                 ),
                 rosterized_entries_stream
               ]

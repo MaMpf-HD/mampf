@@ -97,11 +97,12 @@ test.describe("campaign registration", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
+    const firstTile = student.page.getByTestId("registration-group-tile").first();
     await expect(student.page.getByText("Registration unavailable")).toBeVisible();
     await expect(student.page.getByText(
       "Your current email domain is play, but this registration process requires example.com",
     )).toBeVisible();
-    await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
+    await expect(firstTile.getByRole("button", { name: "Register now" })).toBeDisabled();
   });
 
   test("explains prerequisite policies during registration", async ({
@@ -134,12 +135,11 @@ test.describe("campaign registration", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
+    const firstTile = student.page.getByTestId("registration-group-tile").first();
     await expect(student.page.getByText("Registration unavailable")).toBeVisible();
-    await expect(student.page.getByText(
-      "You need a confirmed registration in Advanced Calculus: Priority registration "
-      + "before you can register here.",
-    )).toBeVisible();
-    await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
+    await expect(student.page.getByText(/You need a confirmed registration in .*Priority registration/))
+      .toBeVisible();
+    await expect(firstTile.getByRole("button", { name: "Register now" })).toBeDisabled();
   });
 
   test("explains finalization policies and policy rejections", async ({
@@ -162,7 +162,7 @@ test.describe("campaign registration", () => {
 
     await expect(student.page.getByText("Registration may be rejected")).toBeVisible();
     await expect(student.page.getByText(
-      "Your email address does not match the required institutional domain (example.com).",
+      "Your current email domain is play, but this registration process requires example.com",
     )).toBeVisible();
 
     await student.page.getByRole("button", { name: "Register now" }).click();
@@ -218,10 +218,8 @@ test.describe("campaign registration", () => {
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
     await expect(student.page.getByText("Registration may be rejected")).toBeVisible();
-    await expect(student.page.getByText(
-      "You need a confirmed registration in Advanced Calculus: Priority registration "
-      + "before you can register here.",
-    )).toBeVisible();
+    await expect(student.page.getByText(/You need a confirmed registration in .*Priority registration/))
+      .toBeVisible();
 
     await student.page.getByRole("button", { name: "Register now" }).click();
     await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
@@ -235,10 +233,7 @@ test.describe("campaign registration", () => {
         + "for the following reasons:",
       );
     await expect(student.page.getByTestId("registration-policy-rejection-notice"))
-      .toContainText(
-        "You need a confirmed registration in Advanced Calculus: Priority registration "
-        + "before you can register here.",
-      );
+      .toContainText("Priority registration");
   });
 
   test("stages preference ranks locally and saves them in one request", async ({

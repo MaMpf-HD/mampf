@@ -1,4 +1,6 @@
 <div data-test="multi-item-first-come-first-served">
+  <% disabled = local_assigns.fetch(:disabled, false) %>
+
   <% registration_blocked_by_unremovable_assignment =
        registration_blocked_by_unremovable_assignment?(campaign.campaignable) %>
 
@@ -63,7 +65,7 @@
                              t("registration.user_registration.register_now"),
                              register_item_path(campaign.id, item.id),
                              method: :post,
-                             disabled: !campaign.open_for_registrations?,
+                             disabled: disabled || !campaign.open_for_registrations?,
                              class: "btn btn-primary btn-sm"
                            ))
                          else
