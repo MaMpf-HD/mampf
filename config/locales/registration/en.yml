@@ -44,7 +44,14 @@ en:
         none: "No registration processes found."
         sections:
           registration: "Registration Process"
-          no_campaign: "No Registration Process"
+          no_campaign: "Without Registration Process"
+        choice:
+          question: "Do you need a registration process?"
+          hint: >-
+            If you are unsure, we recommend choosing a registration process.
+            It gives you a clear registration window, lets you review demand
+            before assignments are finalized, and helps you handle
+            eligibility rules or limited capacities more fairly.
         columns:
           description: "Short description"
           type: "Type"
