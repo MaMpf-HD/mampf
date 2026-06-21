@@ -149,13 +149,12 @@ de:
       move: 'Verschieben'
       add_only: 'Hinzufügen'
     cohorts:
+      modal:
+        create_title: "Flexible Gruppe anlegen"
+        edit_title: "Flexible Gruppe bearbeiten"
       kinds:
         with_enrollment: "Gruppe mit Einschreibung"
         without_enrollment: "Gruppe ohne Einschreibung"
-      with_lecture_enrollment_title: "Mit Einschreibung"
-      with_lecture_enrollment_help: "Mitglieder werden automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Sonderprojekte, Ergänzungsgruppen ('Wiederholende') oder Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge) verwendet werden."
-      without_lecture_enrollment_title: "Ohne Einschreibung"
-      without_lecture_enrollment_help: "Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben. Kann z.B. für Wartelisten oder für Bedarfserfassung verwendet werden."
       propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
       with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
       without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
@@ -169,10 +168,11 @@ de:
         enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende werden automatisch in die Veranstaltung eingeschrieben."
         planning: "Bedarfserhebung (häufig vor Semesterbeginn). Studierende werden nicht in die Veranstaltung eingeschrieben."
         other: "Flexible Gruppen für Wartelisten oder Sonderprojekte. Du bestimmst, ob Studierende automatisch in die Veranstaltung eingeschrieben werden."
+        flexible_group_intro: "Flexible Gruppen sind für Wartelisten, Planungsgruppen und Sonderfälle wie z.B. Ergänzungsgruppen ('Wiederholende') gedacht. Ebenso kannst du sie einsetzen, wenn eine Veranstaltung weder Tutorien noch Vorträge hat, aber dennoch eine Gruppe für die Erfassung aller Studierenden benötigt wird."
         propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Veranstaltung eingeschrieben. Deaktiviere dies z.B. für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
         propagate_readonly_warning: "⚠️ Diese Einstellung kann nach der Erstellung nicht mehr geändert werden."
         with_enrollment_label: "Mit Einschreibung?"
-        with_enrollment_explanation: "Wenn aktiviert, werden Mitglieder automatisch in die Veranstaltung eingeschrieben. Deaktiviere dies für Wartelisten oder Planungsgruppen."
+        with_enrollment_explanation: "Wenn aktiviert, werden Mitglieder automatisch für die Veranstaltung eingeschrieben und damit zu den Teilnehmenden der Veranstaltung hinzugefügt. Tutorien und Vorträge machen das bereits von selbst. Deaktiviere es beispielsweise für Wartelisten oder Planungsgruppen."
         with_enrollment_checkbox: "Automatische Veranstaltungseinschreibung aktivieren"
         enrollment_checkbox_label: "Sammelgruppe: Für Veranstaltungen ohne Tutorien/Vorträge, um alle Studierenden in einer einzigen Gruppe zu sammeln"
         planning_checkbox_label: "Planungsgruppe: Für Bedarfserfassung und Planung"
