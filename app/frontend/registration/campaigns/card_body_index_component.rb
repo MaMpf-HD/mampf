@@ -1,11 +1,17 @@
 class CardBodyIndexComponent < ViewComponent::Base
   attr_reader :lecture, :new_campaign, :selected_section
 
+  def self.normalize_registration_section(section)
+    section.to_s.presence_in(["campaign", "no_campaign"])
+  end
+
   def initialize(lecture:, new_campaign: nil, registration_section: nil)
     super()
     @lecture = lecture
     @new_campaign = new_campaign
-    @selected_section = normalize_registration_section(registration_section)
+    @selected_section = self.class.normalize_registration_section(
+      registration_section
+    )
   end
 
   def active_campaigns
@@ -74,9 +80,5 @@ class CardBodyIndexComponent < ViewComponent::Base
 
     def campaigns
       @campaigns ||= lecture.registration_campaigns.order(created_at: :desc).to_a
-    end
-
-    def normalize_registration_section(section)
-      section.to_s.presence_in(["campaign", "no_campaign"])
     end
 end
