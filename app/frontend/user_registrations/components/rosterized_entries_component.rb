@@ -215,7 +215,7 @@ class RosterizedEntriesComponent < ViewComponent::Base
           .joins(:user_registrations)
           .merge(
             Registration::UserRegistration.rejected
-                                         .with_capacity_or_legacy_rejection_reason
+                                         .with_capacity_rejection_reason
                                          .where(user_id: user.id)
           )
           .where.not(id: confirmed_campaign_ids)
@@ -245,7 +245,7 @@ class RosterizedEntriesComponent < ViewComponent::Base
       @rejected_registrations_by_campaign ||=
         Registration::UserRegistration
         .rejected
-        .with_capacity_or_legacy_rejection_reason
+        .with_capacity_rejection_reason
         .where(user_id: user.id,
                registration_campaign_id: unallocated_campaigns.map(&:id))
         .includes(registration_item: :registerable)

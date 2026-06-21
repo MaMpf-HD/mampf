@@ -21,6 +21,20 @@ FactoryBot.define do
       status { :rejected }
     end
 
+    after(:build) do |registration|
+      next unless registration.status.to_s == "rejected"
+      next if registration.rejection_reason_type.present?
+
+      registration.rejection_reason_type =
+        Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY
+      registration.rejection_reason_code =
+        Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+      registration.rejection_reason_label =
+        Registration::UserRegistration.resolve_rejection_reason_label(
+          reason_code: registration.rejection_reason_code
+        )
+    end
+
     trait :first_come_first_served do
       association :registration_campaign,
                   factory: [:registration_campaign, :first_come_first_served]
