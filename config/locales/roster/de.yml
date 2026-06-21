@@ -50,7 +50,7 @@ de:
       all: 'Alle'
       unassigned: 'Ohne Gruppe'
     banners:
-      groups: "MaMpf integriert Müsli. In diesem Tab werden ab jetzt die Tutorien und Gruppen verwaltet. Da die Anmeldungen im Sommersemster 2026 noch nicht über MaMpf durchgeführt wurden, stehen die Teilnehmerzahlen derzeit auf 0, auch wenn bereits Tutorien existieren. Wir empfehlen, dies in diesem Semester so zu belassen und insbesondere keine neuen Anmeldungen mehr zu starten. Ab dem WS 2026/27 kann die Registrierung für Vorlesungen und Seminare über MaMpf erfolgen"
+      groups: "MaMpf integriert Müsli. In diesem Tab werden ab jetzt die Tutorien und Gruppen verwaltet. Da die Anmeldungen im Sommersemster 2026 noch nicht über MaMpf durchgeführt wurden, stehen die Teilnehmerzahlen derzeit auf 0, auch wenn bereits Tutorien existieren. Wir empfehlen, dies in diesem Semester so zu belassen und insbesondere keine neuen Anmeldungen mehr zu starten. Ab dem WS 2026/27 kann die Registrierung für Vorlesungen und Seminare über MaMpf erfolgen."
       participants: "MaMpf integriert Müsli. Da die Anmeldungen im Sommersemester 2026 noch nicht über MaMpf durchgeführt wurden, ist die Teilnehmerliste leer. Ab dem WS 2026/27 können sich Studierende über MaMpf für Vorlesungen und Seminare registrieren, und die Teilnehmerliste wird sich nach der Anmeldung automatisch füllen."
     dashboard:
       title: 'Dashboard'
