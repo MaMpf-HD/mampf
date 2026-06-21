@@ -145,13 +145,12 @@ en:
       move: 'Move'
       add_only: 'Add'
     cohorts:
+      modal:
+        create_title: "Create Flexible Group"
+        edit_title: "Edit Flexible Group"
       kinds:
         with_enrollment: "Group with enrollment"
         without_enrollment: "Group without enrollment"
-      with_lecture_enrollment_title: "With Enrollment"
-      with_lecture_enrollment_help: "Members are automatically enrolled in the course. Can be used e.g. for special projects, supplementary groups ('repeaters'), or enrollment groups (for courses without tutorials/talks)."
-      without_lecture_enrollment_title: "Without Enrollment"
-      without_lecture_enrollment_help: "Members are not automatically enrolled in the course. Can be used e.g. for waitlists or for needs assessment."
       with_lecture_enrollment: "With Lecture Enrollment"
       without_lecture_enrollment: "Without Lecture Enrollment"
       propagate_to_lecture: "With automatic lecture enrollment"
@@ -165,10 +164,11 @@ en:
         enrollment: "If the course has no tutorials or talks, a registration group can be used. Students are automatically enrolled in the course."
         planning: "Needs assessment (often before the semester starts). Students are not enrolled in the course."
         other: "Flexible groups for waitlists or special projects. You determine whether students are automatically enrolled in the course."
+        flexible_group_intro: "Flexible groups are for waitlists, planning groups, enrollment groups for courses without tutorials or talks, and other special cases."
         propagate_to_lecture: "If enabled, students in this group are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
         propagate_readonly_warning: "⚠️ This setting cannot be changed after creation."
         with_enrollment_label: "With enrollment?"
-        with_enrollment_explanation: "If enabled, members are automatically enrolled in the lecture. Disable this for waitlists or planning groups."
+        with_enrollment_explanation: "If enabled, members are added to Enrolled automatically. Tutorials and talks already do this on their own, so this is mainly for enrollment groups in courses without tutorials or talks. Disable it for waitlists or planning groups."
         with_enrollment_checkbox: "Enable automatic lecture enrollment"
         enrollment_checkbox_label: "Collection group: For courses without tutorials/talks, to collect all students in a single group"
         planning_checkbox_label: "Planning group: For needs assessment and planning"
