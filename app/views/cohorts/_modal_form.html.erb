@@ -74,7 +74,8 @@
   </div>
 
   <div class="modal-footer">
-    <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
+    <%= f.submit(cohort.new_record? ? t("roster.cohorts.modal.create_button") : t("buttons.save"),
+                 class: "btn btn-primary") %>
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t("buttons.cancel") %></button>
   </div>
 <% end %>

@@ -146,6 +146,7 @@ en:
       add_only: 'Add'
     cohorts:
       modal:
+        create_button: "Create"
         create_title: "Create Flexible Group"
         edit_title: "Edit Flexible Group"
       kinds:

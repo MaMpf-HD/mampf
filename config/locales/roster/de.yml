@@ -147,6 +147,7 @@ de:
       add_only: 'Hinzufügen'
     cohorts:
       modal:
+        create_button: "Erstellen"
         create_title: "Flexible Gruppe erstellen"
         edit_title: "Flexible Gruppe bearbeiten"
       kinds:
