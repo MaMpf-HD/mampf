@@ -44,7 +44,14 @@ de:
         none: "Keine Anmeldeverfahren vorhanden."
         sections:
           registration: "Anmeldeverfahren"
-          no_campaign: "Kein Anmeldeverfahren"
+          no_campaign: "Ohne Anmeldeverfahren"
+        choice:
+          question: "Benötigst Du ein Anmeldeverfahren?"
+          hint: >-
+            Wenn Du unsicher bist, empfehlen wir Dir ein Anmeldeverfahren.
+            Damit kannst Du ein klares Registrierungsfenster festlegen, die
+            Nachfrage vor der endgültigen Zuteilung besser überblicken und
+            Regeln oder begrenzte Plätze fairer verwalten.
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"
