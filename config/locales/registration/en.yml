@@ -264,7 +264,7 @@ en:
         unfulfilled_preferences_notice: "Unfortunately, your preferences (%{preferences}) could not be fulfilled."
         unallocated_preference_notice: "Unfortunately, your registration for %{campaign} could not be considered because there were more registrations than available places. We received your preferences: %{preferences}."
         policy_rejection_notice: >-
-          Your registration for %{campaign} was rejected because: %{reasons}
+          Your registration for %{campaign} was rejected for the following reasons:
         unknown_tutor: "A tutor has not been assigned yet."
         unremovable_assignment_notice: "You cannot leave this tutorial because the lecturer has set it up this way."
         first_choice_title: "1st Choice Registrations"
@@ -335,7 +335,11 @@ en:
           When this registration process is finalized, your registration will be checked
           against the following rules:
       eligibility_failures:
-        institutional_email_mismatch_html: "Your email address does not match the required institutional domain (%{domains}). Go to your %{profile} and update it."
+        current_domain_unknown: "an unknown domain"
+        institutional_email_mismatch_html: >-
+          Your current email domain is %{current_domain}, but this registration
+          process requires %{domains}. Go to your %{profile} and update your
+          email there.
         institutional_email_configuration_error: "The required institutional email domains are not configured for this campaign. Please contact the course administration."
         prerequisite_not_met: "You need a confirmed registration in %{campaign} before you can register here. Contact the course administration if you think this is incorrect."
         prerequisite_campaign_not_found: "The required prerequisite registration %{campaign} is currently unavailable. Please contact the course administration."

@@ -264,7 +264,7 @@ de:
         unfulfilled_preferences_notice: "Leider konnten Deine Wünsche (%{preferences}) nicht berücksichtigt werden."
         unallocated_preference_notice: "Leider konnte Deine Anmeldung für %{campaign} nicht berücksichtigt werden, weil es mehr Anmeldungen als Plätze gab. Deine ausgewählten Präferenzen sind bei uns angekommen: %{preferences}."
         policy_rejection_notice: >-
-          Deine Anmeldung für %{campaign} wurde abgelehnt, weil: %{reasons}
+          Deine Anmeldung für %{campaign} wurde aus folgenden Gründen abgelehnt:
         unknown_tutor: "Ein:e Tutor:in wurde noch nicht zugewiesen."
         unremovable_assignment_notice: "Du kannst dieses Tutorium nicht verlassen, weil der Dozent es so eingerichtet hat."
         first_choice_title: "Erstwahl-Anmeldungen"
@@ -335,7 +335,11 @@ de:
           Beim Finalisieren dieses Anmeldeverfahrens wird Deine Anmeldung
           anhand folgender Regeln geprüft:
       eligibility_failures:
-        institutional_email_mismatch_html: "Deine E-Mail-Adresse hat nicht die erforderliche institutionelle Domain (%{domains}). Gehe in Dein %{profile} und passe sie dort an."
+        current_domain_unknown: "eine unbekannte Domain"
+        institutional_email_mismatch_html: >-
+          Deine aktuelle E-Mail-Domain ist %{current_domain}, aber dieses
+          Anmeldeverfahren verlangt %{domains}. Gehe in Dein %{profile} und passe
+          dort Deine E-Mail-Adresse an.
         institutional_email_configuration_error: "Die erforderlichen institutionellen E-Mail-Domains sind für dieses Anmeldeverfahren nicht korrekt konfiguriert. Bitte wende Dich an die Kursverwaltung."
         prerequisite_not_met: "Du benötigst zuerst eine bestätigte Anmeldung im Anmeldeverfahren %{campaign}, bevor Du Dich hier anmelden kannst. Wende Dich an die Kursverwaltung, wenn das aus Deiner Sicht nicht stimmt."
         prerequisite_campaign_not_found: "Das erforderliche vorausgesetzte Anmeldeverfahren %{campaign} ist derzeit nicht verfügbar. Bitte wende Dich an die Kursverwaltung."

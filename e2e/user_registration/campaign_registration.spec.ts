@@ -135,9 +135,15 @@ test.describe("campaign registration", () => {
 
     await expect(student.page.getByTestId("registration-policy-rejection-notice"))
       .toContainText(
-        "Your registration for Email checked tutorial registration was rejected because: "
-        + "Email domain not allowed.",
+        "Your registration for Email checked tutorial registration was rejected "
+        + "for the following reasons:",
       );
+    await expect(student.page.getByTestId("registration-policy-rejection-notice"))
+      .toContainText(
+        "Your current email domain is play, but this registration process "
+        + "requires example.com.",
+      );
+    await expect(student.page.getByRole("link", { name: "Profile" })).toBeVisible();
     await expect(student.page.getByText(
       "You are not registered in any group yet.",
     )).toHaveCount(0);

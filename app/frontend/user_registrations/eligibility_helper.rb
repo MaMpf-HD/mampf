@@ -1,18 +1,18 @@
 module EligibilityHelper
   POLICY_CONFIG_UNAVAILABLE = "No configuration available".freeze
 
-  def eligibility_failure_message(policy)
-    key, options = eligibility_failure_translation(policy)
+  def eligibility_failure_message(policy, user: nil)
+    key, options = eligibility_failure_translation(policy, user: user)
 
     t(key, **options)
   end
 
   private
 
-    def eligibility_failure_translation(policy)
+    def eligibility_failure_translation(policy, user: nil)
       case policy[:kind].to_s
       when "institutional_email"
-        eligibility_failure_translation_for_institutional_email(policy)
+        eligibility_failure_translation_for_institutional_email(policy, user: user)
       when "prerequisite_campaign"
         eligibility_failure_translation_for_prerequisite_campaign(policy)
       when "student_performance"
@@ -28,12 +28,13 @@ module EligibilityHelper
       end
     end
 
-    def eligibility_failure_translation_for_institutional_email(policy)
+    def eligibility_failure_translation_for_institutional_email(policy, user: nil)
       case policy.dig(:outcome, :code).to_s
       when "institutional_email_mismatch"
         [
           "registration.user_registration.eligibility_failures.institutional_email_mismatch_html",
           {
+            current_domain: user_email_domain(user),
             domains: policy_config_info(policy),
             profile: link_to(t("navbar.profile"), edit_profile_path,
                              class: "fw-semibold", target: "_top")
@@ -90,6 +91,13 @@ module EligibilityHelper
       else
         POLICY_CONFIG_UNAVAILABLE
       end
+    end
+
+    def user_email_domain(user)
+      domain = user&.email.to_s.strip.downcase.split("@", 2).last
+      return domain if domain.present?
+
+      I18n.t("registration.user_registration.eligibility_failures.current_domain_unknown")
     end
 
     def prerequisite_campaign_label(policy)

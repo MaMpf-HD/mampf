@@ -3,6 +3,8 @@
 # and the notice for preference-based campaigns where the student was not
 # allocated a spot.
 class RosterizedEntriesComponent < ViewComponent::Base
+  include EligibilityHelper
+
   def initialize(rosterized_entries:, lecture:, user:)
     super()
     @rosterized_entries = rosterized_entries || []
@@ -72,18 +74,20 @@ class RosterizedEntriesComponent < ViewComponent::Base
 
   def policy_rejection_results
     @policy_rejection_results ||= policy_rejected_campaigns.map do |campaign|
-      registrations = policy_rejected_registrations_by_campaign[campaign.id] || []
-      reasons = registrations.filter_map(&:resolved_rejection_reason_label).uniq
+      messages = failed_policy_messages(campaign)
 
       {
         campaign: campaign,
-        reasons: reasons.presence || [t("registration.user_registration.status.rejected")]
+        messages: messages.presence || [t("registration.user_registration.status.rejected")]
       }
     end
   end
 
   def campaign_title(campaign)
-    helpers.student_registration_campaign_title(campaign)
+    description = campaign.description.to_s.strip
+    return description if description.present?
+
+    t("registration.user_registration.campaign_main")
   end
 
   private
@@ -282,6 +286,19 @@ class RosterizedEntriesComponent < ViewComponent::Base
         )
         .includes(:registration_item)
         .group_by(&:registration_campaign_id)
+    end
+
+    def failed_policy_messages(campaign)
+      UserRegistrations::EligibilityTraceService.new(
+        campaign,
+        user,
+        phase: :finalization
+      ).call.reject { |policy| policy.dig(:outcome, :pass) }
+                                                .map do |policy|
+        eligibility_failure_message(policy,
+                                    user: user)
+      end
+                                                .uniq
     end
 
     def unallocated_labels(registrations)

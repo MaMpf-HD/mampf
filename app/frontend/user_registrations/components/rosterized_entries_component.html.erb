@@ -93,13 +93,18 @@
   >
     <% policy_rejection_results.each do |result| %>
       <p
-        class="student-registration-rosterized-message mb-0"
+        class="student-registration-rosterized-message mb-2"
         data-testid="registration-policy-rejection-message"
       >
         <%= t("registration.user_registration.index.policy_rejection_notice",
-              campaign: campaign_title(result[:campaign]),
-              reasons: result[:reasons].join(", ")) %>
+              campaign: campaign_title(result[:campaign])) %>
       </p>
+
+      <ul class="student-registration-rosterized-message mb-0 ps-3">
+        <% result[:messages].each do |message| %>
+          <li class="mb-1"><%= message %></li>
+        <% end %>
+      </ul>
     <% end %>
   </div>
 <% end %>

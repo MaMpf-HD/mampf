@@ -7,14 +7,16 @@ RSpec.describe(EligibilityHelper, type: :helper) do
 
   describe "#eligibility_failure_message" do
     it "renders advice for institutional email mismatches" do
+      user = build_stubbed(:confirmed_user, email: "student@play")
       policy = {
         kind: "institutional_email",
         config: { "allowed_domains" => ["uni-heidelberg.de"] },
         outcome: { pass: false, code: :institutional_email_mismatch }
       }
 
-      html = helper.eligibility_failure_message(policy)
+      html = helper.eligibility_failure_message(policy, user: user)
 
+      expect(html).to include("play")
       expect(html).to include("uni-heidelberg.de")
       expect(html).to include(edit_profile_path)
       expect(html).to include('target="_top"')
@@ -27,7 +29,7 @@ RSpec.describe(EligibilityHelper, type: :helper) do
         outcome: { pass: false, code: :configuration_error }
       }
 
-      expect(helper.eligibility_failure_message(policy))
+      expect(helper.eligibility_failure_message(policy, user: nil))
         .to include("not configured")
     end
 
