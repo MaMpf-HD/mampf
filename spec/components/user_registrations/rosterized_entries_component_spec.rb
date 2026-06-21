@@ -10,7 +10,7 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
   let(:user) { create(:confirmed_user, email: "student@play") }
 
   describe "policy rejection messages" do
-    it "renders the user's current domain and profile link for email-policy rejections" do
+    it "renders finalization-specific email-policy rejections" do
       campaign = create(
         :registration_campaign,
         :first_come_first_served,
@@ -43,10 +43,12 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
       expect(rendered.text).to include(
         "Your registration for Email checked tutorial registration was rejected"
       )
-      expect(rendered.text).to include("Your current email domain is play")
-      expect(rendered.text).to include("requires example.com")
-      expect(rendered.css("a").pluck("href"))
-        .to include("/profile/edit")
+      expect(rendered.text).to include(
+        "At the time this registration process was finalized"
+      )
+      expect(rendered.text).to include("required email domains example.com")
+      expect(rendered.text).not_to include("Your current email domain is play")
+      expect(rendered.css("a")).to be_empty
     end
 
     it "renders the prerequisite campaign label for prerequisite-policy rejections" do

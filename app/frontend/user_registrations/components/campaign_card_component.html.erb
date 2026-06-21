@@ -38,7 +38,9 @@
           <ul class="student-registration-campaign-notice-body mb-0 ps-3">
             <% failed_ineligible_policies.each do |policy| %>
               <li class="mb-1">
-                <%= eligibility_failure_message(policy, user: helpers.current_user) %>
+                <%= eligibility_failure_message(policy,
+                                                user: helpers.current_user,
+                                                context: :registration) %>
               </li>
             <% end %>
           </ul>
@@ -64,7 +66,9 @@
           <ul class="student-registration-campaign-notice-body mb-0 ps-3">
             <% failed_finalization_policies.each do |policy| %>
               <li class="mb-1">
-                <%= eligibility_failure_message(policy, user: helpers.current_user) %>
+                <%= eligibility_failure_message(policy,
+                                                user: helpers.current_user,
+                                                context: :finalization_warning) %>
               </li>
             <% end %>
           </ul>

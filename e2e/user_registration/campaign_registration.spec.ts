@@ -81,7 +81,7 @@ test.describe("campaign registration", () => {
     await expect(buttons.nth(2)).toBeDisabled();
   });
 
-  test("explains policies checked during registration", async ({ factory, student }) => {
+  test("explains email policy during registration", async ({ factory, student }) => {
     const lecture = await createReleasedLecture(factory);
     await subscribeToLecture(factory, lecture, student.user.id);
     await createTutorialItemsCampaign(
@@ -177,9 +177,15 @@ test.describe("campaign registration", () => {
       + "for the following reasons:",
     )).toBeVisible();
     await expect(student.page.getByText(
-      "Your current email domain is play, but this registration process requires example.com.",
+      "At the time this registration process was finalized, your email domain "
+      + "did not match the required email domains example.com.",
     )).toBeVisible();
-    await expect(student.page.getByRole("link", { name: "Profile" })).toBeVisible();
+    await expect(student.page.getByText(
+      "Changing your email address afterwards does not automatically restore this registration.",
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      "If you still want to be admitted, please contact the lecturer or teaching assistant.",
+    )).toBeVisible();
     await expect(student.page.getByText(
       "You are not registered in any group yet.",
     )).toHaveCount(0);

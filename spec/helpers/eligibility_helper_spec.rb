@@ -22,6 +22,46 @@ RSpec.describe(EligibilityHelper, type: :helper) do
       expect(html).to include('target="_top"')
     end
 
+    it "renders finalization warnings for institutional email mismatches with the current domain" do
+      user = build_stubbed(:confirmed_user, email: "student@play")
+      policy = {
+        kind: "institutional_email",
+        config: { "allowed_domains" => ["uni-heidelberg.de"] },
+        outcome: { pass: false, code: :institutional_email_mismatch }
+      }
+
+      html = helper.eligibility_failure_message(
+        policy,
+        user: user,
+        context: :finalization_warning
+      )
+
+      expect(html).to include("play")
+      expect(html).to include("uni-heidelberg.de")
+      expect(html).to include(edit_profile_path)
+    end
+
+    it "renders finalization rejections for institutional email mismatches " \
+       "without the current domain" do
+      user = build_stubbed(:confirmed_user, email: "student@play")
+      policy = {
+        kind: "institutional_email",
+        config: { "allowed_domains" => ["uni-heidelberg.de"] },
+        outcome: { pass: false, code: :institutional_email_mismatch }
+      }
+
+      html = helper.eligibility_failure_message(
+        policy,
+        user: user,
+        context: :finalization_rejection
+      )
+
+      expect(html).to include("At the time this registration process was finalized")
+      expect(html).to include("uni-heidelberg.de")
+      expect(html).not_to include("play")
+      expect(html).not_to include(edit_profile_path)
+    end
+
     it "renders advice for institutional email configuration errors" do
       policy = {
         kind: "institutional_email",

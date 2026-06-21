@@ -340,6 +340,12 @@ en:
           Your current email domain is %{current_domain}, but this registration
           process requires %{domains}. Go to your %{profile} and update your
           email there.
+        institutional_email_finalization_rejection: >-
+          At the time this registration process was finalized, your email domain
+          did not match the required email domains %{domains}. Changing your
+          email address afterwards does not automatically restore this
+          registration. If you still want to be admitted, please contact the
+          lecturer or teaching assistant.
         institutional_email_configuration_error: "The required institutional email domains are not configured for this campaign. Please contact the course administration."
         prerequisite_not_met: "You need a confirmed registration in %{campaign} before you can register here. Contact the course administration if you think this is incorrect."
         prerequisite_campaign_not_found: "The required prerequisite registration %{campaign} is currently unavailable. Please contact the course administration."

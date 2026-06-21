@@ -282,7 +282,8 @@ class RosterizedEntriesComponent < ViewComponent::Base
         .call
         .reject { |policy| policy.dig(:outcome, :pass) }
         .map do |policy|
-          eligibility_failure_message(policy, user: user)
+          eligibility_failure_message(policy, user: user,
+                                              context: :finalization_rejection)
         end
         .uniq
     end
