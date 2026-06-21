@@ -75,58 +75,68 @@ RSpec.describe(Talk, type: :model) do
   end
 
   context "title methods" do
+    around do |example|
+      I18n.with_locale(:en) { example.run }
+    end
+
     before :each do
-      I18n.with_locale(:de) do
-        course = FactoryBot.build(:course, title: "Algebra 1",
-                                           short_title: "Alg1")
-        term = FactoryBot.build(:term, season: "SS", year: 2020)
-        lecture = FactoryBot.build(:seminar, course: course, term: term)
-        FactoryBot.create(:talk, lecture: lecture, title: "total bs")
-        @talk = FactoryBot.create(:talk, lecture: lecture,
-                                         title: "even more bs")
-      end
+      course = FactoryBot.build(:course, title: "Algebra 1",
+                                         short_title: "Alg1")
+      term = FactoryBot.build(:term, season: "SS", year: 2020)
+      lecture = FactoryBot.build(:seminar, course: course, term: term)
+      FactoryBot.create(:talk, lecture: lecture, title: "total bs")
+      @talk = FactoryBot.create(:talk, lecture: lecture,
+                                       title: "even more bs")
     end
 
     describe "#to_label" do
       it "returns the correct label" do
-        I18n.with_locale(:de) do
-          expect(@talk.to_label).to eq("Vortrag 2. even more bs")
-        end
+        expect(@talk.to_label).to eq("Talk 2. even more bs")
       end
     end
 
     describe "#title_for_viewers" do
       it "returns the correct title" do
         expect(@talk.title_for_viewers)
-          .to eq("(S) Alg1 SS 20, Vortrag 2. even more bs")
+          .to eq("(S) Alg1 SS 20, Talk 2. even more bs")
+      end
+
+      it "keeps locale-specific cache entries separate" do
+        expect(@talk.title_for_viewers)
+          .to eq("(S) Alg1 SS 20, Talk 2. even more bs")
+
+        I18n.with_locale(:de) do
+          expect(@talk.title_for_viewers)
+            .to eq("(S) Alg1 SS 20, Vortrag 2. even more bs")
+        end
       end
     end
 
     describe "#long_title" do
       it "returns the correct title" do
         expect(@talk.long_title)
-          .to eq("(S) Alg1 SS 20, Vortrag 2. even more bs")
+          .to eq("(S) Alg1 SS 20, Talk 2. even more bs")
       end
     end
 
     describe "#local_title_for_viewers" do
       it "returns the correct title" do
         expect(@talk.local_title_for_viewers)
-          .to eq("Vortrag 2. even more bs")
+          .to eq("Talk 2. even more bs")
       end
     end
 
     describe "#short_title_with_lecture_date" do
       it "returns the correct title" do
         expect(@talk.short_title_with_lecture_date)
-          .to eq("(S) Alg1 SS 20, Vortrag 2. even more bs")
+          .to eq("(S) Alg1 SS 20, Talk 2. even more bs")
       end
     end
 
     describe "#card_header" do
       it "returns the correct title" do
         expect(@talk.card_header)
-          .to eq("(S) Alg1 SS 20, Vortrag 2. even more bs")
+          .to eq("(S) Alg1 SS 20, Talk 2. even more bs")
       end
     end
 
