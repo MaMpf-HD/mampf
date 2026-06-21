@@ -6,8 +6,8 @@ RSpec.describe(CampaignCardComponent, type: :component) do
                :item_preferences, keyword_init: true)
   end
 
-  describe "#eligible_for_registration?" do
-    it "returns true when all policies pass" do
+  describe "#ineligible?" do
+    it "returns false when all policies pass for an open campaign" do
       details = details_class.new(
         eligibility: [
           { kind: "institutional_email", outcome: { pass: true } },
@@ -22,54 +22,36 @@ RSpec.describe(CampaignCardComponent, type: :component) do
         campaign: build(:registration_campaign, status: :open)
       )
 
-      expect(component.eligible_for_registration?(details.eligibility)).to be(true)
-    end
-
-    it "returns false when one policy fails" do
-      details = details_class.new(
-        eligibility: [
-          { kind: "institutional_email", outcome: { pass: true } },
-          { kind: "prerequisite_campaign", outcome: { pass: false } }
-        ],
-        finalization_eligibility: [],
-        items: [],
-        item_preferences: nil
-      )
-      component = described_class.new(
-        details: details,
-        campaign: build(:registration_campaign, status: :open)
-      )
-
-      expect(component.eligible_for_registration?(details.eligibility)).to be(false)
-    end
-  end
-
-  describe "#ineligible?" do
-    let(:details) do
-      details_class.new(
-        eligibility: [{ kind: "institutional_email", outcome: { pass: false } }],
-        finalization_eligibility: [],
-        items: [],
-        item_preferences: nil
-      )
-    end
-
-    it "returns true for an incomplete campaign with failed eligibility" do
-      component = described_class.new(
-        details: details,
-        campaign: build(:registration_campaign, status: :open)
-      )
-
-      expect(component.ineligible?).to be(true)
-    end
-
-    it "returns false for completed campaigns" do
-      component = described_class.new(
-        details: details,
-        campaign: build(:registration_campaign, :completed)
-      )
-
       expect(component.ineligible?).to be(false)
+    end
+
+    context "with a failing policy" do
+      let(:details) do
+        details_class.new(
+          eligibility: [{ kind: "institutional_email", outcome: { pass: false } }],
+          finalization_eligibility: [],
+          items: [],
+          item_preferences: nil
+        )
+      end
+
+      it "returns true for an incomplete campaign with failed eligibility" do
+        component = described_class.new(
+          details: details,
+          campaign: build(:registration_campaign, status: :open)
+        )
+
+        expect(component.ineligible?).to be(true)
+      end
+
+      it "returns false for completed campaigns" do
+        component = described_class.new(
+          details: details,
+          campaign: build(:registration_campaign, :completed)
+        )
+
+        expect(component.ineligible?).to be(false)
+      end
     end
   end
 

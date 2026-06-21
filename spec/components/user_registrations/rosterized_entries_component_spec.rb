@@ -29,11 +29,10 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
       campaign.update!(status: :completed)
       create(
         :registration_user_registration,
-        :rejected,
+        :policy_rejected,
         registration_campaign: campaign,
         registration_item: campaign.registration_items.first,
         user: user,
-        rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
         rejection_reason_code: "institutional_email_mismatch"
       )
 
@@ -76,11 +75,10 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
       campaign.update!(status: :completed)
       create(
         :registration_user_registration,
-        :rejected,
+        :policy_rejected,
         registration_campaign: campaign,
         registration_item: campaign.registration_items.first,
         user: user,
-        rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
         rejection_reason_code: "prerequisite_not_met"
       )
 

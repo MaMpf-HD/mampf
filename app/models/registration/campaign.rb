@@ -66,6 +66,11 @@ module Registration
       campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
     end
 
+    def student_facing_title
+      description.to_s.strip.presence ||
+        I18n.t("registration.user_registration.campaign_main")
+    end
+
     def evaluate_policies_for(user, phase: :registration)
       policy_engine.eligible?(user, phase: phase)
     end

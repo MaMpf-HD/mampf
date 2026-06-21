@@ -9,24 +9,15 @@ class CampaignCardComponent < ViewComponent::Base
 
   attr_reader :details, :campaign
 
-  delegate :eligibility, to: :details
-
-  delegate :finalization_eligibility, to: :details
-
-  delegate :items, to: :details
-
-  delegate :item_preferences, to: :details
+  delegate :eligibility, :finalization_eligibility, :items, :item_preferences,
+           to: :details
 
   def readonly?
     helpers.student_registration_readonly?(campaign)
   end
 
-  def eligible_for_registration?(eligibility)
-    eligibility.all? { |policy| policy.dig(:outcome, :pass) }
-  end
-
   def ineligible?
-    !campaign.completed? && !eligible_for_registration?(eligibility)
+    !campaign.completed? && failed_ineligible_policies.any?
   end
 
   def failed_ineligible_policies
@@ -59,7 +50,7 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   def campaign_title
-    helpers.student_registration_campaign_title(campaign)
+    campaign.student_facing_title
   end
 
   def instruction

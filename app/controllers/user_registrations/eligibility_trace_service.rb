@@ -22,7 +22,7 @@ module UserRegistrations
         trace.each do |policy_result|
           next unless policy_result[:kind] == PREREQUISITE_CAMPAIGN_KIND
 
-          config = policy_result[:config] ||= {}
+          config = policy_result[:config]
           id = config["prerequisite_campaign_id"]
           campaign = Registration::Campaign.find_by(id: id)
           config["prerequisite_campaign"] =

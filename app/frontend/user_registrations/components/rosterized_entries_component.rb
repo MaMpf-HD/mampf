@@ -84,10 +84,7 @@ class RosterizedEntriesComponent < ViewComponent::Base
   end
 
   def campaign_title(campaign)
-    description = campaign.description.to_s.strip
-    return description if description.present?
-
-    t("registration.user_registration.campaign_main")
+    campaign.student_facing_title
   end
 
   private
