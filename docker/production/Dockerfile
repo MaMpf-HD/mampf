@@ -1,6 +1,6 @@
 FROM node:24.11.0-bookworm-slim AS node
 
-FROM ruby:3.4.7-bookworm AS build
+FROM ruby:3.4.9-bookworm AS build
 
 ENV RAILS_ENV=production \
     BUNDLE_DEPLOYMENT=1 \
@@ -91,7 +91,7 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     rm -rf /usr/local/bundle/cache /usr/local/bundle/ruby/*/cache && \
     find /usr/local/bundle -name "*.gem" -delete
 
-FROM ruby:3.4.7-bookworm
+FROM ruby:3.4.9-bookworm
 
 ENV RAILS_ENV=production \
     BUNDLE_DEPLOYMENT=1 \

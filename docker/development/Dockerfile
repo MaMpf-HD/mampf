@@ -5,7 +5,7 @@ FROM node:24.11.0-bookworm-slim AS node
 
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
-FROM ruby:3.4.7-bookworm
+FROM ruby:3.4.9-bookworm
 
 ARG RAILS_DEVELOPMENT_HOSTS=".githubpreview.dev,.app.github.dev"
 ARG BUNDLER_VERSION=4.0.12
