@@ -27,6 +27,7 @@ export async function createTutorialItemsCampaign(
   status: "open" | "closed" = "open",
   itemsCount = 3,
   extraTraits: string[] = [],
+  extraArgs: Record<string, unknown> = {},
 ): Promise<{ campaign: FactoryBotObject }> {
   const campaign = await factory.create(
     "registration_campaign",
@@ -37,6 +38,7 @@ export async function createTutorialItemsCampaign(
       campaignable_id: lecture.id,
       description,
       items_count: itemsCount,
+      ...extraArgs,
     },
   );
 

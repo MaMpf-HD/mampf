@@ -104,6 +104,44 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
   });
 
+  test("explains prerequisite policies during registration", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const prerequisiteCampaign = await factory.create(
+      "registration_campaign",
+      ["completed", "first_come_first_served"],
+      {
+        allocation_mode: "first_come_first_served",
+        campaignable_type: "Lecture",
+        campaignable_id: lecture.id,
+        description: "Priority registration",
+        items_count: 1,
+      },
+    );
+    await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Follow-up tutorial registration",
+      "open",
+      1,
+      ["with_prerequisite_policy"],
+      { parent_campaign_id: prerequisiteCampaign.id },
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByText("Registration unavailable")).toBeVisible();
+    await expect(student.page.getByText(
+      "You need a confirmed registration in Advanced Calculus: Priority registration "
+      + "before you can register here.",
+    )).toBeVisible();
+    await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
+  });
+
   test("explains finalization policies and policy rejections", async ({
     factory,
     student,
@@ -147,6 +185,60 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText(
       "You are not registered in any group yet.",
     )).toHaveCount(0);
+  });
+
+  test("explains prerequisite policies during finalization and after rejection", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const prerequisiteCampaign = await factory.create(
+      "registration_campaign",
+      ["completed", "first_come_first_served"],
+      {
+        allocation_mode: "first_come_first_served",
+        campaignable_type: "Lecture",
+        campaignable_id: lecture.id,
+        description: "Priority registration",
+        items_count: 1,
+      },
+    );
+    const { campaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Follow-up tutorial registration",
+      "open",
+      1,
+      ["with_finalization_prerequisite_policy"],
+      { parent_campaign_id: prerequisiteCampaign.id },
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByText("Registration may be rejected")).toBeVisible();
+    await expect(student.page.getByText(
+      "You need a confirmed registration in Advanced Calculus: Priority registration "
+      + "before you can register here.",
+    )).toBeVisible();
+
+    await student.page.getByRole("button", { name: "Register now" }).click();
+    await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
+
+    await campaign.__call("finalize!");
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByTestId("registration-policy-rejection-notice"))
+      .toContainText(
+        "Your registration for Follow-up tutorial registration was rejected "
+        + "for the following reasons:",
+      );
+    await expect(student.page.getByTestId("registration-policy-rejection-notice"))
+      .toContainText(
+        "You need a confirmed registration in Advanced Calculus: Priority registration "
+        + "before you can register here.",
+      );
   });
 
   test("stages preference ranks locally and saves them in one request", async ({

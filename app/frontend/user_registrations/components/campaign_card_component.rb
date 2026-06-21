@@ -26,7 +26,7 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   def ineligible?
-    campaign.status != "completed" && !eligible_for_registration?(eligibility)
+    !campaign.completed? && !eligible_for_registration?(eligibility)
   end
 
   def failed_ineligible_policies
@@ -68,7 +68,7 @@ class CampaignCardComponent < ViewComponent::Base
 
   private
 
-    def failed_eligibility_policies(eligibility)
-      eligibility.reject { |policy| policy.dig(:outcome, :pass) }
+    def failed_eligibility_policies(policies)
+      policies.reject { |policy| policy.dig(:outcome, :pass) }
     end
 end

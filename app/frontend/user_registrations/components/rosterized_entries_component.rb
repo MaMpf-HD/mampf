@@ -275,30 +275,19 @@ class RosterizedEntriesComponent < ViewComponent::Base
       end
     end
 
-    def policy_rejected_registrations_by_campaign
-      @policy_rejected_registrations_by_campaign ||=
-        Registration::UserRegistration
-        .rejected
-        .with_policy_rejection_reason
-        .where(
-          user_id: user.id,
-          registration_campaign_id: policy_rejected_campaigns.map(&:id)
-        )
-        .includes(:registration_item)
-        .group_by(&:registration_campaign_id)
-    end
-
     def failed_policy_messages(campaign)
-      UserRegistrations::EligibilityTraceService.new(
-        campaign,
-        user,
-        phase: :finalization
-      ).call.reject { |policy| policy.dig(:outcome, :pass) }
-                                                .map do |policy|
-        eligibility_failure_message(policy,
-                                    user: user)
-      end
-                                                .uniq
+      UserRegistrations::EligibilityTraceService
+        .new(
+          campaign,
+          user,
+          phase: :finalization
+        )
+        .call
+        .reject { |policy| policy.dig(:outcome, :pass) }
+        .map do |policy|
+          eligibility_failure_message(policy, user: user)
+        end
+        .uniq
     end
 
     def unallocated_labels(registrations)
