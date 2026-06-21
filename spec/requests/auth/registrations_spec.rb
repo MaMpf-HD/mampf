@@ -20,7 +20,7 @@ RSpec.describe("Auth registrations", type: :request) do
     end
 
     it "creates an unconfirmed user when captcha validation succeeds" do
-      allow(AltchaSolution).to receive(:verify_and_save).and_return(true)
+      allow(Altcha).to receive(:verify).and_return(true)
 
       expect do
         post(user_registration_path, params: base_params.merge(altcha: "valid"))
@@ -33,7 +33,7 @@ RSpec.describe("Auth registrations", type: :request) do
     end
 
     it "does not create a user when captcha validation fails" do
-      allow(AltchaSolution).to receive(:verify_and_save).and_return(false)
+      allow(Altcha).to receive(:verify).and_return(false)
 
       expect do
         post(user_registration_path,
@@ -47,7 +47,7 @@ RSpec.describe("Auth registrations", type: :request) do
     end
 
     it "blocks sign up when the registration limit is exceeded" do
-      allow(AltchaSolution).to receive(:verify_and_save).and_return(true)
+      allow(Altcha).to receive(:verify).and_return(true)
       allow(ENV).to receive(:fetch).and_call_original
       allow(ENV).to receive(:fetch).with("MAMPF_REGISTRATION_TIMEFRAME", 15).and_return("15")
       allow(ENV).to receive(:fetch).with("MAMPF_MAX_REGISTRATION_PER_TIMEFRAME", 40).and_return("0")
