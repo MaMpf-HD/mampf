@@ -40,22 +40,11 @@ module UserRegistrations
     private
 
       def eligibility_for(phase)
-        trace = Registration::PolicyEngine.new(@campaign)
-                                          .full_trace_with_config_for(@user,
-                                                                      phase: phase)
-        trace.each do |policy_result|
-          next unless policy_result[:kind] == "prerequisite_campaign"
-
-          id = policy_result[:config]["prerequisite_campaign_id"]
-          campaign = Registration::Campaign.find_by(id: id)
-          policy_result[:config]["prerequisite_campaign"] =
-            if campaign
-              "#{campaign&.campaignable&.title}: #{campaign&.description}"
-            else
-              I18n.t("registration.campaign.not_found")
-            end
-        end
-        trace
+        UserRegistrations::EligibilityTraceService.new(
+          @campaign,
+          @user,
+          phase: phase
+        ).call
       end
   end
 end

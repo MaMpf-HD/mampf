@@ -1,0 +1,34 @@
+module UserRegistrations
+  class EligibilityTraceService
+    def initialize(campaign, user, phase:)
+      @campaign = campaign
+      @user = user
+      @phase = phase
+    end
+
+    def call
+      trace = Registration::PolicyEngine.new(@campaign)
+                                        .full_trace_with_config_for(@user,
+                                                                    phase: @phase)
+      decorate_prerequisite_campaigns(trace)
+      trace
+    end
+
+    private
+
+      def decorate_prerequisite_campaigns(trace)
+        trace.each do |policy_result|
+          next unless policy_result[:kind] == "prerequisite_campaign"
+
+          id = policy_result.dig(:config, "prerequisite_campaign_id")
+          campaign = Registration::Campaign.find_by(id: id)
+          policy_result[:config]["prerequisite_campaign"] =
+            if campaign
+              "#{campaign&.campaignable&.title}: #{campaign&.description}"
+            else
+              I18n.t("registration.campaign.not_found")
+            end
+        end
+      end
+  end
+end
