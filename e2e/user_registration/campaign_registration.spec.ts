@@ -262,10 +262,13 @@ test.describe("campaign registration", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
-    const tiles = student.page.locator(".tutorial-gtile--student");
+    const tiles = student.page.getByTestId("registration-group-tile");
     const firstTile = tiles.nth(0);
     const secondTile = tiles.nth(1);
     const thirdTile = tiles.nth(2);
+    const preferencePodium = student.page.getByRole("group", {
+      name: "Selected preference ranks",
+    });
     const firstTitle = await firstTile.getByRole("heading").textContent();
     const secondTitle = await secondTile.getByRole("heading").textContent();
     const thirdTitle = await thirdTile.getByRole("heading").textContent();
@@ -276,13 +279,10 @@ test.describe("campaign registration", () => {
     await firstTile.getByRole("button", { name: "1st" }).click();
     expect(saveRequests).toBe(0);
     await expect(firstTile.getByRole("button", { name: "1st" })).toHaveClass(/btn-primary/);
-    await expect(student.page.locator('[aria-label="Selected preference ranks"]')).toContainText(
-      firstTitle || "",
-    );
+    await expect(preferencePodium).toContainText(firstTitle || "");
     await expect(saveButton).toBeDisabled();
-    await expect(
-      student.page.locator('[data-preference-choices-target="saveTooltip"]'),
-    ).toHaveAttribute("title", "Choose an option for every rank before saving.");
+    await expect(student.page.getByTestId("preference-save-tooltip"))
+      .toHaveAttribute("title", "Choose an option for every rank before saving.");
 
     await secondTile.getByRole("button", { name: "2nd" }).click();
     await thirdTile.getByRole("button", { name: "3rd" }).click();
@@ -305,12 +305,8 @@ test.describe("campaign registration", () => {
     expect(submittedBody).toContain("preferences%5B1%5D");
     expect(submittedBody).toContain("preferences%5B2%5D");
     expect(submittedBody).toContain("preferences%5B3%5D");
-    await expect(student.page.locator('[aria-label="Selected preference ranks"]')).toContainText(
-      thirdTitle || "",
-    );
-    await expect(student.page.locator('[aria-label="Selected preference ranks"]')).toContainText(
-      secondTitle || "",
-    );
+    await expect(preferencePodium).toContainText(thirdTitle || "");
+    await expect(preferencePodium).toContainText(secondTitle || "");
   });
 
   test("limits preference campaigns with two tutorials to two ranks", async ({
@@ -336,13 +332,15 @@ test.describe("campaign registration", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
-    const tiles = student.page.locator(".tutorial-gtile--student");
+    const tiles = student.page.getByTestId("registration-group-tile");
     const firstTile = tiles.nth(0);
     const secondTile = tiles.nth(1);
-    const preferencePodium = student.page.locator('[aria-label="Selected preference ranks"]');
+    const preferencePodium = student.page.getByRole("group", {
+      name: "Selected preference ranks",
+    });
 
     await expect(student.page.getByText("Rank 2 options.")).toBeVisible();
-    await expect(preferencePodium.locator(".student-registration-podium-spot")).toHaveCount(2);
+    await expect(preferencePodium.getByTestId("preference-podium-spot")).toHaveCount(2);
     await expect(student.page.getByRole("button", { name: "3rd" })).toHaveCount(0);
     await expect(student.page.getByRole("button", { name: "Save choices" })).toBeHidden();
 
@@ -492,7 +490,7 @@ test.describe("campaign registration", () => {
 
     const blockedTooltip
       = "You cannot join this tutorial since you cannot leave your tutorial. This was set up by your lecturer this way.";
-    const alternativeTutorialTile = student.page.locator(".tutorial-gtile--student", {
+    const alternativeTutorialTile = student.page.getByTestId("registration-group-tile").filter({
       has: student.page.getByRole("heading", {
         name: "Alternative Self Enrollment Tutorial",
       }),
