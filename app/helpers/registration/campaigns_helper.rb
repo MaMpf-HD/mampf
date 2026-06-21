@@ -115,10 +115,6 @@ module Registration
       t("registration.campaign.confirmations.#{key}")
     end
 
-    def no_campaign_registerables(lecture)
-      Rosters::NoCampaignRegisterablesQuery.new(lecture).call
-    end
-
     def campaign_open_confirmation(campaign)
       msg = t("registration.campaign.confirmations.open")
       if campaign.registration_items.any? { |i| i.capacity.nil? }
