@@ -38,8 +38,11 @@
 
   <%= f.hidden_field :locale, value: I18n.locale %>
   <altcha-widget
-    hidefooter
     class="d-flex mb-3"
+    display="bar"
+    type="native"
+    barPlacement="bottom"
+    language="<%= I18n.locale %>"
     style="--altcha-border-radius:5px;"
     challenge="<%= Altcha.create_challenge.to_json %>">
   </altcha-widget>
