@@ -98,7 +98,8 @@ RSpec.describe(EligibilityHelper, type: :helper) do
         context: :finalization_warning
       )
 
-      expect(html).to include("If this remains unchanged when the registration process is finalized")
+      expect(html)
+        .to include("If this remains unchanged when the registration process is finalized")
       expect(html).not_to include("before you can register here")
     end
 

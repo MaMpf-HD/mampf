@@ -102,7 +102,7 @@ RSpec.describe(CampaignCardComponent, type: :component) do
         campaign: build(:registration_campaign, status: :open)
       )
 
-      expect(component.policy_overview_sections.map { |section| section[:title] })
+      expect(component.policy_overview_sections.pluck(:title))
         .to eq([
                  I18n.t("registration.user_registration.policy_overview.registration_title"),
                  I18n.t("registration.user_registration.policy_overview.finalization_title")
@@ -121,7 +121,7 @@ RSpec.describe(CampaignCardComponent, type: :component) do
         campaign: build(:registration_campaign, status: :open)
       )
 
-      expect(component.policy_overview_sections.map { |section| section[:title] })
+      expect(component.policy_overview_sections.pluck(:title))
         .to eq([
                  I18n.t("registration.user_registration.policy_overview.registration_title"),
                  I18n.t("registration.user_registration.policy_overview.finalization_title")

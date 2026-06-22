@@ -89,7 +89,8 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
       )
 
       expect(rendered.text).to include(
-        "At the time this registration process was finalized, you did not have a confirmed registration in"
+        "At the time this registration process was finalized, you did not have a " \
+        "confirmed registration in"
       )
       expect(rendered.text).to include("Priority registration")
     end
