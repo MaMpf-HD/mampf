@@ -101,6 +101,7 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     rm -f ./docker-dummy.env && \
     rm -rf node_modules tmp/cache && \
     bundle clean --force && \
+    rm -rf /usr/local/bundle/bundler/gems/*/.git && \
     rm -rf /usr/local/bundle/cache /usr/local/bundle/ruby/*/cache && \
     find /usr/local/bundle -name "*.gem" -delete
 
