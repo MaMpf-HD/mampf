@@ -149,4 +149,4 @@ RUN chown -R app:app /usr/src/app/tmp /usr/src/app/log && \
 USER app
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-    CMD ruby -rnet/http -e 'port = ENV.fetch("THRUSTER_HTTP_PORT", "3000"); uri = URI("http://127.0.0.1:#{port}/login"); response = Net::HTTP.start(uri.host, uri.port) { |http| http.get(uri.request_uri, {"X-Forwarded-Proto" => "https", "Host" => "localhost"}) }; exit(response.is_a?(Net::HTTPSuccess) ? 0 : 1)'
+    CMD ruby -rnet/http -e 'port = ENV.fetch("THRUSTER_HTTP_PORT", "3000"); uri = URI("http://127.0.0.1:#{port}/up"); response = Net::HTTP.start(uri.host, uri.port) { |http| http.get(uri.request_uri, {"X-Forwarded-Proto" => "https", "Host" => "localhost"}) }; exit(response.is_a?(Net::HTTPSuccess) ? 0 : 1)'
