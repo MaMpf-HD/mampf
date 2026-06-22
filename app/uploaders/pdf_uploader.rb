@@ -1,4 +1,3 @@
-require "fileutils"
 require "image_processing/vips"
 require "pdf-reader"
 require "timeout"
@@ -9,7 +8,6 @@ class PdfUploader < Shrine
   TOOL_TIMEOUT = 10
   MAX_STRUCTURE_BYTES = 256 * 1024
   STRUCTURE_FILE_NAME = "structure.mampf".freeze
-  UNPACK_ROOT = Rails.root.join("tmp/pdf_uploader")
 
   # shrine plugins
   plugin :upload_endpoint, max_size: MAX_FILE_SIZE
@@ -30,10 +28,7 @@ class PdfUploader < Shrine
         pages = pdf_page_count(file.path)
 
         # Extract structure.mampf (embedded by mampf.sty LaTeX package) using qpdf
-        structure = with_unpack_folder do |temp_folder|
-          read_mampf_structure(file.path, temp_folder)
-        end
-        structure ||= ""
+        structure = read_mampf_structure(file.path) || ""
 
         # extract lines that correspond to MaMpf-Label entries from LaTeX
         # package mampf.sty
@@ -85,11 +80,6 @@ class PdfUploader < Shrine
 
   private
 
-    def with_unpack_folder(&)
-      FileUtils.mkdir_p(UNPACK_ROOT)
-      Dir.mktmpdir("pdf-", UNPACK_ROOT.to_s, &)
-    end
-
     # Extract page count using the pdf-reader gem (pure Ruby, no CLI needed).
     def pdf_page_count(path)
       PDF::Reader.new(path).page_count
@@ -100,27 +90,53 @@ class PdfUploader < Shrine
 
     # Extract the structure.mampf embedded attachment using qpdf.
     # Returns the file content as a UTF-8 string, or nil if unavailable.
-    def read_mampf_structure(file_path, temp_folder)
-      structure_path = File.join(temp_folder, STRUCTURE_FILE_NAME)
-      out_file = File.open(structure_path, "w")
+    def read_mampf_structure(file_path)
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + TOOL_TIMEOUT
+      reader, writer = IO.pipe
       pid = Process.spawn("qpdf", "--show-attachment=#{STRUCTURE_FILE_NAME}",
                           file_path,
-                          out: out_file, err: File::NULL, pgroup: true)
-      _pid, status = Timeout.timeout(TOOL_TIMEOUT) { Process.wait2(pid) }
-      out_file.close
-      return nil unless status.success? && File.exist?(structure_path)
-      return nil if File.size(structure_path) > MAX_STRUCTURE_BYTES
+                          out: writer, err: File::NULL, pgroup: true)
+      writer.close
 
-      File.open(structure_path, "r") do |io|
-        io.read.encode("UTF-8", invalid: :replace)
+      output = +""
+      loop do
+        remaining = deadline - Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        raise(Timeout::Error) if remaining <= 0
+
+        ready = IO.select([reader], nil, nil, remaining)
+        raise(Timeout::Error) unless ready
+
+        chunk = reader.read_nonblock(16 * 1024, exception: false)
+        case chunk
+        when :wait_readable
+          next
+        when nil
+          break
+        else
+          output << chunk
+          if output.bytesize > MAX_STRUCTURE_BYTES
+            terminate_process_group(pid)
+            return nil
+          end
+        end
       end
+
+      remaining = deadline - Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      raise(Timeout::Error) if remaining <= 0
+
+      _pid, status = Timeout.timeout(remaining) { Process.wait2(pid) }
+      return nil unless status.success?
+
+      output.force_encoding("UTF-8").encode("UTF-8", invalid: :replace,
+                                                     undef: :replace)
     rescue SystemCallError
       nil
     rescue Timeout::Error
-      terminate_process_group(pid)
+      terminate_process_group(pid) if pid
       nil
     ensure
-      out_file&.close unless out_file&.closed?
+      writer&.close unless writer.nil? || writer.closed?
+      reader&.close unless reader.nil? || reader.closed?
     end
 
     def terminate_process_group(pid)
