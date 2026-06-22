@@ -40,6 +40,16 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 RUN gem install bundler -v "${BUNDLER_VERSION}"
 
+# Allow Bundler to use its bare git cache with newer Git defaults.
+RUN git config --system safe.bareRepository all
+
+# Download OR-Tools for Debian 13 (the or-tools gem has no official trixie
+# binary yet; see https://github.com/MaMpf-HD/build-artifacts)
+ADD https://github.com/MaMpf-HD/build-artifacts/releases/download/or-tools-9.15-trixie/or-tools-9.15-trixie-amd64.tar.gz /tmp/or-tools.tar.gz
+RUN mkdir -p /opt/or-tools \
+    && tar xzf /tmp/or-tools.tar.gz -C /opt/or-tools \
+    && rm /tmp/or-tools.tar.gz
+
 # Playwright system dependencies
 RUN npx playwright install-deps chromium
 
@@ -61,6 +71,7 @@ ARG USER_GID=$USER_UID
 # Create the user & setup permissions
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && mkdir -p /usr/local/bundle && chown -R $USERNAME /usr/local/bundle \
     && mkdir -p /cache && chown -R $USERNAME /cache \
     && mkdir -p /workspaces/mampf/node_modules/ && chown -R $USERNAME /workspaces/mampf/node_modules/ \
     && mkdir -p /workspaces/mampf/public/ && chown -R $USERNAME /workspaces/mampf/public/ \
@@ -76,6 +87,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
 WORKDIR /workspaces/mampf/
 ENTRYPOINT ["/workspaces/mampf/docker/development/init-and-run.sh"]
 USER $USERNAME
+
+RUN bundle config set --global build.or-tools --with-or-tools-dir=/opt/or-tools
 
 # Log Node.js tooling versions
 RUN which node && node --version && which yarn && yarn --version
