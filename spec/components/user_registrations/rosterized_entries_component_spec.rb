@@ -88,7 +88,9 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
         described_class.new(rosterized_entries: [], lecture: lecture, user: user)
       )
 
-      expect(rendered.text).to include("You need a confirmed registration in")
+      expect(rendered.text).to include(
+        "At the time this registration process was finalized, you did not have a confirmed registration in"
+      )
       expect(rendered.text).to include("Priority registration")
     end
   end

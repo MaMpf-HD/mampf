@@ -37,6 +37,29 @@ class CampaignCardComponent < ViewComponent::Base
     failed_finalization_policies.any?
   end
 
+  def policy_overview_sections
+    @policy_overview_sections ||= [
+      policy_section(
+        title: I18n.t("registration.user_registration.policy_overview." \
+                      "registration_title"),
+        description: I18n.t("registration.user_registration.policy_overview." \
+                            "registration_description"),
+        policies: eligibility
+      ),
+      policy_section(
+        title: I18n.t("registration.user_registration.policy_overview." \
+                      "finalization_title"),
+        description: I18n.t("registration.user_registration.policy_overview." \
+                            "finalization_description"),
+        policies: finalization_eligibility
+      )
+    ].compact
+  end
+
+  def policy_overview?
+    policy_overview_sections.any?
+  end
+
   def main_disabled?
     readonly? || ineligible?
   end
@@ -61,5 +84,15 @@ class CampaignCardComponent < ViewComponent::Base
 
     def failed_eligibility_policies(policies)
       policies.reject { |policy| policy.dig(:outcome, :pass) }
+    end
+
+    def policy_section(title:, description:, policies:)
+      return if policies.blank?
+
+      {
+        title: title,
+        description: description,
+        policies: policies
+      }
     end
 end

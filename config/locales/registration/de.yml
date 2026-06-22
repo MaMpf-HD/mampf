@@ -337,16 +337,38 @@ de:
         title: "Anmeldung geschlossen"
         description: "Deine abgegebenen Auswahlentscheidungen bleiben hier sichtbar, während die Lehrperson die Anmeldungen prüft und die Zuteilung finalisiert. Änderungen sind nicht mehr möglich."
       finalization_policy_notice:
-        title: "Anmeldung kann abgelehnt werden"
+        title: "Deine Anmeldung würde derzeit bei der Finalisierung abgelehnt"
         description: >-
-          Beim Finalisieren dieses Anmeldeverfahrens wird Deine Anmeldung
-          anhand folgender Regeln geprüft:
+          Die Registrierung ist derzeit noch möglich. Würde dieses
+          Anmeldeverfahren jetzt finalisiert, würde Deine Anmeldung aus den
+          folgenden Gründen abgelehnt:
+      policy_overview:
+        title: "Regeln für dieses Anmeldeverfahren"
+        registration_title: "Prüfung bei der Anmeldung"
+        registration_description: "Diese Regeln müssen erfüllt sein, damit Du Dich anmelden kannst."
+        finalization_title: "Erneute Prüfung bei der Finalisierung"
+        finalization_description: "Diese Regeln werden bei der Finalisierung des Anmeldeverfahrens erneut geprüft."
+        status:
+          fulfilled: "Derzeit erfüllt"
+          not_fulfilled: "Derzeit nicht erfüllt"
+          needs_clarification: "Muss geklärt werden"
+        policies:
+          institutional_email: "E-Mail-Domain muss %{domains} sein"
+          prerequisite_campaign: "Bestätigte Anmeldung in %{campaign}"
+          student_performance: "Status bei der Studierendenleistung muss %{status} sein"
+          generic: "Voraussetzung: %{requirement}"
       eligibility_failures:
         current_domain_unknown: "eine unbekannte Domain"
         institutional_email_mismatch_html: >-
           Deine aktuelle E-Mail-Domain ist %{current_domain}, aber dieses
           Anmeldeverfahren verlangt %{domains}. Gehe in Dein %{profile} und passe
           dort Deine E-Mail-Adresse an.
+        institutional_email_finalization_warning_html: >-
+          Deine aktuelle E-Mail-Domain ist %{current_domain}, aber dieses
+          Anmeldeverfahren verlangt %{domains} auch bei der Finalisierung. Wenn
+          sich das bis zur Finalisierung nicht ändert, wird Deine Anmeldung
+          abgelehnt. Gehe in Dein %{profile} und passe dort Deine
+          E-Mail-Adresse an.
         institutional_email_finalization_rejection: >-
           Zum Zeitpunkt der Finalisierung dieses Anmeldeverfahrens entsprach
           Deine E-Mail-Domain nicht den geforderten Domains %{domains}. Eine
@@ -354,11 +376,17 @@ de:
           dennoch noch teilnehmen möchtest, wende Dich bitte an die Lehrperson
           oder die Assistenz.
         institutional_email_configuration_error: "Die erforderlichen institutionellen E-Mail-Domains sind für dieses Anmeldeverfahren nicht korrekt konfiguriert. Bitte wende Dich an die Kursverwaltung."
-        prerequisite_not_met: "Du benötigst zuerst eine bestätigte Anmeldung im Anmeldeverfahren %{campaign}, bevor Du Dich hier anmelden kannst. Wende Dich an die Kursverwaltung, wenn das aus Deiner Sicht nicht stimmt."
+        prerequisite_not_met: "Du benötigst zuerst eine bestätigte Anmeldung im Anmeldeverfahren %{campaign}, bevor Du Dich hier anmelden kannst. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
+        prerequisite_not_met_finalization_warning: "Du hast derzeit keine bestätigte Anmeldung im Anmeldeverfahren %{campaign}. Wenn sich das bis zur Finalisierung nicht ändert, wird Deine Anmeldung abgelehnt."
+        prerequisite_not_met_finalization_rejection: "Zum Zeitpunkt der Finalisierung dieses Anmeldeverfahrens hattest Du keine bestätigte Anmeldung im Anmeldeverfahren %{campaign}. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
         prerequisite_campaign_not_found: "Das erforderliche vorausgesetzte Anmeldeverfahren %{campaign} ist derzeit nicht verfügbar. Bitte wende Dich an die Kursverwaltung."
         prerequisite_configuration_error: "Dieses Anmeldeverfahren hängt von einem vorausgesetzten Anmeldeverfahren ab, das nicht korrekt konfiguriert ist. Bitte wende Dich an die Kursverwaltung."
-        student_performance_failed: "Dein Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status %{status}. Bitte wende Dich an die Kursverwaltung, wenn das aus Deiner Sicht nicht stimmt."
-        generic_html: "Du erfüllst die Voraussetzung %{requirement} derzeit nicht. Bitte wende Dich an die Kursverwaltung, wenn Du Hilfe brauchst."
+        student_performance_failed: "Dein Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status %{status}. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
+        student_performance_failed_finalization_warning: "Dein aktueller Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status %{status}. Wenn sich das bis zur Finalisierung nicht ändert, wird Deine Anmeldung abgelehnt."
+        student_performance_failed_finalization_rejection: "Zum Zeitpunkt der Finalisierung dieses Anmeldeverfahrens entsprach Dein Status bei der Studierendenleistung nicht dem erforderlichen Status %{status}. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
+        generic_html: "Du erfüllst die Voraussetzung %{requirement} derzeit nicht. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
+        generic_finalization_warning_html: "Du erfüllst die Voraussetzung %{requirement} derzeit nicht. Wenn sich das bis zur Finalisierung nicht ändert, wird Deine Anmeldung abgelehnt."
+        generic_finalization_rejection_html: "Zum Zeitpunkt der Finalisierung dieses Anmeldeverfahrens hast Du die Voraussetzung %{requirement} nicht erfüllt. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
       withdraw_first: "Zuerst zurückziehen"
       filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
       status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"

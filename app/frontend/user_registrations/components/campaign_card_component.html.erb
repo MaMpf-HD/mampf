@@ -120,6 +120,40 @@
         </div>
       <% end %>
 
+      <% if policy_overview? %>
+        <div class="border rounded p-3 mb-3 bg-body-tertiary">
+          <div class="fw-semibold mb-2">
+            <%= t("registration.user_registration.policy_overview.title") %>
+          </div>
+
+          <% policy_overview_sections.each_with_index do |section, index| %>
+            <div class="<%= 'mb-3' if index < policy_overview_sections.size - 1 %>">
+              <div class="small fw-semibold text-uppercase text-muted mb-1">
+                <%= section[:title] %>
+              </div>
+
+              <div class="small text-muted mb-2">
+                <%= section[:description] %>
+              </div>
+
+              <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                <% section[:policies].each do |policy| %>
+                  <li class="d-flex justify-content-between align-items-start gap-2">
+                    <div class="small">
+                      <%= eligibility_policy_summary(policy) %>
+                    </div>
+
+                    <span class="badge flex-shrink-0 <%= eligibility_policy_status_badge_class(policy) %>">
+                      <%= eligibility_policy_status_label(policy) %>
+                    </span>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
       <% unless main_disabled? %>
         <div class="student-registration-campaign-instruction fw-semibold mb-3">
           <%= instruction %>

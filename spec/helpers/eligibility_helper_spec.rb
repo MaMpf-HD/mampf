@@ -39,6 +39,7 @@ RSpec.describe(EligibilityHelper, type: :helper) do
       expect(html).to include("play")
       expect(html).to include("uni-heidelberg.de")
       expect(html).to include(edit_profile_path)
+      expect(html).to include("will be rejected")
     end
 
     it "renders finalization rejections for institutional email mismatches " \
@@ -83,6 +84,56 @@ RSpec.describe(EligibilityHelper, type: :helper) do
       html = helper.eligibility_failure_message(policy)
 
       expect(html).to include("Linear Algebra: Priority registration")
+    end
+
+    it "renders phase-specific wording for prerequisite finalization warnings" do
+      policy = {
+        kind: "prerequisite_campaign",
+        config: { "prerequisite_campaign" => "Linear Algebra: Priority registration" },
+        outcome: { pass: false, code: :prerequisite_not_met }
+      }
+
+      html = helper.eligibility_failure_message(
+        policy,
+        context: :finalization_warning
+      )
+
+      expect(html).to include("If this remains unchanged when the registration process is finalized")
+      expect(html).not_to include("before you can register here")
+    end
+
+    it "renders phase-specific wording for prerequisite finalization rejections" do
+      policy = {
+        kind: "prerequisite_campaign",
+        config: { "prerequisite_campaign" => "Linear Algebra: Priority registration" },
+        outcome: { pass: false, code: :prerequisite_not_met }
+      }
+
+      html = helper.eligibility_failure_message(
+        policy,
+        context: :finalization_rejection
+      )
+
+      expect(html).to include("At the time this registration process was finalized")
+      expect(html).not_to include("before you can register here")
+    end
+
+    it "renders policy overview status labels" do
+      pass_policy = {
+        kind: "institutional_email",
+        config: { "allowed_domains" => ["uni-heidelberg.de"] },
+        outcome: { pass: true }
+      }
+      unclear_policy = {
+        kind: "prerequisite_campaign",
+        config: { "prerequisite_campaign" => "Priority registration" },
+        outcome: { pass: false, code: :prerequisite_campaign_not_found }
+      }
+
+      expect(helper.eligibility_policy_status_label(pass_policy))
+        .to eq("Currently fulfilled")
+      expect(helper.eligibility_policy_status_label(unclear_policy))
+        .to eq("Needs clarification")
     end
 
     it "renders advice for missing prerequisite campaigns" do

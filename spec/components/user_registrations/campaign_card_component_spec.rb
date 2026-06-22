@@ -88,4 +88,25 @@ RSpec.describe(CampaignCardComponent, type: :component) do
       expect(component.failed_finalization_policies).to eq([])
     end
   end
+
+  describe "#policy_overview_sections" do
+    it "includes registration and finalization checks when both are present" do
+      details = details_class.new(
+        eligibility: [{ kind: "institutional_email", outcome: { pass: true } }],
+        finalization_eligibility: [{ kind: "prerequisite_campaign", outcome: { pass: false } }],
+        items: [],
+        item_preferences: nil
+      )
+      component = described_class.new(
+        details: details,
+        campaign: build(:registration_campaign, status: :open)
+      )
+
+      expect(component.policy_overview_sections.map { |section| section[:title] })
+        .to eq([
+                 I18n.t("registration.user_registration.policy_overview.registration_title"),
+                 I18n.t("registration.user_registration.policy_overview.finalization_title")
+               ])
+    end
+  end
 end

@@ -161,9 +161,10 @@ test.describe("campaign registration", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
-    await expect(student.page.getByText("Registration may be rejected")).toBeVisible();
+    await expect(student.page.getByText("Your registration would currently fail at finalization"))
+      .toBeVisible();
     await expect(student.page.getByText(
-      "Your current email domain is play, but this registration process requires example.com",
+      "Your current email domain is play, but this registration process also requires example.com at finalization.",
     )).toBeVisible();
 
     await student.page.getByRole("button", { name: "Register now" }).click();
@@ -221,8 +222,11 @@ test.describe("campaign registration", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
-    await expect(student.page.getByText("Registration may be rejected")).toBeVisible();
-    await expect(student.page.getByText(/You need a confirmed registration in .*Priority registration/))
+    await expect(student.page.getByText("Your registration would currently fail at finalization"))
+      .toBeVisible();
+    await expect(student.page.getByText(
+      /You currently do not have a confirmed registration in .*Priority registration/
+    ))
       .toBeVisible();
 
     await student.page.getByRole("button", { name: "Register now" }).click();
@@ -235,7 +239,9 @@ test.describe("campaign registration", () => {
       "Your registration for Follow-up tutorial registration was rejected "
       + "for the following reasons:",
     )).toBeVisible();
-    await expect(student.page.getByText(/You need a confirmed registration in .*Priority registration/))
+    await expect(student.page.getByText(
+      /At the time this registration process was finalized, you did not have a confirmed registration in .*Priority registration/
+    ))
       .toBeVisible();
   });
 

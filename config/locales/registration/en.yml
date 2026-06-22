@@ -337,15 +337,37 @@ en:
         title: "Registration closed"
         description: "Your submitted choices stay visible here while the teacher reviews the registrations and finalizes the allocation. You can no longer make changes."
       finalization_policy_notice:
-        title: "Registration may be rejected"
+        title: "Your registration would currently fail at finalization"
         description: >-
-          When this registration process is finalized, your registration will be checked
-          against the following rules:
+          Registration is still possible. However, if this registration process
+          were finalized now, your registration would be rejected for the
+          following reasons:
+      policy_overview:
+        title: "Policy checks for this registration"
+        registration_title: "Checked at registration"
+        registration_description: "These checks must be fulfilled before you can register."
+        finalization_title: "Checked again at finalization"
+        finalization_description: "These checks are evaluated again when the registration process is finalized."
+        status:
+          fulfilled: "Currently fulfilled"
+          not_fulfilled: "Currently not fulfilled"
+          needs_clarification: "Needs clarification"
+        policies:
+          institutional_email: "Email domain must be %{domains}"
+          prerequisite_campaign: "Confirmed registration in %{campaign}"
+          student_performance: "Student performance status must be %{status}"
+          generic: "Requirement: %{requirement}"
       eligibility_failures:
         current_domain_unknown: "an unknown domain"
         institutional_email_mismatch_html: >-
           Your current email domain is %{current_domain}, but this registration
           process requires %{domains}. Go to your %{profile} and update your
+          email there.
+        institutional_email_finalization_warning_html: >-
+          Your current email domain is %{current_domain}, but this registration
+          process also requires %{domains} at finalization. If this remains
+          unchanged when the registration process is finalized, your
+          registration will be rejected. Go to your %{profile} and update your
           email there.
         institutional_email_finalization_rejection: >-
           At the time this registration process was finalized, your email domain
@@ -354,11 +376,17 @@ en:
           registration. If you still want to be admitted, please contact the
           lecturer or teaching assistant.
         institutional_email_configuration_error: "The required institutional email domains are not configured for this campaign. Please contact the course administration."
-        prerequisite_not_met: "You need a confirmed registration in %{campaign} before you can register here. Contact the course administration if you think this is incorrect."
+        prerequisite_not_met: "You need a confirmed registration in %{campaign} before you can register here. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        prerequisite_not_met_finalization_warning: "You currently do not have a confirmed registration in %{campaign}. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        prerequisite_not_met_finalization_rejection: "At the time this registration process was finalized, you did not have a confirmed registration in %{campaign}. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
         prerequisite_campaign_not_found: "The required prerequisite registration %{campaign} is currently unavailable. Please contact the course administration."
         prerequisite_configuration_error: "This campaign depends on a prerequisite registration that is not configured correctly. Please contact the course administration."
-        student_performance_failed: "Your student performance status does not match the required status %{status}. Please contact the course administration if you think this is incorrect."
-        generic_html: "You do not currently meet the %{requirement} requirement. Please contact the course administration if you need help."
+        student_performance_failed: "Your student performance status does not match the required status %{status}. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        student_performance_failed_finalization_warning: "Your current student performance status does not match the required status %{status}. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        student_performance_failed_finalization_rejection: "At the time this registration process was finalized, your student performance status did not match the required status %{status}. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
+        generic_html: "You do not currently meet the %{requirement} requirement. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        generic_finalization_warning_html: "You do not currently meet the %{requirement} requirement. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        generic_finalization_rejection_html: "At the time this registration process was finalized, you did not meet the %{requirement} requirement. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
       withdraw_first: "Withdraw first"
       filter_placeholder: "Filter by weekday, time, tutor"
       status_for_registration: "Current statuses of your submitted options"
