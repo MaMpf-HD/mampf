@@ -18,7 +18,7 @@ module Assessment
     end
 
     rescue_from SubmissionGraderService::SubmissionGraderError,
-                Assessment::PointEntryService::PointEntryError do |e|
+                PointEntryService::PointEntryError do |e|
       respond_with_flash(:alert, e.message)
     end
 
