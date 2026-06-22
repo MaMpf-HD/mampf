@@ -37,13 +37,8 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def status_col
-      if teacher?
-        Column.new(css_class: "text-center sticky-col status-col-teacher grade-th",
-                   label: t("assessment.grading_tutorial.status"))
-      else
-        Column.new(css_class: "text-center sticky-col status-col grade-th",
-                   label: t("assessment.grading_tutorial.status"))
-      end
+      Column.new(css_class: "text-center sticky-col status-col-#{@mode} grade-th",
+                 label: t("assessment.grading_tutorial.status"))
     end
 
     def grading_columns
@@ -55,7 +50,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
         status_col,
         *@tasks.map { |task| task_column(task) },
         Column.new(
-          css_class: "text-center sticky-col total-col grade-th",
+          css_class: "text-center sticky-col total-col-#{@mode} grade-th",
           label: t("assessment.grading_tutorial.total_points"),
           sublabel: "(#{@total_max_points} #{t("assessment.grading_tutorial.max_points")})"
         )
@@ -71,13 +66,8 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def action_column
-      if teacher?
-        [Column.new(css_class: "text-center sticky-col action-col-teacher grade-th",
-                    label: t("assessment.grading_tutorial.actions"))]
-      else
-        [Column.new(css_class: "text-center sticky-col action-col grade-th",
-                    label: t("assessment.grading_tutorial.actions"))]
-      end
+      [Column.new(css_class: "text-center sticky-col action-col-#{@mode} grade-th",
+                  label: t("assessment.grading_tutorial.actions"))]
     end
 
     def correction_column

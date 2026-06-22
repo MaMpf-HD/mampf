@@ -12,11 +12,11 @@ class TutorialPointingTableComponent < ViewComponent::Base
       @tutorial = tutorial
       @stack = assignment&.submissions&.where(tutorial: @tutorial)&.proper
                          &.order(:last_modification_by_users_at)
-      @non_submitters = assignment&.non_submitters(@tutorial)
+      @non_submitters = assignment&.non_submitters_tutorial(@tutorial)
     else
       @lecture = assignment.lecture
-      @tutorials = @lecture.tutorials
-      @non_submitters = @lecture&.non_submitters(assignment)
+      @participations = assignment.assessment&.assessment_participations
+      @non_submitters = assignment.non_submitters
     end
   end
 
@@ -28,20 +28,12 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @assignment&.assessment&.tasks || []
   end
 
-  def view_participations
-    participations = @stack.map(&:participations).flatten.compact
-    participations += @non_submitters.map do |user|
-      user.assessment_participation_in_assignment(@assignment)
-    end
-    participations.compact
-  end
-
   def total_max_points
     tasks.filter_map(&:max_points).sum
   end
 
   def grading_records?
-    @stack.any? || @non_submitters.any? do |user|
+    @stack&.any? || @non_submitters&.any? do |user|
       user.assessment_participation_in_assignment(@assignment)
     end
   end

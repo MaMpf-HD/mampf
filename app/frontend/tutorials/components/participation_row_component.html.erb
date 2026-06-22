@@ -28,13 +28,14 @@
   </td>
 
   <% if @mode == "teacher" %>
-    <%= @participation.tutorial&.name %>
+    <td class="text-center sticky-col tutorial-col">
+      <span><%= @participation.tutorial&.title %></span>
+    </td>
   <% end %>
 
   <% if grading_enabled? %>
     <!-- Column 2: Status -->
-    <% if @mode == "teacher" %>
-      <td class="text-center sticky-col status-col-teacher">
+      <td class="text-center sticky-col status-col-<%= @mode %>">
         <span
           class="<%= badge_status_participation_class(@participation.status) %>"
           style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
@@ -42,33 +43,24 @@
         <%= @participation.status %>
         </span>
       </td>
-    <% else %>
-      <td class="text-center sticky-col status-col">
-        <span
-          class="<%= badge_status_participation_class(@participation.status) %>"
-          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
-        >
-        <%= @participation.status %>
-        </span>
-      </td>
-    <% end %>
 
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% @assignment.assessment.tasks.each do |assignment_task| %>
       <%= task_points_participation_cell(assignment_task, allow_grading?) %>
     <% end %>
+
     <!-- Column 4: Total Points -->
-    <td class="text-center sticky-col total-col">
+    <td class="text-center sticky-col total-col-<%= @mode %>">
       <span data-submission-row-target="totalPoints">0</span>
     </td>
   <% end %>
 
   <!-- Column 5: Actions buttons -->
-  <td class="text-end sticky-col action-col">
+  <td class="text-end sticky-col action-col-<%= @mode %>">
     <div class="d-inline-flex align-items-center flex-nowrap gap-1">
       <!-- Save and refresh -->
-      <% if helpers.current_user.in?(@tutorial.tutors) && grading_enabled? && @participation %>
+      <% if can_grade? && grading_enabled? && @participation %>
         <!-- Hidden form for this row to submit -->
         <%= form_with url: point_user_tutorial_path(@participation, type: "Tutorial"),
                     method: :patch,

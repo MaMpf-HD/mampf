@@ -15,8 +15,12 @@ class AssessmentAbility
 
     can :grade, Tutorial do |tutorial|
       user.admin? ||
-        user.tutor_in?(tutorial) ||
-        user.teacher_in?(tutorial.lecture)
+        user.can_grade_in_scope?(tutorial)
+    end
+
+    can :grade, Lecture do |lecture|
+      user.admin? ||
+        user.can_grade_in_scope?(lecture)
     end
   end
 end

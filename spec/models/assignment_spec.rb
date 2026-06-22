@@ -42,7 +42,7 @@ RSpec.describe(Assignment, type: :model) do
     end
   end
 
-  describe "non_submitters" do
+  describe "non_submitters_tutorial" do
     before do
       Flipper.enable(:assessment_grading)
       Flipper.enable(:registration_campaigns)
@@ -64,7 +64,7 @@ RSpec.describe(Assignment, type: :model) do
       tutorial.add_user_to_roster!(user2, nil)
       # but only one has a submission for the assignment
       FactoryBot.create(:submission, assignment: assignment, tutorial: tutorial, users: [user1])
-      expect(assignment.non_submitters(tutorial)).to contain_exactly(user2)
+      expect(assignment.non_submitters_tutorial(tutorial)).to contain_exactly(user2)
     end
   end
 

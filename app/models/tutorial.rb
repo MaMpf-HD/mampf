@@ -76,6 +76,10 @@ class Tutorial < ApplicationRecord
       !self_materialization_mode_disabled?
   end
 
+  def graders_with_inheritance
+    (tutors + lecture.graders_with_inheritance).uniq
+  end
+
   private
 
     def enforce_lecture_uniqueness!(user_ids)

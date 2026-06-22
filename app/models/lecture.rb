@@ -526,6 +526,10 @@ class Lecture < ApplicationRecord
     ([teacher] + editors.to_a + course.editors).to_a
   end
 
+  def graders_with_inheritance
+    [teacher]
+  end
+
   # the next methods provide user related information about the lecture
 
   def edited_by?(user)
@@ -878,19 +882,6 @@ class Lecture < ApplicationRecord
     tutorials.joins(:tutorial_memberships).exists? ||
       tutorials.joins(:registration_items).exists? ||
       tutorials.where.not(self_materialization_mode: "disabled").exists?
-  end
-
-  def submitter_ids(assignment)
-    return [] unless assignment.lecture == self
-
-    AssignmentSubmission.where(assignment: assignment).pluck(:submitter_id).uniq
-  end
-
-  def non_submitters(assignment)
-    User.joins(:lecture_memberships)
-        .where(lecture_memberships: { lecture_id: id })
-        .where.not(id: submitter_ids(assignment))
-        .order(:name)
   end
 
   private

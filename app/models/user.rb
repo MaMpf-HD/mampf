@@ -768,6 +768,15 @@ class User < ApplicationRecord
     in?(something.editors_with_inheritance.to_a)
   end
 
+  def can_grade_in_scope?(something)
+    unless something.is_a?(Lecture) || something.is_a?(Tutorial)
+      raise("can_grade_in_scope? was called with incompatible class")
+    end
+    return true if admin
+
+    in?(something.graders_with_inheritance.to_a)
+  end
+
   def speaker?
     talks.any?
   end

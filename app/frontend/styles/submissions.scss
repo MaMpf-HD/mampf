@@ -90,28 +90,11 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
-.tutorial-col {
+.status-col-tutor {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
   left: 200px;
-  z-index: 2;
-}
-
-.status-col {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  left: 200px;
-  background-color: white;
-  z-index: 2;
-}
-
-.status-col-teacher {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  left: 300px;
   background-color: white;
   z-index: 2;
 }
@@ -130,7 +113,7 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
-.action-col {
+.action-col-tutor {
   width: 200px;
   min-width: 200px;
   max-width: 200px;
@@ -139,6 +122,23 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 
   padding: 0.5rem;
+}
+
+.tutorial-col {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 200px;
+  z-index: 2;
+}
+
+.status-col-teacher {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 300px;
+  background-color: white;
+  z-index: 2;
 }
 
 .action-col-teacher {
@@ -213,15 +213,29 @@ input[type="file"] {
   transition: opacity 0.2s;
 }
 
+// .table-wrapper::before {
+//   left: 300px;
+//   background: linear-gradient(to right, #f8f9fa, transparent);
+//   opacity: var(--fade-left, 0);
+//   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+// }
+
+// .table-wrapper::after {
+//   right: 500px;
+//   background: linear-gradient(to left, #f8f9fa, transparent);
+//   opacity: var(--fade-right, 0);
+//   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+// }
+
 .table-wrapper::before {
-  left: 300px;
+  left: 400px;
   background: linear-gradient(to right, #f8f9fa, transparent);
   opacity: var(--fade-left, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
 .table-wrapper::after {
-  right: 500px;
+  right: 200px;
   background: linear-gradient(to left, #f8f9fa, transparent);
   opacity: var(--fade-right, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */

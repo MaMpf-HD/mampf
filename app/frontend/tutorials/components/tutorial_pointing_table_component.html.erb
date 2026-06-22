@@ -59,12 +59,12 @@
                   <% end %>
                 <% end %>
               <% else %>
-                <% view_participations.each do |participation| %>
+                <% @participations.each do |participation| %>
                   <%= render(ParticipationRowComponent.new(
                       participation: participation,
                       mode: @mode,
                       assignment: @assignment, 
-                      tutorial: @tutorial)) %>
+                      tutorial: participation.tutorial)) %>
                 <% end %>
               <% end %>
             </tbody>

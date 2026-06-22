@@ -47,7 +47,15 @@ class Assignment < ApplicationRecord
     User.where(id: submitter_ids)
   end
 
-  def non_submitters(tutorial)
+  def non_submitters
+    User.joins(:lecture_memberships)
+        .where(lecture_memberships: { lecture_id: lecture.id })
+        .where.not(id: submitter_ids)
+        .order(:name)
+  end
+
+  # non submitters of tutorial = users in tutorial_memberships \ submitters of assignment
+  def non_submitters_tutorial(tutorial)
     User.joins(:tutorial_memberships)
         .where(tutorial_memberships: { tutorial_id: tutorial.id })
         .where.not(id: submitter_ids)

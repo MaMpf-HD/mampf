@@ -103,4 +103,13 @@ class ParticipationRowComponent < ViewComponent::Base
       tag.i(class: "bi bi-arrow-clockwise")
     end
   end
+
+  def can_grade?
+    user = helpers.current_user
+    if @mode == "tutor"
+      user.admin? || user.can_grade_in_scope?(@tutorial)
+    elsif @mode == "teacher"
+      user.admin? || user.can_grade_in_scope?(@tutorial.lecture)
+    end
+  end
 end
