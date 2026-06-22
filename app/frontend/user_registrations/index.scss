@@ -218,6 +218,75 @@
   line-height: 1.45;
 }
 
+.student-registration-policy-overview {
+  border: 1px solid #d8e0e8;
+  border-radius: 0.85rem;
+  background: linear-gradient(180deg, #fbfcfd, #f5f7fa);
+  padding: 0.9rem 1rem;
+}
+
+.student-registration-policy-overview-title {
+  margin-bottom: 0.65rem;
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.student-registration-policy-overview-sections {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.student-registration-policy-overview-section {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #e5ebf1;
+  border-radius: 0.7rem;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.student-registration-policy-overview-section-title {
+  margin-bottom: 0.15rem;
+  color: var(--bs-gray-700);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.student-registration-policy-overview-section-description {
+  margin-bottom: 0.55rem;
+  color: var(--bs-gray-600);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.student-registration-policy-overview-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.student-registration-policy-overview-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.6rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.6rem;
+  background: #f7f9fb;
+}
+
+.student-registration-policy-overview-rule {
+  min-width: 0;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  color: var(--bs-gray-900);
+}
+
+.student-registration-policy-overview-status {
+  align-self: center;
+  white-space: nowrap;
+  font-size: 0.72rem;
+}
+
 .student-registration-campaign-card--with-notice {
   margin-top: -0.75rem;
   border-top-left-radius: 0;
@@ -258,6 +327,28 @@
 
 .student-registration-tile-grid {
   row-gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .student-registration-policy-overview-sections {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .student-registration-policy-overview {
+    padding: 0.8rem 0.85rem;
+  }
+
+  .student-registration-policy-overview-item {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+
+  .student-registration-policy-overview-status {
+    justify-self: start;
+  }
 }
 
 .student-registration-preference-workspace {

@@ -121,36 +121,38 @@
       <% end %>
 
       <% if policy_overview? %>
-        <div class="border rounded p-3 mb-3 bg-body-tertiary">
-          <div class="fw-semibold mb-2">
+        <div class="student-registration-policy-overview mb-3">
+          <div class="student-registration-policy-overview-title">
             <%= t("registration.user_registration.policy_overview.title") %>
           </div>
 
-          <% policy_overview_sections.each_with_index do |section, index| %>
-            <div class="<%= 'mb-3' if index < policy_overview_sections.size - 1 %>">
-              <div class="small fw-semibold text-uppercase text-muted mb-1">
-                <%= section[:title] %>
-              </div>
+          <div class="student-registration-policy-overview-sections">
+            <% policy_overview_sections.each do |section| %>
+              <section class="student-registration-policy-overview-section">
+                <div class="student-registration-policy-overview-section-title">
+                  <%= section[:title] %>
+                </div>
 
-              <div class="small text-muted mb-2">
-                <%= section[:description] %>
-              </div>
+                <div class="student-registration-policy-overview-section-description">
+                  <%= section[:description] %>
+                </div>
 
-              <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
-                <% section[:policies].each do |policy| %>
-                  <li class="d-flex justify-content-between align-items-start gap-2">
-                    <div class="small">
-                      <%= eligibility_policy_summary(policy) %>
-                    </div>
+                <ul class="student-registration-policy-overview-list list-unstyled mb-0">
+                  <% section[:policies].each do |policy| %>
+                    <li class="student-registration-policy-overview-item">
+                      <div class="student-registration-policy-overview-rule">
+                        <%= eligibility_policy_summary(policy) %>
+                      </div>
 
-                    <span class="badge flex-shrink-0 <%= eligibility_policy_status_badge_class(policy) %>">
-                      <%= eligibility_policy_status_label(policy) %>
-                    </span>
-                  </li>
-                <% end %>
-              </ul>
-            </div>
-          <% end %>
+                      <span class="badge student-registration-policy-overview-status <%= eligibility_policy_status_badge_class(policy) %>">
+                        <%= eligibility_policy_status_label(policy) %>
+                      </span>
+                    </li>
+                  <% end %>
+                </ul>
+              </section>
+            <% end %>
+          </div>
         </div>
       <% end %>
 
