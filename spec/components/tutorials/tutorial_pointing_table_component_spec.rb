@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(TutorialGradingTableComponent, type: :component) do
+RSpec.describe(TutorialPointingTableComponent, type: :component) do
   let(:lecture) { create(:lecture) }
   let(:tutorial) { create(:tutorial, lecture: lecture) }
   let!(:assignment) do

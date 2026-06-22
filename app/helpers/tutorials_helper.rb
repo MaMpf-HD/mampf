@@ -48,7 +48,11 @@ module TutorialsHelper
     end
   end
 
-  def overview_info(stack, non_submitters, assignment)
+  def overview_info(tutorial, assignment)
+    stack = assignment&.submissions&.where(tutorial: tutorial)&.proper
+                      &.order(:last_modification_by_users_at)
+    non_submitters = assignment.non_submitters(tutorial)
+
     num_submissions = stack.size
     num_submissions_with_points = stack.count do |s|
       s.participations && s.participations.first&.status == "reviewed"

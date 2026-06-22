@@ -880,6 +880,19 @@ class Lecture < ApplicationRecord
       tutorials.where.not(self_materialization_mode: "disabled").exists?
   end
 
+  def submitter_ids(assignment)
+    return [] unless assignment.lecture == self
+
+    AssignmentSubmission.where(assignment: assignment).pluck(:submitter_id).uniq
+  end
+
+  def non_submitters(assignment)
+    User.joins(:lecture_memberships)
+        .where(lecture_memberships: { lecture_id: id })
+        .where.not(id: submitter_ids(assignment))
+        .order(:name)
+  end
+
   private
 
     def initialize_submission_deletion_date

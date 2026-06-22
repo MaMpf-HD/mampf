@@ -9,11 +9,10 @@
     </div>
   </div>
   <div id="tutorial-table" class="m-3">
-    <%= render TutorialGradingTableComponent.new(
+    <%= render TutorialPointingTableComponent.new(
+      mode: "tutor",
       assignment: @assignment,
-      stack: @stack,
-      tutorial: @tutorial,
-      non_submitters: @non_submitters
+      tutorial: @tutorial
     ) %>
   </div>
 </div>

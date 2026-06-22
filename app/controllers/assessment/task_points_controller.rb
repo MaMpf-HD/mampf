@@ -43,9 +43,6 @@ module Assessment
           end
         end
 
-        @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
-                            &.order(:last_modification_by_users_at)
-        @non_submitters = @assignment.non_submitters(@tutorial)
         rerender_submission_table
       end
     end
@@ -94,12 +91,11 @@ module Assessment
             @participation, task_points, current_user
           )
         end
-        @user = @participation.user
         render_task_points_update(
           turbo_stream.replace(
             "participation-row-#{@participation.id}",
             html: render_to_string(ParticipationRowComponent.new(
-                                     user: @user,
+                                     participation: @participation,
                                      assignment: @assignment,
                                      tutorial: @tutorial
                                    ))
@@ -122,9 +118,6 @@ module Assessment
       return respond_with_flash(:alert, t("assessment.task_points.user_not_found")) unless user
 
       SubmissionGraderService.init_participation(@assessment, user, @tutorial)
-      @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
-                          &.order(:last_modification_by_users_at)
-      @non_submitters = @assignment.non_submitters(@tutorial)
       rerender_submission_table
     end
 
@@ -151,7 +144,7 @@ module Assessment
             render turbo_stream: turbo_stream.replace(
               "participation-row-#{@participation.id}",
               html: render_to_string(ParticipationRowComponent.new(
-                                       user: @user,
+                                       participation: @participation,
                                        assignment: @assignment,
                                        tutorial: @tutorial
                                      ))
@@ -170,11 +163,10 @@ module Assessment
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
               "grading-table",
-              html: render_to_string(TutorialGradingTableComponent.new(
+              html: render_to_string(TutorialPointingTableComponent.new(
+                                       mode: "tutor",
                                        assignment: @assignment,
-                                       tutorial: @tutorial,
-                                       stack: @stack,
-                                       non_submitters: @non_submitters
+                                       tutorial: @tutorial
                                      ))
             )
           end

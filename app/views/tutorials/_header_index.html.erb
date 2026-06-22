@@ -36,7 +36,7 @@
   <div class="col align-items-end justify-content-between">
     <% if grading_enabled?(@assignment) %>
       <!-- Overview -->
-      <% info = overview_info(@stack, @non_submitters, @assignment) %>
+      <% info = overview_info(@tutorial, @assignment) %>
       <div class="border rounded-3 bg-light p-2 h-100 m-3">
         <div class="small mb-2">
           <span class="badge bg-primary">

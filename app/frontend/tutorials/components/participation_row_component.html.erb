@@ -27,19 +27,32 @@
     </i>
   </td>
 
+  <% if @mode == "teacher" %>
+    <%= @participation.tutorial&.name %>
+  <% end %>
+
   <% if grading_enabled? %>
     <!-- Column 2: Status -->
-    <td class="text-center sticky-col status-col">
-      <% if @participation %>
-        <% status = @participation.status %>
+    <% if @mode == "teacher" %>
+      <td class="text-center sticky-col status-col-teacher">
         <span
-          class="<%= badge_status_participation_class(status) %>"
+          class="<%= badge_status_participation_class(@participation.status) %>"
           style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
         >
-          <%= status %>
+        <%= @participation.status %>
         </span>
-      <% end %>
-    </td>
+      </td>
+    <% else %>
+      <td class="text-center sticky-col status-col">
+        <span
+          class="<%= badge_status_participation_class(@participation.status) %>"
+          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
+        >
+        <%= @participation.status %>
+        </span>
+      </td>
+    <% end %>
+
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% @assignment.assessment.tasks.each do |assignment_task| %>
@@ -88,5 +101,7 @@
   </td>
 
   <!-- empty correction column -->
+  <% if @mode == "tutor" %>
   <td class="sticky-col correction-col"></td>
+  <% end %>
 </tr>

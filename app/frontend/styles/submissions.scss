@@ -90,11 +90,28 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
+.tutorial-col {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 200px;
+  z-index: 2;
+}
+
 .status-col {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
   left: 200px;
+  background-color: white;
+  z-index: 2;
+}
+
+.status-col-teacher {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 300px;
   background-color: white;
   z-index: 2;
 }
@@ -118,6 +135,17 @@ table.table tbody tr.row-dirty td {
   min-width: 200px;
   max-width: 200px;
   right: 200px;
+  background-color: white;
+  z-index: 2;
+
+  padding: 0.5rem;
+}
+
+.action-col-teacher {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  right: 0px;
   background-color: white;
   z-index: 2;
 

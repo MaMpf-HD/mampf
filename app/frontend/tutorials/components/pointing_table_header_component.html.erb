@@ -1,0 +1,12 @@
+<tr>
+  <% columns.each do |column| %>
+    <th class="<%= column.css_class %>">
+      <%= column.label %>
+
+      <% if column.sublabel %>
+        <br>
+        <div class="text-muted"><%= column.sublabel %></div>
+      <% end %>
+    </th>
+  <% end %>
+</tr>

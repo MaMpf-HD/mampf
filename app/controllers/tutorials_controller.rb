@@ -39,11 +39,6 @@ class TutorialsController < ApplicationController
     @tutorial = Tutorial.find_by(id: params[:tutorial]) || current_user.tutorials(@lecture).first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
-    @non_submitters = if @tutorial
-      @assignment&.non_submitters(@tutorial)
-    else
-      []
-    end
 
     render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
@@ -212,9 +207,6 @@ class TutorialsController < ApplicationController
   def bulk_upload
     files = JSON.parse(params[:files])
     @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
-    @stack = @assignment.submissions.where(tutorial: @tutorial).proper
-                        .order(:last_modification_by_users_at)
-    @non_submitters = @assignment.non_submitters(@tutorial)
     send_correction_upload_emails
   # in case an empty string for files is sent
   rescue JSON::ParserError
