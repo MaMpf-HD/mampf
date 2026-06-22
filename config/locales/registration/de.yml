@@ -344,7 +344,7 @@ de:
           folgenden Gründen abgelehnt:
       policy_overview:
         title: "Regeln für dieses Anmeldeverfahren"
-        registration_title: "Prüfung bei der Anmeldung"
+        registration_title: "Voraussetzungen für die Anmeldung"
         registration_description: "Diese Regeln müssen erfüllt sein, damit Du Dich anmelden kannst."
         registration_empty: "Für die Anmeldung gibt es keine zusätzlichen Regeln oder Einschränkungen."
         finalization_title: "Voraussetzungen für die endgültige Zuteilung"
