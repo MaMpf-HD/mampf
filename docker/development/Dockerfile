@@ -1,11 +1,11 @@
 # https://docs.docker.com/build/checks/#fail-build-on-check-violations
 # check=error=true
 
-FROM node:24.11.0-bookworm-slim AS node
+FROM node:24.11.0-trixie-slim AS node
 
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
-FROM ruby:3.4.9-bookworm
+FROM ruby:3.4.9-trixie
 
 ARG RAILS_DEVELOPMENT_HOSTS=".githubpreview.dev,.app.github.dev"
 ARG BUNDLER_VERSION=4.0.12
@@ -34,7 +34,7 @@ RUN yarn set version "${YARN_VERSION}"
 # Install other dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
-        ffmpeg imagemagick pdftk ghostscript shared-mime-info \
+        ffmpeg qpdf shared-mime-info \
         libarchive-tools wget wait-for-it graphviz libvips42 lsof \
     && rm -rf /var/lib/apt/lists/*
 
@@ -51,9 +51,6 @@ RUN mkdir -p /usr/share/postgresql-common/pgdg \
     && apt-get update \
     && apt-get install -y postgresql-client-17 \
     && rm -rf /var/lib/apt/lists/*
-
-# Setup ImageMagick
-RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
 # 🎈 Users
 # https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user

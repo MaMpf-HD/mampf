@@ -34,7 +34,6 @@ gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"
 gem "kramdown-parser-gfm", "~> 1.1"
-gem "mini_magick", "~> 4.13"
 gem "mobility", "~> 1.2"
 gem "net-smtp", "~> 0.5"
 gem "or-tools", "~> 0.17"

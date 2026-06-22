@@ -23,11 +23,7 @@ RSpec.describe(ScreenshotUploader) do
   def oversized_dimensions_image_fixture
     Tempfile.new(["upload", ".png"]).tap do |file|
       file.binmode
-      MiniMagick::Tool::Convert.new do |convert|
-        convert.size("5000x5000")
-        convert.xc("white")
-        convert << file.path
-      end
+      Vips::Image.black(5000, 5000, bands: 3).write_to_file(file.path)
       file.rewind
     end
   end

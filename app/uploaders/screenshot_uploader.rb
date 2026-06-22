@@ -1,4 +1,4 @@
-require "image_processing/mini_magick"
+require "image_processing/vips"
 # ScreenshotUploader class
 # used for storing video thumbnails
 class ScreenshotUploader < Shrine
@@ -25,7 +25,7 @@ class ScreenshotUploader < Shrine
 
   # store a resized version of the screenshot
   Attacher.derivatives_processor do |original|
-    magick = ImageProcessing::MiniMagick.source(original)
-    { normalized: magick.resize_to_limit!(405, 270) }
+    pipeline = ImageProcessing::Vips.source(original)
+    { normalized: pipeline.resize_to_limit!(405, 270) }
   end
 end

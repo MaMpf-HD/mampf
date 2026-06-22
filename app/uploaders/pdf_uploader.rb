@@ -1,11 +1,12 @@
 require "fileutils"
-require "image_processing/mini_magick"
+require "image_processing/vips"
+require "pdf-reader"
 require "timeout"
 
 # PdfUploader Class
 class PdfUploader < Shrine
   MAX_FILE_SIZE = 50 * 1024 * 1024
-  PDFTK_TIMEOUT = 10
+  TOOL_TIMEOUT = 10
   MAX_STRUCTURE_BYTES = 256 * 1024
   STRUCTURE_FILE_NAME = "structure.mampf".freeze
   UNPACK_ROOT = Rails.root.join("tmp/pdf_uploader")
@@ -21,63 +22,47 @@ class PdfUploader < Shrine
   # extract metadata from uploaded pdf:
   # - number of pages
   # - named destinations
-  # - bookmarks with details (created by mampf.sty LATeX package)
+  # - bookmarks with details (created by mampf.sty LaTeX package)
   add_metadata do |io, context|
     if context[:action] == :upload
       Shrine.with_file(io) do |file|
-        Tempfile.create do |temp_file|
-          with_unpack_folder do |temp_folder|
-            structure_path = "#{temp_folder}/structure.mampf"
-            exit_status = run_pdftk(file.path, "dump_data_utf8", "output",
-                                    temp_file.path) &&
-                          run_pdftk(file.path, "unpack_files", "output",
-                                    temp_folder) &&
-                          valid_unpacked_structure?(temp_folder)
-            if exit_status
-              meta = File.read(temp_file)
-              # extract number of pages from pdftk output
-              page_match = /NumberOfPages: (\d*)/.match(meta)
-              pages = page_match[1].to_i if page_match
-              # extract lines that correspond to MaMpf-Label entries from LaTEX
-              # package mampf.sty
-              structure = if File.file?(structure_path)
-                File.open(structure_path, "r") do |io_stream|
-                  io_stream.read.encode("UTF-8", invalid: :replace)
-                end
-              end
-              structure ||= ""
-              bookmarks = structure.scan(/MaMpf-Label\|(.*?)\n/).flatten
-              result = []
-              bookmarks.each do |b|
-                # extract bookmark data
-                # line may look like this:
-                # defn:erster-Tag|Definition|1.1|Erster Tag|1
-                data = /(.*?)\|(.*?)\|(.*?)\|(.*?)\|(.*)\|(.*)\|(.*)\|(.*)/.match(b)
-                next unless data
+        # Extract page count using pdf-reader (pure Ruby, no external tool)
+        pages = pdf_page_count(file.path)
 
-                details = { "destination" => data[1], "sort" => data[2],
-                            "label" => data[3], "description" => data[4],
-                            "chapter" => data[5], "section" => data[6],
-                            "subsection" => data[7], "page" => data[8],
-                            "counter" => result.length }
-                details["sort"] = "Markierung" if details["sort"].blank?
-                result.push(details)
-              end
-              linked_media = structure.scan(/MaMpf-Link\|(.*?)\n/)
-                                      .flatten.map(&:to_i) - [0]
-              mampf_sty_version = structure.scan(/MaMpf-Version\|(.*?)\n/).flatten
-                                           .first
-              { "pages" => pages,
-                "destinations" => result.pluck("destination"),
-                "bookmarks" => result,
-                "linked_media" => linked_media,
-                "version" => mampf_sty_version }
-            else
-              { "pages" => nil, "destinations" => nil, "bookmarks" => nil,
-                "version" => nil }
-            end
-          end
+        # Extract structure.mampf (embedded by mampf.sty LaTeX package) using qpdf
+        structure = with_unpack_folder do |temp_folder|
+          read_mampf_structure(file.path, temp_folder)
         end
+        structure ||= ""
+
+        # extract lines that correspond to MaMpf-Label entries from LaTeX
+        # package mampf.sty
+        bookmarks = structure.scan(/MaMpf-Label\|(.*?)\n/).flatten
+        result = []
+        bookmarks.each do |b|
+          # extract bookmark data
+          # line may look like this:
+          # defn:erster-Tag|Definition|1.1|Erster Tag|1
+          data = /(.*?)\|(.*?)\|(.*?)\|(.*?)\|(.*)\|(.*)\|(.*)\|(.*)/.match(b)
+          next unless data
+
+          details = { "destination" => data[1], "sort" => data[2],
+                      "label" => data[3], "description" => data[4],
+                      "chapter" => data[5], "section" => data[6],
+                      "subsection" => data[7], "page" => data[8],
+                      "counter" => result.length }
+          details["sort"] = "Markierung" if details["sort"].blank?
+          result.push(details)
+        end
+        linked_media = structure.scan(/MaMpf-Link\|(.*?)\n/)
+                                .flatten.map(&:to_i) - [0]
+        mampf_sty_version = structure.scan(/MaMpf-Version\|(.*?)\n/).flatten
+                                     .first
+        { "pages" => pages,
+          "destinations" => result.pluck("destination"),
+          "bookmarks" => result,
+          "linked_media" => linked_media,
+          "version" => mampf_sty_version }
       end
     end
   end
@@ -92,9 +77,9 @@ class PdfUploader < Shrine
 
   # extract a screenshot from pdf and store it beside the pdf
   Attacher.derivatives_processor do |original|
-    screenshot = ImageProcessing::MiniMagick.source(original).loader(page: 0)
-                                            .convert("png")
-                                            .resize_to_limit!(400, 565)
+    screenshot = ImageProcessing::Vips.source(original).loader(page: 0, dpi: 150)
+                                      .convert("png")
+                                      .resize_to_limit!(400, 565)
     { screenshot: screenshot }
   end
 
@@ -102,20 +87,40 @@ class PdfUploader < Shrine
 
     def with_unpack_folder(&)
       FileUtils.mkdir_p(UNPACK_ROOT)
-
-      Dir.mktmpdir("pdftk-", UNPACK_ROOT.to_s, &)
+      Dir.mktmpdir("pdf-", UNPACK_ROOT.to_s, &)
     end
 
-    def run_pdftk(*)
-      pid = Process.spawn("pdftk", *, out: File::NULL, err: File::NULL,
-                                      pgroup: true)
-      _pid, status = Timeout.timeout(PDFTK_TIMEOUT) { Process.wait2(pid) }
-      status.success?
+    # Extract page count using the pdf-reader gem (pure Ruby, no CLI needed).
+    def pdf_page_count(path)
+      PDF::Reader.new(path).page_count
+    rescue PDF::Reader::MalformedPDFError, PDF::Reader::UnsupportedFeatureError,
+           PDF::Reader::EncryptedPDFError, Errno::ENOENT, ArgumentError
+      nil
+    end
+
+    # Extract the structure.mampf embedded attachment using qpdf.
+    # Returns the file content as a UTF-8 string, or nil if unavailable.
+    def read_mampf_structure(file_path, temp_folder)
+      structure_path = File.join(temp_folder, STRUCTURE_FILE_NAME)
+      out_file = File.open(structure_path, "w")
+      pid = Process.spawn("qpdf", "--show-attachment=#{STRUCTURE_FILE_NAME}",
+                          file_path,
+                          out: out_file, err: File::NULL, pgroup: true)
+      _pid, status = Timeout.timeout(TOOL_TIMEOUT) { Process.wait2(pid) }
+      out_file.close
+      return nil unless status.success? && File.exist?(structure_path)
+      return nil if File.size(structure_path) > MAX_STRUCTURE_BYTES
+
+      File.open(structure_path, "r") do |io|
+        io.read.encode("UTF-8", invalid: :replace)
+      end
     rescue SystemCallError
-      false
+      nil
     rescue Timeout::Error
       terminate_process_group(pid)
-      false
+      nil
+    ensure
+      out_file&.close unless out_file&.closed?
     end
 
     def terminate_process_group(pid)
@@ -132,14 +137,5 @@ class PdfUploader < Shrine
       Process.wait(pid)
     rescue Errno::ECHILD, Errno::ESRCH
       nil
-    end
-
-    def valid_unpacked_structure?(temp_folder)
-      unpacked_files = Dir.children(temp_folder)
-      return true if unpacked_files.empty?
-      return false unless unpacked_files == [STRUCTURE_FILE_NAME]
-
-      File.size(File.join(temp_folder, STRUCTURE_FILE_NAME)) <=
-        MAX_STRUCTURE_BYTES
     end
 end

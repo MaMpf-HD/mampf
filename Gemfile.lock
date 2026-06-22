@@ -756,7 +756,6 @@ DEPENDENCIES
   kramdown-parser-gfm (~> 1.1)
   listen (~> 3.9)
   marcel (~> 1.0)
-  mini_magick (~> 4.13)
   mobility (~> 1.2)
   net-smtp (~> 0.5)
   or-tools (~> 0.17)

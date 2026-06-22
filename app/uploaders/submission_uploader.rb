@@ -1,5 +1,3 @@
-require "image_processing/mini_magick"
-
 # SubmissionUploader Class
 class SubmissionUploader < Shrine
   MAX_SIZE = 20 * 1024 * 1024

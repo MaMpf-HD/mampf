@@ -1,5 +1,3 @@
-require "image_processing/mini_magick"
-
 # UserPdfUploader Class
 class CorrectionUploader < Shrine
   MAX_SIZE = 30 * 1024 * 1024

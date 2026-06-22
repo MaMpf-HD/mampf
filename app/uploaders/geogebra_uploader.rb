@@ -1,4 +1,4 @@
-require "image_processing/mini_magick"
+require "vips"
 require "zip"
 
 # GeogebraUploader class
@@ -91,14 +91,14 @@ class GeogebraUploader < Shrine
         end
       end
     end
-  rescue Zip::Error, MiniMagick::Error, MiniMagick::Invalid,
-         Errno::ENOENT, IOError, ArgumentError
+  rescue Zip::Error, Vips::Error, Errno::ENOENT, IOError, ArgumentError
     nil
   end
 
   def self.validated_thumbnail_file(path)
-    image = MiniMagick::Image.open(path)
-    width, height = image.dimensions
+    image = Vips::Image.new_from_file(path)
+    width = image.width
+    height = image.height
     mime_type = Marcel::MimeType.for(Pathname.new(path), name: THUMBNAIL_ENTRY)
 
     return unless mime_type == "image/png"

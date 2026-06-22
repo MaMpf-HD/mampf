@@ -32,6 +32,7 @@ module Mampf
     config.i18n.available_locales = [:de, :en]
     config.i18n.raise_on_missing_translations = false
     config.time_zone = "Berlin"
+    config.active_storage.variant_processor = :vips
 
     # Message serializing. Starting with Rails 7.2, the default is :json.
     # See: https://guides.rubyonrails.org/v7.1/configuring.html#config-active-support-message-serializer

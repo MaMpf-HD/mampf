@@ -1,4 +1,4 @@
-require "image_processing/mini_magick"
+require "image_processing/vips"
 # ProfileimageUploader class
 # used for storing profile images
 class ProfileimageUploader < Shrine
@@ -25,7 +25,7 @@ class ProfileimageUploader < Shrine
 
   # store a resized version of the screenshot
   Attacher.derivatives_processor do |original|
-    magick = ImageProcessing::MiniMagick.source(original)
-    { normalized: magick.resize_to_limit!(512, 512) }
+    pipeline = ImageProcessing::Vips.source(original)
+    { normalized: pipeline.resize_to_limit!(512, 512) }
   end
 end
