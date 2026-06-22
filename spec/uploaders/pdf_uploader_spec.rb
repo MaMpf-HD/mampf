@@ -96,6 +96,28 @@ RSpec.describe(PdfUploader) do
 
       expect(uploader.send(:run_pdftk, "input.pdf", "dump_data_utf8")).to be(false)
     end
+
+    it "applies a child file-size limit when unpacking attachments" do
+      uploader = described_class.new(:store)
+      status = instance_double(Process::Status, success?: true)
+
+      expect(Process).to receive(:spawn) do |*args|
+        options = args.last
+        expect(options[:rlimit_fsize])
+          .to eq([PdfUploader::MAX_STRUCTURE_BYTES,
+                  PdfUploader::MAX_STRUCTURE_BYTES])
+        1234
+      end
+      allow(Timeout).to receive(:timeout).with(PdfUploader::PDFTK_TIMEOUT)
+                                         .and_yield
+      allow(Process).to receive(:wait2).with(1234).and_return([1234, status])
+
+      result = uploader.send(:run_pdftk, "input.pdf", "unpack_files",
+                             "output", "/tmp/pdf-dir",
+                             file_size_limit: PdfUploader::MAX_STRUCTURE_BYTES)
+
+      expect(result).to be(true)
+    end
   end
 
   describe "unpacked structure validation" do

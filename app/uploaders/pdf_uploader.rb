@@ -31,7 +31,8 @@ class PdfUploader < Shrine
             exit_status = run_pdftk(file.path, "dump_data_utf8", "output",
                                     temp_file.path) &&
                           run_pdftk(file.path, "unpack_files", "output",
-                                    temp_folder) &&
+                                    temp_folder,
+                                    file_size_limit: MAX_STRUCTURE_BYTES) &&
                           valid_unpacked_structure?(temp_folder)
             if exit_status
               meta = File.read(temp_file)
@@ -106,9 +107,13 @@ class PdfUploader < Shrine
       Dir.mktmpdir("pdftk-", UNPACK_ROOT.to_s, &)
     end
 
-    def run_pdftk(*)
-      pid = Process.spawn("pdftk", *, out: File::NULL, err: File::NULL,
-                                      pgroup: true)
+    def run_pdftk(*arguments, file_size_limit: nil)
+      spawn_options = { out: File::NULL, err: File::NULL, pgroup: true }
+      if file_size_limit
+        spawn_options[:rlimit_fsize] = [file_size_limit, file_size_limit]
+      end
+
+      pid = Process.spawn("pdftk", *arguments, spawn_options)
       _pid, status = Timeout.timeout(PDFTK_TIMEOUT) { Process.wait2(pid) }
       status.success?
     rescue SystemCallError
