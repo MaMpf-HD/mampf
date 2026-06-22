@@ -31,7 +31,8 @@ RUN yarn set version "${YARN_VERSION}"
 # Install other dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info libvips42
+        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info libvips42 && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN gem install bundler -v "${BUNDLER_VERSION}"
 
@@ -88,6 +89,7 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     bundle exec rails assets:precompile && \
     rm -f ./docker-dummy.env && \
     rm -rf node_modules tmp/cache && \
+    bundle clean --force && \
     rm -rf /usr/local/bundle/cache /usr/local/bundle/ruby/*/cache && \
     find /usr/local/bundle -name "*.gem" -delete
 
@@ -125,7 +127,8 @@ COPY --from=node /usr/local/ /usr/local/
 COPY --from=build --chown=root:root /usr/local/bundle /usr/local/bundle
 COPY --from=build --chown=root:root /usr/src/app /usr/src/app
 
-RUN chown -R app:app /usr/src/app/tmp /usr/src/app/log
+RUN chown -R app:app /usr/src/app/tmp /usr/src/app/log && \
+    rm -rf /usr/local/bundle/cache
 
 USER app
 
