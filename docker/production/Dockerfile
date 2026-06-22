@@ -139,6 +139,11 @@ COPY --from=build --chown=root:root /usr/src/app /usr/src/app
 COPY --from=build /opt/or-tools/lib /opt/or-tools/lib
 
 RUN chown -R app:app /usr/src/app/tmp /usr/src/app/log && \
+        rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
+            /usr/local/bin/yarn /usr/local/bin/yarnpkg \
+            /usr/src/app/bin/yarn && \
+        rm -rf /usr/local/lib/node_modules/npm \
+            /usr/local/lib/node_modules/corepack && \
     rm -rf /usr/local/bundle/cache
 
 USER app
