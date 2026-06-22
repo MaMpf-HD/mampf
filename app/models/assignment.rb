@@ -48,11 +48,10 @@ class Assignment < ApplicationRecord
   end
 
   def non_submitters(tutorial)
-    tutorial.tutorial_memberships
-            .where.not(user_id: submitter_ids)
-            .joins(:user)
-            .order("users.name")
-            .map(&:user)
+    User.joins(:tutorial_memberships)
+        .where(tutorial_memberships: { tutorial_id: tutorial.id })
+        .where.not(id: submitter_ids)
+        .order(:name)
   end
 
   def past_deadline?

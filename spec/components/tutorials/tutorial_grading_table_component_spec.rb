@@ -36,6 +36,8 @@ RSpec.describe(TutorialGradingTableComponent, type: :component) do
         allow(assignment).to receive(:assessable?).and_return(true)
       end
 
+      after { Flipper.disable(:assessment_grading) }
+
       it "returns true" do
         expect(component.grading_enabled?).to eq(true)
       end
