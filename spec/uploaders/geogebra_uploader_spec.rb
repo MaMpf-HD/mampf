@@ -1,4 +1,5 @@
 require "rails_helper"
+require "stringio"
 require "zip"
 
 RSpec.describe(GeogebraUploader) do
@@ -138,6 +139,27 @@ RSpec.describe(GeogebraUploader) do
     expect(medium).to be_valid
     expect { medium.geogebra_derivatives! }.not_to raise_error
     expect(screenshot_derivative_for(medium)).to be_nil
+  ensure
+    file&.close!
+  end
+
+  it "drops thumbnails whose extracted bytes exceed the limit" do
+    file = Tempfile.new(["upload", ".ggb"])
+    thumbnail_entry = instance_double(Zip::Entry, directory?: false, size: 1)
+    zip_file = instance_double(Zip::File)
+
+    allow(zip_file).to receive(:find_entry)
+      .with(GeogebraUploader::THUMBNAIL_ENTRY)
+      .and_return(thumbnail_entry)
+    allow(thumbnail_entry).to receive(:get_input_stream)
+      .and_yield(StringIO.new("A" * (GeogebraUploader::MAX_THUMBNAIL_SIZE + 1)))
+    allow(Zip::File).to receive(:open).and_yield(zip_file)
+    allow(described_class).to receive(:validated_thumbnail_file)
+
+    result = described_class.build_screenshot_derivative(file)
+
+    expect(result).to be_nil
+    expect(described_class).not_to have_received(:validated_thumbnail_file)
   ensure
     file&.close!
   end

@@ -10,6 +10,7 @@ class GeogebraUploader < Shrine
   MAX_THUMBNAIL_DIMENSIONS = [4096, 4096].freeze
   REQUIRED_ENTRY = "geogebra.xml".freeze
   THUMBNAIL_ENTRY = "geogebra_thumbnail.png".freeze
+  ThumbnailTooLargeError = Class.new(StandardError)
 
   plugin :upload_endpoint, max_size: MAX_SIZE
   plugin :determine_mime_type, analyzer: :marcel
@@ -82,7 +83,8 @@ class GeogebraUploader < Shrine
         Tempfile.create(["geogebra-thumbnail", ".png"]) do |thumbnail_file|
           thumbnail_file.binmode
           thumbnail_entry.get_input_stream do |input_stream|
-            IO.copy_stream(input_stream, thumbnail_file)
+            copy_stream_with_limit(input_stream, thumbnail_file,
+                                   MAX_THUMBNAIL_SIZE)
           end
           thumbnail_file.rewind
 
@@ -92,8 +94,19 @@ class GeogebraUploader < Shrine
       end
     end
   rescue Zip::Error, MiniMagick::Error, MiniMagick::Invalid,
-         Errno::ENOENT, IOError, ArgumentError
+         Errno::ENOENT, IOError, ArgumentError, ThumbnailTooLargeError
     nil
+  end
+
+  def self.copy_stream_with_limit(input_stream, output_stream, limit)
+    bytes_copied = 0
+
+    while (chunk = input_stream.read(16 * 1024))
+      bytes_copied += chunk.bytesize
+      raise ThumbnailTooLargeError if bytes_copied > limit
+
+      output_stream.write(chunk)
+    end
   end
 
   def self.validated_thumbnail_file(path)
