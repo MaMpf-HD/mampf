@@ -69,7 +69,7 @@ class CampaignCardComponent < ViewComponent::Base
     policy_overview_sections.any?
   end
 
-  def main_disabled?
+  def registration_actions_disabled?
     readonly? || ineligible?
   end
 
