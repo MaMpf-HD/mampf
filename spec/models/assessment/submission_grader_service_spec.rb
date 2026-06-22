@@ -478,7 +478,8 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
 
-      it "raises RecordNotFound when the participation's id does not belong to the assessment at all" do
+      it "raises RecordNotFound when the participation's id does" \
+         "not belong to the assessment at all" do
         unrelated_participation = FactoryBot.create(:assessment_participation,
                                                     assessment: assessment_active,
                                                     user: FactoryBot.create(:confirmed_user))
