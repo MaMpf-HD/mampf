@@ -2,11 +2,12 @@
 class ParticipationRowComponent < ViewComponent::Base
   class MissingParticipationError < StandardError; end
 
-  def initialize(user:, assignment:, tutorial:)
+  def initialize(user:, assignment:, tutorial:, mode: nil)
     super()
     @user = user
     @assignment = assignment
     @tutorial = tutorial
+    @mode = mode || "tutor"
     @participation ||= @user.assessment_participation_in_assignment(@assignment)
 
     return unless @participation.nil?

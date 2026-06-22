@@ -90,6 +90,15 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
+.status-col {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 200px;
+  background-color: white;
+  z-index: 2;
+}
+
 .task-col {
   width: 90px;
   min-width: 90px;
@@ -131,15 +140,6 @@ table.table tbody tr.row-dirty td {
 }
 
 
-.status-col {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  right: 400px;
-  background-color: white;
-  z-index: 2;
-}
-
 input[type="file"] {
   max-width: 100%;
   min-width: 0;
@@ -149,7 +149,7 @@ input[type="file"] {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
-  right: 500px;
+  right: 400px;
   background-color: white;
   z-index: 2;
 }
@@ -186,14 +186,14 @@ input[type="file"] {
 }
 
 .table-wrapper::before {
-  left: 200px;
+  left: 300px;
   background: linear-gradient(to right, #f8f9fa, transparent);
   opacity: var(--fade-left, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
 .table-wrapper::after {
-  right: 600px;
+  right: 500px;
   background: linear-gradient(to left, #f8f9fa, transparent);
   opacity: var(--fade-right, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
@@ -204,6 +204,6 @@ input[type="file"] {
   text-transform: uppercase; 
   letter-spacing: 0.04em; 
   color: #888; 
-  font-weight: 500; 
+  font-weight: 400; 
   padding: 10px 12px;
 }

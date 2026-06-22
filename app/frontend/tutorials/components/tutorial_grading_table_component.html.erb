@@ -10,7 +10,7 @@
             placeholder="<%= t('basics.search') %>"
             autocomplete="off"
             data-action="input->status-filter#search"
-          >
+          > <%# herb:disable html-no-duplicate-attributes %>
 
           <% ["all", "pending"].each do |status| %>
             <button
@@ -38,13 +38,16 @@
                 </th>
 
                 <% if grading_enabled? %>
+                  <th class="text-center sticky-col status-col grade-th">
+                    <%= t('assessment.grading_tutorial.status') %>
+                  </th>
                   <!-- support point by task -->
                   <% for assessment_task in tasks %>
-                    <th class="text-center sticky-col task-col grade-th"> <%# herb:disable html-no-duplicate-attributes %>
+                    <th class="text-center sticky-col task-col grade-th">
                       <%= t('assessment.grading_tutorial.task') %> <%= assessment_task.position %>
                       <br>
 
-                      <div class="text-muted"> <%# herb:disable html-no-duplicate-attributes %>
+                      <div class="text-muted">
                         (<%= assessment_task.max_points || 0 %>
                         <%= t('assessment.grading_tutorial.max_points') %>)
                       </div>
@@ -58,9 +61,6 @@
                       (<%= total_max_points %>
                       <%= t('assessment.grading_tutorial.max_points') %>)
                     </div>
-                  </th>
-                  <th class="text-center sticky-col status-col grade-th">
-                    <%= t('assessment.grading_tutorial.status') %>
                   </th>
                 <% end %>
 
@@ -103,7 +103,7 @@
   <% if @non_submitters.present? && grading_enabled? %>
     <div
       style="display: flex; align-items: center; gap: 8px; margin: 20px 0 10px; font-size: 13px; font-weight: 500; color: #888;"
-    >
+    > <%# herb:disable html-no-duplicate-attributes %>
       <%= t('assessment.grading_tutorial.no_submission_zone') %>
       <span style="flex: 1; height: 1px; background: #e5e7eb; display: block;"></span>
     </div>

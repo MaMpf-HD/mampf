@@ -41,17 +41,6 @@
   </td>
 
   <% if grading_enabled? %>
-    <!-- batch of columns 2: grade zone -->
-    <!-- support point by task -->
-    <% for assignment_task in @assignment.assessment.tasks %>
-      <td class="sticky-col task-col">
-        <%= task_points_input(assignment_task, allow_grading?) %>
-      </td>
-    <% end %>
-    <!-- Column 3: Total Points -->
-    <td class="text-center sticky-col total-col">
-      <span data-submission-row-target="totalPoints">0</span>
-    </td>
     <!-- Column 4: Status -->
     <td class="text-center sticky-col status-col">
       <% if @submission&.participations %>
@@ -64,6 +53,18 @@
         </span>
       <% end %>
     </td>
+    <!-- batch of columns 3: grade zone -->
+    <!-- support point by task -->
+    <% for assignment_task in @assignment.assessment.tasks %>
+      <td class="sticky-col task-col">
+        <%= task_points_input(assignment_task, allow_grading?) %>
+      </td>
+    <% end %>
+    <!-- Column 4: Total Points -->
+    <td class="text-center sticky-col total-col">
+      <span data-submission-row-target="totalPoints">0</span>
+    </td>
+
   <% end %>
 
   <!-- Column 5: Actions buttons -->
