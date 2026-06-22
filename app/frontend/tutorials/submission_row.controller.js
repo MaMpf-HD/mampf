@@ -45,7 +45,7 @@ export default class extends Controller {
 
   alertTotalPointsInvalid() {
     if (this.hasTotalPointsTarget) {
-      this.totalPointsTarget.textContent = "Invalid points";
+      this.totalPointsTarget.textContent = "N/A";
     }
   }
 

@@ -2748,8 +2748,6 @@ en:
     de: 'German'
   submission:
     invited: You have been invited by '%{inviter}' for this submission.
-    graded: graded
-    pending: pending
     accept_invitation: Accept invitation
     invalid_code_for_assignment: >
       The code you entered is invalid for %{assignment}.
@@ -2770,8 +2768,6 @@ en:
     tutorial_not_assigned: >
       You have not joined a tutorial for this lecture, therefore you cannot join a submission for this assignment.
     invitations_to: Invitations to
-    tutorial_not_assigned: >
-      You have not joined a tutorial for this lecture, therefore you cannot join a submission for this assignment.
     joined_successfully: >
       You successfully joined the submission to %{assignment}.
     failed_redemption: >

@@ -1,5 +1,7 @@
 module Assessment
   class PointEntryService
+    class PointEntryError < StandardError; end
+
     # must ensure participation and task valid before calling this method
     # task_points is a Hash of task_id => points, points potentially nil and string
     def self.enter_points(participation,
@@ -10,7 +12,7 @@ module Assessment
 
       # check requires_points
       unless assessment.requires_points?
-        raise(ArgumentError,
+        raise(PointEntryError,
               "Assessment #{assessment.id} does not accept points")
       end
 
@@ -20,7 +22,7 @@ module Assessment
       ApplicationRecord.transaction do
         task_points.each do |task_id, points|
           unless valid_task_ids.include?(task_id)
-            raise(ArgumentError,
+            raise(PointEntryError,
                   "Invalid task #{task_id}")
           end
 
@@ -54,10 +56,10 @@ module Assessment
         begin
           Float(points)
         rescue ArgumentError
-          raise(ArgumentError, "Invalid points value for task #{task_id}")
+          raise(PointEntryError, "Invalid points value for task #{task_id}")
         end
       elsif !points.is_a?(Numeric)
-        raise(ArgumentError, "Invalid points value for task #{task_id}")
+        raise(PointEntryError, "Invalid points value for task #{task_id}")
       end
     end
 

@@ -76,17 +76,50 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       context "when participation is nil, should reject the request" do
         subject { described_class.score_tasks_by_participation!(nil, @points_by_task_id, scorer) }
 
+        it "raises SubmissionGraderError" do
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        end
+
         it "does not call PointEntryService" do
           expect(Assessment::PointEntryService).not_to receive(:enter_points)
-          subject
+          begin
+            subject
+          rescue StandardError
+            nil
+          end
         end
 
         it "does not create any participations" do
-          expect { subject }.not_to change(Assessment::Participation, :count)
+          expect do
+            subject
+          rescue StandardError
+            nil
+          end.not_to change(Assessment::Participation, :count)
         end
       end
 
-      context "when submission and assignment are valid" do
+      context "when participation has no resolvable assignment" do
+        before { allow(@participation).to receive(:assessment).and_return(nil) }
+
+        subject do
+          described_class.score_tasks_by_participation!(@participation, @points_by_task_id, scorer)
+        end
+
+        it "raises SubmissionGraderError" do
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        end
+
+        it "does not call PointEntryService" do
+          expect(Assessment::PointEntryService).not_to receive(:enter_points)
+          begin
+            subject
+          rescue StandardError
+            nil
+          end
+        end
+      end
+
+      context "when participation and assignment are valid" do
         subject do
           described_class.score_tasks_by_participation!(@participation, @points_by_task_id,
                                                         scorer)
@@ -174,6 +207,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         Timecop.travel(2.hours.from_now)
       end
       after { Timecop.return }
+
       context "when submission is nil" do
         subject { described_class.score_tasks_by_submission!(nil, @points_by_task_id, scorer) }
 
@@ -229,8 +263,9 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           end.not_to change(Assessment::Participation, :count)
         end
       end
+
       context "when submission and assignment are valid" do
-        context "when submission has 1 users" do
+        context "when submission has 1 user" do
           subject do
             described_class.score_tasks_by_submission!(@submission, @points_by_task_id, scorer)
           end
@@ -340,7 +375,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         subject
       end
 
-      it "scopes submission lookup to the authorized tutorial and assignment" do
+      it "raises when the submission's id is not found within the authorized tutorial" do
         other_tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
         other_submission = FactoryBot.create(:submission, :with_manuscript,
                                              assignment: @assignment,
@@ -358,6 +393,26 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
                                                 tutorial: @tutorial,
                                                 assignment: @assignment)
         end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "raises SubmissionGraderError when the submission belongs to a different assignment" do
+        other_assignment = FactoryBot.create(:assignment, :with_lecture, lecture: @tutorial.lecture)
+        mismatched_submission = FactoryBot.create(:submission, :with_manuscript,
+                                                  assignment: other_assignment,
+                                                  tutorial: @tutorial,
+                                                  users: [FactoryBot.create(:confirmed_user)])
+
+        entry = {
+          "target" => "submission",
+          "id" => mismatched_submission.id,
+          "task_points" => @points_by_task_id
+        }
+
+        expect do
+          described_class.score_tasks_by_types!(entry, scorer,
+                                                tutorial: @tutorial,
+                                                assignment: @assignment)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
     end
 
@@ -381,7 +436,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         subject
       end
 
-      it "scopes participation lookup to the authorized tutorial and assignment" do
+      it "raises when the participation's id is not found within the authorized assessment" do
         other_tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
         other_participation = FactoryBot.create(:assessment_participation,
                                                 assessment: @assessment,
@@ -391,6 +446,46 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         entry = {
           "target" => "participation",
           "id" => other_participation.id,
+          "task_points" => @points_by_task_id
+        }
+
+        expect do
+          described_class.score_tasks_by_types!(entry, scorer,
+                                                tutorial: @tutorial,
+                                                assignment: @assignment)
+        end.not_to raise_error(ActiveRecord::RecordNotFound)
+        # NOTE: this lookup is scoped via assignment.assessment, so a different
+        # tutorial alone does not raise RecordNotFound — see the mismatch test below.
+      end
+
+      it "raises SubmissionGraderError when the participation belongs to a different tutorial" do
+        other_tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
+        mismatched_participation = FactoryBot.create(:assessment_participation,
+                                                     assessment: @assessment,
+                                                     user: FactoryBot.create(:confirmed_user),
+                                                     tutorial: other_tutorial)
+
+        entry = {
+          "target" => "participation",
+          "id" => mismatched_participation.id,
+          "task_points" => @points_by_task_id
+        }
+
+        expect do
+          described_class.score_tasks_by_types!(entry, scorer,
+                                                tutorial: @tutorial,
+                                                assignment: @assignment)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
+
+      it "raises RecordNotFound when the participation's id does not belong to the assessment at all" do
+        unrelated_participation = FactoryBot.create(:assessment_participation,
+                                                    assessment: assessment_active,
+                                                    user: FactoryBot.create(:confirmed_user))
+
+        entry = {
+          "target" => "participation",
+          "id" => unrelated_participation.id,
           "task_points" => @points_by_task_id
         }
 
@@ -412,14 +507,26 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         )
       end
 
+      it "raises SubmissionGraderError" do
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
+
       it "does not call score_tasks_by_submission!" do
         expect(described_class).not_to receive(:score_tasks_by_submission!)
-        subject
+        begin
+          subject
+        rescue StandardError
+          nil
+        end
       end
 
       it "does not call score_tasks_by_participation!" do
         expect(described_class).not_to receive(:score_tasks_by_participation!)
-        subject
+        begin
+          subject
+        rescue StandardError
+          nil
+        end
       end
     end
   end

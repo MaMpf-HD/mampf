@@ -87,19 +87,23 @@ RSpec.describe(Submission, type: :model) do
       let(:user2) { FactoryBot.create(:confirmed_user) }
       let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
 
+      around do |example|
+        Flipper.enable(:assessment_grading)
+        Flipper.enable(:registration_campaigns)
+        Flipper.enable(:roster_maintenance)
+        example.run
+      ensure
+        Flipper.disable(:assessment_grading)
+        Flipper.disable(:registration_campaigns)
+        Flipper.disable(:roster_maintenance)
+      end
+
       it "returns nil" do
         submission = FactoryBot.create(:submission, assignment: assignment,
                                                     tutorial: tutorial,
                                                     users: [user1, user2])
-        Flipper.enable(:assessment_grading)
-        Flipper.enable(:registration_campaigns)
-        Flipper.enable(:roster_maintenance)
 
         expect(submission.participations).to be_nil
-
-        Flipper.disable(:assessment_grading)
-        Flipper.disable(:registration_campaigns)
-        Flipper.disable(:roster_maintenance)
       end
     end
 

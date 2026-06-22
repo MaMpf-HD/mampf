@@ -2968,8 +2968,6 @@ de:
       Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt: %{count}
   submission:
     invited: Du wurdest von '%{inviter}' für diese Abgabe eingeladen.
-    graded: Benote
-    pending: Benotung ausstehend
     accept_invitation: Einladung annehmen
     invalid_code: Der eingegebene Code ist ungültig.
     invalid_code_for_assignment: >
@@ -2990,8 +2988,6 @@ de:
     invitations_to: Einladungen an
     joined_successfully: >
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
-    tutorial_not_assigned: >
-      Sie können dieser Abgabe nicht beitreten, da sie keinem Tutorium zugeordnet ist.
     failed_redemption: >
       Die Einlösung des Codes ist fehlgeschlagen: %{message}
     current: Aktuelle Abgabe

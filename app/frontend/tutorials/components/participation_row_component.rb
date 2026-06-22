@@ -1,11 +1,19 @@
 # Renders a single participation row in the pointing table
 class ParticipationRowComponent < ViewComponent::Base
+  class MissingParticipationError < StandardError; end
+
   def initialize(user:, assignment:, tutorial:)
     super()
     @user = user
     @assignment = assignment
     @tutorial = tutorial
     @participation ||= @user.assessment_participation_in_assignment(@assignment)
+
+    return unless @participation.nil?
+
+    raise(MissingParticipationError,
+          I18n.t("assessment.task_points.no_participarions_for_config",
+                 user_id: @user.id, assignment_id: @assignment.id))
   end
 
   # Determines if grading is enabled for the current assignment

@@ -40,24 +40,24 @@
                 <% if grading_enabled? %>
                   <!-- support point by task -->
                   <% for assessment_task in tasks %>
-                    <th class="text-center sticky-col task-col grade-th">
+                    <th class="text-center sticky-col task-col grade-th"> <%# herb:disable html-no-duplicate-attributes %>
                       <%= t('assessment.grading_tutorial.task') %> <%= assessment_task.position %>
                       <br>
 
-                      <small class="text-muted">
+                      <div class="text-muted"> <%# herb:disable html-no-duplicate-attributes %>
                         (<%= assessment_task.max_points || 0 %>
                         <%= t('assessment.grading_tutorial.max_points') %>)
-                      </small>
+                      </div>
                     </th>
                   <% end %>
                   <th class="text-center sticky-col total-col grade-th">
                     <%= t('assessment.grading_tutorial.total_points') %>
                     <br>
 
-                    <small class="text-muted">
+                    <div class="text-muted">
                       (<%= total_max_points %>
                       <%= t('assessment.grading_tutorial.max_points') %>)
-                    </small>
+                    </div>
                   </th>
                   <th class="text-center sticky-col status-col grade-th">
                     <%= t('assessment.grading_tutorial.status') %>

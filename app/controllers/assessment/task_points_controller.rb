@@ -17,7 +17,8 @@ module Assessment
       respond_with_flash(:alert, I18n.t("assessment.task_points.invalid_submission_params"))
     end
 
-    rescue_from SubmissionGraderService::SubmissionGraderError do |e|
+    rescue_from SubmissionGraderService::SubmissionGraderError,
+                Assessment::PointEntryService::PointEntryError do |e|
       respond_with_flash(:alert, e.message)
     end
 

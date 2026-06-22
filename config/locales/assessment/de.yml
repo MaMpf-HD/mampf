@@ -78,6 +78,14 @@ de:
       assessment_not_found: "Bewertung für diese Hausaufgabe nicht gefunden."
       cannot_score_active_assignment: "Punkte können für aktive Hausaufgaben nicht eingetragen werden."
       user_not_found: "Benutzer nicht gefunden."
+      not_required_points: "Punkte können für Hausaufgaben, die keine Punkte erfordern, nicht eingetragen werden."
+      participation_tutorial_mismatch: "Teilnahme %{participation_id} gehört nicht zum Tutorium %{tutorial_id}"
+      submission_assignment_mismatch: "Abgabe %{submission_id} gehört nicht zur Hausaufgabe %{assignment_id}."
+      submission_has_no_assignment: "Abgabe %{submission_id} hat keine zugehörige Hausaufgabe"
+      assignment_has_no_assessment: "Hausaufgabe %{assignment_id} hat keine zugehörige Bewertung"
+      participation_has_no_assignment: "Teilnahme %{participation_id} hat keine zugehörige Hausaufgabe"
+      participation_missing: "Teilnahme nicht gefunden."
+      submission_missing: "Abgabe nicht gefunden."
     errors:
       no_assessable: "Hausaufgabe nicht gefunden."
       no_assessment: "Bewertung für dieses Element nicht gefunden."
@@ -118,9 +126,10 @@ de:
         non_submitters:
           total: "Personen haben nicht abgegeben"
           participated: "teilgenommen"
-          not_participated: "nicht yet marked"
+          not_participated: "noch nicht bewertet"
           graded: "benotet"
           pending: "ausstehend"
+      no_participarions_for_config: "Keine Teilnahme für Benutzer %{user_id} an Hausaufgabe %{assignment_id}"
     grading_overview:
       submission_progress: "Abgaben"
       submitted: "Abgegeben"

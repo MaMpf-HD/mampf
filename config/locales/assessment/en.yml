@@ -78,6 +78,14 @@ en:
       assessment_not_found: "Assessment for this assignment not found."
       cannot_score_active_assignment: "Points cannot be entered for active assignments."
       user_not_found: "User not found."
+      not_required_points: "Points cannot be entered for assignments that do not require points."
+      participation_tutorial_mismatch: "Participation %{participation_id} does not belong to tutorial %{tutorial_id}"
+      submission_assignment_mismatch: "Submission %{submission_id} does not belong to assignment %{assignment_id}."
+      submission_has_no_assignment: "Submission %{submission_id} has no associated assignment."
+      assignment_has_no_assessment: "Assignment %{assignment_id} has no associated assessment."
+      participation_has_no_assignment: "Participation %{participation_id} has no associated assignment."
+      participation_missing: "Participation not found."
+      submission_missing: "Submission not found."
     errors:
       no_assessable: "Assignment not found."
       no_assessment: "Assessment not found for this item."
@@ -121,6 +129,7 @@ en:
           not_participated: "not yet marked"
           graded: "graded"
           pending: "pending"
+      no_participarions_for_config: "No participation for user %{user_id} on assignment %{assignment_id}"
     grading_overview:
       submission_progress: "Submissions"
       submitted: "Submitted"

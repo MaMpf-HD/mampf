@@ -37,56 +37,55 @@
     <% if grading_enabled?(@assignment) %>
       <!-- Overview -->
       <% info = overview_info(@stack, @non_submitters, @assignment) %>
-      <div class="border rounded-3 bg-light p-3 h-100 m-3">
-      <div class="small mb-2">
-        <span class="badge bg-primary">
-          <%= info[:submissions][:total] %>
-        </span>
-        <%= t('assessment.grading_tutorial.header_overview.submission.total') %>
-        <span class="mx-2">—</span>
-        <span class="text-success">
-          <%= info[:submissions][:graded] %>
-        </span>
-        <%= t('assessment.grading_tutorial.header_overview.submission.graded') %>
-        <span class="mx-1">•</span>
-        <span class="text-warning">
-          <%= info[:submissions][:pending] %>
-        </span>
-        <%= t('assessment.grading_tutorial.header_overview.submission.pending') %>
-      </div>
+      <div class="border rounded-3 bg-light p-2 h-100 m-3">
+        <div class="small mb-2">
+          <span class="badge bg-primary">
+            <%= info[:submissions][:total] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.submission.total') %>
+          <span class="mx-2">—</span>
+          <span class="text-success">
+            <%= info[:submissions][:graded] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.submission.graded') %>
+          <span class="mx-1">•</span>
+          <span class="text-warning">
+            <%= info[:submissions][:pending] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.submission.pending') %>
+        </div>
 
-      <hr class="my-2">
-      <div class="small text-muted">
-        <span class="badge bg-secondary">
-          <%= info[:non_submitters][:total] %>
-        </span>
-        <%= t('assessment.grading_tutorial.header_overview.non_submitters.total') %>
-        <span class="mx-2">—</span>
-        <strong><%= info[:non_submitters][:participated] %></strong>
-        <%= t('assessment.grading_tutorial.header_overview.non_submitters.participated') %>
-        (
-        <span class="text-success">
-          <%= info[:non_submitters][:graded] %>
-        </span>
-        <%= t('assessment.grading_tutorial.header_overview.non_submitters.graded') %>
-        •
-        <span class="text-warning">
-          <%= info[:non_submitters][:pending] %>
-        </span>
-        <%= t('assessment.grading_tutorial.header_overview.non_submitters.pending') %>
-        )
+        <hr class="my-2">
+        <div class="small text-muted">
+          <span class="badge bg-secondary">
+            <%= info[:non_submitters][:total] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.total') %>
+          <span class="mx-2">—</span>
+          <strong><%= info[:non_submitters][:participated] %></strong>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.participated') %>
+          (
+          <span class="text-success">
+            <%= info[:non_submitters][:graded] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.graded') %>
+          •
+          <span class="text-warning">
+            <%= info[:non_submitters][:pending] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.pending') %>
+          )
 
-        <span class="mx-1">•</span>
+          <span class="mx-1">•</span>
 
-        <strong><%= info[:non_submitters][:not_marked] %></strong>
-        <%= t('assessment.grading_tutorial.header_overview.non_submitters.not_participated') %>
-      </div>
+          <strong><%= info[:non_submitters][:not_marked] %></strong>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.not_participated') %>
+        </div>
       </div>
     <% end %>
 
     <!-- Action Buttons -->
     <div class="d-flex flex-wrap gap-2 justify-content-start m-3 w-auto">
-
       <% if @stack.present? %>
         <!-- Bulk Download Submissions -->
         <%= link_to bulk_download_submissions_path(id: @tutorial.id, ass_id: @assignment.id),
