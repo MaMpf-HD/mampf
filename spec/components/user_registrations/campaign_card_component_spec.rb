@@ -108,5 +108,41 @@ RSpec.describe(CampaignCardComponent, type: :component) do
                  I18n.t("registration.user_registration.policy_overview.finalization_title")
                ])
     end
+
+    it "keeps both phases even if one side has no policies" do
+      details = details_class.new(
+        eligibility: [],
+        finalization_eligibility: [{ kind: "prerequisite_campaign", outcome: { pass: false } }],
+        items: [],
+        item_preferences: nil
+      )
+      component = described_class.new(
+        details: details,
+        campaign: build(:registration_campaign, status: :open)
+      )
+
+      expect(component.policy_overview_sections.map { |section| section[:title] })
+        .to eq([
+                 I18n.t("registration.user_registration.policy_overview.registration_title"),
+                 I18n.t("registration.user_registration.policy_overview.finalization_title")
+               ])
+      expect(component.policy_overview_sections.first[:policies]).to eq([])
+    end
+
+    it "returns no sections when neither phase has policies" do
+      details = details_class.new(
+        eligibility: [],
+        finalization_eligibility: [],
+        items: [],
+        item_preferences: nil
+      )
+      component = described_class.new(
+        details: details,
+        campaign: build(:registration_campaign, status: :open)
+      )
+
+      expect(component.policy_overview_sections).to eq([])
+      expect(component.policy_overview?).to be(false)
+    end
   end
 end

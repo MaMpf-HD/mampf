@@ -346,8 +346,10 @@ en:
         title: "Policy checks for this registration"
         registration_title: "Checked at registration"
         registration_description: "These checks must be fulfilled before you can register."
+        registration_empty: "There are no additional rules or restrictions for registration."
         finalization_title: "Checked again at finalization"
         finalization_description: "These checks are evaluated again when the registration process is finalized."
+        finalization_empty: "There are no additional checks at finalization."
         status:
           fulfilled: "Currently fulfilled"
           not_fulfilled: "Currently not fulfilled"

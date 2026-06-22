@@ -133,23 +133,28 @@
                   <%= section[:title] %>
                 </div>
 
-                <div class="student-registration-policy-overview-section-description">
-                  <%= section[:description] %>
-                </div>
+                <% if section[:policies].present? %>
+                  <div class="student-registration-policy-overview-section-description">
+                    <%= section[:description] %>
+                  </div>
+                  <ul class="student-registration-policy-overview-list list-unstyled mb-0">
+                    <% section[:policies].each do |policy| %>
+                      <li class="student-registration-policy-overview-item">
+                        <div class="student-registration-policy-overview-rule">
+                          <%= eligibility_policy_summary(policy) %>
+                        </div>
 
-                <ul class="student-registration-policy-overview-list list-unstyled mb-0">
-                  <% section[:policies].each do |policy| %>
-                    <li class="student-registration-policy-overview-item">
-                      <div class="student-registration-policy-overview-rule">
-                        <%= eligibility_policy_summary(policy) %>
-                      </div>
-
-                      <span class="badge student-registration-policy-overview-status <%= eligibility_policy_status_badge_class(policy) %>">
-                        <%= eligibility_policy_status_label(policy) %>
-                      </span>
-                    </li>
-                  <% end %>
-                </ul>
+                        <span class="badge student-registration-policy-overview-status <%= eligibility_policy_status_badge_class(policy) %>">
+                          <%= eligibility_policy_status_label(policy) %>
+                        </span>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  <div class="student-registration-policy-overview-empty">
+                    <%= section[:empty_text] %>
+                  </div>
+                <% end %>
               </section>
             <% end %>
           </div>

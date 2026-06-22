@@ -38,22 +38,31 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   def policy_overview_sections
-    @policy_overview_sections ||= [
-      policy_section(
-        title: I18n.t("registration.user_registration.policy_overview." \
-                      "registration_title"),
-        description: I18n.t("registration.user_registration.policy_overview." \
-                            "registration_description"),
-        policies: eligibility
-      ),
-      policy_section(
-        title: I18n.t("registration.user_registration.policy_overview." \
-                      "finalization_title"),
-        description: I18n.t("registration.user_registration.policy_overview." \
-                            "finalization_description"),
-        policies: finalization_eligibility
-      )
-    ].compact
+    @policy_overview_sections ||=
+      if eligibility.blank? && finalization_eligibility.blank?
+        []
+      else
+        [
+          policy_section(
+            title: I18n.t("registration.user_registration.policy_overview." \
+                          "registration_title"),
+            description: I18n.t("registration.user_registration.policy_overview." \
+                                "registration_description"),
+            empty_text: I18n.t("registration.user_registration.policy_overview." \
+                               "registration_empty"),
+            policies: eligibility
+          ),
+          policy_section(
+            title: I18n.t("registration.user_registration.policy_overview." \
+                          "finalization_title"),
+            description: I18n.t("registration.user_registration.policy_overview." \
+                                "finalization_description"),
+            empty_text: I18n.t("registration.user_registration.policy_overview." \
+                               "finalization_empty"),
+            policies: finalization_eligibility
+          )
+        ]
+      end
   end
 
   def policy_overview?
@@ -86,12 +95,11 @@ class CampaignCardComponent < ViewComponent::Base
       policies.reject { |policy| policy.dig(:outcome, :pass) }
     end
 
-    def policy_section(title:, description:, policies:)
-      return if policies.blank?
-
+    def policy_section(title:, description:, empty_text:, policies:)
       {
         title: title,
         description: description,
+        empty_text: empty_text,
         policies: policies
       }
     end
