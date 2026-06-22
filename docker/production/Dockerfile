@@ -1,6 +1,6 @@
-FROM node:24.11.0-bookworm-slim AS node
+FROM node:24.11.0-trixie-slim AS node
 
-FROM ruby:3.4.9-bookworm AS build
+FROM ruby:3.4.9-slim-trixie AS build
 
 ENV RAILS_ENV=production \
     BUNDLE_DEPLOYMENT=1 \
@@ -28,22 +28,37 @@ RUN which yarn; yarn --version
 # yarn avaialble instead of our specified version
 RUN yarn set version "${YARN_VERSION}"
 
-# Install other dependencies
+# Install build-time and runtime dependencies.
+# build-essential/git/pkg-config are needed to compile native gem extensions
+# (bcrypt, bindex, msgpack, nio4r, puma, sassc) and to clone git-sourced gems.
+# The remaining packages are runtime deps also needed here so that Rails can
+# boot during assets:precompile.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        build-essential \
+        git \
+        pkg-config \
+        libyaml-dev \
         ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info libvips42 && \
     rm -rf /var/lib/apt/lists/*
 
 RUN gem install bundler -v "${BUNDLER_VERSION}"
 
-# Setup ImageMagick
-RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
+# Download OR-Tools for Debian 13 (the or-tools gem has no official trixie
+# binary yet; see https://github.com/MaMpf-HD/build-artifacts)
+ADD https://github.com/MaMpf-HD/build-artifacts/releases/download/or-tools-9.15-trixie/or-tools-9.15-trixie-amd64.tar.gz /tmp/or-tools.tar.gz
+RUN mkdir -p /opt/or-tools && tar xzf /tmp/or-tools.tar.gz -C /opt/or-tools && rm /tmp/or-tools.tar.gz
+
+# Setup ImageMagick policy (path differs between IM6 and IM7)
+RUN find /etc/ImageMagick-*/policy.xml -exec \
+    sed -i '/disable ghostscript format types/,+6d' {} +
 
 WORKDIR /usr/src/app
 
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
+RUN bundle config set --local build.or-tools --with-or-tools-dir=/opt/or-tools
 RUN bundle install
 RUN yarn install --frozen-lockfile
 
@@ -93,7 +108,7 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     rm -rf /usr/local/bundle/cache /usr/local/bundle/ruby/*/cache && \
     find /usr/local/bundle -name "*.gem" -delete
 
-FROM ruby:3.4.9-bookworm
+FROM ruby:3.4.9-slim-trixie
 
 ENV RAILS_ENV=production \
     BUNDLE_DEPLOYMENT=1 \
@@ -114,7 +129,8 @@ RUN apt-get update && \
 
 RUN gem install bundler -v "${BUNDLER_VERSION}"
 
-RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
+RUN find /etc/ImageMagick-*/policy.xml -exec \
+    sed -i '/disable ghostscript format types/,+6d' {} +
 
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
     mkdir -p /private/media /private/submissions /caches/thruster \
@@ -126,6 +142,7 @@ WORKDIR /usr/src/app
 COPY --from=node /usr/local/ /usr/local/
 COPY --from=build --chown=root:root /usr/local/bundle /usr/local/bundle
 COPY --from=build --chown=root:root /usr/src/app /usr/src/app
+COPY --from=build /opt/or-tools/lib /opt/or-tools/lib
 
 RUN chown -R app:app /usr/src/app/tmp /usr/src/app/log && \
     rm -rf /usr/local/bundle/cache
