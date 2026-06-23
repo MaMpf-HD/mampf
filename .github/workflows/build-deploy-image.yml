@@ -63,6 +63,19 @@ jobs:
           cache-from: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache,mode=max
 
+      - name: Scan published runtime image
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
+        env:
+          TRIVY_USERNAME: ${{ github.actor }}
+          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          image-ref: ${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: CRITICAL
+          vuln-type: os,library
+
       - name: Install cosign
         uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
 
@@ -78,7 +91,9 @@ jobs:
             "image": "${{ steps.image.outputs.image }}",
             "digest": "${{ steps.build.outputs.digest }}",
             "digest_image": "${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}",
+            "source_ref": "${{ github.ref_name }}",
             "head_sha": "${{ github.sha }}",
+            "event_name": "${{ github.event_name }}",
             "run_id": "${{ github.run_id }}"
           }
           EOF
