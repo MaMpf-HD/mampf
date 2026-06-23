@@ -64,6 +64,8 @@ jobs:
           cache-to: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache,mode=max
 
       - name: Scan published runtime image
+        id: trivy_scan
+        continue-on-error: true
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
         env:
           TRIVY_USERNAME: ${{ github.actor }}
@@ -71,11 +73,131 @@ jobs:
         with:
           version: v0.71.2
           image-ref: ${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}
-          format: table
+          format: json
+          output: trivy-results.json
           exit-code: "1"
           ignore-unfixed: true
           severity: CRITICAL
           vuln-type: os,library
+          hide-progress: true
+
+      - name: Summarize Trivy findings
+        if: always()
+        env:
+          IMAGE_DIGEST_REFERENCE: ${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import sys
+          from collections import Counter
+
+          path = "trivy-results.json"
+          if not os.path.exists(path):
+            print("Trivy did not produce trivy-results.json", file=sys.stderr)
+            sys.exit(1)
+
+          with open(path, encoding="utf-8") as handle:
+            data = json.load(handle)
+
+          results = data.get("Results") or []
+
+          def severity_counts(vulns):
+            counts = Counter()
+            for vuln in vulns:
+              counts[vuln.get("Severity", "UNKNOWN")] += 1
+            return counts
+
+          os_results = []
+          dependency_results = []
+          for result in results:
+            if result.get("Class") == "os-pkgs":
+              os_results.append(result)
+            else:
+              dependency_results.append(result)
+
+          os_vulns = [
+            vuln
+            for result in os_results
+            for vuln in (result.get("Vulnerabilities") or [])
+          ]
+          vulnerable_dependency_results = [
+            result for result in dependency_results if result.get("Vulnerabilities")
+          ]
+
+          lines = []
+          lines.append("## Trivy Scan")
+          lines.append("")
+          lines.append("Scanned image references:")
+          lines.append(
+            f"- MaMpf deploy image: `{os.environ['IMAGE_DIGEST_REFERENCE']}`"
+          )
+          lines.append("")
+          lines.append("Not scanned by this workflow:")
+          lines.append("- Separate service images such as Redis and Memcached")
+          lines.append("")
+
+          os_target = "runtime image"
+          os_type = "os"
+          if os_results:
+            os_target = os_results[0].get("Target") or os_target
+            os_type = os_results[0].get("Type") or os_type
+
+          os_counts = severity_counts(os_vulns)
+          lines.append("Scanned surfaces inside the MaMpf deploy image:")
+          lines.append(
+            f"- Base image / OS packages (`{os_type}`): {len(os_vulns)} matching vulnerabilities"
+          )
+          if os_vulns:
+            lines.append(
+              "  Severities: " + ", ".join(
+                f"{severity} {os_counts[severity]}"
+                for severity in ("CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN")
+                if os_counts[severity]
+              )
+            )
+            lines.append(f"  Target: `{os_target}`")
+
+          if vulnerable_dependency_results:
+            lines.append("- Application dependencies found in the image:")
+            for result in vulnerable_dependency_results:
+              vulns = result.get("Vulnerabilities") or []
+              counts = severity_counts(vulns)
+              target = result.get("Target") or "unknown target"
+              target_type = result.get("Type") or "unknown"
+              lines.append(
+                "  - "
+                f"`{target}` ({target_type}): {len(vulns)} vulnerabilities"
+                + " ["
+                + ", ".join(
+                  f"{severity} {counts[severity]}"
+                  for severity in ("CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN")
+                  if counts[severity]
+                )
+                + "]"
+              )
+              for vuln in vulns:
+                fixed = vuln.get("FixedVersion") or "no fix listed"
+                pkg = vuln.get("PkgName") or "unknown package"
+                installed = vuln.get("InstalledVersion") or "unknown version"
+                vid = vuln.get("VulnerabilityID") or "unknown id"
+                lines.append(
+                  f"    - `{vid}` in `{pkg}` {installed} -> {fixed}"
+                )
+          else:
+            lines.append("- Application dependencies found in the image: none")
+
+          output = "\n".join(lines)
+          print(output)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+            handle.write(output + "\n")
+          PY
+
+      - name: Fail on blocked Trivy findings
+        if: steps.trivy_scan.outcome == 'failure'
+        run: |
+          echo "Trivy detected policy-blocking vulnerabilities. See the Trivy Scan summary above."
+          exit 1
 
       - name: Install cosign
         uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
