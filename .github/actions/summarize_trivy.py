@@ -16,11 +16,41 @@ def severity_counts(vulnerabilities):
 def main():
     path = os.environ.get("TRIVY_RESULTS_PATH", "trivy-results.json")
     if not os.path.exists(path):
-        print(f"Trivy results file not found: {path}", file=sys.stderr)
-        return 1
+        output = "\n".join(
+            [
+                "## Trivy Scan",
+                "",
+                "Trivy did not produce a results file.",
+                f"Expected file: `{path}`",
+                "The image build will continue, but no scan summary is available for this run.",
+            ]
+        )
+        print(output)
+        step_summary = os.environ.get("GITHUB_STEP_SUMMARY")
+        if step_summary:
+            with open(step_summary, "a", encoding="utf-8") as handle:
+                handle.write(output + "\n")
+        return 0
 
-    with open(path, encoding="utf-8") as handle:
-        data = json.load(handle)
+    try:
+        with open(path, encoding="utf-8") as handle:
+            data = json.load(handle)
+    except json.JSONDecodeError:
+        output = "\n".join(
+            [
+                "## Trivy Scan",
+                "",
+                "Trivy produced an unreadable results file.",
+                f"Results file: `{path}`",
+                "The image build will continue, but no scan summary is available for this run.",
+            ]
+        )
+        print(output)
+        step_summary = os.environ.get("GITHUB_STEP_SUMMARY")
+        if step_summary:
+            with open(step_summary, "a", encoding="utf-8") as handle:
+                handle.write(output + "\n")
+        return 0
 
     results = data.get("Results") or []
 

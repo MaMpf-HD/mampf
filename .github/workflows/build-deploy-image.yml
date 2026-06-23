@@ -26,6 +26,7 @@ jobs:
     env:
       IMAGE_REPOSITORY: ${{ inputs.image_repository || 'ghcr.io/mampf-hd/mampf-deploy' }}
       IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
+      COSIGN_VERSION: v2.2.4
     outputs:
       image: ${{ steps.image.outputs.image }}
       image_tag: ${{ steps.image.outputs.image_tag }}
@@ -90,7 +91,12 @@ jobs:
           python3 .github/actions/summarize_trivy.py
 
       - name: Install cosign
-        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
+        run: |
+          curl -fsSLo /tmp/cosign-linux-amd64 "https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/cosign-linux-amd64"
+          curl -fsSLo /tmp/cosign_checksums.txt "https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/cosign_checksums.txt"
+          (cd /tmp && grep ' cosign-linux-amd64$' cosign_checksums.txt | sha256sum --check --status)
+          install -m 0755 /tmp/cosign-linux-amd64 /usr/local/bin/cosign
+          cosign version
 
       - name: Sign the published Docker image
         run: cosign sign --yes "${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}"
