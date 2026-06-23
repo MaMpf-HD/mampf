@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+OR_TOOLS_URL="https://github.com/MaMpf-HD/build-artifacts/releases/download/or-tools-9.15-trixie/or-tools-9.15-trixie-amd64.tar.gz"
+OR_TOOLS_SHA256="067e96ba57bbca8bf8e56c9b85010e223d49696cb5fe1a56ef94f5bd3647c0cf"
+
 echo "🚀 Fix bundle cache ownership"
 sudo mkdir -p /usr/local/bundle
 sudo chown -R "$(id -u):$(id -g)" /usr/local/bundle
@@ -10,7 +13,8 @@ sudo git config --system safe.bareRepository all
 
 echo "🚀 Install OR-Tools for Bundler on Debian 13"
 if [ ! -d /opt/or-tools/lib ]; then
-  wget -O /tmp/or-tools.tar.gz https://github.com/MaMpf-HD/build-artifacts/releases/download/or-tools-9.15-trixie/or-tools-9.15-trixie-amd64.tar.gz
+  wget -O /tmp/or-tools.tar.gz "$OR_TOOLS_URL"
+  echo "$OR_TOOLS_SHA256  /tmp/or-tools.tar.gz" | sha256sum -c -
   sudo mkdir -p /opt/or-tools
   sudo tar xzf /tmp/or-tools.tar.gz -C /opt/or-tools
   rm -f /tmp/or-tools.tar.gz

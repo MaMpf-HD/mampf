@@ -9,6 +9,9 @@ FROM ruby:3.4.9-trixie
 
 ARG RAILS_DEVELOPMENT_HOSTS=".githubpreview.dev,.app.github.dev"
 ARG BUNDLER_VERSION=4.0.12
+ARG OR_TOOLS_VERSION=or-tools-9.15-trixie
+ARG OR_TOOLS_FILENAME=or-tools-9.15-trixie-amd64.tar.gz
+ARG OR_TOOLS_SHA256=067e96ba57bbca8bf8e56c9b85010e223d49696cb5fe1a56ef94f5bd3647c0cf
 ENV RAILS_DEVELOPMENT_HOSTS=${RAILS_DEVELOPMENT_HOSTS}
 
 # use "--login" option, so that .bashrc is sourced in new shells
@@ -45,7 +48,7 @@ RUN git config --system safe.bareRepository all
 
 # Download OR-Tools for Debian 13 (the or-tools gem has no official trixie
 # binary yet; see https://github.com/MaMpf-HD/build-artifacts)
-ADD https://github.com/MaMpf-HD/build-artifacts/releases/download/or-tools-9.15-trixie/or-tools-9.15-trixie-amd64.tar.gz /tmp/or-tools.tar.gz
+ADD --checksum=sha256:${OR_TOOLS_SHA256} https://github.com/MaMpf-HD/build-artifacts/releases/download/${OR_TOOLS_VERSION}/${OR_TOOLS_FILENAME} /tmp/or-tools.tar.gz
 RUN mkdir -p /opt/or-tools \
     && tar xzf /tmp/or-tools.tar.gz -C /opt/or-tools \
     && rm /tmp/or-tools.tar.gz
