@@ -22,14 +22,10 @@ RUN npm --version
 
 # Install Yarn (see https://yarnpkg.com/getting-started/install)
 # https://github.com/nodejs/corepack#corepack-prepare--nameversion
-ENV YARN_VERSION=1.22.19
+ENV YARN_VERSION=4.17.0
 RUN rm -f /usr/local/bin/yarn /usr/local/bin/yarnpkg && corepack enable
 RUN corepack prepare "yarn@${YARN_VERSION}" --activate
 RUN which yarn; yarn --version
-# even though this is not specified in the corepack documentation, we need to
-# run "set version", otherwise the app user will have an old version of
-# yarn avaialble instead of our specified version
-RUN yarn set version "${YARN_VERSION}"
 
 # Install build-time and runtime dependencies.
 # build-essential/git/pkg-config are needed to compile native gem extensions
@@ -56,10 +52,10 @@ WORKDIR /usr/src/app
 
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app
 
-COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
+COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json ./.yarnrc.yml /usr/src/app/
 RUN bundle config set --local build.or-tools --with-or-tools-dir=/opt/or-tools
 RUN bundle install
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable
 
 COPY . /usr/src/app
 

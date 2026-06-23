@@ -6,12 +6,20 @@ Dir.chdir(APP_ROOT) do
     product(["yarn", "yarn.cmd", "yarn.ps1"]).
     map { |dir, file| File.expand_path(file, dir) }.
     find { |file| File.executable?(file) }
+  corepack = ENV["PATH"].split(File::PATH_SEPARATOR).
+    select { |dir| File.expand_path(dir) != __dir__ }.
+    product(["corepack", "corepack.cmd", "corepack.ps1"]).
+    map { |dir, file| File.expand_path(file, dir) }.
+    find { |file| File.executable?(file) }
 
   if yarn
     exec yarn, *ARGV
+  elsif corepack
+    exec corepack, "yarn", *ARGV
   else
     $stderr.puts "Yarn executable was not detected in the system."
-    $stderr.puts "Download Yarn at https://yarnpkg.com/en/docs/install"
+    $stderr.puts "This repository pins Yarn via packageManager in package.json."
+    $stderr.puts "Run 'corepack enable' to install the managed Yarn shim."
     exit 1
   end
 end

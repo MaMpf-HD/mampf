@@ -31,14 +31,10 @@ RUN npm --version
 
 # Install Yarn (see https://yarnpkg.com/getting-started/install)
 # https://github.com/nodejs/corepack#corepack-prepare--nameversion
-ENV YARN_VERSION=1.22.19
+ENV YARN_VERSION=4.17.0
 RUN rm -f /usr/local/bin/yarn /usr/local/bin/yarnpkg && corepack enable
 RUN corepack prepare "yarn@${YARN_VERSION}" --activate
 RUN which yarn; yarn --version
-# even though this is not specified in the corepack documentation, we need to
-# run "set version", otherwise the app user will have an old version of
-# yarn available instead of our specified version
-RUN yarn set version "${YARN_VERSION}"
 
 # Install other dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
@@ -102,7 +98,7 @@ RUN bundle config set --global build.or-tools --with-or-tools-dir=/opt/or-tools
 # Log Node.js tooling versions
 RUN which node && node --version && which yarn && yarn --version
 
-COPY --chown=$USERNAME Gemfile Gemfile.lock package.json yarn.lock /workspaces/mampf/
+COPY --chown=$USERNAME Gemfile Gemfile.lock package.json yarn.lock .yarnrc.yml /workspaces/mampf/
 
 ARG CI_BUILD
 RUN if [ "$CI_BUILD" = "true" ]; then \
@@ -112,7 +108,7 @@ RUN if [ "$CI_BUILD" = "true" ]; then \
 # https://stackoverflow.com/a/66158709/9655481
 RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Running yarn install"; \
-        yarn install --frozen-lockfile; \
+    yarn install --immutable; \
     fi
 
 # Playwright browser

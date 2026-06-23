@@ -59,9 +59,13 @@ jobs:
             node-version: '24' # End of Life (EOL): April 2028
             cache: 'yarn'
 
+        - name: Enable Corepack
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
+          run: corepack enable
+
         - name: Install dependencies
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
-          run: yarn install
+          run: yarn install --immutable
 
         # with ESLint v9 --ignore-path does not exist anymore
         # see [1] for the PR. However, my feeling for this is totally reflected
@@ -96,9 +100,13 @@ jobs:
           node-version: '24' # End of Life (EOL): April 2028
           cache: 'yarn'
 
+      - name: Enable Corepack
+        if: ${{ steps.js-changed.outputs.changed-files != ''}}
+        run: corepack enable
+
       - name: Install dependencies
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
-        run: yarn install
+        run: yarn install --immutable
 
       - name: Run Herb Linter
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
