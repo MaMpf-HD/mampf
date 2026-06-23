@@ -4,6 +4,10 @@ set -Eeuo pipefail
 umask 027
 cd /usr/src/app
 
+if [ -n "${THRUSTER_STORAGE_PATH:-}" ]; then
+  mkdir -p "${THRUSTER_STORAGE_PATH}"
+fi
+
 mkdir -p tmp/pids
 rm -f tmp/pids/server.pid
 

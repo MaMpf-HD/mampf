@@ -27,6 +27,13 @@ services:
       - RAILS_ENV=development
       - NODE_ENV=development
       - MAMPF_PORT=3001
+      # Public HTTP port for the current stack and writable cache root for
+      # runtime-specific state.
+      - APP_HEALTHCHECK_PORT=3000
+      - APP_CACHE_ROOT=/cache
+      # Current app server stack: Thruster handles public HTTP on
+      # APP_HEALTHCHECK_PORT, proxies Rails on THRUSTER_TARGET_PORT, and keeps
+      # its cache below APP_CACHE_ROOT.
       - ACTION_DISPATCH_X_SENDFILE_HEADER=X-Sendfile
       - THRUSTER_HTTP_PORT=3000
       - THRUSTER_TARGET_PORT=3001

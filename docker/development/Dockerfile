@@ -12,7 +12,13 @@ ARG BUNDLER_VERSION=4.0.12
 ARG OR_TOOLS_VERSION=or-tools-9.15-trixie
 ARG OR_TOOLS_FILENAME=or-tools-9.15-trixie-amd64.tar.gz
 ARG OR_TOOLS_SHA256=067e96ba57bbca8bf8e56c9b85010e223d49696cb5fe1a56ef94f5bd3647c0cf
-ENV RAILS_DEVELOPMENT_HOSTS=${RAILS_DEVELOPMENT_HOSTS}
+
+# Development images expose the same generic runtime contract as production:
+# APP_HEALTHCHECK_PORT is the public HTTP port for the current stack and
+# APP_CACHE_ROOT is writable cache space for runtime-specific state.
+ENV RAILS_DEVELOPMENT_HOSTS=${RAILS_DEVELOPMENT_HOSTS} \
+    APP_HEALTHCHECK_PORT=3000 \
+    APP_CACHE_ROOT=/cache
 
 # use "--login" option, so that .bashrc is sourced in new shells
 SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]

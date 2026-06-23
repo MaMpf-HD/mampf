@@ -113,7 +113,9 @@ FROM ruby:3.4.9-slim-trixie
 ENV RAILS_ENV=production \
     BUNDLE_DEPLOYMENT=1 \
     BUNDLE_WITHOUT="development:test" \
-    BUNDLE_PATH=/usr/local/bundle
+    BUNDLE_PATH=/usr/local/bundle \
+    APP_HEALTHCHECK_PORT=3000 \
+    APP_CACHE_ROOT=/caches
 
 ARG BUNDLER_VERSION=4.0.12
 
@@ -130,9 +132,9 @@ RUN apt-get update && \
 RUN gem install bundler -v "${BUNDLER_VERSION}"
 
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
-    mkdir -p /private/media /private/submissions /caches/thruster \
+        mkdir -p /private/media /private/submissions "${APP_CACHE_ROOT}" \
       /usr/src/app/tmp/pids /usr/src/app/log && \
-    chown -R app:app /private /caches
+        chown -R app:app /private "${APP_CACHE_ROOT}"
 
 WORKDIR /usr/src/app
 
@@ -152,4 +154,4 @@ RUN chown -R app:app /usr/src/app/tmp /usr/src/app/log && \
 USER app
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-    CMD ruby -rnet/http -e 'port = ENV.fetch("THRUSTER_HTTP_PORT", "3000"); uri = URI("http://127.0.0.1:#{port}/up"); response = Net::HTTP.start(uri.host, uri.port) { |http| http.get(uri.request_uri, {"X-Forwarded-Proto" => "https", "Host" => "localhost"}) }; exit(response.is_a?(Net::HTTPSuccess) ? 0 : 1)'
+    CMD ruby -rnet/http -e 'port = ENV.fetch("APP_HEALTHCHECK_PORT", "3000"); uri = URI("http://127.0.0.1:#{port}/up"); response = Net::HTTP.start(uri.host, uri.port) { |http| http.get(uri.request_uri, {"X-Forwarded-Proto" => "https", "Host" => "localhost"}) }; exit(response.is_a?(Net::HTTPSuccess) ? 0 : 1)'

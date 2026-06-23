@@ -2,6 +2,8 @@
 set -Eeuo pipefail
 cd /workspaces/mampf/
 
+public_http_port="${APP_HEALTHCHECK_PORT:-${THRUSTER_HTTP_PORT:-}}"
+
 echo "RAILS_ENV: $RAILS_ENV"
 echo "NODE_ENV: $NODE_ENV"
 [ "$RAILS_ENV" != "$NODE_ENV" ] && echo "Error: RAILS_ENV and NODE_ENV must be the same!" && exit 1
@@ -9,7 +11,7 @@ echo "NODE_ENV: $NODE_ENV"
 echo "🧹 Cleaning up stale Vite/Debugger port processes..."
 ports_to_clean="3036 13254"
 if [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
-	ports_to_clean="$ports_to_clean $THRUSTER_HTTP_PORT ${THRUSTER_TARGET_PORT:-3001}"
+	ports_to_clean="$ports_to_clean $public_http_port ${THRUSTER_TARGET_PORT:-3001}"
 fi
 if [ "$RAILS_ENV" = "test" ]; then
 	ports_to_clean="$ports_to_clean 3145"
@@ -45,7 +47,10 @@ bundle exec sidekiq &
 # https://shopify.github.io/ruby-lsp/vscode-extension.html#debugging-live-processes
 # https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg
 if [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
-	echo "Starting Thruster on port $THRUSTER_HTTP_PORT with Rails on ${THRUSTER_TARGET_PORT:-3001}"
+	if [ -n "${THRUSTER_STORAGE_PATH:-}" ]; then
+		mkdir -p "$THRUSTER_STORAGE_PATH"
+	fi
+	echo "Starting Thruster on port $public_http_port with Rails on ${THRUSTER_TARGET_PORT:-3001}"
 	RUBY_DEBUG_ENABLE="${RUBY_DEBUG_ENABLE:-}" RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec thrust bin/rails s -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
 else
 	RUBY_DEBUG_ENABLE="${RUBY_DEBUG_ENABLE:-}" RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec bin/rails s -p "$MAMPF_PORT" -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
