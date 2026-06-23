@@ -69,6 +69,7 @@ jobs:
           TRIVY_USERNAME: ${{ github.actor }}
           TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         with:
+          version: v0.71.2
           image-ref: ${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}
           format: table
           exit-code: "1"
