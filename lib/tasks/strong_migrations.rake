@@ -1,7 +1,7 @@
 namespace :db do
   namespace :migrate do
     desc "Run db:migrate in development with strong_migrations checks enabled"
-    task :strong do
+    task strong: :environment do
       rails_env = ENV.fetch("RAILS_ENV", "development")
 
       unless rails_env == "development"

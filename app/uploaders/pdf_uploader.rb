@@ -103,7 +103,7 @@ class PdfUploader < Shrine
         remaining = deadline - Process.clock_gettime(Process::CLOCK_MONOTONIC)
         raise(Timeout::Error) if remaining <= 0
 
-        ready = IO.select([reader], nil, nil, remaining)
+        ready = reader.wait_readable(remaining)
         raise(Timeout::Error) unless ready
 
         chunk = reader.read_nonblock(16 * 1024, exception: false)
