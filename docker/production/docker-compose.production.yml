@@ -33,13 +33,13 @@ services:
 
   redis:
     restart: always
-    image: redis:8.6-alpine
+    image: redis:8.8-alpine
     networks:
       - mampf
 
   cache:
     restart: always
-    image: memcached:alpine
+    image: memcached:1.6-alpine
     networks:
       - default
 

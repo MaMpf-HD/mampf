@@ -62,13 +62,13 @@ RUN mkdir -p /opt/or-tools \
 # Playwright system dependencies
 RUN npx playwright install-deps chromium
 
-# Install PostgreSQL client 17 (https://wiki.postgresql.org/wiki/Apt)
-RUN mkdir -p /usr/share/postgresql-common/pgdg \
-    && curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc \
-    && . /etc/os-release \
-    && sh -c "echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list" \
-    && apt-get update \
-    && apt-get install -y postgresql-client-17 \
+# Install PostgreSQL client 18 (https://wiki.postgresql.org/wiki/Apt)
+  RUN mkdir -p /usr/share/postgresql-common/pgdg \
+      && curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+      && . /etc/os-release \
+      && sh -c "echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list" \
+      && apt-get update \
+      && apt-get install -y postgresql-client-18 \
     && rm -rf /var/lib/apt/lists/*
 
 # 🎈 Users

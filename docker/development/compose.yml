@@ -54,7 +54,7 @@ services:
       - 3037:3037 # Vite server
 
   db:
-    image: postgres:17-bookworm
+    image: postgres:18-trixie
     environment:
       - POSTGRES_USER=localroot
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -66,7 +66,7 @@ services:
       - ../../db/create-mampf-db.sql:/docker-entrypoint-initdb.d/create-mampf-db.sql
 
   redis:
-    image: "redis:8.6-alpine"
+    image: "redis:8.8-alpine"
 
   pgadmin:
     image: dpage/pgadmin4
