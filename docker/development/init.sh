@@ -45,10 +45,28 @@ fi
 
 echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 
+ensure_corepack_yarn() {
+  local package_manager
+
+  if ! command -v corepack >/dev/null 2>&1; then
+    return
+  fi
+
+  package_manager=$(node -p "require('./package.json').packageManager || ''")
+  if [[ "$package_manager" != yarn@* ]]; then
+    return
+  fi
+
+  echo "🧰  Activating $package_manager via Corepack"
+  COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack enable >/dev/null 2>&1 || true
+  COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$package_manager" --activate
+}
+
 echo "📦  Installing Ruby gems (via bundle)"
 bundle install
 
 echo "📦  Installing Node.js modules (via yarn)"
+ensure_corepack_yarn
 yarn install
 
 echo "🕖  Waiting for Redis to come online"
