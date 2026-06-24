@@ -63,7 +63,7 @@ jobs:
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
           run: |
             corepack enable
-            COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p \"require('./package.json').packageManager\")" --activate
+            COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p 'require("./package.json").packageManager')" --activate
 
         - name: Install dependencies
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
@@ -106,7 +106,7 @@ jobs:
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
         run: |
           corepack enable
-          COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p \"require('./package.json').packageManager\")" --activate
+          COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p 'require("./package.json").packageManager')" --activate
 
       - name: Install dependencies
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
