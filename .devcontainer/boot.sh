@@ -4,6 +4,9 @@ set -e
 OR_TOOLS_URL="https://github.com/MaMpf-HD/build-artifacts/releases/download/or-tools-9.15-trixie/or-tools-9.15-trixie-amd64.tar.gz"
 OR_TOOLS_SHA256="067e96ba57bbca8bf8e56c9b85010e223d49696cb5fe1a56ef94f5bd3647c0cf"
 
+echo "🚀 Ensure Docker proxy socket"
+bash ./.devcontainer/ensure-docker-proxy.sh
+
 echo "🚀 Fix bundle cache ownership"
 sudo mkdir -p /usr/local/bundle
 sudo chown -R "$(id -u):$(id -g)" /usr/local/bundle

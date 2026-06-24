@@ -30,6 +30,7 @@
         }
     },
     "containerEnv": {
+        "DOCKER_HOST": "unix:///var/run/docker.sock",
         // in the container itself, we then install zsh
         // (this just serves as a fallback)
         "SHELL": "/bin/bash",
@@ -93,6 +94,7 @@
         }
     },
     "postCreateCommand": ".devcontainer/boot.sh",
+    "postStartCommand": "bash .devcontainer/ensure-docker-proxy.sh",
     "customizations": {
         "vscode": {
             "settings": {
