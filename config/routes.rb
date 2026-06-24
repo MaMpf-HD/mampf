@@ -1103,13 +1103,31 @@ Rails.application.routes.draw do
   # uploader routes
 
   authenticate :user do
-    mount ScreenshotUploader.upload_endpoint(:cache) => "/screenshots/upload"
-    mount ProfileimageUploader.upload_endpoint(:cache) => "/profile_image/upload"
+        mount ScreenshotUploader.upload_endpoint(
+            :cache,
+            upload: MalwareScanGate.endpoint_upload(ScreenshotUploader, :cache)
+        ) => "/screenshots/upload"
+        mount ProfileimageUploader.upload_endpoint(
+            :cache,
+            upload: MalwareScanGate.endpoint_upload(ProfileimageUploader, :cache)
+        ) => "/profile_image/upload"
     mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
-    mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
-    mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
-    mount SubmissionUploader.upload_endpoint(:submission_cache) => "/submissions/upload"
-    mount CorrectionUploader.upload_endpoint(:submission_cache) => "/corrections/upload"
+        mount PdfUploader.upload_endpoint(
+            :cache,
+            upload: MalwareScanGate.endpoint_upload(PdfUploader, :cache)
+        ) => "/pdfs/upload"
+        mount GeogebraUploader.upload_endpoint(
+            :cache,
+            upload: MalwareScanGate.endpoint_upload(GeogebraUploader, :cache)
+        ) => "/ggbs/upload"
+        mount SubmissionUploader.upload_endpoint(
+            :submission_cache,
+            upload: MalwareScanGate.endpoint_upload(SubmissionUploader, :submission_cache)
+        ) => "/submissions/upload"
+        mount CorrectionUploader.upload_endpoint(
+            :submission_cache,
+            upload: MalwareScanGate.endpoint_upload(CorrectionUploader, :submission_cache)
+        ) => "/corrections/upload"
   end
 
   # thredded routes

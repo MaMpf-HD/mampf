@@ -2948,6 +2948,15 @@ de:
     upload_failure_empty_file: >
       Die hochgeladene Datei ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
+    upload_failure_malware: >
+      Die hochgeladene Datei konnte nicht akzeptiert werden.
+      Bitte überprüfe die Datei und versuche es erneut.
+    upload_failure_scanner_unavailable: >
+      Der Upload-Scanner ist momentan nicht verfügbar.
+      Bitte versuche es in Kürze erneut.
+    upload_failure_scan_required: >
+      Für die hochgeladene Datei fehlt ein erforderlicher Malware-Scan.
+      Bitte lade die Datei erneut hoch.
     upload_failure_empty_file_bulk: >
       ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.

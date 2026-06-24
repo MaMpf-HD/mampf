@@ -12,6 +12,7 @@ x-app-base: &app-base
     # https://stackoverflow.com/a/62611202/
     - bundle_cache:/usr/local/bundle/
   depends_on:
+    - clamav
     - db
     - redis
 
@@ -68,6 +69,19 @@ services:
   redis:
     image: "redis:8.8-alpine"
 
+  clamav:
+    image: clamav/clamav-debian:1.5
+    restart: unless-stopped
+    environment:
+      - CLAMD_CONF_StreamMaxLength=100M
+      - CLAMD_CONF_MaxFileSize=100M
+      - CLAMD_CONF_MaxScanSize=150M
+      - CLAMD_CONF_MaxScanTime=120000
+      - CLAMD_CONF_AlertExceedsMax=yes
+      - FRESHCLAM_CHECKS=24
+    volumes:
+      - clamav-db:/var/lib/clamav
+
   pgadmin:
     image: dpage/pgadmin4
     ports:
@@ -113,3 +127,4 @@ volumes:
   pgadmin:
   sprockets-cache:
   bundle_cache:
+  clamav-db:

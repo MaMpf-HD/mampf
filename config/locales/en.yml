@@ -2771,6 +2771,15 @@ en:
     upload_failure_empty_file: >
       The uploaded file is empty.
       Please make sure that the file is not corrupted.
+    upload_failure_malware: >
+      The uploaded file could not be accepted.
+      Please check the file and try again.
+    upload_failure_scanner_unavailable: >
+      The upload scanner is currently unavailable.
+      Please try again in a moment.
+    upload_failure_scan_required: >
+      The uploaded file is missing a required malware scan.
+      Please upload the file again.
     upload_failure_empty_file_bulk: >
       is empty.
       Please make sure that the file is not corrupted.
