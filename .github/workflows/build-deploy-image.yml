@@ -66,7 +66,6 @@ jobs:
 
       - name: Scan published runtime image
         id: trivy_scan
-        continue-on-error: true
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
         env:
           TRIVY_USERNAME: ${{ github.actor }}
@@ -76,7 +75,7 @@ jobs:
           image-ref: ${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}
           format: json
           output: trivy-results.json
-          exit-code: "1"
+          exit-code: "0"
           ignore-unfixed: true
           severity: CRITICAL
           vuln-type: os,library

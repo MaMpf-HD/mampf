@@ -65,6 +65,18 @@ jobs:
             corepack enable
             COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p 'require("./package.json").packageManager')" --activate
 
+        - name: Restore Yarn cache
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
+          uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+          with:
+            path: |
+              ~/.yarn/berry/cache
+              .yarn/install-state.gz
+              node_modules
+            key: ${{ runner.os }}-node24-yarn4-${{ hashFiles('package.json', 'yarn.lock', '.yarnrc.yml') }}
+            restore-keys: |
+              ${{ runner.os }}-node24-yarn4-
+
         - name: Install dependencies
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
           run: yarn install --immutable
@@ -107,6 +119,18 @@ jobs:
         run: |
           corepack enable
           COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p 'require("./package.json").packageManager')" --activate
+
+      - name: Restore Yarn cache
+        if: ${{ steps.js-changed.outputs.changed-files != ''}}
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+        with:
+          path: |
+            ~/.yarn/berry/cache
+            .yarn/install-state.gz
+            node_modules
+          key: ${{ runner.os }}-node24-yarn4-${{ hashFiles('package.json', 'yarn.lock', '.yarnrc.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-node24-yarn4-
 
       - name: Install dependencies
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
