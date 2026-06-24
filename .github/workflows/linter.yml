@@ -57,11 +57,13 @@ jobs:
           uses: actions/setup-node@v6
           with:
             node-version: '24' # End of Life (EOL): April 2028
-            cache: 'yarn'
+            package-manager-cache: false
 
         - name: Enable Corepack
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
-          run: corepack enable
+          run: |
+            corepack enable
+            COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p \"require('./package.json').packageManager\")" --activate
 
         - name: Install dependencies
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
@@ -98,11 +100,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24' # End of Life (EOL): April 2028
-          cache: 'yarn'
+          package-manager-cache: false
 
       - name: Enable Corepack
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
-        run: corepack enable
+        run: |
+          corepack enable
+          COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p \"require('./package.json').packageManager\")" --activate
 
       - name: Install dependencies
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
