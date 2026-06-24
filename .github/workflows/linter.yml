@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -41,7 +41,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout code
-          uses: actions/checkout@v6
+          uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
           with:
             fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -67,7 +67,7 @@ jobs:
 
         - name: Restore Yarn cache
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
-          uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+          uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
           with:
             path: |
               ~/.yarn/berry/cache
@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -122,7 +122,7 @@ jobs:
 
       - name: Restore Yarn cache
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         with:
           path: |
             ~/.yarn/berry/cache
