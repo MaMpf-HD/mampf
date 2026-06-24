@@ -48,9 +48,9 @@ class CorrectionUploader < Shrine
   end
 
   class Attacher
-    def upload(io, storage = store_key, **options)
+    def upload(io, storage = store_key, **)
       if io && storage.to_sym == cache_key && !io.is_a?(Shrine::UploadedFile)
-        return MalwareScanGate.upload_for_attacher(self, io, storage, **options)
+        return MalwareScanGate.upload_for_attacher(self, io, storage, **)
       end
 
       super
