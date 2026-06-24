@@ -85,6 +85,11 @@ bundle exec rails db:create:interactions
 bundle exec rails db:create
 
 check_for_preseeds
+
+echo "🛠️  Preparing development database"
+bundle exec rails db:prepare
+
+echo "🛠️  Loading test database schema"
 RAILS_ENV="test" bundle exec rails db:schema:load
 
 echo "✅  Finished initialization of MaMpf in environment: $RAILS_ENV"
