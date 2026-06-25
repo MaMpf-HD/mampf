@@ -12,10 +12,16 @@ class ClamavScanner
     @timeout = timeout
   end
 
-  def scan(io)
+  # Scans +io+ with clamd over INSTREAM.
+  #
+  # When +max_bytes+ is given, only that many leading bytes are streamed to
+  # clamd; the app (not clamd) enforces the bound. This supports the bounded
+  # video prefix scan, which is defense-in-depth and explicitly NOT a clean
+  # verdict for the whole file.
+  def scan(io, max_bytes: nil)
     return UploadScanResult.clean if Rails.env.test?
 
-    scan_stream(io)
+    scan_stream(io, max_bytes)
   rescue Timeout::Error
     UploadScanResult.timeout
   rescue SystemCallError, IOError, SocketError => e
@@ -27,17 +33,12 @@ class ClamavScanner
 
   private
 
-    def scan_stream(io)
+    def scan_stream(io, max_bytes = nil)
       reply = Timeout.timeout(@timeout) do
         Socket.tcp(@host, @port, connect_timeout: @timeout) do |socket|
           socket.write("zINSTREAM\0")
 
-          io.rewind if io.respond_to?(:rewind)
-          until io.eof?
-            chunk = io.read(CHUNK_SIZE)
-            socket.write([chunk.bytesize].pack("N"))
-            socket.write(chunk)
-          end
+          stream_chunks(io, socket, max_bytes)
 
           socket.write([0].pack("N"))
           socket.close_write
@@ -46,6 +47,23 @@ class ClamavScanner
       end
 
       parse_reply(reply.to_s)
+    end
+
+    # Streams +io+ to +socket+ in INSTREAM chunks, sending at most +max_bytes+
+    # leading bytes when a bound is given (nil means the full stream).
+    def stream_chunks(io, socket, max_bytes)
+      io.rewind if io.respond_to?(:rewind)
+      remaining = max_bytes
+
+      until io.eof? || (remaining && remaining <= 0)
+        read_size = remaining ? [CHUNK_SIZE, remaining].min : CHUNK_SIZE
+        chunk = io.read(read_size)
+        break if chunk.nil?
+
+        socket.write([chunk.bytesize].pack("N"))
+        socket.write(chunk)
+        remaining -= chunk.bytesize if remaining
+      end
     end
 
     def parse_reply(reply)

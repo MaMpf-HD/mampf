@@ -107,6 +107,9 @@ class ApplicationController < ActionController::Base
       mime_type = file.metadata["mime_type"]
       options[:type] = mime_type if mime_type.present?
 
+      # Serving hygiene: never let the browser content-type-sniff a stored
+      # upload (e.g. an mp4) into an executable/HTML interpretation.
+      response.headers["X-Content-Type-Options"] = "nosniff"
       send_file(download_path(file), **options)
     end
 

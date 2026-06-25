@@ -82,4 +82,50 @@ RSpec.describe("MediaUploads", type: :request) do
       I18n.t("submission.upload_failure_malware", locale: user.locale)
     )
   end
+
+  it "scans only the bounded prefix for video uploads and stamps them clean" do
+    allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
+
+    upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "talk.mp4"),
+                                          "video/mp4")
+
+    post "/videos/upload", params: { file: upload }
+
+    expect(response).to have_http_status(:ok)
+    expect(scanner).to have_received(:scan)
+      .with(anything, max_bytes: VideoUploader::SCAN_MAX_BYTES)
+    data = JSON.parse(response.body)
+    expect(data.dig("metadata", "malware_scan", "status")).to eq("clean")
+  end
+
+  it "rejects infected video uploads before cache acceptance" do
+    allow(scanner).to receive(:scan)
+      .and_return(UploadScanResult.infected("Eicar-Signature"))
+
+    upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "talk.mp4"),
+                                          "video/mp4")
+
+    post "/videos/upload", params: { file: upload }
+
+    expect(response.status).to eq(422)
+    expect(response.body).to include(
+      I18n.t("submission.upload_failure_malware", locale: user.locale)
+    )
+  end
+
+  it "blocks video uploads when the scanner is unavailable" do
+    allow(scanner).to receive(:scan)
+      .and_return(UploadScanResult.unavailable("Connection refused"))
+
+    upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "talk.mp4"),
+                                          "video/mp4")
+
+    post "/videos/upload", params: { file: upload }
+
+    expect(response).to have_http_status(:service_unavailable)
+    expect(response.body).to include(
+      I18n.t("submission.upload_failure_scanner_unavailable",
+             locale: user.locale)
+    )
+  end
 end

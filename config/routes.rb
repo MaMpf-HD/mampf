@@ -1111,7 +1111,10 @@ Rails.application.routes.draw do
       :cache,
       upload: MalwareScanGate.endpoint_upload(ProfileimageUploader, :cache)
     ) => "/profile_image/upload"
-    mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
+    mount VideoUploader.upload_endpoint(
+      :cache,
+      upload: MalwareScanGate.endpoint_upload(VideoUploader, :cache)
+    ) => "/videos/upload"
     mount PdfUploader.upload_endpoint(
       :cache,
       upload: MalwareScanGate.endpoint_upload(PdfUploader, :cache)

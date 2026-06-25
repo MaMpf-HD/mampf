@@ -3,6 +3,11 @@ require "streamio-ffmpeg"
 # VideoUploader class
 class VideoUploader < Shrine
   MAX_SIZE = 4 * 1024 * 1024 * 1024
+  # Upper bound (bytes) on what is streamed to clamd. Video is scanned over a
+  # bounded prefix only: this is defense-in-depth against known malware near the
+  # container start, NOT a full-file clean verdict (see MalwareScanGate and
+  # docs/CLAMAV_UPLOAD_SCANNING.md in mampf-infra).
+  SCAN_MAX_BYTES = 32 * 1024 * 1024
   WRONG_TYPE_MESSAGE = "wrong type".freeze
 
   # shrine plugins
@@ -25,7 +30,11 @@ class VideoUploader < Shrine
     end
   end
 
+  Attacher.prepend(MalwareScannableAttacher)
+
   Attacher.validate do
+    MalwareScanGate.validate_cached_file!(self)
+
     validate_mime_type_inclusion ["video/mp4"], message: WRONG_TYPE_MESSAGE
     validate_max_size MAX_SIZE,
                       message: I18n.t("package.too_big")

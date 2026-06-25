@@ -36,7 +36,8 @@ RSpec.describe("SubmissionUploads", type: :request) do
       uploader_class: SubmissionUploader,
       storage_key: :submission_cache,
       result: have_attributes(status: :clean),
-      duration_seconds: be_a(Float)
+      duration_seconds: be_a(Float),
+      scope: "full"
     )
     data = JSON.parse(response.body)
     expect(data.dig("metadata", "malware_scan", "status")).to eq("clean")
