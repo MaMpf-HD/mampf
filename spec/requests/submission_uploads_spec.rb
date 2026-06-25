@@ -59,6 +59,18 @@ RSpec.describe("SubmissionUploads", type: :request) do
     )
   end
 
+  it "treats scan timeouts as scanner unavailable for submission uploads" do
+    allow(scanner).to receive(:scan).and_return(UploadScanResult.timeout)
+
+    post "/submissions/upload", params: { file: upload }
+
+    expect(response).to have_http_status(:service_unavailable)
+    expect(response.body).to include(
+      I18n.t("submission.upload_failure_scanner_unavailable",
+             locale: user.locale)
+    )
+  end
+
   it "uses the explicit request locale for upload error messages" do
     allow(scanner).to receive(:scan)
       .and_return(UploadScanResult.infected("Eicar-Signature"))
@@ -85,5 +97,19 @@ RSpec.describe("SubmissionUploads", type: :request) do
       .to include(
         I18n.t("submission.upload_failure_scan_required", locale: I18n.locale)
       )
+  end
+
+  it "rejects promotion of cached uploads without clean scan metadata" do
+    cached_upload = SubmissionUploader.upload(
+      File.open(File.join(SPEC_FILES, "manuscript.pdf"), "rb"),
+      :submission_cache
+    )
+    attacher = SubmissionUploader::Attacher.from_data(cached_upload.data)
+
+    expect { attacher.promote }
+      .to raise_error(Shrine::Error,
+                      "cached upload is missing clean malware scan metadata")
+  ensure
+    cached_upload&.delete
   end
 end

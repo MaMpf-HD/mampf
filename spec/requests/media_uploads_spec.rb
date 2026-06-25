@@ -53,6 +53,21 @@ RSpec.describe("MediaUploads", type: :request) do
     )
   end
 
+  it "treats scan timeouts as scanner unavailable for media uploads" do
+    allow(scanner).to receive(:scan).and_return(UploadScanResult.timeout)
+
+    upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
+                                          "application/pdf")
+
+    post "/pdfs/upload", params: { file: upload }
+
+    expect(response).to have_http_status(:service_unavailable)
+    expect(response.body).to include(
+      I18n.t("submission.upload_failure_scanner_unavailable",
+             locale: user.locale)
+    )
+  end
+
   it "rejects infected geogebra uploads before archive inspection runs" do
     allow(scanner).to receive(:scan)
       .and_return(UploadScanResult.infected("Eicar-Signature"))

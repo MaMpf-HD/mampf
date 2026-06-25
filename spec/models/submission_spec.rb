@@ -82,5 +82,18 @@ RSpec.describe(Submission, type: :model) do
     ensure
       cached_upload&.delete
     end
+
+    it "rejects direct store-keyed correction assignments" do
+      stored_upload = CorrectionUploader.upload(
+        File.open(File.join(SPEC_FILES, "manuscript.pdf"), "rb"),
+        :submission_store
+      )
+      submission = FactoryBot.build(:valid_submission)
+
+      expect { submission.correction = stored_upload.to_json }
+        .to raise_error(Shrine::Error, /expected cached file/)
+    ensure
+      stored_upload&.delete
+    end
   end
 end
