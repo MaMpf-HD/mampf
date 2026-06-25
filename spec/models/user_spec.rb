@@ -22,6 +22,25 @@ RSpec.describe(User, type: :model) do
     file&.close
   end
 
+  it "rejects forged clean-scan metadata on cached profile images" do
+    cached_upload = ProfileimageUploader.upload(
+      fixture_file("image.png"),
+      :cache
+    )
+    user = build(:user)
+    forged_data = cached_upload.data.deep_dup
+    forged_data["metadata"]["malware_scan"] = { "status" => "clean" }
+
+    user.image = forged_data.to_json
+
+    expect(user).not_to be_valid
+    expect(user.errors[:image]).to include(
+      I18n.t("submission.upload_failure_scan_required", locale: I18n.locale)
+    )
+  ensure
+    cached_upload&.delete
+  end
+
   # test validations - SOME ARE MISSING
 
   it "is invalid if it is persisted and no name is given" do

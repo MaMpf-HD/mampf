@@ -70,7 +70,7 @@ RSpec.describe(PdfUploader) do
 
       allow(Process).to receive(:spawn).and_return(1234)
       allow(IO).to receive(:pipe).and_return([reader, writer])
-      allow(IO).to receive(:select).and_return(nil)
+      allow(reader).to receive(:wait_readable).and_return(nil)
       expect(uploader).to receive(:terminate_process_group).with(1234)
 
       result = uploader.send(:read_mampf_structure, "input.pdf")

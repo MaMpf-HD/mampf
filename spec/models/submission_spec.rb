@@ -63,5 +63,24 @@ RSpec.describe(Submission, type: :model) do
       expect(submission.correction)
         .to be_kind_of(CorrectionUploader::UploadedFile)
     end
+
+    it "rejects forged clean-scan metadata on cached corrections" do
+      cached_upload = CorrectionUploader.upload(
+        File.open(File.join(SPEC_FILES, "manuscript.pdf"), "rb"),
+        :submission_cache
+      )
+      submission = FactoryBot.build(:valid_submission)
+      forged_data = cached_upload.data.deep_dup
+      forged_data["metadata"]["malware_scan"] = { "status" => "clean" }
+
+      submission.correction = forged_data.to_json
+
+      expect(submission).not_to be_valid
+      expect(submission.errors[:correction]).to include(
+        I18n.t("submission.upload_failure_scan_required", locale: I18n.locale)
+      )
+    ensure
+      cached_upload&.delete
+    end
   end
 end

@@ -85,6 +85,25 @@ RSpec.describe(Medium, type: :model) do
       medium = FactoryBot.build(:medium, :with_manuscript)
       expect(medium.manuscript).to be_kind_of(PdfUploader::UploadedFile)
     end
+
+    it "rejects forged clean-scan metadata on cached manuscripts" do
+      cached_upload = PdfUploader.upload(
+        File.open(File.join(SPEC_FILES, "manuscript.pdf"), "rb"),
+        :cache
+      )
+      medium = FactoryBot.build(:lecture_medium)
+      forged_data = cached_upload.data.deep_dup
+      forged_data["metadata"]["malware_scan"] = { "status" => "clean" }
+
+      medium.manuscript = forged_data.to_json
+
+      expect(medium).not_to be_valid
+      expect(medium.errors[:manuscript]).to include(
+        I18n.t("submission.upload_failure_scan_required", locale: I18n.locale)
+      )
+    ensure
+      cached_upload&.delete
+    end
   end
 
   describe "with video" do

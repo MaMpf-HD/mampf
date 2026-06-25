@@ -13,6 +13,7 @@ class PdfUploader < Shrine
   plugin :upload_endpoint, max_size: MAX_FILE_SIZE
   plugin :add_metadata
   plugin :determine_mime_type, analyzer: :marcel
+  plugin :restore_cached_data
   plugin :validation_helpers
   plugin :pretty_location
   plugin :derivatives, versions_compatibility: true
@@ -62,20 +63,7 @@ class PdfUploader < Shrine
     end
   end
 
-  class Attacher
-    def upload(io, storage = store_key, **)
-      if io && storage.to_sym == cache_key && !io.is_a?(Shrine::UploadedFile)
-        return MalwareScanGate.upload_for_attacher(self, io, storage, **)
-      end
-
-      super
-    end
-
-    def promote(storage: store_key, **options)
-      MalwareScanGate.ensure_promotable!(file)
-      super
-    end
-  end
+  Attacher.prepend(MalwareScannableAttacher)
 
   Attacher.validate do
     MalwareScanGate.validate_cached_file!(self)

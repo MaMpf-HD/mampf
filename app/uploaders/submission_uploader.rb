@@ -42,20 +42,7 @@ class SubmissionUploader < Shrine
     mime_type.in?(accepted_mime_types)
   end
 
-  class Attacher
-    def upload(io, storage = store_key, **)
-      if io && storage.to_sym == cache_key && !io.is_a?(Shrine::UploadedFile)
-        return MalwareScanGate.upload_for_attacher(self, io, storage, **)
-      end
-
-      super
-    end
-
-    def promote(storage: store_key, **options)
-      MalwareScanGate.ensure_promotable!(file)
-      super
-    end
-  end
+  Attacher.prepend(MalwareScannableAttacher)
 
   Attacher.validate do
     MalwareScanGate.validate_cached_file!(self)
