@@ -11,6 +11,7 @@ RSpec.describe("SubmissionUploads", type: :request) do
   before do
     sign_in user
     allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+    allow(MalwareScanMetrics).to receive(:record_scan)
   end
 
   it "rejects infected uploads before they enter cache" do
@@ -31,6 +32,12 @@ RSpec.describe("SubmissionUploads", type: :request) do
     post "/submissions/upload", params: { file: upload }
 
     expect(response).to have_http_status(:ok)
+    expect(MalwareScanMetrics).to have_received(:record_scan).with(
+      uploader_class: SubmissionUploader,
+      storage_key: :submission_cache,
+      result: have_attributes(status: :clean),
+      duration_seconds: be_a(Float)
+    )
     data = JSON.parse(response.body)
     expect(data.dig("metadata", "malware_scan", "status")).to eq("clean")
     expect(data.dig("metadata", "malware_scan", "scanner")).to eq("clamav")
