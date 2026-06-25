@@ -75,6 +75,31 @@ RSpec.describe(ClamavScanner) do
     expect(streamed_bytes(socket.written)).to eq(100)
   end
 
+  it "streams nothing for an empty io" do
+    io = StringIO.new("")
+
+    result, socket = run_scan(io, max_bytes: 40)
+
+    expect(streamed_bytes(socket.written)).to eq(0)
+    expect(result).to be_clean
+  end
+
+  it "streams exactly max_bytes when the io equals the bound" do
+    io = StringIO.new("a" * 40)
+
+    _result, socket = run_scan(io, max_bytes: 40)
+
+    expect(streamed_bytes(socket.written)).to eq(40)
+  end
+
+  it "streams only max_bytes when the io is one byte over the bound" do
+    io = StringIO.new("a" * 41)
+
+    _result, socket = run_scan(io, max_bytes: 40)
+
+    expect(streamed_bytes(socket.written)).to eq(40)
+  end
+
   it "rewinds the io after a bounded scan" do
     io = StringIO.new("a" * 100)
 

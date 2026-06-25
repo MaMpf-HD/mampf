@@ -57,4 +57,22 @@ RSpec.describe(VideoUploader) do
   ensure
     file&.close!
   end
+
+  # Regression: a client must not be able to forge mime_type in the cached JSON
+  # (the form's hidden field) to slip a non-mp4 past content-type validation.
+  # restore_cached_data re-derives mime_type from the actual cached file.
+  it "rejects a cached file whose mime_type was tampered to look like video" do
+    medium = build(:valid_medium)
+    file = fixture_file("manuscript.pdf")
+
+    medium.video = file
+    tampered = JSON.parse(medium.cached_video_data)
+    tampered["metadata"]["mime_type"] = "video/mp4"
+    medium.video = tampered.to_json
+
+    expect(medium).not_to be_valid
+    expect(medium.errors[:video]).to include(VideoUploader::WRONG_TYPE_MESSAGE)
+  ensure
+    file&.close
+  end
 end

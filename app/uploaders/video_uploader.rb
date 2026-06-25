@@ -17,10 +17,19 @@ class VideoUploader < Shrine
   plugin :validation_helpers
   plugin :pretty_location
   plugin :refresh_metadata
+  # Re-extract metadata from the actual cached file on assignment, so a client
+  # cannot forge mime_type/size in the cached JSON to slip a non-mp4 past the
+  # content-type validation. This recomputes mime_type via marcel (cheap); the
+  # heavy ffmpeg probe below is deliberately scoped out of this path.
+  plugin :restore_cached_data
 
-  # add metadata to uploaded video: duration, bitrate, resolution, framerate
+  # add metadata to uploaded video: duration, bitrate, resolution, framerate.
+  # Run the ffmpeg probe ONLY in the store/refresh phase (MetadataExtractor,
+  # action: :store). Never at upload, and never when restore_cached_data
+  # re-reads metadata on the web request (action is nil there) — that would
+  # pull a multi-GB ffmpeg parse onto a request thread.
   add_metadata do |io, **options|
-    if options[:action] != :upload
+    if options[:action] == :store
       movie = Shrine.with_file(io) { |file| FFMPEG::Movie.new(file.path) }
 
       { "duration" => movie.duration,
