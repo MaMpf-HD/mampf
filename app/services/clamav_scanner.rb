@@ -54,7 +54,7 @@ class ClamavScanner
       return UploadScanResult.clean if response.end_with?(": OK")
 
       if response.end_with?(" FOUND")
-        signature = response.sub(/\A.*?:\s*/, "").sub(/ FOUND\z/, "")
+        signature = response.sub(/\A.*?:\s*/, "").delete_suffix(" FOUND")
         return UploadScanResult.infected(signature)
       end
 
