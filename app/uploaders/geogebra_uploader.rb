@@ -16,6 +16,7 @@ class GeogebraUploader < Shrine
   plugin :determine_mime_type, analyzer: :marcel
   plugin :restore_cached_data
   plugin :validation_helpers
+  plugin :pretty_location
   plugin :derivatives
 
   def self.filename_for(uploaded_file)

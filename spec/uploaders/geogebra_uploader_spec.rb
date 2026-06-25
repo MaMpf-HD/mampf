@@ -51,6 +51,20 @@ RSpec.describe(GeogebraUploader) do
     file&.close!
   end
 
+  it "stores geogebra uploads under the medium/geogebra prefix" do
+    medium = build(:valid_medium)
+    file = geogebra_archive(entries: {
+                              "geogebra.xml" => "<geogebra />"
+                            })
+
+    medium.geogebra = file
+
+    expect(medium).to be_valid
+    expect(medium.geogebra.id).to match(%r{\Amedium/geogebra/[^/]+\.ggb\z})
+  ensure
+    file&.close!
+  end
+
   it "rejects archives without the ggb extension" do
     medium = build(:valid_medium)
     file = geogebra_archive(extension: ".zip", entries: {
