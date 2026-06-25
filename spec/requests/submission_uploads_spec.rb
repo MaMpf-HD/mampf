@@ -46,6 +46,31 @@ RSpec.describe("SubmissionUploads", type: :request) do
     expect(data.dig("metadata", "malware_scan", "status")).to eq("clean")
   end
 
+  it "returns a scanner unavailable message for submission uploads" do
+    allow(scanner).to receive(:scan)
+      .and_return(UploadScanResult.unavailable("Connection refused"))
+
+    post "/submissions/upload", params: { file: upload }
+
+    expect(response).to have_http_status(:service_unavailable)
+    expect(response.body).to include(
+      I18n.t("submission.upload_failure_scanner_unavailable",
+             locale: user.locale)
+    )
+  end
+
+  it "uses the explicit request locale for upload error messages" do
+    allow(scanner).to receive(:scan)
+      .and_return(UploadScanResult.infected("Eicar-Signature"))
+
+    post "/submissions/upload", params: { file: upload, locale: "de" }
+
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response.body).to include(
+      I18n.t("submission.upload_failure_malware", locale: :de)
+    )
+  end
+
   it "rejects cached uploads without clean scan metadata during assignment" do
     cached_upload = SubmissionUploader.upload(
       File.open(File.join(SPEC_FILES, "manuscript.pdf"), "rb"),
