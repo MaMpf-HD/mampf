@@ -5,7 +5,7 @@
   <div id="thyme" class="thyme-generic" data-medium="<%= @medium.id %>">
     <figure id="hypervideo-container">
       <div id="video-container">
-        <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
+        <video id="video" data-paused="true" data-time="<%= @time %>">
           <source src="<%= stream_video_medium_path(@medium) %>">
             <track kind="chapters"
                src="<%= chapters_vtt_medium_path(@medium) %>"

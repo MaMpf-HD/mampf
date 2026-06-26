@@ -25,11 +25,15 @@ export class AddScreenshotButton extends Component {
       // Append our Canvas image file to the form data
       fd.append("image", file);
       // And send it
+      // The server replies with a JS view (add_screenshot.coffee) that swaps the
+      // new screenshot into #screenshot-area. dataType "script" makes jQuery
+      // execute that response; without it the screenshot only appears on reload.
       $.ajax(Routes.add_screenshot_path(thymeAttributes.mediumId), {
         type: "POST",
         data: fd,
         processData: false,
         contentType: false,
+        dataType: "script",
       });
     });
   }
