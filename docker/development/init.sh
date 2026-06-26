@@ -45,6 +45,20 @@ fi
 
 echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 
+ensure_bundle_volume_permissions() {
+  local bundle_owner expected_owner
+
+  sudo mkdir -p /usr/local/bundle
+
+  bundle_owner=$(stat -c "%u:%g" /usr/local/bundle)
+  expected_owner="$(id -u):$(id -g)"
+
+  if [[ "$bundle_owner" != "$expected_owner" ]]; then
+    echo "🔐  Fixing Bundler volume ownership"
+    sudo chown -R "$expected_owner" /usr/local/bundle
+  fi
+}
+
 ensure_corepack_yarn() {
   local package_manager
 
@@ -61,6 +75,8 @@ ensure_corepack_yarn() {
   COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack enable >/dev/null 2>&1 || true
   COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$package_manager" --activate
 }
+
+ensure_bundle_volume_permissions
 
 echo "📦  Installing Ruby gems (via bundle)"
 bundle install

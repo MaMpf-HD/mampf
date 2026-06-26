@@ -9,8 +9,13 @@ x-app-base: &app-base
   volumes:
     - ../../:/workspaces/mampf
     - sprockets-cache:/cache
-    # https://stackoverflow.com/a/62611202/
-    - bundle_cache:/usr/local/bundle/
+    # Avoid Docker's initial copy-up into a fresh volume at /usr/local/bundle,
+    # which has proven flaky during devcontainer rebuilds.
+    - type: volume
+      source: bundle_cache
+      target: /usr/local/bundle
+      volume:
+        nocopy: true
   depends_on:
     - clamav
     - db
