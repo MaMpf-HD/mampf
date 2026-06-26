@@ -1,6 +1,5 @@
 class SetRegistrationPolicyConfigNotNull < ActiveRecord::Migration[8.0]
   class RegistrationPolicy < ApplicationRecord
-    self.table_name = "registration_policies"
   end
 
   def up
