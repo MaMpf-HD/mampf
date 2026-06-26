@@ -98,6 +98,24 @@ RSpec.describe("UploadRoutes", type: :request) do
         expect(response).to have_http_status(:no_content)
       end
     end
+
+    context "when the user only edits an existing medium" do
+      let(:user) do
+        create(:confirmed_user, locale: "en").tap do |editor|
+          medium = create(:valid_medium)
+          medium.editors << editor
+          editor.reload
+        end
+      end
+
+      it "still allows video as a temporary compromise" do
+        sign_in user
+
+        get "/internal/upload-authorizations/video", params: { locale: user.locale }
+
+        expect(response).to have_http_status(:no_content)
+      end
+    end
   end
 
   describe "temporary coarse endpoint authorization" do
@@ -158,6 +176,23 @@ RSpec.describe("UploadRoutes", type: :request) do
       ].each do |path|
         it "allows #{path}" do
           post path, params: { file: restricted_uploads.fetch(path) }
+
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when the user only edits an existing medium" do
+        let(:user) do
+          create(:confirmed_user, locale: "en").tap do |editor|
+            medium = create(:valid_medium)
+            medium.editors << editor
+            editor.reload
+          end
+        end
+
+        it "still allows /videos/upload as a temporary compromise" do
+          post "/videos/upload",
+               params: { file: restricted_uploads.fetch("/videos/upload") }
 
           expect(response).to have_http_status(:ok)
         end
