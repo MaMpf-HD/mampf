@@ -1100,6 +1100,11 @@ Rails.application.routes.draw do
       to: "main#start",
       as: "start"
 
+  get "internal/upload-authorizations/:uploader",
+      to: "internal/upload_authorizations#show",
+      as: :internal_upload_authorization,
+      format: false
+
   # uploader routes
 
   authenticate :user do

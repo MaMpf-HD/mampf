@@ -3,6 +3,30 @@ require "rails_helper"
 RSpec.describe("UploadRoutes", type: :request) do
   let(:user) { create(:confirmed_user, locale: "en") }
   let(:scanner) { instance_double(ClamavScanner) }
+  let(:restricted_uploads) do
+    {
+      "/screenshots/upload" => Rack::Test::UploadedFile.new(
+        File.join(SPEC_FILES, "image.png"),
+        "image/png"
+      ),
+      "/videos/upload" => Rack::Test::UploadedFile.new(
+        File.join(SPEC_FILES, "talk.mp4"),
+        "video/mp4"
+      ),
+      "/pdfs/upload" => Rack::Test::UploadedFile.new(
+        File.join(SPEC_FILES, "manuscript.pdf"),
+        "application/pdf"
+      ),
+      "/ggbs/upload" => Rack::Test::UploadedFile.new(
+        File.join(SPEC_FILES, "manuscript.pdf"),
+        "application/zip"
+      ),
+      "/corrections/upload" => Rack::Test::UploadedFile.new(
+        File.join(SPEC_FILES, "manuscript.pdf"),
+        "application/pdf"
+      )
+    }
+  end
 
   [
     "/screenshots/upload",
@@ -21,32 +45,62 @@ RSpec.describe("UploadRoutes", type: :request) do
     end
   end
 
-  describe "temporary coarse endpoint authorization" do
-    let(:restricted_uploads) do
-      {
-        "/screenshots/upload" => Rack::Test::UploadedFile.new(
-          File.join(SPEC_FILES, "image.png"),
-          "image/png"
-        ),
-        "/videos/upload" => Rack::Test::UploadedFile.new(
-          File.join(SPEC_FILES, "talk.mp4"),
-          "video/mp4"
-        ),
-        "/pdfs/upload" => Rack::Test::UploadedFile.new(
-          File.join(SPEC_FILES, "manuscript.pdf"),
-          "application/pdf"
-        ),
-        "/ggbs/upload" => Rack::Test::UploadedFile.new(
-          File.join(SPEC_FILES, "manuscript.pdf"),
-          "application/zip"
-        ),
-        "/corrections/upload" => Rack::Test::UploadedFile.new(
-          File.join(SPEC_FILES, "manuscript.pdf"),
-          "application/pdf"
-        )
-      }
+  describe "internal upload authorization" do
+    it "returns unauthorized for anonymous requests" do
+      get "/internal/upload-authorizations/video"
+
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.headers["X-Upload-Authorization-Message"]).to eq(
+        I18n.t("devise.failure.unauthenticated")
+      )
     end
 
+    it "returns not found for unknown uploaders" do
+      sign_in user
+
+      get "/internal/upload-authorizations/unknown"
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "rejects low-privilege users for restricted uploaders" do
+      sign_in user
+
+      get "/internal/upload-authorizations/video", params: { locale: user.locale }
+
+      expect(response).to have_http_status(:forbidden)
+      expect(response.headers["X-Upload-Authorization-Message"]).to eq(
+        I18n.t("submission.upload_failure_unauthorized", locale: user.locale)
+      )
+    end
+
+    it "allows low-privilege users for unrestricted uploaders" do
+      sign_in user
+
+      get "/internal/upload-authorizations/profile_image"
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    context "when the user is an editor" do
+      let(:user) do
+        create(:confirmed_user, locale: "en").tap do |editor|
+          create(:course, :with_editor_by_id, editor_id: editor.id)
+          editor.reload
+        end
+      end
+
+      it "allows restricted uploaders" do
+        sign_in user
+
+        get "/internal/upload-authorizations/pdf", params: { locale: user.locale }
+
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+  end
+
+  describe "temporary coarse endpoint authorization" do
     before do
       sign_in user
       allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
