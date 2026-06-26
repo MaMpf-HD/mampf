@@ -2780,6 +2780,8 @@ en:
     upload_failure_scan_required: >
       The uploaded file is missing a required malware scan.
       Please upload the file again.
+    upload_failure_unauthorized: >
+      You are not allowed to upload this file here.
     upload_failure_empty_file_bulk: >
       is empty.
       Please make sure that the file is not corrupted.
