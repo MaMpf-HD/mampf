@@ -51,7 +51,7 @@ module Vignettes
       CSV.generate(col_sep: ";", encoding: "UTF-8") do |csv|
         csv << HEADERS
         answer_data.each do |answer|
-          csv << answer_data(answer)
+          csv << CsvSafe.row(answer_data(answer))
         end
       end
     end

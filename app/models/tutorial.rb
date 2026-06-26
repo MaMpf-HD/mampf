@@ -50,7 +50,7 @@ class Tutorial < ApplicationRecord
                             .proper.order(:last_modification_by_users_at)
     CSV.generate(headers: false) do |csv|
       submissions.each do |s|
-        csv << [s.team]
+        csv << [CsvSafe.cell(s.team)]
       end
     end
   end
