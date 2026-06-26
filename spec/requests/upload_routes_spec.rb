@@ -116,6 +116,47 @@ RSpec.describe("UploadRoutes", type: :request) do
         expect(response).to have_http_status(:no_content)
       end
     end
+
+    describe "ActiveStorage direct uploads" do
+      it "returns unauthorized for anonymous requests" do
+        get "/internal/upload-authorizations/active_storage"
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(response.headers["X-Upload-Authorization-Message"]).to eq(
+          I18n.t("devise.failure.unauthenticated")
+        )
+      end
+
+      it "rejects low-privilege users" do
+        sign_in user
+
+        get "/internal/upload-authorizations/active_storage",
+            params: { locale: user.locale }
+
+        expect(response).to have_http_status(:forbidden)
+        expect(response.headers["X-Upload-Authorization-Message"]).to eq(
+          I18n.t("submission.upload_failure_unauthorized", locale: user.locale)
+        )
+      end
+
+      context "when the user is an editor" do
+        let(:user) do
+          create(:confirmed_user, locale: "en").tap do |editor|
+            create(:course, :with_editor_by_id, editor_id: editor.id)
+            editor.reload
+          end
+        end
+
+        it "allows the direct-upload endpoint" do
+          sign_in user
+
+          get "/internal/upload-authorizations/active_storage",
+              params: { locale: user.locale }
+
+          expect(response).to have_http_status(:no_content)
+        end
+      end
+    end
   end
 
   describe "temporary coarse endpoint authorization" do
@@ -228,6 +269,49 @@ RSpec.describe("UploadRoutes", type: :request) do
              params: { file: restricted_uploads.fetch("/videos/upload") }
 
         expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
+  describe "ActiveStorage direct-upload endpoint (in-app belt)" do
+    let(:blob_attributes) do
+      {
+        filename: "image.png",
+        byte_size: 123,
+        checksum: "1B2M2Y8AsgTpgAmY7PhCfg==",
+        content_type: "image/png"
+      }
+    end
+
+    it "rejects anonymous requests" do
+      post "/rails/active_storage/direct_uploads", params: { blob: blob_attributes }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "rejects low-privilege users" do
+      sign_in user
+
+      post "/rails/active_storage/direct_uploads", params: { blob: blob_attributes }
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    context "when the user is an editor" do
+      let(:user) do
+        create(:confirmed_user, locale: "en").tap do |editor|
+          create(:course, :with_editor_by_id, editor_id: editor.id)
+          editor.reload
+        end
+      end
+
+      it "allows the upload and creates a blob" do
+        sign_in user
+
+        post "/rails/active_storage/direct_uploads", params: { blob: blob_attributes }
+
+        expect(response).to have_http_status(:ok)
+        expect(ActiveStorage::Blob.exists?(filename: "image.png")).to be(true)
       end
     end
   end

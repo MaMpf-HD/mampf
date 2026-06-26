@@ -7,6 +7,13 @@ class UploadEndpointAuthorization
     "video" => VideoUploader
   }.freeze
 
+  # ActiveStorage's stock direct-upload controller ships without any
+  # authentication of its own. The only app surface that uses it is editor-
+  # authored vignette rich-text (Trix), so the edge gate restricts it to
+  # content editors. This key is not a Shrine uploader; it maps directly to a
+  # role rule (see .active_storage_authorized?).
+  ACTIVE_STORAGE_KEY = "active_storage".freeze
+
   class << self
     def authorized?(uploader_class:, user:)
       case uploader_class.name
@@ -22,6 +29,12 @@ class UploadEndpointAuthorization
       else
         true
       end
+    end
+
+    # Coarse authorization for the stock ActiveStorage direct-upload endpoint.
+    # See ACTIVE_STORAGE_KEY for why this is gated to content editors.
+    def active_storage_authorized?(user:)
+      content_editor?(user)
     end
 
     def uploader_class_for(key)
