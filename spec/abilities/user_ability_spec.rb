@@ -27,5 +27,12 @@ RSpec.describe(UserAbility) do
 
       expect(described_class.new(admin).can?(:image, other)).to be(true)
     end
+
+    it "lets an anonymous viewer see a teacher image without crashing" do
+      anonymous = described_class.new(nil)
+
+      expect(anonymous.can?(:image, teacher)).to be(true)
+      expect(anonymous.can?(:image, other)).to be(false)
+    end
   end
 end

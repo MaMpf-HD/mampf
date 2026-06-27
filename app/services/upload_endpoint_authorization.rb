@@ -29,10 +29,10 @@ class UploadEndpointAuthorization
       when "CorrectionUploader"
         content_editor?(user) || user&.tutor?
       when "SubmissionUploader"
-        # Manuscript submissions are intentionally open to any authenticated
-        # user; the endpoint sits behind `authenticate :user`. Listed explicitly
-        # so the gate fails closed for any future uploader not covered above.
-        true
+        # Manuscript submissions are open to any authenticated user (and sit
+        # behind `authenticate :user`); require a present user so nil callers
+        # fail closed. Other uploaders fall through to a raise.
+        user.present?
       else
         raise(ArgumentError, "Unhandled uploader: #{uploader_class.name}")
       end

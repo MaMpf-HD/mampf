@@ -108,7 +108,7 @@ class UsersController < ApplicationController
     # and EXIF). Everyone else — e.g. a student viewing a teacher profile — is
     # served the resized, metadata-stripped derivative.
     def image_variant_for(user)
-      return params[:variant] if current_user.admin? || current_user == user
+      return params[:variant] if current_user&.admin? || current_user == user
 
       "normalized"
     end

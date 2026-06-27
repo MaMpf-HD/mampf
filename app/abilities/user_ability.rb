@@ -11,7 +11,7 @@ class UserAbility
     # enumerable across accounts. (Upload is gated separately in
     # UploadEndpointAuthorization.)
     can :image, User do |given_user|
-      user.admin? || user == given_user || given_user.teacher?
+      user&.admin? || user == given_user || given_user.teacher?
     end
 
     can [:index, :elevate, :destroy, :edit], User do

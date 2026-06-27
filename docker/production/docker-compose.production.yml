@@ -1,3 +1,14 @@
+# =============================================================================
+# EXAMPLE ONLY — this is NOT the production deployment.
+#
+# The live MaMpf stack is deployed from the `mampf-infra` repository, which
+# renders the authoritative compose file (internal network, vaulted runtime env,
+# per-service healthchecks) via Ansible. This file is a standalone reference for
+# a manual `docker compose` setup; it is not used by CI or any rollout, and
+# values such as `yourfileserverdomain` are placeholders.
+#
+# Do not treat static-analysis findings against this file as production issues.
+# =============================================================================
 x-mampf:
   &mampf
   build:
