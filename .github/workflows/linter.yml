@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -41,7 +41,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout code
-          uses: actions/checkout@v5
+          uses: actions/checkout@v6
           with:
             fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -54,9 +54,9 @@ jobs:
 
         - name: Setup Node.js
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
-          uses: actions/setup-node@v4
+          uses: actions/setup-node@v6
           with:
-            node-version: '20' # End of Life (EOL): April 2026
+            node-version: '24' # End of Life (EOL): April 2028
             cache: 'yarn'
 
         - name: Install dependencies
@@ -73,3 +73,43 @@ jobs:
           run: |
             echo "🚨 Running ESLint version: $(yarn run --silent eslint --version)"
             yarn run eslint --config ./.config/eslint.mjs --max-warnings 0 --no-warn-ignored ${{ steps.js-changed.outputs.changed-files }}
+
+  herb:
+    name: Herb (HTML & ERB)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
+
+      - name: Get changed files
+        id: js-changed
+        uses: ./.github/actions/changed_files/
+        with:
+          file-extensions: \.html$|\.html.erb$
+
+      - name: Setup Node.js
+        if: ${{ steps.js-changed.outputs.changed-files != ''}}
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24' # End of Life (EOL): April 2028
+          cache: 'yarn'
+
+      - name: Install dependencies
+        if: ${{ steps.js-changed.outputs.changed-files != ''}}
+        run: yarn install
+
+      - name: Run Herb Linter
+        if: ${{ steps.js-changed.outputs.changed-files != ''}}
+        run: |
+          echo "🚨 Running Herb Lint version: $(yarn run herb-lint --version)"
+          yarn run herb-lint ${{ steps.js-changed.outputs.changed-files }}
+
+      - name: Run Herb Formatter
+        if: ${{ steps.js-changed.outputs.changed-files != ''}}
+        # we have to explicitly specify the config file here,
+        # see issue: https://github.com/marcoroth/herb/issues/1177
+        run: |
+          echo "🚨 Running Herb Format version: $(yarn run herb-format --version)"
+          yarn run herb-format --config-file ./.herb.yml --check ${{ steps.js-changed.outputs.changed-files }}

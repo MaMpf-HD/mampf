@@ -1,0 +1,33 @@
+<div class="btn-group btn-group-sm" role="group">
+  <%= link_to component.helpers.lecture_roster_participants_path(component.lecture,
+                                                                 filter: :all,
+                                                                 search: component.search_string,
+                                                                 group_type: component.group_type),
+              class: "btn btn-outline-secondary #{'active' if component.filter_mode == 'all'}",
+              data: {
+                turbo_stream: true,
+                action: "click->auto-submit-form#filterSelected",
+                filter_value: "all"
+              } do %>
+    <%= t('roster.filters.all') %>
+    (<span><%= component.counts[:total] || 0 %></span>)
+  <% end %>
+
+  <%= link_to component.helpers.lecture_roster_participants_path(component.lecture,
+                                                                 filter: :unassigned,
+                                                                 search: component.search_string,
+                                                                 group_type: component.group_type),
+              class: "btn btn-outline-secondary #{'active' if component.filter_mode == 'unassigned'}",
+              data: {
+                turbo_stream: true,
+                action: "click->auto-submit-form#filterSelected",
+                filter_value: "unassigned"
+              } do %>
+    <%= t('roster.filters.unassigned') %>
+    (<span><%= component.counts[:unassigned] || 0 %></span>)
+  <% end %>
+</div>
+
+<div>
+  <%= component.helpers.helpdesk(t("roster.participants_hint"), true) %>
+</div>

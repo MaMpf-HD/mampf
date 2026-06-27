@@ -10,6 +10,16 @@ class User < ApplicationRecord
   has_many :lecture_user_joins, dependent: :destroy
   has_many :lectures, -> { distinct }, through: :lecture_user_joins
 
+  # Roster memberships
+  has_many :lecture_memberships, dependent: :destroy
+  has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
+
+  has_many :tutorial_memberships, dependent: :destroy
+  has_many :enrolled_tutorials, through: :tutorial_memberships, source: :tutorial
+
+  has_many :cohort_memberships, dependent: :destroy
+  has_many :cohorts, through: :cohort_memberships
+
   # a user has many favorite lectures
   has_many :user_favorite_lecture_joins, dependent: :destroy
   has_many :favorite_lectures, -> { distinct },
@@ -594,11 +604,9 @@ class User < ApplicationRecord
 
   def subscribe_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
-    return false if lecture.in?(lectures)
 
-    lectures << lecture
-
-    true
+    lecture_user_joins.create_or_find_by(lecture: lecture)
+                      .previously_new_record?
   end
 
   def unsubscribe_lecture!(lecture)

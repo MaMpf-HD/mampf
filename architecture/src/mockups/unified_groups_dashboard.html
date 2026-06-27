@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Groups & Registration — Unified Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+    <style>
+      body { background: #f8f9fa; }
+
+      /* ── Left panel ─────────────────────────────────── */
+      #group-list {
+        height: calc(100vh - 200px);
+        overflow-y: auto;
+        border-right: 1px solid #dee2e6;
+        background: #fff;
+      }
+
+      .group-item {
+        cursor: pointer;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.12s;
+      }
+      .group-item:hover { background: #f0f4ff; }
+      .group-item.active {
+        background: #e8efff;
+        border-left: 3px solid #0d6efd;
+      }
+      .group-item.active .group-title { font-weight: 600; color: #0d6efd; }
+      .group-title { font-size: 0.9rem; font-weight: 500; }
+      .group-meta  { font-size: 0.75rem; color: #6c757d; }
+
+      /* fill bar */
+      .fill-bar { height: 5px; border-radius: 3px; background: #e9ecef; margin-top: 4px; }
+      .fill-bar-inner { height: 100%; border-radius: 3px; }
+      .fill-ok   { background: #0d6efd; }
+      .fill-warn { background: #fd7e14; }
+      .fill-full { background: #dc3545; }
+
+      /* ── Right panel ────────────────────────────────── */
+      #group-detail {
+        height: calc(100vh - 200px);
+        overflow-y: auto;
+        background: #fff;
+        padding: 1.25rem 1.5rem;
+      }
+
+      .campaign-card {
+        border: 1px solid #c6d6f5;
+        border-radius: 6px;
+        background: #f5f8ff;
+        padding: 0.9rem 1rem;
+        margin-bottom: 1rem;
+      }
+      .campaign-card.completed {
+        border-color: #b6e0be;
+        background: #f4fff6;
+      }
+      .campaign-card.draft {
+        border-color: #ddd;
+        background: #fafafa;
+      }
+
+      .badge-draft      { background: #adb5bd; }
+      .badge-open       { background: #0d6efd; }
+      .badge-closed     { background: #fd7e14; }
+      .badge-processing { background: #6f42c1; }
+      .badge-completed  { background: #198754; }
+      .badge-manual     { background: #6c757d; }
+      .badge-self       { background: #20c997; }
+
+      .mode-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.78rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 30px;
+        border: 1px solid;
+        cursor: default;
+      }
+      .mode-pill.active-mode { font-weight: 600; }
+      .mode-pill.campaign-pill.active-mode {
+        background: #e8efff; border-color: #0d6efd; color: #0d6efd;
+      }
+      .mode-pill.manual-pill.active-mode {
+        background: #f0f0f0; border-color: #6c757d; color: #6c757d;
+      }
+      .mode-pill.self-pill.active-mode {
+        background: #e6fff8; border-color: #20c997; color: #157a6e;
+      }
+      .mode-pill.inactive-mode {
+        background: transparent; border-color: #dee2e6; color: #adb5bd;
+      }
+
+      .member-row {
+        display: flex; align-items: center;
+        padding: 0.35rem 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 0.875rem;
+      }
+      .member-row:last-child { border-bottom: none; }
+      .member-name { flex: 1; }
+      .member-source { font-size: 0.72rem; color: #adb5bd; margin-right: 0.75rem; }
+
+      /* ── Stat badges row ─────────────────────────────── */
+      .stat-chip {
+        font-size: 0.78rem;
+        padding: 0.18rem 0.55rem;
+        border-radius: 20px;
+        background: #e9ecef;
+        color: #495057;
+        white-space: nowrap;
+      }
+      .stat-chip.accent { background: #e8efff; color: #0d6efd; }
+
+      /* ── Lifecycle step indicator ────────────────────── */
+      .lifecycle-steps {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        font-size: 0.72rem;
+        margin-bottom: 0.6rem;
+      }
+      .lc-step {
+        padding: 0.2rem 0.6rem;
+        border: 1px solid #dee2e6;
+        background: #f8f9fa;
+        color: #8c95a0;
+        border-radius: 0;
+      }
+      .lc-step:first-child { border-radius: 4px 0 0 4px; }
+      .lc-step:last-child  { border-radius: 0 4px 4px 0; }
+      .lc-step.done   { background: #d1e7dd; color: #0f5132; border-color: #b6d4c2; }
+      .lc-step.active { background: #0d6efd; color: #fff; border-color: #0d6efd; font-weight: 600; }
+
+      /* ── All Participants table ───────────────────────── */
+      .assignment-dot {
+        display: inline-block;
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        margin-right: 4px;
+      }
+
+      /* panels card wrapper */
+      .panel-card {
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-fluid my-3 px-4">
+
+      <!-- ── Breadcrumb + Heading ───────────────────────── -->
+      <nav aria-label="Breadcrumb" class="mb-1">
+        <ol class="breadcrumb mb-0 small">
+          <li class="breadcrumb-item"><a href="#">Administration</a></li>
+          <li class="breadcrumb-item"><a href="#">Linear Algebra I</a></li>
+          <li class="breadcrumb-item active">Groups &amp; Registration</li>
+        </ol>
+      </nav>
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h1 class="h4 mb-0 fw-semibold">
+          Linear Algebra I &mdash; Groups &amp; Registration
+          <span class="text-muted fw-normal fs-6 ms-2">WS 2025/26</span>
+        </h1>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-download me-1"></i>Export CSV
+          </button>
+          <button class="btn btn-sm btn-primary" id="btn-new-group">
+            <i class="bi bi-plus-lg me-1"></i>New group
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Top-level tabs ────────────────────────────── -->
+      <ul class="nav nav-tabs mb-0" id="topTabs" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active" id="tab-groups" data-bs-toggle="tab"
+                  data-bs-target="#pane-groups" type="button">
+            <i class="bi bi-people me-1"></i>Groups
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" id="tab-campaigns" data-bs-toggle="tab"
+                  data-bs-target="#pane-campaigns" type="button">
+            <i class="bi bi-clipboard2-check me-1"></i>Campaigns
+            <span class="badge bg-secondary ms-1">1</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" id="tab-participants" data-bs-toggle="tab"
+                  data-bs-target="#pane-participants" type="button">
+            <i class="bi bi-person-lines-fill me-1"></i>All Participants
+            <span class="badge bg-secondary ms-1">87</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+
+        <!-- ════════════════════════════════════════════════
+             TAB 1: GROUPS
+             ════════════════════════════════════════════════ -->
+        <div class="tab-pane fade show active" id="pane-groups" role="tabpanel">
+
+          <!-- type filter bar -->
+          <div class="d-flex align-items-center gap-2 py-2 px-1 bg-white border-start border-end border-bottom"
+               style="border-color:#dee2e6!important">
+            <span class="text-muted small me-1">Show:</span>
+            <div class="btn-group btn-group-sm" role="group">
+              <input type="radio" class="btn-check" name="gtype" id="gt-all" checked>
+              <label class="btn btn-outline-secondary" for="gt-all">All</label>
+
+              <input type="radio" class="btn-check" name="gtype" id="gt-tut">
+              <label class="btn btn-outline-secondary" for="gt-tut">
+                <i class="bi bi-mortarboard me-1"></i>Tutorials
+                <span class="badge bg-secondary ms-1">4</span>
+              </label>
+
+              <input type="radio" class="btn-check" name="gtype" id="gt-talk">
+              <label class="btn btn-outline-secondary" for="gt-talk">
+                <i class="bi bi-mic me-1"></i>Talks
+                <span class="badge bg-secondary ms-1">0</span>
+              </label>
+
+              <input type="radio" class="btn-check" name="gtype" id="gt-cohort">
+              <label class="btn btn-outline-secondary" for="gt-cohort">
+                <i class="bi bi-collection me-1"></i>Cohorts
+                <span class="badge bg-secondary ms-1">2</span>
+              </label>
+            </div>
+            <div class="ms-auto">
+              <input type="search" class="form-control form-control-sm"
+                     autocomplete="on" placeholder="Search groups…" style="width:180px">
+            </div>
+          </div>
+
+          <!-- master / detail row -->
+          <div class="row g-0 panel-card" style="border-top:none;border-radius:0 0 6px 6px">
+
+            <!-- ── LEFT: Group list ──────────────────────── -->
+            <div class="col-12 col-md-4 col-lg-3" id="group-list">
+
+              <div class="px-3 pt-2 pb-1 text-uppercase"
+                   style="font-size:0.68rem;letter-spacing:.06em;color:#9aa0a6;background:#fafafa;
+                          border-bottom:1px solid #f0f0f0">
+                Tutorials (4)
+              </div>
+
+              <!-- Tutorial 1 — ACTIVE -->
+              <div class="group-item active" onclick="showGroup('tut1', this)">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="group-title">Mon 10:00–12:00</span>
+                  <span class="badge badge-open text-white" style="font-size:.68rem">open</span>
+                </div>
+                <div class="group-meta">Dr. Müller &nbsp;·&nbsp; INF 227</div>
+                <div class="d-flex gap-2 align-items-center mt-1">
+                  <div class="fill-bar flex-grow-1">
+                    <div class="fill-bar-inner fill-ok" style="width:57%"></div>
+                  </div>
+                  <span style="font-size:.72rem;color:#6c757d;white-space:nowrap">17 / 30</span>
+                </div>
+              </div>
+
+              <!-- Tutorial 2 -->
+              <div class="group-item" onclick="showGroup('tut2', this)">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="group-title">Wed 14:00–16:00</span>
+                  <span class="badge badge-open text-white" style="font-size:.68rem">open</span>
+                </div>
+                <div class="group-meta">Dr. Müller &nbsp;·&nbsp; INF 227</div>
+                <div class="d-flex gap-2 align-items-center mt-1">
+                  <div class="fill-bar flex-grow-1">
+                    <div class="fill-bar-inner fill-ok" style="width:27%"></div>
+                  </div>
+                  <span style="font-size:.72rem;color:#6c757d;white-space:nowrap">8 / 30</span>
+                </div>
+              </div>
+
+              <!-- Tutorial 3 — full -->
+              <div class="group-item" onclick="showGroup('tut3', this)">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="group-title">Thu 08:00–10:00</span>
+                  <span class="badge badge-open text-white" style="font-size:.68rem">open</span>
+                </div>
+                <div class="group-meta">M. Bauer &nbsp;·&nbsp; Room 34</div>
+                <div class="d-flex gap-2 align-items-center mt-1">
+                  <div class="fill-bar flex-grow-1">
+                    <div class="fill-bar-inner fill-full" style="width:100%"></div>
+                  </div>
+                  <span style="font-size:.72rem;color:#dc3545;white-space:nowrap">30 / 30</span>
+                </div>
+              </div>
+
+              <!-- Tutorial 4 — manual -->
+              <div class="group-item" onclick="showGroup('tut4', this)">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="group-title">Fri 10:00–12:00</span>
+                  <span class="badge badge-manual text-white" style="font-size:.68rem">manual</span>
+                </div>
+                <div class="group-meta">T. Koch &nbsp;·&nbsp; Room 12</div>
+                <div class="d-flex gap-2 align-items-center mt-1">
+                  <div class="fill-bar flex-grow-1">
+                    <div class="fill-bar-inner fill-ok" style="width:40%"></div>
+                  </div>
+                  <span style="font-size:.72rem;color:#6c757d;white-space:nowrap">12 / 30</span>
+                </div>
+              </div>
+
+              <!-- Section label: Cohorts -->
+              <div class="px-3 pt-2 pb-1 text-uppercase"
+                   style="font-size:0.68rem;letter-spacing:.06em;color:#9aa0a6;background:#fafafa;
+                          border-bottom:1px solid #f0f0f0;border-top:1px solid #e9ecef">
+                Cohorts (2)
+              </div>
+
+              <!-- Cohort 1 — waitlist -->
+              <div class="group-item" onclick="showGroup('cohort1', this)">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="group-title">Waitlist</span>
+                  <span class="badge badge-open text-white" style="font-size:.68rem">open</span>
+                </div>
+                <div class="group-meta">General &nbsp;·&nbsp; no limit</div>
+                <div class="d-flex gap-2 align-items-center mt-1">
+                  <div class="fill-bar flex-grow-1">
+                    <div class="fill-bar-inner fill-ok" style="width:0"></div>
+                  </div>
+                  <span style="font-size:.72rem;color:#6c757d;white-space:nowrap">5 members</span>
+                </div>
+              </div>
+
+              <!-- Cohort 2 — planning completed -->
+              <div class="group-item" onclick="showGroup('cohort2', this)">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="group-title">Interest Survey Oct</span>
+                  <span class="badge badge-completed text-white" style="font-size:.68rem">done</span>
+                </div>
+                <div class="group-meta">Planning &nbsp;·&nbsp; no limit</div>
+                <div class="d-flex gap-2 align-items-center mt-1">
+                  <div class="fill-bar flex-grow-1">
+                    <div class="fill-bar-inner fill-ok" style="width:0"></div>
+                  </div>
+                  <span style="font-size:.72rem;color:#6c757d;white-space:nowrap">102 signups</span>
+                </div>
+              </div>
+
+            </div>
+            <!-- /group-list -->
+
+            <!-- ── RIGHT: Group Detail ───────────────────── -->
+            <div class="col-12 col-md-8 col-lg-9" id="group-detail">
+
+              <!-- ── Detail: Tutorial Mon 10:00 (default) ── -->
+              <div id="detail-tut1">
+
+                <div class="d-flex align-items-start justify-content-between mb-2 flex-wrap gap-2">
+                  <div>
+                    <h2 class="h5 mb-0 fw-semibold">Tutorial — Mon 10:00–12:00</h2>
+                    <div class="text-muted small">Dr. Müller &nbsp;·&nbsp; INF 227</div>
+                  </div>
+                  <div class="d-flex gap-1 flex-wrap">
+                    <span class="stat-chip accent">17 / 30 filled</span>
+                    <span class="stat-chip">42 pending applications</span>
+                    <button class="btn btn-sm btn-outline-secondary py-0">
+                      <i class="bi bi-pencil me-1"></i>Edit group
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger py-0">
+                      <i class="bi bi-trash me-1"></i>Delete
+                    </button>
+                  </div>
+                </div>
+
+                <!-- mode pills -->
+                <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+                  <span class="small text-muted me-1">Fill mode:</span>
+                  <span class="mode-pill campaign-pill active-mode">
+                    <i class="bi bi-diagram-3"></i> Campaign
+                  </span>
+                  <span class="mode-pill manual-pill inactive-mode">
+                    <i class="bi bi-hand-index"></i> Manual
+                  </span>
+                  <span class="mode-pill self-pill inactive-mode">
+                    <i class="bi bi-person-check"></i> Self-enroll
+                  </span>
+                  <span class="text-muted" style="font-size:.7rem">
+                    (self-enroll available once campaign is completed)
+                  </span>
+                </div>
+
+                <!-- ── Campaign card ─────────────────────── -->
+                <div class="campaign-card">
+                  <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                    <div>
+                      <span class="fw-semibold" style="font-size:.9rem">
+                        <i class="bi bi-clipboard2-check me-1 text-primary"></i>
+                        Tutorial Registration SS 2025
+                      </span>
+                      <span class="badge badge-open text-white ms-2">Open</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary py-0">
+                      <i class="bi bi-sliders me-1"></i>Settings &amp; policies
+                    </button>
+                  </div>
+
+                  <!-- lifecycle steps -->
+                  <div class="lifecycle-steps mb-2">
+                    <span class="lc-step done"><i class="bi bi-check2 me-1"></i>Draft</span>
+                    <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                      <i class="bi bi-chevron-right"></i>
+                    </span>
+                    <span class="lc-step active">Open</span>
+                    <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                      <i class="bi bi-chevron-right"></i>
+                    </span>
+                    <span class="lc-step">Closed</span>
+                    <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                      <i class="bi bi-chevron-right"></i>
+                    </span>
+                    <span class="lc-step">Processing</span>
+                    <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                      <i class="bi bi-chevron-right"></i>
+                    </span>
+                    <span class="lc-step">Completed</span>
+                  </div>
+
+                  <div class="d-flex gap-3 small mb-2 flex-wrap">
+                    <span>
+                      <i class="bi bi-clock me-1 text-muted"></i>
+                      Deadline: <strong>Mar 15, 2026</strong>
+                    </span>
+                    <span>
+                      <i class="bi bi-hourglass-split me-1 text-muted"></i>
+                      Mode: <strong>Preference-based</strong>
+                    </span>
+                    <span>
+                      <i class="bi bi-people me-1 text-muted"></i>
+                      42 pending &nbsp;·&nbsp; 0 confirmed
+                    </span>
+                  </div>
+
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-sm btn-outline-warning">
+                      <i class="bi bi-stop-circle me-1"></i>Close early
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary">
+                      <i class="bi bi-eye me-1"></i>View applications
+                    </button>
+                  </div>
+                </div>
+
+                <!-- ── Member list ────────────────────────── -->
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="fw-semibold">
+                    <i class="bi bi-person-lines-fill me-1 text-muted"></i>Members
+                    <span class="badge bg-secondary ms-1">17</span>
+                  </span>
+                  <div class="d-flex gap-2">
+                    <input type="search" class="form-control form-control-sm"
+                           autocomplete="on" placeholder="Search…" style="width:140px">
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-person-plus me-1"></i>Add
+                    </button>
+                  </div>
+                </div>
+
+                <div style="font-size:.82rem">
+                  <div class="member-row">
+                    <span class="member-name">Alice Hoffmann</span>
+                    <span class="member-source">
+                      <i class="bi bi-diagram-3 me-1"></i>via campaign
+                    </span>
+                    <button class="btn btn-outline-secondary py-0 px-2 me-1"
+                            style="font-size:.75rem">
+                      <i class="bi bi-arrow-right-circle"></i> Move
+                    </button>
+                    <button class="btn btn-outline-danger py-0 px-2"
+                            style="font-size:.75rem">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                  <div class="member-row">
+                    <span class="member-name">Bob Schmidt</span>
+                    <span class="member-source">
+                      <i class="bi bi-diagram-3 me-1"></i>via campaign
+                    </span>
+                    <button class="btn btn-outline-secondary py-0 px-2 me-1"
+                            style="font-size:.75rem">
+                      <i class="bi bi-arrow-right-circle"></i> Move
+                    </button>
+                    <button class="btn btn-outline-danger py-0 px-2"
+                            style="font-size:.75rem">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                  <div class="member-row">
+                    <span class="member-name">Carla Weiß</span>
+                    <span class="member-source">
+                      <i class="bi bi-diagram-3 me-1"></i>via campaign
+                    </span>
+                    <button class="btn btn-outline-secondary py-0 px-2 me-1"
+                            style="font-size:.75rem">
+                      <i class="bi bi-arrow-right-circle"></i> Move
+                    </button>
+                    <button class="btn btn-outline-danger py-0 px-2"
+                            style="font-size:.75rem">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                  <div class="member-row">
+                    <span class="member-name">David Braun</span>
+                    <span class="member-source">
+                      <i class="bi bi-hand-index me-1"></i>manual
+                    </span>
+                    <button class="btn btn-outline-secondary py-0 px-2 me-1"
+                            style="font-size:.75rem">
+                      <i class="bi bi-arrow-right-circle"></i> Move
+                    </button>
+                    <button class="btn btn-outline-danger py-0 px-2"
+                            style="font-size:.75rem">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                  <div class="member-row text-muted fst-italic">
+                    <span>… 13 more members</span>
+                  </div>
+                </div>
+
+              </div>
+              <!-- /detail-tut1 -->
+
+              <!-- ── Detail: Tutorial Fri (manual) ─────────── -->
+              <div id="detail-tut4" style="display:none">
+                <div class="d-flex align-items-start justify-content-between mb-2 flex-wrap gap-2">
+                  <div>
+                    <h2 class="h5 mb-0 fw-semibold">Tutorial — Fri 10:00–12:00</h2>
+                    <div class="text-muted small">T. Koch &nbsp;·&nbsp; Room 12</div>
+                  </div>
+                  <div class="d-flex gap-1 flex-wrap">
+                    <span class="stat-chip">12 / 30 filled</span>
+                    <span class="stat-chip">No campaign</span>
+                    <button class="btn btn-sm btn-outline-secondary py-0">
+                      <i class="bi bi-pencil me-1"></i>Edit group
+                    </button>
+                  </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 mb-3">
+                  <span class="small text-muted me-1">Fill mode:</span>
+                  <span class="mode-pill campaign-pill inactive-mode">
+                    <i class="bi bi-diagram-3"></i> Campaign
+                  </span>
+                  <span class="mode-pill manual-pill active-mode">
+                    <i class="bi bi-hand-index"></i> Manual
+                  </span>
+                  <span class="mode-pill self-pill inactive-mode">
+                    <i class="bi bi-person-check"></i> Self-enroll
+                  </span>
+                </div>
+
+                <div class="alert alert-secondary py-2 mb-3" style="font-size:.83rem">
+                  <i class="bi bi-hand-index me-1"></i>
+                  Manual mode — add and remove students directly.
+                  <a href="#" class="ms-2">Enable self-enroll</a> &nbsp;or&nbsp;
+                  <a href="#">Create a campaign</a> for this group.
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="fw-semibold">
+                    <i class="bi bi-person-lines-fill me-1 text-muted"></i>Members
+                    <span class="badge bg-secondary ms-1">12</span>
+                  </span>
+                  <div class="d-flex gap-2">
+                    <input type="search" class="form-control form-control-sm"
+                           autocomplete="on" placeholder="Search…" style="width:140px">
+                    <button class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-person-plus me-1"></i>Add
+                    </button>
+                  </div>
+                </div>
+                <div class="text-muted small fst-italic">… 12 members listed here …</div>
+              </div>
+
+              <!-- ── Detail: Cohort planning completed ──────── -->
+              <div id="detail-cohort2" style="display:none">
+                <div class="d-flex align-items-start justify-content-between mb-2 flex-wrap gap-2">
+                  <div>
+                    <h2 class="h5 mb-0 fw-semibold">Interest Survey Oct</h2>
+                    <div class="text-muted small">Planning cohort &nbsp;·&nbsp; no lecture access granted</div>
+                  </div>
+                  <div class="d-flex gap-1 flex-wrap">
+                    <span class="stat-chip accent">102 signups</span>
+                    <span class="stat-chip">No limit</span>
+                  </div>
+                </div>
+
+                <div class="campaign-card completed">
+                  <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                    <div>
+                      <span class="fw-semibold" style="font-size:.9rem">
+                        <i class="bi bi-clipboard2-check me-1 text-success"></i>
+                        Demand Survey WS 2025/26
+                      </span>
+                      <span class="badge badge-completed text-white ms-2">Completed</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary py-0">
+                      <i class="bi bi-sliders me-1"></i>Settings
+                    </button>
+                  </div>
+
+                  <div class="lifecycle-steps mb-2">
+                    <span class="lc-step done"><i class="bi bi-check2 me-1"></i>Draft</span>
+                    <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                      <i class="bi bi-chevron-right"></i>
+                    </span>
+                    <span class="lc-step done">Open</span>
+                    <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                      <i class="bi bi-chevron-right"></i>
+                    </span>
+                    <span class="lc-step done">Closed</span>
+                    <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                      <i class="bi bi-chevron-right"></i>
+                    </span>
+                    <span class="lc-step done">Processing</span>
+                    <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                      <i class="bi bi-chevron-right"></i>
+                    </span>
+                    <span class="lc-step done active">
+                      <i class="bi bi-check2 me-1"></i>Completed
+                    </span>
+                  </div>
+
+                  <div class="d-flex gap-3 small mb-2 flex-wrap">
+                    <span>
+                      <i class="bi bi-check2-circle me-1 text-success"></i>
+                      Finalized: <strong>Oct 20, 2025</strong>
+                    </span>
+                    <span>102 confirmed &nbsp;·&nbsp; 0 rejected</span>
+                  </div>
+                  <button class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-table me-1"></i>View results / export
+                  </button>
+                </div>
+
+                <div class="text-muted small fst-italic">… 102 members listed here …</div>
+              </div>
+
+              <!-- Placeholders for other details -->
+              <div id="detail-tut2" style="display:none">
+                <div class="d-flex align-items-start justify-content-between mb-2 flex-wrap gap-2">
+                  <div>
+                    <h2 class="h5 mb-0 fw-semibold">Tutorial — Wed 14:00–16:00</h2>
+                    <div class="text-muted small">Dr. Müller &nbsp;·&nbsp; INF 227</div>
+                  </div>
+                  <span class="stat-chip accent">8 / 30 filled</span>
+                </div>
+                <div class="alert alert-info py-2 mb-3" style="font-size:.83rem">
+                  <i class="bi bi-diagram-3 me-1"></i>
+                  This tutorial is part of campaign
+                  <strong>"Tutorial Registration SS 2025"</strong>
+                  together with Mon 10–12 and Thu 08–10.
+                  Students rank all three in a single ballot.
+                  <a href="#" class="ms-2"
+                     onclick="document.getElementById('tab-campaigns').click();return false;">
+                    View campaign →
+                  </a>
+                </div>
+                <div class="text-muted small fst-italic">… member list same structure as Mon 10–12 …</div>
+              </div>
+              <div id="detail-tut3" style="display:none">
+                <div class="alert alert-warning mt-2">
+                  <strong>Tutorial — Thu 08:00–10:00</strong> — Full (30/30). Same structure.
+                </div>
+              </div>
+              <div id="detail-cohort1" style="display:none">
+                <div class="alert alert-info mt-2">
+                  <strong>Waitlist (Cohort)</strong> — Open FCFS campaign. Same structure.
+                </div>
+              </div>
+
+            </div>
+            <!-- /group-detail -->
+
+          </div>
+          <!-- /master-detail row -->
+
+        </div>
+        <!-- /pane-groups -->
+
+        <!-- ════════════════════════════════════════════════
+             TAB 2: CAMPAIGNS
+             ════════════════════════════════════════════════ -->
+        <div class="tab-pane fade" id="pane-campaigns" role="tabpanel">
+          <div class="bg-white border border-top-0 rounded-bottom p-3">
+
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <span class="text-muted small">
+                Campaigns orchestrate how groups are filled — via preference ranking or first-come-first-served.
+              </span>
+              <button class="btn btn-sm btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>New campaign
+              </button>
+            </div>
+
+            <!-- Campaign row — active -->
+            <div class="card mb-2">
+              <div class="card-body py-2 px-3">
+                <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+                  <div>
+                    <span class="fw-semibold">Tutorial Registration SS 2025</span>
+                    <span class="badge badge-open text-white ms-2" style="font-size:.72rem">Open</span>
+                    <div class="text-muted small mt-1">
+                      <i class="bi bi-mortarboard me-1"></i>
+                      Items: Mon 10–12, Wed 14–16, Thu 08–10
+                      &nbsp;·&nbsp;
+                      <i class="bi bi-hourglass-split me-1"></i>Preference-based
+                      &nbsp;·&nbsp;
+                      Deadline: Mar 15, 2026
+                    </div>
+                    <div class="mt-1" style="font-size:.78rem">
+                      <span class="stat-chip">126 pending applications</span>
+                      <span class="stat-chip ms-1">0 confirmed</span>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-1 flex-wrap align-items-start">
+                    <button class="btn btn-sm btn-outline-secondary py-0">
+                      <i class="bi bi-eye me-1"></i>View
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning py-0">
+                      <i class="bi bi-stop-circle me-1"></i>Close early
+                    </button>
+                  </div>
+                </div>
+
+                <!-- lifecycle mini-bar -->
+                <div class="lifecycle-steps mt-2">
+                  <span class="lc-step done"><i class="bi bi-check2 me-1"></i>Draft</span>
+                  <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                    <i class="bi bi-chevron-right"></i>
+                  </span>
+                  <span class="lc-step active">Open</span>
+                  <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                    <i class="bi bi-chevron-right"></i>
+                  </span>
+                  <span class="lc-step">Closed</span>
+                  <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                    <i class="bi bi-chevron-right"></i>
+                  </span>
+                  <span class="lc-step">Processing</span>
+                  <span style="color:#adb5bd;padding:0 1px;font-size:.65rem">
+                    <i class="bi bi-chevron-right"></i>
+                  </span>
+                  <span class="lc-step">Completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Campaign row — completed -->
+            <div class="card mb-2">
+              <div class="card-body py-2 px-3">
+                <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+                  <div>
+                    <span class="fw-semibold">Demand Survey WS 2025/26</span>
+                    <span class="badge badge-completed text-white ms-2" style="font-size:.72rem">Completed</span>
+                    <div class="text-muted small mt-1">
+                      <i class="bi bi-collection me-1"></i>
+                      Items: Interest Survey Oct (planning cohort)
+                      &nbsp;·&nbsp;
+                      <i class="bi bi-lightning me-1"></i>First-come-first-served
+                      &nbsp;·&nbsp;
+                      Finalized: Oct 20, 2025
+                    </div>
+                    <div class="mt-1" style="font-size:.78rem">
+                      <span class="stat-chip">102 confirmed</span>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-1">
+                    <button class="btn btn-sm btn-outline-secondary py-0">
+                      <i class="bi bi-eye me-1"></i>View
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary py-0">
+                      <i class="bi bi-table me-1"></i>Export
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- empty-state hint -->
+            <div class="text-muted small mt-3">
+              <i class="bi bi-info-circle me-1"></i>
+              Campaigns can cover one or multiple groups of the same type.
+              The allocation (preference-based) or first-come-first-served logic runs per campaign,
+              not per group.
+            </div>
+
+          </div>
+        </div>
+        <!-- /pane-campaigns -->
+
+        <!-- ════════════════════════════════════════════════
+             TAB 3: ALL PARTICIPANTS
+             ════════════════════════════════════════════════ -->
+        <div class="tab-pane fade" id="pane-participants" role="tabpanel">
+          <div class="bg-white border border-top-0 rounded-bottom p-3">
+
+            <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
+              <input type="search" class="form-control form-control-sm"
+                     autocomplete="on" placeholder="Name, matriculation…" style="width:220px">
+              <select class="form-select form-select-sm" style="width:160px">
+                <option>All groups</option>
+                <option>Mon 10–12</option>
+                <option>Wed 14–16</option>
+                <option>Thu 08–10</option>
+                <option>Fri 10–12</option>
+                <option>— Unassigned —</option>
+              </select>
+              <select class="form-select form-select-sm" style="width:140px">
+                <option>All statuses</option>
+                <option>Assigned</option>
+                <option>Unassigned</option>
+                <option>Waitlisted</option>
+              </select>
+              <span class="text-muted small ms-auto">87 students total &nbsp;·&nbsp; 67 assigned</span>
+            </div>
+
+            <table class="table table-sm align-middle" style="font-size:.85rem">
+              <thead class="table-light">
+                <tr>
+                  <th>Name</th>
+                  <th>Matr.</th>
+                  <th>Group</th>
+                  <th>Status</th>
+                  <th>Source</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Alice Hoffmann</td>
+                  <td class="text-muted">123456</td>
+                  <td>
+                    <span class="assignment-dot bg-primary"></span>Mon 10–12
+                  </td>
+                  <td><span class="badge bg-success">Assigned</span></td>
+                  <td class="text-muted small">
+                    <i class="bi bi-diagram-3 me-1"></i>Campaign
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-outline-secondary py-0 px-2"
+                            style="font-size:.75rem">Move</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Bob Schmidt</td>
+                  <td class="text-muted">234567</td>
+                  <td>
+                    <span class="assignment-dot bg-primary"></span>Mon 10–12
+                  </td>
+                  <td><span class="badge bg-success">Assigned</span></td>
+                  <td class="text-muted small">
+                    <i class="bi bi-diagram-3 me-1"></i>Campaign
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-outline-secondary py-0 px-2"
+                            style="font-size:.75rem">Move</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Emma Fischer</td>
+                  <td class="text-muted">345678</td>
+                  <td class="text-muted fst-italic">—</td>
+                  <td><span class="badge bg-warning text-dark">Unassigned</span></td>
+                  <td class="text-muted small">
+                    <i class="bi bi-diagram-3 me-1"></i>Campaign (rejected)
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-outline-primary py-0 px-2"
+                            style="font-size:.75rem">Assign</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Felix Wagner</td>
+                  <td class="text-muted">456789</td>
+                  <td>
+                    <span class="assignment-dot" style="background:#6c757d"></span>Waitlist
+                  </td>
+                  <td><span class="badge bg-secondary">Waitlisted</span></td>
+                  <td class="text-muted small">
+                    <i class="bi bi-diagram-3 me-1"></i>Campaign
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-outline-secondary py-0 px-2"
+                            style="font-size:.75rem">Move</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Greta Becker</td>
+                  <td class="text-muted">567890</td>
+                  <td>
+                    <span class="assignment-dot bg-primary"></span>Fri 10–12
+                  </td>
+                  <td><span class="badge bg-success">Assigned</span></td>
+                  <td class="text-muted small">
+                    <i class="bi bi-hand-index me-1"></i>Manual
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-outline-secondary py-0 px-2"
+                            style="font-size:.75rem">Move</button>
+                  </td>
+                </tr>
+                <tr class="text-muted fst-italic">
+                  <td colspan="6" class="text-center py-2">… 82 more rows …</td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+        <!-- /pane-participants -->
+
+      </div>
+      <!-- /tab-content -->
+
+    </div>
+    <!-- /container -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            crossorigin="anonymous"></script>
+    <script>
+      const allDetails = ['tut1','tut2','tut3','tut4','cohort1','cohort2'];
+
+      function showGroup(id, el) {
+        allDetails.forEach(function(d) {
+          var node = document.getElementById('detail-' + d);
+          if (node) node.style.display = 'none';
+        });
+        var target = document.getElementById('detail-' + id);
+        if (target) target.style.display = '';
+
+        document.querySelectorAll('.group-item').forEach(function(item) {
+          item.classList.remove('active');
+        });
+        el.classList.add('active');
+      }
+    </script>
+  </body>
+</html>

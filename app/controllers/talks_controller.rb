@@ -1,5 +1,7 @@
 # TalksController
 class TalksController < ApplicationController
+  include ::RegistrationCampaignContext
+
   before_action :set_talk, except: [:new, :create]
   authorize_resource except: [:new, :create]
   before_action :set_view_locale, only: [:edit]
@@ -19,13 +21,38 @@ class TalksController < ApplicationController
     authorize! :new, @talk
     I18n.locale = @talk.lecture.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
+
+    respond_to do |format|
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TalksController#new")
+      end
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "modal-container",
+          partial: "talks/roster_modal",
+          locals: { talk: @talk }
+        )
+      end
+    end
   end
 
   def edit
+    respond_to do |format|
+      format.html
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "modal-container",
+          partial: "talks/roster_modal",
+          locals: { talk: @talk }
+        )
+      end
+    end
   end
 
   def create
     @talk = Talk.new(talk_params)
+    @talk.skip_campaigns = true if registration_section_no_campaign?
     authorize! :create, @talk
 
     dates = parse_talk_dates(params[:talk][:dates])
@@ -34,21 +61,46 @@ class TalksController < ApplicationController
     I18n.locale = @talk&.lecture&.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
     position = params[:talk][:predecessor]
-    # place the chapter in the correct position
-    if position.present?
-      @talk.insert_at(position.to_i + 1)
-    else
-      @talk.save
+
+    saved = false
+    Talk.transaction do
+      saved = if position.present?
+        @talk.insert_at(position.to_i + 1)
+        @talk.valid?
+      else
+        @talk.save
+      end
+      raise(ActiveRecord::Rollback) unless saved
+
+      saved = apply_registration_context(registerable: @talk,
+                                         lecture: @talk.lecture,
+                                         error_target: @talk)
+      raise(ActiveRecord::Rollback) unless saved
     end
-    redirect_to edit_lecture_path(@talk.lecture) if @talk.valid?
-    @errors = @talk.errors
+
+    respond_to do |format|
+      format.js do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy JS format accessed in " \
+                          "TalksController#create")
+        if saved
+          redirect_to edit_lecture_path(@talk.lecture)
+        else
+          @errors = @talk.errors
+          render :create
+        end
+      end
+      format.turbo_stream do
+        group_type = parse_group_type
+        streams = create_turbo_streams(group_type, saved)
+        render turbo_stream: streams, status: saved ? :ok : :unprocessable_content
+      end
+    end
   end
 
   def update
     I18n.locale = @talk.lecture.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
-    @talk.update(talk_params)
-    if @talk.valid?
+    if @talk.update(talk_params) && @talk.valid?
       dates = parse_talk_dates(params[:talk][:dates])
       @talk.update(dates: dates)
 
@@ -59,16 +111,58 @@ class TalksController < ApplicationController
         position -= 1 if position > @talk.position
         @talk.insert_at(position + 1)
       end
-      redirect_to edit_talk_path(@talk)
+
+      flash.now[:notice] = t("controllers.talks.updated")
+
+      respond_to do |format|
+        format.html { redirect_to edit_talk_path(@talk) }
+        format.turbo_stream do
+          parse_group_type
+          streams = []
+          streams << stream_flash if flash.present?
+          streams << refresh_campaigns_index_stream(@talk.lecture)
+          streams << turbo_stream.update("modal-container", "")
+          render turbo_stream: streams
+        end
+      end
       return
     end
+
     @errors = @talk.errors
+    respond_to do |format|
+      format.html { render :edit }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          dom_id(@talk, "form"),
+          partial: "talks/roster_modal_form",
+          locals: { talk: @talk }
+        ), status: :unprocessable_content
+      end
+    end
   end
 
   def destroy
     lecture = @talk.lecture
-    @talk.destroy
-    redirect_to edit_lecture_path(lecture)
+    if @talk.destroy
+      flash.now[:notice] = t("controllers.talks.destroyed")
+    else
+      flash.now[:alert] = t("controllers.talks.destruction_failed")
+    end
+
+    respond_to do |format|
+      format.html do
+        Rails.logger.warn("[MUESLI-DEPRECATION] Legacy HTML format accessed in " \
+                          "TalksController#destroy")
+        redirect_to edit_lecture_path(lecture)
+      end
+      format.turbo_stream do
+        parse_group_type
+        streams = []
+        streams << stream_flash if flash.present?
+        streams << refresh_campaigns_index_stream(lecture)
+        render turbo_stream: streams
+      end
+    end
   end
 
   def assemble
@@ -92,7 +186,7 @@ class TalksController < ApplicationController
     end
 
     def talk_params
-      attributes = [:title, :lecture_id, :details, :description,
+      attributes = [:title, :lecture_id, :details, :description, :capacity,
                     :display_description, { speaker_ids: [], tag_ids: [] }]
       if @talk && !current_user.in?(@talk.speakers) &&
          !@talk.display_description
@@ -115,5 +209,35 @@ class TalksController < ApplicationController
       return [] unless dates_param
 
       dates_param.values.filter_map { |d| d[:date] }.compact_blank
+    end
+
+    def parse_group_type
+      if params[:group_type].is_a?(Array)
+        params[:group_type].map(&:to_sym)
+      else
+        params[:group_type].presence&.to_sym || :talks
+      end
+    end
+
+    def create_turbo_streams(_group_type, saved)
+      streams = []
+
+      if saved
+        flash.now[:notice] = t("controllers.talks.created")
+        streams << stream_flash if flash.present?
+        streams << refresh_campaigns_index_stream(@talk.lecture)
+        streams << turbo_stream.update("modal-container", "")
+      else
+        streams << turbo_stream.replace(view_context.dom_id(Talk.new, "form"),
+                                        partial: "talks/roster_modal_form",
+                                        locals: { talk: @talk })
+        streams << stream_flash if flash.present?
+      end
+
+      streams
+    end
+
+    def registration_section_no_campaign?
+      params[:registration_section].to_s == "no_campaign"
     end
 end

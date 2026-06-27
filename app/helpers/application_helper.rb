@@ -48,6 +48,47 @@ module ApplicationHelper
     value ? "none;" : "block;"
   end
 
+  def clamped_percentage(value, max)
+    max_value = max.to_f
+    return 0 if max_value <= 0
+
+    (value.to_f / max_value * 100).clamp(0, 100)
+  end
+
+  def clamped_progress_value(value, max)
+    upper_bound = [max.to_i, 0].max
+    value.to_i.clamp(0, upper_bound)
+  end
+
+  # rubocop:disable Metrics/ParameterLists
+  def progress_bar(value, max, classification: :neutral, label: nil,
+                   height: "1.5rem", show_label: true,
+                   container_class: "progress mb-2", style: nil)
+    # rubocop:enable Metrics/ParameterLists
+    clamped_value = clamped_progress_value(value, max)
+    percentage = clamped_percentage(value, max)
+
+    color_class = case classification
+                  when :time
+                    "bg-info"
+                  when :neutral
+                    "bg-primary"
+                  else
+                    "bg-#{classification}"
+    end
+
+    tag.div(class: container_class, style: [style, "height: #{height}"].compact.join("; ")) do
+      tag.div(class: "progress-bar #{color_class}",
+              role: "progressbar",
+              style: "width: #{percentage}%",
+              "aria-valuenow": clamped_value,
+              "aria-valuemin": 0,
+              "aria-valuemax": max) do
+        label || "#{percentage.round}%" if show_label
+      end
+    end
+  end
+
   def show(value)
     value ? "block;" : "none;"
   end
@@ -269,10 +310,13 @@ module ApplicationHelper
   def helpdesk(text, html, title = t("info"))
     tag.i(class: "far fa-question-circle helpdesk ms-2",
           tabindex: -1,
-          "data-bs-toggle": "popover",
-          "data-bs-trigger": "focus",
-          "data-bs-content": text,
-          "data-bs-html": html,
+          data: {
+            controller: "bs-popover",
+            "bs-toggle": "popover",
+            "bs-trigger": "focus",
+            "bs-content": text,
+            "bs-html": html
+          },
           title: title)
   end
 
@@ -319,5 +363,13 @@ module ApplicationHelper
     result.first(length).tap do |truncated|
       return truncated.length < length ? truncated : "#{truncated}..."
     end
+  end
+
+  def format_talk_dates(dates)
+    return "" if dates.blank?
+
+    safe_join(dates.sort.map do |date|
+      tag.span(l(date, format: :long), class: "badge bg-light text-dark border me-1")
+    end)
   end
 end

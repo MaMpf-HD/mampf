@@ -1,0 +1,110 @@
+<% if notice_messages.present? %>
+  <div class="student-registration-rosterized-notice <%= "student-registration-rosterized-notice--neutral" if neutral_notice? %> mb-4">
+    <div class="student-registration-rosterized-shell <%= "student-registration-rosterized-shell--neutral" if neutral_notice? %>">
+      <div class="student-registration-rosterized-kicker <%= "student-registration-rosterized-kicker--message" if custom_notice? %>">
+        <% if custom_notice? %>
+          <% notice_messages.each do |message| %>
+            <p class="student-registration-rosterized-message mb-0">
+              <%= message %>
+            </p>
+          <% end %>
+        <% else %>
+          <%= default_notice %>
+        <% end %>
+      </div>
+
+      <% if rosterized_entries.present? %>
+        <div class="student-registration-rosterized-list">
+          <% rosterized_entries.each do |rosterized_entry| %>
+            <article class="student-registration-rosterized-entry">
+              <div class="student-registration-rosterized-type">
+                <%= entry_type(rosterized_entry) %>
+              </div>
+
+              <h5 class="student-registration-rosterized-title mb-0">
+                <%= rosterized_entry.title %>
+              </h5>
+
+              <% if entry_description(rosterized_entry).present? %>
+                <p class="student-registration-rosterized-description mb-0">
+                  <%= entry_description(rosterized_entry) %>
+                </p>
+              <% end %>
+
+              <div class="student-registration-rosterized-meta-list">
+                <% entry_metadata_rows(rosterized_entry).each do |row| %>
+                  <div class="student-registration-rosterized-meta-pill">
+                    <i class="bi <%= row[:icon] %>" aria-hidden="true"></i>
+
+                    <div class="student-registration-rosterized-meta-copy">
+                      <div class="student-registration-rosterized-meta-label">
+                        <%= row[:label] %>
+                      </div>
+
+                      <div class="student-registration-rosterized-meta-value">
+                        <%= row[:value] %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </article>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if unremovable_assignment_notice? %>
+        <p class="student-registration-rosterized-lock-note mb-0">
+          <%= t("registration.user_registration.index.unremovable_assignment_notice") %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<% if unallocated_results.present? %>
+  <div
+    class="
+      student-registration-rosterized-notice
+      student-registration-rosterized-notice--negative mb-4
+    "
+    data-testid="registration-unallocated-notice"
+  >
+    <% unallocated_results.each do |result| %>
+      <p
+        class="student-registration-rosterized-message mb-0"
+        data-testid="registration-unallocated-message"
+      >
+        <%= t("registration.user_registration.index.unallocated_preference_notice_html",
+              campaign: campaign_title(result[:campaign]),
+              preferences: result[:preferences].join(", ")) %>
+      </p>
+    <% end %>
+  </div>
+<% end %>
+
+<% if policy_rejection_results.present? %>
+  <div
+    class="
+      student-registration-rosterized-notice
+      student-registration-rosterized-notice--negative mb-4
+    "
+    data-testid="registration-policy-rejection-notice"
+  >
+    <% policy_rejection_results.each do |result| %>
+      <p
+        class="student-registration-rosterized-message mb-2"
+        data-testid="registration-policy-rejection-message"
+      >
+        <%= t("registration.user_registration.index.policy_rejection_notice_html",
+              campaign: campaign_title(result[:campaign])) %>
+      </p>
+
+      <ul class="student-registration-rosterized-message mb-0 ps-3">
+        <% result[:messages].each do |message| %>
+          <li class="mb-1"><%= message %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>

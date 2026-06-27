@@ -1,0 +1,21 @@
+require "rails_helper"
+
+RSpec.describe("Dev") do
+  describe "POST /dev/teacher_login" do
+    it "is not routable outside of development" do
+      teacher_routes = Rails.application.routes.routes.select do |r|
+        r.path.spec.to_s.include?("dev/teacher_login")
+      end
+      expect(teacher_routes).to be_empty
+    end
+  end
+
+  describe "POST /dev/impersonate/:id" do
+    it "is not routable outside of development" do
+      impersonate_routes = Rails.application.routes.routes.select do |r|
+        r.path.spec.to_s.include?("dev/impersonate")
+      end
+      expect(impersonate_routes).to be_empty
+    end
+  end
+end
