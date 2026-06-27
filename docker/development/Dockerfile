@@ -78,6 +78,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
     && mkdir -p /usr/local/bundle && chown -R $USERNAME /usr/local/bundle \
     && mkdir -p /cache && chown -R $USERNAME /cache \
+    # yarn 4 creates .yarn/ in the workspace root during CI_BUILD; the non-root user must own the dir itself
+    && mkdir -p /workspaces/mampf && chown $USERNAME /workspaces/mampf \
     && mkdir -p /workspaces/mampf/node_modules/ && chown -R $USERNAME /workspaces/mampf/node_modules/ \
     && mkdir -p /workspaces/mampf/public/ && chown -R $USERNAME /workspaces/mampf/public/ \
     && mkdir -p /workspaces/mampf/public/uploads/ && chown -R $USERNAME /workspaces/mampf/public/uploads/ \
