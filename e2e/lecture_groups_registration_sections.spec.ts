@@ -40,12 +40,8 @@ test.describe("lecture group registration sections", () => {
       await expect(campaignSection.getByTestId("registration-campaign-section-body"))
         .toBeVisible();
 
-      const noCampaignSection = page.getByTestId("registration-no-campaign-section");
-      await expect(
-        noCampaignSection.getByRole("button", { name: "Without Registration Process" }),
-      ).toHaveAttribute("aria-expanded", "false");
-      await expect(noCampaignSection.getByTestId("registration-no-campaign-section-body"))
-        .not.toBeVisible();
+      await expect(page.getByTestId("registration-no-campaign-section-body"))
+        .toBeVisible();
     });
 
   test("opens the ambient section after choosing it",
