@@ -847,19 +847,17 @@ test.describe("campaign registration", () => {
       registerable_id: secondPreferenceTutorial.id,
     });
 
-    await factory.create("registration_user_registration", [], {
+    await factory.create("registration_user_registration", ["capacity_rejected"], {
       user_id: student.user.id,
       registration_campaign_id: campaign.id,
       registration_item_id: item.id,
       preference_rank: 1,
-      status: "rejected",
     });
-    await factory.create("registration_user_registration", [], {
+    await factory.create("registration_user_registration", ["capacity_rejected"], {
       user_id: student.user.id,
       registration_campaign_id: campaign.id,
       registration_item_id: secondPreferenceItem.id,
       preference_rank: 2,
-      status: "rejected",
     });
 
     const secondCampaign = await factory.create(
@@ -882,12 +880,11 @@ test.describe("campaign registration", () => {
       registerable_type: "Tutorial",
       registerable_id: secondTutorial.id,
     });
-    await factory.create("registration_user_registration", [], {
+    await factory.create("registration_user_registration", ["capacity_rejected"], {
       user_id: student.user.id,
       registration_campaign_id: secondCampaign.id,
       registration_item_id: secondItem.id,
       preference_rank: 1,
-      status: "rejected",
     });
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
