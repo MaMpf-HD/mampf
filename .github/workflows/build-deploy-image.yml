@@ -64,6 +64,12 @@ jobs:
           cache-from: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache,mode=max
 
+      # NOTE: this Trivy scan is intentionally advisory (non-gating). exit-code
+      # "0" means findings never fail the build; the image is already pushed and
+      # cosign-signed above, and the next step only writes a summary. This is a
+      # deliberate decision (visibility over enforcement), not an oversight. To
+      # turn it into a gate later, scan the locally-built image before push with
+      # exit-code "1" and severity CRITICAL,HIGH.
       - name: Scan published runtime image
         id: trivy_scan
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
