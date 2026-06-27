@@ -3,6 +3,7 @@ class UploadEndpointAuthorization
     "correction" => CorrectionUploader,
     "geogebra" => GeogebraUploader,
     "pdf" => PdfUploader,
+    "profile_image" => ProfileimageUploader,
     "screenshot" => ScreenshotUploader,
     "video" => VideoUploader
   }.freeze
@@ -22,14 +23,15 @@ class UploadEndpointAuthorization
         # upload intent: a historic editor of an existing non-talk medium
         # must still be able to replace the video on that medium.
         content_editor?(user) || user&.speaker?
-      when "PdfUploader", "GeogebraUploader", "ScreenshotUploader"
+      when "PdfUploader", "GeogebraUploader", "ScreenshotUploader",
+           "ProfileimageUploader"
         content_editor?(user)
       when "CorrectionUploader"
         content_editor?(user) || user&.tutor?
-      when "SubmissionUploader", "ProfileimageUploader"
-        # Intentionally open to any authenticated user; these endpoints sit
-        # behind `authenticate :user`. Listed explicitly so the gate fails
-        # closed for any future uploader not covered above.
+      when "SubmissionUploader"
+        # Manuscript submissions are intentionally open to any authenticated
+        # user; the endpoint sits behind `authenticate :user`. Listed explicitly
+        # so the gate fails closed for any future uploader not covered above.
         true
       else
         raise(ArgumentError, "Unhandled uploader: #{uploader_class.name}")

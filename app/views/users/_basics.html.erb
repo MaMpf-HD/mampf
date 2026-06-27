@@ -51,6 +51,7 @@
     </div>
   </div>
 </div>
+<% if UploadEndpointAuthorization.authorized?(uploader_class: ProfileimageUploader, user: current_user) %>
 <%= t('admin.user.profile_image') %>
 <%= helpdesk(t('admin.user.info.profile_image'), false) %>
 <div class="row">
@@ -82,3 +83,4 @@
           </div>
           <%= render partial: 'users/upload_image',
                      locals: { user: user } %>
+<% end %>

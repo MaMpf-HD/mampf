@@ -80,7 +80,7 @@ class UsersController < ApplicationController
 
     authorize! :image, @user
 
-    file = image_file_for(@user, params[:variant])
+    file = image_file_for(@user, image_variant_for(@user))
     return head :not_found if file.nil?
 
     send_stored_file(file, disposition: "inline", fallback: @user.image_filename || "user-image")
@@ -103,6 +103,15 @@ class UsersController < ApplicationController
   end
 
   private
+
+    # Only the owner and admins may fetch the original upload (full resolution
+    # and EXIF). Everyone else — e.g. a student viewing a teacher profile — is
+    # served the resized, metadata-stripped derivative.
+    def image_variant_for(user)
+      return params[:variant] if current_user.admin? || current_user == user
+
+      "normalized"
+    end
 
     def image_file_for(user, variant)
       case variant

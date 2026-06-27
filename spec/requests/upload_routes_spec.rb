@@ -74,12 +74,16 @@ RSpec.describe("UploadRoutes", type: :request) do
       )
     end
 
-    it "allows low-privilege users for unrestricted uploaders" do
+    it "rejects low-privilege users for /internal/upload-authorizations/profile_image" do
       sign_in user
 
-      get "/internal/upload-authorizations/profile_image"
+      get "/internal/upload-authorizations/profile_image",
+          params: { locale: user.locale }
 
-      expect(response).to have_http_status(:not_found)
+      expect(response).to have_http_status(:forbidden)
+      expect(response.headers["X-Upload-Authorization-Message"]).to eq(
+        I18n.t("submission.upload_failure_unauthorized", locale: user.locale)
+      )
     end
 
     context "when the user is an editor" do
@@ -94,6 +98,15 @@ RSpec.describe("UploadRoutes", type: :request) do
         sign_in user
 
         get "/internal/upload-authorizations/pdf", params: { locale: user.locale }
+
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it "allows profile image uploads" do
+        sign_in user
+
+        get "/internal/upload-authorizations/profile_image",
+            params: { locale: user.locale }
 
         expect(response).to have_http_status(:no_content)
       end
@@ -192,13 +205,16 @@ RSpec.describe("UploadRoutes", type: :request) do
       expect(response).to have_http_status(:ok)
     end
 
-    it "still allows low-privilege users on /profile_image/upload" do
+    it "rejects low-privilege users on /profile_image/upload" do
       upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "image.png"),
                                             "image/png")
 
       post "/profile_image/upload", params: { file: upload }
 
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:forbidden)
+      expect(response.body).to include(
+        I18n.t("submission.upload_failure_unauthorized", locale: user.locale)
+      )
     end
 
     context "when the user is an editor" do
