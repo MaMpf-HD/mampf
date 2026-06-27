@@ -60,7 +60,7 @@ RSpec.describe(UserRegistrations::CampaignDetailsService, type: :service) do
         result = service.eligibility
 
         expect(result.first[:config]["prerequisite_campaign"])
-          .to eq("#{lecture.title}: Prereq Desc")
+          .to eq("Prereq Desc")
       end
     end
 

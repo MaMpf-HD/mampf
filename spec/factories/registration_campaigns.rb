@@ -120,6 +120,13 @@ FactoryBot.define do
       end
     end
 
+    trait :with_finalization_policy do
+      after(:build) do |campaign|
+        create(:registration_policy, :institutional_email, :for_finalization,
+               registration_campaign: campaign)
+      end
+    end
+
     trait :with_prerequisite_policy do
       transient do
         parent_campaign { nil }
@@ -134,6 +141,24 @@ FactoryBot.define do
 
         create(:registration_policy,
                :prerequisite_campaign,
+               registration_campaign: child_campaign,
+               config: { "prerequisite_campaign_id" => id })
+      end
+    end
+
+    trait :with_finalization_prerequisite_policy do
+      transient do
+        parent_campaign { nil }
+        parent_campaign_id { nil }
+      end
+
+      after(:build) do |child_campaign, evaluator|
+        id = evaluator.parent_campaign&.id || evaluator.parent_campaign_id
+        raise ArgumentError, "parent_campaign must be provided" unless id
+
+        create(:registration_policy,
+               :prerequisite_campaign,
+               :for_finalization,
                registration_campaign: child_campaign,
                config: { "prerequisite_campaign_id" => id })
       end

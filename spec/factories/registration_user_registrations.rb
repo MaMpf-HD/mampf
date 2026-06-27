@@ -21,6 +21,22 @@ FactoryBot.define do
       status { :rejected }
     end
 
+    trait :capacity_rejected do
+      rejected
+
+      rejection_reason_type do
+        Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY
+      end
+    end
+
+    trait :policy_rejected do
+      rejected
+
+      rejection_reason_type do
+        Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY
+      end
+    end
+
     trait :first_come_first_served do
       association :registration_campaign,
                   factory: [:registration_campaign, :first_come_first_served]

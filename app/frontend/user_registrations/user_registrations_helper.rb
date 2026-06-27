@@ -44,10 +44,7 @@ module UserRegistrationsHelper
   end
 
   def student_registration_campaign_title(campaign)
-    description = campaign.description.to_s.strip
-    return description if description.present?
-
-    t("registration.user_registration.campaign_main")
+    campaign.student_facing_title
   end
 
   def student_registration_instruction(campaign, items = [])

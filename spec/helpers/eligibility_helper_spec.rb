@@ -5,71 +5,62 @@ RSpec.describe(EligibilityHelper, type: :helper) do
     I18n.with_locale(:en) { example.run }
   end
 
-  describe "#eligible_for_registration?" do
-    it "returns true when all policies pass" do
-      eligibility = [
-        { kind: "institutional_email", outcome: { pass: true } },
-        { kind: "prerequisite_campaign", outcome: { pass: true } }
-      ]
-
-      expect(helper.eligible_for_registration?(eligibility)).to be(true)
-    end
-
-    it "returns false when one policy fails" do
-      eligibility = [
-        { kind: "institutional_email", outcome: { pass: true } },
-        { kind: "prerequisite_campaign", outcome: { pass: false } }
-      ]
-
-      expect(helper.eligible_for_registration?(eligibility)).to be(false)
-    end
-  end
-
-  describe "#student_registration_ineligible?" do
-    let(:eligibility) do
-      [{ kind: "institutional_email", outcome: { pass: false } }]
-    end
-
-    it "returns true for an incomplete campaign with failed eligibility" do
-      campaign = build(:registration_campaign, status: :open)
-
-      expect(helper.student_registration_ineligible?(campaign, eligibility))
-        .to be(true)
-    end
-
-    it "returns false for completed campaigns" do
-      campaign = build(:registration_campaign, :completed)
-
-      expect(helper.student_registration_ineligible?(campaign, eligibility))
-        .to be(false)
-    end
-  end
-
-  describe "#failed_eligibility_policies" do
-    it "returns only the failing policies" do
-      eligibility = [
-        { kind: "institutional_email", outcome: { pass: true } },
-        { kind: "prerequisite_campaign", outcome: { pass: false } }
-      ]
-
-      expect(helper.failed_eligibility_policies(eligibility))
-        .to eq([eligibility.last])
-    end
-  end
-
   describe "#eligibility_failure_message" do
     it "renders advice for institutional email mismatches" do
+      user = build_stubbed(:confirmed_user, email: "student@play")
       policy = {
         kind: "institutional_email",
         config: { "allowed_domains" => ["uni-heidelberg.de"] },
         outcome: { pass: false, code: :institutional_email_mismatch }
       }
 
-      html = helper.eligibility_failure_message(policy)
+      html = helper.eligibility_failure_message(policy, user: user)
 
+      expect(html).to include("play")
       expect(html).to include("uni-heidelberg.de")
       expect(html).to include(edit_profile_path)
       expect(html).to include('target="_top"')
+    end
+
+    it "renders finalization warnings for institutional email mismatches with the current domain" do
+      user = build_stubbed(:confirmed_user, email: "student@play")
+      policy = {
+        kind: "institutional_email",
+        config: { "allowed_domains" => ["uni-heidelberg.de"] },
+        outcome: { pass: false, code: :institutional_email_mismatch }
+      }
+
+      html = helper.eligibility_failure_message(
+        policy,
+        user: user,
+        context: :finalization_warning
+      )
+
+      expect(html).to include("play")
+      expect(html).to include("uni-heidelberg.de")
+      expect(html).to include(edit_profile_path)
+      expect(html).to include("will be rejected")
+    end
+
+    it "renders finalization rejections for institutional email mismatches " \
+       "without the current domain" do
+      user = build_stubbed(:confirmed_user, email: "student@play")
+      policy = {
+        kind: "institutional_email",
+        config: { "allowed_domains" => ["uni-heidelberg.de"] },
+        outcome: { pass: false, code: :institutional_email_mismatch }
+      }
+
+      html = helper.eligibility_failure_message(
+        policy,
+        user: user,
+        context: :finalization_rejection
+      )
+
+      expect(html).to include("At the time this registration process was finalized")
+      expect(html).to include("uni-heidelberg.de")
+      expect(html).not_to include("play")
+      expect(html).not_to include(edit_profile_path)
     end
 
     it "renders advice for institutional email configuration errors" do
@@ -79,7 +70,7 @@ RSpec.describe(EligibilityHelper, type: :helper) do
         outcome: { pass: false, code: :configuration_error }
       }
 
-      expect(helper.eligibility_failure_message(policy))
+      expect(helper.eligibility_failure_message(policy, user: nil))
         .to include("not configured")
     end
 
@@ -93,6 +84,85 @@ RSpec.describe(EligibilityHelper, type: :helper) do
       html = helper.eligibility_failure_message(policy)
 
       expect(html).to include("Linear Algebra: Priority registration")
+    end
+
+    it "renders phase-specific wording for prerequisite finalization warnings" do
+      policy = {
+        kind: "prerequisite_campaign",
+        config: { "prerequisite_campaign" => "Linear Algebra: Priority registration" },
+        outcome: { pass: false, code: :prerequisite_not_met }
+      }
+
+      html = helper.eligibility_failure_message(
+        policy,
+        context: :finalization_warning
+      )
+
+      expect(html)
+        .to include("If this remains unchanged when the registration process is finalized")
+      expect(html).not_to include("before you can register here")
+    end
+
+    it "renders phase-specific wording for prerequisite finalization rejections" do
+      policy = {
+        kind: "prerequisite_campaign",
+        config: { "prerequisite_campaign" => "Linear Algebra: Priority registration" },
+        outcome: { pass: false, code: :prerequisite_not_met }
+      }
+
+      html = helper.eligibility_failure_message(
+        policy,
+        context: :finalization_rejection
+      )
+
+      expect(html).to include("At the time this registration process was finalized")
+      expect(html).not_to include("before you can register here")
+    end
+
+    it "renders policy overview status labels" do
+      pass_policy = {
+        kind: "institutional_email",
+        config: { "allowed_domains" => ["uni-heidelberg.de"] },
+        outcome: { pass: true }
+      }
+      unclear_policy = {
+        kind: "prerequisite_campaign",
+        config: { "prerequisite_campaign" => "Priority registration" },
+        outcome: { pass: false, code: :prerequisite_campaign_not_found }
+      }
+
+      expect(helper.eligibility_policy_status_label(pass_policy))
+        .to eq("Currently fulfilled")
+      expect(helper.eligibility_policy_status_label(unclear_policy))
+        .to eq("Needs clarification")
+    end
+
+    it "renders a policy overview hint for email mismatches" do
+      user = build_stubbed(:confirmed_user, email: "student@play")
+      policy = {
+        kind: "institutional_email",
+        config: { "allowed_domains" => ["uni-heidelberg.de"] },
+        outcome: { pass: false, code: :institutional_email_mismatch }
+      }
+
+      html = helper.eligibility_policy_hint(policy, user: user)
+
+      expect(html).to include("Current domain: play")
+      expect(html).to include(edit_profile_path)
+    end
+
+    it "renders a policy overview hint for finalization prerequisite failures" do
+      policy = {
+        kind: "prerequisite_campaign",
+        config: { "prerequisite_campaign" => "Linear Algebra: Priority registration" },
+        outcome: { pass: false, code: :prerequisite_not_met }
+      }
+
+      html = helper.eligibility_policy_hint(policy,
+                                            context: :finalization_warning)
+
+      expect(html).to include("before the final allocation")
+      expect(html).to include("Priority registration")
     end
 
     it "renders advice for missing prerequisite campaigns" do

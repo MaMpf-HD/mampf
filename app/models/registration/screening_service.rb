@@ -73,6 +73,7 @@ module Registration
             registration_id: registration.id,
             name: user.name,
             email: user.email,
+            policy_id: policy.id,
             policy: policy.kind,
             policy_config: policy.config,
             classification: outcome[:classification],
