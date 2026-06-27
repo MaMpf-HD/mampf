@@ -114,10 +114,10 @@ class RosterizedEntriesComponent < ViewComponent::Base
       end
 
       if fulfilled
-        t("registration.user_registration.index.fulfilled_preference_notice",
+        t("registration.user_registration.index.fulfilled_preference_notice_html",
           rank: preference_rank_label(fulfilled.preference_rank))
       else
-        t("registration.user_registration.index.unfulfilled_preferences_notice",
+        t("registration.user_registration.index.unfulfilled_preferences_notice_html",
           preferences: preference_labels(registrations))
       end
     end

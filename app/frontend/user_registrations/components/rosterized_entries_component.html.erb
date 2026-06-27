@@ -75,7 +75,7 @@
         class="student-registration-rosterized-message mb-0"
         data-testid="registration-unallocated-message"
       >
-        <%= t("registration.user_registration.index.unallocated_preference_notice",
+        <%= t("registration.user_registration.index.unallocated_preference_notice_html",
               campaign: campaign_title(result[:campaign]),
               preferences: result[:preferences].join(", ")) %>
       </p>
@@ -96,7 +96,7 @@
         class="student-registration-rosterized-message mb-2"
         data-testid="registration-policy-rejection-message"
       >
-        <%= t("registration.user_registration.index.policy_rejection_notice",
+        <%= t("registration.user_registration.index.policy_rejection_notice_html",
               campaign: campaign_title(result[:campaign])) %>
       </p>
 

@@ -263,15 +263,15 @@ en:
         confirmed_cases: "Your registration is confirmed for"
         unassigned_notice: "You are not registered in any group yet."
         pending_preference_notice: "You are not registered in any group yet. After the registration period ends, you will be assigned based on your preferences."
-        fulfilled_preference_notice: "We could fulfill your %{rank} preference."
+        fulfilled_preference_notice_html: "We could fulfill your <em>%{rank}</em> preference."
         fulfilled_preference_ranks:
           "1": "1st"
           "2": "2nd"
           "3": "3rd"
-        unfulfilled_preferences_notice: "Unfortunately, your preferences (%{preferences}) could not be fulfilled."
-        unallocated_preference_notice: "Unfortunately, your registration for %{campaign} could not be considered because there were more registrations than available places. We received your preferences: %{preferences}."
-        policy_rejection_notice: >-
-          Your registration for %{campaign} was rejected for the following reasons:
+        unfulfilled_preferences_notice_html: "Unfortunately, your preferences (<em>%{preferences}</em>) could not be fulfilled."
+        unallocated_preference_notice_html: "Unfortunately, your registration for <em>%{campaign}</em> could not be considered because there were more registrations than available places. We received your preferences: <em>%{preferences}</em>."
+        policy_rejection_notice_html: >-
+          Your registration for <em>%{campaign}</em> was rejected for the following reasons:
         unknown_tutor: "A tutor has not been assigned yet."
         unremovable_assignment_notice: "You cannot leave this tutorial because the lecturer has set it up this way."
         first_choice_title: "1st Choice Registrations"
@@ -354,20 +354,20 @@ en:
           not_fulfilled: "Currently not fulfilled"
           needs_clarification: "Needs clarification"
         policies:
-          institutional_email: "Email domain must be %{domains}"
-          prerequisite_campaign: "Confirmed registration in %{campaign}"
-          student_performance: "Student performance status must be %{status}"
-          generic: "Requirement: %{requirement}"
+          institutional_email_html: "Email domain must be <em>%{domains}</em>"
+          prerequisite_campaign_html: "Confirmed registration in <em>%{campaign}</em>"
+          student_performance_html: "Student performance status must be <em>%{status}</em>"
+          generic_html: "Requirement: <em>%{requirement}</em>"
         hints:
           institutional_email_registration_html: >-
             Current domain: %{current_domain}. Update your email in %{profile}.
           institutional_email_finalization_html: >-
             Current domain: %{current_domain}. Update your email in %{profile}
             before the final allocation.
-          prerequisite_campaign_registration: >-
-            Complete %{campaign} successfully first.
-          prerequisite_campaign_finalization: >-
-            Complete %{campaign} successfully before the final allocation.
+          prerequisite_campaign_registration_html: >-
+            Complete <em>%{campaign}</em> successfully first.
+          prerequisite_campaign_finalization_html: >-
+            Complete <em>%{campaign}</em> successfully before the final allocation.
           student_performance: >-
             If you believe you already fulfill this requirement, contact the
             lecturer or teaching assistant.
@@ -377,33 +377,33 @@ en:
       eligibility_failures:
         current_domain_unknown: "an unknown domain"
         institutional_email_mismatch_html: >-
-          Your current email domain is %{current_domain}, but this registration
-          process requires %{domains}. Go to your %{profile} and update your
+          Your current email domain is <em>%{current_domain}</em>, but this registration
+          process requires <em>%{domains}</em>. Go to your %{profile} and update your
           email there.
         institutional_email_finalization_warning_html: >-
-          Your current email domain is %{current_domain}, but this registration
-          process also requires %{domains} at finalization. If this remains
+          Your current email domain is <em>%{current_domain}</em>, but this registration
+          process also requires <em>%{domains}</em> at finalization. If this remains
           unchanged when the registration process is finalized, your
           registration will be rejected. Go to your %{profile} and update your
           email there.
-        institutional_email_finalization_rejection: >-
+        institutional_email_finalization_rejection_html: >-
           At the time this registration process was finalized, your email domain
-          did not match the required email domains %{domains}. Changing your
+          did not match the required email domains <em>%{domains}</em>. Changing your
           email address afterwards does not automatically restore this
           registration. If you still want to be admitted, please contact the
           lecturer or teaching assistant.
         institutional_email_configuration_error: "The required institutional email domains are not configured for this campaign. Please contact the course administration."
-        prerequisite_not_met: "You need a confirmed registration in %{campaign} before you can register here. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
-        prerequisite_not_met_finalization_warning: "You currently do not have a confirmed registration in %{campaign}. If this remains unchanged when the registration process is finalized, your registration will be rejected."
-        prerequisite_not_met_finalization_rejection: "At the time this registration process was finalized, you did not have a confirmed registration in %{campaign}. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
-        prerequisite_campaign_not_found: "The required prerequisite registration %{campaign} is currently unavailable. Please contact the course administration."
+        prerequisite_not_met_html: "You need a confirmed registration in <em>%{campaign}</em> before you can register here. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        prerequisite_not_met_finalization_warning_html: "You currently do not have a confirmed registration in <em>%{campaign}</em>. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        prerequisite_not_met_finalization_rejection_html: "At the time this registration process was finalized, you did not have a confirmed registration in <em>%{campaign}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
+        prerequisite_campaign_not_found_html: "The required prerequisite registration <em>%{campaign}</em> is currently unavailable. Please contact the course administration."
         prerequisite_configuration_error: "This campaign depends on a prerequisite registration that is not configured correctly. Please contact the course administration."
-        student_performance_failed: "Your student performance status does not match the required status %{status}. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
-        student_performance_failed_finalization_warning: "Your current student performance status does not match the required status %{status}. If this remains unchanged when the registration process is finalized, your registration will be rejected."
-        student_performance_failed_finalization_rejection: "At the time this registration process was finalized, your student performance status did not match the required status %{status}. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
-        generic_html: "You do not currently meet the %{requirement} requirement. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
-        generic_finalization_warning_html: "You do not currently meet the %{requirement} requirement. If this remains unchanged when the registration process is finalized, your registration will be rejected."
-        generic_finalization_rejection_html: "At the time this registration process was finalized, you did not meet the %{requirement} requirement. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
+        student_performance_failed_html: "Your student performance status does not match the required status <em>%{status}</em>. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        student_performance_failed_finalization_warning_html: "Your current student performance status does not match the required status <em>%{status}</em>. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        student_performance_failed_finalization_rejection_html: "At the time this registration process was finalized, your student performance status did not match the required status <em>%{status}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
+        generic_html: "You do not currently meet the <em>%{requirement}</em> requirement. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        generic_finalization_warning_html: "You do not currently meet the <em>%{requirement}</em> requirement. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        generic_finalization_rejection_html: "At the time this registration process was finalized, you did not meet the <em>%{requirement}</em> requirement. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
       withdraw_first: "Withdraw first"
       filter_placeholder: "Filter by weekday, time, tutor"
       status_for_registration: "Current statuses of your submitted options"

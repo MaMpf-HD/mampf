@@ -16,18 +16,18 @@ module EligibilityHelper
     case policy[:kind].to_s
     when "institutional_email"
       t("registration.user_registration.policy_overview.policies." \
-        "institutional_email",
+        "institutional_email_html",
         domains: policy_config_info(policy))
     when "prerequisite_campaign"
       t("registration.user_registration.policy_overview.policies." \
-        "prerequisite_campaign",
+        "prerequisite_campaign_html",
         campaign: prerequisite_campaign_label(policy))
     when "student_performance"
       t("registration.user_registration.policy_overview.policies." \
-        "student_performance",
+        "student_performance_html",
         status: policy_config_info(policy))
     else
-      t("registration.user_registration.policy_overview.policies.generic",
+      t("registration.user_registration.policy_overview.policies.generic_html",
         requirement: eligibility_requirement_label(policy))
     end
   end
@@ -116,7 +116,7 @@ module EligibilityHelper
         ]
       when "prerequisite_campaign_not_found"
         [
-          "registration.user_registration.eligibility_failures.prerequisite_campaign_not_found",
+          "registration.user_registration.eligibility_failures.prerequisite_campaign_not_found_html",
           { campaign: prerequisite_campaign_label(policy) }
         ]
       when "configuration_error"
@@ -161,7 +161,7 @@ module EligibilityHelper
       when :finalization_rejection
         [
           "registration.user_registration.eligibility_failures." \
-          "institutional_email_finalization_rejection",
+          "institutional_email_finalization_rejection_html",
           { domains: policy_config_info(policy) }
         ]
       else
@@ -196,10 +196,10 @@ module EligibilityHelper
     def prerequisite_campaign_policy_hint(policy, context: :registration)
       key = if context == :finalization_warning
         "registration.user_registration.policy_overview.hints." \
-          "prerequisite_campaign_finalization"
+          "prerequisite_campaign_finalization_html"
       else
         "registration.user_registration.policy_overview.hints." \
-          "prerequisite_campaign_registration"
+          "prerequisite_campaign_registration_html"
       end
 
       t(key, campaign: prerequisite_campaign_label(policy))
@@ -249,12 +249,12 @@ module EligibilityHelper
       case context
       when :finalization_warning
         "registration.user_registration.eligibility_failures." \
-        "prerequisite_not_met_finalization_warning"
+        "prerequisite_not_met_finalization_warning_html"
       when :finalization_rejection
         "registration.user_registration.eligibility_failures." \
-        "prerequisite_not_met_finalization_rejection"
+        "prerequisite_not_met_finalization_rejection_html"
       else
-        "registration.user_registration.eligibility_failures.prerequisite_not_met"
+        "registration.user_registration.eligibility_failures.prerequisite_not_met_html"
       end
     end
 
@@ -262,13 +262,13 @@ module EligibilityHelper
       case context
       when :finalization_warning
         "registration.user_registration.eligibility_failures." \
-        "student_performance_failed_finalization_warning"
+        "student_performance_failed_finalization_warning_html"
       when :finalization_rejection
         "registration.user_registration.eligibility_failures." \
-        "student_performance_failed_finalization_rejection"
+        "student_performance_failed_finalization_rejection_html"
       else
         "registration.user_registration.eligibility_failures." \
-        "student_performance_failed"
+        "student_performance_failed_html"
       end
     end
 
