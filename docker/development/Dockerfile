@@ -81,6 +81,10 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && mkdir -p /workspaces/mampf/node_modules/ && chown -R $USERNAME /workspaces/mampf/node_modules/ \
     && mkdir -p /workspaces/mampf/public/ && chown -R $USERNAME /workspaces/mampf/public/ \
     && mkdir -p /workspaces/mampf/public/uploads/ && chown -R $USERNAME /workspaces/mampf/public/uploads/ \
+    # Pre-create the Claude Code data dir so the fresh named volume mounted
+    # here (see compose.devcontainer.yml) inherits mampf ownership instead of
+    # being root-owned. Avoids a chown workaround on every rebuild.
+    && mkdir -p /workspaces/claude && chown -R $USERNAME /workspaces/claude \
     # [Optional] Add sudo support
     && apt-get update \
     && apt-get install -y sudo \
