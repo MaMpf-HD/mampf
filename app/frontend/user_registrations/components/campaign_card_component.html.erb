@@ -50,7 +50,7 @@
       <% if finalization_policy_warning? %>
         <div
           class="
-            p-3 pb-4 rounded
+            p-3 rounded
             student-registration-campaign-notice
             student-registration-campaign-notice--ineligible
           "
@@ -62,16 +62,6 @@
           <p class="student-registration-campaign-notice-body mb-2">
             <%= t("registration.user_registration.finalization_policy_notice.description") %>
           </p>
-
-          <ul class="student-registration-campaign-notice-body mb-0 ps-3">
-            <% failed_finalization_policies.each do |policy| %>
-              <li class="mb-1">
-                <%= eligibility_failure_message(policy,
-                                                user: helpers.current_user,
-                                                context: :finalization_warning) %>
-              </li>
-            <% end %>
-          </ul>
         </div>
       <% end %>
     </div>
@@ -140,8 +130,19 @@
                   <ul class="student-registration-policy-overview-list list-unstyled mb-0">
                     <% section[:policies].each do |policy| %>
                       <li class="student-registration-policy-overview-item">
-                        <div class="student-registration-policy-overview-rule">
-                          <%= eligibility_policy_summary(policy) %>
+                        <div class="student-registration-policy-overview-copy">
+                          <div class="student-registration-policy-overview-rule">
+                            <%= eligibility_policy_summary(policy) %>
+                          </div>
+
+                          <% hint = policy_overview_hint(policy,
+                                                         context: section[:context]) %>
+
+                          <% if hint.present? %>
+                            <div class="student-registration-policy-overview-hint">
+                              <%= hint %>
+                            </div>
+                          <% end %>
                         </div>
 
                         <span class="badge student-registration-policy-overview-status <%= eligibility_policy_status_badge_class(policy) %>">

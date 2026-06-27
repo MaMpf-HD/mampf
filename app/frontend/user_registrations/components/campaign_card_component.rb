@@ -50,6 +50,7 @@ class CampaignCardComponent < ViewComponent::Base
                                 "registration_description"),
             empty_text: I18n.t("registration.user_registration.policy_overview." \
                                "registration_empty"),
+            context: :registration,
             policies: eligibility
           ),
           policy_section(
@@ -59,6 +60,7 @@ class CampaignCardComponent < ViewComponent::Base
                                 "finalization_description"),
             empty_text: I18n.t("registration.user_registration.policy_overview." \
                                "finalization_empty"),
+            context: :finalization_warning,
             policies: finalization_eligibility
           )
         ]
@@ -89,17 +91,22 @@ class CampaignCardComponent < ViewComponent::Base
     helpers.student_registration_instruction(campaign, items)
   end
 
+  def policy_overview_hint(policy, context:)
+    eligibility_policy_hint(policy, user: helpers.current_user, context: context)
+  end
+
   private
 
     def failed_eligibility_policies(policies)
       policies.reject { |policy| policy.dig(:outcome, :pass) }
     end
 
-    def policy_section(title:, description:, empty_text:, policies:)
+    def policy_section(title:, description:, empty_text:, context:, policies:)
       {
         title: title,
         description: description,
         empty_text: empty_text,
+        context: context,
         policies: policies
       }
     end

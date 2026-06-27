@@ -48,6 +48,22 @@ module EligibilityHelper
     end
   end
 
+  def eligibility_policy_hint(policy, user: nil, context: :registration)
+    return if policy.dig(:outcome, :pass)
+
+    case policy[:kind].to_s
+    when "institutional_email"
+      institutional_email_policy_hint(user: user, context: context)
+    when "prerequisite_campaign"
+      prerequisite_campaign_policy_hint(policy, context: context)
+    when "student_performance"
+      t("registration.user_registration.policy_overview.hints." \
+        "student_performance")
+    else
+      t("registration.user_registration.policy_overview.hints.generic")
+    end
+  end
+
   private
 
     def eligibility_failure_translation(policy, user: nil, context: :registration)
@@ -160,6 +176,33 @@ module EligibilityHelper
           }
         ]
       end
+    end
+
+    def institutional_email_policy_hint(user: nil, context: :registration)
+      key = if context == :finalization_warning
+        "registration.user_registration.policy_overview.hints." \
+          "institutional_email_finalization_html"
+      else
+        "registration.user_registration.policy_overview.hints." \
+          "institutional_email_registration_html"
+      end
+
+      t(key,
+        current_domain: user_email_domain(user),
+        profile: link_to(t("navbar.profile"), edit_profile_path,
+                         class: "fw-semibold", target: "_top"))
+    end
+
+    def prerequisite_campaign_policy_hint(policy, context: :registration)
+      key = if context == :finalization_warning
+        "registration.user_registration.policy_overview.hints." \
+          "prerequisite_campaign_finalization"
+      else
+        "registration.user_registration.policy_overview.hints." \
+          "prerequisite_campaign_registration"
+      end
+
+      t(key, campaign: prerequisite_campaign_label(policy))
     end
 
     def policy_config_info(policy)

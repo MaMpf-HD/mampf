@@ -164,7 +164,10 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Your registration would currently fail at finalization"))
       .toBeVisible();
     await expect(student.page.getByText(
-      "Your current email domain is play, but this registration process also requires example.com at finalization.",
+      "The requirements that are currently not fulfilled are shown below.",
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      "Current domain: play. Update your email in Profile before the final allocation.",
     )).toBeVisible();
 
     await student.page.getByRole("button", { name: "Register now" }).click();
@@ -225,7 +228,11 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Your registration would currently fail at finalization"))
       .toBeVisible();
     await expect(student.page.getByText(
-      /You currently do not have a confirmed registration in .*Priority registration/
+      "The requirements that are currently not fulfilled are shown below."
+    ))
+      .toBeVisible();
+    await expect(student.page.getByText(
+      /Complete .*Priority registration successfully before the final allocation/
     ))
       .toBeVisible();
 

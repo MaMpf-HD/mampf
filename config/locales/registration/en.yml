@@ -339,9 +339,8 @@ en:
       finalization_policy_notice:
         title: "Your registration would currently fail at finalization"
         description: >-
-          Registration is still possible. However, if this registration process
-          were finalized now, your registration would be rejected for the
-          following reasons:
+          You can still register now. The requirements that are currently not
+          fulfilled are shown below.
       policy_overview:
         title: "Policy checks for this registration"
         registration_title: "Checked at registration"
@@ -359,6 +358,22 @@ en:
           prerequisite_campaign: "Confirmed registration in %{campaign}"
           student_performance: "Student performance status must be %{status}"
           generic: "Requirement: %{requirement}"
+        hints:
+          institutional_email_registration_html: >-
+            Current domain: %{current_domain}. Update your email in %{profile}.
+          institutional_email_finalization_html: >-
+            Current domain: %{current_domain}. Update your email in %{profile}
+            before the final allocation.
+          prerequisite_campaign_registration: >-
+            Complete %{campaign} successfully first.
+          prerequisite_campaign_finalization: >-
+            Complete %{campaign} successfully before the final allocation.
+          student_performance: >-
+            If you believe you already fulfill this requirement, contact the
+            lecturer or teaching assistant.
+          generic: >-
+            If you believe you already fulfill this requirement, contact the
+            lecturer or teaching assistant.
       eligibility_failures:
         current_domain_unknown: "an unknown domain"
         institutional_email_mismatch_html: >-

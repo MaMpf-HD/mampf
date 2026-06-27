@@ -137,6 +137,34 @@ RSpec.describe(EligibilityHelper, type: :helper) do
         .to eq("Needs clarification")
     end
 
+    it "renders a policy overview hint for email mismatches" do
+      user = build_stubbed(:confirmed_user, email: "student@play")
+      policy = {
+        kind: "institutional_email",
+        config: { "allowed_domains" => ["uni-heidelberg.de"] },
+        outcome: { pass: false, code: :institutional_email_mismatch }
+      }
+
+      html = helper.eligibility_policy_hint(policy, user: user)
+
+      expect(html).to include("Current domain: play")
+      expect(html).to include(edit_profile_path)
+    end
+
+    it "renders a policy overview hint for finalization prerequisite failures" do
+      policy = {
+        kind: "prerequisite_campaign",
+        config: { "prerequisite_campaign" => "Linear Algebra: Priority registration" },
+        outcome: { pass: false, code: :prerequisite_not_met }
+      }
+
+      html = helper.eligibility_policy_hint(policy,
+                                            context: :finalization_warning)
+
+      expect(html).to include("before the final allocation")
+      expect(html).to include("Priority registration")
+    end
+
     it "renders advice for missing prerequisite campaigns" do
       policy = {
         kind: "prerequisite_campaign",

@@ -145,4 +145,36 @@ RSpec.describe(CampaignCardComponent, type: :component) do
       expect(component.policy_overview?).to be(false)
     end
   end
+
+  describe "finalization warning presentation" do
+    around do |example|
+      I18n.with_locale(:en) { example.run }
+    end
+
+    let(:details) do
+      details_class.new(
+        eligibility: [],
+        finalization_eligibility: [
+          {
+            kind: "prerequisite_campaign",
+            config: { "prerequisite_campaign" => "Priority registration" },
+            outcome: { pass: false, code: :prerequisite_not_met }
+          }
+        ],
+        items: [],
+        item_preferences: nil
+      )
+    end
+
+    it "keeps finalization warnings short while providing next-step guidance in the overview" do
+      warning_text = I18n.t(
+        "registration.user_registration.finalization_policy_notice.description"
+      )
+
+      expect(warning_text)
+        .to include("The requirements that are currently not fulfilled are shown below")
+      expect(warning_text)
+        .not_to include("If this remains unchanged when the registration process is finalized")
+    end
+  end
 end
