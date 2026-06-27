@@ -32,15 +32,10 @@ module UserRegistrations
       end
 
       def snapshot_for(registration)
-        kind = Registration::Policy.kind_for_rejection_reason_code(
-          registration.rejection_reason_code
-        )
-        return if kind.blank?
-
         policy = @campaign.registration_policies
                           .for_phase(:finalization)
                           .find_by(id: registration.rejection_policy_id)
-        return unless policy&.kind == kind
+        return unless policy
 
         {
           kind: policy.kind,
