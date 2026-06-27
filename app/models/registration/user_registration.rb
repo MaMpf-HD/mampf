@@ -53,6 +53,10 @@ module Registration
       where(rejection_reason_type: REJECTION_REASON_TYPE_POLICY)
     }
 
+    scope :not_overridden, lambda {
+      where(rejection_overridden_at: nil)
+    }
+
     before_validation :set_exclusive_assignment
 
     validates :status, presence: true

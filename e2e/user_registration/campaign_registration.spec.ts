@@ -1,4 +1,4 @@
-import { test, expect } from "../_support/fixtures";
+import { Page, test, expect } from "../_support/fixtures";
 import { enableFeature } from "../_support/backend";
 import { confirmationLinkFor } from "../_support/mail";
 import {
@@ -8,6 +8,46 @@ import {
 } from "./helpers";
 import { CampaignRegistrationPage } from "../page-objects/campaign_registrations_page";
 import { ProfilePage } from "../page-objects/profile_page";
+import { FactoryBot, FactoryBotObject } from "../_support/factorybot";
+
+async function createTeacherOwnedReleasedLecture(
+  factory: FactoryBot,
+  teacherId: number,
+): Promise<FactoryBotObject> {
+  const course = await factory.create("course", [], { title: "Advanced Calculus" });
+  return factory.create("lecture", ["released_for_all"], {
+    course_id: course.id,
+    teacher_id: teacherId,
+  });
+}
+
+async function admitRejectedStudentThroughTeacherRoster(
+  page: Page,
+  lectureId: number,
+  campaign: FactoryBotObject,
+  tutorialTitle: string,
+  studentEmail: string,
+): Promise<void> {
+  await page.goto(`/lectures/${lectureId}/edit?tab=groups`);
+
+  const campaignBar = page.locator(`#dissolved_campaign_${campaign.id}`);
+  await campaignBar.getByRole("button", { name: /1 rejected/ }).click();
+  await expect(page.getByRole("heading", { name: "Rejected Registrations" }))
+    .toBeVisible();
+
+  const rejectedStudent = page.locator(".tutorial-roster-student", {
+    hasText: studentEmail,
+  });
+  const targetTutorial = page.locator(".tutorial-gtile").filter({
+    has: page.getByRole("heading", { name: tutorialTitle }),
+  });
+
+  await expect(rejectedStudent).toBeVisible();
+  await expect(targetTutorial).toBeVisible();
+  await rejectedStudent.dragTo(targetTutorial);
+
+  await expect(campaignBar.getByRole("button", { name: /1 rejected/ })).toHaveCount(0);
+}
 
 test.describe("campaign registration", () => {
   test.beforeEach(async ({ request }) => {
@@ -402,6 +442,139 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText(
       "Your registration is confirmed for",
     )).toHaveCount(0);
+  });
+
+  test("hides a finalized policy rejection after manual admission overrides it", async ({
+    factory,
+    student,
+    teacher,
+  }) => {
+    const lecture = await createTeacherOwnedReleasedLecture(factory, teacher.user.id);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const { campaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Email checked tutorial registration",
+      "open",
+      1,
+      ["with_finalization_policy"],
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    const assignedTutorialTitle = await student.page.getByTestId("registration-group-tile")
+      .first()
+      .getByRole("heading")
+      .textContent();
+    expect(assignedTutorialTitle).toBeTruthy();
+
+    await student.page.getByRole("button", { name: "Register now" }).click();
+    await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
+
+    await campaign.__call("finalize!");
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await expect(student.page.getByText(
+      "Your registration for Email checked tutorial registration was rejected "
+      + "for the following reasons:",
+    )).toBeVisible();
+
+    await admitRejectedStudentThroughTeacherRoster(
+      teacher.page,
+      lecture.id,
+      campaign,
+      assignedTutorialTitle,
+      student.user.email,
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await expect(student.page.getByText("Your registration is confirmed for")).toBeVisible();
+    await expect(student.page.getByRole("heading", { name: assignedTutorialTitle || "" }))
+      .toBeVisible();
+    await expect(student.page.getByText(
+      "Your registration for Email checked tutorial registration was rejected",
+    )).toHaveCount(0);
+    await expect(student.page.getByText(
+      "At the time this registration process was finalized",
+    )).toHaveCount(0);
+  });
+
+  test("keeps unrelated policy rejections visible after another override", async ({
+    factory,
+    student,
+    teacher,
+  }) => {
+    const lecture = await createTeacherOwnedReleasedLecture(factory, teacher.user.id);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const { campaign: overriddenCampaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Resolved tutorial registration",
+      "open",
+      1,
+      ["with_finalization_policy"],
+    );
+    const { campaign: unrelatedCampaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Additional tutorial registration",
+      "open",
+      1,
+      ["with_finalization_policy"],
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    const resolvedCard = student.page.locator(".registration-campaign-card").filter({
+      has: student.page.getByText("Resolved tutorial registration"),
+    });
+    const additionalCard = student.page.locator(".registration-campaign-card").filter({
+      has: student.page.getByText("Additional tutorial registration"),
+    });
+    const resolvedTutorialTitle = await resolvedCard.getByTestId("registration-group-tile")
+      .first()
+      .getByRole("heading")
+      .textContent();
+    expect(resolvedTutorialTitle).toBeTruthy();
+
+    await resolvedCard.getByRole("button", { name: "Register now" }).click();
+    await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await additionalCard.getByRole("button", { name: "Register now" }).click();
+    await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
+
+    await overriddenCampaign.__call("finalize!");
+    await unrelatedCampaign.__call("finalize!");
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await expect(student.page.getByText(
+      "Your registration for Resolved tutorial registration was rejected "
+      + "for the following reasons:",
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      "Your registration for Additional tutorial registration was rejected "
+      + "for the following reasons:",
+    )).toBeVisible();
+
+    await admitRejectedStudentThroughTeacherRoster(
+      teacher.page,
+      lecture.id,
+      overriddenCampaign,
+      resolvedTutorialTitle || "",
+      student.user.email,
+    );
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    await expect(student.page.getByText(
+      "Your registration for Additional tutorial registration was rejected "
+      + "for the following reasons:",
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      "Your registration for Resolved tutorial registration was rejected",
+    )).toHaveCount(0);
+    await expect(student.page.getByRole("heading", { name: resolvedTutorialTitle || "" }))
+      .toBeVisible();
   });
 
   test("stages preference ranks locally and saves them in one request", async ({

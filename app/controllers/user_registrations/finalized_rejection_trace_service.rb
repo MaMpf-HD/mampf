@@ -28,6 +28,7 @@ module UserRegistrations
         @campaign.user_registrations
                  .rejected
                  .with_policy_rejection_reason
+                 .not_overridden
                  .where(user_id: @user.id)
       end
 

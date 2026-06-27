@@ -213,6 +213,7 @@ class RosterizedEntriesComponent < ViewComponent::Base
           .merge(
             Registration::UserRegistration.rejected
                                          .with_capacity_rejection_reason
+                                         .not_overridden
                                          .where(user_id: user.id)
           )
           .where.not(id: confirmed_campaign_ids)
@@ -243,6 +244,7 @@ class RosterizedEntriesComponent < ViewComponent::Base
         Registration::UserRegistration
         .rejected
         .with_capacity_rejection_reason
+        .not_overridden
         .where(user_id: user.id,
                registration_campaign_id: unallocated_campaigns.map(&:id))
         .includes(registration_item: :registerable)
@@ -263,6 +265,7 @@ class RosterizedEntriesComponent < ViewComponent::Base
           .merge(
             Registration::UserRegistration.rejected
                                          .with_policy_rejection_reason
+                                         .not_overridden
                                          .where(user_id: user.id)
           )
           .where.not(id: active_campaign_ids)
