@@ -12,10 +12,12 @@ Dir.chdir(APP_ROOT) do
     map { |dir, file| File.expand_path(file, dir) }.
     find { |file| File.executable?(file) }
 
-  if yarn
-    exec yarn, *ARGV
-  elsif corepack
+  # Prefer Corepack so the repo-pinned packageManager version always wins; only
+  # fall back to a direct yarn on PATH when Corepack is unavailable.
+  if corepack
     exec corepack, "yarn", *ARGV
+  elsif yarn
+    exec yarn, *ARGV
   else
     $stderr.puts "Yarn executable was not detected in the system."
     $stderr.puts "This repository pins Yarn via packageManager in package.json."

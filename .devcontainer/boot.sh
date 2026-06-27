@@ -35,9 +35,18 @@ echo "🚀 Install MdBook"
 if [ -d /workspaces/mampf-infra ]; then
   echo "🚀 Install sops and age for mampf-infra"
   sudo apt-get update && sudo apt-get install -y age
-  wget -O /tmp/sops https://github.com/getsops/sops/releases/download/v3.13.1/sops-v3.13.1.linux.amd64
-  chmod +x /tmp/sops
-  sudo mv /tmp/sops /usr/local/bin/sops
+  SOPS_VERSION="v3.13.1"
+  sops_base="https://github.com/getsops/sops/releases/download/${SOPS_VERSION}"
+  sops_artifact="sops-${SOPS_VERSION}.linux.amd64"
+  sops_tmp="$(mktemp -d)"
+  wget -O "${sops_tmp}/${sops_artifact}" "${sops_base}/${sops_artifact}"
+  wget -O "${sops_tmp}/checksums.txt" "${sops_base}/sops-${SOPS_VERSION}.checksums.txt"
+  # Verify the binary against sops' published checksums before installing it.
+  grep "${sops_artifact}$" "${sops_tmp}/checksums.txt" > "${sops_tmp}/sops.sha256"
+  ( cd "${sops_tmp}" && sha256sum -c sops.sha256 )
+  chmod +x "${sops_tmp}/${sops_artifact}"
+  sudo mv "${sops_tmp}/${sops_artifact}" /usr/local/bin/sops
+  rm -rf "${sops_tmp}"
 
   echo "🚀 Set up Ansible for mampf-infra"
   ./.devcontainer/install-ansible.sh
