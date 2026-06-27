@@ -19,7 +19,7 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
         description: "Email checked tutorial registration",
         items_count: 1
       )
-      create(
+      policy = create(
         :registration_policy,
         :institutional_email,
         :for_finalization,
@@ -33,6 +33,7 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
         registration_campaign: campaign,
         registration_item: campaign.registration_items.first,
         user: user,
+        rejection_policy: policy,
         rejection_reason_code: "institutional_email_mismatch"
       )
 
@@ -67,7 +68,7 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
         description: "Follow-up tutorial registration",
         items_count: 1
       )
-      create(
+      policy = create(
         :registration_policy,
         :prerequisite_campaign,
         :for_finalization,
@@ -81,6 +82,7 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
         registration_campaign: campaign,
         registration_item: campaign.registration_items.first,
         user: user,
+        rejection_policy: policy,
         rejection_reason_code: "prerequisite_not_met",
         rejection_reason_label: "Prerequisite was missing."
       )
@@ -120,7 +122,7 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
         description: "Follow-up tutorial registration",
         items_count: 1
       )
-      create(
+      policy = create(
         :registration_policy,
         :prerequisite_campaign,
         :for_finalization,
@@ -134,6 +136,7 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
         registration_campaign: campaign,
         registration_item: campaign.registration_items.first,
         user: user,
+        rejection_policy: policy,
         rejection_reason_code: "prerequisite_not_met"
       )
 
@@ -146,6 +149,62 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
         "confirmed registration in"
       )
       expect(rendered.text).to include("Priority registration")
+    end
+
+    it "uses the stored policy id when multiple policies share a rejection code" do
+      wrong_prerequisite_campaign = create(
+        :registration_campaign,
+        :completed,
+        campaignable: lecture,
+        description: "Wrong prerequisite registration",
+        items_count: 1
+      )
+      correct_prerequisite_campaign = create(
+        :registration_campaign,
+        :completed,
+        campaignable: lecture,
+        description: "Correct prerequisite registration",
+        items_count: 1
+      )
+      campaign = create(
+        :registration_campaign,
+        :first_come_first_served,
+        :with_items,
+        campaignable: lecture,
+        description: "Follow-up tutorial registration",
+        items_count: 1
+      )
+      create(
+        :registration_policy,
+        :prerequisite_campaign,
+        :for_finalization,
+        registration_campaign: campaign,
+        config: { "prerequisite_campaign_id" => wrong_prerequisite_campaign.id }
+      )
+      correct_policy = create(
+        :registration_policy,
+        :prerequisite_campaign,
+        :for_finalization,
+        registration_campaign: campaign,
+        config: { "prerequisite_campaign_id" => correct_prerequisite_campaign.id }
+      )
+      campaign.update!(status: :completed)
+      create(
+        :registration_user_registration,
+        :policy_rejected,
+        registration_campaign: campaign,
+        registration_item: campaign.registration_items.first,
+        user: user,
+        rejection_policy: correct_policy,
+        rejection_reason_code: "prerequisite_not_met"
+      )
+
+      rendered = render_inline(
+        described_class.new(rosterized_entries: [], lecture: lecture, user: user)
+      )
+
+      expect(rendered.text).to include("Correct prerequisite registration")
+      expect(rendered.text).not_to include("Wrong prerequisite registration")
     end
   end
 end

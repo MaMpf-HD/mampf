@@ -193,6 +193,7 @@ module Registration
           reason_type: violation[:reason_type] || default_reason_type,
           reason_code: violation[:reason_code].to_s,
           reason_label: violation[:reason_label] || violation[:message],
+          rejection_policy_id: violation[:policy_id],
           rejected_at: now
         )
       end

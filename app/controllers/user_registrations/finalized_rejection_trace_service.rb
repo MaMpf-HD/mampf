@@ -39,8 +39,8 @@ module UserRegistrations
 
         policy = @campaign.registration_policies
                           .for_phase(:finalization)
-                          .find_by(kind: kind)
-        return unless policy
+                          .find_by(id: registration.rejection_policy_id)
+        return unless policy&.kind == kind
 
         {
           kind: policy.kind,
