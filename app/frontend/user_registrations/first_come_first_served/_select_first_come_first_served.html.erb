@@ -1,5 +1,6 @@
 <div>
   <%= render partial: "user_registrations/first_come_first_served/select_multi_item",
              locals: { campaign: campaign,
+                       disabled: local_assigns.fetch(:disabled, false),
                        items: items } %>
 </div>

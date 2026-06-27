@@ -66,6 +66,11 @@ module Registration
       campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
     end
 
+    def student_facing_title
+      description.to_s.strip.presence ||
+        I18n.t("registration.user_registration.campaign_main")
+    end
+
     def evaluate_policies_for(user, phase: :registration)
       policy_engine.eligible?(user, phase: phase)
     end
@@ -188,6 +193,7 @@ module Registration
           reason_type: violation[:reason_type] || default_reason_type,
           reason_code: violation[:reason_code].to_s,
           reason_label: violation[:reason_label] || violation[:message],
+          rejection_policy_id: violation[:policy_id],
           rejected_at: now
         )
       end
@@ -315,6 +321,7 @@ module Registration
           rejection_reason_type: nil,
           rejection_reason_code: nil,
           rejection_reason_label: nil,
+          rejection_policy_id: nil,
           rejected_at: nil,
           rejection_overridden_at: nil,
           updated_at: Time.current

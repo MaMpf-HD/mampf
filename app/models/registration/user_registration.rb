@@ -25,6 +25,10 @@ module Registration
                class_name: "Registration::Item",
                inverse_of: :user_registrations
 
+    belongs_to :rejection_policy,
+               class_name: "Registration::Policy",
+               optional: true
+
     # A user registration represents an application for a specific item.
     # Changing the target item is semantically a different application.
     # Therefore, the registration_item_id is immutable.
@@ -39,6 +43,18 @@ module Registration
             rejection_reason_code: REJECTION_REASON_CODE_SOLVER_UNASSIGNED
           )
         )
+    }
+
+    scope :with_capacity_rejection_reason, lambda {
+      where(rejection_reason_type: REJECTION_REASON_TYPE_CAPACITY)
+    }
+
+    scope :with_policy_rejection_reason, lambda {
+      where(rejection_reason_type: REJECTION_REASON_TYPE_POLICY)
+    }
+
+    scope :not_overridden, lambda {
+      where(rejection_overridden_at: nil)
     }
 
     before_validation :set_exclusive_assignment
@@ -104,6 +120,7 @@ module Registration
     end
 
     def reject!(reason_type:, reason_code:, reason_label: nil,
+                rejection_policy_id: nil,
                 rejected_at: Time.current)
       update!(
         status: :rejected,
@@ -113,6 +130,7 @@ module Registration
           reason_code: reason_code,
           fallback_label: reason_label
         ),
+        rejection_policy_id: rejection_policy_id,
         rejected_at: rejected_at,
         rejection_overridden_at: nil
       )
@@ -123,6 +141,7 @@ module Registration
         rejection_reason_type: nil,
         rejection_reason_code: nil,
         rejection_reason_label: nil,
+        rejection_policy_id: nil,
         rejected_at: nil,
         rejection_overridden_at: nil
       )

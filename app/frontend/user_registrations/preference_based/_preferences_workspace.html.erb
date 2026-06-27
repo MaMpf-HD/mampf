@@ -2,6 +2,7 @@
 <% sorted_items = sorted_student_registration_items(campaign, items, current_user) %>
 <% ranks = preference_ranks_for(sorted_items) %>
 <% preferences_by_rank = item_preferences.index_by(&:rank) %>
+<% disabled = local_assigns.fetch(:disabled, false) %>
 
 <% registration_blocked_by_unremovable_assignment =
      registration_blocked_by_unremovable_assignment?(campaign.campaignable) %>
@@ -16,7 +17,8 @@
                 preference_choices_incomplete_tooltip_value: t(
                   "registration.user_registration.save_choices_incomplete_tooltip"
                 ),
-                preference_choices_readonly_value: !campaign.open_for_registrations? ||
+                preference_choices_readonly_value: disabled ||
+                  !campaign.open_for_registrations? ||
                   registration_blocked_by_unremovable_assignment
               } do %>
   <div class="student-registration-preference-workspace">
@@ -26,6 +28,7 @@
         row-cols-xxl-5
         student-registration-tile-grid student-registration-podium
       "
+      role="group"
       data-testid="preference-podium"
       aria-label="<%= t("registration.user_registration.preference_podium.label") %>"
     >
@@ -70,6 +73,7 @@
 
     <%= render partial: "user_registrations/preference_based/options_table",
                locals: { campaign: campaign,
+                         disabled: disabled,
                          item_preferences: item_preferences,
                          sorted_items: sorted_items,
                          ranks: ranks } %>
@@ -88,7 +92,7 @@
       >
         <%= submit_tag t("registration.user_registration.save_choices"),
                        class: "btn btn-warning w-100 text-wrap",
-                       disabled: !campaign.open_for_registrations? ||
+                       disabled: disabled || !campaign.open_for_registrations? ||
                          registration_blocked_by_unremovable_assignment,
                        data: { preference_choices_target: "saveButton" } %>
       </span>

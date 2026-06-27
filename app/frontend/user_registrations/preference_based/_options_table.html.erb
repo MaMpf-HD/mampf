@@ -1,4 +1,6 @@
 <div>
+  <% disabled = local_assigns.fetch(:disabled, false) %>
+
   <% registration_blocked_by_unremovable_assignment =
        registration_blocked_by_unremovable_assignment?(campaign.campaignable) %>
 
@@ -42,7 +44,7 @@
                            button_tag(
                              t("registration.user_registration.preference_rank_options.#{rank}"),
                              type: "button",
-                             disabled: !campaign.open_for_registrations?,
+                             disabled: disabled || !campaign.open_for_registrations?,
                              class: class_names(
                                "btn btn-sm student-registration-rank-button",
                                "btn-primary": selected_rank == rank,

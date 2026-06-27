@@ -464,13 +464,15 @@ RSpec.describe(Registration::Campaign, type: :model) do
         create(:registration_campaign, :with_items, :first_come_first_served)
       end
       let(:item) { campaign.registration_items.first }
-
-      before do
+      let!(:policy) do
         create(:registration_policy,
                :institutional_email,
                :for_finalization,
                registration_campaign: campaign,
                config: { "allowed_domains" => "uni.edu" })
+      end
+
+      before do
         campaign.update!(status: :closed)
       end
 
@@ -486,6 +488,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(registration.reload).to be_rejected
         expect(registration.rejection_reason_type).to eq("policy")
         expect(registration.rejection_reason_code).to eq("institutional_email_mismatch")
+        expect(registration.rejection_policy).to eq(policy)
       end
 
       it "raises a finalization blocked error when screening finds blockers" do
