@@ -450,7 +450,10 @@ class Item < ApplicationRecord
 
     def start_time_not_too_late
       return true if start_time_not_required
-      return true if start_time.total_seconds <= medium.video.metadata["duration"]
+
+      duration = medium.video.metadata["duration"]
+      return true if duration.nil?
+      return true if start_time.total_seconds <= duration
 
       errors.add(:start_time, :too_late)
       false

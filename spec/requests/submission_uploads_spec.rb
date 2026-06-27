@@ -47,6 +47,12 @@ RSpec.describe("SubmissionUploads", type: :request) do
   it "adds clean scan metadata to correction uploads" do
     allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
 
+    tutor = create(:confirmed_user, locale: "en").tap do |u|
+      create(:tutorial, :with_tutor_by_id, tutor_id: u.id)
+      u.reload
+    end
+    sign_in tutor
+
     post "/corrections/upload", params: { file: upload }
 
     expect(response).to have_http_status(:ok)
