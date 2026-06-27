@@ -41,7 +41,11 @@ RSpec.describe(VideoUploader) do
     medium.video = file
 
     expect(medium).not_to be_valid
-    expect(medium.errors[:video]).to include(VideoUploader::WRONG_TYPE_MESSAGE)
+    expect(medium.errors[:video]).to include(
+      I18n.t("submission.wrong_mime_type",
+             mime_type: medium.video.metadata["mime_type"],
+             accepted_mime_types: VideoUploader::ACCEPTED_MIME_TYPES.join(", "))
+    )
   ensure
     file&.close!
   end
@@ -71,7 +75,11 @@ RSpec.describe(VideoUploader) do
     medium.video = tampered.to_json
 
     expect(medium).not_to be_valid
-    expect(medium.errors[:video]).to include(VideoUploader::WRONG_TYPE_MESSAGE)
+    expect(medium.errors[:video]).to include(
+      I18n.t("submission.wrong_mime_type",
+             mime_type: medium.video.metadata["mime_type"],
+             accepted_mime_types: VideoUploader::ACCEPTED_MIME_TYPES.join(", "))
+    )
   ensure
     file&.close
   end

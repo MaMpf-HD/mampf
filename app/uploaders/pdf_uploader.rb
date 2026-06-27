@@ -8,6 +8,7 @@ class PdfUploader < Shrine
   TOOL_TIMEOUT = 10
   MAX_STRUCTURE_BYTES = 256 * 1024
   STRUCTURE_FILE_NAME = "structure.mampf".freeze
+  ACCEPTED_MIME_TYPES = ["application/pdf"].freeze
 
   # shrine plugins
   plugin :upload_endpoint, max_size: MAX_FILE_SIZE
@@ -68,8 +69,12 @@ class PdfUploader < Shrine
   Attacher.validate do
     MalwareScanGate.validate_cached_file!(self)
 
-    validate_mime_type_inclusion ["application/pdf"],
-                                 message: "falscher MIME-Typ"
+    validate_mime_type_inclusion(
+      ACCEPTED_MIME_TYPES,
+      message: I18n.t("submission.wrong_mime_type",
+                      mime_type: file&.mime_type,
+                      accepted_mime_types: ACCEPTED_MIME_TYPES.join(", "))
+    )
     validate_max_size MAX_FILE_SIZE,
                       message: I18n.t("submission.manuscript_size_too_big",
                                       max_size: "50 MB")

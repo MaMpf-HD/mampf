@@ -8,7 +8,7 @@ class VideoUploader < Shrine
   # container start, NOT a full-file clean verdict (see MalwareScanGate and
   # docs/CLAMAV_UPLOAD_SCANNING.md in mampf-infra).
   SCAN_MAX_BYTES = 32 * 1024 * 1024
-  WRONG_TYPE_MESSAGE = "wrong type".freeze
+  ACCEPTED_MIME_TYPES = ["video/mp4"].freeze
 
   # shrine plugins
   plugin :upload_endpoint, max_size: MAX_SIZE # 4 GB
@@ -44,7 +44,12 @@ class VideoUploader < Shrine
   Attacher.validate do
     MalwareScanGate.validate_cached_file!(self)
 
-    validate_mime_type_inclusion ["video/mp4"], message: WRONG_TYPE_MESSAGE
+    validate_mime_type_inclusion(
+      ACCEPTED_MIME_TYPES,
+      message: I18n.t("submission.wrong_mime_type",
+                      mime_type: file&.mime_type,
+                      accepted_mime_types: ACCEPTED_MIME_TYPES.join(", "))
+    )
     validate_max_size MAX_SIZE,
                       message: I18n.t("package.too_big")
   end

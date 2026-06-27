@@ -4,6 +4,7 @@ require "image_processing/vips"
 class ProfileimageUploader < Shrine
   MAX_SIZE = 10 * 1024 * 1024
   MAX_DIMENSIONS = [4096, 4096].freeze
+  ACCEPTED_MIME_TYPES = ["image/jpeg", "image/png", "image/gif"].freeze
 
   # shrine plugins
   plugin :upload_endpoint, max_size: MAX_SIZE
@@ -19,8 +20,12 @@ class ProfileimageUploader < Shrine
   Attacher.validate do
     MalwareScanGate.validate_cached_file!(self)
 
-    validate_mime_type_inclusion ["image/jpeg", "image/png", "image/gif"],
-                                 message: "falscher MIME-Typ"
+    validate_mime_type_inclusion(
+      ACCEPTED_MIME_TYPES,
+      message: I18n.t("submission.wrong_mime_type",
+                      mime_type: file&.mime_type,
+                      accepted_mime_types: ACCEPTED_MIME_TYPES.join(", "))
+    )
     validate_max_size MAX_SIZE, message: I18n.t("package.too_big")
     validate_max_dimensions MAX_DIMENSIONS,
                             message: I18n.t("image.too_large_dimensions",
