@@ -116,7 +116,8 @@ module EligibilityHelper
         ]
       when "prerequisite_campaign_not_found"
         [
-          "registration.user_registration.eligibility_failures.prerequisite_campaign_not_found_html",
+          "registration.user_registration.eligibility_failures." \
+          "prerequisite_campaign_not_found_html",
           { campaign: prerequisite_campaign_label(policy) }
         ]
       when "configuration_error"
