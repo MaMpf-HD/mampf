@@ -41,7 +41,6 @@ config/master.key
 !docker/production/docker.env
 *.local
 
-# Stray dev artifacts that must never enter the build context / image
 *.patch
 *.diff
 

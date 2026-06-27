@@ -6,7 +6,7 @@ class ClamavScanner
 
   def initialize(host: ENV.fetch("CLAMAV_HOST", "clamav"),
                  port: ENV.fetch("CLAMAV_PORT", "3310").to_i,
-                 timeout: ENV.fetch("CLAMAV_TIMEOUT", "15").to_i)
+                 timeout: ENV.fetch("CLAMAV_TIMEOUT", "30").to_i)
     @host = host
     @port = port
     @timeout = timeout
