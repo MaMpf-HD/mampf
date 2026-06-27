@@ -161,26 +161,26 @@ class Submission < ApplicationRecord
       errors.push(I18n.t("submission.manuscript_size_too_big",
                          max_size: "10 MB"))
     end
-    if sort == :correction && metadata["size"] > 15 * 1024 * 1024
+    if sort == :correction && metadata["size"] > CorrectionUploader::MAX_SIZE
       errors.push(I18n.t("submission.manuscript_size_too_big",
-                         max_size: "15 MB"))
+                         max_size: "#{CorrectionUploader::MAX_SIZE / (1024 * 1024)} MB"))
     end
     file_name = metadata["filename"]
+    uploader = sort == :correction ? CorrectionUploader : SubmissionUploader
     file_type = File.extname(file_name)
-    unless CorrectionUploader.allowed_extension?(file_name)
+    unless uploader.allowed_extension?(file_name)
       errors.push(I18n.t("submission.wrong_file_type",
                          file_type: file_type,
                          accepted_file_type:
-                           CorrectionUploader.accepted_extension_list))
+                           uploader.accepted_extension_list))
     end
     if errors.blank? &&
-       !CorrectionUploader.allowed_mime_type?(filename: file_name,
-                                              mime_type: metadata["mime_type"])
+       !uploader.allowed_mime_type?(filename: file_name,
+                                    mime_type: metadata["mime_type"])
       errors.push(I18n.t("submission.wrong_mime_type",
                          mime_type: metadata["mime_type"],
                          accepted_mime_types:
-                           CorrectionUploader.accepted_mime_types_for(file_name)
-                                             .join(", ")))
+                           uploader.accepted_mime_types_for(file_name).join(", ")))
     end
     return {} if errors.blank?
 
@@ -193,9 +193,9 @@ class Submission < ApplicationRecord
       errors.push(I18n.t("submission.manuscript_size_too_big",
                          max_size: "10 MB"))
     end
-    if sort == :correction && metadata["size"] > 15 * 1024 * 1024
+    if sort == :correction && metadata["size"] > CorrectionUploader::MAX_SIZE
       errors.push(I18n.t("submission.manuscript_size_too_big",
-                         max_size: "15 MB"))
+                         max_size: "#{CorrectionUploader::MAX_SIZE / (1024 * 1024)} MB"))
     end
     file_name = metadata["filename"]
     file_type = File.extname(file_name)

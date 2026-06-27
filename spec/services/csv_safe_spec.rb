@@ -8,9 +8,10 @@ RSpec.describe(CsvSafe) do
       end
     end
 
-    it "neutralizes a leading tab or carriage return" do
+    it "neutralizes a leading tab, carriage return, or line feed" do
       expect(described_class.cell("\t=1+1")).to eq("'\t=1+1")
       expect(described_class.cell("\r=1+1")).to eq("'\r=1+1")
+      expect(described_class.cell("\n=SUM(A1:A2)")).to eq("'\n=SUM(A1:A2)")
     end
 
     it "leaves harmless strings unchanged" do

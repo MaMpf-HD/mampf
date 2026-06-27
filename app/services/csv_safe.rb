@@ -10,7 +10,7 @@
 # specific to the spreadsheet context, so the stored data (e.g. user names) stays
 # untouched everywhere else in the application.
 class CsvSafe
-  FORMULA_TRIGGERS = ["=", "+", "-", "@", "\t", "\r"].freeze
+  FORMULA_TRIGGERS = ["=", "+", "-", "@", "\t", "\r", "\n"].freeze
 
   class << self
     # Sanitizes a single cell value. Non-string values (numbers, dates, nil)

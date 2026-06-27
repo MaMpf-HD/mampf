@@ -96,4 +96,50 @@ RSpec.describe(Submission, type: :model) do
       stored_upload&.delete
     end
   end
+
+  describe "#check_file_properties_any" do
+    let(:submission) { FactoryBot.build(:valid_submission) }
+
+    it "validates a manuscript's type with SubmissionUploader, not CorrectionUploader" do
+      # ".tar.gz" is accepted by SubmissionUploader (Assignment.accepted_file_types)
+      # but not by CorrectionUploader, which only sees ".gz".
+      meta = { "size" => 1024, "filename" => "solution.tar.gz",
+               "mime_type" => "application/gzip" }
+      correction_reject = I18n.t("submission.wrong_file_type",
+                                 file_type: ".gz",
+                                 accepted_file_type:
+                                   CorrectionUploader.accepted_extension_list)
+
+      errors = submission.send(:check_file_properties_any, meta, :submission)
+                         .fetch(:submission, [])
+
+      expect(errors).not_to include(correction_reject)
+    end
+
+    it "accepts corrections up to CorrectionUploader::MAX_SIZE" do
+      meta = { "size" => 20 * 1024 * 1024, "filename" => "fix.pdf",
+               "mime_type" => "application/pdf" }
+      old_cap = I18n.t("submission.manuscript_size_too_big", max_size: "15 MB")
+      new_cap = I18n.t("submission.manuscript_size_too_big",
+                       max_size: "#{CorrectionUploader::MAX_SIZE / (1024 * 1024)} MB")
+
+      errors = submission.send(:check_file_properties_any, meta, :correction)
+                         .fetch(:correction, [])
+
+      expect(errors).not_to include(old_cap)
+      expect(errors).not_to include(new_cap)
+    end
+
+    it "rejects corrections above CorrectionUploader::MAX_SIZE" do
+      meta = { "size" => CorrectionUploader::MAX_SIZE + 1, "filename" => "fix.pdf",
+               "mime_type" => "application/pdf" }
+      cap = I18n.t("submission.manuscript_size_too_big",
+                   max_size: "#{CorrectionUploader::MAX_SIZE / (1024 * 1024)} MB")
+
+      errors = submission.send(:check_file_properties_any, meta, :correction)
+                         .fetch(:correction, [])
+
+      expect(errors).to include(cap)
+    end
+  end
 end

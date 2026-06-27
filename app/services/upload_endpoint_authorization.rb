@@ -26,8 +26,13 @@ class UploadEndpointAuthorization
         content_editor?(user)
       when "CorrectionUploader"
         content_editor?(user) || user&.tutor?
-      else
+      when "SubmissionUploader", "ProfileimageUploader"
+        # Intentionally open to any authenticated user; these endpoints sit
+        # behind `authenticate :user`. Listed explicitly so the gate fails
+        # closed for any future uploader not covered above.
         true
+      else
+        raise(ArgumentError, "Unhandled uploader: #{uploader_class.name}")
       end
     end
 
