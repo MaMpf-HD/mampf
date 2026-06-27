@@ -601,7 +601,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_27_000000) do
     t.integer "phase", default: 0, null: false
     t.integer "position"
     t.boolean "active", default: true, null: false
-    t.jsonb "config", default: {}
+    t.jsonb "config", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "registration_campaign_id", null: false

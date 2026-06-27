@@ -81,7 +81,10 @@ class ApplicationController < ActionController::Base
 
     turbo_stream.update("campaigns_container",
                         partial: "registration/campaigns/card_body_index",
-                        locals: { lecture: lecture })
+                        locals: {
+                          lecture: lecture,
+                          registration_section: params[:registration_section]
+                        })
   end
 
   protected
