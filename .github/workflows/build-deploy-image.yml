@@ -11,6 +11,11 @@ on:
         description: Optional GHCR repository override
         required: false
         type: string
+      os_security_refresh:
+        description: Force-pull base and apply all available OS security updates (non-reproducible)
+        required: false
+        type: boolean
+        default: false
   push:
     branches:
       - deploy/app-baseline-thruster
@@ -61,6 +66,9 @@ jobs:
           file: ./docker/production/Dockerfile
           push: true
           tags: ${{ steps.image.outputs.image }}
+          pull: ${{ inputs.os_security_refresh || false }}
+          build-args: |
+            OS_SECURITY_REFRESH=${{ inputs.os_security_refresh && github.run_id || '' }}
           cache-from: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache,mode=max
 
@@ -89,6 +97,14 @@ jobs:
           TRIVY_RESULTS_PATH: trivy-results.json
         run: |
           python3 .github/actions/summarize_trivy.py
+
+      - name: Upload Trivy results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: trivy-results
+          path: trivy-results.json
+          if-no-files-found: ignore
 
       - name: Install cosign
         run: |
