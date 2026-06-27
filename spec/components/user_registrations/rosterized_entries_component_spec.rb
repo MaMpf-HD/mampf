@@ -51,6 +51,59 @@ RSpec.describe(RosterizedEntriesComponent, type: :component) do
       expect(rendered.css("a")).to be_empty
     end
 
+    it "uses the stored rejection code after the student fixes the policy issue" do
+      prerequisite_campaign = create(
+        :registration_campaign,
+        :completed,
+        campaignable: lecture,
+        description: "Priority registration",
+        items_count: 1
+      )
+      campaign = create(
+        :registration_campaign,
+        :first_come_first_served,
+        :with_items,
+        campaignable: lecture,
+        description: "Follow-up tutorial registration",
+        items_count: 1
+      )
+      create(
+        :registration_policy,
+        :prerequisite_campaign,
+        :for_finalization,
+        registration_campaign: campaign,
+        config: { "prerequisite_campaign_id" => prerequisite_campaign.id }
+      )
+      campaign.update!(status: :completed)
+      create(
+        :registration_user_registration,
+        :policy_rejected,
+        registration_campaign: campaign,
+        registration_item: campaign.registration_items.first,
+        user: user,
+        rejection_reason_code: "prerequisite_not_met",
+        rejection_reason_label: "Prerequisite was missing."
+      )
+      create(
+        :registration_user_registration,
+        :confirmed,
+        registration_campaign: prerequisite_campaign,
+        registration_item: prerequisite_campaign.registration_items.first,
+        user: user
+      )
+
+      rendered = render_inline(
+        described_class.new(rosterized_entries: [], lecture: lecture, user: user)
+      )
+
+      expect(rendered.text).to include(
+        "At the time this registration process was finalized, you did not have a " \
+        "confirmed registration in"
+      )
+      expect(rendered.text).to include("Priority registration")
+      expect(rendered.text).not_to include("Your registration was rejected.")
+    end
+
     it "renders the prerequisite campaign label for prerequisite-policy rejections" do
       prerequisite_campaign = create(
         :registration_campaign,

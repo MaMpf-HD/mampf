@@ -1,7 +1,5 @@
 module UserRegistrations
   class EligibilityTraceService
-    PREREQUISITE_CAMPAIGN_KIND = "prerequisite_campaign".freeze
-
     def initialize(campaign, user, phase:)
       @campaign = campaign
       @user = user
@@ -20,18 +18,11 @@ module UserRegistrations
 
       def decorate_prerequisite_campaigns(trace)
         trace.each do |policy_result|
-          next unless policy_result[:kind] == PREREQUISITE_CAMPAIGN_KIND
+          kind = policy_result[:kind]
+          next unless kind == PrerequisiteCampaignDecoration::PREREQUISITE_CAMPAIGN_KIND
 
-          config = policy_result[:config].to_h.deep_dup
-          policy_result[:config] = config
-          id = config["prerequisite_campaign_id"]
-          campaign = Registration::Campaign.find_by(id: id)
-          config["prerequisite_campaign"] =
-            if campaign
-              campaign.student_facing_title
-            else
-              I18n.t("registration.campaign.not_found")
-            end
+          policy_result[:config] =
+            PrerequisiteCampaignDecoration.decorate_config(policy_result[:config])
         end
       end
   end

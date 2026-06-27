@@ -19,6 +19,20 @@ module Registration
                    finalization: 1,
                    both: 2 }
 
+    # Maps a policy kind to the rejection reason code its handler emits when it
+    # auto-rejects a registration. This is the single source of truth for
+    # recovering the responsible policy from a persisted rejection, so that
+    # historical rejection messages stay stable even after the student later
+    # fulfils the requirement.
+    AUTO_REJECT_REASON_CODE_BY_KIND = {
+      institutional_email: "institutional_email_mismatch",
+      prerequisite_campaign: "prerequisite_not_met"
+    }.freeze
+
+    def self.kind_for_rejection_reason_code(code)
+      AUTO_REJECT_REASON_CODE_BY_KIND.key(code.to_s)&.to_s
+    end
+
     validates :kind, :phase, presence: true
     validates :active, inclusion: { in: [true, false] }
     validate :campaign_is_draft, on: [:create, :update]

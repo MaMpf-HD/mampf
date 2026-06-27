@@ -273,19 +273,18 @@ class RosterizedEntriesComponent < ViewComponent::Base
     end
 
     def failed_policy_messages(campaign)
-      UserRegistrations::EligibilityTraceService
-        .new(
-          campaign,
-          user,
-          phase: :finalization
-        )
+      UserRegistrations::FinalizedRejectionTraceService
+        .new(campaign, user)
         .call
-        .reject { |policy| policy.dig(:outcome, :pass) }
-        .map do |policy|
-          eligibility_failure_message(policy, user: user,
-                                              context: :finalization_rejection)
-        end
+        .filter_map { |entry| rejection_entry_message(entry) }
         .uniq
+    end
+
+    def rejection_entry_message(entry)
+      return entry[:fallback_label] if entry.key?(:fallback_label)
+
+      eligibility_failure_message(entry, user: user,
+                                         context: :finalization_rejection)
     end
 
     def unallocated_labels(registrations)

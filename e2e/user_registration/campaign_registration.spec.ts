@@ -1,11 +1,13 @@
 import { test, expect } from "../_support/fixtures";
 import { enableFeature } from "../_support/backend";
+import { confirmationLinkFor } from "../_support/mail";
 import {
   createReleasedLecture,
   createTutorialItemsCampaign,
   subscribeToLecture,
 } from "./helpers";
 import { CampaignRegistrationPage } from "../page-objects/campaign_registrations_page";
+import { ProfilePage } from "../page-objects/profile_page";
 
 test.describe("campaign registration", () => {
   test.beforeEach(async ({ request }) => {
@@ -228,11 +230,11 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Your registration would currently fail at finalization"))
       .toBeVisible();
     await expect(student.page.getByText(
-      "The requirements that are currently not fulfilled are shown below."
+      "The requirements that are currently not fulfilled are shown below.",
     ))
       .toBeVisible();
     await expect(student.page.getByText(
-      /Complete .*Priority registration successfully before the final allocation/
+      /Complete .*Priority registration successfully before the final allocation/,
     ))
       .toBeVisible();
 
@@ -247,9 +249,159 @@ test.describe("campaign registration", () => {
       + "for the following reasons:",
     )).toBeVisible();
     await expect(student.page.getByText(
-      /At the time this registration process was finalized, you did not have a confirmed registration in .*Priority registration/
+      /At the time this registration process was finalized, you did not have a confirmed registration in .*Priority registration/,
     ))
       .toBeVisible();
+  });
+
+  test("keeps the finalization rejection reason after the prerequisite is met later", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const prerequisiteCampaign = await factory.create(
+      "registration_campaign",
+      ["completed", "first_come_first_served"],
+      {
+        allocation_mode: "first_come_first_served",
+        campaignable_type: "Lecture",
+        campaignable_id: lecture.id,
+        description: "Priority registration",
+        items_count: 1,
+      },
+    );
+    const { campaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Follow-up tutorial registration",
+      "open",
+      1,
+      ["with_finalization_prerequisite_policy"],
+      { parent_campaign_id: prerequisiteCampaign.id },
+    );
+
+    // The student registers for the follow-up campaign without having a
+    // confirmed registration in the prerequisite campaign yet.
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await student.page.getByRole("button", { name: "Register now" }).click();
+    await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
+
+    // Finalizing the follow-up campaign rejects the student because the
+    // prerequisite was not met at that point in time.
+    await campaign.__call("finalize!");
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await expect(student.page.getByText(
+      "Your registration for Follow-up tutorial registration was rejected "
+      + "for the following reasons:",
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      /At the time this registration process was finalized, you did not have a confirmed registration in .*Priority registration/,
+    )).toBeVisible();
+
+    // The student now fulfills the prerequisite *after* the follow-up campaign
+    // was already finalized: they obtain a confirmed registration in the
+    // prerequisite campaign.
+    const prerequisiteTutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Priority Tutorial",
+      capacity: 5,
+    });
+    const prerequisiteItem = await factory.create("registration_item", [], {
+      registration_campaign_id: prerequisiteCampaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: prerequisiteTutorial.id,
+    });
+    await factory.create("registration_user_registration", [], {
+      user_id: student.user.id,
+      registration_campaign_id: prerequisiteCampaign.id,
+      registration_item_id: prerequisiteItem.id,
+      status: "confirmed",
+    });
+
+    // Reloading the already-finalized follow-up campaign must NOT retroactively
+    // un-reject the student or re-evaluate the policy against their current
+    // state. The historical finalization rejection reason stays, and the
+    // student is not shown as registered/confirmed in the follow-up campaign.
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await expect(student.page.getByText(
+      "Your registration for Follow-up tutorial registration was rejected "
+      + "for the following reasons:",
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      /At the time this registration process was finalized, you did not have a confirmed registration in .*Priority registration/,
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      "Your registration is confirmed for",
+    )).toHaveCount(0);
+  });
+
+  test("keeps the finalization email rejection after the email is fixed later", async ({
+    factory,
+    student,
+    request,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const { campaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "first_come_first_served",
+      "Email checked tutorial registration",
+      "open",
+      1,
+      ["with_finalization_policy"],
+    );
+
+    // The student registers while their email domain does not satisfy the
+    // finalization email policy yet.
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await student.page.getByRole("button", { name: "Register now" }).click();
+    await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
+
+    // Finalizing rejects the student because their email domain did not match
+    // at that point in time.
+    await campaign.__call("finalize!");
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await expect(student.page.getByText(
+      "Your registration for Email checked tutorial registration was rejected "
+      + "for the following reasons:",
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      "At the time this registration process was finalized, your email domain "
+      + "did not match the required email domains example.com.",
+    )).toBeVisible();
+
+    // The student now fixes their email *after* the campaign was finalized:
+    // they change it to an allowed domain and confirm the change.
+    const newEmail = `fixed_${Date.now()}@example.com`;
+    await new ProfilePage(student.page).goto();
+    await student.page.getByRole("link", { name: "Change login data" }).click();
+    await student.page.locator("#user_email").fill(newEmail);
+    await student.page.getByLabel("Current password", { exact: true })
+      .fill(student.user.password);
+    await student.page.getByRole("button", { name: "Update" }).click();
+    await expect(student.page.getByRole("alert")).toBeVisible();
+
+    const confirmationLink = await confirmationLinkFor(request, newEmail);
+    await student.page.goto(confirmationLink);
+
+    // Even though the email now satisfies the policy, the already-finalized
+    // campaign must keep the historical rejection: the decision is frozen and
+    // not re-evaluated against the current email.
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await expect(student.page.getByText(
+      "Your registration for Email checked tutorial registration was rejected "
+      + "for the following reasons:",
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      "At the time this registration process was finalized, your email domain "
+      + "did not match the required email domains example.com.",
+    )).toBeVisible();
+    await expect(student.page.getByText(
+      "Your registration is confirmed for",
+    )).toHaveCount(0);
   });
 
   test("stages preference ranks locally and saves them in one request", async ({
