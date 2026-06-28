@@ -243,7 +243,7 @@ input[type="file"] {
 }
 
 .table-wrapper-teacher::after {
-  right: 200px;
+  right: 300px;
   background: linear-gradient(to left, #f8f9fa, transparent);
   opacity: var(--fade-right, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
