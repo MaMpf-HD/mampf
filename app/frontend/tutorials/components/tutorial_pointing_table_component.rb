@@ -45,21 +45,17 @@ class TutorialPointingTableComponent < ViewComponent::Base
                "font-size:12px; color:#555; text-decoration:none;".freeze
 
   def mark_as_participated_link(user)
-    path = if @tutorial.present?
-      mark_user_as_participated_path(
-        user_id: user.id,
-        tutorial_id: @tutorial.id,
-        assignment_id: @assignment.id,
-        mode: @mode
-      )
-    elsif @lecture.present?
-      mark_user_as_participated_path(
-        user_id: user.id,
-        lecture_id: @lecture.id,
-        assignment_id: @assignment.id,
-        mode: @mode
-      )
+    tutorial = if @mode == "tutor"
+      @tutorial
+    else
+      user.tutorial_rosterized(@lecture)
     end
+    path = mark_user_as_participated_path(
+      user_id: user.id,
+      tutorial_id: tutorial.id,
+      assignment_id: @assignment.id,
+      mode: @mode
+    )
 
     link_to(path,
             style: LINK_STYLE,
