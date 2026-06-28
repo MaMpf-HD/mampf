@@ -24,6 +24,7 @@ module Assessment
 
     def authorize_assessment!
       authorize! :grade, @tutorial if @tutorial.present?
+      authorize! :grade, @lecture if @lecture.present?
     end
 
     def update_team_multi
@@ -70,7 +71,8 @@ module Assessment
             html: render_to_string(SubmissionRowComponent.new(
                                      submission: @submission,
                                      assignment: @assignment,
-                                     tutorial: @tutorial
+                                     tutorial: @tutorial,
+                                     mode: params[:mode]
                                    ))
           )
         )
@@ -97,7 +99,8 @@ module Assessment
             html: render_to_string(ParticipationRowComponent.new(
                                      participation: @participation,
                                      assignment: @assignment,
-                                     tutorial: @tutorial
+                                     tutorial: @tutorial,
+                                     mode: params[:mode]
                                    ))
           )
         )
@@ -117,7 +120,7 @@ module Assessment
       user = User.find_by(id: params[:user_id])
       return respond_with_flash(:alert, t("assessment.task_points.user_not_found")) unless user
 
-      SubmissionGraderService.init_participation(@assessment, user, @tutorial)
+      SubmissionGraderService.init_participation(@assessment, user, tutorial: @tutorial)
       rerender_submission_table
     end
 
@@ -131,7 +134,8 @@ module Assessment
               html: render_to_string(SubmissionRowComponent.new(
                                        submission: @submission,
                                        assignment: @assignment,
-                                       tutorial: @tutorial
+                                       tutorial: @tutorial,
+                                       mode: params[:mode]
                                      ))
             )
           end
@@ -146,7 +150,8 @@ module Assessment
               html: render_to_string(ParticipationRowComponent.new(
                                        participation: @participation,
                                        assignment: @assignment,
-                                       tutorial: @tutorial
+                                       tutorial: @tutorial,
+                                       mode: params[:mode]
                                      ))
             )
           end
@@ -164,9 +169,9 @@ module Assessment
             render turbo_stream: turbo_stream.replace(
               "grading-table",
               html: render_to_string(TutorialPointingTableComponent.new(
-                                       mode: "tutor",
                                        assignment: @assignment,
-                                       tutorial: @tutorial
+                                       tutorial: @tutorial,
+                                       mode: params[:mode]
                                      ))
             )
           end
@@ -180,8 +185,8 @@ module Assessment
           set_resources_from_submission
         elsif params[:participation_id]
           set_resources_from_participation
-        elsif params[:assignment_id] && params[:tutorial_id]
-          set_resources_from_assignment_and_tutorial
+        elsif params[:assignment_id]
+          set_resources_from_assignment
         end
       end
 
@@ -218,11 +223,11 @@ module Assessment
         respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
       end
 
-      def set_resources_from_assignment_and_tutorial
+      def set_resources_from_assignment
         @assignment = Assignment.find_by(id: params[:assignment_id])
         @tutorial = Tutorial.find_by(id: params[:tutorial_id])
-        @assessment = @assignment.assessment if @assignment && @tutorial
-        return if @assessment && @tutorial && @assignment
+        @assessment = @assignment.assessment if @assignment
+        return if @assessment && @assignment
 
         respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
       end

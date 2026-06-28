@@ -42,7 +42,7 @@
 
   <% if grading_enabled? %>
     <!-- Column 4: Status -->
-    <td class="text-center sticky-col status-col">
+    <td class="text-center sticky-col status-col-tutor">
       <% if @submission&.participations %>
         <% status = @submission&.participations.first&.status %>
         <span
@@ -56,19 +56,18 @@
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% for assignment_task in @assignment.assessment.tasks %>
-      <td class="sticky-col task-col">
+      <td class="sticky-col task-col"> <%# herb:disable html-no-duplicate-attributes %>
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
     <% end %>
     <!-- Column 4: Total Points -->
-    <td class="text-center sticky-col total-col">
+    <td class="text-center sticky-col total-col-tutor">
       <span data-submission-row-target="totalPoints">0</span>
     </td>
-
   <% end %>
 
   <!-- Column 5: Actions buttons -->
-  <td class="text-end sticky-col action-col" data-id="<%= @submission.id %>">
+  <td class="text-end sticky-col action-col-tutor" data-id="<%= @submission.id %>">
     <div class="d-inline-flex align-items-center flex-nowrap gap-1">
       <!-- Download -->
       <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
@@ -91,7 +90,9 @@
       <!-- Save and refresh -->
       <% if helpers.current_user.in?(@submission.tutorial.tutors) && grading_enabled? %>
         <!-- Hidden form for this row to submit -->
-        <%= form_with url: point_submission_tutorial_path(@submission, type: "Tutorial"),
+        <%= form_with url: point_submission_tutorial_path(@submission, 
+                                                          type: "Tutorial", 
+                                                          mode: @mode),
                     method: :patch,
                     data: { turbo: true, submission_row_target: "form" },
                     html: { style: "display:none;" } do %>
@@ -104,7 +105,9 @@
         <!-- Save row -->
         <%= save_row_button(allow_grading?) %>
         <!-- Refresh row -->
-        <%= form_with url: refresh_point_submission_tutorial_path(@submission, type: "Tutorial"),
+        <%= form_with url: refresh_point_submission_tutorial_path(@submission, 
+                                                                  type: "Tutorial", 
+                                                                  mode: @mode),
                     method: :patch,
                     data: { turbo: true, submission_row_target: "refreshForm" },
                     html: { style: "display:none;" } do %>

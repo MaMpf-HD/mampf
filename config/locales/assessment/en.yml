@@ -111,6 +111,7 @@ en:
       no_submissions: 'No submissions for this assignment.'
       no_submission_zone: 'No submissions'
       no_submission_badge: 'no submission'
+      no_tutorial_badge: 'no tutorial'
       participated: 'participated'
       mark_as_participated: 'Mark as participated'
       confirm_unsaved_changes: 'Unsaved changes in the grading table will be lost. Continue?'
@@ -129,7 +130,7 @@ en:
           not_participated: "not yet marked"
           graded: "graded"
           pending: "pending"
-      no_participarions_for_config: "No participation for user %{user_id} on assignment %{assignment_id}"
+      no_users_for_config: "No user for participation %{participation_id} on assignment %{assignment_id}"
     grading_overview:
       submission_progress: "Submissions"
       submitted: "Submitted"

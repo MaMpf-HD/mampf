@@ -35,21 +35,19 @@
 
   <% if grading_enabled? %>
     <!-- Column 2: Status -->
-      <td class="text-center sticky-col status-col-<%= @mode %>">
-        <span
-          class="<%= badge_status_participation_class(@participation.status) %>"
-          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
-        >
+    <td class="text-center sticky-col status-col-<%= @mode %>">
+      <span
+        class="<%= badge_status_participation_class(@participation.status) %>"
+        style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
+      >
         <%= @participation.status %>
-        </span>
-      </td>
-
+      </span>
+    </td>
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% @assignment.assessment.tasks.each do |assignment_task| %>
       <%= task_points_participation_cell(assignment_task, allow_grading?) %>
     <% end %>
-
     <!-- Column 4: Total Points -->
     <td class="text-center sticky-col total-col-<%= @mode %>">
       <span data-submission-row-target="totalPoints">0</span>
@@ -62,7 +60,9 @@
       <!-- Save and refresh -->
       <% if can_grade? && grading_enabled? && @participation %>
         <!-- Hidden form for this row to submit -->
-        <%= form_with url: point_user_tutorial_path(@participation, type: "Tutorial"),
+        <%= form_with url: point_user_tutorial_path(@participation, 
+                                                    type: "Tutorial",
+                                                    mode: @mode),
                     method: :patch,
                     data: { turbo: true, submission_row_target: "form" },
                     html: { style: "display:none;" } do %>
@@ -75,7 +75,9 @@
         <!-- Save row -->
         <%= save_row_button(allow_grading?) %>
         <!-- Refresh row -->
-        <%= form_with url: refresh_point_user_tutorial_path(@participation, type: "Tutorial"),
+        <%= form_with url: refresh_point_user_tutorial_path(@participation, 
+                                                            type: "Tutorial", 
+                                                            mode: @mode),
                     method: :patch,
                     data: { turbo: true, submission_row_target: "refreshForm" },
                     html: { style: "display:none;" } do %>
@@ -87,13 +89,12 @@
         <% end %>
         <!-- refresh row -->
         <%= refresh_row_button(allow_grading?) %>
-        <!-- TODO -->
       <% end %>
     </div>
   </td>
 
   <!-- empty correction column -->
   <% if @mode == "tutor" %>
-  <td class="sticky-col correction-col"></td>
+    <td class="sticky-col correction-col"></td>
   <% end %>
 </tr>

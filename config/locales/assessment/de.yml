@@ -111,6 +111,7 @@ de:
       no_submissions: 'Keine Abgaben für diese Hausaufgabe.'
       no_submission_zone: 'Keine Abgaben'
       no_submission_badge: 'nicht abgegeben'
+      no_tutorial_badge: 'kein Tutorium'
       participated: 'teilgenommen'
       mark_as_participated: 'Als teilgenommen markieren'
       confirm_unsaved_changes: 'Ungespeicherte Änderungen in der Punktetabelle gehen verloren. Fortfahren?'
@@ -129,7 +130,7 @@ de:
           not_participated: "noch nicht bewertet"
           graded: "benotet"
           pending: "ausstehend"
-      no_participarions_for_config: "Keine Teilnahme für Benutzer %{user_id} an Hausaufgabe %{assignment_id}"
+      no_user_for_config: "Keine Benutzer für Teilnahme %{participation_id} an Hausaufgabe %{assignment_id}"
     grading_overview:
       submission_progress: "Abgaben"
       submitted: "Abgegeben"

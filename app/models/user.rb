@@ -769,6 +769,7 @@ class User < ApplicationRecord
   end
 
   def can_grade_in_scope?(something)
+    t = something.class.name
     unless something.is_a?(Lecture) || something.is_a?(Tutorial)
       raise("can_grade_in_scope? was called with incompatible class")
     end

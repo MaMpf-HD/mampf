@@ -12,11 +12,12 @@ class TutorialPointingTableComponent < ViewComponent::Base
       @tutorial = tutorial
       @stack = assignment&.submissions&.where(tutorial: @tutorial)&.proper
                          &.order(:last_modification_by_users_at)
-      @non_submitters = assignment&.non_submitters_tutorial(@tutorial)
+      @non_submitters = assignment&.non_submitters_in_tutorial(@tutorial)
     else
       @lecture = assignment.lecture
       @participations = assignment.assessment&.assessment_participations
-      @non_submitters = assignment.non_submitters
+      @non_submitters = assignment.non_submitters_in_tutorials
+      @non_tutorial_participants = assignment.applicable_users_not_in_tutorials
     end
   end
 
@@ -33,7 +34,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def grading_records?
-    @stack&.any? || @non_submitters&.any? do |user|
+    @stack&.any? || @participations&.any? || @non_submitters&.any? do |user|
       user.assessment_participation_in_assignment(@assignment)
     end
   end
@@ -48,13 +49,15 @@ class TutorialPointingTableComponent < ViewComponent::Base
       mark_user_as_participated_path(
         user_id: user.id,
         tutorial_id: @tutorial.id,
-        assignment_id: @assignment.id
+        assignment_id: @assignment.id,
+        mode: @mode
       )
     elsif @lecture.present?
       mark_user_as_participated_path(
         user_id: user.id,
         lecture_id: @lecture.id,
-        assignment_id: @assignment.id
+        assignment_id: @assignment.id,
+        mode: @mode
       )
     end
 

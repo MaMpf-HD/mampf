@@ -9,10 +9,10 @@ $('#bulk-upload-report').empty()
 												locals: { report: @report } %>').show()
 $('#tutorial-table').empty()
 	.append('<%= j render partial: "tutorials/table_wrapper",
-			locals: { assignment: @assignment,
-			tutorial: @tutorial,
-			non_submitters: @non_submitters,
-			stack: @stack } %>')
+			locals: {
+			mode: "tutor",
+  		assignment: assignment,
+  		tutorial: tutorial} %>')
 initBootstrapPopovers()
 <% end %>
 <% else %>

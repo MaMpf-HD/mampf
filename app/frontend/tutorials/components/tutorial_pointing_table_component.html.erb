@@ -25,7 +25,7 @@
         </div>
       <% end %>
 
-      <div class="table-wrapper" data-controller="table-fade">
+      <div class="table-wrapper-<%= @mode %>" data-controller="table-fade">
         <div class="table-overflow" data-table-fade-target="inner">
           <table
             class="table align-middle my-3"
@@ -78,81 +78,110 @@
     </div>
   <% end %>
 
+
   <%# ── ZONE 2: on roster, no submission ── %>
-  <% if @non_submitters.present? && grading_enabled? %>
-    <div
-      style="display: flex; align-items: center; gap: 8px; margin: 20px 0 10px; font-size: 13px; font-weight: 500; color: #888;"
-    >
-      <%= t('assessment.grading_tutorial.no_submission_zone') %>
-      <span style="flex: 1; height: 1px; background: #e5e7eb; display: block;"></span>
-    </div>
-    <div>
-      <table class="table align-middle my-3">
-        <thead style="background: #fafafa;">
-          <tr>
-            <th class="grade-th">
-              <%= t('basics.user') %>
-            </th>
+  <% if (@non_submitters.present? || @non_tutorial_participants.present?) && grading_enabled? %>
+    <div class="card mt-3">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="bi bi-person-dash me-1"></i>
+          <%= t("assessment.grade_table.excluded_heading") %>
+        </h6>
+      </div>
 
-            <th class="text-center grade-th">
-              <%= t('basics.status') %>
-            </th>
-
-            <th class="text-end grade-th">
-              <%= t('assessment.grading_tutorial.actions') %>
-            </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <% @non_submitters.each do |user| %>
+      <div class="card-body p-0">
+        <table class="table align-middle my-3">
+          <thead style="background: #fafafa;">
             <tr>
-              <td class="sticky-col team-col">
-                <%= user.tutorial_name %>
+              <th class="grade-th">
+                <%= t('basics.user') %>
+              </th>
 
-                <i
-                  class="
-                    clipboardpopup bi bi-clipboard clickable
-                    text-secondary clipboard-btn ms-3 clipboard-button
-                  "
-                  data-clipboard-text="<%= user.email %>"
-                  data-bs-toggle="tooltip"
-                  title="<%= t('buttons.copy_email_to_clipboard') %>"
-                >
-                  <span class="clipboardpopuptext token-clipboard-popup">
-                    <%= t('basics.emails_copied_to_clipboard') %>
-                  </span>
-                </i>
-              </td>
+              <th class="text-center grade-th">
+                Excluded reasons
+              </th>
 
-              <td class="text-center sticky-col action-col">
-                <span
-                  class="badge rounded-pill bg-light text-muted"
-                  style="font-size: 11px;"
-                >
-                  <%= t('assessment.grading_tutorial.no_submission_badge') %>
-                </span>
-              </td>
-
-              <td class="text-end">
-                <% if user.assessment_participation_in_assignment(@assignment) %>
-                  <span
-                    style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; background:#eef7ee; font-size:12px; color:#2e7d32;"
-                  >
-                    <span class="material-icons" style="font-size: 14px;">
-                      check_circle
-                    </span>
-
-                    <%= t('assessment.grading_tutorial.participated') %>
-                  </span>
-                <% else %>
-                  <%= mark_as_participated_link(user) %>
-                <% end %>
-              </td>
+              <th class="text-end grade-th">
+                <%= t('assessment.grading_tutorial.actions') %>
+              </th>
             </tr>
-          <% end %>
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            <% @non_submitters.each do |user| %>
+              <tr>
+                <td>
+                  <%= user.tutorial_name %>
+
+                  <i
+                    class="
+                      clipboardpopup bi bi-clipboard clickable
+                      text-secondary clipboard-btn ms-3 clipboard-button
+                    "
+                    data-clipboard-text="<%= user.email %>"
+                    data-bs-toggle="tooltip"
+                    title="<%= t('buttons.copy_email_to_clipboard') %>"
+                  >
+                    <span class="clipboardpopuptext token-clipboard-popup">
+                      <%= t('basics.emails_copied_to_clipboard') %>
+                    </span>
+                  </i>
+                </td>
+
+                <td class="text-center">
+                  <%= t('assessment.grading_tutorial.no_submission_badge') %>
+                </td>
+
+                <td class="text-end">
+                  <% if user.assessment_participation_in_assignment(@assignment) %>
+                    <span
+                      style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; background:#eef7ee; font-size:12px; color:#2e7d32;"
+                    >
+                      <span class="material-icons" style="font-size: 14px;">
+                        check_circle
+                      </span>
+
+                      <%= t('assessment.grading_tutorial.participated') %>
+                    </span>
+                  <% else %>
+                    <%= mark_as_participated_link(user) %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+
+            <% @non_tutorial_participants.to_a.each do |user| %>
+              <tr>
+                <td>
+                  <%= user.tutorial_name %>
+
+                  <i
+                    class="
+                      clipboardpopup bi bi-clipboard clickable
+                      text-secondary clipboard-btn ms-3 clipboard-button
+                    "
+                    data-clipboard-text="<%= user.email %>"
+                    data-bs-toggle="tooltip"
+                    title="<%= t('buttons.copy_email_to_clipboard') %>"
+                  >
+                    <span class="clipboardpopuptext token-clipboard-popup">
+                      <%= t('basics.emails_copied_to_clipboard') %>
+                    </span>
+                  </i>
+                </td>
+
+                <td class="text-center">
+                  <%= t('assessment.grading_tutorial.no_tutorial_badge') %>
+                </td>
+
+                <td>
+                  <!-- No action buttons for non-tutorial people -->
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </div>
   <% end %>
 <% end %>
