@@ -783,27 +783,27 @@ Rails.application.routes.draw do
   patch "submissions/:submission_id/point_submission",
         to: "assessment/task_points#update_team",
         as: "point_submission_tutorial",
-        defaults: { type: "Tutorial", mode: "tutor" }
+        defaults: { type: "Tutorial" }
 
   patch "participations/:participation_id/point_user",
         to: "assessment/task_points#update_user",
         as: "point_user_tutorial",
-        defaults: { type: "Tutorial", mode: "tutor" }
+        defaults: { type: "Tutorial" }
 
   patch "submissions/point_multi_submissions",
         to: "assessment/task_points#update_team_multi",
         as: "point_multi_submissions_tutorial",
-        defaults: { type: "Tutorial", mode: "tutor" }
+        defaults: { type: "Tutorial" }
 
   patch "submissions/:submission_id/refresh_point_submission",
         to: "assessment/task_points#refresh_submission",
         as: "refresh_point_submission_tutorial",
-        defaults: { type: "Tutorial", mode: "tutor" }
+        defaults: { type: "Tutorial" }
 
   patch "participations/:participation_id/refresh_point_user",
         to: "assessment/task_points#refresh_user",
         as: "refresh_point_user_tutorial",
-        defaults: { type: "Tutorial", mode: "tutor" }
+        defaults: { type: "Tutorial" }
 
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",
