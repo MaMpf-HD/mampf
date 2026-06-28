@@ -45,7 +45,7 @@
     </td>
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
-    <% @assignment.assessment.tasks.each do |assignment_task| %>
+    <% tasks.each do |assignment_task| %>
       <%= task_points_participation_cell(assignment_task, allow_grading?) %>
     <% end %>
     <!-- Column 4: Total Points -->

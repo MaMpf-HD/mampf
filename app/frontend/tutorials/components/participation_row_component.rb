@@ -38,6 +38,10 @@ class ParticipationRowComponent < ViewComponent::Base
     end&.points
   end
 
+  def tasks
+    @assignment.assessment.persisted_tasks || []
+  end
+
   def badge_status_participation_color(status)
     {
       pending: "warning",

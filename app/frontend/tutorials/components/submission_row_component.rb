@@ -19,7 +19,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def tasks
-    @assignment.assessment.tasks
+    @assignment.assessment.persisted_tasks || []
   end
 
   def late?

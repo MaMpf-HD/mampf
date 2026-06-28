@@ -26,7 +26,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def tasks
-    @assignment&.assessment&.tasks || []
+    @assignment&.assessment&.persisted_tasks || []
   end
 
   def total_max_points
@@ -64,7 +64,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
     link_to(path,
             style: LINK_STYLE,
             data: { turbo_method: :patch,
-                    confirm: t("assessment.grading_tutorial.confirm_unsaved_changes") }) do
+                    turbo_confirm: t("assessment.grading_tutorial.confirm_unsaved_changes") }) do
       safe_join([
                   content_tag(:span, "check", class: "material-icons", style: "font-size: 14px;"),
                   t("assessment.grading_tutorial.mark_as_participated")

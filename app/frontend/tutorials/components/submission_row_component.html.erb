@@ -55,7 +55,7 @@
     </td>
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
-    <% for assignment_task in @assignment.assessment.tasks %>
+    <% for assignment_task in tasks %>
       <td class="sticky-col task-col"> <%# herb:disable html-no-duplicate-attributes %>
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
