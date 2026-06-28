@@ -120,7 +120,10 @@ module Assessment
       user = User.find_by(id: params[:user_id])
       return respond_with_flash(:alert, t("assessment.task_points.user_not_found")) unless user
 
-      SubmissionGraderService.init_participation(@assessment, user, tutorial: @tutorial)
+      # derive tutorial from rosterized result
+      @tutorial = user.tutorial_rosterized(@lecture)
+      t = @tutorial
+      SubmissionGraderService.init_participation(@assessment, user, @tutorial)
       rerender_submission_table
     end
 
@@ -226,6 +229,7 @@ module Assessment
       def set_resources_from_assignment
         @assignment = Assignment.find_by(id: params[:assignment_id])
         @tutorial = Tutorial.find_by(id: params[:tutorial_id])
+        @lecture = @assignment&.lecture if @assignment
         @assessment = @assignment.assessment if @assignment
         return if @assessment && @assignment
 

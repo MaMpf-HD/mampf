@@ -64,9 +64,9 @@ module Assessment
       handle_score_tasks_by_participation(participation, points_by_task_id, scorer)
     end
 
-    def self.init_participation(assessment, user, tutorial: nil)
-      if assessment.nil? || user.nil?
-        raise(SubmissionGraderError, "Assessment and user must be present")
+    def self.init_participation(assessment, user, tutorial)
+      if assessment.nil? || user.nil? || tutorial.nil?
+        raise(SubmissionGraderError, "Assessment, user, and tutorial must be present")
       end
 
       participation = Participation.find_or_initialize_by(
@@ -74,9 +74,10 @@ module Assessment
         user_id: user.id
       )
       participation.save! if participation.new_record?
-      if participation.tutorial_id.nil? && tutorial.present?
-        participation.update!(tutorial_id: tutorial.id)
-      end
+
+      # tutorial_id is nullable when a participation is created in submission upload phase
+      # we only set it if it's not already set
+      participation.update!(tutorial_id: tutorial.id) if participation.tutorial_id.nil?
       participation
     end
 
@@ -95,7 +96,7 @@ module Assessment
     def self.handle_score_tasks_by_submission(assessment, submission, points_by_task_id, scorer)
       users = submission.users
       users.each do |user|
-        participation = init_participation(assessment, user, tutorial: submission.tutorial)
+        participation = init_participation(assessment, user, submission.tutorial)
         PointEntryService.enter_points(
           participation,
           points_by_task_id,
