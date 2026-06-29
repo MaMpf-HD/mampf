@@ -1,6 +1,6 @@
 <tr>
   <% columns.each do |column| %>
-    <th class="<%= column.css_class %>">
+    <th class="<%= column.css_class %>" data-mode="<%= column.data_mode %>">
       <%= column.label %>
 
       <% if column.sublabel %>

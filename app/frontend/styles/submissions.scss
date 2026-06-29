@@ -90,7 +90,7 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
-.status-col-tutor {
+.status-col[data-mode="tutor"] {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
@@ -113,7 +113,7 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
-.action-col-tutor {
+.action-col[data-mode="tutor"] {
   width: 200px;
   min-width: 200px;
   max-width: 200px;
@@ -132,7 +132,7 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
-.status-col-teacher {
+.status-col[data-mode="teacher"] {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
@@ -141,7 +141,7 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
-.action-col-teacher {
+.action-col[data-mode="teacher"] {
   width: 200px;
   min-width: 200px;
   max-width: 200px;
@@ -169,7 +169,7 @@ input[type="file"] {
   min-width: 0;
 }
 
-.total-col-tutor {
+.total-col[data-mode="tutor"] {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
@@ -178,7 +178,7 @@ input[type="file"] {
   z-index: 2;
 }
 
-.total-col-teacher {
+.total-col[data-mode="teacher"] {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
@@ -202,15 +202,15 @@ input[type="file"] {
 
 }
 
-.table-wrapper-tutor,
-.table-wrapper-teacher {
+.table-wrapper[data-mode="tutor"],
+.table-wrapper[data-mode="teacher"] {
   position: relative;
 }
 
-.table-wrapper-tutor::before,
-.table-wrapper-tutor::after,
-.table-wrapper-teacher::before,
-.table-wrapper-teacher::after {
+.table-wrapper[data-mode="tutor"]::before,
+.table-wrapper[data-mode="tutor"]::after,
+.table-wrapper[data-mode="teacher"]::before,
+.table-wrapper[data-mode="teacher"]::after {
   content: '';
   position: absolute;
   top: 0;
@@ -221,28 +221,28 @@ input[type="file"] {
   transition: opacity 0.2s;
 }
 
-.table-wrapper-tutor::before {
+.table-wrapper[data-mode="tutor"]::before {
   left: 300px;
   background: linear-gradient(to right, #f8f9fa, transparent);
   opacity: var(--fade-left, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
-.table-wrapper-tutor::after {
+.table-wrapper[data-mode="tutor"]::after {
   right: 500px;
   background: linear-gradient(to left, #f8f9fa, transparent);
   opacity: var(--fade-right, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
-.table-wrapper-teacher::before {
+.table-wrapper[data-mode="teacher"]::before {
   left: 400px;
   background: linear-gradient(to right, #f8f9fa, transparent);
   opacity: var(--fade-left, 0);
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
-.table-wrapper-teacher::after {
+.table-wrapper[data-mode="teacher"]::after {
   right: 300px;
   background: linear-gradient(to left, #f8f9fa, transparent);
   opacity: var(--fade-right, 0);

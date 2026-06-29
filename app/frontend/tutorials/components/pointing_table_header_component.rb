@@ -1,5 +1,5 @@
 class PointingTableHeaderComponent < ViewComponent::Base
-  Column = Struct.new(:css_class, :label, :sublabel, keyword_init: true)
+  Column = Struct.new(:css_class, :label, :sublabel, :data_mode, keyword_init: true)
 
   def initialize(mode:, grading_enabled:, tasks: [], total_max_points: 0, accepted_file_type: nil)
     @mode = mode.to_sym
@@ -38,7 +38,8 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def status_col
-      Column.new(css_class: "text-center sticky-col status-col-#{@mode} grade-th",
+      Column.new(css_class: "text-center sticky-col status-col grade-th",
+                 data_mode: @mode,
                  label: t("assessment.grading_tutorial.status"))
     end
 
@@ -51,7 +52,8 @@ class PointingTableHeaderComponent < ViewComponent::Base
         status_col,
         *@tasks.map { |task| task_column(task) },
         Column.new(
-          css_class: "text-center sticky-col total-col-#{@mode} grade-th",
+          css_class: "text-center sticky-col total-col grade-th",
+          data_mode: @mode,
           label: t("assessment.grading_tutorial.total_points"),
           sublabel: "(#{@total_max_points} #{t("assessment.grading_tutorial.max_points")})"
         )
@@ -67,7 +69,8 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def action_column
-      [Column.new(css_class: "text-center sticky-col action-col-#{@mode} grade-th",
+      [Column.new(css_class: "text-center sticky-col action-col grade-th",
+                  data_mode: @mode,
                   label: t("assessment.grading_tutorial.actions"))]
     end
 
