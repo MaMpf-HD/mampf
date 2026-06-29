@@ -95,6 +95,7 @@ Rails.application.configure do
     port: ENV.fetch("MAILSERVER_PORT", "587").to_i,
     authentication: :plain,
     enable_starttls_auto: true,
+    openssl_verify_mode: "peer",
     user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),
     password: ENV.fetch("MAMPF_EMAIL_PASSWORD")
   }
@@ -116,12 +117,9 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = :all
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.hosts = [ENV.fetch("URL_HOST")]
+  # Skip host authorization for the health/readiness probes (reached with a non-domain Host).
+  config.host_authorization = { exclude: ->(request) { ["/up", "/ready"].include?(request.path) } }
 
   Rails.application.config.active_support.to_time_preserves_timezone = :offset
 end
