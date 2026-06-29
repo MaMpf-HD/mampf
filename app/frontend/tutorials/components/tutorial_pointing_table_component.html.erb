@@ -78,9 +78,9 @@
     </div>
   <% end %>
 
-
   <%# ── ZONE 2: on roster, no submission ── %>
-  <% if (@non_submitters.present? || @non_tutorial_participants.present?) && grading_enabled? %>
+  <%# ── ZONE 2: on roster, no submission ── %>
+  <% if grading_enabled? && (@non_submitters.present? || @non_tutorial_participants.present?) %>
     <div class="card mt-3">
       <div class="card-header">
         <h6 class="mb-0">
@@ -93,12 +93,9 @@
         <table class="table align-middle my-3">
           <thead style="background: #fafafa;">
             <tr>
-              <th class="grade-th">
-                <%= t('basics.user') %>
-              </th>
-
-              <th class="text-center grade-th">
-                Excluded reasons
+              <th class="grade-th"><%= t('basics.user') %></th>
+              <th class="text-start grade-th">
+                <%= t('assessment.grading_tutorial.excluded_reason') %>
               </th>
 
               <th class="text-end grade-th">
@@ -108,76 +105,30 @@
           </thead>
 
           <tbody>
-            <% @non_submitters.each do |user| %>
-              <tr>
-                <td>
-                  <%= user.tutorial_name %>
-
-                  <i
-                    class="
-                      clipboardpopup bi bi-clipboard clickable
-                      text-secondary clipboard-btn ms-3 clipboard-button
-                    "
-                    data-clipboard-text="<%= user.email %>"
-                    data-bs-toggle="tooltip"
-                    title="<%= t('buttons.copy_email_to_clipboard') %>"
-                  >
-                    <span class="clipboardpopuptext token-clipboard-popup">
-                      <%= t('basics.emails_copied_to_clipboard') %>
-                    </span>
-                  </i>
-                </td>
-
-                <td class="text-center">
-                  <%= t('assessment.grading_tutorial.no_submission_badge') %>
-                </td>
-
-                <td class="text-end">
-                  <% if user.assessment_participation_in_assignment(@assignment) %>
-                    <span
+            <% @non_submitters.to_a.each do |user| %>
+              <%= render(layout: "tutorials/components/excluded_user_row",
+                       locals: { user: user,
+                                 reason: t('assessment.grading_tutorial.no_submission_badge') }) do %>
+                <% if user.assessment_participation_in_assignment(@assignment) %>
+                  <span
                       style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; background:#eef7ee; font-size:12px; color:#2e7d32;"
                     >
-                      <span class="material-icons" style="font-size: 14px;">
-                        check_circle
-                      </span>
-
-                      <%= t('assessment.grading_tutorial.participated') %>
+                    <span class="material-icons" style="font-size: 14px;">
+                      check_circle
                     </span>
-                  <% else %>
-                    <%= mark_as_participated_link(user) %>
-                  <% end %>
-                </td>
-              </tr>
+
+                    <%= t('assessment.grading_tutorial.participated') %>
+                  </span>
+                <% else %>
+                  <%= mark_as_participated_link(user) %>
+                <% end %>
+              <% end %>
             <% end %>
 
             <% @non_tutorial_participants.to_a.each do |user| %>
-              <tr>
-                <td>
-                  <%= user.tutorial_name %>
-
-                  <i
-                    class="
-                      clipboardpopup bi bi-clipboard clickable
-                      text-secondary clipboard-btn ms-3 clipboard-button
-                    "
-                    data-clipboard-text="<%= user.email %>"
-                    data-bs-toggle="tooltip"
-                    title="<%= t('buttons.copy_email_to_clipboard') %>"
-                  >
-                    <span class="clipboardpopuptext token-clipboard-popup">
-                      <%= t('basics.emails_copied_to_clipboard') %>
-                    </span>
-                  </i>
-                </td>
-
-                <td class="text-center">
-                  <%= t('assessment.grading_tutorial.no_tutorial_badge') %>
-                </td>
-
-                <td>
-                  <!-- No action buttons for non-tutorial people -->
-                </td>
-              </tr>
+              <%= render partial: "tutorials/components/excluded_user_row",
+                       locals: { user: user,
+                                 reason: t('assessment.grading_tutorial.no_tutorial_badge') } %>
             <% end %>
           </tbody>
         </table>

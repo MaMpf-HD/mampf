@@ -33,7 +33,8 @@ class PointingTableHeaderComponent < ViewComponent::Base
     def tutorial_column
       return [] unless teacher?
 
-      [Column.new(css_class: "sticky-col tutorial-col grade-th", label: t("basics.tutorial"))]
+      [Column.new(css_class: "sticky-col tutorial-col grade-th text-center",
+                  label: t("basics.tutorial"))]
     end
 
     def status_col
