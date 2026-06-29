@@ -47,7 +47,7 @@ class Assignment < ApplicationRecord
     User.where(id: submitter_ids)
   end
 
-  # all user that are applicable for this assignment 
+  # all user that are applicable for this assignment
   # -> all users that are in the lecture of this assignment
   def applicable_user_ids
     lecture.lecture_memberships.pluck(:user_id).uniq

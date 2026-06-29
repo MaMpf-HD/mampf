@@ -122,7 +122,6 @@ module Assessment
 
       # derive tutorial from rosterized result
       @tutorial = user.tutorial_rosterized(@lecture)
-      t = @tutorial
       SubmissionGraderService.init_participation(@assessment, user, @tutorial)
       rerender_submission_table
     end
