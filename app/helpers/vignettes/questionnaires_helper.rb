@@ -76,7 +76,7 @@ module Vignettes
 
       sanitize(
         simple_format(text, {}, sanitize: false),
-        tags: %w[p br strong em],
+        tags: ["p", "br", "strong", "em"],
         attributes: []
       )
     end
