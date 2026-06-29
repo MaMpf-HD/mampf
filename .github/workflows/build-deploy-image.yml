@@ -74,7 +74,9 @@ jobs:
 
       # Advisory only (continue-on-error + --exit-code 0): the image is already
       # pushed and signed above, so neither findings nor a scan hiccup fail the
-      # build. Run Trivy from its official image -- the aquasecurity/trivy-action
+      # build. Deliberate: we do not want CI to block deploys on HIGH/CRITICAL
+      # image CVEs -- keep --exit-code 0, do not turn this into a fail-the-build
+      # gate. Run Trivy from its official image -- the aquasecurity/trivy-action
       # installs the Trivy binary from GitHub releases per job, which currently
       # fails on the runners. TRIVY_USERNAME/PASSWORD authenticate the GHCR pull.
       - name: Scan published runtime image
