@@ -90,8 +90,7 @@ jobs:
             -v "$PWD:/work" -w /work \
             aquasec/trivy:0.71.2 image \
             --scanners vuln \
-            --severity CRITICAL \
-            --ignore-unfixed \
+            --severity CRITICAL,HIGH \
             --format json \
             --output trivy-results.json \
             --exit-code 0 \

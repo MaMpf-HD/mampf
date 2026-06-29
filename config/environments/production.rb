@@ -49,6 +49,7 @@ Rails.application.configure do
   config.force_ssl = true
 
   config.ssl_options = {
+    hsts: false,
     redirect: {
       exclude: lambda do |request|
         ["/up", "/ready"].include?(request.path)
