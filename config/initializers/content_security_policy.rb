@@ -24,6 +24,7 @@ Rails.application.configure do
     policy.object_src(:none)
     policy.script_src(:self,
                       :unsafe_inline,
+                      :wasm_unsafe_eval,
                       "https://cdn.jsdelivr.net",
                       "https://cdnjs.cloudflare.com",
                       "https://www.geogebra.org",
@@ -68,9 +69,10 @@ Rails.application.configure do
     end
   end
 
-  # Staging rollout: run the policy in report-only mode first. The browser logs
-  # every violation to its DevTools console but blocks nothing, so you can click
-  # through staging and watch for warnings. Once the console stays clean, remove
-  # this line to switch the policy to enforcing.
-  config.content_security_policy_report_only = true
+  # Report-only logs every violation to the browser console but blocks nothing, so
+  # the policy can be validated by clicking through the app. Toggled by env so the
+  # switch to enforcing (and an instant rollback under real traffic) needs no rebuild:
+  # CSP_REPORT_ONLY=false enforces. Defaults to report-only.
+  config.content_security_policy_report_only =
+    ENV.fetch("CSP_REPORT_ONLY", "true") == "true"
 end
