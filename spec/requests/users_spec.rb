@@ -89,4 +89,22 @@ RSpec.describe("Users", type: :request) do
         .to include("src=\"#{image_user_path(teacher_user, variant: "original")}\"")
     end
   end
+
+  describe "GET /users/elevate" do
+    let(:student) { create(:confirmed_user) }
+    let(:target) { create(:confirmed_user) }
+
+    it "does not let a student promote themselves to admin" do
+      sign_in student
+      get elevate_user_path(generic_user: { id: student.id, admin: "1" })
+      expect(response).to have_http_status(:redirect)
+      expect(student.reload.admin).to be_falsey
+    end
+
+    it "lets an admin promote a user" do
+      sign_in create(:confirmed_user, admin: true)
+      get elevate_user_path(generic_user: { id: target.id, admin: "1" })
+      expect(target.reload.admin).to be(true)
+    end
+  end
 end

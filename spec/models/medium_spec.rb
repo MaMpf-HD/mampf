@@ -323,4 +323,10 @@ RSpec.describe(Medium, type: :model) do
   #     expect(medium.teachable_type_de).to eq('Sitzung')
   #   end
   # end
+
+  describe "#editors_with_inheritance" do
+    it "returns [] for a medium without a teachable instead of raising" do
+      expect(FactoryBot.build(:medium).editors_with_inheritance).to eq([])
+    end
+  end
 end

@@ -41,6 +41,10 @@ class SubmissionsController < ApplicationController
 
   def create
     @submission = Submission.new(submission_create_params)
+    # authorize_resource only sees the Submission class here (no @submission is
+    # preloaded for :create), so re-authorize the built instance to run the
+    # enrollment check in SubmissionAbility.
+    authorize! :create, @submission
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
     @too_late = @submission.not_updatable?

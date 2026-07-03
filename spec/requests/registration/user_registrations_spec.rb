@@ -54,6 +54,14 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         delete path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
         expect(response).to redirect_to(root_path)
       end
+
+      it "denies before the completed-campaign probe (no membership oracle)" do
+        campaign.update!(status: :completed)
+        delete path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        expect(response).to redirect_to(root_path)
+        expect(response.body)
+          .not_to include(I18n.t("registration.campaign.errors.already_finalized"))
+      end
     end
 
     context "when campaign does not exist" do

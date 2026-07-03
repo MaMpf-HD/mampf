@@ -250,7 +250,9 @@ class Submission < ApplicationRecord
         end
         submission_id = File.basename(filename.split("-ID-").last,
                                       File.extname(filename.split("-ID-").last))
-        submission = Submission.find_by(id: submission_id)
+        # Scope the lookup to this tutorial+assignment so an id parsed from the
+        # uploaded filename cannot target a submission in another tutorial.
+        submission = submissions.find_by(id: submission_id)
         unless submission
           report[:invalid_id].push(filename)
           next

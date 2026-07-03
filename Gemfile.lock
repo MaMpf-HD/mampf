@@ -154,6 +154,8 @@ GEM
     bootstrap_form (5.6.1)
       actionpack (>= 7.2)
       activemodel (>= 7.2)
+    brakeman (7.1.2)
+      racc
     builder (3.3.0)
     cancancan (3.6.1)
     case_transform (0.2)
@@ -727,6 +729,7 @@ DEPENDENCIES
   barby (~> 0.6)
   bootsnap (~> 1.18)
   bootstrap_form (~> 5.4)
+  brakeman (~> 7.0)
   cancancan (~> 3.6)
   coffee-rails (~> 5.0)
   commontator (~> 7.0.1)

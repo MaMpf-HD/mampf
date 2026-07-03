@@ -93,6 +93,7 @@ group :test do
 end
 
 group :development, :test do
+  gem "brakeman", "~> 7.0", require: false
   gem "debug", "~> 1.8"
   gem "factory_bot_rails", "~> 6.4"
   gem "i18n-tasks", "~> 1.1"

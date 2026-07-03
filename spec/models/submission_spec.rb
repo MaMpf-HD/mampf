@@ -142,4 +142,36 @@ RSpec.describe(Submission, type: :model) do
       expect(errors).to include(cap)
     end
   end
+
+  describe ".bulk_corrections!" do
+    let(:lecture) { create(:lecture) }
+    let(:assignment) { create(:assignment, lecture: lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let!(:in_scope) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial)
+    end
+    # a proper submission in a different tutorial+assignment of the same lecture
+    let!(:foreign) do
+      create(:submission, :with_manuscript,
+             assignment: create(:assignment, lecture: lecture),
+             tutorial: create(:tutorial, lecture: lecture))
+    end
+
+    it "only touches submissions in the given tutorial+assignment" do
+      foreign_file = "correction-ID-#{foreign.id}.pdf"
+      in_scope_file = "correction-ID-#{in_scope.id}.pdf"
+
+      report = Submission.bulk_corrections!(
+        tutorial, assignment,
+        [{ "metadata" => { "filename" => foreign_file } },
+         { "metadata" => { "filename" => in_scope_file } }]
+      )
+
+      # the foreign submission is out of scope: rejected as an invalid id, untouched
+      expect(report[:invalid_id]).to include(foreign_file)
+      expect(foreign.reload.correction).to be_blank
+      # the in-scope submission is found (not rejected as an unknown id)
+      expect(report[:invalid_id]).not_to include(in_scope_file)
+    end
+  end
 end

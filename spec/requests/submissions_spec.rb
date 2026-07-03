@@ -63,4 +63,23 @@ RSpec.describe("Submissions", type: :request) do
       expect(content_disposition).not_to match(/[\r\n]/)
     end
   end
+
+  describe "POST /submissions" do
+    def create_params
+      # the create form always sends a (possibly empty) manuscript field
+      { submission: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                      manuscript: "" } }
+    end
+
+    it "lets a student enrolled in the lecture create a submission" do
+      user.lectures << lecture
+      expect { post(submissions_path(format: :js), params: create_params) }
+        .to change(Submission, :count).by(1)
+    end
+
+    it "does not let a user not enrolled in the lecture create a submission" do
+      expect { post(submissions_path(format: :js), params: create_params) }
+        .not_to change(Submission, :count)
+    end
+  end
 end
