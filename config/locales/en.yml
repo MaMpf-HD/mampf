@@ -3994,6 +3994,8 @@ en:
                 There can be only one active voucher of this type for the lecture.
               speaker_vouchers_only_for_seminars: >
                 Speaker vouchers are only allowed for seminars.
+              invalid_for_lecture: >
+                This role is not available for this lecture.
         watchlist_entry:
           attributes:
             medium_id:

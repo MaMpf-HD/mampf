@@ -76,6 +76,33 @@ RSpec.describe(Voucher, type: :model) do
         end
       end
     end
+
+    describe "#ensure_role_valid_for_lecture" do
+      context "when the role is not offered for the lecture" do
+        before { Flipper.enable(:roster_maintenance) }
+        after { Flipper.disable(:roster_maintenance) }
+
+        # roster_maintenance excludes :tutor from a seminar's offered roles
+        let(:voucher) { build(:voucher, :tutor, lecture: seminar) }
+
+        it "rolls back and adds an error" do
+          expect(voucher.save).to be_falsey
+          expect(voucher.errors[:role]).to(
+            include(I18n.t("activerecord.errors.models.voucher.attributes." \
+                           "role.invalid_for_lecture"))
+          )
+        end
+      end
+
+      context "when the role is offered for the lecture" do
+        let(:voucher) { build(:voucher, :editor, lecture: lecture) }
+
+        it "does not add an error" do
+          expect(voucher.save).to be_truthy
+          expect(voucher.errors[:role]).to be_empty
+        end
+      end
+    end
   end
 
   describe "scopes" do

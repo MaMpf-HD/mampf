@@ -4222,6 +4222,8 @@ de:
                 Für diese Vorlesung kann es nur einen aktiven Gutschein dieses Typs geben.
               speaker_vouchers_only_for_seminars: >
                 Vortragenden-Gutscheine können nur für Seminare erstellt werden.
+              invalid_for_lecture: >
+                Diese Rolle ist für diese Vorlesung nicht verfügbar.
         watchlist_entry:
           attributes:
             medium_id:
