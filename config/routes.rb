@@ -311,12 +311,10 @@ Rails.application.routes.draw do
                 as: :registration_campaigns
     end
 
-    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
-      get "",
-          to: "lectures/home#show",
-          as: :user_registrations,
-          defaults: { project: "registration" }
-    end
+    get "",
+        to: "lectures/home#show",
+        as: :user_registrations,
+        defaults: { project: "registration" }
   end
 
   constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
