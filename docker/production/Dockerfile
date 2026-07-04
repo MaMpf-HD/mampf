@@ -125,9 +125,6 @@ ENV RAILS_ENV=production \
     APP_HEALTHCHECK_PORT=3000 \
     APP_CACHE_ROOT=/caches
 
-EXPOSE 3000
-EXPOSE 9394
-
 ENTRYPOINT ["/usr/src/app/docker/production/entrypoint-app.sh"]
 
 ARG OS_SECURITY_REFRESH=
