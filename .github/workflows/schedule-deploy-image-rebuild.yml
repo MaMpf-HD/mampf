@@ -6,6 +6,11 @@ on:
       build_ref:
         description: Branch to rebuild
         required: false
+        # Weekly OS-patch rebuild of the current baseline. Stays on thruster until
+        # cutover, then becomes a matrix over the live baselines (next -> staging,
+        # main -> production). Not pre-switched to next/main: the cron fires on a
+        # schedule, not on code arrival, so it must not target a branch that does
+        # not have the baseline yet.
         default: deploy/app-baseline-thruster
         type: string
   schedule:
@@ -19,6 +24,7 @@ jobs:
       actions: write
       contents: read
     env:
+      # TODO(cutover): rebuild both baselines via a matrix (next, main); see build_ref above.
       BUILD_REF: ${{ inputs.build_ref || 'deploy/app-baseline-thruster' }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:

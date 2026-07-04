@@ -17,8 +17,15 @@ on:
         type: boolean
         default: false
   push:
+    # Baseline branches that build a deploy image. Topology: next -> staging,
+    # main -> production. A push trigger fires from the workflow version on the
+    # branch pushed to, so next/main stay dormant until the baseline (incl. this
+    # file) actually reaches them -- safe to list ahead of cutover. thruster is
+    # dropped once retired.
     branches:
       - deploy/app-baseline-thruster
+      - next
+      - main
 
 jobs:
   build-deploy-image:
