@@ -35,6 +35,28 @@ RSpec.describe("Submissions", type: :request) do
       expect(content_disposition).not_to include("../")
       expect(content_disposition).not_to match(/[\r\n]/)
     end
+
+    it "serves a content-sniffed text/html manuscript as text/plain (FU-01)" do
+      submission.reload # create with real application/pdf metadata before stubbing
+
+      allow_any_instance_of(SubmissionUploader::UploadedFile).to receive(:metadata)
+        .and_wrap_original do |original, *args|
+          original.call(*args).merge("mime_type" => "text/html")
+        end
+
+      get show_submission_manuscript_path(submission)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/plain")
+    end
+
+    it "still serves a PDF manuscript inline as application/pdf" do
+      get show_submission_manuscript_path(submission)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("application/pdf")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+    end
   end
 
   describe "GET /submissions/:id/show_correction" do

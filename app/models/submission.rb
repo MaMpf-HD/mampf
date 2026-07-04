@@ -240,7 +240,6 @@ class Submission < ApplicationRecord
     report = { successful_saves: [], submissions: submissions.size,
                invalid_filenames: [], invalid_id: [], in_subfolder: [],
                no_decision: [], rejected: [], invalid_file: [] }
-    Dir.mktmpdir
     begin
       files.each do |file_shrine|
         filename = file_shrine["metadata"]["filename"]

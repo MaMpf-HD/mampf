@@ -7,6 +7,15 @@ class ApplicationController < ActionController::Base
   include Pagy::Method
   include Flash
 
+  # Content types allowed to render inline in the browser. Anything else served
+  # inline is downgraded so a stored user blob whose real content is HTML/SVG/etc.
+  # cannot execute as our own origin (a content-sniffed text/html submission served
+  # inline would run as the viewing tutor).
+  INLINE_SAFE_MIME_TYPES = [
+    "application/pdf", "image/png", "image/jpeg", "image/gif",
+    "video/mp4", "application/zip"
+  ].freeze
+
   before_action :store_user_location!, if: :storable_location?
   # The callback which stores the current location must be added before you
   # authenticate the user as `authenticate_user!` (or whatever your resource is)
@@ -103,12 +112,19 @@ class ApplicationController < ActionController::Base
     end
 
     def send_stored_file(file, disposition:, fallback:)
-      options = {
-        disposition: disposition,
-        filename: stored_filename(file, fallback)
-      }
-      mime_type = file.metadata["mime_type"]
-      options[:type] = mime_type if mime_type.present?
+      mime_type = file.metadata["mime_type"].to_s.presence
+
+      if disposition == "inline" && mime_type &&
+         INLINE_SAFE_MIME_TYPES.exclude?(mime_type)
+        if mime_type.start_with?("text/")
+          mime_type = "text/plain; charset=utf-8"
+        else
+          disposition = "attachment"
+        end
+      end
+
+      options = { disposition: disposition, filename: stored_filename(file, fallback) }
+      options[:type] = mime_type if mime_type
 
       # Serving hygiene: never let the browser content-type-sniff a stored
       # upload (e.g. an mp4) into an executable/HTML interpretation.
