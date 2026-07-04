@@ -8,10 +8,16 @@
         "compose.devcontainer.yml"
     ],
     "service": "app",
+    // The mampf-infra repo is optional (only needed for infra / deploy work).
+    // A type=bind mount fails container creation if the source is missing, which
+    // would break contributors (e.g. HiWis) who cloned only MaMpf. initializeCommand
+    // runs on the host before create and ensures the source exists (empty if
+    // mampf-infra isn't cloned); boot.sh then skips infra tooling when it's empty.
+    "initializeCommand": "mkdir -p '${localWorkspaceFolder}/../mampf-infra'",
     // https://github.com/orgs/community/discussions/15506
     "mounts": [
-    "source=${localWorkspaceFolder}/../mampf-infra,target=/workspaces/mampf-infra,type=bind"
-    ],    
+        "source=${localWorkspaceFolder}/../mampf-infra,target=/workspaces/mampf-infra,type=bind"
+    ],
     "workspaceFolder": "/workspaces/mampf/",
     // https://containers.dev/features
     "features": {

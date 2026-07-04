@@ -32,7 +32,10 @@ echo "🚀 Install zsh"
 echo "🚀 Install MdBook"
 ./.devcontainer/install-mdbook.sh
 
-if [ -d /workspaces/mampf-infra ]; then
+# Only when mampf-infra is actually cloned (its requirements.txt is present), not
+# when it's the empty placeholder initializeCommand creates so the bind mount
+# doesn't fail for app-only contributors.
+if [ -f /workspaces/mampf-infra/requirements.txt ]; then
   echo "🚀 Install sops and age for mampf-infra"
   sudo apt-get update && sudo apt-get install -y age
   SOPS_VERSION="v3.13.1"
