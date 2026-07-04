@@ -1,0 +1,13 @@
+<%= vite_stylesheet_tag "user_registrations/index.scss" %>
+
+<%# This stays here %>
+
+Welcome to this dashboard.
+
+<%= render partial: "user_registrations/user_registration",
+           locals: {
+             campaigns_details: @campaigns_details,
+             self_rosterables: @self_rosterables,
+             rosterized_entries: @rosterized_entries,
+             lecture: @lecture
+           } %>

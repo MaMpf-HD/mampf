@@ -1,11 +1,8 @@
-<%= vite_stylesheet_tag "user_registrations/index.scss" %>
-
-<!-- campaign list -->
 <div class="container-md small-width">
   <div id="student_registration_rosterized_entries">
     <%= render RosterizedEntriesComponent.new(
-          rosterized_entries: @rosterized_entries,
-          lecture: @lecture,
+          rosterized_entries: rosterized_entries,
+          lecture: lecture,
           user: current_user
         ) %>
   </div>
@@ -16,10 +13,10 @@
   >
     <%= render partial: "user_registrations/registration_options",
                locals: {
-                 campaigns_details: @campaigns_details,
-                 self_rosterables: @self_rosterables,
-                 rosterized_entries: @rosterized_entries,
-                 lecture: @lecture
+                 campaigns_details: campaigns_details,
+                 self_rosterables: self_rosterables,
+                 rosterized_entries: rosterized_entries,
+                 lecture: lecture
                } %>
   </div>
 </div>

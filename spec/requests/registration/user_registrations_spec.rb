@@ -121,6 +121,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_user_registrations_path(lecture_id: lecture.id)
         expect(campaign.campaignable_type).to eq("Lecture")
         expect(response).to have_http_status(:ok)
+        expect(response.body).to include('id="student_registration_options"')
       end
 
       it "renders available options" do
