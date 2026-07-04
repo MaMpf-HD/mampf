@@ -3447,6 +3447,7 @@ de:
     count: 'Anzahl'
     plays: 'Aufrufe'
   basics:
+    home: "Home"
     clear: "Löschen"
     close: "Schließen"
     capacity: 'Kapazität'

@@ -3240,6 +3240,7 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    home: "Home"
     clear: "Clear"
     close: "Close"
     capacity: 'Capacity'
