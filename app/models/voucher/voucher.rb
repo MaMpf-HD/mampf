@@ -60,6 +60,10 @@ class Voucher < ApplicationRecord
     update(invalidated_at: Time.zone.now)
   end
 
+  def active?
+    invalidated_at.nil? && expires_at.present? && expires_at.future?
+  end
+
   private
 
     def generate_secure_hash

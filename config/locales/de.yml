@@ -2928,6 +2928,8 @@ de:
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
     failed_redemption: >
       Die Einlösung des Codes ist fehlgeschlagen: %{message}
+    too_many_attempts: >
+      Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.
     current: Aktuelle Abgabe
     previous: Vorige Abgabe
     old_ones: Ältere Abgaben

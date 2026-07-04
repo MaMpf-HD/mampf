@@ -171,5 +171,21 @@ RSpec.describe(Voucher, type: :model) do
         end
       end
     end
+
+    describe "#active?" do
+      it "is true for a fresh voucher" do
+        expect(FactoryBot.create(:voucher).active?).to be(true)
+      end
+
+      it "is false once invalidated" do
+        voucher = FactoryBot.create(:voucher)
+        voucher.invalidate!
+        expect(voucher.active?).to be(false)
+      end
+
+      it "is false once expired" do
+        expect(FactoryBot.create(:voucher, :expired).active?).to be(false)
+      end
+    end
   end
 end

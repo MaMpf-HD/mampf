@@ -2751,6 +2751,8 @@ en:
       You successfully joined the submission to %{assignment}.
     failed_redemption: >
       Redemption of submission code failed: %{message}.
+    too_many_attempts: >
+      Too many attempts. Please wait a moment and try again.
     current: Current Submission
     previous: Previous Submission
     old_ones: Old Submissions
