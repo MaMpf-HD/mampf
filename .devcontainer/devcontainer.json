@@ -101,9 +101,6 @@
     "postCreateCommand": ".devcontainer/boot.sh",
     "customizations": {
         "vscode": {
-            "settings": {
-                "rubyLsp.customRubyCommand": "export PATH=/usr/local/bin:$PATH"
-            },
             // 🎹 keep this in sync with extensions.json
             "extensions": [
                 "ms-azuretools.vscode-containers",
