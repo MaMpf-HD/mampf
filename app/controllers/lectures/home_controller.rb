@@ -21,6 +21,8 @@ module Lectures
                             .new(current_user)
                             .all_rosterized_for_lecture(@lecture)
       @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call
+      @notifications = current_user.active_notifications(@lecture)
+      @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
 
       render template: "lectures/home/lecture_home",
              layout: turbo_frame_request? ? "turbo_frame" : "application"

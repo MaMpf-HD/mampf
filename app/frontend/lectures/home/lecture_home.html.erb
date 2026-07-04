@@ -2,12 +2,59 @@
 
 <%# This stays here %>
 
-Welcome to this dashboard.
+<div class="container-md small-width">
+  <div class="row mt-2 mb-2">
+    <div id="lecture-details" class="col-12 text-center">
+      <h4>
+        <span class="badge bg-secondary">
+          <%= @lecture.sort_localized %>
+        </span>
+        <span id="lecture-title" class="me-3">
+          <%= @lecture.title_term_info_no_type %>
+        </span>
+        <% if @lecture.term || !@lecture.disable_teacher_display %>
+          <span>
+            <% if !@lecture.teacher.archived %>
+              <%= link_to @lecture.teacher.name,
+                          teacher_path(@lecture.teacher),
+                          id: "lecture-teacher",
+                          class: "text-dark" %>
+            <% else %>
+              <%= @lecture.teacher.name %>
+            <% end %>
+          </span>
+        <% end %>
+        <% privileged = current_user.admin ||
+                        current_user.in?(@lecture.editors_with_inheritance) %>
+        <%= link_to "",
+                    edit_lecture_path(@lecture),
+                    id: "lecture-edit",
+                    class: "far fa-edit text-dark",
+                    data: { toggle: "tooltip",
+                            placement: "bottom" },
+                    title: t("buttons.edit"),
+                    style: "text-decoration: none; " +
+                          "display: " + show_inline(privileged) %>
+      </h4>
+    </div>
+  </div>
 
-<%= render partial: "user_registrations/user_registration",
-           locals: {
-             campaigns_details: @campaigns_details,
-             self_rosterables: @self_rosterables,
-             rosterized_entries: @rosterized_entries,
-             lecture: @lecture
-           } %>
+  <% if @notifications.present? || @new_topics_count.positive? %>
+    <div class="mb-3">
+      <%= render partial: "lectures/show/news_card",
+                 locals: { lecture: @lecture,
+                           notifications: @notifications,
+                           posts_count: @new_topics_count } %>
+    </div>
+  <% end %>
+
+  <p>Welcome to this dashboard.</p>
+
+  <%= render partial: "user_registrations/user_registration",
+             locals: {
+               campaigns_details: @campaigns_details,
+               self_rosterables: @self_rosterables,
+               rosterized_entries: @rosterized_entries,
+               lecture: @lecture
+             } %>
+</div>
