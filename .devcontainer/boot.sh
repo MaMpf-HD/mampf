@@ -9,6 +9,11 @@ sudo mkdir -p /usr/local/bundle
 sudo chown -R "$(id -u):$(id -g)" /usr/local/bundle
 
 echo "🚀 Configure Git for Bundler git caches"
+# Bundler stores git-sourced gems (thredded, thredded-markdown_katex) as bare git
+# repos in the bundle cache. When git's safe.bareRepository is 'explicit' it refuses
+# to use them ("fatal: cannot use bare repository"), which breaks `bundle install`.
+# Set it to 'all' (git's default) so Bundler's git gems keep working.
+# See https://github.com/rubygems/rubygems/issues/7515
 sudo git config --system safe.bareRepository all
 
 echo "🚀 Install OR-Tools for Bundler on Debian 13"
