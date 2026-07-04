@@ -1,13 +1,22 @@
+# Build args shared across stages. Docker scopes ARGs per stage, so each stage
+# below re-declares the ones it needs (bare `ARG NAME`) to inherit these defaults.
+# This single-sources the versions/paths that must stay in sync across stages.
+ARG BUNDLER_VERSION=4.0.12
+ARG BUNDLE_PATH=/usr/local/bundle
+ARG BUNDLE_WITHOUT="development:test"
+
 FROM node:24.11.0-trixie-slim AS node
 
 FROM ruby:3.4.9-slim-trixie AS build
 
+ARG BUNDLER_VERSION
+ARG BUNDLE_PATH
+ARG BUNDLE_WITHOUT
 ENV RAILS_ENV=production \
     BUNDLE_DEPLOYMENT=1 \
-    BUNDLE_WITHOUT="development:test" \
-    BUNDLE_PATH=/usr/local/bundle
+    BUNDLE_WITHOUT="${BUNDLE_WITHOUT}" \
+    BUNDLE_PATH="${BUNDLE_PATH}"
 
-ARG BUNDLER_VERSION=4.0.12
 ARG OR_TOOLS_VERSION=or-tools-9.15-trixie
 ARG OR_TOOLS_FILENAME=or-tools-9.15-trixie-amd64.tar.gz
 ARG OR_TOOLS_SHA256=067e96ba57bbca8bf8e56c9b85010e223d49696cb5fe1a56ef94f5bd3647c0cf
@@ -106,14 +115,15 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
 
 FROM ruby:3.4.9-slim-trixie
 
+ARG BUNDLER_VERSION
+ARG BUNDLE_PATH
+ARG BUNDLE_WITHOUT
 ENV RAILS_ENV=production \
     BUNDLE_DEPLOYMENT=1 \
-    BUNDLE_WITHOUT="development:test" \
-    BUNDLE_PATH=/usr/local/bundle \
+    BUNDLE_WITHOUT="${BUNDLE_WITHOUT}" \
+    BUNDLE_PATH="${BUNDLE_PATH}" \
     APP_HEALTHCHECK_PORT=3000 \
     APP_CACHE_ROOT=/caches
-
-ARG BUNDLER_VERSION=4.0.12
 
 EXPOSE 3000
 EXPOSE 9394
