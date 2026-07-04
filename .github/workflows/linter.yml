@@ -57,6 +57,10 @@ jobs:
           uses: actions/setup-node@v6
           with:
             node-version: '24' # End of Life (EOL): April 2028
+            # setup-node's built-in cache is off on purpose: it resolves the yarn
+            # cache dir before Corepack activates Yarn 4 (below), so it would query
+            # the runner's preinstalled classic Yarn 1.x and cache the wrong dir. We
+            # cache the Berry cache manually instead (standard Corepack + Yarn 4 CI pattern).
             package-manager-cache: false
 
         - name: Enable Corepack
@@ -112,6 +116,10 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24' # End of Life (EOL): April 2028
+          # setup-node's built-in cache is off on purpose: it resolves the yarn
+          # cache dir before Corepack activates Yarn 4 (below), so it would query
+          # the runner's preinstalled classic Yarn 1.x and cache the wrong dir. We
+          # cache the Berry cache manually instead (standard Corepack + Yarn 4 CI pattern).
           package-manager-cache: false
 
       - name: Enable Corepack
