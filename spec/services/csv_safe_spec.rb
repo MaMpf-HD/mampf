@@ -14,8 +14,14 @@ RSpec.describe(CsvSafe) do
       expect(described_class.cell("\n=SUM(A1:A2)")).to eq("'\n=SUM(A1:A2)")
     end
 
+    it "neutralizes a formula hidden behind leading spaces (whitespace bypass)" do
+      expect(described_class.cell("  =cmd()")).to eq("'  =cmd()")
+      expect(described_class.cell(" +1+1")).to eq("' +1+1")
+      expect(described_class.cell("\t @SUM(A1)")).to eq("'\t @SUM(A1)")
+    end
+
     it "leaves harmless strings unchanged" do
-      ["Alice, Bob", "Mustermann", "a=b+c", "3.14"].each do |value|
+      ["Alice, Bob", "Mustermann", "a=b+c", "3.14", "  hello"].each do |value|
         expect(described_class.cell(value)).to eq(value)
       end
     end

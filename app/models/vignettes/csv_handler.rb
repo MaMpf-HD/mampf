@@ -1,5 +1,3 @@
-require "csv"
-
 module Vignettes
   class CsvHandler
     HEADERS = ["Answer ID",
@@ -48,10 +46,10 @@ module Vignettes
 
     def self.generate_questionnaire_csv(questionnaire)
       answer_data = questionnaire.answers_data
-      CSV.generate(col_sep: ";", encoding: "UTF-8") do |csv|
+      SafeCsv.generate(col_sep: ";", encoding: "UTF-8") do |csv|
         csv << HEADERS
         answer_data.each do |answer|
-          csv << CsvSafe.row(answer_data(answer))
+          csv << answer_data(answer)
         end
       end
     end

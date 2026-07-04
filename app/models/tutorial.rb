@@ -1,5 +1,3 @@
-require "csv"
-
 class Tutorial < ApplicationRecord
   include Registration::Registerable
   include Rosters::Rosterable
@@ -48,9 +46,9 @@ class Tutorial < ApplicationRecord
   def teams_to_csv(assignment)
     submissions = Submission.where(tutorial: self, assignment: assignment)
                             .proper.order(:last_modification_by_users_at)
-    CSV.generate(headers: false) do |csv|
+    SafeCsv.generate(headers: false) do |csv|
       submissions.each do |s|
-        csv << [CsvSafe.cell(s.team)]
+        csv << [s.team]
       end
     end
   end

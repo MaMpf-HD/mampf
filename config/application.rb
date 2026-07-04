@@ -25,7 +25,7 @@ module Mampf
     config.eager_load_paths += load_paths
 
     # Autoload lib extensions path
-    config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "tasks"])
+    config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "tasks", "rubocop"])
 
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
