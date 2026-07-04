@@ -1,7 +1,5 @@
 <%= vite_stylesheet_tag "user_registrations/index.scss" %>
 
-<%# This stays here %>
-
 <div class="container-md small-width">
   <div class="row mt-2 mb-2">
     <div id="lecture-details" class="col-12 text-center">
@@ -47,8 +45,6 @@
                            posts_count: @new_topics_count } %>
     </div>
   <% end %>
-
-  <p>Welcome to this dashboard.</p>
 
   <%= render partial: "user_registrations/user_registration",
              locals: {
