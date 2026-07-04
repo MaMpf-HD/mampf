@@ -559,4 +559,22 @@ RSpec.describe("Media", type: :request) do
       expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
     end
   end
+
+  describe "GET /media/:id/check_annotation_visibility" do
+    # SER-05 was a false positive: set_medium (a before_action that also runs for
+    # this action) redirects on a missing medium, so the action never sees nil and
+    # cannot 500. These lock in that safe behavior.
+    it "redirects a bogus medium id instead of erroring" do
+      get check_annotation_visibility_path(id: 0)
+
+      expect(response).to have_http_status(:found)
+      expect(response).to redirect_to(:root)
+    end
+
+    it "returns the visibility flag for an existing medium" do
+      get check_annotation_visibility_path(id: medium_ruby.id)
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end

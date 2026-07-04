@@ -157,7 +157,7 @@ module Vignettes
       render json: { success: true }
     rescue StandardError => e
       Rails.logger.error("Slide position update failed: #{e.message}")
-      render json: { error: e.message }, status: :unprocessable_content
+      render json: { error: t("vignettes.slide_not_updated") }, status: :unprocessable_content
     end
 
     def export_statistics

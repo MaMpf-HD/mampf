@@ -222,11 +222,14 @@ class Medium < ApplicationRecord
     Medium.sort_localized.except("RandomQuiz", "Question", "Remark").map { |k, v| [v, k] }
   end
 
-  # returns the array of all media (by title), together with their ids
-  # is used in options_for_select in form helpers.
-  def self.select_by_name
-    Medium.where.not(sort: ["Question", "Remark", "RandomQuiz"])
-          .map { |m| [m.title_for_viewers, m.id] }
+  # returns the array of media (by title) visible to the given user, together
+  # with their ids; is used in options_for_select in form helpers. Scoped via
+  # filter_visible_media so the picker never discloses unpublished or otherwise
+  # non-visible media (incl. other editors' drafts) — see SER-02.
+  def self.select_by_name(user)
+    media = Medium.where.not(sort: ["Question", "Remark", "RandomQuiz"])
+    user.filter_visible_media(media)
+        .map { |m| [m.title_for_viewers, m.id] }
   end
 
   # protected items are items of type 'pdf_destination' inside associated to

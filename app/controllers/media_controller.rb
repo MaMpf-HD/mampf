@@ -469,7 +469,7 @@ class MediaController < ApplicationController
 
   def fill_media_select
     authorize! :fill_media_select, Medium.new
-    result = Medium.select_by_name.map { |t| { value: t[1], text: t[0] } }
+    result = Medium.select_by_name(current_user).map { |t| { value: t[1], text: t[0] } }
     render json: result
   end
 

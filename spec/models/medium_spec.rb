@@ -172,6 +172,33 @@ RSpec.describe(Medium, type: :model) do
     end
   end
 
+  describe ".select_by_name" do
+    let(:editor) { create(:confirmed_user) }
+    let!(:edited_lecture) { create(:lecture, editors: [editor]) }
+    let!(:own_draft) { create(:lecture_medium, teachable: edited_lecture) }
+    let!(:released_foreign) do
+      create(:lecture_medium,
+             teachable: create(:lecture, :released_for_all),
+             released: "all", released_at: Time.zone.now)
+    end
+    let!(:foreign_draft) { create(:lecture_medium, teachable: create(:lecture)) }
+
+    it "includes visible media (own drafts + released) but not foreign drafts (SER-02)" do
+      ids = Medium.select_by_name(editor).pluck(1)
+
+      expect(ids).to include(own_draft.id)
+      expect(ids).to include(released_foreign.id)
+      expect(ids).not_to include(foreign_draft.id)
+    end
+
+    it "hands an admin every medium" do
+      admin = create(:confirmed_user, admin: true)
+      ids = Medium.select_by_name(admin).pluck(1)
+
+      expect(ids).to include(own_draft.id, released_foreign.id, foreign_draft.id)
+    end
+  end
+
   describe "course medium" do
     before :each do
       @medium = FactoryBot.build(:course_medium)
