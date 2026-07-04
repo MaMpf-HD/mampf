@@ -101,6 +101,12 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     sign_in user
   end
 
+  describe "lecture registration routes" do
+    it "uses the bare lecture path for registration" do
+      expect(lecture_user_registrations_path(lecture)).to eq("/lectures/#{lecture.id}")
+    end
+  end
+
   describe "GET lectures/:lecture_id/campaign_registrations" do
     context "open + first-come-first-served tutorial campaign" do
       let(:campaign) do

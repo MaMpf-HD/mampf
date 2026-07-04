@@ -100,16 +100,24 @@ RSpec.describe("Lectures", type: :request) do
              description: "Lecture script")
     end
 
-    it "renders the registration sidebar entry" do
+    it "renders the lecture home sidebar entry" do
       get lecture_script_path(lecture)
 
       expect(response).to have_http_status(:ok)
-      enrollment_label = I18n.with_locale(:en) do
-        I18n.t("categories.enrollment.singular")
+      home_label = I18n.with_locale(:en) do
+        I18n.t("basics.home")
       end
 
-      expect(response.body).to include(enrollment_label)
+      expect(response.body).to include(home_label)
       expect(response.body).to include(lecture_user_registrations_path(lecture))
+    end
+  end
+
+  describe "lecture routes" do
+    let(:lecture) { create(:lecture) }
+
+    it "uses /outline for the lecture overview path" do
+      expect(lecture_path(lecture)).to eq("/lectures/#{lecture.id}/outline")
     end
   end
 
