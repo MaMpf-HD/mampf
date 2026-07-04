@@ -25,7 +25,7 @@
       <%= link_to url_for(fullpath),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
         <i class="bi bi-book<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('basics.overview') %>
+        <%= t('basics.outline') %>
       <% end %>
     </li>
   <% end %>
