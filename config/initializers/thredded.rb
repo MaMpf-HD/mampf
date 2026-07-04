@@ -121,6 +121,14 @@ Thredded.messageboard_name_length_range = (1..120)
 # E.g. to allow a custom element <custom-element>:
 # Thredded::ContentFormatter.whitelist[:elements] += %w(custom-element)
 
+# ==> Server-side link previews (onebox) — DISABLED for SSRF safety.
+# OneboxFilter fetches user-supplied URLs server-side from the app host, which sits
+# inside the WireGuard overlay / Uninetz — a request-forgery perimeter bypass. Removing
+# it keeps autolinking (plain, sanitized <a> tags); only the server-side fetch is gone.
+Thredded::ContentFormatter.after_sanitization_filters =
+  Thredded::ContentFormatter.after_sanitization_filters -
+  [Thredded::HtmlPipeline::OneboxFilter]
+
 # ==> User autocompletion (Private messages and @-mentions)
 # Thredded.autocomplete_min_length = 2 lower to 1 if have 1-letter names -- increase if you want
 
