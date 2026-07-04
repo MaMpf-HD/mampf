@@ -28,6 +28,11 @@ jobs:
       BUILD_REF: ${{ inputs.build_ref || 'deploy/app-baseline-thruster' }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      # Force an OS security refresh so the weekly rebuild actually re-pulls the
+      # base image and applies fresh apt security updates, instead of reusing the
+      # layer cache (which would rebuild an identical, unpatched image). This is
+      # what makes the schedule worth having; build-deploy-image maps the flag to
+      # `pull: true` + a cache-busting build-arg.
       - name: Dispatch build-deploy-image workflow on target branch
         run: |
           curl --fail --silent --show-error \
@@ -35,4 +40,4 @@ jobs:
             -H "Authorization: Bearer ${GITHUB_TOKEN}" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/build-deploy-image.yml/dispatches" \
-            -d "{\"ref\":\"${BUILD_REF}\"}"
+            -d "{\"ref\":\"${BUILD_REF}\",\"inputs\":{\"os_security_refresh\":\"true\"}}"
