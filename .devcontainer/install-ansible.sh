@@ -3,7 +3,7 @@ set -e
 
 infra_root=/workspaces/mampf-infra
 uv_bin="$HOME/.local/bin/uv"
-uv_version="0.11.25"
+uv_version="0.11.26"
 
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ssh-askpass

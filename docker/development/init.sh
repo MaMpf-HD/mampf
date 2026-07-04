@@ -9,11 +9,11 @@ check_for_preseeds() {
   if [[ -n "${DB_SQL_PRESEED_URL:-}" ]]; then
     if [[ -f "${DB_SQL_PRESEED_URL}" ]]; then
       echo "💾  Found DB preseed file: $DB_SQL_PRESEED_URL"
-      latest=$DB_SQL_PRESEED_URL
+      latest="$DB_SQL_PRESEED_URL"
     else
       echo "💾  Found DB preseed at URL: $DB_SQL_PRESEED_URL"
       mkdir -pv db/backups/development
-      wget --content-disposition --directory-prefix=db/backups/development/ --timestamping $DB_SQL_PRESEED_URL
+      wget --content-disposition --directory-prefix=db/backups/development/ --timestamping "$DB_SQL_PRESEED_URL"
       latest=""
       for file in db/backups/development/*.sql; do
         [[ -z "$latest" || $file -nt $latest ]] && latest=$file
@@ -27,7 +27,7 @@ check_for_preseeds() {
   # Files (uploads) preseed
   if [[ -n "${UPLOADS_PRESEED_URL:-}" ]]; then
     echo "💾  Found upload preseed at URL: $UPLOADS_PRESEED_URL"
-    wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega $UPLOADS_PRESEED_URL
+    wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega "$UPLOADS_PRESEED_URL"
     mkdir -p public/uploads
     bsdtar -xvf public/uploads.zip -s'|[^/]*/||' -C public/uploads
   fi

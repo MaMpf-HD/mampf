@@ -127,10 +127,10 @@ ENV RAILS_ENV=production \
 
 ENTRYPOINT ["/usr/src/app/docker/production/entrypoint-app.sh"]
 
-ARG OS_SECURITY_REFRESH=
 # Empty in normal (reproducible) builds; `just patch-image` passes a unique value
 # to bust this layer and apply all available Debian security updates on top of the
 # (force-pulled) base image.
+ARG OS_SECURITY_REFRESH=
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ffmpeg qpdf rsync shared-mime-info libvips42 && \
