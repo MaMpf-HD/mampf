@@ -4,18 +4,16 @@
 <ul class="nav nav-pills flex-column" data-controller="lecture-sidebar">
 
   <%# Lecture Home %>
-  <% if registration_sidebar_visible?(lecture) %>
-    <% project_name = 'registration' %>
-    <% fullpath = lecture_user_registrations_path(lecture) %>
-    <% active_class = get_class_for_project(project_name) %>
-    <li class="sidebar-item nav-link <%= active_class %>">
-      <%= link_to url_for(fullpath),
-          data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-        <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t("basics.home") %>
-      <% end %>
-    </li>
-  <% end %>
+  <% project_name = 'registration' %>
+  <% fullpath = lecture_user_registrations_path(lecture) %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>">
+    <%= link_to url_for(fullpath),
+        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+      <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t("basics.home") %>
+    <% end %>
+  </li>
 
 
   <%# Overview %>
