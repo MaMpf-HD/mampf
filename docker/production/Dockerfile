@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1-labs
 # Build args shared across stages. Docker scopes ARGs per stage, so each stage
 # below re-declares the ones it needs (bare `ARG NAME`) to inherit these defaults.
 # This single-sources the versions/paths that must stay in sync across stages.

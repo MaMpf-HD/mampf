@@ -1,5 +1,8 @@
-# https://docs.docker.com/build/checks/#fail-build-on-check-violations
+# syntax=docker/dockerfile:1-labs
 # check=error=true
+# ADD --checksum needs the labs frontend (above); # syntax must be the very first
+# line, so parser directives come before this comment.
+# https://docs.docker.com/build/checks/#fail-build-on-check-violations
 
 FROM node:24.11.0-trixie-slim AS node
 
