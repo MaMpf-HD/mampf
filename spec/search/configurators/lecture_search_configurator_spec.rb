@@ -13,6 +13,7 @@ RSpec.describe(Search::Configurators::LectureSearchConfigurator) do
       expected_filters = [
         Search::Filters::TypeFilter,
         Search::Filters::TermFilter,
+        Search::Filters::SemesterFilter,
         Search::Filters::ProgramFilter,
         Search::Filters::TeacherFilter,
         Search::Filters::LectureVisibilityFilter,

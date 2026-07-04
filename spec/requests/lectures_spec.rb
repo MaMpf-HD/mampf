@@ -39,6 +39,38 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include(calculus_courses.first.title)
         expect(response.body).not_to include(lecture_algebra.course.title)
       end
+
+      it "filters lectures to the current semester" do
+        current_term = create(:term, :summer, :active, year: 2025)
+        next_term = create(:term, :winter, year: 2025)
+        current_course = create(:course, title: "Topology Current")
+        next_course = create(:course, title: "Topology Next")
+        create(:lecture, course: current_course, term: current_term)
+        create(:lecture, course: next_course, term: next_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Topology", semester: "current" } },
+            xhr: true
+
+        expect(response.body).to include(current_course.title)
+        expect(response.body).not_to include(next_course.title)
+      end
+
+      it "filters lectures to the next semester" do
+        current_term = create(:term, :summer, :active, year: 2025)
+        next_term = create(:term, :winter, year: 2025)
+        current_course = create(:course, title: "Analysis Current")
+        next_course = create(:course, title: "Analysis Next")
+        create(:lecture, course: current_course, term: current_term)
+        create(:lecture, course: next_course, term: next_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Analysis", semester: "next" } },
+            xhr: true
+
+        expect(response.body).to include(next_course.title)
+        expect(response.body).not_to include(current_course.title)
+      end
     end
 
     context "with an HTML request" do
