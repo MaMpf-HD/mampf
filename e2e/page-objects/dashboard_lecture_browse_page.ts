@@ -33,6 +33,32 @@ export class DashboardLectureBrowsePage {
     await lectureSearchPromise;
   }
 
+  get currentSemesterFilter() {
+    return this.page.getByLabel("Current semester");
+  }
+
+  get nextSemesterFilter() {
+    return this.page.getByLabel("Next semester");
+  }
+
+  async selectCurrentSemester() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByText("Current semester").click();
+    await lectureSearchPromise;
+  }
+
+  async clearNextSemester() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByText("Next semester").click();
+    await lectureSearchPromise;
+  }
+
+  async clearCurrentSemester() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByText("Current semester").click();
+    await lectureSearchPromise;
+  }
+
   async scrollToBottom() {
     await this.page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
