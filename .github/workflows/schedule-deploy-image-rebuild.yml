@@ -35,9 +35,7 @@ jobs:
       # `pull: true` + a cache-busting build-arg.
       - name: Dispatch build-deploy-image workflow on target branch
         run: |
-          curl --fail --silent --show-error \
-            -X POST \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/build-deploy-image.yml/dispatches" \
-            -d "{\"ref\":\"${BUILD_REF}\",\"inputs\":{\"os_security_refresh\":\"true\"}}"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/build-deploy-image.yml/dispatches" \
+            --method POST \
+            -f "ref=${BUILD_REF}" \
+            -f "inputs[os_security_refresh]=true"
