@@ -258,19 +258,3 @@ input[type="file"] {
   font-weight: 400; 
   padding: 10px 12px;
 }
-
-.tutorial-tr {
-  td {
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 4; // higher than the 2 used everywhere else
-  }
-}
-
-.test-sticky {
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 4; // higher than the 2 used everywhere else
-}

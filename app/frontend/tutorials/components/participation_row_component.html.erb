@@ -10,21 +10,23 @@
 >
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
-    <%= @user.tutorial_name %>
+    <div class="row">
+      <%= @user.tutorial_name %>
 
-    <i
-      class="
-        clipboardpopup bi bi-clipboard clickable
-        text-secondary clipboard-btn ms-3 clipboard-button
-      "
-      data-clipboard-text="<%= @user.email %>"
-      data-bs-toggle="tooltip"
-      title="<%= t('buttons.copy_email_to_clipboard') %>"
-    >
-      <span class="clipboardpopuptext token-clipboard-popup">
-        <%= t('basics.emails_copied_to_clipboard') %>
-      </span>
-    </i>
+      <i
+        class="
+          clipboardpopup bi bi-clipboard clickable
+          text-secondary clipboard-btn ms-3 clipboard-button
+        "
+        data-clipboard-text="<%= @user.email %>"
+        data-bs-toggle="tooltip"
+        title="<%= t('buttons.copy_email_to_clipboard') %>"
+      >
+        <span class="clipboardpopuptext token-clipboard-popup">
+          <%= t('basics.emails_copied_to_clipboard') %>
+        </span>
+      </i>
+    </div>
   </td>
 
   <!-- Column 1.5: Tutorial -->

@@ -11,25 +11,32 @@
 >
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
-    <%= @submission.users.map(&:tutorial_name).join(', ') %>
+    <div class="row">
+      <div class="d-flex flex-column justify-content-between" style="width: fit-content;">
+        <% @submission.users.each do |user| %>
+          <div style="width: fit-content;"><%= user.tutorial_name %></div>
+        <% end %>
+      </div>
 
-    <i
-      class="
-        clipboardpopup bi bi-clipboard clickable
-        text-secondary clipboard-btn ms-3 clipboard-button
-      "
-      data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
-      data-bs-toggle="tooltip"
-      data-id="<%= @submission.id %>"
-      title="<%= t('buttons.copy_email_to_clipboard') %>"
-    > <%# herb:disable html-no-duplicate-attributes %>
-      <span
-        class="clipboardpopuptext token-clipboard-popup"
+      <i
+        class="
+          clipboardpopup bi bi-clipboard clickable
+          text-secondary clipboard-btn ms-3 clipboard-button
+        "
+        style="width: fit-content;"
+        data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
+        data-bs-toggle="tooltip"
         data-id="<%= @submission.id %>"
-      >
-        <%= t('basics.emails_copied_to_clipboard') %>
-      </span>
-    </i>
+        title="<%= t('buttons.copy_email_to_clipboard') %>"
+      > <%# herb:disable html-no-duplicate-attributes %>
+        <span
+          class="clipboardpopuptext token-clipboard-popup"
+          data-id="<%= @submission.id %>"
+        >
+          <%= t('basics.emails_copied_to_clipboard') %>
+        </span>
+      </i>
+    </div>
 
     <% if @submission.too_late? %>
       <i
