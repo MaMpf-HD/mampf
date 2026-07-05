@@ -3,16 +3,33 @@
 <% I18n.with_locale(lecture&.locale_with_inheritance) do %>
 <ul class="nav nav-pills flex-column" data-controller="lecture-sidebar">
 
+  <%# Lecture Home %>
+  <% project_name = 'registration' %>
+  <% fullpath = lecture_user_registrations_path(lecture) %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>">
+    <%= link_to url_for(fullpath),
+        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+      <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t("basics.home") %>
+    <% end %>
+  </li>
+
+
   <%# Overview %>
   <% if lecture %>
     <% fullpath = lecture_path(lecture)%>
     <% active_class = get_class_for_path(lecture_path(lecture)) %>
+    <%# Content is only accessible to subscribers and staff (mirrors the
+        redirect in LecturesController#check_for_subscribe). %>
+    <% content_accessible = lecture.in?(current_user.lectures) ||
+                            current_user.can_edit?(lecture) %>
     <li class="sidebar-item nav-link <%= active_class %>
-            <%= !lecture ? "disabled" : ""%>">
+            <%= content_accessible ? "" : "disabled" %>">
       <%= link_to url_for(fullpath),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-        <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('basics.overview') %>
+        <i class="bi bi-book<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= t('basics.outline') %>
       <% end %>
     </li>
   <% end %>
@@ -42,20 +59,6 @@
       <%= t('categories.script.singular') %>
     <% end %>
   </li>
-
-  <%# Enrollment %>
-  <% if registration_sidebar_visible?(lecture) %>
-    <% project_name = 'registration' %>
-    <% fullpath = lecture_user_registrations_path(lecture) %>
-    <% active_class = get_class_for_project(project_name) %>
-    <li class="sidebar-item nav-link <%= active_class %>">
-      <%= link_to url_for(fullpath),
-          data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-        <i class="bi bi-person-check<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('categories.enrollment.singular') %>
-      <% end %>
-    </li>
-  <% end %>
 
   <%# Divider %>
   <span class="border-top my-3"></span>

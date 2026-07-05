@@ -101,6 +101,67 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     sign_in user
   end
 
+  describe "lecture registration routes" do
+    it "uses the bare lecture path for registration" do
+      expect(lecture_user_registrations_path(lecture)).to eq("/lectures/#{lecture.id}")
+    end
+  end
+
+  describe "GET lecture home page (access)" do
+    it "is accessible for students who are not subscribed and offers them " \
+       "the subscription page" do
+      unsubscribed_student = create(:confirmed_user)
+      sign_in unsubscribed_student
+
+      get lecture_user_registrations_path(lecture_id: lecture.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("lecture-home-subscribe-button")
+      expect(response.body).to include(subscribe_lecture_path)
+    end
+
+    it "shows a passphrase field for passphrase-protected lectures" do
+      passphrase_lecture = create(:lecture, :released_for_all,
+                                  passphrase: "secret")
+      unsubscribed_student = create(:confirmed_user)
+      sign_in unsubscribed_student
+
+      get lecture_user_registrations_path(lecture_id: passphrase_lecture.id)
+
+      expect(response.body).to include("lecture-home-passphrase")
+    end
+
+    it "does not show a passphrase field to roster members" do
+      passphrase_lecture = create(:lecture, :released_for_all,
+                                  passphrase: "secret")
+      member = create(:confirmed_user)
+      create(:lecture_membership, user: member, lecture: passphrase_lecture)
+      sign_in member
+
+      get lecture_user_registrations_path(lecture_id: passphrase_lecture.id)
+
+      expect(response.body).to include("lecture-home-subscribe-button")
+      expect(response.body).not_to include("lecture-home-passphrase")
+    end
+
+    it "is accessible for students without the passphrase" do
+      passphrase_lecture = create(:lecture, :released_for_all,
+                                  passphrase: "secret")
+
+      get lecture_user_registrations_path(lecture_id: passphrase_lecture.id)
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "is accessible for the teacher of the lecture" do
+      teacher_lecture = create(:lecture, teacher: user)
+
+      get lecture_user_registrations_path(lecture_id: teacher_lecture.id)
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe "GET lectures/:lecture_id/campaign_registrations" do
     context "open + first-come-first-served tutorial campaign" do
       let(:campaign) do
@@ -115,6 +176,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_user_registrations_path(lecture_id: lecture.id)
         expect(campaign.campaignable_type).to eq("Lecture")
         expect(response).to have_http_status(:ok)
+        expect(response.body).to include('id="student_registration_options"')
       end
 
       it "renders available options" do
@@ -218,8 +280,18 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
     end
 
-    context "when the user is not allowed to enroll" do
+    context "when the user is the lecture's teacher" do
       let(:lecture) { create(:lecture, teacher: user) }
+
+      it "renders the home page (viewing is decoupled from enrolling)" do
+        get lecture_user_registrations_path(lecture_id: lecture.id)
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when the lecture is not published" do
+      let(:lecture) { create(:lecture) }
 
       it "redirects to root" do
         get lecture_user_registrations_path(lecture_id: lecture.id)

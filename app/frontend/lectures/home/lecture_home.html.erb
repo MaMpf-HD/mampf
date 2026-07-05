@@ -1,0 +1,81 @@
+<%= vite_stylesheet_tag "user_registrations/index.scss" %>
+
+<div class="container-md small-width">
+  <div class="row mt-2 mb-2">
+    <div id="lecture-details" class="col-12 text-center">
+      <h4>
+        <span class="badge bg-secondary">
+          <%= @lecture.sort_localized %>
+        </span>
+        <span id="lecture-title" class="me-3">
+          <%= @lecture.title_term_info_no_type %>
+        </span>
+        <% if @lecture.term || !@lecture.disable_teacher_display %>
+          <span>
+            <% if !@lecture.teacher.archived %>
+              <%= link_to @lecture.teacher.name,
+                          teacher_path(@lecture.teacher),
+                          id: "lecture-teacher",
+                          class: "text-dark" %>
+            <% else %>
+              <%= @lecture.teacher.name %>
+            <% end %>
+          </span>
+        <% end %>
+        <% privileged = current_user.admin ||
+                        current_user.in?(@lecture.editors_with_inheritance) %>
+        <%= link_to "",
+                    edit_lecture_path(@lecture),
+                    id: "lecture-edit",
+                    class: "far fa-edit text-dark",
+                    data: { toggle: "tooltip",
+                            placement: "bottom" },
+                    title: t("buttons.edit"),
+                    style: "text-decoration: none; " +
+                          "display: " + show_inline(privileged) %>
+      </h4>
+    </div>
+  </div>
+
+  <% if @notifications.present? || @new_topics_count.positive? %>
+    <div class="mb-3">
+      <%= render partial: "lectures/show/news_card",
+                 locals: { lecture: @lecture,
+                           notifications: @notifications,
+                           posts_count: @new_topics_count } %>
+    </div>
+  <% end %>
+
+  <%= render partial: "user_registrations/user_registration",
+             locals: {
+               campaigns_details: @campaigns_details,
+               self_rosterables: @self_rosterables,
+               rosterized_entries: @rosterized_entries,
+               lecture: @lecture
+             } %>
+
+  <% unless @subscribed || current_user.can_edit?(@lecture) %>
+    <div class="alert alert-light border mt-3"
+         data-testid="lecture-home-subscribe-hint">
+      <p class="mb-2"><%= t("registration.lecture.home.subscribe_prompt") %></p>
+      <%= form_with url: subscribe_lecture_path,
+                    method: :patch,
+                    local: true,
+                    scope: "lecture",
+                    class: "d-flex align-items-center flex-wrap gap-2" do |f| %>
+        <%= f.hidden_field :id, value: @lecture.id %>
+        <%= f.hidden_field :parent, value: "redirect" %>
+        <% if @passphrase_required %>
+          <%= f.password_field :passphrase,
+                               class: "form-control w-auto",
+                               placeholder: t("profile.passphrase"),
+                               "aria-label": t("profile.passphrase"),
+                               data: { testid: "lecture-home-passphrase" } %>
+        <% end %>
+        <%= f.submit t("profile.subscribe_lecture"),
+                     class: "btn btn-outline-primary text-nowrap",
+                     data: { testid: "lecture-home-subscribe-button" } %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

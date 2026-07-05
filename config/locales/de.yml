@@ -3447,6 +3447,7 @@ de:
     count: 'Anzahl'
     plays: 'Aufrufe'
   basics:
+    home: "Home"
     clear: "Löschen"
     close: "Schließen"
     capacity: 'Kapazität'
@@ -3618,6 +3619,7 @@ de:
     submissions: 'Abgaben'
     corrections: 'Korrekturen'
     overview: Übersicht
+    outline: Gliederung
     tba: N.N.
     due: bis
     as: als

@@ -529,6 +529,10 @@ de:
         view_details: "Details"
     lecture:
       not_found: "Veranstaltung nicht gefunden."
+      home:
+        subscribe_prompt: >-
+          Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
+          Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.
   activerecord:
     errors:
       models:
