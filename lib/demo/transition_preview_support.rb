@@ -11,7 +11,7 @@ module Demo
     extend self
 
     COURSE_TITLE = "Demo Transition Lecture".freeze
-    CAMPAIGN_DESCRIPTION = "Tutorienanmeldung".freeze
+    CAMPAIGN_DESCRIPTION = "Anmeldung".freeze
     PASSPHRASE = "geheim".freeze
     FLAGS = ["registration_campaigns", "roster_maintenance",
              "next_semester_banner"].freeze
