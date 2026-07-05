@@ -36,8 +36,13 @@ RSpec.describe(StudentMessageMailer) do
     end
 
     it "prefixes the subject with the lecture title" do
-      expect(mail.subject).to include("First session")
-      expect(mail.subject).to include(lecture.title_for_viewers)
+      # the mail is rendered in the lecture's locale, so the localized
+      # sort prefix of the title must be computed in that locale as well
+      expected_title = I18n.with_locale(lecture.locale_with_inheritance) do
+        lecture.title_for_viewers
+      end
+
+      expect(mail.subject).to eq("[#{expected_title}] First session")
     end
 
     it "contains the message body" do
