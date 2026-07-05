@@ -261,8 +261,8 @@ de:
       index:
         title: "Anmeldungen"
         confirmed_cases: "Deine Anmeldung ist bestätigt für"
-        unassigned_notice: "Aktuell wurde Dir noch keine Gruppe zugeteilt."
-        pending_preference_notice: "Aktuell wurde Dir noch keine Gruppe zugeteilt. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
+        unassigned_notice: "Du wurdest noch keiner Gruppe zugeteilt."
+        pending_preference_notice: "Du wurdest noch keiner Gruppe zugeteilt. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
         fulfilled_preference_notice_html: "Wir konnten Deinen <em>%{rank}</em>-Wunsch erfüllen."
         fulfilled_preference_ranks:
           "1": "Erst"
@@ -328,7 +328,7 @@ de:
       blocked_tooltip: "Du kannst diesem Tutorium nicht beitreten, weil Du Dein Tutorium nicht verlassen kannst. Der Dozent hat das so eingerichtet."
       register_now: "Jetzt anmelden"
       registration_blocked: "Nicht verfügbar"
-      withdraw: "Zurückziehen"
+      withdraw: "Austreten"
       closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
       ineligible_notice:
         title: "Anmeldung derzeit nicht möglich"
@@ -405,7 +405,7 @@ de:
         generic_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
         generic_finalization_warning_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
         generic_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hast Du die Voraussetzung <em>%{requirement}</em> nicht erfüllt. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
-      withdraw_first: "Zuerst zurückziehen"
+      withdraw_first: "Zuerst austreten"
       filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
       status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"
       submitted_pref: "Deine eingereichte Auswahl"
