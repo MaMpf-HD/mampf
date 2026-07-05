@@ -53,4 +53,17 @@
                rosterized_entries: @rosterized_entries,
                lecture: @lecture
              } %>
+
+  <% unless @lecture.in?(current_user.lectures) ||
+            current_user.can_edit?(@lecture) %>
+    <div class="alert alert-light border mt-3 d-flex align-items-center
+                justify-content-between flex-wrap gap-2"
+         data-testid="lecture-home-subscribe-hint">
+      <span><%= t("registration.lecture.home.subscribe_prompt") %></span>
+      <%= link_to t("profile.subscribe_lecture"),
+                  subscribe_lecture_page_path(@lecture.id),
+                  class: "btn btn-outline-primary btn-sm text-nowrap",
+                  data: { testid: "lecture-home-subscribe-link" } %>
+    </div>
+  <% end %>
 </div>

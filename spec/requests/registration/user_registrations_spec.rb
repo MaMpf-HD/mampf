@@ -108,13 +108,16 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   end
 
   describe "GET lecture home page (access)" do
-    it "is accessible for students who are not subscribed" do
+    it "is accessible for students who are not subscribed and offers them " \
+       "the subscription page" do
       unsubscribed_student = create(:confirmed_user)
       sign_in unsubscribed_student
 
       get lecture_user_registrations_path(lecture_id: lecture.id)
 
       expect(response).to have_http_status(:ok)
+      expect(response.body).to include("lecture-home-subscribe-link")
+      expect(response.body).to include(subscribe_lecture_page_path(lecture.id))
     end
 
     it "is accessible for students without the passphrase" do

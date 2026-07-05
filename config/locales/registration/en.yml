@@ -528,6 +528,10 @@ en:
         view_details: "Details"
     lecture:
       not_found: "Lecture not found."
+      home:
+        subscribe_prompt: >-
+          You have not subscribed to this lecture yet. Subscribing gives you
+          access to its materials — it is not a binding course registration.
   activerecord:
     errors:
       models:

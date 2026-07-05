@@ -361,7 +361,10 @@ class LecturesController < ApplicationController
     def check_for_subscribe
       return if @lecture.in?(current_user.lectures)
 
-      redirect_to subscribe_lecture_page_path(@lecture.id)
+      # Non-subscribers are sent to the lecture's home page (its
+      # organizational front door), which offers registration (if the
+      # lecture uses it) as well as a link to the subscription page.
+      redirect_to lecture_user_registrations_path(@lecture)
     end
 
     def lecture_params

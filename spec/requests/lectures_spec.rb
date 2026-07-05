@@ -121,6 +121,17 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id/outline as a non-subscriber" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    it "redirects to the lecture's home page" do
+      get lecture_path(lecture)
+
+      expect(response).to redirect_to(lecture_user_registrations_path(lecture))
+    end
+  end
+
   describe "XSS protections" do
     let(:xss_payload) { "<div id='test-xss-xyz123'><script>alert('lecture-xss')</script></div>" }
     let!(:xss_course) { create(:course, title: "XSS Course") }
