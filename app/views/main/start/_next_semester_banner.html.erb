@@ -12,14 +12,13 @@
      data-dismissible-banner-key-value="nextSemesterBanner:dismissed:<%= next_term.id %>"
      data-testid="next-semester-banner">
   <i class="fas fa-bullhorn fa-lg me-2" aria-hidden="true"></i>
-  <div class="me-auto">
-    <strong>
+  <div class="me-auto" style="min-width: 0;">
+    <strong class="d-block mb-1">
       <%= t("main.next_semester_banner.heading",
             term: next_term.to_label,
             count: lecture_count) %>
     </strong>
-    <br>
-    <%= t("main.next_semester_banner.registration_info") %>
+    <%= simple_format(t("main.next_semester_banner.registration_info")) %>
   </div>
   <%= link_to t("main.next_semester_banner.cta"),
               root_path(semester: "next", anchor: "lecture-search"),

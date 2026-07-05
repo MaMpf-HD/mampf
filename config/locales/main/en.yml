@@ -4,8 +4,10 @@ en:
       heading:
         one: "Lectures for %{term} are being published — the first one is already in MaMpf."
         other: "Lectures for %{term} are being published — %{count} are already in MaMpf."
-      registration_info: >-
-        Course registration will happen here in MaMpf,
-        no longer in Müsli.
+      registration_info: |-
+        Course registration can now also happen here in MaMpf (provided the relevant lecture offers this option).
+
+        Müsli is heading into retirement. Bye-bye, Müsli! Over the next few weeks, we will be gradually rebuilding
+        MaMpf, so some parts may still feel a little unfinished for a while.
       cta: "Browse next semester's lectures"
       dismiss: "Dismiss"
