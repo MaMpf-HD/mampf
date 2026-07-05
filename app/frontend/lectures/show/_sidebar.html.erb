@@ -20,10 +20,12 @@
   <% if lecture %>
     <% fullpath = lecture_path(lecture)%>
     <% active_class = get_class_for_path(lecture_path(lecture)) %>
-    <%# Content is only accessible to subscribers (mirrors the redirect in
-        LecturesController#check_for_subscribe). %>
+    <%# Content is only accessible to subscribers and staff (mirrors the
+        redirect in LecturesController#check_for_subscribe). %>
+    <% content_accessible = lecture.in?(current_user.lectures) ||
+                            current_user.can_edit?(lecture) %>
     <li class="sidebar-item nav-link <%= active_class %>
-            <%= lecture.in?(current_user.lectures) ? "" : "disabled" %>">
+            <%= content_accessible ? "" : "disabled" %>">
       <%= link_to url_for(fullpath),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
         <i class="bi bi-book<%= active_class.present? ? "-fill" : "" %>"></i>

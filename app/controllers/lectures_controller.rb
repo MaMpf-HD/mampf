@@ -360,6 +360,8 @@ class LecturesController < ApplicationController
 
     def check_for_subscribe
       return if @lecture.in?(current_user.lectures)
+      # Staff bypass the subscription gate for content.
+      return if current_user.can_edit?(@lecture)
 
       # Non-subscribers are sent to the lecture's home page (its
       # organizational front door), which offers registration (if the

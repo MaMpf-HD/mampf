@@ -130,6 +130,14 @@ RSpec.describe("Lectures", type: :request) do
 
       expect(response).to redirect_to(lecture_user_registrations_path(lecture))
     end
+
+    it "does not redirect staff (they bypass the subscription gate)" do
+      teacher_lecture = create(:lecture, :released_for_all, teacher: user)
+
+      get lecture_path(teacher_lecture)
+
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   describe "XSS protections" do
