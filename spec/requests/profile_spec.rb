@@ -71,6 +71,20 @@ RSpec.describe("Profile", type: :request) do
         expect(user.reload.lectures).not_to include(lecture)
       end
 
+      it "redirects with an alert also for Turbo form submissions" do
+        # Turbo intercepts even local forms and negotiates the
+        # turbo_stream format
+        patch(subscribe_lecture_path,
+              params: { lecture: { id: lecture.id, passphrase: "wrong",
+                                   parent: "redirect" } },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html, " \
+                                     "text/html, application/xhtml+xml" })
+
+        expect(response)
+          .to redirect_to(lecture_user_registrations_path(lecture))
+        expect(flash[:alert]).to eq(I18n.t("errors.profile.passphrase"))
+      end
+
       it "redirects with an alert when the lecture is not published" do
         unpublished = create(:lecture)
 

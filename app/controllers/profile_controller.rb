@@ -153,10 +153,16 @@ class ProfileController < ApplicationController
   private
 
     # The subscribe form on the lecture home page submits as a plain HTML
-    # request, in contrast to the legacy JS-driven subscribe flows (dashboard
-    # cards, subscribe page), which expect a JS response.
+    # or Turbo request, in contrast to the legacy JS-driven subscribe flows
+    # (dashboard cards, subscribe page), which expect a JS response.
+    #
+    # NOTE: request.format.html? alone would actually suffice even for Turbo
+    # submissions (Mime::Type#html? matches any MIME string containing
+    # "html", which includes text/vnd.turbo-stream.html) — but we spell out
+    # the Turbo case so correctness does not hinge on that subtlety.
     def html_redirect_flow?
-      @parent == "redirect" && request.format.html?
+      @parent == "redirect" &&
+        (request.format.html? || request.format.turbo_stream?)
     end
 
     def set_user
