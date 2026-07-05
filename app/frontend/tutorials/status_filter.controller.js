@@ -1,22 +1,80 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
+  static targets = ["activeFilters"];
+
   connect() {
     this.selectedStatus = "all";
     this.selectedTutorial = "all";
+    this.selectedTutorialLabel = null;
     this.searchQuery = "";
   }
 
   filterStatus(event) {
-    const selected = event.currentTarget.dataset.statusFilterStatusValue;
-    console.log(`Selected status: ${selected}`);
-    this.selectedStatus = selected;
+    this.selectedStatus = event.currentTarget.dataset.statusFilterStatusValue;
     this.applySearchFilter();
+    this.renderActiveFilters();
   }
 
   filterTutorial(event) {
     this.selectedTutorial = event.currentTarget.dataset.statusFilterTutorialValue;
+    this.selectedTutorialLabel = event.currentTarget.textContent.trim();
     this.applySearchFilter();
+    this.renderActiveFilters();
+  }
+
+  clearFilter(event) {
+    const key = event.currentTarget.dataset.filterKey;
+    if (key === "status") this.selectedStatus = "all";
+    if (key === "tutorial") { this.selectedTutorial = "all"; this.selectedTutorialLabel = null; }
+    this.applySearchFilter();
+    this.renderActiveFilters();
+  }
+
+  clearAllFilters() {
+    this.selectedStatus = "all";
+    this.selectedTutorial = "all";
+    this.selectedTutorialLabel = null;
+    this.applySearchFilter();
+    this.renderActiveFilters();
+  }
+
+  renderActiveFilters() {
+    const chips = [];
+
+    if (this.selectedStatus !== "all") {
+      chips.push(this.chipHtml("status", this.selectedStatus));
+    }
+    if (this.selectedTutorial !== "all") {
+      chips.push(this.chipHtml("tutorial", this.selectedTutorialLabel || this.selectedTutorial));
+    }
+
+    if (chips.length === 0) {
+      this.activeFiltersTarget.innerHTML = "";
+      return;
+    }
+
+    this.activeFiltersTarget.innerHTML = chips.join("") + `
+      <button
+        class="btn btn-sm btn-outline-secondary"
+        data-action="click->status-filter#clearAllFilters"
+      >
+        Clear all
+      </button>
+    `;
+  }
+
+  chipHtml(key, label) {
+    return `
+      <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1">
+        ${label}
+        <i
+          class="bi bi-x clickable"
+          data-action="click->status-filter#clearFilter"
+          data-filter-key="${key}"
+        ></i>
+      </span>
+    `;
   }
 
   applySearchFilter() {

@@ -3,15 +3,22 @@
   <% if grading_records? %>
     <div data-controller="status-filter">
       <% if grading_enabled? %>
-        <div class="d-flex gap-2 mb-3">
-          <input
-            type="text"
-            class="form-control form-control-sm w-auto"
-            placeholder="<%= t('basics.search') %>"
-            autocomplete="off"
-            data-action="input->status-filter#search"
-          >
+        <div class="d-flex gap-2 m-3 align-items-center">
+          <div class="d-flex align-items-center">
+            <input
+              type="text"
+              class="form-control form-control-sm w-auto"
+              placeholder="<%= t('assessment.grading_tutorial.filter_name') %>"
+              autocomplete="off"
+              data-action="input->status-filter#search"
+            >
+          </div>
 
+          <div
+            class="d-flex gap-2 align-items-center"
+            data-status-filter-target="activeFilters"
+          >
+          </div>
         </div>
       <% end %>
 

@@ -116,6 +116,7 @@ de:
       participated: 'teilgenommen'
       mark_as_participated: 'Als teilgenommen markieren'
       confirm_unsaved_changes: 'Ungespeicherte Änderungen in der Punktetabelle gehen verloren. Fortfahren?'
+      filter_name: "Name filtern"
       filter_options:
         filter_all: "Alle"
         filter_pending: "Ausstehend"
