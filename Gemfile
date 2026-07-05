@@ -5,7 +5,7 @@ source "https://rubygems.org"
 ruby "3.4.10"
 
 gem "active_model_serializers", "~> 0.10"
-gem "activerecord-import", "~>1.7"
+gem "activerecord-import", "~> 2.0"
 gem "activerecord-nulldb-adapter", "~> 1.0" # for assets precompilation in production
 gem "active_storage_validations", "~> 2.0.2"
 gem "acts_as_list", "~> 1.2"

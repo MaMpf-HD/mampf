@@ -102,7 +102,7 @@ GEM
       activemodel (= 8.0.5)
       activesupport (= 8.0.5)
       timeout (>= 0.4.0)
-    activerecord-import (1.8.1)
+    activerecord-import (2.2.0)
       activerecord (>= 4.2)
     activerecord-nulldb-adapter (1.2.2)
       activerecord (>= 6.1, < 8.2)
@@ -720,7 +720,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers (~> 0.10)
   active_storage_validations (~> 2.0.2)
-  activerecord-import (~> 1.7)
+  activerecord-import (~> 2.0)
   activerecord-nulldb-adapter (~> 1.0)
   acts_as_list (~> 1.2)
   acts_as_tree (~> 2.9)
@@ -795,7 +795,7 @@ DEPENDENCIES
   terser (~> 1.2)
   thredded!
   thredded-markdown_katex!
-  thruster
+  thruster (~> 0.1)
   timecop (~> 0.9.10)
   trix-rails (~> 2.4)
   turbo-rails (~> 2.0)
