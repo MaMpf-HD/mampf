@@ -6,6 +6,7 @@ class CreateRegistrationStudentMessages < ActiveRecord::Migration[8.0]
       t.string :subject, null: false
       t.text :body, null: false
       t.text :attachment_data
+      t.string :recipient_emails, null: false, default: [], array: true
       t.integer :recipients_count, null: false, default: 0
 
       t.timestamps

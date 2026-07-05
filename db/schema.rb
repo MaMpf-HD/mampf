@@ -618,6 +618,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_05_000000) do
     t.string "subject", null: false
     t.text "body", null: false
     t.text "attachment_data"
+    t.string "recipient_emails", default: [], null: false, array: true
     t.integer "recipients_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

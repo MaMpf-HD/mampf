@@ -20,7 +20,8 @@ module Registration
       @message = Registration::StudentMessage.new(message_params)
       @message.lecture = @lecture
       @message.sender = current_user
-      @message.recipients_count = recipients_count
+      # recipient_emails and recipients_count are snapshotted by the model
+      # at creation time
 
       if @message.save
         StudentMessageMailer.with(message: @message)

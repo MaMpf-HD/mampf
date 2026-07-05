@@ -8,7 +8,9 @@ class StudentMessageMailer < ApplicationMailer
   def student_message_email
     @message = params[:message]
     @lecture = @message.lecture
-    recipients = @lecture.registration_mail_recipients.pluck(:email)
+    # Recipients were snapshotted when the message was created, so the
+    # delivery reaches exactly the audience (and count) the sender saw.
+    recipients = @message.recipient_emails
     return if recipients.empty?
 
     if @message.attachment.present?

@@ -57,6 +57,16 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.attachments.map(&:filename)).to include("program.pdf")
     end
 
+    it "delivers to the audience snapshotted at creation time" do
+      message # create (and snapshot) now
+      latecomer = create(:confirmed_user)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, user: latecomer)
+
+      expect(mail.bcc).to include(student.email)
+      expect(mail.bcc).not_to include(latecomer.email)
+    end
+
     it "sends nothing when there are no recipients" do
       registration.update!(status: :rejected)
 
