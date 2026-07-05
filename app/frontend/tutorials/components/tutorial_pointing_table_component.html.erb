@@ -46,21 +46,40 @@
             </thead>
 
             <tbody>
-              <% @stack.each do |submission| %>
-                <%= render(SubmissionRowComponent.new(
-                    submission: submission,
-                    mode: @mode,
-                    assignment: @assignment, 
-                    tutorial: @tutorial)) %>
-              <% end %>
+              <% if @mode == "tutor" %>
+                <% @stack.each do |submission| %>
+                  <%= render(SubmissionRowComponent.new(
+                      submission: submission, mode: @mode,
+                      assignment: @assignment, tutorial: @tutorial)) %>
+                <% end %>
+                <% @non_submitters.each do |user| %>
+                  <% if user.assessment_participation_in_assignment(@assignment) %>
+                    <%= render(ParticipationRowComponent.new(
+                        participation: user.assessment_participation_in_assignment(@assignment),
+                        mode: @mode, assignment: @assignment, tutorial: @tutorial)) %>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <% @tutorials.each do |tutorial| %>
+                  <tr class="tutorial-tr">
+                    <td colspan="<%= column_count %>">
+                      <%= tutorial&.title %>
+                    </td>
+                  </tr>
 
-              <% @non_submitters.each do |user| %>
-                <% if user.assessment_participation_in_assignment(@assignment) %>
-                  <%= render(ParticipationRowComponent.new(
-                      participation: user.assessment_participation_in_assignment(@assignment),
-                      mode: @mode,
-                      assignment: @assignment, 
-                      tutorial: @tutorial)) %>
+                  <% (@submissions_by_tutorial[tutorial] || []).each do |submission| %>
+                    <%= render(SubmissionRowComponent.new(
+                        submission: submission, mode: @mode,
+                        assignment: @assignment, tutorial: tutorial)) %>
+                  <% end %>
+
+                  <% (@non_submitters_by_tutorial[tutorial]).each do |user| %>
+                    <% if user.assessment_participation_in_assignment(@assignment) %>
+                      <%= render(ParticipationRowComponent.new(
+                        participation: user.assessment_participation_in_assignment(@assignment),
+                        mode: @mode, assignment: @assignment, tutorial: @tutorial)) %>
+                    <% end %>
+                  <% end %>
                 <% end %>
               <% end %>
             </tbody>

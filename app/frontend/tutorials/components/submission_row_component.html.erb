@@ -22,7 +22,7 @@
       data-bs-toggle="tooltip"
       data-id="<%= @submission.id %>"
       title="<%= t('buttons.copy_email_to_clipboard') %>"
-    >
+    > <%# herb:disable html-no-duplicate-attributes %>
       <span
         class="clipboardpopuptext token-clipboard-popup"
         data-id="<%= @submission.id %>"
@@ -63,7 +63,7 @@
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% for assignment_task in tasks %>
-      <td class="sticky-col task-col"> <%# herb:disable html-no-duplicate-attributes %>
+      <td class="sticky-col task-col">
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
     <% end %>
@@ -74,7 +74,11 @@
   <% end %>
 
   <!-- Column 5: Actions buttons -->
-  <td class="text-end sticky-col action-col" data-mode="<%= @mode %>" data-id="<%= @submission.id %>">
+  <td
+    class="text-end sticky-col action-col"
+    data-mode="<%= @mode %>"
+    data-id="<%= @submission.id %>"
+  >
     <div class="d-inline-flex align-items-center flex-nowrap gap-1">
       <!-- Download -->
       <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
@@ -139,13 +143,15 @@
   <!-- Column 6: Correction or download correction -->
   <!-- tutor can upload correction, student + teacher can download correction -->
   <!-- there is case when teacher is also tutor, in that case use tutor view for correction -->
-  <td class="sticky-col correction-col" data-id="<%= @submission.id %>">
-    <% if helpers.current_user.in?(@submission.tutorial.tutors) && mode == "tutor" %>
-      <%= render partial: 'submissions/correction_column',
+  <% if  @mode == "tutor" %>
+    <td class="sticky-col correction-col" data-id="<%= @submission.id %>">
+      <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+        <%= render partial: 'submissions/correction_column',
                   locals: { submission: @submission } %>
-    <% else %>
-      <%= render partial: 'submissions/download',
+      <% else %>
+        <%= render partial: 'submissions/download',
                   locals: { submission: @submission } %>
-    <% end %>
-  </td>
+      <% end %>
+    </td>
+  <% end %>
 </tr>

@@ -15,9 +15,14 @@ class TutorialPointingTableComponent < ViewComponent::Base
       @non_submitters = assignment&.non_submitters_in_tutorial(@tutorial)
     else
       @lecture = assignment.lecture
+      @tutorials = @lecture.tutorials
       @stack = assignment&.submissions&.proper
                          &.order(:last_modification_by_users_at)
-      @non_submitters = assignment.non_submitters_in_tutorials
+      @submissions_by_tutorial = @stack.group_by(&:tutorial)
+      @non_submitters = assignment&.non_submitters_in_tutorials
+      @non_submitters_by_tutorial = @non_submitters.group_by do |user|
+        user.assessment_participation_in_assignment(assignment)&.tutorial
+      end
       @non_tutorial_participants = assignment.applicable_users_not_in_tutorials
     end
   end
@@ -37,6 +42,14 @@ class TutorialPointingTableComponent < ViewComponent::Base
   def grading_records?
     @stack&.any? || @non_submitters&.any? do |user|
       user.assessment_participation_in_assignment(@assignment)
+    end
+  end
+
+  def column_count
+    if @mode == "tutor"
+      6 + tasks.count
+    else
+      5 + tasks.count
     end
   end
 

@@ -189,12 +189,13 @@ input[type="file"] {
 
 .table-overflow {
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: clip;
   width: 100%;
 
   > table {
     width: 100%;
-    border-collapse: collapse; // fix for horizontal scrollbar appearing when table has no content
+    border-collapse: separate;
+    border-spacing: 0;
   }
   &:not([data-overflowing]) {
     overflow-x: hidden;
@@ -256,4 +257,20 @@ input[type="file"] {
   color: #888; 
   font-weight: 400; 
   padding: 10px 12px;
+}
+
+.tutorial-tr {
+  td {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 4; // higher than the 2 used everywhere else
+  }
+}
+
+.test-sticky {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 4; // higher than the 2 used everywhere else
 }

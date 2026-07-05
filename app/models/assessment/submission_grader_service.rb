@@ -97,9 +97,9 @@ module Assessment
         assessment_id: assessment.id,
         user_id: user.id
       )
-      participation.save! if participation.new_record?
-      if tutorial.present? && participation.new_record?
-        participation.update!(tutorial_id: tutorial.id)
+      if participation.new_record?
+        participation.update!(tutorial_id: tutorial.id) if tutorial.present?
+        participation.save!
       end
       participation
     end
