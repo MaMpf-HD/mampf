@@ -74,9 +74,12 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     context "with registration campaigns" do
-      def search_calculus
+      # We deliberately use lecture_algebra (a unique title, single search
+      # hit) here: the calculus lectures have random terms, so which of them
+      # end up on the first results page is not deterministic.
+      def search_algebra
         get(search_lectures_path,
-            params: { search: { fulltext: "Calculus" }, infinite_scroll: true },
+            params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
             headers: { "ACCEPT" => "text/vnd.turbo-stream.html" })
       end
 
@@ -91,18 +94,18 @@ RSpec.describe("Lectures", type: :request) do
 
         it "shows a badge for lectures with an open registration campaign" do
           create(:registration_campaign, :open, :first_come_first_served,
-                 campaignable: calculus_lectures.first)
+                 campaignable: lecture_algebra)
 
-          search_calculus
+          search_algebra
 
           expect(response.body).to include("lecture-search-registration-badge")
         end
 
         it "does not show a badge for draft campaigns" do
           create(:registration_campaign, :first_come_first_served,
-                 campaignable: calculus_lectures.first)
+                 campaignable: lecture_algebra)
 
-          search_calculus
+          search_algebra
 
           expect(response.body)
             .not_to include("lecture-search-registration-badge")
@@ -111,11 +114,11 @@ RSpec.describe("Lectures", type: :request) do
         it "shows a registered badge instead when the user has registered" do
           campaign = create(:registration_campaign, :open,
                             :first_come_first_served,
-                            campaignable: calculus_lectures.first)
+                            campaignable: lecture_algebra)
           create(:registration_user_registration,
                  registration_campaign: campaign, user: user)
 
-          search_calculus
+          search_algebra
 
           expect(response.body).to include("lecture-search-registered-badge")
           expect(response.body)
@@ -125,11 +128,11 @@ RSpec.describe("Lectures", type: :request) do
         it "still shows the open badge when the registration was rejected" do
           campaign = create(:registration_campaign, :open,
                             :first_come_first_served,
-                            campaignable: calculus_lectures.first)
+                            campaignable: lecture_algebra)
           create(:registration_user_registration, :rejected,
                  registration_campaign: campaign, user: user)
 
-          search_calculus
+          search_algebra
 
           expect(response.body).to include("lecture-search-registration-badge")
           expect(response.body)
@@ -139,9 +142,9 @@ RSpec.describe("Lectures", type: :request) do
 
       it "does not show a badge when the feature flag is disabled" do
         create(:registration_campaign, :open, :first_come_first_served,
-               campaignable: calculus_lectures.first)
+               campaignable: lecture_algebra)
 
-        search_calculus
+        search_algebra
 
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
@@ -149,21 +152,22 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     context "with subscribed lectures" do
-      it "shows a subscribed indicator on the card" do
-        create(:lecture_user_join, user: user,
-                                   lecture: calculus_lectures.first)
-
+      def search_algebra
         get(search_lectures_path,
-            params: { search: { fulltext: "Calculus" }, infinite_scroll: true },
+            params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
             headers: { "ACCEPT" => "text/vnd.turbo-stream.html" })
+      end
+
+      it "shows a subscribed indicator on the card" do
+        create(:lecture_user_join, user: user, lecture: lecture_algebra)
+
+        search_algebra
 
         expect(response.body).to include("lecture-search-subscribed-indicator")
       end
 
       it "does not show a subscribed indicator otherwise" do
-        get(search_lectures_path,
-            params: { search: { fulltext: "Calculus" }, infinite_scroll: true },
-            headers: { "ACCEPT" => "text/vnd.turbo-stream.html" })
+        search_algebra
 
         expect(response.body)
           .not_to include("lecture-search-subscribed-indicator")
