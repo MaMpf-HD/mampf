@@ -31,6 +31,10 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.reply_to).to eq([teacher.email])
     end
 
+    it "sends the sender a copy" do
+      expect(mail.to).to eq([teacher.email])
+    end
+
     it "prefixes the subject with the lecture title" do
       expect(mail.subject).to include("First session")
       expect(mail.subject).to include(lecture.title_for_viewers)
