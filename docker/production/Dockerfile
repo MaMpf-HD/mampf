@@ -6,7 +6,7 @@ ARG BUNDLER_VERSION=4.0.12
 ARG BUNDLE_PATH=/usr/local/bundle
 ARG BUNDLE_WITHOUT="development:test"
 
-FROM node:24.11.0-trixie-slim AS node
+FROM node:24.18.0-trixie-slim AS node
 
 FROM ruby:3.4.10-slim-trixie AS build
 

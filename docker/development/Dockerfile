@@ -4,7 +4,7 @@
 # line, so parser directives come before this comment.
 # https://docs.docker.com/build/checks/#fail-build-on-check-violations
 
-FROM node:24.11.0-trixie-slim AS node
+FROM node:24.18.0-trixie-slim AS node
 
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
