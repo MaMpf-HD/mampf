@@ -11,6 +11,12 @@ export class DashboardLectureBrowsePage {
     await this.page.goto("/");
   }
 
+  async gotoWithSemesterDeepLink(semester: string) {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.goto(`/?semester=${semester}#lecture-search`);
+    await lectureSearchPromise;
+  }
+
   async scrollToSearchBar() {
     await this.page.getByTestId("lecture-search").scrollIntoViewIfNeeded();
   }
@@ -69,6 +75,20 @@ export class DashboardLectureBrowsePage {
 
   get results() {
     return this.page.getByTestId("lecture-search-results");
+  }
+
+  get nextSemesterBanner() {
+    return this.page.getByTestId("next-semester-banner");
+  }
+
+  async clickNextSemesterBannerCta() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByTestId("next-semester-banner-cta").click();
+    await lectureSearchPromise;
+  }
+
+  async dismissNextSemesterBanner() {
+    await this.page.getByTestId("next-semester-banner-dismiss").click();
   }
 
   async getLectureCardCount() {

@@ -1,0 +1,11 @@
+en:
+  main:
+    next_semester_banner:
+      heading:
+        one: "Lectures for %{term} are being published — the first one is already in MaMpf."
+        other: "Lectures for %{term} are being published — %{count} are already in MaMpf."
+      registration_info: >-
+        Course registration will happen here in MaMpf,
+        no longer in Müsli.
+      cta: "Browse next semester's lectures"
+      dismiss: "Dismiss"

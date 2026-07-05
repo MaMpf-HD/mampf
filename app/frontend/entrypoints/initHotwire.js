@@ -50,6 +50,9 @@ window.Stimulus.register("collapse", CollapseController);
 import BsPopoverController from "~/controllers/bs_popover.controller.js";
 window.Stimulus.register("bs-popover", BsPopoverController);
 
+import DismissibleBannerController from "~/controllers/dismissible_banner.controller.js";
+window.Stimulus.register("dismissible-banner", DismissibleBannerController);
+
 import RowClickController from "~/controllers/row_click.controller.js";
 window.Stimulus.register("row-click", RowClickController);
 

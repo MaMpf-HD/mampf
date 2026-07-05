@@ -1,0 +1,11 @@
+de:
+  main:
+    next_semester_banner:
+      heading:
+        one: "Die Veranstaltungen für das %{term} werden gerade veröffentlicht — die erste ist schon in MaMpf."
+        other: "Die Veranstaltungen für das %{term} werden gerade veröffentlicht — %{count} sind schon in MaMpf."
+      registration_info: >-
+        Die Anmeldung zu den Veranstaltungen läuft ab jetzt hier über MaMpf
+        und nicht mehr über das Müsli.
+      cta: "Veranstaltungen fürs nächste Semester ansehen"
+      dismiss: "Ausblenden"

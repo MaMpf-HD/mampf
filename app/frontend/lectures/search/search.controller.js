@@ -17,6 +17,7 @@ export default class extends Controller {
   connect() {
     addDataToForm(this.formTarget, { infinite_scroll: true });
     this.isSubmitting = false;
+    this.applySemesterFromUrl();
 
     this.observer = new IntersectionObserver((entries) => {
       if (this.initiallyLoaded) return;
@@ -88,6 +89,22 @@ export default class extends Controller {
       addDataToForm(this.formTarget, { page: "" });
       this.submitForm();
     }, 200);
+  }
+
+  /**
+   * Applies the semester filter from the URL (e.g. /?semester=next), so that
+   * banners, announcements etc. can deep-link into a pre-filtered lecture
+   * search. The initial search (triggered by the IntersectionObserver once
+   * the form becomes visible) then picks up the pre-selected filter.
+   */
+  applySemesterFromUrl() {
+    const semester = new URLSearchParams(window.location.search).get("semester");
+    if (!["current", "next"].includes(semester)) return;
+
+    const radios = this.formTarget.querySelectorAll("input[name='search[semester]']");
+    radios.forEach((radio) => {
+      radio.checked = radio.value === semester;
+    });
   }
 
   rememberSemesterFilterState(event) {
