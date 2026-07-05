@@ -555,7 +555,6 @@ de:
       crosslink_html: >-
         Du möchtest allen angemeldeten Studierenden eine E-Mail schreiben
         (z. B. mit dem Kursprogramm)? Das geht im Tab %{link}.
-      crosslink_tab: "Gruppen"
   activerecord:
     errors:
       models:

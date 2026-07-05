@@ -41,7 +41,7 @@ RSpec.describe("Registration::StudentMessages", type: :request) do
            .and(have_enqueued_mail(StudentMessageMailer, :student_message_email))
 
         expect(response).to redirect_to(edit_lecture_path(lecture,
-                                                          tab: "groups"))
+                                                          tab: "communication"))
         message = Registration::StudentMessage.last
         expect(message.sender).to eq(teacher)
         expect(message.recipients_count).to eq(1)
@@ -94,18 +94,13 @@ RSpec.describe("Registration::StudentMessages", type: :request) do
     end
   end
 
-  describe "GET /lectures/:id/edit (groups tab)" do
+  describe "GET /lectures/:id/edit (communication tab)" do
     before do
-      Flipper.enable(:roster_maintenance)
       sign_in teacher
     end
 
-    after do
-      Flipper.disable(:roster_maintenance)
-    end
-
     it "shows the student mail card with recipient count and copy button" do
-      get edit_lecture_path(lecture, tab: "groups")
+      get edit_lecture_path(lecture, tab: "communication")
 
       expect(response.body).to include("student-mail-card")
       expect(response.body).to include("copy-student-emails")

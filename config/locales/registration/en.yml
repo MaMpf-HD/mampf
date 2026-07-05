@@ -554,7 +554,6 @@ en:
       crosslink_html: >-
         You want to email all registered students (e.g. to send around a
         course program)? You can do that in the %{link} tab.
-      crosslink_tab: "Groups"
   activerecord:
     errors:
       models:

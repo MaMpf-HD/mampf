@@ -2,6 +2,10 @@
   <%= t('categories.announcements') %>
 </h3>
 
+<p class="text-muted small">
+  <%= t('lecture.edit.announcements_audience_hint') %>
+</p>
+
 <div class="col-12 text-center">
   <%= link_to t('buttons.create_announcement'),
               new_announcement_path(params: { lecture: lecture.id }),
@@ -19,12 +23,3 @@
   </div>
 <% end %>
 </div>
-
-<% if Flipper.enabled?(:registration_campaigns) &&
-      Flipper.enabled?(:roster_maintenance) %>
-  <p class="text-muted small mt-3">
-    <%= t("registration.student_message.crosslink_html",
-          link: link_to(t("registration.student_message.crosslink_tab"),
-                        edit_lecture_path(lecture, tab: "groups"))) %>
-  </p>
-<% end %>

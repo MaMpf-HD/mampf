@@ -13,7 +13,7 @@ module Registration
 
       recipients_count = @lecture.registration_mail_recipients.count
       if recipients_count.zero?
-        return redirect_to edit_lecture_path(@lecture, tab: "groups"),
+        return redirect_to edit_lecture_path(@lecture, tab: "communication"),
                            alert: t("registration.student_message.no_recipients")
       end
 
@@ -25,11 +25,11 @@ module Registration
       if @message.save
         StudentMessageMailer.with(message: @message)
                             .student_message_email.deliver_later
-        redirect_to edit_lecture_path(@lecture, tab: "groups"),
+        redirect_to edit_lecture_path(@lecture, tab: "communication"),
                     notice: t("registration.student_message.sent",
                               count: recipients_count)
       else
-        redirect_to edit_lecture_path(@lecture, tab: "groups"),
+        redirect_to edit_lecture_path(@lecture, tab: "communication"),
                     alert: @message.errors.full_messages.to_sentence
       end
     end

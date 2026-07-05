@@ -1,5 +1,10 @@
 en:
   lecture:
+    edit:
+      announcements_audience_hint: >-
+        Announcements reach everyone who subscribed to this lecture — as an
+        in-app notification always, but by email only those who have enabled
+        email notifications for announcements.
     search:
       go_to_search: Search lectures
       placeholder: Search for lectures...

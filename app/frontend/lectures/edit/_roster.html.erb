@@ -27,7 +27,10 @@
   <% end %>
 
   <% if Flipper.enabled?(:registration_campaigns) %>
-    <%= render partial: "lectures/edit/student_mail",
-               locals: { lecture: lecture } %>
+    <p class="text-muted small mt-3">
+      <%= t("registration.student_message.crosslink_html",
+            link: link_to(t("admin.lecture.communication"),
+                          edit_lecture_path(lecture, tab: "communication"))) %>
+    </p>
   <% end %>
 </div>
