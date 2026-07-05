@@ -7,6 +7,66 @@
         <br>
         <div class="text-muted"><%= column.sublabel %></div>
       <% end %>
+
+      <!-- possible filtering -->
+
+      <!--1. filter by tutorial -->
+      <% if column.action_tag == "filter-tutorials" %>
+        <button
+          class="btn btn-sm btn-link p-0 ms-1"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="bi bi-funnel"></i>
+        </button>
+        <ul class="dropdown-menu z-20">
+          <li>
+            <button
+              class="dropdown-item"
+              data-action="click->status-filter#filterTutorial"
+              data-status-filter-tutorial-value="all"
+            >
+              <%= t('basics.all') %>
+            </button>
+          </li>
+
+          <% @tutorials.each do |tutorial| %>
+            <li>
+              <button
+                class="dropdown-item"
+                data-action="click->status-filter#filterTutorial"
+                data-status-filter-tutorial-value="<%= tutorial.id %>"
+              >
+                <%= tutorial.title %>
+              </button>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <!--2. filter by status -->
+      <% if column.action_tag == "filter-status" %>
+        <button
+          class="btn btn-sm btn-link p-0 ms-1"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="bi bi-funnel"></i>
+        </button>
+        <ul class="dropdown-menu z-10">
+          <% @status.each do |status| %>
+            <li>
+              <button
+                class="dropdown-item"
+                data-action="click->status-filter#filterStatus"
+                data-status-filter-status-value="<%= status %>"
+              >
+                <%= t("assessment.grading_tutorial.filter_options.filter_#{status}") %>
+              </button>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
     </th>
   <% end %>
 </tr>

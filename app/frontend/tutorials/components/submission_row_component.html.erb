@@ -7,6 +7,7 @@
   data-submission-row-id="<%= @submission.id %>"
   data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
   data-status-filter-status="<%= @submission&.participations&.first&.status %>"
+  data-status-filter-tutorial="<%= @submission.tutorial_id %>"
   data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
 >
   <!-- Column 1: User names + copy emails + late icon -->
@@ -106,7 +107,7 @@
       <% end %>
 
       <!-- Save and refresh -->
-      <% if helpers.current_user.in?(@submission.tutorial.tutors) && grading_enabled? %>
+      <% if can_grade? && grading_enabled? %>
         <!-- Hidden form for this row to submit -->
         <%= form_with url: point_submission_tutorial_path(@submission, 
                                                           type: "Tutorial", 

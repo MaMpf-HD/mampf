@@ -6,11 +6,12 @@
   data-participation-row-id="<%= @participation.id %>"
   data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
   data-status-filter-status="<%= @participation.status %>"
+  data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
   data-status-filter-name="<%= @user.tutorial_name %>"
 >
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
-    <div class="row">
+    <div class="d-flex justify-content-between">
       <%= @user.tutorial_name %>
 
       <i
@@ -18,6 +19,7 @@
           clipboardpopup bi bi-clipboard clickable
           text-secondary clipboard-btn ms-3 clipboard-button
         "
+        style="width: fit-content;"
         data-clipboard-text="<%= @user.email %>"
         data-bs-toggle="tooltip"
         title="<%= t('buttons.copy_email_to_clipboard') %>"

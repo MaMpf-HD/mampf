@@ -104,4 +104,9 @@ class SubmissionRowComponent < ViewComponent::Base
 
     "#{text} (#{t("tutorial.late_submission_decision")})"
   end
+
+  def can_grade?
+    user = helpers.current_user
+    user.admin? || user.can_grade_in_scope?(@tutorial)
+  end
 end

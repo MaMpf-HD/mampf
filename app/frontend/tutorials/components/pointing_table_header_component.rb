@@ -1,12 +1,20 @@
 class PointingTableHeaderComponent < ViewComponent::Base
-  Column = Struct.new(:css_class, :label, :sublabel, :data_mode, keyword_init: true)
+  Column = Struct.new(:css_class, :label, :sublabel,
+                      :data_mode, :action_tag, keyword_init: true)
 
-  def initialize(mode:, grading_enabled:, tasks: [], total_max_points: 0, accepted_file_type: nil)
+  def initialize(mode:, # rubocop:disable Metrics/ParameterLists
+                 grading_enabled:,
+                 tasks: [],
+                 total_max_points: 0,
+                 accepted_file_type: nil,
+                 tutorials: [])
     @mode = mode.to_sym
     @grading_enabled = grading_enabled
     @tasks = tasks
     @total_max_points = total_max_points
     @accepted_file_type = accepted_file_type
+    @tutorials = tutorials || []
+    @status = ["all", "pending", "reviewed"]
     super()
   end
 
@@ -33,13 +41,22 @@ class PointingTableHeaderComponent < ViewComponent::Base
     def tutorial_column
       return [] unless teacher?
 
-      [Column.new(css_class: "sticky-col tutorial-col grade-th text-center",
-                  label: t("basics.tutorial"))]
+      if @tutorials&.count&.zero? || @tutorials.nil?
+        [Column.new(css_class: "sticky-col tutorial-col grade-th text-center",
+                    label: t("basics.tutorial"))]
+      else
+        # need to use action_tag to identify the column for the filter dropdown
+        # need to increase z-index of the header cell
+        [Column.new(css_class: "sticky-col tutorial-col grade-th text-center z-20",
+                    label: t("basics.tutorial"),
+                    action_tag: "filter-tutorials")]
+      end
     end
 
     def status_col
-      Column.new(css_class: "text-center sticky-col status-col grade-th",
+      Column.new(css_class: "text-center sticky-col status-col grade-th z-10",
                  data_mode: @mode,
+                 action_tag: "filter-status",
                  label: t("assessment.grading_tutorial.status"))
     end
 

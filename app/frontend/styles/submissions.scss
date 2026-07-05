@@ -189,8 +189,8 @@ input[type="file"] {
 
 .table-overflow {
   overflow-x: auto;
-  overflow-y: clip;
   width: 100%;
+  min-height: 200px; // to ensure that filter dropdowns are not cut off when table is empty
 
   > table {
     width: 100%;
@@ -257,4 +257,12 @@ input[type="file"] {
   color: #888; 
   font-weight: 400; 
   padding: 10px 12px;
+}
+
+.z-20 {
+  z-index: 20 !important;
+}
+
+.z-10 {
+  z-index: 10 !important;
 }

@@ -12,16 +12,6 @@
             data-action="input->status-filter#search"
           >
 
-          <% ["all", "pending"].each do |status| %>
-            <button
-              class="btn btn-sm <%= status == 'all' ? 'btn-dark' : 'btn-outline-secondary' %>"
-              style="min-width: 4rem"
-              data-action="click->status-filter#filter"
-              data-status-filter-value="<%= status %>"
-            >
-              <%= t("assessment.grading_tutorial.filter_options.filter_#{status}") %>
-            </button>
-          <% end %>
         </div>
       <% end %>
 
@@ -41,7 +31,8 @@
                 grading_enabled: grading_enabled?,
                 tasks: tasks,
                 total_max_points: total_max_points,
-                accepted_file_type: @assignment.accepted_file_type
+                accepted_file_type: @assignment.accepted_file_type,
+                tutorials: @tutorials
               )) %>
             </thead>
 
@@ -61,13 +52,13 @@
                 <% end %>
               <% else %>
                 <% @tutorials.each do |tutorial| %>
-                  <% (@submissions_by_tutorial[tutorial]).each do |submission| %>
+                  <% (@submissions_by_tutorial[tutorial] || []).each do |submission| %>
                     <%= render(SubmissionRowComponent.new(
                         submission: submission, mode: @mode,
                         assignment: @assignment, tutorial: tutorial)) %>
                   <% end %>
 
-                  <% (@non_submitters_by_tutorial[tutorial]).each do |user| %>
+                  <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
                     <% if user.assessment_participation_in_assignment(@assignment) %>
                       <%= render(ParticipationRowComponent.new(
                         participation: user.assessment_participation_in_assignment(@assignment),

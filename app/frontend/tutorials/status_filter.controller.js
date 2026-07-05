@@ -3,19 +3,19 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   connect() {
     this.selectedStatus = "all";
+    this.selectedTutorial = "all";
     this.searchQuery = "";
   }
 
-  filter(event) {
-    const selected = event.currentTarget.dataset.statusFilterValue;
+  filterStatus(event) {
+    const selected = event.currentTarget.dataset.statusFilterStatusValue;
+    console.log(`Selected status: ${selected}`);
     this.selectedStatus = selected;
+    this.applySearchFilter();
+  }
 
-    this.element.querySelectorAll("button[data-status-filter-value]").forEach((btn) => {
-      const active = btn.dataset.statusFilterValue === selected;
-      btn.classList.toggle("btn-dark", active);
-      btn.classList.toggle("btn-outline-secondary", !active);
-    });
-
+  filterTutorial(event) {
+    this.selectedTutorial = event.currentTarget.dataset.statusFilterTutorialValue;
     this.applySearchFilter();
   }
 
@@ -24,7 +24,9 @@ export default class extends Controller {
       const matchStatus = (this.selectedStatus === "all"
         || row.dataset.statusFilterStatus === this.selectedStatus);
       const matchName = row.dataset.statusFilterName.toLowerCase().includes(this.searchQuery);
-      row.style.display = matchStatus && matchName ? "" : "none";
+      const matchTutorial = (this.selectedTutorial === "all"
+        || row.dataset.statusFilterTutorial === this.selectedTutorial);
+      row.style.display = matchStatus && matchName && matchTutorial ? "" : "none";
     });
   }
 
