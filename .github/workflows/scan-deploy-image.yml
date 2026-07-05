@@ -1,9 +1,9 @@
 name: Scan deploy image
 
 # On-demand Trivy scan of a specific published deploy-image reference (digest).
-# Used by `just app-image scan` (mampf-infra) to scan the image currently
-# deployed in an environment, i.e. what is actually running -- not just the
-# latest build. Report-only: findings never fail the run.
+# Used by `just scan deployed` / `just scan app-image` (mampf-infra) to scan the
+# image currently deployed in an environment (or a specific digest), i.e. what is
+# actually running -- not just the latest build. Report-only: findings never fail the run.
 #
 # Trivy runs from its official image (the aquasecurity/trivy-action installs the
 # Trivy binary from GitHub releases per job, which currently fails on the
