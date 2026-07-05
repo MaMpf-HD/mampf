@@ -4,8 +4,9 @@
     The audience is the union of campaign registrants (pending/confirmed)
     and roster members, see Lecture#registration_mail_recipients. %>
 <hr class="lecture-pane-separator">
-<% recipients = lecture.registration_mail_recipients %>
-<% recipient_count = recipients.count %>
+<%# one query for count and clipboard text, so both are consistent %>
+<% recipient_emails = lecture.registration_mail_recipients.pluck(:email) %>
+<% recipient_count = recipient_emails.size %>
 <div class="card mt-4" data-testid="student-mail-card">
   <div class="card-header">
     <h5 class="mb-0">
@@ -22,7 +23,7 @@
         <button type="button"
                 class="btn btn-sm btn-outline-secondary clipboard-btn clipboard-button"
                 title="<%= t("buttons.copy_to_clipboard") %>"
-                data-clipboard-text="<%= recipients.pluck(:email).join("; ") %>"
+                data-clipboard-text="<%= recipient_emails.join("; ") %>"
                 data-testid="copy-student-emails">
           <i class="bi bi-clipboard" aria-hidden="true"></i>
           <%= t("registration.student_message.copy_addresses") %>
