@@ -18,4 +18,9 @@ namespace :demo do
   task setup: :environment do
     Demo::SetupSupport.setup!
   end
+
+  desc "Stage the Müsli-transition preview scenario (see PR #1171)"
+  task transition_preview: :environment do
+    Demo::TransitionPreviewSupport.setup!
+  end
 end
