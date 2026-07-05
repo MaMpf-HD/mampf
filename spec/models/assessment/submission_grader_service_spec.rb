@@ -224,46 +224,6 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         end
       end
 
-      context "when submission has no assignment" do
-        before { allow(@submission).to receive(:assignment).and_return(nil) }
-
-        subject do
-          described_class.score_tasks_by_submission!(@submission, @points_by_task_id, scorer)
-        end
-
-        it "raises SubmissionGraderError" do
-          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
-        end
-
-        it "does not create any participations" do
-          expect do
-            subject
-          rescue StandardError
-            nil
-          end.not_to change(Assessment::Participation, :count)
-        end
-      end
-
-      context "when assignment has no assessment" do
-        before { allow(@assignment).to receive(:assessment).and_return(nil) }
-
-        subject do
-          described_class.score_tasks_by_submission!(@submission, @points_by_task_id, scorer)
-        end
-
-        it "raises SubmissionGraderError" do
-          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
-        end
-
-        it "does not create any participations" do
-          expect do
-            subject
-          rescue StandardError
-            nil
-          end.not_to change(Assessment::Participation, :count)
-        end
-      end
-
       context "when submission and assignment are valid" do
         context "when submission has 1 user" do
           subject do
@@ -310,23 +270,39 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           end
         end
       end
+    end
 
-      context "when assignment is active" do
-        subject do
-          described_class.score_tasks_by_submission!(submission_active, points_by_task_id, scorer)
-        end
+    context "when assignment is active" do
+      before do
+        @assignment = FactoryBot.create(:assignment, :with_lecture, deadline: 1.hour.from_now)
+        @tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
+        @assessment = FactoryBot.create(:assessment,
+                                        requires_points: true,
+                                        assessable: @assignment,
+                                        lecture: @assignment.lecture)
+        @assignment.reload
+        @task = FactoryBot.create(:assessment_task, assessment: @assessment)
+        @points_by_task_id = { @task.id => "7" }
+        @submission = FactoryBot.create(:submission, :with_manuscript,
+                                        assignment: @assignment,
+                                        tutorial: @tutorial,
+                                        users: [user])
+        Timecop.travel(2.hours.from_now)
+      end
+      subject do
+        described_class.score_tasks_by_submission!(submission_active, points_by_task_id, scorer)
+      end
 
-        it "raises SubmissionGraderError" do
-          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
-        end
+      it "raises SubmissionGraderError" do
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
 
-        it "does not create any participations" do
-          expect do
-            subject
-          rescue StandardError
-            nil
-          end.not_to change(Assessment::Participation, :count)
-        end
+      it "does not create any participations" do
+        expect do
+          subject
+        rescue StandardError
+          nil
+        end.not_to change(Assessment::Participation, :count)
       end
     end
   end
@@ -349,20 +325,25 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
                                       tutorial: @tutorial,
                                       users: [user])
       @participation = FactoryBot.create(:assessment_participation,
-                                         assessment: @assignment.assessment,
+                                         assessment: @assessment,
                                          user: user,
                                          tutorial: @tutorial)
+      @submission.reload
+      @participation.reload
+      @assessment.reload
+      allow(scorer).to receive(:can_grade_in_scope?).and_return(true)
       Timecop.travel(2.hours.from_now)
     end
     after { Timecop.return }
+
+    let(:validated_tutorials_ids) { [] }
 
     context "when target is submission" do
       subject do
         described_class.score_tasks_by_types!(
           { "target" => "submission", "id" => @submission.id, "task_points" => @points_by_task_id },
           scorer,
-          tutorial: @tutorial,
-          assignment: @assignment
+          validated_tutorials_ids
         )
       end
 
@@ -375,44 +356,32 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         subject
       end
 
-      it "raises when the submission's id is not found within the authorized tutorial" do
-        other_tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
-        other_submission = FactoryBot.create(:submission, :with_manuscript,
-                                             assignment: @assignment,
-                                             tutorial: other_tutorial,
-                                             users: [FactoryBot.create(:confirmed_user)])
-
-        entry = {
-          "target" => "submission",
-          "id" => other_submission.id,
-          "task_points" => @points_by_task_id
-        }
-
+      it "raises ActiveRecord::RecordNotFound when the submission id does not exist" do
+        entry = { "target" => "submission", "id" => 999_999, "task_points" => @points_by_task_id }
         expect do
-          described_class.score_tasks_by_types!(entry, scorer,
-                                                tutorial: @tutorial,
-                                                assignment: @assignment)
+          described_class.score_tasks_by_types!(entry, scorer, validated_tutorials_ids)
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
 
-      it "raises SubmissionGraderError when the submission belongs to a different assignment" do
-        other_assignment = FactoryBot.create(:assignment, :with_lecture, lecture: @tutorial.lecture)
-        mismatched_submission = FactoryBot.create(:submission, :with_manuscript,
-                                                  assignment: other_assignment,
-                                                  tutorial: @tutorial,
-                                                  users: [FactoryBot.create(:confirmed_user)])
+      it "raises SubmissionGraderError when the scorer cannot grade the submission's tutorial" do
+        allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
 
-        entry = {
-          "target" => "submission",
-          "id" => mismatched_submission.id,
-          "task_points" => @points_by_task_id
-        }
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
 
-        expect do
-          described_class.score_tasks_by_types!(entry, scorer,
-                                                tutorial: @tutorial,
-                                                assignment: @assignment)
-        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      it "adds the tutorial id to validated_tutorials_ids on success" do
+        allow(Assessment::PointEntryService).to receive(:enter_points)
+
+        subject
+
+        expect(validated_tutorials_ids).to include(@tutorial.id)
+      end
+
+      it "does not re-validate a tutorial already in validated_tutorials_ids" do
+        allow(Assessment::PointEntryService).to receive(:enter_points)
+        validated_tutorials_ids << @tutorial.id
+        expect(Tutorial).not_to receive(:find)
+        subject
       end
     end
 
@@ -422,8 +391,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           { "target" => "participation", "id" => @participation.id,
             "task_points" => @points_by_task_id },
           scorer,
-          tutorial: @tutorial,
-          assignment: @assignment
+          validated_tutorials_ids
         )
       end
 
@@ -436,65 +404,44 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         subject
       end
 
-      it "raises when the participation's id is not found within the authorized assessment" do
-        other_tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
-        other_participation = FactoryBot.create(:assessment_participation,
-                                                assessment: @assessment,
-                                                user: FactoryBot.create(:confirmed_user),
-                                                tutorial: other_tutorial)
-
-        entry = {
-          "target" => "participation",
-          "id" => other_participation.id,
-          "task_points" => @points_by_task_id
-        }
-
+      it "raises ActiveRecord::RecordNotFound when the participation id does not exist" do
+        entry = { "target" => "participation", "id" => 999_999,
+                  "task_points" => @points_by_task_id }
         expect do
-          described_class.score_tasks_by_types!(entry, scorer,
-                                                tutorial: @tutorial,
-                                                assignment: @assignment)
-        end.not_to raise_error(ActiveRecord::RecordNotFound)
-        # NOTE: this lookup is scoped via assignment.assessment, so a different
-        # tutorial alone does not raise RecordNotFound — see the mismatch test below.
-      end
-
-      it "raises SubmissionGraderError when the participation belongs to a different tutorial" do
-        other_tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
-        mismatched_participation = FactoryBot.create(:assessment_participation,
-                                                     assessment: @assessment,
-                                                     user: FactoryBot.create(:confirmed_user),
-                                                     tutorial: other_tutorial)
-
-        entry = {
-          "target" => "participation",
-          "id" => mismatched_participation.id,
-          "task_points" => @points_by_task_id
-        }
-
-        expect do
-          described_class.score_tasks_by_types!(entry, scorer,
-                                                tutorial: @tutorial,
-                                                assignment: @assignment)
-        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
-      end
-
-      it "raises RecordNotFound when the participation's id does" \
-         "not belong to the assessment at all" do
-        unrelated_participation = FactoryBot.create(:assessment_participation,
-                                                    assessment: assessment_active,
-                                                    user: FactoryBot.create(:confirmed_user))
-
-        entry = {
-          "target" => "participation",
-          "id" => unrelated_participation.id,
-          "task_points" => @points_by_task_id
-        }
-
-        expect do
-          described_class.score_tasks_by_types!(entry, scorer,
-                                                tutorial: @tutorial,
-                                                assignment: @assignment)
+          described_class.score_tasks_by_types!(entry, scorer, validated_tutorials_ids)
         end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "raises SubmissionGraderError when the scorer cannot grade the participation's tutorial" do
+        allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
+
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
+
+      it "adds the tutorial id to validated_tutorials_ids on success" do
+        subject
+        expect(validated_tutorials_ids).to include(@tutorial.id)
+      end
+
+      context "when participation has no tutorial_id (falls back to lecture)" do
+        let!(:participation_no_tutorial) do
+          FactoryBot.create(:assessment_participation, assessment: @assessment, user:
+            FactoryBot.create(:confirmed_user), tutorial: nil)
+        end
+
+        subject do
+          described_class.score_tasks_by_types!(
+            { "target" => "participation", "id" => participation_no_tutorial.id,
+              "task_points" => @points_by_task_id },
+            scorer,
+            validated_tutorials_ids
+          )
+        end
+
+        it "raises SubmissionGraderError when the scorer cannot grade the lecture" do
+          allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        end
       end
     end
 
@@ -503,8 +450,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         described_class.score_tasks_by_types!(
           { "target" => "unknown", "id" => @submission.id, "task_points" => @points_by_task_id },
           scorer,
-          tutorial: @tutorial,
-          assignment: @assignment
+          validated_tutorials_ids
         )
       end
 
@@ -529,6 +475,47 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           nil
         end
       end
+    end
+  end
+
+  describe ".score_multi_teams_by_types!" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      @assignment = FactoryBot.create(:assignment, :with_lecture, deadline: 1.hour.from_now)
+      @tutorial = FactoryBot.create(:tutorial, lecture: @assignment.lecture)
+      @assessment = FactoryBot.create(:assessment,
+                                      requires_points: true,
+                                      assessable: @assignment,
+                                      lecture: @assignment.lecture)
+      @task = FactoryBot.create(:assessment_task, assessment: @assessment)
+      @submission = FactoryBot.create(:submission, :with_manuscript,
+                                      assignment: @assignment,
+                                      tutorial: @tutorial,
+                                      users: [user])
+      allow(scorer).to receive(:can_grade_in_scope?).and_return(true)
+      Timecop.travel(2.hours.from_now)
+    end
+    after { Timecop.return }
+
+    let(:records) do
+      [{ "target" => "submission", "id" => @submission.id,
+         "task_points" => { @task.id => "7" } }]
+    end
+
+    it "wraps processing in a transaction and calls score_tasks_by_types! for each record" do
+      expect(described_class).to receive(:score_tasks_by_types!).once
+      described_class.score_multi_teams_by_types!(records, scorer)
+    end
+
+    it "rolls back all changes if one record raises" do
+      bad_records = records + [{ "target" => "submission", "id" => 999_999, "task_points" => {} }]
+
+      expect do
+        described_class.score_multi_teams_by_types!(bad_records, scorer)
+      rescue StandardError
+        nil
+      end.not_to change(Assessment::Participation, :count)
     end
   end
 end

@@ -16,10 +16,10 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
         FactoryBot.create(:assessment_participation, assessment: assessment_no_points)
       end
 
-      it "raises ArgumentError" do
+      it "raises Assessment::PointEntryService::PointEntryError" do
         expect do
           described_class.enter_points(participation_no_points, {}, grader)
-        end.to raise_error(ArgumentError, /does not accept points/)
+        end.to raise_error(Assessment::PointEntryService::PointEntryError, /does not accept points/)
       end
     end
 
@@ -72,16 +72,16 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
     end
 
     context "with an invalid task id" do
-      it "raises ArgumentError" do
+      it "raises Assessment::PointEntryService::PointEntryError" do
         expect do
           described_class.enter_points(participation, { 999_999 => "5" }, grader)
-        end.to raise_error(ArgumentError, /Invalid task/)
+        end.to raise_error(Assessment::PointEntryService::PointEntryError, /Invalid task/)
       end
 
       it "does not persist any task points (rolls back transaction)" do
         expect do
           described_class.enter_points(participation, { task1.id => "5", 999_999 => "3" }, grader)
-        rescue ArgumentError
+        rescue Assessment::PointEntryService::PointEntryError
           nil
         end.not_to change(Assessment::TaskPoint, :count)
       end
@@ -134,10 +134,11 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
     context "with an invalid points string" do
       before { task1 }
 
-      it "raises ArgumentError for a non-numeric string" do
+      it "raises Assessment::PointEntryService::PointEntryError for a non-numeric string" do
         expect do
           described_class.enter_points(participation, { task1.id => "abc" }, grader)
-        end.to raise_error(ArgumentError, /Invalid points value for task/)
+        end.to raise_error(Assessment::PointEntryService::PointEntryError,
+                           /Invalid points value for task/)
       end
 
       it "rolls back the transaction on invalid points" do
@@ -148,7 +149,7 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
           described_class.enter_points(participation,
                                        { task1.id => "5", task2.id => "bad" },
                                        grader)
-        rescue ArgumentError
+        rescue Assessment::PointEntryService::PointEntryError
           nil
         end.not_to change(Assessment::TaskPoint, :count)
       end
@@ -157,16 +158,18 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
     context "with a non-Numeric, non-String points value" do
       before { task1 }
 
-      it "raises ArgumentError for an array" do
+      it "raises Assessment::PointEntryService::PointEntryError for an array" do
         expect do
           described_class.enter_points(participation, { task1.id => [5] }, grader)
-        end.to raise_error(ArgumentError, /Invalid points value for task/)
+        end.to raise_error(Assessment::PointEntryService::PointEntryError,
+                           /Invalid points value for task/)
       end
 
-      it "raises ArgumentError for a hash" do
+      it "raises Assessment::PointEntryService::PointEntryError for a hash" do
         expect do
           described_class.enter_points(participation, { task1.id => { value: 5 } }, grader)
-        end.to raise_error(ArgumentError, /Invalid points value for task/)
+        end.to raise_error(Assessment::PointEntryService::PointEntryError,
+                           /Invalid points value for task/)
       end
     end
 

@@ -9,8 +9,7 @@ module Assessment
                                                  :update_team,
                                                  :update_user,
                                                  :refresh_submission,
-                                                 :refresh_user,
-                                                 :mark_as_participated]
+                                                 :refresh_user]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|

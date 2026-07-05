@@ -2,6 +2,8 @@ require "rails_helper"
 
 RSpec.describe("Assessment::TaskPoints", type: :request) do
   let(:teacher) { create(:confirmed_user) }
+  let(:tutor) { create(:confirmed_user) }
+
   let(:lecture) { create(:lecture, teacher: teacher) }
   let!(:assignment) do
     create(:assignment, :with_lecture, lecture: lecture, deadline: 1.hour.from_now)
@@ -10,9 +12,24 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     create(:assessment, requires_points: true, assessable: assignment, lecture: lecture)
   end
   let!(:task) { create(:assessment_task, assessment: assessment) }
-  let(:tutorial) { create(:tutorial, lecture: lecture) }
 
+  let(:tutorial) { create(:tutorial, lecture: lecture) }
   let(:student) { create(:confirmed_user) }
+  let!(:tutorial_membership) do
+    create(:tutorial_membership, user: student, tutorial: tutorial)
+  end
+  let!(:lecture_membership) do
+    create(:lecture_membership, user: student, lecture: lecture)
+  end
+
+  let(:tutorial2) { create(:tutorial, lecture: lecture) }
+  let(:student2) { create(:confirmed_user) }
+  let!(:tutorial_membership2) do
+    create(:tutorial_membership, user: student2, tutorial: tutorial2)
+  end
+  let!(:lecture_membership2) do
+    create(:lecture_membership, user: student2, lecture: lecture)
+  end
 
   before do
     Flipper.enable(:assessment_grading)
@@ -28,9 +45,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     Flipper.disable(:roster_maintenance)
   end
 
-  # PATCH point_multi_submissions_tutorial
-  describe "PATCH /submissions/point_multi_submissions" do
-    before { sign_in teacher }
+  # PATCH update_team_multi (tutorial)
+  # this only applicable for tutor
+  describe "PATCH /submissions/point_multi_submissions { type: Tutorial }" do
+    before do
+      tutorial.tutors << tutor
+      sign_in tutor
+    end
 
     context "when assignment is inactive" do
       before { Timecop.travel(2.hours.from_now) }
@@ -57,6 +78,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         it "returns turbo_stream" do
           patch point_multi_submissions_tutorial_path,
                 params: { tutorial_id: tutorial.id, assignment_id: assignment.id,
+                          mode: "tutor",
                           submissions: payload },
                 as: :turbo_stream
           expect(response.media_type).to eq(Mime[:turbo_stream])
@@ -133,137 +155,267 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
   end
 
   # PATCH point_submission_tutorial
-  describe "PATCH /submissions/:submission_id/point_submission" do
+  describe "PATCH /submissions/:submission_id/point_submission { type: Tutorial }" do
     let(:submission) do
       create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
     end
 
-    before do
-      sign_in teacher
-    end
-
-    context "when assignment is inactive" do
+    context "as tutor" do
       before do
-        sign_in teacher
-        Timecop.travel(2.hours.from_now)
-      end
-      after { Timecop.return }
-
-      it "calls SubmissionGraderService.score_tasks_by_submission!" do
-        expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
-          .and_return(nil)
-        patch point_submission_tutorial_path(submission),
-              params: { task_points: { task.id => "8" }.to_json },
-              as: :turbo_stream
+        tutorial.tutors << tutor
+        sign_in tutor
       end
 
-      it "returns turbo_stream success" do
-        patch point_submission_tutorial_path(submission),
-              params: { task_points: { task.id => "8" }.to_json, type: "Tutorial" },
-              as: :turbo_stream
-        expect(response).to have_http_status(:success)
+      context "when assignment is inactive" do
+        before do
+          sign_in teacher
+          Timecop.travel(2.hours.from_now)
+        end
+        after { Timecop.return }
+
+        it "calls SubmissionGraderService.score_tasks_by_submission!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
+            .and_return(nil)
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json, mode: "tutor" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream success" do
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json, type: "Tutorial",
+                          mode: "tutor" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+        end
+
+        context "when submission is not found" do
+          it "responds with turbo_stream alert" do
+            patch point_submission_tutorial_path(999_999),
+                  params: { task_points: {}.to_json, mode: "tutor" },
+                  as: :turbo_stream
+            expect(response).to have_http_status(:success)
+            expect(response.media_type).to eq(Mime[:turbo_stream])
+            expect(response.body).to include(
+              I18n.t("assessment.task_points.invalid_submission_params")
+            )
+          end
+        end
       end
 
-      context "when submission is not found" do
-        it "responds with turbo_stream alert" do
-          patch point_submission_tutorial_path(999_999),
-                params: { task_points: {}.to_json },
+      context "when assignment is active" do
+        it "calls SubmissionGraderService.score_tasks_by_submission!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
+            .and_return(nil)
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json, mode: "tutor" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream alert" do
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json, mode: "tutor" },
                 as: :turbo_stream
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include(
-            I18n.t("assessment.task_points.invalid_submission_params")
+            I18n.t("assessment.task_points.cannot_score_active_assignment")
           )
         end
       end
     end
 
-    context "when assignment is active" do
-      it "calls SubmissionGraderService.score_tasks_by_submission!" do
-        expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
-          .and_return(nil)
-        patch point_submission_tutorial_path(submission),
-              params: { task_points: { task.id => "8" }.to_json },
-              as: :turbo_stream
+    context "as teacher" do
+      before { sign_in teacher }
+      context "when assignment is inactive" do
+        before do
+          sign_in teacher
+          Timecop.travel(2.hours.from_now)
+        end
+        after { Timecop.return }
+
+        it "calls SubmissionGraderService.score_tasks_by_submission!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
+            .and_return(nil)
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream success" do
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json,
+                          type: "Tutorial",
+                          mode: "teacher" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+        end
+
+        context "when submission is not found" do
+          it "responds with turbo_stream alert" do
+            patch point_submission_tutorial_path(999_999),
+                  params: { task_points: {}.to_json, mode: "teacher" },
+                  as: :turbo_stream
+            expect(response).to have_http_status(:success)
+            expect(response.media_type).to eq(Mime[:turbo_stream])
+            expect(response.body).to include(
+              I18n.t("assessment.task_points.invalid_submission_params")
+            )
+          end
+        end
       end
 
-      it "returns turbo_stream alert" do
-        patch point_submission_tutorial_path(submission),
-              params: { task_points: { task.id => "8" }.to_json },
-              as: :turbo_stream
-        expect(response).to have_http_status(:success)
-        expect(response.media_type).to eq(Mime[:turbo_stream])
-        expect(response.body).to include(
-          I18n.t("assessment.task_points.cannot_score_active_assignment")
-        )
+      context "when assignment is active" do
+        it "calls SubmissionGraderService.score_tasks_by_submission!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
+            .and_return(nil)
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json, mode: "teacher" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream alert" do
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json, mode: "teacher" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+          expect(response.body).to include(
+            I18n.t("assessment.task_points.cannot_score_active_assignment")
+          )
+        end
       end
     end
   end
 
   # PATCH point_user_tutorial
-  describe "PATCH /participations/:participation_id/point_user" do
+  describe "PATCH /participations/:participation_id/point_user { type: Tutorial }" do
     let!(:participation) do
       create(:assessment_participation, assessment: assessment, user: student, tutorial: tutorial)
     end
 
-    before do
-      sign_in teacher
-      participation.reload
-      student.reload
-    end
-
-    context "when assignment is inactive" do
+    context "as teacher" do
       before do
-        Timecop.travel(2.hours.from_now)
-      end
-      after { Timecop.return }
-
-      it "calls SubmissionGraderService.score_tasks_by_participation!" do
-        expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
-        patch point_user_tutorial_path(participation),
-              params: { task_points: { task.id => "6" }.to_json },
-              as: :turbo_stream
+        sign_in teacher
+        participation.reload
+        student.reload
       end
 
-      it "returns turbo_stream success" do
-        patch point_user_tutorial_path(participation),
-              params: { task_points: { task.id => "6" }.to_json },
-              as: :turbo_stream
-        expect(response).to have_http_status(:success)
-        expect(response.media_type).to eq(Mime[:turbo_stream])
+      context "when assignment is inactive" do
+        before do
+          Timecop.travel(2.hours.from_now)
+        end
+        after { Timecop.return }
+
+        it "calls SubmissionGraderService.score_tasks_by_participation!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "teacher" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream success" do
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "teacher" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+        end
+
+        context "when participation is not found" do
+          it "responds with turbo_stream alert" do
+            patch point_user_tutorial_path(999_999),
+                  params: { task_points: {}.to_json, mode: "teacher" },
+                  as: :turbo_stream
+            expect(response).to have_http_status(:success)
+            expect(response.media_type).to eq(Mime[:turbo_stream])
+            expect(response.body).to include(
+              I18n.t("assessment.task_points.invalid_submission_params")
+            )
+          end
+        end
       end
 
-      context "when participation is not found" do
-        it "responds with turbo_stream alert" do
-          patch point_user_tutorial_path(999_999),
-                params: { task_points: {}.to_json },
+      context "when assignment is active" do
+        it "calls SubmissionGraderService.score_tasks_by_participation!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "teacher" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream alert" do
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "teacher" },
                 as: :turbo_stream
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include(
-            I18n.t("assessment.task_points.invalid_submission_params")
+            I18n.t("assessment.task_points.cannot_score_active_assignment")
           )
         end
       end
     end
 
-    context "when assignment is active" do
-      it "calls SubmissionGraderService.score_tasks_by_participation!" do
-        expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
-        patch point_user_tutorial_path(participation),
-              params: { task_points: { task.id => "6" }.to_json },
-              as: :turbo_stream
+    context "as tutor" do
+      before do
+        tutorial.tutors << tutor
+        sign_in tutor
       end
 
-      it "returns turbo_stream alert" do
-        patch point_user_tutorial_path(participation),
-              params: { task_points: { task.id => "6" }.to_json },
-              as: :turbo_stream
-        expect(response).to have_http_status(:success)
-        expect(response.media_type).to eq(Mime[:turbo_stream])
-        expect(response.body).to include(
-          I18n.t("assessment.task_points.cannot_score_active_assignment")
-        )
+      context "when assignment is inactive" do
+        before do
+          Timecop.travel(2.hours.from_now)
+        end
+        after { Timecop.return }
+
+        it "calls SubmissionGraderService.score_tasks_by_participation!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "tutor" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream success" do
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "tutor" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+        end
+
+        context "when participation is not found" do
+          it "responds with turbo_stream alert" do
+            patch point_user_tutorial_path(999_999),
+                  params: { task_points: {}.to_json, mode: "tutor" },
+                  as: :turbo_stream
+            expect(response).to have_http_status(:success)
+            expect(response.media_type).to eq(Mime[:turbo_stream])
+            expect(response.body).to include(
+              I18n.t("assessment.task_points.invalid_submission_params")
+            )
+          end
+        end
+      end
+
+      context "when assignment is active" do
+        it "calls SubmissionGraderService.score_tasks_by_participation!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "tutor" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream alert" do
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "tutor" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+          expect(response.body).to include(
+            I18n.t("assessment.task_points.cannot_score_active_assignment")
+          )
+        end
       end
     end
   end
@@ -322,32 +474,37 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
   # PATCH mark_user_as_participated
   describe "PATCH /participations/mark_as_participated" do
-    before { sign_in teacher }
+    context "as tutor" do
+      before do
+        tutorial.tutors << tutor
+        sign_in tutor
+      end
 
-    it "calls SubmissionGraderService.init_participation" do
-      expect(Assessment::SubmissionGraderService).to receive(:init_participation)
-      patch mark_user_as_participated_path,
-            params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
-                      user_id: student.id },
-            as: :turbo_stream
-    end
-
-    it "returns turbo_stream success" do
-      patch mark_user_as_participated_path,
-            params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
-                      user_id: student.id },
-            as: :turbo_stream
-      expect(response).to have_http_status(:success)
-      expect(response.media_type).to eq(Mime[:turbo_stream])
-    end
-
-    context "when user is not found" do
-      it "calls init_participation with nil user and does not raise" do
+      it "calls SubmissionGraderService.init_participation" do
+        expect(Assessment::SubmissionGraderService).to receive(:init_participation)
         patch mark_user_as_participated_path,
-              params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
-                        user_id: 999_999 },
+              params: { assignment_id: assignment.id,
+                        user_id: student.id, mode: "tutor" },
               as: :turbo_stream
+      end
+
+      it "returns turbo_stream success" do
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, mode: "tutor",
+                        user_id: student.id },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
         expect(response.media_type).to eq(Mime[:turbo_stream])
+      end
+
+      context "when user is not found" do
+        it "calls init_participation with nil user and does not raise" do
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id,
+                          user_id: 999_999, mode: "tutor" },
+                as: :turbo_stream
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+        end
       end
     end
   end
@@ -409,8 +566,6 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     end
 
     context "when user is a tutor" do
-      let(:tutor) { create(:confirmed_user) }
-
       before do
         tutorial.tutors << tutor
         sign_in tutor
@@ -439,7 +594,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       it "allows mark_as_participated" do
         patch mark_user_as_participated_path,
-              params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+              params: { assignment_id: assignment.id, mode: "tutor",
                         user_id: student.id },
               as: :turbo_stream
         expect(response).to have_http_status(:success)
@@ -477,7 +632,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       it "allows mark_as_participated" do
         patch mark_user_as_participated_path,
-              params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+              params: { assignment_id: assignment.id, mode: "tutor",
                         user_id: student.id },
               as: :turbo_stream
         expect(response).to have_http_status(:success)
