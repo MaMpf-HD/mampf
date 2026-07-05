@@ -261,8 +261,8 @@ en:
       index:
         title: "Registrations"
         confirmed_cases: "Your registration is confirmed for"
-        unassigned_notice: "You are not registered in any group yet."
-        pending_preference_notice: "You are not registered in any group yet. After the registration period ends, you will be assigned based on your preferences."
+        unassigned_notice: "You have not been assigned to a group yet."
+        pending_preference_notice: "You have not been assigned to a group yet. After the registration period ends, you will be assigned based on your preferences."
         fulfilled_preference_notice_html: "We could fulfill your <em>%{rank}</em> preference."
         fulfilled_preference_ranks:
           "1": "1st"
