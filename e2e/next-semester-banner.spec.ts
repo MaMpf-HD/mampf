@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, test } from "./_support/fixtures";
 import { disableFeature, enableFeature } from "./_support/backend";
 import { DashboardLectureBrowsePage } from "./page-objects/dashboard_lecture_browse_page";
