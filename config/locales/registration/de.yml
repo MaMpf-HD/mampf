@@ -529,6 +529,33 @@ de:
         view_details: "Details"
     lecture:
       not_found: "Veranstaltung nicht gefunden."
+    student_message:
+      title: "E-Mail an angemeldete Studierende"
+      audience:
+        zero: "Es haben sich noch keine Studierenden angemeldet."
+        one: "Geht an 1 angemeldete Person."
+        other: "Geht an %{count} angemeldete Personen."
+      copy_addresses: "E-Mail-Adressen kopieren"
+      addresses_copied: "Adressen in die Zwischenablage kopiert"
+      subject: "Betreff"
+      body: "Nachricht"
+      attachment: "Anhang (optional)"
+      attachment_hint: "Eine Datei, maximal 10 MB — z. B. ein Kursprogramm."
+      send:
+        one: "An 1 Person senden"
+        other: "An %{count} Personen senden"
+      sent:
+        one: "Deine Nachricht wird an 1 Person verschickt."
+        other: "Deine Nachricht wird an %{count} Personen verschickt."
+      no_recipients: "Es gibt noch keine angemeldeten Studierenden."
+      sent_messages: "Gesendete Nachrichten"
+      recipients:
+        one: "1 Empfänger(in)"
+        other: "%{count} Empfänger(innen)"
+      crosslink_html: >-
+        Du möchtest allen angemeldeten Studierenden eine E-Mail schreiben
+        (z. B. mit dem Kursprogramm)? Das geht im Tab %{link}.
+      crosslink_tab: "Gruppen"
   activerecord:
     errors:
       models:

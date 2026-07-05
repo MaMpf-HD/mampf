@@ -1,0 +1,27 @@
+# Delivers a Registration::StudentMessage from the lecture staff to all
+# registered students (see Lecture#registration_mail_recipients).
+#
+# Note that this deliberately does not respect the email_for_announcement
+# opt-out: these are operational emails tied to a registration the
+# student entered themselves.
+class StudentMessageMailer < ApplicationMailer
+  def student_message_email
+    @message = params[:message]
+    @lecture = @message.lecture
+    recipients = @lecture.registration_mail_recipients.pluck(:email)
+    return if recipients.empty?
+
+    if @message.attachment.present?
+      attachments[@message.attachment_filename || "attachment"] =
+        @message.attachment.read
+    end
+
+    I18n.with_locale(@lecture.locale_with_inheritance || I18n.default_locale) do
+      mail(from: "#{t("mailer.notification")} " \
+                 "<#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>",
+           reply_to: @message.sender.email,
+           bcc: recipients,
+           subject: "[#{@lecture.title_for_viewers}] #{@message.subject}")
+    end
+  end
+end

@@ -3046,6 +3046,10 @@ en:
       client you can try to copy and paste the link to the address bar of your
       browser and open it afterwards.
     announcement_subject: 'New announcement'
+    student_message_footer: >-
+      This message was sent by %{sender} via MaMpf to the registered
+      students of %{lecture}. Replies to this email go directly to the
+      sender.
     mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
     author: 'Author'

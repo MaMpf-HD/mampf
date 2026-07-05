@@ -19,3 +19,12 @@
   </div>
 <% end %>
 </div>
+
+<% if Flipper.enabled?(:registration_campaigns) &&
+      Flipper.enabled?(:roster_maintenance) %>
+  <p class="text-muted small mt-3">
+    <%= t("registration.student_message.crosslink_html",
+          link: link_to(t("registration.student_message.crosslink_tab"),
+                        edit_lecture_path(lecture, tab: "groups"))) %>
+  </p>
+<% end %>
