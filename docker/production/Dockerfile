@@ -8,7 +8,7 @@ ARG BUNDLE_WITHOUT="development:test"
 
 FROM node:24.11.0-trixie-slim AS node
 
-FROM ruby:3.4.9-slim-trixie AS build
+FROM ruby:3.4.10-slim-trixie AS build
 
 ARG BUNDLER_VERSION
 ARG BUNDLE_PATH
@@ -114,7 +114,7 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     rm -rf /usr/local/bundle/cache /usr/local/bundle/ruby/*/cache && \
     find /usr/local/bundle -name "*.gem" -delete
 
-FROM ruby:3.4.9-slim-trixie
+FROM ruby:3.4.10-slim-trixie
 
 ARG BUNDLER_VERSION
 ARG BUNDLE_PATH
