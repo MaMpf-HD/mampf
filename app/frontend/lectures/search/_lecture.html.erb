@@ -15,10 +15,23 @@
           <%= lecture.title_no_term %>
         </h5>
         <div class="lecture-search-result-info">
-          <% if registration_open?(lecture) %>
+          <% if @registered_lecture_ids&.include?(lecture.id) %>
             <span class="badge bg-success lecture-search-result-registration"
+                  data-testid="lecture-search-registered-badge">
+              <i class="fas fa-check" aria-hidden="true"></i>
+              <%= t('lecture.search.registered') %>
+            </span>
+          <% elsif registration_open?(lecture) %>
+            <span class="badge bg-primary lecture-search-result-registration"
                   data-testid="lecture-search-registration-badge">
               <%= t('lecture.search.registration_open') %>
+            </span>
+          <% end %>
+          <% if @subscribed_lecture_ids&.include?(lecture.id) %>
+            <span class="lecture-search-result-subscribed text-muted"
+                  data-testid="lecture-search-subscribed-indicator">
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <%= t('lecture.search.subscribed') %>
             </span>
           <% end %>
           <% if lecture.term %>

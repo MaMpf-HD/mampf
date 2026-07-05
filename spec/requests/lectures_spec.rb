@@ -107,6 +107,34 @@ RSpec.describe("Lectures", type: :request) do
           expect(response.body)
             .not_to include("lecture-search-registration-badge")
         end
+
+        it "shows a registered badge instead when the user has registered" do
+          campaign = create(:registration_campaign, :open,
+                            :first_come_first_served,
+                            campaignable: calculus_lectures.first)
+          create(:registration_user_registration,
+                 registration_campaign: campaign, user: user)
+
+          search_calculus
+
+          expect(response.body).to include("lecture-search-registered-badge")
+          expect(response.body)
+            .not_to include("lecture-search-registration-badge")
+        end
+
+        it "still shows the open badge when the registration was rejected" do
+          campaign = create(:registration_campaign, :open,
+                            :first_come_first_served,
+                            campaignable: calculus_lectures.first)
+          create(:registration_user_registration, :rejected,
+                 registration_campaign: campaign, user: user)
+
+          search_calculus
+
+          expect(response.body).to include("lecture-search-registration-badge")
+          expect(response.body)
+            .not_to include("lecture-search-registered-badge")
+        end
       end
 
       it "does not show a badge when the feature flag is disabled" do
@@ -117,6 +145,28 @@ RSpec.describe("Lectures", type: :request) do
 
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
+      end
+    end
+
+    context "with subscribed lectures" do
+      it "shows a subscribed indicator on the card" do
+        create(:lecture_user_join, user: user,
+                                   lecture: calculus_lectures.first)
+
+        get(search_lectures_path,
+            params: { search: { fulltext: "Calculus" }, infinite_scroll: true },
+            headers: { "ACCEPT" => "text/vnd.turbo-stream.html" })
+
+        expect(response.body).to include("lecture-search-subscribed-indicator")
+      end
+
+      it "does not show a subscribed indicator otherwise" do
+        get(search_lectures_path,
+            params: { search: { fulltext: "Calculus" }, infinite_scroll: true },
+            headers: { "ACCEPT" => "text/vnd.turbo-stream.html" })
+
+        expect(response.body)
+          .not_to include("lecture-search-subscribed-indicator")
       end
     end
 

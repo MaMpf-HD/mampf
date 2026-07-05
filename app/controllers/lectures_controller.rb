@@ -287,6 +287,18 @@ class LecturesController < ApplicationController
       # avoid N+1 queries for the registration badge on the result cards
       @lectures = @lectures.includes(:registration_campaigns)
     end
+    # ID sets for the state indicators on the result cards (computed once
+    # per request, so the cards do not trigger per-lecture queries)
+    @subscribed_lecture_ids = current_user.lecture_ids.to_set
+    if Flipper.enabled?(:registration_campaigns)
+      @registered_lecture_ids =
+        Registration::UserRegistration
+        .where(user: current_user, status: [:pending, :confirmed])
+        .joins(:registration_campaign)
+        .where(registration_campaigns: { campaignable_type: "Lecture" })
+        .pluck("registration_campaigns.campaignable_id")
+        .to_set
+    end
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
