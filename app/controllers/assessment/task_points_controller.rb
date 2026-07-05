@@ -282,7 +282,7 @@ module Assessment
 
       def set_locale
         I18n.locale = @lecture&.locale_with_inheritance ||
-                      @assessable&.lecture&.locale_with_inheritance ||
+                      @assignment&.lecture&.locale_with_inheritance ||
                       @assessment&.assessable&.lecture&.locale_with_inheritance ||
                       current_user.locale ||
                       I18n.default_locale
