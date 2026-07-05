@@ -36,13 +36,7 @@ module Assessment
           respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
           return
         end
-        ActiveRecord::Base.transaction do
-          records.each do |entry|
-            SubmissionGraderService.score_tasks_by_types!(entry, current_user,
-                                                          tutorial: @tutorial,
-                                                          assignment: @assignment)
-          end
-        end
+        SubmissionGraderService.score_multi_teams_by_types!(records, current_user)
 
         rerender_submission_table
       end
@@ -121,7 +115,14 @@ module Assessment
       return respond_with_flash(:alert, t("assessment.task_points.user_not_found")) unless user
 
       # derive tutorial from rosterized result
-      @tutorial = user.tutorial_rosterized(@lecture)
+      roster_tutorial = user.tutorial_rosterized(@lecture)
+      unless roster_tutorial
+        return respond_with_flash(
+          :alert, t("assessment.task_points.invalid_submission_params")
+        )
+      end
+      authorize! :grade, roster_tutorial
+      @tutorial = roster_tutorial
       SubmissionGraderService.init_participation(@assessment, user, @tutorial)
       rerender_submission_table
     end

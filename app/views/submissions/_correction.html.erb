@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-12">
-    <% if !@assignment.active? %>
+    <% if !@assignment&.active? %>
       <%= link_to t('buttons.upload'),
                   edit_correction_path(submission),
                   class: "btn btn-sm btn-outline-secondary",

@@ -40,9 +40,16 @@
     <% end %>
   </td>
 
+  <!-- Column 1.5: Tutorial -->
+  <% if @mode == "teacher" %>
+    <td class="text-center sticky-col tutorial-col">
+      <span><%= @submission.tutorial&.title %></span>
+    </td>
+  <% end %>
+
   <% if grading_enabled? %>
     <!-- Column 4: Status -->
-    <td class="text-center sticky-col status-col-tutor">
+    <td class="text-center sticky-col status-col" data-mode="<%= @mode %>">
       <% if @submission&.participations %>
         <% status = @submission&.participations.first&.status %>
         <span
@@ -61,13 +68,13 @@
       </td>
     <% end %>
     <!-- Column 4: Total Points -->
-    <td class="text-center sticky-col total-col-tutor">
+    <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
       <span data-submission-row-target="totalPoints">0</span>
     </td>
   <% end %>
 
   <!-- Column 5: Actions buttons -->
-  <td class="text-end sticky-col action-col-tutor" data-id="<%= @submission.id %>">
+  <td class="text-end sticky-col action-col" data-mode="<%= @mode %>" data-id="<%= @submission.id %>">
     <div class="d-inline-flex align-items-center flex-nowrap gap-1">
       <!-- Download -->
       <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
@@ -129,9 +136,11 @@
     </div>
   </td>
 
-  <!-- Column 6: Correction or download partial -->
+  <!-- Column 6: Correction or download correction -->
+  <!-- tutor can upload correction, student + teacher can download correction -->
+  <!-- there is case when teacher is also tutor, in that case use tutor view for correction -->
   <td class="sticky-col correction-col" data-id="<%= @submission.id %>">
-    <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+    <% if helpers.current_user.in?(@submission.tutorial.tutors) && mode == "tutor" %>
       <%= render partial: 'submissions/correction_column',
                   locals: { submission: @submission } %>
     <% else %>

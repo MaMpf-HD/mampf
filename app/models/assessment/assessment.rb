@@ -65,7 +65,7 @@ module Assessment
     end
 
     def persisted_tasks
-      tasks.select(&:persisted?)
+      tasks.order(:position)
     end
 
     private

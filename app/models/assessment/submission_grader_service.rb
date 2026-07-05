@@ -7,24 +7,48 @@ module Assessment
   class SubmissionGraderService
     class SubmissionGraderError < StandardError; end
 
+    def self.score_multi_teams_by_types!(records, scorer)
+      validated_tutorials_ids = []
+      validated_lecture_ids = []
+      ActiveRecord::Base.transaction do
+        records.each do |entry|
+          SubmissionGraderService.score_tasks_by_types!(entry, scorer,
+                                                        validated_tutorials_ids,
+                                                        validated_lecture_ids)
+        end
+      end
+    end
+
     # Routes a bulk entry to the correct scoring method based on target type.
-    def self.score_tasks_by_types!(entry, scorer, tutorial:, assignment:)
+    def self.score_tasks_by_types!(entry, scorer, validated_tutorials_ids, validated_lecture_ids)
       case entry["target"]
       when "submission"
-        submission = tutorial.submissions.find(entry["id"])
-
-        raise_if_errors!([
-                           validate_submission_matches_assignment(submission, assignment)
-                         ])
-
+        submission = Submission.find(entry["id"])
+        tutorial_id = submission.tutorial_id
+        if tutorial_id.present? && validated_tutorials_ids.exclude?(tutorial_id)
+          tutorial = Tutorial.find(tutorial_id)
+          raise_if_errors!([validate_current_user_can_grade_tutorial(tutorial, scorer)])
+          validated_tutorials_ids << tutorial_id
+        end
         score_tasks_by_submission!(submission, entry["task_points"], scorer)
+
       when "participation"
-        participation = assignment.assessment
-                                  .assessment_participations
-                                  .find(entry["id"])
+        participation = Assessment::Participation.find(entry["id"])
+        tutorial_id = participation.tutorial_id
 
-        raise_if_errors!([validate_participation_matches_tutorial(participation, tutorial)])
+        if tutorial_id.present? && validated_tutorials_ids.exclude?(tutorial_id)
+          tutorial = Tutorial.find(tutorial_id)
+          raise_if_errors!([validate_current_user_can_grade(tutorial, scorer)])
+          validated_tutorials_ids << tutorial_id
+        elsif tutorial_id.nil?
+          lecture_id = participation.assessment&.assessable&.lecture_id
 
+          if lecture_id.present? && validated_lecture_ids.exclude?(lecture_id)
+            lecture = Lecture.find(lecture_id)
+            raise_if_errors!([validate_current_user_can_grade(lecture, scorer)])
+            validated_lecture_ids << lecture_id if lecture_id.present?
+          end
+        end
         score_tasks_by_participation!(participation, entry["task_points"], scorer)
       else
         raise(SubmissionGraderError, "Unknown target type #{entry["target"].inspect}")
@@ -74,10 +98,9 @@ module Assessment
         user_id: user.id
       )
       participation.save! if participation.new_record?
-
-      # tutorial_id is nullable when a participation is created in submission upload phase
-      # we only set it if it's not already set
-      participation.update!(tutorial_id: tutorial.id) if participation.tutorial_id.nil?
+      if tutorial.present? && participation.new_record?
+        participation.update!(tutorial_id: tutorial.id)
+      end
       participation
     end
 
@@ -107,22 +130,6 @@ module Assessment
     end
 
     # validation methods: each returns nil (valid) or an error string (invalid) ---
-
-    def self.validate_submission_matches_assignment(submission, assignment)
-      return if submission.assignment_id == assignment.id
-
-      I18n.t("assessment.task_points.submission_assignment_mismatch",
-             submission_id: submission.id,
-             assignment_id: assignment.id)
-    end
-
-    def self.validate_participation_matches_tutorial(participation, tutorial)
-      return if participation.tutorial_id.nil? || participation.tutorial_id == tutorial.id
-
-      I18n.t("assessment.task_points.participation_tutorial_mismatch",
-             participation_id: participation.id,
-             tutorial_id: tutorial.id)
-    end
 
     def self.validate_submission_has_assignment(submission, assignment)
       return if assignment.present?
@@ -169,6 +176,12 @@ module Assessment
       I18n.t("assessment.task_points.participation_missing")
     end
 
+    def self.validate_current_user_can_grade(something, user)
+      return if something.nil? || user.can_grade_in_scope?(something)
+
+      "User cannot grade"
+    end
+
     #  error-raising helper ---
 
     def self.raise_if_errors!(errors)
@@ -176,9 +189,7 @@ module Assessment
       raise(SubmissionGraderError, errors.join("; ")) if errors.any?
     end
 
-    private_class_method :raise_if_errors!,
-                         :validate_submission_matches_assignment,
-                         :validate_participation_matches_tutorial,
+    private_class_method(:raise_if_errors!,
                          :validate_submission_has_assignment,
                          :validate_assignment_has_assessment,
                          :validate_participation_has_assignment,
@@ -186,7 +197,8 @@ module Assessment
                          :validate_assessment_requires_points,
                          :validate_submission_present,
                          :validate_participation_present,
+                         :validate_current_user_can_grade,
                          :handle_score_tasks_by_submission,
-                         :handle_score_tasks_by_participation
+                         :handle_score_tasks_by_participation)
   end
 end

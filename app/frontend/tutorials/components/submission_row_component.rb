@@ -1,10 +1,11 @@
 # Renders a single submission row in the pointing table
 class SubmissionRowComponent < ViewComponent::Base
-  def initialize(submission:, assignment:, tutorial:)
+  def initialize(submission:, assignment:, tutorial: nil, mode: nil)
     super()
     @submission = submission
     @assignment = assignment
     @tutorial = tutorial
+    @mode = mode || "tutor"
   end
 
   # Feature guard: grading is only possible if the feature flag is enabled
