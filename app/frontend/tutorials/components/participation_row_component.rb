@@ -32,10 +32,13 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def extract_task_points_participation(assessment_task)
-    submission_points = @participation.graded_tasks_points
-    submission_points.find do |sp|
+    graded_task_points.find do |sp|
       sp.task_id == assessment_task.id
     end&.points
+  end
+
+  def graded_task_points
+    @graded_task_points ||= @participation.graded_tasks_points
   end
 
   def tasks
