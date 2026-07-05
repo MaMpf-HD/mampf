@@ -66,11 +66,11 @@
         <%= f.hidden_field :id, value: @lecture.id %>
         <%= f.hidden_field :parent, value: "redirect" %>
         <% if @passphrase_required %>
-          <%= f.text_field :passphrase,
-                           class: "form-control w-auto",
-                           placeholder: t("profile.passphrase"),
-                           "aria-label": t("profile.passphrase"),
-                           data: { testid: "lecture-home-passphrase" } %>
+          <%= f.password_field :passphrase,
+                               class: "form-control w-auto",
+                               placeholder: t("profile.passphrase"),
+                               "aria-label": t("profile.passphrase"),
+                               data: { testid: "lecture-home-passphrase" } %>
         <% end %>
         <%= f.submit t("profile.subscribe_lecture"),
                      class: "btn btn-outline-primary text-nowrap",
