@@ -8,6 +8,9 @@ import { Controller } from "@hotwired/stimulus";
  * connect, the banner is revealed unless a dismissal has been recorded in
  * localStorage under the configured key.
  *
+ * When localStorage is unavailable (e.g. blocked by browser settings), the
+ * banner is shown and dismissals last only for the current page view.
+ *
  * Usage:
  *   <div hidden
  *        data-controller="dismissible-banner"
@@ -20,7 +23,7 @@ export default class extends Controller {
   static values = { key: String };
 
   connect() {
-    if (this.hasKeyValue && localStorage.getItem(this.keyValue)) {
+    if (this.isDismissed()) {
       this.element.remove();
     }
     else {
@@ -30,8 +33,26 @@ export default class extends Controller {
 
   dismiss() {
     if (this.hasKeyValue) {
-      localStorage.setItem(this.keyValue, "true");
+      try {
+        localStorage.setItem(this.keyValue, "true");
+      }
+      catch {
+        // storage unavailable: the dismissal lasts only for this page view
+      }
     }
     this.element.remove();
+  }
+
+  isDismissed() {
+    if (!this.hasKeyValue) return false;
+
+    try {
+      return Boolean(localStorage.getItem(this.keyValue));
+    }
+    catch {
+      // storage unavailable: we cannot remember dismissals, so show the
+      // banner rather than hiding it forever
+      return false;
+    }
   }
 }
