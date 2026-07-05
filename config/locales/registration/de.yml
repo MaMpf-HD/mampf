@@ -328,7 +328,7 @@ de:
       blocked_tooltip: "Du kannst diesem Tutorium nicht beitreten, weil Du Dein Tutorium nicht verlassen kannst. Der Dozent hat das so eingerichtet."
       register_now: "Jetzt anmelden"
       registration_blocked: "Nicht verfügbar"
-      withdraw: "Austreten"
+      withdraw: "Zurückziehen"
       closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
       ineligible_notice:
         title: "Anmeldung derzeit nicht möglich"
@@ -405,7 +405,7 @@ de:
         generic_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
         generic_finalization_warning_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
         generic_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hast Du die Voraussetzung <em>%{requirement}</em> nicht erfüllt. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
-      withdraw_first: "Zuerst austreten"
+      withdraw_first: "Zuerst zurückziehen"
       filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
       status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"
       submitted_pref: "Deine eingereichte Auswahl"
