@@ -82,8 +82,12 @@ class ProfileController < ApplicationController
       @unpublished = true
       return
     end
+    # Roster members may subscribe without the passphrase: a roster seat is
+    # a stronger credential than a shared passphrase.
     return if @lecture.passphrase.present? &&
               !@lecture.in?(current_user.lectures) &&
+              !LectureMembership.exists?(user: current_user,
+                                         lecture: @lecture) &&
               @lecture.passphrase != @passphrase
 
     @success = current_user.subscribe_lecture!(@lecture)

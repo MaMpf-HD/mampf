@@ -811,6 +811,14 @@ class Lecture < ApplicationRecord
       attributes,
       unique_by: [:user_id, :lecture_id]
     )
+
+    # Roster membership implies a subscription: members need access to the
+    # lecture's content, even when subscribing is gated by a passphrase
+    # (a roster seat is a stronger credential than a shared passphrase).
+    LectureUserJoin.insert_all(
+      attributes,
+      unique_by: [:lecture_id, :user_id]
+    )
     # rubocop:enable Rails/SkipsModelValidations
   end
 
