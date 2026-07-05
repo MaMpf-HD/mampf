@@ -105,6 +105,12 @@ export default class extends Controller {
     radios.forEach((radio) => {
       radio.checked = radio.value === semester;
     });
+
+    // The deep link should always bring the search into view. We cannot rely
+    // on the #lecture-search anchor alone: when the hash did not change
+    // (e.g. the banner CTA is clicked a second time), the browser does not
+    // scroll to it again.
+    requestAnimationFrame(() => this.element.scrollIntoView());
   }
 
   rememberSemesterFilterState(event) {
