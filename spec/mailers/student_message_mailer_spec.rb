@@ -67,8 +67,16 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.bcc).not_to include(latecomer.email)
     end
 
-    it "sends nothing when there are no recipients" do
-      registration.update!(status: :rejected)
+    it "sends nothing when the recipient snapshot is empty" do
+      # cannot happen through the regular flow (the model validates the
+      # presence of recipients), so this only guards against anomalous data
+      empty_message = Registration::StudentMessage.new(
+        lecture: lecture, sender: teacher, subject: "s", body: "b",
+        recipient_emails: []
+      )
+
+      mail = described_class.with(message: empty_message)
+                            .student_message_email
 
       expect(mail.message).to be_a(ActionMailer::Base::NullMail)
     end

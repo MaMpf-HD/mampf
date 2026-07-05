@@ -11,8 +11,7 @@ module Registration
     def create
       authorize! :edit, @lecture
 
-      recipients_count = @lecture.registration_mail_recipients.count
-      if recipients_count.zero?
+      if @lecture.registration_mail_recipients.none?
         return redirect_to edit_lecture_path(@lecture, tab: "communication"),
                            alert: t("registration.student_message.no_recipients")
       end
@@ -28,7 +27,7 @@ module Registration
                             .student_message_email.deliver_later
         redirect_to edit_lecture_path(@lecture, tab: "communication"),
                     notice: t("registration.student_message.sent",
-                              count: recipients_count)
+                              count: @message.recipients_count)
       else
         redirect_to edit_lecture_path(@lecture, tab: "communication"),
                     alert: @message.errors.full_messages.to_sentence

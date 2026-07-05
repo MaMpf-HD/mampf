@@ -16,6 +16,9 @@ module Registration
 
     validates :subject, presence: true, length: { maximum: 200 }
     validates :body, presence: true
+    # safety net: a message must never be persisted without an audience
+    # (the snapshot happens in a callback right before validation)
+    validates :recipient_emails, presence: true
 
     before_validation :snapshot_recipients, on: :create
 
