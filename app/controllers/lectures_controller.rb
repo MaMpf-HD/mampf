@@ -283,6 +283,10 @@ class LecturesController < ApplicationController
       configurator_class: Search::Configurators::LectureSearchConfigurator,
       options: { infinite_scroll: params[:infinite_scroll], default_per_page: 6 }
     )
+    if @lectures.respond_to?(:includes)
+      # avoid N+1 queries for the registration badge on the result cards
+      @lectures = @lectures.includes(:registration_campaigns)
+    end
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }

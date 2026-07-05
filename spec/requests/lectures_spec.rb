@@ -73,6 +73,53 @@ RSpec.describe("Lectures", type: :request) do
       end
     end
 
+    context "with registration campaigns" do
+      def search_calculus
+        get(search_lectures_path,
+            params: { search: { fulltext: "Calculus" }, infinite_scroll: true },
+            headers: { "ACCEPT" => "text/vnd.turbo-stream.html" })
+      end
+
+      context "when the feature flag is enabled" do
+        before do
+          Flipper.enable(:registration_campaigns)
+        end
+
+        after do
+          Flipper.disable(:registration_campaigns)
+        end
+
+        it "shows a badge for lectures with an open registration campaign" do
+          create(:registration_campaign, :open, :first_come_first_served,
+                 campaignable: calculus_lectures.first)
+
+          search_calculus
+
+          expect(response.body).to include("lecture-search-registration-badge")
+        end
+
+        it "does not show a badge for draft campaigns" do
+          create(:registration_campaign, :first_come_first_served,
+                 campaignable: calculus_lectures.first)
+
+          search_calculus
+
+          expect(response.body)
+            .not_to include("lecture-search-registration-badge")
+        end
+      end
+
+      it "does not show a badge when the feature flag is disabled" do
+        create(:registration_campaign, :open, :first_come_first_served,
+               campaignable: calculus_lectures.first)
+
+        search_calculus
+
+        expect(response.body)
+          .not_to include("lecture-search-registration-badge")
+      end
+    end
+
     context "with an HTML request" do
       it "redirects to the root path" do
         get search_lectures_path, params: { search: { fulltext: "Calculus" } }

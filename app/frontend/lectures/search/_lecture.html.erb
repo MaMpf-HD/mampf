@@ -15,6 +15,12 @@
           <%= lecture.title_no_term %>
         </h5>
         <div class="lecture-search-result-info">
+          <% if registration_open?(lecture) %>
+            <span class="badge bg-success lecture-search-result-registration"
+                  data-testid="lecture-search-registration-badge">
+              <%= t('lecture.search.registration_open') %>
+            </span>
+          <% end %>
           <% if lecture.term %>
             <span class="lecture-search-result-term">
               <%= lecture.term.to_label_short %>
