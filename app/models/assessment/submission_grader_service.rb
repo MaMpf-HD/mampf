@@ -67,7 +67,8 @@ module Assessment
 
       def init_participation(assessment, user, tutorial)
         if assessment.nil? || user.nil? || tutorial.nil?
-          raise(SubmissionGraderError, "Assessment, user, and tutorial must be present")
+          raise(SubmissionGraderError,
+                I18n.t("assessment.task_points.init_participation_missing_args"))
         end
 
         participation = Participation.find_or_initialize_by(
@@ -96,7 +97,8 @@ module Assessment
             authorize_tutorial!(participation.tutorial_id, scorer, validated_tutorial_ids)
           else
             raise(SubmissionGraderError,
-                  "Participation #{participation.id} has no tutorial_id. Assignment can be graded only when user is assigned to a tutorial.")
+                  I18n.t("assessment.task_points.participation_missing_tutorial",
+                         participation_id: participation.id))
           end
 
           score_tasks_by_participation!(participation, entry["task_points"], scorer)
@@ -172,7 +174,7 @@ module Assessment
         def validate_current_user_can_grade(scope, user)
           return if scope.nil? || user.can_grade_in_scope?(scope)
 
-          "User cannot grade"
+          I18n.t("assessment.task_points.user_cannot_grade")
         end
 
         # ── error raising ───────────────────────────────────────────────────

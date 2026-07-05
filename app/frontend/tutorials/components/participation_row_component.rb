@@ -17,7 +17,7 @@ class ParticipationRowComponent < ViewComponent::Base
     return unless @user.nil?
 
     raise(MissingUserError,
-          I18n.t("assessment.task_points.no_user_for_config",
+          I18n.t("assessment.grading_tutorial.no_user_for_config",
                  participation_id: @participation.id, assignment_id: @assignment.id))
   end
 

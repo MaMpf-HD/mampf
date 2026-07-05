@@ -13,7 +13,8 @@ module Assessment
       # check requires_points
       unless assessment.requires_points?
         raise(PointEntryError,
-              "Assessment #{assessment.id} does not accept points")
+              I18n.t("assessment.task_points.assessment_does_not_require_points",
+                     assessment_id: assessment.id))
       end
 
       # validate task ids belong to the assessment
@@ -23,7 +24,7 @@ module Assessment
         task_points.each do |task_id, points|
           unless valid_task_ids.include?(task_id)
             raise(PointEntryError,
-                  "Invalid task #{task_id}")
+                  I18n.t("assessment.task_points.invalid_task", task_id: task_id))
           end
 
           tp = TaskPoint.find_or_initialize_by(
@@ -56,10 +57,12 @@ module Assessment
         begin
           Float(points)
         rescue ArgumentError
-          raise(PointEntryError, "Invalid points value for task #{task_id}")
+          raise(PointEntryError,
+                I18n.t("assessment.task_points.invalid_points_value", task_id: task_id))
         end
       elsif !points.is_a?(Numeric)
-        raise(PointEntryError, "Invalid points value for task #{task_id}")
+        raise(PointEntryError,
+              I18n.t("assessment.task_points.invalid_points_value", task_id: task_id))
       end
     end
 

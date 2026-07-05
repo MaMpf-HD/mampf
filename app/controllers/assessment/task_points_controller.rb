@@ -113,13 +113,12 @@ module Assessment
       user = User.find_by(id: params[:user_id])
       return respond_with_flash(:alert, t("assessment.task_points.user_not_found")) unless user
 
-      # derive tutorial from rosterized result
       roster_tutorial = user.tutorial_rosterized(@lecture)
       unless roster_tutorial
-        return respond_with_flash(
-          :alert, t("assessment.task_points.invalid_submission_params")
-        )
+        return respond_with_flash(:alert,
+                                  t("assessment.task_points.user_not_rostered"))
       end
+
       authorize! :grade, roster_tutorial
       @tutorial = roster_tutorial
       SubmissionGraderService.init_participation(@assessment, user, @tutorial)
@@ -195,44 +194,86 @@ module Assessment
       def set_resources_from_bulk_params
         @tutorial = Tutorial.find_by(id: params["tutorial_id"])
         @assignment = Assignment.find_by(id: params["assignment_id"])
-        @assessment = @assignment.assessment if @tutorial && @assignment
-        return if @assessment && @tutorial && @assignment
 
-        respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+        unless @tutorial
+          return respond_with_flash(:alert,
+                                    t("assessment.task_points.tutorial_not_found"))
+        end
+
+        unless @assignment
+          return respond_with_flash(:alert,
+                                    t("assessment.task_points.assignment_not_found"))
+        end
+
+        @assessment = @assignment.assessment
+        return if @assessment
+
+        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"))
       end
 
       def set_resources_from_submission
         @submission = Submission.find_by(id: params[:submission_id])
-        if @submission
-          @assignment = @submission.assignment
-          @tutorial = @submission.tutorial
-          @assessment = @assignment.assessment if @assignment
+        unless @submission
+          return respond_with_flash(:alert,
+                                    t("assessment.task_points.submission_not_found"))
         end
-        return if @assessment && @tutorial && @assignment
 
-        respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+        @assignment = @submission.assignment
+        unless @assignment
+          return respond_with_flash(:alert,
+                                    t("assessment.task_points.submission_missing_assignment"))
+        end
+
+        @tutorial = @submission.tutorial
+        unless @tutorial
+          return respond_with_flash(:alert,
+                                    t("assessment.task_points.submission_missing_tutorial"))
+        end
+
+        @assessment = @assignment.assessment
+        return if @assessment
+
+        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"))
       end
 
       def set_resources_from_participation
         @participation = Participation.find_by(id: params[:participation_id])
-        if @participation
-          @assessment = @participation.assessment
-          @tutorial = @participation.tutorial
-          @assignment = @assessment.assessable if @assessment
+        unless @participation
+          return respond_with_flash(:alert,
+                                    t("assessment.task_points.participation_not_found"))
         end
-        return if @tutorial && @assessment && @assignment
 
-        respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+        @assessment = @participation.assessment
+        unless @assessment
+          return respond_with_flash(:alert,
+                                    t("assessment.task_points.participation_missing_assessment"))
+        end
+
+        @tutorial = @participation.tutorial
+        unless @tutorial
+          return respond_with_flash(:alert,
+                                    t("assessment.task_points.participation_missing_tutorial"))
+        end
+
+        @assignment = @assessment.assessable
+        return if @assignment
+
+        respond_with_flash(:alert, t("assessment.task_points.participation_missing_assignment"))
       end
 
       def set_resources_from_assignment
         @assignment = Assignment.find_by(id: params[:assignment_id])
-        @tutorial = Tutorial.find_by(id: params[:tutorial_id])
-        @lecture = @assignment&.lecture if @assignment
-        @assessment = @assignment.assessment if @assignment
-        return if @assessment && @assignment
+        unless @assignment
+          return respond_with_flash(:alert,
+                                    t("assessment.task_points.assignment_not_found"))
+        end
 
-        respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+        @tutorial = Tutorial.find_by(id: params[:tutorial_id])
+        @lecture = @assignment.lecture
+        @assessment = @assignment.assessment
+        return if @assessment
+
+        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"))
       end
 
       def current_ability
