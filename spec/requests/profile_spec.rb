@@ -41,5 +41,45 @@ RSpec.describe("Profile", type: :request) do
         expect(user.reload.lectures).to include(lecture)
       end
     end
+
+    context "with the plain HTML flow of the lecture home page" do
+      let(:lecture) do
+        create(:lecture, :released_for_all, passphrase: "secret")
+      end
+
+      def subscribe_html(lecture, passphrase: nil)
+        patch(subscribe_lecture_path,
+              params: { lecture: { id: lecture.id,
+                                   passphrase: passphrase,
+                                   parent: "redirect" } })
+      end
+
+      it "redirects to the lecture content after a successful subscription" do
+        subscribe_html(lecture, passphrase: "secret")
+
+        expect(response).to redirect_to(lecture_path(lecture))
+        expect(user.reload.lectures).to include(lecture)
+      end
+
+      it "redirects back to the lecture home page with an alert on a " \
+         "wrong passphrase" do
+        subscribe_html(lecture, passphrase: "wrong")
+
+        expect(response)
+          .to redirect_to(lecture_user_registrations_path(lecture))
+        expect(flash[:alert]).to eq(I18n.t("errors.profile.passphrase"))
+        expect(user.reload.lectures).not_to include(lecture)
+      end
+
+      it "redirects with an alert when the lecture is not published" do
+        unpublished = create(:lecture)
+
+        subscribe_html(unpublished)
+
+        expect(response)
+          .to redirect_to(lecture_user_registrations_path(unpublished))
+        expect(flash[:alert]).to eq(I18n.t("admin.lecture.no_rights"))
+      end
+    end
   end
 end

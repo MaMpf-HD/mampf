@@ -23,6 +23,12 @@ module Lectures
       @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
+      @subscribed = @lecture.in?(current_user.lectures)
+      # Roster members may subscribe without the passphrase, see
+      # ProfileController#subscribe_lecture.
+      @passphrase_required = @lecture.restricted? &&
+                             !LectureMembership.exists?(user: current_user,
+                                                        lecture: @lecture)
 
       render template: "lectures/home/lecture_home",
              layout: turbo_frame_request? ? "turbo_frame" : "application"

@@ -80,15 +80,24 @@ class ProfileController < ApplicationController
     if !@lecture.published? && !current_user.admin &&
        !@lecture.edited_by?(current_user)
       @unpublished = true
+      if html_redirect_flow?
+        return redirect_to lecture_user_registrations_path(@lecture),
+                           alert: t("admin.lecture.no_rights")
+      end
       return
     end
     # Roster members may subscribe without the passphrase: a roster seat is
     # a stronger credential than a shared passphrase.
-    return if @lecture.passphrase.present? &&
-              !@lecture.in?(current_user.lectures) &&
-              !LectureMembership.exists?(user: current_user,
-                                         lecture: @lecture) &&
-              @lecture.passphrase != @passphrase
+    if @lecture.passphrase.present? &&
+       !@lecture.in?(current_user.lectures) &&
+       !LectureMembership.exists?(user: current_user, lecture: @lecture) &&
+       @lecture.passphrase != @passphrase
+      if html_redirect_flow?
+        return redirect_to lecture_user_registrations_path(@lecture),
+                           alert: t("errors.profile.passphrase")
+      end
+      return
+    end
 
     @success = current_user.subscribe_lecture!(@lecture)
 
@@ -142,6 +151,13 @@ class ProfileController < ApplicationController
   end
 
   private
+
+    # The subscribe form on the lecture home page submits as a plain HTML
+    # request, in contrast to the legacy JS-driven subscribe flows (dashboard
+    # cards, subscribe page), which expect a JS response.
+    def html_redirect_flow?
+      @parent == "redirect" && request.format.html?
+    end
 
     def set_user
       @user = current_user

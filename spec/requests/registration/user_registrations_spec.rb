@@ -116,8 +116,32 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       get lecture_user_registrations_path(lecture_id: lecture.id)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("lecture-home-subscribe-link")
-      expect(response.body).to include(subscribe_lecture_page_path(lecture.id))
+      expect(response.body).to include("lecture-home-subscribe-button")
+      expect(response.body).to include(subscribe_lecture_path)
+    end
+
+    it "shows a passphrase field for passphrase-protected lectures" do
+      passphrase_lecture = create(:lecture, :released_for_all,
+                                  passphrase: "secret")
+      unsubscribed_student = create(:confirmed_user)
+      sign_in unsubscribed_student
+
+      get lecture_user_registrations_path(lecture_id: passphrase_lecture.id)
+
+      expect(response.body).to include("lecture-home-passphrase")
+    end
+
+    it "does not show a passphrase field to roster members" do
+      passphrase_lecture = create(:lecture, :released_for_all,
+                                  passphrase: "secret")
+      member = create(:confirmed_user)
+      create(:lecture_membership, user: member, lecture: passphrase_lecture)
+      sign_in member
+
+      get lecture_user_registrations_path(lecture_id: passphrase_lecture.id)
+
+      expect(response.body).to include("lecture-home-subscribe-button")
+      expect(response.body).not_to include("lecture-home-passphrase")
     end
 
     it "is accessible for students without the passphrase" do
