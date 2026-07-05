@@ -77,7 +77,7 @@ class ParticipationRowComponent < ViewComponent::Base
         action: "change->submission-row#onPointParticipationChanged input->submission-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
-      disabled: !allow_grading
+      disabled: !allow_grading || !grading_enabled? || !can_grade?
     )
   end
 
@@ -97,7 +97,7 @@ class ParticipationRowComponent < ViewComponent::Base
                        submission_row_target: "save",
                        action: "click->submission-row#saveRow" },
                title: helpers.t("buttons.save"),
-               disabled: !allow_grading) do
+               disabled: !allow_grading || !grading_enabled? || !can_grade?) do
       tag.i(class: "bi bi-save")
     end
   end
@@ -110,7 +110,7 @@ class ParticipationRowComponent < ViewComponent::Base
                class: class_name,
                data: { bs_toggle: "tooltip", action: "click->submission-row#refreshRow" },
                title: helpers.t("buttons.refresh"),
-               disabled: !allow_grading) do
+               disabled: !allow_grading || !grading_enabled? || !can_grade?) do
       tag.i(class: "bi bi-arrow-clockwise")
     end
   end
