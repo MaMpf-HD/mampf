@@ -47,15 +47,35 @@ export class DashboardLectureBrowsePage {
     await lectureSearchPromise;
   }
 
+  async selectNextSemester() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByText("Next semester").click();
+    await lectureSearchPromise;
+  }
+
   async clearNextSemester() {
     const lectureSearchPromise = this.getLectureSearchPromise();
     await this.page.getByText("Next semester").click();
     await lectureSearchPromise;
   }
 
+  async clearNextSemesterWithKeyboard() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.nextSemesterFilter.focus();
+    await this.nextSemesterFilter.press("Space");
+    await lectureSearchPromise;
+  }
+
   async clearCurrentSemester() {
     const lectureSearchPromise = this.getLectureSearchPromise();
     await this.page.getByText("Current semester").click();
+    await lectureSearchPromise;
+  }
+
+  async clearCurrentSemesterWithKeyboard() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.currentSemesterFilter.focus();
+    await this.currentSemesterFilter.press("Space");
     await lectureSearchPromise;
   }
 

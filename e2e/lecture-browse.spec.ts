@@ -128,7 +128,29 @@ test("filters results by selected semester",
     await expect(dashboard.results).toContainText("Topology Current");
     await expect(dashboard.results).not.toContainText("Topology Next");
 
+    await dashboard.clearCurrentSemesterWithKeyboard();
+    await expect(dashboard.currentSemesterFilter).not.toBeChecked();
+    await expect(dashboard.nextSemesterFilter).not.toBeChecked();
+    await expect(dashboard.results).toContainText("Topology Current");
+    await expect(dashboard.results).toContainText("Topology Next");
+
+    await dashboard.selectCurrentSemester();
+    await expect(dashboard.currentSemesterFilter).toBeChecked();
+    await expect(dashboard.results).toContainText("Topology Current");
+    await expect(dashboard.results).not.toContainText("Topology Next");
+
     await dashboard.clearCurrentSemester();
+    await expect(dashboard.currentSemesterFilter).not.toBeChecked();
+    await expect(dashboard.nextSemesterFilter).not.toBeChecked();
+    await expect(dashboard.results).toContainText("Topology Current");
+    await expect(dashboard.results).toContainText("Topology Next");
+
+    await dashboard.selectNextSemester();
+    await expect(dashboard.nextSemesterFilter).toBeChecked();
+    await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).not.toContainText("Topology Current");
+
+    await dashboard.clearNextSemesterWithKeyboard();
     await expect(dashboard.currentSemesterFilter).not.toBeChecked();
     await expect(dashboard.nextSemesterFilter).not.toBeChecked();
     await expect(dashboard.results).toContainText("Topology Current");
