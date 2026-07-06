@@ -159,6 +159,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
 
   describe "test tutorial id for submissions" do
     before do
+      sign_in user
       allow_any_instance_of(User).to receive(:tutorial_rosterized).and_return(tutorial)
     end
 

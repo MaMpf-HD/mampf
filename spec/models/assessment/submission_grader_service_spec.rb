@@ -15,6 +15,12 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     Flipper.enable(:roster_maintenance)
   end
 
+  after do
+    Flipper.disable(:assessment_grading)
+    Flipper.disable(:registration_campaigns)
+    Flipper.disable(:roster_maintenance)
+  end
+
   describe ".init_participation" do
     let!(:user) { FactoryBot.create(:confirmed_user) }
     let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
