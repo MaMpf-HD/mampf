@@ -26,7 +26,10 @@ export default class extends Controller {
   clearFilter(event) {
     const key = event.currentTarget.dataset.filterKey;
     if (key === "status") this.selectedStatus = "all";
-    if (key === "tutorial") { this.selectedTutorial = "all"; this.selectedTutorialLabel = null; }
+    if (key === "tutorial") {
+      this.selectedTutorial = "all";
+      this.selectedTutorialLabel = null;
+    }
     this.applySearchFilter();
     this.renderActiveFilters();
   }
