@@ -56,7 +56,8 @@ export default class extends Controller {
       this.calculateTotalPoints();
     }
     else {
-      this.handleInvalidCase();
+      this.alertTotalPointsInvalid();
+      this.handleClean();
     }
   }
 
@@ -67,14 +68,8 @@ export default class extends Controller {
       this.calculateTotalPoints();
     }
     else {
-      this.handleInvalidCase();
-    }
-  }
-
-  handleInvalidCase() {
-    this.alertTotalPointsInvalid();
-    if (this.hasSaveTarget) {
-      this.saveTarget.disabled = true;
+      this.alertTotalPointsInvalid();
+      this.handleCleanParticipation();
     }
   }
 
@@ -97,60 +92,76 @@ export default class extends Controller {
 
   markDirty() {
     const dirty = this.inputTargets.some((input, idx) => input.value != this.originalValues[idx]);
-
     if (dirty) {
-      this.element.classList.add("row-dirty");
-      this.dispatch("dirty", {
-        prefix: false,
-        bubbles: true,
-        detail: {
-          id: this.element.dataset.submissionRowId,
-          target: "submission",
-          task_points: this.extractTasksPoints(this.inputTargets),
-        },
-      });
-      if (this.hasSaveTarget) this.saveTarget.disabled = false;
+      this.handleDirty();
     }
     else {
-      this.element.classList.remove("row-dirty");
-      this.dispatch("clean", {
-        prefix: false,
-        bubbles: true,
-        detail: { id: this.element.dataset.submissionRowId,
-          target: "submission" },
-      });
-
-      if (this.hasSaveTarget) this.saveTarget.disabled = true;
+      this.handleClean();
     }
+  }
+
+  handleDirty() {
+    this.element.classList.add("row-dirty");
+    this.dispatch("dirty", {
+      prefix: false,
+      bubbles: true,
+      detail: {
+        id: this.element.dataset.submissionRowId,
+        target: "submission",
+        task_points: this.extractTasksPoints(this.inputTargets),
+      },
+    });
+    if (this.hasSaveTarget) this.saveTarget.disabled = false;
+  }
+
+  handleClean() {
+    this.element.classList.remove("row-dirty");
+    this.dispatch("clean", {
+      prefix: false,
+      bubbles: true,
+      detail: { id: this.element.dataset.submissionRowId,
+        target: "submission" },
+    });
+
+    if (this.hasSaveTarget) this.saveTarget.disabled = true;
   }
 
   markDirtyParticipation() {
     const dirty = this.inputTargets.some((input, idx) => input.value != this.originalValues[idx]);
-
     if (dirty) {
-      this.element.classList.add("row-dirty");
-      this.dispatch("dirty", {
-        prefix: false,
-        bubbles: true,
-        detail: {
-          id: this.element.dataset.participationRowId,
-          target: "participation",
-          task_points: this.extractTasksPoints(this.inputTargets),
-        },
-      });
-      if (this.hasSaveTarget) this.saveTarget.disabled = false;
+      this.handleDirtyParticipation();
     }
     else {
-      this.element.classList.remove("row-dirty");
-      this.dispatch("clean", {
-        prefix: false,
-        bubbles: true,
-        detail: { id: this.element.dataset.participationRowId,
-          target: "participation" },
-      });
-
-      if (this.hasSaveTarget) this.saveTarget.disabled = true;
+      this.handleCleanParticipation();
     }
+  }
+
+  handleDirtyParticipation() {
+    this.element.classList.add("row-dirty");
+    this.dispatch("dirty", {
+      prefix: false,
+      bubbles: true,
+      detail: {
+        id: this.element.dataset.participationRowId,
+        target: "participation",
+        task_points: this.extractTasksPoints(this.inputTargets),
+      },
+    });
+    if (this.hasSaveTarget) this.saveTarget.disabled = false;
+  }
+
+  handleCleanParticipation() {
+    this.element.classList.remove("row-dirty");
+    this.dispatch("clean", {
+      prefix: false,
+      bubbles: true,
+      detail: {
+        id: this.element.dataset.participationRowId,
+        target: "participation",
+      },
+    });
+
+    if (this.hasSaveTarget) this.saveTarget.disabled = true;
   }
 
   extractTasksPoints(inputTargets) {

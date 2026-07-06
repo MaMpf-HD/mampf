@@ -32,10 +32,13 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def extract_task_points(assessment_task)
-    submission_points = @submission.graded_tasks_points
-    submission_points.find do |sp|
+    graded_task_points.find do |sp|
       sp.task_id == assessment_task.id
     end&.points
+  end
+
+  def graded_task_points
+    @graded_task_points ||= @submission.graded_tasks_points
   end
 
   def badge_status_participation_color(status)
