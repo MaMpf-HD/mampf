@@ -73,7 +73,7 @@ RSpec.describe(Submission, type: :model) do
   end
 
   describe "participations" do
-    context "when assessement flag is disabled" do
+    context "when assessment flag is disabled" do
       it "returns nil" do
         submission = FactoryBot.build(:valid_submission, :with_assignment)
         expect(submission.participations).to be_nil
@@ -121,7 +121,9 @@ RSpec.describe(Submission, type: :model) do
 
       let!(:assignment) { FactoryBot.create(:valid_assignment, title: "usual BS") }
       let!(:assessment) do
-        FactoryBot.create(:assessment, assessable: assignment, requires_points: true)
+        assignment.assessment.tap do |record|
+          record.update!(requires_points: true)
+        end
       end
       let(:lecture) { assignment.lecture }
       # both users are in the same tutorial,
@@ -146,7 +148,7 @@ RSpec.describe(Submission, type: :model) do
   end
 
   describe "graded_tasks_points" do
-    context "when assessement flag is disabled" do
+    context "when assessment flag is disabled" do
       it "returns nil" do
         submission = FactoryBot.build(:valid_submission, :with_assignment)
         expect(submission.graded_tasks_points).to be_nil
