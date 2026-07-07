@@ -610,13 +610,15 @@ Rails.application.routes.draw do
 
   # quizzes routes
 
-  post "quiz_certificates/:id/claim",
-       to: "quiz_certificates#claim",
-       as: "claim_quiz_certificate"
+  constraints ->(_req) { Flipper.enabled?(:quiz_certificates) } do
+    post "quiz_certificates/:id/claim",
+         to: "quiz_certificates#claim",
+         as: "claim_quiz_certificate"
 
-  post "quiz_certificates/validate",
-       to: "quiz_certificates#validate",
-       as: "validate_certificate"
+    post "quiz_certificates/validate",
+         to: "quiz_certificates#validate",
+         as: "validate_certificate"
+  end
 
   get "quizzes/:id/take",
       to: "quizzes#take",
@@ -908,9 +910,11 @@ Rails.application.routes.draw do
         to: "tutorials#bulk_upload",
         as: "bulk_upload_corrections"
 
-  get "tutorials/validate_certificate",
-      to: "tutorials#validate_certificate",
-      as: "validate_certificate_as_tutor"
+  constraints ->(_req) { Flipper.enabled?(:quiz_certificates) } do
+    get "tutorials/validate_certificate",
+        to: "tutorials#validate_certificate",
+        as: "validate_certificate_as_tutor"
+  end
 
   get "tutorials/:id/assignments/:ass_id/export_teams",
       to: "tutorials#export_teams",
