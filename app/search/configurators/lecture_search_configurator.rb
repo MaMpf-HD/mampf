@@ -21,7 +21,7 @@ module Search
           [
             Filters::TypeFilter,
             Filters::TermFilter,
-            Filters::SemesterFilter,
+            Filters::CurrentNextTermFilter,
             Filters::ProgramFilter,
             Filters::TeacherFilter,
             Filters::LectureVisibilityFilter,

@@ -93,7 +93,7 @@ test("filters results based on search input",
     await expect(dashboard.results).not.toContainText("Mathematics");
   });
 
-test("filters results by selected semester",
+test("filters results by selected term",
   async ({ factory, student: { page } }) => {
     const { currentTerm, nextTerm } = await createLectureSearchTerms(factory);
     const currentCourse = await factory.create("course", [], { title: "Topology Current" });
@@ -106,53 +106,65 @@ test("filters results by selected semester",
       course_id: nextCourse.id,
       term_id: nextTerm.id,
     });
+    const termIndependentCourse = await factory.create("course", [], { title: "Topology Independent" });
+    await factory.create("lecture", ["term_independent", "released_for_all"], {
+      course_id: termIndependentCourse.id,
+    });
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
     await dashboard.scrollToSearchAndWaitForResults();
 
-    await expect(dashboard.nextSemesterFilter).toBeChecked();
+    await expect(dashboard.nextTermFilter).toBeChecked();
 
     await dashboard.searchFor("Topology");
     await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Current");
 
-    await dashboard.clearNextSemester();
-    await expect(dashboard.nextSemesterFilter).not.toBeChecked();
-    await expect(dashboard.currentSemesterFilter).not.toBeChecked();
+    await dashboard.clearNextTerm();
+    await expect(dashboard.nextTermFilter).not.toBeChecked();
+    await expect(dashboard.currentTermFilter).not.toBeChecked();
     await expect(dashboard.results).toContainText("Topology Current");
     await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).toContainText("Topology Independent");
 
-    await dashboard.selectCurrentSemester();
-    await expect(dashboard.currentSemesterFilter).toBeChecked();
+    await dashboard.selectCurrentTerm();
+    await expect(dashboard.currentTermFilter).toBeChecked();
     await expect(dashboard.results).toContainText("Topology Current");
+    await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Next");
 
-    await dashboard.clearCurrentSemesterWithKeyboard();
-    await expect(dashboard.currentSemesterFilter).not.toBeChecked();
-    await expect(dashboard.nextSemesterFilter).not.toBeChecked();
+    await dashboard.clearCurrentTermWithKeyboard();
+    await expect(dashboard.currentTermFilter).not.toBeChecked();
+    await expect(dashboard.nextTermFilter).not.toBeChecked();
     await expect(dashboard.results).toContainText("Topology Current");
     await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).toContainText("Topology Independent");
 
-    await dashboard.selectCurrentSemester();
-    await expect(dashboard.currentSemesterFilter).toBeChecked();
+    await dashboard.selectCurrentTerm();
+    await expect(dashboard.currentTermFilter).toBeChecked();
     await expect(dashboard.results).toContainText("Topology Current");
+    await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Next");
 
-    await dashboard.clearCurrentSemester();
-    await expect(dashboard.currentSemesterFilter).not.toBeChecked();
-    await expect(dashboard.nextSemesterFilter).not.toBeChecked();
+    await dashboard.clearCurrentTerm();
+    await expect(dashboard.currentTermFilter).not.toBeChecked();
+    await expect(dashboard.nextTermFilter).not.toBeChecked();
     await expect(dashboard.results).toContainText("Topology Current");
     await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).toContainText("Topology Independent");
 
-    await dashboard.selectNextSemester();
-    await expect(dashboard.nextSemesterFilter).toBeChecked();
+    await dashboard.selectNextTerm();
+    await expect(dashboard.nextTermFilter).toBeChecked();
     await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Current");
 
-    await dashboard.clearNextSemesterWithKeyboard();
-    await expect(dashboard.currentSemesterFilter).not.toBeChecked();
-    await expect(dashboard.nextSemesterFilter).not.toBeChecked();
+    await dashboard.clearNextTermWithKeyboard();
+    await expect(dashboard.currentTermFilter).not.toBeChecked();
+    await expect(dashboard.nextTermFilter).not.toBeChecked();
     await expect(dashboard.results).toContainText("Topology Current");
     await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).toContainText("Topology Independent");
   });

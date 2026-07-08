@@ -69,8 +69,8 @@
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
 
-#lecture-search-semester-filter {
-    .lecture-search-semester-filter-label {
+#lecture-search-term-filter {
+    .lecture-search-term-filter-label {
         align-items: center;
         display: inline-flex;
         padding: 0.35rem 0.9rem;
@@ -81,11 +81,11 @@
         }
     }
 
-    #lecture-search-current-semester + .lecture-search-semester-filter-label {
+    #lecture-search-current-term + .lecture-search-term-filter-label {
         border-radius: 999px 0 0 999px;
     }
 
-    #lecture-search-next-semester + .lecture-search-semester-filter-label {
+    #lecture-search-next-term + .lecture-search-term-filter-label {
         border-radius: 0 999px 999px 0;
     }
 
@@ -102,7 +102,7 @@
         width: 0;
     }
 
-    .btn-check:checked + .lecture-search-semester-filter-label {
+    .btn-check:checked + .lecture-search-term-filter-label {
         .lecture-search-filter-check {
             margin-right: 0.55rem;
             opacity: 1;

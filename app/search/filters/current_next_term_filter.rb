@@ -1,8 +1,8 @@
 module Search
   module Filters
-    class SemesterFilter < BaseFilter
+    class CurrentNextTermFilter < BaseFilter
       def filter
-        case params[:semester]
+        case params[:term_scope]
         when "current"
           filter_by_term(Term.active)
         when "next"
@@ -15,9 +15,9 @@ module Search
       private
 
         def filter_by_term(term)
-          return scope.none if term.blank?
+          return scope.where(term: nil) if term.blank?
 
-          scope.where(term: term)
+          scope.where(term: [term, nil])
         end
     end
   end

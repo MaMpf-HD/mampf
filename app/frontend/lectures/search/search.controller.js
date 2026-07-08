@@ -90,15 +90,15 @@ export default class extends Controller {
     }, 200);
   }
 
-  rememberSemesterFilterState(event) {
-    const input = this.semesterFilterInput(event);
+  rememberTermFilterState(event) {
+    const input = this.termFilterInput(event);
     if (!input) return;
 
     input.dataset.wasChecked = input.checked ? "true" : "false";
   }
 
-  toggleSemesterFilter(event) {
-    const input = this.semesterFilterInput(event);
+  toggleTermFilter(event) {
+    const input = this.termFilterInput(event);
     if (!input || input.dataset.wasChecked !== "true") return;
 
     delete input.dataset.wasChecked;
@@ -107,7 +107,7 @@ export default class extends Controller {
     this.search();
   }
 
-  clearSemesterFilterWithKeyboard(event) {
+  clearTermFilterWithKeyboard(event) {
     if (!event.target.checked) return;
 
     event.preventDefault();
@@ -145,7 +145,7 @@ export default class extends Controller {
     this.formTarget.requestSubmit();
   }
 
-  semesterFilterInput(event) {
+  termFilterInput(event) {
     if (event.currentTarget instanceof HTMLInputElement) return event.currentTarget;
 
     const inputId = event.currentTarget.getAttribute("for");
