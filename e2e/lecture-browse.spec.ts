@@ -106,7 +106,9 @@ test("filters results by selected term",
       course_id: nextCourse.id,
       term_id: nextTerm.id,
     });
-    const termIndependentCourse = await factory.create("course", [], { title: "Topology Independent" });
+    const termIndependentCourse = await factory.create("course", ["term_independent"], {
+      title: "Topology Independent",
+    });
     await factory.create("lecture", ["term_independent", "released_for_all"], {
       course_id: termIndependentCourse.id,
     });

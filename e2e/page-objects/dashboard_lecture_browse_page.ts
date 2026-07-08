@@ -43,19 +43,19 @@ export class DashboardLectureBrowsePage {
 
   async selectCurrentTerm() {
     const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByText("Current term").click();
+    await this.page.getByTestId("lecture-search").getByText("Current term").click();
     await lectureSearchPromise;
   }
 
   async selectNextTerm() {
     const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByText("Next term").click();
+    await this.page.getByTestId("lecture-search").getByText("Next term").click();
     await lectureSearchPromise;
   }
 
   async clearNextTerm() {
     const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByText("Next term").click();
+    await this.page.getByTestId("lecture-search").getByText("Next term").click();
     await lectureSearchPromise;
   }
 
@@ -68,7 +68,7 @@ export class DashboardLectureBrowsePage {
 
   async clearCurrentTerm() {
     const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByText("Current term").click();
+    await this.page.getByTestId("lecture-search").getByText("Current term").click();
     await lectureSearchPromise;
   }
 
