@@ -29,10 +29,9 @@ module Lectures
       @self_rosterables = Array(
         Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call
       )
-      @show_workflow_content = @can_use_registration_workflow &&
-                               (@lecture.registration_campaigns.exists? ||
-                                @rosterized_entries.any? ||
-                                @self_rosterables.any?)
+      @show_workflow_content = @can_use_registration_workflow ||
+                               @rosterized_entries.any? ||
+                               @self_rosterables.any?
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
       @subscribed = @lecture.in?(current_user.lectures)

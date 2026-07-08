@@ -201,13 +201,12 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     end
 
     context "when no registration options are available" do
-      it "renders the global Home page without the workflow section" do
+      it "renders the empty registration state" do
         get lecture_home_path(lecture)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).not_to include('id="student_registration_options"')
-        expect(response.body).not_to include("student-registration-rosterized-notice--neutral")
-        expect(response.body.squish).not_to include(
+        expect(response.body).to include('id="student_registration_options"')
+        expect(response.body.squish).to include(
           I18n.t("roster.self_enrollment.no_registration_options")
         )
       end
