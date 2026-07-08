@@ -66,7 +66,7 @@ RSpec.describe("Profile", type: :request) do
         subscribe_html(lecture, passphrase: "wrong")
 
         expect(response)
-          .to redirect_to(lecture_user_registrations_path(lecture))
+          .to redirect_to(lecture_home_path(lecture))
         expect(flash[:alert]).to eq(I18n.t("errors.profile.passphrase"))
         expect(user.reload.lectures).not_to include(lecture)
       end
@@ -81,7 +81,7 @@ RSpec.describe("Profile", type: :request) do
                                      "text/html, application/xhtml+xml" })
 
         expect(response)
-          .to redirect_to(lecture_user_registrations_path(lecture))
+          .to redirect_to(lecture_home_path(lecture))
         expect(flash[:alert]).to eq(I18n.t("errors.profile.passphrase"))
       end
 
@@ -91,7 +91,7 @@ RSpec.describe("Profile", type: :request) do
         subscribe_html(unpublished)
 
         expect(response)
-          .to redirect_to(lecture_user_registrations_path(unpublished))
+          .to redirect_to(lecture_home_path(unpublished))
         expect(flash[:alert]).to eq(I18n.t("admin.lecture.no_rights"))
       end
     end

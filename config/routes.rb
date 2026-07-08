@@ -284,8 +284,8 @@ Rails.application.routes.draw do
 
   get "lectures/:id/home",
       to: "lectures/home#show",
-      as: "lecture_user_registrations",
-      defaults: { project: "registration" }
+      as: "lecture_home",
+      defaults: { project: "home" }
 
   get "lectures/:id/outline",
       to: redirect("/lectures/%{id}")

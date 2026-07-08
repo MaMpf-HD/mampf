@@ -81,7 +81,7 @@ class ProfileController < ApplicationController
        !@lecture.edited_by?(current_user)
       @unpublished = true
       if html_redirect_flow?
-        return redirect_to lecture_user_registrations_path(@lecture),
+        return redirect_to lecture_home_path(@lecture),
                            alert: t("admin.lecture.no_rights")
       end
       return
@@ -93,7 +93,7 @@ class ProfileController < ApplicationController
        !LectureMembership.exists?(user: current_user, lecture: @lecture) &&
        @lecture.passphrase != @passphrase
       if html_redirect_flow?
-        return redirect_to lecture_user_registrations_path(@lecture),
+        return redirect_to lecture_home_path(@lecture),
                            alert: t("errors.profile.passphrase")
       end
       return

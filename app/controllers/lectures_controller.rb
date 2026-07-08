@@ -366,7 +366,7 @@ class LecturesController < ApplicationController
       # Non-subscribers are sent to the lecture's home page (its
       # organizational front door), which offers registration (if the
       # lecture uses it) as well as a link to the subscription page.
-      redirect_to lecture_user_registrations_path(@lecture)
+      redirect_to lecture_home_path(@lecture)
     end
 
     def lecture_params

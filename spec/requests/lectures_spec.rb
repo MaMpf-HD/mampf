@@ -109,7 +109,7 @@ RSpec.describe("Lectures", type: :request) do
       end
 
       expect(response.body).to include(home_label)
-      expect(response.body).to include(lecture_user_registrations_path(lecture))
+      expect(response.body).to include(lecture_home_path(lecture))
     end
 
     it "renders a Home marker when there are lecture updates" do
@@ -143,7 +143,7 @@ RSpec.describe("Lectures", type: :request) do
     it "redirects to the lecture's home page" do
       get lecture_path(lecture)
 
-      expect(response).to redirect_to(lecture_user_registrations_path(lecture))
+      expect(response).to redirect_to(lecture_home_path(lecture))
     end
 
     it "does not redirect staff (they bypass the subscription gate)" do

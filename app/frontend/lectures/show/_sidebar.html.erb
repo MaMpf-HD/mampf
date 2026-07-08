@@ -4,8 +4,8 @@
 <ul class="nav nav-pills flex-column" data-controller="lecture-sidebar">
 
   <%# Lecture Home %>
-  <% project_name = 'registration' %>
-  <% fullpath = lecture_user_registrations_path(lecture) %>
+  <% project_name = 'home' %>
+  <% fullpath = lecture_home_path(lecture) %>
   <% active_class = get_class_for_project(project_name) %>
   <% home_updates_count = current_user.active_notifications(lecture).size +
                           lecture.unread_forum_topics_count(current_user).to_i %>
