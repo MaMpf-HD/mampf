@@ -8,7 +8,7 @@
     </div>
   <% end %>
   <% if @next_term_lecture_count.to_i.positive? %>
-    <%= render partial: "main/start/next_semester_banner",
+    <%= render partial: "main/start/next_term_banner",
                locals: { next_term: @next_term,
                          lecture_count: @next_term_lecture_count } %>
   <% end %>

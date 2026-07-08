@@ -4,7 +4,7 @@ import { DashboardLectureBrowsePage } from "./page-objects/dashboard_lecture_bro
 
 /**
  * Tests for the (transitional) banner on the start page that announces the
- * lectures of the upcoming semester and deep-links into the pre-filtered
+ * lectures of the upcoming term and deep-links into the pre-filtered
  * lecture search.
  */
 
@@ -26,64 +26,64 @@ async function createTermsWithLectures(factory: any) {
   return { currentTerm, nextTerm };
 }
 
-test("shows the banner and leads to the next semester lecture search",
+test("shows the banner and leads to the next term lecture search",
   async ({ request, factory, student: { page } }) => {
     await createTermsWithLectures(factory);
-    await enableFeature(request, "next_semester_banner");
+    await enableFeature(request, "next_term_banner");
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
 
-    await expect(dashboard.nextSemesterBanner).toBeVisible();
-    await expect(dashboard.nextSemesterBanner).toContainText("WS 2025/26");
+    await expect(dashboard.nextTermBanner).toBeVisible();
+    await expect(dashboard.nextTermBanner).toContainText("WS 2025/26");
 
-    await dashboard.clickNextSemesterBannerCta();
-    expect(page.url()).toContain("semester=next");
-    await expect(dashboard.nextSemesterFilter).toBeChecked();
+    await dashboard.clickNextTermBannerCta();
+    expect(page.url()).toContain("term_scope=next");
+    await expect(dashboard.nextTermFilter).toBeChecked();
     await expect(dashboard.results).toContainText("Topology Next");
     await expect(dashboard.results).not.toContainText("Topology Current");
 
-    await disableFeature(request, "next_semester_banner");
+    await disableFeature(request, "next_term_banner");
   });
 
 test("banner stays dismissed after a reload",
   async ({ request, factory, student: { page } }) => {
     await createTermsWithLectures(factory);
-    await enableFeature(request, "next_semester_banner");
+    await enableFeature(request, "next_term_banner");
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
 
-    await expect(dashboard.nextSemesterBanner).toBeVisible();
-    await dashboard.dismissNextSemesterBanner();
-    await expect(dashboard.nextSemesterBanner).not.toBeVisible();
+    await expect(dashboard.nextTermBanner).toBeVisible();
+    await dashboard.dismissNextTermBanner();
+    await expect(dashboard.nextTermBanner).not.toBeVisible();
 
     await page.reload();
-    await expect(dashboard.nextSemesterBanner).not.toBeVisible();
+    await expect(dashboard.nextTermBanner).not.toBeVisible();
 
-    await disableFeature(request, "next_semester_banner");
+    await disableFeature(request, "next_term_banner");
   });
 
 test("does not show the banner when the feature flag is disabled",
   async ({ request, factory, student: { page } }) => {
     await createTermsWithLectures(factory);
-    await disableFeature(request, "next_semester_banner");
+    await disableFeature(request, "next_term_banner");
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
 
-    await expect(dashboard.nextSemesterBanner).not.toBeVisible();
+    await expect(dashboard.nextTermBanner).not.toBeVisible();
   });
 
-test("deep-link with semester=current overrides the default filter",
+test("deep-link with term_scope=current overrides the default filter",
   async ({ factory, student: { page } }) => {
     await createTermsWithLectures(factory);
 
     const dashboard = new DashboardLectureBrowsePage(page);
-    await dashboard.gotoWithSemesterDeepLink("current");
+    await dashboard.gotoWithTermScopeDeepLink("current");
 
-    await expect(dashboard.currentSemesterFilter).toBeChecked();
-    await expect(dashboard.nextSemesterFilter).not.toBeChecked();
+    await expect(dashboard.currentTermFilter).toBeChecked();
+    await expect(dashboard.nextTermFilter).not.toBeChecked();
     await expect(dashboard.results).toContainText("Topology Current");
     await expect(dashboard.results).not.toContainText("Topology Next");
   });

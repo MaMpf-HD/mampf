@@ -1,32 +1,32 @@
-<%# Transitional banner announcing that lectures for the next semester are
+<%# Transitional banner announcing that lectures for the next term are
     being published and that registration now happens in MaMpf.
-    Rendered only when the :next_semester_banner feature flag is enabled and
+    Rendered only when the :next_term_banner feature flag is enabled and
     at least one published lecture for the next term exists
-    (see MainController#next_semester_banner).
+    (see MainController#next_term_banner).
     Dismissal is stored per browser and term in localStorage; the `hidden`
     attribute avoids a flash of content for users who already dismissed it. %>
 <div class="alert alert-primary d-flex align-items-center flex-wrap gap-2"
      role="alert"
      hidden
      data-controller="dismissible-banner"
-     data-dismissible-banner-key-value="nextSemesterBanner:dismissed:<%= next_term.id %>"
-     data-testid="next-semester-banner">
+     data-dismissible-banner-key-value="nextTermBanner:dismissed:<%= next_term.id %>"
+     data-testid="next-term-banner">
   <i class="fas fa-bullhorn fa-lg me-2" aria-hidden="true"></i>
   <div class="me-auto" style="min-width: 0;">
     <strong class="d-block mb-1">
-      <%= t("main.next_semester_banner.heading",
+      <%= t("main.next_term_banner.heading",
             term: next_term.to_label,
             count: lecture_count) %>
     </strong>
-    <%= simple_format(t("main.next_semester_banner.registration_info")) %>
+    <%= simple_format(t("main.next_term_banner.registration_info")) %>
   </div>
-  <%= link_to t("main.next_semester_banner.cta"),
-              root_path(semester: "next", anchor: "lecture-search"),
+  <%= link_to t("main.next_term_banner.cta"),
+              root_path(term_scope: "next", anchor: "lecture-search"),
               class: "btn btn-primary btn-sm text-nowrap",
-              data: { testid: "next-semester-banner-cta" } %>
+              data: { testid: "next-term-banner-cta" } %>
   <button type="button"
           class="btn-close"
-          aria-label="<%= t('main.next_semester_banner.dismiss') %>"
+          aria-label="<%= t('main.next_term_banner.dismiss') %>"
           data-action="dismissible-banner#dismiss"
-          data-testid="next-semester-banner-dismiss"></button>
+          data-testid="next-term-banner-dismiss"></button>
 </div>

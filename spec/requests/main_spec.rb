@@ -8,7 +8,7 @@ RSpec.describe("Main", type: :request) do
   end
 
   describe "GET / (start page)" do
-    describe "next semester banner" do
+    describe "next term banner" do
       let!(:current_term) { create(:term, :summer, :active, year: 2025) }
 
       def create_next_term
@@ -21,11 +21,11 @@ RSpec.describe("Main", type: :request) do
 
       context "when the feature flag is enabled" do
         before do
-          Flipper.enable(:next_semester_banner)
+          Flipper.enable(:next_term_banner)
         end
 
         after do
-          Flipper.disable(:next_semester_banner)
+          Flipper.disable(:next_term_banner)
         end
 
         it "shows the banner when a published lecture for the next term " \
@@ -36,17 +36,17 @@ RSpec.describe("Main", type: :request) do
           get root_path
 
           expect(response).to be_successful
-          expect(response.body).to include("next-semester-banner")
+          expect(response.body).to include("next-term-banner")
           expect(response.body).to include(next_term.to_label)
         end
 
-        it "links to the next semester lecture search" do
+        it "links to the next term lecture search" do
           create_published_lecture(create_next_term)
 
           get root_path
 
           expect(response.body)
-            .to include(root_path(semester: "next", anchor: "lecture-search"))
+            .to include(root_path(term_scope: "next", anchor: "lecture-search"))
         end
 
         it "does not count unpublished lectures" do
@@ -55,7 +55,7 @@ RSpec.describe("Main", type: :request) do
 
           get root_path
 
-          expect(response.body).not_to include("next-semester-banner")
+          expect(response.body).not_to include("next-term-banner")
         end
 
         it "does not count published lectures of other terms" do
@@ -64,13 +64,13 @@ RSpec.describe("Main", type: :request) do
 
           get root_path
 
-          expect(response.body).not_to include("next-semester-banner")
+          expect(response.body).not_to include("next-term-banner")
         end
 
         it "does not show the banner when no next term exists" do
           get root_path
 
-          expect(response.body).not_to include("next-semester-banner")
+          expect(response.body).not_to include("next-term-banner")
         end
       end
 
@@ -80,7 +80,7 @@ RSpec.describe("Main", type: :request) do
 
           get root_path
 
-          expect(response.body).not_to include("next-semester-banner")
+          expect(response.body).not_to include("next-term-banner")
         end
       end
     end

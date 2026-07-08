@@ -17,7 +17,7 @@ export default class extends Controller {
   connect() {
     addDataToForm(this.formTarget, { infinite_scroll: true });
     this.isSubmitting = false;
-    this.applySemesterFromUrl();
+    this.applyTermScopeFromUrl();
 
     this.observer = new IntersectionObserver((entries) => {
       if (this.initiallyLoaded) return;
@@ -92,18 +92,18 @@ export default class extends Controller {
   }
 
   /**
-   * Applies the semester filter from the URL (e.g. /?semester=next), so that
+   * Applies the term filter from the URL (e.g. /?term_scope=next), so that
    * banners, announcements etc. can deep-link into a pre-filtered lecture
    * search. The initial search (triggered by the IntersectionObserver once
    * the form becomes visible) then picks up the pre-selected filter.
    */
-  applySemesterFromUrl() {
-    const semester = new URLSearchParams(window.location.search).get("semester");
-    if (!["current", "next"].includes(semester)) return;
+  applyTermScopeFromUrl() {
+    const termScope = new URLSearchParams(window.location.search).get("term_scope");
+    if (!["current", "next"].includes(termScope)) return;
 
-    const radios = this.formTarget.querySelectorAll("input[name='search[semester]']");
+    const radios = this.formTarget.querySelectorAll("input[name='search[term_scope]']");
     radios.forEach((radio) => {
-      radio.checked = radio.value === semester;
+      radio.checked = radio.value === termScope;
     });
 
     // The deep link should always bring the search into view. We cannot rely
@@ -113,29 +113,7 @@ export default class extends Controller {
     requestAnimationFrame(() => this.element.scrollIntoView());
   }
 
-  /**
-   * Applies the semester filter from the URL (e.g. /?semester=next), so that
-   * banners, announcements etc. can deep-link into a pre-filtered lecture
-   * search. The initial search (triggered by the IntersectionObserver once
-   * the form becomes visible) then picks up the pre-selected filter.
-   */
-  applySemesterFromUrl() {
-    const semester = new URLSearchParams(window.location.search).get("semester");
-    if (!["current", "next"].includes(semester)) return;
-
-    const radios = this.formTarget.querySelectorAll("input[name='search[semester]']");
-    radios.forEach((radio) => {
-      radio.checked = radio.value === semester;
-    });
-
-    // The deep link should always bring the search into view. We cannot rely
-    // on the #lecture-search anchor alone: when the hash did not change
-    // (e.g. the banner CTA is clicked a second time), the browser does not
-    // scroll to it again.
-    requestAnimationFrame(() => this.element.scrollIntoView());
-  }
-
-  rememberTermFilterState(event) { 
+  rememberTermFilterState(event) {
     const input = this.termFilterInput(event);
     if (!input) return;
 
