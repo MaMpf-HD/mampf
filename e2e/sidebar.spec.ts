@@ -20,10 +20,11 @@ test("can access tutorial submission page (only as tutor)",
 
     // tutor should see tutorials link
     await new LecturePage(tutorPage, lecture.id).subscribe();
-    await tutorPage.locator('[data-controller="lecture-sidebar"]')
+    const tutorTutorialsLink = tutorPage.locator('[data-controller="lecture-sidebar"]')
       .getByRole("link", {
         name: "Tutorials",
-      }).click();
-    await expect(tutorPage).toHaveURL(/tutorials/);
+      });
+    await expect(tutorTutorialsLink).toHaveAttribute("href", /tutorials/);
+    await tutorTutorialsLink.click();
     await expect(tutorPage.getByText("no submissions")).toBeVisible();
   });
