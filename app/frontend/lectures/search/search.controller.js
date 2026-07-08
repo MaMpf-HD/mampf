@@ -113,15 +113,37 @@ export default class extends Controller {
     requestAnimationFrame(() => this.element.scrollIntoView());
   }
 
-  rememberSemesterFilterState(event) {
-    const input = this.semesterFilterInput(event);
+  /**
+   * Applies the semester filter from the URL (e.g. /?semester=next), so that
+   * banners, announcements etc. can deep-link into a pre-filtered lecture
+   * search. The initial search (triggered by the IntersectionObserver once
+   * the form becomes visible) then picks up the pre-selected filter.
+   */
+  applySemesterFromUrl() {
+    const semester = new URLSearchParams(window.location.search).get("semester");
+    if (!["current", "next"].includes(semester)) return;
+
+    const radios = this.formTarget.querySelectorAll("input[name='search[semester]']");
+    radios.forEach((radio) => {
+      radio.checked = radio.value === semester;
+    });
+
+    // The deep link should always bring the search into view. We cannot rely
+    // on the #lecture-search anchor alone: when the hash did not change
+    // (e.g. the banner CTA is clicked a second time), the browser does not
+    // scroll to it again.
+    requestAnimationFrame(() => this.element.scrollIntoView());
+  }
+
+  rememberTermFilterState(event) { 
+    const input = this.termFilterInput(event);
     if (!input) return;
 
     input.dataset.wasChecked = input.checked ? "true" : "false";
   }
 
-  toggleSemesterFilter(event) {
-    const input = this.semesterFilterInput(event);
+  toggleTermFilter(event) {
+    const input = this.termFilterInput(event);
     if (!input || input.dataset.wasChecked !== "true") return;
 
     delete input.dataset.wasChecked;
@@ -130,7 +152,7 @@ export default class extends Controller {
     this.search();
   }
 
-  clearSemesterFilterWithKeyboard(event) {
+  clearTermFilterWithKeyboard(event) {
     if (!event.target.checked) return;
 
     event.preventDefault();
@@ -168,7 +190,7 @@ export default class extends Controller {
     this.formTarget.requestSubmit();
   }
 
-  semesterFilterInput(event) {
+  termFilterInput(event) {
     if (event.currentTarget instanceof HTMLInputElement) return event.currentTarget;
 
     const inputId = event.currentTarget.getAttribute("for");

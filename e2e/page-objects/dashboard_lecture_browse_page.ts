@@ -39,29 +39,49 @@ export class DashboardLectureBrowsePage {
     await lectureSearchPromise;
   }
 
-  get currentSemesterFilter() {
-    return this.page.getByLabel("Current semester");
+  get currentTermFilter() {
+    return this.page.getByLabel("Current term");
   }
 
-  get nextSemesterFilter() {
-    return this.page.getByLabel("Next semester");
+  get nextTermFilter() {
+    return this.page.getByLabel("Next term");
   }
 
-  async selectCurrentSemester() {
+  async selectCurrentTerm() {
     const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByText("Current semester").click();
+    await this.page.getByText("Current term").click();
     await lectureSearchPromise;
   }
 
-  async clearNextSemester() {
+  async selectNextTerm() {
     const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByText("Next semester").click();
+    await this.page.getByText("Next term").click();
     await lectureSearchPromise;
   }
 
-  async clearCurrentSemester() {
+  async clearNextTerm() {
     const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByText("Current semester").click();
+    await this.page.getByText("Next term").click();
+    await lectureSearchPromise;
+  }
+
+  async clearNextTermWithKeyboard() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.nextTermFilter.focus();
+    await this.nextTermFilter.press("Space");
+    await lectureSearchPromise;
+  }
+
+  async clearCurrentTerm() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByText("Current term").click();
+    await lectureSearchPromise;
+  }
+
+  async clearCurrentTermWithKeyboard() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.currentTermFilter.focus();
+    await this.currentTermFilter.press("Space");
     await lectureSearchPromise;
   }
 

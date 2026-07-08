@@ -11,50 +11,48 @@
                           turbo_stream: true,
                           lecture_search_target: "form" } do |f| %>
 
-      <div id="lecture-search-semester-filter"
+      <div id="lecture-search-term-filter"
            class="btn-group mb-3"
            role="group"
-           aria-label="<%= t('lecture.search.semester_filter') %>">
-        <%= radio_button_tag "search[semester]", "current", false,
+           aria-label="<%= t('lecture.search.term_filter') %>">
+        <%= radio_button_tag "search[term_scope]", "current", false,
                              class: "btn-check",
-                             id: "lecture-search-current-semester",
+                             id: "lecture-search-current-term",
                              autocomplete: "off",
                              data: {
-                               action: "pointerdown->lecture-search#rememberSemesterFilterState " \
-                                       "click->lecture-search#toggleSemesterFilter " \
-                                       "keydown.space->lecture-search#clearSemesterFilterWithKeyboard " \
-                                       "change->lecture-search#search",
-                               testid: "lecture-search-current-semester"
+                               action: "pointerdown->lecture-search#rememberTermFilterState " \
+                                       "click->lecture-search#toggleTermFilter " \
+                                       "keydown.space->lecture-search#clearTermFilterWithKeyboard " \
+                                       "change->lecture-search#search"
                              } %>
-        <%= label_tag "lecture-search-current-semester",
-                      class: "btn btn-outline-primary lecture-search-semester-filter-label",
+        <%= label_tag "lecture-search-current-term",
+                      class: "btn btn-outline-primary lecture-search-term-filter-label",
                       data: {
-                        action: "pointerdown->lecture-search#rememberSemesterFilterState " \
-                                "click->lecture-search#toggleSemesterFilter"
+                        action: "pointerdown->lecture-search#rememberTermFilterState " \
+                                "click->lecture-search#toggleTermFilter"
                       } do %>
            <i class="fas fa-check lecture-search-filter-check" aria-hidden="true"></i>
-          <span><%= t('lecture.search.current_semester') %></span>
+          <span><%= t('lecture.search.current_term') %></span>
         <% end %>
 
-        <%= radio_button_tag "search[semester]", "next", true,
+        <%= radio_button_tag "search[term_scope]", "next", true,
                              class: "btn-check",
-                             id: "lecture-search-next-semester",
+                             id: "lecture-search-next-term",
                              autocomplete: "off",
                              data: {
-                               action: "pointerdown->lecture-search#rememberSemesterFilterState " \
-                                       "click->lecture-search#toggleSemesterFilter " \
-                                       "keydown.space->lecture-search#clearSemesterFilterWithKeyboard " \
-                                       "change->lecture-search#search",
-                               testid: "lecture-search-next-semester"
+                               action: "pointerdown->lecture-search#rememberTermFilterState " \
+                                       "click->lecture-search#toggleTermFilter " \
+                                       "keydown.space->lecture-search#clearTermFilterWithKeyboard " \
+                                       "change->lecture-search#search"
                              } %>
-        <%= label_tag "lecture-search-next-semester",
-                      class: "btn btn-outline-primary lecture-search-semester-filter-label",
+        <%= label_tag "lecture-search-next-term",
+                      class: "btn btn-outline-primary lecture-search-term-filter-label",
                       data: {
-                        action: "pointerdown->lecture-search#rememberSemesterFilterState " \
-                                "click->lecture-search#toggleSemesterFilter"
+                        action: "pointerdown->lecture-search#rememberTermFilterState " \
+                                "click->lecture-search#toggleTermFilter"
                       } do %>
            <i class="fas fa-check lecture-search-filter-check" aria-hidden="true"></i>
-          <span><%= t('lecture.search.next_semester') %></span>
+          <span><%= t('lecture.search.next_term') %></span>
         <% end %>
       </div>
 

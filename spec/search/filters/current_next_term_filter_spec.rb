@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Search::Filters::SemesterFilter, type: :filter) do
+RSpec.describe(Search::Filters::CurrentNextTermFilter, type: :filter) do
   describe "#filter" do
     let(:user) { create(:user) }
     let!(:current_term) { create(:term, :summer, :active, year: 2025) }
@@ -12,33 +12,39 @@ RSpec.describe(Search::Filters::SemesterFilter, type: :filter) do
 
     subject(:filtered_scope) { described_class.filter(scope: scope, params: params, user: user) }
 
-    context "when filtering for the current semester" do
-      let(:params) { { semester: "current" } }
+    context "when filtering for the current term" do
+      let(:params) { { term_scope: "current" } }
 
-      it "returns only lectures in the active term" do
-        expect(filtered_scope).to contain_exactly(lecture_in_current_term)
+      it "returns lectures in the active term and term-independent lectures" do
+        expect(filtered_scope).to contain_exactly(
+          lecture_in_current_term,
+          lecture_without_term
+        )
       end
     end
 
-    context "when filtering for the next semester" do
-      let(:params) { { semester: "next" } }
+    context "when filtering for the next term" do
+      let(:params) { { term_scope: "next" } }
 
-      it "returns only lectures in the term after the active term" do
-        expect(filtered_scope).to contain_exactly(lecture_in_next_term)
+      it "returns lectures in the next term and term-independent lectures" do
+        expect(filtered_scope).to contain_exactly(
+          lecture_in_next_term,
+          lecture_without_term
+        )
       end
     end
 
     context "when there is no next term" do
       before { next_term.destroy! }
 
-      let(:params) { { semester: "next" } }
+      let(:params) { { term_scope: "next" } }
 
-      it "returns no lectures" do
-        expect(filtered_scope).to be_empty
+      it "returns term-independent lectures" do
+        expect(filtered_scope).to contain_exactly(lecture_without_term)
       end
     end
 
-    context "when no semester filter is selected" do
+    context "when no term filter is selected" do
       let(:params) { {} }
 
       it "returns the unmodified scope" do

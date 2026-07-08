@@ -3,9 +3,9 @@ de:
     search:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...
-      semester_filter: Semesterfilter für Vorlesungen
-      current_semester: Aktuelles Semester
-      next_semester: Nächstes Semester
+      term_filter: Semesterfilter für Vorlesungen
+      current_term: Aktuelles Semester
+      next_term: Nächstes Semester
       registration_open: Anmeldung offen
       registered: Angemeldet
       subscribed: Abonniert
