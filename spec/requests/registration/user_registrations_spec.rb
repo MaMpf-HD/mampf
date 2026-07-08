@@ -281,11 +281,20 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
     context "when the user is the lecture's teacher" do
       let(:lecture) { create(:lecture, teacher: user) }
+      let!(:campaign) do
+        create(:registration_campaign, :open, :first_come_first_served,
+               campaignable: lecture)
+      end
 
-      it "renders the home page (viewing is decoupled from enrolling)" do
+      it "renders the home page without student registration workflow" do
         get lecture_user_registrations_path(lecture)
 
         expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('id="student_registration_options"')
+        expect(response.body.squish).not_to include(
+          I18n.t("registration.user_registration.index.unassigned_notice")
+        )
+        expect(response.body).not_to include(I18n.t("registration.user_registration.register_now"))
       end
     end
 
