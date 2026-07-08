@@ -128,6 +128,22 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id as staff" do
+    let(:lecture) { create(:lecture, :released_for_all, teacher: user) }
+
+    before do
+      create(:lecture_user_join, user: user, lecture: lecture)
+    end
+
+    it "renders an edit affordance on the content page" do
+      get lecture_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(edit_lecture_path(lecture))
+      expect(response.body).to include(I18n.t("buttons.edit"))
+    end
+  end
+
   describe "lecture routes" do
     let(:lecture) { create(:lecture) }
 
