@@ -24,7 +24,7 @@ class Notification < ApplicationRecord
   # lecture path for announcements in lectures
   # news path for general announcements
   # all other cases: notifiable path
-  def path(user)
+  def path(_user)
     return if notifiable.blank?
 
     if redemption?
@@ -32,7 +32,7 @@ class Notification < ApplicationRecord
     elsif lecture_or_course?
       edit_profile_path
     elsif lecture_announcement?
-      lecture_home_path(notifiable.lecture)
+      lecture_user_registrations_path(notifiable.lecture)
     elsif generic_announcement?
       news_path
     elsif quiz?
