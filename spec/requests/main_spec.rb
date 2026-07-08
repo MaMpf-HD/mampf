@@ -38,6 +38,9 @@ RSpec.describe("Main", type: :request) do
           expect(response).to be_successful
           expect(response.body).to include("next-term-banner")
           expect(response.body).to include(next_term.to_label)
+          expect(response.body).to include("next-term-banner-construction-icon")
+          expect(response.body).to include(I18n.t("main.next_term_banner.transition_label"))
+          expect(response.body).to include(I18n.t("main.next_term_banner.transition_notice"))
         end
 
         it "links to the next term lecture search" do

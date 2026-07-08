@@ -13,7 +13,20 @@
             term: next_term.to_label,
             count: lecture_count) %>
     </strong>
-    <%= simple_format(t("main.next_term_banner.registration_info")) %>
+    <p class="mb-2">
+      <%= t("main.next_term_banner.registration_intro") %>
+    </p>
+    <p class="mb-0"
+       data-testid="next-term-banner-transition-notice">
+      <strong><%= t("main.next_term_banner.transition_label") %>:</strong>
+      <%= t("main.next_term_banner.transition_notice") %>
+      <span class="text-warning"
+            data-testid="next-term-banner-construction-icon"
+            title="<%= t("main.next_term_banner.transition_label") %>">
+        <span aria-hidden="true" style="font-size: 1.55em; line-height: 1;">🚧</span>
+        <span class="visually-hidden"><%= t("main.next_term_banner.transition_label") %></span>
+      </span>
+    </p>
   </div>
   <%= link_to t("main.next_term_banner.cta"),
               root_path(term_scope: "next", anchor: "lecture-search"),
