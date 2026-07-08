@@ -529,6 +529,14 @@ en:
     lecture:
       not_found: "Lecture not found."
       home:
+        empty_title: "Start here"
+        empty_subscribed: >-
+          Lecture news and updates appear on this page. Materials and the
+          lecture structure are available under %{outline_label}.
+        empty_unsubscribed: >-
+          Lecture news and updates appear on this page. Subscribe below to
+          access the materials and the %{outline_label} page.
+        news_indicator: "New updates on Home"
         subscribe_prompt: >-
           You have not subscribed to this lecture yet. Subscribing gives you
           access to its materials — it is not a binding course registration.

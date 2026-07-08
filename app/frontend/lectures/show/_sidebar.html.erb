@@ -7,11 +7,21 @@
   <% project_name = 'registration' %>
   <% fullpath = lecture_user_registrations_path(lecture) %>
   <% active_class = get_class_for_project(project_name) %>
+  <% home_updates_count = current_user.active_notifications(lecture).size +
+                          lecture.unread_forum_topics_count(current_user).to_i %>
   <li class="sidebar-item nav-link <%= active_class %>">
     <%= link_to url_for(fullpath),
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t("basics.home") %>
+      <span class="sidebar-item__label">
+        <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= t("basics.home") %>
+      </span>
+      <% if home_updates_count.positive? %>
+        <span class="sidebar-item__badge"
+              title="<%= t("registration.lecture.home.news_indicator") %>">
+          <%= home_updates_count %>
+        </span>
+      <% end %>
     <% end %>
   </li>
 

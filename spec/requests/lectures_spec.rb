@@ -111,6 +111,21 @@ RSpec.describe("Lectures", type: :request) do
       expect(response.body).to include(home_label)
       expect(response.body).to include(lecture_user_registrations_path(lecture))
     end
+
+    it "renders a Home marker when there are lecture updates" do
+      announcement = create(:announcement,
+                            lecture: lecture,
+                            announcer: lecture.teacher)
+      create(:notification, recipient: user, notifiable: announcement)
+
+      get lecture_script_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("sidebar-item__badge")
+      expect(response.body).to include(
+        I18n.t("registration.lecture.home.news_indicator")
+      )
+    end
   end
 
   describe "lecture routes" do
