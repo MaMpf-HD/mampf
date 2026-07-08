@@ -1,15 +1,10 @@
 <%# Transitional banner announcing that lectures for the next term are
-    being published and that registration now happens in MaMpf.
-    Rendered only when the :next_term_banner feature flag is enabled and
-    at least one published lecture for the next term exists
-    (see MainController#next_term_banner).
-    Dismissal is stored per browser and term in localStorage; the `hidden`
-    attribute avoids a flash of content for users who already dismissed it. %>
+  being published and that registration now happens in MaMpf.
+  Rendered only when the :next_term_banner feature flag is enabled and
+  at least one published lecture for the next term exists
+  (see MainController#next_term_banner). %>
 <div class="alert alert-primary d-flex align-items-center flex-wrap gap-2"
      role="alert"
-     hidden
-     data-controller="dismissible-banner"
-     data-dismissible-banner-key-value="nextTermBanner:dismissed:<%= next_term.id %>"
      data-testid="next-term-banner">
   <i class="fas fa-bullhorn fa-lg me-2" aria-hidden="true"></i>
   <div class="me-auto" style="min-width: 0;">
@@ -24,9 +19,4 @@
               root_path(term_scope: "next", anchor: "lecture-search"),
               class: "btn btn-primary btn-sm text-nowrap",
               data: { testid: "next-term-banner-cta" } %>
-  <button type="button"
-          class="btn-close"
-          aria-label="<%= t('main.next_term_banner.dismiss') %>"
-          data-action="dismissible-banner#dismiss"
-          data-testid="next-term-banner-dismiss"></button>
 </div>

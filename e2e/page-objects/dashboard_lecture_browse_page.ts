@@ -107,10 +107,6 @@ export class DashboardLectureBrowsePage {
     await lectureSearchPromise;
   }
 
-  async dismissNextTermBanner() {
-    await this.page.getByTestId("next-term-banner-dismiss").click();
-  }
-
   async getLectureCardCount() {
     const lectureCards = this.page.getByTestId("lecture-search-result-card");
     return await lectureCards.count();

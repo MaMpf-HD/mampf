@@ -46,24 +46,6 @@ test("shows the banner and leads to the next term lecture search",
     await disableFeature(request, "next_term_banner");
   });
 
-test("banner stays dismissed after a reload",
-  async ({ request, factory, student: { page } }) => {
-    await createTermsWithLectures(factory);
-    await enableFeature(request, "next_term_banner");
-
-    const dashboard = new DashboardLectureBrowsePage(page);
-    await dashboard.goto();
-
-    await expect(dashboard.nextTermBanner).toBeVisible();
-    await dashboard.dismissNextTermBanner();
-    await expect(dashboard.nextTermBanner).not.toBeVisible();
-
-    await page.reload();
-    await expect(dashboard.nextTermBanner).not.toBeVisible();
-
-    await disableFeature(request, "next_term_banner");
-  });
-
 test("does not show the banner when the feature flag is disabled",
   async ({ request, factory, student: { page } }) => {
     await createTermsWithLectures(factory);
