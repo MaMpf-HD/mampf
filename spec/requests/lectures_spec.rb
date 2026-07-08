@@ -116,12 +116,12 @@ RSpec.describe("Lectures", type: :request) do
   describe "lecture routes" do
     let(:lecture) { create(:lecture) }
 
-    it "uses /outline for the lecture overview path" do
-      expect(lecture_path(lecture)).to eq("/lectures/#{lecture.id}/outline")
+    it "uses the canonical lecture member path for content" do
+      expect(lecture_path(lecture)).to eq("/lectures/#{lecture.id}")
     end
   end
 
-  describe "GET /lectures/:id/outline as a non-subscriber" do
+  describe "GET /lectures/:id as a non-subscriber" do
     let(:user) { create(:confirmed_user) }
     let(:lecture) { create(:lecture, :released_for_all) }
 

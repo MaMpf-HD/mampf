@@ -282,11 +282,15 @@ Rails.application.routes.draw do
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  get "lectures/:id/outline",
-      to: "lectures#show",
-      as: "lecture"
+  get "lectures/:id/home",
+      to: "lectures/home#show",
+      as: "lecture_user_registrations",
+      defaults: { project: "registration" }
 
-  resources :lectures, except: [:index, :show] do
+  get "lectures/:id/outline",
+      to: redirect("/lectures/%{id}")
+
+  resources :lectures, except: [:index] do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
       get "roster", to: "roster/maintenance#index"
       get "roster/participants", to: "roster/maintenance#participants"
@@ -310,11 +314,6 @@ Rails.application.routes.draw do
                 only: [:index, :new, :create],
                 as: :registration_campaigns
     end
-
-    get "",
-        to: "lectures/home#show",
-        as: :user_registrations,
-        defaults: { project: "registration" }
   end
 
   constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do

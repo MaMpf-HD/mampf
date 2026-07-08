@@ -46,13 +46,15 @@
     </div>
   <% end %>
 
-  <%= render partial: "user_registrations/user_registration",
-             locals: {
-               campaigns_details: @campaigns_details,
-               self_rosterables: @self_rosterables,
-               rosterized_entries: @rosterized_entries,
-               lecture: @lecture
-             } %>
+  <% if @show_workflow_content %>
+    <%= render partial: "user_registrations/user_registration",
+               locals: {
+                 campaigns_details: @campaigns_details,
+                 self_rosterables: @self_rosterables,
+                 rosterized_entries: @rosterized_entries,
+                 lecture: @lecture
+               } %>
+  <% end %>
 
   <% unless @subscribed || current_user.can_edit?(@lecture) %>
     <div class="alert alert-light border mt-3"

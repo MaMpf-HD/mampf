@@ -32,7 +32,7 @@ class Notification < ApplicationRecord
     elsif lecture_or_course?
       edit_profile_path
     elsif lecture_announcement?
-      notifiable.lecture.path(user)
+      lecture_user_registrations_path(notifiable.lecture)
     elsif generic_announcement?
       news_path
     elsif quiz?

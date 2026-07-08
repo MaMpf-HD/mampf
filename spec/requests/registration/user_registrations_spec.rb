@@ -102,8 +102,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   end
 
   describe "lecture registration routes" do
-    it "uses the bare lecture path for registration" do
-      expect(lecture_user_registrations_path(lecture)).to eq("/lectures/#{lecture.id}")
+    it "uses the /home lecture path for registration" do
+      expect(lecture_user_registrations_path(lecture)).to eq("/lectures/#{lecture.id}/home")
     end
   end
 
@@ -113,7 +113,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       unsubscribed_student = create(:confirmed_user)
       sign_in unsubscribed_student
 
-      get lecture_user_registrations_path(lecture_id: lecture.id)
+      get lecture_user_registrations_path(lecture)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("lecture-home-subscribe-button")
@@ -126,7 +126,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       unsubscribed_student = create(:confirmed_user)
       sign_in unsubscribed_student
 
-      get lecture_user_registrations_path(lecture_id: passphrase_lecture.id)
+      get lecture_user_registrations_path(passphrase_lecture)
 
       expect(response.body).to include("lecture-home-passphrase")
     end
@@ -138,7 +138,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       create(:lecture_membership, user: member, lecture: passphrase_lecture)
       sign_in member
 
-      get lecture_user_registrations_path(lecture_id: passphrase_lecture.id)
+      get lecture_user_registrations_path(passphrase_lecture)
 
       expect(response.body).to include("lecture-home-subscribe-button")
       expect(response.body).not_to include("lecture-home-passphrase")
@@ -148,7 +148,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       passphrase_lecture = create(:lecture, :released_for_all,
                                   passphrase: "secret")
 
-      get lecture_user_registrations_path(lecture_id: passphrase_lecture.id)
+      get lecture_user_registrations_path(passphrase_lecture)
 
       expect(response).to have_http_status(:ok)
     end
@@ -156,7 +156,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     it "is accessible for the teacher of the lecture" do
       teacher_lecture = create(:lecture, teacher: user)
 
-      get lecture_user_registrations_path(lecture_id: teacher_lecture.id)
+      get lecture_user_registrations_path(teacher_lecture)
 
       expect(response).to have_http_status(:ok)
     end
@@ -173,15 +173,15 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                           description: "Solver Test Campaign")
       end
       it "return success response" do
-        get lecture_user_registrations_path(lecture_id: lecture.id)
-        expect(campaign.campaignable_type).to eq("Lecture")
+        campaign
+        get lecture_user_registrations_path(lecture)
         expect(response).to have_http_status(:ok)
         expect(response.body).to include('id="student_registration_options"')
       end
 
       it "renders available options" do
         campaign
-        get lecture_user_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture)
         expect(response.body.squish).to include("Solver Test Campaign")
       end
     end
@@ -194,21 +194,20 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                           description: "Solver Test Campaign")
       end
       it "return success response" do
-        get lecture_user_registrations_path(lecture_id: seminar.id)
+        get lecture_user_registrations_path(seminar)
         expect(campaign.campaignable_type).to eq("Lecture")
         expect(response).to have_http_status(:ok)
       end
     end
 
     context "when no registration options are available" do
-      it "shows a single empty state message" do
-        get lecture_user_registrations_path(lecture_id: lecture.id)
+      it "renders the global Home page without the workflow section" do
+        get lecture_user_registrations_path(lecture)
 
-        expect(response.body.squish).to include(
-          I18n.t("registration.user_registration.index.unassigned_notice")
-        )
-        expect(response.body).to include("student-registration-rosterized-notice--neutral")
-        expect(response.body.squish).to include(
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('id="student_registration_options"')
+        expect(response.body).not_to include("student-registration-rosterized-notice--neutral")
+        expect(response.body.squish).not_to include(
           I18n.t("roster.self_enrollment.no_registration_options")
         )
       end
@@ -224,7 +223,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
 
       it "does not show the empty state message" do
-        get lecture_user_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture)
 
         expect(response).to have_http_status(:ok)
         expect(response.body.squish).to include("Tutorial 7")
@@ -248,7 +247,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
 
       it "shows that they will be assigned after the registration period" do
-        get lecture_user_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture)
 
         expect(response.body.squish).to include(
           I18n.t("registration.user_registration.index.pending_preference_notice")
@@ -264,7 +263,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
 
       it "does not show the empty state message" do
-        get lecture_user_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture)
 
         expect(response.body.squish).to include(
           I18n.t("registration.user_registration.index.confirmed_cases")
@@ -284,7 +283,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       let(:lecture) { create(:lecture, teacher: user) }
 
       it "renders the home page (viewing is decoupled from enrolling)" do
-        get lecture_user_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture)
 
         expect(response).to have_http_status(:ok)
       end
@@ -294,7 +293,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       let(:lecture) { create(:lecture) }
 
       it "redirects to root" do
-        get lecture_user_registrations_path(lecture_id: lecture.id)
+        get lecture_user_registrations_path(lecture)
 
         expect(response).to redirect_to(root_path)
       end

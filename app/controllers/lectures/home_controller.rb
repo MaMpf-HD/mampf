@@ -14,13 +14,22 @@ module Lectures
     def show
       authorize! :index, @lecture
 
-      @campaigns_details = ::UserRegistrations::LectureCampaignsService
-                           .new(@lecture, current_user)
-                           .call
-      @rosterized_entries = Rosters::StudentMaterializedResultResolver
-                            .new(current_user)
-                            .all_rosterized_for_lecture(@lecture)
-      @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call
+      @campaigns_details = Array(
+        ::UserRegistrations::LectureCampaignsService
+          .new(@lecture, current_user)
+          .call
+      )
+      @rosterized_entries = Array(
+        Rosters::StudentMaterializedResultResolver
+          .new(current_user)
+          .all_rosterized_for_lecture(@lecture)
+      )
+      @self_rosterables = Array(
+        Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call
+      )
+      @show_workflow_content = @lecture.registration_campaigns.exists? ||
+                               @rosterized_entries.any? ||
+                               @self_rosterables.any?
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
       @subscribed = @lecture.in?(current_user.lectures)
