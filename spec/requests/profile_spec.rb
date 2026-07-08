@@ -90,8 +90,7 @@ RSpec.describe("Profile", type: :request) do
 
         subscribe_html(unpublished)
 
-        expect(response)
-          .to redirect_to(lecture_home_path(unpublished))
+        expect(response).to redirect_to(root_path)
         expect(flash[:alert]).to eq(I18n.t("admin.lecture.no_rights"))
       end
     end

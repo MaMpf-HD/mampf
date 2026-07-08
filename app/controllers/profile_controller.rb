@@ -81,7 +81,7 @@ class ProfileController < ApplicationController
        !@lecture.edited_by?(current_user)
       @unpublished = true
       if html_redirect_flow?
-        return redirect_to lecture_home_path(@lecture),
+        return redirect_to root_path,
                            alert: t("admin.lecture.no_rights")
       end
       return
