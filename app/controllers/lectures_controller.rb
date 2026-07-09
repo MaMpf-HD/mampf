@@ -283,6 +283,28 @@ class LecturesController < ApplicationController
       configurator_class: Search::Configurators::LectureSearchConfigurator,
       options: { infinite_scroll: params[:infinite_scroll], default_per_page: 6 }
     )
+    if @lectures.respond_to?(:includes)
+      # avoid N+1 queries for the registration badge on the result cards
+      @lectures = @lectures.includes(:registration_campaigns)
+    end
+    # ID sets for the state indicators on the result cards (computed once
+    # per request and scoped to the current page, so the cards do not
+    # trigger per-lecture queries and the cost is bounded by the page size)
+    page_lecture_ids = @lectures.map(&:id)
+    @subscribed_lecture_ids =
+      current_user.lecture_user_joins
+                  .where(lecture_id: page_lecture_ids)
+                  .pluck(:lecture_id).to_set
+    if Flipper.enabled?(:registration_campaigns)
+      @registered_lecture_ids =
+        Registration::UserRegistration
+        .where(user: current_user, status: [:pending, :confirmed])
+        .joins(:registration_campaign)
+        .where(registration_campaigns: { campaignable_type: "Lecture",
+                                         campaignable_id: page_lecture_ids })
+        .pluck("registration_campaigns.campaignable_id")
+        .to_set
+    end
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
@@ -360,8 +382,13 @@ class LecturesController < ApplicationController
 
     def check_for_subscribe
       return if @lecture.in?(current_user.lectures)
+      # Staff bypass the subscription gate for content.
+      return if current_user.can_edit?(@lecture)
 
-      redirect_to subscribe_lecture_page_path(@lecture.id)
+      # Non-subscribers are sent to the lecture's home page (its
+      # organizational front door), which offers registration (if the
+      # lecture uses it) as well as a link to the subscription page.
+      redirect_to lecture_home_path(@lecture)
     end
 
     def lecture_params
@@ -449,7 +476,7 @@ class LecturesController < ApplicationController
 
     def search_params
       params.expect(search: [:all_types, :all_terms, :all_programs,
-                             :all_teachers, :fulltext, :per,
+                             :all_teachers, :fulltext, :per, :term_scope,
                              { types: [],
                                term_ids: [],
                                program_ids: [],

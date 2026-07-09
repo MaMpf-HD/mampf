@@ -39,6 +39,147 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include(calculus_courses.first.title)
         expect(response.body).not_to include(lecture_algebra.course.title)
       end
+
+      it "filters lectures to the current term" do
+        current_term = create(:term, :summer, :active, year: 2025)
+        next_term = create(:term, :winter, year: 2025)
+        current_course = create(:course, title: "Topology Current")
+        next_course = create(:course, title: "Topology Next")
+        create(:lecture, course: current_course, term: current_term)
+        create(:lecture, course: next_course, term: next_term)
+        term_independent_course = create(:course, :term_independent,
+                                         title: "Topology Independent")
+        create(:lecture, :term_independent, course: term_independent_course)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Topology", term_scope: "current" } },
+            xhr: true
+
+        expect(response.body).to include(current_course.title)
+        expect(response.body).to include(term_independent_course.title)
+        expect(response.body).not_to include(next_course.title)
+      end
+
+      it "filters lectures to the next term" do
+        current_term = create(:term, :summer, :active, year: 2025)
+        next_term = create(:term, :winter, year: 2025)
+        current_course = create(:course, title: "Analysis Current")
+        next_course = create(:course, title: "Analysis Next")
+        create(:lecture, course: current_course, term: current_term)
+        create(:lecture, course: next_course, term: next_term)
+        term_independent_course = create(:course, :term_independent,
+                                         title: "Analysis Independent")
+        create(:lecture, :term_independent, course: term_independent_course)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Analysis", term_scope: "next" } },
+            xhr: true
+
+        expect(response.body).to include(next_course.title)
+        expect(response.body).to include(term_independent_course.title)
+        expect(response.body).not_to include(current_course.title)
+      end
+    end
+
+    context "with registration campaigns" do
+      # We deliberately use lecture_algebra (a unique title, single search
+      # hit) here: the calculus lectures have random terms, so which of them
+      # end up on the first results page is not deterministic.
+      def search_algebra
+        get(search_lectures_path,
+            params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
+            as: :turbo_stream)
+      end
+
+      context "when the feature flag is enabled" do
+        before do
+          Flipper.enable(:registration_campaigns)
+        end
+
+        after do
+          Flipper.disable(:registration_campaigns)
+        end
+
+        it "shows a badge for lectures with an open registration campaign" do
+          create(:registration_campaign, :open, :first_come_first_served,
+                 campaignable: lecture_algebra)
+
+          search_algebra
+
+          expect(response.body).to include("lecture-search-registration-badge")
+        end
+
+        it "does not show a badge for draft campaigns" do
+          create(:registration_campaign, :first_come_first_served,
+                 campaignable: lecture_algebra)
+
+          search_algebra
+
+          expect(response.body)
+            .not_to include("lecture-search-registration-badge")
+        end
+
+        it "shows a registered badge instead when the user has registered" do
+          campaign = create(:registration_campaign, :open,
+                            :first_come_first_served,
+                            campaignable: lecture_algebra)
+          create(:registration_user_registration,
+                 registration_campaign: campaign, user: user)
+
+          search_algebra
+
+          expect(response.body).to include("lecture-search-registered-badge")
+          expect(response.body)
+            .not_to include("lecture-search-registration-badge")
+        end
+
+        it "still shows the open badge when the registration was rejected" do
+          campaign = create(:registration_campaign, :open,
+                            :first_come_first_served,
+                            campaignable: lecture_algebra)
+          create(:registration_user_registration, :rejected,
+                 registration_campaign: campaign, user: user)
+
+          search_algebra
+
+          expect(response.body).to include("lecture-search-registration-badge")
+          expect(response.body)
+            .not_to include("lecture-search-registered-badge")
+        end
+      end
+
+      it "does not show a badge when the feature flag is disabled" do
+        create(:registration_campaign, :open, :first_come_first_served,
+               campaignable: lecture_algebra)
+
+        search_algebra
+
+        expect(response.body)
+          .not_to include("lecture-search-registration-badge")
+      end
+    end
+
+    context "with subscribed lectures" do
+      def search_algebra
+        get(search_lectures_path,
+            params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
+            as: :turbo_stream)
+      end
+
+      it "shows a subscribed indicator on the card" do
+        create(:lecture_user_join, user: user, lecture: lecture_algebra)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-subscribed-indicator")
+      end
+
+      it "does not show a subscribed indicator otherwise" do
+        search_algebra
+
+        expect(response.body)
+          .not_to include("lecture-search-subscribed-indicator")
+      end
     end
 
     context "with an HTML request" do
@@ -100,16 +241,74 @@ RSpec.describe("Lectures", type: :request) do
              description: "Lecture script")
     end
 
-    it "renders the registration sidebar entry" do
+    it "renders the lecture home sidebar entry" do
       get lecture_script_path(lecture)
 
       expect(response).to have_http_status(:ok)
-      enrollment_label = I18n.with_locale(:en) do
-        I18n.t("categories.enrollment.singular")
+      home_label = I18n.with_locale(:en) do
+        I18n.t("basics.home")
       end
 
-      expect(response.body).to include(enrollment_label)
-      expect(response.body).to include(lecture_user_registrations_path(lecture))
+      expect(response.body).to include(home_label)
+      expect(response.body).to include(lecture_home_path(lecture))
+    end
+
+    it "renders a Home marker when there are lecture updates" do
+      announcement = create(:announcement,
+                            lecture: lecture,
+                            announcer: lecture.teacher)
+      create(:notification, recipient: user, notifiable: announcement)
+
+      get lecture_script_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("sidebar-item__badge")
+      expect(response.body).to include(
+        I18n.t("registration.lecture.home.news_indicator")
+      )
+    end
+  end
+
+  describe "GET /lectures/:id as staff" do
+    let(:lecture) { create(:lecture, :released_for_all, teacher: user) }
+
+    before do
+      create(:lecture_user_join, user: user, lecture: lecture)
+    end
+
+    it "renders an edit affordance on the content page" do
+      get lecture_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(edit_lecture_path(lecture))
+      expect(response.body).to include(I18n.t("buttons.edit"))
+    end
+  end
+
+  describe "lecture routes" do
+    let(:lecture) { create(:lecture) }
+
+    it "uses the canonical lecture member path for content" do
+      expect(lecture_path(lecture)).to eq("/lectures/#{lecture.id}")
+    end
+  end
+
+  describe "GET /lectures/:id as a non-subscriber" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    it "redirects to the lecture's home page" do
+      get lecture_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "does not redirect staff (they bypass the subscription gate)" do
+      teacher_lecture = create(:lecture, :released_for_all, teacher: user)
+
+      get lecture_path(teacher_lecture)
+
+      expect(response).to have_http_status(:ok)
     end
   end
 

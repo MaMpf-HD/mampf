@@ -2,7 +2,6 @@ module Registration
   class UserRegistrationsController < ApplicationController
     helper ::UserRegistrationsHelper,
            ItemsHelper, CampaignsHelper
-    before_action :set_lecture, only: [:index]
     before_action :set_campaign,
                   only: [:create, :destroy, :reject_for_user, :save_preferences]
     before_action :set_user_locale
@@ -24,20 +23,6 @@ module Registration
       authorize! :destroy, registrations.first
 
       reject_registrations(registrations)
-    end
-
-    def index
-      authorize! :index, @lecture
-
-      @campaigns_details = ::UserRegistrations::LectureCampaignsService
-                           .new(@lecture, current_user)
-                           .call
-      @rosterized_entries = Rosters::StudentMaterializedResultResolver
-                            .new(current_user)
-                            .all_rosterized_for_lecture(@lecture)
-      @self_rosterables = Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call
-      render template: "user_registrations/index",
-             layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
 
     def create
@@ -97,7 +82,7 @@ module Registration
               ]
             end
             format.html do
-              redirect_to lecture_user_registrations_path(@campaign.campaignable),
+              redirect_to lecture_home_path(@campaign.campaignable),
                           notice: success_message
             end
           end
@@ -105,7 +90,7 @@ module Registration
           respond_with_flash(
             :alert,
             result.errors.join(", "),
-            fallback_location: lecture_user_registrations_path(@campaign.campaignable)
+            fallback_location: lecture_home_path(@campaign.campaignable)
           )
         end
       end
@@ -237,15 +222,6 @@ module Registration
         return if @item
 
         respond_with_flash(:alert, t("registration.item.not_found"),
-                           fallback_location: root_path)
-      end
-
-      def set_lecture
-        lecture_id = params[:lecture_id]&.to_i
-        @lecture = Lecture.find_by(id: lecture_id)
-        return if @lecture
-
-        respond_with_flash(:alert, t("registration.lecture.not_found"),
                            fallback_location: root_path)
       end
   end

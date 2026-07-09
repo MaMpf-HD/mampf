@@ -81,6 +81,10 @@
         <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/announcements',
                      locals: { lecture: @lecture, announcements: @announcements } %>
+          <% if Flipper.enabled?(:registration_campaigns) %>
+            <%= render partial: 'lectures/edit/student_mail',
+                       locals: { lecture: @lecture } %>
+          <% end %>
           <%= render partial: 'lectures/edit/forum',
                      locals: { lecture: @lecture } %>
           <%= render partial: 'lectures/edit/comments',
