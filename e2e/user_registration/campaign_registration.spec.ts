@@ -59,7 +59,7 @@ test.describe("campaign registration", () => {
     await enableFeature(request, "roster_maintenance");
   });
 
-  test("can be opened from the lecture enrollment tab", async ({ factory, student }) => {
+  test("can be opened from the lecture home tab", async ({ factory, student }) => {
     const lecture = await createReleasedLecture(factory);
     await subscribeToLecture(factory, lecture, student.user.id);
     await createTutorialItemsCampaign(
@@ -70,7 +70,7 @@ test.describe("campaign registration", () => {
     );
 
     await student.page.goto(`/lectures/${lecture.id}`);
-    await student.page.getByRole("link", { name: "Enrollment" }).click();
+    await student.page.getByRole("link", { name: "Home" }).click();
 
     await expect(student.page.getByText("Tutorial registration")).toBeVisible();
     await expect(student.page.getByText("Register for a group.")).toBeVisible();

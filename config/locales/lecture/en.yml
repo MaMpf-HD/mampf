@@ -3,5 +3,8 @@ en:
     search:
       go_to_search: Search lectures
       placeholder: Search for lectures...
+      term_filter: Lecture term filter
+      current_term: Current term
+      next_term: Next term
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.
