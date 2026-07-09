@@ -540,7 +540,37 @@ en:
         subscribe_prompt: >-
           You have not subscribed to this lecture yet. Subscribing gives you
           access to its materials — it is not a binding course registration.
+    student_message:
+      title: "Email to registered students"
+      audience:
+        zero: "No students have registered yet."
+        one: "Goes to 1 registered student."
+        other: "Goes to %{count} registered students."
+      copy_addresses: "Copy email addresses"
+      addresses_copied: "Addresses copied to clipboard"
+      subject: "Subject"
+      body: "Message"
+      attachment: "Attachment (optional)"
+      attachment_hint: "One PDF file, at most 10 MB — e.g. a course program."
+      attachment_must_be_pdf: "must be a PDF file"
+      send:
+        one: "Send to 1 student"
+        other: "Send to %{count} students"
+      sent:
+        one: "Your message is being sent to 1 student."
+        other: "Your message is being sent to %{count} students."
+      no_recipients: "There are no registered students to send to yet."
+      sent_messages: "Sent messages"
+      recipients:
+        one: "1 recipient"
+        other: "%{count} recipients"
+      crosslink_html: >-
+        You want to email all registered students (e.g. to send around a
+        course program)? You can do that in the %{link} tab.
   activerecord:
+    attributes:
+      registration/student_message:
+        attachment: "Attachment"
     errors:
       models:
         registration/campaign:

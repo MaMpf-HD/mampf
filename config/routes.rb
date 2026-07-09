@@ -313,6 +313,9 @@ Rails.application.routes.draw do
                 controller: "registration/campaigns",
                 only: [:index, :new, :create],
                 as: :registration_campaigns
+      resources :student_messages,
+                controller: "registration/student_messages",
+                only: [:create]
     end
   end
 

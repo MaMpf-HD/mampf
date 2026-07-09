@@ -3251,6 +3251,10 @@ de:
       Mailclient heraus aufrufst, kannst Du versuchen, ihn per Copy and Paste
       die Adresszeile Deines Browsers zu kopieren und dann aufzurufen.
     announcement_subject: 'Neue Mitteilung'
+    student_message_footer: >-
+      Diese Nachricht wurde von %{sender} über MaMpf an die angemeldeten
+      Studierenden von %{lecture} verschickt. Antworten auf diese E-Mail
+      gehen direkt an den Absender / die Absenderin.
     mampf_news: 'über MaMpf'
     new_announcement: 'Es gibt eine neue Mitteilung'
     author: 'VerfasserIn'
