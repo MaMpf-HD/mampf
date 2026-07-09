@@ -103,8 +103,12 @@ export class DashboardLectureBrowsePage {
 
   async clickNextTermBannerCta() {
     const lectureSearchPromise = this.getLectureSearchPromise();
+    const nextTermUrlPromise = this.page.waitForURL(url =>
+      url.searchParams.get("term_scope") === "next",
+    );
+
     await this.page.getByTestId("next-term-banner-cta").click();
-    await lectureSearchPromise;
+    await Promise.all([lectureSearchPromise, nextTermUrlPromise]);
   }
 
   async getLectureCardCount() {
