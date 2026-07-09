@@ -241,16 +241,74 @@ RSpec.describe("Lectures", type: :request) do
              description: "Lecture script")
     end
 
-    it "renders the registration sidebar entry" do
+    it "renders the lecture home sidebar entry" do
       get lecture_script_path(lecture)
 
       expect(response).to have_http_status(:ok)
-      enrollment_label = I18n.with_locale(:en) do
-        I18n.t("categories.enrollment.singular")
+      home_label = I18n.with_locale(:en) do
+        I18n.t("basics.home")
       end
 
-      expect(response.body).to include(enrollment_label)
-      expect(response.body).to include(lecture_user_registrations_path(lecture))
+      expect(response.body).to include(home_label)
+      expect(response.body).to include(lecture_home_path(lecture))
+    end
+
+    it "renders a Home marker when there are lecture updates" do
+      announcement = create(:announcement,
+                            lecture: lecture,
+                            announcer: lecture.teacher)
+      create(:notification, recipient: user, notifiable: announcement)
+
+      get lecture_script_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("sidebar-item__badge")
+      expect(response.body).to include(
+        I18n.t("registration.lecture.home.news_indicator")
+      )
+    end
+  end
+
+  describe "GET /lectures/:id as staff" do
+    let(:lecture) { create(:lecture, :released_for_all, teacher: user) }
+
+    before do
+      create(:lecture_user_join, user: user, lecture: lecture)
+    end
+
+    it "renders an edit affordance on the content page" do
+      get lecture_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(edit_lecture_path(lecture))
+      expect(response.body).to include(I18n.t("buttons.edit"))
+    end
+  end
+
+  describe "lecture routes" do
+    let(:lecture) { create(:lecture) }
+
+    it "uses the canonical lecture member path for content" do
+      expect(lecture_path(lecture)).to eq("/lectures/#{lecture.id}")
+    end
+  end
+
+  describe "GET /lectures/:id as a non-subscriber" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    it "redirects to the lecture's home page" do
+      get lecture_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "does not redirect staff (they bypass the subscription gate)" do
+      teacher_lecture = create(:lecture, :released_for_all, teacher: user)
+
+      get lecture_path(teacher_lecture)
+
+      expect(response).to have_http_status(:ok)
     end
   end
 

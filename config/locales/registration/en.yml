@@ -261,8 +261,8 @@ en:
       index:
         title: "Registrations"
         confirmed_cases: "Your registration is confirmed for"
-        unassigned_notice: "You are not registered in any group yet."
-        pending_preference_notice: "You are not registered in any group yet. After the registration period ends, you will be assigned based on your preferences."
+        unassigned_notice: "You have not been assigned to a group yet."
+        pending_preference_notice: "You have not been assigned to a group yet. After the registration period ends, you will be assigned based on your preferences."
         fulfilled_preference_notice_html: "We could fulfill your <em>%{rank}</em> preference."
         fulfilled_preference_ranks:
           "1": "1st"
@@ -528,6 +528,18 @@ en:
         view_details: "Details"
     lecture:
       not_found: "Lecture not found."
+      home:
+        empty_title: "Start here"
+        empty_subscribed: >-
+          Lecture news and updates appear on this page. Materials and the
+          lecture structure are available under %{outline_label}.
+        empty_unsubscribed: >-
+          Lecture news and updates appear on this page. Subscribe to
+          access the materials and the %{outline_label} page.
+        news_indicator: "New updates on Home"
+        subscribe_prompt: >-
+          You have not subscribed to this lecture yet. Subscribing gives you
+          access to its materials — it is not a binding course registration.
   activerecord:
     errors:
       models:
