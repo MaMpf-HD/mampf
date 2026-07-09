@@ -120,6 +120,23 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       expect(response.body).to include(subscribe_lecture_path)
     end
 
+    it "greys out every sidebar entry except Home for unsubscribed students" do
+      unsubscribed_student = create(:confirmed_user)
+      sign_in unsubscribed_student
+
+      get lecture_home_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+
+      sidebar_html = Nokogiri::HTML.fragment(response.body)
+      sidebar_items = sidebar_html.css("#sidebar .sidebar-item")
+
+      expect(sidebar_items.first["class"]).not_to include("disabled")
+      expect(sidebar_items.drop(1)).to all(satisfy do |item|
+        item["class"].include?("disabled")
+      end)
+    end
+
     it "shows a passphrase field for passphrase-protected lectures" do
       passphrase_lecture = create(:lecture, :released_for_all,
                                   passphrase: "secret")
