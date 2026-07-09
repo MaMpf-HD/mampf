@@ -3,33 +3,44 @@
   Rendered only when the :next_term_banner feature flag is enabled and
   at least one published lecture for the next term exists
   (see MainController#next_term_banner). %>
-<div class="alert alert-primary d-flex align-items-center flex-wrap gap-2"
+<div class="next-term-banner alert alert-primary d-flex align-items-start gap-3 p-3 px-md-4 mx-auto"
      role="alert"
      data-testid="next-term-banner">
-  <i class="fas fa-bullhorn fa-lg me-2" aria-hidden="true"></i>
-  <div class="me-auto" style="min-width: 0;">
-    <strong class="d-block mb-1">
-      <%= t("main.next_term_banner.heading",
-            term: next_term.to_label,
-            count: lecture_count) %>
-    </strong>
-    <p class="mb-2">
+  <div class="pt-1" aria-hidden="true">
+    <i class="fas fa-bullhorn fa-lg"></i>
+  </div>
+  <div class="next-term-banner__content vstack gap-2">
+    <p class="alert-heading fs-5 fw-semibold mb-0">
+      <%= safe_join(
+            t("main.next_term_banner.heading",
+              term: next_term.to_label,
+              count: lecture_count).split(" — "),
+            safe_join([tag.br, "— "])) %>
+    </p>
+
+    <p class="mb-0">
       <%= t("main.next_term_banner.registration_intro") %>
     </p>
-    <p class="mb-0"
-       data-testid="next-term-banner-transition-notice">
-      <strong><%= t("main.next_term_banner.transition_label") %>:</strong>
-      <%= t("main.next_term_banner.transition_notice") %>
-      <span class="text-warning"
-            data-testid="next-term-banner-construction-icon"
-            title="<%= t("main.next_term_banner.transition_label") %>">
-        <span aria-hidden="true" style="font-size: 1.55em; line-height: 1;">🚧</span>
-        <span class="visually-hidden"><%= t("main.next_term_banner.transition_label") %></span>
-      </span>
-    </p>
+
+    <div class="w-100">
+      <%= link_to t("main.next_term_banner.cta"),
+                  root_path(term_scope: "next", anchor: "lecture-search"),
+                  class: "btn btn-primary btn-sm w-100",
+                  data: { testid: "next-term-banner-cta" } %>
+    </div>
+
+    <div class="border-top pt-1">
+      <p class="mb-0"
+         data-testid="next-term-banner-transition-notice">
+        <strong><%= t("main.next_term_banner.transition_label") %>:</strong>
+        <%= t("main.next_term_banner.transition_notice") %>
+        <span class="text-warning ms-1 fs-5 lh-1 align-text-bottom"
+              data-testid="next-term-banner-construction-icon"
+              title="<%= t("main.next_term_banner.transition_label") %>">
+          <span aria-hidden="true">🚧</span>
+          <span class="visually-hidden"><%= t("main.next_term_banner.transition_label") %></span>
+        </span>
+      </p>
+    </div>
   </div>
-  <%= link_to t("main.next_term_banner.cta"),
-              root_path(term_scope: "next", anchor: "lecture-search"),
-              class: "btn btn-primary btn-sm text-nowrap",
-              data: { testid: "next-term-banner-cta" } %>
 </div>

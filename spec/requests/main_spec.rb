@@ -80,9 +80,11 @@ RSpec.describe("Main", type: :request) do
 
           get root_path
 
-          expect(response.body)
-            .to include(I18n.t("main.next_term_banner.heading",
-                               term: next_term.to_label, count: 2))
+          heading = I18n.t("main.next_term_banner.heading",
+                           term: next_term.to_label, count: 2)
+          lead, rest = heading.split(" — ", 2)
+          expect(response.body).to include(lead)
+          expect(response.body).to include("— #{rest}")
         end
 
         it "does not show the banner when no next term exists" do
