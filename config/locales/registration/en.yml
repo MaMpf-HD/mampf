@@ -551,7 +551,8 @@ en:
       subject: "Subject"
       body: "Message"
       attachment: "Attachment (optional)"
-      attachment_hint: "One file, at most 10 MB — e.g. a course program."
+      attachment_hint: "One PDF file, at most 10 MB — e.g. a course program."
+      attachment_must_be_pdf: "must be a PDF file"
       send:
         one: "Send to 1 student"
         other: "Send to %{count} students"
@@ -567,6 +568,9 @@ en:
         You want to email all registered students (e.g. to send around a
         course program)? You can do that in the %{link} tab.
   activerecord:
+    attributes:
+      registration/student_message:
+        attachment: "Attachment"
     errors:
       models:
         registration/campaign:

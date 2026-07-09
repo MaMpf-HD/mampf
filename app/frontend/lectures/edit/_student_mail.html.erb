@@ -66,6 +66,7 @@
                       class: "form-label" %>
           <%= f.file_field :attachment,
                            class: "form-control",
+                           accept: "application/pdf",
                            data: { testid: "student-mail-attachment" } %>
           <div class="form-text">
             <%= t("registration.student_message.attachment_hint") %>

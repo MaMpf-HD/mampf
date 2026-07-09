@@ -66,7 +66,7 @@ RSpec.describe(StudentMessageMailer) do
     end
 
     it "attaches the uploaded file" do
-      message.attachment = StringIO.new("program")
+      message.attachment = StringIO.new("%PDF-1.4 demo")
       message.attachment_attacher.file.metadata["filename"] = "program.pdf"
       message.save!
 

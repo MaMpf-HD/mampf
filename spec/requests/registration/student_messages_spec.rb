@@ -47,9 +47,9 @@ RSpec.describe("Registration::StudentMessages", type: :request) do
         expect(message.recipients_count).to eq(1)
       end
 
-      it "stores an attachment" do
+      it "stores a pdf attachment" do
         file = Rack::Test::UploadedFile.new(
-          StringIO.new("program"), "application/pdf",
+          StringIO.new("%PDF-1.4 demo"), "application/pdf",
           original_filename: "program.pdf"
         )
 
@@ -57,6 +57,21 @@ RSpec.describe("Registration::StudentMessages", type: :request) do
 
         expect(Registration::StudentMessage.last.attachment_filename)
           .to eq("program.pdf")
+      end
+
+      it "rejects non-pdf attachments (content-sniffed, not by extension)" do
+        file = Rack::Test::UploadedFile.new(
+          StringIO.new("just some text"), "application/pdf",
+          original_filename: "program.pdf"
+        )
+
+        expect do
+          send_message(attachment: file)
+        end.not_to change(Registration::StudentMessage, :count)
+
+        expect(flash[:alert]).to include(
+          I18n.t("registration.student_message.attachment_must_be_pdf")
+        )
       end
 
       it "rejects a message without a body" do

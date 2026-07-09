@@ -554,7 +554,8 @@ de:
       subject: "Betreff"
       body: "Nachricht"
       attachment: "Anhang (optional)"
-      attachment_hint: "Eine Datei, maximal 10 MB — z. B. ein Kursprogramm."
+      attachment_hint: "Eine PDF-Datei, maximal 10 MB — z. B. ein Kursprogramm."
+      attachment_must_be_pdf: "muss eine PDF-Datei sein"
       send:
         one: "An 1 Person senden"
         other: "An %{count} Personen senden"
@@ -570,6 +571,9 @@ de:
         Du möchtest allen angemeldeten Studierenden eine E-Mail schreiben
         (z. B. mit dem Kursprogramm)? Das geht im Tab %{link}.
   activerecord:
+    attributes:
+      registration/student_message:
+        attachment: "Anhang"
     errors:
       models:
         registration/campaign:
