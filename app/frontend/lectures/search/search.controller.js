@@ -91,6 +91,31 @@ export default class extends Controller {
     }, 200);
   }
 
+  rememberTermFilterState(event) {
+    const input = this.termFilterInput(event);
+    if (!input) return;
+
+    input.dataset.wasChecked = input.checked ? "true" : "false";
+  }
+
+  toggleTermFilter(event) {
+    const input = this.termFilterInput(event);
+    if (!input || input.dataset.wasChecked !== "true") return;
+
+    delete input.dataset.wasChecked;
+    event.preventDefault();
+    input.checked = false;
+    this.search();
+  }
+
+  clearTermFilterWithKeyboard(event) {
+    if (!event.target.checked) return;
+
+    event.preventDefault();
+    event.target.checked = false;
+    this.search();
+  }
+
   /**
    * Applies the term filter from the URL (e.g. /?term_scope=next), so that
    * banners, announcements etc. can deep-link into a pre-filtered lecture

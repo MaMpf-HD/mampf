@@ -14,6 +14,19 @@ async function createLecturesWithCourses(
   titlePrefix: string,
   termId: number,
 ) {
+async function createLectureSearchTerms(factory: any) {
+  const currentTerm = await factory.create("term", ["summer", "active"], { year: 2025 });
+  const nextTerm = await factory.create("term", ["winter"], { year: 2025 });
+
+  return { currentTerm, nextTerm };
+}
+
+async function createLecturesWithCourses(
+  factory: any,
+  count: number,
+  titlePrefix: string,
+  termId: number,
+) {
   for (let i = 1; i <= count; i++) {
     const course = await factory.create("course", [], { title: `${titlePrefix} ${i}` });
     await factory.create("lecture", ["released_for_all"], {
@@ -106,7 +119,9 @@ test("filters results by selected term",
       course_id: nextCourse.id,
       term_id: nextTerm.id,
     });
-    const termIndependentCourse = await factory.create("course", [], { title: "Topology Independent" });
+    const termIndependentCourse = await factory.create("course", ["term_independent"], {
+      title: "Topology Independent",
+    });
     await factory.create("lecture", ["term_independent", "released_for_all"], {
       course_id: termIndependentCourse.id,
     });
