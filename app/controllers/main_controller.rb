@@ -75,7 +75,11 @@ class MainController < ApplicationController
       @next_term = Term.active&.next
       return if @next_term.blank?
 
-      @next_term_lecture_count = Lecture.published.where(term: @next_term)
+      # matches Search::Filters::CurrentNextTermFilter: term-independent
+      # lectures (term: nil) are part of the results the banner links to,
+      # so they are part of the count as well
+      @next_term_lecture_count = Lecture.published
+                                        .where(term: [@next_term, nil])
                                         .count
     end
 end

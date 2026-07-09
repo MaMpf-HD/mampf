@@ -70,6 +70,21 @@ RSpec.describe("Main", type: :request) do
           expect(response.body).not_to include("next-term-banner")
         end
 
+        it "counts published term-independent lectures (they are part of " \
+           "the results the banner links to)" do
+          next_term = create_next_term
+          create_published_lecture(next_term)
+          course = create(:course, :term_independent)
+          create(:lecture, :term_independent, :released_for_all,
+                 course: course)
+
+          get root_path
+
+          expect(response.body)
+            .to include(I18n.t("main.next_term_banner.heading",
+                               term: next_term.to_label, count: 2))
+        end
+
         it "does not show the banner when no next term exists" do
           get root_path
 
