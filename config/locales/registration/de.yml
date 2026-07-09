@@ -56,8 +56,8 @@ de:
           description: "Kurzbeschreibung"
           type: "Typ"
           mode: "Zuteilungsmodus"
-          opens_at: "Registrierungsbeginn"
-          deadline: "Registrierungsende"
+          opens_at: "Anmeldebeginn"
+          deadline: "Anmeldeschluss"
           status: "Status"
           registrations: "Anzahl Registrierungen"
       new:
@@ -69,8 +69,8 @@ de:
         edit_title: "Anmeldeverfahren bearbeiten"
         description: "Kurzbeschreibung"
         allocation_mode: "Zuteilungsmodus"
-        registration_opens_at: "Registrierungsbeginn"
-        registration_deadline: "Registrierungsende"
+        registration_opens_at: "Anmeldebeginn"
+        registration_deadline: "Anmeldeschluss"
         submit: "Speichern"
       allocation_mode:
         first_come_first_served: "Direktanmeldung"
@@ -261,8 +261,8 @@ de:
       index:
         title: "Anmeldungen"
         confirmed_cases: "Deine Anmeldung ist bestätigt für"
-        unassigned_notice: "Aktuell bist Du noch in keiner Gruppe eingetragen."
-        pending_preference_notice: "Aktuell bist Du noch in keiner Gruppe eingetragen. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
+        unassigned_notice: "Du wurdest noch keiner Gruppe zugeteilt."
+        pending_preference_notice: "Du wurdest noch keiner Gruppe zugeteilt. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
         fulfilled_preference_notice_html: "Wir konnten Deinen <em>%{rank}</em>-Wunsch erfüllen."
         fulfilled_preference_ranks:
           "1": "Erst"
@@ -323,12 +323,12 @@ de:
       not_eligible: "Nicht berechtigt"
       prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
       seats_remaining: "Verbleibende Plätze"
-      registered: "Registriert"
-      not_registered: "Nicht registriert"
+      registered: "Angemeldet"
+      not_registered: "Nicht angemeldet"
       blocked_tooltip: "Du kannst diesem Tutorium nicht beitreten, weil Du Dein Tutorium nicht verlassen kannst. Der Dozent hat das so eingerichtet."
-      register_now: "Jetzt registrieren"
+      register_now: "Jetzt anmelden"
       registration_blocked: "Nicht verfügbar"
-      withdraw: "Austreten"
+      withdraw: "Zurückziehen"
       closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
       ineligible_notice:
         title: "Anmeldung derzeit nicht möglich"
@@ -529,6 +529,20 @@ de:
         view_details: "Details"
     lecture:
       not_found: "Veranstaltung nicht gefunden."
+      home:
+        empty_title: "Starte hier"
+        empty_subscribed: >-
+          Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
+          dieser Seite. Materialien und die Gliederung findest du unter
+          %{outline_label}.
+        empty_unsubscribed: >-
+          Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
+          dieser Seite. Abonniere die Veranstaltung, um Materialien und
+          %{outline_label} zu sehen.
+        news_indicator: "Neue Updates auf Home"
+        subscribe_prompt: >-
+          Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
+          Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.
     student_message:
       title: "E-Mail an angemeldete Studierende"
       audience:

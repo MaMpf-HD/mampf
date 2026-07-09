@@ -8,5 +8,8 @@ de:
     search:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...
+      term_filter: Semesterfilter für Vorlesungen
+      current_term: Aktuelles Semester
+      next_term: Nächstes Semester
       scroll_for_more_results: Scrolle nach unten für mehr Ergebnisse
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.

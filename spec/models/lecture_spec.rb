@@ -270,6 +270,25 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.members).to include(*users)
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
+
+    it "subscribes roster members to the lecture" do
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureUserJoin, :count).by(3)
+
+      expect(lecture.users).to include(*users)
+    end
+
+    it "keeps existing subscriptions intact" do
+      create(:lecture_user_join, user: users.first, lecture: lecture)
+
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureUserJoin, :count).by(2) # Only 2 new ones
+
+      expect(LectureUserJoin.where(lecture: lecture, user: users.first).count)
+        .to eq(1)
+    end
   end
 
   describe "#registration_mail_recipients" do

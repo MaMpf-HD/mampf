@@ -59,7 +59,7 @@ test.describe("campaign registration", () => {
     await enableFeature(request, "roster_maintenance");
   });
 
-  test("can be opened from the lecture enrollment tab", async ({ factory, student }) => {
+  test("can be opened from the lecture home tab", async ({ factory, student }) => {
     const lecture = await createReleasedLecture(factory);
     await subscribeToLecture(factory, lecture, student.user.id);
     await createTutorialItemsCampaign(
@@ -70,7 +70,7 @@ test.describe("campaign registration", () => {
     );
 
     await student.page.goto(`/lectures/${lecture.id}`);
-    await student.page.getByRole("link", { name: "Enrollment" }).click();
+    await student.page.getByRole("link", { name: "Home" }).click();
 
     await expect(student.page.getByText("Tutorial registration")).toBeVisible();
     await expect(student.page.getByText("Register for a group.")).toBeVisible();
@@ -237,7 +237,7 @@ test.describe("campaign registration", () => {
       "If you still want to be admitted, please contact the lecturer or teaching assistant.",
     )).toBeVisible();
     await expect(student.page.getByText(
-      "You are not registered in any group yet.",
+      "You have not been assigned to a group yet.",
     )).toHaveCount(0);
   });
 
@@ -712,7 +712,7 @@ test.describe("campaign registration", () => {
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
     await expect(student.page.getByText(
-      "You are not registered in any group yet.",
+      "You have not been assigned to a group yet.",
     )).toBeVisible();
     await expect(student.page.getByText("Tutorial registration")).toBeVisible();
   });
@@ -751,7 +751,7 @@ test.describe("campaign registration", () => {
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
     await expect(student.page.getByText(
-      "You are not registered in any group yet. After the registration period ends, you will be assigned based on your preferences.",
+      "You have not been assigned to a group yet. After the registration period ends, you will be assigned based on your preferences.",
     )).toBeVisible();
     await expect(student.page.getByText("Your registration is confirmed for")).toHaveCount(0);
   });

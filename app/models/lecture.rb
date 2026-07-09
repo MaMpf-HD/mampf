@@ -812,10 +812,20 @@ class Lecture < ApplicationRecord
     # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
     # created_at/updated_at for existing members.
     # rubocop:disable Rails/SkipsModelValidations
-    LectureMembership.insert_all(
-      attributes,
-      unique_by: [:user_id, :lecture_id]
-    )
+    transaction do
+      LectureMembership.insert_all(
+        attributes,
+        unique_by: [:user_id, :lecture_id]
+      )
+
+      # Roster membership implies a subscription: members need access to the
+      # lecture's content, even when subscribing is gated by a passphrase
+      # (a roster seat is a stronger credential than a shared passphrase).
+      LectureUserJoin.insert_all(
+        attributes,
+        unique_by: [:lecture_id, :user_id]
+      )
+    end
     # rubocop:enable Rails/SkipsModelValidations
   end
 

@@ -33,6 +33,52 @@ export class DashboardLectureBrowsePage {
     await lectureSearchPromise;
   }
 
+  get currentTermFilter() {
+    return this.page.getByLabel("Current term");
+  }
+
+  get nextTermFilter() {
+    return this.page.getByLabel("Next term");
+  }
+
+  async selectCurrentTerm() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByTestId("lecture-search").getByText("Current term").click();
+    await lectureSearchPromise;
+  }
+
+  async selectNextTerm() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByTestId("lecture-search").getByText("Next term").click();
+    await lectureSearchPromise;
+  }
+
+  async clearNextTerm() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByTestId("lecture-search").getByText("Next term").click();
+    await lectureSearchPromise;
+  }
+
+  async clearNextTermWithKeyboard() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.nextTermFilter.focus();
+    await this.nextTermFilter.press("Space");
+    await lectureSearchPromise;
+  }
+
+  async clearCurrentTerm() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.getByTestId("lecture-search").getByText("Current term").click();
+    await lectureSearchPromise;
+  }
+
+  async clearCurrentTermWithKeyboard() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.currentTermFilter.focus();
+    await this.currentTermFilter.press("Space");
+    await lectureSearchPromise;
+  }
+
   async scrollToBottom() {
     await this.page.evaluate(() => {
       window.scrollTo(0, document.body.scrollHeight);
