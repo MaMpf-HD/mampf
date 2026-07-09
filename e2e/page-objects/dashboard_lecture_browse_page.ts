@@ -11,6 +11,12 @@ export class DashboardLectureBrowsePage {
     await this.page.goto("/");
   }
 
+  async gotoWithTermScopeDeepLink(termScope: string) {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    await this.page.goto(`/?term_scope=${termScope}#lecture-search`);
+    await lectureSearchPromise;
+  }
+
   async scrollToSearchBar() {
     await this.page.getByTestId("lecture-search").scrollIntoViewIfNeeded();
   }
@@ -89,6 +95,20 @@ export class DashboardLectureBrowsePage {
 
   get results() {
     return this.page.getByTestId("lecture-search-results");
+  }
+
+  get nextTermBanner() {
+    return this.page.getByTestId("next-term-banner");
+  }
+
+  async clickNextTermBannerCta() {
+    const lectureSearchPromise = this.getLectureSearchPromise();
+    const nextTermUrlPromise = this.page.waitForURL(url =>
+      url.searchParams.get("term_scope") === "next",
+    );
+
+    await this.page.getByTestId("next-term-banner-cta").click();
+    await Promise.all([lectureSearchPromise, nextTermUrlPromise]);
   }
 
   async getLectureCardCount() {

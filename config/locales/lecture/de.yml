@@ -11,5 +11,8 @@ de:
       term_filter: Semesterfilter für Vorlesungen
       current_term: Aktuelles Semester
       next_term: Nächstes Semester
+      registration_open: Anmeldung offen
+      registered: Angemeldet
+      subscribed: Abonniert
       scroll_for_more_results: Scrolle nach unten für mehr Ergebnisse
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.

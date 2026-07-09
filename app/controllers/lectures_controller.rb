@@ -283,6 +283,28 @@ class LecturesController < ApplicationController
       configurator_class: Search::Configurators::LectureSearchConfigurator,
       options: { infinite_scroll: params[:infinite_scroll], default_per_page: 6 }
     )
+    if @lectures.respond_to?(:includes)
+      # avoid N+1 queries for the registration badge on the result cards
+      @lectures = @lectures.includes(:registration_campaigns)
+    end
+    # ID sets for the state indicators on the result cards (computed once
+    # per request and scoped to the current page, so the cards do not
+    # trigger per-lecture queries and the cost is bounded by the page size)
+    page_lecture_ids = @lectures.map(&:id)
+    @subscribed_lecture_ids =
+      current_user.lecture_user_joins
+                  .where(lecture_id: page_lecture_ids)
+                  .pluck(:lecture_id).to_set
+    if Flipper.enabled?(:registration_campaigns)
+      @registered_lecture_ids =
+        Registration::UserRegistration
+        .where(user: current_user, status: [:pending, :confirmed])
+        .joins(:registration_campaign)
+        .where(registration_campaigns: { campaignable_type: "Lecture",
+                                         campaignable_id: page_lecture_ids })
+        .pluck("registration_campaigns.campaignable_id")
+        .to_set
+    end
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
