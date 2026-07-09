@@ -237,7 +237,7 @@ test.describe("campaign registration", () => {
       "If you still want to be admitted, please contact the lecturer or teaching assistant.",
     )).toBeVisible();
     await expect(student.page.getByText(
-      "You are not registered in any group yet.",
+      "You have not been assigned to a group yet.",
     )).toHaveCount(0);
   });
 
@@ -712,7 +712,7 @@ test.describe("campaign registration", () => {
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
     await expect(student.page.getByText(
-      "You are not registered in any group yet.",
+      "You have not been assigned to a group yet.",
     )).toBeVisible();
     await expect(student.page.getByText("Tutorial registration")).toBeVisible();
   });
@@ -751,7 +751,7 @@ test.describe("campaign registration", () => {
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
     await expect(student.page.getByText(
-      "You are not registered in any group yet. After the registration period ends, you will be assigned based on your preferences.",
+      "You have not been assigned to a group yet. After the registration period ends, you will be assigned based on your preferences.",
     )).toBeVisible();
     await expect(student.page.getByText("Your registration is confirmed for")).toHaveCount(0);
   });
