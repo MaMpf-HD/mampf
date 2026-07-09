@@ -88,7 +88,7 @@ RSpec.describe("Lectures", type: :request) do
       def search_algebra
         get(search_lectures_path,
             params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
-            headers: { "ACCEPT" => "text/vnd.turbo-stream.html" })
+            as: :turbo_stream)
       end
 
       context "when the feature flag is enabled" do
@@ -163,7 +163,7 @@ RSpec.describe("Lectures", type: :request) do
       def search_algebra
         get(search_lectures_path,
             params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
-            headers: { "ACCEPT" => "text/vnd.turbo-stream.html" })
+            as: :turbo_stream)
       end
 
       it "shows a subscribed indicator on the card" do
