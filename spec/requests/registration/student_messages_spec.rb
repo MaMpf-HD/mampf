@@ -107,6 +107,55 @@ RSpec.describe("Registration::StudentMessages", type: :request) do
         expect(response).to redirect_to(root_url)
       end
     end
+
+    context "authorization and parameter safety" do
+      it "does not let a teacher send to another lecture (uses the URL " \
+         "lecture, authorizes against it)" do
+        victim = create(:lecture, :released_for_all,
+                        teacher: create(:confirmed_user))
+        victim_campaign = create(:registration_campaign, :open,
+                                 :first_come_first_served,
+                                 campaignable: victim)
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: victim_campaign,
+               user: create(:confirmed_user))
+        sign_in teacher
+
+        expect do
+          post(lecture_student_messages_path(victim),
+               params: { registration_student_message: {
+                 subject: "s", body: "b"
+               } })
+        end.not_to change(Registration::StudentMessage, :count)
+        expect(response).to redirect_to(root_url)
+      end
+
+      it "forces the sender to the current user, ignoring a spoofed " \
+         "sender_id" do
+        sign_in teacher
+        post(lecture_student_messages_path(lecture),
+             params: { registration_student_message: {
+               subject: "s", body: "b",
+               sender_id: create(:confirmed_user).id
+             } })
+
+        expect(Registration::StudentMessage.last.sender).to eq(teacher)
+      end
+
+      it "ignores recipient_emails supplied in params (snapshots the " \
+         "lecture audience server-side)" do
+        sign_in teacher
+        post(lecture_student_messages_path(lecture),
+             params: { registration_student_message: {
+               subject: "s", body: "b",
+               recipient_emails: ["attacker@evil.test"]
+             } })
+
+        recipients = Registration::StudentMessage.last.recipient_emails
+        expect(recipients).to eq([registration.user.email])
+        expect(recipients).not_to include("attacker@evil.test")
+      end
+    end
   end
 
   describe "GET /lectures/:id/edit (communication tab)" do
