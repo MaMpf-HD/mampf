@@ -529,6 +529,20 @@ de:
         view_details: "Details"
     lecture:
       not_found: "Veranstaltung nicht gefunden."
+      home:
+        empty_title: "Starte hier"
+        empty_subscribed: >-
+          Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
+          dieser Seite. Materialien und die Gliederung findest du unter
+          %{outline_label}.
+        empty_unsubscribed: >-
+          Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
+          dieser Seite. Abonniere die Veranstaltung, um Materialien und
+          %{outline_label} zu sehen.
+        news_indicator: "Neue Updates auf Home"
+        subscribe_prompt: >-
+          Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
+          Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.
   activerecord:
     errors:
       models:
