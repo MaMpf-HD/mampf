@@ -90,6 +90,31 @@ export default class extends Controller {
     }, 200);
   }
 
+  rememberTermFilterState(event) {
+    const input = this.termFilterInput(event);
+    if (!input) return;
+
+    input.dataset.wasChecked = input.checked ? "true" : "false";
+  }
+
+  toggleTermFilter(event) {
+    const input = this.termFilterInput(event);
+    if (!input || input.dataset.wasChecked !== "true") return;
+
+    delete input.dataset.wasChecked;
+    event.preventDefault();
+    input.checked = false;
+    this.search();
+  }
+
+  clearTermFilterWithKeyboard(event) {
+    if (!event.target.checked) return;
+
+    event.preventDefault();
+    event.target.checked = false;
+    this.search();
+  }
+
   /**
    * Retrieves the next page of results when the user scrolls to the bottom
    * of the page. This is important for performance when there are many results.
@@ -118,5 +143,14 @@ export default class extends Controller {
     const unlockHandler = () => this.isSubmitting = false;
     document.addEventListener("turbo:submit-end", unlockHandler, { once: true });
     this.formTarget.requestSubmit();
+  }
+
+  termFilterInput(event) {
+    if (event.currentTarget instanceof HTMLInputElement) return event.currentTarget;
+
+    const inputId = event.currentTarget.getAttribute("for");
+    if (!inputId) return null;
+
+    return document.getElementById(inputId);
   }
 }
