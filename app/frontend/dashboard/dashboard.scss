@@ -18,6 +18,15 @@
     }
 }
 
+.next-term-banner {
+    width: fit-content;
+    max-width: 100%;
+}
+
+.next-term-banner__content {
+    width: min(70ch, calc(100vw - 6rem));
+}
+
 #arrow-go-to-lecture {
     font-size: 1.5em;
     animation: bounce-subtle 2s ease-in-out infinite;
