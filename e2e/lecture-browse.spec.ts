@@ -14,19 +14,6 @@ async function createLecturesWithCourses(
   titlePrefix: string,
   termId: number,
 ) {
-async function createLectureSearchTerms(factory: any) {
-  const currentTerm = await factory.create("term", ["summer", "active"], { year: 2025 });
-  const nextTerm = await factory.create("term", ["winter"], { year: 2025 });
-
-  return { currentTerm, nextTerm };
-}
-
-async function createLecturesWithCourses(
-  factory: any,
-  count: number,
-  titlePrefix: string,
-  termId: number,
-) {
   for (let i = 1; i <= count; i++) {
     const course = await factory.create("course", [], { title: `${titlePrefix} ${i}` });
     await factory.create("lecture", ["released_for_all"], {
