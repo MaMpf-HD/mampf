@@ -537,7 +537,7 @@ de:
           %{outline_label}.
         empty_unsubscribed: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Abonniere die Veranstaltung unten, um Materialien und
+          dieser Seite. Abonniere die Veranstaltung, um Materialien und
           %{outline_label} zu sehen.
         news_indicator: "Neue Updates auf Home"
         subscribe_prompt: >-

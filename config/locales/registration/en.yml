@@ -534,7 +534,7 @@ en:
           Lecture news and updates appear on this page. Materials and the
           lecture structure are available under %{outline_label}.
         empty_unsubscribed: >-
-          Lecture news and updates appear on this page. Subscribe below to
+          Lecture news and updates appear on this page. Subscribe to
           access the materials and the %{outline_label} page.
         news_indicator: "New updates on Home"
         subscribe_prompt: >-
