@@ -4,8 +4,9 @@ class StudentMessageUploader < Shrine
   MAX_SIZE = 10 * 1024 * 1024 # 10 MB
 
   # shrine plugins
+  # (no default_storage override: attachments live in the regular media
+  # cache/store, like the uploads of PdfUploader & co.)
   plugin :determine_mime_type, analyzer: :marcel
-  plugin :default_storage, cache: :submission_cache, store: :submission_store
   plugin :restore_cached_data
   plugin :validation_helpers
 
