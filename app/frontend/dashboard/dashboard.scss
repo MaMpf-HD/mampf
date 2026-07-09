@@ -24,7 +24,25 @@
 }
 
 .next-term-banner__content {
-    width: min(70ch, calc(100vw - 6rem));
+    max-width: min(105ch, calc(100vw - 6rem));
+}
+
+// Divider between the main content and the transition notice: a top border
+// when stacked (mobile), switching to a left border in the side-by-side
+// layout (md and up).
+.next-term-banner__transition {
+    border-top: var(--bs-border-width) solid var(--bs-border-color);
+    padding-top: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .next-term-banner__transition {
+        flex: 0 0 30%;
+        border-top: 0;
+        border-left: var(--bs-border-width) solid var(--bs-border-color);
+        padding-top: 0;
+        padding-left: 1.5rem;
+    }
 }
 
 #arrow-go-to-lecture {
