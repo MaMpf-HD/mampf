@@ -35,6 +35,22 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.to).to eq([teacher.email])
     end
 
+    it "puts the lecture editors in cc (the sender is not cc'd twice)" do
+      editors = create_list(:confirmed_user, 2)
+      lecture.update!(editors: editors)
+
+      expect(mail.cc).to match_array(editors.map(&:email))
+    end
+
+    it "keeps the teacher in cc when an editor sends" do
+      editor = create(:confirmed_user)
+      lecture.update!(editors: [editor])
+      message.update!(sender: editor)
+
+      expect(mail.to).to eq([editor.email])
+      expect(mail.cc).to eq([teacher.email])
+    end
+
     it "prefixes the subject with the lecture title" do
       # the mail is rendered in the lecture's locale, so the localized
       # sort prefix of the title must be computed in that locale as well
