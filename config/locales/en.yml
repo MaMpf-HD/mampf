@@ -1899,7 +1899,7 @@ en:
     consent: >
       You consented to our privacy policy.
     locale: 'Language'
-    subscribe_lecture: 'Subscribe event series'
+    subscribe_lecture: 'Subscribe lecture'
     passphrase_required: >
       You want to subscribe the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
