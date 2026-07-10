@@ -9,6 +9,11 @@ export function initializeDatetimePickers(container = document) {
 
   pickerElements.each((i, element) => {
     element = $(element);
+    // Skip elements handled by the datetimepicker Stimulus controller; it inits
+    // them on connect(), so initializing here too would create a second picker.
+    if ((element.attr("data-controller") || "").split(/\s+/).includes("datetimepicker")) {
+      return;
+    }
     if (element.data("td-initialized")) {
       return;
     }
