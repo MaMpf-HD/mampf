@@ -22,6 +22,10 @@ Rails.application.configure do
     policy.media_src(:self,
                      :blob)
     policy.object_src(:none)
+    # ALTCHA (the registration captcha) runs its proof-of-work in Web Workers
+    # created from blob: URLs. Without an explicit worker-src the browser falls back
+    # to script-src, which does not allow blob:. Allow it for workers only.
+    policy.worker_src(:self, :blob)
     policy.script_src(:self,
                       :unsafe_inline,
                       :wasm_unsafe_eval,
