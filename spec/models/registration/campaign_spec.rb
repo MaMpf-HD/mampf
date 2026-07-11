@@ -968,4 +968,50 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(tutorial).to be_valid
     end
   end
+
+  describe "#apply_self_materialization_mode!" do
+    it "sets the mode on all of the campaign's groups once completed" do
+      campaign = create(:registration_campaign, :completed,
+                        :first_come_first_served, items_count: 2)
+
+      campaign.apply_self_materialization_mode!("add_and_remove")
+
+      modes = campaign.registerables.map(&:self_materialization_mode).uniq
+      expect(modes).to eq(["add_and_remove"])
+    end
+
+    it "does nothing while the campaign is not completed" do
+      campaign = create(:registration_campaign, :first_come_first_served,
+                        :with_items, items_count: 2)
+
+      expect(campaign.apply_self_materialization_mode!("add_and_remove"))
+        .to be(false)
+      expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+        .to eq(["disabled"])
+    end
+
+    it "rejects an unknown mode" do
+      campaign = create(:registration_campaign, :completed,
+                        :first_come_first_served, items_count: 2)
+
+      expect { campaign.apply_self_materialization_mode!("nonsense") }
+        .to raise_error(ArgumentError)
+    end
+  end
+
+  describe "#shared_self_materialization_mode" do
+    it "returns the common mode when all groups agree" do
+      campaign = create(:registration_campaign, :with_items, items_count: 2)
+
+      expect(campaign.shared_self_materialization_mode).to eq("disabled")
+    end
+
+    it "returns nil when the groups differ" do
+      campaign = create(:registration_campaign, :completed,
+                        :first_come_first_served, items_count: 2)
+      campaign.registerables.first.update!(self_materialization_mode: :add_only)
+
+      expect(campaign.shared_self_materialization_mode).to be_nil
+    end
+  end
 end
