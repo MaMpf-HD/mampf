@@ -17,13 +17,16 @@ export default class extends Controller {
   highlightedTile = null;
 
   connect() {
+    this.boundRefreshDropZones = this.refreshDropZones.bind(this);
     this.initDraggable();
     this.initDropZones();
-    document.addEventListener("turbo:stream-render", this.refreshDropZones);
+    document.addEventListener("turbo:stream-render", this.boundRefreshDropZones);
   }
 
   disconnect() {
-    document.removeEventListener("turbo:stream-render", this.refreshDropZones);
+    document.removeEventListener(
+      "turbo:stream-render", this.boundRefreshDropZones,
+    );
     this.sortableInstance?.destroy();
     this.tileDropInstances.forEach(s => s.destroy());
     this.tileDropInstances = [];

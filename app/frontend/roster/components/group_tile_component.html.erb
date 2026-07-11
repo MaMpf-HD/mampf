@@ -89,7 +89,11 @@
       data-roster-title="<%= registerable.title %>"
       data-roster-add-member-path="<%= add_member_path %>"
     >
-      <div class="tutorial-gtile-top-bar <%= top_bar_class %>"></div>
+      <div
+        class="tutorial-gtile-top-bar <%= top_bar_class %>"
+        title="<%= top_bar_tooltip %>"
+        data-bs-toggle="tooltip"
+      ></div>
 
       <div class="card-body d-flex flex-column position-relative">
         <% if show_self_enrollment_dropdown? %>
