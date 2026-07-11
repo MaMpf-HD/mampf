@@ -2046,7 +2046,7 @@ de:
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
     locale: 'Sprache'
-    subscribe_lecture: 'Veranstaltung abonnieren'
+    subscribe_lecture: 'Vorlesung abonnieren'
     passphrase_required: >
       Du möchtest die Veranstaltung %{lecture_title} abonnieren. Diese ist
       durch einen Zugangsschlüssel geschützt. Gib diesen bitte hier ein.
@@ -3268,6 +3268,10 @@ de:
       Mailclient heraus aufrufst, kannst Du versuchen, ihn per Copy and Paste
       die Adresszeile Deines Browsers zu kopieren und dann aufzurufen.
     announcement_subject: 'Neue Mitteilung'
+    student_message_footer: >-
+      Diese Nachricht wurde von %{sender} über MaMpf an die angemeldeten
+      Studierenden von %{lecture} verschickt. Antworten auf diese E-Mail
+      gehen direkt an den Absender / die Absenderin.
     mampf_news: 'über MaMpf'
     new_announcement: 'Es gibt eine neue Mitteilung'
     author: 'VerfasserIn'
@@ -3464,6 +3468,7 @@ de:
     count: 'Anzahl'
     plays: 'Aufrufe'
   basics:
+    home: "Home"
     clear: "Löschen"
     close: "Schließen"
     capacity: 'Kapazität'
@@ -3635,6 +3640,7 @@ de:
     submissions: 'Abgaben'
     corrections: 'Korrekturen'
     overview: Übersicht
+    outline: Gliederung
     tba: N.N.
     due: bis
     as: als

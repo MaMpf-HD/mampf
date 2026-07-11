@@ -1899,7 +1899,7 @@ en:
     consent: >
       You consented to our privacy policy.
     locale: 'Language'
-    subscribe_lecture: 'Subscribe event series'
+    subscribe_lecture: 'Subscribe lecture'
     passphrase_required: >
       You want to subscribe the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
@@ -3063,6 +3063,10 @@ en:
       client you can try to copy and paste the link to the address bar of your
       browser and open it afterwards.
     announcement_subject: 'New announcement'
+    student_message_footer: >-
+      This message was sent by %{sender} via MaMpf to the registered
+      students of %{lecture}. Replies to this email go directly to the
+      sender.
     mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
     author: 'Author'
@@ -3257,6 +3261,7 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    home: "Home"
     clear: "Clear"
     close: "Close"
     capacity: 'Capacity'
@@ -3427,6 +3432,7 @@ en:
     submissions: 'Submissions'
     corrections: 'Corrections'
     overview: Overview
+    outline: Outline
     tba: tba
     due: due
     as: as
