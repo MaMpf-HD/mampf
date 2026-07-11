@@ -82,6 +82,12 @@ class Tutorial < ApplicationRecord
     true
   end
 
+  def conflicting_lecture_membership(user)
+    TutorialMembership.where(lecture: lecture, user: user)
+                      .where.not(tutorial: self)
+                      .first&.tutorial
+  end
+
   private
 
     def lecture_id_immutable

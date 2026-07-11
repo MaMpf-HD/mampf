@@ -9,10 +9,13 @@
        registration_blocked_by_unremovable_assignment?(lecture) %>
 
   <% self_rosterables.each do |rosterable| %>
-    <%# Only a roster-exclusive pool (tutorials) can create a "must leave to
-        join" conflict: joining it would evict the student from their current
-        one, which an unremovable assignment forbids. Non-exclusive pools
-        (cohorts, talks) coexist and are never blocked. %>
+    <%#
+      Only a roster-exclusive pool (tutorials) can create a "must leave to
+      join" conflict: joining it would evict the student from their current
+      one, which an unremovable assignment forbids. Non-exclusive pools
+      (cohorts, talks) coexist and are never blocked.
+    %>
+
     <% rosterable_blocked = registration_blocked_by_unremovable_assignment &&
               rosterable.roster_exclusive_within_lecture? &&
               !rosterable.user_allocated?(current_user) %>

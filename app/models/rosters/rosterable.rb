@@ -84,6 +84,14 @@ module Rosters
       false
     end
 
+    # The rosterable in the same lecture that the user would have to leave
+    # before joining this one, or nil if there is none. Only roster-exclusive
+    # pools (see #roster_exclusive_within_lecture?) can produce a conflict;
+    # non-exclusive pools coexist, so they always return nil.
+    def conflicting_lecture_membership(_user)
+      nil
+    end
+
     def config_allow_self_add?
       self_materialization_mode_add_only? ||
         self_materialization_mode_add_and_remove?

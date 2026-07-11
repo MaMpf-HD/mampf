@@ -103,16 +103,10 @@ module Rosters
       end
 
       def ensure_uniqueness!(user, rosterable)
-        return unless rosterable.roster_exclusive_within_lecture?
+        conflicting = rosterable.conflicting_lecture_membership(user)
+        return unless conflicting
 
-        membership = TutorialMembership
-                     .where(lecture: rosterable.lecture, user: user)
-                     .where.not(tutorial: rosterable)
-                     .first
-
-        return unless membership
-
-        raise(UserAlreadyInBundleError, membership.tutorial)
+        raise(UserAlreadyInBundleError, conflicting)
       end
 
       def propagate_to_lecture!(user, rosterable)

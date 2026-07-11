@@ -29,9 +29,8 @@ RSpec.describe(Rosters::SelfRosterAvailability) do
         "Rosterable",
         roster_exclusive_within_lecture?: true,
         user_allocated?: true,
-        config_allow_self_remove?: false
+        config_allow_self_remove?: true
       )
-      allow(rosterable).to receive(:config_allow_self_remove?).and_return(true)
 
       expect(availability_with(rosterable).blocked_by_unremovable_assignment?)
         .to be(false)
