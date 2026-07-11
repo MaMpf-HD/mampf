@@ -540,6 +540,15 @@ de:
           dieser Seite. Abonniere die Veranstaltung, um Materialien und
           %{outline_label} zu sehen.
         news_indicator: "Neue Updates auf Home"
+        attachment_download: "Programm herunterladen (PDF)"
+        intro_empty: >-
+          Die Startseite dieser Veranstaltung hat noch keinen Begrüßungstext und
+          kein Programm. Füge eine kurze Einführung hinzu, damit Studierende hier
+          mehr als eine leere Seite sehen.
+        intro_empty_campaign: >-
+          Für diese Veranstaltung läuft eine Anmeldung, aber Deine Startseite hat
+          keinen Begrüßungstext — genau das sehen Studierende vor der Anmeldung.
+          Füge eine kurze Einführung und Dein Programm hinzu.
         subscribe_prompt: >-
           Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
           Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.

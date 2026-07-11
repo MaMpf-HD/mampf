@@ -45,6 +45,22 @@ module Lectures
              layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
 
+    # Streams the teacher's home-page PDF program. Gated exactly like the home
+    # page itself, so anyone who may view the page may download the file.
+    def attachment
+      authorize! :index, @lecture
+
+      if @lecture.home_attachment.blank?
+        return respond_with_flash(:alert, t("registration.lecture.not_found"),
+                                  fallback_location: lecture_home_path(@lecture))
+      end
+
+      send_data(@lecture.home_attachment.read,
+                filename: @lecture.home_attachment_filename || "program.pdf",
+                type: "application/pdf",
+                disposition: "inline")
+    end
+
     private
 
       def set_lecture

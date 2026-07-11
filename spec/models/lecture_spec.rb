@@ -9,6 +9,54 @@ RSpec.describe(Lecture, type: :model) do
     expect(FactoryBot.build(:lecture)).to be_valid
   end
 
+  describe "lecture home page content" do
+    let(:lecture) { create(:lecture) }
+
+    def pdf_upload(content = "%PDF-1.4 demo", name = "program.pdf")
+      Rack::Test::UploadedFile.new(StringIO.new(content), "application/pdf",
+                                   original_filename: name)
+    end
+
+    describe "#home_content?" do
+      it "is false when neither intro nor attachment is set" do
+        expect(lecture.home_content?).to be(false)
+      end
+
+      it "is true with intro text" do
+        lecture.home_intro = "<div>Welcome</div>"
+        expect(lecture.home_content?).to be(true)
+      end
+
+      it "is true with an attachment" do
+        lecture.home_attachment = pdf_upload
+        expect(lecture.home_content?).to be(true)
+      end
+    end
+
+    describe "#home_attachment_filename" do
+      it "returns nil without an attachment" do
+        expect(lecture.home_attachment_filename).to be_nil
+      end
+
+      it "returns the uploaded filename" do
+        lecture.update!(home_attachment: pdf_upload("%PDF-1.4 demo", "seminar.pdf"))
+        expect(lecture.home_attachment_filename).to eq("seminar.pdf")
+      end
+    end
+
+    describe "home_attachment validation" do
+      it "accepts a pdf" do
+        lecture.home_attachment = pdf_upload
+        expect(lecture).to be_valid
+      end
+
+      it "rejects a non-pdf (content-sniffed, not by extension)" do
+        lecture.home_attachment = pdf_upload("just some text", "program.pdf")
+        expect(lecture).to be_invalid
+      end
+    end
+  end
+
   # Test validations  -- SOME ARE MISSING
 
   it "is invalid without a course" do

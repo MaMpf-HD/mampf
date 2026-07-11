@@ -28,6 +28,7 @@
 ## User-Facing Applications
 - [Teacher & Editor Dashboard](features/teacher_editor_dashboard.md)
 - [Student Dashboard](features/student_dashboard.md)
+- [Lecture Home Page](features/lecture_home.md)
 
 ## Project Planning
 - [Implementation Plan](features/plan.md)

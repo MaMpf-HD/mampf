@@ -1,0 +1,68 @@
+<%# Teacher-authored content for the lecture home page: a welcome/intro text
+    and an optional PDF program. Rendered on the home page above the
+    registration workflow (see lectures/home/lecture_home). %>
+<h3 class="lecture-pane-header">
+  <%= t("admin.lecture.home_page") %>
+</h3>
+
+<p class="text-muted">
+  <%= t("admin.lecture.home_intro_lead") %>
+  <%= link_to t("admin.lecture.home_preview"),
+              lecture_home_path(lecture),
+              target: "_blank",
+              rel: "noopener" %>
+</p>
+
+<%= form_with model: lecture,
+              html: { id: "lecture-home-form", multipart: true } do |f| %>
+  <div class="row">
+    <div class="col-12">
+      <%= f.label :home_intro,
+                  t("admin.lecture.home_intro_label"),
+                  class: "form-label" %>
+      <%= helpdesk(t("admin.lecture.info.home_intro"), false) %>
+      <%= f.trix_editor :home_intro,
+                        id: "lecture-home-intro-trix",
+                        data: { content: lecture.home_intro } %>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-12">
+      <%= f.label :home_attachment,
+                  t("admin.lecture.home_attachment_label"),
+                  class: "form-label" %>
+
+      <% if lecture.home_attachment.present? %>
+        <div class="mb-2">
+          <i class="fas fa-paperclip" aria-hidden="true"></i>
+          <%= link_to lecture.home_attachment_filename,
+                      lecture_home_attachment_path(lecture),
+                      target: "_blank",
+                      rel: "noopener" %>
+          <div class="form-check">
+            <%= f.check_box :remove_home_attachment,
+                            class: "form-check-input" %>
+            <%= f.label :remove_home_attachment,
+                        t("admin.lecture.home_attachment_remove"),
+                        class: "form-check-label" %>
+          </div>
+        </div>
+      <% end %>
+
+      <%= f.file_field :home_attachment,
+                       class: "form-control",
+                       accept: "application/pdf" %>
+      <div class="form-text">
+        <%= t("admin.lecture.home_attachment_hint") %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-12 text-center">
+      <%= hidden_field_tag :subpage, "home" %>
+      <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>

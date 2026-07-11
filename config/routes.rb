@@ -287,6 +287,11 @@ Rails.application.routes.draw do
       as: "lecture_home",
       defaults: { project: "home" }
 
+  get "lectures/:id/home_attachment",
+      to: "lectures/home#attachment",
+      as: "lecture_home_attachment",
+      defaults: { project: "home" }
+
   get "lectures/:id/outline",
       to: redirect("/lectures/%{id}")
 

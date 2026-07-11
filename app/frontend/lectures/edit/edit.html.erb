@@ -32,6 +32,12 @@
         </div>
       <% end %>
 
+      <% component.with_tab(name: "home", label: t("admin.lecture.home_tab")) do %>
+        <div class="container small-width lecture-pane">
+          <%= render partial: 'lectures/edit/home', locals: { lecture: @lecture } %>
+        </div>
+      <% end %>
+
       <% component.with_tab(name: "settings", label: t("basics.preferences")) do %>
         <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/preferences', locals: { lecture: @lecture } %>

@@ -38,6 +38,52 @@
     </div>
   </div>
 
+  <% can_edit_home = current_user.can_edit?(@lecture) %>
+
+  <% if @lecture.home_content? %>
+    <div class="card mt-3" data-testid="lecture-home-intro">
+      <div class="card-body">
+        <% if can_edit_home %>
+          <%= link_to edit_lecture_path(@lecture, tab: "home"),
+                      class: "float-end text-muted ms-2",
+                      title: t("buttons.edit"),
+                      "aria-label": t("buttons.edit") do %>
+            <i class="far fa-edit" aria-hidden="true"></i>
+          <% end %>
+        <% end %>
+
+        <% if @lecture.home_intro.present? %>
+          <div class="lecture-home-intro-text">
+            <%= sanitize(@lecture.home_intro) %>
+          </div>
+        <% end %>
+
+        <% if @lecture.home_attachment.present? %>
+          <%= link_to lecture_home_attachment_path(@lecture),
+                      class: "btn btn-outline-primary btn-sm mt-2",
+                      target: "_blank",
+                      rel: "noopener",
+                      data: { testid: "lecture-home-attachment" } do %>
+            <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>
+            <%= t("registration.lecture.home.attachment_download") %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% elsif can_edit_home %>
+    <div class="alert alert-light border mt-3"
+         data-testid="lecture-home-intro-empty">
+      <p class="mb-2">
+        <%= @show_workflow_content ?
+              t("registration.lecture.home.intro_empty_campaign") :
+              t("registration.lecture.home.intro_empty") %>
+      </p>
+      <%= link_to t("admin.lecture.home_intro_add"),
+                  edit_lecture_path(@lecture, tab: "home"),
+                  class: "btn btn-outline-primary btn-sm" %>
+    </div>
+  <% end %>
+
   <% if @notifications.present? || @new_topics_count.positive? %>
     <div class="mb-3">
       <%= render partial: "lectures/show/news_card",

@@ -3,6 +3,8 @@ class Lecture < ApplicationRecord
   include ApplicationHelper
   include Registration::Campaignable
   include Rosters::Rosterable
+  # optional PDF program shown on the lecture home page (see #home_intro)
+  include LectureHomeAttachmentUploader[:home_attachment]
 
   belongs_to :course
 
@@ -534,6 +536,17 @@ class Lecture < ApplicationRecord
     return true if editors_with_inheritance.include?(user)
 
     false
+  end
+
+  # the next methods concern the teacher-authored lecture home page
+
+  # Does the teacher want anything shown at the top of the home page?
+  def home_content?
+    home_intro.present? || home_attachment.present?
+  end
+
+  def home_attachment_filename
+    home_attachment&.metadata&.fetch("filename", nil)
   end
 
   # returns path for show action of the lecture's course,

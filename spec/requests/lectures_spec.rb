@@ -338,4 +338,29 @@ RSpec.describe("Lectures", type: :request) do
       expect(response.body).not_to include("<script>alert('lecture-xss')</script>")
     end
   end
+
+  describe "PATCH /lectures/:id (home page content)" do
+    let(:lecture) { create(:lecture, teacher: user) }
+
+    it "saves the home intro and returns to the home tab" do
+      patch lecture_path(lecture),
+            params: { lecture: { home_intro: "<div>Welcome</div>" },
+                      subpage: "home" }
+
+      expect(lecture.reload.home_intro).to include("Welcome")
+      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "home"))
+    end
+
+    it "stores a pdf program" do
+      file = Rack::Test::UploadedFile.new(
+        StringIO.new("%PDF-1.4 demo"), "application/pdf",
+        original_filename: "program.pdf"
+      )
+
+      patch lecture_path(lecture),
+            params: { lecture: { home_attachment: file }, subpage: "home" }
+
+      expect(lecture.reload.home_attachment_filename).to eq("program.pdf")
+    end
+  end
 end

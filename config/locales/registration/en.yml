@@ -537,6 +537,14 @@ en:
           Lecture news and updates appear on this page. Subscribe to
           access the materials and the %{outline_label} page.
         news_indicator: "New updates on Home"
+        attachment_download: "Download program (PDF)"
+        intro_empty: >-
+          Your lecture home page has no welcome text or program yet. Add a short
+          intro so students landing here see more than an empty page.
+        intro_empty_campaign: >-
+          A registration is running for this lecture, but your home page has no
+          welcome text — this is what students see before they register. Add a
+          short intro and your program.
         subscribe_prompt: >-
           You have not subscribed to this lecture yet. Subscribing gives you
           access to its materials — it is not a binding course registration.
