@@ -76,6 +76,12 @@ class Tutorial < ApplicationRecord
     true
   end
 
+  # A student can be in at most one tutorial per lecture (enforced by the
+  # unique index on tutorial_memberships (user_id, lecture_id)).
+  def roster_exclusive_within_lecture?
+    true
+  end
+
   private
 
     def lecture_id_immutable

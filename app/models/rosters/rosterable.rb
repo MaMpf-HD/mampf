@@ -72,6 +72,18 @@ module Rosters
       !in_completed_campaign?
     end
 
+    # Whether holding a slot in this rosterable precludes holding another
+    # slot of the same kind in the same lecture — i.e. taking a new slot
+    # would require LEAVING the current one (backed by a DB uniqueness on
+    # user + lecture). This is the only situation that creates a
+    # "must leave to join" conflict, so it is what gates both the
+    # uniqueness check on self-add and the "blocked by an unremovable
+    # assignment" hint in the registration UI. Non-exclusive pools (talks,
+    # cohorts) allow several simultaneous memberships and never conflict.
+    def roster_exclusive_within_lecture?
+      false
+    end
+
     def config_allow_self_add?
       self_materialization_mode_add_only? ||
         self_materialization_mode_add_and_remove?

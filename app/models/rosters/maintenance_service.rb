@@ -103,7 +103,7 @@ module Rosters
       end
 
       def ensure_uniqueness!(user, rosterable)
-        return unless rosterable.is_a?(Tutorial)
+        return unless rosterable.roster_exclusive_within_lecture?
 
         membership = TutorialMembership
                      .where(lecture: rosterable.lecture, user: user)

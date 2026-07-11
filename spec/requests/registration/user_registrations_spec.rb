@@ -217,6 +217,31 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
     end
 
+    context "when the student is in an unremovable interest cohort" do
+      # regression: a confirmed, non-self-removable membership in a cohort
+      # (interest group) must NOT block registering for a talk campaign —
+      # cohorts are not roster-exclusive, so the two coexist.
+      before do
+        interest_group = create(:cohort, context: seminar,
+                                         self_materialization_mode: :add_only,
+                                         skip_campaigns: true)
+        create(:cohort_membership, user: user, cohort: interest_group)
+
+        campaign = create(:registration_campaign, :preference_based, :open,
+                          :with_items, campaignable: seminar, items_count: 2)
+        campaign
+      end
+
+      it "does not block the talk registration tiles" do
+        get lecture_home_path(seminar)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('id="student_registration_options"')
+        expect(response.body).not_to include("tutorial-gtile--blocked")
+        expect(response.body).not_to include("registration-blocked-action")
+      end
+    end
+
     context "when no registration options are available" do
       it "renders the empty registration state" do
         get lecture_home_path(lecture)
