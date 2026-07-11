@@ -1,6 +1,4 @@
 module RosterHelper
-  include GtileIconHelper
-
   def roster_panel_path(registerable)
     public_send(
       "#{registerable.model_name.singular}_roster_path",
@@ -125,52 +123,6 @@ module RosterHelper
                              bs_title: t("registration.item.hints.no_propagation") })
         safe_join([base_type, " ", icon])
       end
-    end
-  end
-
-  SELF_ROSTER_TABLE_CONFIG = {
-    "Tutorial" => [
-      { header: "basics.tutor",
-        cell_class: "text-start fw-semibold",
-        icon: "person",
-        field: ->(rosterable) { rosterable.tutor_names } },
-      { header: "basics.location",
-        cell_class: "text-start fw-semibold",
-        icon: "location",
-        field: ->(rosterable) { rosterable.location } }
-    ],
-    "Talk" => [
-      { header: "basics.position",
-        cell_class: "text-end",
-        icon: "looks_one",
-        field: ->(rosterable) { rosterable.position } },
-      { header: "basics.description",
-        icon: "description",
-        cell_class: "text-center",
-        field: ->(rosterable) { rosterable.description } },
-      { header: "basics.date",
-        icon: "event",
-        field: lambda { |rosterable|
-          rosterable.dates&.map do |d|
-            d.nil? ? "" : d.strftime("%b %d %Y")
-          end&.join(", ")
-        } }
-    ],
-    "Cohort" => [
-      { header: "basics.description",
-        icon: "description",
-        cell_class: "text-center",
-        field: ->(rosterable) { rosterable.description } }
-    ]
-  }.freeze
-
-  def rosterable_tile_metadata_rows(rosterable)
-    SELF_ROSTER_TABLE_CONFIG[rosterable.class.name.capitalize].map do |col|
-      {
-        label: t(col[:header]),
-        value: col[:field].call(rosterable),
-        icon: gtile_icon_for(col[:icon])
-      }
     end
   end
 
