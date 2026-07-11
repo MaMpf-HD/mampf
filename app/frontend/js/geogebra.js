@@ -16,13 +16,13 @@ window.addEventListener("load", () => {
   });
 
   const ggbApp = new GGBApplet({
-    "appName": appName,
-    "width": 500,
-    "height": 700,
-    "showToolBar": false,
-    "showAlgebraInput": true,
-    "showMenuBar": false,
-    "filename": filename,
+    appName: appName,
+    width: 500,
+    height: 700,
+    showToolBar: false,
+    showAlgebraInput: true,
+    showMenuBar: false,
+    filename: filename,
   }, true);
 
   ggbApp.inject("ggb-element");
