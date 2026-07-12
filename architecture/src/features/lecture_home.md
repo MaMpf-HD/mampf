@@ -203,6 +203,24 @@ criterion relative to `Term.active` can do both. Naming the terms explicitly is
 not a hack; it is the only formulation that expresses the actual intent.
 ```
 
+```admonish danger "`lecture_path` does double duty — keep the `outline` bypass"
+`lecture_path` is used for **two different intentions**:
+
+- the generic **entry** link ("the lecture") — start page cards, search results;
+- the link to the **outline** — the sidebar's *Overview* item and the "start here"
+  button on the home page itself.
+
+Only the first may be redirected. Without a bypass the sidebar's outline link
+bounces straight back to home and **the content page becomes unreachable for
+every student in an opted-in term** — the media catalogue, of all things. (The
+other sidebar entries — script, exercises, quizzes … — have their own routes and
+are unaffected, since `check_for_subscribe` only hooks `:show`.)
+
+Hence the outline links pass `outline: true`, and `#home_is_landing_page?` returns
+false when that param is present. The sidebar's active-class still works, because
+`get_class_for_path` compares `request.path` — the query string is not part of it.
+```
+
 Nothing is thereby decided about later terms (SS 2027 registrations open in
 Feb 2027). By then the [Student Dashboard](student_dashboard.md) is expected to
 have superseded the question — which is precisely why no general rule is baked

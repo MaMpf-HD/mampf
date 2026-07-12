@@ -179,8 +179,10 @@
         <% if @subscribed %>
           <p class="mb-3"><%= t("registration.lecture.home.empty_subscribed",
                                   outline_label: t("basics.outline")) %></p>
+          <%# outline: true, so the button is not bounced back to this very page
+              in terms where home is the landing page. %>
           <%= link_to t("basics.outline"),
-                      lecture_path(@lecture),
+                      lecture_path(@lecture, outline: true),
                       class: "btn btn-outline-primary btn-sm" %>
         <% else %>
           <p class="mb-0"><%= t("registration.lecture.home.empty_unsubscribed",

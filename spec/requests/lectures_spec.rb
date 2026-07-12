@@ -368,6 +368,15 @@ RSpec.describe("Lectures", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
+      # Without this, the sidebar's "outline" link (which points at lecture_path)
+      # would bounce right back to home and the content page would be
+      # unreachable for every student in an opted-in term.
+      it "still serves the content page when the outline is asked for explicitly" do
+        get lecture_path(lecture, outline: true)
+
+        expect(response).to have_http_status(:success)
+      end
+
       it "leaves lectures of other terms alone" do
         summer = create(:lecture, :released_for_all,
                         term: create(:term, :summer, year: 2026))

@@ -413,6 +413,12 @@ class LecturesController < ApplicationController
     # Nothing is thereby decided about later terms; by then the dashboard is
     # expected to have superseded the question (see architecture/lecture_home.md).
     def home_is_landing_page?
+      # `lecture_path` does double duty: it is both the generic *entry* link
+      # (start page cards, search) and the link to the *outline* (sidebar,
+      # "start here" button). Only the former may be sent to home — otherwise
+      # the content page would be unreachable for everyone in an opted-in term.
+      return false if params[:outline].present?
+
       @lecture.term.present? &&
         Flipper.enabled?(:lecture_home_landing, @lecture.term)
     end
