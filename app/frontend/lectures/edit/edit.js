@@ -19,6 +19,10 @@ function renderMathIn(element) {
   });
 }
 
+function showHomeFormWarning() {
+  $("#lecture-home-warning").show();
+}
+
 /**
  * Live preview for the lecture home intro.
  *
@@ -27,10 +31,6 @@ function renderMathIn(element) {
  * The preview box deliberately carries no `trix-content` class, so it renders
  * math exactly the way the public home page does.
  */
-function showHomeFormWarning() {
-  $("#lecture-home-warning").show();
-}
-
 function initHomeIntroPreview() {
   const editor = document.getElementById(HOME_INTRO_TRIX_ID);
   if (!editor) {
