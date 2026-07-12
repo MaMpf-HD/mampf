@@ -136,6 +136,33 @@ RSpec.describe(GroupTileComponent, type: :component) do
       expect(date_line).to be_present
       expect(rendered.to_html).to include("Apr 10 2026")
     end
+
+    it "labels the date for screen readers and hides the icon from them" do
+      rendered = render_inline(described_class.new(registerable: talk, item: item))
+
+      expect(rendered.css(".bi-calendar-event").first["aria-hidden"]).to eq("true")
+      expect(rendered.css(".visually-hidden").map(&:text))
+        .to include("#{I18n.t("basics.date")}:")
+    end
+  end
+
+  describe "student tile metadata rows" do
+    let(:tutorial) { build_stubbed(:tutorial, location: "INF 205") }
+    let(:rows) do
+      [{ label: "Date", value: "Jul 11 2026", icon: "bi-calendar-event" }]
+    end
+
+    it "labels the value for screen readers and hides the icon from them" do
+      rendered = render_inline(
+        described_class.new(registerable: tutorial, student_tile: true,
+                            tile_metadata_rows: rows)
+      )
+      row = rendered.css(".student-registration-tile-meta > div").first
+
+      expect(row.css("i").first["aria-hidden"]).to eq("true")
+      expect(row.css(".visually-hidden").text).to eq("Date:")
+      expect(row["title"]).to eq("Date")
+    end
   end
 
   describe "#sm_mode" do
