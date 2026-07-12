@@ -74,6 +74,47 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
+  # Staff never satisfy @show_workflow_content, so without this note they would
+  # see nothing where students get the whole registration block — and conclude
+  # the page is empty, even though we link them here from the editor.
+  describe "the staff note about the student registration view" do
+    let!(:campaign) do
+      create(:registration_campaign, :open, :with_items,
+             campaignable: lecture, items_count: 2,
+             description: "Seminarvergabe")
+    end
+
+    it "tells staff what students see below the intro" do
+      sign_in editor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body)
+        .to include('data-testid="lecture-home-staff-workflow-note"')
+      expect(response.body).to include("Seminarvergabe")
+      expect(response.body).to include(edit_lecture_path(lecture, tab: "groups"))
+    end
+
+    it "is not shown to students, who get the real registration block" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body)
+        .not_to include('data-testid="lecture-home-staff-workflow-note"')
+    end
+
+    it "is not shown to staff when the lecture has no campaigns" do
+      without_campaign = create(:lecture, :released_for_all, teacher: editor)
+      sign_in editor
+
+      get lecture_home_path(without_campaign)
+
+      expect(response.body)
+        .not_to include('data-testid="lecture-home-staff-workflow-note"')
+    end
+  end
+
   describe "GET /lectures/:id/home_attachment" do
     it "streams the pdf to anyone who may see the home page" do
       lecture.update!(home_attachment: pdf_upload)

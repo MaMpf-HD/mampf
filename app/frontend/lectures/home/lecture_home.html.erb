@@ -127,6 +127,36 @@
                 rosterized_entries: @rosterized_entries,
                 lecture: @lecture
               } %>
+  <%# Staff can never satisfy @show_workflow_content (they may not register), so
+      where students get the whole registration block they would see nothing at
+      all — and conclude the page is empty. That is especially misleading because
+      the home tab of the editor links them here. Show them what is actually live
+      instead; @campaigns_details is already loaded for them. %>
+  <% elsif can_edit_home && @campaigns_details.any? %>
+    <div class="alert alert-info mt-3"
+         data-testid="lecture-home-staff-workflow-note">
+      <h6 class="mb-2">
+        <%= t("registration.lecture.home.staff_workflow_title") %>
+      </h6>
+
+      <p class="small mb-2">
+        <%= t("registration.lecture.home.staff_workflow_hint") %>
+      </p>
+
+      <ul class="small mb-2">
+        <% @campaigns_details.each do |details| %>
+          <li>
+            <%= student_registration_campaign_title(details.campaign) %>
+            —
+            <%= t("registration.campaign.status.#{details.campaign.status}") %>
+          </li>
+        <% end %>
+      </ul>
+
+      <%= link_to t("registration.lecture.home.staff_workflow_manage"),
+                  edit_lecture_path(@lecture, tab: "groups"),
+                  class: "btn btn-sm btn-outline-primary" %>
+    </div>
   <% end %>
 
   <%# The "start here" card is the system's default intro, so it only makes
