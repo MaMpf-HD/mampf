@@ -48,6 +48,14 @@
 
           <% current_mode = campaign.shared_self_materialization_mode %>
 
+          <%#
+            The current mode is only *labelled* as such; the recommendation is
+            preselected on purpose. Right after finalization the current mode is
+            always "disabled", so preselecting it would turn "Apply" into a
+            no-op — leaving students locked in, which is what this modal exists
+            to prevent.
+          %>
+
           <%= select_tag :self_materialization_mode,
                          options_for_select(
                            self_service_mode_options(current_mode),
