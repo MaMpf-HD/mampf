@@ -154,6 +154,11 @@ RSpec.describe("Lectures::Home", type: :request) do
       get lecture_home_attachment_path(lecture)
 
       expect(response).to redirect_to(lecture_home_path(lecture))
+      # the lecture exists — only the PDF is gone, so do not claim otherwise
+      expect(flash[:alert])
+        .to eq(I18n.t("registration.lecture.home.attachment_missing"))
+      expect(flash[:alert])
+        .not_to eq(I18n.t("registration.lecture.not_found"))
     end
 
     it "denies access for a non-staff user on an unpublished lecture" do

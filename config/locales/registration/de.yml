@@ -541,6 +541,7 @@ de:
           %{outline_label} zu sehen.
         news_indicator: "Neue Updates auf Home"
         attachment_download: "Programm herunterladen (PDF)"
+        attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
         staff_workflow_title: "Was Studierende hier sehen"
         staff_workflow_hint: >-
           Unterhalb Deines Intros sehen Studierende das Anmeldeverfahren und

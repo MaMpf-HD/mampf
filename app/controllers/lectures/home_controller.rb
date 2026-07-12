@@ -50,9 +50,14 @@ module Lectures
     def attachment
       authorize! :index, @lecture
 
+      # The lecture exists — only its PDF is gone (e.g. a stale link after the
+      # teacher removed it), so do not claim the lecture was not found.
       if @lecture.home_attachment.blank?
-        return respond_with_flash(:alert, t("registration.lecture.not_found"),
-                                  fallback_location: lecture_home_path(@lecture))
+        return respond_with_flash(
+          :alert,
+          t("registration.lecture.home.attachment_missing"),
+          fallback_location: lecture_home_path(@lecture)
+        )
       end
 
       send_data(@lecture.home_attachment.read,
