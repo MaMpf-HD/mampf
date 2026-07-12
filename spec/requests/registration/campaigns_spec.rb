@@ -693,6 +693,15 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           .to eq(["disabled"])
       end
 
+      it "rejects a missing mode with a flash error" do
+        patch self_service_registration_campaign_path(campaign),
+              as: :turbo_stream
+
+        assert_flash_error
+        expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+          .to eq(["disabled"])
+      end
+
       it "refuses while the campaign is not completed" do
         draft = create(:registration_campaign, :first_come_first_served,
                        :with_items, campaignable: lecture, items_count: 2)

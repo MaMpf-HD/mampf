@@ -316,8 +316,10 @@ module Registration
     # at once. Only meaningful once the campaign is completed, since the groups
     # are locked while a campaign is still running.
     def apply_self_materialization_mode!(mode)
-      unless Rosters::Rosterable::SELF_MATERIALIZATION_MODES.key?(mode.to_sym)
-        raise(ArgumentError, "unknown self_materialization_mode: #{mode}")
+      # to_s first: a missing mode would otherwise raise NoMethodError instead of
+      # the ArgumentError that callers rescue.
+      unless Rosters::Rosterable::SELF_MATERIALIZATION_MODES.key?(mode.to_s.to_sym)
+        raise(ArgumentError, "unknown self_materialization_mode: #{mode.inspect}")
       end
       return false unless completed?
 

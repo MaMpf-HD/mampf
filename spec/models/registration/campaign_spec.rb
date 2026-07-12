@@ -997,6 +997,14 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect { campaign.apply_self_materialization_mode!("nonsense") }
         .to raise_error(ArgumentError)
     end
+
+    it "rejects a missing mode with an ArgumentError, not a NoMethodError" do
+      campaign = create(:registration_campaign, :completed,
+                        :first_come_first_served, items_count: 2)
+
+      expect { campaign.apply_self_materialization_mode!(nil) }
+        .to raise_error(ArgumentError)
+    end
   end
 
   describe "#shared_self_materialization_mode" do
