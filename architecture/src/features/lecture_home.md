@@ -108,28 +108,120 @@ double-booking one field across two pages and lets each evolve independently.
 
 This also improves the page for the audience that currently sees the thinnest version of it — **prospective students**, for whom the home page is the "shop window" that informs the decision to subscribe or register.
 
-## Landing Logic (companion improvements)
+## Page composition — who sees what
 
-The content enhancement above makes the home page worth landing on. Two small, optional routing corrections address the routing half of the problem without a rewrite:
+The page composes differently for students and staff, because the registration
+block is *personal* to each student:
 
-1. **Never route to an empty content page.** In `check_for_subscribe`, if the content page would be empty (no released content yet), prefer the home page even for subscribers. There is precedent for state-driven landing: `Lecture#organizational_on_top` already flips the content page to organizational-first.
-2. **Surface registration activity to subscribers.** The lecture sidebar already links to Home, so the gap is *discovery*, not reachability. A badge/banner on the content page (or a notification — the notification system already deep-links to `lecture_home`) can point subscribers back to Home when there is a live reason to look.
+| Block | Student | Staff |
+|---|---|---|
+| Intro (`home_intro` + PDF) | yes, when authored | yes, plus an edit pencil |
+| "Your home page is empty" nudge | no | when no intro is authored |
+| Registration block (campaigns + **their own** status: open registrations, assigned group) | yes | **no** — it is per-student |
+| "What students see here" note (live campaigns + link to manage them) | no | when the lecture has campaigns |
+| "Start here" fallback | when the page is genuinely empty | never (the two above cover staff) |
 
-```admonish warning "Scope the 'spot freed up' nudge"
-Spots only meaningfully "free up" in specific states: during an **open
-first-come campaign**, or **after finalization when self-materialization
-(add) is enabled**. The nudge should be conditional on those states, not
-always-on.
+The staff note exists because staff would otherwise see *nothing* where students
+see the whole registration block — and conclude the page is empty, which is
+especially misleading since the editor's Home tab links them here.
+
+```admonish warning "`@show_workflow_content` is a permission flag, not a has-content flag"
+`@show_workflow_content = can?(:create, lecture) || rosterized.any? || self_rosterables.any?`,
+and `student_registration_participant?` is simply *"published lecture and not staff"*. So it is:
+
+- **true for every student**, even when the lecture has no campaign at all, and
+- **false for all staff**, who may never register.
+
+Keying UI off it produced two bugs: the "start here" fallback was unreachable
+for students (and, absurdly, only ever rendered for staff — with
+student-oriented copy), and staff saw nothing where students get the entire
+registration block.
+
+Gate on **actual content** instead — `@campaigns_details.any? || @rosterized_entries.any? || @self_rosterables.any?`.
+Note `@campaigns_details` *is* populated for staff: `UserRegistrations::LectureCampaignsService`
+returns every non-draft campaign and does not filter by user.
 ```
 
-```admonish note "A teacher 'which page is the front' toggle — deliberately omitted"
-A per-lecture flag to swap the default landing is technically easy (again,
-`organizational_on_top` is the precedent) but risks disorienting students when
-flipped mid-semester ("where did my content go?"). Prefer letting the
-**lifecycle** drive it — home during the registration/pre-semester phase,
-content once the student is subscribed *and* content exists — over a manual
-whole-page swap. If teacher control is ever wanted, scope it to "pin a home
-banner," not "swap the landing page."
+## Landing Logic — the home page as the front door
+
+### Why subscription alone is a broken criterion
+
+The original rule was *"subscribed → content, otherwise → home"*. It looks like a
+lifecycle proxy, but it breaks exactly where it matters most:
+
+- A student lands on home, where we offer **both** "subscribe" and "register".
+  They subscribe — and from that moment we route them to the content page, away
+  from the very page where their registration status appears: *"you were assigned
+  to group X"*, *"to be finalized you still need to satisfy …"*, *"your
+  registration was rejected"*. **Deadline-bound, consequential information on a
+  page they no longer visit** — reached via a button we ourselves offered.
+- The same holds for anyone who subscribed **before** a campaign opened: they
+  never see it at all.
+
+And there is no safety net: the sidebar's home badge counts
+`active_notifications + unread_forum_topics` only — **campaign events create no
+notifications whatsoever**, so a subscriber gets *zero* signal about registration
+state. A passive badge would in any case be too weak for information that can
+cost a student their seat.
+
+### The implemented rule
+
+For **opted-in terms**, the home page is the front door for *everyone* —
+subscribers included. Staff still go straight to content (they reach home from
+the editor's Home tab).
+
+```ruby
+# filepath: app/controllers/lectures_controller.rb
+def home_is_landing_page?
+  @lecture.term.present? &&
+    Flipper.enabled?(:lecture_home_landing, @lecture.term)
+end
+```
+
+Terms are opted in as **data**, not code — `Term` responds to `#flipper_id` out
+of the box, so it works directly as a Flipper actor:
+
+```ruby
+Flipper.enable_actor(:lecture_home_landing, Term.find_by(year: 2026, season: "WS"))
+Flipper.disable(:lecture_home_landing)   # kill switch — clears all gates, incl. actors
+```
+
+```admonish warning "Do NOT express this relative to `Term.active`"
+The obvious-looking rules (*"the active term"*, *"the active or next term"*) are
+all wrong, because **the cut is a one-off event (the MÜSLI rollout), not a
+seasonal pattern**:
+
+- **Today** (`Term.active` = SS 2026): WS 2026/27 is the *next* term and must land
+  on home — while SS 2026, the *active* one, must **not** (nothing MÜSLI-related
+  happens there; its content page stays the entry point).
+- **From 1 Oct 2026**: WS 2026/27 becomes the *active* term and must **still**
+  land on home (lectures only start on 15 Oct, registrations are still running,
+  and the home page stays the hub during the term).
+
+So the rule must say *"next, not active"* today and *"active"* later — no
+criterion relative to `Term.active` can do both. Naming the terms explicitly is
+not a hack; it is the only formulation that expresses the actual intent.
+```
+
+Nothing is thereby decided about later terms (SS 2027 registrations open in
+Feb 2027). By then the [Student Dashboard](student_dashboard.md) is expected to
+have superseded the question — which is precisely why no general rule is baked
+into the code.
+
+```admonish note "Why a feature flag, and why the landing subsumes the alternatives"
+The flag makes the change **revertible in seconds, without a deploy** — the
+platform is in flux and this is an interim measure.
+
+It also makes the cheaper fixes unnecessary *for now*: if students land on home
+anyway, **the landing is the signal**. That single change covers the missed
+campaign, the missed allocation status *and* the missed eligibility deadline —
+which otherwise would have required campaign notifications, state-based routing
+and a banner. Those become necessary again only once home stops being the
+default entry (i.e. with the dashboard).
+
+Still open, deliberately: **deep links** to sub-pages (`/lectures/:id/script`, …)
+bypass the redirect. Once deadlines live on the home page, a banner on the
+lecture sub-pages will be worth adding.
 ```
 
 ## Relationship to the Student Dashboard

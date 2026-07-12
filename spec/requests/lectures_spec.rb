@@ -339,6 +339,55 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  # The home page is the front door only for terms that were explicitly opted
+  # in (Flipper actor gate on Term), so nothing is decided for later terms.
+  describe "GET /lectures/:id with the lecture_home_landing flag" do
+    let(:user) { create(:confirmed_user) }
+    let(:term) { create(:term, :winter, year: 2026) }
+    let(:lecture) { create(:lecture, :released_for_all, term: term) }
+
+    before { create(:lecture_user_join, user: user, lecture: lecture) }
+
+    after { Flipper.disable(:lecture_home_landing) }
+
+    context "when the lecture's term is opted in" do
+      before { Flipper.enable_actor(:lecture_home_landing, term) }
+
+      it "sends even subscribers to the lecture home page" do
+        get lecture_path(lecture)
+
+        expect(response).to redirect_to(lecture_home_path(lecture))
+      end
+
+      it "still sends staff straight to the content page" do
+        staff_lecture = create(:lecture, :released_for_all,
+                               term: term, teacher: user)
+
+        get lecture_path(staff_lecture)
+
+        expect(response).to have_http_status(:success)
+      end
+
+      it "leaves lectures of other terms alone" do
+        summer = create(:lecture, :released_for_all,
+                        term: create(:term, :summer, year: 2026))
+        create(:lecture_user_join, user: user, lecture: summer)
+
+        get lecture_path(summer)
+
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "when the term is not opted in" do
+      it "keeps sending subscribers to the content page" do
+        get lecture_path(lecture)
+
+        expect(response).to have_http_status(:success)
+      end
+    end
+  end
+
   describe "PATCH /lectures/:id (home page content)" do
     let(:lecture) { create(:lecture, teacher: user) }
 
