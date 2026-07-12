@@ -377,6 +377,18 @@ RSpec.describe("Lectures", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
+      # The legacy /outline URL redirects to the bare lecture path, which would
+      # then be bounced on to home — losing the explicit outline intent of any
+      # old bookmark still pointing at it.
+      it "keeps the outline intent on the legacy /outline url" do
+        get "/lectures/#{lecture.id}/outline"
+
+        expect(response).to redirect_to("/lectures/#{lecture.id}?outline=true")
+
+        follow_redirect!
+        expect(response).to have_http_status(:success)
+      end
+
       it "leaves lectures of other terms alone" do
         summer = create(:lecture, :released_for_all,
                         term: create(:term, :summer, year: 2026))

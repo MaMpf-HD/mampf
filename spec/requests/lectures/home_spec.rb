@@ -30,6 +30,28 @@ RSpec.describe("Lectures::Home", type: :request) do
       expect(response.body).to include('data-testid="lecture-home-intro-empty"')
     end
 
+    # Blank Trix wrapper markup must not masquerade as an authored intro,
+    # otherwise the nudge (staff) and the fallback (students) both vanish behind
+    # an empty card.
+    it "still nudges staff when the intro is only blank trix markup" do
+      lecture.update!(home_intro: "<div><br></div>")
+      sign_in editor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-intro-empty"')
+      expect(response.body).not_to include('data-testid="lecture-home-intro"')
+    end
+
+    it "still shows students the fallback when the intro is only blank markup" do
+      lecture.update!(home_intro: "<div><br></div>")
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-fallback-card"')
+    end
+
     it "does not show the staff empty-state to a plain student" do
       sign_in student
 

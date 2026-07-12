@@ -31,6 +31,22 @@ RSpec.describe(Lecture, type: :model) do
         lecture.home_attachment = pdf_upload
         expect(lecture.home_content?).to be(true)
       end
+
+      # Trix leaves wrapper markup behind for an editor that was emptied again.
+      # Counting that as content would give students an empty card and rob staff
+      # of the "add an intro" nudge.
+      it "is false for blank trix wrapper markup" do
+        ["<div><br></div>", "<br>", "<div></div>", "&nbsp;"].each do |blank|
+          lecture.home_intro = blank
+          expect(lecture.home_content?)
+            .to(be(false), "expected #{blank} to count as blank")
+        end
+      end
+
+      it "is still true for real text, latex included" do
+        lecture.home_intro = "<div>Welcome, we study $x^2$</div>"
+        expect(lecture.home_content?).to be(true)
+      end
     end
 
     describe "#home_attachment_filename" do

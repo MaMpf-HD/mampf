@@ -540,9 +540,22 @@ class Lecture < ApplicationRecord
 
   # the next methods concern the teacher-authored lecture home page
 
+  # Trix keeps wrapper markup ("<div><br></div>") around for an editor that the
+  # teacher emptied again, so a plain #present? would count a blank intro as
+  # content: students would get an empty card, staff would lose the "add an
+  # intro" nudge, and the "start here" fallback would be suppressed. Ask for
+  # actual text instead (LaTeX survives — it is plain text between $...$).
+  def home_intro_present?
+    ActionController::Base.helpers
+                          .strip_tags(home_intro.to_s)
+                          .gsub("&nbsp;", " ")
+                          .strip
+                          .present?
+  end
+
   # Does the teacher want anything shown at the top of the home page?
   def home_content?
-    home_intro.present? || home_attachment.present?
+    home_intro_present? || home_attachment.present?
   end
 
   def home_attachment_filename

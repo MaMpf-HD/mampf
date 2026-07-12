@@ -52,7 +52,9 @@
           <% end %>
         <% end %>
 
-        <% if @lecture.home_intro.present? %>
+        <%# home_intro_present?, not .present?: blank Trix wrapper markup
+            ("<div><br></div>") would otherwise render as an empty box. %>
+        <% if @lecture.home_intro_present? %>
           <div class="lecture-home-intro-text">
             <%= sanitize(@lecture.home_intro) %>
           </div>
