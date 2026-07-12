@@ -3,7 +3,6 @@ class Lecture < ApplicationRecord
   include ApplicationHelper
   include Registration::Campaignable
   include Rosters::Rosterable
-  # optional PDF program shown on the lecture home page (see #home_intro)
   include LectureHomeAttachmentUploader[:home_attachment]
 
   belongs_to :course
@@ -538,13 +537,8 @@ class Lecture < ApplicationRecord
     false
   end
 
-  # the next methods concern the teacher-authored lecture home page
-
-  # Trix keeps wrapper markup ("<div><br></div>") around for an editor that the
-  # teacher emptied again, so a plain #present? would count a blank intro as
-  # content: students would get an empty card, staff would lose the "add an
-  # intro" nudge, and the "start here" fallback would be suppressed. Ask for
-  # actual text instead (LaTeX survives — it is plain text between $...$).
+  # Trix leaves wrapper markup ("<div><br></div>") behind for an editor that was
+  # emptied again, which a plain #present? would count as content.
   def home_intro_present?
     ActionController::Base.helpers
                           .strip_tags(home_intro.to_s)
@@ -553,7 +547,6 @@ class Lecture < ApplicationRecord
                           .present?
   end
 
-  # Does the teacher want anything shown at the top of the home page?
   def home_content?
     home_intro_present? || home_attachment.present?
   end

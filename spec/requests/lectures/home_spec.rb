@@ -30,9 +30,6 @@ RSpec.describe("Lectures::Home", type: :request) do
       expect(response.body).to include('data-testid="lecture-home-intro-empty"')
     end
 
-    # Blank Trix wrapper markup must not masquerade as an authored intro,
-    # otherwise the nudge (staff) and the fallback (students) both vanish behind
-    # an empty card.
     it "still nudges staff when the intro is only blank trix markup" do
       lecture.update!(home_intro: "<div><br></div>")
       sign_in editor
@@ -62,8 +59,6 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
-  # The "start here" card is the system's default intro, so it must stand down
-  # as soon as the page is not actually empty for the viewer.
   describe "the \"start here\" fallback card" do
     it "shows when the page is genuinely empty for a student" do
       sign_in student
@@ -96,9 +91,6 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
-  # Staff never satisfy @show_workflow_content, so without this note they would
-  # see nothing where students get the whole registration block — and conclude
-  # the page is empty, even though we link them here from the editor.
   describe "the staff note about the student registration view" do
     let!(:campaign) do
       create(:registration_campaign, :open, :with_items,
@@ -154,7 +146,6 @@ RSpec.describe("Lectures::Home", type: :request) do
       get lecture_home_attachment_path(lecture)
 
       expect(response).to redirect_to(lecture_home_path(lecture))
-      # the lecture exists — only the PDF is gone, so do not claim otherwise
       expect(flash[:alert])
         .to eq(I18n.t("registration.lecture.home.attachment_missing"))
       expect(flash[:alert])

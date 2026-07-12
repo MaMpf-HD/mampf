@@ -1,6 +1,3 @@
-<%# Teacher-authored content for the lecture home page: a welcome/intro text
-    and an optional PDF program. Rendered on the home page above the
-    registration workflow (see lectures/home/lecture_home). %>
 <h3 class="lecture-pane-header">
   <%= t("admin.lecture.home_page") %>
 </h3>
@@ -22,9 +19,8 @@
                   class: "form-label" %>
       <%= helpdesk(t("admin.lecture.info.home_intro"), false) %>
 
-      <%# The wrapper scopes the CSS rule that hides Trix's file-attach button
-          (see lectures.scss): attachments are only wired up for vignettes, so
-          uploading here would silently do nothing. Use the PDF field below. %>
+      <%# The wrapper scopes the CSS rule hiding Trix's file-attach button,
+          see lectures.scss %>
       <div class="lecture-home-trix">
         <%= f.trix_editor :home_intro,
                           id: "lecture-home-intro-trix",
@@ -34,8 +30,6 @@
     </div>
   </div>
 
-  <%# Trix shows raw $...$ source (it sits in KaTeX's ignoredClasses), so the
-      live preview is what lets the teacher see the rendered formulas. %>
   <div class="row mt-2">
     <div class="col-12">
       <div class="form-text mb-1"><%= t("basics.preview") %></div>
@@ -59,9 +53,6 @@
                       target: "_blank",
                       rel: "noopener" %>
 
-          <%# A bin toggle rather than a checkbox: pressing it reveals the save
-              button (unsaved-changes warning), saving then drops the PDF.
-              Still Shrine's remove_home_attachment flag underneath. %>
           <%= f.check_box :remove_home_attachment, class: "btn-check" %>
           <%= f.label :remove_home_attachment,
                       class: "btn btn-sm btn-outline-danger",
@@ -81,9 +72,7 @@
     </div>
   </div>
 
-  <%# Hidden until something actually changes (see lectures.scss), so the save
-      button only shows up when there is something to save — same pattern as
-      the organizational form. %>
+  <%# Holds the save button, so it only appears once something changed %>
   <div class="row mt-3">
     <div class="col-12 text-center">
       <div id="lecture-home-warning">

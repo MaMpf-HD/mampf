@@ -381,12 +381,9 @@ class LecturesController < ApplicationController
     end
 
     def check_for_subscribe
-      # Staff bypass both gates: they need the content editor, and they reach
-      # the home page from the lecture's "Home" edit tab anyway.
+      # Staff bypass the subscription gate for content.
       return if current_user.can_edit?(@lecture)
 
-      # For opted-in terms the home page is the front door for everyone,
-      # subscribers included (see #home_is_landing_page?).
       return redirect_to(lecture_home_path(@lecture)) if home_is_landing_page?
 
       return if @lecture.in?(current_user.lectures)
@@ -397,26 +394,14 @@ class LecturesController < ApplicationController
       redirect_to lecture_home_path(@lecture)
     end
 
-    # Is the lecture home page the landing page for this lecture?
-    #
-    # Deliberately *not* expressed relative to Term.active. The cut is a one-off
-    # event (the MÜSLI rollout), not a seasonal pattern: WS 2026/27 is the *next*
-    # term today and becomes the *active* one on 1 Oct 2026, and it must land on
-    # home in both cases — while SS 2026 must never. No rule relative to the
-    # active term can do that, so terms are opted in explicitly, as data, via a
-    # Flipper actor gate (Term responds to #flipper_id out of the box):
-    #
-    #   Flipper.enable_actor(:lecture_home_landing,
-    #                        Term.find_by(year: 2026, season: "WS"))
-    #   Flipper.disable(:lecture_home_landing)  # kill switch: clears all gates
-    #
-    # Nothing is thereby decided about later terms; by then the dashboard is
-    # expected to have superseded the question (see architecture/lecture_home.md).
+    # Terms are opted in as data, via a Flipper actor gate on Term. This must NOT
+    # be expressed relative to Term.active: WS 2026/27 is the *next* term today
+    # and the *active* one from 1 Oct 2026, and has to land on home in both cases
+    # — while SS 2026 never may.
     def home_is_landing_page?
-      # `lecture_path` does double duty: it is both the generic *entry* link
-      # (start page cards, search) and the link to the *outline* (sidebar,
-      # "start here" button). Only the former may be sent to home — otherwise
-      # the content page would be unreachable for everyone in an opted-in term.
+      # lecture_path is both the entry link (cards, search) and the outline link
+      # (sidebar, "start here"). Redirecting the latter, too, would make the
+      # content page unreachable.
       return false if params[:outline].present?
 
       @lecture.term.present? &&

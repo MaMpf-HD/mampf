@@ -32,9 +32,6 @@ RSpec.describe(Lecture, type: :model) do
         expect(lecture.home_content?).to be(true)
       end
 
-      # Trix leaves wrapper markup behind for an editor that was emptied again.
-      # Counting that as content would give students an empty card and rob staff
-      # of the "add an intro" nudge.
       it "is false for blank trix wrapper markup" do
         ["<div><br></div>", "<br>", "<div></div>", "&nbsp;"].each do |blank|
           lecture.home_intro = blank

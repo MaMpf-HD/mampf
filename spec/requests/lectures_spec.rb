@@ -339,8 +339,6 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
-  # The home page is the front door only for terms that were explicitly opted
-  # in (Flipper actor gate on Term), so nothing is decided for later terms.
   describe "GET /lectures/:id with the lecture_home_landing flag" do
     let(:user) { create(:confirmed_user) }
     let(:term) { create(:term, :winter, year: 2026) }
@@ -368,18 +366,12 @@ RSpec.describe("Lectures", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
-      # Without this, the sidebar's "outline" link (which points at lecture_path)
-      # would bounce right back to home and the content page would be
-      # unreachable for every student in an opted-in term.
       it "still serves the content page when the outline is asked for explicitly" do
         get lecture_path(lecture, outline: true)
 
         expect(response).to have_http_status(:success)
       end
 
-      # The legacy /outline URL redirects to the bare lecture path, which would
-      # then be bounced on to home — losing the explicit outline intent of any
-      # old bookmark still pointing at it.
       it "keeps the outline intent on the legacy /outline url" do
         get "/lectures/#{lecture.id}/outline"
 
@@ -423,11 +415,8 @@ RSpec.describe("Lectures", type: :request) do
       get edit_lecture_path(lecture, tab: "home")
 
       expect(response.body).to include("lecture-home-intro-trix")
-      # preview box the KaTeX live preview renders into
       expect(response.body).to include('id="lecture-home-intro-preview"')
-      # wrapper that scopes hiding Trix's (non-functional) file-attach button
       expect(response.body).to include("lecture-home-trix")
-      # save button lives inside the unsaved-changes warning
       expect(response.body).to include('id="lecture-home-warning"')
     end
 

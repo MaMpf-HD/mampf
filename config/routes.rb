@@ -292,9 +292,8 @@ Rails.application.routes.draw do
       as: "lecture_home_attachment",
       defaults: { project: "home" }
 
-  # Legacy URL. It has to carry the outline intent along, otherwise it lands on a
-  # bare /lectures/:id, which is bounced on to the home page in opted-in terms
-  # (see LecturesController#home_is_landing_page?).
+  # Legacy URL. It has to carry the outline intent along, see
+  # LecturesController#home_is_landing_page?.
   get "lectures/:id/outline",
       to: redirect("/lectures/%{id}?outline=true")
 

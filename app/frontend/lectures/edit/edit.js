@@ -23,14 +23,8 @@ function showHomeFormWarning() {
   $("#lecture-home-warning").show();
 }
 
-/**
- * Live preview for the lecture home intro.
- *
- * Trix sits in KaTeX's `ignoredClasses`, so the editor itself shows the raw
- * `$...$` source. Without this preview the teacher would write formulas blind.
- * The preview box deliberately carries no `trix-content` class, so it renders
- * math exactly the way the public home page does.
- */
+// Trix sits in KaTeX's `ignoredClasses` and shows the raw `$...$` source, hence
+// the preview. It must not carry a `trix-content` class, or KaTeX skips it too.
 function initHomeIntroPreview() {
   const editor = document.getElementById(HOME_INTRO_TRIX_ID);
   if (!editor) {
@@ -50,31 +44,20 @@ function initHomeIntroPreview() {
   update();
   editor.addEventListener("trix-initialize", update);
 
-  // A real edit: refresh the preview and reveal the save button. Trix loading
-  // the stored content does not fire this — the same assumption the
-  // organizational form makes for #lecture-concept-trix.
+  // Loading the stored content does not fire this (same assumption as the
+  // organizational form), so it really is an edit.
   editor.addEventListener("trix-change", () => {
     update();
     showHomeFormWarning();
   });
 }
 
-/**
- * Reveal the unsaved-changes warning (which also carries the save button) as
- * soon as anything in the home form changes: the PDF field or the bin toggle.
- * The Trix editor is wired separately above. Mirrors the organizational form.
- */
 function initHomeFormWarning() {
   $("#lecture-home-form :input").on("change", showHomeFormWarning);
   $("#cancel-lecture-home").on("click", () => location.reload());
 }
 
-/**
- * Trix attachments are only wired up for vignette questionnaires, so a file
- * dropped into the home intro would never be uploaded. The toolbar button is
- * hidden via CSS (lectures.scss); this closes the drag & drop and paste paths
- * too. Scoped to this one editor so that vignettes keep working.
- */
+// Hiding the toolbar button (lectures.scss) leaves drag & drop and paste open.
 document.addEventListener("trix-file-accept", (event) => {
   if (event.target?.id === HOME_INTRO_TRIX_ID) {
     event.preventDefault();
