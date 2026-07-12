@@ -342,6 +342,36 @@ RSpec.describe("Lectures", type: :request) do
   describe "PATCH /lectures/:id (home page content)" do
     let(:lecture) { create(:lecture, teacher: user) }
 
+    def pdf_upload
+      Rack::Test::UploadedFile.new(
+        StringIO.new("%PDF-1.4 demo"), "application/pdf",
+        original_filename: "program.pdf"
+      )
+    end
+
+    it "renders the home tab with the katex preview and the attach-free trix" do
+      get edit_lecture_path(lecture, tab: "home")
+
+      expect(response.body).to include("lecture-home-intro-trix")
+      # preview box the KaTeX live preview renders into
+      expect(response.body).to include('id="lecture-home-intro-preview"')
+      # wrapper that scopes hiding Trix's (non-functional) file-attach button
+      expect(response.body).to include("lecture-home-trix")
+      # save button lives inside the unsaved-changes warning
+      expect(response.body).to include('id="lecture-home-warning"')
+    end
+
+    it "offers a bin toggle for dropping an attached pdf" do
+      lecture.update!(home_attachment: pdf_upload)
+
+      get edit_lecture_path(lecture, tab: "home")
+
+      expect(response.body).to include("program.pdf")
+      expect(response.body).to include("remove_home_attachment")
+      expect(response.body).to include("btn-check")
+      expect(response.body).to include("bi-trash")
+    end
+
     it "saves the home intro and returns to the home tab" do
       patch lecture_path(lecture),
             params: { lecture: { home_intro: "<div>Welcome</div>" },
@@ -352,15 +382,19 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "stores a pdf program" do
-      file = Rack::Test::UploadedFile.new(
-        StringIO.new("%PDF-1.4 demo"), "application/pdf",
-        original_filename: "program.pdf"
-      )
-
       patch lecture_path(lecture),
-            params: { lecture: { home_attachment: file }, subpage: "home" }
+            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" }
 
       expect(lecture.reload.home_attachment_filename).to eq("program.pdf")
+    end
+
+    it "drops the pdf when the bin toggle is submitted" do
+      lecture.update!(home_attachment: pdf_upload)
+
+      patch lecture_path(lecture),
+            params: { lecture: { remove_home_attachment: "1" }, subpage: "home" }
+
+      expect(lecture.reload.home_attachment).to be_nil
     end
   end
 end

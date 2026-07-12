@@ -21,9 +21,27 @@
                   t("admin.lecture.home_intro_label"),
                   class: "form-label" %>
       <%= helpdesk(t("admin.lecture.info.home_intro"), false) %>
-      <%= f.trix_editor :home_intro,
-                        id: "lecture-home-intro-trix",
-                        data: { content: lecture.home_intro } %>
+
+      <%# The wrapper scopes the CSS rule that hides Trix's file-attach button
+          (see lectures.scss): attachments are only wired up for vignettes, so
+          uploading here would silently do nothing. Use the PDF field below. %>
+      <div class="lecture-home-trix">
+        <%= f.trix_editor :home_intro,
+                          id: "lecture-home-intro-trix",
+                          data: { content: lecture.home_intro,
+                                  preview: "lecture-home-intro-preview" } %>
+      </div>
+    </div>
+  </div>
+
+  <%# Trix shows raw $...$ source (it sits in KaTeX's ignoredClasses), so the
+      live preview is what lets the teacher see the rendered formulas. %>
+  <div class="row mt-2">
+    <div class="col-12">
+      <div class="form-text mb-1"><%= t("basics.preview") %></div>
+      <div class="alert alert-dark bg-mdb-color-lighten-6"
+           id="lecture-home-intro-preview"
+           data-testid="lecture-home-intro-preview"></div>
     </div>
   </div>
 
@@ -34,19 +52,23 @@
                   class: "form-label" %>
 
       <% if lecture.home_attachment.present? %>
-        <div class="mb-2">
+        <div class="mb-2 d-flex align-items-center gap-2">
           <i class="fas fa-paperclip" aria-hidden="true"></i>
           <%= link_to lecture.home_attachment_filename,
                       lecture_home_attachment_path(lecture),
                       target: "_blank",
                       rel: "noopener" %>
-          <div class="form-check">
-            <%= f.check_box :remove_home_attachment,
-                            class: "form-check-input" %>
-            <%= f.label :remove_home_attachment,
-                        t("admin.lecture.home_attachment_remove"),
-                        class: "form-check-label" %>
-          </div>
+
+          <%# A bin toggle rather than a checkbox: pressing it reveals the save
+              button (unsaved-changes warning), saving then drops the PDF.
+              Still Shrine's remove_home_attachment flag underneath. %>
+          <%= f.check_box :remove_home_attachment, class: "btn-check" %>
+          <%= f.label :remove_home_attachment,
+                      class: "btn btn-sm btn-outline-danger",
+                      title: t("admin.lecture.home_attachment_remove"),
+                      "aria-label": t("admin.lecture.home_attachment_remove") do %>
+            <i class="bi bi-trash" aria-hidden="true"></i>
+          <% end %>
         </div>
       <% end %>
 
@@ -59,10 +81,19 @@
     </div>
   </div>
 
+  <%# Hidden until something actually changes (see lectures.scss), so the save
+      button only shows up when there is something to save — same pattern as
+      the organizational form. %>
   <div class="row mt-3">
     <div class="col-12 text-center">
-      <%= hidden_field_tag :subpage, "home" %>
-      <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
+      <div id="lecture-home-warning">
+        <%= t("warnings.unsaved_changes") %>
+        <%= hidden_field_tag :subpage, "home" %>
+        <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
+        <button type="button" id="cancel-lecture-home" class="btn btn-secondary">
+          <%= t("buttons.cancel") %>
+        </button>
+      </div>
     </div>
   </div>
 <% end %>

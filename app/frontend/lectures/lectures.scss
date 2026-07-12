@@ -23,6 +23,13 @@
   display: none;
 }
 
+// Holds the save/cancel buttons too, so they only appear once the home form
+// has actually changed (shown from lectures/edit/edit.js).
+#lecture-home-warning {
+  color: red;
+  display: none;
+}
+
 #show-media-button {
   display: none;
 }
@@ -139,4 +146,12 @@ h4.lecture-pane-subheader {
   max-height: 17em;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+// Trix's file-attach button is a dead end for the lecture home intro: uploads
+// are only wired up for vignette questionnaires, so attaching a file here
+// would silently do nothing. Scoped to this editor on purpose — vignettes rely
+// on the button. Drag & drop and paste are blocked in lectures/edit/edit.js.
+.lecture-home-trix trix-toolbar .trix-button-group--file-tools {
+  display: none;
 }

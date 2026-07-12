@@ -40,6 +40,40 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
+  # The "start here" card is the system's default intro, so it must stand down
+  # as soon as the page is not actually empty for the viewer.
+  describe "the \"start here\" fallback card" do
+    it "shows when the page is genuinely empty for a student" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body)
+        .to include('data-testid="lecture-home-fallback-card"')
+    end
+
+    it "stands down once the teacher has authored an intro" do
+      lecture.update!(home_intro: "<div>Welcome to the seminar</div>")
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body)
+        .not_to include('data-testid="lecture-home-fallback-card"')
+    end
+
+    it "stands down for staff, who get the nudge instead" do
+      sign_in editor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body)
+        .not_to include('data-testid="lecture-home-fallback-card"')
+      expect(response.body)
+        .to include('data-testid="lecture-home-intro-empty"')
+    end
+  end
+
   describe "GET /lectures/:id/home_attachment" do
     it "streams the pdf to anyone who may see the home page" do
       lecture.update!(home_attachment: pdf_upload)
