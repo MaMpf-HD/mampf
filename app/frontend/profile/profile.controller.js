@@ -36,8 +36,7 @@ export default class extends Controller {
   }
 
   moveCourseCardsIntoProgram(event) {
-    const program = event.currentTarget.dataset.program;
-    const programCollapse = this.element.querySelector(`#program-${program}-collapse`);
+    const programCollapse = event.currentTarget;
     for (const placeholder of programCollapse.querySelectorAll(".coursePlaceholder")) {
       const course = placeholder.dataset.course;
       const courseCard = this.element.querySelector(`#course-card-${course}`);
