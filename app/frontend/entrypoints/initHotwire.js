@@ -80,6 +80,12 @@ window.Stimulus.register("capacity-editor", CapacityEditorController);
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 
+import ProfileController from "~/profile/profile.controller.js";
+window.Stimulus.register("profile", ProfileController);
+
+import LectureHighlightsController from "~/lectures/lecture_highlights.controller.js";
+window.Stimulus.register("lecture-highlights", LectureHighlightsController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

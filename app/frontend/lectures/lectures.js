@@ -5,62 +5,6 @@ function disableExceptOrganizational() {
   $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
 };
 
-$(document).on("mouseenter", '[id^="lecture-medium_"]', function () {
-  if (this.dataset.type === "Lesson") {
-    const lessonId = this.dataset.id;
-    $('.lecture-lesson[data-id="' + lessonId + '"]')
-      .removeClass("bg-secondary")
-      .addClass("bg-info");
-  }
-  const tags = $(this).data("tags");
-  for (const t of tags) {
-    $('.lecture-tag[data-id="' + t + '"]').removeClass("bg-light")
-      .addClass("bg-warning");
-  }
-});
-
-$(document).on("mouseleave", '[id^="lecture-medium_"]', function () {
-  if (this.dataset.type === "Lesson") {
-    const lessonId = this.dataset.id;
-    $('.lecture-lesson[data-id="' + lessonId + '"]').removeClass("bg-info")
-      .addClass("bg-secondary");
-  }
-  const tags = $(this).data("tags");
-  for (const t of tags) {
-    $('.lecture-tag[data-id="' + t + '"]').removeClass("bg-warning");
-  }
-});
-
-$(document).on("mouseenter", '[id^="lecture-lesson_"]', function () {
-  const tags = $(this).data("tags");
-  for (const t of tags) {
-    $('.lecture-tag[data-id="' + t + '"]').addClass("bg-warning");
-  }
-});
-
-$(document).on("mouseleave", '[id^="lecture-lesson_"]', function () {
-  const tags = $(this).data("tags");
-  for (const t of tags) {
-    $('.lecture-tag[data-id="' + t + '"]').removeClass("bg-warning");
-  }
-});
-
-$(document).on("mouseenter", '[id^="lecture-tag_"]', function () {
-  const lessons = $(this).data("lessons");
-  for (const l of lessons) {
-    $('.lecture-lesson[data-id="' + l + '"]').removeClass("bg-secondary")
-      .addClass("bg-info");
-  }
-});
-
-$(document).on("mouseleave", '[id^="lecture-tag_"]', function () {
-  const lessons = $(this).data("lessons");
-  for (const l of lessons) {
-    $('.lecture-lesson[data-id="' + l + '"]').removeClass("bg-info")
-      .addClass("bg-secondary");
-  }
-});
-
 $(document).on("turbo:load", function () {
   $("#delete-forum").on("click", () => {
     const sureToDeleteMsg = $("#delete-forum").data("sureToDelete");
@@ -167,10 +111,6 @@ $(document).on("turbo:load", function () {
     $("#lecture-media-card").show();
     $("#show-media-button").hide();
   });
-
-  // Lesson/tag/medium hover-highlight handlers are delegated on `document` at the
-  // top of this file (outside this turbo:load callback) so they survive Turbo
-  // navigations. Do not re-add them here.
 
   const userModalContent = document.getElementById("lectureUserModalContent");
   if (userModalContent && (userModalContent.dataset.filled === "false")) {
