@@ -321,7 +321,7 @@ en:
           <strong>%{lecture_title}</strong>.
         </p>
         <p>
-          This grant you access to the lecture %{lecture_title} and its materials.
+          This grants you access to the lecture %{lecture_title} and its materials.
         </p>
       roster_added_to_lecture_email_subject: 'Added to lecture %{lecture_title}'
       roster_removed_from_group_email_body: |
