@@ -58,12 +58,16 @@ module Assessment
     def update_status_if_all_scored!
       return if absent? || exempt?
 
-      if pending? && !task_points.exists?(points: nil)
+      task_ids = assessment.tasks.pluck(:id)
+      points_by_task_id = task_points.pluck(:task_id, :points).to_h
+      missing_scored_tasks = task_ids.any? { |task_id| points_by_task_id[task_id].nil? }
+
+      if pending? && !missing_scored_tasks
         update!(status: :reviewed)
         return
       end
 
-      return unless reviewed? && task_points.exists?(points: nil)
+      return unless reviewed? && missing_scored_tasks
 
       update!(status: :pending)
     end
