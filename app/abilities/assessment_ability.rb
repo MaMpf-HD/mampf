@@ -12,5 +12,10 @@ class AssessmentAbility
       lecture = assessment.assessable&.lecture
       lecture.present? && user.can_edit?(lecture)
     end
+
+    can :grade, Lecture do |lecture|
+      user.admin? ||
+        user.can_grade_in_scope?(lecture)
+    end
   end
 end

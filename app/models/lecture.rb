@@ -531,6 +531,10 @@ class Lecture < ApplicationRecord
     ([teacher] + editors.to_a + course.editors).to_a
   end
 
+  def graders_with_inheritance
+    [teacher]
+  end
+
   # the next methods provide user related information about the lecture
 
   def edited_by?(user)

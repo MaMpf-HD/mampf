@@ -70,6 +70,10 @@ class Tutorial < ApplicationRecord
     end
   end
 
+  def graders_with_inheritance
+    (tutors + lecture.graders_with_inheritance).uniq
+  end
+
   private
 
     def enforce_lecture_uniqueness!(user_ids)
