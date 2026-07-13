@@ -124,9 +124,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "sends an email when a user is successfully added to tutorial" do
-        expect do
-          post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        perform_enqueued_jobs do
+          expect do
+            post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
 
         email = ActionMailer::Base.deliveries.last
         expect(email.subject).to eq(
@@ -240,9 +242,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "sends an email when a user is successfully removed from tutorial" do
-        expect do
-          delete(remove_member_tutorial_path(tutorial, user_id: member.id))
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        perform_enqueued_jobs do
+          expect do
+            delete(remove_member_tutorial_path(tutorial, user_id: member.id))
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
 
         email = ActionMailer::Base.deliveries.last
         expect(email.subject).to eq(
@@ -329,10 +333,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "sends an email when a user is successfully moved" do
-        expect do
-          patch(move_member_tutorial_path(source, user_id: member.id),
-                params: { target_id: target.id })
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        perform_enqueued_jobs do
+          expect do
+            patch(move_member_tutorial_path(source, user_id: member.id),
+                  params: { target_id: target.id })
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
 
         email = ActionMailer::Base.deliveries.last
 
@@ -460,9 +466,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "sends an email when a user is successfully removed" do
-        expect do
-          delete(remove_member_lecture_path(lecture, user_id: member.id))
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        perform_enqueued_jobs do
+          expect do
+            delete(remove_member_lecture_path(lecture, user_id: member.id))
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
 
         email = ActionMailer::Base.deliveries.last
 
@@ -521,10 +529,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "sends an email when a user is successfully moved" do
-        expect do
-          patch(move_member_lecture_path(lecture, user_id: member.id),
-                params: { target_id: target_tutorial.id, target_type: "Tutorial" })
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        perform_enqueued_jobs do
+          expect do
+            patch(move_member_lecture_path(lecture, user_id: member.id),
+                  params: { target_id: target_tutorial.id, target_type: "Tutorial" })
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
 
         email = ActionMailer::Base.deliveries.last
 
@@ -639,9 +649,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "sends an email when a user is successfully added to the cohort" do
-        expect do
-          post(add_member_cohort_path(cohort), params: { email: new_student.email })
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        perform_enqueued_jobs do
+          expect do
+            post(add_member_cohort_path(cohort), params: { email: new_student.email })
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
 
         email = ActionMailer::Base.deliveries.last
         expect(email.subject).to eq(
@@ -701,9 +713,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "sends an email when a user is successfully removed" do
-        expect do
-          delete(remove_member_cohort_path(cohort, user_id: member.id))
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        perform_enqueued_jobs do
+          expect do
+            delete(remove_member_cohort_path(cohort, user_id: member.id))
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
 
         email = ActionMailer::Base.deliveries.last
 
@@ -749,10 +763,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "sends an email when a user is successfully moved" do
-        expect do
-          patch(move_member_cohort_path(source, user_id: member.id),
-                params: { target_id: target.id })
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        perform_enqueued_jobs do
+          expect do
+            patch(move_member_cohort_path(source, user_id: member.id),
+                  params: { target_id: target.id })
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
 
         email = ActionMailer::Base.deliveries.last
         expect(email.subject).to eq(

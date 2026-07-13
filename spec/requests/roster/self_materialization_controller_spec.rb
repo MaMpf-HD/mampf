@@ -185,16 +185,12 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
   end
 
   context "when self-add succeeds and should send email" do
-    before do
-      allow_any_instance_of(Rosters::SelfMaterializationService)
-        .to receive(:self_add!)
-      allow(RosterMailer).to receive_message_chain(:self_added, :deliver_now)
-    end
-
     it "sends an email" do
-      expect do
-        post(self_add_tutorial_path(tutorial), as: :turbo_stream)
-      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      perform_enqueued_jobs do
+        expect do
+          post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
     end
   end
 end
@@ -270,12 +266,14 @@ describe "DELETE /tutorials/:id/roster/self_remove" do
     before do
       allow_any_instance_of(Rosters::SelfMaterializationService)
         .to receive(:self_remove!)
-      allow(RosterMailer).to receive_message_chain(:self_removed, :deliver_now)
+      allow(RosterNotificationMailer).to receive_message_chain(:removed, :deliver_later)
     end
     it "sends an email" do
-      expect do
-        delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
-      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      perform_enqueued_jobs do
+        expect do
+          delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
     end
   end
 end
