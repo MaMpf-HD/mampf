@@ -81,6 +81,15 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.registration_policies.count).to eq(1)
       expect(campaign.registration_policies.first.kind).to eq("institutional_email")
     end
+
+    it "creates campaign with prerequisite_campaign_id match" do
+      parent = create(:registration_campaign, :open, :with_items)
+      child  = create(:registration_campaign, :open, :with_items, :with_prerequisite_policy,
+                      parent_campaign: parent)
+
+      policy = child.registration_policies.find_by(kind: :prerequisite_campaign)
+      expect(policy.config["prerequisite_campaign_id"]).to eq(parent.id)
+    end
   end
 
   describe "validations" do
@@ -391,7 +400,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    context "with FCFS campaign" do
+    context "with first-come-first-served campaign" do
       let(:campaign) { create(:registration_campaign, :with_items, :first_come_first_served) }
       let(:item1) { campaign.registration_items.first }
 
@@ -455,13 +464,15 @@ RSpec.describe(Registration::Campaign, type: :model) do
         create(:registration_campaign, :with_items, :first_come_first_served)
       end
       let(:item) { campaign.registration_items.first }
-
-      before do
+      let!(:policy) do
         create(:registration_policy,
                :institutional_email,
                :for_finalization,
                registration_campaign: campaign,
                config: { "allowed_domains" => "uni.edu" })
+      end
+
+      before do
         campaign.update!(status: :closed)
       end
 
@@ -477,6 +488,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(registration.reload).to be_rejected
         expect(registration.rejection_reason_type).to eq("policy")
         expect(registration.rejection_reason_code).to eq("institutional_email_mismatch")
+        expect(registration.rejection_policy).to eq(policy)
       end
 
       it "raises a finalization blocked error when screening finds blockers" do

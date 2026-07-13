@@ -99,7 +99,7 @@ RSpec.describe("Registration::Allocations", type: :request) do
           success?: false,
           error_code: :policy_violation,
           error_message: "blocked",
-          data: [
+          violations: [
             {
               user_id: blocked_student.id,
               registration_id: registration.id,

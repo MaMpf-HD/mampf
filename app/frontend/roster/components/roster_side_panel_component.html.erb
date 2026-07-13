@@ -43,16 +43,13 @@
           <span class="badge text-bg-secondary ms-2">
             <% if allocated? %>
               <%= "#{students.size} " +
-                  t("registration.user_registration.index.allocated_count",
-                    default: "allocated") %>
+                  t("registration.user_registration.index.allocated_count") %>
             <% elsif preference_based_campaign? %>
               <%= "#{students.size} " +
-                  t("registration.item.badge.first_choice",
-                    default: "First Choice") %>
+                  t("registration.item.badge.first_choice") %>
             <% elsif campaign %>
               <%= "#{students.size} " +
-                  t("registration.item.columns.registrations",
-                    default: "Registrations") %>
+                  t("registration.item.columns.registrations") %>
             <% else %>
               <%= "#{students.size} " +
                   t("basics.participants") %>
@@ -115,7 +112,7 @@
       <% end %>
       <div class="mb-3">
         <label class="visually-hidden" for="tutorial-roster-filter">
-          <%= t("roster.actions.search", default: "Filter students") %>
+          <%= t("roster.actions.search") %>
         </label>
 
         <input

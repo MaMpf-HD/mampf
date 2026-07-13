@@ -71,6 +71,9 @@ window.Stimulus.register("roster-drag", RosterDragController);
 import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 
+import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
+window.Stimulus.register("preference-choices", PreferenceChoicesController);
+
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
 

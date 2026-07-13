@@ -70,6 +70,10 @@ class Talk < ApplicationRecord
     user.in?(speakers)
   end
 
+  def cache_key
+    "#{super}-#{I18n.locale}"
+  end
+
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
       "#{lecture.title_for_viewers}, #{to_label}"
@@ -133,6 +137,10 @@ class Talk < ApplicationRecord
 
   def roster_association_name
     :speaker_talk_joins
+  end
+
+  def exclusive_assignment?
+    true
   end
 
   private

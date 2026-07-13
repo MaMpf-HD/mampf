@@ -1,0 +1,84 @@
+<div data-test="multi-item-first-come-first-served">
+  <% disabled = local_assigns.fetch(:disabled, false) %>
+
+  <% registration_blocked_by_unremovable_assignment =
+       registration_blocked_by_unremovable_assignment?(campaign.campaignable) %>
+
+  <div>
+    <div>
+      <div
+        class="
+          row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4
+          row-cols-xxl-5
+          student-registration-tile-grid
+        "
+      >
+        <% sorted_student_registration_items(campaign, items, current_user).each do |item| %>
+          <% metadata_rows = item_tile_metadata_rows(item) + [{
+               value: item_capacity_row(item)
+             }] %>
+
+          <% item_full = !item.still_has_capacity? && !item.user_registered?(current_user) %>
+
+          <% item_blocked = registration_blocked_by_unremovable_assignment &&
+                            !item.user_registered?(current_user) %>
+
+          <%= render partial: "user_registrations/group_tile",
+                     locals: {
+                       registerable: item.registerable,
+                       item: item,
+                       tile_title: item.registerable.title,
+                       tile_type: item_display_type(item),
+                       tile_metadata_rows: metadata_rows,
+                       **registration_blocked_tile_locals(
+                         item_blocked,
+                         tile_variant_class: class_names(
+                           "tutorial-gtile--campaign",
+                           "tutorial-gtile--full": item_full
+                         )
+                       ),
+                       tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
+                       tile_column_class: "registration-group-tile-col--student",
+                       tile_actions_content: capture do
+                         if item.user_registered?(current_user)
+                           concat(button_to(
+                             t("registration.user_registration.withdraw"),
+                             withdraw_item_path(campaign.id, item.id),
+                             method: :delete,
+                             disabled: !campaign.open_for_withdrawals?,
+                             class: "btn btn-outline-danger btn-sm"
+                           ))
+                         elsif item_blocked
+                           concat(registration_blocked_action)
+                         elsif item_full
+                           concat(content_tag(
+                             :span,
+                             t("basics.full"),
+                             class: "text-muted small fw-semibold"
+                           ))
+                         elsif freely_registerable?(item.registerable_type) ||
+                               !campaign.user_registration_confirmed_for_group_type?(
+                                 current_user,
+                                 item.registerable_type
+                               )
+                           concat(button_to(
+                             t("registration.user_registration.register_now"),
+                             register_item_path(campaign.id, item.id),
+                             method: :post,
+                             disabled: disabled || !campaign.open_for_registrations?,
+                             class: "btn btn-primary btn-sm"
+                           ))
+                         else
+                           concat(content_tag(
+                             :span,
+                             t("registration.user_registration.withdraw_first"),
+                             class: "text-muted small"
+                           ))
+                         end
+                       end
+                     } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

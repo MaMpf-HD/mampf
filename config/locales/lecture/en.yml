@@ -1,7 +1,18 @@
 en:
   lecture:
+    edit:
+      announcements_audience_hint: >-
+        Announcements reach everyone who subscribed to this lecture — as an
+        in-app notification always, but by email only those who have enabled
+        email notifications for announcements.
     search:
       go_to_search: Search lectures
       placeholder: Search for lectures...
+      term_filter: Lecture term filter
+      current_term: Current term
+      next_term: Next term
+      registration_open: Registration open
+      registered: Registered
+      subscribed: Subscribed
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.

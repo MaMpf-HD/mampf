@@ -1,6 +1,20 @@
 require "rails_helper"
 
 RSpec.describe(ApplicationHelper, type: :helper) do
+  describe "#clamped_percentage" do
+    it "returns the computed percentage for positive max values" do
+      expect(helper.clamped_percentage(50, 100)).to eq(50.0)
+    end
+
+    it "clamps the result to 100" do
+      expect(helper.clamped_percentage(150, 100)).to eq(100)
+    end
+
+    it "returns zero when max is zero" do
+      expect(helper.clamped_percentage(50, 0)).to eq(0)
+    end
+  end
+
   describe "#progress_bar" do
     it "renders a progress bar with correct percentage" do
       html = helper.progress_bar(50, 100)
@@ -19,15 +33,6 @@ RSpec.describe(ApplicationHelper, type: :helper) do
       expect(html).to include('style="width: 0%"')
     end
 
-    it "applies utilization colors" do
-      expect(helper.progress_bar(50, 100, classification: :utilization))
-        .to include("allocation-progress-bar--utilization-low")
-      expect(helper.progress_bar(85, 100, classification: :utilization))
-        .to include("allocation-progress-bar--utilization-mid")
-      expect(helper.progress_bar(100, 100, classification: :utilization))
-        .to include("allocation-progress-bar--utilization-high")
-    end
-
     it "applies custom classification colors" do
       expect(helper.progress_bar(50, 100, classification: :info))
         .to include("bg-info")
@@ -41,23 +46,6 @@ RSpec.describe(ApplicationHelper, type: :helper) do
     it "can hide label" do
       html = helper.progress_bar(50, 100, show_label: false)
       expect(html).not_to include("50%")
-    end
-  end
-
-  describe "#utilization_color" do
-    it "returns success for low usage" do
-      expect(helper.send(:utilization_color, 40))
-        .to eq("allocation-progress-bar allocation-progress-bar--utilization-low")
-    end
-
-    it "returns warning for medium usage" do
-      expect(helper.send(:utilization_color, 85))
-        .to eq("allocation-progress-bar allocation-progress-bar--utilization-mid")
-    end
-
-    it "returns danger for high usage" do
-      expect(helper.send(:utilization_color, 110))
-        .to eq("allocation-progress-bar allocation-progress-bar--utilization-high")
     end
   end
 

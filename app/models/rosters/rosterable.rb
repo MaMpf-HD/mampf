@@ -5,7 +5,18 @@ module Rosters
   module Rosterable
     extend ActiveSupport::Concern
 
-    TYPES = ["Tutorial", "Talk", "Cohort", "Lecture"].freeze
+    TYPE_CLASS_MAP = {
+      "Tutorial" => -> { Tutorial },
+      "Talk" => -> { Talk },
+      "Cohort" => -> { Cohort },
+      "Lecture" => -> { Lecture }
+    }.freeze
+
+    TYPES = TYPE_CLASS_MAP.keys.freeze
+
+    def self.class_for(type)
+      TYPE_CLASS_MAP[type]&.call
+    end
 
     # Models including this concern must:
     # - Implement #roster_entries (returns ActiveRecord::Relation)
@@ -59,6 +70,33 @@ module Rosters
       return false if skip_campaigns?
 
       !in_completed_campaign?
+    end
+
+    def config_allow_self_add?
+      self_materialization_mode_add_only? ||
+        self_materialization_mode_add_and_remove?
+    end
+
+    # guard for self-assignment possibility
+    def allow_self_add?(user)
+      return false unless config_allow_self_add?
+      return false if locked?
+      return false if user_allocated?(user)
+
+      !full?
+    end
+
+    def config_allow_self_remove?
+      self_materialization_mode_remove_only? ||
+        self_materialization_mode_add_and_remove?
+    end
+
+    # guard for self-removal possibility
+    def allow_self_remove?(user)
+      return false unless config_allow_self_remove?
+      return false if locked?
+
+      user_allocated?(user)
     end
 
     # Checks if skip_campaigns can be enabled (switched from false to true).
@@ -131,6 +169,14 @@ module Rosters
       end
     end
 
+    def user_allocated?(user)
+      if roster_entries.loaded?
+        roster_entries.any? { |e| e.public_send(roster_user_id_column) == user.id }
+      else
+        roster_entries.exists?(roster_user_id_column => user.id)
+      end
+    end
+
     # Adds a single user to the roster.
     # Can be overridden by the model if custom logic/callbacks are needed.
     def add_user_to_roster!(user, source_campaign = nil)
@@ -181,19 +227,14 @@ module Rosters
       users_to_add = target_ids - current_ids
       return if users_to_add.empty?
 
-      # insert_all does not automatically apply the association scope (e.g. foreign keys).
-      # We must explicitly merge the scope attributes (like { tutorial_id: 123 }).
       scope_attrs = roster_entries.scope_attributes
+      now = Time.current
 
       attributes = users_to_add.map do |uid|
-        {
-          roster_user_id_column => uid,
-          :source_campaign_id => campaign.id,
-          :created_at => Time.current,
-          :updated_at => Time.current
-        }.merge(scope_attrs)
+        missing_roster_entry_attributes(uid, campaign, scope_attrs, now)
       end
-      roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
+
+      persist_missing_roster_entries!(attributes)
     end
 
     # Identifies users currently in the roster associated with this specific
@@ -228,6 +269,24 @@ module Rosters
     end
 
     private
+
+      def missing_roster_entry_attributes(user_id, campaign, scope_attrs, now)
+        {
+          roster_user_id_column => user_id,
+          :source_campaign_id => campaign.id,
+          :created_at => now,
+          :updated_at => now
+        }.merge(scope_attrs)
+          .merge(extra_roster_entry_attributes(user_id, campaign))
+      end
+
+      def extra_roster_entry_attributes(_user_id, _campaign)
+        {}
+      end
+
+      def persist_missing_roster_entries!(attributes)
+        roster_entries.insert_all(attributes) # rubocop:disable Rails/SkipsModelValidations
+      end
 
       def validate_skip_campaigns_switch
         return unless respond_to?(:skip_campaigns)

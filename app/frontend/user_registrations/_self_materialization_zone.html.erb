@@ -1,0 +1,67 @@
+<div
+  class="
+    row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4
+    row-cols-xxl-5
+    student-registration-tile-grid
+  "
+>
+  <% registration_blocked_by_unremovable_assignment =
+       registration_blocked_by_unremovable_assignment?(lecture) %>
+
+  <% self_rosterables.each do |rosterable| %>
+    <% rosterable_blocked = registration_blocked_by_unremovable_assignment &&
+              !rosterable.user_allocated?(current_user) %>
+
+    <% metadata_rows = self_rosterable_tile_metadata_rows(rosterable) + [{
+         value: "#{rosterable.roster_entries_count} / #{nullable_capacity_display(rosterable.capacity)}"
+       }] %>
+
+    <% path_self_add = send(
+         "self_add_#{rosterable.class.name.underscore}_path",
+         rosterable.id
+       ) %>
+
+    <% path_self_remove = send(
+         "self_remove_#{rosterable.class.name.underscore}_path",
+         rosterable.id
+       ) %>
+
+    <%= render partial: "user_registrations/group_tile",
+               locals: {
+                 registerable: rosterable,
+                 tile_title: rosterable.title,
+                 tile_type: self_rosterable_display_type(rosterable),
+                 tile_metadata_rows: metadata_rows,
+                 **registration_blocked_tile_locals(rosterable_blocked),
+                 tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
+                 tile_column_class: "registration-group-tile-col--student",
+                 tile_actions_content: capture do
+                   if rosterable.user_allocated?(current_user)
+                     if rosterable.allow_self_remove?(current_user)
+                       concat(button_to(
+                         t("registration.user_registration.withdraw"),
+                         path_self_remove,
+                         method: :delete,
+                         class: "btn btn-outline-danger btn-sm"
+                       ))
+                     end
+                   elsif rosterable_blocked
+                     concat(registration_blocked_action)
+                   elsif rosterable.allow_self_add?(current_user)
+                     concat(button_to(
+                       t("registration.user_registration.register_now"),
+                       path_self_add,
+                       method: :post,
+                       class: "btn btn-primary btn-sm"
+                     ))
+                   elsif rosterable.full?
+                     concat(content_tag(
+                       :span,
+                       t("basics.full"),
+                       class: "text-muted small fw-semibold"
+                     ))
+                   end
+                 end
+               } %>
+  <% end %>
+</div>

@@ -64,6 +64,11 @@ class Lecture < ApplicationRecord
   has_many :lecture_memberships, dependent: :destroy
   has_many :members, through: :lecture_memberships, source: :user
 
+  # messages from the lecture staff to registered students
+  has_many :registration_student_messages,
+           class_name: "Registration::StudentMessage",
+           dependent: :destroy
+
   # a lecture has many users who have starred it (fans)
   has_many :user_favorite_lecture_joins, dependent: :destroy
   has_many :fans, -> { distinct }, through: :user_favorite_lecture_joins,
@@ -807,11 +812,36 @@ class Lecture < ApplicationRecord
     # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
     # created_at/updated_at for existing members.
     # rubocop:disable Rails/SkipsModelValidations
-    LectureMembership.insert_all(
-      attributes,
-      unique_by: [:user_id, :lecture_id]
-    )
+    transaction do
+      LectureMembership.insert_all(
+        attributes,
+        unique_by: [:user_id, :lecture_id]
+      )
+
+      # Roster membership implies a subscription: members need access to the
+      # lecture's content, even when subscribing is gated by a passphrase
+      # (a roster seat is a stronger credential than a shared passphrase).
+      LectureUserJoin.insert_all(
+        attributes,
+        unique_by: [:lecture_id, :user_id]
+      )
+    end
     # rubocop:enable Rails/SkipsModelValidations
+  end
+
+  # All students that lecture staff can reach by registration mail:
+  # everyone with a pending or confirmed registration in one of the
+  # lecture's campaigns, plus everyone on the roster (union, deduplicated).
+  # Before finalization this is "everyone who signed up", afterwards it
+  # also covers manually added roster members.
+  def registration_mail_recipients
+    registered_ids = Registration::UserRegistration
+                     .where(registration_campaign: registration_campaigns,
+                            status: [:pending, :confirmed])
+                     .select(:user_id)
+    member_ids = lecture_memberships.select(:user_id)
+
+    User.where(id: registered_ids).or(User.where(id: member_ids))
   end
 
   def eligible_as_tutors

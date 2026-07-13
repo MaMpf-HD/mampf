@@ -451,7 +451,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
 
           before do
             create(:registration_user_registration,
-                   :rejected,
+                   :capacity_rejected,
                    registration_campaign: campaign,
                    registration_item: item,
                    user: unassigned_student,
