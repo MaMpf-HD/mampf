@@ -1,0 +1,105 @@
+<tr
+  id="<%= row_id %>"
+  is="turbo-frame"
+  data-id="<%= @participation.id %>"
+  data-controller="submission-row"
+  data-participation-row-id="<%= @participation.id %>"
+  data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
+  data-status-filter-status="<%= @participation.status %>"
+  data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
+  data-status-filter-name="<%= @user.tutorial_name %>"
+>
+  <!-- Column 1: User names + copy emails + late icon -->
+  <td class="sticky-col team-col">
+    <div class="d-flex justify-content-between">
+      <%= @user.tutorial_name %>
+
+      <i
+        class="
+          clipboardpopup bi bi-clipboard clickable
+          text-secondary clipboard-btn ms-3 clipboard-button
+        "
+        style="width: fit-content;"
+        data-clipboard-text="<%= @user.email %>"
+        data-bs-toggle="tooltip"
+        title="<%= t('buttons.copy_email_to_clipboard') %>"
+      >
+        <span class="clipboardpopuptext token-clipboard-popup">
+          <%= t('basics.emails_copied_to_clipboard') %>
+        </span>
+      </i>
+    </div>
+  </td>
+
+  <!-- Column 1.5: Tutorial -->
+  <% if @mode == "teacher" %>
+    <td class="text-center sticky-col tutorial-col">
+      <span><%= @participation.tutorial&.title %></span>
+    </td>
+  <% end %>
+
+  <% if grading_enabled? %>
+    <!-- Column 2: Status -->
+    <td class="text-center sticky-col status-col" data-mode="<%= @mode %>">
+      <span
+        class="<%= badge_status_participation_class(@participation.status) %>"
+        style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
+      >
+        <%= @participation.status %>
+      </span>
+    </td>
+    <!-- batch of columns 3: grade zone -->
+    <!-- support point by task -->
+    <% tasks.each do |assignment_task| %>
+      <%= task_points_participation_cell(assignment_task, allow_grading?) %>
+    <% end %>
+    <!-- Column 4: Total Points -->
+    <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
+      <span data-submission-row-target="totalPoints">0</span>
+    </td>
+  <% end %>
+
+  <!-- Column 5: Actions buttons -->
+  <td class="text-end sticky-col action-col" data-mode="<%= @mode %>">
+    <div class="d-inline-flex align-items-center flex-nowrap gap-1">
+      <!-- Save and refresh -->
+      <% if can_grade? && grading_enabled? && @participation %>
+        <!-- Hidden form for this row to submit -->
+        <%= form_with url: point_user_tutorial_path(@participation, 
+                                                    type: "Tutorial",
+                                                    mode: @mode),
+                    method: :patch,
+                    data: { turbo: true, submission_row_target: "form" },
+                    html: { style: "display:none;" } do %>
+          <input
+            type="hidden"
+            name="task_points"
+            data-submission-row-target="payload"
+          >
+        <% end %>
+        <!-- Save row -->
+        <%= save_row_button(allow_grading?) %>
+        <!-- Refresh row -->
+        <%= form_with url: refresh_point_user_tutorial_path(@participation, 
+                                                            type: "Tutorial", 
+                                                            mode: @mode),
+                    method: :patch,
+                    data: { turbo: true, submission_row_target: "refreshForm" },
+                    html: { style: "display:none;" } do %>
+          <input
+            type="hidden"
+            name="task_points"
+            data-submission-row-target="payload"
+          >
+        <% end %>
+        <!-- refresh row -->
+        <%= refresh_row_button(allow_grading?) %>
+      <% end %>
+    </div>
+  </td>
+
+  <!-- empty correction column -->
+  <% if @mode == "tutor" %>
+    <td class="sticky-col correction-col"></td>
+  <% end %>
+</tr>

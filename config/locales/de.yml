@@ -2983,6 +2983,8 @@ de:
       bei.
     nothing_here_past: >
       Zu dieser Hausaufgabe hast Du nichts abgegeben.
+    tutorial_not_assigned: >
+      Sie können dieser Abgabe nicht beitreten, da sie keinem Tutorium zugeordnet ist.
     invitations_to: Einladungen an
     joined_successfully: >
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
@@ -3192,6 +3194,10 @@ de:
   tutorial:
     no_submissions_for_assignment: >
       Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.
+    no_submissions: >
+      Keine Abgaben eingereicht
+    no_submission: >
+      Keine Abgabe
     destruction_info:
       <i>
       Hinweis.
@@ -3204,8 +3210,7 @@ de:
       Eigene Tutorien
     other_tutorials: 'Sonstige Tutorien'
     deadline_warning: >
-      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Abgabefrist
-      können Korrekturen hochgeladen werden.
+      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Frist kann der Bewertungsprozess erfolgen und die Korrekturen können von den Tutoren hochgeladen werden.
     grace_period_warning: >
       Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
@@ -3743,6 +3748,7 @@ de:
     create_cohort: 'Gruppe erstellen'
     edit_cohort: 'Gruppe bearbeiten'
     save: 'Speichern'
+    refresh: 'Aktualisieren'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
     save_changes: "Änderungen speichern"
@@ -3831,6 +3837,7 @@ de:
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
+    refresh: 'Erneuern'
     refresh_token: 'Code erneuern'
     invite: 'Einladen'
     send: 'Versenden'

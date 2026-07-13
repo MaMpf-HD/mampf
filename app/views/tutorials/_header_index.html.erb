@@ -1,119 +1,184 @@
-<%# Exercise sheet dropdown button %>
-<% if @assignments.size > 1 %>
-  <span class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle"
-            data-bs-toggle="dropdown"
-            type="button">
-      <%= @assignment.title %>
-    </button>
-    <div class="dropdown-menu">
-      <% (@assignments - [@assignment]).each do |a| %>
-        <%= link_to a.title,
-                    lecture_tutorials_path( @lecture,
-                                            params: { assignment: a.id,
-                                                      tutorial: @tutorial.id }),
-                                            class: 'dropdown-item' %>
+<div class="row justify-content-between">
+  <!-- Assignment Selector -->
+  <div class="col-md-4 m-3">
+    <h5 class="form-label fw-semibold mb-1"><%= t('basics.assignment') %></h5>
+
+    <% if @assignments.size > 1 %>
+      <select class="form-select form-select-sm"
+              onchange="window.location=this.value">
+        <option selected><%= @assignment.title %></option>
+        <% (@assignments - [@assignment]).each do |a| %>
+          <option value="<%= lecture_tutorials_path(@lecture, params: { assignment: a.id, tutorial: @tutorial.id }) %>">
+            <%= a.title %>
+          </option>
+        <% end %>
+      </select>
+    <% else %>
+      <input class="form-control form-control-sm" disabled value="<%= @assignment.title %>">
+    <% end %>
+  </div>
+
+  <!-- Tutorial Selector -->
+  <div class="col-md-4 m-3">
+    <h5 class="form-label fw-semibold mb-1"><%= t('categories.tutorials') %></h5>
+
+    <% if @tutorials.size > 1 %>
+      <%= render partial: 'tutorials/tutorial_dropdown' %>
+    <% else %>
+      <input class="form-control form-control-sm" disabled value="<%= @tutorial.title %>">
+    <% end %>
+  </div>
+</div>
+
+
+<!-- ACTION CARD -->
+<div>
+  <div class="col align-items-end justify-content-between">
+    <% if grading_enabled?(@assignment) %>
+      <!-- Overview -->
+      <% info = overview_info(@tutorial, @assignment) %>
+      <div class="border rounded-3 bg-light p-2 h-100 m-3">
+        <div class="small mb-2">
+          <span class="badge bg-primary">
+            <%= info[:submissions][:total] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.submission.total') %>
+          <span class="mx-2">—</span>
+          <span class="text-success">
+            <%= info[:submissions][:graded] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.submission.graded') %>
+          <span class="mx-1">•</span>
+          <span class="text-warning">
+            <%= info[:submissions][:pending] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.submission.pending') %>
+        </div>
+
+        <hr class="my-2">
+        <div class="small text-muted">
+          <span class="badge bg-secondary">
+            <%= info[:non_submitters][:total] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.total') %>
+          <span class="mx-2">—</span>
+          <strong><%= info[:non_submitters][:participated] %></strong>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.participated') %>
+          (
+          <span class="text-success">
+            <%= info[:non_submitters][:graded] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.graded') %>
+          •
+          <span class="text-warning">
+            <%= info[:non_submitters][:pending] %>
+          </span>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.pending') %>
+          )
+
+          <span class="mx-1">•</span>
+
+          <strong><%= info[:non_submitters][:not_marked] %></strong>
+          <%= t('assessment.grading_tutorial.header_overview.non_submitters.not_participated') %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Action Buttons -->
+    <div class="d-flex flex-wrap gap-2 justify-content-start m-3 w-auto">
+      <% if @stack.present? %>
+        <!-- Bulk Download Submissions -->
+        <%= link_to bulk_download_submissions_path(id: @tutorial.id, ass_id: @assignment.id),
+                    class: "btn btn-primary btn-sm", data: { turbo: false } do %>
+          <i class="bi bi-download me-1"></i>
+          <%= t('submission.bulk_download_submissions') %>
+        <% end %>
+
+        <% if current_user.in?(@tutorial.tutors) %>
+          <!-- Bulk Upload -->
+          <button class="btn btn-<%= @assignment.active? ? 'secondary' : 'primary' %> btn-sm"
+                  id="show-bulk-upload-area"
+                  <%= @assignment.active? ? 'disabled' : '' %>>
+            <i class="bi bi-upload me-1"></i>
+            <%= t('submission.bulk_upload') %>
+          </button>
+        <% else %>
+          <!-- Bulk Download Corrections -->
+          <% if @stack.any? { |s| s.correction.present? } %>
+            <%= link_to bulk_download_corrections_path(id: @tutorial.id, ass_id: @assignment.id),
+                        class: "btn btn-primary btn-sm", data: { turbo: false } do %>
+              <i class="bi bi-download me-1"></i>
+              <%= t('submission.bulk_download_corrections') %>
+            <% end %>
+          <% else %>
+            <button class="btn btn-secondary btn-sm" disabled>
+              <%= t('submission.bulk_download_corrections') %>
+            </button>
+          <% end %>
+        <% end %>
+
+        <!-- Teams CSV -->
+        <%= link_to export_teams_to_csv_path(id: @tutorial.id, ass_id: @assignment.id, format: 'csv'),
+                    class: "btn btn-dark btn-sm", id: "export-teams" do %>
+          <i class="bi bi-file-earmark-arrow-down me-1"></i>
+          <%= t('tutorial.teams_as_csv') %>
+        <% end %>
+      <% end %>
+
+      <!-- Certificate Check -->
+      <%= link_to validate_certificate_as_tutor_path(params: { lecture_id: @lecture.id }),
+                  class: "btn btn-outline-secondary btn-sm", remote: true do %>
+        <i class="bi bi-patch-check me-1"></i>
+        <%= t('tutorial.certificate_check') %>
+      <% end %>
+
+      <!-- Save bulk changes -->
+      <% if grading_enabled?(@assignment) %>
+        <button class="btn btn-success btn-sm"
+                <%= @assignment.active? ? 'disabled' : '' %>
+                data-submission-table-target="bulkSave"
+                data-action="click->submission-table#submitAll">
+          <i class="bi bi-save me-1"></i>
+          Save All Changes
+        </button>
+
+        <%= form_with url: point_multi_submissions_tutorial_path,
+                      method: :patch,
+                      data: { turbo: true, submission_table_target: "form" } do %>
+          <input type="hidden" name="submissions" data-submission-table-target="payload">
+          <input type="hidden" name="assignment_id" value="<%= @assignment.id %>">
+          <input type="hidden" name="tutorial_id" value="<%= @tutorial.id %>">
+          <input type="hidden" name="mode" value="tutor">
+        <% end %>
       <% end %>
     </div>
-  </span>
-<% else %>
-  <button class="btn btn-secondary" disabled>
-    <%= @assignment.title %>
-  </button>
-<% end %>
-<%# Tutorial dropdown button %>
-<% if @tutorials.size > 1 %>
-  <%= render partial: 'tutorials/tutorial_dropdown' %>
-<% else %>
-  <button class="btn btn-secondary ms-3" disabled>
-    <%= @tutorial.title %>
-  </button>
-<% end %>
-<%# Overviwe button %>
-<% if current_user.editor_or_teacher_in?(@lecture) %>
-  <%= link_to t('basics.overview'),
-              lecture_tutorial_overview_path( @lecture,
-                                              params: { assignment: @assignment.id }),
-                                              class: 'btn btn-primary ms-3' %>
-<% end %>
-<%# Bulk download and upload submission buttons %>
-<% if @stack.present? %>
-  <%= link_to t('submission.bulk_download_submissions'),
-              bulk_download_submissions_path( id: @tutorial.id,
-                                              ass_id: @assignment.id),
-                                              class: 'btn btn-primary ms-3',
-                                              data: { turbo: false } %>
-  <% if current_user.in?(@tutorial.tutors) %>
-    <% if !@assignment.active? %>
-      <button class="btn btn-primary ms-3"
-                  id="show-bulk-upload-area">
-            <%= t('submission.bulk_upload') %>
-          </button>
+  </div>
+</div>
+
+
+<!-- DEADLINE / GRACE PERIOD WARNING -->
+<% if current_user.in?(@tutorial.tutors) && (@assignment.active? || @assignment.in_grace_period?) %>
+  <div class="alert alert-danger m-3">
+    <strong><%= t('basics.attention') %>:</strong>
+    <% if @assignment.active? %>
+      <%= t('tutorial.deadline_warning', deadline: l(@assignment.deadline, format: :short)) %>
     <% else %>
-      <button class="btn btn-secondary ms-3"
-                  id="show-bulk-upload-area" disabled>
-            <%= t('submission.bulk_upload') %>
-          </button>
+      <%= t('tutorial.grace_period_warning', friendly_deadline: l(@assignment.friendly_deadline, format: :short)) %>
     <% end %>
-  <% else %>
-    <% if @stack.select{|s| s.correction.present?}.size > 0 %>
-      <%= link_to t('submission.bulk_download_corrections'),
-                  bulk_download_corrections_path( id: @tutorial.id,
-                                                  ass_id: @assignment.id),
-                                                  class: 'btn btn-primary ms-3',
-                                                  data: { turbo: false } %>
-    <% else %>
-      <button class="btn btn-secondary ms-3" disabled>
-        <%= t('submission.bulk_download_corrections') %>
-      </button>
-    <% end %>
-  <% end %>
-  <%# Teams as csv button %>
-  <%= link_to t('tutorial.teams_as_csv'),
-              export_teams_to_csv_path( id: @tutorial.id,
-                                        ass_id: @assignment.id,
-                                        format: 'csv'),
-                                        class: 'btn btn-primary ms-3',
-                                        id: 'export-teams' %>
+  </div>
 <% end %>
-<%# Certificate check button %>
-<%= link_to t('tutorial.certificate_check'),
-            validate_certificate_as_tutor_path( params:
-                                                  { lecture_id: @lecture.id }),
-                                                class: 'btn btn-primary ms-3',
-                                                remote: true %>
+
+
+<!-- BULK UPLOAD AREA -->
 <% if current_user.in?(@tutorial.tutors) %>
-  <%# Deadline and grace period warnings %>
-  <% if @assignment.active? || @assignment.in_grace_period? %>
-    <div class="row my-3">
-      <div class="col-12">
-        <span class="badge bg-danger">
-          <%= t('basics.attention') %>
-        </span>
-        <% if @assignment.active? %>
-          <%= t('tutorial.deadline_warning',
-                deadline: l(@assignment.deadline,
-                            format: :short)) %>
-        <% else %>
-          <%= t('tutorial.grace_period_warning',
-                friendly_deadline: l(@assignment.friendly_deadline,
-                                     format: :short)) %>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
-  <%# Bulk upload area %>
-  <div class="row m-2 p-2 border border-round bg-light"
-       id="bulk-upload-area">
-    <div class="col-12">
+  <div class="card mt-3" id="bulk-upload-area">
+    <div class="card-body">
       <% if @stack.present? %>
         <%= render partial: 'tutorials/bulk_correction_form',
-                   locals: { tutorial: @tutorial,
-                             assignment: @assignment } %>
+                   locals: { tutorial: @tutorial, assignment: @assignment } %>
       <% end %>
     </div>
   </div>
-  <div class="row my-3 p-3"
-       id="bulk-upload-report">
-  </div>
+
+  <div class="row my-3 p-3" id="bulk-upload-report"></div>
 <% end %>

@@ -1,0 +1,165 @@
+<tr
+  id="<%= row_id %>"
+  is="turbo-frame"
+  class="submission-row <%= helpers.submission_late_color(@submission) %>"
+  data-id="<%= @submission.id %>"
+  data-controller="submission-row"
+  data-submission-row-id="<%= @submission.id %>"
+  data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
+  data-status-filter-status="<%= @submission&.participations&.first&.status %>"
+  data-status-filter-tutorial="<%= @submission.tutorial_id %>"
+  data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
+>
+  <!-- Column 1: User names + copy emails + late icon -->
+  <td class="sticky-col team-col">
+    <div class="row">
+      <div class="d-flex flex-column justify-content-between" style="width: fit-content;">
+        <% @submission.users.each do |user| %>
+          <div style="width: fit-content;"><%= user.tutorial_name %></div>
+        <% end %>
+      </div>
+
+      <i
+        class="
+          clipboardpopup bi bi-clipboard clickable
+          text-secondary clipboard-btn ms-3 clipboard-button
+        "
+        style="width: fit-content;"
+        data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
+        data-bs-toggle="tooltip"
+        data-id="<%= @submission.id %>"
+        title="<%= t('buttons.copy_email_to_clipboard') %>"
+      > <%# herb:disable html-no-duplicate-attributes %>
+        <span
+          class="clipboardpopuptext token-clipboard-popup"
+          data-id="<%= @submission.id %>"
+        >
+          <%= t('basics.emails_copied_to_clipboard') %>
+        </span>
+      </i>
+    </div>
+
+    <% if @submission.too_late? %>
+      <i
+        class="fas fa-exclamation-triangle"
+        data-bs-toggle="tooltip"
+        title="<%= late_submission_info(@submission, @submission.tutorial) %>"
+      ></i>
+    <% end %>
+  </td>
+
+  <!-- Column 1.5: Tutorial -->
+  <% if @mode == "teacher" %>
+    <td class="text-center sticky-col tutorial-col">
+      <span><%= @submission.tutorial&.title %></span>
+    </td>
+  <% end %>
+
+  <% if grading_enabled? %>
+    <!-- Column 4: Status -->
+    <td class="text-center sticky-col status-col" data-mode="<%= @mode %>">
+      <% if @submission&.participations %>
+        <% status = @submission&.participations.first&.status %>
+        <span
+          class="<%= badge_status_participation_class(status) %>"
+          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
+        >
+          <%= status %>
+        </span>
+      <% end %>
+    </td>
+    <!-- batch of columns 3: grade zone -->
+    <!-- support point by task -->
+    <% for assignment_task in tasks %>
+      <td class="sticky-col task-col">
+        <%= task_points_input(assignment_task, allow_grading?) %>
+      </td>
+    <% end %>
+    <!-- Column 4: Total Points -->
+    <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
+      <span data-submission-row-target="totalPoints">0</span>
+    </td>
+  <% end %>
+
+  <!-- Column 5: Actions buttons -->
+  <td
+    class="text-end sticky-col action-col"
+    data-mode="<%= @mode %>"
+    data-id="<%= @submission.id %>"
+  >
+    <div class="d-inline-flex align-items-center flex-nowrap gap-1">
+      <!-- Download -->
+      <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
+                class: "btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
+                data: { bs_toggle: "tooltip", turbo: false },
+                title: t('buttons.download') do %>
+        <i class="bi bi-download"></i>
+      <% end %>
+
+      <!-- Show -->
+      <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
+        <%= link_to show_submission_manuscript_path(@submission),
+                  class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
+                  data: { bs_toggle: "tooltip", turbo: false },
+                  title: t('buttons.show') do %>
+          <i class="bi bi-eye"></i>
+        <% end %>
+      <% end %>
+
+      <!-- Save and refresh -->
+      <% if can_grade? && grading_enabled? %>
+        <!-- Hidden form for this row to submit -->
+        <%= form_with url: point_submission_tutorial_path(@submission, 
+                                                          type: "Tutorial", 
+                                                          mode: @mode),
+                    method: :patch,
+                    data: { turbo: true, submission_row_target: "form" },
+                    html: { style: "display:none;" } do %>
+          <input
+            type="hidden"
+            name="task_points"
+            data-submission-row-target="payload"
+          >
+        <% end %>
+        <!-- Save row -->
+        <%= save_row_button(allow_grading?) %>
+        <!-- Refresh row -->
+        <%= form_with url: refresh_point_submission_tutorial_path(@submission, 
+                                                                  type: "Tutorial", 
+                                                                  mode: @mode),
+                    method: :patch,
+                    data: { turbo: true, submission_row_target: "refreshForm" },
+                    html: { style: "display:none;" } do %>
+          <input
+            type="hidden"
+            name="task_points"
+            data-submission-row-target="payload"
+          >
+        <% end %>
+        <!-- refresh row -->
+        <%= refresh_row_button(allow_grading?) %>
+      <% end %>
+
+      <!-- accept / reject late submissions -->
+      <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+        <%= render partial: 'submissions/other_actions',
+                  locals: { submission: @submission } %>
+      <% end %>
+    </div>
+  </td>
+
+  <!-- Column 6: Correction or download correction -->
+  <!-- tutor can upload correction, student + teacher can download correction -->
+  <!-- there is case when teacher is also tutor, in that case use tutor view for correction -->
+  <% if  @mode == "tutor" %>
+    <td class="sticky-col correction-col" data-id="<%= @submission.id %>">
+      <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+        <%= render partial: 'submissions/correction_column',
+                  locals: { submission: @submission } %>
+      <% else %>
+        <%= render partial: 'submissions/download',
+                  locals: { submission: @submission } %>
+      <% end %>
+    </td>
+  <% end %>
+</tr>

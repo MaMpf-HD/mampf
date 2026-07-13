@@ -196,60 +196,89 @@ class SubmissionsController < ApplicationController
   end
 
   def edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_edit_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def cancel_edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def add_correction
-    if correction_params[:correction].present?
-      @submission.correction = correction_params[:correction]
-      @errors = @submission.check_file_properties_any(@submission.correction
-                                                             .metadata,
-                                                      :correction)
-      return if @errors.present?
+    @submission.assign_attributes(correction_params)
+    @errors = @submission.check_file_properties_any(
+      @submission.correction&.metadata,
+      :correction
+    )
 
-      @submission.save
-      @errors = @submission.errors
-      return unless @submission.valid?
+    if @errors.present?
+      return render partial: "submissions/correction_wrap",
+                    locals: { submission: @submission }
     end
-    @submission.update(correction_params)
-    @errors = @submission.errors
-    return if @errors.present?
 
-    send_correction_upload_email(@submission.users)
+    send_correction_upload_email(@submission.users) if @submission.save
+
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def delete_correction
     @submission.update(correction: nil)
-    render :add_correction
-  end
-
-  def select_tutorial
-    @tutorial = @submission.tutorial
-    @lecture = @submission.assignment.lecture
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def cancel_action
   end
 
-  def move
-    @old_tutorial = @submission.tutorial
-    @submission.update(move_params)
-    @tutorial = @submission.tutorial
-  end
-
   def accept
     @submission.update(accepted: true)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
     send_acceptance_email(@submission.users)
+    rerender_submission_row
   end
 
   def reject
     @submission.update(accepted: false)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
     send_rejection_email(@submission.users)
+    rerender_submission_row
   end
 
   private
+
+    def rerender_submission_row
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "submission-row-#{@submission.id}",
+            html: render_to_string(
+              SubmissionRowComponent.new(
+                submission: @submission,
+                assignment: @assignment,
+                tutorial: @tutorial,
+                mode: params[:mode]
+              )
+            )
+          )
+        end
+      end
+    end
 
     def set_submission
       @submission = Submission.find_by(id: params[:id])
@@ -263,12 +292,25 @@ class SubmissionsController < ApplicationController
     end
 
     def submission_create_params
-      params.expect(submission: [:tutorial_id, :assignment_id])
+      permitted = params.expect(submission: [:tutorial_id, :assignment_id])
+      assignment_id = params[:submission][:assignment_id]
+      assignment = Assignment.find_by(id: assignment_id)
+      lecture = assignment&.lecture
+
+      if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
+        permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
+      end
+      permitted
     end
 
     # disallow modification of assignment
     def submission_update_params
-      params.expect(submission: [:tutorial_id])
+      permitted = params.expect(submission: [:tutorial_id])
+      lecture = @submission.assignment.lecture
+      if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
+        permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
+      end
+      permitted
     end
 
     # disallow modification of assignment

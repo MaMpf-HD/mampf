@@ -1,3 +1,6 @@
+<% roster_eligible = enabled_roster_for_lecture?(lecture) %>
+<% enrolled_tutorial = current_user.tutorial_rosterized(lecture) %>
+
 <%= form_with model: submission do |f| %>
   <div class="card-body submissionBody"
        data-id="<%= assignment.id %>">
@@ -5,7 +8,19 @@
       <div class="col-12">
         <%= f.label :tutorial_id,
                     t('basics.tutorial') %>
-        <%= f.select :tutorial_id,
+        <% if roster_eligible %>
+          <% if enrolled_tutorial %>
+            <p>
+              <%= enrolled_tutorial.title_with_tutors %>
+            </p>
+          <% else %>
+            <p>
+              <%= t('submission.enroll_first') %>
+            </p>
+            <%= link_to t('submission.enroll'), lecture_enrollment_path(lecture), class: 'btn btn-primary' %>
+          <% end %>
+        <% else %>
+          <%= f.select :tutorial_id,
                      options_for_select(tutorials_selection(lecture),
                                         submission.tutorial&.id ||
                                           submission
@@ -13,6 +28,7 @@
                                            &.id),
                      {},
                      {} %>
+        <% end %>
         <div class="invalid-feedback"
              id="submission-tutorial-error">
         </div>
@@ -80,12 +96,12 @@
         <div class="col-12 submission-initially-hidden"
              id="file-size-correct">
           <i class="fas fa-check"></i>
-            <%=t('submission.correct_file_size')%>
+            <%= t('submission.correct_file_size') %>
         </div>
         <div class="col-12 submission-initially-hidden"
              id="multiple-files-selected">
           <i class="fas fa-exclamation-triangle"></i>
-          <%=t('submission.multiple_files_selected')%>
+          <%= t('submission.multiple_files_selected') %>
           <div class="col-12"
              id="files-display">
         </div>
@@ -94,12 +110,12 @@
         <div class="col-12 submission-initially-hidden"
              id="file-size-too-big">
           <i class="fas fa-exclamation-triangle"></i>
-          <%=t('submission.file_size_too_big')%>
+          <%= t('submission.file_size_too_big') %>
         </div>
         <div class="col-12 submission-initially-hidden"
              id="file-size-way-too-big">
           <i class="fas fa-bomb"></i>
-          <%=t('submission.file_size_way_too_big')%>
+          <%= t('submission.file_size_way_too_big') %>
         </div>
         <div class="col-12 my-1" id="file-permission-field">
           <div class="form-check">
@@ -114,30 +130,30 @@
             <button id="userManuscript-uploadButton-call"
                     data-cy="upload-user-submission"
                     data-tr-success="<%= t('buttons.upload_success') %>"
-                    data-tr-failure="<%= t('submission.upload_failure')%>"
-                    data-tr-upload="<%=t('buttons.upload')%>"
-                    data-tr-post-processing="<%= t('basics.post_processing')%>"
-                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+                    data-tr-failure="<%= t('submission.upload_failure') %>"
+                    data-tr-upload="<%= t('buttons.upload') %>"
+                    data-tr-post-processing="<%= t('basics.post_processing') %>"
+                    data-tr-missing-consent="<%= t('submission.missing_consent') %>"
                     class="btn btn-sm btn-outline-secondary"
-                    disabled=true>
+                    disabled>
               <%= t('buttons.upload') %>
             </button>
           </div>
           <div class="col-12">
             <small>
-              <%= t('submission.removal_notice_html')%>
+              <%= t('submission.removal_notice_html') %>
             </small>
           </div>
           <div class="col-12">
             <small class="text-danger submission-initially-hidden"
                    id="userManuscript-not-upload-notice">
-              <%= t('submission.submission_not_upload_notice_html')%>
+              <%= t('submission.submission_not_upload_notice_html') %>
             </small>
           </div>
           <div class="col-12">
             <small class="text-danger submission-initially-hidden"
                    id="userManuscript-upload-notice">
-              <%= t('submission.submission_upload_notice_html')%>
+              <%= t('submission.submission_upload_notice_html') %>
             </small>
           </div>
         </div>
@@ -148,9 +164,11 @@
   </div>
   <div class="card-footer submissionFooter text-center p-2"
        data-id="<%= assignment.id %>">
-    <%= f.submit t('buttons.save'),
-                  class: 'btn btn-primary',
-                  "data-cy": "save-submission" %>
+    <% unless roster_eligible && !enrolled_tutorial %>
+      <%= f.submit t('buttons.save'),
+                    class: 'btn btn-primary',
+                    "data-cy": "save-submission" %>
+    <% end %>
     <%= link_to t('buttons.cancel'),
                 cancel_editing_submission_path(submission),
                 class: 'btn btn-secondary',

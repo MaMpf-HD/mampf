@@ -65,3 +65,204 @@
     outline:none;
     box-shadow:none;
 }
+
+/* Highlight dirty submission rows */
+.row-dirty,
+.row-dirty td {
+  background-color: #fffbeb !important;
+}
+table.table tbody tr.row-dirty,
+table.table tbody tr.row-dirty td {
+    background-color: #fffbeb !important;
+}
+
+.sticky-col {
+  position: -webkit-sticky;
+  position: sticky;
+  background-color: white;
+}
+
+.team-col {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  left: 0px;
+  z-index: 2;
+}
+
+.status-col[data-mode="tutor"] {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 200px;
+  background-color: white;
+  z-index: 2;
+}
+
+.task-col {
+  width: 90px;
+  min-width: 90px;
+}
+
+.correction-col {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  right: 0px;
+  background-color: white;
+  z-index: 2;
+}
+
+.action-col[data-mode="tutor"] {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  right: 200px;
+  background-color: white;
+  z-index: 2;
+
+  padding: 0.5rem;
+}
+
+.tutorial-col {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 200px;
+  z-index: 2;
+}
+
+.status-col[data-mode="teacher"] {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 300px;
+  background-color: white;
+  z-index: 2;
+}
+
+.action-col[data-mode="teacher"] {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  right: 0px;
+  background-color: white;
+  z-index: 2;
+
+  padding: 0.5rem;
+}
+
+.action-icon {
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+}
+
+
+input[type="file"] {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.total-col[data-mode="tutor"] {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  right: 400px;
+  background-color: white;
+  z-index: 2;
+}
+
+.total-col[data-mode="teacher"] {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  right: 200px;
+  background-color: white;
+  z-index: 2;
+}
+
+.table-overflow {
+  overflow-x: auto;
+  width: 100%;
+  min-height: 200px; // to ensure that filter dropdowns are not cut off when table is empty
+
+  > table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  &:not([data-overflowing]) {
+    overflow-x: hidden;
+  }
+
+}
+
+.table-wrapper[data-mode="tutor"],
+.table-wrapper[data-mode="teacher"] {
+  position: relative;
+}
+
+.table-wrapper[data-mode="tutor"]::before,
+.table-wrapper[data-mode="tutor"]::after,
+.table-wrapper[data-mode="teacher"]::before,
+.table-wrapper[data-mode="teacher"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 48px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.2s;
+}
+
+.table-wrapper[data-mode="tutor"]::before {
+  left: 300px;
+  background: linear-gradient(to right, #f8f9fa, transparent);
+  opacity: var(--fade-left, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+}
+
+.table-wrapper[data-mode="tutor"]::after {
+  right: 500px;
+  background: linear-gradient(to left, #f8f9fa, transparent);
+  opacity: var(--fade-right, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+}
+
+.table-wrapper[data-mode="teacher"]::before {
+  left: 400px;
+  background: linear-gradient(to right, #f8f9fa, transparent);
+  opacity: var(--fade-left, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+}
+
+.table-wrapper[data-mode="teacher"]::after {
+  right: 300px;
+  background: linear-gradient(to left, #f8f9fa, transparent);
+  opacity: var(--fade-right, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+}
+
+.grade-th {
+  font-size: 11px; 
+  text-transform: uppercase; 
+  letter-spacing: 0.04em; 
+  color: #888; 
+  font-weight: 400; 
+  padding: 10px 12px;
+}
+
+.z-20 {
+  z-index: 20 !important;
+}
+
+.z-10 {
+  z-index: 10 !important;
+}

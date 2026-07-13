@@ -64,6 +64,10 @@ module Assessment
       # rubocop:enable Rails/SkipsModelValidations
     end
 
+    def persisted_tasks
+      tasks.order(:position)
+    end
+
     private
 
       def lecture_matches_assessable

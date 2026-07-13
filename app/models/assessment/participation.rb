@@ -48,6 +48,34 @@ module Assessment
       end
     end
 
+    def recompute_points_total!
+      update!(points_total: task_points.sum(:points))
+    end
+
+    # absent and exempt -> no change
+    # pending -> reviewed if all tasks scored, otherwise remains pending
+    # reviewed -> pending if any task points are changed to nil, otherwise remains reviewed
+    def update_status_if_all_scored!
+      return if absent? || exempt?
+
+      task_ids = assessment.tasks.pluck(:id)
+      points_by_task_id = task_points.pluck(:task_id, :points).to_h
+      missing_scored_tasks = task_ids.any? { |task_id| points_by_task_id[task_id].nil? }
+
+      if pending? && !missing_scored_tasks
+        update!(status: :reviewed)
+        return
+      end
+
+      return unless reviewed? && missing_scored_tasks
+
+      update!(status: :pending)
+    end
+
+    def graded_tasks_points
+      TaskPoint.where(assessment_participation: self)
+    end
+
     private
 
       def grading_lifecycle_must_be_open

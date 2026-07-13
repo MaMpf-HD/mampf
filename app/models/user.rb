@@ -20,6 +20,11 @@ class User < ApplicationRecord
   has_many :cohort_memberships, dependent: :destroy
   has_many :cohorts, through: :cohort_memberships
 
+  has_many :assessment_participations,
+           dependent: :destroy,
+           class_name: "Assessment::Participation",
+           inverse_of: :user
+
   # a user has many favorite lectures
   has_many :user_favorite_lecture_joins, dependent: :destroy
   has_many :favorite_lectures, -> { distinct },
@@ -658,8 +663,26 @@ class User < ApplicationRecord
     User.where(id: partner_ids - [id])
   end
 
+  def tutorial_rosterized(lecture)
+    tutorial_membership = tutorial_memberships.joins(:tutorial)
+                                              .find_by(tutorials: { lecture_id: lecture.id })
+    tutorial_membership&.tutorial
+  end
+
+  def assessment_participation_in_assignment(assignment)
+    assessment_participations.where(assessment: assignment.assessment)&.first
+  end
+
   def tutor?
     given_tutorials.any?
+  end
+
+  def tutor_in?(tutorial)
+    given_tutorials.include?(tutorial)
+  end
+
+  def teacher_in?(lecture)
+    given_lectures.include?(lecture)
   end
 
   def editor_or_teacher_in?(lecture)
@@ -743,6 +766,15 @@ class User < ApplicationRecord
     return true if admin
 
     in?(something.editors_with_inheritance.to_a)
+  end
+
+  def can_grade_in_scope?(something)
+    unless something.is_a?(Lecture) || something.is_a?(Tutorial)
+      raise("can_grade_in_scope? was called with incompatible class")
+    end
+    return true if admin
+
+    in?(something.graders_with_inheritance.to_a)
   end
 
   def speaker?

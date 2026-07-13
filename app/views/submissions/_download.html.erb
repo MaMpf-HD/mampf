@@ -1,16 +1,22 @@
 <div class="row">
   <div class="col-12">
-    <span class="correction-action-area"
-        data-id="<%= submission.id %>">
+    <span class="correction-action-area" data-id="<%= submission.id %>">
       <% if submission.correction %>
-        <%= link_to t('buttons.download'),
-                    show_correction_path(submission, params: { download: 'true' }),
-                    class: 'btn btn-sm btn-outline-secondary mb-2',
-                    data: { turbo: false } %>
-        <%= link_to correction_display_mode(submission),
-                    show_correction_path(submission),
-                    class: 'btn btn-sm btn-outline-secondary mb-2',
-                    data: { turbo: false } %>
+        <div class="d-inline-flex align-items-center gap-1">
+          <%= link_to show_correction_path(submission, params: { download: 'true' }),
+                      class: "btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                      data: { bs_toggle: "tooltip", turbo: false },
+                      title: t('buttons.download') do %>
+            <span class="material-icons" style="font-size: 16px;">download</span>
+          <% end %>
+
+          <%= link_to show_correction_path(submission),
+                      class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                      data: { bs_toggle: "tooltip", turbo: false },
+                      title: correction_display_mode(submission) do %>
+            <span class="material-icons" style="font-size: 16px;">visibility</span>
+          <% end %>
+        </div>
       <% end %>
     </span>
   </div>

@@ -72,6 +72,41 @@ de:
     no_assignments_yet: "Noch keine Hausaufgaben erstellt."
     no_assessables_yet: "Noch keine Bewertungen erstellt."
     submission_settings: "Abgabe-Einstellungen"
+    task_points:
+      update: "Punkte erfolgreich aktualisiert."
+      submission_not_found: "Abgabe nicht gefunden."
+      submission_missing_tutorial: "Diese Abgabe ist keinem Tutorium zugeordnet."
+      submission_missing_assignment: "Diese Abgabe ist keiner Hausaufgabe zugeordnet."
+      submission_missing_assessment: "Für diese Hausaufgabe ist keine Bewertung konfiguriert."
+      participation_not_found: "Teilnahme nicht gefunden."
+      participation_missing_tutorial: "Diese Teilnahme ist keinem Tutorium zugeordnet."
+      participation_missing_assessment: "Dieser Teilnahme ist keine Bewertung zugeordnet."
+      participation_missing_assignment: "Für diese Bewertung ist keine Hausaufgabe konfiguriert."
+      assignment_not_found: "Hausaufgabe nicht gefunden."
+      assignment_missing_assessment: "Für diese Hausaufgabe ist keine Bewertung konfiguriert."
+      tutorial_not_found: "Tutorium nicht gefunden."
+      user_not_found: "Benutzer nicht gefunden."
+      user_not_rostered: "Dieser Benutzer ist keinem Tutorium für diese Vorlesung zugeordnet."
+      invalid_submission_params: "Ungültige Anfrageparameter."
+      update: "Punkte erfolgreich aktualisiert."
+      assessment_not_found: "Bewertung für diese Hausaufgabe nicht gefunden."
+      cannot_score_active_assignment: "Punkte können für aktive Hausaufgaben nicht eingetragen werden."
+      user_not_found: "Benutzer nicht gefunden."
+      invalid_submission_params: "Ungültige Anfrageparameter."
+      participation_missing_tutorial: "Teilnahme %{participation_id} ist keinem Tutorium zugeordnet. Eine Bewertung ist nur möglich, wenn der Benutzer einem Tutorium zugeordnet ist."
+      user_cannot_grade: "Der Benutzer ist nicht berechtigt, in diesem Bereich zu bewerten."
+      init_participation_missing_args: "Bewertung, Benutzer und Tutorium müssen angegeben sein."
+      assessment_does_not_require_points: "Bewertung %{assessment_id} erfordert keine Punkteingabe."
+      invalid_task: "Ungültige Aufgabe %{task_id}."
+      invalid_points_value: "Ungültiger Punktwert für Aufgabe %{task_id}."
+      not_required_points: "Punkte können für Hausaufgaben, die keine Punkte erfordern, nicht eingetragen werden."
+      participation_tutorial_mismatch: "Teilnahme %{participation_id} gehört nicht zum Tutorium %{tutorial_id}"
+      submission_assignment_mismatch: "Abgabe %{submission_id} gehört nicht zur Hausaufgabe %{assignment_id}."
+      submission_has_no_assignment: "Abgabe %{submission_id} hat keine zugehörige Hausaufgabe"
+      assignment_has_no_assessment: "Hausaufgabe %{assignment_id} hat keine zugehörige Bewertung"
+      participation_has_no_assignment: "Teilnahme %{participation_id} hat keine zugehörige Hausaufgabe"
+      participation_missing: "Teilnahme nicht gefunden."
+      submission_missing: "Abgabe nicht gefunden."
     errors:
       no_assessable: "Hausaufgabe nicht gefunden."
       no_assessment: "Bewertung für dieses Element nicht gefunden."
@@ -86,6 +121,39 @@ de:
       not_submitted: "nicht abgegeben"
       excluded_heading: "Sonderfälle"
       reason: "Grund"
+    grading_tutorial:
+      team: 'Team'
+      task: 'Aufgabe'
+      total_points: 'Gesamtpunkte'
+      status: 'Status'
+      actions: 'Aktionen'
+      excluded_reason: 'Grund für Ausschluss'
+      correction: 'Korrektur'
+      max_points: 'Pkt'
+      no_submissions: 'Keine Abgaben für diese Hausaufgabe.'
+      no_submission_zone: 'Keine Abgaben'
+      no_submission_badge: 'Keine Abgabe'
+      no_tutorial_badge: 'Keinem Übungsgruppe zugeordnet'
+      participated: 'teilgenommen'
+      mark_as_participated: 'Als teilgenommen markieren'
+      confirm_unsaved_changes: 'Ungespeicherte Änderungen in der Punktetabelle gehen verloren. Fortfahren?'
+      filter_name: "Name filtern"
+      filter_options:
+        filter_all: "Alle"
+        filter_pending: "Ausstehend"
+        filter_reviewed: "Überprüft"
+      header_overview:
+        submission:
+          total: "Abgaben"
+          graded: "benotet"
+          pending: "ausstehend"
+        non_submitters:
+          total: "Personen haben nicht abgegeben"
+          participated: "teilgenommen"
+          not_participated: "noch nicht bewertet"
+          graded: "benotet"
+          pending: "ausstehend"
+      no_user_for_config: "Keine Benutzer für Teilnahme %{participation_id} an Hausaufgabe %{assignment_id}"
     grading_overview:
       submission_progress: "Abgaben"
       submitted: "Abgegeben"
