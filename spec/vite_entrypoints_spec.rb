@@ -6,9 +6,13 @@ require "rails_helper"
 # breaks in production while working fine behind the dev server, which
 # transpiles on the fly. This is what happened to js/geogebra.coffee.
 RSpec.describe("Vite entrypoints") do
+  # Mirrors KNOWN_ENTRYPOINT_TYPES of the vite-plugin-ruby release yarn.lock
+  # pins (v5.2.2), where "jsx?" and "tsx?" are regex fragments. Re-check on
+  # upgrade:
+  # https://github.com/ElMassimo/vite_ruby/blob/3edc67485fd4021072b43ad3a073ffa0fa851ede/vite-plugin-ruby/src/constants.ts#L11-L28
   let(:transpilable_extensions) do
-    ["js", "mjs", "jsx", "ts", "tsx", "css", "scss", "sass", "less", "styl", "stylus", "pcss",
-     "postcss"]
+    ["html", "js", "jsx", "ts", "tsx",
+     "css", "less", "sass", "scss", "styl", "stylus", "pcss", "postcss"]
   end
 
   it "never point at a file extension vite cannot transpile" do
