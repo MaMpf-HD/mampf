@@ -24,6 +24,7 @@ Rails.application.routes.draw do
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :user_creator_playwright, only: :create
+      post "playwright_user_login", to: "playwright_user_sessions#create"
       resources :mails_playwright, only: :create
       resources :i18n, only: :create
       post "feature_flags/enable", to: "feature_flags#enable"
