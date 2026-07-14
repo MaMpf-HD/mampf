@@ -18,12 +18,44 @@ RSpec.describe("Dev") do
     end
   end
 
+  describe "local-only routes" do
+    it "does not draw login and impersonation routes outside local environments" do
+      allow(Rails.env).to receive(:local?).and_return(false)
+      Rails.application.reload_routes!
+
+      route_paths = Rails.application.routes.routes.map { |r| r.path.spec.to_s }
+
+      expect(route_paths).not_to include(a_string_including("/dev/impersonate"))
+      expect(route_paths).not_to include(a_string_including("/dev/teacher_login"))
+      expect(route_paths).not_to include(a_string_including("/cypress/playwright_user_login"))
+    ensure
+      allow(Rails.env).to receive(:local?).and_call_original
+      Rails.application.reload_routes!
+    end
+  end
+
   describe "POST /dev/impersonate/:id" do
-    it "is not routable outside of development" do
-      impersonate_routes = Rails.application.routes.routes.select do |r|
-        r.path.spec.to_s.include?("dev/impersonate")
-      end
-      expect(impersonate_routes).to be_empty
+    it "is offered in the navbar for Playwright tests" do
+      current_user = create(:confirmed_user_en, email: "teacher-1@play")
+      target_user = create(:confirmed_user_en, email: "student-1@play")
+      sign_in(current_user)
+
+      get start_path
+
+      expect(response.body).to include(dev_impersonate_path(target_user.id))
+    end
+
+    it "switches to the selected user" do
+      current_user = create(:confirmed_user_en, email: "teacher-1@play")
+      target_user = create(:confirmed_user_en, email: "student-1@play")
+      sign_in(current_user)
+      host! "localhost"
+
+      post dev_impersonate_path(target_user.id)
+
+      expect(response).to redirect_to(start_path)
+      follow_redirect!
+      expect(controller.current_user).to eq(target_user)
     end
   end
 

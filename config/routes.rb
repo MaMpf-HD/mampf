@@ -7,10 +7,19 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => "/sidekiq"
   end
 
-  if Rails.env.development?
+  # Login/impersonation routes for development & testing
+  if Rails.env.local?
     namespace :dev do
       post "impersonate/:id", to: "impersonate#create", as: :impersonate
-      post "teacher_login", to: "teacher_sessions#create", as: :teacher_login
+
+      if Rails.env.development?
+        post "teacher_login", to: "teacher_sessions#create",
+                              as: :teacher_login
+      end
+    end
+
+    namespace :cypress do
+      post "playwright_user_login", to: "playwright_user_sessions#create" if Rails.env.test?
     end
   end
 
@@ -24,7 +33,6 @@ Rails.application.routes.draw do
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :user_creator_playwright, only: :create
-      post "playwright_user_login", to: "playwright_user_sessions#create"
       resources :mails_playwright, only: :create
       resources :i18n, only: :create
       post "feature_flags/enable", to: "feature_flags#enable"
