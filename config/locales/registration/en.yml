@@ -51,7 +51,9 @@ en:
             If you are unsure, we recommend choosing a registration process.
             It gives you a clear registration window, lets you review demand
             before assignments are finalized, and helps you handle
-            eligibility rules or limited capacities more fairly.
+            eligibility rules or limited capacities more fairly. It can also
+            assign students to groups automatically, based on the preferences
+            they submit.
         columns:
           description: "Short description"
           type: "Type"
