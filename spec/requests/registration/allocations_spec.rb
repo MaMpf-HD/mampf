@@ -297,45 +297,6 @@ RSpec.describe("Registration::Allocations", type: :request) do
           expect(flash[:notice]).to eq(I18n.t("registration.campaign.finalized"))
         end
 
-        it "prompts for student self-service via a modal when the campaign " \
-           "has groups" do
-          with_groups = create(:registration_campaign, :closed,
-                               :first_come_first_served, :with_items,
-                               campaignable: lecture, items_count: 2)
-
-          patch finalize_registration_campaign_allocation_path(with_groups),
-                as: :turbo_stream
-
-          expect(response.body).to include("self-service-modal")
-          expect(response.body).to include("modal-container")
-        end
-
-        it "preselects the recommendation, not the current mode" do
-          with_groups = create(:registration_campaign, :closed,
-                               :first_come_first_served, :with_items,
-                               campaignable: lecture, items_count: 2)
-
-          patch finalize_registration_campaign_allocation_path(with_groups),
-                as: :turbo_stream
-
-          # The groups are still locked at this point ...
-          expect(with_groups.registerables.map(&:self_materialization_mode).uniq)
-            .to eq(["disabled"])
-
-          doc = Nokogiri::HTML(response.body)
-          select = doc.css("select[name='self_materialization_mode']")
-
-          # ... the current state is labelled as such ...
-          expect(select.css("option[value='disabled']").text)
-            .to include(
-              I18n.t("registration.campaign.self_service.current_state_suffix")
-            )
-          # ... but preselecting it would make "Apply" a no-op and leave the
-          # students locked in, so the recommendation is preselected instead.
-          expect(select.css("option[selected]").pluck("value"))
-            .to eq(["add_and_remove"])
-        end
-
         it "folds the summary into the modal instead of flashing over it" do
           with_groups = create(:registration_campaign, :closed,
                                :first_come_first_served, :with_items,

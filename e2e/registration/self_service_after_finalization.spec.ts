@@ -40,8 +40,12 @@ test.describe("self-enrollment prompt after finalization", () => {
       const modal = page.getByTestId("self-service-modal");
       await expect(modal).toBeVisible();
 
-      // the recommended option is preselected (instead of the current state being preselected)
-      await expect(modal.getByTestId("self-service-mode")).toHaveValue("add_and_remove");
+      const modeSelect = modal.getByTestId("self-service-mode");
+      // the current state ("disabled") is labelled as such, but the recommended
+      // option is preselected (instead of the current state being preselected)
+      await expect(modeSelect.locator("option[value='disabled']"))
+        .toContainText("(current state)");
+      await expect(modeSelect).toHaveValue("add_and_remove");
 
       await modal.getByRole("button", { name: "Apply" }).click();
       await expect(modal).toBeHidden();
