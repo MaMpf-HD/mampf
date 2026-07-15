@@ -6,11 +6,6 @@ import { FactoryBot, FactoryBotObject } from "../_support/factorybot";
  * Finalizing a campaign leaves every group with self-enrollment disabled, so
  * students end up silently locked into their allocation. The modal makes the
  * teacher decide.
- *
- * Worth covering end to end: the modal's form has to submit via Turbo. It once
- * rendered as a Rails-UJS remote form instead (form_with_generates_remote_forms),
- * so "Apply" did nothing at all — while the server side stayed perfectly correct,
- * which is exactly why the request specs were happy.
  */
 test.describe("self-enrollment prompt after finalization", () => {
   test.beforeEach(async ({ request }) => {
@@ -45,8 +40,7 @@ test.describe("self-enrollment prompt after finalization", () => {
       const modal = page.getByTestId("self-service-modal");
       await expect(modal).toBeVisible();
 
-      // the recommendation is preselected, not the current state — preselecting
-      // "disabled" would make the primary button a no-op
+      // the recommended option is preselected (instead of the current state being preselected)
       await expect(modal.getByTestId("self-service-mode")).toHaveValue("add_and_remove");
 
       await modal.getByRole("button", { name: "Apply" }).click();
