@@ -166,11 +166,9 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
-  # top_bar_tooltip relies on the ViewComponent translate helper, so it is
-  # exercised through the rendered bar's title rather than called directly.
   describe "top-bar tooltip" do
     def bar_title(instance)
-      render_inline(instance).css(".tutorial-gtile-top-bar").first["title"]
+      render_inline(instance).css("[data-testid='group-tile-top-bar']").first["title"]
     end
 
     context "with an item" do
