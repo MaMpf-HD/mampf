@@ -990,20 +990,30 @@ RSpec.describe(Registration::Campaign, type: :model) do
         .to eq(["disabled"])
     end
 
-    it "rejects an unknown mode" do
+    it "rejects an unknown mode without touching the current modes" do
       campaign = create(:registration_campaign, :completed,
                         :first_come_first_served, items_count: 2)
+      campaign.registerables.each do |group|
+        group.update!(self_materialization_mode: :add_only)
+      end
 
       expect { campaign.apply_self_materialization_mode!("nonsense") }
         .to raise_error(ArgumentError)
+      expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+        .to eq(["add_only"])
     end
 
     it "rejects a missing mode with an ArgumentError, not a NoMethodError" do
       campaign = create(:registration_campaign, :completed,
                         :first_come_first_served, items_count: 2)
+      campaign.registerables.each do |group|
+        group.update!(self_materialization_mode: :add_only)
+      end
 
       expect { campaign.apply_self_materialization_mode!(nil) }
         .to raise_error(ArgumentError)
+      expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+        .to eq(["add_only"])
     end
   end
 
@@ -1017,7 +1027,9 @@ RSpec.describe(Registration::Campaign, type: :model) do
     it "returns nil when the groups differ" do
       campaign = create(:registration_campaign, :completed,
                         :first_come_first_served, items_count: 2)
-      campaign.registerables.first.update!(self_materialization_mode: :add_only)
+      first, second = campaign.registerables.to_a
+      first.update!(self_materialization_mode: :add_only)
+      second.update!(self_materialization_mode: :disabled)
 
       expect(campaign.shared_self_materialization_mode).to be_nil
     end
