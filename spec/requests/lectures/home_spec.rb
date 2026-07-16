@@ -30,7 +30,7 @@ RSpec.describe("Lectures::Home", type: :request) do
       expect(response.body).to include('data-testid="lecture-home-intro-empty"')
     end
 
-    it "still nudges staff when the intro is only blank trix markup" do
+    it "still shows the staff empty-state when the intro is only blank markup" do
       lecture.update!(home_intro: "<div><br></div>")
       sign_in editor
 
@@ -60,7 +60,7 @@ RSpec.describe("Lectures::Home", type: :request) do
   end
 
   describe "the \"start here\" fallback card" do
-    it "shows when the page is genuinely empty for a student" do
+    it "shows when the page is empty for a student" do
       sign_in student
 
       get lecture_home_path(lecture)
@@ -69,7 +69,7 @@ RSpec.describe("Lectures::Home", type: :request) do
         .to include('data-testid="lecture-home-fallback-card"')
     end
 
-    it "stands down once the teacher has authored an intro" do
+    it "is hidden once the teacher has authored an intro" do
       lecture.update!(home_intro: "<div>Welcome to the seminar</div>")
       sign_in student
 
@@ -79,7 +79,7 @@ RSpec.describe("Lectures::Home", type: :request) do
         .not_to include('data-testid="lecture-home-fallback-card"')
     end
 
-    it "stands down for staff, who get the nudge instead" do
+    it "is hidden for staff, who get the empty-state instead" do
       sign_in editor
 
       get lecture_home_path(lecture)
@@ -98,7 +98,7 @@ RSpec.describe("Lectures::Home", type: :request) do
              description: "Seminarvergabe")
     end
 
-    it "tells staff what students see below the intro" do
+    it "shows staff a note about the student registration view" do
       sign_in editor
 
       get lecture_home_path(lecture)

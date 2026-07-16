@@ -394,14 +394,12 @@ class LecturesController < ApplicationController
       redirect_to lecture_home_path(@lecture)
     end
 
-    # Terms are opted in as data, via a Flipper actor gate on Term. This must NOT
-    # be expressed relative to Term.active: WS 2026/27 is the *next* term today
-    # and the *active* one from 1 Oct 2026, and has to land on home in both cases
-    # — while SS 2026 never may.
+    # Opt-in per term via a Flipper actor gate, deliberately not tied to
+    # Term.active: an opted-in term must land on home both while it is upcoming
+    # and once it is active.
     def home_is_landing_page?
-      # lecture_path is both the entry link (cards, search) and the outline link
-      # (sidebar, "start here"). Redirecting the latter, too, would make the
-      # content page unreachable.
+      # lecture_path is also the outline link (sidebar, "start here"); redirecting
+      # that too would make the content page unreachable.
       return false if params[:outline].present?
 
       @lecture.term.present? &&

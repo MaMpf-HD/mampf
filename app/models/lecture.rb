@@ -540,11 +540,11 @@ class Lecture < ApplicationRecord
   # Trix leaves wrapper markup ("<div><br></div>") behind for an editor that was
   # emptied again, which a plain #present? would count as content.
   def home_intro_present?
-    ActionController::Base.helpers
-                          .strip_tags(home_intro.to_s)
-                          .gsub("&nbsp;", " ")
-                          .strip
-                          .present?
+    ActionView::Base.full_sanitizer
+                    .sanitize(home_intro.to_s)
+                    .gsub("&nbsp;", " ")
+                    .strip
+                    .present?
   end
 
   def home_content?

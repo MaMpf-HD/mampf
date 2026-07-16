@@ -127,9 +127,6 @@
                 rosterized_entries: @rosterized_entries,
                 lecture: @lecture
               } %>
-  <%# Staff can never satisfy @show_workflow_content (they may not register), so
-      without this they would see nothing where students get the whole
-      registration block — and conclude the page is empty. %>
   <% elsif can_edit_home && @campaigns_details.any? %>
     <div class="alert alert-info mt-3"
          data-testid="lecture-home-staff-workflow-note">
@@ -157,9 +154,6 @@
     </div>
   <% end %>
 
-  <%# We cannot key the "start here" card off @show_workflow_content: that is a
-      *permission* flag (any student may register for a published lecture), true
-      even without a single campaign. Ask for actual content instead. %>
   <% workflow_content = @campaigns_details.any? ||
                         @rosterized_entries.any? ||
                         @self_rosterables.any? %>
@@ -173,7 +167,7 @@
         <% if @subscribed %>
           <p class="mb-3"><%= t("registration.lecture.home.empty_subscribed",
                                   outline_label: t("basics.outline")) %></p>
-          <%# outline: true, or the button bounces straight back to this page %>
+          <%# outline: true keeps this link out of the home redirect %>
           <%= link_to t("basics.outline"),
                       lecture_path(@lecture, outline: true),
                       class: "btn btn-outline-primary btn-sm" %>

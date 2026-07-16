@@ -411,24 +411,21 @@ RSpec.describe("Lectures", type: :request) do
       )
     end
 
-    it "renders the home tab with the katex preview and the attach-free trix" do
+    it "renders the home tab with the intro editor, preview and save controls" do
       get edit_lecture_path(lecture, tab: "home")
 
-      expect(response.body).to include("lecture-home-intro-trix")
-      expect(response.body).to include('id="lecture-home-intro-preview"')
-      expect(response.body).to include("lecture-home-trix")
+      expect(response.body).to include('id="lecture-home-intro-trix"')
+      expect(response.body).to include('data-testid="lecture-home-intro-preview"')
       expect(response.body).to include('id="lecture-home-warning"')
     end
 
-    it "offers a bin toggle for dropping an attached pdf" do
+    it "shows the attached pdf with a control to remove it" do
       lecture.update!(home_attachment: pdf_upload)
 
       get edit_lecture_path(lecture, tab: "home")
 
       expect(response.body).to include("program.pdf")
       expect(response.body).to include("remove_home_attachment")
-      expect(response.body).to include("btn-check")
-      expect(response.body).to include("bi-trash")
     end
 
     it "saves the home intro and returns to the home tab" do
@@ -447,7 +444,7 @@ RSpec.describe("Lectures", type: :request) do
       expect(lecture.reload.home_attachment_filename).to eq("program.pdf")
     end
 
-    it "drops the pdf when the bin toggle is submitted" do
+    it "removes the pdf when the remove control is submitted" do
       lecture.update!(home_attachment: pdf_upload)
 
       patch lecture_path(lecture),

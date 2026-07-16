@@ -23,7 +23,6 @@
   display: none;
 }
 
-// Holds the save/cancel buttons, so they only appear once something changed.
 #lecture-home-warning {
   color: red;
   display: none;
@@ -147,8 +146,8 @@ h4.lecture-pane-subheader {
   overflow-y: auto;
 }
 
-// Attaching a file here would silently do nothing — Trix uploads are only wired
-// up for vignettes, which is also why this stays scoped to this one editor.
+// Trix uploads are only wired up for vignettes, so the file button would do
+// nothing here. Scoped to this editor so vignette editors keep theirs.
 .lecture-home-trix trix-toolbar .trix-button-group--file-tools {
   display: none;
 }

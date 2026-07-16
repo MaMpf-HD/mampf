@@ -44,8 +44,6 @@ function initHomeIntroPreview() {
   update();
   editor.addEventListener("trix-initialize", update);
 
-  // Loading the stored content does not fire this (same assumption as the
-  // organizational form), so it really is an edit.
   editor.addEventListener("trix-change", () => {
     update();
     showHomeFormWarning();
