@@ -104,7 +104,7 @@ RSpec.describe("Lectures::Home", type: :request) do
       get lecture_home_path(lecture)
 
       expect(response.body)
-        .to include('data-testid="lecture-home-staff-workflow-note"')
+        .to include('data-testid="lecture-home-staff-registration-note"')
       expect(response.body).to include("Seminarvergabe")
       expect(response.body).to include(edit_lecture_path(lecture, tab: "groups"))
     end
@@ -115,7 +115,7 @@ RSpec.describe("Lectures::Home", type: :request) do
       get lecture_home_path(lecture)
 
       expect(response.body)
-        .not_to include('data-testid="lecture-home-staff-workflow-note"')
+        .not_to include('data-testid="lecture-home-staff-registration-note"')
     end
 
     it "is not shown to staff when the lecture has no campaigns" do
@@ -125,7 +125,7 @@ RSpec.describe("Lectures::Home", type: :request) do
       get lecture_home_path(without_campaign)
 
       expect(response.body)
-        .not_to include('data-testid="lecture-home-staff-workflow-note"')
+        .not_to include('data-testid="lecture-home-staff-registration-note"')
     end
   end
 

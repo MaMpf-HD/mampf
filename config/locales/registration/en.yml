@@ -539,12 +539,12 @@ en:
         news_indicator: "New updates on Home"
         attachment_download: "Download program (PDF)"
         attachment_missing: "No program is attached to this lecture."
-        staff_workflow_title: "What students see here"
-        staff_workflow_hint: >-
+        staff_registration_title: "What students see here"
+        staff_registration_hint: >-
           Below your intro, students see the registration process and their own
           status (open registrations, the group they were assigned to). That
           view is personal to each student, so it is not shown to you here.
-        staff_workflow_manage: "Manage registration processes"
+        staff_registration_manage: "Manage registration processes"
         intro_empty: >-
           Your lecture home page has no welcome text or program yet. Add a short
           intro so students landing here see more than an empty page.

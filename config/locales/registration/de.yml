@@ -542,13 +542,13 @@ de:
         news_indicator: "Neue Updates auf Home"
         attachment_download: "Programm herunterladen (PDF)"
         attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
-        staff_workflow_title: "Was Studierende hier sehen"
-        staff_workflow_hint: >-
+        staff_registration_title: "Was Studierende hier sehen"
+        staff_registration_hint: >-
           Unterhalb Deines Intros sehen Studierende das Anmeldeverfahren und
           ihren eigenen Status (offene Anmeldungen, zugeteilte Gruppe). Diese
           Ansicht ist für jede Person individuell und wird Dir deshalb hier
           nicht angezeigt.
-        staff_workflow_manage: "Anmeldeverfahren verwalten"
+        staff_registration_manage: "Anmeldeverfahren verwalten"
         intro_empty: >-
           Die Startseite dieser Veranstaltung hat noch keinen Begrüßungstext und
           kein Programm. Füge eine kurze Einführung hinzu, damit Studierende hier
