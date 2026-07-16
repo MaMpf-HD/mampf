@@ -11,7 +11,7 @@ FROM node:24.18.0-trixie-slim AS node
 FROM ruby:3.4.10-trixie
 
 ARG RAILS_DEVELOPMENT_HOSTS=".githubpreview.dev,.app.github.dev"
-ARG BUNDLER_VERSION=4.0.12
+ARG BUNDLER_VERSION=4.0.15
 ARG OR_TOOLS_VERSION=or-tools-9.15-trixie
 ARG OR_TOOLS_FILENAME=or-tools-9.15-trixie-amd64.tar.gz
 ARG OR_TOOLS_SHA256=067e96ba57bbca8bf8e56c9b85010e223d49696cb5fe1a56ef94f5bd3647c0cf
