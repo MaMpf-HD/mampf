@@ -85,7 +85,7 @@
   <% end %>
 
   <% if @notifications.present? || @new_topics_count.positive? %>
-    <div class="mb-3">
+    <div class="mt-3 mb-3">
       <%= render partial: "lectures/show/news_card",
                  locals: { lecture: @lecture,
                            notifications: @notifications,
