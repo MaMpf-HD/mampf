@@ -54,9 +54,20 @@ services:
     environment:
       - RAILS_ENV=test
       - NODE_ENV=test
-      - MAMPF_PORT=3145
+      # Run the e2e stack behind Thruster, like dev/prod. Streamed media goes
+      # through `send_file`, which only gets HTTP Range support (needed for video
+      # seeking) when a front proxy serves it via X-Sendfile. Thruster is the
+      # public port (3145, unchanged for Cypress/Playwright); Rails sits behind it.
+      - MAMPF_PORT=3146
+      - APP_HEALTHCHECK_PORT=3145
+      - APP_CACHE_ROOT=/cache
+      - ACTION_DISPATCH_X_SENDFILE_HEADER=X-Sendfile
+      - THRUSTER_HTTP_PORT=3145
+      - THRUSTER_TARGET_PORT=3146
+      - THRUSTER_STORAGE_PATH=/cache/thruster-test
+      - THRUSTER_GZIP_COMPRESSION_DISABLE_ON_AUTH=true
     ports:
-      - 3145:3145 # Rails app for Cypress tests (no nginx used here)
+      - 3145:3145 # Thruster public HTTP (Cypress/Playwright target)
       - 3037:3037 # Vite server
 
   db:
