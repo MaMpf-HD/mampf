@@ -51,7 +51,9 @@ de:
             Wenn Du unsicher bist, empfehlen wir Dir ein Anmeldeverfahren.
             Damit kannst Du ein klares Registrierungsfenster festlegen, die
             Nachfrage vor der endgültigen Zuteilung besser überblicken und
-            Regeln oder begrenzte Plätze fairer verwalten.
+            Regeln oder begrenzte Plätze fairer verwalten. Außerdem kannst Du
+            die Zuteilung automatisch anhand der Präferenzen der Studierenden
+            berechnen lassen.
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"
