@@ -403,7 +403,7 @@ class LecturesController < ApplicationController
       return false if params[:outline].present?
 
       @lecture.term.present? &&
-        Flipper.enabled?(:lecture_home_landing, @lecture.term)
+        Flipper.enabled?(:term_uses_mampf_registration, @lecture.term)
     end
 
     def lecture_params

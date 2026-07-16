@@ -339,17 +339,17 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
-  describe "GET /lectures/:id with the lecture_home_landing flag" do
+  describe "GET /lectures/:id with the term_uses_mampf_registration flag" do
     let(:user) { create(:confirmed_user) }
     let(:term) { create(:term, :winter, year: 2026) }
     let(:lecture) { create(:lecture, :released_for_all, term: term) }
 
     before { create(:lecture_user_join, user: user, lecture: lecture) }
 
-    after { Flipper.disable(:lecture_home_landing) }
+    after { Flipper.disable(:term_uses_mampf_registration) }
 
     context "when the lecture's term is opted in" do
-      before { Flipper.enable_actor(:lecture_home_landing, term) }
+      before { Flipper.enable_actor(:term_uses_mampf_registration, term) }
 
       it "sends even subscribers to the lecture home page" do
         get lecture_path(lecture)
@@ -451,6 +451,33 @@ RSpec.describe("Lectures", type: :request) do
             params: { lecture: { remove_home_attachment: "1" }, subpage: "home" }
 
       expect(lecture.reload.home_attachment).to be_nil
+    end
+  end
+
+  describe "the Müsli transition banner on the roster tabs" do
+    let(:term) { create(:term, :winter, year: 2026) }
+    let(:lecture) { create(:lecture, term: term) }
+
+    before { Flipper.enable(:roster_maintenance) }
+
+    after do
+      Flipper.disable(:roster_maintenance)
+      Flipper.disable(:term_uses_mampf_registration)
+    end
+
+    it "shows the banner, naming the lecture's term, while it is not on MaMpf" do
+      get edit_lecture_path(lecture, tab: "groups")
+
+      expect(response.body).to include('data-testid="roster-transition-banner"')
+      expect(response.body).to include(term.to_label)
+    end
+
+    it "hides the banner once the term is opted into MaMpf registration" do
+      Flipper.enable_actor(:term_uses_mampf_registration, term)
+
+      get edit_lecture_path(lecture, tab: "groups")
+
+      expect(response.body).not_to include('data-testid="roster-transition-banner"')
     end
   end
 end
