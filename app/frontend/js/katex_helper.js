@@ -5,13 +5,20 @@ export const KATEX_DELIMITERS = [
   { left: "\\[", right: "\\]", display: true },
 ];
 
-// Matches Trix display math where line breaks split `$$`, content, and `$$`.
-const TRIX_DISPLAY_MATH_WITH_BREAKS
-  = /\$\$(?:\s*<br\s*\/?>\s*)+([\s\S]*?)(?:\s*<br\s*\/?>\s*)+\$\$/gi;
+// A $$…$$ display-math block. Written as an "unrolled loop" (each iteration
+// consumes a single `$`) so it matches in linear time — a lazy `[\s\S]*?`
+// searching for a closing `$$` that may be absent backtracks catastrophically.
+const DISPLAY_MATH = /\$\$([^$]*(?:\$(?!\$)[^$]*)*)\$\$/g;
+// A run of Trix line breaks (with surrounding whitespace) inside such a block.
+const DISPLAY_MATH_BREAK_RUN = /(?:\s*<br\s*\/?>\s*)+/gi;
 
+// Trix splits display math across `<br>`s, which stops KaTeX from pairing the
+// `$$` delimiters. Collapse those breaks to newlines within each block. Run per
+// block on the bounded content, never as one regex over the whole HTML — the
+// break run alone has no failing tail, so it stays linear.
 export function normalizeDisplayMathLineBreaks(html) {
-  return html.replace(TRIX_DISPLAY_MATH_WITH_BREAKS, (_match, content) => (
-    `$$\n${content.replace(/<br\s*\/?>/gi, "\n")}\n$$`
+  return html.replace(DISPLAY_MATH, (_match, content) => (
+    `$$${content.replace(DISPLAY_MATH_BREAK_RUN, "\n")}$$`
   ));
 }
 
