@@ -36,12 +36,14 @@ test("can upload a manuscript and extract structure from it",
       .getByRole("button", { name: "Close" }).click();
     page.on("dialog", dialog => dialog.accept());
     const importRequestPromise = page.waitForResponse(`/media/${medium.id}/import_manuscript`);
+    const importRedirectPromise = page.waitForURL(`/media/${medium.id}/edit`);
     await page.getByRole("button", { name: "Import" }).click();
     await importRequestPromise;
+    await importRedirectPromise;
 
     await page.goto(`/lectures/${lecture.id}/edit`);
     await expect(page.getByText(CHAPTER1)).toBeVisible();
-    await page.getByText(SECTION1).click();
+    await page.getByRole("link", { name: SECTION1 }).click();
     await expect(page.getByText("§1.1")).toBeVisible();
     await expect(page.getByText("Blub")).toBeVisible();
     await expect(page.getByText("Space")).toBeVisible();
