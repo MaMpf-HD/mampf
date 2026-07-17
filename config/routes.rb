@@ -328,6 +328,7 @@ Rails.application.routes.draw do
         patch :open
         patch :close
         patch :reopen
+        patch :self_service
         get :rejected
         get :unassigned
       end
