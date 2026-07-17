@@ -1,22 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-
-const KATEX_DELIMITERS = [
-  { left: "$$", right: "$$", display: true },
-  { left: "$", right: "$", display: false },
-  { left: "\\(", right: "\\)", display: false },
-  { left: "\\[", right: "\\]", display: true },
-];
-
-function renderMathIn(element) {
-  if (!element || typeof renderMathInElement !== "function") {
-    return;
-  }
-
-  renderMathInElement(element, {
-    delimiters: KATEX_DELIMITERS,
-    throwOnError: false,
-  });
-}
+import { renderMathIn } from "~/js/katex_helper";
 
 export default class extends Controller {
   static targets = ["editor", "preview", "warning"];
