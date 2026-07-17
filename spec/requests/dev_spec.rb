@@ -65,6 +65,7 @@ RSpec.describe("Dev") do
       last_playwright_user = create(:confirmed_user_en,
                                     email: "teacher-1-new@play")
       create(:confirmed_user_en, email: "student-1-new@example.com")
+      host! "localhost"
 
       post cypress_playwright_user_login_path
 
@@ -73,9 +74,19 @@ RSpec.describe("Dev") do
     end
 
     it "redirects back to the login page when there is no Playwright user" do
+      host! "localhost"
+
       post cypress_playwright_user_login_path
 
       expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "rejects non-local hosts" do
+      host! "example.com"
+
+      post cypress_playwright_user_login_path
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

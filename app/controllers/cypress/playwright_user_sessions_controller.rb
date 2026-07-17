@@ -1,5 +1,5 @@
 module Cypress
-  class PlaywrightUserSessionsController < ApplicationController
+  class PlaywrightUserSessionsController < Dev::BaseController
     skip_before_action :authenticate_user!
 
     def create
