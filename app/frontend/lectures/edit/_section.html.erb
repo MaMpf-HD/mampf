@@ -6,7 +6,8 @@
         <span class="<%= section_color(section) %>">
           <%= link_to section.to_label,
                       edit_section_path(section),
-                      class: 'text-dark' %>
+                      class: 'text-dark',
+                      data: { turbo_frame: "_top" } %>
         </span>
       </strong>
     </div>
