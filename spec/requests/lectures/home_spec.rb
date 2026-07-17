@@ -67,6 +67,7 @@ RSpec.describe("Lectures::Home", type: :request) do
 
       expect(response.body)
         .to include('data-testid="lecture-home-fallback-card"')
+      expect(response.body).to include(lecture_outline_path(lecture))
     end
 
     it "is hidden once the teacher has authored an intro" do

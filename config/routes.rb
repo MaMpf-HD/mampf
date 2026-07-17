@@ -292,10 +292,9 @@ Rails.application.routes.draw do
       as: "lecture_home_attachment",
       defaults: { project: "home" }
 
-  # Legacy URL. It has to carry the outline intent along, see
-  # LecturesController#home_is_landing_page?.
   get "lectures/:id/outline",
-      to: redirect("/lectures/%{id}?outline=true")
+      to: "lectures#outline",
+      as: "lecture_outline"
 
   resources :lectures, except: [:index] do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do

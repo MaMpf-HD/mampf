@@ -535,12 +535,11 @@ de:
         empty_title: "Starte hier"
         empty_subscribed: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Materialien und die Gliederung findest du unter
-          %{outline_label}.
+          dieser Seite. Materialien findest du in der Navigation der
+          Veranstaltung.
         empty_unsubscribed: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Abonniere die Veranstaltung, um Materialien und
-          %{outline_label} zu sehen.
+          dieser Seite. Abonniere die Veranstaltung, um Materialien zu sehen.
         news_indicator: "Neue Updates auf Home"
         attachment_download: "Programm herunterladen (PDF)"
         attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."

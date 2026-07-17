@@ -277,7 +277,7 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "renders an edit affordance on the content page" do
-      get lecture_path(lecture)
+      get lecture_outline_path(lecture)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(edit_lecture_path(lecture))
@@ -288,27 +288,12 @@ RSpec.describe("Lectures", type: :request) do
   describe "lecture routes" do
     let(:lecture) { create(:lecture) }
 
-    it "uses the canonical lecture member path for content" do
+    it "uses the canonical lecture member path as the landing page" do
       expect(lecture_path(lecture)).to eq("/lectures/#{lecture.id}")
     end
-  end
 
-  describe "GET /lectures/:id as a non-subscriber" do
-    let(:user) { create(:confirmed_user) }
-    let(:lecture) { create(:lecture, :released_for_all) }
-
-    it "redirects to the lecture's home page" do
-      get lecture_path(lecture)
-
-      expect(response).to redirect_to(lecture_home_path(lecture))
-    end
-
-    it "does not redirect staff (they bypass the subscription gate)" do
-      teacher_lecture = create(:lecture, :released_for_all, teacher: user)
-
-      get lecture_path(teacher_lecture)
-
-      expect(response).to have_http_status(:ok)
+    it "has a stable outline path" do
+      expect(lecture_outline_path(lecture)).to eq("/lectures/#{lecture.id}/outline")
     end
   end
 
@@ -333,68 +318,111 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "escapes or strips script tags in show view" do
-      get lecture_path(xss_lecture)
+      get lecture_outline_path(xss_lecture)
       expect(response).to be_successful
       expect(response.body).not_to include("<script>alert('lecture-xss')</script>")
     end
   end
 
-  describe "GET /lectures/:id with the term_uses_mampf_registration flag" do
+  describe "GET /lectures/:id" do
     let(:user) { create(:confirmed_user) }
     let(:term) { create(:term, :winter, year: 2026) }
     let(:lecture) { create(:lecture, :released_for_all, term: term) }
 
-    before { create(:lecture_user_join, user: user, lecture: lecture) }
+    after { Flipper.disable(:lecture_home_landing) }
 
-    after { Flipper.disable(:term_uses_mampf_registration) }
+    context "when the lecture's term uses home as its landing page" do
+      before { Flipper.enable_actor(:lecture_home_landing, term) }
 
-    context "when the lecture's term is opted in" do
-      before { Flipper.enable_actor(:term_uses_mampf_registration, term) }
+      it "sends subscribers to the lecture home page" do
+        create(:lecture_user_join, user: user, lecture: lecture)
 
-      it "sends even subscribers to the lecture home page" do
         get lecture_path(lecture)
 
         expect(response).to redirect_to(lecture_home_path(lecture))
       end
 
-      it "still sends staff straight to the content page" do
-        staff_lecture = create(:lecture, :released_for_all,
-                               term: term, teacher: user)
+      it "sends non-subscribers to the lecture home page" do
+        get lecture_path(lecture)
 
-        get lecture_path(staff_lecture)
-
-        expect(response).to have_http_status(:success)
+        expect(response).to redirect_to(lecture_home_path(lecture))
       end
 
-      it "still serves the content page when the outline is asked for explicitly" do
-        get lecture_path(lecture, outline: true)
+      it "sends teachers to the lecture home page without a subscription" do
+        teacher_lecture = create(:lecture, :released_for_all,
+                                 term: term, teacher: user)
 
-        expect(response).to have_http_status(:success)
-      end
+        get lecture_path(teacher_lecture)
 
-      it "keeps the outline intent on the legacy /outline url" do
-        get "/lectures/#{lecture.id}/outline"
-
-        expect(response).to redirect_to("/lectures/#{lecture.id}?outline=true")
-
-        follow_redirect!
-        expect(response).to have_http_status(:success)
-      end
-
-      it "leaves lectures of other terms alone" do
-        summer = create(:lecture, :released_for_all,
-                        term: create(:term, :summer, year: 2026))
-        create(:lecture_user_join, user: user, lecture: summer)
-
-        get lecture_path(summer)
-
-        expect(response).to have_http_status(:success)
+        expect(teacher_lecture.in?(user.lectures)).to be(false)
+        expect(response).to redirect_to(lecture_home_path(teacher_lecture))
       end
     end
 
-    context "when the term is not opted in" do
-      it "keeps sending subscribers to the content page" do
+    context "when the lecture's term keeps the outline landing page" do
+      it "sends subscribers to the stable outline page" do
+        create(:lecture_user_join, user: user, lecture: lecture)
+
         get lecture_path(lecture)
+
+        expect(response).to redirect_to(lecture_outline_path(lecture))
+      end
+
+      it "sends non-subscribers to the stable outline page" do
+        get lecture_path(lecture)
+
+        expect(response).to redirect_to(lecture_outline_path(lecture))
+      end
+
+      it "sends teachers to the stable outline page" do
+        teacher_lecture = create(:lecture, :released_for_all,
+                                 term: term, teacher: user)
+
+        get lecture_path(teacher_lecture)
+
+        expect(response).to redirect_to(lecture_outline_path(teacher_lecture))
+      end
+    end
+  end
+
+  describe "GET /lectures/:id/outline" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    it "serves the outline content page to subscribers" do
+      create(:lecture_user_join, user: user, lecture: lecture)
+
+      get lecture_outline_path(lecture)
+
+      expect(response).to have_http_status(:success)
+    end
+
+    it "serves the outline content page to teachers" do
+      teacher_lecture = create(:lecture, :released_for_all, teacher: user)
+
+      get lecture_outline_path(teacher_lecture)
+
+      expect(response).to have_http_status(:success)
+    end
+
+    it "sends non-subscribers to the lecture home page" do
+      get lecture_outline_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    context "when the lecture's term uses home as its landing page" do
+      let(:term) { create(:term, :winter, year: 2026) }
+      let(:lecture) { create(:lecture, :released_for_all, term: term) }
+
+      before { Flipper.enable_actor(:lecture_home_landing, term) }
+
+      after { Flipper.disable(:lecture_home_landing) }
+
+      it "still serves the stable outline page to subscribers" do
+        create(:lecture_user_join, user: user, lecture: lecture)
+
+        get lecture_outline_path(lecture)
 
         expect(response).to have_http_status(:success)
       end

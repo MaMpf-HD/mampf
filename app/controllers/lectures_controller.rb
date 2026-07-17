@@ -3,12 +3,12 @@ class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
 
   before_action :set_lecture, except: [:new, :create, :search]
-  before_action :set_lecture_cookie, only: [:show, :organizational,
+  before_action :set_lecture_cookie, only: [:show, :outline, :organizational,
                                             :show_announcements]
-  authorize_resource except: [:new, :create, :search]
+  authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
-  before_action :check_for_subscribe, only: [:show]
-  before_action :set_view_locale, only: [:edit, :show, :subscribe_page,
+  before_action :check_for_subscribe, only: [:outline]
+  before_action :set_view_locale, only: [:edit, :show, :outline, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   layout "administration"
@@ -18,40 +18,20 @@ class LecturesController < ApplicationController
   end
 
   def show
-    if @lecture.sort == "vignettes"
-      if @lecture.organizational
-        redirect_to lecture_organizational_path(@lecture)
-        return
-      end
-      redirect_to lecture_questionnaires_path(@lecture)
-      return
-    end
+    return if redirect_to_vignettes_landing
 
-    # deactivate http caching for the moment
-    if stale?(etag: @lecture,
-              last_modified: [current_user.updated_at,
-                              @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil)),
-                              Thredded::UserDetail.find_by(user_id: current_user.id)
-                                                  &.last_seen_at || @lecture.updated_at,
-                              @lecture.forum&.updated_at || @lecture.updated_at].max)
-      @lecture = Lecture.includes(:teacher, :term, :editors, :users,
-                                  :announcements, :imported_media,
-                                  course: [:editors],
-                                  media: [:teachable, :tags],
-                                  lessons: [media: [:tags]],
-                                  chapters: [:lecture,
-                                             { sections: [lessons: [:tags],
-                                                          chapter: [:lecture],
-                                                          tags: [:notions,
-                                                                 :lessons]] }])
-                        .find_by(id: params[:id])
-      @notifications = current_user.active_notifications(@lecture)
-      @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
-
-      render template: "lectures/show/show",
-             layout: turbo_frame_request? ? "turbo_frame" : "application"
+    if lecture_home_landing_page?
+      redirect_to lecture_home_path(@lecture)
+    else
+      redirect_to lecture_outline_path(@lecture)
     end
+  end
+
+  def outline
+    authorize! :show, @lecture
+    return if redirect_to_vignettes_landing
+
+    render_outline
   end
 
   def new
@@ -384,8 +364,6 @@ class LecturesController < ApplicationController
       # Staff bypass the subscription gate for content.
       return if current_user.can_edit?(@lecture)
 
-      return redirect_to(lecture_home_path(@lecture)) if home_is_landing_page?
-
       return if @lecture.in?(current_user.lectures)
 
       # Non-subscribers are sent to the lecture's home page (its
@@ -394,16 +372,48 @@ class LecturesController < ApplicationController
       redirect_to lecture_home_path(@lecture)
     end
 
-    # Opt-in per term via a Flipper actor gate, deliberately not tied to
-    # Term.active: an opted-in term must land on home both while it is upcoming
-    # and once it is active.
-    def home_is_landing_page?
-      # lecture_path is also the outline link (sidebar, "start here"); redirecting
-      # that too would make the content page unreachable.
-      return false if params[:outline].present?
+    def render_outline
+      # deactivate http caching for the moment
+      if stale?(etag: @lecture,
+                last_modified: [current_user.updated_at,
+                                @lecture.updated_at,
+                                Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil)),
+                                Thredded::UserDetail.find_by(user_id: current_user.id)
+                                                    &.last_seen_at || @lecture.updated_at,
+                                @lecture.forum&.updated_at || @lecture.updated_at].max)
+        @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                    :announcements, :imported_media,
+                                    course: [:editors],
+                                    media: [:teachable, :tags],
+                                    lessons: [media: [:tags]],
+                                    chapters: [:lecture,
+                                               { sections: [lessons: [:tags],
+                                                            chapter: [:lecture],
+                                                            tags: [:notions,
+                                                                   :lessons]] }])
+                          .find_by(id: params[:id])
+        @notifications = current_user.active_notifications(@lecture)
+        @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
 
+        render template: "lectures/show/show",
+               layout: turbo_frame_request? ? "turbo_frame" : "application"
+      end
+    end
+
+    def redirect_to_vignettes_landing
+      return false unless @lecture.sort == "vignettes"
+
+      if @lecture.organizational
+        redirect_to lecture_organizational_path(@lecture)
+      else
+        redirect_to lecture_questionnaires_path(@lecture)
+      end
+      true
+    end
+
+    def lecture_home_landing_page?
       @lecture.term.present? &&
-        Flipper.enabled?(:term_uses_mampf_registration, @lecture.term)
+        Flipper.enabled?(:lecture_home_landing, @lecture.term)
     end
 
     def lecture_params

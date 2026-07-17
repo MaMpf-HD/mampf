@@ -165,15 +165,12 @@
            data-testid="lecture-home-fallback-card">
         <h5 class="mb-2"><%= t("registration.lecture.home.empty_title") %></h5>
         <% if @subscribed %>
-          <p class="mb-3"><%= t("registration.lecture.home.empty_subscribed",
-                                  outline_label: t("basics.outline")) %></p>
-          <%# outline: true keeps this link out of the home redirect %>
+          <p class="mb-3"><%= t("registration.lecture.home.empty_subscribed") %></p>
           <%= link_to t("basics.outline"),
-                      lecture_path(@lecture, outline: true),
+                      lecture_outline_path(@lecture),
                       class: "btn btn-outline-primary btn-sm" %>
         <% else %>
-          <p class="mb-0"><%= t("registration.lecture.home.empty_unsubscribed",
-                                  outline_label: t("basics.outline")) %></p>
+          <p class="mb-0"><%= t("registration.lecture.home.empty_unsubscribed") %></p>
         <% end %>
       </div>
     <% end %>
