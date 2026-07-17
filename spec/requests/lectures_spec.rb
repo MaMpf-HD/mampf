@@ -159,6 +159,51 @@ RSpec.describe("Lectures", type: :request) do
       end
     end
 
+    context "with self-enrollment groups" do
+      def search_algebra
+        get(search_lectures_path,
+            params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
+            as: :turbo_stream)
+      end
+
+      before { Flipper.enable(:roster_maintenance) }
+
+      after { Flipper.disable(:roster_maintenance) }
+
+      it "shows the open badge for a lecture with a self-enrollment group" do
+        create(:tutorial, lecture: lecture_algebra,
+                          self_materialization_mode: :add_only)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registration-badge")
+      end
+
+      it "shows the registered badge when the user is already in a group" do
+        tutorial = create(:tutorial, lecture: lecture_algebra,
+                                     self_materialization_mode: :add_only)
+        create(:tutorial_membership, tutorial: tutorial, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body)
+          .not_to include("lecture-search-registration-badge")
+      end
+
+      it "shows no badge for groups with self-enrollment disabled" do
+        create(:tutorial, lecture: lecture_algebra,
+                          self_materialization_mode: :disabled)
+
+        search_algebra
+
+        expect(response.body)
+          .not_to include("lecture-search-registration-badge")
+        expect(response.body)
+          .not_to include("lecture-search-registered-badge")
+      end
+    end
+
     context "with subscribed lectures" do
       def search_algebra
         get(search_lectures_path,
