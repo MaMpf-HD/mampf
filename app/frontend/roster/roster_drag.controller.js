@@ -19,11 +19,9 @@ export default class extends Controller {
   connect() {
     this.initDraggable();
     this.initDropZones();
-    document.addEventListener("turbo:stream-render", this.refreshDropZones);
   }
 
   disconnect() {
-    document.removeEventListener("turbo:stream-render", this.refreshDropZones);
     this.sortableInstance?.destroy();
     this.tileDropInstances.forEach(s => s.destroy());
     this.tileDropInstances = [];
