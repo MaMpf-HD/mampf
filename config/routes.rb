@@ -287,8 +287,14 @@ Rails.application.routes.draw do
       as: "lecture_home",
       defaults: { project: "home" }
 
+  get "lectures/:id/home_attachment",
+      to: "lectures/home#attachment",
+      as: "lecture_home_attachment",
+      defaults: { project: "home" }
+
   get "lectures/:id/outline",
-      to: redirect("/lectures/%{id}")
+      to: "lectures#outline",
+      as: "lecture_outline"
 
   resources :lectures, except: [:index] do
     constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
@@ -328,6 +334,7 @@ Rails.application.routes.draw do
         patch :open
         patch :close
         patch :reopen
+        patch :self_service
         get :rejected
         get :unassigned
       end

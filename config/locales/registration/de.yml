@@ -27,6 +27,20 @@ de:
       active_campaign_title: "Aktive Kampagnen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutze die Gruppenverwaltung, um Änderungen vorzunehmen."
       go_to_roster: "Zur Gruppenverwaltung"
+      self_service:
+        title: "Abgeschlossen — dürfen sich Studierende selbst ein- und austragen?"
+        description: "Aktuell ist die Selbsteinschreibung deaktiviert: Die Studierenden sind zugeteilt, können sich aber nicht selbst ein- oder austragen. Du kannst das jetzt für alle Gruppen des Anmeldeverfahrens erlauben — etwa zum eigenständigen Ausgleich oder für Nachrücker:innen. Einzelne Gruppen kannst Du später anpassen."
+        modes:
+          disabled: "Selbsteinschreibung deaktiviert"
+          add_only: "Nur Eintragen erlauben"
+          remove_only: "Nur Austragen erlauben"
+          add_and_remove: "Ein- & Austragen erlauben"
+        current_state_suffix: "(aktueller Zustand)"
+        keep_closed: "Selbsteinschreibung deaktiviert lassen"
+        apply: "Übernehmen"
+        updated: "Die Selbstverwaltungs-Einstellung der Gruppen wurde aktualisiert."
+        only_when_completed: "Die Selbstverwaltung kann erst nach Abschluss des Anmeldeverfahrens geändert werden."
+        failed: "Die Selbstverwaltungs-Einstellung konnte nicht aktualisiert werden."
       dissolved_enrolled: "zugeteilt"
       lecture_not_found: "Veranstaltung nicht gefunden."
       default_description: "Anmeldung"
@@ -535,13 +549,29 @@ de:
         empty_title: "Starte hier"
         empty_subscribed: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Materialien und die Gliederung findest du unter
-          %{outline_label}.
+          dieser Seite. Materialien findest du in der Navigation der
+          Veranstaltung.
         empty_unsubscribed: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Abonniere die Veranstaltung, um Materialien und
-          %{outline_label} zu sehen.
+          dieser Seite. Abonniere die Veranstaltung, um Materialien zu sehen.
         news_indicator: "Neue Updates auf Home"
+        attachment_download: "Programm herunterladen (PDF)"
+        attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
+        staff_registration_title: "Was Studierende hier sehen"
+        staff_registration_hint: >-
+          Unterhalb Deines Intros sehen Studierende das Anmeldeverfahren und
+          ihren eigenen Status (offene Anmeldungen, zugeteilte Gruppe). Diese
+          Ansicht ist für jede Person individuell und wird Dir deshalb hier
+          nicht angezeigt.
+        staff_registration_manage: "Anmeldeverfahren verwalten"
+        intro_empty: >-
+          Die Startseite dieser Veranstaltung hat noch keinen Begrüßungstext und
+          kein Programm. Füge eine kurze Einführung hinzu, damit Studierende hier
+          mehr als eine leere Seite sehen.
+        intro_empty_campaign: >-
+          Für diese Veranstaltung läuft eine Anmeldung, aber Deine Startseite hat
+          keinen Begrüßungstext — genau das sehen Studierende vor der Anmeldung.
+          Füge eine kurze Einführung und Dein Programm hinzu.
         subscribe_prompt: >-
           Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
           Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.

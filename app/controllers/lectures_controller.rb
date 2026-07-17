@@ -3,12 +3,12 @@ class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
 
   before_action :set_lecture, except: [:new, :create, :search]
-  before_action :set_lecture_cookie, only: [:show, :organizational,
+  before_action :set_lecture_cookie, only: [:show, :outline, :organizational,
                                             :show_announcements]
-  authorize_resource except: [:new, :create, :search]
+  authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
-  before_action :check_for_subscribe, only: [:show]
-  before_action :set_view_locale, only: [:edit, :show, :subscribe_page,
+  before_action :check_for_subscribe, only: [:outline]
+  before_action :set_view_locale, only: [:edit, :show, :outline, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   layout "administration"
@@ -18,40 +18,20 @@ class LecturesController < ApplicationController
   end
 
   def show
-    if @lecture.sort == "vignettes"
-      if @lecture.organizational
-        redirect_to lecture_organizational_path(@lecture)
-        return
-      end
-      redirect_to lecture_questionnaires_path(@lecture)
-      return
-    end
+    return if redirect_to_vignettes_landing
 
-    # deactivate http caching for the moment
-    if stale?(etag: @lecture,
-              last_modified: [current_user.updated_at,
-                              @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil)),
-                              Thredded::UserDetail.find_by(user_id: current_user.id)
-                                                  &.last_seen_at || @lecture.updated_at,
-                              @lecture.forum&.updated_at || @lecture.updated_at].max)
-      @lecture = Lecture.includes(:teacher, :term, :editors, :users,
-                                  :announcements, :imported_media,
-                                  course: [:editors],
-                                  media: [:teachable, :tags],
-                                  lessons: [media: [:tags]],
-                                  chapters: [:lecture,
-                                             { sections: [lessons: [:tags],
-                                                          chapter: [:lecture],
-                                                          tags: [:notions,
-                                                                 :lessons]] }])
-                        .find_by(id: params[:id])
-      @notifications = current_user.active_notifications(@lecture)
-      @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
-
-      render template: "lectures/show/show",
-             layout: turbo_frame_request? ? "turbo_frame" : "application"
+    if lecture_home_landing_page?
+      redirect_to lecture_home_path(@lecture)
+    else
+      redirect_to lecture_outline_path(@lecture)
     end
+  end
+
+  def outline
+    authorize! :show, @lecture
+    return if redirect_to_vignettes_landing
+
+    render_outline
   end
 
   def new
@@ -386,14 +366,59 @@ class LecturesController < ApplicationController
     end
 
     def check_for_subscribe
-      return if @lecture.in?(current_user.lectures)
       # Staff bypass the subscription gate for content.
       return if current_user.can_edit?(@lecture)
+
+      return if @lecture.in?(current_user.lectures)
 
       # Non-subscribers are sent to the lecture's home page (its
       # organizational front door), which offers registration (if the
       # lecture uses it) as well as a link to the subscription page.
       redirect_to lecture_home_path(@lecture)
+    end
+
+    def render_outline
+      # deactivate http caching for the moment
+      if stale?(etag: @lecture,
+                last_modified: [current_user.updated_at,
+                                @lecture.updated_at,
+                                Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil)),
+                                Thredded::UserDetail.find_by(user_id: current_user.id)
+                                                    &.last_seen_at || @lecture.updated_at,
+                                @lecture.forum&.updated_at || @lecture.updated_at].max)
+        @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                    :announcements, :imported_media,
+                                    course: [:editors],
+                                    media: [:teachable, :tags],
+                                    lessons: [media: [:tags]],
+                                    chapters: [:lecture,
+                                               { sections: [lessons: [:tags],
+                                                            chapter: [:lecture],
+                                                            tags: [:notions,
+                                                                   :lessons]] }])
+                          .find_by(id: params[:id])
+        @notifications = current_user.active_notifications(@lecture)
+        @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
+
+        render template: "lectures/show/show",
+               layout: turbo_frame_request? ? "turbo_frame" : "application"
+      end
+    end
+
+    def redirect_to_vignettes_landing
+      return false unless @lecture.sort == "vignettes"
+
+      if @lecture.organizational
+        redirect_to lecture_organizational_path(@lecture)
+      else
+        redirect_to lecture_questionnaires_path(@lecture)
+      end
+      true
+    end
+
+    def lecture_home_landing_page?
+      @lecture.term.present? &&
+        Flipper.enabled?(:lecture_home_landing, @lecture.term)
     end
 
     def lecture_params
@@ -403,7 +428,8 @@ class LecturesController < ApplicationController
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
-                        :annotations_status]
+                        :annotations_status,
+                        :home_intro, :home_attachment, :remove_home_attachment]
       if action_name == "update" && current_user.can_update_personell?(@lecture)
         allowed_params.push({ editor_ids: [] })
       end
