@@ -15,13 +15,14 @@ test("teacher authors a home intro and a student sees it", async ({
 }) => {
   const lecture = await factory.create("lecture", ["released_for_all"], {
     teacher_id: teacher.user.id,
+    locale: "en",
   });
 
   const editPage = new LectureEditPage(teacher.page, lecture.id);
   await editPage.goto();
   await editPage.homeTab.click();
 
-  await teacher.page.locator("#lecture-home-intro-trix").click();
+  await teacher.page.getByTestId("lecture-home-intro-editor").click();
   await teacher.page.keyboard.type("Welcome, we study $x^2$");
 
   // the preview updates from the editor as you type — the part a request spec
@@ -29,8 +30,7 @@ test("teacher authors a home intro and a student sees it", async ({
   await expect(teacher.page.getByTestId("lecture-home-intro-preview"))
     .toContainText("Welcome, we study");
 
-  await teacher.page.locator("#lecture-home-form")
-    .getByRole("button", { name: "Save" }).click();
+  await teacher.page.getByTestId("lecture-home-save").click();
   await expect.poll(() => lecture.__call("home_intro_present?")).toBe(true);
 
   await new CampaignRegistrationPage(student.page, lecture.id).goto();

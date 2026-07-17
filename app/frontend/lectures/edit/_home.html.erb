@@ -25,7 +25,8 @@
         <%= f.trix_editor :home_intro,
                           id: "lecture-home-intro-trix",
                           data: { content: lecture.home_intro,
-                                  preview: "lecture-home-intro-preview" } %>
+                                  preview: "lecture-home-intro-preview",
+                                  testid: "lecture-home-intro-editor" } %>
       </div>
     </div>
   </div>
@@ -77,7 +78,8 @@
       <div id="lecture-home-warning">
         <%= t("warnings.unsaved_changes") %>
         <%= hidden_field_tag :subpage, "home" %>
-        <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
+        <%= f.submit t("buttons.save"), class: "btn btn-primary",
+                     data: { testid: "lecture-home-save" } %>
         <button type="button" id="cancel-lecture-home" class="btn btn-secondary">
           <%= t("buttons.cancel") %>
         </button>
