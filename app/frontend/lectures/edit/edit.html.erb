@@ -1,7 +1,7 @@
 <%= vite_javascript_tag "lectures/lectures.js" %>
 <%= vite_javascript_tag "lectures/edit/edit.js" %>
 
-  <%= turbo_frame_tag "lecture-area",
+  <%= turbo_frame_tag "lecture-area", target: "_top",
                       data: { cy: "lecture-area",
                               controller: "lecture-highlights" } do %>
     <!-- Header -->
