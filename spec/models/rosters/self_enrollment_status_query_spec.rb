@@ -6,6 +6,17 @@ RSpec.describe(Rosters::SelfEnrollmentStatusQuery) do
 
   subject(:query) { described_class.new(user, [lecture.id]) }
 
+  def count_queries
+    count = 0
+    subscription = ActiveSupport::Notifications.subscribe("sql.active_record") do |*, payload|
+      count += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION|CACHE/)
+    end
+    yield
+    count
+  ensure
+    ActiveSupport::Notifications.unsubscribe(subscription)
+  end
+
   describe "#rosterized_lecture_ids" do
     it "includes a lecture where the user is in a tutorial" do
       tutorial = create(:tutorial, lecture: lecture)
@@ -62,6 +73,22 @@ RSpec.describe(Rosters::SelfEnrollmentStatusQuery) do
       create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user))
 
       expect(query.enrollable_lecture_ids).to be_empty
+    end
+
+    it "issues a bounded number of queries regardless of candidate count" do
+      lectures = create_list(:lecture, 8)
+      lectures.each do |group_lecture|
+        create(:tutorial, lecture: group_lecture, capacity: 5,
+                          self_materialization_mode: :add_only)
+      end
+      wide_query = described_class.new(user, lectures.map(&:id))
+
+      queries = count_queries { wide_query.enrollable_lecture_ids }
+
+      expect(wide_query.enrollable_lecture_ids).to match_array(lectures.map(&:id))
+      # a per-candidate full?/locked? lookup would scale with the 8 groups; the
+      # batched counts keep it flat (candidate load + grouped count per type)
+      expect(queries).to be <= 6
     end
   end
 end

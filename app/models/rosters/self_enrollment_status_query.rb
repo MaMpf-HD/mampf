@@ -1,10 +1,22 @@
 module Rosters
   # For the lecture search cards: given a page of lectures, tells which the
   # user is already rostered into and which still have a group anyone could
-  # self-enroll into. Bounded queries, since the search page renders many cards
-  # and per-card lookups would be N+1.
+  # self-enroll into. Answered in a fixed, small number of queries regardless
+  # of how many lectures or groups the page holds — the search renders many
+  # cards and paginates on scroll, so per-card or per-group lookups would N+1.
   class SelfEnrollmentStatusQuery
     SELF_ADD_MODES = [:add_only, :add_and_remove].freeze
+
+    # Per rosterable type: how to scope it to a lecture page and which
+    # membership association counts towards capacity.
+    ENROLLABLE_SOURCES = [
+      { klass: Tutorial, membership: :tutorial_memberships,
+        page_scope: ->(ids) { { lecture_id: ids } } },
+      { klass: Talk, membership: :speaker_talk_joins,
+        page_scope: ->(ids) { { lecture_id: ids } } },
+      { klass: Cohort, membership: :cohort_memberships,
+        page_scope: ->(ids) { { context_type: "Lecture", context_id: ids } } }
+    ].freeze
 
     def initialize(user, lecture_ids)
       @user = user
@@ -26,8 +38,8 @@ module Rosters
     def enrollable_lecture_ids
       return Set.new if @lecture_ids.empty?
 
-      candidates.each_with_object(Set.new) do |rosterable, ids|
-        ids << lecture_id_for(rosterable) unless rosterable.locked? || rosterable.full?
+      ENROLLABLE_SOURCES.each_with_object(Set.new) do |source, ids|
+        collect_enrollable(source, ids)
       end
     end
 
@@ -52,15 +64,36 @@ module Rosters
               .distinct.pluck(:context_id)
       end
 
-      def candidates
-        [
-          Tutorial.where(lecture_id: @lecture_ids,
-                         self_materialization_mode: SELF_ADD_MODES),
-          Talk.where(lecture_id: @lecture_ids,
-                     self_materialization_mode: SELF_ADD_MODES),
-          Cohort.where(context_type: "Lecture", context_id: @lecture_ids,
-                       self_materialization_mode: SELF_ADD_MODES)
-        ].flat_map(&:to_a)
+      def collect_enrollable(source, ids)
+        candidates = source[:klass]
+                     .where(source[:page_scope].call(@lecture_ids))
+                     .where(self_materialization_mode: SELF_ADD_MODES)
+                     .to_a
+        return if candidates.empty?
+
+        counts = member_counts(source, candidates.map(&:id))
+
+        candidates.each do |rosterable|
+          # locked? short-circuits on skip_campaigns, which self-materialization
+          # always sets, so this issues no query for these candidates.
+          next if rosterable.locked?
+          next if rosterable_full?(rosterable, counts[rosterable.id])
+
+          ids << lecture_id_for(rosterable)
+        end
+      end
+
+      # One grouped COUNT per type instead of rosterable.full?'s per-record
+      # count. Keep the capacity check in sync with Rosters::Rosterable#full?.
+      def member_counts(source, candidate_ids)
+        source[:klass].where(id: candidate_ids)
+                      .joins(source[:membership])
+                      .group(source[:klass].arel_table[:id])
+                      .count
+      end
+
+      def rosterable_full?(rosterable, member_count)
+        rosterable.capacity.present? && (member_count || 0) >= rosterable.capacity
       end
 
       def lecture_id_for(rosterable)
