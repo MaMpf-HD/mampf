@@ -1,0 +1,40 @@
+require "rails_helper"
+
+RSpec.describe(Dev::BaseController, type: :controller) do
+  controller(Dev::BaseController) do
+    skip_before_action :authenticate_user!
+
+    def index
+      head :ok
+    end
+  end
+
+  before do
+    routes.draw do
+      get "index" => "dev/base#index"
+    end
+  end
+
+  describe "#verify_development_environment" do
+    before do
+      allow(Rails.env).to receive(:development?).and_return(true)
+    end
+
+    it "allows localhost loopback requests via 127.0.0.1" do
+      request.host = "127.0.0.1"
+
+      get :index
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "rejects non-local hosts" do
+      request.host = "example.com"
+
+      expect { get(:index) }.to raise_error(
+        ActionController::RoutingError,
+        "Not Found"
+      )
+    end
+  end
+end
