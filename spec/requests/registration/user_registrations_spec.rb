@@ -234,8 +234,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
         expect(response).to have_http_status(:ok)
         expect(response.body).to include('id="student_registration_options"')
-        expect(response.body).not_to include("tutorial-gtile--blocked")
-        expect(response.body).not_to include("registration-blocked-action")
+        expect(response.body)
+          .not_to include('data-testid="registration-blocked-action"')
       end
 
       it "does not block a tutorial campaign for a student stuck in an " \
@@ -250,8 +250,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_home_path(lecture)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).not_to include("tutorial-gtile--blocked")
-        expect(response.body).not_to include("registration-blocked-action")
+        expect(response.body)
+          .not_to include('data-testid="registration-blocked-action"')
       end
     end
 
@@ -276,7 +276,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
         get lecture_home_path(lecture)
 
-        expect(response.body).to include("registration-blocked-action")
+        expect(response.body)
+          .to include('data-testid="registration-blocked-action"')
       end
 
       it "does not block self-enrolling into a cohort (cohorts coexist with " \
@@ -288,7 +289,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_home_path(lecture)
 
         expect(response.body).to include("Deepening group")
-        expect(response.body).not_to include("registration-blocked-action")
+        expect(response.body)
+          .not_to include('data-testid="registration-blocked-action"')
       end
     end
 
