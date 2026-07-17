@@ -11,6 +11,14 @@
 </p>
 
 <%= form_with model: lecture,
+              local: true,
+              data: {
+                turbo_frame: "lecture-area",
+                controller: "lecture-home-form",
+                action: "change->lecture-home-form#showWarning",
+                lecture_home_form_cancel_url_value:
+                  edit_lecture_path(lecture, tab: "home")
+              },
               html: { id: "lecture-home-form", multipart: true } do |f| %>
   <div class="row">
     <div class="col-12">
@@ -25,7 +33,11 @@
         <%= f.trix_editor :home_intro,
                           id: "lecture-home-intro-trix",
                           data: { content: lecture.home_intro,
-                                  preview: "lecture-home-intro-preview",
+                lecture_home_form_target: "editor",
+                action: "trix-initialize->lecture-home-form#updatePreview " \
+                  "trix-change->lecture-home-form#updatePreview " \
+                  "trix-change->lecture-home-form#showWarning " \
+                  "trix-file-accept->lecture-home-form#rejectAttachment",
                                   testid: "lecture-home-intro-editor" } %>
       </div>
     </div>
@@ -36,6 +48,7 @@
       <div class="form-text mb-1"><%= t("basics.preview") %></div>
       <div class="alert alert-dark bg-mdb-color-lighten-6"
            id="lecture-home-intro-preview"
+         data-lecture-home-form-target="preview"
            data-testid="lecture-home-intro-preview"></div>
     </div>
   </div>
@@ -75,12 +88,15 @@
 
   <div class="row mt-3">
     <div class="col-12 text-center">
-      <div id="lecture-home-warning">
+      <div id="lecture-home-warning" data-lecture-home-form-target="warning">
         <%= t("warnings.unsaved_changes") %>
         <%= hidden_field_tag :subpage, "home" %>
         <%= f.submit t("buttons.save"), class: "btn btn-primary",
                      data: { testid: "lecture-home-save" } %>
-        <button type="button" id="cancel-lecture-home" class="btn btn-secondary">
+        <button type="button"
+          id="cancel-lecture-home"
+          class="btn btn-secondary"
+          data-action="click->lecture-home-form#cancel">
           <%= t("buttons.cancel") %>
         </button>
       </div>

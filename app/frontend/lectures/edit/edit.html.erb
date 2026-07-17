@@ -1,7 +1,9 @@
 <%= vite_javascript_tag "lectures/lectures.js" %>
 <%= vite_javascript_tag "lectures/edit/edit.js" %>
 
-  <div id="lecture-area" data-cy="lecture-area" data-controller="lecture-highlights">
+  <%= turbo_frame_tag "lecture-area",
+                      data: { cy: "lecture-area",
+                              controller: "lecture-highlights" } do %>
     <!-- Header -->
     <div class="container small-width">
       <%= render partial: "lectures/edit/header",
@@ -122,7 +124,7 @@
       <% end %>
 
     <% end %>
-  </div>
+  <% end %>
 
   <!-- Modals -->
   <%= render partial: 'media/modal' %>
