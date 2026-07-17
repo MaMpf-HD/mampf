@@ -20,12 +20,12 @@ RSpec.describe(Dev::BaseController, type: :controller) do
       allow(Rails.env).to receive(:development?).and_return(true)
     end
 
-    it "allows localhost loopback requests via 127.0.0.1" do
-      request.host = "127.0.0.1"
-
-      get :index
-
-      expect(response).to have_http_status(:ok)
+    it "allows loopback hosts" do
+      ["127.0.0.1", "[::1]", "localhost"].each do |host|
+        request.host = host
+        get :index
+        expect(response).to have_http_status(:ok)
+      end
     end
 
     it "rejects non-local hosts" do
