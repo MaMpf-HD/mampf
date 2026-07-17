@@ -253,6 +253,7 @@ de:
       locked_manage_no_campaign: "Liste ist gesperrt (aktiviere Anmeldeverfahren überspringen für direkte Verwaltung)"
       edit_settings: "Einstellungen bearbeiten"
       edit_disabled_campaign: "Einstellungen können während eines laufenden Anmeldeverfahrens nicht bearbeitet werden"
+      top_bar_campaign: "Diese Gruppe ist Teil eines Anmeldeverfahrens"
       delete: "Löschen"
       delete_disabled: "Gruppe kann nicht gelöscht werden (hat Teilnehmer oder ist Teil eines Anmeldeverfahrens)"
       self_materialization_disabled_campaign: "Selbsteinschreibung ist während aktiver Anmeldeverfahren deaktiviert"

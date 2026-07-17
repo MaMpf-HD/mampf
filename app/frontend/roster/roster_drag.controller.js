@@ -82,6 +82,8 @@ export default class extends Controller {
     });
   }
 
+  // Stimulus action, wired to our custom turbo:stream-render (see initHotwire.js)
+  // from the side panel markup.
   refreshDropZones() {
     this.clearHighlight();
     if (!this.hasStudentListTarget) return;
