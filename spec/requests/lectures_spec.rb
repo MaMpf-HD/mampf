@@ -277,7 +277,7 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "renders an edit affordance on the content page" do
-      get lecture_path(lecture)
+      get lecture_outline_path(lecture)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(edit_lecture_path(lecture))
@@ -288,27 +288,12 @@ RSpec.describe("Lectures", type: :request) do
   describe "lecture routes" do
     let(:lecture) { create(:lecture) }
 
-    it "uses the canonical lecture member path for content" do
+    it "uses the canonical lecture member path as the landing page" do
       expect(lecture_path(lecture)).to eq("/lectures/#{lecture.id}")
     end
-  end
 
-  describe "GET /lectures/:id as a non-subscriber" do
-    let(:user) { create(:confirmed_user) }
-    let(:lecture) { create(:lecture, :released_for_all) }
-
-    it "redirects to the lecture's home page" do
-      get lecture_path(lecture)
-
-      expect(response).to redirect_to(lecture_home_path(lecture))
-    end
-
-    it "does not redirect staff (they bypass the subscription gate)" do
-      teacher_lecture = create(:lecture, :released_for_all, teacher: user)
-
-      get lecture_path(teacher_lecture)
-
-      expect(response).to have_http_status(:ok)
+    it "has a stable outline path" do
+      expect(lecture_outline_path(lecture)).to eq("/lectures/#{lecture.id}/outline")
     end
   end
 
@@ -333,9 +318,194 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "escapes or strips script tags in show view" do
-      get lecture_path(xss_lecture)
+      get lecture_outline_path(xss_lecture)
       expect(response).to be_successful
       expect(response.body).not_to include("<script>alert('lecture-xss')</script>")
+    end
+  end
+
+  describe "GET /lectures/:id" do
+    let(:user) { create(:confirmed_user) }
+    let(:term) { create(:term, :winter, year: 2026) }
+    let(:lecture) { create(:lecture, :released_for_all, term: term) }
+
+    after { Flipper.disable(:lecture_home_landing) }
+
+    context "when the lecture's term uses home as its landing page" do
+      before { Flipper.enable_actor(:lecture_home_landing, term) }
+
+      it "sends subscribers to the lecture home page" do
+        create(:lecture_user_join, user: user, lecture: lecture)
+
+        get lecture_path(lecture)
+
+        expect(response).to redirect_to(lecture_home_path(lecture))
+      end
+
+      it "sends non-subscribers to the lecture home page" do
+        get lecture_path(lecture)
+
+        expect(response).to redirect_to(lecture_home_path(lecture))
+      end
+
+      it "sends teachers to the lecture home page without a subscription" do
+        teacher_lecture = create(:lecture, :released_for_all,
+                                 term: term, teacher: user)
+
+        get lecture_path(teacher_lecture)
+
+        expect(teacher_lecture.in?(user.lectures)).to be(false)
+        expect(response).to redirect_to(lecture_home_path(teacher_lecture))
+      end
+    end
+
+    context "when the lecture's term keeps the outline landing page" do
+      it "sends subscribers to the stable outline page" do
+        create(:lecture_user_join, user: user, lecture: lecture)
+
+        get lecture_path(lecture)
+
+        expect(response).to redirect_to(lecture_outline_path(lecture))
+      end
+
+      it "sends non-subscribers to the stable outline page" do
+        get lecture_path(lecture)
+
+        expect(response).to redirect_to(lecture_outline_path(lecture))
+      end
+
+      it "sends teachers to the stable outline page" do
+        teacher_lecture = create(:lecture, :released_for_all,
+                                 term: term, teacher: user)
+
+        get lecture_path(teacher_lecture)
+
+        expect(response).to redirect_to(lecture_outline_path(teacher_lecture))
+      end
+    end
+  end
+
+  describe "GET /lectures/:id/outline" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    it "serves the outline content page to subscribers" do
+      create(:lecture_user_join, user: user, lecture: lecture)
+
+      get lecture_outline_path(lecture)
+
+      expect(response).to have_http_status(:success)
+    end
+
+    it "serves the outline content page to teachers" do
+      teacher_lecture = create(:lecture, :released_for_all, teacher: user)
+
+      get lecture_outline_path(teacher_lecture)
+
+      expect(response).to have_http_status(:success)
+    end
+
+    it "sends non-subscribers to the lecture home page" do
+      get lecture_outline_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    context "when the lecture's term uses home as its landing page" do
+      let(:term) { create(:term, :winter, year: 2026) }
+      let(:lecture) { create(:lecture, :released_for_all, term: term) }
+
+      before { Flipper.enable_actor(:lecture_home_landing, term) }
+
+      after { Flipper.disable(:lecture_home_landing) }
+
+      it "still serves the stable outline page to subscribers" do
+        create(:lecture_user_join, user: user, lecture: lecture)
+
+        get lecture_outline_path(lecture)
+
+        expect(response).to have_http_status(:success)
+      end
+    end
+  end
+
+  describe "PATCH /lectures/:id (home page content)" do
+    let(:lecture) { create(:lecture, teacher: user) }
+
+    def pdf_upload
+      Rack::Test::UploadedFile.new(
+        StringIO.new("%PDF-1.4 demo"), "application/pdf",
+        original_filename: "program.pdf"
+      )
+    end
+
+    it "renders the home tab with the intro editor, preview and save controls" do
+      get edit_lecture_path(lecture, tab: "home")
+
+      expect(response.body).to include('id="lecture-home-intro-trix"')
+      expect(response.body).to include('data-testid="lecture-home-intro-preview"')
+      expect(response.body).to include('id="lecture-home-warning"')
+    end
+
+    it "shows the attached pdf with a control to remove it" do
+      lecture.update!(home_attachment: pdf_upload)
+
+      get edit_lecture_path(lecture, tab: "home")
+
+      expect(response.body).to include("program.pdf")
+      expect(response.body).to include("remove_home_attachment")
+    end
+
+    it "saves the home intro and returns to the home tab" do
+      patch lecture_path(lecture),
+            params: { lecture: { home_intro: "<div>Welcome</div>" },
+                      subpage: "home" }
+
+      expect(lecture.reload.home_intro).to include("Welcome")
+      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "home"))
+    end
+
+    it "stores a pdf program" do
+      patch lecture_path(lecture),
+            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" }
+
+      expect(lecture.reload.home_attachment_filename).to eq("program.pdf")
+    end
+
+    it "removes the pdf when the remove control is submitted" do
+      lecture.update!(home_attachment: pdf_upload)
+
+      patch lecture_path(lecture),
+            params: { lecture: { remove_home_attachment: "1" }, subpage: "home" }
+
+      expect(lecture.reload.home_attachment).to be_nil
+    end
+  end
+
+  describe "the Müsli transition banner on the roster tabs" do
+    let(:term) { create(:term, :winter, year: 2026) }
+    let(:lecture) { create(:lecture, term: term) }
+
+    before { Flipper.enable(:roster_maintenance) }
+
+    after do
+      Flipper.disable(:roster_maintenance)
+      Flipper.disable(:term_uses_mampf_registration)
+    end
+
+    it "shows the banner, naming the lecture's term, while it is not on MaMpf" do
+      get edit_lecture_path(lecture, tab: "groups")
+
+      expect(response.body).to include('data-testid="roster-transition-banner"')
+      expect(response.body).to include(term.to_label)
+    end
+
+    it "hides the banner once the term is opted into MaMpf registration" do
+      Flipper.enable_actor(:term_uses_mampf_registration, term)
+
+      get edit_lecture_path(lecture, tab: "groups")
+
+      expect(response.body).not_to include('data-testid="roster-transition-banner"')
     end
   end
 end

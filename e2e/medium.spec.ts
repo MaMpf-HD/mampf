@@ -15,6 +15,7 @@ test("can schedule medium publication with datetimepicker",
 
     await new LecturePage(page, lecture.id).gotoEdit();
     await page.getByRole("link", { name: medium.description }).click();
+    await expect(page).toHaveURL(`/media/${medium.id}/edit`);
     await page.getByRole("button", { name: "publish" }).click();
 
     await page.getByRole("radio", { name: "at the following time" }).click();
