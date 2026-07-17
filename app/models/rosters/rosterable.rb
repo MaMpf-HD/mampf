@@ -14,6 +14,14 @@ module Rosters
 
     TYPES = TYPE_CLASS_MAP.keys.freeze
 
+    # Student self-service roster access modes (see #self_materialization_mode).
+    SELF_MATERIALIZATION_MODES = {
+      disabled: 0,
+      add_only: 1,
+      remove_only: 2,
+      add_and_remove: 3
+    }.freeze
+
     def self.class_for(type)
       TYPE_CLASS_MAP[type]&.call
     end
@@ -43,12 +51,7 @@ module Rosters
         :"#{self.class.name.underscore}_memberships"
       end
 
-      enum :self_materialization_mode, {
-        disabled: 0,
-        add_only: 1,
-        remove_only: 2,
-        add_and_remove: 3
-      }, prefix: true
+      enum :self_materialization_mode, SELF_MATERIALIZATION_MODES, prefix: true
 
       before_validation :enforce_consistency_between_modes
       validate :validate_skip_campaigns_switch
