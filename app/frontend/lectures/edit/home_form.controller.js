@@ -1,5 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
-import { renderMathIn } from "~/js/katex_helper";
+import {
+  normalizeDisplayMathLineBreaks,
+  renderMathIn,
+} from "~/js/katex_helper";
 
 export default class extends Controller {
   static targets = ["editor", "preview", "warning"];
@@ -15,7 +18,9 @@ export default class extends Controller {
   updatePreview() {
     if (!this.hasEditorTarget || !this.hasPreviewTarget) return;
 
-    this.previewTarget.innerHTML = this.editorTarget.innerHTML;
+    this.previewTarget.innerHTML = normalizeDisplayMathLineBreaks(
+      this.editorTarget.innerHTML,
+    );
     renderMathIn(this.previewTarget);
   }
 

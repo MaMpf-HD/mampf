@@ -24,11 +24,21 @@ test("teacher authors a home intro and a student sees it", async ({
 
   await teacher.page.getByTestId("lecture-home-intro-editor").click();
   await teacher.page.keyboard.type("Welcome, we study $x^2$");
+  await teacher.page.keyboard.press("Enter");
+  await teacher.page.keyboard.press("Enter");
+  await teacher.page.keyboard.type("$$");
+  await teacher.page.keyboard.press("Enter");
+  await teacher.page.keyboard.type("\\sum");
+  await teacher.page.keyboard.press("Enter");
+  await teacher.page.keyboard.type("$$");
 
   // the preview updates from the editor as you type — the part a request spec
   // cannot cover (whether KaTeX then typesets the math is KaTeX's own concern)
   await expect(teacher.page.getByTestId("lecture-home-intro-preview"))
     .toContainText("Welcome, we study");
+  await expect(teacher.page.getByTestId("lecture-home-intro-preview")
+    .locator(".katex"))
+    .toHaveCount(2);
 
   await teacher.page.getByTestId("lecture-home-save").click();
   await expect.poll(() => lecture.__call("home_intro_present?")).toBe(true);
