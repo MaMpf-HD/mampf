@@ -85,8 +85,7 @@
                                 data: { type: m.teachable.class.to_s,
                                         id: m.teachable.id,
                                         tags: m.tags.pluck(:id),
-                                        action: lecture_medium_highlight_actions,
-                                        turbo_frame: "_top",
+                                      action: lecture_medium_highlight_actions,
                                         toggle: 'tooltip' } %>
                   </li>
                 <% end %>
