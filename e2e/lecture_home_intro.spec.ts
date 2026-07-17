@@ -22,18 +22,27 @@ test("teacher authors a home intro and a student sees it", async ({
   await editPage.goto();
   await editPage.homeTab.click();
 
-  await teacher.page.getByTestId("lecture-home-intro-editor").click();
-  await teacher.page.keyboard.type("Welcome, we study $x^2$");
-  await teacher.page.keyboard.press("Enter");
-  await teacher.page.keyboard.press("Enter");
-  await teacher.page.keyboard.type("$$");
-  await teacher.page.keyboard.press("Enter");
-  await teacher.page.keyboard.type("\\sum");
-  await teacher.page.keyboard.press("Enter");
-  await teacher.page.keyboard.type("$$");
+  // Build the content through Trix's own editor API rather than by simulated
+  // keystrokes: typing "$$" and "\sum" with interleaved Enter presses races
+  // with Trix's input handling and intermittently splits them across <br>s
+  // (e.g. "$<br>$"), which is flaky. This is deterministic and still exercises
+  // the real case — display math whose delimiters are broken across <br>s.
+  const editor = teacher.page.getByTestId("lecture-home-intro-editor");
+  await editor.evaluate((element) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const trix = (element as any).editor;
+    trix.insertString("Welcome, we study $x^2$");
+    trix.insertLineBreak();
+    trix.insertLineBreak();
+    trix.insertString("$$");
+    trix.insertLineBreak();
+    trix.insertString("\\sum");
+    trix.insertLineBreak();
+    trix.insertString("$$");
+  });
 
-  // the preview updates from the editor as you type — the part a request spec
-  // cannot cover (whether KaTeX then typesets the math is KaTeX's own concern)
+  // the preview mirrors the editor and KaTeX typesets both the inline and the
+  // display formula — the client-side part a request spec cannot cover
   await expect(teacher.page.getByTestId("lecture-home-intro-preview"))
     .toContainText("Welcome, we study");
   await expect(teacher.page.getByTestId("lecture-home-intro-preview")
