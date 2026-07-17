@@ -11,7 +11,7 @@ RSpec.describe(Dev::BaseController, type: :controller) do
 
   before do
     routes.draw do
-      get "index" => "dev/base#index"
+      get "index" => "anonymous#index"
     end
   end
 
