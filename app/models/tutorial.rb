@@ -76,6 +76,18 @@ class Tutorial < ApplicationRecord
     true
   end
 
+  # A student can be in at most one tutorial per lecture (enforced by the
+  # unique index on tutorial_memberships (user_id, lecture_id)).
+  def roster_exclusive_within_lecture?
+    true
+  end
+
+  def conflicting_lecture_membership(user)
+    TutorialMembership.where(lecture: lecture, user: user)
+                      .where.not(tutorial: self)
+                      .first&.tutorial
+  end
+
   private
 
     def lecture_id_immutable

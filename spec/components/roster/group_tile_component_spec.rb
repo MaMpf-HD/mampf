@@ -236,6 +236,43 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
+  describe "top-bar tooltip" do
+    def bar_title(instance)
+      render_inline(instance).css("[data-testid='group-tile-top-bar']").first["title"]
+    end
+
+    context "with an item" do
+      let(:lecture) { create(:lecture) }
+      let(:campaign) do
+        create(:registration_campaign, :first_come_first_served, :with_items,
+               campaignable: lecture, items_count: 1)
+      end
+      let(:campaign_item) { campaign.registration_items.first }
+
+      it "describes the registration process" do
+        instance = described_class.new(registerable: campaign_item.registerable,
+                                       item: campaign_item)
+        expect(bar_title(instance))
+          .to eq(I18n.t("roster.tooltips.top_bar_campaign"))
+      end
+    end
+
+    context "with self-enrollment active" do
+      before { tutorial.self_materialization_mode = "add_only" }
+
+      it "mirrors the self-enrollment icon tooltip" do
+        title = bar_title(described_class.new(registerable: tutorial))
+        expect(title).to include(I18n.t("roster.self_materialization.label"))
+        expect(title).to include(I18n.t("roster.self_materialization.modes.add_only"))
+      end
+    end
+
+    it "reports self-enrollment disabled by default" do
+      title = bar_title(described_class.new(registerable: tutorial))
+      expect(title).to include(I18n.t("roster.self_materialization.modes.disabled"))
+    end
+  end
+
   describe "#cohort_without_enrollment?" do
     it "is false for a non-cohort" do
       expect(component.cohort_without_enrollment?).to be(false)
