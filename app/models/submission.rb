@@ -161,16 +161,26 @@ class Submission < ApplicationRecord
       errors.push(I18n.t("submission.manuscript_size_too_big",
                          max_size: "10 MB"))
     end
-    if sort == :correction && metadata["size"] > 15 * 1024 * 1024
+    if sort == :correction && metadata["size"] > CorrectionUploader::MAX_SIZE
       errors.push(I18n.t("submission.manuscript_size_too_big",
-                         max_size: "15 MB"))
+                         max_size: "#{CorrectionUploader::MAX_SIZE / (1024 * 1024)} MB"))
     end
     file_name = metadata["filename"]
+    uploader = sort == :correction ? CorrectionUploader : SubmissionUploader
     file_type = File.extname(file_name)
-    unless file_type.in?([".cc", ".hh", ".m", ".mlx", ".pdf", ".zip", ".txt"])
+    unless uploader.allowed_extension?(file_name)
       errors.push(I18n.t("submission.wrong_file_type",
                          file_type: file_type,
-                         accepted_file_type: assignment.accepted_file_type))
+                         accepted_file_type:
+                           uploader.accepted_extension_list))
+    end
+    if errors.blank? &&
+       !uploader.allowed_mime_type?(filename: file_name,
+                                    mime_type: metadata["mime_type"])
+      errors.push(I18n.t("submission.wrong_mime_type",
+                         mime_type: metadata["mime_type"],
+                         accepted_mime_types:
+                           uploader.accepted_mime_types_for(file_name).join(", ")))
     end
     return {} if errors.blank?
 
@@ -183,9 +193,9 @@ class Submission < ApplicationRecord
       errors.push(I18n.t("submission.manuscript_size_too_big",
                          max_size: "10 MB"))
     end
-    if sort == :correction && metadata["size"] > 15 * 1024 * 1024
+    if sort == :correction && metadata["size"] > CorrectionUploader::MAX_SIZE
       errors.push(I18n.t("submission.manuscript_size_too_big",
-                         max_size: "15 MB"))
+                         max_size: "#{CorrectionUploader::MAX_SIZE / (1024 * 1024)} MB"))
     end
     file_name = metadata["filename"]
     file_type = File.extname(file_name)
@@ -230,7 +240,6 @@ class Submission < ApplicationRecord
     report = { successful_saves: [], submissions: submissions.size,
                invalid_filenames: [], invalid_id: [], in_subfolder: [],
                no_decision: [], rejected: [], invalid_file: [] }
-    Dir.mktmpdir
     begin
       files.each do |file_shrine|
         filename = file_shrine["metadata"]["filename"]
@@ -240,7 +249,9 @@ class Submission < ApplicationRecord
         end
         submission_id = File.basename(filename.split("-ID-").last,
                                       File.extname(filename.split("-ID-").last))
-        submission = Submission.find_by(id: submission_id)
+        # Scope the lookup to this tutorial+assignment so an id parsed from the
+        # uploaded filename cannot target a submission in another tutorial.
+        submission = submissions.find_by(id: submission_id)
         unless submission
           report[:invalid_id].push(filename)
           next

@@ -4,9 +4,16 @@
 help:
     @just --list
 
+[private]
+ensure-dev-dependencies:
+    #!/usr/bin/env bash
+    just docker ensure-db-container-running
+    just docker ensure-redis-container-running
+
 # Preseeds the database
 seed:
     #!/usr/bin/env bash
+    just ensure-dev-dependencies
     export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/mampf.sql"
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     ./docker/development/init.sh | tee /proc/1/fd/1
@@ -14,6 +21,7 @@ seed:
 # Starts the app
 up:
     #!/usr/bin/env bash
+    just ensure-dev-dependencies
     ./docker/development/init-and-run.sh | tee /proc/1/fd/1
 
 # Starts the architecture book server (Müsli integration)
