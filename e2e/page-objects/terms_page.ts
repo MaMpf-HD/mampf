@@ -1,4 +1,4 @@
-import { Page } from "../_support/fixtures";
+import { expect, Page } from "../_support/fixtures";
 
 export class TermsPage {
   readonly page: Page;
@@ -12,16 +12,19 @@ export class TermsPage {
     await this.page.goto(this.link);
   }
 
-  async createTerm(termYear: number, season: "SS" | "WS", action = "save") {
-    const newTermsPromise = this.page.waitForResponse(response =>
-      response.url().includes("terms/new"),
-    );
-    await this.page.getByRole("link", { name: "Create Term" }).click();
-    await newTermsPromise;
-    await this.page.selectOption("#term_year", termYear.toString());
-    await this.page.selectOption("#term_season", season);
-    await this.page.locator("#new_term")
-      .getByRole("button", { name: action === "save" ? "Save" : "Cancel" }).click();
+  async createTerm(termYear: number, season: "SS" | "WS") {
+    const form = await this.submitNewTermForm(termYear, season, "Save");
+    await expect(form).toBeHidden();
+    await expect(this.getTermRow(termYear, season)).toBeVisible();
+  }
+
+  async submitCreateTerm(termYear: number, season: "SS" | "WS") {
+    await this.submitNewTermForm(termYear, season, "Save");
+  }
+
+  async cancelCreateTerm(termYear: number, season: "SS" | "WS") {
+    const form = await this.submitNewTermForm(termYear, season, "Cancel");
+    await expect(form).toBeHidden();
   }
 
   async deleteTerm(termYear: number, season: "SS" | "WS") {
@@ -31,5 +34,22 @@ export class TermsPage {
 
   getTermRow(termYear: number, season: "SS" | "WS") {
     return this.page.getByTestId(`term-row-${termYear}-${season}`);
+  }
+
+  private async submitNewTermForm(
+    termYear: number,
+    season: "SS" | "WS",
+    action: "Save" | "Cancel",
+  ) {
+    const form = this.page.locator("#new_term form");
+
+    await this.page.getByRole("link", { name: "Create Term" }).click();
+    await expect(form).toBeVisible();
+
+    await this.page.selectOption("#term_year", termYear.toString());
+    await this.page.selectOption("#term_season", season);
+    await form.getByRole("button", { name: action }).click();
+
+    return form;
   }
 }

@@ -13,6 +13,12 @@ RSpec.describe(Talk, type: :model) do
     expect(FactoryBot.build(:valid_talk)).to be_valid
   end
 
+  it "is not roster-exclusive within a lecture (a student may give " \
+     "several talks)" do
+    expect(FactoryBot.build(:valid_talk).roster_exclusive_within_lecture?)
+      .to be(false)
+  end
+
   # Test validations
   it "is invalid without a lecture" do
     talk = FactoryBot.build(:valid_talk)

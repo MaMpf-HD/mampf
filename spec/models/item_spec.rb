@@ -40,4 +40,28 @@ RSpec.describe(Item, type: :model) do
       expect(FactoryBot.build(:item_for_sample_video)).to be_valid
     end
   end
+
+  describe "#related_items_visible?" do
+    let(:item) { create(:item, medium: create(:lecture_medium, :released)) }
+    let(:guest_user) { User.new }
+
+    it "returns false for guests when the related medium is not free" do
+      related_medium = create(:lecture_medium, released: "users",
+                                               released_at: Time.zone.now)
+      related_item = create(:item, medium: related_medium)
+      create(:item_self_join, item: item, related_item: related_item)
+
+      expect(item.related_items_visible?).to be(false)
+      expect(item.related_items_visible?(guest_user)).to be(false)
+    end
+
+    it "returns true for guests when the related medium is free" do
+      related_medium = create(:lecture_medium, :released)
+      related_item = create(:item, medium: related_medium)
+      create(:item_self_join, item: item, related_item: related_item)
+
+      expect(item.related_items_visible?).to be(true)
+      expect(item.related_items_visible?(guest_user)).to be(true)
+    end
+  end
 end
