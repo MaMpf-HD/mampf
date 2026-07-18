@@ -19,11 +19,9 @@ export default class extends Controller {
   connect() {
     this.initDraggable();
     this.initDropZones();
-    document.addEventListener("turbo:stream-render", this.refreshDropZones);
   }
 
   disconnect() {
-    document.removeEventListener("turbo:stream-render", this.refreshDropZones);
     this.sortableInstance?.destroy();
     this.tileDropInstances.forEach(s => s.destroy());
     this.tileDropInstances = [];
@@ -84,6 +82,8 @@ export default class extends Controller {
     });
   }
 
+  // Stimulus action, wired to our custom turbo:stream-render (see initHotwire.js)
+  // from the side panel markup.
   refreshDropZones() {
     this.clearHighlight();
     if (!this.hasStudentListTarget) return;

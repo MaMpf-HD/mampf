@@ -54,7 +54,7 @@ RSpec.describe("Profile", type: :request) do
                                    parent: "redirect" } })
       end
 
-      it "redirects to the lecture content after a successful subscription" do
+      it "redirects to the lecture landing page after a successful subscription" do
         subscribe_html(lecture, passphrase: "secret")
 
         expect(response).to redirect_to(lecture_path(lecture))

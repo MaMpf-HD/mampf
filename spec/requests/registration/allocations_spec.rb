@@ -297,6 +297,36 @@ RSpec.describe("Registration::Allocations", type: :request) do
           expect(flash[:notice]).to eq(I18n.t("registration.campaign.finalized"))
         end
 
+        it "folds the summary into the modal instead of flashing over it" do
+          with_groups = create(:registration_campaign, :closed,
+                               :first_come_first_served, :with_items,
+                               campaignable: lecture, items_count: 2)
+          allow_any_instance_of(Registration::Campaign)
+            .to receive(:open_rejected_count).and_return(2)
+
+          patch finalize_registration_campaign_allocation_path(with_groups),
+                as: :turbo_stream
+
+          expect(response.body).to include("self-service-modal")
+          expect(response.body).to include(
+            I18n.t("registration.campaign.finalization_summary.rejected", count: 2)
+          )
+          # no flash is prepended over the modal
+          expect(response.body)
+            .not_to match(/action="prepend"[^>]*target="flash-messages"/)
+        end
+
+        it "does not prompt for self-service when the campaign has no groups" do
+          no_groups = create(:registration_campaign, :first_come_first_served,
+                             campaignable: lecture, status: :closed,
+                             registration_deadline: 1.day.ago)
+
+          patch finalize_registration_campaign_allocation_path(no_groups),
+                as: :turbo_stream
+
+          expect(response.body).not_to include("self-service-modal")
+        end
+
         it "includes only nonzero queue summaries" do
           allow_any_instance_of(Registration::Campaign)
             .to receive(:open_rejected_count).and_return(5)

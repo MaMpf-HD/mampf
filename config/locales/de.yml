@@ -436,6 +436,21 @@ de:
       orga: 'Orga'
       organization: 'Organisation'
       communication: 'Kommunikation'
+      home_tab: 'Startseite'
+      home_page: 'Startseite der Veranstaltung'
+      home_intro_lead: >
+        Das ist das Erste, was Studierende — auch Interessierte, die noch über
+        eine Anmeldung entscheiden — sehen. Ein paar Begrüßungsworte und Dein
+        Programm machen die Seite deutlich nützlicher als die fast leere
+        Standardansicht.
+      home_preview: 'Startseite ansehen'
+      home_intro_label: 'Begrüßungstext'
+      home_intro_add: 'Startseite einrichten'
+      home_attachment_label: 'Programm (PDF)'
+      home_attachment_hint: >
+        Optional. Nur PDF, bis 10 MB — z.B. ein Seminar- oder Veranstaltungsprogramm.
+      home_attachment_remove: 'Angehängtes PDF entfernen'
+      home_attachment_must_be_pdf: 'Der Anhang muss ein PDF sein.'
       new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
@@ -479,6 +494,10 @@ de:
       no_active_voucher: >
         Es gibt keinen aktiven %{role} für diese Veranstaltung.
       info:
+        home_intro: >
+          Wird oben auf der Startseite der Veranstaltung angezeigt, über der
+          Anmeldung. Begrüße hier die Studierenden, erkläre das Anmeldeverfahren
+          und verweise auf Dein Programm (PDF).
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
           Veranstaltung gehört.

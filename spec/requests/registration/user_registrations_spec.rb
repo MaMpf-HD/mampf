@@ -225,6 +225,83 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       end
     end
 
+    context "when the student holds an unremovable roster slot" do
+      # Campaign registration never touches the roster; conflicts are settled
+      # by the materializer at finalization (which can move the student). So a
+      # campaign's tiles are never gated by an unremovable existing membership,
+      # regardless of pool.
+      it "does not block a talk campaign for a student in an interest cohort" do
+        interest_group = create(:cohort, context: seminar,
+                                         self_materialization_mode: :add_only,
+                                         skip_campaigns: true)
+        create(:cohort_membership, user: user, cohort: interest_group)
+        create(:registration_campaign, :preference_based, :open,
+               :with_items, campaignable: seminar, items_count: 2)
+
+        get lecture_home_path(seminar)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('id="student_registration_options"')
+        expect(response.body)
+          .not_to include('data-testid="registration-blocked-action"')
+      end
+
+      it "does not block a tutorial campaign for a student stuck in an " \
+         "unremovable tutorial" do
+        stuck = create(:tutorial, lecture: lecture,
+                                  self_materialization_mode: :add_only,
+                                  skip_campaigns: true)
+        create(:tutorial_membership, user: user, tutorial: stuck)
+        create(:registration_campaign, :preference_based, :open,
+               :with_items, campaignable: lecture, items_count: 2)
+
+        get lecture_home_path(lecture)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body)
+          .not_to include('data-testid="registration-blocked-action"')
+      end
+    end
+
+    context "self-materialization (immediate self-enroll) zone" do
+      # Here the gate is legitimate: joining is an immediate roster change, so
+      # being stuck in an unremovable exclusive slot really does prevent it.
+      let!(:stuck_tutorial) do
+        create(:tutorial, lecture: lecture, title: "Stuck",
+                          self_materialization_mode: :add_only,
+                          skip_campaigns: true)
+      end
+
+      before do
+        create(:tutorial_membership, user: user, tutorial: stuck_tutorial)
+      end
+
+      it "blocks self-enrolling into another tutorial (must leave the " \
+         "current, unremovable one)" do
+        create(:tutorial, lecture: lecture, title: "Other",
+                          self_materialization_mode: :add_and_remove,
+                          skip_campaigns: true)
+
+        get lecture_home_path(lecture)
+
+        expect(response.body)
+          .to include('data-testid="registration-blocked-action"')
+      end
+
+      it "does not block self-enrolling into a cohort (cohorts coexist with " \
+         "a tutorial)" do
+        create(:cohort, context: lecture, title: "Deepening group",
+                        self_materialization_mode: :add_only,
+                        skip_campaigns: true)
+
+        get lecture_home_path(lecture)
+
+        expect(response.body).to include("Deepening group")
+        expect(response.body)
+          .not_to include('data-testid="registration-blocked-action"')
+      end
+    end
+
     context "when no registration options are available" do
       it "renders the empty registration state" do
         get lecture_home_path(lecture)

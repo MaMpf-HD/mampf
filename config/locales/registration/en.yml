@@ -27,6 +27,20 @@ en:
       active_campaign_title: "Active registration process"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the group management to make any adjustments."
       go_to_roster: "Go to Roster"
+      self_service:
+        title: "Finalized — can students join and leave groups themselves?"
+        description: "Self-enrollment is currently disabled: students are assigned but cannot join or leave groups on their own. You can allow it now for all of the campaign's groups — e.g. to let them self-balance or admit latecomers. You can fine-tune each group later."
+        modes:
+          disabled: "Self-enrollment disabled"
+          add_only: "Allow joining only"
+          remove_only: "Allow leaving only"
+          add_and_remove: "Allow joining and leaving"
+        current_state_suffix: "(current state)"
+        keep_closed: "Keep self-enrollment disabled"
+        apply: "Apply"
+        updated: "Self-service setting updated for the campaign's groups."
+        only_when_completed: "Self-service can only be changed once the campaign is finalized."
+        failed: "Could not update the self-service setting."
       dissolved_enrolled: "enrolled"
       lecture_not_found: "Lecture not found."
       default_description: "Registration"
@@ -533,12 +547,27 @@ en:
       home:
         empty_title: "Start here"
         empty_subscribed: >-
-          Lecture news and updates appear on this page. Materials and the
-          lecture structure are available under %{outline_label}.
+          Lecture news and updates appear on this page. Materials are
+          available from the lecture navigation.
         empty_unsubscribed: >-
-          Lecture news and updates appear on this page. Subscribe to
-          access the materials and the %{outline_label} page.
+          Lecture news and updates appear on this page. Subscribe to access
+          the materials.
         news_indicator: "New updates on Home"
+        attachment_download: "Download program (PDF)"
+        attachment_missing: "No program is attached to this lecture."
+        staff_registration_title: "What students see here"
+        staff_registration_hint: >-
+          Below your intro, students see the registration process and their own
+          status (open registrations, the group they were assigned to). That
+          view is personal to each student, so it is not shown to you here.
+        staff_registration_manage: "Manage registration processes"
+        intro_empty: >-
+          Your lecture home page has no welcome text or program yet. Add a short
+          intro so students landing here see more than an empty page.
+        intro_empty_campaign: >-
+          A registration is running for this lecture, but your home page has no
+          welcome text — this is what students see before they register. Add a
+          short intro and your program.
         subscribe_prompt: >-
           You have not subscribed to this lecture yet. Subscribing gives you
           access to its materials — it is not a binding course registration.

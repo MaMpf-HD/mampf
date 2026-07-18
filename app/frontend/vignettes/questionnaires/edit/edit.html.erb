@@ -78,7 +78,7 @@
   </div>
 
   <!-- 🎈 Info Slides -->
-  <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.info_slides") %></h1>
+  <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.info_slides") %></h2>
 
   <div class="accordion" id="info_slides">
     <% @questionnaire.info_slides.each() do |info_slide| %>
@@ -96,7 +96,7 @@
   <% end %>
 
   <!-- 🎈 Slides -->
-  <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.slides") %></h1>
+  <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.slides") %></h2>
   <% if @questionnaire.editable && @slides.size > 1%>
   <p><%= t("vignettes.drag_slides_tip") %></p>
   <% end %>

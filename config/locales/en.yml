@@ -412,6 +412,20 @@ en:
       orga: 'Orga'
       organization: 'Organization'
       communication: 'Communication'
+      home_tab: 'Home'
+      home_page: 'Lecture home page'
+      home_intro_lead: >
+        This is the first thing students — including prospective ones deciding
+        whether to register — see. A short welcome and your program make it far
+        more useful than the near-empty default.
+      home_preview: 'Preview the home page'
+      home_intro_label: 'Welcome text'
+      home_intro_add: 'Set up the home page'
+      home_attachment_label: 'Program (PDF)'
+      home_attachment_hint: >
+        Optional. PDF only, up to 10 MB — e.g. a seminar or course program.
+      home_attachment_remove: 'Remove the attached PDF'
+      home_attachment_must_be_pdf: 'The attachment must be a PDF.'
       new_lecture: 'Create a new event series'
       no_courses_yet: 'You have to create a course first.'
       no_terms_yet: 'You have to create a term first.'
@@ -455,6 +469,10 @@ en:
       no_active_voucher: >
         There is no active %{role} for this event series.
       info:
+        home_intro: >
+          Shown at the top of the lecture home page, above the registration.
+          Use it to welcome students, explain the registration process, and
+          point to your program (PDF).
         course: >
           Here you can select the course to which this event series belongs.
         term: >

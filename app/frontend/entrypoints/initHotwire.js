@@ -8,6 +8,9 @@ window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);
 
+import LectureHomeFormController from "~/lectures/edit/home_form.controller.js";
+window.Stimulus.register("lecture-home-form", LectureHomeFormController);
+
 import MediaButtonSortController from "~/lectures/edit/media/media_button_sort.controller.js";
 window.Stimulus.register("media-button-sort", MediaButtonSortController);
 

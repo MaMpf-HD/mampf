@@ -169,6 +169,19 @@ module Registration
       !campaign.open_for_registrations? && campaign.registration_deadline > Time.current
     end
 
+    # Options for the post-finalization "open for self-service" select.
+    # Phrased as permissions ("Allow …"), with the group's current mode
+    # flagged so the teacher sees what is in effect right now.
+    def self_service_mode_options(current_mode = nil)
+      Rosters::Rosterable::SELF_MATERIALIZATION_MODES.keys.map do |mode|
+        label = t("registration.campaign.self_service.modes.#{mode}")
+        if mode.to_s == current_mode.to_s
+          label += " #{t("registration.campaign.self_service.current_state_suffix")}"
+        end
+        [label, mode.to_s]
+      end
+    end
+
     private
 
       def unassigned_summary_item_css_class(item)
