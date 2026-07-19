@@ -16,10 +16,10 @@ module Rosters
     end
 
     def remove_user!(user, rosterable)
-      rosterable.with_lock do
+      removed = rosterable.with_lock do
         remove_user_without_lock!(user, rosterable)
       end
-      RosterNotificationMailer.removed(user, rosterable)
+      RosterNotificationMailer.removed(user, rosterable) if removed
     end
 
     def move_user!(user, from_rosterable, to_rosterable, force: false)
@@ -55,8 +55,9 @@ module Rosters
       end
 
       def remove_user_without_lock!(user, rosterable)
-        rosterable.remove_user_from_roster!(user)
+        removed = rosterable.remove_user_from_roster!(user)
         cascade_removal_from_subgroups!(user, rosterable)
+        removed
       end
 
       def lock_rosterables_in_order(*rosterables, &)
