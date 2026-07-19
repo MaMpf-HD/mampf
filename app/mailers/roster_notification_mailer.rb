@@ -76,15 +76,17 @@ class RosterNotificationMailer < ApplicationMailer
 
     def email(mail_template)
       prepare_data(params)
-      mail(
-        from: @sender,
-        to: @recipient.email,
-        subject: t(
-          "roster.mailer.roster_#{mail_template}_email_subject",
-          rosterable_title: @rosterable&.title || @new_rosterable&.title,
-          lecture_title: @lecture&.title || ""
+      I18n.with_locale(@recipient.locale || I18n.default_locale) do
+        mail(
+          from: @sender,
+          to: @recipient.email,
+          subject: t(
+            "roster.mailer.roster_#{mail_template}_email_subject",
+            rosterable_title: @rosterable&.title || @new_rosterable&.title,
+            lecture_title: @lecture&.title || ""
+          )
         )
-      )
+      end
     end
 
     def lecture_for_rosterable(rosterable)
