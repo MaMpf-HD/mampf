@@ -89,16 +89,18 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       end
 
       it "does not send an email" do
-        expect do
-          post(self_add_tutorial_path(tutorial), as: :turbo_stream)
-        end.not_to(change { ActionMailer::Base.deliveries.count })
+        perform_enqueued_jobs do
+          expect do
+            post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
       end
-    end
 
-    it "does not add the user" do
-      expect do
-        post(self_add_tutorial_path(camp_tutorial), as: :turbo_stream)
-      end.not_to(change { camp_tutorial.members.count })
+      it "does not add the user" do
+        expect do
+          post(self_add_tutorial_path(camp_tutorial), as: :turbo_stream)
+        end.not_to(change { camp_tutorial.members.count })
+      end
     end
   end
 
@@ -150,9 +152,11 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
     end
 
     it "does not send an email" do
-      expect do
-        post(self_add_tutorial_path(tutorial), as: :turbo_stream)
-      end.not_to(change { ActionMailer::Base.deliveries.count })
+      perform_enqueued_jobs do
+        expect do
+          post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
   end
 
@@ -229,9 +233,11 @@ describe "DELETE /tutorials/:id/roster/self_remove" do
       end.not_to(change { camp_tutorial.members.count })
     end
     it "does not send an email" do
-      expect do
-        delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
-      end.not_to(change { ActionMailer::Base.deliveries.count })
+      perform_enqueued_jobs do
+        expect do
+          delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
   end
 
@@ -256,9 +262,11 @@ describe "DELETE /tutorials/:id/roster/self_remove" do
       end.not_to(change { tutorial.members.count })
     end
     it "does not send an email" do
-      expect do
-        delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
-      end.not_to(change { ActionMailer::Base.deliveries.count })
+      perform_enqueued_jobs do
+        expect do
+          delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
   end
 

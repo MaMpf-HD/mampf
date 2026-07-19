@@ -197,9 +197,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         it "does not send an email" do
-          expect do
-            post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
-          end.not_to(change { ActionMailer::Base.deliveries.count })
+          perform_enqueued_jobs do
+            expect do
+              post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
         end
       end
     end
@@ -219,9 +221,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "does not send an email" do
-        expect do
-          post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
-        end.not_to(change { ActionMailer::Base.deliveries.count })
+        perform_enqueued_jobs do
+          expect do
+            post(add_member_tutorial_path(tutorial), params: { email: new_student.email })
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
       end
     end
   end
@@ -285,9 +289,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         it "does not send an email" do
-          expect do
-            delete(remove_member_tutorial_path(tutorial, user_id: member.id))
-          end.not_to(change { ActionMailer::Base.deliveries.count })
+          perform_enqueued_jobs do
+            expect do
+              delete(remove_member_tutorial_path(tutorial, user_id: member.id))
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
         end
       end
     end
@@ -307,9 +313,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
 
       it "does not send an email" do
-        expect do
-          delete(remove_member_tutorial_path(tutorial, user_id: member.id))
-        end.not_to(change { ActionMailer::Base.deliveries.count })
+        perform_enqueued_jobs do
+          expect do
+            delete(remove_member_tutorial_path(tutorial, user_id: member.id))
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
       end
     end
   end
@@ -383,10 +391,12 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         it "does not send an email" do
-          expect do
-            patch(move_member_tutorial_path(source, user_id: member.id),
-                  params: { target_id: target.id })
-          end.not_to(change { ActionMailer::Base.deliveries.count })
+          perform_enqueued_jobs do
+            expect do
+              patch(move_member_tutorial_path(source, user_id: member.id),
+                    params: { target_id: target.id })
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
         end
       end
     end
