@@ -19,11 +19,8 @@
               </i>
             </a>
             <div class="download-button">
-              <a href="<%= medium.geogebra_download_url %>"
-                 download="<%= geogebra_download_file(medium) %>"
-                 class="triggerDownload"
-                 data-medium="<%= medium.id %>"
-                 data-sort="geogebra">
+              <a href="<%= download_medium_path(medium, sort: "geogebra") %>"
+                 data-turbo="false">
                 <span>
                   <span class="badge bg-secondary"
                         data-bs-toggle="tooltip"

@@ -102,7 +102,7 @@ GEM
       activemodel (= 8.0.5)
       activesupport (= 8.0.5)
       timeout (>= 0.4.0)
-    activerecord-import (1.8.1)
+    activerecord-import (2.2.0)
       activerecord (>= 4.2)
     activerecord-nulldb-adapter (1.2.2)
       activerecord (>= 6.1, < 8.2)
@@ -154,6 +154,8 @@ GEM
     bootstrap_form (5.6.1)
       actionpack (>= 7.2)
       activemodel (>= 7.2)
+    brakeman (7.1.2)
+      racc
     builder (3.3.0)
     cancancan (3.6.1)
     case_transform (0.2)
@@ -636,6 +638,8 @@ GEM
     stream (0.5.6)
     streamio-ffmpeg (3.0.2)
       multi_json (~> 1.8)
+    strong_migrations (2.8.0)
+      activerecord (>= 7.2)
     sync (0.5.0)
     term-ansicolor (1.11.3)
       tins (~> 1)
@@ -644,6 +648,11 @@ GEM
     terser (1.2.7)
       execjs (>= 0.3.0, < 3)
     thor (1.5.0)
+    thruster (0.1.22)
+    thruster (0.1.22-aarch64-linux)
+    thruster (0.1.22-arm64-darwin)
+    thruster (0.1.22-x86_64-darwin)
+    thruster (0.1.22-x86_64-linux)
     tilt (2.7.0)
     timeago_js (3.0.2.2)
     timecop (0.9.11)
@@ -711,7 +720,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers (~> 0.10)
   active_storage_validations (~> 2.0.2)
-  activerecord-import (~> 1.7)
+  activerecord-import (~> 2.0)
   activerecord-nulldb-adapter (~> 1.0)
   acts_as_list (~> 1.2)
   acts_as_tree (~> 2.9)
@@ -720,6 +729,7 @@ DEPENDENCIES
   barby (~> 0.6)
   bootsnap (~> 1.18)
   bootstrap_form (~> 5.4)
+  brakeman (~> 7.0)
   cancancan (~> 3.6)
   coffee-rails (~> 5.0)
   commontator (~> 7.0.1)
@@ -746,7 +756,6 @@ DEPENDENCIES
   kramdown-parser-gfm (~> 1.1)
   listen (~> 3.9)
   marcel (~> 1.0)
-  mini_magick (~> 4.13)
   mobility (~> 1.2)
   net-smtp (~> 0.5)
   or-tools (~> 0.17)
@@ -782,9 +791,11 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0)
   sprockets-rails (~> 3.5)
   streamio-ffmpeg (~> 3.0)
+  strong_migrations (>= 2.8, < 3.0)
   terser (~> 1.2)
   thredded!
   thredded-markdown_katex!
+  thruster (~> 0.1)
   timecop (~> 0.9.10)
   trix-rails (~> 2.4)
   turbo-rails (~> 2.0)
@@ -794,7 +805,7 @@ DEPENDENCIES
   web-console (~> 4.2)
 
 RUBY VERSION
-  ruby 3.4.7p58
+  ruby 3.4.10
 
 BUNDLED WITH
   4.0.15

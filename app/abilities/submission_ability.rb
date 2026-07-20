@@ -4,8 +4,13 @@ class SubmissionAbility
   def initialize(user)
     clear_aliased_actions
 
-    can [:index, :new, :create, :join, :cancel_edit, :cancel_new, :redeem_code,
+    can [:index, :new, :join, :cancel_edit, :cancel_new, :redeem_code,
          :enter_code], Submission
+
+    can :create, Submission do |submission|
+      lecture = submission.assignment&.lecture
+      lecture.present? && user.proper_student_in?(lecture)
+    end
 
     can [:edit, :update, :destroy, :leave, :refresh_token, :enter_invitees,
          :invite], Submission do |submission|

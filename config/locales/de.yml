@@ -436,6 +436,21 @@ de:
       orga: 'Orga'
       organization: 'Organisation'
       communication: 'Kommunikation'
+      home_tab: 'Startseite'
+      home_page: 'Startseite der Veranstaltung'
+      home_intro_lead: >
+        Das ist das Erste, was Studierende — auch Interessierte, die noch über
+        eine Anmeldung entscheiden — sehen. Ein paar Begrüßungsworte und Dein
+        Programm machen die Seite deutlich nützlicher als die fast leere
+        Standardansicht.
+      home_preview: 'Startseite ansehen'
+      home_intro_label: 'Begrüßungstext'
+      home_intro_add: 'Startseite einrichten'
+      home_attachment_label: 'Programm (PDF)'
+      home_attachment_hint: >
+        Optional. Nur PDF, bis 10 MB — z.B. ein Seminar- oder Veranstaltungsprogramm.
+      home_attachment_remove: 'Angehängtes PDF entfernen'
+      home_attachment_must_be_pdf: 'Der Anhang muss ein PDF sein.'
       new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
@@ -479,6 +494,10 @@ de:
       no_active_voucher: >
         Es gibt keinen aktiven %{role} für diese Veranstaltung.
       info:
+        home_intro: >
+          Wird oben auf der Startseite der Veranstaltung angezeigt, über der
+          Anmeldung. Begrüße hier die Studierenden, erkläre das Anmeldeverfahren
+          und verweise auf Dein Programm (PDF).
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
           Veranstaltung gehört.
@@ -2391,6 +2410,9 @@ de:
     size: 'Größe'
   image:
     resolution: 'Abmessungen'
+    too_large_dimensions: >
+      Die Bildabmessungen sind zu groß. Erlaubt sind höchstens
+      %{max_width}x%{max_height}.
   manuscript:
     manuscript: 'Manuskript'
     no_manuscript: 'Es gibt kein Manuskript.'
@@ -2478,6 +2500,7 @@ de:
     app_name: Applet-Typ
     view: Geogebra-Applet im Browser ansehen
     size: Größe
+    invalid_archive: Ungültiges GeoGebra-Archiv.
     attribution_html: >
       Dieses Applet wurde mit %{geogebra_link} erstellt, die obige Animation
       verwendet die GeoGebra JavaScript API.
@@ -2926,6 +2949,8 @@ de:
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
     failed_redemption: >
       Die Einlösung des Codes ist fehlgeschlagen: %{message}
+    too_many_attempts: >
+      Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.
     current: Aktuelle Abgabe
     previous: Vorige Abgabe
     old_ones: Ältere Abgaben
@@ -2946,6 +2971,17 @@ de:
     upload_failure_empty_file: >
       Die hochgeladene Datei ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
+    upload_failure_malware: >
+      Die hochgeladene Datei konnte nicht akzeptiert werden.
+      Bitte überprüfe die Datei und versuche es erneut.
+    upload_failure_scanner_unavailable: >
+      Der Upload-Scanner ist momentan nicht verfügbar.
+      Bitte versuche es in Kürze erneut.
+    upload_failure_scan_required: >
+      Für die hochgeladene Datei fehlt ein erforderlicher Malware-Scan.
+      Bitte lade die Datei erneut hoch.
+    upload_failure_unauthorized: >
+      Du darfst diese Datei hier nicht hochladen.
     upload_failure_empty_file_bulk: >
       ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
@@ -3883,7 +3919,9 @@ de:
     no_video: 'Zu diesem Medium existiert kein Video.'
     no_manuscript: 'Zu diesem Medium existiert kein Manuskript.'
     no_geogebra: 'Zu diesem Medium existiert kein Geogebra-Applet.'
+    invalid_download: 'Der angeforderte Download ist ungültig.'
     no_medium: 'Ein Medium mit der angeforderten id existiert nicht.'
+    no_user: 'Ein(e) BenutzerIn mit der angeforderten id existiert nicht.'
     contradiction: 'Widersprüchliche Suchanfrage.'
     no_notification: >
       Eine Benachrichtigung mit der angeforderten id existiert nicht.
@@ -4213,6 +4251,8 @@ de:
                 Für diese Vorlesung kann es nur einen aktiven Gutschein dieses Typs geben.
               speaker_vouchers_only_for_seminars: >
                 Vortragenden-Gutscheine können nur für Seminare erstellt werden.
+              invalid_for_lecture: >
+                Diese Rolle ist für diese Vorlesung nicht verfügbar.
         watchlist_entry:
           attributes:
             medium_id:

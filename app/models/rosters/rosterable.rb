@@ -14,6 +14,14 @@ module Rosters
 
     TYPES = TYPE_CLASS_MAP.keys.freeze
 
+    # Student self-service roster access modes (see #self_materialization_mode).
+    SELF_MATERIALIZATION_MODES = {
+      disabled: 0,
+      add_only: 1,
+      remove_only: 2,
+      add_and_remove: 3
+    }.freeze
+
     def self.class_for(type)
       TYPE_CLASS_MAP[type]&.call
     end
@@ -43,12 +51,7 @@ module Rosters
         :"#{self.class.name.underscore}_memberships"
       end
 
-      enum :self_materialization_mode, {
-        disabled: 0,
-        add_only: 1,
-        remove_only: 2,
-        add_and_remove: 3
-      }, prefix: true
+      enum :self_materialization_mode, SELF_MATERIALIZATION_MODES, prefix: true
 
       before_validation :enforce_consistency_between_modes
       validate :validate_skip_campaigns_switch
@@ -70,6 +73,26 @@ module Rosters
       return false if skip_campaigns?
 
       !in_completed_campaign?
+    end
+
+    # Whether holding a slot in this rosterable precludes holding another
+    # slot of the same kind in the same lecture — i.e. taking a new slot
+    # would require LEAVING the current one (backed by a DB uniqueness on
+    # user + lecture). This is the only situation that creates a
+    # "must leave to join" conflict, so it is what gates both the
+    # uniqueness check on self-add and the "blocked by an unremovable
+    # assignment" hint in the registration UI. Non-exclusive pools (talks,
+    # cohorts) allow several simultaneous memberships and never conflict.
+    def roster_exclusive_within_lecture?
+      false
+    end
+
+    # The rosterable in the same lecture that the user would have to leave
+    # before joining this one, or nil if there is none. Only roster-exclusive
+    # pools (see #roster_exclusive_within_lecture?) can produce a conflict;
+    # non-exclusive pools coexist, so they always return nil.
+    def conflicting_lecture_membership(_user)
+      nil
     end
 
     def config_allow_self_add?

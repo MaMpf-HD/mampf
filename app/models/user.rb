@@ -104,7 +104,7 @@ class User < ApplicationRecord
   # a user has redemptions of vouchers
   has_many :redemptions, dependent: :destroy
 
-  include ScreenshotUploader[:image]
+  include ProfileimageUploader[:image]
 
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
@@ -710,16 +710,14 @@ class User < ApplicationRecord
       self != lecture.teacher
   end
 
-  def image_url_with_host
-    return unless image
-
-    image_url(host: host)
+  def original_image_file
+    image
   end
 
-  def normalized_image_url_with_host
+  def normalized_image_file
     return unless image && image(:normalized)
 
-    image_url(:normalized, host: host)
+    image(:normalized)
   end
 
   def image_filename

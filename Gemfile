@@ -2,10 +2,10 @@ source "https://rubygems.org"
 # We only pin versions to specific Git commits when they are "problem childs"
 # and we want to review each commit before updating to the latest version.
 
-ruby "3.4.7"
+ruby "3.4.10"
 
 gem "active_model_serializers", "~> 0.10"
-gem "activerecord-import", "~>1.7"
+gem "activerecord-import", "~> 2.0"
 gem "activerecord-nulldb-adapter", "~> 1.0" # for assets precompilation in production
 gem "active_storage_validations", "~> 2.0.2"
 gem "acts_as_list", "~> 1.2"
@@ -34,7 +34,6 @@ gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"
 gem "kramdown-parser-gfm", "~> 1.1"
-gem "mini_magick", "~> 4.13"
 gem "mobility", "~> 1.2"
 gem "net-smtp", "~> 0.5"
 gem "or-tools", "~> 0.17"
@@ -64,6 +63,7 @@ gem "thredded", git: "https://github.com/thredded/thredded.git",
 gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
+gem "thruster", "~> 0.1"
 gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbo-rails", "~> 2.0"
 gem "view_component", "~> 4.0"
@@ -81,6 +81,7 @@ group :development do
   gem "rubocop-rails", "2.34.3", require: false
   gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
   gem "spring-watcher-listen", "~> 2.0"
+  gem "strong_migrations", ">= 2.8", "< 3.0", require: false
   gem "web-console", "~> 4.2" # interactive console on exception pages
 end
 
@@ -92,6 +93,7 @@ group :test do
 end
 
 group :development, :test do
+  gem "brakeman", "~> 7.0", require: false
   gem "debug", "~> 1.8"
   gem "factory_bot_rails", "~> 6.4"
   gem "i18n-tasks", "~> 1.1"

@@ -3,6 +3,7 @@ class Lecture < ApplicationRecord
   include ApplicationHelper
   include Registration::Campaignable
   include Rosters::Rosterable
+  include LectureHomeAttachmentUploader[:home_attachment]
 
   belongs_to :course
 
@@ -534,6 +535,24 @@ class Lecture < ApplicationRecord
     return true if editors_with_inheritance.include?(user)
 
     false
+  end
+
+  # Trix leaves wrapper markup ("<div><br></div>") behind for an editor that was
+  # emptied again, which a plain #present? would count as content.
+  def home_intro_present?
+    ActionView::Base.full_sanitizer
+                    .sanitize(home_intro.to_s)
+                    .gsub("&nbsp;", " ")
+                    .strip
+                    .present?
+  end
+
+  def home_content?
+    home_intro_present? || home_attachment.present?
+  end
+
+  def home_attachment_filename
+    home_attachment&.metadata&.fetch("filename", nil)
   end
 
   # returns path for show action of the lecture's course,

@@ -38,4 +38,38 @@ RSpec.describe("Referrals Security", type: :request) do
       )
     end
   end
+
+  describe "POST /referrals" do
+    let(:student) { create(:confirmed_user) }
+    let(:medium) { create(:valid_medium) }
+    let(:medium_editor) { create(:confirmed_user) }
+    let!(:link_item) do
+      create(:item, sort: "link", medium: nil,
+                    link: "https://legit.example", description: "Legit")
+    end
+
+    before { medium.editors << medium_editor }
+
+    def create_referral_params(link)
+      { referral: { item_id: link_item.id, medium_id: medium.id,
+                    link: link, description: "Desc",
+                    start_time: "0:00:00.000", end_time: "0:00:01.000" } }
+    end
+
+    it "lets an editor of the medium update the link item and create the referral" do
+      sign_in medium_editor
+      expect do
+        post(referrals_path(format: :js), params: create_referral_params("https://new.example"))
+      end.to change(Referral, :count).by(1)
+      expect(link_item.reload.link).to eq("https://new.example")
+    end
+
+    it "does not let a non-editor rewrite the shared link item or create a referral" do
+      sign_in student
+      expect do
+        post(referrals_path(format: :js), params: create_referral_params("https://evil.example"))
+      end.not_to change(Referral, :count)
+      expect(link_item.reload.link).to eq("https://legit.example")
+    end
+  end
 end

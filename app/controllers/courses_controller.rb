@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   before_action :set_course, only: [:take_random_quiz, :render_question_counter]
   before_action :set_course_admin, only: [:edit, :update, :destroy]
   before_action :check_if_enough_questions, only: [:take_random_quiz]
-  before_action :check_for_consent
+  before_action :check_for_consent, except: [:image]
   authorize_resource except: [:create, :search]
   layout "administration"
 
@@ -85,7 +85,29 @@ class CoursesController < ApplicationController
     end
   end
 
+  def image
+    @course = Course.find_by(id: params[:id])
+    return head :not_found if @course.nil?
+
+    authorize! :image, @course
+
+    file = image_file_for(@course, params[:variant])
+    return head :not_found if file.nil?
+
+    send_stored_file(file, disposition: "inline",
+                           fallback: @course.image_filename || "course-image")
+  end
+
   private
+
+    def image_file_for(course, variant)
+      case variant
+      when "original"
+        course.original_image_file
+      when "normalized"
+        course.normalized_image_file
+      end
+    end
 
     def set_course
       @course = Course.find_by(id: params[:id])

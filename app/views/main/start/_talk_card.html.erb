@@ -17,7 +17,8 @@
                            'display: inline;' %>
     </div>
   </div>
-  <%= image_tag(talk.lecture.course.normalized_image_url_with_host ||
+  <%= image_tag(talk.lecture.course.normalized_image_file ?
+                image_course_path(talk.lecture.course, variant: "normalized") :
                 "/no_course_information.png",
                 class: 'card-img-top teachableThumbnail border-bottom',
                 alt: 'Card image cap') %>

@@ -1,8 +1,44 @@
 require "rails_helper"
 
 RSpec.describe(User, type: :model) do
+  def fixture_file(name)
+    Rails.root.join(SPEC_FILES, name).open("rb")
+  end
+
   it "has a valid factory" do
     expect(FactoryBot.build(:user)).to be_valid
+  end
+
+  it "uses the profile image uploader for user images" do
+    user = build(:user)
+    file = fixture_file("image.png")
+
+    user.image = file
+
+    expect(user.image_attacher).to be_a(ProfileimageUploader::Attacher)
+    expect(user).to be_valid
+    expect(user.image.metadata["mime_type"]).to eq("image/png")
+  ensure
+    file&.close
+  end
+
+  it "rejects forged clean-scan metadata on cached profile images" do
+    cached_upload = ProfileimageUploader.upload(
+      fixture_file("image.png"),
+      :cache
+    )
+    user = build(:user)
+    forged_data = cached_upload.data.deep_dup
+    forged_data["metadata"]["malware_scan"] = { "status" => "clean" }
+
+    user.image = forged_data.to_json
+
+    expect(user).not_to be_valid
+    expect(user.errors[:image]).to include(
+      I18n.t("submission.upload_failure_scan_required", locale: I18n.locale)
+    )
+  ensure
+    cached_upload&.delete
   end
 
   # test validations - SOME ARE MISSING

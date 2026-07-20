@@ -43,7 +43,7 @@ test("create invalid Term", async ({ admin: { page } }) => {
   const termsPage = new TermsPage(page);
   await termsPage.goto();
   await termsPage.createTerm(currentYear, "SS");
-  await termsPage.createTerm(currentYear, "SS");
+  await termsPage.submitCreateTerm(currentYear, "SS");
 
   await expect(page.locator("#term_season")).toContainClass("is-invalid");
   await expect(page.getByText("term already exists")).toBeVisible();
@@ -54,7 +54,7 @@ test("cancel creating Term", async ({ admin: { page } }) => {
   await termsPage.goto();
   await termsPage.createTerm(currentYear, "SS");
 
-  await termsPage.createTerm(currentYear + 2, "WS", "cancel");
+  await termsPage.cancelCreateTerm(currentYear + 2, "WS");
 
   await expect(termsPage.getTermRow(currentYear + 2, "WS")).not.toBeVisible();
   await expect(page.getByText(`${currentYear + 2} WS`)).not.toBeVisible();
