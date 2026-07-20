@@ -9,9 +9,15 @@ x-app-base: &app-base
   volumes:
     - ../../:/workspaces/mampf
     - sprockets-cache:/cache
-    # https://stackoverflow.com/a/62611202/
-    - bundle_cache:/usr/local/bundle/
+    # Avoid Docker's initial copy-up into a fresh volume at /usr/local/bundle,
+    # which has proven flaky during devcontainer rebuilds.
+    - type: volume
+      source: bundle_cache
+      target: /usr/local/bundle
+      volume:
+        nocopy: true
   depends_on:
+    - clamav
     - db
     - redis
 
@@ -26,49 +32,71 @@ services:
     environment:
       - RAILS_ENV=development
       - NODE_ENV=development
-      - MAMPF_PORT=3000
+      - MAMPF_PORT=3001
+      # Public HTTP port for the current stack and writable cache root for
+      # runtime-specific state.
+      - APP_HEALTHCHECK_PORT=3000
+      - APP_CACHE_ROOT=/cache
+      # Current app server stack: Thruster handles public HTTP on
+      # APP_HEALTHCHECK_PORT, proxies Rails on THRUSTER_TARGET_PORT, and keeps
+      # its cache below APP_CACHE_ROOT.
+      - ACTION_DISPATCH_X_SENDFILE_HEADER=X-Sendfile
+      - THRUSTER_HTTP_PORT=3000
+      - THRUSTER_TARGET_PORT=3001
+      - THRUSTER_STORAGE_PATH=/cache/thruster
+      - THRUSTER_GZIP_COMPRESSION_DISABLE_ON_AUTH=true
     ports:
+      - 3000:3000
       - 3036:3036 # Vite server
-    labels:
-      # see nginx.tmpl, which is serving mampf on port 30
-      de.uni-heidelberg.mathi.mampf.container-type: worker
 
   app-test:
     <<: *app-base
     environment:
       - RAILS_ENV=test
       - NODE_ENV=test
-      - MAMPF_PORT=3145
+      # Run the e2e stack behind Thruster, like dev/prod. Streamed media goes
+      # through `send_file`, which only gets HTTP Range support (needed for video
+      # seeking) when a front proxy serves it via X-Sendfile. Thruster is the
+      # public port (3145, unchanged for Cypress/Playwright); Rails sits behind it.
+      - MAMPF_PORT=3146
+      - APP_HEALTHCHECK_PORT=3145
+      - APP_CACHE_ROOT=/cache
+      - ACTION_DISPATCH_X_SENDFILE_HEADER=X-Sendfile
+      - THRUSTER_HTTP_PORT=3145
+      - THRUSTER_TARGET_PORT=3146
+      - THRUSTER_STORAGE_PATH=/cache/thruster-test
+      - THRUSTER_GZIP_COMPRESSION_DISABLE_ON_AUTH=true
     ports:
-      - 3145:3145 # Rails app for Cypress tests (no nginx used here)
+      - 3145:3145 # Thruster public HTTP (Cypress/Playwright target)
       - 3037:3037 # Vite server
 
-  nginx:
-    image: openresty/openresty:alpine
-    # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
-    container_name: mampf-docker-nginx
-    ports:
-      - 3000:80
-    volumes:
-      - "nginx-conf-d:/etc/nginx/conf.d"
-      # Submissions are served by nginx but are still authenticated by MaMpf. (accel_redirect)
-      - "submissions:/private/submissions:ro,nocopy"
-      - ../../public:/public
-
   db:
-    image: postgres:17-bookworm
+    image: postgres:18-trixie
     environment:
       - POSTGRES_USER=localroot
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - type: volume
         source: db-data
-        target: /var/lib/postgresql/data
+        target: /var/lib/postgresql
       # https://docs.docker.com/guides/pre-seeding/#pre-seed-the-database-by-bind-mounting-a-sql-script
       - ../../db/create-mampf-db.sql:/docker-entrypoint-initdb.d/create-mampf-db.sql
 
   redis:
-    image: "redis:8.6-alpine"
+    image: "redis:8.8-alpine"
+
+  clamav:
+    image: clamav/clamav-debian:1.5
+    restart: unless-stopped
+    environment:
+      - CLAMD_CONF_StreamMaxLength=100M
+      - CLAMD_CONF_MaxFileSize=100M
+      - CLAMD_CONF_MaxScanSize=150M
+      - CLAMD_CONF_MaxScanTime=120000
+      - CLAMD_CONF_AlertExceedsMax=yes
+      - FRESHCLAM_CHECKS=24
+    volumes:
+      - clamav-db:/var/lib/clamav
 
   pgadmin:
     image: dpage/pgadmin4
@@ -109,21 +137,10 @@ services:
       - MAIL_ADDRESS=mampf@localhost
       - MAIL_PASS=mampf
 
-  dockergen:
-    build:
-      context: ./../..
-      dockerfile: docker/Dockerfile.dockergen
-    command: -notify-sighup mampf-docker-nginx -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
-    restart: always
-    volumes:
-      - "nginx-conf-d:/etc/nginx/conf.d"
-      - "../nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl"
-      - "/var/run/docker.sock:/tmp/docker.sock"
 
 volumes:
-  nginx-conf-d:
-  submissions:
   db-data:
   pgadmin:
   sprockets-cache:
   bundle_cache:
+  clamav-db:

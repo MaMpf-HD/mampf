@@ -30,6 +30,7 @@ export class AddScreenshotButton extends Component {
         data: fd,
         processData: false,
         contentType: false,
+        dataType: "script",
       });
     });
   }

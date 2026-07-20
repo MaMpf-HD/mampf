@@ -1,0 +1,170 @@
+name: Build Deploy Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Optional image tag override
+        required: false
+        type: string
+      image_repository:
+        description: Optional GHCR repository override
+        required: false
+        type: string
+      os_security_refresh:
+        description: Force-pull base and apply all available OS security updates (non-reproducible)
+        required: false
+        type: boolean
+        default: false
+  push:
+    # Baseline branches that build a deploy image. Topology: next -> staging,
+    # main -> production. A push trigger fires from the workflow version on the
+    # branch pushed to, so next/main stay dormant until the baseline (incl. this
+    # file) actually reaches them -- safe to list ahead of cutover. thruster is
+    # dropped once retired.
+    branches:
+      - deploy/app-baseline-thruster
+      - next
+      - main
+
+jobs:
+  build-deploy-image:
+    name: Build deploy image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    env:
+      IMAGE_REPOSITORY: ${{ inputs.image_repository || 'ghcr.io/mampf-hd/mampf-deploy' }}
+      IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
+      COSIGN_VERSION: v2.2.4
+    outputs:
+      image: ${{ steps.image.outputs.image }}
+      image_tag: ${{ steps.image.outputs.image_tag }}
+      image_repository: ${{ steps.image.outputs.image_repository }}
+      image_digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Log in to GHCR
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image reference
+        id: image
+        run: |
+          echo "image=${IMAGE_REPOSITORY}:${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "image_repository=${IMAGE_REPOSITORY}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
+
+      - name: Build and push deploy image
+        id: build
+        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
+        with:
+          context: .
+          file: ./docker/production/Dockerfile
+          push: true
+          tags: ${{ steps.image.outputs.image }}
+          pull: ${{ inputs.os_security_refresh || false }}
+          build-args: |
+            OS_SECURITY_REFRESH=${{ inputs.os_security_refresh && github.run_id || '' }}
+          cache-from: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache
+          cache-to: type=registry,ref=${{ env.IMAGE_REPOSITORY }}:buildcache,mode=max
+
+      # Advisory only (continue-on-error + --exit-code 0): the image is already
+      # pushed and signed above, so neither findings nor a scan hiccup fail the
+      # build. Deliberate: we do not want CI to block deploys on HIGH/CRITICAL
+      # image CVEs -- keep --exit-code 0, do not turn this into a fail-the-build
+      # gate. Run Trivy from its official image -- the aquasecurity/trivy-action
+      # installs the Trivy binary from GitHub releases per job, which currently
+      # fails on the runners. TRIVY_USERNAME/PASSWORD authenticate the GHCR pull.
+      - name: Scan published runtime image
+        continue-on-error: true
+        env:
+          IMAGE_REF: ${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}
+          TRIVY_USERNAME: ${{ github.actor }}
+          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker run --rm \
+            -e TRIVY_USERNAME -e TRIVY_PASSWORD -e GITHUB_TOKEN \
+            -v "$PWD:/work" -w /work \
+            aquasec/trivy:0.71.2 image \
+            --scanners vuln \
+            --severity CRITICAL,HIGH \
+            --format json \
+            --output trivy-results.json \
+            --exit-code 0 \
+            --no-progress \
+            --skip-version-check \
+            "$IMAGE_REF"
+
+      - name: Summarize Trivy findings
+        if: always()
+        env:
+          IMAGE_DIGEST_REFERENCE: ${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}
+          TRIVY_RESULTS_PATH: trivy-results.json
+        run: |
+          python3 .github/actions/summarize_trivy.py
+
+      - name: Upload Trivy results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: trivy-results
+          path: trivy-results.json
+          if-no-files-found: ignore
+
+      - name: Install cosign
+        run: |
+          curl -fsSLo /tmp/cosign-linux-amd64 "https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/cosign-linux-amd64"
+          curl -fsSLo /tmp/cosign_checksums.txt "https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/cosign_checksums.txt"
+          (cd /tmp && grep ' cosign-linux-amd64$' cosign_checksums.txt | sha256sum --check --status)
+          install -m 0755 /tmp/cosign-linux-amd64 /usr/local/bin/cosign
+          cosign version
+
+      - name: Sign the published Docker image
+        run: cosign sign --yes "${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}"
+
+      - name: Write deploy image metadata
+        run: |
+          cat > deploy-image-metadata.json <<EOF
+          {
+            "image_repository": "${{ steps.image.outputs.image_repository }}",
+            "tag": "${{ steps.image.outputs.image_tag }}",
+            "image": "${{ steps.image.outputs.image }}",
+            "digest": "${{ steps.build.outputs.digest }}",
+            "digest_image": "${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}",
+            "source_ref": "${{ github.ref_name }}",
+            "head_sha": "${{ github.sha }}",
+            "event_name": "${{ github.event_name }}",
+            "run_id": "${{ github.run_id }}"
+          }
+          EOF
+
+      - name: Upload deploy image metadata
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: deploy-image-metadata
+          path: deploy-image-metadata.json
+
+      - name: Print image reference
+        run: |
+          echo "Built image: ${{ steps.image.outputs.image }}"
+          {
+            echo "## Image"
+            echo
+            echo "Image: \`${{ steps.image.outputs.image }}\`"
+            echo
+            echo "Tag: \`${{ steps.image.outputs.image_tag }}\`"
+            echo
+            echo "Digest: \`${{ steps.image.outputs.image_repository }}@${{ steps.build.outputs.digest }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

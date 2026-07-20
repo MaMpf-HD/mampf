@@ -55,7 +55,12 @@ class AnnouncementsController < ApplicationController
   private
 
     def announcement_params
-      params.expect(announcement: [:details, :lecture_id, :on_main_page])
+      # on_main_page controls the (lecture-less) main-page banner and is an
+      # admin-only concern; strip it for non-admins so it can't be set via a
+      # crafted request.
+      permitted = [:details, :lecture_id]
+      permitted << :on_main_page if current_user.admin?
+      params.expect(announcement: permitted)
     end
 
     def create_notifications
