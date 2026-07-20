@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+image_repository="${MAMPF_IMAGE_REPOSITORY:-ghcr.io/mampf-hd/mampf-deploy}"
+image_tag="${MAMPF_IMAGE_TAG:-$(git rev-parse --short=12 HEAD)}"
+image_platform="${MAMPF_IMAGE_PLATFORM:-linux/amd64}"
+image_progress="${MAMPF_IMAGE_PROGRESS:-auto}"
+image="${image_repository}:${image_tag}"
+ghcr_token="${GHCR_TOKEN:-${GITHUB_TOKEN:-}}"
+ghcr_username="${GHCR_USERNAME:-}"
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  echo "Usage: bin/build-production-image"
+  echo ""
+  echo "Environment overrides:"
+  echo "  MAMPF_IMAGE_REPOSITORY   default: ghcr.io/mampf-hd/mampf-deploy"
+  echo "  MAMPF_IMAGE_TAG          default: current git short SHA"
+  echo "  MAMPF_IMAGE_PLATFORM     default: linux/amd64"
+  echo "  MAMPF_IMAGE_PROGRESS     default: auto (set to plain for line-by-line logs)"
+  echo "  GHCR_USERNAME            default: gh user login"
+  echo "  GHCR_TOKEN or GITHUB_TOKEN"
+  exit 0
+fi
+
+if [[ -z "$ghcr_token" ]]; then
+  if ! command -v gh >/dev/null 2>&1; then
+    echo "Set GHCR_TOKEN or GITHUB_TOKEN, or install and authenticate gh"
+    exit 1
+  fi
+
+  ghcr_token="$(gh auth token)"
+fi
+
+if [[ -z "$ghcr_username" ]]; then
+  if ! command -v gh >/dev/null 2>&1; then
+    echo "Set GHCR_USERNAME, or install and authenticate gh"
+    exit 1
+  fi
+
+  ghcr_username="$(gh api user --jq .login)"
+fi
+
+printf '%s\n' "$ghcr_token" | docker login ghcr.io -u "$ghcr_username" --password-stdin
+
+if ! docker buildx inspect >/dev/null 2>&1; then
+  docker buildx create --use >/dev/null
+fi
+
+docker buildx build \
+  --platform "$image_platform" \
+  --progress "$image_progress" \
+  --file docker/production/Dockerfile \
+  --tag "$image" \
+  --push \
+  .
+
+echo "Pushed $image"
+echo "Deploy with:"
+echo "cd /workspaces/mampf-infra && . .venv/bin/activate && ansible-playbook playbooks/deploy.yml --ask-vault-pass -e 'mampf_app_image=$image'"
