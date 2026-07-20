@@ -96,7 +96,7 @@
           </a>
         </li>
 
-        <% if Rails.env.development? %>
+        <% if Rails.env.local? %>
           <%= render partial: "dev/impersonate_dropdown" %>
         <% end %>
       </ul>
