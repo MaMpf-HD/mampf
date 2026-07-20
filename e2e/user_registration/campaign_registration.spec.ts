@@ -785,7 +785,8 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Late tutorial registration")).toBeVisible();
   });
 
-  test("disables registration options for a join-only assigned tutorial", async ({
+  test("keeps campaign registration open for a join-only assigned tutorial, "
+    + "but still blocks self-enrollment", async ({
     factory,
     student,
   }) => {
@@ -828,8 +829,12 @@ test.describe("campaign registration", () => {
     await expect(assignedTutorialHeadings).toHaveCount(2);
     await expect(student.page.getByText("Alternative Self Enrollment Tutorial")).toBeVisible();
     await expect(student.page.getByText("Late tutorial registration")).toBeVisible();
-    await expect(student.page.getByRole("button", { name: "Register now" })).toHaveCount(0);
+    // Registering never touches the roster -- the group assignment happens at
+    // finalization -- so an unremovable assignment does not block a campaign.
+    await expect(student.page.getByRole("button", { name: "Register now" })).toHaveCount(3);
 
+    // Immediate self-enrollment stays blocked: joining another tutorial would
+    // mean leaving the one the student cannot leave.
     const blockedTooltip
       = "You cannot join this tutorial since you cannot leave your tutorial. This was set up by your lecturer this way.";
     const alternativeTutorialTile = student.page.getByTestId("registration-group-tile").filter({
@@ -839,15 +844,10 @@ test.describe("campaign registration", () => {
     });
     await expect(alternativeTutorialTile).toHaveAttribute("title", blockedTooltip);
 
-    const unavailableButtons = student.page.getByRole("button", { name: "Unavailable" });
-    await expect(unavailableButtons).toHaveCount(4);
-
-    for (let index = 0; index < 4; index += 1) {
-      const unavailableButton = unavailableButtons.nth(index);
-      const blockedAction = unavailableButton.locator("..");
-      await expect(unavailableButton).toBeDisabled();
-      await expect(blockedAction).toHaveAttribute("title", blockedTooltip);
-    }
+    const unavailableButton = student.page.getByRole("button", { name: "Unavailable" });
+    await expect(unavailableButton).toHaveCount(1);
+    await expect(unavailableButton).toBeDisabled();
+    await expect(unavailableButton.locator("..")).toHaveAttribute("title", blockedTooltip);
   });
 
   test("explains whether a materialized assignment fulfilled preferences", async ({

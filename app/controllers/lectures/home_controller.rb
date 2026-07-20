@@ -14,7 +14,7 @@ module Lectures
     def show
       authorize! :index, @lecture
 
-      @can_use_registration_workflow = current_ability.can?(:create, @lecture)
+      @can_register = current_ability.can?(:create, @lecture)
 
       @campaigns_details = Array(
         ::UserRegistrations::LectureCampaignsService
@@ -29,9 +29,9 @@ module Lectures
       @self_rosterables = Array(
         Rosters::SelfRosterOptionsQuery.new(@lecture, current_user).call
       )
-      @show_workflow_content = @can_use_registration_workflow ||
-                               @rosterized_entries.any? ||
-                               @self_rosterables.any?
+      @show_registration_section = @can_register ||
+                                   @rosterized_entries.any? ||
+                                   @self_rosterables.any?
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
       @subscribed = @lecture.in?(current_user.lectures)
@@ -43,6 +43,23 @@ module Lectures
 
       render template: "lectures/home/lecture_home",
              layout: turbo_frame_request? ? "turbo_frame" : "application"
+    end
+
+    def attachment
+      authorize! :index, @lecture
+
+      if @lecture.home_attachment.blank?
+        return respond_with_flash(
+          :alert,
+          t("registration.lecture.home.attachment_missing"),
+          fallback_location: lecture_home_path(@lecture)
+        )
+      end
+
+      send_data(@lecture.home_attachment.read,
+                filename: @lecture.home_attachment_filename || "program.pdf",
+                type: "application/pdf",
+                disposition: "inline")
     end
 
     private

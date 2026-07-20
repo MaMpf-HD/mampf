@@ -2,6 +2,7 @@
   "name": "mampf",
   "license": "MIT",
   "private": true,
+  "packageManager": "yarn@4.17.0",
   "dependencies": {
     "@eonasdan/tempus-dominus": "^6.10.4",
     "@hotwired/stimulus": "^3.2.2",

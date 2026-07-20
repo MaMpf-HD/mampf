@@ -1,0 +1,83 @@
+<%#
+  Shown once right after a campaign is finalized (see
+  Registration::AllocationsController#finalize), so the teacher consciously
+  decides whether students may change their groups themselves instead of
+  being silently locked into their allocation. Per-group fine-tuning stays
+  available afterwards via the self-materialization dropdown on each group
+  tile.
+%>
+
+<div
+  class="modal fade"
+  id="selfServiceModal"
+  tabindex="-1"
+  aria-labelledby="selfServiceModalLabel"
+  aria-hidden="true"
+  data-controller="modal"
+  data-modal-show-on-connect-value="true"
+  data-testid="self-service-modal"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="selfServiceModalLabel">
+          <%= t("registration.campaign.self_service.title") %>
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="<%= t("basics.close") %>"
+        ></button>
+      </div>
+
+      <%= form_with url: self_service_registration_campaign_path(campaign),
+                    method: :patch,
+                    data: { turbo: true } do %>
+        <div class="modal-body">
+          <% if local_assigns[:summary].present? %>
+            <div class="alert alert-warning small" role="alert">
+              <%= summary %>
+            </div>
+          <% end %>
+
+          <p class="text-muted">
+            <%= t("registration.campaign.self_service.description") %>
+          </p>
+
+          <% current_mode = campaign.shared_self_materialization_mode %>
+
+          <%#
+            The current mode is only *labelled* as such; the recommendation is
+            preselected on purpose. Right after finalization the current mode is
+            always "disabled", so preselecting it would turn "Apply" into a
+            no-op — leaving students locked in, which is what this modal exists
+            to prevent.
+          %>
+
+          <%= select_tag :self_materialization_mode,
+                         options_for_select(
+                           self_service_mode_options(current_mode),
+                           "add_and_remove"
+                         ),
+                         class: "form-select",
+                         data: { testid: "self-service-mode" } %>
+        </div>
+
+        <div class="modal-footer">
+          <%= submit_tag t("registration.campaign.self_service.apply"),
+                         class: "btn btn-primary" %>
+
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-bs-dismiss="modal"
+          >
+            <%= t("registration.campaign.self_service.keep_closed") %>
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

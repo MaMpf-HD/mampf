@@ -33,8 +33,8 @@
 
   <%# Overview %>
   <% if lecture %>
-    <% fullpath = lecture_path(lecture)%>
-    <% active_class = get_class_for_path(lecture_path(lecture)) %>
+    <% fullpath = lecture_outline_path(lecture) %>
+    <% active_class = get_class_for_path(lecture_outline_path(lecture)) %>
     <li class="sidebar-item nav-link <%= active_class %>
             <%= content_accessible ? "" : "disabled" %>">
       <%= link_to url_for(fullpath),
