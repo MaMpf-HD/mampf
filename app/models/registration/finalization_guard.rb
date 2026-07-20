@@ -1,0 +1,87 @@
+# Checks whether the registration campaign can be finalized and performs the
+# necessary checks and screenings.
+module Registration
+  class FinalizationGuard
+    Result = Struct.new(:success?,
+                        :error_code,
+                        :error_message,
+                        :violations,
+                        :screening_result,
+                        keyword_init: true) do
+      def initialize(**attributes)
+        super
+
+        self.screening_result ||= Registration::ScreeningService::Result.new(
+          violations: Array(violations)
+        )
+        self.violations = screening_result.violations
+      end
+
+      def policy_violations
+        screening_result.violations
+      end
+
+      delegate :blocker_violations, to: :screening_result
+
+      delegate :auto_reject_violations, to: :screening_result
+    end
+
+    def initialize(campaign)
+      @campaign = campaign
+    end
+
+    def check
+      if @campaign.completed?
+        return failure(:already_completed,
+                       I18n.t("registration.allocation.errors.already_completed"))
+      end
+
+      if @campaign.preference_based?
+        unless @campaign.processing? && @campaign.allocation_decided_at.present?
+          return failure(:wrong_status,
+                         I18n.t("registration.allocation.errors.wrong_status"))
+        end
+
+        return success
+      end
+
+      unless @campaign.closed?
+        return failure(:wrong_status,
+                       I18n.t("registration.allocation.errors.wrong_status"))
+      end
+
+      screening = Registration::ScreeningService.new(
+        @campaign,
+        registrations: @campaign.user_registrations.where.not(status: :rejected)
+      ).call
+
+      if screening.blocked?
+        return failure(:policy_violation,
+                       I18n.t("registration.allocation.errors.policy_violation"),
+                       screening)
+      end
+
+      success(screening)
+    end
+
+    def success(screening_result = nil)
+      Result.new(success?: true, screening_result: screening_result)
+    end
+
+    def failure(code, message, screening_result_or_violations = nil)
+      screening_result, violations = if screening_result_or_violations.is_a?(
+        Registration::ScreeningService::Result
+      )
+        [screening_result_or_violations, nil]
+      else
+        [nil, screening_result_or_violations]
+      end
+
+      Result.new(success?: false,
+                 error_code: code,
+                 error_message: message,
+                 violations: violations,
+                 screening_result: screening_result)
+    end
+  end
+end

@@ -94,7 +94,7 @@ add_foreign_key :assessment_task_points, :assessment_participations, column: :pa
 | `Participation.total_points = sum(task_points.points)` | Automatic recomputation on `TaskPoint` save |
 | `TaskPoint.points ≤ Task.max_points` | Validation on save |
 | Task records exist only if `Assessment` has tasks | Validation |
-| Results visible only when `Assessment.results_published = true` | Controller authorization |
+| Results visible only when `Assessment.results_published?` returns true | Controller authorization |
 | `Participation.submitted_at` persists across status changes | Never overwritten after initial set |
 
 ```admonish note "Multiple Choice Extension"
@@ -209,6 +209,15 @@ add_foreign_key :student_performance_certifications,
 
 ### Recommended Background Jobs
 
+```admonish tip "Implementation placement"
+`PerformanceRecordUpdateJob` and `CertificationStaleCheckJob` are
+implemented as part of Step 10 (Student Performance). The remaining
+jobs listed here are implemented alongside the features they support
+(e.g., `RecountAssignedJob` in Step 5, `ParticipationTotalsJob` in
+Step 8). An admin integrity dashboard for monitoring these jobs is a
+future extension.
+```
+
 | Job | Purpose | Frequency |
 |-----|---------|-----------|
 | `RecountAssignedJob` | Recompute `assigned_count` from confirmed submissions | Hourly |
@@ -217,7 +226,6 @@ add_foreign_key :student_performance_certifications,
 | `CertificationStaleCheckJob` | Flag certifications for review when Records change | After record updates |
 | `OrphanTaskPointsJob` | Detect task points with missing participation/task | Weekly |
 | `RosterIntegrityJob` | Check roster user counts vs. capacities | Daily |
-| `AllocatedAssignedMatchJob` | Verify allocated_user_ids matches assigned users post-finalization | Weekly |
 
 ---
 
@@ -227,7 +235,7 @@ add_foreign_key :student_performance_certifications,
 |-----------|---------------------|
 | `Campaign.finalize!` | Check `status != :finalized` before proceeding |
 | `materialize_allocation!` | Replace entire roster (not additive) |
-| `GradeScheme::Applier.apply!` | Compare `version_hash`; skip if unchanged |
+| `Assessment::GradeSchemeApplier.apply!` | Compare `version_hash`; skip if unchanged |
 | `StudentPerformance::ComputationService.compute!` | Upsert pattern preserves overrides |
 | `Roster::MaintenanceService` operations | Each operation atomic with validation |
 

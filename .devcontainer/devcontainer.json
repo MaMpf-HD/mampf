@@ -1,16 +1,6 @@
 // adapted from https://github.com/rails/rails/tree/main/.devcontainer
 // For format details, see https://containers.dev/implementors/json_reference/.
 //
-// For ssh-related issues on WSL, see
-// https://github.com/microsoft/vscode-remote-release/issues/8666#issuecomment-2986483634
-// basically, add this to your ~/.profile inside WSL:
-// if [ -z "$SSH_AUTH_SOCK" ]; then
-//   eval "$(ssh-agent -s)"
-//   ssh-add ~/.ssh/your_github_key
-// fi
-// 
-// for pure-Windows users (no WSL), see this instead:
-// https://github.com/microsoft/vscode-remote-release/issues/11043#issuecomment-3005677524
 {
     "name": "MaMpf",
     "dockerComposeFile": [
@@ -18,14 +8,25 @@
         "compose.devcontainer.yml"
     ],
     "service": "app",
+    // The mampf-infra repo is optional (only needed for infra / deploy work).
+    // A type=bind mount fails container creation if the source is missing, which
+    // would break contributors (e.g. HiWis) who cloned only MaMpf. initializeCommand
+    // runs on the host before create and ensures the source exists (empty if
+    // mampf-infra isn't cloned); boot.sh then skips infra tooling when it's empty.
+    "initializeCommand": "mkdir -p '${localWorkspaceFolder}/../mampf-infra'",
     // https://github.com/orgs/community/discussions/15506
+    "mounts": [
+        "source=${localWorkspaceFolder}/../mampf-infra,target=/workspaces/mampf-infra,type=bind"
+    ],
     "workspaceFolder": "/workspaces/mampf/",
     // https://containers.dev/features
     "features": {
         "ghcr.io/devcontainers/features/github-cli:1": {
             "version": "latest"
         },
-        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "moby": false
+        },
         "ghcr.io/jsburckhardt/devcontainer-features/just:1": {},
         "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {},
         "ghcr.io/devcontainers/features/desktop-lite:1": {
@@ -97,28 +98,24 @@
             "onAutoForward": "openBrowser"
         }
     },
-    "initializeCommand": "git submodule update --init --recursive",
     "postCreateCommand": ".devcontainer/boot.sh",
     "customizations": {
         "vscode": {
             // 🎹 keep this in sync with extensions.json
             "extensions": [
-                // Container & Remote
                 "ms-azuretools.vscode-containers",
                 "ms-vscode.remote-explorer",
                 "docker.docker",
-                // Ruby extensions
                 "Shopify.ruby-lsp",
-                // JavaScript/Node extensions
                 "dbaeumer.vscode-eslint",
-                // Other useful extensions
                 "streetsidesoftware.code-spell-checker",
                 "streetsidesoftware.code-spell-checker-german",
                 "nefrob.vscode-just-syntax",
                 "timonwong.shellcheck",
                 "github.copilot-chat",
                 "github.vscode-pull-request-github",
-                "ms-playwright.playwright"
+                "ms-playwright.playwright",
+                "marcoroth.herb-lsp"
             ]
         }
     },

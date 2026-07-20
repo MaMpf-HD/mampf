@@ -5,7 +5,7 @@
     </h5>
   </div>
   <div class="card-body">
-    
+
     <div class="row">
       <div class="col-12 mb-3">
         <%= f.label :title, t('basics.title'),
@@ -17,6 +17,18 @@
         </div>
       </div>
     </div>
+
+    <% if Flipper.enabled?(:roster_maintenance) %>
+      <div class="row">
+        <div class="col-12 mb-3">
+          <%= f.label :capacity, t('basics.capacity'), class: "form-label" %>
+          <%= f.number_field :capacity,
+                             class: 'form-control',
+                             placeholder: '∞',
+                             min: 0 %>
+        </div>
+      </div>
+    <% end %>
 
     <!-- 📅 Dates -->
     <div class="row">

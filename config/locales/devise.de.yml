@@ -24,6 +24,7 @@ de:
       timeout: "Deine Sitzung ist abgelaufen, bitte melde Dich erneut an."
       unauthenticated: "Du musst Dich anmelden oder registrieren, bevor Du fortfahren kannst."
       unconfirmed: "Du musst Deinen Account bestätigen, bevor Du fortfahren kannst."
+      too_many_requests: "Zu viele Anfragen. Bitte versuche es später erneut."
     mailer:
       confirmation_instructions:
         greeting: "Willkommen bei MaMpf!"

@@ -61,4 +61,19 @@ RSpec.describe("Auth confirmations", type: :request) do
       expect(user.unconfirmed_email).to be_nil
     end
   end
+
+  describe "POST /users/confirmation (resend)" do
+    it "stops sending confirmation emails after the per-source limit (AUTH-H02)" do
+      Rails.cache.clear
+      user = create(:user) # unconfirmed
+      ActionMailer::Base.deliveries.clear # drop the sign-up confirmation mail
+
+      params = { user: { email: user.email } }
+      6.times { post(user_confirmation_path, params: params) }
+
+      # rate_limit allows 5 within the hour; the 6th request is throttled before
+      # the action runs, so no 6th mail goes out.
+      expect(ActionMailer::Base.deliveries.count).to eq(5)
+    end
+  end
 end

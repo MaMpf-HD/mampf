@@ -8,6 +8,9 @@ window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);
 
+import LectureHomeFormController from "~/lectures/edit/home_form.controller.js";
+window.Stimulus.register("lecture-home-form", LectureHomeFormController);
+
 import MediaButtonSortController from "~/lectures/edit/media/media_button_sort.controller.js";
 window.Stimulus.register("media-button-sort", MediaButtonSortController);
 
@@ -34,6 +37,57 @@ window.Stimulus.register("vignettes-number", VignettesNumberController);
 
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
+
+import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
+window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
+
+import SortablePoliciesController from "~/registration/policies/sortable_policies.controller.js";
+window.Stimulus.register("sortable-policies", SortablePoliciesController);
+
+import RegisterableTypeHelpController from "~/registration/registerable_type_help.controller.js";
+window.Stimulus.register("registerable-type-help", RegisterableTypeHelpController);
+
+import CollapseController from "~/registration/collapse.controller.js";
+window.Stimulus.register("collapse", CollapseController);
+
+import BsPopoverController from "~/controllers/bs_popover.controller.js";
+window.Stimulus.register("bs-popover", BsPopoverController);
+
+import RowClickController from "~/controllers/row_click.controller.js";
+window.Stimulus.register("row-click", RowClickController);
+
+import DatetimepickerController from "~/controllers/datetimepicker.controller.js";
+window.Stimulus.register("datetimepicker", DatetimepickerController);
+
+import CapacityGuardController from "~/roster/capacity_guard.controller.js";
+window.Stimulus.register("capacity-guard", CapacityGuardController);
+
+import TutorialRosterPanelController from "~/registration/campaigns/tutorial_roster_panel.controller.js";
+window.Stimulus.register("tutorial-roster-panel", TutorialRosterPanelController);
+
+import CampaignDissolveController from "~/registration/campaigns/campaign_dissolve.controller.js";
+window.Stimulus.register("campaign-dissolve", CampaignDissolveController);
+
+import RosterDragController from "~/roster/roster_drag.controller.js";
+window.Stimulus.register("roster-drag", RosterDragController);
+
+import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
+window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
+
+import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
+window.Stimulus.register("preference-choices", PreferenceChoicesController);
+
+import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
+window.Stimulus.register("capacity-editor", CapacityEditorController);
+
+import SelectizeController from "~/controllers/selectize.controller.js";
+window.Stimulus.register("selectize", SelectizeController);
+
+import ProfileController from "~/profile/profile.controller.js";
+window.Stimulus.register("profile", ProfileController);
+
+import LectureHighlightsController from "~/lectures/lecture_highlights.controller.js";
+window.Stimulus.register("lecture-highlights", LectureHighlightsController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
