@@ -163,6 +163,16 @@ class GroupTileComponent < ViewComponent::Base
     registerable.try(:location)
   end
 
+  # Talks carry scheduled dates; other rosterables do not respond to :dates.
+  def date_text
+    return unless registerable.respond_to?(:dates)
+
+    Array(registerable.dates)
+      .filter_map { |d| d&.strftime("%b %d %Y") }
+      .join(", ")
+      .presence
+  end
+
   def sm_mode
     registerable.try(:self_materialization_mode) || "disabled"
   end

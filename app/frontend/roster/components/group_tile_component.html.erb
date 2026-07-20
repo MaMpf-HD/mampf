@@ -41,8 +41,19 @@
         <div class="student-registration-tile-meta small flex-grow-1">
           <% tile_metadata_rows.each do |row| %>
             <% if row[:icon].present? %>
-              <div class="text-muted <%= row[:class_name] %>">
-                <i class="bi <%= row[:icon] %> me-1"></i>
+              <div
+                class="text-muted <%= row[:class_name] %>"
+                <% if row[:label].present? %>
+                  title="<%= row[:label] %>"
+                  data-bs-toggle="tooltip"
+                <% end %>
+              >
+                <i class="bi <%= row[:icon] %> me-1" aria-hidden="true"></i>
+
+                <% if row[:label].present? %>
+                  <span class="visually-hidden"><%= row[:label] %>:</span>
+                <% end %>
+
                 <%= row[:value] %>
               </div>
             <% elsif row[:label].present? %>
@@ -175,6 +186,18 @@
           <div class="text-muted small">
             <i class="bi bi-geo-alt me-1"></i>
             <%= location_text %>
+          </div>
+        <% end %>
+
+        <% if date_text.present? %>
+          <div
+            class="text-muted small"
+            title="<%= t("basics.date") %>"
+            data-bs-toggle="tooltip"
+          >
+            <i class="bi bi-calendar-event me-1" aria-hidden="true"></i>
+            <span class="visually-hidden"><%= t("basics.date") %>:</span>
+            <%= date_text %>
           </div>
         <% end %>
 
