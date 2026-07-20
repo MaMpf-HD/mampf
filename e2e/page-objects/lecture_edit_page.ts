@@ -19,4 +19,8 @@ export class LectureEditPage {
   get groupsTab() {
     return this.page.getByRole("tab", { name: "Groups" });
   }
+
+  get homeTab() {
+    return this.page.getByRole("tab", { name: "Home" });
+  }
 }

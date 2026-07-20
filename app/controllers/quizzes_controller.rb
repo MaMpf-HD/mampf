@@ -156,6 +156,6 @@ class QuizzesController < ApplicationController
     end
 
     def store_access
-      ConsumptionSaver.perform_async(@quiz.id, "browser", "quiz")
+      enqueue_consumption(@quiz.id, "browser", "quiz")
     end
 end

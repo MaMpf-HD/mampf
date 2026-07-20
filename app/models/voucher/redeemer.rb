@@ -11,9 +11,13 @@ module Redeemer
   end
 
   def redeem(params)
-    redemption = create_redemption(params)
-    create_notifications!(redemption)
-    Current.user.subscribe_lecture!(lecture)
+    with_lock do
+      return unless active?
+
+      redemption = create_redemption(params)
+      create_notifications!(redemption)
+      Current.user.subscribe_lecture!(lecture)
+    end
   end
 
   private

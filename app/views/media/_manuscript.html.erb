@@ -43,7 +43,7 @@
         <%= t('basics.screenshot') %>
       </button>
       <%= link_to t('buttons.view'),
-                  medium.manuscript_url_with_host,
+                  display_medium_path(medium),
                   class: 'btn btn-sm btn-outline-secondary',
                   target: "_blank" %>
     <% end %>

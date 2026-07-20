@@ -18,7 +18,9 @@
           <%= lecture_form.check_box :subscribed,
                                      label: lecture.term_teacher_info,
                                      checked: lecture.in?(current_user.lectures),
-                                     data: { course: c.id, lecture: lecture.id } %>
+                                     data: { course: c.id,
+                                             lecture: lecture.id,
+                                             action: 'change->profile#updateLectureRegistration' } %>
 
           <% if lecture.restricted? %>
           <div id="pass-lecture-<%= lecture.id.to_s %>" style="display: none;">
