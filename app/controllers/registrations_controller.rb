@@ -9,7 +9,7 @@ class RegistrationsController < Devise::RegistrationsController
 
   def create
     altcha_param = params.permit(:altcha)[:altcha]
-    if altcha_param.present? && AltchaSolution.verify_and_save(altcha_param)
+    if altcha_param.present? && Altcha.verify(altcha_param)
       super
     else
       build_resource(devise_parameter_sanitizer.sanitize(:sign_up))

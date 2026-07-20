@@ -78,6 +78,18 @@ class UsersController < ApplicationController
                 alert: I18n.t("controllers.no_teacher")
   end
 
+  def image
+    @user = User.find_by(id: params[:id])
+    return head :not_found if @user.nil?
+
+    authorize! :image, @user
+
+    file = image_file_for(@user, image_variant_for(@user))
+    return head :not_found if file.nil?
+
+    send_stored_file(file, disposition: "inline", fallback: @user.image_filename || "user-image")
+  end
+
   def fill_user_select
     authorize! :fill_user_select, User.new
     if params[:q]
@@ -96,6 +108,24 @@ class UsersController < ApplicationController
 
   private
 
+    # Only the owner and admins may fetch the original upload (full resolution
+    # and EXIF). Everyone else — e.g. a student viewing a teacher profile — is
+    # served the resized, metadata-stripped derivative.
+    def image_variant_for(user)
+      return params[:variant] if current_user&.admin? || current_user == user
+
+      "normalized"
+    end
+
+    def image_file_for(user, variant)
+      case variant
+      when "original"
+        user.original_image_file
+      when "normalized"
+        user.normalized_image_file
+      end
+    end
+
     def elevate_params
       params.expect(generic_user: [:id, :admin, :editor, :teacher, :name])
     end
@@ -108,7 +138,7 @@ class UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       return unless @user.nil?
 
-      redirect_to :root, alert: I18n.t("controllers.no_medium")
+      redirect_to :root, alert: I18n.t("controllers.no_user")
     end
 
     def set_elevated_users

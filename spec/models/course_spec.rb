@@ -817,36 +817,6 @@ RSpec.describe(Course, type: :model) do
       @course = FactoryBot.create(:course, :with_image)
     end
 
-    describe "#image_url_with_host" do
-      it "returns nil if there is no image" do
-        course = FactoryBot.create(:course)
-        expect(course.image_url_with_host).to be_nil
-      end
-
-      it "returns a string with the correct ending" do
-        course = FactoryBot.create(:course, :with_image)
-        expect(course.image_url_with_host.end_with?(course.image.id)).to be(true)
-      end
-    end
-
-    describe "#normalized_image_url_with_host" do
-      it "returns nil if there is no image" do
-        course = FactoryBot.create(:course)
-        expect(course.normalized_image_url_with_host).to be_nil
-      end
-
-      it "returns nil if there is no normalized image" do
-        course = FactoryBot.create(:course, :with_image)
-        expect(course.normalized_image_url_with_host).to be_nil
-      end
-
-      it "returns a string with the correct ending" do
-        course = FactoryBot.create(:course, :with_image_and_normalization)
-        expect(course.normalized_image_url_with_host
-                     .end_with?(course.image(:normalized).id)).to be(true)
-      end
-    end
-
     describe "#image_filename" do
       it "returns nil if there is no image" do
         course = FactoryBot.create(:course)

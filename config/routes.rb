@@ -1,10 +1,20 @@
 Rails.application.routes.draw do
+  get "up" => "rails/health#show", as: :rails_health_check
+  get "ready" => "readiness#show", as: :readiness_check
+
   # mount sidekiq engine
 
   require "sidekiq/web"
   require "sidekiq/cron/web"
   authenticate :user, ->(u) { u.admin? } do
     mount Sidekiq::Web => "/sidekiq"
+  end
+
+  if Rails.env.development?
+    namespace :dev do
+      post "impersonate/:id", to: "impersonate#create", as: :impersonate
+      post "teacher_login", to: "teacher_sessions#create", as: :teacher_login
+    end
   end
 
   if Rails.env.test?
@@ -19,12 +29,12 @@ Rails.application.routes.draw do
       resources :user_creator_playwright, only: :create
       resources :mails_playwright, only: :create
       resources :i18n, only: :create
+      post "feature_flags/enable", to: "feature_flags#enable"
+      post "feature_flags/disable", to: "feature_flags#disable"
       post "timecop/travel", to: "timecop#travel"
       post "timecop/reset", to: "timecop#reset"
     end
   end
-
-  get "/altcha", to: "altcha#new"
 
   # mount commontator engine
 
@@ -123,6 +133,10 @@ Rails.application.routes.draw do
   get "courses/search",
       to: "courses#search",
       as: "search_courses"
+
+  get "courses/:id/image/:variant",
+      to: "courses#image",
+      as: "image_course"
 
   resources :courses, except: [:index, :show, :new]
 
@@ -275,7 +289,97 @@ Rails.application.routes.draw do
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  resources :lectures, except: [:index]
+  get "lectures/:id/home",
+      to: "lectures/home#show",
+      as: "lecture_home",
+      defaults: { project: "home" }
+
+  get "lectures/:id/home_attachment",
+      to: "lectures/home#attachment",
+      as: "lecture_home_attachment",
+      defaults: { project: "home" }
+
+  get "lectures/:id/outline",
+      to: "lectures#outline",
+      as: "lecture_outline"
+
+  resources :lectures, except: [:index] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#index"
+      get "roster/participants", to: "roster/maintenance#participants"
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Lecture" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :roster_update_self_materialization
+          patch "bulk_self_materialization", action: :bulk_update_self_materialization,
+                                             as: :roster_bulk_update_self_materialization
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+      end
+    end
+
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      resources :campaigns,
+                controller: "registration/campaigns",
+                only: [:index, :new, :create],
+                as: :registration_campaigns
+      resources :student_messages,
+                controller: "registration/student_messages",
+                only: [:create]
+    end
+  end
+
+  constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+    resources :campaigns,
+              controller: "registration/campaigns",
+              only: [:show, :edit, :update, :destroy],
+              as: :registration_campaigns do
+      member do
+        patch :open
+        patch :close
+        patch :reopen
+        patch :self_service
+        get :rejected
+        get :unassigned
+      end
+      resource :allocation,
+               controller: "registration/allocations",
+               only: [:show, :create] do
+        patch :finalize
+      end
+      resources :policies,
+                controller: "registration/policies",
+                only: [:new, :create, :edit, :update, :destroy] do
+        collection do
+          patch :reorder
+        end
+        member do
+          patch :move_up
+          patch :move_down
+        end
+      end
+
+      resources :items,
+                controller: "registration/items",
+                only: [:create, :destroy, :update] do
+        member do
+          get :roster
+        end
+      end
+
+      resources :registrations,
+                controller: "registration/user_registrations",
+                only: [] do
+        collection do
+          delete "user/:user_id/reject", to: "registration/user_registrations#reject_for_user",
+                                         as: :reject_for_user
+        end
+      end
+    end
+  end
 
   # lessons routes
 
@@ -303,13 +407,41 @@ Rails.application.routes.draw do
       to: "media#play",
       as: "play_medium"
 
+  get "media/:id/screenshot/:sort",
+      to: "media#screenshot",
+      as: "screenshot_medium"
+
+  get "media/:id/vtt/chapters",
+      to: "media#chapters_vtt",
+      as: "chapters_vtt_medium"
+
+  get "media/:id/vtt/references",
+      to: "media#references_vtt",
+      as: "references_vtt_medium"
+
+  get "media/:id/video/stream",
+      to: "media#stream_video",
+      as: "stream_video_medium"
+
   get "media/:id/display",
       to: "media#display",
       as: "display_medium"
 
+  get "media/:id/manuscript/inline",
+      to: "media#inline_manuscript",
+      as: "inline_manuscript_medium"
+
   get "media/:id/geogebra",
       to: "media#geogebra",
       as: "geogebra_medium"
+
+  get "media/:id/geogebra/inline",
+      to: "media#inline_geogebra",
+      as: "inline_geogebra_medium"
+
+  get "media/:id/download/:sort",
+      to: "media#download",
+      as: "download_medium"
 
   get "media/:id/add_item",
       to: "media#add_item",
@@ -350,10 +482,6 @@ Rails.application.routes.draw do
   post "media/update_tags",
        to: "media#update_tags",
        as: "update_tags"
-
-  post "media/:id/register_download",
-       to: "media#register_download",
-       as: "register_download"
 
   get "media/:id/statistics",
       to: "media#statistics",
@@ -493,13 +621,15 @@ Rails.application.routes.draw do
 
   # quizzes routes
 
-  post "quiz_certificates/:id/claim",
-       to: "quiz_certificates#claim",
-       as: "claim_quiz_certificate"
+  constraints ->(_req) { Flipper.enabled?(:quiz_certificates) } do
+    post "quiz_certificates/:id/claim",
+         to: "quiz_certificates#claim",
+         as: "claim_quiz_certificate"
 
-  post "quiz_certificates/validate",
-       to: "quiz_certificates#validate",
-       as: "validate_certificate"
+    post "quiz_certificates/validate",
+         to: "quiz_certificates#validate",
+         as: "validate_certificate"
+  end
 
   get "quizzes/:id/take",
       to: "quizzes#take",
@@ -749,7 +879,25 @@ Rails.application.routes.draw do
        to: "talks#modify",
        as: "modify_talk"
 
-  resources :talks, except: [:index]
+  resources :talks, except: [:index] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Talk" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Talk" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :update_self_materialization
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Talk" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
+      end
+    end
+  end
 
   # tutorials routes
 
@@ -773,15 +921,58 @@ Rails.application.routes.draw do
         to: "tutorials#bulk_upload",
         as: "bulk_upload_corrections"
 
-  get "tutorials/validate_certificate",
-      to: "tutorials#validate_certificate",
-      as: "validate_certificate_as_tutor"
+  constraints ->(_req) { Flipper.enabled?(:quiz_certificates) } do
+    get "tutorials/validate_certificate",
+        to: "tutorials#validate_certificate",
+        as: "validate_certificate_as_tutor"
+  end
 
   get "tutorials/:id/assignments/:ass_id/export_teams",
       to: "tutorials#export_teams",
       as: "export_teams_to_csv"
 
-  resources :tutorials, only: [:new, :edit, :create, :update, :destroy]
+  resources :tutorials, only: [:new, :edit, :create, :update, :destroy] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Tutorial" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Tutorial" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :update_self_materialization
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+        scope "roster", controller: "roster/self_materialization",
+                        defaults: { type: "Tutorial" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
+      end
+    end
+  end
+
+  # cohorts routes
+
+  resources :cohorts, only: [:new, :create, :edit, :update, :destroy] do
+    constraints ->(_req) { Flipper.enabled?(:roster_maintenance) } do
+      get "roster", to: "roster/maintenance#show", defaults: { type: "Cohort" }
+
+      member do
+        scope "roster", controller: "roster/maintenance", defaults: { type: "Cohort" } do
+          patch "self_materialization", action: :update_self_materialization,
+                                        as: :update_self_materialization
+          post "members", action: :add_member, as: :add_member
+          delete "members/:user_id", action: :remove_member, as: :remove_member
+          patch "members/:user_id/move", action: :move_member, as: :move_member
+        end
+        scope "roster", controller: "roster/self_materialization", defaults: { type: "Cohort" } do
+          post "self_add", action: :self_add, as: :self_add
+          delete "self_remove", action: :self_remove, as: :self_remove
+        end
+      end
+    end
+  end
 
   # sections routes
 
@@ -792,10 +983,6 @@ Rails.application.routes.draw do
   resources :sections, except: [:index]
 
   # terms routes
-
-  get "terms/cancel_term_edit",
-      to: "terms#cancel",
-      as: "cancel_term_edit"
 
   post "terms/set_active_term",
        to: "terms#set_active",
@@ -830,6 +1017,10 @@ Rails.application.routes.draw do
   get "users/delete_account",
       to: "users#delete_account",
       as: "delete_account"
+
+  get "users/:id/image/:variant",
+      to: "users#image",
+      as: "image_user"
 
   resources :users, only: [:index, :edit, :update, :destroy]
 
@@ -873,6 +1064,22 @@ Rails.application.routes.draw do
 
   resources :watchlist_entries
 
+  # registration routes
+  scope module: "registration", path: "" do
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
+      post "campaign_registrations/:campaign_id/items/:item_id/register",
+           to: "user_registrations#create",
+           as: :register_item
+      delete "campaign_registrations/:campaign_id/items/:item_id/withdraw",
+             to: "user_registrations#destroy",
+             as: :withdraw_item
+
+      post "campaign_registrations/:campaign_id/preferences",
+           to: "user_registrations#save_preferences",
+           as: :save_preferences
+    end
+  end
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not
@@ -912,16 +1119,43 @@ Rails.application.routes.draw do
       to: "main#start",
       as: "start"
 
+  get "internal/upload-authorizations/:uploader",
+      to: "internal/upload_authorizations#show",
+      as: :internal_upload_authorization,
+      format: false
+
   # uploader routes
 
-  mount ScreenshotUploader.upload_endpoint(:cache) => "/screenshots/upload"
-  mount ProfileimageUploader.upload_endpoint(:cache) => "/profile_image/upload"
-  mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
-  mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
-  mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
-  mount SubmissionUploader.upload_endpoint(:submission_cache) => "/submissions/upload"
-  mount CorrectionUploader.upload_endpoint(:submission_cache) => "/corrections/upload"
-  mount ZipUploader.upload_endpoint(:submission_cache) => "/packages/upload"
+  authenticate :user do
+    mount ScreenshotUploader.upload_endpoint(
+      :cache,
+      upload: MalwareScanGate.endpoint_upload(ScreenshotUploader, :cache)
+    ) => "/screenshots/upload"
+    mount ProfileimageUploader.upload_endpoint(
+      :cache,
+      upload: MalwareScanGate.endpoint_upload(ProfileimageUploader, :cache)
+    ) => "/profile_image/upload"
+    mount VideoUploader.upload_endpoint(
+      :cache,
+      upload: MalwareScanGate.endpoint_upload(VideoUploader, :cache)
+    ) => "/videos/upload"
+    mount PdfUploader.upload_endpoint(
+      :cache,
+      upload: MalwareScanGate.endpoint_upload(PdfUploader, :cache)
+    ) => "/pdfs/upload"
+    mount GeogebraUploader.upload_endpoint(
+      :cache,
+      upload: MalwareScanGate.endpoint_upload(GeogebraUploader, :cache)
+    ) => "/ggbs/upload"
+    mount SubmissionUploader.upload_endpoint(
+      :submission_cache,
+      upload: MalwareScanGate.endpoint_upload(SubmissionUploader, :submission_cache)
+    ) => "/submissions/upload"
+    mount CorrectionUploader.upload_endpoint(
+      :submission_cache,
+      upload: MalwareScanGate.endpoint_upload(CorrectionUploader, :submission_cache)
+    ) => "/corrections/upload"
+  end
 
   # thredded routes
 

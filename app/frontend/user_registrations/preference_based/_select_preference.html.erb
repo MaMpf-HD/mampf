@@ -1,0 +1,11 @@
+<div data-test="multi-item-preference">
+  <% disabled = local_assigns.fetch(:disabled, false) %>
+
+  <%= turbo_frame_tag dom_id(campaign, :preferences_workspace) do %>
+    <%= render partial: "user_registrations/preference_based/preferences_workspace",
+               locals: { campaign: campaign,
+                         disabled: disabled,
+                         item_preferences: item_preferences,
+                         items: items } %>
+  <% end %>
+</div>

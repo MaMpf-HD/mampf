@@ -22,3 +22,13 @@ export async function callBackend(
   errorMsg += `\n\nStacktrace:\n${body.stacktrace}`;
   throw new Error(errorMsg);
 }
+
+export async function enableFeature(
+  context: APIRequestContext, featureName: string): Promise<void> {
+  await callBackend(context, "feature_flags/enable", { name: featureName });
+}
+
+export async function disableFeature(
+  context: APIRequestContext, featureName: string): Promise<void> {
+  await callBackend(context, "feature_flags/disable", { name: featureName });
+}
