@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe RosterNotificationMailer do
-  let(:user) { create(:user, name: "Alice") }
+  let(:user) { create(:user, name: "Alice", locale: "de") }
 
   def deliver(email)
     expect { email.deliver_now }
