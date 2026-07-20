@@ -1,0 +1,60 @@
+<div>
+  <% disabled = local_assigns.fetch(:disabled, false) %>
+
+  <div
+    class="
+      row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4
+      row-cols-xxl-5
+      student-registration-tile-grid
+    "
+  >
+    <% sorted_items.each do |item| %>
+      <% metadata_rows = item_tile_metadata_rows(item) + [{
+           value: item_capacity_row(item)
+         }] %>
+
+      <% selected_rank = preference_rank_for(item, item_preferences) %>
+      <% tile_title = item.registerable.title %>
+      <% tile_type = item_display_type(item) %>
+
+      <%= render partial: "user_registrations/group_tile",
+                 locals: {
+                   registerable: item.registerable,
+                   item: item,
+                   tile_title: tile_title,
+                   tile_type: tile_type,
+                   tile_metadata_rows: metadata_rows,
+                   tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
+                   tile_column_class: "registration-group-tile-col--student",
+                   tile_actions_content: capture do
+                     concat(content_tag(
+                       :div,
+                       class: "d-flex gap-1 flex-nowrap student-registration-rank-actions"
+                     ) do
+                       safe_join(ranks.map do |rank|
+                         button_tag(
+                           t("registration.user_registration.preference_rank_options.#{rank}"),
+                           type: "button",
+                           disabled: disabled || !campaign.open_for_registrations?,
+                           class: class_names(
+                             "btn btn-sm student-registration-rank-button",
+                             "btn-primary": selected_rank == rank,
+                             "btn-outline-primary": selected_rank != rank
+                           ),
+                           title: preference_rank_button_tooltip(rank),
+                           aria: { pressed: selected_rank == rank },
+                           data: {
+                             action: "preference-choices#choose",
+                             preference_choices_target: "button",
+                             item_id: item.id,
+                             item_title: tile_title,
+                             rank: rank
+                           }
+                         )
+                       end)
+                     end)
+                   end
+                 } %>
+    <% end %>
+  </div>
+</div>

@@ -1,17 +1,23 @@
 services:
   # Remove services that we don't need for CI
   app: !reset null
-  nginx: !reset null
   pgadmin: !reset null
   mailcatcher: !reset null
-  dockergen: !reset null
 
   app-test:
     image: ghcr.io/mampf-hd/mampftest:image
     # only used when Cypress is running tests in CI, NOT for unit tests. For unit
     # tests, we overwrite the entrypoint to the empty string.
     command: "CI=true RUBY_DEBUG_ENABLE=0 DISABLE_VITE_IN_CI=true /workspaces/mampf/docker/development/init-and-run.sh"
-    volumes:
+    # REPLACE (not merge) the dev app-base volumes for CI. The dev `bundle_cache` mount
+    # uses `nocopy: true` so Docker skips copy-up; on a fresh CI volume that leaves
+    # /usr/local/bundle empty and hides the gems baked into mampftest:image (rspec etc.),
+    # so `bundle exec rspec` fails with "command not found: rspec". The CI image already
+    # ships the full bundle, so we deliberately DO NOT mount bundle_cache here and use the
+    # image's bundle directly. Source + sprockets kept (coverage output, asset cache).
+    volumes: !override
+      - ../../:/workspaces/mampf
+      - sprockets-cache:/cache
       # see compose.cicd.build.yml
       - "/workspaces/mampf/public/"
     healthcheck:
@@ -21,5 +27,9 @@ services:
       test: curl --fail http://localhost:3145 || exit 1
       interval: 5s
       retries: 10
-      start_period: 10s
+      # Cold start runs the full init-and-run.sh (bundle + yarn + db:prepare +
+      # schema:load) before the server binds 3145; on a fresh CI runner that can
+      # take well over a minute. During start_period a failing probe neither counts
+      # against retries nor marks the container unhealthy, so give init room to finish.
+      start_period: 150s
       timeout: 10s

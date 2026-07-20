@@ -1,6 +1,54 @@
 require "rails_helper"
 
 RSpec.describe(ApplicationHelper, type: :helper) do
+  describe "#clamped_percentage" do
+    it "returns the computed percentage for positive max values" do
+      expect(helper.clamped_percentage(50, 100)).to eq(50.0)
+    end
+
+    it "clamps the result to 100" do
+      expect(helper.clamped_percentage(150, 100)).to eq(100)
+    end
+
+    it "returns zero when max is zero" do
+      expect(helper.clamped_percentage(50, 0)).to eq(0)
+    end
+  end
+
+  describe "#progress_bar" do
+    it "renders a progress bar with correct percentage" do
+      html = helper.progress_bar(50, 100)
+      expect(html).to include('style="width: 50.0%"')
+      expect(html).to include('aria-valuenow="50"')
+      expect(html).to include("50%")
+    end
+
+    it "clamps percentage to 100" do
+      html = helper.progress_bar(150, 100)
+      expect(html).to include('style="width: 100%"')
+    end
+
+    it "handles zero max value" do
+      html = helper.progress_bar(50, 0)
+      expect(html).to include('style="width: 0%"')
+    end
+
+    it "applies custom classification colors" do
+      expect(helper.progress_bar(50, 100, classification: :info))
+        .to include("bg-info")
+    end
+
+    it "supports custom height and style" do
+      html = helper.progress_bar(50, 100, height: "10px", style: "width: 50px")
+      expect(html).to include('style="width: 50px; height: 10px"')
+    end
+
+    it "can hide label" do
+      html = helper.progress_bar(50, 100, show_label: false)
+      expect(html).not_to include("50%")
+    end
+  end
+
   # NEEDS TO BE REFACTORED
 
   # describe '#full_title' do

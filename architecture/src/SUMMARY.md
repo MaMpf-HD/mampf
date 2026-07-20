@@ -33,4 +33,5 @@
 - [Implementation Plan](features/plan.md)
 - [Implementation PR Roadmap](features/implementation-prs.md)
 - [Parallelization Strategy](features/parallelization.md)
+- [Integration Strategy](features/integration-strategy.md)
 ```

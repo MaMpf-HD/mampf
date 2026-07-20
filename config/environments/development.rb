@@ -81,6 +81,9 @@ Rails.application.configure do
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 
+  config.action_dispatch.x_sendfile_header =
+    ENV.fetch("ACTION_DISPATCH_X_SENDFILE_HEADER", nil)
+
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
 

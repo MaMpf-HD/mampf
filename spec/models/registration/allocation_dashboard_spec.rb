@@ -1,0 +1,366 @@
+require "rails_helper"
+
+RSpec.describe(Registration::AllocationDashboard, type: :model) do
+  let(:lecture) { create(:lecture) }
+  let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+  let(:dashboard) { described_class.new(campaign) }
+
+  describe "#stats" do
+    it "returns allocation stats" do
+      expect(dashboard.stats).to be_a(Registration::AllocationStats)
+    end
+  end
+
+  describe "#unassigned_students" do
+    let(:student) { create(:confirmed_user) }
+
+    before do
+      next if campaign.preference_based?
+
+      create(:registration_user_registration, registration_campaign: campaign, user: student)
+    end
+
+    it "returns unassigned students" do
+      expect(dashboard.unassigned_students).to include(student)
+    end
+
+    context "when a preference-based campaign has auto-rejected registrations" do
+      let(:campaign) do
+        create(:registration_campaign, :preference_based, :with_items,
+               status: :draft,
+               campaignable: lecture)
+      end
+      let(:dashboard) { described_class.new(campaign) }
+      let(:assigned_student) { create(:confirmed_user, email: "assigned@uni.edu") }
+      let(:unassigned_student) { create(:confirmed_user, email: "waiting@uni.edu") }
+      let(:rejected_student) { create(:confirmed_user, email: "rejected@other.com") }
+
+      before do
+        create(:registration_policy, :institutional_email,
+               registration_campaign: campaign,
+               phase: :finalization,
+               config: { "allowed_domains" => "uni.edu" })
+
+        campaign.update!(status: :processing,
+                         registration_deadline: 1.day.ago)
+
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               preference_rank: 1,
+               user: assigned_student)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.second,
+               preference_rank: 1,
+               user: unassigned_student)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.third,
+               preference_rank: 1,
+               status: :rejected,
+               rejection_reason_code: "institutional_email_mismatch",
+               rejection_reason_label: I18n.t(
+                 "registration.policy.errors.email_domain_not_allowed"
+               ),
+               user: rejected_student)
+      end
+
+      it "does not classify rejected students as unassigned" do
+        expect(dashboard.unassigned_students).to include(unassigned_student)
+        expect(dashboard.unassigned_students).not_to include(rejected_student)
+        expect(dashboard.rejected_students).to include(rejected_student)
+        expect(dashboard.stats.unassigned_users).to eq(1)
+        expect(dashboard.stats.rejected_users).to eq(1)
+      end
+
+      it "localizes rejection reasons from the code instead of the stored label" do
+        I18n.with_locale(:de) do
+          expect(dashboard.rejection_reasons_for(rejected_student))
+            .to eq("E-Mail-Domain nicht erlaubt.")
+        end
+      end
+
+      it "does not include solver-unassigned reasons for students in the rejected queue" do
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.second,
+               preference_rank: 2,
+               status: :rejected,
+               rejection_reason_code:
+                 Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
+               rejection_reason_label: I18n.t(
+                 "registration.user_registration.reason_labels.solver_unassigned"
+               ),
+               user: rejected_student)
+
+        expected_reason = Registration::UserRegistration.resolve_rejection_reason_label(
+          reason_code: "institutional_email_mismatch",
+          fallback_label: I18n.t("registration.policy.errors.email_domain_not_allowed")
+        )
+
+        expect(dashboard.rejected_students).to include(rejected_student)
+        expect(dashboard.rejection_reasons_for(rejected_student))
+          .to eq(expected_reason)
+      end
+
+      it "keeps users with active registrations out of the rejected bucket" do
+        mixed_student = create(:confirmed_user, email: "mixed@uni.edu")
+
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               preference_rank: 1,
+               user: mixed_student)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.second,
+               preference_rank: 2,
+               status: :rejected,
+               rejection_reason_code: "institutional_email_mismatch",
+               rejection_reason_label: I18n.t(
+                 "registration.policy.errors.email_domain_not_allowed"
+               ),
+               user: mixed_student)
+
+        expect(dashboard.rejected_students).not_to include(mixed_student)
+        expect(dashboard.unassigned_students).to include(mixed_student)
+        expect(dashboard.stats.rejected_user_ids).to eq([rejected_student.id])
+        expect(dashboard.stats.unassigned_user_ids).to contain_exactly(
+          unassigned_student.id,
+          mixed_student.id
+        )
+      end
+    end
+  end
+
+  describe "#policy_violations" do
+    it "returns policy violations" do
+      # Assuming default campaign has no violations
+      expect(dashboard.policy_violations).to be_empty
+    end
+
+    context "when guard fails with status error" do
+      before do
+        allow_any_instance_of(Registration::FinalizationGuard).to receive(:check).and_return(
+          Registration::FinalizationGuard::Result.new(success?: false, error_code: :wrong_status,
+                                                      violations: nil)
+        )
+      end
+
+      it "returns empty array" do
+        expect(dashboard.policy_violations).to eq([])
+      end
+    end
+  end
+
+  describe "#summary_items" do
+    context "when showing the current registration state" do
+      let(:campaign) do
+        create(:registration_campaign,
+               :first_come_first_served,
+               campaignable: lecture,
+               status: :draft)
+      end
+
+      before do
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: create(:tutorial, lecture: lecture))
+        campaign.update!(status: :open)
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: create(:confirmed_user, email: "confirmed@example.com"))
+        create(:registration_user_registration,
+               :rejected,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               rejection_reason_label: "Missing prerequisite",
+               user: create(:confirmed_user, email: "rejected@example.com"))
+      end
+
+      it "returns current-state summary items" do
+        expect(dashboard.summary_items).to eq([
+                                                {
+                                                  kind: :total_registrations,
+                                                  count: 2
+                                                },
+                                                {
+                                                  kind: :currently_confirmed,
+                                                  count: 1
+                                                },
+                                                {
+                                                  kind: :currently_rejected,
+                                                  count: 1
+                                                }
+                                              ])
+      end
+    end
+
+    context "when showing allocation results" do
+      let(:campaign) do
+        create(:registration_campaign,
+               :preference_based,
+               :with_items,
+               campaignable: lecture,
+               status: :processing,
+               allocation_decided_at: Time.current)
+      end
+      let(:item) { campaign.registration_items.first }
+
+      before do
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: campaign,
+               registration_item: item,
+               preference_rank: 1,
+               user: create(:confirmed_user, email: "assigned@example.com"))
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: item,
+               preference_rank: 1,
+               user: create(:confirmed_user, email: "waiting@example.com"))
+      end
+
+      it "returns allocation summary items including percentage and unassigned state" do
+        expect(dashboard.summary_items).to eq([
+                                                {
+                                                  kind: :total_registrations,
+                                                  count: 2
+                                                },
+                                                {
+                                                  kind: :eligible,
+                                                  count: 2
+                                                },
+                                                {
+                                                  kind: :assigned,
+                                                  count: 1,
+                                                  percentage: 50.0
+                                                },
+                                                {
+                                                  kind: :unassigned,
+                                                  count: 1
+                                                }
+                                              ])
+      end
+    end
+  end
+
+  describe "#conflicting_registrations" do
+    context "when there are conflicts" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:student) { create(:confirmed_user) }
+
+      before do
+        create(:registration_user_registration, registration_campaign: campaign, user: student)
+        create(:tutorial_membership, tutorial: tutorial, user: student)
+      end
+
+      it "returns conflicting registrations" do
+        conflicts = dashboard.conflicting_registrations
+        expect(conflicts).to be_present
+        expect(conflicts.first[:user]).to eq(student)
+        expect(conflicts.first[:tutorial]).to eq(tutorial)
+      end
+    end
+
+    context "when there are no conflicts" do
+      it "returns empty array" do
+        expect(dashboard.conflicting_registrations).to be_empty
+      end
+    end
+
+    context "when campaign is already completed" do
+      let(:tutorial) { create(:tutorial, lecture: lecture) }
+      let(:student) { create(:confirmed_user) }
+      let(:completed_campaign) do
+        create(:registration_campaign, :completed, campaignable: lecture)
+      end
+      let(:completed_dashboard) { described_class.new(completed_campaign) }
+
+      before do
+        create(:registration_user_registration,
+               registration_campaign: completed_campaign, user: student)
+        create(:tutorial_membership, tutorial: tutorial, user: student)
+      end
+
+      it "returns empty array" do
+        expect(completed_dashboard.conflicting_registrations).to be_empty
+      end
+    end
+  end
+  describe "#finalization_policies" do
+    it "returns active finalization policies for the campaign" do
+      policy = create(:registration_policy, registration_campaign: campaign,
+                                            active: true, phase: :finalization)
+      create(:registration_policy, :student_performance, registration_campaign: campaign,
+                                                         active: false, phase: :finalization)
+      create(:registration_policy, :student_performance, registration_campaign: campaign,
+                                                         active: true, phase: :registration)
+      expect(dashboard.finalization_policies).to eq([policy])
+    end
+  end
+
+  describe "#allocation_run?" do
+    it "returns true if last_allocation_calculated_at is present" do
+      campaign.update(last_allocation_calculated_at: Time.current)
+      expect(dashboard.allocation_run?).to be(true)
+    end
+
+    it "returns false if last_allocation_calculated_at is blank" do
+      campaign.update(last_allocation_calculated_at: nil)
+      expect(dashboard.allocation_run?).to be(false)
+    end
+  end
+
+  describe "#demand_per_item" do
+    let(:campaign) { create(:registration_campaign, :preference_based, campaignable: lecture) }
+    let(:item1) { create(:registration_item, registration_campaign: campaign) }
+    let(:item2) { create(:registration_item, registration_campaign: campaign) }
+
+    before do
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 1)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 2)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 3)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 4)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item1, preference_rank: 5)
+
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item2, preference_rank: 1)
+    end
+
+    it "calculates demand correctly" do
+      demand = dashboard.demand_per_item
+
+      d1 = demand.find { |d| d[:item] == item1 }
+      expect(d1[:first]).to eq(1)
+      expect(d1[:second]).to eq(1)
+      expect(d1[:third]).to eq(1)
+      expect(d1[:rest]).to eq(2)
+      expect(d1[:total]).to eq(5)
+
+      d2 = demand.find { |d| d[:item] == item2 }
+      expect(d2[:first]).to eq(1)
+      expect(d2[:second]).to eq(0)
+      expect(d2[:total]).to eq(1)
+    end
+  end
+
+  describe "conflicting_registrations not lecture" do
+    let(:course) { create(:course) }
+    let(:course_campaign) { create(:registration_campaign, campaignable: course) }
+    let(:course_dashboard) { described_class.new(course_campaign) }
+
+    it "returns empty array if campaignable is not a Lecture" do
+      expect(course_dashboard.conflicting_registrations).to eq([])
+    end
+  end
+end

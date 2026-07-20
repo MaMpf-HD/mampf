@@ -24,6 +24,12 @@ app/frontend/js/mampf_routes.js
 
 /node_modules
 /yarn-error.log
+/.yarn/*
+!/.yarn/patches
+!/.yarn/plugins
+!/.yarn/releases
+!/.yarn/sdks
+!/.yarn/versions
 
 coverage
 
@@ -38,8 +44,6 @@ coverage
 
 # Ignore environment variables
 /public/uploads.zip
-/public/pdfcomprezzor/pdfcomprezzor.wasm
-/public/pdfcomprezzor/wasm_exec.js
 
 
 /cypress/videos
@@ -49,12 +53,8 @@ coverage
 
 /public/packs
 /public/packs-test
-/node_modules
-/yarn-error.log
 yarn-debug.log*
 .yarn-integrity
-
-node_modules
 
 # Vite Ruby
 /public/vite*

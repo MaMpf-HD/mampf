@@ -36,9 +36,9 @@
                         method: 'patch',
                         scope: 'lecture' do |f|%>
             <p>
-              <%= f.text_field :passphrase,
-                               class: 'form-control',
-                               value: "" %>
+              <%= f.password_field :passphrase,
+                                   class: 'form-control',
+                                   value: "" %>
               <div class="invalid-feedback"
                    id="passphrase-error" >
               </div>

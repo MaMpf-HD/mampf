@@ -30,7 +30,8 @@
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-12">
-            <%= image_tag(course.image_url_with_host.presence ||
+            <%= image_tag(course.original_image_file ?
+                            image_course_path(course, variant: "original") :
                             "/no_course_information.png",
                           class: 'img-fluid',
                           id: 'image-preview') %>

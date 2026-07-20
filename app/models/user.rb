@@ -10,6 +10,16 @@ class User < ApplicationRecord
   has_many :lecture_user_joins, dependent: :destroy
   has_many :lectures, -> { distinct }, through: :lecture_user_joins
 
+  # Roster memberships
+  has_many :lecture_memberships, dependent: :destroy
+  has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
+
+  has_many :tutorial_memberships, dependent: :destroy
+  has_many :enrolled_tutorials, through: :tutorial_memberships, source: :tutorial
+
+  has_many :cohort_memberships, dependent: :destroy
+  has_many :cohorts, through: :cohort_memberships
+
   # a user has many favorite lectures
   has_many :user_favorite_lecture_joins, dependent: :destroy
   has_many :favorite_lectures, -> { distinct },
@@ -94,7 +104,7 @@ class User < ApplicationRecord
   # a user has redemptions of vouchers
   has_many :redemptions, dependent: :destroy
 
-  include ScreenshotUploader[:image]
+  include ProfileimageUploader[:image]
 
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
@@ -603,11 +613,9 @@ class User < ApplicationRecord
 
   def subscribe_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
-    return false if lecture.in?(lectures)
 
-    lectures << lecture
-
-    true
+    lecture_user_joins.create_or_find_by(lecture: lecture)
+                      .previously_new_record?
   end
 
   def unsubscribe_lecture!(lecture)
@@ -705,16 +713,14 @@ class User < ApplicationRecord
       self != lecture.teacher
   end
 
-  def image_url_with_host
-    return unless image
-
-    image_url(host: host)
+  def original_image_file
+    image
   end
 
-  def normalized_image_url_with_host
+  def normalized_image_file
     return unless image && image(:normalized)
 
-    image_url(:normalized, host: host)
+    image(:normalized)
   end
 
   def image_filename

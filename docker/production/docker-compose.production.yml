@@ -1,11 +1,20 @@
+# =============================================================================
+# EXAMPLE ONLY — this is NOT the production deployment.
+#
+# The live MaMpf stack is deployed from the `mampf-infra` repository, which
+# renders the authoritative compose file (internal network, vaulted runtime env,
+# per-service healthchecks) via Ansible. This file is a standalone reference for
+# a manual `docker compose` setup; it is not used by CI or any rollout, and
+# values such as `yourfileserverdomain` are placeholders.
+#
+# Do not treat static-analysis findings against this file as production issues.
+# =============================================================================
 x-mampf:
   &mampf
   build:
-    context: https://github.com/MaMpf-HD/mampf.git#main
+    context: https://github.com/MaMpf-HD/mampf.git#${GIT_BRANCH:-main}
     dockerfile: docker/production/Dockerfile
   env_file: docker.env
-  environment:
-    PRODUCTION_NAME:
   networks:
     - mampf
     - postgres
@@ -15,65 +24,33 @@ x-mampf:
     - cache
 
 services:
-  master:
+  sidekiq:
     <<: *mampf
-    entrypoint: /usr/src/app/docker/production/entrypoint-master.sh
-    volumes:
-      - "media:/private/media:nocopy"
-      - "submissions:/private/submissions:nocopy"
-      - "public:/usr/src/app/public"
-      - "caches:/caches:nocopy"
-
-  worker:
-    <<: *mampf
-    entrypoint: /usr/src/app/docker/production/entrypoint-worker.sh
+    entrypoint: /usr/src/app/docker/production/entrypoint-sidekiq.sh
     volumes:
       - "media:/private/media:nocopy"
       - "submissions:/private/submissions:nocopy"
       - "caches:/caches:nocopy"
-    labels:
-      de.uni-heidelberg.mathi.mampf.container-type: worker
 
-  nginx:
-    image: openresty/openresty:alpine
+  app:
+    <<: *mampf
+    entrypoint: /usr/src/app/docker/production/entrypoint-app.sh
     ports:
-      - "127.0.0.1:3000:80"
-    # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
-    container_name: mampf-docker-proxy
+      - "127.0.0.1:3000:3000"
     volumes:
-      - "nginx-conf-d:/etc/nginx/conf.d"
-      - "media:/private/media:ro,nocopy"  # nginx only accesses /private/media/vignettes/ here
-      - "submissions:/private/submissions:ro,nocopy"
-      - "public:/public:ro"
-    restart: always
-    depends_on:
-      - master
-    networks:
-      - mampf
-
-  dockergen:
-    build:
-      dockerfile: docker/Dockerfile.dockergen
-      context: https://github.com/MaMpf-HD/mampf.git#main
-    command: -notify-sighup mampf-docker-proxy -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
-    restart: always
-    volumes:
-      - "nginx-conf-d:/etc/nginx/conf.d"
-      - "/var/run/docker.sock:/tmp/docker.sock"
-    depends_on:
-      - master
-    networks:
-      - mampf
+      - "media:/private/media:nocopy"
+      - "submissions:/private/submissions:nocopy"
+      - "caches:/caches:nocopy"
 
   redis:
     restart: always
-    image: redis:8.6-alpine
+    image: redis:8.8-alpine
     networks:
       - mampf
 
   cache:
     restart: always
-    image: memcached:alpine
+    image: memcached:1.6-alpine
     networks:
       - default
 
@@ -94,8 +71,6 @@ volumes:
       type: "nfs"
       o: "addr=yourfileserverdomain,noatime,nolock,soft,vers=4.2,rw"
       device: ":/mampf/submissions/mampf"
-  public:
-  nginx-conf-d:
   caches:
     driver_opts:
       type: "nfs"

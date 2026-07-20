@@ -1,12 +1,15 @@
-require "csv"
-
 class Tutorial < ApplicationRecord
   include Registration::Registerable
+  include Rosters::Rosterable
 
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
   has_many :tutors, through: :tutor_tutorial_joins
+
+  # Roster associations
+  has_many :tutorial_memberships, dependent: :destroy
+  has_many :members, through: :tutorial_memberships, source: :user
 
   has_many :submissions, dependent: :destroy
 
@@ -15,10 +18,19 @@ class Tutorial < ApplicationRecord
   before_destroy :check_destructibility, prepend: true
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
+  validate :lecture_must_not_be_seminar
+  validate :lecture_id_immutable, on: :update
+
   def title_with_tutors
     return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
 
     "#{title}, #{tutor_names}"
+  end
+
+  def registration_title
+    return title unless tutors.any?
+
+    "#{title} (#{tutor_names})"
   end
 
   def tutor_names
@@ -28,13 +40,13 @@ class Tutorial < ApplicationRecord
   end
 
   def destructible?
-    Submission.where(tutorial: self).proper.none?
+    super && Submission.where(tutorial: self).proper.none?
   end
 
   def teams_to_csv(assignment)
     submissions = Submission.where(tutorial: self, assignment: assignment)
                             .proper.order(:last_modification_by_users_at)
-    CSV.generate(headers: false) do |csv|
+    SafeCsv.generate(headers: false) do |csv|
       submissions.each do |s|
         csv << [s.team]
       end
@@ -42,13 +54,74 @@ class Tutorial < ApplicationRecord
   end
 
   def add_tutor(tutor)
-    tutors << tutor unless tutors.include?(tutor)
+    tutor_tutorial_joins.create_or_find_by(tutor: tutor)
+                        .previously_new_record?
+  end
+
+  def roster_entries
+    tutorial_memberships
+  end
+
+  def add_user_to_roster!(user, source_campaign = nil)
+    super
+  rescue ActiveRecord::RecordNotUnique
+    conflicting = TutorialMembership
+                  .find_by(lecture_id: lecture_id, user_id: user.id)
+    raise(Rosters::UserAlreadyInBundleError, conflicting&.tutorial || self)
+  end
+
+  def exclusive_assignment?
+    true
+  end
+
+  # A student can be in at most one tutorial per lecture (enforced by the
+  # unique index on tutorial_memberships (user_id, lecture_id)).
+  def roster_exclusive_within_lecture?
+    true
+  end
+
+  def conflicting_lecture_membership(user)
+    TutorialMembership.where(lecture: lecture, user: user)
+                      .where.not(tutorial: self)
+                      .first&.tutorial
   end
 
   private
 
+    def lecture_id_immutable
+      errors.add(:lecture_id, :immutable) if lecture_id_changed?
+    end
+
+    def extra_roster_entry_attributes(_user_id, _campaign)
+      { lecture_id: lecture_id }
+    end
+
+    def persist_missing_roster_entries!(attributes)
+      roster_entries.upsert_all( # rubocop:disable Rails/SkipsModelValidations
+        attributes,
+        unique_by: :index_tutorial_memberships_on_user_id_and_lecture_id,
+        update_only: [:tutorial_id, :source_campaign_id]
+      )
+    end
+
     def check_destructibility
-      throw(:abort) unless destructible?
-      true
+      return if destructible?
+
+      if submissions.proper.exists?
+        errors.add(:base,
+                   I18n.t("controllers.tutorials.errors.cannot_delete_with_submissions"))
+      elsif in_campaign?
+        errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
+      elsif !roster_empty?
+        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
+      end
+
+      throw(:abort)
+    end
+
+    def lecture_must_not_be_seminar
+      return unless lecture&.seminar?
+
+      errors.add(:lecture, :must_not_be_seminar)
     end
 end
