@@ -285,6 +285,11 @@ class LecturesController < ApplicationController
         .pluck("registration_campaigns.campaignable_id")
         .to_set
     end
+    if Flipper.enabled?(:roster_maintenance)
+      status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
+      @rosterized_lecture_ids = status.rosterized_lecture_ids
+      @self_enrollable_lecture_ids = status.enrollable_lecture_ids
+    end
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }

@@ -17,13 +17,16 @@
           <%= lecture.title_no_term %>
         </h5>
         <div class="lecture-search-result-info">
-          <% if @registered_lecture_ids&.include?(lecture.id) %>
+          <% registered = @registered_lecture_ids&.include?(lecture.id) ||
+                          @rosterized_lecture_ids&.include?(lecture.id) %>
+          <% if registered %>
             <span class="badge bg-success lecture-search-result-registration"
                   data-testid="lecture-search-registered-badge">
               <i class="fas fa-check" aria-hidden="true"></i>
               <%= t('lecture.search.registered') %>
             </span>
-          <% elsif registration_open?(lecture) %>
+          <% elsif registration_open?(lecture) ||
+                   @self_enrollable_lecture_ids&.include?(lecture.id) %>
             <span class="badge bg-primary lecture-search-result-registration"
                   data-testid="lecture-search-registration-badge">
               <%= t('lecture.search.registration_open') %>
