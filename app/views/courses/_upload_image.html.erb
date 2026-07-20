@@ -1,18 +1,14 @@
-<div id="image-uploadArea" class="form-group">
-  <div class="row mb-2">
-    <div class="col-12"
-         id="image-informer">
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12" id="image-progressBar">
-    </div>
-  </div>
-  <div class="row" id="image-wait">
-    <div class="col-12">
-      <%= t('basics.please_wait') %>
-    </div>
-  </div>
+<div id="image-uploadArea"
+     class="form-group"
+     data-controller="uppy-upload"
+     data-uppy-upload-kind-value="image"
+     data-uppy-upload-endpoint-value="/screenshots/upload"
+     data-uppy-upload-failure-message-value="<%= t('submission.upload_failure') %>"
+     data-uppy-upload-hidden-input-selector-value="#upload-image-hidden"
+     data-uppy-upload-warning-selector-value="#course-basics-warning"
+     data-uppy-upload-preview-selector-value="#image-preview"
+     data-uppy-upload-detach-selector-value="#course_detach_image">
+  <div data-uppy-upload-target="dashboard"></div>
   <div class="row p-2">
     <div id="image-meta"
          class="col-12 meta rounded"
