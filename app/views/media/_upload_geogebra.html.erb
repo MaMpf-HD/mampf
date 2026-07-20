@@ -1,13 +1,16 @@
-<div id="geogebra-uploadArea" class="form-group">
-  <div class="row mb-2">
-    <div class="col-12"
-         id="geogebra-informer">
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12" id="geogebra-progressBar">
-    </div>
-  </div>
+<div id="geogebra-uploadArea"
+     class="form-group"
+     data-controller="uppy-upload"
+     data-uppy-upload-kind-value="geogebra"
+     data-uppy-upload-endpoint-value="/ggbs/upload"
+     data-uppy-upload-failure-message-value="<%= t('submission.upload_failure') %>"
+     data-uppy-upload-hidden-input-selector-value="#upload-geogebra-hidden"
+     data-uppy-upload-warning-selector-value="#medium-basics-warning">
+  <input type="hidden"
+         name="medium[geogebra]"
+         value="<%= medium.cached_geogebra_data %>"
+         id="upload-geogebra-hidden">
+  <div data-uppy-upload-target="dashboard"></div>
   <div class="row p-2">
     <div id="geogebra-meta"
          class="col-12 meta rounded"

@@ -1,4 +1,11 @@
-<%= form_with model: submission do |f| %>
+<%= form_with model: submission,
+              html: { data: { controller: 'submission-upload',
+                              submission_upload_endpoint_value: '/submissions/upload',
+                              submission_upload_accepted_file_types_value: assignment.accepted_for_file_input,
+                              submission_upload_max_file_size_value: 10 * 1024 * 1024,
+                              submission_upload_failure_message_value: t('submission.upload_failure'),
+                              submission_upload_missing_consent_message_value: t('submission.missing_consent'),
+                              submission_upload_upload_button_label_value: t('submission.upload_file') } } do |f| %>
   <div class="card-body submissionBody"
        data-id="<%= assignment.id %>">
     <div class="row mb-3">
@@ -41,88 +48,53 @@
       <div class="col-12">
         <%= f.label :manuscript, t('basics.submission') %>
       </div>
-      <div class="col-3" id="userManuscript-uploadButton"
-           data-choosefiles="<%= file_button_text(assignment) %>">
+      <div class="col-12 mb-3">
         <%= f.hidden_field :manuscript,
                            value: submission.cached_manuscript_data,
-                           id: 'upload-userManuscript-hidden' %>
-        <%= f.file_field :manuscript,
-                         class: 'form-control-file',
-                         id: 'upload-userManuscript',
-                         "data-cy": "choose-user-submission-file",
-                         accept: assignment.accepted_for_file_input %>
+                           id: 'upload-userManuscript-hidden',
+                           data: { submission_upload_target: 'hiddenInput' } %>
         <%= f.hidden_field :detach_user_manuscript,
                            value: false %>
-        <button id="userManuscript-uploadButton-btn"
-         data-cy="choose-user-submission"
-         class="btn btn-sm btn-outline-secondary">
-          <%= file_button_text(assignment) %>
-         </button>
+        <div data-submission-upload-target="dashboard"></div>
       </div>
 
-      <div class="col-9">
+      <div class="col-12">
         <i class="fas fa-lg fa-trash-alt me-2 clickable"
-           id="removeUserManuscript">
+           id="removeUserManuscript"
+           data-action="click->submission-upload#remove"
+           data-submission-upload-target="removeButton"
+           style="display: <%= show_inline(submission.manuscript) %>">
         </i>
 
         <span id="userManuscriptMetadata"
+              data-submission-upload-target="metadata"
               style="display: <%= show_inline(submission.manuscript) %>">
           <%= submission.manuscript_filename %>
           (<%= number_to_human_size(submission.manuscript_size) %>)
         </span>
         <span id="noUserManuscript"
+              data-submission-upload-target="noMetadata"
               style="display: <%= show_inline(!submission.manuscript) %>">
           <%= t('submission.no_manuscript_yet') %>
         </span>
       </div>
       <div class="col-12 mt-2"
            id="userManuscript-status">
-        <div class="col-12 submission-initially-hidden"
-             id="file-size-correct">
-          <i class="fas fa-check"></i>
-            <%=t('submission.correct_file_size')%>
-        </div>
-        <div class="col-12 submission-initially-hidden"
-             id="multiple-files-selected">
-          <i class="fas fa-exclamation-triangle"></i>
-          <%=t('submission.multiple_files_selected')%>
-          <div class="col-12"
-             id="files-display">
-        </div>
-        </div>
-
-        <div class="col-12 submission-initially-hidden"
-             id="file-size-too-big">
-          <i class="fas fa-exclamation-triangle"></i>
-          <%=t('submission.file_size_too_big')%>
-        </div>
-        <div class="col-12 submission-initially-hidden"
-             id="file-size-way-too-big">
-          <i class="fas fa-bomb"></i>
-          <%=t('submission.file_size_way_too_big')%>
-        </div>
-        <div class="col-12 my-1" id="file-permission-field">
+        <div class="col-12 my-1"
+             id="file-permission-field"
+             data-submission-upload-target="permissionField">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="0" id="file-permission-checkbox">
+            <input class="form-check-input"
+                   type="checkbox"
+                   value="0"
+                   id="file-permission-checkbox"
+                   data-submission-upload-target="permission">
             <label class="form-check-label" for="file-permission-checkbox">
               <%= t('submission.assure_third_party') %>
             </label>
           </div>
         </div>
-        <div class="col-12" id="submission-final-upload-dialogue">
-          <div class="col-12">
-            <button id="userManuscript-uploadButton-call"
-                    data-cy="upload-user-submission"
-                    data-tr-success="<%= t('buttons.upload_success') %>"
-                    data-tr-failure="<%= t('submission.upload_failure')%>"
-                    data-tr-upload="<%=t('buttons.upload')%>"
-                    data-tr-post-processing="<%= t('basics.post_processing')%>"
-                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
-                    class="btn btn-sm btn-outline-secondary"
-                    disabled=true>
-              <%= t('buttons.upload') %>
-            </button>
-          </div>
+        <div class="col-12">
           <div class="col-12">
             <small>
               <%= t('submission.removal_notice_html')%>
@@ -130,19 +102,19 @@
           </div>
           <div class="col-12">
             <small class="text-danger submission-initially-hidden"
-                   id="userManuscript-not-upload-notice">
+                   id="userManuscript-not-upload-notice"
+                   data-submission-upload-target="pendingNotice">
               <%= t('submission.submission_not_upload_notice_html')%>
             </small>
           </div>
           <div class="col-12">
             <small class="text-danger submission-initially-hidden"
-                   id="userManuscript-upload-notice">
+                   id="userManuscript-upload-notice"
+                   data-submission-upload-target="uploadedNotice">
               <%= t('submission.submission_upload_notice_html')%>
             </small>
           </div>
         </div>
-      </div>
-      <div class="col-12" id="userManuscript-statusBar">
       </div>
     </div>
   </div>
@@ -150,6 +122,7 @@
        data-id="<%= assignment.id %>">
     <%= f.submit t('buttons.save'),
                   class: 'btn btn-primary',
+                  data: { submission_upload_target: 'saveButton' },
                   "data-cy": "save-submission" %>
     <%= link_to t('buttons.cancel'),
                 cancel_editing_submission_path(submission),
