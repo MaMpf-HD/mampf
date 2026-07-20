@@ -53,6 +53,14 @@ module ApplicationHelper
                     "bg-info"
                   when :neutral
                     "bg-primary"
+                  when :allocation_first
+                    "allocation-progress-bar allocation-progress-bar--first"
+                  when :allocation_second
+                    "allocation-progress-bar allocation-progress-bar--second"
+                  when :allocation_other
+                    "allocation-progress-bar allocation-progress-bar--other"
+                  when :allocation_forced
+                    "allocation-progress-bar allocation-progress-bar--forced"
                   else
                     "bg-#{classification}"
     end

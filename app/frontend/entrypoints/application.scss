@@ -48,6 +48,22 @@ $container-max-widths: (
 @import "~/styles/link.scss";
 @import "trix";
 
+.task-index-highlight {
+  animation: task-index-pulse 0.6s ease;
+}
+
+@keyframes task-index-pulse {
+  0% {
+    color: #212529;
+  }
+  40% {
+    color: #dc3545;
+  }
+  100% {
+    color: #212529;
+  }
+}
+
 @import "~/styles/_branding.scss";
 
 

@@ -1,4 +1,43 @@
 de:
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: etwa einer Stunde
+        other: etwa %{count} Stunden
+      about_x_months:
+        one: etwa einem Monat
+        other: etwa %{count} Monaten
+      about_x_years:
+        one: etwa einem Jahr
+        other: etwa %{count} Jahren
+      almost_x_years:
+        one: fast einem Jahr
+        other: fast %{count} Jahren
+      half_a_minute: einer halben Minute
+      less_than_x_seconds:
+        one: weniger als einer Sekunde
+        other: weniger als %{count} Sekunden
+      less_than_x_minutes:
+        one: weniger als einer Minute
+        other: weniger als %{count} Minuten
+      over_x_years:
+        one: mehr als einem Jahr
+        other: mehr als %{count} Jahren
+      x_seconds:
+        one: einer Sekunde
+        other: "%{count} Sekunden"
+      x_minutes:
+        one: einer Minute
+        other: "%{count} Minuten"
+      x_days:
+        one: einem Tag
+        other: "%{count} Tagen"
+      x_months:
+        one: einem Monat
+        other: "%{count} Monaten"
+      x_years:
+        one: einem Jahr
+        other: "%{count} Jahren"
   mampf: 'MaMpf'
   views:
     pagination:
@@ -415,6 +454,7 @@ de:
           MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
+      updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
       lecture: 'Vorlesung'
       lecture_short: 'V'
       lecture_content: 'Vorlesungsinhalt'
@@ -485,8 +525,10 @@ de:
       no_rights: >
         Du hast keine Berechtigung, diese Veranstaltung zu abonnieren.
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
+      uses_exam_eligibility: Prüfungszulassung aktivieren
       submission_max_team_size: maximale Größe von Abgabegruppen
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
+      submission_deletion_date: Löschdatum für Abgaben
       import_toc: Gliederung aus anderer Veranstaltung importieren
       import_chapters: Kapitel importieren
       import_sections: Abschnitte importieren
@@ -702,6 +744,11 @@ de:
           der DozentInnen-Name nicht angezeigt. Das macht z.B. Sinn, wenn
           eine semesterunabhängige Veranstaltung von jemandem nur administrativ
           als "DozentIn" begleitet wird.
+        uses_exam_eligibility: >
+          Wenn Du diesen Haken setzt, wird die Prüfungszulassung für
+          diese Veranstaltung aktiviert. Studierende können dann
+          Zertifizierungen erhalten und Anmeldebedingungen können auf
+          diese Veranstaltung verweisen.
         submission_max_team_size: >
           Hier kannst Du angeben, wieviele Personen maximal zu einer Abgabgruppe
           gehören dürfen. Wenn Du nichts angibst, gibt es keine Begrenzung.
@@ -713,6 +760,17 @@ de:
           Hier kannst Du angeben, wieviele Minuten nach dem Abgabeschluss für
           Hausaufgaben noch Dateiuploads möglich sind (diese werden aber dann
           aber als verspätet gekennzeichnet und mit einem Zeitstempel versehen.)
+        submission_deletion_date: >-
+          Hier kannst Du festlegen, wann Abgaben und Korrekturen
+          dieser Veranstaltung automatisch gelöscht werden. Die
+          erste Option entspricht dem Semesterende plus ca. zwei
+          Wochen, die zweite dem Semesterende plus ca. vier
+          Monate und zwei Wochen. Zwei Wochen vor dem gewählten
+          Datum werden die Studierenden per E-Mail informiert,
+          eine Woche vorher erhalten sie eine Erinnerung. Am
+          gewählten Datum werden die Abgaben unwiderruflich
+          gelöscht. Sollte das Datum bereits verstrichen sein,
+          erfolgt die Löschung beim nächsten Durchlauf.
         section_needed: Bitte erstelle zuerst einen Abschnitt
         voucher_for_tutor: >
           Gutscheine für TutorInnen können von NutzerInnen eingelöst werden, um
@@ -1073,6 +1131,7 @@ de:
           Da nicht klar ist, welche Tags zu  diesem Abschnitt gehören,
           kannst Du sie hier zu ordnen.
     medium:
+      singular: 'Medium'
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des
         zugehörigen Moduls %{course} angesiedelt ist.
@@ -1402,6 +1461,9 @@ de:
           Veranstaltung gelten, wie die Teamgröße für Abgaben und die
           Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
           einstellen.
+        assignment_further_settings: >-
+          Weitere Einstellungen wie Aufgaben und Punkte können auf
+          der Vorlesungsseite unter „Testate" konfiguriert werden.
     tag:
       index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'
@@ -2005,6 +2067,10 @@ de:
       new: 'Neues Tutorium anlegen'
     assignment:
       new: 'Neue Hausaufgabe anlegen'
+      title: 'Titel'
+      title_placeholder: 'z.B. Übungsblatt 1'
+      filetype: 'Dateityp'
+      deletion: 'Löschdatum'
     voucher:
       secure_hash: 'Sicherheits-Hash'
       expires_at: 'Läuft ab'
@@ -2257,6 +2323,7 @@ de:
     redemption_in_lecture: 'Gutschein eingelöst in %{lecture}'
     no_tutorials_taken: 'Dabei wurden keine Tutorien übernommen.'
     no_talks_taken: 'Dabei wurden keine Vorträge übernommen.'
+
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
@@ -2309,6 +2376,7 @@ de:
   mampf_map: 'MaMpf-Map'
   external_render: 'in externem Tab rendern'
   medium:
+    singular: 'Medium'
     details: 'Details ansehen'
     different_language: 'Das Medium ist auf %{language}.'
     unpublished: 'Dieses Medium ist nicht veröffentlicht.'
@@ -3521,6 +3589,9 @@ de:
     preferences: 'Einstellungen'
     language: 'Sprache'
     date: 'Datum'
+    location: 'Ort'
+    not_specified: 'Nicht angegeben'
+    unlimited: 'Unbegrenzt'
     sections: 'Abschnitte'
     at_the_beginning: 'am Anfang'
     at_beginning_of_chapter: 'am Anfang des Kapitels'
@@ -3539,6 +3610,9 @@ de:
     actions: 'Aktionen'
     search: 'Suche'
     post_processing: 'Stelle fertig...'
+    edit: 'Bearbeiten'
+    delete: 'Löschen'
+    confirm_delete: 'Sind Sie sicher, dass Sie dies löschen möchten?'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
@@ -3602,6 +3676,7 @@ de:
     question: 'Frage'
     answer: 'Antwort'
     answers: 'Antworten'
+    loading: 'Laden...'
     none: 'keine'
     remark: 'Bemerkung'
     latex: 'LaTeX'
@@ -3646,6 +3721,9 @@ de:
     assignments: 'Hausaufgaben'
     deadline: 'Abgabetermin'
     tutorial: 'Tutorium'
+    exam: 'Prüfung'
+    exams: 'Prüfungen'
+    edit_settings: 'Einstellungen bearbeiten'
     code: 'Code'
     partners: 'PartnerInnen'
     team: 'Team'
@@ -3759,6 +3837,7 @@ de:
     create_division: 'Teilbereich anlegen'
     create_voucher: 'Gutschein anlegen'
     create: 'Anlegen'
+    new: 'Neu'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -3841,6 +3920,9 @@ de:
     self_remove_talk: Von diesem Vortrag abmelden
     add_to_list: Zur Liste hinzufügen
     remove_from_list: Aus der Liste entfernen
+    back_to_assessments: 'Zurück zu Prüfungen'
+    create_exam: 'Prüfung erstellen'
+    edit_exam: 'Prüfung bearbeiten'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -4039,6 +4121,10 @@ de:
           attributes:
             details:
               blank: 'Es muss ein Text angegeben werden.'
+        assessment/assessment:
+          attributes:
+            lecture_id:
+              must_match_assessable_lecture: "muss mit der Veranstaltung des Assessable übereinstimmen"
         assignment:
           attributes:
             title:
@@ -4050,11 +4136,16 @@ de:
             deadline:
               blank: >
                 Es muss ein Abgabetermin angegeben werden.
+              in_past: >
+                Der Abgabetermin darf nicht in der Vergangenheit liegen.
             deletion_date:
               blank: >
                 Es muss ein Löschdatum angegeben werden.
               in_past: >
                 Löschdatum darf nicht in der Vergangenheit liegen.
+            accepted_file_type:
+              locked_after_deadline: >
+                kann nach Ablauf der Abgabefrist nicht mehr geändert werden.
         chapter:
           attributes:
             title:
@@ -4104,6 +4195,11 @@ de:
                 semesterunabhängig
             teacher:
               required: 'Es muss ein(e) DozentIn angegeben werden.'
+            uses_exam_eligibility:
+              has_existing_data: >
+                kann nicht deaktiviert werden, da bereits Zertifizierungen,
+                Regeln oder Anmeldebedingungen für diese Veranstaltung
+                existieren.
         link:
           attributes:
             linked_medium:

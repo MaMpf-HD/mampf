@@ -1,0 +1,127 @@
+de:
+  assessment:
+    assessments: "Testate"
+    tabs:
+      assignments: "Hausaufgaben"
+    subtitle:
+      assignments: "Hausaufgabenblätter, Bewertungen und Punktevergabe verwalten."
+    tasks: "Aufgaben"
+    submissions: "Abgaben"
+    points: "Punkte"
+    grades: "Noten"
+    grade: "Note"
+    speakers: "Sprecher:innen"
+    date: "Datum"
+    participants: "Teilnehmer"
+    grading: "Bewertung"
+    graded_by: "Bewertet von"
+    graded_at: "Bewertet am"
+    statistics: "Statistiken"
+    updated: "Bewertung erfolgreich aktualisiert."
+    requires_submission: "Digitale Abgabe erforderlich"
+    requires_submission_hint: "Studierende müssen eine Datei hochladen"
+    locked_after_deadline: "Gesperrt (Abgabefrist abgelaufen)"
+    no_submission_required: "Keine digitale Abgabe"
+    not_destructible:
+      has_submissions: "Löschen nicht möglich: Abgaben vorhanden"
+      has_grading_data: "Löschen nicht möglich: Bewertungsdaten vorhanden"
+    form:
+      submit: "Speichern"
+    task:
+      max_points: "Maximalpunkte"
+      max_points_placeholder: "z.B. 10"
+      add: "Aufgabe hinzufügen"
+      created: "Aufgabe erfolgreich hinzugefügt."
+      updated: "Aufgabe erfolgreich aktualisiert."
+      deleted: "Aufgabe erfolgreich gelöscht."
+      delete_failed: "Löschen der Aufgabe fehlgeschlagen."
+      has_points: "Löschen nicht möglich: Es wurden bereits Punkte eingetragen."
+      points_abbrev: "Pkt"
+      description: "Aufgabenname"
+      description_placeholder: "z.B. Aufgabe 1"
+      default_name: "A%{number}"
+      description_hint: "In der Punktetabelle heißen die Spalten A1, A2, ... - änderbar über den Aufgabennamen beim Bearbeiten."
+      max_points_precision_hint: "Es werden 2 Nachkommastellen gespeichert."
+      max_points_precision_warning: "Es werden nur 2 Nachkommastellen gespeichert."
+      missing_warning: "Noch keine Aufgaben. Punkteingabe durch Tutor:innen nicht möglich."
+    no_tasks_yet: "Noch keine Aufgaben erstellt."
+    no_grades_yet: "Es wurden noch keine Noten eingetragen."
+    position: "Position"
+    edit_grades: "Noten bearbeiten"
+    visible_from: "Sichtbar ab"
+    due_at: "Abgabedatum"
+    legacy: "Legacy"
+    draft: "Entwurf"
+    results_published: "Ergebnisse veröffentlicht"
+    status:
+      title: "Status"
+      draft: "Entwurf"
+      open: "Offen"
+      closed: "Geschlossen"
+      graded: "Benotet"
+      archived: "Archiviert"
+    legacy_items: "Hausaufgaben (altes System ohne Bewertungsfunktion)"
+    legacy_items_subtitle: "Diese Hausaufgaben wurden noch mit dem alten System erstellt. Sie können über die alte Oberfläche bearbeitet werden."
+    legacy_assignments: "Hausaufgaben (altes System ohne Bewertungsfunktion)"
+    legacy_assignments_info: "Diese Hausaufgaben wurden noch mit dem alten System erstellt. Sie können über die alte Oberfläche bearbeitet werden."
+    legacy_talks: "Vorträge (ohne Bewertung)"
+    legacy_talks_info: "Diese Vorträge wurden erstellt, bevor die Bewertungsfunktion hinzugefügt wurde."
+    legacy_description: "Erstellt vor dem Bewertungssystem"
+    no_talks_yet: "Noch keine Vorträge erstellt."
+    no_talks_with_speakers_yet: "Alle Vorträge haben noch keine Sprecher zugewiesen."
+    no_assignments_yet: "Noch keine Hausaufgaben erstellt."
+    no_assessables_yet: "Noch keine Bewertungen erstellt."
+    submission_settings: "Abgabe-Einstellungen"
+    errors:
+      no_assessable: "Hausaufgabe nicht gefunden."
+      no_assessment: "Bewertung für dieses Element nicht gefunden."
+      no_task: "Aufgabe nicht gefunden."
+    info:
+      talks_created_in_roster: "Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab."
+    grade_table:
+      pending: "ausstehend"
+      reviewed: "überprüft"
+      absent: "nicht angetreten"
+      exempt: "entschuldigt"
+      not_submitted: "nicht abgegeben"
+      excluded_heading: "Sonderfälle"
+      reason: "Grund"
+    grading_overview:
+      submission_progress: "Abgaben"
+      submitted: "Abgegeben"
+      missing: "Ausstehend"
+      not_submitted: "Nicht abgegeben"
+      unassigned: "Nicht zugewiesen"
+      no_submission_required: "Für diese Bewertung ist keine digitale Abgabe erforderlich."
+      no_participants_yet: "Es wurden noch keine Teilnehmenden hinzugefügt. Teilnehmende werden aus den Vorlesungsanmeldungen übernommen."
+      no_tutorial_breakdown: "Keine Aufschlüsselung nach Tutorien verfügbar."
+      deadline:
+        due_in: "Fällig in %{time} (%{date})"
+        due_soon: "Fällig in %{time} (%{date})"
+        just_closed: "Geschlossen vor %{time}"
+        grading_phase: "Geschlossen vor %{time} - Bewertungsphase"
+    no_points_yet: "Noch keine Punkte eingetragen."
+    point_grid:
+      total: "Gesamt"
+    statistics_placeholder: "Statistiken sind noch nicht verfügbar"
+
+  activerecord:
+    errors:
+      models:
+        assessment/task:
+          attributes:
+            base:
+              requires_points_true: "Tasks können nur für Assessments mit requires_points: true erstellt werden"
+        assessment/participation:
+          attributes:
+            base:
+              early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
+        assessment/task_point:
+          attributes:
+            base:
+              early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
+              assessment_mismatch: "Task und Teilnahme müssen zum selben Assessment gehören"
+        assessment/assessment:
+          attributes:
+            requires_submission:
+              locked_after_deadline: "kann nach Ablauf der Abgabefrist nicht mehr geändert werden"
