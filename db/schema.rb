@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_11_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_18_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1253,13 +1253,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_000000) do
     t.datetime "updated_at", null: false
     t.index ["lecture_id"], name: "index_vouchers_on_lecture_id"
     t.index ["secure_hash"], name: "index_vouchers_on_secure_hash", unique: true
-  end
-
-  create_table "vtt_containers", force: :cascade do |t|
-    t.text "table_of_contents_data"
-    t.text "references_data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "watchlist_entries", force: :cascade do |t|

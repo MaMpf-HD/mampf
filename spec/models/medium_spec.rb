@@ -85,6 +85,25 @@ RSpec.describe(Medium, type: :model) do
       medium = FactoryBot.build(:medium, :with_manuscript)
       expect(medium.manuscript).to be_kind_of(PdfUploader::UploadedFile)
     end
+
+    it "rejects forged clean-scan metadata on cached manuscripts" do
+      cached_upload = PdfUploader.upload(
+        File.open(File.join(SPEC_FILES, "manuscript.pdf"), "rb"),
+        :cache
+      )
+      medium = FactoryBot.build(:lecture_medium)
+      forged_data = cached_upload.data.deep_dup
+      forged_data["metadata"]["malware_scan"] = { "status" => "clean" }
+
+      medium.manuscript = forged_data.to_json
+
+      expect(medium).not_to be_valid
+      expect(medium.errors[:manuscript]).to include(
+        I18n.t("submission.upload_failure_scan_required", locale: I18n.locale)
+      )
+    ensure
+      cached_upload&.delete
+    end
   end
 
   describe "with video" do
@@ -121,6 +140,62 @@ RSpec.describe(Medium, type: :model) do
     end
     it "has an editor that matches the teacher of the lecture" do
       expect(@medium.editors).to include @medium.teachable.teacher
+    end
+  end
+
+  describe "#references_vtt_content" do
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let(:medium) do
+      create(:lecture_medium, :with_video, teachable: lecture,
+                                           released: "all",
+                                           released_at: Time.zone.now)
+    end
+    let(:guest_user) { User.new }
+
+    it "filters users-only references for guests" do
+      restricted_medium = create(:lecture_medium, :with_video,
+                                 teachable: lecture,
+                                 released: "users",
+                                 released_at: Time.zone.now)
+      create(:referral,
+             medium: medium,
+             item: restricted_medium.items.find_by(sort: "self"),
+             start_time: TimeStamp.new(total_seconds: 5),
+             end_time: TimeStamp.new(total_seconds: 10))
+      restricted_medium_path = Rails.application.routes.url_helpers
+                                    .play_medium_path(restricted_medium)
+
+      expect(medium.references_vtt_content(nil))
+        .not_to include(restricted_medium_path)
+      expect(medium.references_vtt_content(guest_user))
+        .not_to include(restricted_medium_path)
+    end
+  end
+
+  describe ".select_by_name" do
+    let(:editor) { create(:confirmed_user) }
+    let!(:edited_lecture) { create(:lecture, editors: [editor]) }
+    let!(:own_draft) { create(:lecture_medium, teachable: edited_lecture) }
+    let!(:released_foreign) do
+      create(:lecture_medium,
+             teachable: create(:lecture, :released_for_all),
+             released: "all", released_at: Time.zone.now)
+    end
+    let!(:foreign_draft) { create(:lecture_medium, teachable: create(:lecture)) }
+
+    it "includes visible media (own drafts + released) but not foreign drafts (SER-02)" do
+      ids = Medium.select_by_name(editor).pluck(1)
+
+      expect(ids).to include(own_draft.id)
+      expect(ids).to include(released_foreign.id)
+      expect(ids).not_to include(foreign_draft.id)
+    end
+
+    it "hands an admin every medium" do
+      admin = create(:confirmed_user, admin: true)
+      ids = Medium.select_by_name(admin).pluck(1)
+
+      expect(ids).to include(own_draft.id, released_foreign.id, foreign_draft.id)
     end
   end
 
@@ -275,4 +350,10 @@ RSpec.describe(Medium, type: :model) do
   #     expect(medium.teachable_type_de).to eq('Sitzung')
   #   end
   # end
+
+  describe "#editors_with_inheritance" do
+    it "returns [] for a medium without a teachable instead of raising" do
+      expect(FactoryBot.build(:medium).editors_with_inheritance).to eq([])
+    end
+  end
 end

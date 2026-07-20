@@ -1,77 +1,76 @@
-# Now build the actual mampf application
-# https://hub.docker.com/_/ruby/
-FROM ruby:3.4.7-bookworm
+# syntax=docker/dockerfile:1-labs
+# Build args shared across stages. Docker scopes ARGs per stage, so each stage
+# below re-declares the ones it needs (bare `ARG NAME`) to inherit these defaults.
+# This single-sources the versions/paths that must stay in sync across stages.
+ARG BUNDLER_VERSION=4.0.12
+ARG BUNDLE_PATH=/usr/local/bundle
+ARG BUNDLE_WITHOUT="development:test"
 
-ENV RAILS_ENV=production
+FROM node:24.18.0-trixie-slim AS node
 
-EXPOSE 3000
-EXPOSE 9394
+FROM ruby:3.4.10-slim-trixie AS build
 
-ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
+ARG BUNDLER_VERSION
+ARG BUNDLE_PATH
+ARG BUNDLE_WITHOUT
+ENV RAILS_ENV=production \
+    BUNDLE_DEPLOYMENT=1 \
+    BUNDLE_WITHOUT="${BUNDLE_WITHOUT}" \
+    BUNDLE_PATH="${BUNDLE_PATH}"
 
-# use "--login" option, so that .bashrc is sourced in new shells
+ARG OR_TOOLS_VERSION=or-tools-9.15-trixie
+ARG OR_TOOLS_FILENAME=or-tools-9.15-trixie-amd64.tar.gz
+ARG OR_TOOLS_SHA256=067e96ba57bbca8bf8e56c9b85010e223d49696cb5fe1a56ef94f5bd3647c0cf
+
 SHELL ["/bin/bash", "--login", "-c"]
 
 # Install Node.js
-# https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
-# https://stackoverflow.com/a/57546198/
-# Unfortunately, we have to explicitly specify the node version here
-# and cannot use 24.x as we need to put the node binary into the PATH
-# and therefore require the exact version to find the folder
-ENV NODE_VERSION=24.11.0
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-ENV NVM_DIR=/root/.nvm
-RUN source "${NVM_DIR}/nvm.sh" && nvm install "${NODE_VERSION}" && \
-    nvm use "${NODE_VERSION}" && nvm alias default "${NODE_VERSION}"
+COPY --from=node /usr/local/ /usr/local/
 
-ENV NODE_PATH="${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/"
-ENV PATH="${NODE_PATH}:${PATH}"
-
-RUN nvm current; node --version
+RUN node --version
 RUN npm --version
 
 # Install Yarn (see https://yarnpkg.com/getting-started/install)
 # https://github.com/nodejs/corepack#corepack-prepare--nameversion
-ENV YARN_VERSION=1.22.19
-RUN corepack enable
+ENV YARN_VERSION=4.17.0
+RUN rm -f /usr/local/bin/yarn /usr/local/bin/yarnpkg && corepack enable
 RUN corepack prepare "yarn@${YARN_VERSION}" --activate
 RUN which yarn; yarn --version
-# even though this is not specified in the corepack documentation, we need to
-# run "set version", otherwise the app user will have an old version of
-# yarn avaialble instead of our specified version
-RUN yarn set version "${YARN_VERSION}"
 
-# Make Node.js tooling available for other users
-# see https://www.digitalocean.com/community/tutorials/how-to-install-node-js-with-nvm-node-version-manager-on-a-vps
-# this command copies the currently active nvm node tooling to /usr/local/
-# so that it can be used by the app user later
-RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; chmod 755 $n/bin/yarn; cp -r $n/{bin,lib,share} /usr/local
-
-# Install other dependencies
+# Install build-time and runtime dependencies.
+# build-essential/git/pkg-config are needed to compile native gem extensions
+# (bcrypt, bindex, msgpack, nio4r, puma, sassc) and to clone git-sourced gems.
+# The remaining packages are runtime deps also needed here so that Rails can
+# boot during assets:precompile.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info libvips42
+        build-essential \
+        git \
+        pkg-config \
+        libyaml-dev \
+        ffmpeg rsync shared-mime-info libvips42 && \
+    rm -rf /var/lib/apt/lists/*
 
-# Setup ImageMagick
-RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
+RUN gem install bundler -v "${BUNDLER_VERSION}"
 
-# Manage users
-RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
-    mkdir /private /caches && chown app:app /private /caches
+# Download OR-Tools for Debian 13 (the or-tools gem has no official trixie
+# binary yet; see https://github.com/MaMpf-HD/build-artifacts)
+ADD --checksum=sha256:${OR_TOOLS_SHA256} https://github.com/MaMpf-HD/build-artifacts/releases/download/${OR_TOOLS_VERSION}/${OR_TOOLS_FILENAME} /tmp/or-tools.tar.gz
+RUN mkdir -p /opt/or-tools && tar xzf /tmp/or-tools.tar.gz -C /opt/or-tools && rm /tmp/or-tools.tar.gz
 
-
-# ============= Now switch to the app user
 WORKDIR /usr/src/app
-USER app
 
-# Log Node.js tooling versions that the `app` user uses
-RUN which node; node --version; which yarn; yarn --version
+RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app
 
-COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
+COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json ./.yarnrc.yml /usr/src/app/
+RUN bundle config set --local build.or-tools --with-or-tools-dir=/opt/or-tools
 RUN bundle install
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable
 
-COPY --chown=app:app . /usr/src/app
+COPY . /usr/src/app
+
+RUN chmod 755 /usr/src/app/docker/production/entrypoint-app.sh \
+    /usr/src/app/docker/production/entrypoint-sidekiq.sh
 
 # The command ". ./docker-dummy.env" will source our dummy docker env file.
 # So why do we need this?
@@ -107,4 +106,61 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     SECRET_KEY_BASE="$(bundle exec rails secret)" \
     VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
     RAILS_ENV=production DATABASE_ADAPTER=nulldb \
-    bundle exec rails assets:precompile
+    bundle exec rails assets:precompile && \
+    rm -f ./docker-dummy.env && \
+    rm -rf node_modules tmp/cache && \
+    bundle clean --force && \
+    rm -rf /usr/local/bundle/bundler/gems/*/.git && \
+    rm -rf /usr/local/bundle/cache /usr/local/bundle/ruby/*/cache && \
+    find /usr/local/bundle -name "*.gem" -delete
+
+FROM ruby:3.4.10-slim-trixie
+
+ARG BUNDLER_VERSION
+ARG BUNDLE_PATH
+ARG BUNDLE_WITHOUT
+ENV RAILS_ENV=production \
+    BUNDLE_DEPLOYMENT=1 \
+    BUNDLE_WITHOUT="${BUNDLE_WITHOUT}" \
+    BUNDLE_PATH="${BUNDLE_PATH}" \
+    APP_HEALTHCHECK_PORT=3000 \
+    APP_CACHE_ROOT=/caches
+
+ENTRYPOINT ["/usr/src/app/docker/production/entrypoint-app.sh"]
+
+# Empty in normal (reproducible) builds; `just patch-image` passes a unique value
+# to bust this layer and apply all available Debian security updates on top of the
+# (force-pulled) base image.
+ARG OS_SECURITY_REFRESH=
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ffmpeg qpdf rsync shared-mime-info libvips42 && \
+    if [ -n "${OS_SECURITY_REFRESH}" ]; then apt-get upgrade -y; fi && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN gem install bundler -v "${BUNDLER_VERSION}"
+
+RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
+        mkdir -p /private/media /private/submissions "${APP_CACHE_ROOT}" \
+      /usr/src/app/tmp/pids /usr/src/app/log && \
+        chown -R app:app /private "${APP_CACHE_ROOT}"
+
+WORKDIR /usr/src/app
+
+COPY --from=node /usr/local/ /usr/local/
+COPY --from=build --chown=root:root /usr/local/bundle /usr/local/bundle
+COPY --from=build --chown=root:root /usr/src/app /usr/src/app
+COPY --from=build /opt/or-tools/lib /opt/or-tools/lib
+
+RUN chown -R app:app /usr/src/app/tmp /usr/src/app/log && \
+        rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
+            /usr/local/bin/yarn /usr/local/bin/yarnpkg \
+            /usr/src/app/bin/yarn && \
+        rm -rf /usr/local/lib/node_modules/npm \
+            /usr/local/lib/node_modules/corepack && \
+    rm -rf /usr/local/bundle/cache
+
+USER app
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+    CMD ruby -rnet/http -e 'port = ENV.fetch("APP_HEALTHCHECK_PORT", "3000"); uri = URI("http://127.0.0.1:#{port}/up"); response = Net::HTTP.start(uri.host, uri.port) { |http| http.get(uri.request_uri, {"X-Forwarded-Proto" => "https", "Host" => "localhost"}) }; exit(response.is_a?(Net::HTTPSuccess) ? 0 : 1)'

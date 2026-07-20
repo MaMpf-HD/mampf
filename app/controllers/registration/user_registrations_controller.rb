@@ -12,15 +12,18 @@ module Registration
     end
 
     def reject_for_user
+      # Authorize before the campaign_completed?/no_registrations_found? probes so
+      # their differing responses can't be used as an oracle to enumerate campaign
+      # membership. All registrations share this campaign, so a campaign-bound
+      # instance carries the same can_edit? check as registrations.first.
+      authorize! :destroy, Registration::UserRegistration.new(registration_campaign: @campaign)
+
       return if campaign_completed?
 
       @user = User.find(params[:user_id])
       registrations = @campaign.user_registrations.where(user: @user)
 
       return if no_registrations_found?(registrations)
-
-      # Authorize based on the first registration (all belong to same campaign)
-      authorize! :destroy, registrations.first
 
       reject_registrations(registrations)
     end

@@ -7,7 +7,7 @@
 <% else %>
   <% if medium.video && medium.screenshot %>
     <img class="card-img-top video-thumbnail"
-         src="<%= medium.screenshot_url_with_host %>">
+         src="<%= screenshot_medium_path(medium, sort: "video") %>">
   <% elsif medium.manuscript && medium.manuscript_screenshot_url %>
     <img class="card-img-top video-thumbnail"
          src="<%= medium.manuscript_screenshot_url %>">

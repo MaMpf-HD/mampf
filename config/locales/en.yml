@@ -2253,6 +2253,9 @@ en:
     size: 'Size'
   image:
     resolution: 'Resolution'
+    too_large_dimensions: >
+      The image dimensions are too large. Maximum allowed dimensions are
+      %{max_width}x%{max_height}.
   manuscript:
     manuscript: 'Manuscript'
     no_manuscript: 'There is no manuscript present.'
@@ -2337,6 +2340,7 @@ en:
     app_name: Applet Type
     view: View Geogebra Applet in Browser
     size: Size
+    invalid_archive: Invalid GeoGebra archive.
     attribution_html: >
       This applet as been created using %{geogebra_link}, the above animation
       uses the GeoGebra JavaScript API.
@@ -2765,6 +2769,8 @@ en:
       You successfully joined the submission to %{assignment}.
     failed_redemption: >
       Redemption of submission code failed: %{message}.
+    too_many_attempts: >
+      Too many attempts. Please wait a moment and try again.
     current: Current Submission
     previous: Previous Submission
     old_ones: Old Submissions
@@ -2785,6 +2791,17 @@ en:
     upload_failure_empty_file: >
       The uploaded file is empty.
       Please make sure that the file is not corrupted.
+    upload_failure_malware: >
+      The uploaded file could not be accepted.
+      Please check the file and try again.
+    upload_failure_scanner_unavailable: >
+      The upload scanner is currently unavailable.
+      Please try again in a moment.
+    upload_failure_scan_required: >
+      The uploaded file is missing a required malware scan.
+      Please upload the file again.
+    upload_failure_unauthorized: >
+      You are not allowed to upload this file here.
     upload_failure_empty_file_bulk: >
       is empty.
       Please make sure that the file is not corrupted.
@@ -3687,7 +3704,9 @@ en:
     no_video: 'There is no video for this medium.'
     no_manuscript: 'There is no manuscript for this medium.'
     no_geogebra: 'There is no Geogebra applet for this medium.'
+    invalid_download: 'The requested download is invalid.'
     no_medium: 'There is no medium with this id.'
+    no_user: 'There is no user with this id.'
     contradiction: 'Contradictory request.'
     no_notification: 'There is no notification with this id.'
     no_question: 'There is no question with this id.'
@@ -4001,6 +4020,8 @@ en:
                 There can be only one active voucher of this type for the lecture.
               speaker_vouchers_only_for_seminars: >
                 Speaker vouchers are only allowed for seminars.
+              invalid_for_lecture: >
+                This role is not available for this lecture.
         watchlist_entry:
           attributes:
             medium_id:
