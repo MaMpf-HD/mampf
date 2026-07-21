@@ -14,30 +14,41 @@ export class MetadataManager {
    * It receives a boolean value that indicates whether metadata is present.
    */
   load(onLoad) {
-    let initialMetadata = true;
     const metadata = this.#getMetadata();
     const metadataManager = this;
+    let notified = false;
 
-    /* after video metadata have been loaded, display chapters in the interactive area
-     Originally (and more appropriately, according to the standards),
-     only the 'loadedmetadata' event was used. However, Firefox triggers this event too soon,
-     i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
-     for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
-    onVideoMetadataLoaded(thymeAttributes.video, function () {
-      if (initialMetadata && metadata.readyState === 2) {
+    // Tie "metadata is ready" to the metadata track element itself, not to a
+    // single video event: onVideoMetadataLoaded/canplay can fire before the track
+    // has parsed its cues (readyState 2), notably when the video is already
+    // buffered (e.g. under test). The old code only called onLoad from the
+    // loadedmetadata handler, and only if the track was ready at that instant;
+    // otherwise onLoad never fired and onVideoDataReady hung. Listening to the
+    // track's own load/error events makes onLoad fire exactly once.
+    const notifyIfReady = () => {
+      if (notified) {
+        return;
+      }
+      if (metadata.readyState === 2) {
+        notified = true;
         metadataManager.#displayMetadata();
-        initialMetadata = false;
         if (onLoad) {
           onLoad(metadata.track ? (metadata.track.cues.length > 0) : false);
         }
       }
-    });
-    thymeAttributes.video.addEventListener("canplay", function () {
-      if (initialMetadata && metadata.readyState === 2) {
-        metadataManager.#displayMetadata();
-        initialMetadata = false;
+      else if (metadata.readyState === 3) {
+        notified = true;
+        if (onLoad) {
+          onLoad(false);
+        }
       }
-    });
+    };
+
+    notifyIfReady();
+    metadata.addEventListener("load", notifyIfReady);
+    metadata.addEventListener("error", notifyIfReady);
+    onVideoMetadataLoaded(thymeAttributes.video, notifyIfReady);
+    thymeAttributes.video.addEventListener("canplay", notifyIfReady);
   }
 
   /* returns the jQuery object of all metadata elements that start before the
