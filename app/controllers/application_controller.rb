@@ -180,10 +180,12 @@ class ApplicationController < ActionController::Base
       when ["passwords", "new"], ["passwords", "create"]
         new_user_password_path(locale: locale)
       when ["passwords", "edit"], ["passwords", "update"]
-        edit_user_password_path(locale: locale,
-                                reset_password_token:
-                                  params[:reset_password_token] ||
-                                  params.dig(:user, :reset_password_token))
+        user_params = params[:user]
+        token = params[:reset_password_token]
+        if user_params.is_a?(ActionController::Parameters)
+          token ||= user_params[:reset_password_token]
+        end
+        edit_user_password_path(locale: locale, reset_password_token: token)
       when ["confirmations", "new"], ["confirmations", "create"]
         new_user_confirmation_path(locale: locale)
       else
