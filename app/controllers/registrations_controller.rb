@@ -52,6 +52,14 @@ class RegistrationsController < Devise::RegistrationsController
     edit_profile_path
   end
 
+  def after_update_path_for(resource)
+    return super unless session[:enforce_password_change]
+    return edit_user_registration_path if resource.password_change_required?
+
+    session.delete(:enforce_password_change)
+    stored_location_for(resource_name).presence || start_path
+  end
+
   private
 
     def enable_password_strength_validation

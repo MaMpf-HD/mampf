@@ -34,9 +34,34 @@ RSpec.describe("Auth passwords", type: :request) do
     end
   end
 
+  describe "POST /users/password/restart" do
+    it "signs out stale users and redirects them to the reset form" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      post restart_user_password_path(locale: :de)
+
+      expect(response).to redirect_to(new_user_password_path(locale: :de))
+
+      follow_redirect!
+
+      expect(response).to have_http_status(:ok)
+
+      get edit_user_registration_path
+
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
+
   describe "PUT /users/password" do
     it "updates the password from a valid reset token" do
       user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
 
       post user_password_path, params: { user: { email: user.email } }
       token = devise_mail_token(ActionMailer::Base.deliveries.last,
@@ -51,6 +76,9 @@ RSpec.describe("Auth passwords", type: :request) do
       }
 
       expect(response).to redirect_to(start_path)
+      expect(user.reload.password_policy_version)
+        .to eq(User::CURRENT_PASSWORD_POLICY_VERSION)
+      expect(user.password_changed_at).to be_present
 
       delete destroy_user_session_path
       post user_session_path,

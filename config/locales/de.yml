@@ -1693,6 +1693,7 @@ de:
       edited_media: 'Editierte Medien'
       administration: 'Nutzerverwaltung'
       sorts: 'Admins, EditorInnen und DozentInnen'
+      password_policy_progress: '%{current} von %{total} Accounts erfüllen derzeit den aktualisierten Passwortstandard.'
       edit_generics: 'Sonstige NutzerInnen bearbeiten'
       elevate: 'zum Administrator befördern'
       info:

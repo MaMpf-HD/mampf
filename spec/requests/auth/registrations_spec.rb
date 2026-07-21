@@ -117,6 +117,53 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(user.unconfirmed_email).to eq(new_email)
       expect(ActionMailer::Base.deliveries.last.to).to include(new_email)
     end
+
+    it "redirects stale users away from authenticated pages until their password changes" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get news_path
+
+      expect(response).to redirect_to(edit_user_registration_path)
+    end
+
+    it "shows the forced password change prompt for stale users" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get edit_user_registration_path
+
+      expect(response.body)
+        .to include(I18n.t("devise.edit.password_change_required"))
+      expect(response.body).not_to include(I18n.t("devise.edit.email"))
+    end
+
+    it "does not allow password_policy_version to be changed through update params" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      put user_registration_path, params: {
+        user: {
+          email: user.email,
+          current_password: user.password,
+          password: "",
+          password_confirmation: "",
+          password_policy_version: User::CURRENT_PASSWORD_POLICY_VERSION
+        }
+      }
+
+      expect(user.reload.password_policy_version).to eq(0)
+      expect(user).to be_password_change_required
+    end
   end
 
   describe "GET /users/edit" do

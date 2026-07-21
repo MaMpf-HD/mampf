@@ -1567,6 +1567,7 @@ en:
       edited_media: 'Edited Media'
       administration: 'User Administration'
       sorts: 'Admins, Editors and Teachers'
+      password_policy_progress: '%{current} of %{total} accounts currently meet the updated password standard.'
       edit_generics: 'Edit generic users'
       elevate: 'Promote to Administrator'
       info:
