@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :user, aliases: [:teacher] do
     email { Faker::Internet.email }
-    password { Faker::Internet.password }
+    password { "super-secure-#{SecureRandom.hex(16)}" }
     name { Faker::Name.name }
     locale { "en" }
 

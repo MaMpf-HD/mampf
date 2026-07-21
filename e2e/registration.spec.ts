@@ -33,3 +33,37 @@ test("shows an altcha error and blocks signup when auto verification fails", asy
     /verification failed\. try again later\./i,
   );
 });
+
+test("enforces password strength on sign up", async ({ page }) => {
+  const signUpPage = new SignUpPage(page);
+  await signUpPage.goto();
+
+  const email = `testuser_weak_${Date.now()}@example.com`;
+  await page.getByLabel("Email").fill(email);
+
+  // Test short password
+  await page.getByLabel("Password", { exact: true }).fill("short");
+  await expect(page.getByText("Must be at least 15 characters")).toBeVisible();
+
+  // Test weak password (denylist)
+  await page.getByLabel("Password", { exact: true }).fill("password123456789");
+  await expect(page.getByText("Very weak")).toBeVisible();
+
+  // Test app-specific identifiers
+  await page.getByLabel("Password", { exact: true }).fill("medienplattform");
+  await expect(page.getByText("Very weak")).toBeVisible();
+
+  // Test strong password
+  await page.getByLabel("Password", { exact: true }).fill("correct-horse-battery-staple");
+  await expect(page.getByText(/^Strong$/)).toBeVisible();
+
+  // Attempt to submit with a weak password
+  await page.getByLabel("Password", { exact: true }).fill("password123456789");
+  await page.getByLabel("Password confirmation").fill("password123456789");
+  await page.getByLabel(/I consent/).check();
+  await signUpPage.solveCaptcha();
+  await signUpPage.submit();
+
+  // Backend should reject it
+  await expect(page.getByText("is too weak")).toBeVisible();
+});
