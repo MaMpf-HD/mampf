@@ -5,7 +5,22 @@
     "name": "MaMpf",
     "dockerComposeFile": [
         "../docker/development/compose.yml",
-        "compose.devcontainer.yml"
+        "compose.devcontainer.yml",
+        "compose.mampf-infra.yml"
+    ],
+    "initializeCommand": [
+        "docker",
+        "run",
+        "--rm",
+        "--mount",
+        "type=bind,source=${localWorkspaceFolder},target=/workspace",
+        "--mount",
+        "type=bind,source=${localWorkspaceFolder}/..,target=/workspace-parent,readonly",
+        "alpine:3.22",
+        "sh",
+        "/workspace/.devcontainer/create-mampf-infra-compose.sh",
+        "/workspace",
+        "/workspace-parent"
     ],
     "service": "app",
     // The mampf-infra repo is optional (only needed for infra / deploy work).
