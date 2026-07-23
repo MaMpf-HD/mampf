@@ -88,6 +88,26 @@ RSpec.describe(User, type: :model) do
     end
   end
 
+  describe "#tutorial_rosterized" do
+    let(:lecture)   { create(:lecture) }
+    let(:tutorial)  { create(:tutorial, lecture: lecture) }
+    let(:user)      { create(:user) }
+
+    context "when user is rostered to a tutorial in the lecture" do
+      before { create(:tutorial_membership, user: user, tutorial: tutorial) }
+
+      it "returns the tutorial" do
+        expect(user.tutorial_rosterized(lecture)).to eq(tutorial)
+      end
+    end
+
+    context "when user is not rostered to a tutorial in the lecture" do
+      it "returns nil" do
+        expect(user.tutorial_rosterized(lecture)).to be_nil
+      end
+    end
+  end
+
   # test callbacks - NEEDS TO BE REFACTORED
 
   # it 'is given the default subscription type if subscription type is nil' do

@@ -104,6 +104,10 @@ module SubmissionsHelper
     true
   end
 
+  def enabled_roster_for_lecture?(lecture)
+    Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?
+  end
+
   def submission_late_color(submission)
     return "" unless submission.too_late?
     return "" unless submission.accepted.nil?
