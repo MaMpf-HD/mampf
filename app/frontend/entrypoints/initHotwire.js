@@ -101,6 +101,12 @@ window.Stimulus.register("assessments--points-precision", PointsPrecisionControl
 import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
 window.Stimulus.register("achievement-form", AchievementFormController);
 
+import CertificationInlineController from "~/student_performance/certifications/certification_inline.controller.js";
+window.Stimulus.register("certification-inline", CertificationInlineController);
+
+import ThresholdModeController from "~/student_performance/rules/threshold-mode.controller.js";
+window.Stimulus.register("threshold-mode", ThresholdModeController);
+
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
 

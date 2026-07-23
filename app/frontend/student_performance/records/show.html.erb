@@ -9,9 +9,21 @@
 
   <div class="card mb-4">
     <div class="card-header bg-white border-bottom">
-      <div>
-        <h4 class="mb-1"><%= @record.user.tutorial_name %></h4>
-        <p class="text-muted small mb-0"><%= @record.user.email %></p>
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="mb-1"><%= @record.user.tutorial_name %></h4>
+          <p class="text-muted small mb-0"><%= @record.user.email %></p>
+        </div>
+
+        <div class="d-flex gap-2">
+          <%= link_to single_proposal_lecture_student_performance_evaluator_path(
+                     @lecture, record_id: @record.id),
+                   class: "btn btn-outline-primary btn-sm",
+                   data: { turbo_frame: "performance-records-frame" } do %>
+            <i class="bi bi-clipboard-check me-1"></i>
+            <%= t("student_performance.records.show.review_proposal") %>
+          <% end %>
+        </div>
       </div>
     </div>
 

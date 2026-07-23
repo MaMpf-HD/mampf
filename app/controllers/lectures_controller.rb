@@ -392,7 +392,7 @@ class LecturesController < ApplicationController
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
-                        :submission_deletion_date,
+                        :submission_deletion_date, :uses_exam_eligibility,
                         :annotations_status,
                         :home_intro, :home_attachment, :remove_home_attachment]
       if action_name == "update" && current_user.can_update_personell?(@lecture)

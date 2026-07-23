@@ -3,6 +3,10 @@ class Achievement < ApplicationRecord
 
   belongs_to :lecture
 
+  has_many :rule_achievements,
+           class_name: "StudentPerformance::RuleAchievement",
+           dependent: :restrict_with_error
+
   enum :value_type, { boolean: 0, numeric: 1, percentage: 2 }
 
   validates :title, :value_type, presence: true
@@ -59,6 +63,14 @@ class Achievement < ApplicationRecord
       StudentPerformance::ComputationService
         .new(lecture: lecture)
         .compute_and_upsert_all_records!
+      touch_linked_rules
+    end
+
+    def touch_linked_rules
+      rule_ids = rule_achievements.pluck(:rule_id)
+      return if rule_ids.empty?
+
+      StudentPerformance::Rule.where(id: rule_ids).touch_all
     end
 
     def setup_assessment

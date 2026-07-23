@@ -1,0 +1,435 @@
+require "rails_helper"
+
+RSpec.describe("StudentPerformance::Rules", type: :request) do
+  let(:lecture) { FactoryBot.create(:lecture, locale: I18n.default_locale) }
+  let(:editor) { FactoryBot.create(:confirmed_user) }
+  let(:student) { FactoryBot.create(:confirmed_user) }
+
+  before do
+    Flipper.enable(:student_performance)
+    FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
+    editor.reload
+    lecture.reload
+  end
+
+  after do
+    Flipper.disable(:student_performance)
+  end
+
+  describe "GET /lectures/:lecture_id/performance/rules/edit" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns http success" do
+        get edit_lecture_student_performance_rules_path(lecture)
+        expect(response).to have_http_status(:success)
+      end
+
+      it "shows the edit form title" do
+        get edit_lecture_student_performance_rules_path(lecture)
+        expect(response.body).to include(
+          I18n.t("student_performance.rules.edit.title")
+        )
+      end
+
+      it "renders inside rule-editor-frame by default" do
+        get edit_lecture_student_performance_rules_path(lecture)
+        expect(response.body).to include("rule-editor-frame")
+      end
+
+      context "with an existing rule" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 42)
+        end
+
+        it "pre-fills the percentage value" do
+          get edit_lecture_student_performance_rules_path(lecture)
+          expect(response.body).to include("42")
+        end
+      end
+
+      context "with achievements" do
+        let!(:achievement) do
+          FactoryBot.create(:achievement, :boolean,
+                            lecture: lecture,
+                            title: "Homework Pass")
+        end
+
+        it "shows available achievements as checkboxes" do
+          get edit_lecture_student_performance_rules_path(lecture)
+          expect(response.body).to include("Homework Pass")
+        end
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        get edit_lecture_student_performance_rules_path(lecture)
+        expect(response).to redirect_to(root_url)
+      end
+    end
+  end
+
+  describe "PATCH /lectures/:lecture_id/performance/rules" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "creates a new rule with percentage threshold" do
+        expect do
+          patch(lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } })
+        end.to change(StudentPerformance::Rule, :count).by(1)
+
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        rule = StudentPerformance::Rule.find_by(lecture: lecture)
+        expect(rule.min_percentage).to eq(50)
+        expect(rule.min_points_absolute).to be_nil
+        expect(rule).to be_active
+      end
+
+      it "redirects to records when source_frame is performance-records-frame" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: {
+                source_frame: "performance-records-frame",
+                rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                }
+              }
+        expect(response).to redirect_to(
+          lecture_student_performance_records_path(lecture)
+        )
+      end
+
+      it "redirects to certifications by default" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "percentage",
+                min_percentage: "50"
+              } }
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+      end
+
+      it "creates a rule with absolute points threshold" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "absolute",
+                min_points_absolute: "75"
+              } }
+        rule = StudentPerformance::Rule.find_by(lecture: lecture)
+        expect(rule.min_points_absolute).to eq(75)
+        expect(rule.min_percentage).to be_nil
+      end
+
+      it "updates an existing rule" do
+        rule = FactoryBot.create(:student_performance_rule, :active,
+                                 :with_percentage,
+                                 lecture: lecture,
+                                 min_percentage: 40)
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "percentage",
+                min_percentage: "60"
+              } }
+        rule.reload
+        expect(rule.min_percentage).to eq(60)
+      end
+
+      it "switches from percentage to absolute" do
+        rule = FactoryBot.create(:student_performance_rule, :active,
+                                 :with_percentage,
+                                 lecture: lecture,
+                                 min_percentage: 50)
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "absolute",
+                min_points_absolute: "80"
+              } }
+        rule.reload
+        expect(rule.min_percentage).to be_nil
+        expect(rule.min_points_absolute).to eq(80)
+      end
+
+      it "shows a success flash" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "percentage",
+                min_percentage: "50"
+              } }
+        follow_redirect!
+        expect(response.body).to include(
+          I18n.t("student_performance.rules.flash.updated")
+        )
+      end
+
+      context "with achievements" do
+        let!(:ach_a) do
+          FactoryBot.create(:achievement, :boolean,
+                            lecture: lecture, title: "Presentation")
+        end
+        let!(:ach_b) do
+          FactoryBot.create(:achievement, :boolean,
+                            lecture: lecture, title: "Homework")
+        end
+
+        it "adds selected achievements to the rule" do
+          patch lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50",
+                  achievement_ids: [ach_a.id.to_s, ach_b.id.to_s]
+                } }
+          rule = StudentPerformance::Rule.find_by(lecture: lecture)
+          expect(rule.required_achievements).to contain_exactly(ach_a, ach_b)
+        end
+
+        it "removes deselected achievements" do
+          rule = FactoryBot.create(:student_performance_rule, :active,
+                                   :with_percentage,
+                                   lecture: lecture)
+          FactoryBot.create(:student_performance_rule_achievement,
+                            rule: rule, achievement: ach_a)
+          FactoryBot.create(:student_performance_rule_achievement,
+                            rule: rule, achievement: ach_b)
+          patch lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50",
+                  achievement_ids: [ach_a.id.to_s]
+                } }
+          rule.reload
+          expect(rule.required_achievements).to contain_exactly(ach_a)
+        end
+
+        it "clears all achievements when none selected" do
+          rule = FactoryBot.create(:student_performance_rule, :active,
+                                   :with_percentage,
+                                   lecture: lecture)
+          FactoryBot.create(:student_performance_rule_achievement,
+                            rule: rule, achievement: ach_a)
+          patch lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } }
+          rule.reload
+          expect(rule.required_achievements).to be_empty
+        end
+
+        it "ignores achievement IDs that do not belong to this lecture" do
+          other_lecture = FactoryBot.create(:lecture, :with_organizational_stuff)
+          foreign_ach = FactoryBot.create(:achievement, :boolean,
+                                          lecture: other_lecture,
+                                          title: "Foreign")
+          patch lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50",
+                  achievement_ids: [ach_a.id.to_s, foreign_ach.id.to_s]
+                } }
+          rule = StudentPerformance::Rule.find_by(lecture: lecture)
+          expect(rule.required_achievements).to contain_exactly(ach_a)
+        end
+      end
+
+      it "renders edit with errors for invalid percentage" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "percentage",
+                min_percentage: "150"
+              } }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include(
+          I18n.t("student_performance.rules.edit.title")
+        )
+      end
+
+      it "renders edit with inline error when percentage mode has blank value" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "percentage",
+                min_percentage: ""
+              } }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("is-invalid")
+        expect(response.body).to include("blank")
+      end
+
+      it "renders edit with inline error when absolute mode has blank value" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "absolute",
+                min_points_absolute: ""
+              } }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("is-invalid")
+        expect(response.body).to include("blank")
+      end
+
+      it "renders edit inside records frame when source_frame is records" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: {
+                source_frame: "performance-records-frame",
+                rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "150"
+                }
+              }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("performance-records-frame")
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: {
+                threshold_mode: "percentage",
+                min_percentage: "50"
+              } }
+        expect(response).to redirect_to(root_url)
+      end
+    end
+  end
+
+  describe "PATCH /lectures/:lecture_id/performance/rules/preview" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      context "with an active rule and records" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        let!(:passing_record) do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            percentage_materialized: 60)
+        end
+
+        let!(:failing_record) do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            percentage_materialized: 40)
+        end
+
+        it "returns http success" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } }
+          expect(response).to have_http_status(:success)
+        end
+
+        it "shows no changes when threshold is the same" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.no_changes")
+          )
+        end
+
+        it "shows impact when threshold changes" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "35"
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.newly_passed")
+          )
+        end
+
+        it "renders inside the rule-preview-frame" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } }
+          expect(response.body).to include("rule-preview-frame")
+        end
+      end
+
+      context "when adding an achievement requirement" do
+        let!(:achievement) do
+          FactoryBot.create(:achievement, :boolean, lecture: lecture)
+        end
+
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        let!(:record_without_achievement) do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            percentage_materialized: 60,
+                            achievements_met_ids: [])
+        end
+
+        it "shows newly failed when students lack the achievement" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50",
+                  achievement_ids: [achievement.id.to_s]
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.newly_failed")
+          )
+        end
+
+        it "shows no changes when students already meet the achievement" do
+          record_without_achievement
+            .update!(achievements_met_ids: [achievement.id])
+
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50",
+                  achievement_ids: [achievement.id.to_s]
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.no_changes")
+          )
+        end
+      end
+
+      context "without an active rule" do
+        it "shows the no-rule message" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "50"
+                } }
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.preview.no_rule")
+          )
+        end
+      end
+    end
+  end
+end

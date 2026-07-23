@@ -91,6 +91,8 @@ en:
       allocation_mode:
         first_come_first_served: "First-Come-First-Served"
         preference_based: "Preference-Based"
+      type:
+        exam: "Exam"
       status:
         draft: "Draft"
         open: "Open"
@@ -193,10 +195,17 @@ en:
         prerequisite_not_configured: "Prerequisite registration process not configured."
         prerequisite_missing: "Prerequisite registration process missing."
         prerequisite_not_met: "Prerequisite registration process not completed."
+        certification_not_passed: "Exam eligibility not granted"
+        missing_lecture: "At least one lecture must be selected."
+        lecture_not_found: "At least one selected lecture does not exist."
+        lecture_exam_eligibility_disabled: >-
+          Exam eligibility is disabled for: %{titles}
+        multiple_student_performance: "Only one student performance policy is allowed."
       configs:
         allowed_domains: "Allowed Domains"
         prerequisite_campaign_id: "Prerequisite Registration Process"
         lecture_id: "Lecture"
+        lecture_ids: "Lectures"
       hints:
         allowed_domains: "e.g. uni-heidelberg.de (also allows stud.uni-heidelberg.de)"
         select_prerequisite: "— Select a registration process —"

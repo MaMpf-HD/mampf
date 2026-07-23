@@ -6,6 +6,7 @@ en:
       talks: "Talks"
       achievements: "Achievements"
       performance: "Performance"
+      certifications: "Exam Eligibility"
     subtitle:
       assignments: "Manage homework sheets, grading, and point allocation."
     achievements:
@@ -17,6 +18,7 @@ en:
       errors:
         destroy_failed: "Failed to delete achievement."
         not_found: "Achievement not found."
+        referenced_by_rules: "Cannot delete: Achievement is referenced by a rule."
       subtitle: "Define additional criteria students must fulfill beyond points."
       new: "New Achievement"
       edit: "Edit Achievement"
