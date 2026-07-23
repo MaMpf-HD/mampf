@@ -236,6 +236,38 @@
   background: linear-gradient(135deg, #f0f4fd 0%, #f5f9fd 100%);
 }
 
+.registration-section-choice-text {
+  min-width: 0;
+}
+
+.registration-section-choice-actions {
+  flex-shrink: 0;
+}
+
+@media (min-width: 992px) {
+  .registration-section-choice-body {
+    justify-content: space-between;
+  }
+
+  .registration-section-choice-text {
+    max-width: 68%;
+  }
+}
+
+.registration-campaign-section-toggle-icon {
+  transition: transform 0.2s ease;
+}
+
+.registration-campaign-section-toggle {
+  line-height: 1;
+}
+
+.registration-campaign-section-toggle[aria-expanded="true"] {
+  .registration-campaign-section-toggle-icon {
+    transform: rotate(180deg);
+  }
+}
+
 .registration-campaign-ghost-label,
 .registration-campaign-ghost-title {
   font-size: 0.72rem;

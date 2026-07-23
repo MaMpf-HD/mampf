@@ -49,40 +49,40 @@
     color: var(--bs-danger-text-emphasis);
     background: rgba(var(--bs-danger-rgb), 0.12);
     border: 1px solid var(--bs-danger-border-subtle);
-}
 
-.allocation-action-primary:hover,
-.allocation-action-primary:focus {
-    color: var(--bs-danger-text-emphasis);
-    background: rgba(var(--bs-danger-rgb), 0.2);
-    border-color: rgba(var(--bs-danger-rgb), 0.28);
-}
+    &:hover,
+    &:focus {
+        color: var(--bs-danger-text-emphasis);
+        background: rgba(var(--bs-danger-rgb), 0.2);
+        border-color: rgba(var(--bs-danger-rgb), 0.28);
+    }
 
-.allocation-action-primary:disabled,
-.allocation-action-primary.disabled {
-    color: var(--bs-danger-text-emphasis);
-    background: rgba(var(--bs-danger-rgb), 0.12);
-    border-color: var(--bs-danger-border-subtle);
+    &:disabled,
+    &.disabled {
+        color: var(--bs-danger-text-emphasis);
+        background: rgba(var(--bs-danger-rgb), 0.12);
+        border-color: var(--bs-danger-border-subtle);
+    }
 }
 
 .allocation-action-secondary {
     color: var(--bs-emphasis-color);
     background: rgba(201, 155, 139, 0.13);
     border: 1px solid rgba(201, 155, 139, 0.26);
-}
 
-.allocation-action-secondary:hover,
-.allocation-action-secondary:focus {
-    color: var(--bs-emphasis-color);
-    background: rgba(201, 155, 139, 0.22);
-    border-color: rgba(201, 155, 139, 0.34);
-}
+    &:hover,
+    &:focus {
+        color: var(--bs-emphasis-color);
+        background: rgba(201, 155, 139, 0.22);
+        border-color: rgba(201, 155, 139, 0.34);
+    }
 
-.allocation-action-secondary:disabled,
-.allocation-action-secondary.disabled {
-    color: var(--bs-emphasis-color);
-    background: rgba(201, 155, 139, 0.13);
-    border-color: rgba(201, 155, 139, 0.26);
+    &:disabled,
+    &.disabled {
+        color: var(--bs-emphasis-color);
+        background: rgba(201, 155, 139, 0.13);
+        border-color: rgba(201, 155, 139, 0.26);
+    }
 }
 
 .allocation-status-panel {

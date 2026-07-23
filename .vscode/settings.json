@@ -44,10 +44,10 @@
         "editor.formatOnSave": true
     },
     "rubyLsp.formatter": "rubocop",
-    // https://shopify.github.io/ruby-lsp/version-managers.html#custom-activation
     "rubyLsp.rubyVersionManager": {
-        "identifier": "custom"
+        "identifier": "none"
     },
+    "rubyLsp.customRubyCommand": "export PATH=/usr/local/bin:$PATH",
     "rubyLsp.rubyExecutablePath": "/usr/local/bin/ruby",
     "rubyLsp.enabledFeatures": {
         "codeActions": true,

@@ -99,11 +99,12 @@
             <% if data[:capacity] %>
               <div class="d-flex align-items-center">
                 <div class="flex-grow-1">
-                  <%= progress_bar(data[:count], data[:capacity],
-                                   classification: :utilization,
-                                   height: "10px",
-                                   show_label: false,
-                                   container_class: "progress") %>
+                  <%= allocation_progress_bar(
+                    data[:count],
+                    data[:capacity],
+                    bar_class: allocation_utilization_bar_class(percentage),
+                    height: "10px"
+                  ) %>
                 </div>
 
                 <div class="ms-2 text-end allocation-pct-label">

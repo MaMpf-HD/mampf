@@ -43,4 +43,20 @@ RSpec.describe("Announcements", type: :request) do
       expect(response.body).not_to include("<script>alert('main-xss')</script>")
     end
   end
+
+  describe "POST /announcements" do
+    it "ignores on_main_page from a non-admin editor" do
+      post announcements_path,
+           params: { announcement: { details: "Hi", lecture_id: lecture.id,
+                                     on_main_page: "1" } }
+      expect(Announcement.last.on_main_page).to be_falsey
+    end
+
+    it "lets an admin set on_main_page" do
+      sign_in create(:confirmed_user, admin: true)
+      post announcements_path,
+           params: { announcement: { details: "Hi", on_main_page: "1" } }
+      expect(Announcement.last.on_main_page).to be(true)
+    end
+  end
 end

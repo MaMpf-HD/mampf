@@ -9,6 +9,67 @@ RSpec.describe(Lecture, type: :model) do
     expect(FactoryBot.build(:lecture)).to be_valid
   end
 
+  describe "lecture home page content" do
+    let(:lecture) { create(:lecture) }
+
+    def pdf_upload(content = "%PDF-1.4 demo", name = "program.pdf")
+      Rack::Test::UploadedFile.new(StringIO.new(content), "application/pdf",
+                                   original_filename: name)
+    end
+
+    describe "#home_content?" do
+      it "is false when neither intro nor attachment is set" do
+        expect(lecture.home_content?).to be(false)
+      end
+
+      it "is true with intro text" do
+        lecture.home_intro = "<div>Welcome</div>"
+        expect(lecture.home_content?).to be(true)
+      end
+
+      it "is true with an attachment" do
+        lecture.home_attachment = pdf_upload
+        expect(lecture.home_content?).to be(true)
+      end
+
+      it "is false for blank trix wrapper markup" do
+        ["<div><br></div>", "<br>", "<div></div>", "&nbsp;"].each do |blank|
+          lecture.home_intro = blank
+          expect(lecture.home_content?)
+            .to(be(false), "expected #{blank} to count as blank")
+        end
+      end
+
+      it "is still true for real text, latex included" do
+        lecture.home_intro = "<div>Welcome, we study $x^2$</div>"
+        expect(lecture.home_content?).to be(true)
+      end
+    end
+
+    describe "#home_attachment_filename" do
+      it "returns nil without an attachment" do
+        expect(lecture.home_attachment_filename).to be_nil
+      end
+
+      it "returns the uploaded filename" do
+        lecture.update!(home_attachment: pdf_upload("%PDF-1.4 demo", "seminar.pdf"))
+        expect(lecture.home_attachment_filename).to eq("seminar.pdf")
+      end
+    end
+
+    describe "home_attachment validation" do
+      it "accepts a pdf" do
+        lecture.home_attachment = pdf_upload
+        expect(lecture).to be_valid
+      end
+
+      it "rejects a non-pdf (content-sniffed, not by extension)" do
+        lecture.home_attachment = pdf_upload("just some text", "program.pdf")
+        expect(lecture).to be_invalid
+      end
+    end
+  end
+
   # Test validations  -- SOME ARE MISSING
 
   it "is invalid without a course" do
@@ -269,6 +330,76 @@ RSpec.describe(Lecture, type: :model) do
 
       expect(lecture.members).to include(*users)
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
+    end
+
+    it "subscribes roster members to the lecture" do
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureUserJoin, :count).by(3)
+
+      expect(lecture.users).to include(*users)
+    end
+
+    it "keeps existing subscriptions intact" do
+      create(:lecture_user_join, user: users.first, lecture: lecture)
+
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(LectureUserJoin, :count).by(2) # Only 2 new ones
+
+      expect(LectureUserJoin.where(lecture: lecture, user: users.first).count)
+        .to eq(1)
+    end
+  end
+
+  describe "#registration_mail_recipients" do
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let(:campaign) do
+      create(:registration_campaign, :open, :first_come_first_served,
+             campaignable: lecture)
+    end
+
+    it "includes campaign registrants with pending or confirmed status" do
+      pending_user = create(:confirmed_user)
+      confirmed_user = create(:confirmed_user)
+      rejected_user = create(:confirmed_user)
+      create(:registration_user_registration,
+             registration_campaign: campaign, user: pending_user)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, user: confirmed_user)
+      create(:registration_user_registration, :rejected,
+             registration_campaign: campaign, user: rejected_user)
+
+      recipients = lecture.registration_mail_recipients
+
+      expect(recipients).to include(pending_user, confirmed_user)
+      expect(recipients).not_to include(rejected_user)
+    end
+
+    it "includes roster members" do
+      member = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: member)
+
+      expect(lecture.registration_mail_recipients).to include(member)
+    end
+
+    it "deduplicates users who are both registered and on the roster" do
+      user = create(:confirmed_user)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, user: user)
+      create(:lecture_membership, lecture: lecture, user: user)
+
+      expect(lecture.registration_mail_recipients.count).to eq(1)
+    end
+
+    it "does not include registrants of other lectures" do
+      other_campaign = create(:registration_campaign, :open,
+                              :first_come_first_served)
+      stranger = create(:confirmed_user)
+      create(:registration_user_registration,
+             registration_campaign: other_campaign, user: stranger)
+
+      expect(lecture.registration_mail_recipients).not_to include(stranger)
     end
 
     it "fires LectureMembership callbacks (creates performance records)" do

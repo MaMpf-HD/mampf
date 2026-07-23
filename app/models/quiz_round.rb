@@ -117,7 +117,9 @@ class QuizRound
     def create_certificate_final_probe
       return unless @save_probe
 
-      @certificate = QuizCertificate.create(quiz: @quiz)
       ProbeSaver.perform_async(@quiz.id, nil, nil, -1, @attempt_token)
+      return unless Flipper.enabled?(:quiz_certificates)
+
+      @certificate = QuizCertificate.create(quiz: @quiz)
     end
 end

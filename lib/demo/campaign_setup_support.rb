@@ -10,6 +10,7 @@ module Demo
     TWO_STAGE_COURSE_TITLE = "Campaign Test Seminar".freeze
 
     def setup!
+      ensure_non_production!
       Demo::SetupSupport.setup_flags!
       Demo::QuietLoggingSupport.with_quiet_logging do
         setup_preference_campaign!
