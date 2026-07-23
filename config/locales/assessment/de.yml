@@ -3,8 +3,43 @@ de:
     assessments: "Testate"
     tabs:
       assignments: "Hausaufgaben"
+      talks: "Vorträge"
+      achievements: "Zusatzkriterien"
+      performance: "Leistungen"
     subtitle:
       assignments: "Hausaufgabenblätter, Bewertungen und Punktevergabe verwalten."
+    achievements:
+      placeholder: "Zusatzkriterien werden in einem späteren Schritt hier angezeigt."
+      flash:
+        created: "Zusatzkriterium erfolgreich erstellt."
+        updated: "Zusatzkriterium erfolgreich aktualisiert."
+        destroyed: "Zusatzkriterium erfolgreich gelöscht."
+      errors:
+        destroy_failed: "Löschen des Zusatzkriteriums fehlgeschlagen."
+        not_found: "Zusatzkriterium nicht gefunden."
+      subtitle: "Zusätzliche Kriterien definieren, die Studierende über Punkte hinaus erfüllen müssen."
+      new: "Neues Zusatzkriterium"
+      edit: "Zusatzkriterium bearbeiten"
+      value_types:
+        boolean: "Ja/Nein"
+        numeric: "Numerisch"
+        percentage: "Prozentual"
+      fields:
+        title: "Titel"
+        value_type: "Typ"
+        threshold: "Schwellenwert"
+        description: "Beschreibung"
+      no_achievements_yet: "Noch keine Zusatzkriterien angelegt."
+      confirm_delete: "Zusatzkriterium wirklich löschen?"
+      marking:
+        marked: "bewertet"
+        met_label: "erfüllt"
+        value: "Wert"
+        status: "Status"
+        met: "Erfüllt"
+        not_met: "Nicht erfüllt"
+        unmarked: "Offen"
+        no_participations: "Noch keine Teilnahmen vorhanden."
     tasks: "Aufgaben"
     submissions: "Abgaben"
     points: "Punkte"

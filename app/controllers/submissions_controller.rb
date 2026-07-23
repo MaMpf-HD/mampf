@@ -489,7 +489,10 @@ class SubmissionsController < ApplicationController
       return unless assessment
 
       lecture = assignment.lecture
-      target_users = users || @submission.users
+      target_users = Array(users || @submission.users)
+      member_ids = lecture.members.where(id: target_users.map(&:id)).pluck(:id)
+      target_users.select! { |user| user.id.in?(member_ids) }
+      return if target_users.empty?
 
       target_users.each do |user|
         participation = assessment.assessment_participations

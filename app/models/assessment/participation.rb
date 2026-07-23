@@ -22,6 +22,9 @@ module Assessment
 
     scope :submitted, -> { where.not(submitted_at: nil) }
 
+    after_commit :recompute_performance_record,
+                 if: :should_recompute_performance_record?
+
     validates :user_id, uniqueness: { scope: :assessment_id }
     validate :grading_lifecycle_must_be_open
     validates :grade_numeric,
@@ -72,6 +75,26 @@ module Assessment
         return if assessment.assessable.is_a?(::Assessment::Gradable)
 
         errors.add(:grade_numeric, :not_gradable)
+      end
+
+      def should_recompute_performance_record?
+        achievement_grade_text_changed? ||
+          saved_change_to_status? ||
+          saved_change_to_submitted_at?
+      end
+
+      def achievement_grade_text_changed?
+        saved_change_to_grade_text? &&
+          assessment&.assessable_type == "Achievement"
+      end
+
+      def recompute_performance_record
+        lecture = assessment&.lecture
+        return unless lecture && Flipper.enabled?(:assessment_grading)
+
+        StudentPerformance::ComputationService
+          .new(lecture: lecture)
+          .compute_and_upsert_record_for(user)
       end
   end
 end

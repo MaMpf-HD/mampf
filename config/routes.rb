@@ -346,6 +346,19 @@ Rails.application.routes.draw do
                 controller: "registration/student_messages",
                 only: [:create]
     end
+
+    constraints ->(_req) { Flipper.enabled?(:student_performance) } do
+      namespace :student_performance, path: "performance" do
+        resources :records, only: [:index, :show] do
+          collection do
+            post :recompute
+          end
+        end
+
+        resources :achievements,
+                  only: [:index, :new, :show, :create, :update, :destroy]
+      end
+    end
   end
 
   constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do

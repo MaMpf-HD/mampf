@@ -98,6 +98,9 @@ window.Stimulus.register("assessments--settings", SettingsController);
 import PointsPrecisionController from "~/assessment/points_precision.controller.js";
 window.Stimulus.register("assessments--points-precision", PointsPrecisionController);
 
+import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
+window.Stimulus.register("achievement-form", AchievementFormController);
+
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
 

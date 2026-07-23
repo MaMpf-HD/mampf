@@ -14,8 +14,8 @@ module Assessment
     validate :grading_lifecycle_must_be_open
 
     after_commit :refresh_participation_points_total,
-                 on: [:create, :update, :destroy],
-                 if: :refresh_participation_points_total?
+                 :recompute_performance_record,
+                 if: :should_recompute_points?
 
     private
 
@@ -23,6 +23,10 @@ module Assessment
         return if assessment_participation&.assessment&.grading_open?
 
         errors.add(:base, :early_grading_not_allowed)
+      end
+
+      def should_recompute_points?
+        destroyed? || previously_new_record? || saved_change_to_points?
       end
 
       def refresh_participation_points_total
@@ -33,15 +37,29 @@ module Assessment
                     assessment_participation_id: assessment_participation_id
                   )
                   .sum(:points)
+        participation = ::Assessment::Participation
+                        .find_by(id: assessment_participation_id)
+        return unless participation
 
-        participation = ::Assessment::Participation.find_by(
-          id: assessment_participation_id
-        )
-        participation&.update!(points_total: sum)
+        # points_total mirrors committed task points and must stay in sync
+        # rubocop:disable Rails/SkipsModelValidations
+        participation.update_columns(points_total: sum, updated_at: Time.current)
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
-      def refresh_participation_points_total?
-        destroyed? || saved_change_to_points?
+      def recompute_performance_record
+        participation = ::Assessment::Participation
+                        .includes({ assessment: :lecture }, :user)
+                        .find_by(id: assessment_participation_id)
+        return unless participation
+
+        lecture = participation.assessment&.lecture
+        return unless lecture && participation.user
+        return unless Flipper.enabled?(:assessment_grading)
+
+        StudentPerformance::ComputationService
+          .new(lecture: lecture)
+          .compute_and_upsert_record_for(participation.user)
       end
 
       def ensure_task_and_participation_match_assessment

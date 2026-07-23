@@ -92,6 +92,11 @@ class Lecture < ApplicationRecord
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
 
+  has_many :student_performance_records,
+           class_name: "StudentPerformance::Record",
+           dependent: :destroy
+  has_many :achievements, dependent: :destroy
+
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
@@ -824,17 +829,20 @@ class Lecture < ApplicationRecord
   end
 
   def ensure_roster_membership!(user_ids)
-    # Efficiently insert missing memberships (ignoring duplicates)
-    # Note: Requires a unique index on [:user_id, :lecture_id]
-    attributes = user_ids.map do |uid|
+    # Efficiently insert missing memberships without touching existing rows.
+    # Note: Requires a unique index on [:user_id, :lecture_id].
+    existing_user_ids = lecture_memberships.where(user_id: user_ids).pluck(:user_id)
+    new_user_ids = user_ids.uniq - existing_user_ids
+
+    attributes = new_user_ids.map do |uid|
       { user_id: uid, lecture_id: id }
     end
 
     return if attributes.empty?
 
     # Rails handles timestamps automatically.
-    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
-    # created_at/updated_at for existing members.
+    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset
+    # of created_at/updated_at for existing members.
     # rubocop:disable Rails/SkipsModelValidations
     transaction do
       LectureMembership.insert_all(
@@ -851,6 +859,27 @@ class Lecture < ApplicationRecord
       )
     end
     # rubocop:enable Rails/SkipsModelValidations
+
+    sync_student_performance_for_members!(new_user_ids)
+  end
+
+  def sync_student_performance_for_members!(user_ids)
+    return unless Flipper.enabled?(:assessment_grading)
+
+    new_user_ids = user_ids.uniq
+    return if new_user_ids.empty?
+
+    achievements.includes(:assessment).find_each do |achievement|
+      achievement.assessment&.seed_participations_from!(
+        user_ids: new_user_ids,
+        recompute: false
+      )
+    end
+
+    service = StudentPerformance::ComputationService.new(lecture: self)
+    User.where(id: new_user_ids).find_each do |user|
+      service.compute_and_upsert_record_for(user)
+    end
   end
 
   # All students that lecture staff can reach by registration mail:

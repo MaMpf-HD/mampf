@@ -78,4 +78,40 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
       expect(task_point).to be_valid
     end
   end
+
+  describe "performance record recomputation" do
+    let(:task_point) { FactoryBot.create(:assessment_task_point) }
+    let(:participation) { task_point.assessment_participation }
+    let(:service) do
+      instance_double(StudentPerformance::ComputationService,
+                      compute_and_upsert_record_for: true)
+    end
+
+    before do
+      allow(StudentPerformance::ComputationService)
+        .to receive(:new)
+        .with(lecture: participation.assessment.lecture)
+        .and_return(service)
+    end
+
+    it "is gated by the assessment_grading flag" do
+      Flipper.disable(:assessment_grading)
+
+      task_point.send(:recompute_performance_record)
+
+      expect(service).not_to have_received(:compute_and_upsert_record_for)
+    end
+
+    it "refreshes points_total even when participation validations are closed" do
+      # rubocop:disable Rails/SkipsModelValidations
+      participation.update_column(:points_total, nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      allow_any_instance_of(Assessment::Assessment)
+        .to receive(:grading_open?).and_return(false)
+
+      task_point.send(:refresh_participation_points_total)
+
+      expect(participation.reload.points_total).to eq(task_point.points)
+    end
+  end
 end
