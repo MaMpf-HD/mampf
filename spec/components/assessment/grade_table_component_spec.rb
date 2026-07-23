@@ -353,7 +353,7 @@ RSpec.describe(GradeTableComponent, type: :component) do
       render_inline(component)
       expect(rendered_content).to include("bi-person-x")
       expect(rendered_content).to include("bi-person-dash")
-      expect(rendered_content).to include("bg-danger")
+      expect(rendered_content).to include("text-danger")
       expect(rendered_content).to include(
         I18n.t("assessment.grade_table.absent")
       )

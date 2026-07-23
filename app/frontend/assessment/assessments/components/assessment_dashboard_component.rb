@@ -173,7 +173,10 @@ class AssessmentDashboardComponent < ViewComponent::Base
     def registration_tab
       TabConfig.new(
         "registration",
-        registration_tab_label,
+        # Rendered lazily: the label renders a partial via `helpers`, which is
+        # only available during rendering, but `tabs` is also read (for keys)
+        # before render.
+        -> { registration_tab_label },
         PartialTabComponent.new(
           partial: "exams/registration",
           locals: { exam: assessable, lecture: lecture }

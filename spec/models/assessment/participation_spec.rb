@@ -134,7 +134,7 @@ RSpec.describe(Assessment::Participation, type: :model) do
 
     context "when grade_text changes on a non-achievement participation" do
       let(:assignment) do
-        FactoryBot.create(:assignment, :with_lecture, lecture: lecture)
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
       end
       let(:assessment) do
         FactoryBot.create(:assessment, assessable: assignment,

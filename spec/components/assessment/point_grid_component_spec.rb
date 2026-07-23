@@ -4,7 +4,7 @@ RSpec.describe(PointGridComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
   let(:tutorial) { create(:tutorial, lecture: lecture) }
-  let(:assignment) { create(:valid_assignment, lecture: lecture) }
+  let(:assignment) { create(:valid_assignment, :expired, lecture: lecture) }
   let(:assessment) { assignment.reload.assessment }
   let(:component) { described_class.new(assessment: assessment) }
 

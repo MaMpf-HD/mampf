@@ -354,6 +354,7 @@ RSpec.describe(Lecture, type: :model) do
 
   describe "#registration_mail_recipients" do
     let(:lecture) { create(:lecture, :released_for_all) }
+    let(:users) { create_list(:confirmed_user, 3) }
     let(:campaign) do
       create(:registration_campaign, :open, :first_come_first_served,
              campaignable: lecture)
