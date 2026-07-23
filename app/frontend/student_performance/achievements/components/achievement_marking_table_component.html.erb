@@ -39,16 +39,22 @@
             <% when :met %>
               <i
                 class="bi bi-check-circle text-success"
+                role="img"
+                aria-label="<%= t("assessment.achievements.marking.met") %>"
                 title="<%= t("assessment.achievements.marking.met") %>"
               ></i>
             <% when :not_met %>
               <i
                 class="bi bi-x-circle text-danger"
+                role="img"
+                aria-label="<%= t("assessment.achievements.marking.not_met") %>"
                 title="<%= t("assessment.achievements.marking.not_met") %>"
               ></i>
             <% when :unmarked %>
               <i
                 class="bi bi-question-circle text-amber"
+                role="img"
+                aria-label="<%= t("assessment.achievements.marking.unmarked") %>"
                 title="<%= t("assessment.achievements.marking.unmarked") %>"
               ></i>
             <% end %>

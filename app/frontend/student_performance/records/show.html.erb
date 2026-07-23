@@ -23,14 +23,6 @@
             <i class="bi bi-clipboard-check me-1"></i>
             <%= t("student_performance.records.show.review_proposal") %>
           <% end %>
-
-          <%= button_to recompute_lecture_student_performance_records_path(@lecture,
-                        user_id: @record.user_id),
-                      method: :post,
-                      class: "btn btn-outline-secondary btn-sm" do %>
-            <i class="bi bi-arrow-clockwise me-1"></i>
-            <%= t("student_performance.records.show.recompute") %>
-          <% end %>
         </div>
       </div>
     </div>
@@ -61,7 +53,15 @@
         <div class="col-12 col-md-4">
           <div class="text-center p-3 border rounded bg-light">
             <div class="display-6 fw-bold">
-              <%= number_to_percentage(@record.percentage_materialized.to_f, precision: 0) %>
+              <% if @record.percentage_materialized.nil? %>
+                <span class="text-muted" aria-hidden="true">&mdash;</span>
+                <span class="visually-hidden">
+                  <%= t("student_performance.records.percentage_unavailable") %>
+                </span>
+              <% else %>
+                <%= number_to_percentage(@record.percentage_materialized,
+                                         precision: 0) %>
+              <% end %>
             </div>
 
             <div class="text-muted small">
@@ -148,6 +148,7 @@
                   <% if submission&.manuscript %>
                     <%= link_to show_submission_manuscript_path(submission),
                                 target: "_blank",
+                                rel: "noopener",
                                 class: "text-decoration-none",
                                 title: t("student_performance.records.show.view_manuscript") do %>
                       <i class="bi bi-file-earmark-text"></i>
@@ -157,6 +158,7 @@
                   <% if submission&.correction %>
                     <%= link_to show_correction_path(submission),
                                 target: "_blank",
+                                rel: "noopener",
                                 class: "text-decoration-none ms-2",
                                 title: t("student_performance.records.show.view_correction") do %>
                       <i class="bi bi-file-earmark-check text-success"></i>
@@ -195,14 +197,30 @@
         </table>
       </div>
 
-      <% if @record.computed_at %>
-        <div class="text-muted small mt-4">
-          <i class="bi bi-info-circle me-1"></i>
+      <div class="border-top pt-3 mt-4">
+        <% if @record.computed_at %>
+          <div class="text-muted small mb-2">
+            <i class="bi bi-info-circle me-1"></i>
 
-          <%= t("student_performance.records.show.last_computed",
-              time: time_ago_in_words(@record.computed_at)) %>
+            <%= t("student_performance.records.show.last_computed",
+                time: time_ago_in_words(@record.computed_at)) %>
+          </div>
+        <% end %>
+
+        <div class="d-flex flex-column flex-md-row align-items-md-center gap-2">
+          <p class="text-muted small mb-0">
+            <%= t("student_performance.records.show.recompute_hint") %>
+          </p>
+
+          <%= button_to recompute_lecture_student_performance_records_path(@lecture,
+                        user_id: @record.user_id),
+                      method: :post,
+                      class: "btn btn-outline-secondary btn-sm ms-md-auto" do %>
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            <%= t("student_performance.records.show.recompute") %>
+          <% end %>
         </div>
-      <% end %>
+      </div>
     </div>
   </div>
 <% end %>

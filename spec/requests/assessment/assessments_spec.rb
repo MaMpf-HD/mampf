@@ -139,7 +139,7 @@ RSpec.describe("Assessment::Assessments", type: :request) do
       end
 
       it "redirects with alert" do
-        get assessment_assessment_path(999),
+        get assessment_assessment_path(assignment_no_assessment.id),
             params: { assessable_type: "Assignment", assessable_id: assignment_no_assessment.id }
         expect(response).to redirect_to(assessment_assessments_path(lecture_id: lecture.id))
       end

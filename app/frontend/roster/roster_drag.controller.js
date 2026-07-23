@@ -19,11 +19,9 @@ export default class extends Controller {
   connect() {
     this.initDraggable();
     this.initDropZones();
-    document.addEventListener("turbo:stream-render", this.refreshDropZones);
   }
 
   disconnect() {
-    document.removeEventListener("turbo:stream-render", this.refreshDropZones);
     this.sortableInstance?.destroy();
     this.tileDropInstances.forEach(s => s.destroy());
     this.tileDropInstances = [];
@@ -84,6 +82,8 @@ export default class extends Controller {
     });
   }
 
+  // Stimulus action, wired to our custom turbo:stream-render (see initHotwire.js)
+  // from the side panel markup.
   refreshDropZones() {
     this.clearHighlight();
     if (!this.hasStudentListTarget) return;
@@ -119,7 +119,7 @@ export default class extends Controller {
     const targetTitle = tile.dataset.rosterTitle;
     const targetAddPath = tile.dataset.rosterAddMemberPath;
 
-    if (["unassigned", "rejected"].includes(this.sourceTypeValue)) {
+    if (this.campaignSourceType()) {
       if (targetFull && !confirm(this.overbookingWarningValue)) {
         return;
       }
@@ -196,7 +196,7 @@ export default class extends Controller {
   }
 
   submitAdd(userId, targetAddPath) {
-    const sourceParams = ["unassigned", "rejected"].includes(this.sourceTypeValue)
+    const sourceParams = this.campaignSourceType()
       ? {
           source: this.sourceTypeValue,
           source_id: this.sourceIdValue,
@@ -244,6 +244,10 @@ export default class extends Controller {
     input.name = name;
     input.value = value;
     return input;
+  }
+
+  campaignSourceType() {
+    return ["unassigned", "rejected"].includes(this.sourceTypeValue);
   }
 
   classNameFor(type) {

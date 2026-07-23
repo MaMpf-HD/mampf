@@ -1,3 +1,5 @@
+# Represents a student's participation in an assessment. It tracks the student's
+# submission status, grade, and other relevant information.
 module Assessment
   class Participation < ApplicationRecord
     belongs_to :assessment, class_name: "Assessment::Assessment",
@@ -24,6 +26,7 @@ module Assessment
                  if: :should_recompute_performance_record?
 
     validates :user_id, uniqueness: { scope: :assessment_id }
+    validate :grading_lifecycle_must_be_open
     validates :grade_numeric,
               inclusion: {
                 in: [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0],
@@ -50,6 +53,23 @@ module Assessment
 
     private
 
+      def grading_lifecycle_must_be_open
+        # Allow new/pending changes to pass, or modifications when grading is explicitly open.
+        return if assessment&.grading_open?
+
+        # An array intersection checks if any of the critical grading attributes were modified.
+        # "status_changed?(from: 'pending')" is evaluated manually, since `changes.keys` only
+        # checks if it changed at all.
+        changed_grading_attributes =
+          changes.keys.intersect?(["grade_numeric", "grade_text",
+                                   "points_total", "grader_id", "graded_at"])
+        status_changed_from_pending = status_changed?(from: "pending")
+
+        return unless changed_grading_attributes || status_changed_from_pending
+
+        errors.add(:base, :early_grading_not_allowed)
+      end
+
       def assessment_must_be_gradable
         return unless assessment&.assessable
         return if assessment.assessable.is_a?(::Assessment::Gradable)
@@ -70,7 +90,7 @@ module Assessment
 
       def recompute_performance_record
         lecture = assessment&.lecture
-        return unless lecture && Flipper.enabled?(:student_performance)
+        return unless lecture && Flipper.enabled?(:assessment_grading)
 
         StudentPerformance::ComputationService
           .new(lecture: lecture)

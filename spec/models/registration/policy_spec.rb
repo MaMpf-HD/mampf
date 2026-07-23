@@ -190,8 +190,8 @@ RSpec.describe(Registration::Policy, type: :model) do
         expect(policy.allowed_domains_display).to eq("uni-heidelberg.de, @example.com")
       end
 
-      it "returns empty string for allowed_domains_display when config is nil" do
-        policy = build(:registration_policy, config: nil)
+      it "returns empty string for allowed_domains_display when config is empty" do
+        policy = build(:registration_policy, config: {})
         expect(policy.allowed_domains_display).to eq("")
       end
 

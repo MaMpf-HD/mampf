@@ -1,4 +1,5 @@
 module Assessment
+  # Represents a specific task within an assessment, which can have points assigned to it.
   class Task < ApplicationRecord
     belongs_to :assessment, class_name: "Assessment::Assessment",
                             inverse_of: :tasks
@@ -51,8 +52,6 @@ module Assessment
       def recompute_all_performance_records
         return unless assessment&.lecture_id
         return unless Flipper.enabled?(:assessment_grading)
-        return if StudentPerformance::Record
-                  .where(lecture_id: assessment.lecture_id).none?
 
         StudentPerformance::ComputationService
           .new(lecture: assessment.lecture)

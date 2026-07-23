@@ -60,5 +60,17 @@ RSpec.describe(Registration::Policy::Handler, type: :model) do
         extra: :value
       )
     end
+
+    it "derives reason_label centrally when reason_code is provided" do
+      result = handler.fail_result(
+        :blocked,
+        "Fallback label",
+        {},
+        reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER
+      )
+
+      expect(result[:reason_label])
+        .to eq(I18n.t("registration.user_registration.reason_labels.withdrawn_by_teacher"))
+    end
   end
 end

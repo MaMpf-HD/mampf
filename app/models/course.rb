@@ -267,16 +267,14 @@ class Course < ApplicationRecord
                  .map { |t| { value: t[:id], text: t[:title] } }
   end
 
-  def image_url_with_host
-    return unless image
-
-    image_url(host: host)
+  def original_image_file
+    image
   end
 
-  def normalized_image_url_with_host
+  def normalized_image_file
     return unless image && image(:normalized)
 
-    image_url(:normalized, host: host)
+    image(:normalized)
   end
 
   def image_filename

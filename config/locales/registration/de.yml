@@ -14,17 +14,33 @@ de:
       finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
       finalization_summary:
         rejected:
-          one: "1 Person hat derzeit eine abgelehnte Anmeldung."
+          one: "1 Studierende(r) hat derzeit eine abgelehnte Anmeldung."
           other: "%{count} Studierende haben derzeit eine abgelehnte Anmeldung."
         unassigned:
-          one: "1 Person konnte nicht zugeteilt werden."
+          one: "1 Studierende(r) konnte nicht zugeteilt werden."
           other: "%{count} Studierende konnten nicht zugeteilt werden."
         manual_addition: "Nachträgliches manuelles Hinzufügen ist möglich."
-      cannot_reopen_completed: "Anmeldung kann nicht wiederöffnet werden, da das Verfahren bereits abgeschlossen wurde."
+      cannot_reopen_completed: "Anmeldung kann nicht wieder geöffnet werden, da das Verfahren bereits abgeschlossen wurde."
       not_found: "Anmeldeverfahren nicht gefunden."
       completed_title: "Anmeldeverfahren abgeschlossen"
+      completed_campaign_title: "Abgeschlossene Kampagnen"
+      active_campaign_title: "Aktive Kampagnen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutze die Gruppenverwaltung, um Änderungen vorzunehmen."
       go_to_roster: "Zur Gruppenverwaltung"
+      self_service:
+        title: "Abgeschlossen — dürfen sich Studierende selbst ein- und austragen?"
+        description: "Aktuell ist die Selbsteinschreibung deaktiviert: Die Studierenden sind zugeteilt, können sich aber nicht selbst ein- oder austragen. Du kannst das jetzt für alle Gruppen des Anmeldeverfahrens erlauben — etwa zum eigenständigen Ausgleich oder für Nachrücker:innen. Einzelne Gruppen kannst Du später anpassen."
+        modes:
+          disabled: "Selbsteinschreibung deaktiviert"
+          add_only: "Nur Eintragen erlauben"
+          remove_only: "Nur Austragen erlauben"
+          add_and_remove: "Ein- & Austragen erlauben"
+        current_state_suffix: "(aktueller Zustand)"
+        keep_closed: "Selbsteinschreibung deaktiviert lassen"
+        apply: "Übernehmen"
+        updated: "Die Selbstverwaltungs-Einstellung der Gruppen wurde aktualisiert."
+        only_when_completed: "Die Selbstverwaltung kann erst nach Abschluss des Anmeldeverfahrens geändert werden."
+        failed: "Die Selbstverwaltungs-Einstellung konnte nicht aktualisiert werden."
       dissolved_enrolled: "zugeteilt"
       lecture_not_found: "Veranstaltung nicht gefunden."
       default_description: "Anmeldung"
@@ -42,13 +58,22 @@ de:
         none: "Keine Anmeldeverfahren vorhanden."
         sections:
           registration: "Anmeldeverfahren"
-          no_campaign: "Kein Anmeldeverfahren"
+          no_campaign: "Ohne Anmeldeverfahren"
+        choice:
+          question: "Benötigst Du ein Anmeldeverfahren?"
+          hint: >-
+            Wenn Du unsicher bist, empfehlen wir Dir ein Anmeldeverfahren.
+            Damit kannst Du ein klares Registrierungsfenster festlegen, die
+            Nachfrage vor der endgültigen Zuteilung besser überblicken und
+            Regeln oder begrenzte Plätze fairer verwalten. Außerdem kannst Du
+            die Zuteilung automatisch anhand der Präferenzen der Studierenden
+            berechnen lassen.
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"
           mode: "Zuteilungsmodus"
-          opens_at: "Registrierungsbeginn"
-          deadline: "Registrierungsende"
+          opens_at: "Anmeldebeginn"
+          deadline: "Anmeldeschluss"
           status: "Status"
           registrations: "Anzahl Registrierungen"
       new:
@@ -60,8 +85,8 @@ de:
         edit_title: "Anmeldeverfahren bearbeiten"
         description: "Kurzbeschreibung"
         allocation_mode: "Zuteilungsmodus"
-        registration_opens_at: "Registrierungsbeginn"
-        registration_deadline: "Registrierungsende"
+        registration_opens_at: "Anmeldebeginn"
+        registration_deadline: "Anmeldeschluss"
         submit: "Speichern"
       allocation_mode:
         first_come_first_served: "Direktanmeldung"
@@ -97,7 +122,7 @@ de:
         reallocate: "Möchtest Du die Zuteilung wirklich neu berechnen? Die aktuelle Verteilung wird dabei überschrieben und kann sich ändern."
         complete_planning: "Bist Du sicher? Dies markiert die Planung als abgeschlossen. Es werden keine Listen verändert."
         user_registration_reject_for_user: "Möchtest Du die Anmeldungen von %{email} ablehnen? Die Anmeldungen bleiben erhalten und können später erneut bearbeitet werden."
-        user_registration_defer_due_to_blocker: "Möchtest Du die Anmeldung von %{email} für jetzt manuell ablehnen? Die Anmeldung bleibt erhalten, erscheint in der Liste der abgelehnten Anmeldungen und kann später erneut bearbeitet werden."
+        user_registration_defer_due_to_blocker: "Möchtest Du die Anmeldung von %{email} vorerst manuell ablehnen? Die Anmeldung bleibt erhalten, erscheint in der Liste der abgelehnten Anmeldungen und kann später erneut bearbeitet werden."
       overview:
         registrations: "Anmeldungen"
         total: "Gesamt"
@@ -260,6 +285,20 @@ de:
       forced_assignment: "Zwangszuweisung"
       index:
         title: "Anmeldungen"
+        confirmed_cases: "Deine Anmeldung ist bestätigt für"
+        unassigned_notice: "Du wurdest noch keiner Gruppe zugeteilt."
+        pending_preference_notice: "Du wurdest noch keiner Gruppe zugeteilt. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
+        fulfilled_preference_notice_html: "Wir konnten Deinen <em>%{rank}</em>-Wunsch erfüllen."
+        fulfilled_preference_ranks:
+          "1": "Erst"
+          "2": "Zweit"
+          "3": "Dritt"
+        unfulfilled_preferences_notice_html: "Leider konnten Deine Wünsche (<em>%{preferences}</em>) nicht berücksichtigt werden."
+        unallocated_preference_notice_html: "Leider konnte Deine Anmeldung für <em>%{campaign}</em> nicht berücksichtigt werden, weil es mehr Anmeldungen als Plätze gab. Deine ausgewählten Präferenzen sind bei uns angekommen: <em>%{preferences}</em>."
+        policy_rejection_notice_html: >-
+          Deine Anmeldung für <em>%{campaign}</em> wurde aus folgenden Gründen abgelehnt:
+        unknown_tutor: "Ein:e Tutor:in wurde noch nicht zugewiesen."
+        unremovable_assignment_notice: "Du kannst dieses Tutorium nicht verlassen, weil der Dozent es so eingerichtet hat."
         first_choice_title: "Erstwahl-Anmeldungen"
         allocated_title: "Zugeteilte Studierende"
         rejected_title: "Abgelehnte Anmeldungen"
@@ -285,6 +324,150 @@ de:
       actions:
         reject_user: "Anmeldungen ablehnen"
         defer_due_to_blocker: "Für jetzt ablehnen"
+        rank_option_tooltip: "Als %{rank} Präferenz setzen"
+      registrations: "Anmeldungen"
+      title: "Deine Anmeldung"
+      planning: "Planung"
+      course_code: "Kurscode"
+      campaign_main: "Anmeldeverfahren"
+      eligibility_title: "Berechtigung"
+      first_come_first_served_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
+      preference_instruction:
+        one: "Ordne %{count} Option nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
+        other: "Ordne %{count} Optionen nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
+      preference_rank_options:
+        "1": "1."
+        "2": "2."
+        "3": "3."
+      preference_podium:
+        label: "Ausgewählte Präferenzstufen"
+        empty: "Option wählen"
+      save_choices: "Auswahl speichern"
+      save_choices_incomplete_tooltip: "Wähle zuerst für jede Präferenzstufe eine Option."
+      eligible: "Berechtigt"
+      not_eligible: "Nicht berechtigt"
+      prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
+      seats_remaining: "Verbleibende Plätze"
+      registered: "Angemeldet"
+      not_registered: "Nicht angemeldet"
+      blocked_tooltip: "Du kannst diesem Tutorium nicht beitreten, weil Du Dein Tutorium nicht verlassen kannst. Der Dozent hat das so eingerichtet."
+      register_now: "Jetzt anmelden"
+      registration_blocked: "Nicht verfügbar"
+      withdraw: "Zurückziehen"
+      closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
+      ineligible_notice:
+        title: "Anmeldung derzeit nicht möglich"
+        description: "Du kannst Dich für dieses Anmeldeverfahren derzeit aus folgenden Gründen nicht anmelden:"
+      readonly_notice:
+        title: "Anmeldung geschlossen"
+        description: "Deine abgegebenen Auswahlentscheidungen bleiben hier sichtbar, während die Lehrperson die Anmeldungen prüft und die endgültige Zuteilung vorbereitet. Änderungen sind nicht mehr möglich."
+      finalization_policy_notice:
+        title: "Deine Anmeldung würde derzeit bei der endgültigen Zuteilung abgelehnt"
+        description: >-
+          Du kannst Dich trotzdem anmelden. Welche Voraussetzungen aktuell nicht
+          erfüllt sind, siehst Du unten.
+      policy_overview:
+        title: "Regeln für dieses Anmeldeverfahren"
+        registration_title: "Voraussetzungen für die Anmeldung"
+        registration_description: "Diese Regeln müssen erfüllt sein, damit Du Dich anmelden kannst."
+        registration_empty: "Für die Anmeldung gibt es keine zusätzlichen Regeln oder Einschränkungen."
+        finalization_title: "Voraussetzungen für die endgültige Zuteilung"
+        finalization_description: "Diese Regeln werden bei der endgültigen Zuteilung geprüft."
+        finalization_empty: "Für die endgültige Zuteilung gibt es keine zusätzlichen Prüfungen."
+        status:
+          fulfilled: "Derzeit erfüllt"
+          not_fulfilled: "Derzeit nicht erfüllt"
+          needs_clarification: "Muss geklärt werden"
+        policies:
+          institutional_email_html: "E-Mail-Domain muss <em>%{domains}</em> sein"
+          prerequisite_campaign_html: "Bestätigte Anmeldung in <em>%{campaign}</em>"
+          student_performance_html: "Status bei der Studierendenleistung muss <em>%{status}</em> sein"
+          generic_html: "Voraussetzung: <em>%{requirement}</em>"
+        hints:
+          institutional_email_registration_html: >-
+            Aktuelle Domain: %{current_domain}. Passe Deine E-Mail in Deinem
+            %{profile} an.
+          institutional_email_finalization_html: >-
+            Aktuelle Domain: %{current_domain}. Passe Deine E-Mail in Deinem
+            %{profile} vor der endgültigen Zuteilung an.
+          prerequisite_campaign_registration_html: >-
+            Schließe <em>%{campaign}</em> zuerst erfolgreich ab.
+          prerequisite_campaign_finalization_html: >-
+            Schließe <em>%{campaign}</em> vor der endgültigen Zuteilung erfolgreich ab.
+          student_performance: >-
+            Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende
+            Dich bitte an die Lehrperson oder die Assistenz.
+          generic: >-
+            Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende
+            Dich bitte an die Lehrperson oder die Assistenz.
+      eligibility_failures:
+        current_domain_unknown: "eine unbekannte Domain"
+        institutional_email_mismatch_html: >-
+          Deine aktuelle E-Mail-Domain ist <em>%{current_domain}</em>, aber dieses
+          Anmeldeverfahren verlangt <em>%{domains}</em>. Gehe in Dein %{profile} und passe
+          dort Deine E-Mail-Adresse an.
+        institutional_email_finalization_warning_html: >-
+          Deine aktuelle E-Mail-Domain ist <em>%{current_domain}</em>, aber dieses
+          Anmeldeverfahren verlangt <em>%{domains}</em> auch bei der endgültigen
+          Zuteilung. Wenn sich das bis dahin nicht ändert, wird Deine Anmeldung
+          abgelehnt. Gehe in Dein %{profile} und passe dort Deine
+          E-Mail-Adresse an.
+        institutional_email_finalization_rejection_html: >-
+          Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens entsprach
+          Deine E-Mail-Domain nicht den geforderten Domains <em>%{domains}</em>. Eine
+          spätere Änderung Deiner E-Mail-Adresse ändert daran nichts. Wenn Du
+          dennoch noch teilnehmen möchtest, wende Dich bitte an die Lehrperson
+          oder die Assistenz.
+        institutional_email_configuration_error: "Die erforderlichen institutionellen E-Mail-Domains sind für dieses Anmeldeverfahren nicht korrekt konfiguriert. Bitte wende Dich an die Kursverwaltung."
+        prerequisite_not_met_html: "Du benötigst zuerst eine bestätigte Anmeldung im Anmeldeverfahren <em>%{campaign}</em>, bevor Du Dich hier anmelden kannst. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
+        prerequisite_not_met_finalization_warning_html: "Du hast derzeit keine bestätigte Anmeldung im Anmeldeverfahren <em>%{campaign}</em>. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
+        prerequisite_not_met_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hattest Du keine bestätigte Anmeldung im Anmeldeverfahren <em>%{campaign}</em>. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
+        prerequisite_campaign_not_found_html: "Das erforderliche vorausgesetzte Anmeldeverfahren <em>%{campaign}</em> ist derzeit nicht verfügbar. Bitte wende Dich an die Kursverwaltung."
+        prerequisite_configuration_error: "Dieses Anmeldeverfahren hängt von einem vorausgesetzten Anmeldeverfahren ab, das nicht korrekt konfiguriert ist. Bitte wende Dich an die Kursverwaltung."
+        student_performance_failed_html: "Dein Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status <em>%{status}</em>. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
+        student_performance_failed_finalization_warning_html: "Dein aktueller Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status <em>%{status}</em>. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
+        student_performance_failed_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens entsprach Dein Status bei der Studierendenleistung nicht dem erforderlichen Status <em>%{status}</em>. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
+        generic_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
+        generic_finalization_warning_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
+        generic_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hast Du die Voraussetzung <em>%{requirement}</em> nicht erfüllt. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
+      withdraw_first: "Zuerst zurückziehen"
+      filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
+      status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"
+      submitted_pref: "Deine eingereichte Auswahl"
+      confirmed_assignment_pref: "Deine bestätigte %{type}-Zuweisung"
+      first_come_first_served_columns:
+        type: "Gruppenart"
+        title: "Titel"
+        details: "Details"
+        seats: "Plätze"
+        status: "Status"
+        action: "Aktion"
+      preference_based_columns:
+        type: "Gruppenart"
+        title: "Titel"
+        details: "Details"
+        seats: "Plätze"
+        status: "Status"
+        action: "Aktion"
+      messages:
+        campaign_unavailable: "Dieses Anmeldeverfahren ist derzeit nicht verfügbar."
+        campaign_not_opened: "Die Registrierung für dieses Anmeldeverfahren ist geschlossen."
+        registration_success: "Registrierung erfolgreich abgeschlossen."
+        registration_failed: "Registrierung konnte nicht abgeschlossen werden."
+        already_registered: "Du bist bereits für dieses Anmeldeverfahren registriert."
+        no_slots: "Keine Plätze verfügbar."
+        requirements_not_met: "Du erfüllst die Voraussetzungen nicht."
+        unremovable_assignment: "Du kannst Dich nicht für eine andere Gruppe anmelden, weil Du Dein aktuelles Tutorium nicht verlassen kannst."
+        invalid_options: "Ungültige Optionen ausgewählt."
+        preferences_saved: "Deine Einstellungen wurden gespeichert."
+        withdrawn: "Du hast Deine Registrierung zurückgezogen."
+        dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
+        not_preference_based_mode: "Dieses Anmeldeverfahren ist nicht im präferenzbasierten Modus. Präferenzen können hier nicht gespeichert werden."
+        invalid_preferences: "Bitte wähle genau eine Option für jede verfügbare Präferenzstufe."
+        not_first_come_first_served_mode: "Dieses Anmeldeverfahren ist nicht im First-Come-First-Served-Modus. Direkte Anmeldungen können hier nicht vorgenommen werden."
+        cannot_secure_slot: "Leider konnte keine Deiner gewählten Optionen zugeteilt werden."
+        course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wende Dich an den Kursadministrator, um Alternativen zu besprechen."
+        campaign_not_found: "Anmeldeverfahren nicht gefunden."
     allocation:
       started: "Zuteilung wurde berechnet."
       conflicts:
@@ -300,7 +483,7 @@ de:
         current_registration_state: "Aktueller Registrierungsstand"
         current_group_occupancy: "Aktuelle Belegung der Gruppen"
         workflow_info: "Überprüfe die Statistiken. Kapazitäten können direkt in der Tabelle über den Stift-Button angepasst werden. Falls das Ergebnis nicht zufriedenstellend ist, kannst Du die Anmeldung erneut öffnen, um neue Anmeldungen zu akzeptieren oder Studierenden die Anpassung ihrer Präferenzen zu ermöglichen, und anschließend die Zuteilung erneut berechnen. Du kannst die Zuteilung auch direkt neu berechnen. Wenn Du zufrieden bist, klicke auf 'Zuteilung durchführen', um die Zuweisungen zu speichern. Verbleibende nicht zugewiesene oder abgelehnte Studierende können anschließend manuell in Gruppen nachverteilt werden."
-        workflow_info_fcfs: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnahmelisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
+        workflow_info_first_come_first_served: "Überprüfe die Statistiken und die Auslastung der Gruppen. Wenn alles korrekt aussieht, klicke auf 'Zuteilung durchführen', um die Zuweisungen in die Teilnehmerlisten zu übernehmen. Du kannst auch die Anmeldung erneut öffnen, um weitere Anmeldungen zu akzeptieren, bevor Du abschließt."
         item_capacities: "Auslastung"
         finalization_status:
           blocked_title: "Finalisierung derzeit nicht möglich"
@@ -358,7 +541,80 @@ de:
       policy_summary:
         required_domain: "Erforderliche Domain:"
         failed: "Zuteilung fehlgeschlagen: %{error}"
+    student_campaigns:
+      index:
+        columns:
+          title: "Titel"
+          lecture: "Vortrag"
+          mode: "Format"
+          closes: "Endet am"
+          eligibility: "Teilnahmeberechtigung"
+          action: "Aktion"
+          status: "Status"
+        view_details: "Details"
+    lecture:
+      not_found: "Veranstaltung nicht gefunden."
+      home:
+        empty_title: "Starte hier"
+        empty_subscribed: >-
+          Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
+          dieser Seite. Materialien findest du in der Navigation der
+          Veranstaltung.
+        empty_unsubscribed: >-
+          Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
+          dieser Seite. Abonniere die Veranstaltung, um Materialien zu sehen.
+        news_indicator: "Neue Updates auf Home"
+        attachment_download: "Programm herunterladen (PDF)"
+        attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
+        staff_registration_title: "Was Studierende hier sehen"
+        staff_registration_hint: >-
+          Unterhalb Deines Intros sehen Studierende das Anmeldeverfahren und
+          ihren eigenen Status (offene Anmeldungen, zugeteilte Gruppe). Diese
+          Ansicht ist für jede Person individuell und wird Dir deshalb hier
+          nicht angezeigt.
+        staff_registration_manage: "Anmeldeverfahren verwalten"
+        intro_empty: >-
+          Die Startseite dieser Veranstaltung hat noch keinen Begrüßungstext und
+          kein Programm. Füge eine kurze Einführung hinzu, damit Studierende hier
+          mehr als eine leere Seite sehen.
+        intro_empty_campaign: >-
+          Für diese Veranstaltung läuft eine Anmeldung, aber Deine Startseite hat
+          keinen Begrüßungstext — genau das sehen Studierende vor der Anmeldung.
+          Füge eine kurze Einführung und Dein Programm hinzu.
+        subscribe_prompt: >-
+          Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
+          Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.
+    student_message:
+      title: "E-Mail an angemeldete Studierende"
+      audience:
+        zero: "Es haben sich noch keine Studierenden angemeldet."
+        one: "Geht an 1 angemeldete Person."
+        other: "Geht an %{count} angemeldete Personen."
+      copy_addresses: "E-Mail-Adressen kopieren"
+      addresses_copied: "Adressen in die Zwischenablage kopiert"
+      subject: "Betreff"
+      body: "Nachricht"
+      attachment: "Anhang (optional)"
+      attachment_hint: "Eine PDF-Datei, maximal 10 MB — z. B. ein Kursprogramm."
+      attachment_must_be_pdf: "muss eine PDF-Datei sein"
+      send:
+        one: "An 1 Person senden"
+        other: "An %{count} Personen senden"
+      sent:
+        one: "Deine Nachricht wird an 1 Person verschickt."
+        other: "Deine Nachricht wird an %{count} Personen verschickt."
+      no_recipients: "Es gibt noch keine angemeldeten Studierenden."
+      sent_messages: "Gesendete Nachrichten"
+      recipients:
+        one: "1 Empfänger(in)"
+        other: "%{count} Empfänger(innen)"
+      crosslink_html: >-
+        Du möchtest allen angemeldeten Studierenden eine E-Mail schreiben
+        (z. B. mit dem Kursprogramm)? Das geht im Tab %{link}.
   activerecord:
+    attributes:
+      registration/student_message:
+        attachment: "Anhang"
     errors:
       models:
         registration/campaign:

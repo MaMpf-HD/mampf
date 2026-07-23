@@ -65,7 +65,12 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
       format_points(@points)
     else
       display = COMPACT_SYMBOLS[@status] || COMPACT_SYMBOLS[:not_submitted]
-      tag.span(display[:text], class: "text-#{display[:color]}")
+      tag.span(class: "text-#{display[:color]}") do
+        safe_join([
+                    tag.span(display[:text], aria: { hidden: true }),
+                    tag.span(label, class: "visually-hidden")
+                  ])
+      end
     end
   end
 

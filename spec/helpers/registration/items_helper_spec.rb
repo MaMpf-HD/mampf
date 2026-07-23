@@ -39,11 +39,9 @@ RSpec.describe(Registration::ItemsHelper, type: :helper) do
           double("Cohort", propagate_to_lecture: false)
         end
 
-        it "returns group label with no-propagation icon" do
-          result = helper.item_display_type(item)
-          expect(result).to include(I18n.t("registration.item.types.other_group"))
-          expect(result).to include("bi-person-x")
-          expect(result).to include(I18n.t("registration.item.hints.no_propagation"))
+        it "returns group label without icon" do
+          expect(helper.item_display_type(item))
+            .to eq(I18n.t("registration.item.types.other_group"))
         end
       end
     end

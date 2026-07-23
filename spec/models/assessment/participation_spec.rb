@@ -15,6 +15,12 @@ RSpec.describe(Assessment::Participation, type: :model) do
     it "creates a pending participation" do
       participation = FactoryBot.create(:assessment_participation, :pending)
       expect(participation.status).to eq("pending")
+      expect(participation.submitted_at).to be_nil
+    end
+
+    it "creates a submitted participation" do
+      participation = FactoryBot.create(:assessment_participation, :submitted)
+      expect(participation.status).to eq("pending")
       expect(participation.submitted_at).to be_present
     end
 
@@ -64,6 +70,29 @@ RSpec.describe(Assessment::Participation, type: :model) do
     it "returns nil when the user has no tutorial membership" do
       result = described_class.tutorial_for(user, lecture)
       expect(result).to be_nil
+    end
+  end
+
+  describe "performance record recomputation" do
+    let(:participation) { FactoryBot.create(:assessment_participation) }
+    let(:service) do
+      instance_double(StudentPerformance::ComputationService,
+                      compute_and_upsert_record_for: true)
+    end
+
+    before do
+      allow(StudentPerformance::ComputationService)
+        .to receive(:new)
+        .with(lecture: participation.assessment.lecture)
+        .and_return(service)
+    end
+
+    it "is gated by the assessment_grading flag" do
+      Flipper.disable(:assessment_grading)
+
+      participation.send(:recompute_performance_record)
+
+      expect(service).not_to have_received(:compute_and_upsert_record_for)
     end
   end
 end

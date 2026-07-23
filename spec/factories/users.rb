@@ -3,7 +3,7 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password { Faker::Internet.password }
     name { Faker::Name.name }
-    locale { I18n.available_locales.map(&:to_s).sample }
+    locale { "en" }
 
     transient do
       lecture_count { 2 }

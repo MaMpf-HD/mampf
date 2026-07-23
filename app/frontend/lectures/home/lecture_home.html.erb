@@ -1,0 +1,178 @@
+<%= vite_stylesheet_tag "user_registrations/index.scss" %>
+
+<div class="container-md small-width">
+  <div class="row mt-2 mb-2">
+    <div id="lecture-details" class="col-12 text-center">
+      <h4>
+        <span class="badge bg-secondary">
+          <%= @lecture.sort_localized %>
+        </span>
+        <span id="lecture-title" class="me-3">
+          <%= @lecture.title_term_info_no_type %>
+        </span>
+        <% if @lecture.term || !@lecture.disable_teacher_display %>
+          <span>
+            <% if !@lecture.teacher.archived %>
+              <%= link_to @lecture.teacher.name,
+                          teacher_path(@lecture.teacher),
+                          id: "lecture-teacher",
+                          class: "text-dark" %>
+            <% else %>
+              <%= @lecture.teacher.name %>
+            <% end %>
+          </span>
+        <% end %>
+        <% privileged = current_user.admin ||
+                        current_user.in?(@lecture.editors_with_inheritance) %>
+        <%= link_to "",
+                    edit_lecture_path(@lecture),
+                    id: "lecture-edit",
+                    class: "far fa-edit text-dark",
+                    data: { toggle: "tooltip",
+                            placement: "bottom" },
+              "aria-label": t("buttons.edit"),
+                    title: t("buttons.edit"),
+                    style: "text-decoration: none; " +
+                          "display: " + show_inline(privileged) %>
+      </h4>
+    </div>
+  </div>
+
+  <% can_edit_home = current_user.can_edit?(@lecture) %>
+
+  <% if @lecture.home_content? %>
+    <div class="card mt-3" data-testid="lecture-home-intro">
+      <div class="card-body">
+        <% if can_edit_home %>
+          <%= link_to edit_lecture_path(@lecture, tab: "home"),
+                      class: "float-end text-muted ms-2",
+                      title: t("buttons.edit"),
+                      "aria-label": t("buttons.edit") do %>
+            <i class="far fa-edit" aria-hidden="true"></i>
+          <% end %>
+        <% end %>
+
+        <% if @lecture.home_intro_present? %>
+          <div class="lecture-home-intro-text">
+            <%= sanitize(@lecture.home_intro) %>
+          </div>
+        <% end %>
+
+        <% if @lecture.home_attachment.present? %>
+          <%= link_to lecture_home_attachment_path(@lecture),
+                      class: "btn btn-outline-primary btn-sm mt-2",
+                      target: "_blank",
+                      rel: "noopener",
+                      data: { testid: "lecture-home-attachment" } do %>
+            <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>
+            <%= t("registration.lecture.home.attachment_download") %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% elsif can_edit_home %>
+    <div class="alert alert-light border mt-3"
+         data-testid="lecture-home-intro-empty">
+      <p class="mb-2">
+        <%= @show_registration_section ?
+              t("registration.lecture.home.intro_empty_campaign") :
+              t("registration.lecture.home.intro_empty") %>
+      </p>
+      <%= link_to t("admin.lecture.home_intro_add"),
+                  edit_lecture_path(@lecture, tab: "home"),
+                  class: "btn btn-outline-primary btn-sm" %>
+    </div>
+  <% end %>
+
+  <% if @notifications.present? || @new_topics_count.positive? %>
+    <div class="mt-3 mb-3">
+      <%= render partial: "lectures/show/news_card",
+                 locals: { lecture: @lecture,
+                           notifications: @notifications,
+                           posts_count: @new_topics_count } %>
+    </div>
+  <% end %>
+
+  <% unless @subscribed || current_user.can_edit?(@lecture) %>
+    <div class="alert alert-light border mt-3"
+         data-testid="lecture-home-subscribe-hint">
+      <p class="mb-2"><%= t("registration.lecture.home.subscribe_prompt") %></p>
+      <%= form_with url: subscribe_lecture_path,
+                    method: :patch,
+                    local: true,
+                    scope: "lecture",
+                    class: "d-flex align-items-center flex-wrap gap-2" do |f| %>
+        <%= f.hidden_field :id, value: @lecture.id %>
+        <%= f.hidden_field :parent, value: "redirect" %>
+        <% if @passphrase_required %>
+          <%= f.password_field :passphrase,
+                               class: "form-control w-auto",
+                               placeholder: t("profile.passphrase"),
+                               "aria-label": t("profile.passphrase"),
+                               data: { testid: "lecture-home-passphrase" } %>
+        <% end %>
+        <%= f.submit t("profile.subscribe_lecture"),
+                     class: "btn btn-outline-primary text-nowrap",
+                     data: { testid: "lecture-home-subscribe-button" } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @show_registration_section %>
+    <br/><br/><br/>
+    <%= render partial: "user_registrations/user_registration",
+              locals: {
+                campaigns_details: @campaigns_details,
+                self_rosterables: @self_rosterables,
+                rosterized_entries: @rosterized_entries,
+                lecture: @lecture
+              } %>
+  <% elsif can_edit_home && @campaigns_details.any? %>
+    <div class="alert alert-info mt-3"
+         data-testid="lecture-home-staff-registration-note">
+      <h6 class="mb-2">
+        <%= t("registration.lecture.home.staff_registration_title") %>
+      </h6>
+
+      <p class="small mb-2">
+        <%= t("registration.lecture.home.staff_registration_hint") %>
+      </p>
+
+      <ul class="small mb-2">
+        <% @campaigns_details.each do |details| %>
+          <li>
+            <%= student_registration_campaign_title(details.campaign) %>
+            —
+            <%= t("registration.campaign.status.#{details.campaign.status}") %>
+          </li>
+        <% end %>
+      </ul>
+
+      <%= link_to t("registration.lecture.home.staff_registration_manage"),
+                  edit_lecture_path(@lecture, tab: "groups"),
+                  class: "btn btn-sm btn-outline-primary" %>
+    </div>
+  <% end %>
+
+  <% registration_content_present = @campaigns_details.any? ||
+                        @rosterized_entries.any? ||
+                        @self_rosterables.any? %>
+
+  <% if !registration_content_present && @notifications.blank? && @new_topics_count.zero? &&
+        !@lecture.home_content? && !can_edit_home %>
+    <% I18n.with_locale(@lecture.locale_with_inheritance || I18n.locale) do %>
+      <div class="alert alert-light border mt-3"
+           data-testid="lecture-home-fallback-card">
+        <h5 class="mb-2"><%= t("registration.lecture.home.empty_title") %></h5>
+        <% if @subscribed %>
+          <p class="mb-3"><%= t("registration.lecture.home.empty_subscribed") %></p>
+          <%= link_to t("basics.outline"),
+                      lecture_outline_path(@lecture),
+                      class: "btn btn-outline-primary btn-sm" %>
+        <% else %>
+          <p class="mb-0"><%= t("registration.lecture.home.empty_unsubscribed") %></p>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

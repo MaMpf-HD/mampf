@@ -1,3 +1,6 @@
+# Represents the overview component for assessments in the lecture.
+# It manages the active tab and provides helper methods for rendering the tabs
+# and their content.
 class AssessmentsOverviewComponent < ViewComponent::Base
   def initialize(lecture:, active_tab: nil)
     super()
@@ -20,11 +23,11 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   end
 
   def performance_enabled?
-    Flipper.enabled?(:student_performance) && !lecture.seminar?
+    student_performance_enabled?
   end
 
   def achievements_enabled?
-    Flipper.enabled?(:student_performance) && !lecture.seminar?
+    student_performance_enabled?
   end
 
   def certifications_enabled?
@@ -46,6 +49,10 @@ class AssessmentsOverviewComponent < ViewComponent::Base
   end
 
   private
+
+    def student_performance_enabled?
+      Flipper.enabled?(:student_performance) && !lecture.seminar?
+    end
 
     def resolve_tab(tab)
       key = tab&.to_sym

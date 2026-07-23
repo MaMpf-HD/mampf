@@ -1,0 +1,18 @@
+module UserRegistrations
+  class LectureCampaignsService
+    def initialize(lecture, user)
+      @lecture = lecture
+      @user = user
+    end
+
+    def call
+      campaigns = Registration::Campaign
+                  .where(campaignable: @lecture)
+                  .where.not(status: :draft)
+
+      campaigns.map do |campaign|
+        CampaignDetailsService.new(campaign, @user).call
+      end
+    end
+  end
+end

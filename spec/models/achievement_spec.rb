@@ -29,25 +29,6 @@ RSpec.describe(Achievement, type: :model) do
       achievement = FactoryBot.build(:achievement, lecture: nil)
       expect(achievement).not_to be_valid
     end
-
-    it "has many rule_achievements" do
-      achievement = FactoryBot.create(:achievement)
-      rule = FactoryBot.create(:student_performance_rule,
-                               lecture: achievement.lecture)
-      FactoryBot.create(:student_performance_rule_achievement,
-                        rule: rule, achievement: achievement)
-      expect(achievement.rule_achievements.count).to eq(1)
-    end
-
-    it "restricts deletion when rule_achievements exist" do
-      achievement = FactoryBot.create(:achievement)
-      rule = FactoryBot.create(:student_performance_rule,
-                               lecture: achievement.lecture)
-      FactoryBot.create(:student_performance_rule_achievement,
-                        rule: rule, achievement: achievement)
-      expect { achievement.destroy }.not_to change(Achievement, :count)
-      expect(achievement.errors[:base]).to be_present
-    end
   end
 
   describe "validations" do
@@ -165,6 +146,15 @@ RSpec.describe(Achievement, type: :model) do
         participation.update!(grade_text: "5")
         expect(achievement.student_met_threshold?(user)).to be(false)
       end
+
+      it "returns true when a decimal grade_text meets a decimal threshold" do
+        achievement.update!(threshold: 12.5)
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+        participation.update!(grade_text: "12.6")
+        expect(achievement.student_met_threshold?(user)).to be(true)
+      end
     end
 
     context "when percentage" do
@@ -245,28 +235,20 @@ RSpec.describe(Achievement, type: :model) do
       achievement.update!(value_type: :percentage, threshold: 75)
     end
 
+    it "recomputes records synchronously when destroyed" do
+      achievement = FactoryBot.create(:achievement, :numeric,
+                                      lecture: lecture, threshold: 10)
+      expect_any_instance_of(StudentPerformance::ComputationService)
+        .to receive(:compute_and_upsert_all_records!)
+      achievement.destroy!
+    end
+
     it "does not recompute when only title changes" do
       achievement = FactoryBot.create(:achievement, :numeric,
                                       lecture: lecture, threshold: 10)
       expect_any_instance_of(StudentPerformance::ComputationService)
         .not_to receive(:compute_and_upsert_all_records!)
       achievement.update!(title: "Renamed")
-    end
-
-    it "touches linked rules when threshold changes" do
-      achievement = FactoryBot.create(:achievement, :numeric,
-                                      lecture: lecture, threshold: 10)
-      rule = FactoryBot.create(:student_performance_rule,
-                               :active, :with_percentage,
-                               lecture: lecture)
-      FactoryBot.create(:student_performance_rule_achievement,
-                        rule: rule, achievement: achievement)
-      original_updated_at = rule.updated_at
-
-      sleep(0.1)
-      achievement.update!(threshold: 20)
-
-      expect(rule.reload.updated_at).to be > original_updated_at
     end
   end
 

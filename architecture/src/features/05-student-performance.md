@@ -433,7 +433,7 @@ The "performance calculator" that gathers all the data and stamps it into a stud
 | Method | Purpose |
 |--------|---------|
 | `initialize(lecture:)` | Sets up the service with the lecture whose rule will be used. |
-| `compute_and_upsert_record_for(user)` | Computes performance for a single user and upserts their `StudentPerformance::Record`. Returns the fresh record. |
+| `compute_and_upsert_record_for(user)` | Computes performance for a single user and upserts their `StudentPerformance::Record`. |
 | `compute_and_upsert_all_records!` | Computes performance for all students in the lecture. |
 
 ### Behavior Highlights
@@ -448,8 +448,8 @@ The service is called synchronously via `after_commit` callbacks, covering all m
 1.  **`Assessment::Participation` (per-user):** Changes to `status`, `submitted_at`, or `grade_text` (for achievement participations) trigger `compute_and_upsert_record_for(user)`.
 2.  **`Assessment::TaskPoint` (per-user):** Changes to `points` trigger `compute_and_upsert_record_for(user)`.
 3.  **`Achievement` (full-lecture):** Changes to `threshold` or `value_type` trigger `compute_and_upsert_all_records!`.
-4.  **`Assessment::Assessment` (full-lecture):** Assignment-type create/destroy, or `total_points` change, trigger `compute_and_upsert_all_records!`.
-5.  **`Assessment::Task` (full-lecture):** Create/destroy or `max_points` change trigger `compute_and_upsert_all_records!` (skipped when no participations exist yet, e.g. during initial assignment setup).
+4.  **`Assessment::Assessment` (full-lecture):** Assignment-type destroy or `total_points` change trigger `compute_and_upsert_all_records!`. Assignment creation reaches the same recompute indirectly via assessment setup and participation seeding.
+5.  **`Assessment::Task` (full-lecture):** Create/destroy or `max_points` change trigger `compute_and_upsert_all_records!`.
 6.  **`LectureMembership` (enrollment):** Student joining calls `compute_and_upsert_record_for(user)`; student leaving deletes the record.
 
 All callbacks are gated by the `:assessment_grading` Flipper flag (except `TaskPoint`, where the flag is implicitly enforced because task points only exist when the flag is on).

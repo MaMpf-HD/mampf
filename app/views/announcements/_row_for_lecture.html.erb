@@ -8,7 +8,7 @@
       <%= notification.notifiable.announcer.name %>
     </div>
     <div class="col-7">
-      <%= notification.notifiable.details.html_safe %>
+      <%= sanitize(notification.notifiable.details) %>
     </div>
     <div class="col-1 text-end">
       <%= link_to notification_path(notification),

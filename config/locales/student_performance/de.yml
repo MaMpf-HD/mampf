@@ -17,6 +17,7 @@ de:
       no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
     records:
       tooltip_points: "Punkte"
+      percentage_unavailable: "Prozent nicht verfügbar"
       columns:
         student: "Studierende/r"
         email: "E-Mail"
@@ -43,7 +44,8 @@ de:
         showing: "%{from}–%{to} von %{count} Studierenden"
       show:
         back: "Zurück zur Übersicht"
-        recompute: "Neu berechnen"
+        recompute: "Datensatz neu berechnen"
+        recompute_hint: "Nur als Fallback: Verwende dies, wenn die angezeigten Daten veraltet oder fehlerhaft wirken."
         review_proposal: "Vorschlag prüfen"
         total_points: "Gesamtpunkte"
         out_of: "von %{max} möglichen"

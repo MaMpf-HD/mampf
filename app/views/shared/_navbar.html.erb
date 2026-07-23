@@ -91,7 +91,7 @@
           <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
             class="nav-link bi bi-box-arrow-right"
             data-bs-toggle="tooltip"
-            data-method="delete"
+            data-turbo-method="delete"
             title="<%= t('navbar.logout') %>">
           </a>
         </li>

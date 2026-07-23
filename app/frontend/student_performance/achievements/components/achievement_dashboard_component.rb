@@ -1,12 +1,13 @@
 # Missing top-level docstring, please formulate one yourself 😁
 class AchievementDashboardComponent < ViewComponent::Base
-  def initialize(achievement:, lecture:)
+  def initialize(achievement:, lecture:, original_achievement: achievement)
     super()
     @achievement = achievement
     @lecture = lecture
+    @original_achievement = original_achievement
   end
 
-  attr_reader :achievement, :lecture, :back_path
+  attr_reader :achievement, :lecture, :original_achievement, :back_path
 
   def before_render
     @back_path = helpers.assessment_assessments_path(

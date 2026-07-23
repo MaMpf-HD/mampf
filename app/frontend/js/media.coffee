@@ -279,52 +279,40 @@ $(document).on 'turbo:load', ->
   if trixElement?
     content = trixElement.dataset.content
     editor = trixElement.editor
-    if !editor
-      return
-    editor.setSelectedRange([0,65535])
-    editor.deleteInDirection("forward")
-    editor.insertHTML(content)
-    document.activeElement.blur()
-    trixElement.addEventListener 'trix-change', ->
-      $('#medium-basics-warning').show()
-      $('#medium-content-preview').html($('#medium-content-trix').html())
-      mediumContentDetails = document.getElementById('medium-content-preview')
-      renderMathInElement mediumContentDetails,
-        delimiters: [
-          {
-            left: '$$'
-            right: '$$'
-            display: true
-          }
-          {
-            left: '$'
-            right: '$'
-            display: false
-          }
-          {
-            left: '\\('
-            right: '\\)'
-            display: false
-          }
-          {
-            left: '\\['
-            right: '\\]'
-            display: true
-          }
-        ]
-        throwOnError: false
-      return
-
-  $(document).on 'click', '.triggerDownload', ->
-    mediumId = $(this).data('medium')
-    sort = $(this).data('sort')
-    $.ajax Routes.register_download_path(mediumId, { sort: sort }),
-      type: 'POST'
-      dataType: 'script'
-      data: {
-        sort:  sort
-      }
-    return
+    if editor
+      editor.setSelectedRange([0,65535])
+      editor.deleteInDirection("forward")
+      editor.insertHTML(content)
+      document.activeElement.blur()
+      trixElement.addEventListener 'trix-change', ->
+        $('#medium-basics-warning').show()
+        $('#medium-content-preview').html($('#medium-content-trix').html())
+        mediumContentDetails = document.getElementById('medium-content-preview')
+        renderMathInElement mediumContentDetails,
+          delimiters: [
+            {
+              left: '$$'
+              right: '$$'
+              display: true
+            }
+            {
+              left: '$'
+              right: '$'
+              display: false
+            }
+            {
+              left: '\\('
+              right: '\\)'
+              display: false
+            }
+            {
+              left: '\\['
+              right: '\\]'
+              display: true
+            }
+          ]
+          throwOnError: false
+        return
 
   $(document).on 'click', '#showMediaStatistics', ->
     mediumId = $(this).data('medium')
@@ -340,6 +328,10 @@ $(document).on 'turbo:load', ->
   $('#release_date').on 'focus', ->
     # Select other option if user clicks on release date input field
     $('#medium_release_now_0').prop('checked', true)
+    return
+
+  $('#medium_release_now_0').on 'click', ->
+    setTimeout((-> document.getElementById('release_date')?.focus()), 100)
     return
 
   $('#medium_create_assignment').on 'click', ->
@@ -365,6 +357,5 @@ $(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#cancel-medium-actions'
   $(document).off 'click', '#editMediumTags'
   $(document).off 'click', '#cancelMediumTags'
-  $(document).off 'click', '.triggerDownload'
   $(document).off 'click', '#showMediaStatistics'
   return

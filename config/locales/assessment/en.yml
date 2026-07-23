@@ -1,7 +1,6 @@
 en:
   assessment:
     assessments: "Assessments"
-    grading: "Grading"
     tabs:
       assignments: "Assignments"
       talks: "Talks"
@@ -17,6 +16,7 @@ en:
         updated: "Achievement updated successfully."
         destroyed: "Achievement deleted successfully."
       errors:
+        destroy_failed: "Failed to delete achievement."
         not_found: "Achievement not found."
         referenced_by_rules: "Cannot delete: Achievement is referenced by a rule."
       subtitle: "Define additional criteria students must fulfill beyond points."
@@ -149,9 +149,14 @@ en:
           attributes:
             base:
               requires_points_true: "can only be created for assessments with requires_points: true"
+        assessment/participation:
+          attributes:
+            base:
+              early_grading_not_allowed: "Grading is not permitted before the deadline"
         assessment/task_point:
           attributes:
             base:
+              early_grading_not_allowed: "Grading is not permitted before the deadline"
               assessment_mismatch: "Task and participation must belong to the same assessment"
         assessment/assessment:
           attributes:

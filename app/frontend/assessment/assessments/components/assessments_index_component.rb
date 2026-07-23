@@ -38,7 +38,9 @@ class AssessmentsIndexComponent < ViewComponent::Base
         all_talks.select { |t| t.speakers.any? }
       when "Assignment"
         lecture.assignments
-               .includes(:assessment, medium: :tags, lecture: :term)
+               .includes({ assessment: :assessment_participations },
+                         { medium: :tags },
+                         { lecture: :term })
                .order(created_at: :desc)
       else
         []
@@ -47,7 +49,9 @@ class AssessmentsIndexComponent < ViewComponent::Base
 
     def all_talks
       @all_talks ||= lecture.talks
-                            .includes(:assessment, :speakers, lecture: :term)
+                            .includes({ assessment: :assessment_participations },
+                                      :speakers,
+                                      { lecture: :term })
                             .order(:position)
     end
 

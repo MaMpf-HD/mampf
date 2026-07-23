@@ -21,9 +21,11 @@ RSpec.describe(PartialTabComponent, type: :component) do
 
   it "works without locals" do
     component = described_class.new(
-      partial: "assessment/assessments/settings",
-      locals: {}
+      partial: "assessment/assessments/empty_assignments"
     )
-    expect { component }.not_to raise_error
+
+    expect(render_inline(component).to_html).to include(
+      I18n.t("assessment.no_assignments_yet")
+    )
   end
 end
