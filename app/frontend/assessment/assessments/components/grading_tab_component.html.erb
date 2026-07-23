@@ -1,0 +1,41 @@
+<div data-cy="grading-tab">
+  <% if full_width? %>
+    <%= render scheme_component %>
+  <% else %>
+    <div class="row g-4">
+      <div class="col-xl-6 order-2 order-xl-1">
+        <div class="card shadow">
+          <div class="card-header bg-light">
+            <h6 class="mb-0">
+              <i class="bi bi-people me-1"></i>
+              <%= t("assessment.grade_table.roster_heading") %>
+            </h6>
+          </div>
+
+          <div class="card-body">
+            <%= render roster_component %>
+          </div>
+        </div>
+      </div>
+
+      <aside class="col-xl-6 order-1 order-xl-2">
+        <div
+          class="grading-aside position-sticky"
+          style="top: 1rem; max-height: calc(100vh - 2rem);
+                    overflow-y: auto; padding: 0.5rem;
+                    margin: -0.5rem;"
+        >
+          <% if show_form? %>
+            <%= render scheme_component %>
+          <% else %>
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <%= render scheme_component %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </aside>
+    </div>
+  <% end %>
+</div>

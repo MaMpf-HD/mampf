@@ -29,6 +29,12 @@ RSpec.describe(Assessment::Participation, type: :model) do
       expect(participation.status).to eq("reviewed")
       expect(participation.graded_at).to be_present
     end
+
+    it "creates a participation with numeric grade" do
+      participation = FactoryBot.create(:assessment_participation, :with_numeric_grade)
+      expect([1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0,
+              5.0]).to include(participation.grade_numeric)
+    end
   end
 
   describe "validations" do
@@ -43,6 +49,44 @@ RSpec.describe(Assessment::Participation, type: :model) do
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:user_id]).to be_present
     end
+
+    context "grade_numeric validation" do
+      let(:gradable_assessment) { FactoryBot.create(:assessment, :gradable) }
+
+      it "accepts valid German grades on gradable assessments" do
+        valid_grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0]
+        valid_grades.each do |grade|
+          participation = FactoryBot.build(:assessment_participation,
+                                           assessment: gradable_assessment,
+                                           grade_numeric: grade)
+          expect(participation).to be_valid
+        end
+      end
+
+      it "rejects invalid grades" do
+        invalid_grades = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.0]
+        invalid_grades.each do |grade|
+          participation = FactoryBot.build(:assessment_participation,
+                                           assessment: gradable_assessment,
+                                           grade_numeric: grade)
+          expect(participation).not_to be_valid
+          expect(participation.errors[:grade_numeric]).to be_present
+        end
+      end
+
+      it "rejects grade_numeric on non-gradable assessments" do
+        participation = FactoryBot.build(:assessment_participation,
+                                         assessment: assessment,
+                                         grade_numeric: 1.0)
+        expect(participation).not_to be_valid
+        expect(participation.errors[:grade_numeric]).to be_present
+      end
+
+      it "allows nil" do
+        participation = FactoryBot.build(:assessment_participation, grade_numeric: nil)
+        expect(participation).to be_valid
+      end
+    end
   end
 
   describe "enums" do
@@ -51,6 +95,78 @@ RSpec.describe(Assessment::Participation, type: :model) do
       statuses.each do |status|
         participation = FactoryBot.build(:assessment_participation, status: status)
         expect(participation.status).to eq(status)
+      end
+    end
+  end
+
+  describe "achievement recomputation trigger" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      Flipper.enable(:assessment_grading)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+    end
+
+    after { Flipper.disable(:assessment_grading) }
+
+    context "when grade_text changes on an achievement participation" do
+      let(:achievement) do
+        FactoryBot.create(:achievement, :boolean, lecture: lecture)
+      end
+
+      it "recomputes the performance record synchronously" do
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+
+        service = instance_double(
+          StudentPerformance::ComputationService,
+          compute_and_upsert_record_for: nil
+        )
+        expect(StudentPerformance::ComputationService)
+          .to receive(:new).with(lecture: lecture).and_return(service)
+        expect(service).to receive(:compute_and_upsert_record_for).with(user)
+
+        participation.update!(grade_text: "pass")
+      end
+    end
+
+    context "when grade_text changes on a non-achievement participation" do
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assessment) do
+        FactoryBot.create(:assessment, assessable: assignment,
+                                       lecture: lecture)
+      end
+      let!(:participation) do
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment, user: user)
+      end
+
+      it "does not recompute the performance record" do
+        expect(StudentPerformance::ComputationService)
+          .not_to receive(:new)
+
+        participation.update!(grade_text: "some value")
+      end
+    end
+
+    context "when a non-grade_text attribute changes" do
+      let(:achievement) do
+        FactoryBot.create(:achievement, :boolean, lecture: lecture)
+      end
+
+      it "recomputes when status changes" do
+        participation = achievement.assessment
+                                   .assessment_participations
+                                   .find_by(user: user)
+
+        expect_any_instance_of(StudentPerformance::ComputationService)
+          .to receive(:compute_and_upsert_record_for).with(user)
+
+        participation.update!(status: :reviewed)
       end
     end
   end

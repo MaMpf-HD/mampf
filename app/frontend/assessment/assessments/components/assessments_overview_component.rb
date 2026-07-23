@@ -1,7 +1,9 @@
-# Represents the overview component for assessments in the lecture.
-# It manages the active tab and provides helper methods for rendering the tabs
-# and their content.
+# Renders an overview of assessments with tabs for assessments, achievements,
+# performance, and certifications.
 class AssessmentsOverviewComponent < ViewComponent::Base
+  TABS = [:assessments, :achievements, :performance,
+          :certifications].freeze
+
   def initialize(lecture:, active_tab: nil)
     super()
     @lecture = lecture

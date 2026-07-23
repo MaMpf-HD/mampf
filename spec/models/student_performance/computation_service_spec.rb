@@ -294,6 +294,7 @@ RSpec.describe(StudentPerformance::ComputationService) do
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
         expect(record.percentage_materialized).to be_within(0.01).of(75.0)
       end
+
     end
 
     context "when assessment has no participation record" do

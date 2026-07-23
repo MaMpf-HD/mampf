@@ -119,7 +119,7 @@
       <% component.with_tab(name: "exams", label: t("assessment.exams")) do %>
         <div class="container medium-width lecture-pane">
           <div id="exams_container">
-            <%= render partial: "exams/list", locals: { lecture: @lecture } %>
+            <%= render partial: 'exams/list', locals: { lecture: @lecture } %>
           </div>
         </div>
       <% end %>

@@ -24,7 +24,7 @@
                 type="button"
                 role="tab"
                 aria-selected="<%= tab_active?(tab.key) %>">
-          <%= tab.label %>
+          <%= tab.label.respond_to?(:call) ? tab.label.call : tab.label %>
         </button>
       </li>
     <% end %>

@@ -101,14 +101,8 @@ window.Stimulus.register("assessments--settings", SettingsController);
 import PointsPrecisionController from "~/assessment/points_precision.controller.js";
 window.Stimulus.register("assessments--points-precision", PointsPrecisionController);
 
-import ExamFormController from "~/exams/form.controller.js";
-window.Stimulus.register("exams--form", ExamFormController);
-
-import ExamRegistrationSettingsController from "~/exams/registration_settings.controller.js";
-window.Stimulus.register("exams--registration-settings", ExamRegistrationSettingsController);
-
-import ExamRegistrationListController from "~/exams/registration_list.controller.js";
-window.Stimulus.register("exams--registration-list", ExamRegistrationListController);
+import SchemeFormController from "~/assessment/assessments/scheme_form.controller.js";
+window.Stimulus.register("assessments--scheme-form", SchemeFormController);
 
 import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
 window.Stimulus.register("achievement-form", AchievementFormController);
@@ -121,6 +115,15 @@ window.Stimulus.register("threshold-mode", ThresholdModeController);
 
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
+
+import ExamFormController from "~/exams/form.controller.js";
+window.Stimulus.register("exams--form", ExamFormController);
+
+import ExamRegistrationSettingsController from "~/exams/registration_settings.controller.js";
+window.Stimulus.register("exams--registration-settings", ExamRegistrationSettingsController);
+
+import ExamRegistrationListController from "~/exams/registration_list.controller.js";
+window.Stimulus.register("exams--registration-list", ExamRegistrationListController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

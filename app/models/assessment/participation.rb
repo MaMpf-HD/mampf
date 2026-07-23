@@ -54,18 +54,18 @@ module Assessment
     private
 
       def grading_lifecycle_must_be_open
-        # Allow new/pending changes to pass, or modifications when grading is explicitly open.
+        # Grade-bearing changes and the transition into "reviewed" are gated by
+        # the grading window. Administrative transitions to absent/exempt carry
+        # no grade and stay allowed, so absences can be recorded before grading
+        # opens.
         return if assessment&.grading_open?
 
-        # An array intersection checks if any of the critical grading attributes were modified.
-        # "status_changed?(from: 'pending')" is evaluated manually, since `changes.keys` only
-        # checks if it changed at all.
         changed_grading_attributes =
           changes.keys.intersect?(["grade_numeric", "grade_text",
                                    "points_total", "grader_id", "graded_at"])
-        status_changed_from_pending = status_changed?(from: "pending")
+        becoming_reviewed = status_changed?(to: "reviewed")
 
-        return unless changed_grading_attributes || status_changed_from_pending
+        return unless changed_grading_attributes || becoming_reviewed
 
         errors.add(:base, :early_grading_not_allowed)
       end

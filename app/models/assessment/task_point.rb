@@ -13,9 +13,14 @@ module Assessment
     validate :ensure_task_and_participation_match_assessment
     validate :grading_lifecycle_must_be_open
 
+    after_commit :refresh_participation_points_total, on: :destroy
+    after_commit :recompute_performance_record, on: :destroy
     after_commit :refresh_participation_points_total,
-                 :recompute_performance_record,
-                 if: :should_recompute_points?
+                 on: [:create, :update],
+                 if: :saved_change_to_points?
+    after_commit :recompute_performance_record,
+                 on: [:create, :update],
+                 if: :saved_change_to_points?
 
     private
 
@@ -23,10 +28,6 @@ module Assessment
         return if assessment_participation&.assessment&.grading_open?
 
         errors.add(:base, :early_grading_not_allowed)
-      end
-
-      def should_recompute_points?
-        destroyed? || previously_new_record? || saved_change_to_points?
       end
 
       def refresh_participation_points_total
@@ -37,13 +38,11 @@ module Assessment
                     assessment_participation_id: assessment_participation_id
                   )
                   .sum(:points)
-        participation = ::Assessment::Participation
-                        .find_by(id: assessment_participation_id)
-        return unless participation
-
         # points_total mirrors committed task points and must stay in sync
         # rubocop:disable Rails/SkipsModelValidations
-        participation.update_columns(points_total: sum, updated_at: Time.current)
+        ::Assessment::Participation
+          .where(id: assessment_participation_id)
+          .update_all(points_total: sum, updated_at: Time.current)
         # rubocop:enable Rails/SkipsModelValidations
       end
 
