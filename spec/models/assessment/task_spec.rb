@@ -59,7 +59,8 @@ RSpec.describe(Assessment::Task, type: :model) do
   end
 
   describe "#points_entered?" do
-    let(:task) { FactoryBot.create(:assessment_task) }
+    let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
+    let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
 
     it "returns false when no task points exist" do
       expect(task.points_entered?).to be(false)
@@ -82,7 +83,8 @@ RSpec.describe(Assessment::Task, type: :model) do
   end
 
   describe "destruction" do
-    let(:task) { FactoryBot.create(:assessment_task) }
+    let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
+    let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
 
     it "can be destroyed when no points have been entered" do
       expect(task.destroy).to be_truthy
@@ -138,6 +140,50 @@ RSpec.describe(Assessment::Task, type: :model) do
     context "when assignment deadline has not passed" do
       it "reports deadline_passed? as false" do
         expect(task.deadline_passed?).to be(false)
+      end
+    end
+  end
+
+  describe "performance record recomputation" do
+    before { Flipper.enable(:assessment_grading) }
+
+    after { Flipper.disable(:assessment_grading) }
+
+    let(:task) { FactoryBot.create(:assessment_task) }
+    let(:create_existing_record) { true }
+    let!(:record) do
+      next unless create_existing_record
+
+      FactoryBot.create(:student_performance_record,
+                        lecture: task.assessment.lecture)
+    end
+    let(:service) do
+      instance_double(StudentPerformance::ComputationService,
+                      compute_and_upsert_all_records!: true)
+    end
+
+    before do
+      allow(StudentPerformance::ComputationService)
+        .to receive(:new)
+        .with(lecture: task.assessment.lecture)
+        .and_return(service)
+    end
+
+    it "is gated by the assessment_grading flag" do
+      Flipper.disable(:assessment_grading)
+
+      task.send(:recompute_all_performance_records)
+
+      expect(service).not_to have_received(:compute_and_upsert_all_records!)
+    end
+
+    context "when no performance records exist yet" do
+      let(:create_existing_record) { false }
+
+      it "still recomputes all performance records" do
+        task.send(:recompute_all_performance_records)
+
+        expect(service).to have_received(:compute_and_upsert_all_records!)
       end
     end
   end

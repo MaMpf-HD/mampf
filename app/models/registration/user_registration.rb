@@ -25,12 +25,39 @@ module Registration
                class_name: "Registration::Item",
                inverse_of: :user_registrations
 
+    belongs_to :rejection_policy,
+               class_name: "Registration::Policy",
+               optional: true
+
     # A user registration represents an application for a specific item.
     # Changing the target item is semantically a different application.
     # Therefore, the registration_item_id is immutable.
     attr_readonly :registration_item_id
 
     enum :status, { pending: 0, confirmed: 1, rejected: 2 }
+
+    scope :with_open_rejection_reason, lambda {
+      where(rejection_reason_code: nil)
+        .or(
+          where.not(
+            rejection_reason_code: REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+          )
+        )
+    }
+
+    scope :with_capacity_rejection_reason, lambda {
+      where(rejection_reason_type: REJECTION_REASON_TYPE_CAPACITY)
+    }
+
+    scope :with_policy_rejection_reason, lambda {
+      where(rejection_reason_type: REJECTION_REASON_TYPE_POLICY)
+    }
+
+    scope :not_overridden, lambda {
+      where(rejection_overridden_at: nil)
+    }
+
+    before_validation :set_exclusive_assignment
 
     validates :status, presence: true
 
@@ -52,26 +79,34 @@ module Registration
               },
               if: -> { registration_campaign.preference_based? }
 
-    # FCFS campaigns: no rank allowed, one row per user+campaign
+    # first-come-first-served campaigns: no rank allowed, one row per user+campaign
     validates :preference_rank,
               absence: true,
-              if: -> { registration_campaign.first_come_first_served? }
-
-    # FCFS campaigns: one row per user+campaign
-    # There is also a DB index to enforce it at the database level (see the schema).
-    validates :user_id,
-              uniqueness: {
-                scope: :registration_campaign_id
-              },
               if: -> { registration_campaign.first_come_first_served? }
 
     after_create :increment_confirmed_counter
     after_update :update_confirmed_counter
     after_destroy :decrement_confirmed_counter
 
-    def self.localized_rejection_reason_label(reason_code:, reason_label:)
+    # first-come-first-served campaigns: one row per user+campaign for tutorial + talk items
+    # (exclusive_assignment == true)
+    validates :user_id,
+              uniqueness: {
+                scope: :registration_campaign_id,
+                conditions: -> { where(exclusive_assignment: true, preference_rank: nil) }
+              },
+              if: -> { exclusive_assignment && preference_rank.nil? }
+
+    # first-come-first-served campaigns: one row per user + campaign + item
+    validates :user_id,
+              uniqueness: {
+                scope: [:registration_campaign_id, :registration_item_id]
+              },
+              if: -> { registration_campaign.first_come_first_served? }
+
+    def self.resolve_rejection_reason_label(reason_code:, fallback_label: nil)
       code = reason_code.to_s.presence
-      return reason_label if code.blank?
+      return fallback_label if code.blank?
 
       translated_code = REJECTION_REASON_CODE_TRANSLATION_ALIASES.fetch(code, code)
 
@@ -81,15 +116,21 @@ module Registration
       reason_key = "registration.user_registration.reason_labels.#{translated_code}"
       return I18n.t(reason_key) if I18n.exists?(reason_key)
 
-      reason_label
+      fallback_label
     end
 
-    def reject!(reason_type:, reason_code:, reason_label:, rejected_at: Time.current)
+    def reject!(reason_type:, reason_code:, reason_label: nil,
+                rejection_policy_id: nil,
+                rejected_at: Time.current)
       update!(
         status: :rejected,
         rejection_reason_type: reason_type,
         rejection_reason_code: reason_code,
-        rejection_reason_label: reason_label,
+        rejection_reason_label: self.class.resolve_rejection_reason_label(
+          reason_code: reason_code,
+          fallback_label: reason_label
+        ),
+        rejection_policy_id: rejection_policy_id,
         rejected_at: rejected_at,
         rejection_overridden_at: nil
       )
@@ -100,15 +141,16 @@ module Registration
         rejection_reason_type: nil,
         rejection_reason_code: nil,
         rejection_reason_label: nil,
+        rejection_policy_id: nil,
         rejected_at: nil,
         rejection_overridden_at: nil
       )
     end
 
-    def localized_rejection_reason_label
-      self.class.localized_rejection_reason_label(
+    def resolved_rejection_reason_label
+      self.class.resolve_rejection_reason_label(
         reason_code: rejection_reason_code,
-        reason_label: rejection_reason_label
+        fallback_label: rejection_reason_label
       )
     end
 
@@ -149,6 +191,12 @@ module Registration
         return if registration_item.registration_campaign_id == registration_campaign_id
 
         errors.add(:registration_item, :must_belong_to_same_campaign)
+      end
+
+      def set_exclusive_assignment
+        self.exclusive_assignment =
+          registration_campaign&.first_come_first_served? &&
+          registration_item&.exclusive_assignment?
       end
   end
 end

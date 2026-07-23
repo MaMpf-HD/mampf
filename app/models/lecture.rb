@@ -3,6 +3,7 @@ class Lecture < ApplicationRecord
   include ApplicationHelper
   include Registration::Campaignable
   include Rosters::Rosterable
+  include LectureHomeAttachmentUploader[:home_attachment]
 
   belongs_to :course
 
@@ -63,6 +64,11 @@ class Lecture < ApplicationRecord
   # Roster associations
   has_many :lecture_memberships, dependent: :destroy
   has_many :members, through: :lecture_memberships, source: :user
+
+  # messages from the lecture staff to registered students
+  has_many :registration_student_messages,
+           class_name: "Registration::StudentMessage",
+           dependent: :destroy
 
   # a lecture has many users who have starred it (fans)
   has_many :user_favorite_lecture_joins, dependent: :destroy
@@ -555,6 +561,24 @@ class Lecture < ApplicationRecord
     false
   end
 
+  # Trix leaves wrapper markup ("<div><br></div>") behind for an editor that was
+  # emptied again, which a plain #present? would count as content.
+  def home_intro_present?
+    ActionView::Base.full_sanitizer
+                    .sanitize(home_intro.to_s)
+                    .gsub("&nbsp;", " ")
+                    .strip
+                    .present?
+  end
+
+  def home_content?
+    home_intro_present? || home_attachment.present?
+  end
+
+  def home_attachment_filename
+    home_attachment&.metadata&.fetch("filename", nil)
+  end
+
   # returns path for show action of the lecture's course,
   def path(user)
     return unless user.lectures.include?(self)
@@ -821,13 +845,72 @@ class Lecture < ApplicationRecord
   end
 
   def ensure_roster_membership!(user_ids)
-    user_ids.uniq.each do |uid|
-      LectureMembership.transaction(requires_new: true) do
-        LectureMembership.create!(user_id: uid, lecture_id: id)
-      end
-    rescue ActiveRecord::RecordNotUnique
-      next
+    # Efficiently insert missing memberships without touching existing rows.
+    # Note: Requires a unique index on [:user_id, :lecture_id].
+    existing_user_ids = lecture_memberships.where(user_id: user_ids).pluck(:user_id)
+    new_user_ids = user_ids.uniq - existing_user_ids
+
+    attributes = new_user_ids.map do |uid|
+      { user_id: uid, lecture_id: id }
     end
+
+    return if attributes.empty?
+
+    # Rails handles timestamps automatically.
+    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset
+    # of created_at/updated_at for existing members.
+    # rubocop:disable Rails/SkipsModelValidations
+    transaction do
+      LectureMembership.insert_all(
+        attributes,
+        unique_by: [:user_id, :lecture_id]
+      )
+
+      # Roster membership implies a subscription: members need access to the
+      # lecture's content, even when subscribing is gated by a passphrase
+      # (a roster seat is a stronger credential than a shared passphrase).
+      LectureUserJoin.insert_all(
+        attributes,
+        unique_by: [:lecture_id, :user_id]
+      )
+    end
+    # rubocop:enable Rails/SkipsModelValidations
+
+    sync_student_performance_for_members!(new_user_ids)
+  end
+
+  def sync_student_performance_for_members!(user_ids)
+    return unless Flipper.enabled?(:assessment_grading)
+
+    new_user_ids = user_ids.uniq
+    return if new_user_ids.empty?
+
+    achievements.includes(:assessment).find_each do |achievement|
+      achievement.assessment&.seed_participations_from!(
+        user_ids: new_user_ids,
+        recompute: false
+      )
+    end
+
+    service = StudentPerformance::ComputationService.new(lecture: self)
+    User.where(id: new_user_ids).find_each do |user|
+      service.compute_and_upsert_record_for(user)
+    end
+  end
+
+  # All students that lecture staff can reach by registration mail:
+  # everyone with a pending or confirmed registration in one of the
+  # lecture's campaigns, plus everyone on the roster (union, deduplicated).
+  # Before finalization this is "everyone who signed up", afterwards it
+  # also covers manually added roster members.
+  def registration_mail_recipients
+    registered_ids = Registration::UserRegistration
+                     .where(registration_campaign: registration_campaigns,
+                            status: [:pending, :confirmed])
+                     .select(:user_id)
+    member_ids = lecture_memberships.select(:user_id)
+
+    User.where(id: registered_ids).or(User.where(id: member_ids))
   end
 
   def eligible_as_tutors

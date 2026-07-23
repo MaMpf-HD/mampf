@@ -85,7 +85,7 @@
       <%= helpdesk(t('admin.lecture.info.submission_deletion_date'),
                    false) %>
       <% current = lecture.submission_deletion_date
-                         .strftime(I18n.t("date.formats.concise")) %>
+                         &.strftime(I18n.t("date.formats.concise")) %>
       <% dates = Term.possible_deletion_dates_localized %>
       <% current = dates.last unless dates.include?(current) %>
       <% dates.each do |date_str| %>

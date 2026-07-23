@@ -1,5 +1,10 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
+  # Throttle group-join code entry so the short join token cannot be brute-forced.
+  rate_limit to: 10, within: 1.minute, only: [:join, :redeem_code],
+             by: -> { current_user&.id || request.remote_ip },
+             with: -> { redirect_to :start, alert: I18n.t("submission.too_many_attempts") }
+
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
                                           :redeem_code, :join, :cancel_new]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
@@ -41,6 +46,10 @@ class SubmissionsController < ApplicationController
 
   def create
     @submission = Submission.new(submission_create_params)
+    # authorize_resource only sees the Submission class here (no @submission is
+    # preloaded for :create), so re-authorize the built instance to run the
+    # enrollment check in SubmissionAbility.
+    authorize! :create, @submission
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
     @too_late = @submission.not_updatable?
@@ -154,10 +163,9 @@ class SubmissionsController < ApplicationController
 
   def show_manuscript
     if @submission&.manuscript
-      send_file(@submission.manuscript.to_io,
-                type: @submission.manuscript_mime_type,
-                disposition: @disposition,
-                filename: @submission.manuscript_filename)
+      send_stored_file(@submission.manuscript,
+                       disposition: @disposition,
+                       fallback: @submission.manuscript_filename || "manuscript")
     elsif @submission
       redirect_to :start, alert: t("submission.no_manuscript_yet")
     else
@@ -167,10 +175,9 @@ class SubmissionsController < ApplicationController
 
   def show_correction
     if @submission&.correction
-      send_file(@submission.correction.to_io,
-                type: @submission.correction_mime_type,
-                disposition: @disposition,
-                filename: @submission.correction_filename)
+      send_stored_file(@submission.correction,
+                       disposition: @disposition,
+                       fallback: @submission.correction_filename || "correction")
     elsif @submission
       redirect_to :start, alert: t("submission.no_correction_yet")
     else
@@ -320,7 +327,9 @@ class SubmissionsController < ApplicationController
     end
 
     def send_invitation_emails
-      invitees = User.where(id: invitation_params[:invitee_ids])
+      requested_ids = invitation_params[:invitee_ids].map(&:to_i)
+      invitees = @submission.admissible_invitees(current_user)
+                            .select { |i| requested_ids.include?(i.id) }
       invitees.each do |i|
         NotificationMailer.with(recipient: i,
                                 locale: i.locale,
@@ -330,7 +339,7 @@ class SubmissionsController < ApplicationController
                           .submission_invitation_email.deliver_later
       end
       @submission.update(invited_user_ids: @submission.invited_user_ids |
-                                             invitees.pluck(:id))
+                                             invitees.map(&:id))
     end
 
     def send_upload_email(users)
@@ -395,7 +404,7 @@ class SubmissionsController < ApplicationController
         @error = I18n.t("submission.already_corrected")
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
-      elsif !@submission.tutorial.lecture.in?(current_user.lectures)
+      elsif !current_user.proper_student_in?(@submission.tutorial.lecture)
         @error = I18n.t("submission.lecture_not_subscribed")
       end
     end
@@ -480,12 +489,22 @@ class SubmissionsController < ApplicationController
       return unless assessment
 
       lecture = assignment.lecture
-      target_users = users || @submission.users
+      target_users = Array(users || @submission.users)
+      member_ids = lecture.members.where(id: target_users.map(&:id)).pluck(:id)
+      target_users.select! { |user| user.id.in?(member_ids) }
+      return if target_users.empty?
 
       target_users.each do |user|
         participation = assessment.assessment_participations
                                   .find_or_initialize_by(user: user)
-        participation.status ||= :pending
+        participation.status = :pending
+        participation.grade_numeric = nil
+        participation.grade_text = nil
+        participation.points_total = nil
+        participation.graded_at = nil
+        participation.grader_id = nil
+        participation.task_points.destroy_all if participation.persisted?
+
         participation.submitted_at = Time.current
         participation.tutorial_id ||=
           Assessment::Participation.tutorial_for(user, lecture)

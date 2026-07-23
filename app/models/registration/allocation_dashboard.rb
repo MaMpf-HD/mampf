@@ -32,12 +32,7 @@ module Registration
 
     def rejection_reasons_for(student)
       Array(rejected_registrations_by_user[student.id])
-        .filter_map do |registration|
-          Registration::UserRegistration.localized_rejection_reason_label(
-            reason_code: registration.rejection_reason_code,
-            reason_label: registration.rejection_reason_label
-          )
-        end
+        .filter_map(&:resolved_rejection_reason_label)
         .uniq
         .join(", ")
     end
@@ -98,6 +93,25 @@ module Registration
       @campaign.first_come_first_served? && !@campaign.completed?
     end
 
+    def summary_items
+      items = [
+        {
+          kind: :total_registrations,
+          count: stats.total_registrations
+        }
+      ]
+
+      items.concat(
+        if current_registration_state?
+          current_registration_state_summary_items
+        else
+          allocation_summary_items
+        end
+      )
+
+      items
+    end
+
     def finalization_status
       return :blocked if blockers?
 
@@ -117,6 +131,52 @@ module Registration
     end
 
     private
+
+      def current_registration_state_summary_items
+        items = [
+          {
+            kind: :currently_confirmed,
+            count: stats.assigned_users
+          }
+        ]
+
+        if stats.rejected_users.positive?
+          items << {
+            kind: :currently_rejected,
+            count: stats.rejected_users
+          }
+        end
+
+        items
+      end
+
+      def allocation_summary_items
+        items = [
+          {
+            kind: :eligible,
+            count: stats.eligible_users
+          },
+          {
+            kind: :assigned,
+            count: stats.assigned_users,
+            percentage: stats.assigned_percentage
+          }
+        ]
+
+        if stats.rejected_users.positive?
+          items << {
+            kind: :rejected,
+            count: stats.rejected_users
+          }
+        end
+
+        items << {
+          kind: :unassigned,
+          count: stats.unassigned_users
+        }
+
+        items
+      end
 
       def calculate_conflicts
         return [] if @campaign.completed?

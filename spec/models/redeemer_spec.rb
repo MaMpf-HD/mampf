@@ -96,7 +96,10 @@ RSpec.describe(Redeemer, type: :model) do
 
       it "sets the user as the lecture's teacher" do
         voucher.redeem(params)
-        expect(lecture.teacher).to eq(user)
+        # `redeem` now runs inside `with_lock`, which reloads the voucher and thus its
+        # `lecture`; the redeem updates that freshly loaded lecture, so the memoized
+        # `lecture` here keeps a stale cached `teacher` until reloaded.
+        expect(lecture.reload.teacher).to eq(user)
       end
 
       it "demotes the previous teacher to an editor" do
@@ -127,6 +130,9 @@ RSpec.describe(Redeemer, type: :model) do
         perform_enqueued_jobs do
           voucher.redeem(params)
         end
+        # redeem's with_lock reloads the voucher's lecture; reload the memoized one so its
+        # cached `teacher` reflects the new teacher (matches what the sent mail used).
+        lecture.reload
 
         # Mail to previous teacher
         mail = ActionMailer::Base.deliveries.last

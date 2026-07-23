@@ -11,8 +11,7 @@ module Assessment
     def edit
       authorize! :update, @assessment
 
-      index = @assessment.tasks.order(:position).pluck(:id).index(@task.id)
-      index = index ? index + 1 : @task.position
+      index = task_display_index(@task)
 
       respond_to do |format|
         format.turbo_stream do
@@ -32,8 +31,7 @@ module Assessment
     def cancel
       authorize! :update, @assessment
 
-      index = @assessment.tasks.order(:position).pluck(:id).index(@task.id)
-      index = index ? index + 1 : @task.position
+      index = task_display_index(@task)
 
       respond_to do |format|
         format.turbo_stream do
@@ -84,8 +82,7 @@ module Assessment
       if @task.update(task_params)
         redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.updated"))
       else
-        index = @assessment.tasks.order(:position).pluck(:id).index(@task.id)
-        index = index ? index + 1 : @task.position
+        index = task_display_index(@task)
 
         respond_to do |format|
           format.html do
@@ -136,6 +133,11 @@ module Assessment
 
       def task_params
         params.expect(assessment_task: [:max_points, :description])
+      end
+
+      def task_display_index(task)
+        index = @assessment.tasks.order(:position).pluck(:id).index(task.id)
+        index ? index + 1 : task.position
       end
 
       def redirect_to_dashboard(tab:, notice: nil, alert: nil)

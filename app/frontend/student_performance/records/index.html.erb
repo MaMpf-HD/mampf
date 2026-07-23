@@ -21,7 +21,7 @@
           <% @lecture.tutorials.each do |tutorial| %>
             <option
               value="<%= tutorial.id %>"
-              <% if params[:tutorial_id].to_s == tutorial.id.to_s %>
+              <% if params[:tutorial_id] == tutorial.id.to_s %>
                 selected
               <% end %>
             >
@@ -86,7 +86,7 @@
                 class="text-center small"
                 title="<%= achievement.title %>"
               >
-                <%= truncate(achievement.title, length: 12) %>
+                <%= truncate(achievement.title, length: 24) %>
               </th>
             <% end %>
 
@@ -110,7 +110,15 @@
 
               <td class="text-end">
                 <span class="fw-semibold">
-                  <%= number_to_percentage(record.percentage_materialized.to_f, precision: 0) %>
+                  <% if record.percentage_materialized.nil? %>
+                    <span class="text-muted" aria-hidden="true">&mdash;</span>
+                    <span class="visually-hidden">
+                      <%= t("student_performance.records.percentage_unavailable") %>
+                    </span>
+                  <% else %>
+                    <%= number_to_percentage(record.percentage_materialized,
+                                             precision: 0) %>
+                  <% end %>
                 </span>
               </td>
 
@@ -134,16 +142,36 @@
                 <% met = record.achievements_met_ids&.include?(achievement.id) %>
                 <% ungraded = record.achievements_ungraded_ids&.include?(achievement.id) %>
 
+                <% status_text = if met
+                                   t("student_performance.records.columns.achievement_met")
+                                 elsif ungraded
+                                   t("student_performance.records.columns.achievement_ungraded")
+                                 else
+                                   t("student_performance.records.columns.achievement_not_met")
+                                 end %>
+
                 <td
                   class="text-center"
-                  title="<%= achievement.title %>: <%= met ? t('student_performance.records.columns.achievement_met') : ungraded ? t('student_performance.records.columns.achievement_ungraded') : t('student_performance.records.columns.achievement_not_met') %>"
+                  title="<%= achievement.title %>: <%= status_text %>"
                 >
                   <% if met %>
-                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <i
+                      class="bi bi-check-circle-fill text-success"
+                      role="img"
+                      aria-label="<%= status_text %>"
+                    ></i>
                   <% elsif ungraded %>
-                    <i class="bi bi-question-circle text-amber"></i>
+                    <i
+                      class="bi bi-question-circle text-amber"
+                      role="img"
+                      aria-label="<%= status_text %>"
+                    ></i>
                   <% else %>
-                    <i class="bi bi-x-circle text-danger"></i>
+                    <i
+                      class="bi bi-x-circle text-danger"
+                      role="img"
+                      aria-label="<%= status_text %>"
+                    ></i>
                   <% end %>
                 </td>
               <% end %>

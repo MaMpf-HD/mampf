@@ -35,8 +35,9 @@ class PointGridComponent < ViewComponent::Base
   end
 
   def excluded_participations
-    @excluded_participations ||= not_submitted_participations +
-                                 participations.where(status: [:absent, :exempt]).to_a
+    @excluded_participations ||= not_submitted_participations.or(
+      participations.where(status: [:absent, :exempt])
+    )
   end
 
   def any_scoring?

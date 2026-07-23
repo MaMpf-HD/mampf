@@ -66,6 +66,7 @@ class Assignment < ApplicationRecord
   def totally_expired?
     !semiactive?
   end
+  alias grading_open? totally_expired?
 
   def in_grace_period?
     semiactive? && !active?
@@ -185,11 +186,13 @@ class Assignment < ApplicationRecord
     end
 
     def grading_data?
-      return false unless assessment&.assessment_participations
+      return false unless assessment
 
-      assessment.assessment_participations.any? do |p|
-        p.reviewed? || p.exempt? || p.task_points.any? || p.points_total.present?
-      end
+      participations = assessment.assessment_participations
+
+      participations.exists?(status: [:reviewed, :exempt]) ||
+        participations.where.not(points_total: nil).exists? ||
+        participations.joins(:task_points).exists?
     end
 
     def setup_assessment

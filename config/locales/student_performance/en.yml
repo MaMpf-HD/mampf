@@ -17,6 +17,7 @@ en:
       no_member: "User is not a member of this lecture."
     records:
       tooltip_points: "points"
+      percentage_unavailable: "Percentage unavailable"
       columns:
         student: "Student"
         email: "Email"
@@ -43,7 +44,8 @@ en:
         showing: "Showing %{from}–%{to} of %{count} students"
       show:
         back: "Back to records"
-        recompute: "Recompute"
+        recompute: "Recompute record"
+        recompute_hint: "Fallback only: use this if the displayed data seems out of date or incorrect."
         review_proposal: "Review Proposal"
         total_points: "Total Points"
         out_of: "out of %{max} possible"

@@ -20,6 +20,9 @@ en:
     script:
       singular: 'Manuscript'
       short: 'Man'
+    enrollment:
+      singular: 'Enrollment'
+      short: 'Enr'
     worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
@@ -410,6 +413,20 @@ en:
       orga: 'Orga'
       organization: 'Organization'
       communication: 'Communication'
+      home_tab: 'Home'
+      home_page: 'Lecture home page'
+      home_intro_lead: >
+        This is the first thing students — including prospective ones deciding
+        whether to register — see. A short welcome and your program make it far
+        more useful than the near-empty default.
+      home_preview: 'Preview the home page'
+      home_intro_label: 'Welcome text'
+      home_intro_add: 'Set up the home page'
+      home_attachment_label: 'Program (PDF)'
+      home_attachment_hint: >
+        Optional. PDF only, up to 10 MB — e.g. a seminar or course program.
+      home_attachment_remove: 'Remove the attached PDF'
+      home_attachment_must_be_pdf: 'The attachment must be a PDF.'
       new_lecture: 'Create a new event series'
       no_courses_yet: 'You have to create a course first.'
       no_terms_yet: 'You have to create a term first.'
@@ -455,6 +472,10 @@ en:
       no_active_voucher: >
         There is no active %{role} for this event series.
       info:
+        home_intro: >
+          Shown at the top of the lecture home page, above the registration.
+          Use it to welcome students, explain the registration process, and
+          point to your program (PDF).
         course: >
           Here you can select the course to which this event series belongs.
         term: >
@@ -1921,7 +1942,7 @@ en:
     consent: >
       You consented to our privacy policy.
     locale: 'Language'
-    subscribe_lecture: 'Subscribe event series'
+    subscribe_lecture: 'Subscribe lecture'
     passphrase_required: >
       You want to subscribe the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
@@ -2259,6 +2280,9 @@ en:
     size: 'Size'
   image:
     resolution: 'Resolution'
+    too_large_dimensions: >
+      The image dimensions are too large. Maximum allowed dimensions are
+      %{max_width}x%{max_height}.
   manuscript:
     manuscript: 'Manuscript'
     no_manuscript: 'There is no manuscript present.'
@@ -2343,6 +2367,7 @@ en:
     app_name: Applet Type
     view: View Geogebra Applet in Browser
     size: Size
+    invalid_archive: Invalid GeoGebra archive.
     attribution_html: >
       This applet as been created using %{geogebra_link}, the above animation
       uses the GeoGebra JavaScript API.
@@ -2619,6 +2644,7 @@ en:
   time:
     formats:
       concise: '%Y-%m-%d'
+      student_registration: '%B %-d, %Hh%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
     last_updated: 'Last updated %{time_ago} ago'
   thyme:
@@ -2770,6 +2796,8 @@ en:
       You successfully joined the submission to %{assignment}.
     failed_redemption: >
       Redemption of submission code failed: %{message}.
+    too_many_attempts: >
+      Too many attempts. Please wait a moment and try again.
     current: Current Submission
     previous: Previous Submission
     old_ones: Old Submissions
@@ -2790,11 +2818,22 @@ en:
     upload_failure_empty_file: >
       The uploaded file is empty.
       Please make sure that the file is not corrupted.
+    upload_failure_malware: >
+      The uploaded file could not be accepted.
+      Please check the file and try again.
+    upload_failure_scanner_unavailable: >
+      The upload scanner is currently unavailable.
+      Please try again in a moment.
+    upload_failure_scan_required: >
+      The uploaded file is missing a required malware scan.
+      Please upload the file again.
+    upload_failure_unauthorized: >
+      You are not allowed to upload this file here.
     upload_failure_empty_file_bulk: >
       is empty.
       Please make sure that the file is not corrupted.
     file_size_too_big: The filesize exceeds the limit, nevertheless it is uploadable.
-    file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
+    file_size_way_too_big: The filesize exceeds the limit. Please reduce it outside MaMpf and upload the smaller file.
     optimization_help_html: >
       <b>Optimizing:</b> Use this button to optimize your file with your browser.
       This process takes about 1-2 minutes. We strongly suggest downloading the resulting
@@ -3069,6 +3108,10 @@ en:
       client you can try to copy and paste the link to the address bar of your
       browser and open it afterwards.
     announcement_subject: 'New announcement'
+    student_message_footer: >-
+      This message was sent by %{sender} via MaMpf to the registered
+      students of %{lecture}. Replies to this email go directly to the
+      sender.
     mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
     author: 'Author'
@@ -3263,6 +3306,7 @@ en:
     count: 'Count'
     plays: 'Plays'
   basics:
+    home: "Home"
     clear: "Clear"
     close: "Close"
     capacity: 'Capacity'
@@ -3399,6 +3443,7 @@ en:
     aliases: 'Aliases'
     translations_aliases: 'Translations, Aliases'
     answer_count: 'Number of answers'
+    item_count: '%{count} items'
     multiple_choice: 'Multiple Choice'
     free: 'free answer'
     solution: 'Solution'
@@ -3442,6 +3487,7 @@ en:
     submissions: 'Submissions'
     corrections: 'Corrections'
     overview: Overview
+    outline: Outline
     tba: tba
     due: due
     as: as
@@ -3476,6 +3522,26 @@ en:
     voucher_for: Voucher for %{role}
     speaker: Speaker
     speakers: Speakers
+    mode: "Allocation Mode"
+    capacity: "Capacity"
+    seats: "Seats"
+    filled: "filled"
+    across_group: "across group"
+    closes: "Closes"
+    passed: "Passed"
+    failed: "Failed"
+    select_type: "Select preferences"
+    saved_at: "Saved %{time}"
+    last_saved_at: "Last saved %{time}"
+    available: "Available"
+    full: "Full"
+    position: "Position"
+    room: "Room"
+    confirmed: "Confirmed"
+    rejected: Rejected
+    pending: Pending
+    assigned: "Assigned"
+    dismissed: "Dismissed"
     unlimited: unlimited
     personnel: Personnel
   warnings:
@@ -3502,6 +3568,7 @@ en:
     save_changes: "Save Changes"
     discard_changes: "Discard Changes"
     delete: 'Delete'
+    add: 'Add'
     move_up: 'Move Up'
     move_down: 'Move Down'
     publish: 'Publish'
@@ -3601,6 +3668,10 @@ en:
     verify_voucher: 'Verify Voucher'
     edit_talk: 'Edit Talk'
     invalidate: 'Invalidate'
+    self_register_talk: Register for this talk
+    self_remove_talk: Unregister from this talk
+    add_to_list: 'Add to List'
+    remove_from_list: 'Remove from List'
     back_to_assessments: 'Back to Assessments'
     create_exam: 'Create Exam'
     edit_exam: 'Edit Exam'
@@ -3674,7 +3745,9 @@ en:
     no_video: 'There is no video for this medium.'
     no_manuscript: 'There is no manuscript for this medium.'
     no_geogebra: 'There is no Geogebra applet for this medium.'
+    invalid_download: 'The requested download is invalid.'
     no_medium: 'There is no medium with this id.'
+    no_user: 'There is no user with this id.'
     contradiction: 'Contradictory request.'
     no_notification: 'There is no notification with this id.'
     no_question: 'There is no question with this id.'
@@ -3960,6 +4033,8 @@ en:
           attributes:
             lecture:
               must_not_be_seminar: "Tutorials cannot be created for seminars."
+            lecture_id:
+              immutable: cannot be changed after the tutorial has been created.
             title:
               taken: >
                 This tutorium title is already taken for this event series.
@@ -3970,6 +4045,8 @@ en:
               already_in_lecture_tutorial: >
                 There is already a tutorial membership for this user in this
                 lecture.
+            lecture:
+              does_not_match_tutorial: does not match the tutorial's lecture.
         user:
           attributes:
             courses:
@@ -3995,6 +4072,8 @@ en:
                 There can be only one active voucher of this type for the lecture.
               speaker_vouchers_only_for_seminars: >
                 Speaker vouchers are only allowed for seminars.
+              invalid_for_lecture: >
+                This role is not available for this lecture.
         watchlist_entry:
           attributes:
             medium_id:

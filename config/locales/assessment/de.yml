@@ -84,6 +84,7 @@ de:
         updated: "Zusatzkriterium erfolgreich aktualisiert."
         destroyed: "Zusatzkriterium erfolgreich gelöscht."
       errors:
+        destroy_failed: "Löschen des Zusatzkriteriums fehlgeschlagen."
         not_found: "Zusatzkriterium nicht gefunden."
         referenced_by_rules: "Löschen nicht möglich: Zusatzkriterium wird von einer Regel referenziert."
       subtitle: "Zusätzliche Kriterien definieren, die Studierende über Punkte hinaus erfüllen müssen."
@@ -224,9 +225,14 @@ de:
           attributes:
             base:
               requires_points_true: "Tasks können nur für Assessments mit requires_points: true erstellt werden"
+        assessment/participation:
+          attributes:
+            base:
+              early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
         assessment/task_point:
           attributes:
             base:
+              early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
               assessment_mismatch: "Task und Teilnahme müssen zum selben Assessment gehören"
         assessment/assessment:
           attributes:

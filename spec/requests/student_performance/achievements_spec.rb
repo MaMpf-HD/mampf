@@ -24,6 +24,18 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
         get lecture_student_performance_achievements_path(lecture)
         expect(response).to have_http_status(:success)
       end
+
+      it "renders percentage thresholds in fixed-point notation" do
+        create(:achievement,
+               :percentage,
+               lecture: lecture,
+               threshold: BigDecimal("0.75e2"))
+
+        get lecture_student_performance_achievements_path(lecture)
+
+        expect(response.body).to include("75.0%")
+        expect(response.body).not_to include("0.75e2%")
+      end
     end
 
     context "as a student" do
@@ -145,6 +157,18 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
+      let!(:assessment) do
+        achievement.ensure_assessment!(
+          requires_points: false, requires_submission: false
+        )
+      end
+
+      let!(:participation) do
+        create(:assessment_participation,
+               assessment: assessment,
+               grade_text: "85.0")
+      end
+
       it "updates the achievement" do
         patch lecture_student_performance_achievement_path(lecture, achievement),
               params: { achievement: { title: "Updated Title" } }
@@ -158,6 +182,40 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
           lecture_student_performance_achievements_path(lecture)
         )
         expect(flash[:alert]).to be_present
+      end
+
+      it "returns an unprocessable turbo response for blank threshold" do
+        achievement.update!(value_type: :percentage, threshold: 80.0)
+
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: {
+                achievement: {
+                  title: achievement.title,
+                  value_type: "percentage",
+                  threshold: "",
+                  description: achievement.description
+                }
+              },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+        expect(response.body).to include(
+          %(data-achievement-form-has-errors-value="true")
+        )
+        expect(response.body).to include(
+          %(data-achievement-form-original-threshold-value="80.0")
+        )
+      end
+
+      it "renders validation errors only through invalid-feedback" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { title: "" } },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("invalid-feedback")
+        expect(response.body).not_to include("text-danger small mt-1")
       end
     end
 
@@ -186,6 +244,21 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
                    lecture, achievement
                  ))
         end.to change(Achievement, :count).by(-1)
+      end
+
+      it "keeps the destroy error in turbo responses" do
+        allow_any_instance_of(Achievement).to receive(:destroy) do |record|
+          record.errors.add(:base, "Achievement is still in use")
+          false
+        end
+
+        delete lecture_student_performance_achievement_path(
+          lecture, achievement
+        ), as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        assert_flash_error
+        expect(response.body).to include("Achievement is still in use")
       end
 
       context "when referenced by a rule" do

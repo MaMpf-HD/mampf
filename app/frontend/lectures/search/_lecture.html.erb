@@ -3,7 +3,9 @@
   <div class="lecture-search-result glass row g-0">
 
     <div class="col-md-3">
-      <%= image_tag(lecture.course.normalized_image_url_with_host ||
+      <%= image_tag(lecture.course.normalized_image_file ?
+                      image_course_path(lecture.course,
+                                        variant: "normalized") :
                       "/no_course_information.png",
                     class: "lecture-search-result-image",
                     alt: lecture.title_no_term) %>
@@ -15,6 +17,25 @@
           <%= lecture.title_no_term %>
         </h5>
         <div class="lecture-search-result-info">
+          <% if @registered_lecture_ids&.include?(lecture.id) %>
+            <span class="badge bg-success lecture-search-result-registration"
+                  data-testid="lecture-search-registered-badge">
+              <i class="fas fa-check" aria-hidden="true"></i>
+              <%= t('lecture.search.registered') %>
+            </span>
+          <% elsif registration_open?(lecture) %>
+            <span class="badge bg-primary lecture-search-result-registration"
+                  data-testid="lecture-search-registration-badge">
+              <%= t('lecture.search.registration_open') %>
+            </span>
+          <% end %>
+          <% if @subscribed_lecture_ids&.include?(lecture.id) %>
+            <span class="lecture-search-result-subscribed text-muted"
+                  data-testid="lecture-search-subscribed-indicator">
+              <i class="fas fa-check-circle" aria-hidden="true"></i>
+              <%= t('lecture.search.subscribed') %>
+            </span>
+          <% end %>
           <% if lecture.term %>
             <span class="lecture-search-result-term">
               <%= lecture.term.to_label_short %>

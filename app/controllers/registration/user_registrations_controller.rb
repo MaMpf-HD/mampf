@@ -1,13 +1,23 @@
 module Registration
   class UserRegistrationsController < ApplicationController
-    before_action :set_campaign
-    before_action :set_locale
+    helper ::UserRegistrationsHelper,
+           ItemsHelper, CampaignsHelper
+    before_action :set_campaign,
+                  only: [:create, :destroy, :reject_for_user, :save_preferences]
+    before_action :set_user_locale
+    before_action :set_item, only: [:create, :destroy]
 
     def current_ability
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
     end
 
     def reject_for_user
+      # Authorize before the campaign_completed?/no_registrations_found? probes so
+      # their differing responses can't be used as an oracle to enumerate campaign
+      # membership. All registrations share this campaign, so a campaign-bound
+      # instance carries the same can_edit? check as registrations.first.
+      authorize! :destroy, Registration::UserRegistration.new(registration_campaign: @campaign)
+
       return if campaign_completed?
 
       @user = User.find(params[:user_id])
@@ -15,13 +25,103 @@ module Registration
 
       return if no_registrations_found?(registrations)
 
-      # Authorize based on the first registration (all belong to same campaign)
-      authorize! :destroy, registrations.first
-
       reject_registrations(registrations)
     end
 
+    def create
+      authorize! :create, @item.registration_campaign.campaignable
+
+      result = ::UserRegistrations::LectureFirstComeFirstServedEditService
+               .new(@campaign, current_user).register!(@item)
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages." \
+                                             "registration_success"))
+    end
+
+    def destroy
+      @campaign = @item.registration_campaign
+      authorize! :destroy, @campaign.campaignable
+
+      result = ::UserRegistrations::LectureFirstComeFirstServedEditService
+               .new(@campaign, current_user).withdraw!(@item)
+      respond_to_student_registration(result,
+                                      I18n.t("registration.user_registration.messages.withdrawn"))
+    end
+
+    def save_preferences
+      authorize! :add, @campaign.campaignable
+
+      ranked_preferences = preference_params
+      pref_items = ::UserRegistrations::PreferencesHandler
+                   .new.pref_items_from_ranked_params(ranked_preferences)
+      result = ::UserRegistrations::LecturePreferenceEditService
+               .new(@campaign, current_user).update!(pref_items)
+      respond_to_student_registration(
+        result,
+        I18n.t("registration.user_registration.messages.preferences_saved")
+      )
+    end
+
     private
+
+      def respond_to_student_registration(result, success_message)
+        if result.success?
+          flash.now[:notice] = success_message
+          respond_to do |format|
+            format.turbo_stream do
+              @details = ::UserRegistrations::CampaignDetailsService
+                         .new(@campaign, current_user)
+                         .call
+              render turbo_stream: [
+                turbo_stream.replace("flash-messages", partial: "flash/messages"),
+                turbo_stream.update(
+                  view_context.dom_id(@campaign, :main_student_registration_campaign),
+                  html: CampaignCardComponent.new(
+                    details: @details,
+                    campaign: @campaign
+                  ).render_in(view_context)
+                ),
+                rosterized_entries_stream
+              ]
+            end
+            format.html do
+              redirect_to lecture_home_path(@campaign.campaignable),
+                          notice: success_message
+            end
+          end
+        else
+          respond_with_flash(
+            :alert,
+            result.errors.join(", "),
+            fallback_location: lecture_home_path(@campaign.campaignable)
+          )
+        end
+      end
+
+      def rosterized_entries_stream
+        turbo_stream.update(
+          "student_registration_rosterized_entries",
+          html: RosterizedEntriesComponent.new(
+            rosterized_entries: Rosters::StudentMaterializedResultResolver
+                                 .new(current_user)
+                                 .all_rosterized_for_lecture(student_registration_lecture),
+            lecture: student_registration_lecture,
+            user: current_user
+          ).render_in(view_context)
+        )
+      end
+
+      def preference_params
+        params.expect(preferences: preference_param_keys).to_h
+      end
+
+      def preference_param_keys
+        (1..::UserRegistrations::PreferencesHandler::MAX_PREFERENCES).map(&:to_s)
+      end
+
+      def student_registration_lecture
+        @student_registration_lecture ||= @campaign.campaignable
+      end
 
       def evaluate_turbo_stream_response
         streams = [turbo_stream.replace("flash-messages", partial: "flash/messages")]
@@ -76,15 +176,12 @@ module Registration
       end
 
       def set_campaign
-        @campaign = Registration::Campaign.find_by(id: params[:registration_campaign_id])
+        id = params[:registration_campaign_id] || params[:campaign_id]
+        @campaign = Registration::Campaign.find_by(id: id)
         return if @campaign
 
         respond_with_flash(:alert, t("registration.campaign.not_found"),
                            fallback_location: root_path)
-      end
-
-      def set_locale
-        I18n.locale = @campaign&.campaignable&.locale_with_inheritance || I18n.locale
       end
 
       def campaign_completed?
@@ -92,6 +189,7 @@ module Registration
 
         respond_with_flash(:alert, t("registration.campaign.errors.already_finalized"),
                            fallback_location: registration_campaign_path(@campaign))
+
         true
       end
 
@@ -106,14 +204,13 @@ module Registration
       def reject_registrations(registrations)
         registrations = registrations.where.not(status: :rejected).to_a
         count = registrations.size
-        reason_code, reason_label = rejection_reason
+        reason_code = rejection_reason
 
         Registration::UserRegistration.transaction do
           registrations.each do |registration|
             registration.reject!(
               reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
-              reason_code: reason_code,
-              reason_label: reason_label
+              reason_code: reason_code
             )
           end
         end
@@ -131,16 +228,18 @@ module Registration
 
       def rejection_reason
         if params[:reason] == Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER
-          [
-            Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER,
-            t("registration.user_registration.reason_labels.deferred_due_to_blocker")
-          ]
+          Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER
         else
-          [
-            Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER,
-            t("registration.user_registration.reason_labels.withdrawn_by_teacher")
-          ]
+          Registration::UserRegistration::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER
         end
+      end
+
+      def set_item
+        @item = Registration::Item.find_by(id: params[:item_id])
+        return if @item
+
+        respond_with_flash(:alert, t("registration.item.not_found"),
+                           fallback_location: root_path)
       end
   end
 end

@@ -55,11 +55,25 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
       it "shows check icon for pass" do
         render_inline(component)
         expect(rendered_content).to include("bi-check-circle")
+        expect(rendered_content).to include(
+          %(aria-label="#{I18n.t("assessment.achievements.marking.met")}")
+        )
       end
 
       it "shows x icon for fail" do
         render_inline(component)
         expect(rendered_content).to include("bi-x-circle")
+        expect(rendered_content).to include(
+          %(aria-label="#{I18n.t("assessment.achievements.marking.not_met")}")
+        )
+      end
+
+      it "shows accessible label for unmarked status" do
+        render_inline(component)
+        expect(rendered_content).to include("bi-question-circle")
+        expect(rendered_content).to include(
+          %(aria-label="#{I18n.t("assessment.achievements.marking.unmarked")}")
+        )
       end
 
       it "does not show the value column" do
@@ -89,6 +103,13 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
         create(:assessment_participation,
                assessment: assessment,
                grade_text: "")
+        expect(component.marked_count).to eq(2)
+      end
+
+      it "does not count whitespace-only grade_text as marked" do
+        create(:assessment_participation,
+               assessment: assessment,
+               grade_text: "   ")
         expect(component.marked_count).to eq(2)
       end
 
@@ -134,6 +155,16 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
       expect(component.met?(above)).to be(true)
       expect(component.met?(below)).to be(false)
     end
+
+    it "preserves decimal values in the display and comparison" do
+      achievement.update!(threshold: 12.5)
+      decimal = create(:assessment_participation,
+                       assessment: assessment,
+                       grade_text: "12.6")
+
+      expect(component.value_display(decimal)).to eq("12.6 / 12.5")
+      expect(component.met?(decimal)).to be(true)
+    end
   end
 
   context "with a percentage achievement" do
@@ -166,6 +197,19 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
     it "evaluates met? correctly" do
       expect(component.met?(above)).to be(true)
       expect(component.met?(below)).to be(false)
+    end
+
+    context "with a blank threshold in memory" do
+      before do
+        achievement.threshold = nil
+      end
+
+      it "renders undecidable statuses without raising" do
+        render_inline(component)
+
+        expect(rendered_content).to include("bi-question-circle")
+        expect(component.value_display(above)).to eq("85.0% / —")
+      end
     end
   end
 end

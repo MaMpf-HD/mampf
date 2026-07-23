@@ -42,7 +42,7 @@
         <%= render partial: 'quizzes/free_question_open',
                    locals: { quiz_round: @quiz_round,
                              answers: answers,
-                             solution: Solution.new(question.solution.type.constantize.trivial_instance),
+                             solution: Solution.new(question.solution.content.class.trivial_instance),
                              question: question,
                              parameters: parameters } %>
       <% end %>

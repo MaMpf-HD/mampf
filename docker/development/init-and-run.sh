@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -Eeuo pipefail
 
 ./docker/development/init.sh
 ./docker/development/run.sh

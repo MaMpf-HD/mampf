@@ -1,7 +1,9 @@
 <%= vite_javascript_tag "lectures/lectures.js" %>
 <%= vite_javascript_tag "lectures/edit/edit.js" %>
 
-<div id="lecture-area" data-cy="lecture-area">
+<%= turbo_frame_tag "lecture-area", target: "_top",
+                    data: { cy: "lecture-area",
+                            controller: "lecture-highlights" } do %>
   <!-- Header -->
   <div class="container small-width">
     <%= render partial: "lectures/edit/header",
@@ -28,6 +30,12 @@
           <%= render partial: 'lectures/edit/media',
                        locals: { media: @media, lecture: @lecture } %>
         </div>
+      </div>
+    <% end %>
+
+    <% component.with_tab(name: "home", label: t("admin.lecture.home_tab")) do %>
+      <div class="container small-width lecture-pane">
+        <%= render partial: 'lectures/edit/home', locals: { lecture: @lecture } %>
       </div>
     <% end %>
 
@@ -81,6 +89,11 @@
       <div class="container small-width lecture-pane">
         <%= render partial: 'lectures/edit/announcements',
                      locals: { lecture: @lecture, announcements: @announcements } %>
+
+        <% if Flipper.enabled?(:registration_campaigns) %>
+          <%= render partial: 'lectures/edit/student_mail',
+                     locals: { lecture: @lecture } %>
+        <% end %>
 
         <%= render partial: 'lectures/edit/forum',
                      locals: { lecture: @lecture } %>
@@ -137,7 +150,7 @@
       <% end %>
     <% end %>
   <% end %>
-</div>
+<% end %>
 
 <!-- Modals -->
 <%= render partial: 'media/modal' %>

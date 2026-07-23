@@ -1,6 +1,7 @@
 module Vignettes
   class InfoSlidesController < ApplicationController
     before_action :set_questionnaire
+    before_action :check_edit_accessibility
     before_action :set_info_slide, only: [:edit, :update]
     before_action :check_empty_title, only: [:create, :update]
     before_action :check_empty_icon, only: [:create, :update]
@@ -93,6 +94,14 @@ module Vignettes
 
       def set_questionnaire
         @questionnaire = Questionnaire.find(params[:questionnaire_id])
+      end
+
+      def check_edit_accessibility
+        return if current_user.admin
+        return if current_user.in?(@questionnaire.lecture.editors_with_inheritance)
+
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    alert: t("vignettes.not_accessible")
       end
 
       def set_info_slide

@@ -1,6 +1,9 @@
 FactoryBot.define do
   factory :assessment_task_point, class: "Assessment::TaskPoint" do
-    task { association(:assessment_task) }
+    task do
+      association(:assessment_task,
+                  assessment: association(:assessment, :gradable, requires_points: true))
+    end
     assessment_participation do
       association(:assessment_participation, assessment: task.assessment)
     end
