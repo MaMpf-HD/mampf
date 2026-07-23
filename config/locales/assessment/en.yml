@@ -17,6 +17,7 @@ en:
         updated: 'Achievement updated successfully.'
         destroyed: 'Achievement deleted successfully.'
       errors:
+        destroy_failed: 'Failed to delete achievement.'
         not_found: 'Achievement not found.'
         referenced_by_rules: 'Cannot delete: Achievement is referenced by a rule.'
       subtitle: 'Define additional criteria students must fulfill beyond points.'
@@ -381,9 +382,12 @@ en:
           attributes:
             grade_numeric:
               not_gradable: "cannot be set on a non-gradable assessment"
+            base:
+              early_grading_not_allowed: "Grading is not permitted before the deadline"
         assessment/task_point:
           attributes:
             base:
+              early_grading_not_allowed: "Grading is not permitted before the deadline"
               assessment_mismatch: "Task and participation must belong to the same assessment"
         assessment/grade_scheme:
           attributes:

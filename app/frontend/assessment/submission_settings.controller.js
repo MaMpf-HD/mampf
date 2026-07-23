@@ -37,7 +37,11 @@ export default class extends Controller {
     this.hideSubmitElements();
   }
 
-  resetAfterSave() {
+  resetAfterSave(event) {
+    if (!event.detail.success) {
+      return;
+    }
+
     this.originalMaxTeamSize = this.maxTeamSizeTarget.value;
     this.originalGracePeriod = this.gracePeriodTarget.value;
     this.hideSubmitElements();

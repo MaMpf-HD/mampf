@@ -18,26 +18,32 @@ class AchievementMarkingTableComponent < ViewComponent::Base
 
     case achievement.value_type
     when "numeric"
-      "#{participation.grade_text.to_i} / #{threshold.to_i}"
+      return "#{format_numeric(participation.grade_text)} / \u2014" if threshold.blank?
+
+      "#{format_numeric(participation.grade_text)} / #{format_numeric(threshold)}"
     when "percentage"
+      return "#{format_percentage(participation.grade_text.to_f)} / \u2014" if threshold.blank?
+
       "#{format_percentage(participation.grade_text.to_f)} / #{format_percentage(threshold)}"
     end
   end
 
   def met?(participation)
     return false if participation.grade_text.blank?
+    return false if threshold.blank? && !boolean?
 
     case achievement.value_type
     when "boolean"
       participation.grade_text == "pass"
     when "numeric"
-      participation.grade_text.to_i >= threshold
+      numeric_value(participation.grade_text) >= threshold
     when "percentage"
       participation.grade_text.to_f >= threshold
     end
   end
 
   def status_badge(participation)
+    return :unmarked if threshold.blank? && !boolean?
     return :unmarked if participation.grade_text.blank?
 
     met?(participation) ? :met : :not_met
@@ -52,9 +58,7 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def marked_count
-    @marked_count ||= participations
-                      .where.not(grade_text: [nil, ""])
-                      .count
+    @marked_count ||= participations.count { |p| p.grade_text.present? }
   end
 
   def met_count
@@ -69,5 +73,15 @@ class AchievementMarkingTableComponent < ViewComponent::Base
 
     def format_percentage(value)
       "#{format("%.1f", value.to_f)}%"
+    end
+
+    def format_numeric(value)
+      numeric_value(value).to_s("F").sub(/\.0+\z/, "").sub(/(\.\d*?)0+\z/, "\\1")
+    end
+
+    def numeric_value(value)
+      BigDecimal(value.to_s)
+    rescue ArgumentError
+      BigDecimal("0")
     end
 end

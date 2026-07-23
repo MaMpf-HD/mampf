@@ -8,12 +8,7 @@ class AssessmentAbility
       user.can_edit?(lecture)
     end
 
-    can :show, Assessment::Assessment do |assessment|
-      lecture = assessment.assessable&.lecture
-      lecture.present? && user.can_edit?(lecture)
-    end
-
-    can :update, Assessment::Assessment do |assessment|
+    can [:show, :update], Assessment::Assessment do |assessment|
       lecture = assessment.assessable&.lecture
       lecture.present? && user.can_edit?(lecture)
     end

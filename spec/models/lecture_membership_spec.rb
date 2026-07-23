@@ -25,10 +25,21 @@ RSpec.describe(LectureMembership, type: :model) do
       FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
     end
 
+    it "seeds existing achievement participations when a membership is created" do
+      achievement = FactoryBot.create(:achievement, lecture: lecture)
+
+      expect do
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      end.to change {
+        achievement.assessment.assessment_participations.where(user: user).count
+      }.from(0).to(1)
+    end
+
     it "removes the performance record when a membership is destroyed" do
       membership = FactoryBot.create(:lecture_membership,
                                      lecture: lecture, user: user)
-      StudentPerformance::Record.create!(lecture: lecture, user: user)
+      expect(StudentPerformance::Record.where(lecture: lecture, user: user))
+        .to exist
 
       membership.destroy!
 

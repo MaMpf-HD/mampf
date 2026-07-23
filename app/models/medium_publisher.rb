@@ -62,7 +62,7 @@ class MediumPublisher
                         assignment_title: params[:assignment_title],
                         assignment_file_type: params[:assignment_file_type],
                         assignment_deadline: assignment_deadline,
-                        requires_submission: params[:requires_submission] == "1")
+                        requires_submission: params.fetch(:requires_submission, "1") == "1")
   end
 
   def publish!

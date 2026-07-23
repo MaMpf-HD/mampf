@@ -59,7 +59,8 @@ RSpec.describe(Assessment::Task, type: :model) do
   end
 
   describe "#points_entered?" do
-    let(:task) { FactoryBot.create(:assessment_task) }
+    let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
+    let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
 
     it "returns false when no task points exist" do
       expect(task.points_entered?).to be(false)
@@ -82,7 +83,8 @@ RSpec.describe(Assessment::Task, type: :model) do
   end
 
   describe "destruction" do
-    let(:task) { FactoryBot.create(:assessment_task) }
+    let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
+    let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
 
     it "can be destroyed when no points have been entered" do
       expect(task.destroy).to be_truthy
@@ -147,42 +149,41 @@ RSpec.describe(Assessment::Task, type: :model) do
 
     after { Flipper.disable(:assessment_grading) }
 
-    let(:assessment) { FactoryBot.create(:assessment, requires_points: true) }
+    let(:task) { FactoryBot.create(:assessment_task) }
+    let(:create_existing_record) { true }
+    let!(:record) do
+      next unless create_existing_record
 
-    context "when records exist" do
-      let(:lecture) { assessment.lecture }
-      let(:user) { FactoryBot.create(:confirmed_user) }
-
-      before do
-        FactoryBot.create(:lecture_membership, user: user, lecture: lecture)
-      end
-
-      it "recomputes all records when a task is created" do
-        expect_any_instance_of(StudentPerformance::ComputationService)
-          .to receive(:compute_and_upsert_all_records!)
-        FactoryBot.create(:assessment_task, assessment: assessment)
-      end
-
-      it "recomputes all records when max_points changes" do
-        task = FactoryBot.create(:assessment_task, assessment: assessment)
-        expect_any_instance_of(StudentPerformance::ComputationService)
-          .to receive(:compute_and_upsert_all_records!)
-        task.update!(max_points: task.max_points + 5)
-      end
+      FactoryBot.create(:student_performance_record,
+                        lecture: task.assessment.lecture)
+    end
+    let(:service) do
+      instance_double(StudentPerformance::ComputationService,
+                      compute_and_upsert_all_records!: true)
     end
 
-    context "when no records exist" do
-      it "does not recompute when a task is created" do
-        expect_any_instance_of(StudentPerformance::ComputationService)
-          .not_to receive(:compute_and_upsert_all_records!)
-        FactoryBot.create(:assessment_task, assessment: assessment)
-      end
+    before do
+      allow(StudentPerformance::ComputationService)
+        .to receive(:new)
+        .with(lecture: task.assessment.lecture)
+        .and_return(service)
+    end
 
-      it "does not recompute when max_points changes" do
-        task = FactoryBot.create(:assessment_task, assessment: assessment)
-        expect_any_instance_of(StudentPerformance::ComputationService)
-          .not_to receive(:compute_and_upsert_all_records!)
-        task.update!(max_points: task.max_points + 5)
+    it "is gated by the assessment_grading flag" do
+      Flipper.disable(:assessment_grading)
+
+      task.send(:recompute_all_performance_records)
+
+      expect(service).not_to have_received(:compute_and_upsert_all_records!)
+    end
+
+    context "when no performance records exist yet" do
+      let(:create_existing_record) { false }
+
+      it "still recomputes all performance records" do
+        task.send(:recompute_all_performance_records)
+
+        expect(service).to have_received(:compute_and_upsert_all_records!)
       end
     end
   end

@@ -184,6 +184,29 @@ module Registration
       end
     end
 
+    # Opens (or closes) student self-service on all of the campaign's groups
+    # once it is completed, so students are not silently locked into their
+    # allocated group.
+    def self_service
+      unless @campaign.completed?
+        return respond_with_flash(
+          :alert, t("registration.campaign.self_service.only_when_completed"),
+          redirect_path: registration_campaign_path(@campaign)
+        )
+      end
+
+      @campaign.apply_self_materialization_mode!(params[:self_materialization_mode])
+
+      respond_with_flash(:notice, t("registration.campaign.self_service.updated"),
+                         redirect_path: registration_campaign_path(@campaign)) do
+        evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                      expanded_campaign_id: @campaign.id)
+      end
+    rescue ArgumentError, ActiveRecord::RecordInvalid
+      respond_with_flash(:alert, t("registration.campaign.self_service.failed"),
+                         redirect_path: registration_campaign_path(@campaign))
+    end
+
     private
 
       def set_lecture

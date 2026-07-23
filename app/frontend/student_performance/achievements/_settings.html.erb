@@ -4,7 +4,16 @@
               method: :patch,
               data: {
                 controller: "achievement-form",
-                action: "turbo:submit-end->achievement-form#resetAfterSave"
+                action: "turbo:submit-end->achievement-form#resetAfterSave",
+                achievement_form_original_title_value:
+                  original_achievement.title.to_s,
+                achievement_form_original_value_type_value:
+                  original_achievement.value_type.to_s,
+                achievement_form_original_threshold_value:
+                  original_achievement.threshold&.to_s("F").to_s,
+                achievement_form_original_description_value:
+                  original_achievement.description.to_s,
+                achievement_form_has_errors_value: achievement.errors.any?
               } do |f| %>
   <div class="row g-3">
     <div class="col-md-4">
@@ -19,12 +28,6 @@
                          achievement_form_target: "title",
                          action: "input->achievement-form#checkForChanges"
                        } %>
-
-      <% if achievement.errors[:title].any? %>
-        <div class="text-danger small mt-1">
-          <%= achievement.errors[:title].first %>
-        </div>
-      <% end %>
     </div>
 
     <div class="col-md-4">
@@ -61,12 +64,6 @@
                            achievement_form_target: "thresholdInput",
                            action: "input->achievement-form#checkForChanges"
                          } %>
-
-      <% if achievement.errors[:threshold].any? %>
-        <div class="text-danger small mt-1">
-          <%= achievement.errors[:threshold].first %>
-        </div>
-      <% end %>
     </div>
 
     <div class="col-12">

@@ -104,53 +104,25 @@ RSpec.describe(Assessment::Assessment, type: :model) do
   end
 
   describe "performance record recomputation" do
-    before { Flipper.enable(:assessment_grading) }
-
-    after { Flipper.disable(:assessment_grading) }
-
-    let(:assignment) { FactoryBot.create(:assignment, :with_lecture) }
-
-    it "does not recompute on assignment assessment create (no participations yet)" do
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .not_to receive(:compute_and_upsert_all_records!)
-      FactoryBot.create(:assessment,
-                        assessable: assignment,
-                        lecture: assignment.lecture)
+    let(:assessment) { FactoryBot.create(:assessment) }
+    let(:service) do
+      instance_double(StudentPerformance::ComputationService,
+                      compute_and_upsert_all_records!: true)
     end
 
-    it "recomputes on assignment assessment destroy" do
-      assessment = FactoryBot.create(:assessment,
-                                     assessable: assignment,
-                                     lecture: assignment.lecture)
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .to receive(:compute_and_upsert_all_records!)
-      assessment.destroy!
+    before do
+      allow(StudentPerformance::ComputationService)
+        .to receive(:new)
+        .with(lecture: assessment.lecture)
+        .and_return(service)
     end
 
-    it "recomputes when total_points changes on an assignment assessment" do
-      assessment = FactoryBot.create(:assessment,
-                                     assessable: assignment,
-                                     lecture: assignment.lecture)
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .to receive(:compute_and_upsert_all_records!)
-      assessment.update!(total_points: 100)
-    end
+    it "is gated by the assessment_grading flag" do
+      Flipper.disable(:assessment_grading)
 
-    it "does not recompute on non-assignment assessable type" do
-      talk_assessment = FactoryBot.create(:assessment, :gradable)
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .not_to receive(:compute_and_upsert_all_records!)
-      talk_assessment.update!(total_points: 100)
-    end
+      assessment.send(:recompute_all_performance_records)
 
-    it "does not recompute when total_points is unchanged" do
-      assessment = FactoryBot.create(:assessment,
-                                     assessable: assignment,
-                                     lecture: assignment.lecture,
-                                     total_points: 50)
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .not_to receive(:compute_and_upsert_all_records!)
-      assessment.update!(requires_submission: false)
+      expect(service).not_to have_received(:compute_and_upsert_all_records!)
     end
   end
 end

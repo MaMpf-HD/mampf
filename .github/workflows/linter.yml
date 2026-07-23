@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -27,7 +27,7 @@ jobs:
         if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.4.7
+          ruby-version: 3.4.10
           bundler-cache: true
 
       - name: Run RuboCop
@@ -41,7 +41,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout code
-          uses: actions/checkout@v6
+          uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
           with:
             fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -57,11 +57,33 @@ jobs:
           uses: actions/setup-node@v6
           with:
             node-version: '24' # End of Life (EOL): April 2028
-            cache: 'yarn'
+            # setup-node's built-in cache is off on purpose: it resolves the yarn
+            # cache dir before Corepack activates Yarn 4 (below), so it would query
+            # the runner's preinstalled classic Yarn 1.x and cache the wrong dir. We
+            # cache the Berry cache manually instead (standard Corepack + Yarn 4 CI pattern).
+            package-manager-cache: false
+
+        - name: Enable Corepack
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
+          run: |
+            corepack enable
+            COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p 'require("./package.json").packageManager')" --activate
+
+        - name: Restore Yarn cache
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
+          uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+          with:
+            path: |
+              ~/.yarn/berry/cache
+              .yarn/install-state.gz
+              node_modules
+            key: ${{ runner.os }}-node24-yarn4-${{ hashFiles('package.json', 'yarn.lock', '.yarnrc.yml') }}
+            restore-keys: |
+              ${{ runner.os }}-node24-yarn4-
 
         - name: Install dependencies
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
-          run: yarn install
+          run: yarn install --immutable
 
         # with ESLint v9 --ignore-path does not exist anymore
         # see [1] for the PR. However, my feeling for this is totally reflected
@@ -79,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -94,11 +116,33 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24' # End of Life (EOL): April 2028
-          cache: 'yarn'
+          # setup-node's built-in cache is off on purpose: it resolves the yarn
+          # cache dir before Corepack activates Yarn 4 (below), so it would query
+          # the runner's preinstalled classic Yarn 1.x and cache the wrong dir. We
+          # cache the Berry cache manually instead (standard Corepack + Yarn 4 CI pattern).
+          package-manager-cache: false
+
+      - name: Enable Corepack
+        if: ${{ steps.js-changed.outputs.changed-files != ''}}
+        run: |
+          corepack enable
+          COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$(node -p 'require("./package.json").packageManager')" --activate
+
+      - name: Restore Yarn cache
+        if: ${{ steps.js-changed.outputs.changed-files != ''}}
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        with:
+          path: |
+            ~/.yarn/berry/cache
+            .yarn/install-state.gz
+            node_modules
+          key: ${{ runner.os }}-node24-yarn4-${{ hashFiles('package.json', 'yarn.lock', '.yarnrc.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-node24-yarn4-
 
       - name: Install dependencies
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
-        run: yarn install
+        run: yarn install --immutable
 
       - name: Run Herb Linter
         if: ${{ steps.js-changed.outputs.changed-files != ''}}

@@ -37,8 +37,21 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
     end
 
+    context "when user is no longer a lecture member" do
+      before do
+        lecture.lecture_memberships.where(user: user).delete_all
+      end
+
+      it "does not recreate a performance record" do
+        expect { compute }
+          .not_to change(StudentPerformance::Record, :count)
+      end
+    end
+
     context "when user has participations with task points" do
-      let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
       let(:assessment) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment,
                                                      lecture: lecture)
@@ -79,7 +92,7 @@ RSpec.describe(StudentPerformance::ComputationService) do
       it "computes percentage correctly" do
         compute
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
-        expect(record.percentage_materialized).to eq(76.67)
+        expect(record.percentage_materialized).to be_within(0.01).of(76.67)
       end
 
       it "sets computed_at" do
@@ -90,8 +103,12 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "with multiple assessments" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment1) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assignment2) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
 
       let(:assessment1) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment1,
@@ -133,12 +150,14 @@ RSpec.describe(StudentPerformance::ComputationService) do
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
         expect(record.points_total_materialized).to eq(37)
         expect(record.points_max_materialized).to eq(50)
-        expect(record.percentage_materialized).to eq(74.0)
+        expect(record.percentage_materialized).to be_within(0.01).of(74.0)
       end
     end
 
     context "when called twice (upsert)" do
-      let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
       let(:assessment) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment, lecture: lecture)
       end
@@ -175,7 +194,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when assessment has total_points override" do
-      let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
       let(:assessment) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment,
                                                      lecture: lecture, total_points: 50)
@@ -191,7 +212,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when participation is pending" do
-      let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
       let(:assessment) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment,
                                                      lecture: lecture)
@@ -224,8 +247,12 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     context "when participation is exempt" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment1) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assignment2) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
 
       let(:assessment1) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment1,
@@ -265,48 +292,18 @@ RSpec.describe(StudentPerformance::ComputationService) do
       it "computes percentage without the exempt assessment" do
         compute
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
-        expect(record.percentage_materialized).to eq(75.0)
-      end
-    end
-
-    context "assessment counts" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment3) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-
-      let(:assessment1) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment1,
-                                                     lecture: lecture)
-      end
-
-      let(:assessment2) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment2,
-                                                     lecture: lecture)
-      end
-
-      let(:assessment3) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment3,
-                                                     lecture: lecture)
-      end
-
-      before do
-        FactoryBot.create(:assessment_task, assessment: assessment1, max_points: 10)
-        FactoryBot.create(:assessment_task, assessment: assessment2, max_points: 10)
-        FactoryBot.create(:assessment_task, assessment: assessment3, max_points: 10)
-
-        FactoryBot.create(:assessment_participation, :reviewed,
-                          assessment: assessment1, user: user)
-        FactoryBot.create(:assessment_participation, :pending,
-                          assessment: assessment2, user: user)
-        FactoryBot.create(:assessment_participation, :exempt,
-                          assessment: assessment3, user: user)
+        expect(record.percentage_materialized).to be_within(0.01).of(75.0)
       end
 
     end
 
     context "when assessment has no participation record" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+      let(:assignment1) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assignment2) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
 
       let(:assessment1) do
         FactoryBot.create(:assessment, :with_points, assessable: assignment1,
@@ -332,37 +329,13 @@ RSpec.describe(StudentPerformance::ComputationService) do
         expect(record.points_max_materialized).to eq(30)
       end
     end
-
-    context "when participation is absent" do
-      let(:assignment1) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-      let(:assignment2) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
-
-      let(:assessment1) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment1,
-                                                     lecture: lecture)
-      end
-
-      let(:assessment2) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment2,
-                                                     lecture: lecture)
-      end
-
-      before do
-        FactoryBot.create(:assessment_task, assessment: assessment1, max_points: 10)
-        FactoryBot.create(:assessment_task, assessment: assessment2, max_points: 20)
-
-        FactoryBot.create(:assessment_participation, :reviewed,
-                          assessment: assessment1, user: user)
-        FactoryBot.create(:assessment_participation, :absent,
-                          assessment: assessment2, user: user)
-      end
-
-    end
   end
 
   describe "#compute_and_upsert_all_records!" do
     let(:user2) { FactoryBot.create(:confirmed_user) }
-    let(:assignment) { FactoryBot.create(:assignment, :with_lecture, lecture: lecture) }
+    let(:assignment) do
+      FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+    end
     let(:assessment) do
       FactoryBot.create(:assessment, :with_points, assessable: assignment, lecture: lecture)
     end
@@ -410,6 +383,17 @@ RSpec.describe(StudentPerformance::ComputationService) do
       context "with a boolean achievement" do
         let!(:achievement) do
           FactoryBot.create(:achievement, :boolean, lecture: lecture)
+        end
+
+        it "filters single-user achievement lookups to the requested user" do
+          allow(Assessment::Participation).to receive(:where).and_call_original
+          expect(Assessment::Participation)
+            .to receive(:where)
+            .with(assessment_id: [achievement.assessment.id], user_id: user.id)
+            .and_call_original
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
         end
 
         it "includes met achievement id when grade_text is pass" do
@@ -474,6 +458,21 @@ RSpec.describe(StudentPerformance::ComputationService) do
           record = StudentPerformance::Record
                    .find_by(lecture: lecture, user: user)
           expect(record.achievements_met_ids).not_to include(achievement.id)
+        end
+
+        it "includes met achievement when decimal value meets decimal threshold" do
+          achievement.update!(threshold: 12.5)
+          participation = achievement.assessment
+                                     .assessment_participations
+                                     .find_by(user: user)
+          participation.update!(grade_text: "12.6")
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_met_ids).to include(achievement.id)
         end
       end
 

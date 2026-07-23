@@ -42,6 +42,21 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(response.body).not_to include(other_user.tutorial_name)
       end
 
+      it "renders a dash when percentage is unavailable" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture,
+                          percentage_materialized: nil,
+                          points_total_materialized: 0,
+                          points_max_materialized: 0)
+
+        get lecture_student_performance_records_path(lecture)
+
+        expect(response.body).to include(
+          I18n.t("student_performance.records.percentage_unavailable")
+        )
+        expect(response.body).not_to include(">0%</span>")
+      end
+
       context "with achievements" do
         before { Flipper.enable(:assessment_grading) }
 
@@ -53,13 +68,18 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                             lecture: lecture, user: user)
           achievement = FactoryBot.create(:achievement, :boolean,
                                           lecture: lecture)
+          # rubocop:disable Rails/SkipsModelValidations
           StudentPerformance::Record
             .where(lecture: lecture, user: user)
             .update_all(achievements_met_ids: [achievement.id])
+          # rubocop:enable Rails/SkipsModelValidations
 
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
           expect(response.body).to include("bi-check-circle-fill")
+          expect(response.body).to include(
+            %(aria-label="#{I18n.t("student_performance.records.columns.achievement_met")}")
+          )
         end
 
         it "renders not-met icon for unmet achievements" do
@@ -68,13 +88,44 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                             lecture: lecture, user: user)
           achievement = FactoryBot.create(:achievement, :boolean,
                                           lecture: lecture)
+          # rubocop:disable Rails/SkipsModelValidations
           StudentPerformance::Record
             .where(lecture: lecture, user: user)
-            .update_all(achievements_met_ids: [])
+            .update_all(
+              achievements_met_ids: [],
+              achievements_ungraded_ids: []
+            )
+          # rubocop:enable Rails/SkipsModelValidations
 
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
           expect(response.body).to include("bi-x-circle")
+          expect(response.body).to include(
+            %(aria-label="#{I18n.t("student_performance.records.columns.achievement_not_met")}")
+          )
+        end
+
+        it "renders an accessible label for ungraded achievements" do
+          user = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership,
+                            lecture: lecture, user: user)
+          achievement = FactoryBot.create(:achievement, :boolean,
+                                          lecture: lecture)
+          # rubocop:disable Rails/SkipsModelValidations
+          StudentPerformance::Record
+            .where(lecture: lecture, user: user)
+            .update_all(
+              achievements_met_ids: [],
+              achievements_ungraded_ids: [achievement.id]
+            )
+          # rubocop:enable Rails/SkipsModelValidations
+
+          get lecture_student_performance_records_path(lecture)
+          expect(response.body).to include(achievement.title)
+          expect(response.body).to include("bi-question-circle")
+          expect(response.body).to include(
+            %(aria-label="#{I18n.t("student_performance.records.columns.achievement_ungraded")}")
+          )
         end
       end
 
@@ -100,6 +151,20 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           )
           expect(response.body).to include(member.tutorial_name)
           expect(response.body).not_to include(non_member.tutorial_name)
+        end
+
+        it "ignores tutorial_ids from other lectures" do
+          other_lecture = FactoryBot.create(:lecture)
+          other_tutorial = FactoryBot.create(:tutorial, lecture: other_lecture)
+          FactoryBot.create(:tutorial_membership,
+                            tutorial: other_tutorial, user: member)
+
+          get lecture_student_performance_records_path(
+            lecture, tutorial_id: other_tutorial.id
+          )
+
+          expect(response.body).to include(member.tutorial_name)
+          expect(response.body).to include(non_member.tutorial_name)
         end
       end
 
@@ -180,6 +245,48 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(response).to redirect_to(
           lecture_student_performance_records_path(lecture)
         )
+      end
+
+      it "adds noopener to manuscript and correction links" do
+        assignment = FactoryBot.create(:assignment,
+                                       :with_lecture,
+                                       lecture: lecture)
+        FactoryBot.create(:assessment,
+                          :with_points,
+                          assessable: assignment,
+                          lecture: lecture)
+        submission = FactoryBot.create(:valid_submission,
+                                       :with_manuscript,
+                                       :with_correction,
+                                       lecture: lecture,
+                                       assignment: assignment)
+        FactoryBot.create(:user_submission_join,
+                          user: record.user,
+                          submission: submission)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body).to include(
+          %(href="#{show_submission_manuscript_path(submission)}")
+        )
+        expect(response.body).to include(
+          %(href="#{show_correction_path(submission)}")
+        )
+        expect(response.body.scan(%(target="_blank" rel="noopener")).size)
+          .to eq(2)
+      end
+
+      it "renders a dash when percentage is unavailable" do
+        record.update!(percentage_materialized: nil,
+                       points_total_materialized: 0,
+                       points_max_materialized: 0)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body).to include(
+          I18n.t("student_performance.records.percentage_unavailable")
+        )
+        expect(response.body).not_to include(">0%</div>")
       end
     end
 

@@ -1,3 +1,5 @@
+# Represents a student's participation in an assessment. It tracks the student's
+# submission status, grade, and other relevant information.
 module Assessment
   class Participation < ApplicationRecord
     belongs_to :assessment, class_name: "Assessment::Assessment",
@@ -24,6 +26,7 @@ module Assessment
                  if: :should_recompute_performance_record?
 
     validates :user_id, uniqueness: { scope: :assessment_id }
+    validate :grading_lifecycle_must_be_open
     validates :grade_numeric,
               inclusion: {
                 in: [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0],
@@ -50,6 +53,30 @@ module Assessment
 
     private
 
+      def grading_lifecycle_must_be_open
+        # Grade-bearing changes and the transition into "reviewed" are gated by
+        # the grading window. Administrative transitions to absent/exempt carry
+        # no grade and stay allowed, so absences can be recorded before grading
+        # opens.
+        return if assessment&.grading_open?
+
+        changed_grading_attributes =
+          changes.keys.intersect?(["grade_numeric", "grade_text",
+                                   "points_total", "grader_id", "graded_at"])
+        becoming_reviewed = status_changed?(to: "reviewed")
+
+        return unless changed_grading_attributes || becoming_reviewed
+
+        errors.add(:base, :early_grading_not_allowed)
+      end
+
+      def assessment_must_be_gradable
+        return unless assessment&.assessable
+        return if assessment.assessable.is_a?(::Assessment::Gradable)
+
+        errors.add(:grade_numeric, :not_gradable)
+      end
+
       def should_recompute_performance_record?
         achievement_grade_text_changed? ||
           saved_change_to_status? ||
@@ -62,19 +89,12 @@ module Assessment
       end
 
       def recompute_performance_record
-        lecture_id = assessment&.lecture_id
-        return unless lecture_id
+        lecture = assessment&.lecture
+        return unless lecture && Flipper.enabled?(:assessment_grading)
 
         StudentPerformance::ComputationService
-          .new(lecture: assessment.lecture)
+          .new(lecture: lecture)
           .compute_and_upsert_record_for(user)
-      end
-
-      def assessment_must_be_gradable
-        return unless assessment&.assessable
-        return if assessment.assessable.is_a?(::Assessment::Gradable)
-
-        errors.add(:grade_numeric, :not_gradable)
       end
   end
 end

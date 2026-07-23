@@ -25,8 +25,10 @@ Thredded.user_path = lambda { |_user|
 # This method is used by Thredded controllers and views to fetch the currently signed-in user
 Thredded.current_user_method = :"current_#{Thredded.user_class_name.demodulize.underscore}"
 
-# User avatar URL. rb-gravatar gem is used by default:
-Thredded.avatar_url = ->(user) { RailsGravatar.src(user.email, 156, "mm") }
+# User avatar URL. rb-gravatar gem is used by default. RailsGravatar.src returns a
+# protocol-relative URL (//www.gravatar.com/...); force https so it is never
+# rendered as http on an http page (dev), which would trip the CSP img-src.
+Thredded.avatar_url = ->(user) { "https:#{RailsGravatar.src(user.email, 156, "mm")}" }
 
 # ==> Permissions Configuration
 # By default, thredded uses a simple permission model, where all the users can
@@ -120,6 +122,14 @@ Thredded.messageboard_name_length_range = (1..120)
 # See the Sanitize docs for more information on the underlying library: https://github.com/rgrove/sanitize/#readme
 # E.g. to allow a custom element <custom-element>:
 # Thredded::ContentFormatter.whitelist[:elements] += %w(custom-element)
+
+# ==> Server-side link previews (onebox) — DISABLED for SSRF safety.
+# OneboxFilter fetches user-supplied URLs server-side from the app host, which sits
+# inside the WireGuard overlay / Uninetz — a request-forgery perimeter bypass. Removing
+# it keeps autolinking (plain, sanitized <a> tags); only the server-side fetch is gone.
+Thredded::ContentFormatter.after_sanitization_filters =
+  Thredded::ContentFormatter.after_sanitization_filters -
+  [Thredded::HtmlPipeline::OneboxFilter]
 
 # ==> User autocompletion (Private messages and @-mentions)
 # Thredded.autocomplete_min_length = 2 lower to 1 if have 1-letter names -- increase if you want

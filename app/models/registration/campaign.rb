@@ -25,7 +25,7 @@ module Registration
     # indexes in the UserRegistration table in the schema):
     # - in preference  mode,  the same preference_rank cannot be used twice by
     #   the same user in the same campaign.
-    # - in FCFS mode, the same user cannot register twice in the same campaign.
+    # - in first-come-first-served mode, the same user cannot register twice in the same campaign.
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
              dependent: :destroy,
@@ -73,6 +73,11 @@ module Registration
       campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
     end
 
+    def student_facing_title
+      description.to_s.strip.presence ||
+        I18n.t("registration.user_registration.campaign_main")
+    end
+
     def evaluate_policies_for(user, phase: :registration)
       policy_engine.eligible?(user, phase: phase)
     end
@@ -85,8 +90,18 @@ module Registration
       open? && registration_deadline > Time.current
     end
 
+    def open_for_withdrawals?
+      open_for_registrations?
+    end
+
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registration_confirmed_for_group_type?(user, group_type)
+      user_registrations.joins(:registration_item)
+                        .where(user_id: user.id, status: :confirmed)
+                        .exists?(registration_items: { registerable_type: group_type })
     end
 
     def can_be_deleted?
@@ -124,7 +139,8 @@ module Registration
       # Users with at least one pending registration, but no confirmed registration.
       # This covers:
       # - Preference mode: All applicants before allocation (since none are confirmed).
-      # - FCFS mode: Users on the waitlist who haven't secured a spot elsewhere in this campaign.
+      # - first-come-first-served mode: Users on the waitlist who haven't secured
+      # a spot elsewhere in this campaign.
       user_registrations.pending
                         .where.not(user_id: user_registrations.confirmed.select(:user_id))
                         .distinct
@@ -165,6 +181,9 @@ module Registration
             registrations: user_registrations.where.not(status: :rejected)
           ).call
 
+          # Finalization re-screens under lock because the UI pre-check does not
+          # lock campaign state. If blockers appear now, we stop before applying
+          # auto-rejections to avoid leaving a partially changed rejection state.
           raise(FinalizationBlockedError, screening) if screening.blocked?
 
           apply_rejections!(screening.auto_reject_violations)
@@ -212,6 +231,7 @@ module Registration
           reason_type: violation[:reason_type] || default_reason_type,
           reason_code: violation[:reason_code].to_s,
           reason_label: violation[:reason_label] || violation[:message],
+          rejection_policy_id: violation[:policy_id],
           rejected_at: now
         )
       end
@@ -299,16 +319,13 @@ module Registration
     end
 
     def open_rejected_registrations
+      active_user_ids = user_registrations.where(status: [:confirmed, :pending])
+                                          .select(:user_id)
+
       user_registrations.rejected
-                        .where(
-                          "rejection_reason_code IS NULL OR rejection_reason_code != ?",
-                          Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
-                        )
+                        .with_open_rejection_reason
                         .where(rejection_overridden_at: nil)
-                        .where.not(
-                          user_id: user_registrations.where(status: [:confirmed, :pending])
-                                                     .select(:user_id)
-                        )
+                        .where.not(user_id: active_user_ids)
     end
 
     def roster_group_type
@@ -318,6 +335,38 @@ module Registration
         registration_items.limit(1)
       end
       items.first&.registerable_type&.tableize || "tutorials"
+    end
+
+    # The distinct groups (tutorials/cohorts/talks) this campaign allocates.
+    def registerables
+      registration_items.includes(:registerable).map(&:registerable).uniq
+    end
+
+    # The self-materialization mode shared by all of this campaign's groups,
+    # or nil if they differ. Used to preselect the post-finalization
+    # "open for self-service" prompt.
+    def shared_self_materialization_mode
+      modes = registerables.map(&:self_materialization_mode).uniq
+      modes.first if modes.one?
+    end
+
+    # Opens (or closes) student self-service on all of this campaign's groups
+    # at once. Only meaningful once the campaign is completed, since the groups
+    # are locked while a campaign is still running.
+    def apply_self_materialization_mode!(mode)
+      # to_s first: a missing mode would otherwise raise NoMethodError instead of
+      # the ArgumentError that callers rescue.
+      unless Rosters::Rosterable::SELF_MATERIALIZATION_MODES.key?(mode.to_s.to_sym)
+        raise(ArgumentError, "unknown self_materialization_mode: #{mode.inspect}")
+      end
+      return false unless completed?
+
+      transaction do
+        registerables.each do |registerable|
+          registerable.update!(self_materialization_mode: mode)
+        end
+      end
+      true
     end
 
     private
@@ -342,6 +391,7 @@ module Registration
           rejection_reason_type: nil,
           rejection_reason_code: nil,
           rejection_reason_label: nil,
+          rejection_policy_id: nil,
           rejected_at: nil,
           rejection_overridden_at: nil,
           updated_at: Time.current
@@ -359,8 +409,9 @@ module Registration
           status: Registration::UserRegistration.statuses[:rejected],
           rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY,
           rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
-          rejection_reason_label:
-          I18n.t("registration.user_registration.reason_labels.solver_unassigned"),
+          rejection_reason_label: Registration::UserRegistration.resolve_rejection_reason_label(
+            reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+          ),
           rejected_at: now,
           rejection_overridden_at: nil,
           updated_at: now
@@ -472,7 +523,9 @@ module Registration
           return campaignable.public_send(assoc).flat_map(&:allocated_user_ids)
         end
 
-        klass = type.constantize
+        klass = Rosters::Rosterable.class_for(type)
+        return [] unless klass
+
         scope = fetch_scope_for_type(klass, type)
         fetch_ids_from_scope(klass, scope)
       end

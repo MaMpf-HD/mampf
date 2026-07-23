@@ -18,7 +18,9 @@
 
   <td>
     <% if achievement.threshold.present? %>
-      <%= achievement.percentage? ? "#{achievement.threshold}%" : achievement.threshold %>
+      <%= achievement.percentage? ?
+            "#{achievement.threshold.to_s("F")}%" :
+            achievement.threshold.to_s("F") %>
     <% else %>
       &mdash;
     <% end %>

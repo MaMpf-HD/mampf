@@ -25,10 +25,12 @@ module StudentPerformance
                              ))
 
       if params[:tutorial_id].present?
-        user_ids = TutorialMembership
-                   .where(tutorial_id: params[:tutorial_id])
-                   .select(:user_id)
-        scope = scope.where(user_id: user_ids)
+        tutorial = @lecture.tutorials.find_by(id: params[:tutorial_id])
+
+        if tutorial
+          user_ids = TutorialMembership.where(tutorial: tutorial).select(:user_id)
+          scope = scope.where(user_id: user_ids)
+        end
       end
 
       @pagy, @records = pagy(scope)

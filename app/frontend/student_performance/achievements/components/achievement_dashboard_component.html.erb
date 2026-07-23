@@ -26,7 +26,11 @@
   </div>
 
   <%= render partial: "student_performance/achievements/settings",
-             locals: { achievement: achievement, lecture: lecture } %>
+             locals: {
+               achievement: achievement,
+               lecture: lecture,
+               original_achievement: original_achievement
+             } %>
 
   <% if grading_enabled? %>
     <hr class="my-4">

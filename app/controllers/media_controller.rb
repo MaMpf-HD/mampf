@@ -1,6 +1,12 @@
 # MediaController
 class MediaController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:play, :display]
+  skip_before_action :authenticate_user!, only: [:play, :screenshot,
+                                                 :chapters_vtt,
+                                                 :references_vtt, :display,
+                                                 :stream_video,
+                                                 :inline_manuscript,
+                                                 :geogebra, :inline_geogebra,
+                                                 :download]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
                                       :fill_media_select,
@@ -12,9 +18,14 @@ class MediaController < ApplicationController
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :check_for_consent, except: [:play, :display]
+  before_action :check_for_consent, except: [:play, :screenshot,
+                                             :chapters_vtt,
+                                             :references_vtt, :display,
+                                             :stream_video,
+                                             :inline_manuscript,
+                                             :geogebra, :inline_geogebra,
+                                             :download]
   after_action :store_access, only: [:play, :display]
-  after_action :store_download, only: [:register_download]
   authorize_resource except: [:index, :new, :create, :search,
                               :fill_teachable_select, :fill_media_select,
                               :fill_medium_preview, :render_medium_actions,
@@ -259,9 +270,48 @@ class MediaController < ApplicationController
       return
     end
     I18n.locale = @medium.locale_with_inheritance
-    @vtt_container = @medium.create_vtt_container!
     @time = params[:time]
     render layout: "thyme"
+  end
+
+  def screenshot
+    file = screenshot_file_for(params[:sort])
+    return head :not_found if file.nil?
+
+    send_stored_file(file, disposition: "inline",
+                           fallback: "#{params[:sort]}-screenshot")
+    prevent_caching unless @medium.free?
+  end
+
+  def chapters_vtt
+    if @medium.video.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_video")
+      return
+    end
+
+    send_vtt(@medium.toc_vtt_content, "chapters")
+    prevent_caching unless @medium.free?
+  end
+
+  def references_vtt
+    if @medium.video.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_video")
+      return
+    end
+
+    send_vtt(@medium.references_vtt_content(current_user || User.new),
+             "references")
+    prevent_caching
+  end
+
+  def stream_video
+    if @medium.video.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_video")
+      return
+    end
+
+    send_stored_file(@medium.video, disposition: "inline", fallback: "video")
+    prevent_caching unless @medium.free?
   end
 
   # show the pdf, optionally at specified page or named destination
@@ -270,17 +320,22 @@ class MediaController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_manuscript")
       return
     end
-    if params[:destination].present?
-      redirect_to "#{@medium.manuscript_url_with_host}##{params[:destination]}",
-                  allow_other_host: true
-      return
-    elsif params[:page].present?
-      redirect_to "#{@medium.manuscript_url_with_host}#page=#{params[:page]}",
-                  allow_other_host: true
+
+    @manuscript_inline_url = inline_manuscript_medium_path(@medium) +
+                             manuscript_fragment
+    render layout: false
+    prevent_caching unless @medium.free?
+  end
+
+  def inline_manuscript
+    if @medium.manuscript.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_manuscript")
       return
     end
-    redirect_to @medium.manuscript_url_with_host,
-                allow_other_host: true
+
+    send_stored_file(@medium.manuscript, disposition: "inline",
+                                         fallback: "manuscript")
+    prevent_caching unless @medium.free?
   end
 
   # run the geogebra applet using Geogebra's Javascript API
@@ -291,6 +346,43 @@ class MediaController < ApplicationController
     end
     I18n.locale = @medium.locale_with_inheritance
     render layout: "geogebra"
+    prevent_caching unless @medium.free?
+  end
+
+  def inline_geogebra
+    if @medium.geogebra.nil?
+      redirect_to :root, alert: I18n.t("controllers.no_geogebra")
+      return
+    end
+
+    send_stored_file(@medium.geogebra, disposition: "inline",
+                                       fallback: "geogebra")
+    prevent_caching unless @medium.free?
+  end
+
+  def download
+    download_sort = params[:sort]
+    file = case download_sort
+           when "video"
+             @medium.video
+           when "manuscript"
+             @medium.manuscript
+           when "geogebra"
+             @medium.geogebra
+           else
+             redirect_to :root,
+                         alert: I18n.t("controllers.invalid_download")
+             return
+    end
+    if file.nil?
+      redirect_to :root,
+                  alert: I18n.t("controllers.no_#{download_sort}")
+      return
+    end
+
+    send_stored_file(file, disposition: "attachment", fallback: download_sort)
+    prevent_caching unless @medium.free?
+    enqueue_consumption(@medium.id, "download", download_sort)
   end
 
   # add a toc item for the video
@@ -377,7 +469,7 @@ class MediaController < ApplicationController
 
   def fill_media_select
     authorize! :fill_media_select, Medium.new
-    result = Medium.select_by_name.map { |t| { value: t[1], text: t[0] } }
+    result = Medium.select_by_name(current_user).map { |t| { value: t[1], text: t[0] } }
     render json: result
   end
 
@@ -386,10 +478,6 @@ class MediaController < ApplicationController
 
     @medium.tags = Tag.where(id: params[:tag_ids])
     @medium.touch
-  end
-
-  def register_download
-    head :ok
   end
 
   def statistics
@@ -568,11 +656,16 @@ class MediaController < ApplicationController
     end
 
     def set_teachable
-      if params[:teachable_type].in?(["Course", "Lecture", "Lesson", "Talk"]) &&
-         params[:teachable_id].present?
-        @teachable = params[:teachable_type].constantize
-                                            .find_by(id: params[:teachable_id])
-      end
+      allowed_types = {
+        "Course" => Course,
+        "Lecture" => Lecture,
+        "Lesson" => Lesson,
+        "Talk" => Talk
+      }
+
+      return unless params[:teachable_id].present? && allowed_types.key?(params[:teachable_type])
+
+      @teachable = allowed_types[params[:teachable_type]].find_by(id: params[:teachable_id])
     end
 
     def detach_components
@@ -608,6 +701,34 @@ class MediaController < ApplicationController
       params.permit(:project, :visibility, :reverse, :id, :all, :page, :per)
     end
 
+    def send_vtt(content, fallback)
+      send_data(content,
+                type: "text/vtt; charset=utf-8",
+                disposition: "inline",
+                filename: "medium-#{@medium.id}-#{fallback}.vtt")
+    end
+
+    def screenshot_file_for(sort)
+      case sort
+      when "video"
+        @medium.video_screenshot_file
+      when "manuscript"
+        @medium.manuscript_screenshot_file
+      when "geogebra"
+        @medium.geogebra_screenshot_file
+      end
+    end
+
+    def manuscript_fragment
+      if params[:destination].present?
+        "##{ERB::Util.url_encode(params[:destination])}"
+      elsif params[:page].present?
+        "#page=#{ERB::Util.url_encode(params[:page])}"
+      else
+        ""
+      end
+    end
+
     # destroy all notifications related to this medium
     def destroy_notifications
       Notification.where(notifiable_id: @medium.id, notifiable_type: "Medium")
@@ -629,10 +750,6 @@ class MediaController < ApplicationController
     def store_access
       mode = action_name == "play" ? "thyme" : "pdf_view"
       sort = action_name == "play" ? "video" : "manuscript"
-      ConsumptionSaver.perform_async(@medium.id, mode, sort)
-    end
-
-    def store_download
-      ConsumptionSaver.perform_async(@medium.id, "download", params[:sort])
+      enqueue_consumption(@medium.id, mode, sort)
     end
 end

@@ -3,12 +3,12 @@ class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
 
   before_action :set_lecture, except: [:new, :create, :search]
-  before_action :set_lecture_cookie, only: [:show, :organizational,
+  before_action :set_lecture_cookie, only: [:show, :outline, :organizational,
                                             :show_announcements]
-  authorize_resource except: [:new, :create, :search]
+  authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
-  before_action :check_for_subscribe, only: [:show]
-  before_action :set_view_locale, only: [:edit, :update, :show, :subscribe_page,
+  before_action :check_for_subscribe, only: [:outline]
+  before_action :set_view_locale, only: [:edit, :update, :show, :outline, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   layout "administration"
@@ -18,40 +18,20 @@ class LecturesController < ApplicationController
   end
 
   def show
-    if @lecture.sort == "vignettes"
-      if @lecture.organizational
-        redirect_to lecture_organizational_path(@lecture)
-        return
-      end
-      redirect_to lecture_questionnaires_path(@lecture)
-      return
-    end
+    return if redirect_to_vignettes_landing
 
-    # deactivate http caching for the moment
-    if stale?(etag: @lecture,
-              last_modified: [current_user.updated_at,
-                              @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil)),
-                              Thredded::UserDetail.find_by(user_id: current_user.id)
-                                                  &.last_seen_at || @lecture.updated_at,
-                              @lecture.forum&.updated_at || @lecture.updated_at].max)
-      @lecture = Lecture.includes(:teacher, :term, :editors, :users,
-                                  :announcements, :imported_media,
-                                  course: [:editors],
-                                  media: [:teachable, :tags],
-                                  lessons: [media: [:tags]],
-                                  chapters: [:lecture,
-                                             { sections: [lessons: [:tags],
-                                                          chapter: [:lecture],
-                                                          tags: [:notions,
-                                                                 :lessons]] }])
-                        .find_by(id: params[:id])
-      @notifications = current_user.active_notifications(@lecture)
-      @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
-
-      render template: "lectures/show/show",
-             layout: turbo_frame_request? ? "turbo_frame" : "application"
+    if lecture_home_landing_page?
+      redirect_to lecture_home_path(@lecture)
+    else
+      redirect_to lecture_outline_path(@lecture)
     end
+  end
+
+  def outline
+    authorize! :show, @lecture
+    return if redirect_to_vignettes_landing
+
+    render_outline
   end
 
   def new
@@ -252,6 +232,28 @@ class LecturesController < ApplicationController
       configurator_class: Search::Configurators::LectureSearchConfigurator,
       options: { infinite_scroll: params[:infinite_scroll], default_per_page: 6 }
     )
+    if @lectures.respond_to?(:includes)
+      # avoid N+1 queries for the registration badge on the result cards
+      @lectures = @lectures.includes(:registration_campaigns)
+    end
+    # ID sets for the state indicators on the result cards (computed once
+    # per request and scoped to the current page, so the cards do not
+    # trigger per-lecture queries and the cost is bounded by the page size)
+    page_lecture_ids = @lectures.map(&:id)
+    @subscribed_lecture_ids =
+      current_user.lecture_user_joins
+                  .where(lecture_id: page_lecture_ids)
+                  .pluck(:lecture_id).to_set
+    if Flipper.enabled?(:registration_campaigns)
+      @registered_lecture_ids =
+        Registration::UserRegistration
+        .where(user: current_user, status: [:pending, :confirmed])
+        .joins(:registration_campaign)
+        .where(registration_campaigns: { campaignable_type: "Lecture",
+                                         campaignable_id: page_lecture_ids })
+        .pluck("registration_campaigns.campaignable_id")
+        .to_set
+    end
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
@@ -328,9 +330,59 @@ class LecturesController < ApplicationController
     end
 
     def check_for_subscribe
+      # Staff bypass the subscription gate for content.
+      return if current_user.can_edit?(@lecture)
+
       return if @lecture.in?(current_user.lectures)
 
-      redirect_to subscribe_lecture_page_path(@lecture.id)
+      # Non-subscribers are sent to the lecture's home page (its
+      # organizational front door), which offers registration (if the
+      # lecture uses it) as well as a link to the subscription page.
+      redirect_to lecture_home_path(@lecture)
+    end
+
+    def render_outline
+      # deactivate http caching for the moment
+      if stale?(etag: @lecture,
+                last_modified: [current_user.updated_at,
+                                @lecture.updated_at,
+                                Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil)),
+                                Thredded::UserDetail.find_by(user_id: current_user.id)
+                                                    &.last_seen_at || @lecture.updated_at,
+                                @lecture.forum&.updated_at || @lecture.updated_at].max)
+        @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                    :announcements, :imported_media,
+                                    course: [:editors],
+                                    media: [:teachable, :tags],
+                                    lessons: [media: [:tags]],
+                                    chapters: [:lecture,
+                                               { sections: [lessons: [:tags],
+                                                            chapter: [:lecture],
+                                                            tags: [:notions,
+                                                                   :lessons]] }])
+                          .find_by(id: params[:id])
+        @notifications = current_user.active_notifications(@lecture)
+        @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
+
+        render template: "lectures/show/show",
+               layout: turbo_frame_request? ? "turbo_frame" : "application"
+      end
+    end
+
+    def redirect_to_vignettes_landing
+      return false unless @lecture.sort == "vignettes"
+
+      if @lecture.organizational
+        redirect_to lecture_organizational_path(@lecture)
+      else
+        redirect_to lecture_questionnaires_path(@lecture)
+      end
+      true
+    end
+
+    def lecture_home_landing_page?
+      @lecture.term.present? &&
+        Flipper.enabled?(:lecture_home_landing, @lecture.term)
     end
 
     def lecture_params
@@ -341,7 +393,8 @@ class LecturesController < ApplicationController
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
                         :submission_deletion_date, :uses_exam_eligibility,
-                        :annotations_status]
+                        :annotations_status,
+                        :home_intro, :home_attachment, :remove_home_attachment]
       if action_name == "update" && current_user.can_update_personell?(@lecture)
         allowed_params.push({ editor_ids: [] })
       end
@@ -419,7 +472,7 @@ class LecturesController < ApplicationController
 
     def search_params
       params.expect(search: [:all_types, :all_terms, :all_programs,
-                             :all_teachers, :fulltext, :per,
+                             :all_teachers, :fulltext, :per, :term_scope,
                              { types: [],
                                term_ids: [],
                                program_ids: [],

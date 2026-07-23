@@ -1,7 +1,11 @@
 module Assessment
+  # Represents a specific instance of a user participating in an assessment.
+  # It tracks the user's status, points, and grading information for that assessment.
   class Assessment < ApplicationRecord
     belongs_to :assessable, polymorphic: true
     belongs_to :lecture
+
+    delegate :grading_open?, to: :assessable, allow_nil: true
 
     has_many :tasks, dependent: :destroy, class_name: "Assessment::Task",
                      inverse_of: :assessment
@@ -45,7 +49,8 @@ module Assessment
                      saved_change_to_total_points?
                  }
 
-    def seed_participations_from!(user_ids:, tutorial_mapping: {})
+    def seed_participations_from!(user_ids:, tutorial_mapping: {},
+                                  recompute: true)
       existing = assessment_participations.pluck(:user_id).to_set
       new_user_ids = user_ids.reject { |uid| existing.include?(uid) }
 
@@ -72,7 +77,7 @@ module Assessment
       )
       # rubocop:enable Rails/SkipsModelValidations
 
-      recompute_all_performance_records
+      recompute_all_performance_records if recompute
     end
 
     private

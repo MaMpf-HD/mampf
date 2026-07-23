@@ -1,3 +1,4 @@
+# Responsible for backfilling assessment participations for expired assignments
 class AssessmentBackfillWorker
   include Sidekiq::Worker
 

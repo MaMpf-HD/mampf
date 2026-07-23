@@ -57,12 +57,12 @@
           <div
             class="mb-3 input-group td-picker"
             id="release-date-picker"
+            data-controller="datetimepicker"
             data-td-target-input="nearest"
             data-td-target-toggle="nearest">
             <%= f.text_field :release_date,
                              class: 'form-control td-input',
                              id: 'release_date',
-                             "data-testid": 'release-date-datetimepicker',
                              autocomplete: 'off',
                              value: medium.planned_release_date,
                             'data-td-target': '#release-date-picker'%>
@@ -113,6 +113,7 @@
                 <div
                   class="input-group td-picker"
                   id="assignment-date-picker"
+                  data-controller="datetimepicker"
                   data-td-target-input="nearest"
                   data-td-target-toggle="nearest">
                   <%= f.text_field :assignment_deadline,
@@ -146,11 +147,13 @@
                      { class: 'form-select' } %>
               </div>
               <% if Flipper.enabled?(:assessment_grading) %>
+                <% requires_submission = medium.publisher&.requires_submission %>
                 <div class="mb-3 col-3 d-flex align-items-end">
                   <div class="form-check">
                     <%= f.check_box :requires_submission,
                                     class: 'form-check-input',
-                                    checked: true %>
+                                    checked: requires_submission.nil? ? true :
+                                      requires_submission %>
                     <%= f.label :requires_submission,
                                 t('assessment.requires_submission'),
                                 class: 'form-check-label' %>

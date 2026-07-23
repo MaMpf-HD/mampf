@@ -1,0 +1,21 @@
+<%= render GroupTileComponent.new(
+      registerable: local_assigns.fetch(:registerable),
+      item: local_assigns[:item],
+      student_tile: true,
+      tile_title: tile_title,
+      tile_type: tile_type,
+      tile_metadata_rows: tile_metadata_rows,
+      tile_tooltip_text: local_assigns[:tile_tooltip_text],
+      tile_variant_class: local_assigns.fetch(
+        :tile_variant_class,
+        "tutorial-gtile--campaign"
+      ),
+      tile_top_bar_class: local_assigns.fetch(
+        :tile_top_bar_class,
+        "tutorial-gtile-top-bar--campaign"
+      ),
+      tile_status_content: local_assigns[:tile_status_content],
+      tile_footer_content: local_assigns[:tile_footer_content],
+      tile_actions_content: local_assigns[:tile_actions_content],
+      tile_column_class: local_assigns[:tile_column_class]
+    ) %>
