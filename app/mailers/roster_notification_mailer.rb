@@ -3,7 +3,13 @@ class RosterNotificationMailer < ApplicationMailer
   # of a rosterable object
 
   class << self
+    SUPPORTED_ROSTERABLES = [Lecture, Tutorial, Cohort, Talk].freeze
+
     def added(user, rosterable)
+      return log_unsupported(rosterable) unless SUPPORTED_ROSTERABLES.any? do |k|
+        rosterable.is_a?(k)
+      end
+
       template = if rosterable.is_a?(Lecture)
         :added_to_lecture_email
       else
@@ -16,6 +22,10 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     def removed(user, rosterable)
+      return log_unsupported(rosterable) unless SUPPORTED_ROSTERABLES.any? do |k|
+        rosterable.is_a?(k)
+      end
+
       template = rosterable.is_a?(Lecture) ? :removed_from_lecture_email : :removed_from_group_email
 
       with(
@@ -25,6 +35,14 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     def moved(user, old_rosterable, new_rosterable)
+      return log_unsupported(old_rosterable) unless SUPPORTED_ROSTERABLES.any? do |k|
+        old_rosterable.is_a?(k)
+      end
+
+      return log_unsupported(new_rosterable) unless SUPPORTED_ROSTERABLES.any? do |k|
+        new_rosterable.is_a?(k)
+      end
+
       with(
         old_rosterable: old_rosterable,
         new_rosterable: new_rosterable,
@@ -51,6 +69,12 @@ class RosterNotificationMailer < ApplicationMailer
 
   def removed_from_lecture_email
     email("roster.mailer.roster_removed_from_lecture_email_subject")
+  end
+
+  def log_unsupported(rosterable)
+    Rails.logger.error(
+      "RosterNotificationMailer: Unsupported rosterable type: #{rosterable.class.name}"
+    )
   end
 
   private
