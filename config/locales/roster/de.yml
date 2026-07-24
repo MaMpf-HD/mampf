@@ -320,12 +320,13 @@ de:
         <p>Hallo %{name},</p>
         <p>
           Du wurdest der %{rosterable_type}-Gruppe
-          <strong>%{rosterable_title}</strong> hinzugefügt.
+          <strong>%{rosterable_title}</strong> in der Vorlesung
+          <strong>%{lecture_title}</strong> hinzugefügt.
         </p>
         <p>
-          Dies gewährt Dir Zugriff auf die entsprechende Vorlesung %{lecture_title} und deren Materialien.
+          Du nimmst nun an dieser Gruppe teil.
         </p>
-      roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} hinzugefügt'
+      roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_added_to_lecture_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
@@ -340,7 +341,8 @@ de:
         <p>Hallo %{name},</p>
         <p>
           Du wurdest aus der %{rosterable_type}-Gruppe
-          <strong>%{rosterable_title}</strong> entfernt.
+          <strong>%{rosterable_title}</strong> in der Vorlesung
+          <strong>%{lecture_title}</strong> entfernt.
         </p>
         <p>
           Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
@@ -349,23 +351,25 @@ de:
         <p>
           Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
         </p>
-      roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} entfernt'
+      roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
       roster_moved_between_groups_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest von der %{old_rosterable_type}-Gruppe
           <strong>%{old_rosterable_title}</strong>
           in die %{new_rosterable_type}-Gruppe
-          <strong>%{new_rosterable_title}</strong> verschoben.
+          <strong>%{new_rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> verschoben.
         </p>
         <p>
           Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
         </p>
-      roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} verschoben'
+      roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} in %{lecture_title} verschoben'
       roster_removed_from_lecture_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
-          Du wurdest aus der Veranstaltung %{lecture_title} entfernt.
+          Du wurdest aus der Vorlesungsliste von
+          <strong>%{lecture_title}</strong> entfernt.
         </p>
         <p>
           Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
