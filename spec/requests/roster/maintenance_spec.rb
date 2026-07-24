@@ -133,7 +133,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         email = ActionMailer::Base.deliveries.last
         expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_added_to_group_email_subject",
-                 rosterable_title: tutorial.title)
+                 rosterable_title: tutorial.title,
+                 lecture_title: lecture.title)
         end
         expect(email.subject).to eq(expected_subject)
       end
@@ -256,7 +257,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         email = ActionMailer::Base.deliveries.last
         expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_removed_from_group_email_subject",
-                 rosterable_title: tutorial.title)
+                 rosterable_title: tutorial.title,
+                 lecture_title: lecture.title)
         end
         expect(email.subject).to eq(expected_subject)
       end
@@ -353,7 +355,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         email = ActionMailer::Base.deliveries.last
         expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
-                 rosterable_title: target.title)
+                 rosterable_title: target.title,
+                 lecture_title: lecture.title)
         end
         expect(email.subject).to eq(expected_subject)
       end
@@ -576,7 +579,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         email = ActionMailer::Base.deliveries.last
         expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
-                 rosterable_title: target_tutorial.title)
+                 rosterable_title: target_tutorial.title,
+                 lecture_title: lecture.title)
         end
         expect(email.subject).to eq(expected_subject)
       end
@@ -695,7 +699,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         email = ActionMailer::Base.deliveries.last
         expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_added_to_group_email_subject",
-                 rosterable_title: cohort.title)
+                 rosterable_title: cohort.title,
+                 lecture_title: lecture.title)
         end
         expect(email.subject).to eq(expected_subject)
       end
@@ -760,7 +765,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         email = ActionMailer::Base.deliveries.last
         expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_removed_from_group_email_subject",
-                 rosterable_title: cohort.title)
+                 rosterable_title: cohort.title,
+                 lecture_title: lecture.title)
         end
         expect(email.subject).to eq(expected_subject)
       end
@@ -811,7 +817,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         email = ActionMailer::Base.deliveries.last
         expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
-                 rosterable_title: target.title)
+                 rosterable_title: target.title,
+                 lecture_title: lecture.title)
         end
         expect(email.subject).to eq(expected_subject)
       end
