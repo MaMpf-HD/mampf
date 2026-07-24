@@ -56,6 +56,8 @@ describe RosterNotificationMailer do
     context "with an unsupported rosterable" do
       it "does not enqueue an email and logs instead" do
         unsupported = create(:registration_campaign)
+        expect(described_class).to receive(:log_unsupported).with(unsupported).and_call_original
+
         expect do
           described_class.added(user, unsupported)
         end.not_to have_enqueued_mail
@@ -101,6 +103,7 @@ describe RosterNotificationMailer do
     context "with an unsupported rosterable" do
       it "does not enqueue an email and logs instead" do
         unsupported = create(:registration_campaign)
+        expect(described_class).to receive(:log_unsupported).with(unsupported).and_call_original
         expect do
           described_class.removed(user, unsupported)
         end.not_to have_enqueued_mail
@@ -151,6 +154,7 @@ describe RosterNotificationMailer do
       it "does not enqueue an email and logs instead" do
         old_unsupported = create(:registration_campaign)
         new_unsupported = create(:registration_campaign)
+        expect(described_class).to receive(:log_unsupported).with(old_unsupported).and_call_original
         expect do
           described_class.moved(user, old_unsupported, new_unsupported)
         end.not_to have_enqueued_mail
