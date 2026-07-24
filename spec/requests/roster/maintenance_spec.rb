@@ -131,7 +131,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expected_subject = I18n.with_locale(editor.locale) do
+        expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_added_to_group_email_subject",
                  rosterable_title: tutorial.title)
         end
@@ -254,7 +254,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expected_subject = I18n.with_locale(editor.locale) do
+        expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_removed_from_group_email_subject",
                  rosterable_title: tutorial.title)
         end
@@ -351,7 +351,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expected_subject = I18n.with_locale(editor.locale) do
+        expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
                  rosterable_title: target.title)
         end
@@ -693,7 +693,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expected_subject = I18n.with_locale(editor.locale) do
+        expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_added_to_group_email_subject",
                  rosterable_title: cohort.title)
         end
@@ -758,7 +758,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expected_subject = I18n.with_locale(editor.locale) do
+        expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_removed_from_group_email_subject",
                  rosterable_title: cohort.title)
         end
@@ -809,7 +809,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expected_subject = I18n.with_locale(editor.locale) do
+        expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
                  rosterable_title: target.title)
         end
