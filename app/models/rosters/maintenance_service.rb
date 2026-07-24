@@ -5,25 +5,39 @@ module Rosters
     class CapacityExceededError < StandardError; end
 
     def add_user!(user, rosterable, force: false, source_campaign_id: nil)
-      rosterable.with_lock do
+      added = rosterable.with_lock do
         add_user_without_lock!(user,
                                rosterable,
                                force: force,
                                source_campaign_id: source_campaign_id)
       end
+      RosterNotificationMailer.added(user, rosterable) if added
+      added
     end
 
     def remove_user!(user, rosterable)
-      rosterable.with_lock do
+      removed = rosterable.with_lock do
         remove_user_without_lock!(user, rosterable)
       end
+      RosterNotificationMailer.removed(user, rosterable) if removed
+      removed
     end
 
     def move_user!(user, from_rosterable, to_rosterable, force: false)
-      lock_rosterables_in_order(from_rosterable, to_rosterable) do
-        remove_user_without_lock!(user, from_rosterable)
-        add_user_without_lock!(user, to_rosterable, force: force)
+      return if from_rosterable == to_rosterable
+
+      moved = lock_rosterables_in_order(from_rosterable, to_rosterable) do
+        raise(ActiveRecord::Rollback) unless user_in_roster?(user, from_rosterable)
+
+        removed = remove_user_without_lock!(user, from_rosterable)
+        added   = add_user_without_lock!(user, to_rosterable, force: force)
+
+        raise(ActiveRecord::Rollback) unless removed && added
+
+        true
       end
+      RosterNotificationMailer.moved(user, from_rosterable, to_rosterable) if moved
+      moved
     end
 
     private
@@ -51,8 +65,9 @@ module Rosters
       end
 
       def remove_user_without_lock!(user, rosterable)
-        rosterable.remove_user_from_roster!(user)
+        removed = rosterable.remove_user_from_roster!(user)
         cascade_removal_from_subgroups!(user, rosterable)
+        removed
       end
 
       def lock_rosterables_in_order(*rosterables, &)
@@ -65,11 +80,10 @@ module Rosters
       def lock_rosterables_recursively(sorted_rosterables, index, &)
         if index >= sorted_rosterables.length
           yield
-          return
-        end
-
-        sorted_rosterables[index].with_lock do
-          lock_rosterables_recursively(sorted_rosterables, index + 1, &)
+        else
+          sorted_rosterables[index].with_lock do
+            lock_rosterables_recursively(sorted_rosterables, index + 1, &)
+          end
         end
       end
 

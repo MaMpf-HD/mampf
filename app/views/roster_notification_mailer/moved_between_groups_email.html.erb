@@ -1,0 +1,12 @@
+<%= t('roster.mailer.roster_moved_between_groups_email_body_html',
+      name: @username,
+      lecture_title: @lecture&.title || '',
+      old_rosterable_type: @old_rosterable.model_name.human,
+      old_rosterable_title: @old_rosterable.title,
+      new_rosterable_type: @new_rosterable.model_name.human,
+      new_rosterable_title: @new_rosterable.title) %>
+<% if @rosterable_link %>
+  <%= t('roster.mailer.link_text_html',
+        rosterable_link: link_to(t('basics.link'), @rosterable_link)) %>
+<% end %>
+<%= t('roster.mailer.end_mail_html') %>
