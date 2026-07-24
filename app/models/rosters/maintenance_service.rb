@@ -27,9 +27,14 @@ module Rosters
       return if from_rosterable == to_rosterable
 
       moved = lock_rosterables_in_order(from_rosterable, to_rosterable) do
+        raise(ActiveRecord::Rollback) unless user_in_roster?(user, from_rosterable)
+
         removed = remove_user_without_lock!(user, from_rosterable)
         added   = add_user_without_lock!(user, to_rosterable, force: force)
-        removed && added
+
+        raise(ActiveRecord::Rollback) unless removed && added
+
+        true
       end
       RosterNotificationMailer.moved(user, from_rosterable, to_rosterable) if moved
       moved
