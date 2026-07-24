@@ -1,8 +1,4 @@
-<%= sanitize(
-      t('roster.mailer.roster_removed_from_lecture_email_body',
-        name: @username,
-        lecture_title: @lecture&.title || ''),
-      tags: %w[p strong br],
-      attributes: []
-    ) %>
-<%= sanitize(t('roster.mailer.end_mail'), tags: %w[p strong br], attributes: []) %>
+<%= t('roster.mailer.roster_removed_from_lecture_email_body_html',
+      name: @username,
+      lecture_title: @lecture&.title || '') %>
+<%= t('roster.mailer.end_mail_html') %>

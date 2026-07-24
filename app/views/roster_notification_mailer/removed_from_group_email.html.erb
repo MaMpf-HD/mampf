@@ -1,18 +1,10 @@
-<%= sanitize(
-                  t('roster.mailer.roster_removed_from_group_email_body',
-                        name: @username,
-                        lecture_title: @lecture&.title || '',
-                        rosterable_type: @rosterable.model_name.human,
-                        rosterable_title: @rosterable.title),
-                  tags: %w[p strong br a],
-                  attributes: %w[href]
-            ) %>
+<%= t('roster.mailer.roster_removed_from_group_email_body_html',
+      name: @username,
+      lecture_title: @lecture&.title || '',
+      rosterable_type: @rosterable.model_name.human,
+      rosterable_title: @rosterable.title) %>
 <% if @rosterable_link %>
-      <%= sanitize(
-                        t('roster.mailer.link_text',
-                              rosterable_link: link_to(t('basics.link'), @rosterable_link)),
-                        tags: %w[p strong br a],
-                        attributes: %w[href]
-                  ) %>
+  <%= t('roster.mailer.link_text_html',
+        rosterable_link: link_to(t('basics.link'), @rosterable_link)) %>
 <% end %>
-<%= sanitize(t('roster.mailer.end_mail'), tags: %w[p strong br a], attributes: %w[href]) %>
+<%= t('roster.mailer.end_mail_html') %>

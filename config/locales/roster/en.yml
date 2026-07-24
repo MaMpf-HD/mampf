@@ -308,11 +308,11 @@ en:
     self_enrollment:
       no_registration_options: "There are currently no tutorials or groups available for registration."
     mailer:
-      end_mail: |
+      end_mail_html: |
         <p>With kind regards,<br>Your MaMpf-Team</p>
-      link_text: |
+      link_text_html: |
         <p>You can access your new group here: %{rosterable_link}</p>
-      roster_added_to_group_email_body: |
+      roster_added_to_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>
           You have been added to the %{rosterable_type} group
@@ -322,7 +322,7 @@ en:
           This grants you access to the corresponding lecture %{lecture_title} and its materials.
         </p>
       roster_added_to_group_email_subject: 'Added to group %{rosterable_title}'
-      roster_added_to_lecture_email_body: |
+      roster_added_to_lecture_email_body_html: |
         <p>Hello %{name},</p>
         <p>
           You have been added to the lecture roster of
@@ -332,7 +332,7 @@ en:
           This grants you access to the lecture %{lecture_title} and its materials.
         </p>
       roster_added_to_lecture_email_subject: 'Added to lecture %{lecture_title}'
-      roster_removed_from_group_email_body: |
+      roster_removed_from_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>
           You have been removed from the %{rosterable_type} group
@@ -346,7 +346,7 @@ en:
           Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
         </p>
       roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title}'
-      roster_moved_between_groups_email_body: |
+      roster_moved_between_groups_email_body_html: |
         <p>Hello %{name},</p>
         <p>
           You have been moved from the %{old_rosterable_type} group
@@ -358,7 +358,7 @@ en:
           Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
         </p>
       roster_moved_between_groups_email_subject: 'Moved to group %{rosterable_title}'
-      roster_removed_from_lecture_email_body: |
+      roster_removed_from_lecture_email_body_html: |
         <p>Hello %{name},</p>
         <p>
           You have been removed from the lecture roster of

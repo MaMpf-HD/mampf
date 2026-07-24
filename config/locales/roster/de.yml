@@ -312,11 +312,11 @@ de:
     self_enrollment:
       no_registration_options: "Derzeit sind keine Tutorien oder Gruppen zur Anmeldung verfügbar."
     mailer:
-      end_mail: |
+      end_mail_html: |
         <p>Mit freundlichen Grüßen,<br>Dein MaMpf-Team</p>
-      link_text: |
+      link_text_html: |
         <p>Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}</p>
-      roster_added_to_group_email_body: |
+      roster_added_to_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest der %{rosterable_type}-Gruppe
@@ -326,7 +326,7 @@ de:
           Dies gewährt Dir Zugriff auf die entsprechende Vorlesung %{lecture_title} und deren Materialien.
         </p>
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} hinzugefügt'
-      roster_added_to_lecture_email_body: |
+      roster_added_to_lecture_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest der Vorlesungsliste von
@@ -336,7 +336,7 @@ de:
           Dies gewährt Dir Zugriff auf die Vorlesung %{lecture_title} und deren Materialien.
         </p>
       roster_added_to_lecture_email_subject: 'Zur Vorlesung %{lecture_title} hinzugefügt'
-      roster_removed_from_group_email_body: |
+      roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest aus der %{rosterable_type}-Gruppe
@@ -350,7 +350,7 @@ de:
           Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
         </p>
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} entfernt'
-      roster_moved_between_groups_email_body: |
+      roster_moved_between_groups_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest von der %{old_rosterable_type}-Gruppe
@@ -362,7 +362,7 @@ de:
           Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
         </p>
       roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} verschoben'
-      roster_removed_from_lecture_email_body: |
+      roster_removed_from_lecture_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest aus der Veranstaltung %{lecture_title} entfernt.
