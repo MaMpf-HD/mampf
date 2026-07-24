@@ -86,6 +86,10 @@ class Tutorial < ApplicationRecord
                       .first&.tutorial
   end
 
+  def graders_with_inheritance
+    (tutors + lecture.graders_with_inheritance).uniq
+  end
+
   private
 
     def lecture_id_immutable

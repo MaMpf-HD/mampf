@@ -1,0 +1,124 @@
+<tr
+  id="<%= row_id %>"
+  is="turbo-frame"
+  data-id="<%= @participation.id %>"
+  data-controller="grade-row"
+  data-participation-row-id="<%= @participation.id %>"
+  data-action="dirty->grade-table#rowDirty clean->grade-table#rowClean"
+  data-status-filter-status="<%= @participation.status %>"
+  data-status-filter-name="<%= @user.tutorial_name %>"
+>
+  <!-- Column 1: Speaker name + copy email -->
+  <td class="sticky-col team-col">
+    <div class="d-flex justify-content-between">
+      <% if @participation.absent? %>
+        <i
+          class="bi bi-person-x text-danger me-1"
+          data-bs-toggle="tooltip"
+          title="<%= status_label(@participation) %>"
+        ></i>
+      <% elsif @participation.exempt? %>
+        <i
+          class="bi bi-person-dash text-secondary me-1"
+          data-bs-toggle="tooltip"
+          title="<%= status_label(@participation) %>"
+        ></i>
+      <% end %>
+
+      <%= @user.tutorial_name %>
+
+      <i
+        class="
+          clipboardpopup bi bi-clipboard clickable
+          text-secondary clipboard-btn ms-3 clipboard-button
+        "
+        style="width: fit-content;"
+        data-clipboard-text="<%= @user.email %>"
+        data-bs-toggle="tooltip"
+        title="<%= t('buttons.copy_email_to_clipboard') %>"
+      >
+        <span class="clipboardpopuptext token-clipboard-popup">
+          <%= t('basics.emails_copied_to_clipboard') %>
+        </span>
+      </i>
+    </div>
+  </td>
+
+  <!-- Column 2: Status -->
+  <td class="text-center sticky-col status-col" >
+    <span
+      class="<%= badge_status_participation_class(@participation.status) %>"
+      style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
+    >
+      <%= @participation.status %>
+    </span>
+  </td>
+
+  <!-- Column 3: Grade (editable) -->
+  <td class="text-center sticky-col grade-col" >
+    <% if allow_grading? %>
+      <%= grade_select_input(@participation) %>
+    <% else %>
+      <%= grade_display(@participation) %>
+    <% end %>
+  </td>
+
+  <!-- Column 4: Note (editable) -->
+  <td class="note-col">
+    <% if allow_grading? %>
+      <%= text_field_tag "note", @participation.note,
+                          class: "form-control form-control-sm",
+                          data: { grade_row_target: "note", action: "input->grade-row#markDirty" } %>
+    <% else %>
+      <span class="text-muted small"><%= @participation.note %></span>
+    <% end %>
+  </td>
+
+  <!-- Column 5: Graded by / at -->
+  <td class="text-muted small">
+    <%= grader_display(@participation) %>
+  </td>
+
+  <td class="text-muted small">
+    <% if graded_at_relative(@participation) %>
+      <span title="<%= graded_at_full(@participation) %>">
+        <%= graded_at_relative(@participation) %>
+      </span>
+    <% end %>
+  </td>
+
+  <!-- Column 6: Actions -->
+  <td class="text-end sticky-col action-col">
+    <div class="d-inline-flex align-items-center flex-nowrap gap-1">
+      <% if can_grade? && @participation %>
+        <%= form_with url: grade_participation_path(@participation),
+                    method: :patch,
+                    data: { turbo: true, grade_row_target: "form" },
+                    html: { style: "display:none;" } do %>
+          <input
+            type="hidden"
+            name="grade"
+            data-grade-row-target="gradePayload"
+          >
+
+          <input
+            type="hidden"
+            name="comment"
+            data-grade-row-target="notePayload"
+          >
+        <% end %>
+        <%= save_row_button(allow_grading?) %>
+        <%= form_with url: refresh_grade_participation_path(@participation),
+                    method: :patch,
+                    data: { turbo: true, grade_row_target: "refreshForm" },
+                    html: { style: "display:none;" } %>
+        <%= refresh_row_button(allow_grading?) %>
+        <%= button_to t("assessment.mark_absent"),
+                    mark_absent_participation_path(@participation),
+                    method: :patch,
+                    form: { data: { turbo: true } },
+                    class: "btn btn-sm btn-outline-danger" %>
+      <% end %>
+    </div>
+  </td>
+</tr>
