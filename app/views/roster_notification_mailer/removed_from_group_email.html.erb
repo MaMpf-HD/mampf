@@ -3,8 +3,4 @@
       lecture_title: @lecture&.title || '',
       rosterable_type: @rosterable.model_name.human,
       rosterable_title: @rosterable.title) %>
-<% if @rosterable_link %>
-  <%= t('roster.mailer.link_text_html',
-        rosterable_link: link_to(t('basics.link'), @rosterable_link)) %>
-<% end %>
 <%= t('roster.mailer.end_mail_html') %>
