@@ -35,27 +35,27 @@ class RosterNotificationMailer < ApplicationMailer
 
   def added_to_group_email
     prepare_data(params)
-    email("added_to_group")
+    email("roster.mailer.roster_added_to_group_email_subject")
   end
 
   def removed_from_group_email
     prepare_data(params)
-    email("removed_from_group")
+    email("roster.mailer.roster_removed_from_group_email_subject")
   end
 
   def moved_between_groups_email
     prepare_data(params)
-    email("moved_between_groups")
+    email("roster.mailer.roster_moved_between_groups_email_subject")
   end
 
   def added_to_lecture_email
     prepare_data(params)
-    email("added_to_lecture")
+    email("roster.mailer.roster_added_to_lecture_email_subject")
   end
 
   def removed_from_lecture_email
     prepare_data(params)
-    email("removed_from_lecture")
+    email("roster.mailer.roster_removed_from_lecture_email_subject")
   end
 
   private
@@ -77,7 +77,7 @@ class RosterNotificationMailer < ApplicationMailer
           from: NotificationMailer.sender(@recipient.locale),
           to: @recipient.email,
           subject: t(
-            "roster.mailer.roster_#{mail_template}_email_subject",
+            mail_template,
             rosterable_title: @rosterable&.title || @new_rosterable&.title,
             lecture_title: @lecture&.title || ""
           )
