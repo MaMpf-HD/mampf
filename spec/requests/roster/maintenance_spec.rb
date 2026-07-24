@@ -401,6 +401,31 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           end
         end
       end
+
+      context "when source is locked" do
+        let(:source) { create(:tutorial, lecture: lecture, skip_campaigns: false) }
+        let!(:campaign) do
+          create(:registration_campaign, :open,
+                 campaignable: lecture,
+                 registration_items: [build(:registration_item, registerable: source)])
+        end
+
+        it "rejects the request" do
+          patch move_member_tutorial_path(source, user_id: member.id),
+                params: { target_id: target.id }
+          expect(source.members).to include(member)
+          expect(target.members).not_to include(member)
+        end
+
+        it "does not send an email" do
+          perform_enqueued_jobs do
+            expect do
+              patch(move_member_tutorial_path(source, user_id: member.id),
+                    params: { target_id: target.id })
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
+        end
+      end
     end
 
     context "as a student" do

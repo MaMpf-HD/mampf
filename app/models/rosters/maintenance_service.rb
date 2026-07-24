@@ -20,14 +20,19 @@ module Rosters
         remove_user_without_lock!(user, rosterable)
       end
       RosterNotificationMailer.removed(user, rosterable) if removed
+      removed
     end
 
     def move_user!(user, from_rosterable, to_rosterable, force: false)
-      lock_rosterables_in_order(from_rosterable, to_rosterable) do
-        remove_user_without_lock!(user, from_rosterable)
-        add_user_without_lock!(user, to_rosterable, force: force)
+      return if from_rosterable == to_rosterable
+
+      moved = lock_rosterables_in_order(from_rosterable, to_rosterable) do
+        removed = remove_user_without_lock!(user, from_rosterable)
+        added   = add_user_without_lock!(user, to_rosterable, force: force)
+        removed && added
       end
-      RosterNotificationMailer.moved(user, from_rosterable, to_rosterable)
+      RosterNotificationMailer.moved(user, from_rosterable, to_rosterable) if moved
+      moved
     end
 
     private
@@ -70,11 +75,10 @@ module Rosters
       def lock_rosterables_recursively(sorted_rosterables, index, &)
         if index >= sorted_rosterables.length
           yield
-          return
-        end
-
-        sorted_rosterables[index].with_lock do
-          lock_rosterables_recursively(sorted_rosterables, index + 1, &)
+        else
+          sorted_rosterables[index].with_lock do
+            lock_rosterables_recursively(sorted_rosterables, index + 1, &)
+          end
         end
       end
 
