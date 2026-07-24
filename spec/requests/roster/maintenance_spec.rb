@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe("Roster::Maintenance", type: :request) do
   let(:lecture) { create(:lecture, locale: I18n.default_locale) }
   let(:editor) { create(:confirmed_user) }
-  let(:student) { create(:confirmed_user) }
+  let(:student) { create(:confirmed_user, locale: "en") }
 
   before do
     Flipper.enable(:roster_maintenance)
@@ -131,10 +131,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expect(email.subject).to eq(
+        expected_subject = I18n.with_locale(editor.locale) do
           I18n.t("roster.mailer.roster_added_to_group_email_subject",
                  rosterable_title: tutorial.title)
-        )
+        end
+        expect(email.subject).to eq(expected_subject)
       end
 
       it "propagates tutorial roster additions to the lecture roster" do
@@ -253,10 +254,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expect(email.subject).to eq(
+        expected_subject = I18n.with_locale(editor.locale) do
           I18n.t("roster.mailer.roster_removed_from_group_email_subject",
                  rosterable_title: tutorial.title)
-        )
+        end
+        expect(email.subject).to eq(expected_subject)
       end
 
       it "does not remove the user from the lecture roster" do
@@ -349,11 +351,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-
-        expect(email.subject).to eq(
+        expected_subject = I18n.with_locale(editor.locale) do
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
                  rosterable_title: target.title)
-        )
+        end
+        expect(email.subject).to eq(expected_subject)
       end
 
       it "keeps lecture roster membership when moving within tutorials" do
@@ -483,11 +485,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-
-        expect(email.subject).to eq(
+        expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_removed_from_lecture_email_subject",
                  lecture_title: lecture.title)
-        )
+        end
+        expect(email.subject).to eq(expected_subject)
       end
 
       it "returns turbo stream response" do
@@ -547,11 +549,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-
-        expect(email.subject).to eq(
+        expected_subject = I18n.with_locale(student.locale) do
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
                  rosterable_title: target_tutorial.title)
-        )
+        end
+        expect(email.subject).to eq(expected_subject)
       end
 
       it "keeps lecture membership when moving between tutorials" do
@@ -666,10 +668,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expect(email.subject).to eq(
+        expected_subject = I18n.with_locale(editor.locale) do
           I18n.t("roster.mailer.roster_added_to_group_email_subject",
                  rosterable_title: cohort.title)
-        )
+        end
+        expect(email.subject).to eq(expected_subject)
       end
 
       it "does not add the user to the lecture roster by default" do
@@ -730,11 +733,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-
-        expect(email.subject).to eq(
+        expected_subject = I18n.with_locale(editor.locale) do
           I18n.t("roster.mailer.roster_removed_from_group_email_subject",
                  rosterable_title: cohort.title)
-        )
+        end
+        expect(email.subject).to eq(expected_subject)
       end
     end
 
@@ -781,10 +784,11 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expect(email.subject).to eq(
+        expected_subject = I18n.with_locale(editor.locale) do
           I18n.t("roster.mailer.roster_moved_between_groups_email_subject",
                  rosterable_title: target.title)
-        )
+        end
+        expect(email.subject).to eq(expected_subject)
       end
     end
 

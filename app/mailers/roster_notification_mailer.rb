@@ -11,8 +11,7 @@ class RosterNotificationMailer < ApplicationMailer
       end
       with(
         rosterable: rosterable,
-        recipient: user,
-        sender: DefaultSetting::PROJECT_EMAIL
+        recipient: user
       ).public_send(template).deliver_later
     end
 
@@ -21,8 +20,7 @@ class RosterNotificationMailer < ApplicationMailer
 
       with(
         rosterable: rosterable,
-        recipient: user,
-        sender: DefaultSetting::PROJECT_EMAIL
+        recipient: user
       ).public_send(template).deliver_later
     end
 
@@ -30,8 +28,7 @@ class RosterNotificationMailer < ApplicationMailer
       with(
         old_rosterable: old_rosterable,
         new_rosterable: new_rosterable,
-        recipient: user,
-        sender: DefaultSetting::PROJECT_EMAIL
+        recipient: user
       ).moved_between_groups_email.deliver_later
     end
   end
@@ -68,8 +65,7 @@ class RosterNotificationMailer < ApplicationMailer
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]
-      @sender          = params[:sender]
-      @username        = @recipient.name
+      @username        = @recipient.tutorial_name
       @rosterable_link = url_for_rosterable(@rosterable || @new_rosterable)
       @lecture         = lecture_for_rosterable(@rosterable || @new_rosterable)
     end
@@ -78,7 +74,7 @@ class RosterNotificationMailer < ApplicationMailer
       prepare_data(params)
       I18n.with_locale(@recipient.locale || I18n.default_locale) do
         mail(
-          from: @sender,
+          from: NotificationMailer.sender(@recipient.locale),
           to: @recipient.email,
           subject: t(
             "roster.mailer.roster_#{mail_template}_email_subject",
