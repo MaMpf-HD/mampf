@@ -34,27 +34,22 @@ class RosterNotificationMailer < ApplicationMailer
   end
 
   def added_to_group_email
-    prepare_data(params)
     email("roster.mailer.roster_added_to_group_email_subject")
   end
 
   def removed_from_group_email
-    prepare_data(params)
     email("roster.mailer.roster_removed_from_group_email_subject")
   end
 
   def moved_between_groups_email
-    prepare_data(params)
     email("roster.mailer.roster_moved_between_groups_email_subject")
   end
 
   def added_to_lecture_email
-    prepare_data(params)
     email("roster.mailer.roster_added_to_lecture_email_subject")
   end
 
   def removed_from_lecture_email
-    prepare_data(params)
     email("roster.mailer.roster_removed_from_lecture_email_subject")
   end
 
