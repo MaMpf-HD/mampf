@@ -310,9 +310,23 @@ en:
     mailer:
       end_mail_html: |
         <p>With kind regards,<br>Your MaMpf-Team</p>
+      end_mail: |
+        <p>With kind regards,<br>Your MaMpf-Team</p>
       link_text_html: |
         <p>You can access your new group here: %{rosterable_link}</p>
+      link_text: |
+        <p>You can access your new group here: %{rosterable_link}</p>
       roster_added_to_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been added to the %{rosterable_type} group
+          <strong>%{rosterable_title}</strong> in the lecture
+          <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          You are now a participant in this group.
+        </p>
+      roster_added_to_group_email_body: |
         <p>Hello %{name},</p>
         <p>
           You have been added to the %{rosterable_type} group
@@ -332,8 +346,31 @@ en:
         <p>
           This grants you access to the lecture %{lecture_title} and its materials.
         </p>
+      roster_added_to_lecture_email_body: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been added to the lecture roster of
+          <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          This grants you access to the lecture %{lecture_title} and its materials.
+        </p>
       roster_added_to_lecture_email_subject: 'Added to lecture %{lecture_title}'
       roster_removed_from_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from the %{rosterable_type} group
+          <strong>%{rosterable_title}</strong> in the lecture
+          <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
+      roster_removed_from_group_email_body: |
         <p>Hello %{name},</p>
         <p>
           You have been removed from the %{rosterable_type} group
@@ -360,8 +397,30 @@ en:
         <p>
           Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
         </p>
+      roster_moved_between_groups_email_body: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been moved from the %{old_rosterable_type} group
+          <strong>%{old_rosterable_title}</strong>
+          to the %{new_rosterable_type} group
+          <strong>%{new_rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
       roster_moved_between_groups_email_subject: 'Moved to group %{rosterable_title} in %{lecture_title}'
       roster_removed_from_lecture_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from the lecture roster of
+          <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+      roster_removed_from_lecture_email_body: |
         <p>Hello %{name},</p>
         <p>
           You have been removed from the lecture roster of
