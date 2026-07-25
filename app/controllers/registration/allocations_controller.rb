@@ -147,7 +147,7 @@ module Registration
         lecture = @campaign.campaignable
         if exam_workspace?
           exam = @campaign.exam
-          flash[:success] = t("registration.campaign.finalized")
+          flash.now[:success] = t("registration.campaign.finalized")
           render turbo_stream: [
             turbo_stream.replace(
               "exam_#{exam.id}_registration",
@@ -162,20 +162,26 @@ module Registration
             *refresh_roster_streams(lecture),
             stream_flash
           ]
-        elsif !@campaign.exam_campaign? && @campaign.registerables.any?
+          return
+        end
+
+        base_streams = [
+          turbo_stream.update("campaigns_container",
+                              partial: "registration/campaigns/card_body_index",
+                              locals: {
+                                lecture: lecture,
+                                expanded_campaign_id: @campaign.id
+                              }),
+          *refresh_roster_streams(lecture)
+        ]
+
+        if !@campaign.exam_campaign? && @campaign.registerables.any?
           # The self-service modal is the post-finalization surface, so we do
           # NOT also pop a flash over it (fixed, top-of-screen, it would cover
           # the modal). The finalization summary is folded into the modal.
           respond_to do |format|
             format.turbo_stream do
-              render turbo_stream: [
-                turbo_stream.update("campaigns_container",
-                                    partial: "registration/campaigns/card_body_index",
-                                    locals: {
-                                      lecture: lecture,
-                                      expanded_campaign_id: @campaign.id
-                                    }),
-                *refresh_roster_streams(lecture),
+              render turbo_stream: base_streams + [
                 turbo_stream.update(
                   "modal-container",
                   partial: "registration/campaigns/self_service_modal",
@@ -191,15 +197,7 @@ module Registration
         else
           respond_with_flash(:notice, finalization_notice,
                              redirect_path: registration_campaign_path(@campaign)) do
-            [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_index",
-                                  locals: {
-                                    lecture: lecture,
-                                    expanded_campaign_id: @campaign.id
-                                  }),
-              *refresh_roster_streams(lecture)
-            ]
+            base_streams
           end
         end
       else

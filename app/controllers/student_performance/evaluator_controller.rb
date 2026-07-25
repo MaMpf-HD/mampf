@@ -89,13 +89,6 @@ module StudentPerformance
       @result = evaluator.evaluate(@record)
     end
 
-    PreviewRule = Struct.new(
-      :min_percentage,
-      :min_points_absolute,
-      :required_achievements,
-      keyword_init: true
-    )
-
     private
 
       def set_lecture

@@ -350,6 +350,35 @@ RSpec.describe(Registration::Policy, type: :model) do
           expect(policies).not_to include(registration_policy)
         end
       end
+
+      describe ".student_performance_for_lecture" do
+        let(:lecture) { create(:lecture, :with_organizational_stuff) }
+        let(:other_lecture) { create(:lecture, :with_organizational_stuff) }
+
+        it "finds policies storing the lecture under lecture_ids" do
+          policy = create(:registration_policy, :student_performance,
+                          config: { "lecture_ids" => [lecture.id.to_s] })
+
+          expect(described_class.student_performance_for_lecture(lecture.id))
+            .to include(policy)
+        end
+
+        it "finds policies storing the lecture under the legacy lecture_id" do
+          policy = create(:registration_policy, :student_performance,
+                          config: { "lecture_id" => lecture.id })
+
+          expect(described_class.student_performance_for_lecture(lecture.id))
+            .to include(policy)
+        end
+
+        it "excludes policies referencing a different lecture" do
+          create(:registration_policy, :student_performance,
+                 config: { "lecture_id" => other_lecture.id })
+
+          expect(described_class.student_performance_for_lecture(lecture.id))
+            .to be_empty
+        end
+      end
     end
   end
 end

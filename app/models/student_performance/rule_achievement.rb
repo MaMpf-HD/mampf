@@ -4,7 +4,6 @@ module StudentPerformance
     belongs_to :achievement
 
     validates :rule_id, uniqueness: { scope: :achievement_id }
-    validates :position, presence: true
     validate :same_lecture
 
     acts_as_list scope: :rule

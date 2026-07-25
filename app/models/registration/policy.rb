@@ -42,7 +42,8 @@ module Registration
 
     scope :student_performance_for_lecture, lambda { |lecture_id|
       where(kind: :student_performance)
-        .where("config->'lecture_ids' @> ?", [lecture_id.to_s].to_json)
+        .where("config->'lecture_ids' @> :ids OR config->>'lecture_id' = :id",
+               ids: [lecture_id.to_s].to_json, id: lecture_id.to_s)
     }
 
     # Virtual attributes for form handling and validation
