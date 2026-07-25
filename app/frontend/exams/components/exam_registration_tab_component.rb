@@ -132,7 +132,7 @@ class ExamRegistrationTabComponent < ViewComponent::Base
         return certification_not_passed_reason_label
       end
 
-      registration.localized_rejection_reason_label
+      registration.resolved_rejection_reason_label
     end
 
     def certification_not_passed_reason_label
