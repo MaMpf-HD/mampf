@@ -5,13 +5,13 @@ namespace :eligibility_demo do
   task prepare_blocker_demo: :environment do
     abort "Cannot run in production!" if Rails.env.production?
 
-    invoke_task("muesli:setup")
-    invoke_task("exam_policy:create_exam")
-    invoke_task("eligibility_demo:setup")
+    invoke_eligibility_demo_task("muesli:setup")
+    invoke_eligibility_demo_task("exam_policy:create_exam")
+    invoke_eligibility_demo_task("eligibility_demo:setup")
 
     campaign = open_eligibility_demo_campaign!
 
-    invoke_task("eligibility_demo:register_members")
+    invoke_eligibility_demo_task("eligibility_demo:register_members")
 
     puts ""
     puts "=" * 60
@@ -189,7 +189,7 @@ namespace :eligibility_demo do
     campaign
   end
 
-  def invoke_task(name)
+  def invoke_eligibility_demo_task(name)
     puts "-" * 60
     puts "Running #{name}..."
     puts "-" * 60

@@ -134,15 +134,14 @@ module StudentPerformance
 
       stale_certs = @lecture.student_performance_certifications
                             .stale.where.not(source: :manual)
-                            .includes(:user)
       evaluator = StudentPerformance::Evaluator.new(@rule)
+      records_by_user = @lecture.student_performance_records.index_by(&:user_id)
       updated = 0
       reset_to_pending = 0
 
       ActiveRecord::Base.transaction do
         stale_certs.find_each do |cert|
-          record = @lecture.student_performance_records
-                           .find_by(user: cert.user)
+          record = records_by_user[cert.user_id]
           next unless record
 
           result = evaluator.evaluate(record)

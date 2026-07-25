@@ -740,6 +740,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_23_000004) do
     t.index ["kind"], name: "index_registration_policies_on_kind"
     t.index ["phase"], name: "index_registration_policies_on_phase"
     t.index ["registration_campaign_id", "position"], name: "index_registration_policies_position"
+    t.index ["registration_campaign_id"], name: "index_one_student_performance_policy_per_campaign", unique: true, where: "(kind = 2)"
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 

@@ -350,6 +350,28 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureUserJoin.where(lecture: lecture, user: users.first).count)
         .to eq(1)
     end
+
+    it "fires LectureMembership callbacks (creates performance records)" do
+      Flipper.enable(:assessment_grading)
+      lecture.ensure_roster_membership!(users.map(&:id))
+
+      expect(StudentPerformance::Record.where(lecture: lecture).count)
+        .to eq(3)
+    ensure
+      Flipper.disable(:assessment_grading)
+    end
+
+    it "seeds existing achievement participations for new roster members" do
+      Flipper.enable(:assessment_grading)
+      achievement = create(:achievement, lecture: lecture)
+
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(achievement.assessment.assessment_participations, :count)
+        .by(3)
+    ensure
+      Flipper.disable(:assessment_grading)
+    end
   end
 
   describe "#registration_mail_recipients" do
@@ -402,28 +424,6 @@ RSpec.describe(Lecture, type: :model) do
 
       expect(lecture.registration_mail_recipients).not_to include(stranger)
     end
-
-    it "fires LectureMembership callbacks (creates performance records)" do
-      Flipper.enable(:assessment_grading)
-      lecture.ensure_roster_membership!(users.map(&:id))
-
-      expect(StudentPerformance::Record.where(lecture: lecture).count)
-        .to eq(3)
-    ensure
-      Flipper.disable(:assessment_grading)
-    end
-
-    it "seeds existing achievement participations for new roster members" do
-      Flipper.enable(:assessment_grading)
-      achievement = create(:achievement, lecture: lecture)
-
-      expect do
-        lecture.ensure_roster_membership!(users.map(&:id))
-      end.to change(achievement.assessment.assessment_participations, :count)
-        .by(3)
-    ensure
-      Flipper.disable(:assessment_grading)
-    end
   end
 
   describe "#supported_assessable_types" do
@@ -472,6 +472,58 @@ RSpec.describe(Lecture, type: :model) do
       lecture.update!(passphrase: "new-passphrase")
 
       expect(a1.reload.deletion_date).to eq(original_date)
+    end
+  end
+
+  describe "disabling uses_exam_eligibility" do
+    let(:lecture) do
+      create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)
+    end
+
+    it "is allowed when no dependent data exists" do
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+    end
+
+    it "is blocked by an existing rule" do
+      create(:student_performance_rule, lecture: lecture)
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+      expect(lecture.errors[:uses_exam_eligibility]).to be_present
+    end
+
+    it "is blocked by an existing certification" do
+      user = create(:confirmed_user)
+      create(:lecture_membership, user: user, lecture: lecture)
+      create(:student_performance_certification, :passed,
+             lecture: lecture, user: user,
+             certified_by: create(:confirmed_user))
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+      expect(lecture.errors[:uses_exam_eligibility]).to be_present
+    end
+
+    it "is blocked by a policy referencing the lecture" do
+      create(:registration_policy, :student_performance,
+             config: { "lecture_ids" => [lecture.id.to_s] })
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+      expect(lecture.errors[:uses_exam_eligibility]).to be_present
+    end
+
+    it "is blocked by a policy using the legacy lecture_id config" do
+      create(:registration_policy, :student_performance,
+             config: { "lecture_id" => lecture.id })
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+      expect(lecture.errors[:uses_exam_eligibility]).to be_present
+    end
+
+    it "is not blocked by a policy referencing a different lecture" do
+      other = create(:lecture, :with_organizational_stuff)
+      create(:registration_policy, :student_performance,
+             config: { "lecture_id" => other.id })
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
     end
   end
 end

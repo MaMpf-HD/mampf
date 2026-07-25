@@ -128,21 +128,21 @@
         class="progress-bar bg-success"
         role="progressbar"
         style="width: <%= (@passed_count.to_f / @total_students * 100) %>%;"
-        aria-label="Passed"
+        aria-label="<%= t("student_performance.certifications.index.passed") %>"
       ></div>
 
       <div
         class="progress-bar bg-danger"
         role="progressbar"
         style="width: <%= (@failed_count.to_f / @total_students * 100) %>%;"
-        aria-label="Failed"
+        aria-label="<%= t("student_performance.certifications.index.failed") %>"
       ></div>
 
       <div
         class="progress-bar bg-warning"
         role="progressbar"
         style="width: <%= (@uncertified_count.to_f / @total_students * 100) %>%;"
-        aria-label="Uncertified"
+        aria-label="<%= t("student_performance.certifications.index.uncertified") %>"
       ></div>
     </div>
   <% end %>

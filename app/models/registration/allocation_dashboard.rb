@@ -74,7 +74,7 @@ module Registration
 
       perf_policy = finalization_policies.find { |p| p.kind == "student_performance" }
       @performance_lecture = perf_policy&.lecture_ids&.then do |lecture_ids|
-        Lecture.find_by(id: lecture_ids)
+        Lecture.find_by(id: lecture_ids.first)
       end
     end
 

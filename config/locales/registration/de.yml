@@ -473,6 +473,32 @@ de:
         course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wende Dich an den Kursadministrator, um Alternativen zu besprechen."
         campaign_not_found: "Anmeldeverfahren nicht gefunden."
     allocation:
+      violations_table:
+        override_pass: "Auf bestanden setzen"
+        confirm_override_pass: "Studierende:n als zugelassen markieren? Dies erzeugt eine manuelle Überschreibung der Zulassung, die nur im Zulassungs-Dashboard rückgängig gemacht werden kann."
+        go_to_certifications: "Im Zulassungs-Dashboard klären"
+        additional_blockers: "Weitere offene Punkte"
+        other_blockers: "Weitere offene Punkte"
+      student_performance:
+        unfulfilled: "Einige angemeldete Studierende haben keine bestandene Prüfungszulassung. Diese werden bei der Finalisierung gegen die Richtlinie verstoßen."
+      perf_evidence:
+        certified_by: "(von %{name})"
+        no_cert: "Kein Zulassungseintrag"
+        pts_abbr: "Pkt."
+        achievements_short: "%{met}/%{total} Krit."
+      cert_incomplete:
+        title: "Klausurzulassungen unvollständig"
+        desc:
+          one: "%{count} registrierter Studierender hat keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
+          other: "%{count} registrierte Studierende haben keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
+        missing_label:
+          one: "%{count} Studierender noch nicht bearbeitet"
+          other: "%{count} Studierende noch nicht bearbeitet"
+        pending_label:
+          one: "%{count} Studierender mit ausstehender Klausurzulassung"
+          other: "%{count} Studierende mit ausstehenden Klausurzulassungen"
+        go_to_certs: "Zu den Klausurzulassungen"
+        policy_reason: "Dieses Anmeldeverfahren hat eine Finalisierungsrichtlinie, die entschiedene Klausurzulassungen voraussetzt."
       started: "Zuteilung wurde berechnet."
       conflicts:
         title: "Konflikte bei Registrierungen"
@@ -616,35 +642,6 @@ de:
       crosslink_html: >-
         Du möchtest allen angemeldeten Studierenden eine E-Mail schreiben
         (z. B. mit dem Kursprogramm)? Das geht im Tab %{link}.
-        of_total_points: "der Gesamtpunkte"
-        points_absolute: "Punkte (absolut)"
-        no_rule: "Keine aktive Regel konfiguriert"
-      violations_table:
-        override_pass: "Auf bestanden setzen"
-        confirm_override_pass: "Studierende:n als zugelassen markieren? Dies erzeugt eine manuelle Überschreibung der Zulassung, die nur im Zulassungs-Dashboard rückgängig gemacht werden kann."
-        go_to_certifications: "Im Zulassungs-Dashboard klären"
-        additional_blockers: "Weitere offene Punkte"
-        other_blockers: "Weitere offene Punkte"
-      student_performance:
-        unfulfilled: "Einige angemeldete Studierende haben keine bestandene Prüfungszulassung. Diese werden bei der Finalisierung gegen die Richtlinie verstoßen."
-      perf_evidence:
-        certified_by: "(von %{name})"
-        no_cert: "Kein Zulassungseintrag"
-        pts_abbr: "Pkt."
-        achievements_short: "%{met}/%{total} Krit."
-      cert_incomplete:
-        title: "Klausurzulassungen unvollständig"
-        desc:
-          one: "%{count} registrierter Studierender hat keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
-          other: "%{count} registrierte Studierende haben keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
-        missing_label:
-          one: "%{count} Studierender noch nicht bearbeitet"
-          other: "%{count} Studierende noch nicht bearbeitet"
-        pending_label:
-          one: "%{count} Studierender mit ausstehender Klausurzulassung"
-          other: "%{count} Studierende mit ausstehenden Klausurzulassungen"
-        go_to_certs: "Zu den Klausurzulassungen"
-        policy_reason: "Dieses Anmeldeverfahren hat eine Finalisierungsrichtlinie, die entschiedene Klausurzulassungen voraussetzt."
   activerecord:
     attributes:
       registration/student_message:

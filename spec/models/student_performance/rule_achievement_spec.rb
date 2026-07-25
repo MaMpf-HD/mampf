@@ -39,13 +39,6 @@ RSpec.describe(StudentPerformance::RuleAchievement, type: :model) do
       expect(duplicate.errors[:rule_id]).to be_present
     end
 
-    it "requires position" do
-      rule_achievement = FactoryBot.build(
-        :student_performance_rule_achievement, position: nil
-      )
-      expect(rule_achievement).not_to be_valid
-    end
-
     it "rejects achievement from a different lecture" do
       rule = FactoryBot.create(:student_performance_rule)
       other_achievement = FactoryBot.create(:achievement)
@@ -72,6 +65,16 @@ RSpec.describe(StudentPerformance::RuleAchievement, type: :model) do
   end
 
   describe "acts_as_list" do
+    it "assigns position without an explicit value" do
+      rule_achievement = FactoryBot.build(
+        :student_performance_rule_achievement, position: nil
+      )
+
+      expect(rule_achievement).to be_valid
+      expect { rule_achievement.save! }
+        .to change { rule_achievement.position }.from(nil).to(1)
+    end
+
     it "manages position scoped to rule" do
       rule = FactoryBot.create(:student_performance_rule)
       a1 = FactoryBot.create(:achievement, lecture: rule.lecture)
