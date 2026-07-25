@@ -33,6 +33,37 @@ RSpec.describe(CertificationStaleCheckJob, type: :worker) do
       end
     end
 
+    context "when more certifications are stale than the log sample size" do
+      let(:other_user) { FactoryBot.create(:confirmed_user) }
+
+      before do
+        stub_const("#{described_class}::LOGGED_USER_ID_SAMPLE_SIZE", 1)
+        FactoryBot.create(:lecture_membership, user: other_user,
+                                               lecture: lecture)
+
+        [user, other_user].each do |stale_user|
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture, user: stale_user,
+                            computed_at: 1.hour.ago)
+
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: stale_user,
+                            certified_by: certifier,
+                            certified_at: 2.hours.ago)
+        end
+      end
+
+      it "logs the full count but only a bounded sample of user ids" do
+        allow(Rails.logger).to receive(:info)
+
+        described_class.new.perform(lecture.id)
+
+        expect(Rails.logger).to have_received(:info).with(
+          a_string_matching(/stale_count=2 user_ids=\d+ \(\+1 more\)\z/)
+        )
+      end
+    end
+
     context "when no certification is stale" do
       before do
         FactoryBot.create(:student_performance_record,
