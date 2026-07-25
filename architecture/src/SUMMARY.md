@@ -19,6 +19,10 @@
 - [View Architecture](features/12-views.md)
 - [Mockups Index](features/mockups-index.md)
 
+## Müsli Bucket — Slice Guides
+- [Slice 3 — Exam Eligibility & Certification](slices/03-eligibility.md)
+  - [Decisions](slices/03-eligibility-decisions.md)
+
 ## Extensions (Optional Features)
 - [Multiple Choice Exams](features/05c-multiple-choice-exams.md)
 
