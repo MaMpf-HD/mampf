@@ -4,18 +4,18 @@ class CertificationStaleCheckJob
   sidekiq_options queue: :default, retry: 1
 
   def perform(lecture_id)
-    lecture = Lecture.find(lecture_id)
+    stale_user_ids = StudentPerformance::Certification
+                     .where(lecture_id: lecture_id)
+                     .stale
+                     .distinct
+                     .pluck(:user_id)
 
-    stale = StudentPerformance::Certification
-            .where(lecture: lecture)
-            .stale
-
-    return if stale.none?
+    return if stale_user_ids.empty?
 
     Rails.logger.info(
       "[CertificationStaleCheck] lecture_id=#{lecture_id} " \
-      "stale_count=#{stale.count} " \
-      "user_ids=#{stale.pluck(:user_id).join(",")}"
+      "stale_count=#{stale_user_ids.size} " \
+      "user_ids=#{stale_user_ids.join(",")}"
     )
   end
 end

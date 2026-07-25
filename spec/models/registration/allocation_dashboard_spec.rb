@@ -298,8 +298,8 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
                                             active: true, phase: :finalization)
       create(:registration_policy, :student_performance, registration_campaign: campaign,
                                                          active: false, phase: :finalization)
-      create(:registration_policy, :student_performance, registration_campaign: campaign,
-                                                         active: true, phase: :registration)
+      create(:registration_policy, :prerequisite_campaign, registration_campaign: campaign,
+                                                           active: true, phase: :registration)
       expect(dashboard.finalization_policies).to eq([policy])
     end
   end

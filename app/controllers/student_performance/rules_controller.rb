@@ -83,13 +83,6 @@ module StudentPerformance
       @newly_inconclusive = @changes.count { |c| c[:to] == :inconclusive }
     end
 
-    PreviewRule = Struct.new(
-      :min_percentage,
-      :min_points_absolute,
-      :required_achievements,
-      keyword_init: true
-    )
-
     private
 
       def set_lecture
