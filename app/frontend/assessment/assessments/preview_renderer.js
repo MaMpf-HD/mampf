@@ -22,7 +22,9 @@ export function renderPreview(bands, tbody, { studentPoints, passLabel, failLabe
     const tr = document.createElement("tr");
     if (band.grade === "5.0") tr.classList.add("table-danger");
 
-    const badgeClass = GRADE_BADGE_CLASS[band.grade] || "bg-secondary";
+    const badgeClass = Object.hasOwn(GRADE_BADGE_CLASS, band.grade)
+      ? GRADE_BADGE_CLASS[band.grade]
+      : "bg-secondary";
     const count = counts[band.grade] || 0;
     const pct = total > 0 ? ((count / total) * 100).toFixed(1) : "0.0";
     const barWidth = maxCount > 0
@@ -33,8 +35,8 @@ export function renderPreview(bands, tbody, { studentPoints, passLabel, failLabe
       : "#dc3545";
 
     tr.innerHTML = `
-      <td><span class="badge ${badgeClass}">${band.grade}</span></td>
-      <td>\u2265\u00a0${band.min_points} pts</td>
+      <td><span class="badge ${badgeClass}"></span></td>
+      <td class="band-threshold"></td>
       <td>
         <div class="d-flex align-items-center gap-2">
           <div style="flex: 1; height: 14px; background: #e9ecef;
@@ -49,6 +51,11 @@ export function renderPreview(bands, tbody, { studentPoints, passLabel, failLabe
       </td>
       <td class="text-end">${pct}%</td>
     `;
+
+    const threshold = `\u2265\u00a0${band.min_points} pts`;
+
+    tr.querySelector(".badge").textContent = band.grade;
+    tr.querySelector(".band-threshold").textContent = threshold;
 
     tbody.appendChild(tr);
   });
