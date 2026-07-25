@@ -102,6 +102,18 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
       expect(service).not_to have_received(:compute_and_upsert_record_for)
     end
 
+    it "refreshes points_total when a task point is destroyed" do
+      other_task = FactoryBot.create(:assessment_task,
+                                     assessment: participation.assessment)
+      other_point = FactoryBot.create(:assessment_task_point,
+                                      task: other_task,
+                                      assessment_participation: participation)
+
+      expect { other_point.destroy! }
+        .to change { participation.reload.points_total }
+        .to(task_point.points)
+    end
+
     it "refreshes points_total even when participation validations are closed" do
       # rubocop:disable Rails/SkipsModelValidations
       participation.update_column(:points_total, nil)

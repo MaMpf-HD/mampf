@@ -13,14 +13,12 @@ module Assessment
     validate :ensure_task_and_participation_match_assessment
     validate :grading_lifecycle_must_be_open
 
-    after_commit :refresh_participation_points_total, on: :destroy
-    after_commit :recompute_performance_record, on: :destroy
     after_commit :refresh_participation_points_total,
-                 on: [:create, :update],
-                 if: :saved_change_to_points?
+                 on: [:create, :update, :destroy],
+                 if: -> { destroyed? || saved_change_to_points? }
     after_commit :recompute_performance_record,
-                 on: [:create, :update],
-                 if: :saved_change_to_points?
+                 on: [:create, :update, :destroy],
+                 if: -> { destroyed? || saved_change_to_points? }
 
     private
 

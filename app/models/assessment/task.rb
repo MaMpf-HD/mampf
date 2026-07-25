@@ -13,10 +13,11 @@ module Assessment
     before_destroy :check_deadline_not_passed, prepend: true
 
     after_commit :recompute_all_performance_records,
-                 on: [:create, :destroy]
-    after_commit :recompute_all_performance_records,
-                 on: :update,
-                 if: :saved_change_to_max_points?
+                 on: [:create, :update, :destroy],
+                 if: lambda {
+                   previously_new_record? || destroyed? ||
+                     saved_change_to_max_points?
+                 }
 
     acts_as_list scope: :assessment
 
