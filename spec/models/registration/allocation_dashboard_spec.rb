@@ -325,6 +325,24 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
     end
   end
 
+  describe "#performance_lecture" do
+    it "returns the first configured lecture, not an arbitrary match" do
+      lower_id_lecture = create(:lecture, :with_organizational_stuff)
+      higher_id_lecture = create(:lecture, :with_organizational_stuff)
+
+      create(:registration_policy, :student_performance,
+             registration_campaign: campaign, active: true, phase: :finalization,
+             config: { "lecture_ids" =>
+                         [higher_id_lecture.id.to_s, lower_id_lecture.id.to_s] })
+
+      expect(dashboard.performance_lecture).to eq(higher_id_lecture)
+    end
+
+    it "is nil without a student_performance finalization policy" do
+      expect(dashboard.performance_lecture).to be_nil
+    end
+  end
+
   describe "#allocation_run?" do
     it "returns true if last_allocation_calculated_at is present" do
       campaign.update(last_allocation_calculated_at: Time.current)
