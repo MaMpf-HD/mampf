@@ -95,6 +95,55 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
       end
     end
 
+    context "when a closed FCFS campaign has a multi-lecture performance policy" do
+      let(:lecture) { create(:lecture) }
+      let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+      let(:item) { create(:registration_item, registration_campaign: campaign) }
+      let(:user) { create(:confirmed_user) }
+      let(:passed_lecture) { create(:lecture, :with_organizational_stuff) }
+      let(:other_lecture) { create(:lecture, :with_organizational_stuff) }
+
+      before do
+        create(:registration_policy, :student_performance,
+               registration_campaign: campaign,
+               phase: :finalization,
+               config: {
+                 "lecture_ids" => [other_lecture.id.to_s, passed_lecture.id.to_s]
+               })
+
+        campaign.update!(status: :closed)
+
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: campaign,
+               registration_item: item,
+               user: user)
+      end
+
+      it "does not block when one of the selected lectures is passed" do
+        create(:student_performance_certification, :pending,
+               lecture: other_lecture, user: user)
+        create(:student_performance_certification, :passed,
+               lecture: passed_lecture, user: user)
+
+        result = described_class.new(campaign).check
+
+        expect(result.success?).to be(true)
+        expect(result.blocker_violations).to be_empty
+      end
+
+      it "blocks when no selected lecture is passed" do
+        create(:student_performance_certification, :pending,
+               lecture: other_lecture, user: user)
+        create(:student_performance_certification, :failed,
+               lecture: passed_lecture, user: user)
+
+        result = described_class.new(campaign).check
+
+        expect(result.success?).to be(false)
+        expect(result.error_code).to eq(:policy_violation)
+      end
+    end
+
     context "with policies" do
       # Create as draft first to allow policy creation
       let(:campaign) do
@@ -154,40 +203,6 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
                user: other_user)
 
         result = guard.check
-        expect(result.success?).to be(true)
-      end
-
-      it "does not block finalization when another selected lecture is already passed" do
-        perf_campaign = create(:registration_campaign, :preference_based,
-                               :with_items, status: :draft)
-        perf_item = perf_campaign.registration_items.first
-        perf_lecture = create(:lecture, :with_organizational_stuff)
-        other_perf_lecture = create(:lecture, :with_organizational_stuff)
-
-        create(:registration_policy, :student_performance,
-               :for_finalization,
-               registration_campaign: perf_campaign,
-               config: {
-                 "lecture_ids" => [perf_lecture.id.to_s, other_perf_lecture.id.to_s]
-               })
-
-        perf_campaign.update!(status: :processing)
-
-        create(:registration_user_registration, :confirmed,
-               registration_campaign: perf_campaign,
-               registration_item: perf_item,
-               user: user)
-
-        create(:student_performance_certification, :pending,
-               lecture: perf_lecture,
-               user: user)
-        create(:student_performance_certification, :passed,
-               lecture: other_perf_lecture,
-               user: user,
-               certified_by: create(:confirmed_user))
-
-        result = described_class.new(perf_campaign).check
-
         expect(result.success?).to be(true)
       end
     end
