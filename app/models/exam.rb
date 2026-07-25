@@ -99,6 +99,10 @@ class Exam < ApplicationRecord
     "#{title} (#{I18n.l(date, format: :short)})"
   end
 
+  def exclusive_assignment?
+    true
+  end
+
   def status_phase
     campaign = registration_campaign
 
