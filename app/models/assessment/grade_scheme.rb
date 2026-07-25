@@ -123,9 +123,25 @@ module Assessment
           return
         end
 
-        return if bands.all? { |b| b["grade"].present? }
+        unless bands.all? { |b| b["grade"].present? }
+          errors.add(:config, "every band must have a grade")
+          return
+        end
 
-        errors.add(:config, "every band must have a grade")
+        unless bands.all? { |b| numeric_band_value?(b["grade"]) }
+          errors.add(:config, "every band grade must be numeric")
+          return
+        end
+
+        return if bands.all? { |b| numeric_band_value?(b[key]) }
+
+        errors.add(:config, "every band #{key} must be numeric")
+      end
+
+      def numeric_band_value?(value)
+        return true if value.is_a?(Numeric)
+
+        value.is_a?(String) && value.match?(/\A-?\d+(\.\d+)?\z/)
       end
   end
 end

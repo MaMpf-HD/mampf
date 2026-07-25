@@ -163,6 +163,42 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
         expect(scheme.errors[:config]).to be_present
       end
 
+      it "is invalid when a grade is not numeric" do
+        config = {
+          "bands" => [
+            { "min_points" => 54, "grade" => "<img src=x onerror=alert(1)>" },
+            { "min_points" => 0, "grade" => "5.0" }
+          ]
+        }
+        scheme = FactoryBot.build(:assessment_grade_scheme, config: config)
+        expect(scheme).not_to be_valid
+        expect(scheme.errors[:config]).to be_present
+      end
+
+      it "is invalid when a threshold is not numeric" do
+        config = {
+          "bands" => [
+            { "min_points" => "54<script>", "grade" => "1.0" },
+            { "min_points" => 0, "grade" => "5.0" }
+          ]
+        }
+        scheme = FactoryBot.build(:assessment_grade_scheme, config: config)
+        expect(scheme).not_to be_valid
+        expect(scheme.errors[:config]).to be_present
+      end
+
+      it "accepts numeric thresholds given as strings" do
+        config = {
+          "bands" => [
+            { "min_points" => "54", "grade" => "1.0" },
+            { "min_points" => 0, "grade" => "5.0" }
+          ]
+        }
+        expect(
+          FactoryBot.build(:assessment_grade_scheme, config: config)
+        ).to be_valid
+      end
+
       it "is valid with absolute points bands" do
         expect(FactoryBot.build(:assessment_grade_scheme)).to be_valid
       end
