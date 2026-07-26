@@ -10,7 +10,9 @@ module StudentPerformance
              through: :rule_achievements,
              source: :achievement
 
-    attr_accessor :threshold_mode
+    # `none` would collide with ActiveRecord's own `none` scope, hence the prefix.
+    enum :threshold_mode, { percentage: 0, absolute: 1, none: 2 },
+         prefix: true, default: :none
 
     validates :min_percentage,
               numericality: { greater_than_or_equal_to: 0,
@@ -19,8 +21,7 @@ module StudentPerformance
     validates :min_points_absolute,
               numericality: { greater_than_or_equal_to: 0 },
               allow_nil: true
-    validate :percentage_or_absolute_not_both
-    validate :threshold_value_required_for_mode
+    validate :threshold_matches_mode
     validate :at_least_one_criterion
 
     def rule_achievement_ids_set
@@ -45,19 +46,23 @@ module StudentPerformance
         errors.add(:base, :no_criteria)
       end
 
-      def percentage_or_absolute_not_both
-        return unless min_percentage.present? && min_points_absolute.present?
+      # The mode is the single source of truth; the two value columns have to
+      # agree with it, so a rule can never claim a threshold it does not carry.
+      def threshold_matches_mode
+        if min_percentage.present? && min_points_absolute.present?
+          return errors.add(:base, :percentage_and_absolute_exclusive)
+        end
 
-        errors.add(:base, :percentage_and_absolute_exclusive)
-      end
-
-      def threshold_value_required_for_mode
-        return if threshold_mode.blank?
-
-        if threshold_mode == "percentage" && min_percentage.nil?
-          errors.add(:min_percentage, :blank)
-        elsif threshold_mode == "absolute" && min_points_absolute.nil?
-          errors.add(:min_points_absolute, :blank)
+        case threshold_mode
+        when "percentage"
+          errors.add(:min_percentage, :blank) if min_percentage.nil?
+          errors.add(:min_points_absolute, :present) if min_points_absolute.present?
+        when "absolute"
+          errors.add(:min_points_absolute, :blank) if min_points_absolute.nil?
+          errors.add(:min_percentage, :present) if min_percentage.present?
+        when "none"
+          errors.add(:base, :threshold_without_mode) if min_percentage.present? ||
+                                                        min_points_absolute.present?
         end
       end
   end

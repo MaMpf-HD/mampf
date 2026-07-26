@@ -102,6 +102,8 @@ module StudentPerformance
 
       def apply_threshold_params
         mode = params.dig(:rule, :threshold_mode)
+        # Guard the enum assignment: an unknown value would otherwise raise.
+        mode = "none" unless StudentPerformance::Rule.threshold_modes.key?(mode)
         @rule.threshold_mode = mode
 
         case mode

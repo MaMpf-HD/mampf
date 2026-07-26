@@ -4,6 +4,8 @@ class CreateStudentPerformanceRules < ActiveRecord::Migration[8.0]
       t.bigint :lecture_id, null: false
       t.decimal :min_percentage, precision: 5, scale: 2
       t.decimal :min_points_absolute, precision: 10, scale: 2
+      # 0 = percentage, 1 = absolute, 2 = none
+      t.integer :threshold_mode, null: false, default: 2
       t.boolean :active, default: false, null: false
 
       t.timestamps

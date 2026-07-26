@@ -7,6 +7,7 @@ de:
             base:
               percentage_and_absolute_exclusive: "Es kann nicht gleichzeitig ein Prozent- und ein absoluter Punkteschwellwert angegeben werden"
               no_criteria: "Die Regel braucht mindestens ein Kriterium: einen Punkteschwellwert oder ein Zusatzkriterium. Ohne Kriterium würden alle Studierenden zugelassen."
+              threshold_without_mode: "Es ist ein Punkteschwellwert gesetzt, obwohl kein Schwellenmodus gewählt wurde"
         student_performance/rule_achievement:
           attributes:
             achievement:

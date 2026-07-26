@@ -123,6 +123,21 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
       expect(rule).to be_valid
     end
 
+    it "rejects a threshold value that contradicts the mode" do
+      rule = FactoryBot.build(:student_performance_rule, :without_criteria,
+                              min_points_absolute: 60)
+
+      expect(rule).not_to be_valid
+      expect(rule.errors.added?(:base, :threshold_without_mode)).to be(true)
+    end
+
+    it "rejects a percentage mode without a percentage value" do
+      rule = FactoryBot.build(:student_performance_rule, min_percentage: nil)
+
+      expect(rule).not_to be_valid
+      expect(rule.errors.added?(:min_percentage, :blank)).to be(true)
+    end
+
     describe "at least one criterion" do
       it "rejects a rule with neither a threshold nor an achievement" do
         rule = FactoryBot.build(:student_performance_rule, :without_criteria)
