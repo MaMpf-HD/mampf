@@ -17,6 +17,11 @@ class SubmissionsController < ApplicationController
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
   authorize_resource
 
+  class TutorialNotRosteredError < StandardError; end
+  rescue_from TutorialNotRosteredError do
+    redirect_to :start, alert: t("submission.tutorial_not_assigned")
+  end
+
   def current_ability
     @current_ability ||= SubmissionAbility.new(current_user)
   end
@@ -255,12 +260,15 @@ class SubmissionsController < ApplicationController
 
     def submission_create_params
       permitted = params.expect(submission: [:tutorial_id, :assignment_id])
-      assignment_id = params[:submission][:assignment_id]
+      assignment_id = permitted[:assignment_id]
       assignment = Assignment.find_by(id: assignment_id)
       lecture = assignment&.lecture
 
       if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
-        permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
+        tutorial = current_user.tutorial_rosterized(lecture)
+        raise(TutorialNotRosteredError) if tutorial.nil?
+
+        permitted[:tutorial_id] = tutorial.id
       end
       permitted
     end
@@ -270,7 +278,10 @@ class SubmissionsController < ApplicationController
       permitted = params.expect(submission: [:tutorial_id])
       lecture = @submission.assignment.lecture
       if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
-        permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
+        tutorial = current_user.tutorial_rosterized(lecture)
+        raise(TutorialNotRosteredError) if tutorial.nil?
+
+        permitted[:tutorial_id] = tutorial.id
       end
       permitted
     end
