@@ -83,8 +83,16 @@ RSpec.describe(StudentPerformance::Evaluator) do
     end
 
     context "with a rule that has no points threshold" do
+      # A rule must constrain something, so a threshold-less rule carries an
+      # achievement instead; points are then irrelevant to the outcome.
+      let(:achievement) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
+
       let(:rule) do
-        FactoryBot.create(:student_performance_rule, :active, lecture: lecture)
+        FactoryBot.build(:student_performance_rule, :active, :without_criteria,
+                         lecture: lecture).tap do |r|
+          r.rule_achievements.build(achievement: achievement, position: 1)
+          r.save!
+        end
       end
 
       let(:evaluator) { described_class.new(rule) }
@@ -93,7 +101,8 @@ RSpec.describe(StudentPerformance::Evaluator) do
         record = FactoryBot.create(:student_performance_record,
                                    lecture: lecture,
                                    points_total_materialized: 0,
-                                   percentage_materialized: 0)
+                                   percentage_materialized: 0,
+                                   achievements_met_ids: [achievement.id])
 
         result = evaluator.evaluate(record)
         expect(result.proposed_status).to eq(:passed)
@@ -106,14 +115,12 @@ RSpec.describe(StudentPerformance::Evaluator) do
       let(:achievement2) { FactoryBot.create(:achievement, :numeric, lecture: lecture) }
 
       let(:rule) do
-        FactoryBot.create(:student_performance_rule, :active, lecture: lecture)
-      end
-
-      before do
-        FactoryBot.create(:student_performance_rule_achievement,
-                          rule: rule, achievement: achievement1)
-        FactoryBot.create(:student_performance_rule_achievement,
-                          rule: rule, achievement: achievement2)
+        FactoryBot.build(:student_performance_rule, :active, :without_criteria,
+                         lecture: lecture).tap do |r|
+          r.rule_achievements.build(achievement: achievement1, position: 1)
+          r.rule_achievements.build(achievement: achievement2, position: 2)
+          r.save!
+        end
       end
 
       let(:evaluator) { described_class.new(rule) }

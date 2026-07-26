@@ -861,6 +861,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_23_000002) do
     t.bigint "lecture_id", null: false
     t.decimal "min_percentage", precision: 5, scale: 2
     t.decimal "min_points_absolute", precision: 10, scale: 2
+    t.integer "threshold_mode", default: 2, null: false
     t.boolean "active", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
