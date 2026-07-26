@@ -6,6 +6,7 @@ en:
           attributes:
             base:
               percentage_and_absolute_exclusive: "Cannot specify both a percentage and an absolute point threshold"
+              no_criteria: "The rule needs at least one criterion: a point threshold or a required achievement. Without one, every student would be certified."
         student_performance/rule_achievement:
           attributes:
             achievement:

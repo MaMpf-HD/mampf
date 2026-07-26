@@ -6,6 +6,7 @@ de:
           attributes:
             base:
               percentage_and_absolute_exclusive: "Es kann nicht gleichzeitig ein Prozent- und ein absoluter Punkteschwellwert angegeben werden"
+              no_criteria: "Die Regel braucht mindestens ein Kriterium: einen Punkteschwellwert oder ein Zusatzkriterium. Ohne Kriterium würden alle Studierenden zugelassen."
         student_performance/rule_achievement:
           attributes:
             achievement:

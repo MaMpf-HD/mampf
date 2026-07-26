@@ -97,6 +97,18 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(rule).to be_active
       end
 
+      it "rejects a rule with neither a threshold nor an achievement" do
+        expect do
+          patch(lecture_student_performance_rules_path(lecture),
+                params: { rule: { threshold_mode: "none" } })
+        end.not_to change(StudentPerformance::Rule, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body)
+          .to include(I18n.t("activerecord.errors.models." \
+                             "student_performance/rule.attributes.base.no_criteria"))
+      end
+
       it "redirects to records when source_frame is performance-records-frame" do
         patch lecture_student_performance_rules_path(lecture),
               params: {

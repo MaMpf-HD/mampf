@@ -4,7 +4,8 @@ module StudentPerformance
 
     has_many :rule_achievements,
              class_name: "StudentPerformance::RuleAchievement",
-             dependent: :destroy
+             dependent: :destroy,
+             autosave: true
     has_many :required_achievements,
              through: :rule_achievements,
              source: :achievement
@@ -20,12 +21,29 @@ module StudentPerformance
               allow_nil: true
     validate :percentage_or_absolute_not_both
     validate :threshold_value_required_for_mode
+    validate :at_least_one_criterion
 
     def rule_achievement_ids_set
       Set.new(rule_achievements.pluck(:achievement_id))
     end
 
+    # Criteria that survive the current save — excludes associated records that
+    # are built but marked for removal.
+    def pending_rule_achievements
+      rule_achievements.reject(&:marked_for_destruction?)
+    end
+
     private
+
+      # A rule that constrains nothing certifies every student, so it is never a
+      # meaningful configuration: leaving exam eligibility switched off has the
+      # same effect without silently producing certifications.
+      def at_least_one_criterion
+        return if min_percentage.present? || min_points_absolute.present?
+        return if pending_rule_achievements.any?
+
+        errors.add(:base, :no_criteria)
+      end
 
       def percentage_or_absolute_not_both
         return unless min_percentage.present? && min_points_absolute.present?

@@ -62,8 +62,8 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
 
   describe "validations" do
     it "allows nil min_percentage" do
-      rule = FactoryBot.build(:student_performance_rule,
-                              min_percentage: nil)
+      rule = FactoryBot.build(:student_performance_rule, :with_absolute_points)
+      expect(rule.min_percentage).to be_nil
       expect(rule).to be_valid
     end
 
@@ -119,10 +119,46 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
     end
 
     it "allows absolute without percentage" do
-      rule = FactoryBot.build(:student_performance_rule,
-                              min_percentage: nil,
-                              min_points_absolute: 60)
+      rule = FactoryBot.build(:student_performance_rule, :with_absolute_points)
       expect(rule).to be_valid
+    end
+
+    describe "at least one criterion" do
+      it "rejects a rule with neither a threshold nor an achievement" do
+        rule = FactoryBot.build(:student_performance_rule, :without_criteria)
+
+        expect(rule).not_to be_valid
+        expect(rule.errors.added?(:base, :no_criteria)).to be(true)
+      end
+
+      it "accepts a threshold without any achievement" do
+        rule = FactoryBot.build(:student_performance_rule, :with_percentage)
+        expect(rule).to be_valid
+      end
+
+      it "accepts an achievement without any threshold" do
+        lecture = FactoryBot.create(:lecture)
+        rule = FactoryBot.build(:student_performance_rule, :without_criteria,
+                                lecture: lecture)
+        achievement = FactoryBot.create(:achievement, lecture: lecture)
+        rule.rule_achievements.build(achievement: achievement, position: 1)
+
+        expect(rule).to be_valid
+      end
+
+      it "rejects removing the last achievement from a threshold-less rule" do
+        lecture = FactoryBot.create(:lecture)
+        rule = FactoryBot.build(:student_performance_rule, :without_criteria,
+                                lecture: lecture)
+        achievement = FactoryBot.create(:achievement, lecture: lecture)
+        rule.rule_achievements.build(achievement: achievement, position: 1)
+        rule.save!
+
+        rule.rule_achievements.each(&:mark_for_destruction)
+
+        expect(rule).not_to be_valid
+        expect(rule.errors.added?(:base, :no_criteria)).to be(true)
+      end
     end
   end
 
