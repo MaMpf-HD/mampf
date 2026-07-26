@@ -54,17 +54,8 @@
         </div>
       </div>
 
-      <% threshold_mode = @threshold_mode || if @rule.min_percentage.present?
-                              "percentage"
-                            elsif @rule.min_points_absolute.present?
-                              "absolute"
-                            elsif @rule.persisted? &&
-                                  @rule.min_percentage.nil? &&
-                                  @rule.min_points_absolute.nil?
-                              "none"
-                            else
-                              "percentage"
-                            end %>
+      <% threshold_mode = @threshold_mode ||
+                          (@rule.persisted? ? @rule.threshold_mode : "percentage") %>
 
       <div class="row g-3">
         <div

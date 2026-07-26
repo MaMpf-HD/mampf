@@ -27,12 +27,10 @@ module StudentPerformance
       @rule = StudentPerformance::Rule
               .find_or_initialize_by(lecture: @lecture)
 
-      ActiveRecord::Base.transaction do
-        apply_threshold_params
-        @rule.active = true
-        @rule.save!
-        sync_rule_achievements
-      end
+      apply_threshold_params
+      @rule.active = true
+      build_rule_achievements
+      @rule.save!
 
       target = if @source_frame == "performance-records-frame"
         lecture_student_performance_records_path(@lecture)
@@ -104,11 +102,15 @@ module StudentPerformance
 
       def apply_threshold_params
         mode = params.dig(:rule, :threshold_mode)
+        # Guard the enum assignment: an unknown value would otherwise raise.
+        mode = "none" unless StudentPerformance::Rule.threshold_modes.key?(mode)
         @rule.threshold_mode = mode
-        if mode == "percentage"
+
+        case mode
+        when "percentage"
           @rule.min_percentage = params.dig(:rule, :min_percentage)
           @rule.min_points_absolute = nil
-        elsif mode == "absolute"
+        when "absolute"
           @rule.min_points_absolute = params.dig(:rule, :min_points_absolute)
           @rule.min_percentage = nil
         else
@@ -117,7 +119,9 @@ module StudentPerformance
         end
       end
 
-      def sync_rule_achievements
+      # Builds the criteria in memory so that they are present when the rule is
+      # validated; the association is autosaved together with the rule.
+      def build_rule_achievements
         lecture_achievement_ids = Achievement.where(lecture: @lecture)
                                              .pluck(:id).to_set
         wanted_ids = Set.new(
@@ -127,19 +131,12 @@ module StudentPerformance
         existing = @rule.rule_achievements.index_by(&:achievement_id)
 
         (existing.keys.to_set - wanted_ids).each do |removed_id|
-          existing[removed_id].destroy!
+          existing[removed_id].mark_for_destruction
         end
 
-        position = 1
-        wanted_ids.each do |aid|
-          if existing[aid]
-            existing[aid].update!(position: position)
-          else
-            @rule.rule_achievements.create!(
-              achievement_id: aid, position: position
-            )
-          end
-          position += 1
+        wanted_ids.each_with_index do |aid, index|
+          record = existing[aid] || @rule.rule_achievements.build(achievement_id: aid)
+          record.position = index + 1
         end
       end
 
