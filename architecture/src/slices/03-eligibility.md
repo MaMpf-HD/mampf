@@ -160,3 +160,8 @@ stale. It is diagnostic only — it changes no data and drives no UI.
 
 Files you can skip: locale files, `db/schema.rb`, and
 `app/frontend/js/mampf_routes.js` — all generated or mechanical.
+
+---
+
+Previous: [Slice 2 — Achievements & Performance Records](02-performance.md) ·
+Next: [Slice 4 — Exam Core & Registrations](04-exam-core.md)

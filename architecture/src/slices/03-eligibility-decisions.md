@@ -342,7 +342,7 @@ through 7,600 diff lines will almost certainly pass over.
 [c-proposal]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/evaluator.rb#L17-L23
 [c-attrs]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/controllers/student_performance/certifications_controller.rb#L302-L320
 [c-reeval]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/controllers/student_performance/certifications_controller.rb#L135-L136
-[c-confirm]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/controllers/student_performance/certifications_controller.rb#L161-L167
+[c-confirm]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/controllers/student_performance/certifications_controller.rb#L161-L166
 [c-stale]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/certification.rb#L15-L33
 [c-certvalid]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/certification.rb#L13
 [c-handler]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/registration/policy/student_performance_handler.rb#L25-L34
