@@ -84,6 +84,8 @@ class SubmissionsController < ApplicationController
   def update
     return if @too_late
 
+    update_params = submission_update_params
+
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
@@ -97,7 +99,7 @@ class SubmissionsController < ApplicationController
       @errors = @submission.errors
       return unless @submission.valid?
     end
-    @submission.update(submission_update_params)
+    @submission.update(update_params)
     if @submission.valid?
       @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == "true"
