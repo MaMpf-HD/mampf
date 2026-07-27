@@ -105,7 +105,17 @@ module SubmissionsHelper
   end
 
   def enabled_roster_for_lecture?(lecture)
-    Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?
+    roster_cache[:enabled].fetch(lecture.id) do
+      roster_cache[:enabled][lecture.id] =
+        Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?
+    end
+  end
+
+  def rostered_tutorial_for(lecture)
+    roster_cache[:tutorial].fetch(lecture.id) do
+      roster_cache[:tutorial][lecture.id] =
+        enabled_roster_for_lecture?(lecture) ? current_user.tutorial_rosterized(lecture) : nil
+    end
   end
 
   def submission_late_color(submission)
