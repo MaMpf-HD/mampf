@@ -23,6 +23,12 @@ class SubmissionAbility
       user.in?(submission.tutorial.tutors)
     end
 
+    can :move, Submission do |submission|
+      lecture = submission.assignment.lecture
+      user.in?(submission.tutorial.tutors) &&
+        !(Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?)
+    end
+
     can [:show_manuscript, :show_correction], Submission do |submission|
       user.in?(submission.users) || user.in?(submission.tutorial.tutors) ||
         user.in?(submission.tutorial.lecture.editors) ||

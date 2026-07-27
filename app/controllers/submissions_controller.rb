@@ -233,7 +233,18 @@ class SubmissionsController < ApplicationController
     render :add_correction
   end
 
+  def select_tutorial
+    @tutorial = @submission.tutorial
+    @lecture = @submission.assignment.lecture
+  end
+
   def cancel_action
+  end
+
+  def move
+    @old_tutorial = @submission.tutorial
+    @submission.update(move_params)
+    @tutorial = @submission.tutorial
   end
 
   def accept
