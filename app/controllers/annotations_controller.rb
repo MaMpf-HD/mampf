@@ -1,5 +1,9 @@
 class AnnotationsController < ApplicationController
-  authorize_resource
+  before_action :set_annotation, only: [:edit, :update, :destroy]
+  # #edit is excepted from authorize_resource: it is a read-only capability probe
+  # for the video UI and must answer a non-owner with `json: false` (see #edit)
+  # rather than a CanCan redirect. It authorizes via `can?` in its body instead.
+  authorize_resource except: [:edit]
 
   def index
     @annotations_by_lecture = annotations_by_lecture(current_user.own_annotations)
@@ -29,13 +33,9 @@ class AnnotationsController < ApplicationController
   end
 
   def edit
-    @annotation = Annotation.find(params[:annotation_id])
-
-    # only allow editing, if the current user created the annotation
-    if @annotation.user_id != current_user.id
-      render json: false
-      return
-    end
+    # Only the author may open the edit form. The thyme UI shows the edit button
+    # on shared annotations too and expects `false` when editing isn't permitted.
+    return render(json: false) unless can?(:edit, @annotation)
 
     @total_seconds = @annotation.timestamp.total_seconds
     @medium_id = @annotation.medium_id
@@ -63,7 +63,6 @@ class AnnotationsController < ApplicationController
   end
 
   def update
-    @annotation = Annotation.find(params[:id])
     @annotation.assign_attributes(annotation_params)
 
     return unless create_and_update_shared(@annotation)
@@ -72,18 +71,13 @@ class AnnotationsController < ApplicationController
   end
 
   def destroy
-    annotation = Annotation.find(params[:annotation_id])
-
-    # only the owner of the annotation is allowed to delete it
-    return unless annotation.user == current_user
-
     # delete associated commontator comment
-    unless annotation.public_comment_id.nil?
-      commontator_comment = Commontator::Comment.find_by(id: annotation.public_comment_id)
+    unless @annotation.public_comment_id.nil?
+      commontator_comment = Commontator::Comment.find_by(id: @annotation.public_comment_id)
       commontator_comment.update(deleted_at: DateTime.now)
     end
 
-    annotation.destroy
+    @annotation.destroy
 
     render json: []
   end
@@ -91,8 +85,12 @@ class AnnotationsController < ApplicationController
   def update_annotations
     medium = Medium.find_by(id: params[:mediumId])
 
-    annotations = Annotation.where(medium: medium, visible_for_teacher: true)
-                            .or(Annotation.where(medium: medium, user: current_user))
+    annotations = if medium && current_user.can_edit?(medium)
+      Annotation.where(medium: medium, visible_for_teacher: true)
+                .or(Annotation.where(medium: medium, user: current_user))
+    else
+      Annotation.where(medium: medium, user: current_user)
+    end
 
     # If annotation is associated to a comment,
     # the field "comment" is empty -> get it from the commontator comment
@@ -127,6 +125,10 @@ class AnnotationsController < ApplicationController
   end
 
   private
+
+    def set_annotation
+      @annotation = Annotation.find(params[:id])
+    end
 
     def annotation_params
       params.expect(

@@ -35,12 +35,27 @@ module Registration
         end
 
         def fail_result(code, message, details = {}, **metadata)
+          metadata = sanitize_result_metadata(metadata)
+          metadata = enrich_rejection_metadata(message, metadata)
+
           { pass: false, code: code, message: message, details: details }
-            .merge(sanitize_result_metadata(metadata))
+            .merge(metadata)
         end
 
         def sanitize_result_metadata(metadata)
           metadata.except(*RESERVED_RESULT_KEYS)
+        end
+
+        def enrich_rejection_metadata(message, metadata)
+          reason_code = metadata[:reason_code]
+          return metadata if reason_code.blank?
+
+          metadata.merge(
+            reason_label: Registration::UserRegistration.resolve_rejection_reason_label(
+              reason_code: reason_code,
+              fallback_label: metadata[:reason_label] || message
+            )
+          )
         end
     end
   end

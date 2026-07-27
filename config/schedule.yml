@@ -21,12 +21,6 @@ user_cleaner_job:
   class: "UserCleanerJob"
   queue: critical
 
-altcha_solutions_cleaner_job:
-  # at midnight, every 2 days
-  cron: "0 0 */2 * *"
-  class: "AltchaSolutionsCleaner"
-  queue: critical
-
 roster_superset_checker:
   # at 3:00 AM, every day
   cron: "0 3 * * *"

@@ -26,10 +26,12 @@ module Demo
     end
 
     def setup_campaigns!
+      ensure_non_production!
       Demo::CampaignSetupSupport.setup!
     end
 
     def setup_rosters!
+      ensure_non_production!
       setup_flags!
 
       Rails.logger.debug("=== Demo Roster Setup ===")
@@ -41,6 +43,7 @@ module Demo
     end
 
     def setup!
+      ensure_non_production!
       setup_rosters!
       setup_assessment!
       setup_performance!

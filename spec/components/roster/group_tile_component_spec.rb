@@ -16,6 +16,23 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
+  describe "rendering" do
+    it "adds tooltip attributes to student tiles" do
+      rendered = render_inline(
+        described_class.new(
+          registerable: tutorial,
+          student_tile: true,
+          tile_tooltip_text: "Blocked tooltip"
+        )
+      )
+      tile = rendered.css(".tutorial-gtile--student").first
+
+      expect(tile["title"]).to eq("Blocked tooltip")
+      expect(tile["data-bs-toggle"]).to eq("tooltip")
+      expect(tile["tabindex"]).to eq("0")
+    end
+  end
+
   describe "#dom_target" do
     it "returns registerable when no item" do
       expect(component.dom_target).to eq(tutorial)
@@ -146,6 +163,43 @@ RSpec.describe(GroupTileComponent, type: :component) do
 
     it "returns free class by default" do
       expect(component.top_bar_class).to eq("tutorial-gtile-top-bar--free")
+    end
+  end
+
+  describe "top-bar tooltip" do
+    def bar_title(instance)
+      render_inline(instance).css("[data-testid='group-tile-top-bar']").first["title"]
+    end
+
+    context "with an item" do
+      let(:lecture) { create(:lecture) }
+      let(:campaign) do
+        create(:registration_campaign, :first_come_first_served, :with_items,
+               campaignable: lecture, items_count: 1)
+      end
+      let(:campaign_item) { campaign.registration_items.first }
+
+      it "describes the registration process" do
+        instance = described_class.new(registerable: campaign_item.registerable,
+                                       item: campaign_item)
+        expect(bar_title(instance))
+          .to eq(I18n.t("roster.tooltips.top_bar_campaign"))
+      end
+    end
+
+    context "with self-enrollment active" do
+      before { tutorial.self_materialization_mode = "add_only" }
+
+      it "mirrors the self-enrollment icon tooltip" do
+        title = bar_title(described_class.new(registerable: tutorial))
+        expect(title).to include(I18n.t("roster.self_materialization.label"))
+        expect(title).to include(I18n.t("roster.self_materialization.modes.add_only"))
+      end
+    end
+
+    it "reports self-enrollment disabled by default" do
+      title = bar_title(described_class.new(registerable: tutorial))
+      expect(title).to include(I18n.t("roster.self_materialization.modes.disabled"))
     end
   end
 

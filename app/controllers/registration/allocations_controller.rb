@@ -94,17 +94,40 @@ module Registration
 
       if @campaign.finalize!
         lecture = @campaign.campaignable
-        respond_with_flash(:notice, finalization_notice,
-                           redirect_path: registration_campaign_path(@campaign)) do
-          [
-            turbo_stream.update("campaigns_container",
-                                partial: "registration/campaigns/card_body_index",
-                                locals: {
-                                  lecture: lecture,
-                                  expanded_campaign_id: @campaign.id
-                                }),
-            *refresh_roster_streams(lecture)
-          ]
+        base_streams = [
+          turbo_stream.update("campaigns_container",
+                              partial: "registration/campaigns/card_body_index",
+                              locals: {
+                                lecture: lecture,
+                                expanded_campaign_id: @campaign.id
+                              }),
+          *refresh_roster_streams(lecture)
+        ]
+
+        if @campaign.registerables.any?
+          # The self-service modal is the post-finalization surface, so we do
+          # NOT also pop a flash over it (fixed, top-of-screen, it would cover
+          # the modal). The finalization summary is folded into the modal.
+          respond_to do |format|
+            format.turbo_stream do
+              render turbo_stream: base_streams + [
+                turbo_stream.update(
+                  "modal-container",
+                  partial: "registration/campaigns/self_service_modal",
+                  locals: { campaign: @campaign, summary: finalization_summary }
+                )
+              ]
+            end
+            format.html do
+              redirect_to registration_campaign_path(@campaign),
+                          notice: finalization_notice
+            end
+          end
+        else
+          respond_with_flash(:notice, finalization_notice,
+                             redirect_path: registration_campaign_path(@campaign)) do
+            base_streams
+          end
         end
       else
         respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
@@ -118,10 +141,18 @@ module Registration
     private
 
       def finalization_notice
+        [t("registration.campaign.finalized"), finalization_summary]
+          .compact.join(" ")
+      end
+
+      # The "some students could not be placed" warning, or nil when everyone
+      # got a spot. Shown in the flash (no groups) or inside the modal.
+      def finalization_summary
         rejected_count = @campaign.open_rejected_count
         unassigned_count = @campaign.unassigned_users.count
+        return if rejected_count.zero? && unassigned_count.zero?
 
-        parts = [t("registration.campaign.finalized")]
+        parts = []
         if rejected_count.positive?
           parts << t("registration.campaign.finalization_summary.rejected",
                      count: rejected_count)
@@ -130,11 +161,7 @@ module Registration
           parts << t("registration.campaign.finalization_summary.unassigned",
                      count: unassigned_count)
         end
-
-        if rejected_count.positive? || unassigned_count.positive?
-          parts << t("registration.campaign.finalization_summary.manual_addition")
-        end
-
+        parts << t("registration.campaign.finalization_summary.manual_addition")
         parts.join(" ")
       end
 

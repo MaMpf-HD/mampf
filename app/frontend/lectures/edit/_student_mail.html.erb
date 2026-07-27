@@ -1,0 +1,110 @@
+<%# Mail to registered students: recipient count with a copy-to-clipboard
+    escape hatch, a minimal send form (subject, body, one attachment), and
+    an audit trail of sent messages.
+    The audience is the union of campaign registrants (pending/confirmed)
+    and roster members, see Lecture#registration_mail_recipients. %>
+<hr class="lecture-pane-separator">
+<%# one query for count and clipboard text, so both are consistent %>
+<% recipient_emails = lecture.registration_mail_recipients.pluck(:email) %>
+<% recipient_count = recipient_emails.size %>
+<div class="card mt-4" data-testid="student-mail-card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="far fa-envelope me-2" aria-hidden="true"></i>
+      <%= t("registration.student_message.title") %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+      <span class="text-muted">
+        <%= t("registration.student_message.audience", count: recipient_count) %>
+      </span>
+      <% if recipient_count.positive? %>
+        <button type="button"
+                class="btn btn-sm btn-outline-secondary clipboard-btn clipboard-button"
+                title="<%= t("buttons.copy_to_clipboard") %>"
+                data-clipboard-text="<%= recipient_emails.join("; ") %>"
+                data-testid="copy-student-emails">
+          <i class="bi bi-clipboard" aria-hidden="true"></i>
+          <%= t("registration.student_message.copy_addresses") %>
+          <div class="clipboardpopup" style="display: block;">
+            <span class="clipboardpopuptext token-clipboard-popup">
+              <%= t("registration.student_message.addresses_copied") %>
+            </span>
+          </div>
+        </button>
+      <% end %>
+    </div>
+
+    <% if recipient_count.positive? %>
+      <%= form_with scope: :registration_student_message,
+                    url: lecture_student_messages_path(lecture),
+                    method: :post,
+                    local: true,
+                    html: { multipart: true } do |f| %>
+        <div class="mb-3">
+          <%= f.label :subject, t("registration.student_message.subject"),
+                      class: "form-label" %>
+          <%= f.text_field :subject,
+                           class: "form-control",
+                           required: true,
+                           maxlength: 200,
+                           data: { testid: "student-mail-subject" } %>
+        </div>
+        <div class="mb-3">
+          <%= f.label :body, t("registration.student_message.body"),
+                      class: "form-label" %>
+          <%= f.text_area :body,
+                          class: "form-control",
+                          rows: 6,
+                          required: true,
+                          data: { testid: "student-mail-body" } %>
+        </div>
+        <div class="mb-3">
+          <%= f.label :attachment,
+                      t("registration.student_message.attachment"),
+                      class: "form-label" %>
+          <%= f.file_field :attachment,
+                           class: "form-control",
+                           accept: "application/pdf",
+                           data: { testid: "student-mail-attachment" } %>
+          <div class="form-text">
+            <%= t("registration.student_message.attachment_hint") %>
+          </div>
+        </div>
+        <%= f.submit t("registration.student_message.send", count: recipient_count),
+                     class: "btn btn-primary",
+                     data: { testid: "student-mail-send" } %>
+      <% end %>
+    <% end %>
+
+    <% sent_messages = lecture.registration_student_messages
+                              .order(created_at: :desc).limit(10) %>
+    <% if sent_messages.any? %>
+      <hr>
+      <h6><%= t("registration.student_message.sent_messages") %></h6>
+      <table class="table table-sm mb-0">
+        <tbody>
+          <% sent_messages.each do |message| %>
+            <tr>
+              <td class="text-muted text-nowrap">
+                <%= l(message.created_at, format: :short) %>
+              </td>
+              <td><%= message.subject %></td>
+              <td class="text-muted">
+                <% if message.attachment_filename %>
+                  <i class="fas fa-paperclip" aria-hidden="true"></i>
+                  <%= message.attachment_filename %>
+                <% end %>
+              </td>
+              <td class="text-muted text-nowrap text-end">
+                <%= t("registration.student_message.recipients",
+                      count: message.recipients_count) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>

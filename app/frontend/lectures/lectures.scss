@@ -23,6 +23,11 @@
   display: none;
 }
 
+#lecture-home-warning {
+  color: red;
+  display: none;
+}
+
 #show-media-button {
   display: none;
 }
@@ -63,8 +68,10 @@
   display: none;
 }
 
-.lecture-tag {
-  background-color: #dae0e5;
+.lecture-tag,
+.lecture-lesson {
+  text-decoration: none;
+  cursor: pointer !important;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
   &:hover,
@@ -72,8 +79,15 @@
     text-decoration: none;
     background-color: #545b62 !important;
     color: white !important;
-    cursor: pointer !important;
   }
+}
+
+.lecture-tag {
+  background-color: #dae0e5;
+}
+
+.lecture-lesson {
+  color: white !important;
 }
 
 #lecture-nav-pills {
@@ -139,4 +153,10 @@ h4.lecture-pane-subheader {
   max-height: 17em;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+// Trix uploads are only wired up for vignettes, so the file button would do
+// nothing here. Scoped to this editor so vignette editors keep theirs.
+.lecture-home-trix trix-toolbar .trix-button-group--file-tools {
+  display: none;
 }

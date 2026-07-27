@@ -32,19 +32,19 @@ class Referral < ApplicationRecord
   end
 
   # provide metadata for vtt file
-  def vtt_properties
+  def vtt_properties(user = nil)
     link = item.link.presence || item.medium_link
     # at the moment, relations between items can be only of the form
     # script <-> video, which means that between them there will be at most
     # one script, one manuscript and one video
     if item.medium&.sort == "Script"
       script = item.manuscript_link
-      if item.related_items_visible?
+      if item.related_items_visible?(user)
         video = item.related_items&.first&.video_link
         manuscript = item.related_items&.first&.manuscript_link
       end
     else
-      script = item.related_items&.first&.manuscript_link if item.related_items_visible?
+      script = item.related_items&.first&.manuscript_link if item.related_items_visible?(user)
       manuscript = item.manuscript_link
       video = item.video_link
     end
@@ -133,6 +133,7 @@ class Referral < ApplicationRecord
     def start_time_not_too_late
       return true if medium.nil? || !medium.video
       return true unless start_time.valid?
+      return true if medium.video_duration.nil?
       return true if start_time.total_seconds <= medium.video_duration
 
       errors.add(:start_time, :too_late)
@@ -142,6 +143,7 @@ class Referral < ApplicationRecord
     def end_time_not_too_late
       return true if medium.nil? || !medium.video
       return true unless end_time.valid?
+      return true if medium.video_duration.nil?
       return true if end_time.total_seconds <= medium.video_duration
 
       errors.add(:end_time, :too_late)

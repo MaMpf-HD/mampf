@@ -86,6 +86,9 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
         result = described_class.new(campaign).check
 
         expect(result.success?).to be(true)
+        expect(result.screening_result)
+          .to be_a(Registration::ScreeningService::Result)
+        expect(result.violations).to eq(result.screening_result.violations)
         expect(result.blocker_violations).to be_empty
         expect(result.auto_reject_violations.size).to eq(1)
         expect(result.auto_reject_violations.first[:user_id]).to eq(user.id)

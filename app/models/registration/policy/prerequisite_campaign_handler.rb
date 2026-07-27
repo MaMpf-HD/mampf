@@ -33,8 +33,7 @@ module Registration
             I18n.t("registration.policy.errors.prerequisite_not_met"),
             classification: Registration::ScreeningService::CLASSIFICATION_AUTO_REJECT,
             reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
-            reason_code: :prerequisite_not_met,
-            reason_label: I18n.t("registration.policy.errors.prerequisite_not_met")
+            reason_code: :prerequisite_not_met
           )
         end
       end

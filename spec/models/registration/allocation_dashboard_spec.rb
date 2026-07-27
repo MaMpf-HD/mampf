@@ -95,9 +95,9 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
                ),
                user: rejected_student)
 
-        expected_reason = Registration::UserRegistration.localized_rejection_reason_label(
+        expected_reason = Registration::UserRegistration.resolve_rejection_reason_label(
           reason_code: "institutional_email_mismatch",
-          reason_label: I18n.t("registration.policy.errors.email_domain_not_allowed")
+          fallback_label: I18n.t("registration.policy.errors.email_domain_not_allowed")
         )
 
         expect(dashboard.rejected_students).to include(rejected_student)
@@ -145,12 +145,106 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
       before do
         allow_any_instance_of(Registration::FinalizationGuard).to receive(:check).and_return(
           Registration::FinalizationGuard::Result.new(success?: false, error_code: :wrong_status,
-                                                      data: nil)
+                                                      violations: nil)
         )
       end
 
       it "returns empty array" do
         expect(dashboard.policy_violations).to eq([])
+      end
+    end
+  end
+
+  describe "#summary_items" do
+    context "when showing the current registration state" do
+      let(:campaign) do
+        create(:registration_campaign,
+               :first_come_first_served,
+               campaignable: lecture,
+               status: :draft)
+      end
+
+      before do
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: create(:tutorial, lecture: lecture))
+        campaign.update!(status: :open)
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: create(:confirmed_user, email: "confirmed@example.com"))
+        create(:registration_user_registration,
+               :rejected,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               rejection_reason_label: "Missing prerequisite",
+               user: create(:confirmed_user, email: "rejected@example.com"))
+      end
+
+      it "returns current-state summary items" do
+        expect(dashboard.summary_items).to eq([
+                                                {
+                                                  kind: :total_registrations,
+                                                  count: 2
+                                                },
+                                                {
+                                                  kind: :currently_confirmed,
+                                                  count: 1
+                                                },
+                                                {
+                                                  kind: :currently_rejected,
+                                                  count: 1
+                                                }
+                                              ])
+      end
+    end
+
+    context "when showing allocation results" do
+      let(:campaign) do
+        create(:registration_campaign,
+               :preference_based,
+               :with_items,
+               campaignable: lecture,
+               status: :processing,
+               allocation_decided_at: Time.current)
+      end
+      let(:item) { campaign.registration_items.first }
+
+      before do
+        create(:registration_user_registration,
+               :confirmed,
+               registration_campaign: campaign,
+               registration_item: item,
+               preference_rank: 1,
+               user: create(:confirmed_user, email: "assigned@example.com"))
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: item,
+               preference_rank: 1,
+               user: create(:confirmed_user, email: "waiting@example.com"))
+      end
+
+      it "returns allocation summary items including percentage and unassigned state" do
+        expect(dashboard.summary_items).to eq([
+                                                {
+                                                  kind: :total_registrations,
+                                                  count: 2
+                                                },
+                                                {
+                                                  kind: :eligible,
+                                                  count: 2
+                                                },
+                                                {
+                                                  kind: :assigned,
+                                                  count: 1,
+                                                  percentage: 50.0
+                                                },
+                                                {
+                                                  kind: :unassigned,
+                                                  count: 1
+                                                }
+                                              ])
       end
     end
   end

@@ -152,6 +152,46 @@ RSpec.describe(RegistrationCampaignContext) do
           item = Registration::Item.last
           expect(item.registration_campaign).to eq(newer_campaign)
         end
+
+        it "ignores completed campaigns when selecting an existing campaign" do
+          completed_campaign = create(:registration_campaign,
+                                      :completed,
+                                      campaignable: lecture,
+                                      created_at: 1.day.from_now)
+
+          expect do
+            result = context_instance.send(:apply_registration_context,
+                                           registerable: registerable,
+                                           lecture: lecture,
+                                           error_target: error_target)
+            expect(result).to be(true)
+          end.to change(Registration::Item, :count).by(1)
+             .and(change(Registration::Campaign, :count).by(0))
+
+          item = Registration::Item.find_by!(registerable: registerable)
+          expect(item.registration_campaign).to eq(existing_campaign)
+          expect(item.registration_campaign).not_to eq(completed_campaign)
+        end
+      end
+
+      context "when only completed campaigns exist and no ID is provided" do
+        before do
+          create(:registration_campaign, :completed, campaignable: lecture)
+        end
+
+        it "creates a new active campaign instead of reusing a completed one" do
+          expect do
+            result = context_instance.send(:apply_registration_context,
+                                           registerable: registerable,
+                                           lecture: lecture,
+                                           error_target: error_target)
+            expect(result).to be(true)
+          end.to change(Registration::Campaign, :count).by(1)
+             .and(change(Registration::Item, :count).by(1))
+
+          item = Registration::Item.find_by!(registerable: registerable)
+          expect(item.registration_campaign).not_to be_completed
+        end
       end
 
       context "when failing to create a registration item" do

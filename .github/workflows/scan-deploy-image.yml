@@ -1,0 +1,54 @@
+name: Scan deploy image
+
+# On-demand Trivy scan of a specific published deploy-image reference (digest).
+# Used by `just scan deployed` / `just scan app-image` (mampf-infra) to scan the
+# image currently deployed in an environment (or a specific digest), i.e. what is
+# actually running -- not just the latest build. Report-only: findings never fail the run.
+#
+# Trivy runs from its official image (the aquasecurity/trivy-action installs the
+# Trivy binary from GitHub releases per job, which currently fails on the
+# runners). TRIVY_USERNAME/PASSWORD authenticate the private GHCR image pull.
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Full deploy-image reference to scan (ghcr.io/...@sha256:...)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  scan:
+    name: Trivy scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scan image with Trivy
+        env:
+          IMAGE_REF: ${{ github.event.inputs.image }}
+          TRIVY_USERNAME: ${{ github.actor }}
+          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker run --rm \
+            -e TRIVY_USERNAME -e TRIVY_PASSWORD -e GITHUB_TOKEN \
+            -v "$PWD:/work" -w /work \
+            aquasec/trivy:0.71.2 image \
+            --scanners vuln \
+            --severity CRITICAL,HIGH \
+            --format json \
+            --output trivy-results.json \
+            --exit-code 0 \
+            --no-progress \
+            --skip-version-check \
+            "$IMAGE_REF"
+          test -s trivy-results.json
+      - name: Upload Trivy results
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: trivy-results
+          path: trivy-results.json
+          if-no-files-found: error

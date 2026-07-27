@@ -57,12 +57,12 @@
           <div
             class="mb-3 input-group td-picker"
             id="release-date-picker"
+            data-controller="datetimepicker"
             data-td-target-input="nearest"
             data-td-target-toggle="nearest">
             <%= f.text_field :release_date,
                              class: 'form-control td-input',
                              id: 'release_date',
-                             "data-testid": 'release-date-datetimepicker',
                              autocomplete: 'off',
                              value: medium.planned_release_date,
                             'data-td-target': '#release-date-picker'%>
@@ -113,6 +113,7 @@
                 <div
                   class="input-group td-picker"
                   id="assignment-date-picker"
+                  data-controller="datetimepicker"
                   data-td-target-input="nearest"
                   data-td-target-toggle="nearest">
                   <%= f.text_field :assignment_deadline,

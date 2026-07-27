@@ -16,7 +16,9 @@
           <%= t('basics.information') %>
         </h5>
       </div>
-      <%= image_tag(@teacher.image_url_with_host.presence ||"/unknown-person.gif",
+      <%= image_tag(@teacher.original_image_file ?
+                      image_user_path(@teacher, variant: "original") :
+                      "/unknown-person.gif",
                     width: '128',
                     alt: "Card image cap",
                     class: 'mx-auto pt-3') %>
@@ -48,5 +50,5 @@
                  locals: { lectures: @teacher.given_lectures_by_date,
                            type: 'lecture_info'} %>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>

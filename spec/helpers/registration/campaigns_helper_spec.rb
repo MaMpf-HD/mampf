@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.describe(Registration::CampaignsHelper, type: :helper) do
   let(:campaign) { create(:registration_campaign, status: :draft) }
-  let(:lecture) { create(:lecture) }
 
   describe "#email_domain" do
     it "extracts the domain correctly" do
@@ -64,13 +63,65 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
     end
   end
 
-  describe "#rank_color" do
+  describe "summary item helpers" do
+    it "maps summary item kinds to translation keys" do
+      expect(helper.allocation_summary_item_translation_key(kind: :assigned))
+        .to eq("registration.allocation.stats.assigned_inline")
+    end
+
+    it "maps summary item kinds to css classes" do
+      expect(helper.allocation_summary_item_css_class(kind: :currently_rejected, count: 1))
+        .to eq("text-danger fw-medium")
+    end
+
+    it "uses muted styling for zero unassigned users" do
+      expect(helper.allocation_summary_item_css_class(kind: :unassigned, count: 0))
+        .to eq("text-muted fw-medium")
+    end
+
+    it "uses danger styling for positive unassigned users" do
+      expect(helper.allocation_summary_item_css_class(kind: :unassigned, count: 1))
+        .to eq("text-danger fw-medium")
+    end
+  end
+
+  describe "#allocation_progress_bar" do
+    it "renders an allocation-specific progress bar" do
+      html = helper.allocation_progress_bar(
+        50,
+        100,
+        bar_class: "allocation-progress-bar--first"
+      )
+
+      expect(html).to include("allocation-progress-bar allocation-progress-bar--first")
+      expect(html).to include('style="width: 50.0%"')
+      expect(html).to include('aria-valuenow="50"')
+    end
+  end
+
+  describe "#allocation_rank_bar_class" do
     it "maps correctly" do
-      expect(helper.rank_color(:forced)).to eq(:allocation_forced)
-      expect(helper.rank_color(1)).to eq(:allocation_first)
-      expect(helper.rank_color(2)).to eq(:allocation_second)
-      expect(helper.rank_color(3)).to eq(:allocation_other)
-      expect(helper.rank_color(99)).to eq(:allocation_other)
+      expect(helper.allocation_rank_bar_class(:forced))
+        .to eq("allocation-progress-bar--forced")
+      expect(helper.allocation_rank_bar_class(1))
+        .to eq("allocation-progress-bar--first")
+      expect(helper.allocation_rank_bar_class(2))
+        .to eq("allocation-progress-bar--second")
+      expect(helper.allocation_rank_bar_class(3))
+        .to eq("allocation-progress-bar--other")
+      expect(helper.allocation_rank_bar_class(99))
+        .to eq("allocation-progress-bar--other")
+    end
+  end
+
+  describe "#allocation_utilization_bar_class" do
+    it "maps percentages to utilization classes" do
+      expect(helper.allocation_utilization_bar_class(40))
+        .to eq("allocation-progress-bar--utilization-low")
+      expect(helper.allocation_utilization_bar_class(85))
+        .to eq("allocation-progress-bar--utilization-mid")
+      expect(helper.allocation_utilization_bar_class(110))
+        .to eq("allocation-progress-bar--utilization-high")
     end
   end
 
@@ -96,15 +147,6 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       campaign.registration_deadline = 1.day.ago
       expect(helper.campaign_close_confirmation(campaign))
         .to eq(I18n.t("registration.campaign.confirmations.close"))
-    end
-  end
-
-  describe "#no_campaign_registerables" do
-    it "delegates to Rosters::NoCampaignRegisterablesQuery" do
-      query = double("Query")
-      expect(Rosters::NoCampaignRegisterablesQuery).to receive(:new).with(lecture).and_return(query)
-      expect(query).to receive(:call).and_return([])
-      expect(helper.no_campaign_registerables(lecture)).to eq([])
     end
   end
 

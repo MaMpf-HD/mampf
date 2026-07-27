@@ -21,15 +21,14 @@
     <% end %>
     <%= hidden_field_tag :group_category, "Flexible Group" unless cohort.persisted? %>
 
-    <div class="mb-3">
-      <label class="form-label">
-        <%= t("roster.cohorts.help.with_enrollment_label") %>
-      </label>
-      <small class="form-text text-muted d-block mb-2">
-        <%= t("roster.cohorts.help.with_enrollment_explanation") %>
-      </small>
+    <div class="border rounded p-3 mb-3 bg-light-subtle">
+      <div class="small text-muted mb-0">
+        <%= t("roster.cohorts.help.flexible_group_intro") %>
+      </div>
+    </div>
 
-      <div class="form-check form-switch">
+    <div class="border rounded p-3 mb-3">
+      <div class="form-check form-switch mb-0">
         <%= check_box_tag "cohort[propagate_to_lecture]",
                           "true",
                           propagates,
@@ -37,7 +36,11 @@
                           disabled: cohort.persisted? %>
         <%= label_tag "cohort_propagate_to_lecture",
                       t("roster.cohorts.help.with_enrollment_checkbox"),
-                      class: "form-check-label" %>
+                      class: "form-check-label fw-semibold" %>
+      </div>
+
+      <div class="small text-muted mt-2">
+        <%= t("roster.cohorts.help.with_enrollment_explanation") %>
       </div>
 
       <% unless cohort.persisted? %>
@@ -54,7 +57,9 @@
 
     <div class="mb-3">
       <%= f.label :description, t("basics.description"), class: "form-label" %>
-      <%= helpdesk(t("roster.hints.cohort_description"), false) %>
+      <small class="form-text text-muted d-block mb-2">
+        <%= t("roster.hints.cohort_description") %>
+      </small>
       <%= f.text_area :description, class: "form-control", rows: 3 %>
     </div>
 
@@ -69,7 +74,8 @@
   </div>
 
   <div class="modal-footer">
-    <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
+    <%= f.submit(cohort.new_record? ? t("buttons.create") : t("buttons.save"),
+                 class: "btn btn-primary") %>
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t("buttons.cancel") %></button>
   </div>
 <% end %>
