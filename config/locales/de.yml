@@ -2961,6 +2961,7 @@ de:
     correct_file_size: Die Datei hat die richtige Größe.
     optimize: Optimieren
     missing_consent: Du musst den Bedingungen zustimmen.
+    upload_file: Hochladen
     working: Arbeite
     optimization_log: Log (anzeigen)
     optimization_failed: >

@@ -2783,6 +2783,7 @@ en:
     correct_file_size: This file has the correct size.
     no_manuscript_yet: No file has yet been uploaded.
     missing_consent: You must consent to upload file.
+    upload_file: Upload file
     optimize: Optimize
     optimization_log: Log (show)
     optimization_failed: >

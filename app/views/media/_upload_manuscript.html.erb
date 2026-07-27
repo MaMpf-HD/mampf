@@ -1,17 +1,17 @@
 <div id="manuscript-uploadArea"
-     class="form-group">
-  <div class="row mb-2">
-    <div class="col-12"
-         id="manuscript-informer">
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12"
-         id="manuscript-progressBar">
-    </div>
-  </div>
-  <div class="row">
-  </div>
+  class="form-group"
+  data-controller="uppy-upload"
+  data-uppy-upload-kind-value="manuscript"
+  data-uppy-upload-endpoint-value="/pdfs/upload"
+  data-uppy-upload-failure-message-value="<%= t('submission.upload_failure') %>"
+  data-uppy-upload-invalid-message-value="<%= t('submission.upload_failure') %>"
+  data-uppy-upload-hidden-input-selector-value="#upload-manuscript-hidden"
+  data-uppy-upload-warning-selector-value="#medium-basics-warning">
+  <input type="hidden"
+      name="medium[manuscript]"
+      value="<%= medium.cached_manuscript_data %>"
+      id="upload-manuscript-hidden">
+  <div data-uppy-upload-target="dashboard"></div>
   <div class="row p-2">
     <div id="manuscript-meta"
          class="col-12 meta rounded"
