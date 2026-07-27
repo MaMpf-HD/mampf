@@ -1,4 +1,4 @@
-<% unless enabled_roster_for_lecture?(lecture) %>
+<% unless enabled_roster_for_lecture?(submission&.assignment&.lecture) %>
   <%= link_to t('buttons.move'),
               select_tutorial_path(submission),
               class: 'btn btn-sm btn-outline-secondary mb-2',
