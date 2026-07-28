@@ -42,8 +42,8 @@ class GradeTalkRowComponent < ViewComponent::Base
     tag.select(
       name: "grade",
       data: {
-        grade_row_target: "grade",
-        action: "change->grade-row#onGradeChanged"
+        grade_talk_row_target: "grade",
+        action: "change->grade-talk-row#onGradeChanged"
       },
       class: "form-select form-select-sm",
       disabled: !allow_grading
@@ -63,8 +63,8 @@ class GradeTalkRowComponent < ViewComponent::Base
       name: "comment",
       value: participation.note,
       data: {
-        grade_row_target: "note",
-        action: "input->grade-row#onNoteChanged"
+        grade_talk_row_target: "note",
+        action: "input->grade-talk-row#onNoteChanged"
       },
       class: "form-control form-control-sm",
       disabled: !allow_grading
@@ -106,8 +106,8 @@ class GradeTalkRowComponent < ViewComponent::Base
     tag.button(type: "button",
                class: class_name,
                data: { bs_toggle: "tooltip",
-                       grade_row_target: "save",
-                       action: "click->grade-row#saveRow" },
+                       grade_talk_row_target: "save",
+                       action: "click->grade-talk-row#saveRow" },
                title: helpers.t("buttons.save"),
                disabled: !allow_grading) do
       tag.i(class: "bi bi-save")
@@ -119,7 +119,7 @@ class GradeTalkRowComponent < ViewComponent::Base
                  "justify-content-center text-nowrap px-2 py-1 lh-1"
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip", action: "click->grade-row#refreshRow" },
+               data: { bs_toggle: "tooltip", action: "click->grade-talk-row#refreshRow" },
                title: helpers.t("buttons.refresh"),
                disabled: !allow_grading) do
       tag.i(class: "bi bi-arrow-clockwise")
@@ -131,7 +131,7 @@ class GradeTalkRowComponent < ViewComponent::Base
                  "justify-content-center text-nowrap px-2 py-1 lh-1"
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip", action: "click->grade-row#markAbsent" },
+               data: { bs_toggle: "tooltip", action: "click->grade-talk-row#markAbsent" },
                title: helpers.t("assessment.mark_absent"),
                disabled: !allow_grading) do
       tag.i(class: "bi bi-person-x")

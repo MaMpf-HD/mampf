@@ -2,7 +2,7 @@
   id="<%= row_id %>"
   is="turbo-frame"
   data-id="<%= @participation.id %>"
-  data-controller="grade-row"
+  data-controller="grade-talk-row"
   data-participation-row-id="<%= @participation.id %>"
   data-action="dirty->grade-table#rowDirty clean->grade-table#rowClean"
   data-status-filter-status="<%= @participation.status %>"
@@ -68,7 +68,7 @@
     <% if allow_grading? %>
       <%= text_field_tag "note", @participation.note,
                           class: "form-control form-control-sm",
-                          data: { grade_row_target: "note", action: "input->grade-row#markDirty" } %>
+                          data: { grade_row_target: "note", action: "input->grade-talk-row#markDirty" } %>
     <% else %>
       <span class="text-muted small"><%= @participation.note %></span>
     <% end %>
@@ -93,24 +93,24 @@
       <% if can_grade? && @participation %>
         <%= form_with url: grade_participation_path(@participation),
                     method: :patch,
-                    data: { turbo: true, grade_row_target: "form" },
+                    data: { turbo: true, grade_talk_row_target: "form" },
                     html: { style: "display:none;" } do %>
           <input
             type="hidden"
             name="grade"
-            data-grade-row-target="gradePayload"
+            data-grade-talk-row-target="gradePayload"
           >
 
           <input
             type="hidden"
             name="comment"
-            data-grade-row-target="notePayload"
+            data-grade-talk-row-target="notePayload"
           >
         <% end %>
         <%= save_row_button(allow_grading?) %>
         <%= form_with url: refresh_grade_participation_path(@participation),
                     method: :patch,
-                    data: { turbo: true, grade_row_target: "refreshForm" },
+                    data: { turbo: true, grade_talk_row_target: "refreshForm" },
                     html: { style: "display:none;" } %>
         <%= refresh_row_button(allow_grading?) %>
         <%= button_to t("assessment.mark_absent"),
