@@ -15,7 +15,7 @@ file.
 ```admonish tip "About the code links"
 Every entry carries a **Code** line linking to the deciding lines on GitHub.
 The links are permalinks pinned to commit
-[`9998d481`](https://github.com/MaMpf-HD/mampf/commit/9998d4815ac03a2ae77ee5309f990deee7641428),
+[`405f24c8`](https://github.com/MaMpf-HD/mampf/commit/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281),
 the tip of `muesli-03-eligibility` — so they resolve even though this branch
 starts from `next`, where the code does not exist yet, and they keep resolving
 after the branch is merged and deleted.
@@ -60,34 +60,43 @@ recorded nowhere.
 
 ---
 
-## E-3.2 · A rule without a threshold admits everyone
+## E-3.2 · A rule must constrain something
 
-> **Should a rule with no point threshold treat the point criterion as
-> satisfied?**
+> **Is it right that a rule with no threshold *and* no achievement is refused
+> outright, rather than warned about?**
 
-**As built.** `Evaluator#points_met?` falls through to `true` when neither
-`min_points_absolute` nor `min_percentage` is set.
+**As built.** A rule is valid only if it carries at least one criterion — a
+percentage threshold, an absolute threshold, or at least one required
+achievement. `Evaluator#points_met?` still falls through to `true` when no
+threshold is configured, which is correct: a threshold-less rule is decided by
+its achievements alone.
 
-**Code.** [`points_met?` — the `else true` branch][c-points]
+**Code.** [`points_met?` — the `else true` branch][c-points] ·
+[`at_least_one_criterion`][c-criteria]
 
-**Example.** A teacher configures *Analysis I*: threshold mode "none" (both
-fields empty), required achievement "Blackboard presentation".
+**Example.** *Analysis I*, threshold mode "no point threshold", required
+achievement "Blackboard presentation":
 
-- Alice has **0 of 120 points** but gave her presentation
-- point criterion → `true` (no threshold), achievement → met
-- → **proposal: passed**
+- Alice has **0 of 120 points** but gave her presentation → **passed**.
+  Intended — points were deliberately not part of this rule.
 
-Now the same rule, intended as *"at least 50 % **and** a presentation"*, but
-saved with the percentage field accidentally cleared: every student who
-presented is admitted, regardless of points. Nothing in the UI flags this.
+The same rule with the achievement box left unticked is now **rejected on save**
+with *"The rule needs at least one criterion…"*. Before, it saved happily and
+proposed *passed* for every student in the lecture, including one with zero
+points — reachable from the UI in two clicks, with no warning anywhere.
 
-**Why it matters.** The failure is silent and permissive — the worst combination
-for something that gates exam admission.
+**Why it matters.** The old failure was silent and permissive, the worst
+combination for something that gates exam admission. A hard refusal is
+defensible because there is already a supported way to admit everyone: leave
+exam eligibility switched off. An empty rule has no second reading.
 
-**Alternative.** Reject a rule with no threshold as a configuration error, or
-surface a warning in the rule preview.
+**Why refusal rather than a warning.** A warning would have to hang off "no
+threshold", and at that point a legitimate achievements-only rule is
+indistinguishable from an abandoned draft — the warning would fire on both and
+become noise. The *combination* is the only unambiguous signal.
 
-**Status:** reconstructed · **no test pins this behaviour.**
+**Status:** settled — fixed in `121deb797` after the security audit raised it as
+MS-02; covered by four model specs and one request spec.
 
 ---
 
@@ -259,28 +268,38 @@ turned out to bypass it).
 
 ---
 
-## E-3.9 · `threshold_mode` is not persisted
+## E-3.9 · `threshold_mode` is a column, not a form field
 
-> **Is it acceptable that the chosen threshold mode is not stored?**
+> **Is the mode worth storing, given that it could be derived?**
 
-**As built.** `attr_accessor :threshold_mode` — a form-only field. Which mode a
-rule is in gets derived from *which column is populated*.
+**As built.** An enum column on `student_performance_rules`
+(`percentage` / `absolute` / `none`, default `none`). One validation keeps the
+two value columns in agreement with it, so a rule can never claim a threshold it
+does not carry.
 
-**Code.** [the `attr_accessor`][c-mode] · [`apply_threshold_params`][c-applymode]
+**Code.** [the enum][c-mode] · [the consistency validation][c-modecheck] ·
+[`apply_threshold_params`][c-applymode]
 
 **Example.** A teacher picks "percentage" and enters 50. Stored:
-`min_percentage = 50`, `min_points_absolute = nil`. Reopening the editor shows
-"percentage" because the percentage column is filled.
+`threshold_mode = percentage`, `min_percentage = 50`. Reopening the editor reads
+the mode back from the row instead of guessing it.
 
-Now they clear the value and save. Both columns are nil, and the form comes back
-as **"no threshold"** — indistinguishable from a rule where nobody ever
-configured one. Combined with [E-3.2](#e-32--a-rule-without-a-threshold-admits-everyone),
-that state silently admits everyone.
+Previously the mode was an `attr_accessor` and the form reconstructed the radio
+state from whichever value column happened to be filled. That derivation was
+faithful *only* because `RulesController` was the sole writer and always set mode
+and values together. Any second writer — an import, a console session, a future
+API — could have produced a rule with two NULL columns that the form would then
+present as a deliberate "no point threshold", asserting a decision nobody made.
 
-**Why it matters.** "Explicitly no threshold" and "never configured" are the same
-state, so neither the UI nor a validation can warn about the dangerous one.
+**Why it matters.** The mode is now the single source of truth, and the column
+landed in the table's own migration rather than a follow-up, since the slice is
+unreleased and no live data needed backfilling.
 
-**Status:** reconstructed.
+**Note.** The enum carries `prefix: true`: a bare `none` value would collide with
+ActiveRecord's own `none` scope and Rails refuses to define it.
+
+**Status:** settled — implemented in `405f24c8a`; covered by model and request
+specs.
 
 ---
 
@@ -288,12 +307,11 @@ state, so neither the UI nor a validation can warn about the dangerous one.
 
 > **Should a rule be prevented from carrying both threshold kinds at once?**
 
-**As built.** `Rule#percentage_or_absolute_not_both` rejects a rule where both
-are present; `RulesController#apply_threshold_params` nils out the other column
-when a mode is chosen. `Evaluator#points_met?` checks absolute first, then
-percentage.
+**As built.** `Rule#threshold_matches_mode` rejects a rule carrying both values;
+`RulesController#apply_threshold_params` nils out the other column when a mode is
+chosen. `Evaluator#points_met?` checks absolute first, then percentage.
 
-**Code.** [`percentage_or_absolute_not_both`][c-xor] ·
+**Code.** [`threshold_matches_mode`][c-modecheck] ·
 [`apply_threshold_params`][c-applymode] · [the precedence in `points_met?`][c-points]
 
 **Example.** A teacher enters 50 %, saves, then switches the form to "absolute"
@@ -316,41 +334,45 @@ ordering in `points_met?` would turn that into an arbitrary winner.
 | # | Decision | Status |
 |---|---|---|
 | E-3.1 | Ungraded ⇒ pending, not failed | settled |
-| E-3.2 | No threshold ⇒ point criterion met | **reconstructed, untested** |
+| E-3.2 | A rule must constrain something | settled *(was: untested)* |
 | E-3.3 | Manual decisions never auto-overwritten | settled |
 | E-3.4 | `certified_at` doubles as "last evaluated" | **reconstructed, untested** |
 | E-3.5 | Multi-lecture policies mean OR | settled |
 | E-3.6 | One active rule per lecture (DB index) | settled |
 | E-3.7 | One performance policy per campaign (model + index) | settled |
 | E-3.8 | Eligibility off only while no data exists | settled |
-| E-3.9 | `threshold_mode` not persisted | reconstructed |
+| E-3.9 | `threshold_mode` is a column | settled *(was: reconstructed)* |
 | E-3.10 | Percentage XOR absolute | settled |
 
-**E-3.2 and E-3.4 are the ones that need attention.** Both are behavioural
-commitments with real consequences, both lack a test, and both hide in a handful
-of lines (`else true`, `certified_at: Time.current`) that a reader working
-through 7,600 diff lines will almost certainly pass over.
+**E-3.4 is the one still needing attention.** It is a behavioural commitment with
+real consequences, it lacks a test, and it hides in a single line
+(`certified_at: Time.current`) that a reader working through 7,600 diff lines
+will almost certainly pass over.
+
+E-3.2 and E-3.9 were open when this page was first written; both have since been
+addressed — see the entries for what changed and why.
 
 <!-- ------------------------------------------------------------------ -->
-<!-- Code permalinks — all pinned to 9998d481, the tip of               -->
+<!-- Code permalinks — all pinned to 405f24c8, the tip of               -->
 <!-- muesli-03-eligibility. To re-pin to a later commit, replace the     -->
 <!-- SHA in every line below; nothing else in this file refers to it.    -->
 <!-- ------------------------------------------------------------------ -->
 
-[c-points]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/evaluator.rb#L49-L57
-[c-status]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/evaluator.rb#L59-L71
-[c-proposal]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/evaluator.rb#L17-L23
-[c-attrs]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/controllers/student_performance/certifications_controller.rb#L302-L320
-[c-reeval]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/controllers/student_performance/certifications_controller.rb#L135-L136
-[c-confirm]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/controllers/student_performance/certifications_controller.rb#L161-L166
-[c-stale]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/certification.rb#L15-L33
-[c-certvalid]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/certification.rb#L13
-[c-handler]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/registration/policy/student_performance_handler.rb#L25-L34
-[c-lectureids]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/registration/policy.rb#L85-L93
-[c-ruleindex]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/db/migrate/20260722000003_add_unique_active_rule_per_lecture.rb
-[c-singlepolicy]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/registration/policy.rb#L150-L160
-[c-policyindex]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/db/migrate/20260722000006_add_unique_student_performance_policy_per_campaign.rb
-[c-guard]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/lecture.rb#L1072-L1084
-[c-mode]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/rule.rb#L12
-[c-applymode]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/controllers/student_performance/rules_controller.rb#L105-L118
-[c-xor]: https://github.com/MaMpf-HD/mampf/blob/9998d4815ac03a2ae77ee5309f990deee7641428/app/models/student_performance/rule.rb#L30-L34
+[c-points]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/evaluator.rb#L49-L57
+[c-status]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/evaluator.rb#L59-L71
+[c-proposal]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/evaluator.rb#L17-L23
+[c-attrs]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/controllers/student_performance/certifications_controller.rb#L302-L320
+[c-reeval]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/controllers/student_performance/certifications_controller.rb#L135-L136
+[c-confirm]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/controllers/student_performance/certifications_controller.rb#L161-L166
+[c-stale]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/certification.rb#L15-L33
+[c-certvalid]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/certification.rb#L13
+[c-handler]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/registration/policy/student_performance_handler.rb#L25-L34
+[c-lectureids]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/registration/policy.rb#L85-L93
+[c-ruleindex]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/db/migrate/20260722000003_add_unique_active_rule_per_lecture.rb
+[c-singlepolicy]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/registration/policy.rb#L150-L160
+[c-policyindex]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/db/migrate/20260722000006_add_unique_student_performance_policy_per_campaign.rb
+[c-guard]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/lecture.rb#L1072-L1084
+[c-mode]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/rule.rb#L13-L15
+[c-applymode]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/controllers/student_performance/rules_controller.rb#L103-L120
+[c-modecheck]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/rule.rb#L49-L67
+[c-criteria]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/rule.rb#L39-L47

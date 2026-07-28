@@ -31,7 +31,7 @@ Slice 3 deliberately stops there. It does **not** create exams
 
 | Model | Purpose | Notable columns |
 |---|---|---|
-| `StudentPerformance::Rule` | The eligibility criteria for one lecture | `min_percentage`, `min_points_absolute`, `active` |
+| `StudentPerformance::Rule` | The eligibility criteria for one lecture | `threshold_mode`, `min_percentage`, `min_points_absolute`, `active` |
 | `StudentPerformance::RuleAchievement` | Join: which achievements a rule requires | `position` (ordered via `acts_as_list`) |
 | `StudentPerformance::Certification` | The teacher's decision per (lecture, user) | `status`, `source`, `certified_by_id`, `certified_at`, `rule_id` |
 | `StudentPerformance::Evaluator` | PORO — interprets a record against a rule | *(no table)* |
@@ -134,7 +134,7 @@ instance-bound pattern, not class-level `authorize_resource`.
 
 | Migration | Effect |
 |---|---|
-| `…000001_create_student_performance_rules` | table |
+| `…000001_create_student_performance_rules` | table, incl. the `threshold_mode` enum column |
 | `…000002_create_student_performance_rule_achievements` | join table with `position` |
 | `…000003_add_unique_active_rule_per_lecture` | partial unique index, `WHERE active = true` |
 | `…000004_create_student_performance_certifications` | table |
