@@ -8,6 +8,9 @@ window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);
 
+import LectureHomeFormController from "~/lectures/edit/home_form.controller.js";
+window.Stimulus.register("lecture-home-form", LectureHomeFormController);
+
 import MediaButtonSortController from "~/lectures/edit/media/media_button_sort.controller.js";
 window.Stimulus.register("media-button-sort", MediaButtonSortController);
 
@@ -71,11 +74,20 @@ window.Stimulus.register("roster-drag", RosterDragController);
 import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 
+import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
+window.Stimulus.register("preference-choices", PreferenceChoicesController);
+
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
 
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
+
+import ProfileController from "~/profile/profile.controller.js";
+window.Stimulus.register("profile", ProfileController);
+
+import LectureHighlightsController from "~/lectures/lecture_highlights.controller.js";
+window.Stimulus.register("lecture-highlights", LectureHighlightsController);
 
 import SubmissionSettingsController from "~/assessment/submission_settings.controller.js";
 window.Stimulus.register("assessments--submission-settings", SubmissionSettingsController);

@@ -31,7 +31,7 @@ RSpec.describe(Registration::Item, type: :model) do
       let(:campaign) { create(:registration_campaign, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }
 
-      context "when campaign is open (FCFS)" do
+      context "when campaign is open (first-come-first-served)" do
         before do
           item # ensure item exists
           campaign.update!(status: :open)

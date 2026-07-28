@@ -23,8 +23,24 @@ en:
       cannot_reopen_completed: "Cannot reopen registration process because it has already been finalized."
       not_found: "Registration process not found."
       completed_title: "Registration Process Completed"
+      completed_campaign_title: "Completed registration processes"
+      active_campaign_title: "Active registration process"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the group management to make any adjustments."
       go_to_roster: "Go to Roster"
+      self_service:
+        title: "Finalized — can students join and leave groups themselves?"
+        description: "Self-enrollment is currently disabled: students are assigned but cannot join or leave groups on their own. You can allow it now for all of the campaign's groups — e.g. to let them self-balance or admit latecomers. You can fine-tune each group later."
+        modes:
+          disabled: "Self-enrollment disabled"
+          add_only: "Allow joining only"
+          remove_only: "Allow leaving only"
+          add_and_remove: "Allow joining and leaving"
+        current_state_suffix: "(current state)"
+        keep_closed: "Keep self-enrollment disabled"
+        apply: "Apply"
+        updated: "Self-service setting updated for the campaign's groups."
+        only_when_completed: "Self-service can only be changed once the campaign is finalized."
+        failed: "Could not update the self-service setting."
       dissolved_enrolled: "enrolled"
       lecture_not_found: "Lecture not found."
       default_description: "Registration"
@@ -42,7 +58,16 @@ en:
         none: "No registration processes found."
         sections:
           registration: "Registration Process"
-          no_campaign: "No Registration Process"
+          no_campaign: "Without Registration Process"
+        choice:
+          question: "Do you need a registration process?"
+          hint: >-
+            If you are unsure, we recommend choosing a registration process.
+            It gives you a clear registration window, lets you review demand
+            before assignments are finalized, and helps you handle
+            eligibility rules or limited capacities more fairly. It can also
+            assign students to groups automatically, based on the preferences
+            they submit.
         columns:
           description: "Short description"
           type: "Type"
@@ -251,6 +276,20 @@ en:
       forced_assignment: "Forced Assignment"
       index:
         title: "Registrations"
+        confirmed_cases: "Your registration is confirmed for"
+        unassigned_notice: "You have not been assigned to a group yet."
+        pending_preference_notice: "You have not been assigned to a group yet. After the registration period ends, you will be assigned based on your preferences."
+        fulfilled_preference_notice_html: "We could fulfill your <em>%{rank}</em> preference."
+        fulfilled_preference_ranks:
+          "1": "1st"
+          "2": "2nd"
+          "3": "3rd"
+        unfulfilled_preferences_notice_html: "Unfortunately, your preferences (<em>%{preferences}</em>) could not be fulfilled."
+        unallocated_preference_notice_html: "Unfortunately, your registration for <em>%{campaign}</em> could not be considered because there were more registrations than available places. We received your preferences: <em>%{preferences}</em>."
+        policy_rejection_notice_html: >-
+          Your registration for <em>%{campaign}</em> was rejected for the following reasons:
+        unknown_tutor: "A tutor has not been assigned yet."
+        unremovable_assignment_notice: "You cannot leave this tutorial because the lecturer has set it up this way."
         first_choice_title: "1st Choice Registrations"
         allocated_title: "Allocated Students"
         rejected_title: "Rejected Registrations"
@@ -276,6 +315,149 @@ en:
       actions:
         reject_user: "Reject registrations"
         defer_due_to_blocker: "Reject for now"
+        rank_option_tooltip: "Set as %{rank} preference"
+      registrations: "Registrations"
+      title: "Your Registration"
+      planning: "Planning"
+      course_code: "Course code"
+      campaign_main: "Registration process"
+      eligibility_title: "Eligibility"
+      first_come_first_served_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
+      preference_instruction:
+        one: "Rank %{count} option. Allocation is calculated after the deadline."
+        other: "Rank %{count} options. Allocation is calculated after the deadline."
+      preference_rank_options:
+        "1": "1st"
+        "2": "2nd"
+        "3": "3rd"
+      preference_podium:
+        label: "Selected preference ranks"
+        empty: "Choose an option"
+      save_choices: "Save choices"
+      save_choices_incomplete_tooltip: "Choose an option for every rank before saving."
+      eligible: "Eligible"
+      not_eligible: "Not eligible"
+      prerequisite_campaign: "Prerequisite registration process"
+      seats_remaining: "Seats remaining"
+      registered: "Registered"
+      not_registered: "Not registered"
+      blocked_tooltip: "You cannot join this tutorial since you cannot leave your tutorial. This was set up by your lecturer this way."
+      register_now: "Register now"
+      registration_blocked: "Unavailable"
+      withdraw: "Withdraw"
+      closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
+      ineligible_notice:
+        title: "Registration unavailable"
+        description: "You cannot register for this campaign right now for the following reasons:"
+      readonly_notice:
+        title: "Registration closed"
+        description: "Your submitted choices stay visible here while the teacher reviews the registrations and finalizes the allocation. You can no longer make changes."
+      finalization_policy_notice:
+        title: "Your registration would currently fail at finalization"
+        description: >-
+          You can still register now. The requirements that are currently not
+          fulfilled are shown below.
+      policy_overview:
+        title: "Policy checks for this registration"
+        registration_title: "Checked at registration"
+        registration_description: "These checks must be fulfilled before you can register."
+        registration_empty: "There are no additional rules or restrictions for registration."
+        finalization_title: "Checked again at finalization"
+        finalization_description: "These checks are evaluated again when the registration process is finalized."
+        finalization_empty: "There are no additional checks at finalization."
+        status:
+          fulfilled: "Currently fulfilled"
+          not_fulfilled: "Currently not fulfilled"
+          needs_clarification: "Needs clarification"
+        policies:
+          institutional_email_html: "Email domain must be <em>%{domains}</em>"
+          prerequisite_campaign_html: "Confirmed registration in <em>%{campaign}</em>"
+          student_performance_html: "Student performance status must be <em>%{status}</em>"
+          generic_html: "Requirement: <em>%{requirement}</em>"
+        hints:
+          institutional_email_registration_html: >-
+            Current domain: %{current_domain}. Update your email in %{profile}.
+          institutional_email_finalization_html: >-
+            Current domain: %{current_domain}. Update your email in %{profile}
+            before the final allocation.
+          prerequisite_campaign_registration_html: >-
+            Complete <em>%{campaign}</em> successfully first.
+          prerequisite_campaign_finalization_html: >-
+            Complete <em>%{campaign}</em> successfully before the final allocation.
+          student_performance: >-
+            If you believe you already fulfill this requirement, contact the
+            lecturer or teaching assistant.
+          generic: >-
+            If you believe you already fulfill this requirement, contact the
+            lecturer or teaching assistant.
+      eligibility_failures:
+        current_domain_unknown: "an unknown domain"
+        institutional_email_mismatch_html: >-
+          Your current email domain is <em>%{current_domain}</em>, but this registration
+          process requires <em>%{domains}</em>. Go to your %{profile} and update your
+          email there.
+        institutional_email_finalization_warning_html: >-
+          Your current email domain is <em>%{current_domain}</em>, but this registration
+          process also requires <em>%{domains}</em> at finalization. If this remains
+          unchanged when the registration process is finalized, your
+          registration will be rejected. Go to your %{profile} and update your
+          email there.
+        institutional_email_finalization_rejection_html: >-
+          At the time this registration process was finalized, your email domain
+          did not match the required email domains <em>%{domains}</em>. Changing your
+          email address afterwards does not automatically restore this
+          registration. If you still want to be admitted, please contact the
+          lecturer or teaching assistant.
+        institutional_email_configuration_error: "The required institutional email domains are not configured for this campaign. Please contact the course administration."
+        prerequisite_not_met_html: "You need a confirmed registration in <em>%{campaign}</em> before you can register here. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        prerequisite_not_met_finalization_warning_html: "You currently do not have a confirmed registration in <em>%{campaign}</em>. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        prerequisite_not_met_finalization_rejection_html: "At the time this registration process was finalized, you did not have a confirmed registration in <em>%{campaign}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
+        prerequisite_campaign_not_found_html: "The required prerequisite registration <em>%{campaign}</em> is currently unavailable. Please contact the course administration."
+        prerequisite_configuration_error: "This campaign depends on a prerequisite registration that is not configured correctly. Please contact the course administration."
+        student_performance_failed_html: "Your student performance status does not match the required status <em>%{status}</em>. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        student_performance_failed_finalization_warning_html: "Your current student performance status does not match the required status <em>%{status}</em>. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        student_performance_failed_finalization_rejection_html: "At the time this registration process was finalized, your student performance status did not match the required status <em>%{status}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
+        generic_html: "You do not currently meet the <em>%{requirement}</em> requirement. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        generic_finalization_warning_html: "You do not currently meet the <em>%{requirement}</em> requirement. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        generic_finalization_rejection_html: "At the time this registration process was finalized, you did not meet the <em>%{requirement}</em> requirement. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
+      withdraw_first: "Withdraw first"
+      filter_placeholder: "Filter by weekday, time, tutor"
+      status_for_registration: "Current statuses of your submitted options"
+      submitted_pref: "Your submitted choice(s)"
+      confirmed_assignment_pref: "Your confirmed %{type} assignment"
+      first_come_first_served_columns:
+        type: "Group Type"
+        title: "Title"
+        details: "Details"
+        seats: "Seats"
+        status: "Status"
+        action: "Action"
+      preference_based_columns:
+        type: "Group Type"
+        title: "Title"
+        details: "Details"
+        seats: "Seats"
+        status: "Status"
+        action: "Action"
+      messages:
+        campaign_unavailable: "This registration process is not accessible right now."
+        campaign_not_opened: "Registration is not opened."
+        registration_success: "Registration completed successfully."
+        registration_failed: "Registration could not be completed."
+        already_registered: "You are already registered for this registration process."
+        no_slots: "No seats available."
+        requirements_not_met: "You do not meet the requirements."
+        unremovable_assignment: "You cannot register for another group because you cannot leave your current tutorial."
+        invalid_options: "Invalid options selected."
+        withdrawn: "You have withdrawn your registration."
+        preferences_saved: "Your preferences have been saved."
+        dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following registration processes are confirmed: %{names}"
+        not_preference_based_mode: "This registration process is not in preference-based mode. Preferences cannot be saved here."
+        invalid_preferences: "Please choose exactly one option for each available preference rank."
+        not_first_come_first_served_mode: "This registration process is not in first-come-first-served mode. Direct registrations cannot be made here."
+        cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
+        course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."
+        campaign_not_found: "Registration process not found."
     allocation:
       started: "Allocation has been calculated."
       conflicts:
@@ -291,7 +473,7 @@ en:
         current_registration_state: "Current Registration State"
         current_group_occupancy: "Current Group Occupancy"
         workflow_info: "Review the allocation statistics below. Capacities can be adjusted directly in the table via the pencil button. If the results are unsatisfactory, you can 'Reopen Registration' to accept new sign-ups or let students update their preferences, and then re-run the allocation. You can also recalculate the allocation directly. Once satisfied, click 'Finalize' to commit the assignments. Remaining unassigned or rejected students can be manually distributed to groups afterwards."
-        workflow_info_fcfs: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
+        workflow_info_first_come_first_served: "Review the statistics and group utilization below. If everything looks correct, click 'Finalize' to commit the assignments to the course roster. You can also 'Reopen Registration' to accept further sign-ups before finalizing."
         item_capacities: "Group Capacities"
         finalization_status:
           blocked_title: "Finalization currently not possible"
@@ -349,7 +531,77 @@ en:
       policy_summary:
         required_domain: "Required domain:"
         failed: "Allocation failed: %{error}"
+    student_campaigns:
+      index:
+        columns:
+          title: "Title"
+          lecture: "Lecture"
+          mode: "Mode"
+          closes: "Closes"
+          eligibility: "Eligibility"
+          action: "Action"
+          status: "Status"
+        view_details: "Details"
+    lecture:
+      not_found: "Lecture not found."
+      home:
+        empty_title: "Start here"
+        empty_subscribed: >-
+          Lecture news and updates appear on this page. Materials are
+          available from the lecture navigation.
+        empty_unsubscribed: >-
+          Lecture news and updates appear on this page. Subscribe to access
+          the materials.
+        news_indicator: "New updates on Home"
+        attachment_download: "Download program (PDF)"
+        attachment_missing: "No program is attached to this lecture."
+        staff_registration_title: "What students see here"
+        staff_registration_hint: >-
+          Below your intro, students see the registration process and their own
+          status (open registrations, the group they were assigned to). That
+          view is personal to each student, so it is not shown to you here.
+        staff_registration_manage: "Manage registration processes"
+        intro_empty: >-
+          Your lecture home page has no welcome text or program yet. Add a short
+          intro so students landing here see more than an empty page.
+        intro_empty_campaign: >-
+          A registration is running for this lecture, but your home page has no
+          welcome text — this is what students see before they register. Add a
+          short intro and your program.
+        subscribe_prompt: >-
+          You have not subscribed to this lecture yet. Subscribing gives you
+          access to its materials — it is not a binding course registration.
+    student_message:
+      title: "Email to registered students"
+      audience:
+        zero: "No students have registered yet."
+        one: "Goes to 1 registered student."
+        other: "Goes to %{count} registered students."
+      copy_addresses: "Copy email addresses"
+      addresses_copied: "Addresses copied to clipboard"
+      subject: "Subject"
+      body: "Message"
+      attachment: "Attachment (optional)"
+      attachment_hint: "One PDF file, at most 10 MB — e.g. a course program."
+      attachment_must_be_pdf: "must be a PDF file"
+      send:
+        one: "Send to 1 student"
+        other: "Send to %{count} students"
+      sent:
+        one: "Your message is being sent to 1 student."
+        other: "Your message is being sent to %{count} students."
+      no_recipients: "There are no registered students to send to yet."
+      sent_messages: "Sent messages"
+      recipients:
+        one: "1 recipient"
+        other: "%{count} recipients"
+      crosslink_html: >-
+        You want to email all registered students (e.g. to send around a
+        course program)? You can do that in the %{link} tab.
   activerecord:
+    attributes:
+      registration/student_message:
+        attachment: "Attachment"
     errors:
       models:
         registration/campaign:

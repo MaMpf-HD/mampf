@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "module": "es2022",
+    "target": "es6",
+    "module": "nodenext",
     "lib": [
       "ESNext",
       "DOM"
     ],
-    "moduleResolution": "Node",
+    "moduleResolution": "nodenext",
     "isolatedModules": true,
     "useDefineForClassFields": true,
     "strict": true,

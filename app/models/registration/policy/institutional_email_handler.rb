@@ -27,8 +27,7 @@ module Registration
             { allowed_domains: domains },
             classification: Registration::ScreeningService::CLASSIFICATION_AUTO_REJECT,
             reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
-            reason_code: :institutional_email_mismatch,
-            reason_label: I18n.t("registration.policy.errors.email_domain_not_allowed")
+            reason_code: :institutional_email_mismatch
           )
         end
       end

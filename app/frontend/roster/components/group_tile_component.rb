@@ -3,13 +3,34 @@ require "view_component/base"
 class GroupTileComponent < ViewComponent::Base
   with_collection_parameter :registerable
 
-  attr_reader :registerable, :item
+  attr_reader :registerable, :item, :tile_metadata_rows,
+              :tile_status_content, :tile_footer_content,
+              :tile_actions_content,
+              :tile_tooltip_text
 
-  def initialize(registerable:, item: nil, lecture: nil)
+  def initialize(registerable:, item: nil, lecture: nil, # rubocop:disable Metrics/ParameterLists
+                 student_tile: false, tile_title: nil, tile_type: nil,
+                 tile_metadata_rows: [],
+                 tile_tooltip_text: nil,
+                 tile_variant_class: nil,
+                 tile_top_bar_class: nil, tile_status_content: nil,
+                 tile_footer_content: nil, tile_actions_content: nil,
+                 tile_column_class: nil)
     super()
     @registerable = registerable
     @item = item
     @lecture = lecture
+    @student_tile = student_tile
+    @tile_title = tile_title
+    @tile_type = tile_type
+    @tile_metadata_rows = tile_metadata_rows
+    @tile_tooltip_text = tile_tooltip_text
+    @tile_variant_class = tile_variant_class
+    @tile_top_bar_class = tile_top_bar_class
+    @tile_status_content = tile_status_content
+    @tile_footer_content = tile_footer_content
+    @tile_actions_content = tile_actions_content
+    @tile_column_class = tile_column_class
   end
 
   def render?
@@ -18,6 +39,37 @@ class GroupTileComponent < ViewComponent::Base
 
   def dom_target
     item || registerable
+  end
+
+  def student_tile?
+    @student_tile
+  end
+
+  def column_classes
+    [
+      "col",
+      "registration-group-tile-col",
+      @tile_column_class
+    ].compact.join(" ")
+  end
+
+  def card_classes
+    [
+      "card",
+      "h-100",
+      "tutorial-gtile",
+      ("tutorial-gtile--student" if student_tile?),
+      gtile_type_class,
+      ("tutorial-gtile--without-enrollment" if cohort_without_enrollment?)
+    ].compact.join(" ")
+  end
+
+  def title_text
+    @tile_title || registerable.title
+  end
+
+  def type_text
+    @tile_type || helpers.roster_type_text(registerable, item: item)
   end
 
   def roster_key
@@ -111,10 +163,6 @@ class GroupTileComponent < ViewComponent::Base
     registerable.try(:location)
   end
 
-  def type_text
-    helpers.roster_type_text(registerable, item: item)
-  end
-
   def sm_mode
     registerable.try(:self_materialization_mode) || "disabled"
   end
@@ -124,6 +172,8 @@ class GroupTileComponent < ViewComponent::Base
   end
 
   def gtile_type_class
+    return @tile_variant_class if @tile_variant_class.present?
+
     if item
       "tutorial-gtile--campaign"
     elsif sm_active?
@@ -134,6 +184,8 @@ class GroupTileComponent < ViewComponent::Base
   end
 
   def top_bar_class
+    return @tile_top_bar_class if @tile_top_bar_class.present?
+
     if item
       "tutorial-gtile-top-bar--campaign"
     elsif sm_active?
@@ -141,6 +193,15 @@ class GroupTileComponent < ViewComponent::Base
     else
       "tutorial-gtile-top-bar--free"
     end
+  end
+
+  # Explains the top-bar color on hover. Campaign (blue) tiles describe the
+  # registration process; every other tile mirrors the self-enrollment icon's
+  # tooltip, since the bar color and that icon track the same mode.
+  def top_bar_tooltip
+    return t("roster.tooltips.top_bar_campaign") if item
+
+    sm_tooltip
   end
 
   def cohort_without_enrollment?

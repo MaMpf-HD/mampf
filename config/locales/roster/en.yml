@@ -49,6 +49,9 @@ en:
     filters:
       all: 'All'
       unassigned: 'Without group'
+    banners:
+      groups: 'MaMpf is integrating Müsli. Tutorials and groups will now be managed in this tab. Since registrations for %{term} have not yet been carried out via MaMpf, the participant counts are currently 0, even if tutorials already exist. We recommend leaving this as is for this semester and, in particular, not starting any new registrations. Starting with winter semester 2026/27, registration for lectures and seminars can take place via MaMpf.'
+      participants: 'MaMpf is integrating Müsli. Since registrations for %{term} have not yet been carried out via MaMpf, the participant list is empty. Starting with winter semester 2026/27, students will be able to register for lectures and seminars via MaMpf, and the participant list will fill automatically after registration.'
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
@@ -98,7 +101,7 @@ en:
           title: "Registration Processes"
           description: "Time-bounded process with rules"
           benefits:
-            - "Allocation via Preferences or FCFS"
+            - "Allocation via preferences or first come, first served"
             - "Enforce eligibility rules (e.g. grades)"
             - "Review registrations before allocation"
             - "Roster entry after deadline"
@@ -106,7 +109,7 @@ en:
           title: "Skip Registration Processes"
           description: "Immediate, direct access"
           benefits:
-            - "Direct join only (FCFS)"
+            - "Direct join only (first come, first served)"
             - "No eligibility checks"
             - "Changes take effect immediately"
             - "Immediate roster entry"
@@ -145,13 +148,12 @@ en:
       move: 'Move'
       add_only: 'Add'
     cohorts:
+      modal:
+        create_title: "Create Flexible Group"
+        edit_title: "Edit Flexible Group"
       kinds:
         with_enrollment: "Group with enrollment"
         without_enrollment: "Group without enrollment"
-      with_lecture_enrollment_title: "With Enrollment"
-      with_lecture_enrollment_help: "Members are automatically enrolled in the course. Can be used e.g. for special projects, supplementary groups ('repeaters'), or enrollment groups (for courses without tutorials/talks)."
-      without_lecture_enrollment_title: "Without Enrollment"
-      without_lecture_enrollment_help: "Members are not automatically enrolled in the course. Can be used e.g. for waitlists or for needs assessment."
       with_lecture_enrollment: "With Lecture Enrollment"
       without_lecture_enrollment: "Without Lecture Enrollment"
       propagate_to_lecture: "With automatic lecture enrollment"
@@ -165,10 +167,11 @@ en:
         enrollment: "If the course has no tutorials or talks, a registration group can be used. Students are automatically enrolled in the course."
         planning: "Needs assessment (often before the semester starts). Students are not enrolled in the course."
         other: "Flexible groups for waitlists or special projects. You determine whether students are automatically enrolled in the course."
-        propagate_to_lecture: "If enabled, students in this group are automatically enrolled in the course. Disable this for pure waitlists that are not linked to course enrollment."
+        flexible_group_intro: "Flexible groups are intended for waitlists, planning groups, and special cases such as supplementary groups ('repeaters'). You can also use them when a course has neither tutorials nor talks but still needs a group to capture all students."
+        propagate_to_lecture: "If enabled, students in this group are automatically enrolled in the course. Disable this, for example, for pure waitlists that are not connected to enrollment in the lecture."
         propagate_readonly_warning: "⚠️ This setting cannot be changed after creation."
         with_enrollment_label: "With enrollment?"
-        with_enrollment_explanation: "If enabled, members are automatically enrolled in the lecture. Disable this for waitlists or planning groups."
+        with_enrollment_explanation: "If enabled, members are automatically enrolled in the course and thereby added to the course participants. Tutorials and talks already do this on their own. Disable it, for example, for waitlists or planning groups."
         with_enrollment_checkbox: "Enable automatic lecture enrollment"
         enrollment_checkbox_label: "Collection group: For courses without tutorials/talks, to collect all students in a single group"
         planning_checkbox_label: "Planning group: For needs assessment and planning"
@@ -246,6 +249,7 @@ en:
       locked_manage_no_campaign: "Roster is locked (enable skip registration processes to manage directly)"
       edit_settings: "Edit Settings"
       edit_disabled_campaign: "Cannot edit settings during active registration process"
+      top_bar_campaign: "This group is part of a registration process"
       delete: "Delete"
       delete_disabled: "Cannot delete group (has participants or in registration process)"
       self_materialization_disabled_campaign: "Self-enrollment is disabled during active registration processes"
@@ -273,11 +277,14 @@ en:
       campaign_running: "cannot be disabled while a registration process is running."
       active_campaign_exists: 'Self-Enrollment cannot be enabled because an active registration process already handles enrollment.'
       capacity_exceeded: "Group capacity exceeded."
+      lecture_has_other_roster_entry: "You are already enrolled in another group of this lecture and cannot join another group at the same time."
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."
       user_not_found: "Student not found."
       user_already_in_bundle: "%{user} is already assigned to %{group}."
       item_locked: "This group is managed by an active registration process and cannot be modified manually."
+      self_add_not_allowed: "Self-enrollment in this %{type} is not permitted for students."
+      self_remove_not_allowed: "Self-leaving from this %{type} is not permitted for students."
       campaign_associated: "Self-enrollment is not available because this group is part of a registration process."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration process."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
@@ -298,3 +305,5 @@ en:
       user_added_to: "%{user} added to %{group}."
       user_already_member: "%{user} is already in %{group}."
       user_removed: "%{user} removed successfully."
+    self_enrollment:
+      no_registration_options: "There are currently no tutorials or groups available for registration."

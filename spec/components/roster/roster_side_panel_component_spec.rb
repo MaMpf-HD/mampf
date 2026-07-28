@@ -329,12 +329,11 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
                             label: I18n.t("registration.allocation.stats.rank_label", rank: 3),
                             color: "bg-warning text-dark" },
                           { count: 2,
-                            label: I18n.t("registration.item.badge.other_choices",
-                                          default: "Other"),
+                            label: I18n.t("registration.item.badge.other_choices"),
                             color: "bg-secondary" },
                           { count: 1,
-                            label: I18n.t("registration.allocation.stats.forced_short",
-                                          default: "Assigned"), color: "bg-secondary" }
+                            label: I18n.t("registration.allocation.stats.forced_short"),
+                            color: "bg-secondary" }
                         ])
     end
   end
@@ -347,18 +346,12 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
 
     it "returns rejected title when rejected" do
       expect(described_class.new(panel_kind: :rejected).panel_title)
-        .to eq(I18n.t(
-                 "registration.user_registration.index.rejected_title",
-                 default: "Rejected Registrations"
-               ))
+        .to eq(I18n.t("registration.user_registration.index.rejected_title"))
     end
 
     it "returns allocated title when allocated" do
       expect(described_class.new(allocated: true).panel_title)
-        .to eq(I18n.t(
-                 "registration.user_registration.index.allocated_title",
-                 default: "Allocated Students"
-               ))
+        .to eq(I18n.t("registration.user_registration.index.allocated_title"))
     end
 
     it "returns 1st choice title when readonly and preference_based" do
@@ -366,17 +359,12 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       item_mock = double("Item", registration_campaign: camp)
       expect(described_class.new(read_only: true,
                                  item: item_mock).panel_title)
-        .to eq(I18n.t(
-                 "registration.user_registration.index.first_choice_title",
-                 default: "1st Choice Registrations"
-               ))
+        .to eq(I18n.t("registration.user_registration.index.first_choice_title"))
     end
 
     it "returns registrations title when readonly without preference" do
       expect(described_class.new(read_only: true).panel_title)
-        .to eq(I18n.t(
-                 "registration.user_registration.index.title", default: "Registrations"
-               ))
+        .to eq(I18n.t("registration.user_registration.index.title"))
     end
 
     it "returns default participants title fallback" do
@@ -475,16 +463,29 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     it "joins unique rejection labels for the campaign" do
       reg_a = double(registration_campaign_id: 1,
                      status: :rejected,
-                     rejection_reason_code: "prerequisite_not_met",
-                     rejection_reason_label: "Prerequisite registration process not completed.")
+                     rejection_reason_code: "prerequisite_not_met")
       reg_b = double(registration_campaign_id: 1,
                      status: :rejected,
-                     rejection_reason_code: "institutional_email_mismatch",
-                     rejection_reason_label: "Email domain not allowed.")
+                     rejection_reason_code: "institutional_email_mismatch")
       reg_c = double(registration_campaign_id: 2,
                      status: :rejected,
-                     rejection_reason_code: "ignored",
-                     rejection_reason_label: "Ignored")
+                     rejection_reason_code: "ignored")
+      allow(reg_a).to receive(:resolved_rejection_reason_label) do
+        Registration::UserRegistration.resolve_rejection_reason_label(
+          reason_code: reg_a.rejection_reason_code
+        )
+      end
+      allow(reg_b).to receive(:resolved_rejection_reason_label) do
+        Registration::UserRegistration.resolve_rejection_reason_label(
+          reason_code: reg_b.rejection_reason_code
+        )
+      end
+      allow(reg_c).to receive(:resolved_rejection_reason_label) do
+        Registration::UserRegistration.resolve_rejection_reason_label(
+          reason_code: reg_c.rejection_reason_code,
+          fallback_label: "Ignored"
+        )
+      end
       student = double(user_registrations: [reg_a, reg_b, reg_c])
       c = described_class.new(panel_kind: :rejected, campaign: campaign)
 

@@ -1,6 +1,19 @@
 require "rails_helper"
 
 RSpec.describe(Rosters::Rosterable) do
+  describe ".class_for" do
+    it "returns the explicitly allowed class for a valid type" do
+      expect(described_class.class_for("Tutorial")).to eq(Tutorial)
+      expect(described_class.class_for("Talk")).to eq(Talk)
+      expect(described_class.class_for("Cohort")).to eq(Cohort)
+      expect(described_class.class_for("Lecture")).to eq(Lecture)
+    end
+
+    it "returns nil for an invalid type" do
+      expect(described_class.class_for("User")).to be_nil
+    end
+  end
+
   describe "#locked?" do
     let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 
@@ -340,6 +353,99 @@ RSpec.describe(Rosters::Rosterable) do
       it "returns true when over capacity" do
         create_list(:tutorial_membership, 3, tutorial: rosterable)
         expect(rosterable.full?).to be(true)
+      end
+    end
+  end
+
+  describe "allow self materialization checks" do
+    let(:rosterable) { create(:tutorial) }
+    let(:user) { create(:user) }
+    before do
+      allow(rosterable).to receive(:capacity).and_return(2)
+    end
+
+    describe "#allow_self_add?" do
+      context "when self-add is allowed, not locked, not full, and user not allocated" do
+        before do
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns true" do
+          expect(rosterable.allow_self_add?(user)).to be(true)
+        end
+      end
+      context "when self-add is not allowed" do
+        before do
+          rosterable.update(self_materialization_mode: :disabled)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_add?(user)).to be(false)
+        end
+      end
+      context "when locked" do
+        before do
+          allow(rosterable).to receive(:locked?).and_return(true)
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_add?(user)).to be(false)
+        end
+      end
+      context "when full" do
+        before do
+          create_list(:tutorial_membership, 2, tutorial: rosterable)
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_add?(user)).to be(false)
+        end
+      end
+      context "when user already allocated" do
+        before do
+          rosterable.add_user_to_roster!(user)
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_add?(user)).to be(false)
+        end
+      end
+    end
+
+    describe "#allow_self_remove?" do
+      context "when self-remove is allowed, not locked, and user is allocated" do
+        before do
+          rosterable.update(self_materialization_mode: :add_and_remove)
+          rosterable.add_user_to_roster!(user)
+        end
+        it "returns true" do
+          expect(rosterable.allow_self_remove?(user)).to be(true)
+        end
+      end
+      context "when self-remove is not allowed" do
+        before do
+          rosterable.update(self_materialization_mode: :add_only)
+          rosterable.add_user_to_roster!(user)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_remove?(user)).to be(false)
+        end
+      end
+      context "when locked" do
+        before do
+          allow(rosterable).to receive(:locked?).and_return(true)
+          rosterable.update(self_materialization_mode: :add_and_remove)
+          rosterable.add_user_to_roster!(user)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_remove?(user)).to be(false)
+        end
+      end
+      context "when user not allocated" do
+        before do
+          rosterable.update(self_materialization_mode: :add_and_remove)
+        end
+        it "returns false" do
+          expect(rosterable.allow_self_remove?(user)).to be(false)
+        end
       end
     end
   end

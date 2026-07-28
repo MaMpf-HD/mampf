@@ -42,7 +42,9 @@ module RegistrationCampaignContext
 
     def existing_registration_campaign(lecture:, error_target:)
       campaign_id = params[:registration_campaign_id]
-      scope = lecture.registration_campaigns.order(created_at: :desc)
+      scope = Registration::Campaign.where(campaignable: lecture)
+                                    .where.not(status: :completed)
+                                    .order(created_at: :desc)
       campaign = campaign_id.present? ? scope.find_by(id: campaign_id) : scope.first
       return campaign if campaign
 

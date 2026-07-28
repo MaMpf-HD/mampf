@@ -13,18 +13,6 @@ module MediaHelper
     current_user.admin || medium.edited_with_inheritance_by?(current_user)
   end
 
-  def video_download_file(medium)
-    "#{medium.title}.mp4"
-  end
-
-  def manuscript_download_file(medium)
-    "#{medium.title}.pdf"
-  end
-
-  def geogebra_download_file(medium)
-    "#{medium.title}.ggb"
-  end
-
   def inspect_or_edit_medium_path(medium, inspection)
     inspection ? inspect_medium_path(medium) : edit_medium_path(medium)
   end

@@ -23,4 +23,9 @@ namespace :demo do
   task setup: :environment do
     Demo::SetupSupport.setup!
   end
+
+  desc "Stage the next-term banner scenario (flag, next term, demo lectures)"
+  task next_term_banner: :environment do
+    Demo::NextTermBannerSupport.setup!
+  end
 end

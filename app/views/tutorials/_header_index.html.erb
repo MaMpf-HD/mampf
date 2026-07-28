@@ -167,9 +167,14 @@
     <% end %>
   </div>
 <% end %>
-
-
-<!-- BULK UPLOAD AREA -->
+<% if Flipper.enabled?(:quiz_certificates) %>
+  <%# Certificate check button %>
+  <%= link_to t('tutorial.certificate_check'),
+              validate_certificate_as_tutor_path( params:
+                                                    { lecture_id: @lecture.id }),
+                                                  class: 'btn btn-primary ms-3',
+                                                  remote: true %>
+<% end %>
 <% if current_user.in?(@tutorial.tutors) %>
   <div class="card mt-3" id="bulk-upload-area">
     <div class="card-body">

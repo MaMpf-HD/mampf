@@ -22,8 +22,7 @@
       <span>
         <%= campaign.total_registrations_count %>
 
-        <%= t("registration.item.columns.registrations",
-              default: "Registrations") %>
+        <%= t("registration.item.columns.registrations") %>
       </span>
 
       <span class="dissolved-campaign-pill-sep">&middot;</span>
@@ -53,7 +52,7 @@
           <i class="bi bi-x-octagon-fill text-danger"></i>
 
           <span>
-            <%= rejected %> <%= t("roster.candidates.rejected_short", default: "rejected") %>
+            <%= rejected %> <%= t("roster.candidates.rejected_short") %>
           </span>
         </span>
       <% end %>
@@ -77,7 +76,7 @@
           <i class="bi bi-exclamation-triangle-fill text-warning"></i>
 
           <span>
-            <%= unassigned %> <%= t('roster.candidates.short_title', default: 'unplaced') %>
+            <%= unassigned %> <%= t('roster.candidates.short_title') %>
           </span>
         </span>
       <% end %>

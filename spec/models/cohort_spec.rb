@@ -5,6 +5,10 @@ RSpec.describe(Cohort, type: :model) do
     expect(build(:cohort)).to be_valid
   end
 
+  it "is not roster-exclusive within a lecture (memberships can coexist)" do
+    expect(build(:cohort).roster_exclusive_within_lecture?).to be(false)
+  end
+
   describe "validations" do
     it "is invalid without a title" do
       cohort = build(:cohort, title: nil)

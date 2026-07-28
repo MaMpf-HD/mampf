@@ -67,6 +67,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_geogebra do
+      after(:build) do |m|
+        m.geogebra = File.open("#{SPEC_FILES}/geogebra.ggb", "rb")
+      end
+    end
+
     trait :with_toc_item do
       after(:create) do |m|
         m.items.create!(

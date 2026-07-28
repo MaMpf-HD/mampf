@@ -41,6 +41,26 @@ module Registration
     validate :validate_capacity_reduction, on: :update
     before_destroy :ensure_campaign_is_draft
 
+    def item_capacity_used
+      confirmed_registrations_count
+    end
+
+    def remaining_capacity
+      return nil if capacity.nil?
+
+      capacity - item_capacity_used
+    end
+
+    def still_has_capacity?
+      return true if capacity.nil?
+
+      remaining_capacity.positive?
+    end
+
+    def user_registered?(user)
+      user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
     def title
       registerable&.registration_title || registerable&.title
     end
@@ -63,6 +83,8 @@ module Registration
     def first_choice_count
       user_registrations.where(preference_rank: 1).count
     end
+
+    delegate :exclusive_assignment?, to: :registerable
 
     private
 

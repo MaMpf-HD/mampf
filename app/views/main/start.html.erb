@@ -7,6 +7,11 @@
       <%= sanitize(@announcements) %>
     </div>
   <% end %>
+  <% if @next_term_lecture_count.to_i.positive? %>
+    <%= render partial: "main/start/next_term_banner",
+               locals: { next_term: @next_term,
+                         lecture_count: @next_term_lecture_count } %>
+  <% end %>
   <div class="accordion" id="subscriptionsAccordion" style="flex: 1;">
   <% if Term.active %>
     <div class="accordion-item">

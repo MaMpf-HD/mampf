@@ -1,0 +1,107 @@
+require "rails_helper"
+
+RSpec.describe("Submissions", type: :request) do
+  let(:user) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture, :released_for_all) }
+  let(:assignment) { create(:assignment, lecture: lecture, accepted_file_type: ".pdf") }
+  let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+  before do
+    sign_in user
+  end
+
+  describe "GET /submissions/:id/show_manuscript" do
+    let(:submission) do
+      create(:submission, :with_manuscript, assignment: assignment,
+                                            tutorial: tutorial).tap do |record|
+        record.users << user
+      end
+    end
+
+    it "sanitizes the manuscript filename from uploaded metadata" do
+      allow_any_instance_of(SubmissionUploader::UploadedFile).to receive(:metadata)
+        .and_wrap_original do |original, *args|
+          original.call(*args).merge("filename" => "../evil\r\nname.pdf")
+        end
+
+      get show_submission_manuscript_path(submission)
+
+      content_disposition = response.headers["Content-Disposition"]
+
+      expect(response).to have_http_status(:ok)
+      expect(content_disposition).to include("inline")
+      expect(content_disposition).to include("evil")
+      expect(content_disposition).to include("name.pdf")
+      expect(content_disposition).not_to include("../")
+      expect(content_disposition).not_to match(/[\r\n]/)
+    end
+
+    it "serves a content-sniffed text/html manuscript as text/plain (FU-01)" do
+      submission.reload # create with real application/pdf metadata before stubbing
+
+      allow_any_instance_of(SubmissionUploader::UploadedFile).to receive(:metadata)
+        .and_wrap_original do |original, *args|
+          original.call(*args).merge("mime_type" => "text/html")
+        end
+
+      get show_submission_manuscript_path(submission)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("text/plain")
+    end
+
+    it "still serves a PDF manuscript inline as application/pdf" do
+      get show_submission_manuscript_path(submission)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("application/pdf")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+    end
+  end
+
+  describe "GET /submissions/:id/show_correction" do
+    let(:submission) do
+      create(:submission, :with_correction, assignment: assignment,
+                                            tutorial: tutorial).tap do |record|
+        record.users << user
+      end
+    end
+
+    it "sanitizes the correction filename from uploaded metadata" do
+      allow_any_instance_of(CorrectionUploader::UploadedFile).to receive(:metadata)
+        .and_wrap_original do |original, *args|
+          original.call(*args).merge("filename" => "../evil\r\nname.pdf")
+        end
+
+      get show_correction_path(submission, download: true)
+
+      content_disposition = response.headers["Content-Disposition"]
+
+      expect(response).to have_http_status(:ok)
+      expect(content_disposition).to include("attachment")
+      expect(content_disposition).to include("evil")
+      expect(content_disposition).to include("name.pdf")
+      expect(content_disposition).not_to include("../")
+      expect(content_disposition).not_to match(/[\r\n]/)
+    end
+  end
+
+  describe "POST /submissions" do
+    def create_params
+      # the create form always sends a (possibly empty) manuscript field
+      { submission: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                      manuscript: "" } }
+    end
+
+    it "lets a student enrolled in the lecture create a submission" do
+      user.lectures << lecture
+      expect { post(submissions_path(format: :js), params: create_params) }
+        .to change(Submission, :count).by(1)
+    end
+
+    it "does not let a user not enrolled in the lecture create a submission" do
+      expect { post(submissions_path(format: :js), params: create_params) }
+        .not_to change(Submission, :count)
+    end
+  end
+end

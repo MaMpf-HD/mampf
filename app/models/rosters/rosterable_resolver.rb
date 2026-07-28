@@ -29,9 +29,9 @@ module Rosters
 
     def self.resolve(params, lecture: nil)
       type = params[:type]
-      return nil unless Rosters::Rosterable::TYPES.include?(type)
+      klass = Rosters::Rosterable.class_for(type)
+      return nil unless klass
 
-      klass = type.constantize
       param_key = "#{type.underscore}_id"
       id = params[param_key] || params[:id]
       rosterable = klass.find_by(id: id)
@@ -53,9 +53,8 @@ module Rosters
 
     def self.find_target(id, type:, lecture:, default_type:)
       target_type = type.presence || default_type
-      return nil if target_type && Rosters::Rosterable::TYPES.exclude?(target_type)
-
-      klass = target_type.constantize
+      klass = Rosters::Rosterable.class_for(target_type)
+      return nil unless klass
 
       if klass == Cohort
         klass.find_by(id: id, context: lecture)

@@ -81,6 +81,15 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.registration_policies.count).to eq(1)
       expect(campaign.registration_policies.first.kind).to eq("institutional_email")
     end
+
+    it "creates campaign with prerequisite_campaign_id match" do
+      parent = create(:registration_campaign, :open, :with_items)
+      child  = create(:registration_campaign, :open, :with_items, :with_prerequisite_policy,
+                      parent_campaign: parent)
+
+      policy = child.registration_policies.find_by(kind: :prerequisite_campaign)
+      expect(policy.config["prerequisite_campaign_id"]).to eq(parent.id)
+    end
   end
 
   describe "validations" do
@@ -391,7 +400,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    context "with FCFS campaign" do
+    context "with first-come-first-served campaign" do
       let(:campaign) { create(:registration_campaign, :with_items, :first_come_first_served) }
       let(:item1) { campaign.registration_items.first }
 
@@ -455,13 +464,15 @@ RSpec.describe(Registration::Campaign, type: :model) do
         create(:registration_campaign, :with_items, :first_come_first_served)
       end
       let(:item) { campaign.registration_items.first }
-
-      before do
+      let!(:policy) do
         create(:registration_policy,
                :institutional_email,
                :for_finalization,
                registration_campaign: campaign,
                config: { "allowed_domains" => "uni.edu" })
+      end
+
+      before do
         campaign.update!(status: :closed)
       end
 
@@ -477,6 +488,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(registration.reload).to be_rejected
         expect(registration.rejection_reason_type).to eq("policy")
         expect(registration.rejection_reason_code).to eq("institutional_email_mismatch")
+        expect(registration.rejection_policy).to eq(policy)
       end
 
       it "raises a finalization blocked error when screening finds blockers" do
@@ -954,6 +966,72 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(tutorial.skip_campaigns).to be(true)
       expect(tutorial).not_to be_locked
       expect(tutorial).to be_valid
+    end
+  end
+
+  describe "#apply_self_materialization_mode!" do
+    it "sets the mode on all of the campaign's groups once completed" do
+      campaign = create(:registration_campaign, :completed,
+                        :first_come_first_served, items_count: 2)
+
+      campaign.apply_self_materialization_mode!("add_and_remove")
+
+      modes = campaign.registerables.map(&:self_materialization_mode).uniq
+      expect(modes).to eq(["add_and_remove"])
+    end
+
+    it "does nothing while the campaign is not completed" do
+      campaign = create(:registration_campaign, :first_come_first_served,
+                        :with_items, items_count: 2)
+
+      expect(campaign.apply_self_materialization_mode!("add_and_remove"))
+        .to be(false)
+      expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+        .to eq(["disabled"])
+    end
+
+    it "rejects an unknown mode without touching the current modes" do
+      campaign = create(:registration_campaign, :completed,
+                        :first_come_first_served, items_count: 2)
+      campaign.registerables.each do |group|
+        group.update!(self_materialization_mode: :add_only)
+      end
+
+      expect { campaign.apply_self_materialization_mode!("nonsense") }
+        .to raise_error(ArgumentError)
+      expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+        .to eq(["add_only"])
+    end
+
+    it "rejects a missing mode with an ArgumentError, not a NoMethodError" do
+      campaign = create(:registration_campaign, :completed,
+                        :first_come_first_served, items_count: 2)
+      campaign.registerables.each do |group|
+        group.update!(self_materialization_mode: :add_only)
+      end
+
+      expect { campaign.apply_self_materialization_mode!(nil) }
+        .to raise_error(ArgumentError)
+      expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+        .to eq(["add_only"])
+    end
+  end
+
+  describe "#shared_self_materialization_mode" do
+    it "returns the common mode when all groups agree" do
+      campaign = create(:registration_campaign, :with_items, items_count: 2)
+
+      expect(campaign.shared_self_materialization_mode).to eq("disabled")
+    end
+
+    it "returns nil when the groups differ" do
+      campaign = create(:registration_campaign, :completed,
+                        :first_come_first_served, items_count: 2)
+      first, second = campaign.registerables.to_a
+      first.update!(self_materialization_mode: :add_only)
+      second.update!(self_materialization_mode: :disabled)
+
+      expect(campaign.shared_self_materialization_mode).to be_nil
     end
   end
 end

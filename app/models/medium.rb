@@ -222,11 +222,14 @@ class Medium < ApplicationRecord
     Medium.sort_localized.except("RandomQuiz", "Question", "Remark").map { |k, v| [v, k] }
   end
 
-  # returns the array of all media (by title), together with their ids
-  # is used in options_for_select in form helpers.
-  def self.select_by_name
-    Medium.where.not(sort: ["Question", "Remark", "RandomQuiz"])
-          .map { |m| [m.title_for_viewers, m.id] }
+  # returns the array of media (by title) visible to the given user, together
+  # with their ids; is used in options_for_select in form helpers. Scoped via
+  # filter_visible_media so the picker never discloses unpublished or otherwise
+  # non-visible media (incl. other editors' drafts) — see SER-02.
+  def self.select_by_name(user)
+    media = Medium.where.not(sort: ["Question", "Remark", "RandomQuiz"])
+    user.filter_visible_media(media)
+        .map { |m| [m.title_for_viewers, m.id] }
   end
 
   # protected items are items of type 'pdf_destination' inside associated to
@@ -305,8 +308,8 @@ class Medium < ApplicationRecord
   def editors_with_inheritance
     return [] if sort == "RandomQuiz"
 
-    result = (editors&.to_a&.+ teachable.lecture&.editors.to_a +
-      [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq.compact
+    result = (editors.to_a + teachable&.lecture&.editors.to_a +
+      [teachable&.lecture&.teacher] + teachable&.course&.editors.to_a).uniq.compact
     return result unless teachable.is_a?(Talk)
 
     (result + teachable.speakers).uniq
@@ -335,23 +338,26 @@ class Medium < ApplicationRecord
     file
   end
 
+  def toc_vtt_content
+    vtt_content_from_file(toc_to_vtt)
+  end
+
   # creates a .vtt file (and returns it), which contains
   # all data needed by the thyme player to realize references
   # Note: Only references to unlocked media will be incorporated.
-  def references_to_vtt
+  def references_to_vtt(user = nil)
     file = Tempfile.new(["ref-", ".vtt"], encoding: "UTF-8")
     file.write(vtt_start)
-    referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
+    referrals_by_time.select { |r| referral_visible_for_vtt?(r, user) }
                      .each do |r|
       file.write(r.vtt_time_span)
-      file.write("#{JSON.pretty_generate(r.vtt_properties)}\n\n")
+      file.write("#{JSON.pretty_generate(r.vtt_properties(user))}\n\n")
     end
     file
   end
 
-  def create_vtt_container!
-    VttContainer.create(table_of_contents: toc_to_vtt,
-                        references: references_to_vtt)
+  def references_vtt_content(user)
+    vtt_content_from_file(references_to_vtt(user))
   end
 
   # some plain methods for items and referrals
@@ -373,20 +379,8 @@ class Medium < ApplicationRecord
     end
   end
 
-  def screenshot_url_with_host
-    return screenshot_url(host: host) unless screenshot(:normalized)
-
-    screenshot_url(:normalized, host: host)
-  end
-
-  def video_url
-    return if video.blank?
-
-    video.url(host: host)
-  end
-
-  def video_download_url
-    video.url(host: download_host)
+  def video_screenshot_file
+    screenshot(:normalized) || screenshot
   end
 
   def video_filename
@@ -431,28 +425,17 @@ class Medium < ApplicationRecord
     geogebra.metadata["size"]
   end
 
-  def geogebra_url_with_host
-    geogebra_url(host: host)
-  end
+  def geogebra_screenshot_file
+    return if geogebra.blank?
 
-  def geogebra_download_url
-    geogebra_url(host: download_host)
+    geogebra(:screenshot)
   end
 
   def geogebra_screenshot_url
-    return "" if geogebra.blank?
+    return "" if geogebra_screenshot_file.blank?
 
-    geogebra_url(:screenshot, host: host)
-  end
-
-  def manuscript_url_with_host
-    return "#{manuscript_url(host: host)}/#{manuscript_filename}" if ENV["REWRITE_ENABLED"] == "1"
-
-    manuscript_url(host: host)
-  end
-
-  def manuscript_download_url
-    manuscript_url(host: download_host)
+    Rails.application.routes.url_helpers.screenshot_medium_path(id,
+                                                                sort: "geogebra")
   end
 
   def manuscript_filename
@@ -473,10 +456,17 @@ class Medium < ApplicationRecord
     manuscript.metadata["pages"]
   end
 
-  def manuscript_screenshot_url
-    return "" if manuscript.blank?
+  def manuscript_screenshot_file
+    return if manuscript.blank?
 
-    manuscript_url(:screenshot, host: host)
+    manuscript(:screenshot)
+  end
+
+  def manuscript_screenshot_url
+    return "" if manuscript_screenshot_file.blank?
+
+    Rails.application.routes.url_helpers.screenshot_medium_path(id,
+                                                                sort: "manuscript")
   end
 
   def manuscript_destinations
@@ -1001,6 +991,22 @@ class Medium < ApplicationRecord
 
     def vtt_start
       "WEBVTT\n\n"
+    end
+
+    def referral_visible_for_vtt?(referral, user)
+      if user.nil? || !user.persisted?
+        return referral.item&.medium.nil? || referral.item.medium.free?
+      end
+      return true if referral.item&.medium.nil?
+
+      referral.item.medium.visible_for_user?(user)
+    end
+
+    def vtt_content_from_file(file)
+      file.rewind
+      file.read
+    ensure
+      file.close!
     end
 
     def belongs_to_course?(lecture)

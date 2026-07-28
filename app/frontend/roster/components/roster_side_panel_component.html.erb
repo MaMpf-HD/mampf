@@ -6,6 +6,7 @@
   data-tutorial-roster-panel-target="panelCard"
   <% if drag_controller? %>
     data-controller="roster-drag"
+    data-action="turbo:stream-render@document->roster-drag#refreshDropZones"
     data-roster-drag-source-type-value="<%= drag_source_type %>"
     data-roster-drag-source-id-value="<%= drag_source_id %>"
     data-roster-drag-move-path-value="<%= move_member_path_template unless panel_mode? %>"
@@ -43,16 +44,13 @@
           <span class="badge text-bg-secondary ms-2">
             <% if allocated? %>
               <%= "#{students.size} " +
-                  t("registration.user_registration.index.allocated_count",
-                    default: "allocated") %>
+                  t("registration.user_registration.index.allocated_count") %>
             <% elsif preference_based_campaign? %>
               <%= "#{students.size} " +
-                  t("registration.item.badge.first_choice",
-                    default: "First Choice") %>
+                  t("registration.item.badge.first_choice") %>
             <% elsif campaign %>
               <%= "#{students.size} " +
-                  t("registration.item.columns.registrations",
-                    default: "Registrations") %>
+                  t("registration.item.columns.registrations") %>
             <% else %>
               <%= "#{students.size} " +
                   t("basics.participants") %>
@@ -115,7 +113,7 @@
       <% end %>
       <div class="mb-3">
         <label class="visually-hidden" for="tutorial-roster-filter">
-          <%= t("roster.actions.search", default: "Filter students") %>
+          <%= t("roster.actions.search") %>
         </label>
 
         <input

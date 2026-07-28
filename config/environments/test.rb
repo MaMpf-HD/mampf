@@ -17,6 +17,13 @@ Rails.application.configure do
 
   config.public_file_server.enabled = true
 
+  # Delegate `send_file` to the front proxy when one runs in front of the app
+  # (the e2e stack puts Thruster there and sets ACTION_DISPATCH_X_SENDFILE_HEADER).
+  # That proxy is what serves streamed media with HTTP Range support, so the video
+  # player can seek. Unset (nil) for plain rspec, i.e. no behaviour change there.
+  config.action_dispatch.x_sendfile_header =
+    ENV.fetch("ACTION_DISPATCH_X_SENDFILE_HEADER", nil)
+
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
   if Rails.root.join("tmp/caching-test.txt").exist?

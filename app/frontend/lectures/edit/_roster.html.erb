@@ -1,12 +1,39 @@
 <% group_type ||= :all %>
+<% roster_params = { group_type: group_type } %>
+<% selected_section =
+     RegistrationCampaignsCardBodyIndexComponent.normalize_registration_section(
+     params[:registration_section]
+   ) %>
+<% if selected_section.present? %>
+  <% roster_params[:registration_section] = selected_section %>
+<% end %>
+
 <div class="col-12">
+  <% if show_muesli_transition_banner?(lecture) %>
+    <div class="alert alert-warning d-flex align-items-start mb-3"
+         role="alert"
+         data-testid="roster-transition-banner">
+      <i class="bi bi-info-circle-fill flex-shrink-0 me-2 mt-1"
+         aria-hidden="true"></i>
+      <div><%= t("roster.banners.groups", term: lecture.term.to_label) %></div>
+    </div>
+  <% end %>
+
   <%= turbo_frame_tag roster_maintenance_frame_id(group_type),
-                      src: lecture_roster_path(lecture, group_type: group_type),
+                      src: lecture_roster_path(lecture, roster_params),
                       loading: "lazy" do %>
     <div class="text-center my-5">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
+  <% end %>
+
+  <% if Flipper.enabled?(:registration_campaigns) %>
+    <p class="text-muted small mt-3">
+      <%= t("registration.student_message.crosslink_html",
+            link: link_to(t("admin.lecture.communication"),
+                          edit_lecture_path(lecture, tab: "communication"))) %>
+    </p>
   <% end %>
 </div>

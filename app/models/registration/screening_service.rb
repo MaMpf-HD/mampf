@@ -1,3 +1,7 @@
+# This class is responsible for screening user registrations against the active
+# registration policies of a campaign, typically as part of the finalization process.
+# It evaluates each registration and collects any violations that occur, classifying
+# them according to the policy outcomes.
 module Registration
   class ScreeningService
     CLASSIFICATION_PASS = :pass
@@ -69,6 +73,7 @@ module Registration
             registration_id: registration.id,
             name: user.name,
             email: user.email,
+            policy_id: policy.id,
             policy: policy.kind,
             policy_config: policy.config,
             classification: outcome[:classification],

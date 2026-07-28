@@ -102,20 +102,33 @@
             <% end %>
           </span>
         <% end %>
-        <% if violations.none? { |violation| violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION } %>
-          <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
-                                                                                user_id: user_id,
-                                                                                source: allocation_source,
-                                                                                reason: Registration::UserRegistration::REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER),
-                        method: :delete,
-                        class: "btn btn-sm btn-outline-danger ms-2 align-baseline py-0 px-2",
-                        data: {
-                          turbo_confirm:
-                          t("registration.campaign.confirmations.user_registration_defer_due_to_blocker",
-                          email: first[:email])
-                        },
-                        form: { class: "d-inline-block" },
-                        title: t("registration.user_registration.actions.defer_due_to_blocker") do %>
+        <% if violations.none? do |violation|
+             violation[:blocker_kind] ==
+               Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+           end %>
+          <%= button_to(
+                reject_for_user_registration_campaign_registrations_path(
+                  campaign,
+                  user_id: user_id,
+                  source: allocation_source,
+                  reason: Registration::UserRegistration::
+                    REJECTION_REASON_CODE_DEFERRED_DUE_TO_BLOCKER
+                ),
+                method: :delete,
+                class: "btn btn-sm btn-outline-danger ms-2 align-baseline py-0 px-2",
+                data: {
+                  turbo_confirm: t(
+                    "registration.campaign.confirmations." \
+                    "user_registration_defer_due_to_blocker",
+                    email: first[:email]
+                  )
+                },
+                form: { class: "d-inline-block" },
+                title: t(
+                  "registration.user_registration.actions." \
+                  "defer_due_to_blocker"
+                )
+              ) do %>
             <i class="bi bi-slash-circle me-1"></i>
             <%= t("registration.user_registration.actions.defer_due_to_blocker") %>
           <% end %>

@@ -34,11 +34,12 @@
           <td>
             <div class="d-flex align-items-center">
               <div class="flex-grow-1">
-                <%= progress_bar(count, dashboard.stats.assigned_users,
-                                 classification: rank_color(rank),
-                                 height: "10px",
-                                 show_label: false,
-                                 container_class: "progress") %>
+                <%= allocation_progress_bar(
+                  count,
+                  dashboard.stats.assigned_users,
+                  bar_class: allocation_rank_bar_class(rank),
+                  height: "10px"
+                ) %>
               </div>
 
               <div class="ms-2 text-end allocation-pct-label">
