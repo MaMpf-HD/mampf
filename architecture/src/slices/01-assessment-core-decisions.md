@@ -76,39 +76,54 @@ that assumption everywhere at once.
 
 ---
 
-## E-1.3 · `grading_open?` is always true — the lifecycle guard never fires
+## E-1.3 · Grading opens only once nobody can still submit
 
-> **Is it intended that no assessable ever closes grading, making the early-grading
-> validation dead code?**
+> **Is "deadline plus grace period elapsed" the right moment to allow grading to
+> begin?**
 
-**As built.** `Assessable#grading_open?` returns `true` and is documented as
-being overridden "by the specific assessable (like Assignment)". **No such
-override exists** — not in this slice, and not by slice 5 either.
-`Participation#grading_lifecycle_must_be_open` therefore returns on its first
-line every time.
+**As built.** `Assessable#grading_open?` defaults to `true`, and `Assignment`
+overrides it:
 
-**Code.** [`grading_open?` and its comment][c1-open] ·
+```ruby
+alias grading_open? totally_expired?    # !semiactive?
+```
+
+So for an assignment, grading opens only once the deadline *and* the grace period
+have passed. `Participation#grading_lifecycle_must_be_open` then rejects any
+change to `grade_numeric`, `grade_text`, `points_total`, `grader_id`, `graded_at`,
+or any move away from `pending`, while grading is still closed.
+`Assessment::TaskPoint` carries the same guard, so individual point entries are
+covered too.
+
+**Code.** [`grading_open?` in `Assessable`][c1-open] ·
+[the alias in `Assignment`][c1-assignopen] ·
 [the guard that consumes it][c1-lifecycle]
 
-**Example.** The guard is written to reject changing `grade_numeric`,
-`grade_text`, `points_total`, `grader_id`, `graded_at`, or moving `status` away
-from `pending`, whenever grading is closed. In practice:
+**Example.** A tutor tries to enter points for *Übungsblatt 5* three days before
+its deadline:
 
-- teacher grades a participation for an assignment whose deadline has not passed
-- `assessment.grading_open?` → delegates to `Assignment` → falls through to
-  `Assessable#grading_open?` → `true`
-- guard returns early → **the change is allowed**
+- `assessment.grading_open?` delegates to `Assignment#grading_open?` →
+  `totally_expired?` → **false**
+- the participation fails validation with `early_grading_not_allowed`
 
-The only place the closed branch is ever exercised is in specs, which stub
-`grading_open?` to `false` explicitly.
+Once the deadline and grace period have elapsed, the same write succeeds.
 
-**Why it matters.** Roughly fifteen lines of validation, plus the error key
-`early_grading_not_allowed`, exist and can never trigger. Either an override is
-missing (assignments arguably should close grading after a deadline — the
-machinery for that, `past_deadline?`, already exists and is used by
-`Task#check_deadline_not_passed`), or the guard should go.
+**Why it matters.** It stops a tutor from grading while classmates can still
+submit or revise — no partial grading, no early leak of results. Note the
+consequence in the other direction: because the same guard blocks *changes*, it
+also constrains corrections made while an assignment is briefly reopened.
 
-**Status:** **open.**
+Assessables that do not override it — `Exam`, `Achievement` — are always open,
+which is the sensible default for things without a submission deadline.
+
+**Status:** settled.
+
+```admonish warning "Correction"
+An earlier version of this entry claimed the override did not exist and that the
+guard was dead code. That was wrong: the sweep searched for `def grading_open?`,
+which does not match an `alias`. The guard is live and demonstrably rejects
+early grading.
+```
 
 ---
 
@@ -300,7 +315,7 @@ where the analogous guard is unreachable.
 |---|---|---|
 | E-1.1 | Capabilities as concerns, not columns | settled |
 | E-1.2 | One assessment per assessable, idempotent | settled |
-| E-1.3 | `grading_open?` always true ⇒ lifecycle guard is dead code | **open** |
+| E-1.3 | Grading opens once deadline and grace period elapsed | settled *(was: open, in error)* |
 | E-1.4 | Explicit `total_points` overrides the task sum | reconstructed |
 | E-1.5 | Participation seeding bypasses validations | reconstructed |
 | E-1.6 | Grade scale hardcoded in a validation | reconstructed |
@@ -309,9 +324,14 @@ where the analogous guard is unreachable.
 | E-1.9 | Denormalised `lecture_id`, kept honest by validation | settled |
 | E-1.10 | `requires_submission` frozen after the deadline | settled |
 
-**E-1.3 is the one to look at first** — a validation that can never fire, with a
-comment describing an override that does not exist. **E-1.4** is the runner-up:
-it silently allows percentages above 100 % downstream.
+**E-1.4 is the one to look at first**: an explicit `total_points` overrides the
+task sum and becomes the denominator for every percentage downstream, so a
+student with all task points can score above 100 %. Nothing reconciles the two or
+caps the result.
+
+E-1.3 was previously listed here as an open item on the grounds that its
+validation could never fire. That was a mistake on our side, corrected in the
+entry itself — the guard is live.
 
 <!-- ------------------------------------------------------------------ -->
 <!-- Code permalinks — all pinned to 1b18286c, the tip of                -->
@@ -323,6 +343,7 @@ it silently allows percentages above 100 % downstream.
 [c1-setgrade]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/gradable.rb#L16-L38
 [c1-ensure]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessable.rb#L11-L18
 [c1-open]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessable.rb#L20-L24
+[c1-assignopen]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assignment.rb#L66-L69
 [c1-lifecycle]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/participation.rb#L53-L68
 [c1-effective]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessment.rb#L31-L33
 [c1-seed]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessment.rb#L39-L65
