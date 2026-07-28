@@ -15,7 +15,13 @@ class SubmissionsController < ApplicationController
   before_action :check_if_assignments, only: :index
   before_action :check_student_status, only: :index
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
+  before_action :init_roster_cache, only: [:index]
   authorize_resource
+
+  class TutorialNotRosteredError < StandardError; end
+  rescue_from TutorialNotRosteredError do
+    redirect_to :start, alert: t("submission.tutorial_not_assigned")
+  end
 
   def current_ability
     @current_ability ||= SubmissionAbility.new(current_user)
@@ -79,6 +85,8 @@ class SubmissionsController < ApplicationController
   def update
     return if @too_late
 
+    update_params = submission_update_params
+
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
@@ -92,7 +100,7 @@ class SubmissionsController < ApplicationController
       @errors = @submission.errors
       return unless @submission.valid?
     end
-    @submission.update(submission_update_params)
+    @submission.update(update_params)
     if @submission.valid?
       @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == "true"
@@ -248,7 +256,18 @@ class SubmissionsController < ApplicationController
     render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
+  def select_tutorial
+    @tutorial = @submission.tutorial
+    @lecture = @submission.assignment.lecture
+  end
+
   def cancel_action
+  end
+
+  def move
+    @old_tutorial = @submission.tutorial
+    @submission.update(move_params)
+    @tutorial = @submission.tutorial
   end
 
   def accept
@@ -266,6 +285,11 @@ class SubmissionsController < ApplicationController
     send_rejection_email(@submission.users)
     rerender_submission_row
   end
+
+  def roster_cache
+    @roster_cache ||= { enabled: {}, tutorial: {} }
+  end
+  helper_method :roster_cache
 
   private
 
@@ -287,6 +311,10 @@ class SubmissionsController < ApplicationController
       end
     end
 
+    def init_roster_cache
+      @roster_cache = { enabled: {}, tutorial: {} }
+    end
+
     def set_submission
       @submission = Submission.find_by(id: params[:id])
       @assignment = @submission&.assignment
@@ -300,12 +328,15 @@ class SubmissionsController < ApplicationController
 
     def submission_create_params
       permitted = params.expect(submission: [:tutorial_id, :assignment_id])
-      assignment_id = params[:submission][:assignment_id]
+      assignment_id = permitted[:assignment_id]
       assignment = Assignment.find_by(id: assignment_id)
       lecture = assignment&.lecture
 
       if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
-        permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
+        tutorial = current_user.tutorial_rosterized(lecture)
+        raise(TutorialNotRosteredError) if tutorial.nil?
+
+        permitted[:tutorial_id] = tutorial.id
       end
       permitted
     end
@@ -315,7 +346,10 @@ class SubmissionsController < ApplicationController
       permitted = params.expect(submission: [:tutorial_id])
       lecture = @submission.assignment.lecture
       if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
-        permitted[:tutorial_id] = current_user.tutorial_rosterized(lecture)&.id
+        tutorial = current_user.tutorial_rosterized(lecture)
+        raise(TutorialNotRosteredError) if tutorial.nil?
+
+        permitted[:tutorial_id] = tutorial.id
       end
       permitted
     end
