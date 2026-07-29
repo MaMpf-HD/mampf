@@ -30,8 +30,11 @@ module Assessment
 
     # Uses the block form so a preloaded `tasks` association is reused;
     # `sum(:max_points)` would issue a query even then.
+    # Summed in Ruby so a preloaded `tasks` association is reused — `sum(:max_points)`
+    # would issue a query even then. The nil guard covers tasks that are only built:
+    # the task form puts one into the association before it is saved.
     def effective_total_points
-      tasks.sum(&:max_points)
+      tasks.sum { |task| task.max_points || 0 }
     end
 
     validate :lecture_matches_assessable
