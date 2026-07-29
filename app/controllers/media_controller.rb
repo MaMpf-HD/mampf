@@ -316,10 +316,8 @@ class MediaController < ApplicationController
 
   # show the pdf, optionally at specified page or named destination
   #
-  # The pdf is the top-level response here, not embedded in a wrapper page:
-  # mobile browsers refuse to render it inside an iframe. Page and destination
-  # arrive as query parameters, but viewers only honour them as a URL
-  # fragment - hence the redirect onto ourselves.
+  # Mobile browsers don't render a pdf in an iframe, so it is served here
+  # directly. Page and destination only work as a fragment, hence the redirect.
   def display
     if @medium.manuscript.nil?
       redirect_to :root, alert: I18n.t("controllers.no_manuscript")
