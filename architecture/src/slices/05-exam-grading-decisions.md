@@ -12,10 +12,26 @@ does — they aim your reading rather than replace it.
 
 ```admonish tip "About the code links"
 Permalinks are pinned to commit
-[`cd764556`](https://github.com/MaMpf-HD/mampf/commit/cd764556ca107363648f4be5ab60e4d7f6b4fb87),
+[`25b9597e`](https://github.com/MaMpf-HD/mampf/commit/25b9597ec69a791d3dd8ae841bae7c35d7c460f4),
 the tip of `muesli-05-exam-grading`. All URLs live in one block at the end of
 the file.
 ```
+
+---
+
+## Defects to fix before review
+
+~~~admonish warning "`roster.participants` has no German translation"
+English has it, German does not — inherited from slice 4, where the same entry
+records it. Fixing it there carries it here.
+~~~
+
+~~~admonish warning "`exam_registration_spec` is flaky by construction"
+Also inherited: the exam factory randomises the exam date, so examples that set a
+deadline relative to it fail whenever the draw lands close to today. Different
+examples fail on slice 4 and slice 5 for that reason alone. See
+[slice 4](04-exam-core-decisions.md#defects-to-fix-before-review).
+~~~
 
 ---
 
@@ -356,22 +372,22 @@ technical counterpart: three quite different situations all end up stored as the
 same 5.0.
 
 <!-- ------------------------------------------------------------------ -->
-<!-- Code permalinks — all pinned to cd764556, the tip of                -->
+<!-- Code permalinks — all pinned to 25b9597e, the tip of                -->
 <!-- muesli-05-exam-grading. To re-pin, replace the SHA below.           -->
 <!-- ------------------------------------------------------------------ -->
 
-[c5-apply]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme_applier.rb#L69-L115
-[c5-previewall]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme_applier.rb#L38-L54
-[c5-compute]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme_applier.rb#L117-L135
-[c5-immutable]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme.rb#L60-L67
-[c5-hash]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme.rb#L24-L28
-[c5-deepsort]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme.rb#L86-L95
-[c5-absence]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/absence_handling.rb#L5-L20
-[c5-nottransition]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/absence_handling.rb#L24-L30
-[c5-unique]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme.rb#L11-L12
-[c5-bandconfig]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme.rb#L102-L139
-[c5-twopoint]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme.rb#L30-L56
-[c5-pointgrad]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/grade_scheme.rb#L69-L77
-[c5-notecol]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/db/migrate/20260720000004_add_note_to_assessment_participations.rb#L1-L5
-[c5-statusenum]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/app/models/assessment/participation.rb#L16-L21
-[c5-absencespec]: https://github.com/MaMpf-HD/mampf/blob/cd764556ca107363648f4be5ab60e4d7f6b4fb87/spec/models/assessment/absence_handling_spec.rb#L1-L83
+[c5-apply]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme_applier.rb#L69-L115
+[c5-previewall]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme_applier.rb#L38-L54
+[c5-compute]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme_applier.rb#L117-L135
+[c5-immutable]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L60-L67
+[c5-hash]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L24-L28
+[c5-deepsort]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L86-L95
+[c5-absence]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/absence_handling.rb#L5-L20
+[c5-nottransition]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/absence_handling.rb#L24-L30
+[c5-unique]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L11-L12
+[c5-bandconfig]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L102-L139
+[c5-twopoint]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L30-L56
+[c5-pointgrad]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L69-L77
+[c5-notecol]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/db/migrate/20260720000004_add_note_to_assessment_participations.rb#L1-L5
+[c5-statusenum]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/participation.rb#L16-L21
+[c5-absencespec]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/spec/models/assessment/absence_handling_spec.rb#L1-L83

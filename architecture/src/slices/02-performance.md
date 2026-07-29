@@ -80,7 +80,7 @@ The service walks a deliberately narrow path:
 flowchart LR
     A["Assessments<br/>assessable_type = Assignment"] --> B["Participations<br/>status = reviewed"]
     B --> C["points_total"]
-    A --> D["effective_max<br/>minus exempt"]
+    A --> D["effective_total_points<br/>minus exempt"]
     C --> E["Record"]
     D --> E
     F["Achievement participations<br/>grade_text present"] --> G["met / ungraded IDs"]

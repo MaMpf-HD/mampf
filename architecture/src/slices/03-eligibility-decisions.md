@@ -15,7 +15,7 @@ does — they aim your reading rather than replace it.
 ```admonish tip "About the code links"
 Every entry carries a **Code** line linking to the deciding lines on GitHub.
 The links are permalinks pinned to commit
-[`405f24c8`](https://github.com/MaMpf-HD/mampf/commit/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281),
+[`877dc84d`](https://github.com/MaMpf-HD/mampf/commit/877dc84d5724f3a41d379ab27d9130be341a4c87),
 the tip of `muesli-03-eligibility` — so they resolve even though this branch
 starts from `next`, where the code does not exist yet, and they keep resolving
 after the branch is merged and deleted.
@@ -351,26 +351,26 @@ E-3.2 and E-3.9 were open when this page was first written; both have since been
 addressed — see the entries for what changed and why.
 
 <!-- ------------------------------------------------------------------ -->
-<!-- Code permalinks — all pinned to 405f24c8, the tip of               -->
+<!-- Code permalinks — all pinned to 877dc84d, the tip of               -->
 <!-- muesli-03-eligibility. To re-pin to a later commit, replace the     -->
 <!-- SHA in every line below; nothing else in this file refers to it.    -->
 <!-- ------------------------------------------------------------------ -->
 
-[c-points]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/evaluator.rb#L49-L57
-[c-status]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/evaluator.rb#L59-L71
-[c-proposal]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/evaluator.rb#L17-L23
-[c-attrs]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/controllers/student_performance/certifications_controller.rb#L302-L320
-[c-reeval]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/controllers/student_performance/certifications_controller.rb#L135-L136
-[c-confirm]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/controllers/student_performance/certifications_controller.rb#L161-L166
-[c-stale]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/certification.rb#L15-L33
-[c-certvalid]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/certification.rb#L13
-[c-handler]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/registration/policy/student_performance_handler.rb#L25-L34
-[c-lectureids]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/registration/policy.rb#L85-L93
-[c-ruleindex]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/db/migrate/20260722000003_add_unique_active_rule_per_lecture.rb
-[c-singlepolicy]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/registration/policy.rb#L150-L160
-[c-policyindex]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/db/migrate/20260722000006_add_unique_student_performance_policy_per_campaign.rb
-[c-guard]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/lecture.rb#L1072-L1084
-[c-mode]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/rule.rb#L13-L15
-[c-applymode]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/controllers/student_performance/rules_controller.rb#L103-L120
-[c-modecheck]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/rule.rb#L49-L67
-[c-criteria]: https://github.com/MaMpf-HD/mampf/blob/405f24c8a9efc49ed86a5bdb0b3074ac16b5d281/app/models/student_performance/rule.rb#L39-L47
+[c-points]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/student_performance/evaluator.rb#L49-L57
+[c-status]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/student_performance/evaluator.rb#L59-L71
+[c-proposal]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/student_performance/evaluator.rb#L17-L23
+[c-attrs]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/controllers/student_performance/certifications_controller.rb#L302-L320
+[c-reeval]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/controllers/student_performance/certifications_controller.rb#L135-L136
+[c-confirm]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/controllers/student_performance/certifications_controller.rb#L161-L166
+[c-stale]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/student_performance/certification.rb#L15-L33
+[c-certvalid]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/student_performance/certification.rb#L13
+[c-handler]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/registration/policy/student_performance_handler.rb#L25-L34
+[c-lectureids]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/registration/policy.rb#L85-L93
+[c-ruleindex]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/db/migrate/20260722000003_add_unique_active_rule_per_lecture.rb
+[c-singlepolicy]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/registration/policy.rb#L150-L160
+[c-policyindex]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/db/migrate/20260722000006_add_unique_student_performance_policy_per_campaign.rb
+[c-guard]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/lecture.rb#L1072-L1084
+[c-mode]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/student_performance/rule.rb#L13-L15
+[c-applymode]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/controllers/student_performance/rules_controller.rb#L103-L120
+[c-modecheck]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/student_performance/rule.rb#L49-L67
+[c-criteria]: https://github.com/MaMpf-HD/mampf/blob/877dc84d5724f3a41d379ab27d9130be341a4c87/app/models/student_performance/rule.rb#L39-L47

@@ -12,7 +12,7 @@ does — they aim your reading rather than replace it.
 
 ```admonish tip "About the code links"
 Permalinks are pinned to commit
-[`73031867`](https://github.com/MaMpf-HD/mampf/commit/730318679fe08d1c981f169de965fb91461dcff7),
+[`b2c5529c`](https://github.com/MaMpf-HD/mampf/commit/b2c5529ce790ba9746010a37cad7e01d25c0c55b),
 the tip of `muesli-02-performance-achievements`. All URLs live in one block at
 the end of the file.
 ```
@@ -321,16 +321,16 @@ indistinguishable from poor performance.
 <!-- muesli-02-performance-achievements. To re-pin, replace the SHA.     -->
 <!-- ------------------------------------------------------------------ -->
 
-[c2-assessments]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L49-L54
-[c2-aggregate]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L71-L87
-[c2-met]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L107-L122
-[c2-ungraded]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L124-L133
-[c2-all]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L24-L45
-[c2-forone]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L13-L22
-[c2-pct]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L168-L172
-[c2-stale]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/record.rb#L10-L12
-[c2-setup]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/achievement.rb#L64-L67
-[c2-sync]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/lecture.rb#L866-L877
-[c2-marking]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/frontend/student_performance/achievements/components/achievement_marking_table_component.rb#L52-L58
-[c2-shouldinvalidate]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/achievement.rb#L54-L56
-[c2-invalidate]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/achievement.rb#L58-L62
+[c2-assessments]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/student_performance/computation_service.rb#L49-L54
+[c2-aggregate]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/student_performance/computation_service.rb#L71-L87
+[c2-met]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/student_performance/computation_service.rb#L107-L122
+[c2-ungraded]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/student_performance/computation_service.rb#L124-L133
+[c2-all]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/student_performance/computation_service.rb#L24-L45
+[c2-forone]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/student_performance/computation_service.rb#L13-L22
+[c2-pct]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/student_performance/computation_service.rb#L164-L168
+[c2-stale]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/student_performance/record.rb#L10-L12
+[c2-setup]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/achievement.rb#L64-L67
+[c2-sync]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/lecture.rb#L866-L877
+[c2-marking]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/frontend/student_performance/achievements/components/achievement_marking_table_component.rb#L52-L58
+[c2-shouldinvalidate]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/achievement.rb#L54-L56
+[c2-invalidate]: https://github.com/MaMpf-HD/mampf/blob/b2c5529ce790ba9746010a37cad7e01d25c0c55b/app/models/achievement.rb#L58-L62

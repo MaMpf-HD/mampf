@@ -366,22 +366,22 @@ Files you can skip: locale files, `db/schema.rb`,
 Next: [Slice 2 — Achievements & Performance Records](02-performance.md)
 
 <!-- ------------------------------------------------------------------ -->
-<!-- Code permalinks — all pinned to 1b18286c, the tip of                -->
+<!-- Code permalinks — all pinned to 09fd35df, the tip of                -->
 <!-- muesli-01-assessment-core. To re-pin, replace the SHA below.        -->
 <!-- ------------------------------------------------------------------ -->
 
-[c1-assessable]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessable.rb
-[c1-ensure]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessable.rb#L11-L18
-[c1-effective]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessment.rb#L31-L33
-[c1-grades]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/participation.rb#L27-L31
-[c1-open]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessable.rb#L20-L24
-[c1-assignopen]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assignment.rb#L66-L69
-[c1-lifecycle]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/participation.rb#L53-L68
-[c1-seed]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessment.rb#L39-L65
-[c1-nopoints]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/task.rb#L35-L37
-[c1-pointsentered]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/task.rb#L17-L19
-[c1-display]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/participation.rb#L41-L49
-[c1-lecmatch]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessment.rb#L69-L75
-[c1-lecimmutable]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessable.rb
-[c1-locksub]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assessment/assessment.rb#L77-L81
-[c1-reqsub]: https://github.com/MaMpf-HD/mampf/blob/1b18286c708e89d5982b00eaf6a216c54c2b0584/app/models/assignment.rb#L14-L18
+[c1-assessable]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/assessable.rb
+[c1-ensure]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/assessable.rb#L15-L22
+[c1-effective]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/assessment.rb#L31-L36
+[c1-grades]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/participation.rb#L27-L31
+[c1-open]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/assessable.rb#L24-L28
+[c1-assignopen]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assignment.rb#L66-L69
+[c1-lifecycle]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/participation.rb#L53-L68
+[c1-seed]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/assessment.rb#L42-L68
+[c1-nopoints]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/task.rb#L28-L30
+[c1-pointsentered]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/task.rb#L16-L18
+[c1-display]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/participation.rb#L41-L49
+[c1-lecmatch]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/assessment.rb#L72-L78
+[c1-lecimmutable]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/assessable.rb
+[c1-locksub]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assessment/assessment.rb#L80-L84
+[c1-reqsub]: https://github.com/MaMpf-HD/mampf/blob/09fd35df6ea3f600f2f03c72bdf7583d6f719f32/app/models/assignment.rb#L14-L18

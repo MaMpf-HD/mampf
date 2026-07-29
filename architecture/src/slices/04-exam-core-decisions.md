@@ -12,10 +12,58 @@ does — they aim your reading rather than replace it.
 
 ```admonish tip "About the code links"
 Permalinks are pinned to commit
-[`77565064`](https://github.com/MaMpf-HD/mampf/commit/775650640aa77a849c3c01a279ec865c6f1ff2a3),
+[`cb300a0c`](https://github.com/MaMpf-HD/mampf/commit/cb300a0c1721249a879590bb00d2c92f3855d944),
 the tip of `muesli-04-exam-core`. All URLs live in one block at the end of the
 file.
 ```
+
+---
+
+## Defects to fix before review
+
+Found by running this slice's suite on its own during the cascade. Each was
+checked against the branch and is unrelated to the assessment work merged in.
+
+~~~admonish danger "The component calls a method that does not exist"
+`ExamRegistrationTabComponent` calls `localized_rejection_reason_label` on a
+`Registration::UserRegistration`, which has no such method — the render raises
+`NoMethodError`, so the tab is broken wherever a rejected registration appears
+after finalization.
+
+Slice 5 does not call it at all, so this is confined to slice 4 and already
+resolved upstream. Either the method never landed with the component, or it was
+dropped and this call site was missed.
+
+Seen in `exam_registration_tab_component_spec:94`.
+~~~
+
+~~~admonish danger "The exam statistics partial uses translations this slice does not have"
+`app/frontend/exams/_statistics.html.erb` references
+`assessment.statistics_analysis` and `assessment.statistics_description`. Neither
+key exists anywhere in this slice's locale files — they arrive only in slice 5.
+In the test environment that raises; in production the page shows
+"translation missing".
+
+Slice 4 is therefore not self-contained: a page it ships cannot be rendered until
+the next slice lands.
+~~~
+
+~~~admonish warning "`roster.participants` has no German translation"
+English has it, German does not. The key has been in use since slice 3, but this
+slice adds a call site in `exams/_list.html.erb` that `i18n-tasks` picks up,
+which is why it surfaces here.
+~~~
+
+~~~admonish warning "`exam_registration_spec` is flaky by construction"
+The exam factory sets `date { Faker::Time.forward(days: 30) }` — a random point
+within the next 30 days. Examples that then set
+`registration_deadline = exam.date - 1.day` land in the past whenever the draw is
+less than a day out, and the deadline validation rejects them.
+
+Demonstrated: the same file gives 0 failures on seed 222 and 2 on seed 333. This
+is why different examples failed on slice 4 and slice 5 — it is the dice, not the
+code. A fixed date in the affected examples fixes it.
+~~~
 
 ---
 
@@ -316,15 +364,15 @@ but reads like an oversight.
 <!-- muesli-04-exam-core. To re-pin, replace the SHA below.              -->
 <!-- ------------------------------------------------------------------ -->
 
-[c4-createcamp]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L177-L191
-[c4-attrs]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L24
-[c4-updatedeadline]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L170-L175
-[c4-camplookup]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L88-L90
-[c4-remove]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L65-L76
-[c4-add]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L57-L63
-[c4-removable]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L78-L86
-[c4-nondestruct]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L40-L47
-[c4-destroydraft]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L217-L222
-[c4-exclusive]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L102-L104
-[c4-phase]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L106-L123
-[c4-concerns]: https://github.com/MaMpf-HD/mampf/blob/775650640aa77a849c3c01a279ec865c6f1ff2a3/app/models/exam.rb#L19-L38
+[c4-createcamp]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L177-L191
+[c4-attrs]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L24
+[c4-updatedeadline]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L170-L175
+[c4-camplookup]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L88-L90
+[c4-remove]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L65-L76
+[c4-add]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L57-L63
+[c4-removable]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L78-L86
+[c4-nondestruct]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L40-L47
+[c4-destroydraft]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L217-L222
+[c4-exclusive]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L102-L104
+[c4-phase]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L106-L123
+[c4-concerns]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L19-L38
