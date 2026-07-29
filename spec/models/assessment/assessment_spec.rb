@@ -89,6 +89,48 @@ RSpec.describe(Assessment::Assessment, type: :model) do
     end
   end
 
+  describe "#effective_total_points" do
+    let(:assessment) { FactoryBot.create(:assessment, :with_points) }
+
+    it "sums the tasks' max_points" do
+      FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+      FactoryBot.create(:assessment_task, assessment: assessment, max_points: 15)
+
+      expect(assessment.effective_total_points).to eq(25)
+    end
+
+    it "is 0 without tasks" do
+      expect(assessment.effective_total_points).to eq(0)
+    end
+
+    # The task form builds a blank task into the association before saving it;
+    # summing in Ruby would otherwise trip over its nil max_points.
+    it "ignores a task that is only built, not saved" do
+      FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+      assessment.tasks.build
+
+      expect(assessment.effective_total_points).to eq(10)
+    end
+
+    # sum(:max_points) would issue one query per assessment even here, which is
+    # what defeats the includes(:tasks) in the records controller.
+    it "does not query when the association is preloaded" do
+      FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+      preloaded = Assessment::Assessment.where(id: assessment.id)
+                                        .includes(:tasks).first
+
+      queries = 0
+      counter = lambda { |*, payload|
+        queries += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION/)
+      }
+      ActiveSupport::Notifications.subscribed(counter, "sql.active_record") do
+        preloaded.effective_total_points
+      end
+
+      expect(queries).to eq(0)
+    end
+  end
+
   describe "publication" do
     let(:assessment) { FactoryBot.create(:assessment) }
 
