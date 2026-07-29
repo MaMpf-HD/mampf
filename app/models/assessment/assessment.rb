@@ -28,8 +28,6 @@ module Assessment
       results_published_at.present?
     end
 
-    # Uses the block form so a preloaded `tasks` association is reused;
-    # `sum(:max_points)` would issue a query even then.
     # Summed in Ruby so a preloaded `tasks` association is reused — `sum(:max_points)`
     # would issue a query even then. The nil guard covers tasks that are only built:
     # the task form puts one into the association before it is saved.
