@@ -127,7 +127,9 @@ RSpec.describe(Assessment::Task, type: :model) do
         FactoryBot.create(:assessment_task, assessment: assessment)
       end
 
-      before { Timecop.travel(2.hours.from_now) }
+      # friendly_deadline is deadline plus the lecture's grace period, which is
+      # what grading_open? keys off — entering points earlier would be refused.
+      before { Timecop.travel(assignment.friendly_deadline + 1.minute) }
       after { Timecop.return }
 
       it "can still be destroyed while no points have been entered" do
