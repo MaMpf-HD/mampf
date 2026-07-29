@@ -81,7 +81,7 @@ module StudentPerformance
         non_exempt = assessments.reject do |a|
           exempt_assessment_ids.include?(a.id)
         end
-        points_max = non_exempt.sum { |a| effective_max(a) }
+        points_max = non_exempt.sum(&:effective_total_points)
 
         { points_total: points_total, points_max: points_max }
       end
@@ -159,10 +159,6 @@ module StudentPerformance
               end
           end
         end
-      end
-
-      def effective_max(assessment)
-        assessment.total_points || assessment.tasks.sum(&:max_points)
       end
 
       def compute_percentage(points_total, points_max)
