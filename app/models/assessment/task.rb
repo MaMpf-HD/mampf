@@ -10,7 +10,6 @@ module Assessment
     validate :assessment_requires_points
 
     before_destroy :check_no_points_entered, prepend: true
-    before_destroy :check_deadline_not_passed, prepend: true
 
     after_commit :recompute_all_performance_records,
                  if: :should_recompute_performance_records?
@@ -19,12 +18,6 @@ module Assessment
 
     def points_entered?
       task_points.where.not(points: nil).exists?
-    end
-
-    def deadline_passed?
-      return false unless assessment&.assessable.is_a?(Assignment)
-
-      assessment.assessable.past_deadline?
     end
 
     private
@@ -37,12 +30,6 @@ module Assessment
 
       def check_no_points_entered
         throw(:abort) if points_entered?
-      end
-
-      def check_deadline_not_passed
-        return unless assessment&.assessable.is_a?(Assignment)
-
-        throw(:abort) if assessment.assessable.past_deadline?
       end
 
       def should_recompute_performance_records?

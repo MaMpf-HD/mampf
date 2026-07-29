@@ -43,6 +43,8 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
 
   describe "#policy_kinds_summary" do
     it "returns joined translations" do
+      # The trait is what supplies config["lecture_ids"]; setting kind as a plain
+      # attribute leaves the config empty and the policy invalid.
       create(:registration_policy, :student_performance,
              registration_campaign: campaign, position: 1)
       create(:registration_policy, :institutional_email,

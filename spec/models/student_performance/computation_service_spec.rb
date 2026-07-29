@@ -193,24 +193,6 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
     end
 
-    context "when assessment has total_points override" do
-      let(:assignment) do
-        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
-      end
-      let(:assessment) do
-        FactoryBot.create(:assessment, :with_points, assessable: assignment,
-                                                     lecture: lecture, total_points: 50)
-      end
-
-      let!(:task) { FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10) }
-
-      it "uses effective_total_points for points_max" do
-        compute
-        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
-        expect(record.points_max_materialized).to eq(50)
-      end
-    end
-
     context "when participation is pending" do
       let(:assignment) do
         FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)

@@ -111,7 +111,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_23_000002) do
     t.bigint "lecture_id", null: false
     t.boolean "requires_points", default: false, null: false
     t.boolean "requires_submission", default: false, null: false
-    t.decimal "total_points", precision: 10, scale: 2
     t.datetime "results_published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

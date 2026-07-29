@@ -215,6 +215,8 @@ de:
 
   activerecord:
     errors:
+      messages:
+        immutable: "kann nach dem Anlegen nicht mehr geändert werden"
       models:
         exam:
           attributes:
