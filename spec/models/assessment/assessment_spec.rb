@@ -74,7 +74,7 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       end
 
       it "allows saving without changing requires_submission" do
-        assessment.total_points = 100
+        assessment.results_published_at = Time.zone.now
         expect(assessment).to be_valid
       end
     end

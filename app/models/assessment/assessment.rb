@@ -28,8 +28,10 @@ module Assessment
       results_published_at.present?
     end
 
+    # Uses the block form so a preloaded `tasks` association is reused;
+    # `sum(:max_points)` would issue a query even then.
     def effective_total_points
-      total_points || tasks.sum(:max_points)
+      tasks.sum(&:max_points)
     end
 
     validate :lecture_matches_assessable
