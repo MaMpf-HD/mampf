@@ -112,6 +112,15 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       expect(assessment.effective_total_points).to eq(10)
     end
 
+    def count_queries(&)
+      queries = 0
+      counter = lambda { |*, payload|
+        queries += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION/)
+      }
+      ActiveSupport::Notifications.subscribed(counter, "sql.active_record", &)
+      queries
+    end
+
     # sum(:max_points) would issue one query per assessment even here, which is
     # what defeats the includes(:tasks) in the records controller.
     it "does not query when the association is preloaded" do
@@ -119,15 +128,17 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       preloaded = Assessment::Assessment.where(id: assessment.id)
                                         .includes(:tasks).first
 
-      queries = 0
-      counter = lambda { |*, payload|
-        queries += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION/)
-      }
-      ActiveSupport::Notifications.subscribed(counter, "sql.active_record") do
-        preloaded.effective_total_points
-      end
+      expect(count_queries { preloaded.effective_total_points }).to eq(0)
+    end
 
-      expect(queries).to eq(0)
+    # …and the other way round: without a preload it must aggregate in SQL
+    # rather than load every task row.
+    it "aggregates in SQL when the association is not loaded" do
+      FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+      fresh = Assessment::Assessment.find(assessment.id)
+
+      expect(count_queries { fresh.effective_total_points }).to eq(1)
+      expect(fresh.tasks).not_to be_loaded
     end
   end
 

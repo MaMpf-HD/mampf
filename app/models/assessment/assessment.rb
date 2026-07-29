@@ -28,11 +28,14 @@ module Assessment
       results_published_at.present?
     end
 
-    # Summed in Ruby so a preloaded `tasks` association is reused — `sum(:max_points)`
-    # would issue a query even then. The nil guard covers tasks that are only built:
-    # the task form puts one into the association before it is saved.
+    # A preloaded association is summed in Ruby, because `sum(:max_points)` would
+    # issue a query even then. The nil guard belongs to that path only: the task
+    # form builds a blank task into a loaded association before saving it, and
+    # `build` never marks an unloaded one as loaded.
     def effective_total_points
-      tasks.sum { |task| task.max_points || 0 }
+      return tasks.sum { |task| task.max_points || 0 } if tasks.loaded?
+
+      tasks.sum(:max_points) || 0
     end
 
     validate :lecture_matches_assessable
