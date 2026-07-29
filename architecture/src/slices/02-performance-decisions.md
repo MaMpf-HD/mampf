@@ -1,13 +1,30 @@
-# Slice 2 — Decisions
+# Slice 2 — Before review
 
-```admonish question "How to read this page"
-Nine choices this slice makes where the code shows *what* happens but not why
-that option was picked or what it costs elsewhere. Each entry leads with a
-**question for the reviewer** and then answers it the way the branch currently
-does — they aim your reading rather than replace it.
+```admonish question "How to use this page"
+A working list, not a reviewer document. Each entry is a design point in slice 2
+that still needs something from **the author** before the branch goes out for
+review — agreement, a check, or a change to the code.
 
-**Status** is one of **settled** (rationale and test exist), **reconstructed**
-(intent inferred; the author should confirm) or **open** (needs a decision).
+Entries leave this page in one of two ways: the choice is confirmed, or the code
+is changed so it can be. Either way the point then moves to
+[Decisions made in this slice](02-performance.md#decisions-made-in-this-slice)
+on the slice page, where the reviewer finds it as background. When this page is
+empty it can go.
+
+Unlike slice 1, **every entry here is this slice's own**. The architecture book
+designs the materialised record and asks for just-in-time recomputation; how much
+is recomputed, what counts towards the totals, and what "ungraded" means were all
+decided in the code. What the book does fix is under
+[Following the architecture book](02-performance.md#following-the-architecture-book).
+
+Each entry carries a **Test** line naming the spec that pins the behaviour, or
+saying that none does. Those lines are checked against the branch, not assumed.
+
+**Status** is what the entry still needs:
+- **confirm** — intent is clear and a test pins it; agree and move on
+- **cover** — intent is clear, but nothing pins it; a test has to be written
+- **verify** — intent was inferred from the code; check the reading is right first
+- **decide** — no discernible intent; a choice has to be made
 ```
 
 ```admonish tip "About the code links"
@@ -47,7 +64,7 @@ the next exam.
 **Alternative.** Include every `Pointable` assessable, or make the set
 configurable per rule.
 
-**Status:** reconstructed.
+**Status:** verify.
 
 ---
 
@@ -77,7 +94,7 @@ but it means two students can have percentages computed against different
 denominators, so the percentage is not comparable across students, only against
 a threshold.
 
-**Status:** reconstructed.
+**Status:** verify.
 
 ---
 
@@ -106,7 +123,7 @@ An unfinished grading queue therefore looks exactly like poor performance. Note
 that slice 3 handles this carefully for *achievements* (there is an explicit
 `ungraded` state) but not for points.
 
-**Status:** reconstructed · consider whether the record should expose an
+**Status:** verify · consider whether the record should expose an
 "ungraded points" figure the way it exposes ungraded achievements.
 
 ---
@@ -139,7 +156,7 @@ participations for all members
 the usual case is a blank grade rather than a missing row — but both land in the
 same bucket.
 
-**Status:** settled — the branches are covered by
+**Status:** confirm — the branches are covered by
 `computation_service_spec`.
 
 ---
@@ -167,7 +184,7 @@ service is written for it — it prefetches participations and task points to av
 N+1 — but the cost still scales with lecture size on a user-facing save. Editing
 an achievement's *title* is correctly exempt; only threshold and type trigger it.
 
-**Status:** reconstructed.
+**Status:** verify.
 
 ---
 
@@ -190,7 +207,7 @@ reverse.
 **Why it matters.** Two unrelated definitions of the same word live one slice
 apart. Whichever is shown in the UI, a reader will assume they agree.
 
-**Status:** reconstructed · worth renaming one of the two.
+**Status:** verify · worth renaming one of the two.
 
 ---
 
@@ -239,7 +256,7 @@ the rule cannot apply as written. Seeding up front is the only shape that yields
 a usable grading table.
 ~~~
 
-**Status:** settled.
+**Status:** confirm.
 
 ---
 
@@ -264,7 +281,7 @@ certification dashboard may still show them.
 **Why it matters.** The guard prevents creating records for outsiders, which is
 right, but it also means membership changes never clean up.
 
-**Status:** reconstructed.
+**Status:** verify.
 
 ---
 
@@ -293,7 +310,7 @@ with no threshold admits them.
 percent" — but the consumer flattens it to zero, so the distinction is lost
 exactly where it would matter.
 
-**Status:** reconstructed.
+**Status:** verify.
 
 ---
 

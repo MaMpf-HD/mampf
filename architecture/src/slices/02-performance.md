@@ -2,8 +2,11 @@
 
 ```admonish info "What this page is"
 An orientation map for the second Müsli slice (PR #1106, branch
-`muesli-02-performance-achievements`). The judgement calls are collected in
-[Slice 2 — Decisions](02-performance-decisions.md).
+`muesli-02-performance-achievements`).
+
+Two sections below carry the design rationale: what the slice inherits from the
+architecture book, and what it decided itself. Points still being worked through
+are on [Before review](02-performance-decisions.md).
 ```
 
 ## TL;DR
@@ -91,6 +94,35 @@ Everything that is *not* an assignment — talks, exams, achievements themselves
 contributes nothing to the point totals. See
 [E-2.1](02-performance-decisions.md#e-21--only-assignments-count-towards-points).
 
+## Following the architecture book
+
+Two things below are the architecture design realised in code, not choices this
+PR makes. Read them as background; what the slice genuinely decides is the
+[section after this one](#decisions-made-in-this-slice).
+
+**A record holds facts, not a verdict.** The book describes
+[`StudentPerformance::Record`](../features/05-student-performance.md#studentperformancerecord-activerecord-model)
+as a *materialised performance snapshot*: points earned, achievements met — and
+explicitly **not** an interpretation like "eligible" or "passed". That separation
+is what lets slice 3 add the judgement without touching the facts, and it is why
+the record carries `..._materialized` columns rather than a status.
+
+**Correctness comes from recomputing, not from keeping in sync.** The book's
+stated guarantee is "recompute performance data on demand to ensure decisions use
+fresh facts". So the record is allowed to be stale between recomputations; what
+matters is that anything deciding on it recomputes first. *How much* gets
+recomputed, and when, is this slice's own choice — see
+[E-2.5](02-performance-decisions.md#e-25--records-are-recomputed-wholesale-not-incrementally).
+
+## Decisions made in this slice
+
+Choices this branch made on its own, with the reasoning behind each. Unlike the
+section above, these *are* open to argument — if one looks wrong, this is the
+place to say so.
+
+*(Design points move here once they have been worked through. What is still in
+progress is listed under [Before review](02-performance-decisions.md).)*
+
 ## New screens
 
 | Screen | What it does |
@@ -119,7 +151,7 @@ that grading a submission triggers a recomputation.
 2. `app/models/student_performance/record.rb` — tiny; note what it does *not* hold
 3. `app/models/student_performance/computation_service.rb` — the aggregation,
    read `assessments`, `aggregate_from_prefetched` and `achievement_ids_*` first
-4. [Slice 2 — Decisions](02-performance-decisions.md)
+4. [Before review](02-performance-decisions.md) — the points still being worked through
 
 ---
 
