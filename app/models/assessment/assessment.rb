@@ -31,20 +31,22 @@ module Assessment
       results_published_at.present?
     end
 
+    # Summed in Ruby so a preloaded `tasks` association is reused — `sum(:max_points)`
+    # would issue a query even then. The nil guard covers tasks that are only built:
+    # the task form puts one into the association before it is saved.
     def effective_total_points
-      total_points || tasks.sum(:max_points)
+      tasks.sum { |task| task.max_points || 0 }
     end
 
     validate :lecture_matches_assessable
     validate :requires_submission_locked_after_deadline,
              if: -> { requires_submission_changed? }
 
+    # A task's own callback covers changes to what an assessment is worth;
+    # what is left here is the assessment disappearing entirely.
     after_commit :recompute_all_performance_records,
-                 on: [:update, :destroy],
-                 if: lambda {
-                   assessable_type == "Assignment" &&
-                     (destroyed? || saved_change_to_total_points?)
-                 }
+                 on: :destroy,
+                 if: -> { assessable_type == "Assignment" }
 
     def seed_participations_from!(user_ids:, tutorial_mapping: {},
                                   recompute: true)

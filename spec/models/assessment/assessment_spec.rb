@@ -74,7 +74,7 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       end
 
       it "allows saving without changing requires_submission" do
-        assessment.total_points = 100
+        assessment.results_published_at = Time.zone.now
         expect(assessment).to be_valid
       end
     end
@@ -86,6 +86,48 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       assessment = FactoryBot.create(:assessment, assessable: assignment,
                                                   lecture: assignment.lecture)
       expect(assessment.title).to eq("Homework 5")
+    end
+  end
+
+  describe "#effective_total_points" do
+    let(:assessment) { FactoryBot.create(:assessment, :with_points) }
+
+    it "sums the tasks' max_points" do
+      FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+      FactoryBot.create(:assessment_task, assessment: assessment, max_points: 15)
+
+      expect(assessment.effective_total_points).to eq(25)
+    end
+
+    it "is 0 without tasks" do
+      expect(assessment.effective_total_points).to eq(0)
+    end
+
+    # The task form builds a blank task into the association before saving it;
+    # summing in Ruby would otherwise trip over its nil max_points.
+    it "ignores a task that is only built, not saved" do
+      FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+      assessment.tasks.build
+
+      expect(assessment.effective_total_points).to eq(10)
+    end
+
+    # sum(:max_points) would issue one query per assessment even here, which is
+    # what defeats the includes(:tasks) in the records controller.
+    it "does not query when the association is preloaded" do
+      FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+      preloaded = Assessment::Assessment.where(id: assessment.id)
+                                        .includes(:tasks).first
+
+      queries = 0
+      counter = lambda { |*, payload|
+        queries += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION/)
+      }
+      ActiveSupport::Notifications.subscribed(counter, "sql.active_record") do
+        preloaded.effective_total_points
+      end
+
+      expect(queries).to eq(0)
     end
   end
 
@@ -123,6 +165,30 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       assessment.send(:recompute_all_performance_records)
 
       expect(service).not_to have_received(:compute_and_upsert_all_records!)
+    end
+
+    # What an assessment is worth now follows from its tasks, and Task has its
+    # own callback for that. Destroying the assessment is what is left here.
+    context "when the assessment is destroyed" do
+      before { Flipper.enable(:assessment_grading) }
+      after { Flipper.disable(:assessment_grading) }
+
+      it "recomputes for an assignment" do
+        assessment.destroy
+
+        expect(service).to have_received(:compute_and_upsert_all_records!)
+      end
+
+      it "does not recompute for another assessable type" do
+        talk_assessment = FactoryBot.create(:assessment, :gradable)
+        allow(StudentPerformance::ComputationService)
+          .to receive(:new).with(lecture: talk_assessment.lecture)
+                           .and_return(service)
+
+        talk_assessment.destroy
+
+        expect(service).not_to have_received(:compute_and_upsert_all_records!)
+      end
     end
   end
 end

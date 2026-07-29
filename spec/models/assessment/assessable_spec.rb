@@ -62,4 +62,27 @@ RSpec.describe(Assessment::Assessable) do
 
     it_behaves_like "an assessable model"
   end
+
+  describe "lecture immutability" do
+    # The assessment stores lecture_id too, so a move would leave that copy
+    # pointing at the old lecture with nothing to notice it.
+    let(:assignment) { FactoryBot.create(:assignment, lecture: lecture) }
+
+    it "refuses to move to another lecture" do
+      assignment.lecture = FactoryBot.create(:lecture)
+
+      expect(assignment).to be_invalid
+      expect(assignment.errors.added?(:lecture_id, :immutable)).to be(true)
+    end
+
+    it "allows saving without touching the lecture" do
+      assignment.title = "Übungsblatt 8"
+
+      expect(assignment).to be_valid
+    end
+
+    it "does not interfere with creating an assessable" do
+      expect(FactoryBot.build(:assignment, lecture: lecture)).to be_valid
+    end
+  end
 end
