@@ -1,8 +1,10 @@
 # Slice 4 — Decisions
 
 ```admonish question "How to read this page"
-Ten places where slice 4 makes a choice that cannot be read off the diff. Each
-entry leads with a **question for the reviewer**.
+Ten choices this slice makes where the code shows *what* happens but not why
+that option was picked or what it costs elsewhere. Each entry leads with a
+**question for the reviewer** and then answers it the way the branch currently
+does — they aim your reading rather than replace it.
 
 **Status** is one of **settled** (rationale and test exist), **reconstructed**
 (intent inferred; the author should confirm) or **open** (needs a decision).

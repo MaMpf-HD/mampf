@@ -29,13 +29,17 @@ Slice 3 deliberately stops there. It does **not** create exams
 
 ## New models
 
+Each name links to its full description in
+[Student Performance](../features/05-student-performance.md).
+`RuleAchievement` has no section of its own — it is described inside the rule's.
+
 | Model | Purpose | Notable columns |
 |---|---|---|
-| `StudentPerformance::Rule` | The eligibility criteria for one lecture | `threshold_mode`, `min_percentage`, `min_points_absolute`, `active` |
+| [`StudentPerformance::Rule`](../features/05-student-performance.md#studentperformancerule-activerecord-model) | The eligibility criteria for one lecture | `threshold_mode`, `min_percentage`, `min_points_absolute`, `active` |
 | `StudentPerformance::RuleAchievement` | Join: which achievements a rule requires | `position` (ordered via `acts_as_list`) |
-| `StudentPerformance::Certification` | The teacher's decision per (lecture, user) | `status`, `source`, `certified_by_id`, `certified_at`, `rule_id` |
-| `StudentPerformance::Evaluator` | PORO — interprets a record against a rule | *(no table)* |
-| `Registration::Policy::StudentPerformanceHandler` | PORO — evaluates the new policy kind | *(no table)* |
+| [`StudentPerformance::Certification`](../features/05-student-performance.md#studentperformancecertification-activerecord-model) | The teacher's decision per (lecture, user) | `status`, `source`, `certified_by_id`, `certified_at`, `rule_id` |
+| [`StudentPerformance::Evaluator`](../features/05-student-performance.md#studentperformanceevaluator-service-object) | PORO — interprets a record against a rule | *(no table)* |
+| [`Registration::Policy::StudentPerformanceHandler`](../features/05-student-performance.md#integration-with-registrationpolicy) | PORO — evaluates the new policy kind | *(no table)* |
 
 Two existing models are extended rather than replaced:
 
@@ -74,12 +78,12 @@ have a `Record` without a `Certification` and vice versa — nothing enforces th
 pairing.
 ```
 
-```admonish note "`Certification#rule_id` is a snapshot, not a dependency"
+~~~admonish note "`Certification#rule_id` is a snapshot, not a dependency"
 It records *which rule the decision was based on*, and is optional. A manually
 created certification has no rule. This is what makes staleness detectable: if
 `rule.updated_at` is newer than `certified_at`, the decision predates the current
 rule.
-```
+~~~
 
 ```admonish note "The policy references lectures through JSON, not an association"
 `Registration::Policy#config["lecture_ids"]` holds an array of stringified IDs.

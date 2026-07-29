@@ -21,7 +21,6 @@
 
 ## Müsli Bucket — Slice Guides
 - [Slice 1 — Assessment Core](slices/01-assessment-core.md)
-  - [Decisions](slices/01-assessment-core-decisions.md)
 - [Slice 2 — Achievements & Performance](slices/02-performance.md)
   - [Decisions](slices/02-performance-decisions.md)
 - [Slice 3 — Exam Eligibility & Certification](slices/03-eligibility.md)

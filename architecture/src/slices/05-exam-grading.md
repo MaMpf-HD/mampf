@@ -25,9 +25,9 @@ slice 3 decided who may sit, slice 4 ran the exam — slice 5 grades it.
 
 | Model | Purpose | Notable columns |
 |---|---|---|
-| `Assessment::GradeScheme` | Points-to-grade mapping for one assessment | `kind` (`banded`), `config` (jsonb), `version_hash`, `active`, `applied_at`, `applied_by_id`, `points_step` |
-| `Assessment::GradeSchemeApplier` | Analyse, preview and apply a scheme | *(no table)* |
-| `Assessment::AbsenceHandling` | Transitions to absent/exempt | *(concern)* |
+| [`Assessment::GradeScheme`](../features/05b-grading-schemes.md#assessmentgradescheme-activerecord-model) | Points-to-grade mapping for one assessment | `kind` (`banded`), `config` (jsonb), `version_hash`, `active`, `applied_at`, `applied_by_id`, `points_step` |
+| [`Assessment::GradeSchemeApplier`](../features/05b-grading-schemes.md#assessmentgradeschemeapplier-service-object) | Analyse, preview and apply a scheme | *(no table)* |
+| [`Assessment::AbsenceHandling`](../features/04-assessments-and-grading.md#absence-tracking--no-shows) | Transitions to absent/exempt | *(concern)* |
 
 ## The band config
 
@@ -66,13 +66,16 @@ Because `Assessment` is polymorphic, the same machinery grades an exam and an
 assignment. Nothing is exam-specific — the exam only appears as the assessable.
 ```
 
-```admonish warning "Percentage bands divide by `effective_total_points`"
-That is slice 1's value, where an explicit `total_points` overrides the sum of
-the tasks. A scheme expressed in percentages therefore inherits
-[E-1.4](01-assessment-core-decisions.md#e-14--an-explicit-total-overrides-the-sum-of-task-points):
-if the override disagrees with the tasks, every percentage-based grade shifts
-with it.
-```
+~~~admonish note "Percentage bands divide by `effective_total_points`"
+That is slice 1's value: the sum of the tasks' `max_points`, with no column to
+override it — see
+[Tasks are the only source](01-assessment-core.md#tasks-are-the-only-source-of-what-an-assessment-is-worth).
+Adding or removing a task therefore shifts every percentage-based grade.
+
+Results above 100 % are normal, because task points are not capped at the task
+maximum. `apply_percentage_scheme` sorts bands descending and matches with `>=`,
+so such a result lands in the top band rather than falling through.
+~~~
 
 ## Applying a scheme
 

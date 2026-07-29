@@ -1,8 +1,10 @@
 # Slice 2 — Decisions
 
 ```admonish question "How to read this page"
-Nine places where slice 2 makes a choice that cannot be read off the diff. Each
-entry leads with a **question for the reviewer**.
+Nine choices this slice makes where the code shows *what* happens but not why
+that option was picked or what it costs elsewhere. Each entry leads with a
+**question for the reviewer** and then answers it the way the branch currently
+does — they aim your reading rather than replace it.
 
 **Status** is one of **settled** (rationale and test exist), **reconstructed**
 (intent inferred; the author should confirm) or **open** (needs a decision).
@@ -55,11 +57,11 @@ configurable per rule.
 > zero?**
 
 **As built.** `aggregate_from_prefetched` collects the assessment IDs of
-`exempt` participations and removes those assessments from the `points_max` sum.
+`exempt` participations and removes those assessments from the `points_max` sum,
+which is the sum of each remaining assessment's `effective_total_points`.
 `reviewed` participations contribute to `points_total`.
 
-**Code.** [`aggregate_from_prefetched`][c2-aggregate] ·
-[`effective_max`][c2-effmax]
+**Code.** [`aggregate_from_prefetched`][c2-aggregate]
 
 **Example.** Ten assignments, 12 points each (120 total). Ian is exempted from
 two on medical grounds and scores 84 on the remaining eight.
@@ -201,19 +203,41 @@ apart. Whichever is shown in the UI, a reader will assume they agree.
 `assessment_grading` flag), calls `ensure_assessment!` and then seeds
 participations for all `lecture.members`.
 
-**Code.** [`setup_assessment`][c2-setup]
+**Code.** [`setup_assessment`][c2-setup] ·
+[`Lecture#sync_student_performance_for_members!`][c2-sync] ·
+[the marking table][c2-marking]
 
 **Example.** A teacher adds "Blackboard presentation" to a lecture with 600
 members. 600 participation rows are inserted immediately, via slice 1's
-`insert_all` path.
+`insert_all` path. Students who enrol *later* get no row from this hook —
+`Lecture#sync_student_performance_for_members!`, in this same slice, covers them.
 
-Students who enrol *later* get no row from this hook — slice 3's
-`Lecture#sync_student_performance_for_members!` covers that separately.
+**Why it matters.** The rows are what the grading surface is made of.
+`AchievementMarkingTableComponent` iterates the participations, and its template
+opens with `<% if any_participations? %>` — with no rows it shows
+"no participations" and offers nothing to click. Since an achievement has no
+submission event that could create a row on the way past, lazy creation here
+would mean the first row could never come into being.
 
-**Why it matters.** It makes "ungraded" the well-defined default state for every
-student rather than an absence, which is what makes
+Note it is *not* needed for the computation:
 [E-2.4](#e-24--an-achievement-is-ungraded-when-no-grade-text-exists-at-all)
-behave predictably. The cost is a bulk write on a single form submission.
+treats a missing row and a blank grade identically, so the performance records
+would come out the same either way.
+
+The cost is a bulk write on a single form submission, and 600 rows that may never
+be graded.
+
+~~~admonish note "This departs from the architecture book, on purpose"
+The book states in four places that participations are created **lazily, not
+eagerly** — "Does not eagerly seed participations", "Ensure participations are
+created lazily, not eagerly". That is written about *assignments*, where a
+submission creates the row, and assignments do follow it. For **exams** the book
+wants the opposite ("All exam participations exist *before* grading begins").
+
+Achievements are not covered either way, and they have no submission event — so
+the rule cannot apply as written. Seeding up front is the only shape that yields
+a usable grading table.
+~~~
 
 **Status:** settled.
 
@@ -299,7 +323,6 @@ indistinguishable from poor performance.
 
 [c2-assessments]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L49-L54
 [c2-aggregate]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L71-L87
-[c2-effmax]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L164-L166
 [c2-met]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L107-L122
 [c2-ungraded]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L124-L133
 [c2-all]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L24-L45
@@ -307,5 +330,7 @@ indistinguishable from poor performance.
 [c2-pct]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/computation_service.rb#L168-L172
 [c2-stale]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/student_performance/record.rb#L10-L12
 [c2-setup]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/achievement.rb#L64-L67
+[c2-sync]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/lecture.rb#L866-L877
+[c2-marking]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/frontend/student_performance/achievements/components/achievement_marking_table_component.rb#L52-L58
 [c2-shouldinvalidate]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/achievement.rb#L54-L56
 [c2-invalidate]: https://github.com/MaMpf-HD/mampf/blob/730318679fe08d1c981f169de965fb91461dcff7/app/models/achievement.rb#L58-L62

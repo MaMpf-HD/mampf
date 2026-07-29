@@ -25,17 +25,20 @@ question *"may this student sit the exam?"*, and slice 4 is what asks it.
 
 | Model | Purpose | Notable columns |
 |---|---|---|
-| `Exam` | An exam in a lecture | `title`, `date`, `location`, `capacity`, `description`, `skip_campaigns`, `self_materialization_mode` |
+| [`Exam`](../features/05a-exam-model.md#exam-activerecord-model) | An exam in a lecture | `title`, `date`, `location`, `capacity`, `description`, `skip_campaigns`, `self_materialization_mode` |
 | `ExamRosterEntry` | One person on one exam's roster | `exam_id`, `user_id`, `source_campaign_id`, `excluded_at` |
 
-`Exam` includes **four** concerns at once:
+`ExamRosterEntry` has no section in the book — it exists only to satisfy
+`Rosters::Rosterable`'s `#roster_entries` contract.
+
+`Exam` includes **four** concerns at once, each documented where it comes from:
 
 | Concern | From | Grants |
 |---|---|---|
-| `Registration::Registerable` | registration system | can be the target of a campaign |
-| `Rosters::Rosterable` | roster system | allocation can be materialised into it |
-| `Assessment::Pointable` | slice 1 | an assessment with tasks and points |
-| `Assessment::Gradable` | slice 1 | grades on participations (used by slice 5) |
+| [`Registration::Registerable`](../features/02-registration.md#registrationregisterable-concern) | registration system | can be the target of a campaign |
+| [`Rosters::Rosterable`](../features/03-rosters.md#rostersrosterable-concern) | roster system | allocation can be materialised into it |
+| [`Assessment::Pointable`](../features/04-assessments-and-grading.md#assessmentpointable-concern) | slice 1 | an assessment with tasks and points |
+| [`Assessment::Gradable`](../features/04-assessments-and-grading.md#assessmentgradable-concern) | slice 1 | grades on participations (used by slice 5) |
 
 ## How they relate
 

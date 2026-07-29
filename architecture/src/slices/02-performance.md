@@ -23,11 +23,19 @@ a student passes — that arrives in slice 3.
 
 ## New models
 
+Each name links to its full description in
+[Student Performance](../features/05-student-performance.md).
+
 | Model | Purpose | Notable columns |
 |---|---|---|
-| `Achievement` | A qualitative criterion in a lecture | `title`, `value_type` (boolean/numeric/percentage), `threshold` |
-| `StudentPerformance::Record` | Materialised facts per (lecture, user) | `points_total_materialized`, `points_max_materialized`, `percentage_materialized`, `achievements_met_ids`, `achievements_ungraded_ids`, `computed_at` |
-| `StudentPerformance::ComputationService` | Aggregates and upserts records | *(no table)* |
+| [`Achievement`](../features/05-student-performance.md#achievement-activerecord-model) | A qualitative criterion in a lecture | `title`, `value_type` (boolean/numeric/percentage), `threshold` |
+| [`StudentPerformance::Record`](../features/05-student-performance.md#studentperformancerecord-activerecord-model) | Materialised facts per (lecture, user) | `points_total_materialized`, `points_max_materialized`, `percentage_materialized`, `achievements_met_ids`, `achievements_ungraded_ids`, `computed_at` |
+| [`StudentPerformance::ComputationService`](../features/05-student-performance.md#studentperformanceservice-service-object) | Aggregates and upserts records | *(no table)* |
+
+~~~admonish note "The design page calls the service `StudentPerformance::Service`"
+Same object, older name — the section it links to describes exactly this
+aggregate-and-upsert step. The implementation renamed it.
+~~~
 
 `Achievement` includes slice 1's `Assessment::Assessable`, so an achievement gets
 an assessment with `requires_points: false` and is "graded" through
@@ -57,12 +65,12 @@ no foreign keys. Deleting an achievement leaves its ID in every record until the
 next recomputation.
 ```
 
-```admonish note "Achievements are graded through `grade_text`, not points"
+~~~admonish note "Achievements are graded through `grade_text`, not points"
 `value_type` decides how the free-text grade is interpreted: `"pass"` for
 boolean, a number compared against `threshold` for numeric, a percentage for
 percentage. So the same column carries three different meanings depending on the
 achievement.
-```
+~~~
 
 ## What feeds the numbers
 

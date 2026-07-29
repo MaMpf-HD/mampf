@@ -1,10 +1,10 @@
 # Slice 3 — Decisions
 
 ```admonish question "How to read this page"
-Ten places where slice 3 makes a choice that cannot be read off the diff. Each
-entry leads with a **question for the reviewer**. Answer it — if the answer is
-"yes, that is what we want", the entry is settled and you never need to open the
-file.
+Ten choices this slice makes where the code shows *what* happens but not why
+that option was picked or what it costs elsewhere. Each entry leads with a
+**question for the reviewer** and then answers it the way the branch currently
+does — they aim your reading rather than replace it.
 
 **Status** is one of:
 - **settled** — rationale and a test both exist
@@ -284,22 +284,20 @@ does not carry.
 `threshold_mode = percentage`, `min_percentage = 50`. Reopening the editor reads
 the mode back from the row instead of guessing it.
 
-Previously the mode was an `attr_accessor` and the form reconstructed the radio
-state from whichever value column happened to be filled. That derivation was
-faithful *only* because `RulesController` was the sole writer and always set mode
-and values together. Any second writer — an import, a console session, a future
-API — could have produced a rule with two NULL columns that the form would then
-present as a deliberate "no point threshold", asserting a decision nobody made.
+**Alternative.** Derive the mode from whichever value column is filled, and keep
+it out of the table. That works only as long as a single writer sets mode and
+values together — and it fails silently when one does not: a rule with both value
+columns NULL is indistinguishable from a deliberate "no point threshold", so the
+form would assert a decision nobody made. An import, a console session or a
+future API would be enough to produce one.
 
-**Why it matters.** The mode is now the single source of truth, and the column
-landed in the table's own migration rather than a follow-up, since the slice is
-unreleased and no live data needed backfilling.
+**Why it matters.** Storing the mode makes it the single source of truth, so the
+editor reads back what the teacher chose instead of inferring it.
 
 **Note.** The enum carries `prefix: true`: a bare `none` value would collide with
 ActiveRecord's own `none` scope and Rails refuses to define it.
 
-**Status:** settled — implemented in `405f24c8a`; covered by model and request
-specs.
+**Status:** settled — covered by model and request specs.
 
 ---
 

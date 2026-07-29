@@ -185,13 +185,11 @@ The main fields and methods of `Assessment` are:
 | `title`                   | DB column         | Human-readable assessment title                                          |
 | `requires_points`         | DB column         | Boolean: whether this assessment tracks per-task points                  |
 | `requires_submission`     | DB column         | Boolean: whether students must upload files                              |
-| `total_points`            | DB column         | Optional maximum points (computed from tasks if blank)                   |
-| `results_published_at`    | DB column         | Timestamp when results were published (null = unpublished)               |
 | `results_published_at`    | DB column         | Timestamp when results were published (null = unpublished)               |
 | `participations`          | Association       | All student records for this assessment                                  |
 | `tasks`                   | Association       | Tasks (problems) for this assessment (only if `requires_points`)         |
 | `task_points`             | Association       | All task points through participations                                   |
-| `effective_total_points`  | Method            | Returns `total_points` or sum of task max_points                         |
+| `effective_total_points`  | Method            | Sum of the tasks' `max_points` — what the assessment is worth            |
 | `seed_participations_from!(user_ids:)` | Method | Creates participation records for given users                    |
 
 ```admonish warning "Submission Support - Configurable for Assignments"
@@ -229,8 +227,10 @@ module Assessment
   validates :title, presence: true
   validate :tasks_only_when_requires_points
 
+  # Block form, so a preloaded `tasks` association is reused;
+  # `sum(:max_points)` would issue a query even then.
   def effective_total_points
-    total_points.presence || tasks.sum(:max_points)
+    tasks.sum(&:max_points)
   end
 
   def results_published?
@@ -750,7 +750,7 @@ For exams with multiple choice components requiring legal compliance, see the [M
 
 - **Exam with multiple questions:** An exam assessment has tasks for each question. A task titled "Question 3: Proof of Theorem" with `max_points: 8` allows tutors to grade that specific question independently across all students.
 
-- **Automatic total calculation:** If the assessment's `total_points` field is blank, calling `assessment.effective_total_points` sums all task `max_points` values (e.g., 10 + 15 + 8 = 33 total points).
+- **What an assessment is worth:** `assessment.effective_total_points` sums all task `max_points` values (e.g., 10 + 15 + 8 = 33 total points). Tasks are the only source — there is no separate column to override the total. Individual task points are *not* capped at the task maximum, which is how bonus tasks work, so a student's result may exceed the total.
 
 - **Reordering tasks:** Teachers can adjust the `position` field to reorder how tasks appear in the grading interface without changing the underlying data structure.
 
