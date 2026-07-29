@@ -142,6 +142,35 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  describe "#display_status" do
+    # The enum has four values, the views need five: `pending` covers both
+    # "has not handed in" and "waiting to be marked", told apart by submitted_at.
+    def display_status_for(**attrs)
+      FactoryBot.build(:assessment_participation, **attrs).display_status
+    end
+
+    it "is :not_submitted while pending with no submission" do
+      expect(display_status_for(status: :pending, submitted_at: nil))
+        .to eq(:not_submitted)
+    end
+
+    it "is :pending_grading while pending with a submission" do
+      expect(display_status_for(status: :pending, submitted_at: 1.day.ago))
+        .to eq(:pending_grading)
+    end
+
+    it "passes every other status through unchanged" do
+      [:reviewed, :absent, :exempt].each do |status|
+        expect(display_status_for(status: status)).to eq(status)
+      end
+    end
+
+    it "ignores submitted_at once the status is no longer pending" do
+      expect(display_status_for(status: :reviewed, submitted_at: nil))
+        .to eq(:reviewed)
+    end
+  end
+
   describe ".tutorial_for" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
