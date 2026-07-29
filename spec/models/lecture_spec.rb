@@ -358,6 +358,7 @@ RSpec.describe(Lecture, type: :model) do
       create(:registration_campaign, :open, :first_come_first_served,
              campaignable: lecture)
     end
+    let(:users) { create_list(:confirmed_user, 3) }
 
     it "includes campaign registrants with pending or confirmed status" do
       pending_user = create(:confirmed_user)

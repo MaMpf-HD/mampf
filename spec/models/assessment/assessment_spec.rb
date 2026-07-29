@@ -74,7 +74,7 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       end
 
       it "allows saving without changing requires_submission" do
-        assessment.total_points = 100
+        assessment.results_published_at = Time.zone.now
         expect(assessment).to be_valid
       end
     end
@@ -123,6 +123,30 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       assessment.send(:recompute_all_performance_records)
 
       expect(service).not_to have_received(:compute_and_upsert_all_records!)
+    end
+
+    # What an assessment is worth now follows from its tasks, and Task has its
+    # own callback for that. Destroying the assessment is what is left here.
+    context "when the assessment is destroyed" do
+      before { Flipper.enable(:assessment_grading) }
+      after { Flipper.disable(:assessment_grading) }
+
+      it "recomputes for an assignment" do
+        assessment.destroy
+
+        expect(service).to have_received(:compute_and_upsert_all_records!)
+      end
+
+      it "does not recompute for another assessable type" do
+        talk_assessment = FactoryBot.create(:assessment, :gradable)
+        allow(StudentPerformance::ComputationService)
+          .to receive(:new).with(lecture: talk_assessment.lecture)
+                           .and_return(service)
+
+        talk_assessment.destroy
+
+        expect(service).not_to have_received(:compute_and_upsert_all_records!)
+      end
     end
   end
 end

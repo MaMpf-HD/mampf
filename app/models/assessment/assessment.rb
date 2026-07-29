@@ -28,17 +28,21 @@ module Assessment
       results_published_at.present?
     end
 
+    # Uses the block form so a preloaded `tasks` association is reused;
+    # `sum(:max_points)` would issue a query even then.
     def effective_total_points
-      total_points || tasks.sum(:max_points)
+      tasks.sum(&:max_points)
     end
 
     validate :lecture_matches_assessable
     validate :requires_submission_locked_after_deadline,
              if: -> { requires_submission_changed? }
 
+    # A task's own callback covers changes to what an assessment is worth;
+    # what is left here is the assessment disappearing entirely.
     after_commit :recompute_all_performance_records,
-                 on: [:destroy, :update],
-                 if: :should_recompute_performance_records?
+                 on: :destroy,
+                 if: -> { assessable_type == "Assignment" }
 
     def seed_participations_from!(user_ids:, tutorial_mapping: {},
                                   recompute: true)
@@ -85,12 +89,6 @@ module Assessment
         return unless assessable.is_a?(Assignment) && assessable.past_deadline?
 
         errors.add(:requires_submission, :locked_after_deadline)
-      end
-
-      def should_recompute_performance_records?
-        return false unless assessable_type == "Assignment"
-
-        destroyed? || saved_change_to_total_points?
       end
 
       def recompute_all_performance_records

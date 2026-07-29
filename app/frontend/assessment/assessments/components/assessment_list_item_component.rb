@@ -62,7 +62,7 @@ class AssessmentListItemComponent < ViewComponent::Base
   end
 
   def total_points
-    assessment&.tasks&.sum(:max_points) || 0
+    assessment&.effective_total_points || 0
   end
 
   def total_points_display
