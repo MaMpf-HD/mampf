@@ -107,6 +107,8 @@ de:
 
   activerecord:
     errors:
+      messages:
+        immutable: "kann nach dem Anlegen nicht mehr geändert werden"
       models:
         assessment/task:
           attributes:
