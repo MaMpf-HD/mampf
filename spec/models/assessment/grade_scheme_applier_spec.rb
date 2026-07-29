@@ -4,9 +4,12 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
   let(:lecture) { FactoryBot.create(:lecture) }
   let(:exam) { FactoryBot.create(:exam, lecture: lecture) }
   let(:assessment) do
-    FactoryBot.create(:assessment, :for_exam,
-                      assessable: exam, lecture: lecture,
-                      total_points: 60)
+    FactoryBot.create(:assessment, :for_exam, :with_points,
+                      assessable: exam, lecture: lecture)
+  end
+  # The exam is worth 60 points; that is what the percentage bands divide by.
+  let!(:exam_task) do
+    FactoryBot.create(:assessment_task, assessment: assessment, max_points: 60)
   end
   let(:scheme) { FactoryBot.create(:assessment_grade_scheme, assessment: assessment) }
   let(:applier) { described_class.new(scheme) }
@@ -248,24 +251,24 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
     end
   end
 
-  describe "effective_total_points fallback" do
-    let(:assessment_no_total) do
+  describe "effective_total_points" do
+    let(:other_exam) { FactoryBot.create(:exam, lecture: lecture) }
+    let(:other_assessment) do
       FactoryBot.create(:assessment, :for_exam, :with_points,
-                        assessable: exam, lecture: lecture,
-                        total_points: nil)
+                        assessable: other_exam, lecture: lecture)
     end
 
-    it "falls back to sum of task max_points" do
-      FactoryBot.create(:assessment_task, assessment: assessment_no_total,
+    it "sums the task max_points" do
+      FactoryBot.create(:assessment_task, assessment: other_assessment,
                                           max_points: 30)
-      FactoryBot.create(:assessment_task, assessment: assessment_no_total,
+      FactoryBot.create(:assessment_task, assessment: other_assessment,
                                           max_points: 30)
 
-      expect(assessment_no_total.effective_total_points).to eq(60)
+      expect(other_assessment.effective_total_points).to eq(60)
     end
 
-    it "returns 0 when no tasks and no total_points" do
-      expect(assessment_no_total.effective_total_points).to eq(0)
+    it "returns 0 when there are no tasks" do
+      expect(other_assessment.effective_total_points).to eq(0)
     end
   end
 end

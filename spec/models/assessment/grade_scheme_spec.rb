@@ -326,8 +326,9 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
     end
 
     it "produces a valid banded config" do
-      exam_assessment = FactoryBot.create(:assessment, :for_exam,
-                                          total_points: 60)
+      exam_assessment = FactoryBot.create(:assessment, :for_exam, :with_points)
+      FactoryBot.create(:assessment_task, assessment: exam_assessment,
+                                          max_points: 60)
       scheme = FactoryBot.build(:assessment_grade_scheme,
                                 assessment: exam_assessment,
                                 config: config)

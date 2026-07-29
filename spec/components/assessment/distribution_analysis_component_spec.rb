@@ -4,8 +4,12 @@ RSpec.describe(DistributionAnalysisComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, teacher: teacher) }
   let(:exam) { create(:exam, lecture: lecture) }
+  # The exam is worth 100 points, carried by a single task.
   let(:assessment) do
-    exam.reload.assessment.tap { |a| a.update!(total_points: 100) }
+    exam.reload.assessment.tap do |a|
+      a.update!(requires_points: true)
+      create(:assessment_task, assessment: a, max_points: 100)
+    end
   end
 
   before { Flipper.enable(:assessment_grading) }
@@ -100,7 +104,6 @@ RSpec.describe(DistributionAnalysisComponent, type: :component) do
     end
 
     it "returns 0 when no data and no total set" do
-      assessment.update!(total_points: nil)
       assessment.tasks.destroy_all
       c = described_class.new(assessment: assessment.reload)
       expect(c.max_possible).to eq(0)
@@ -137,7 +140,6 @@ RSpec.describe(DistributionAnalysisComponent, type: :component) do
     end
 
     it "returns a single tick at 0 when max_possible is 0" do
-      assessment.update!(total_points: nil)
       assessment.tasks.destroy_all
       c = described_class.new(assessment: assessment.reload)
       expect(c.axis_tick_items).to eq([{ value: 0, style: "left: 0;" }])
