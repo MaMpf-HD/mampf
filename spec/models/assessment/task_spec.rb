@@ -109,7 +109,10 @@ RSpec.describe(Assessment::Task, type: :model) do
       expect(Assessment::TaskPoint.find_by(id: tp.id)).to be_present
     end
 
-    context "when assignment deadline has passed" do
+    # The deadline on its own does not protect a task: a question that turns out
+    # to be unsolvable has to be removable afterwards, and by then nobody will
+    # have marked it.
+    context "when the assignment deadline has passed" do
       let!(:assignment) do
         FactoryBot.create(:assignment, :with_lecture,
                           deadline: 1.hour.from_now)
@@ -127,19 +130,17 @@ RSpec.describe(Assessment::Task, type: :model) do
       before { Timecop.travel(2.hours.from_now) }
       after { Timecop.return }
 
-      it "cannot be destroyed" do
+      it "can still be destroyed while no points have been entered" do
+        expect(past_deadline_task.destroy).to be_truthy
+        expect(Assessment::Task.find_by(id: past_deadline_task.id)).to be_nil
+      end
+
+      it "cannot be destroyed once points have been entered" do
+        FactoryBot.create(:assessment_task_point,
+                          task: past_deadline_task, points: 8)
+
         expect(past_deadline_task.destroy).to be(false)
         expect(past_deadline_task.reload).to be_persisted
-      end
-
-      it "reports deadline_passed? as true" do
-        expect(past_deadline_task.deadline_passed?).to be(true)
-      end
-    end
-
-    context "when assignment deadline has not passed" do
-      it "reports deadline_passed? as false" do
-        expect(task.deadline_passed?).to be(false)
       end
     end
   end

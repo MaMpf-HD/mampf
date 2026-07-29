@@ -45,6 +45,93 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  describe "the grading lifecycle guard" do
+    let(:grader) { FactoryBot.create(:confirmed_user) }
+
+    context "while the assignment can still be submitted to" do
+      # The default assignment factory puts the deadline 30 days out.
+      let(:participation) { FactoryBot.create(:assessment_participation) }
+
+      it "reports grading as closed" do
+        expect(participation.assessment.grading_open?).to be(false)
+      end
+
+      it "rejects a points total" do
+        participation.points_total = 12
+
+        expect(participation).not_to be_valid
+        expect(participation.errors.of_kind?(:base, :early_grading_not_allowed)).to be(true)
+      end
+
+      it "rejects a text grade" do
+        participation.grade_text = "pass"
+
+        expect(participation).not_to be_valid
+        expect(participation.errors.of_kind?(:base, :early_grading_not_allowed)).to be(true)
+      end
+
+      it "rejects a grader and a grading timestamp" do
+        participation.grader = grader
+        participation.graded_at = Time.zone.now
+
+        expect(participation).not_to be_valid
+        expect(participation.errors.of_kind?(:base, :early_grading_not_allowed)).to be(true)
+      end
+
+      it "rejects leaving the pending status" do
+        participation.status = :reviewed
+
+        expect(participation).not_to be_valid
+        expect(participation.errors.of_kind?(:base, :early_grading_not_allowed)).to be(true)
+      end
+
+      it "allows changes that are not grading data" do
+        participation.submitted_at = Time.zone.now
+
+        expect(participation).to be_valid
+      end
+    end
+
+    context "once the deadline and the grace period have passed" do
+      let(:assessment) { FactoryBot.create(:assessment, :for_expired_assignment) }
+      let(:participation) do
+        FactoryBot.create(:assessment_participation, assessment: assessment)
+      end
+
+      it "reports grading as open" do
+        expect(participation.assessment.grading_open?).to be(true)
+      end
+
+      it "accepts the write that was rejected before" do
+        participation.points_total = 12
+        participation.grader = grader
+        participation.graded_at = Time.zone.now
+        participation.status = :reviewed
+
+        expect(participation).to be_valid
+      end
+    end
+
+    context "with an assessable that never closes" do
+      # Talk does not override grading_open?, so it keeps the default of true.
+      let(:assessment) { FactoryBot.create(:assessment, :gradable) }
+      let(:participation) do
+        FactoryBot.create(:assessment_participation, assessment: assessment)
+      end
+
+      it "reports grading as open" do
+        expect(participation.assessment.grading_open?).to be(true)
+      end
+
+      it "accepts grading data straight away" do
+        participation.points_total = 12
+        participation.status = :reviewed
+
+        expect(participation).to be_valid
+      end
+    end
+  end
+
   describe "enums" do
     it "supports all status values" do
       statuses = ["pending", "reviewed", "absent", "exempt"]
@@ -52,6 +139,35 @@ RSpec.describe(Assessment::Participation, type: :model) do
         participation = FactoryBot.build(:assessment_participation, status: status)
         expect(participation.status).to eq(status)
       end
+    end
+  end
+
+  describe "#display_status" do
+    # The enum has four values, the views need five: `pending` covers both
+    # "has not handed in" and "waiting to be marked", told apart by submitted_at.
+    def display_status_for(**attrs)
+      FactoryBot.build(:assessment_participation, **attrs).display_status
+    end
+
+    it "is :not_submitted while pending with no submission" do
+      expect(display_status_for(status: :pending, submitted_at: nil))
+        .to eq(:not_submitted)
+    end
+
+    it "is :pending_grading while pending with a submission" do
+      expect(display_status_for(status: :pending, submitted_at: 1.day.ago))
+        .to eq(:pending_grading)
+    end
+
+    it "passes every other status through unchanged" do
+      [:reviewed, :absent, :exempt].each do |status|
+        expect(display_status_for(status: status)).to eq(status)
+      end
+    end
+
+    it "ignores submitted_at once the status is no longer pending" do
+      expect(display_status_for(status: :reviewed, submitted_at: nil))
+        .to eq(:reviewed)
     end
   end
 
