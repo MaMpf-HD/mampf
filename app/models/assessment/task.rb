@@ -11,6 +11,10 @@ module Assessment
 
     before_destroy :check_no_points_entered, prepend: true
 
+    # Registered first so the statuses are already corrected when the recompute
+    # below reads them.
+    after_create_commit :reopen_reviewed_participations
+
     after_commit :recompute_all_performance_records,
                  on: [:create, :update, :destroy],
                  if: lambda {
@@ -34,6 +38,14 @@ module Assessment
 
       def check_no_points_entered
         throw(:abort) if points_entered?
+      end
+
+      # A new task has no points anywhere, so nobody who counted as fully marked
+      # still is.
+      def reopen_reviewed_participations
+        assessment.assessment_participations
+                  .where(status: :reviewed)
+                  .find_each { |participation| participation.update!(status: :pending) }
       end
 
       def recompute_all_performance_records
