@@ -146,4 +146,63 @@ RSpec.describe(Assessment::Task, type: :model) do
       end
     end
   end
+
+  # Nothing stops a teacher from adding a task after grading has begun. The new
+  # task has no points anywhere, so anyone who counted as fully marked no longer
+  # is and has to go back into the tutor's queue.
+  describe "adding a task once participations exist" do
+    let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
+    let!(:existing_task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+
+    def add_a_task
+      FactoryBot.create(:assessment_task, assessment: assessment)
+    end
+
+    it "sends a reviewed participation back to pending" do
+      participation = FactoryBot.create(:assessment_participation, :reviewed,
+                                        assessment: assessment)
+
+      add_a_task
+
+      expect(participation.reload).to be_pending
+    end
+
+    it "leaves an exempt participation alone" do
+      participation = FactoryBot.create(:assessment_participation, :exempt,
+                                        assessment: assessment)
+
+      add_a_task
+
+      expect(participation.reload).to be_exempt
+    end
+
+    it "leaves an absent participation alone" do
+      participation = FactoryBot.create(:assessment_participation, :absent,
+                                        assessment: assessment)
+
+      add_a_task
+
+      expect(participation.reload).to be_absent
+    end
+
+    it "does not reach into another assessment" do
+      other = FactoryBot.create(:assessment, :gradable, requires_points: true)
+      participation = FactoryBot.create(:assessment_participation, :reviewed,
+                                        assessment: other)
+
+      add_a_task
+
+      expect(participation.reload).to be_reviewed
+    end
+
+    # Only a new task leaves something unscored; editing one does not.
+    it "does not reopen when an existing task is edited" do
+      participation = FactoryBot.create(:assessment_participation, :reviewed,
+                                        assessment: assessment)
+
+      existing_task.update!(max_points: 42)
+
+      expect(participation.reload).to be_reviewed
+    end
+  end
 end

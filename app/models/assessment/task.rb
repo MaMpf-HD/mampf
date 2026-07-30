@@ -11,6 +11,8 @@ module Assessment
 
     before_destroy :check_no_points_entered, prepend: true
 
+    after_create_commit :reopen_reviewed_participations
+
     acts_as_list scope: :assessment
 
     def points_entered?
@@ -27,6 +29,14 @@ module Assessment
 
       def check_no_points_entered
         throw(:abort) if points_entered?
+      end
+
+      # A new task has no points anywhere, so nobody who counted as fully marked
+      # still is.
+      def reopen_reviewed_participations
+        assessment.assessment_participations
+                  .where(status: :reviewed)
+                  .find_each { |participation| participation.update!(status: :pending) }
       end
   end
 end
