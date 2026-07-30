@@ -27,6 +27,34 @@ We use a unified grading model with clear separation of concerns:
 - **Roster Integration:** Participations are seeded from `Roster::Rosterable` models (tutorials, talks) or lecture rosters.
 - **Idempotent Operations:** Re-grading the same submission overwrites points consistently; totals are recomputed atomically.
 
+## Grading Rules
+
+Four rules hold across the whole assessment stack. None of them is visible in a
+single file, and each has been guessed wrongly at least once.
+
+**Grading opens only after the deadline has passed.** On an `Assignment`,
+`grading_open?` is an alias for `totally_expired?`, which becomes true once
+`friendly_deadline` — the deadline plus the lecture's `submission_grace_period` —
+is behind us. `Assessment::Participation` and `Assessment::TaskPoint` both refuse
+to be written before that. An assignment that is not yet due therefore cannot
+carry points at all.
+
+**Only `reviewed` participations contribute points.** An `exempt` one removes its
+assessment from the maximum entirely — an exemption is not a zero. `pending` and
+`absent` contribute nothing while their assessment stays in the maximum, so they
+read as points not earned.
+
+**The percentage is a share of the whole term.** `StudentPerformance::Record`
+divides by every assignment in the lecture, not by those already marked. In week
+three of twelve, a student with a perfect record still shows a low percentage.
+That is the intended reading: eligibility thresholds are stated as a share of the
+term's total points.
+
+**Only assignments count towards those points.** Talks and achievements carry
+grades rather than points. Exams do carry points of their own, but they stay out
+of the performance record deliberately — that record is what decides who is
+admitted to the exam.
+
 ---
 
 ## Tab Organization & Creation Contexts
