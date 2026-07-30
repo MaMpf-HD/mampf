@@ -46,6 +46,8 @@ module StudentPerformance
 
     private
 
+      # Assignments only. Exams carry points as well, but exam eligibility is
+      # earned from assignments, so exam points never count towards it.
       def assessments
         @assessments ||= Assessment::Assessment
                          .where(lecture_id: lecture.id,

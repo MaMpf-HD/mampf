@@ -154,6 +154,36 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
     end
 
+    context "with a point-bearing assessment on something other than an assignment" do
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assessment) do
+        FactoryBot.create(:assessment, :with_points, assessable: assignment,
+                                                     lecture: lecture)
+      end
+      let!(:task) do
+        FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+      end
+
+      let(:achievement) { FactoryBot.create(:achievement, lecture: lecture) }
+      let(:other_assessment) do
+        FactoryBot.create(:assessment, :with_points, assessable: achievement,
+                                                     lecture: lecture)
+      end
+      let!(:other_task) do
+        FactoryBot.create(:assessment_task, assessment: other_assessment,
+                                            max_points: 90)
+      end
+
+      it "leaves it out of the denominator" do
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+
+        expect(record.points_max_materialized).to eq(10)
+      end
+    end
+
     context "when called twice (upsert)" do
       let(:assignment) do
         FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
