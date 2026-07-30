@@ -39,10 +39,19 @@ is behind us. `Assessment::Participation` and `Assessment::TaskPoint` both refus
 to be written before that. An assignment that is not yet due therefore cannot
 carry points at all.
 
-**Only `reviewed` participations contribute points.** An `exempt` one removes its
-assessment from the maximum entirely — an exemption is not a zero. `pending` and
-`absent` contribute nothing while their assessment stays in the maximum, so they
-read as points not earned.
+**Only `reviewed` participations contribute points.** A participation is
+`reviewed` once every task of its assessment carries a value, and it falls back to
+`pending` the moment one is cleared again — or when a task is added later, which
+leaves everyone who was finished with something unscored. An `exempt`
+participation removes its assessment from the maximum entirely; an exemption is
+not a zero. `pending` and `absent` contribute nothing while their assessment stays
+in the maximum.
+
+**Work handed in but not yet marked is recorded separately.** A `pending`
+participation that carries a `submitted_at` is waiting for a tutor rather than
+missing, and `points_max_pending_materialized` on the performance record adds up
+what that is worth. Without it a marking backlog is indistinguishable from work
+never done, and eligibility reads it as a failure.
 
 **The percentage is a share of the whole term.** `StudentPerformance::Record`
 divides by every assignment in the lecture, not by those already marked. In week

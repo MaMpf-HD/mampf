@@ -90,9 +90,9 @@ flowchart LR
     G --> E
 ```
 
-Everything that is *not* an assignment — talks, exams, achievements themselves —
-contributes nothing to the point totals. See
-[E-2.1](02-performance-decisions.md#e-21--only-assignments-count-towards-points).
+Only assignments count towards the points. Exams have points of their own from
+slice 4 on, but those are not included here: these totals are what decide who is
+admitted to the exam.
 
 ## Following the architecture book
 
@@ -122,6 +122,35 @@ place to say so.
 
 *(Design points move here once they have been worked through. What is still in
 progress is listed under [Before review](02-performance-decisions.md).)*
+
+### Unmarked work is recorded, not counted
+
+Points count only once a tutor has awarded them, while the sheet they belong to
+sits in the maximum from the day it exists. That is the right arithmetic — nobody
+has earned anything yet — but on its own it makes a marking backlog look exactly
+like work never done. Jonas hands in all twelve assignments, eleven come back
+worth 96 points, the twelfth is still on his tutor's desk: 96 of 120, 80 %, and
+nothing says the missing 24 points are unmarked rather than lost.
+
+So the record carries a fourth figure, `points_max_pending_materialized` — the
+maximum of every assessment this student handed in that is not fully marked. The
+total, the maximum and the percentage are untouched, so the percentage still means
+*share of the term's points*, which is what an eligibility threshold is stated
+against. The outstanding amount sits beside it instead of being folded in.
+
+Two readers use it. The overview marks the **assignment's column** with an
+hourglass while any of its submissions are unmarked — that is a property of the
+sheet, not of the student, so repeating it on every row would say nothing. And
+slice 3 defers the eligibility decision rather than refusing it, but only where
+the outstanding points could still carry the student over the threshold: somebody
+already past it is proposed eligible, somebody who cannot reach it even with
+everything outstanding is proposed ineligible, and only the genuinely open cases
+wait. Otherwise one unmarked sheet would defer a whole cohort.
+
+A submission counts as awaiting marking while its participation is `pending` with
+a `submitted_at`. Paper hand-ins have no such timestamp today, so for them the
+figure stays zero — see the note on `muesli/tutor-grading-view` in
+[slice 1](01-assessment-core.md).
 
 ## New screens
 

@@ -163,10 +163,12 @@ The main fields and methods of `StudentPerformance::Record` are:
 |---------------------------|-------------------|--------------------------------------------------------------------------|
 | `lecture_id`              | DB column (FK)    | The lecture this performance record applies to                           |
 | `user_id`                 | DB column (FK)    | The student whose performance is materialized                            |
-| `points_total_materialized` | DB column       | Sum of relevant assessment points at computation time                    |
-| `points_max_materialized` | DB column         | Maximum possible points from graded assessments at computation time      |
+| `points_total_materialized` | DB column       | Points awarded so far — only participations that are fully marked count  |
+| `points_max_materialized` | DB column         | Maximum of every assignment in the lecture, minus the ones this student is exempt from |
+| `points_max_pending_materialized` | DB column | Of that maximum, how much belongs to work handed in but not yet fully marked |
 | `percentage_materialized` | DB column         | Computed percentage (points_total / points_max)                          |
 | `achievements_met_ids`    | DB column (JSONB) | Optional list of achievement IDs currently met (factual audit)           |
+| `achievements_ungraded_ids` | DB column (JSONB) | Achievement IDs with no grade recorded yet — not met, but not missed either |
 | `computed_at`             | DB column         | Timestamp of last computation                                            |
 
 ### Behavior Highlights
@@ -534,62 +536,39 @@ The "proposal calculator" for teachers: shows which students would pass/fail bas
 - Finalization guards (Policy requires Certification=passed)
 - Any automated student-facing flows
 
-### Example Implementation
+### How the decision is reached
+
+Two criteria, each in one of three states, and one rule that weighs them: a
+criterion nobody can satisfy any more settles the case, one that is merely
+unfinished defers it.
 
 ```ruby
-module StudentPerformance
-  class Evaluator
-    Result = Struct.new(:proposed_status, :details, keyword_init: true)
+      def evaluate(record)
+        return Result.new(proposed_status: :failed, details: {}) unless record
 
-    def initialize(rule)
-      @rule = rule
-    end
+        propose(points_status(record), achievements_status(record))
+      end
 
-    def evaluate(record)
-      return Result.new(proposed_status: :failed, details: {}) unless record
+      # :met · :pending (marking outstanding) · :not_met
+      # :met · :ungraded (no grade recorded)   · :not_met
+      def propose(*statuses)
+        return :failed if statuses.include?(:not_met)
+        return :inconclusive if statuses.intersect?([:pending, :ungraded])
 
-      req_pts = required_points(@rule)
-      meets_points = req_pts.nil? || record.points_total_materialized.to_i >= req_pts
-      meets_achievements = includes_all?(
-        record.achievements_met_ids,
-        @rule.required_achievements.pluck(:id)
-      )
-      proposed = (meets_points && meets_achievements) ? :passed : :failed
-
-      Result.new(
-        proposed_status: proposed,
-        details: {
-          current_points: record.points_total_materialized,
-          required_points: req_pts,
-          current_achievement_ids: record.achievements_met_ids,
-          required_achievement_ids: @rule.required_achievements.pluck(:id)
-        }
-      )
-    end
-
-    def bulk_evaluate(records)
-      records.map { |record| [record, evaluate(record)] }.to_h
-    end
-
-    private
-
-    def required_points(rule)
-      return rule.min_points_absolute if rule.min_points_absolute.present?
-      return nil unless rule.min_percentage.present?
-
-      total = rule.lecture.assignments.sum(:max_points)
-      (total * rule.min_percentage / 100.0).ceil
-    end
-
-    def includes_all?(have_ids, need_ids)
-      return true if need_ids.blank?
-      have = Array(have_ids).map(&:to_i).to_set
-      need = Array(need_ids).map(&:to_i).to_set
-      have >= need
-    end
-  end
-end
+        :passed
+      end
 ```
+
+`points_status` is `:pending` when the student is below the threshold but the
+points still awaiting marking — `points_max_pending_materialized` — would carry
+them over it. Marking only ever adds points, and the sheets awaiting it are
+already inside `points_max_materialized`, so the best case is simply everything
+outstanding awarded in full.
+
+That distinction matters in both directions. Without it, a tutor's backlog reads
+as a failed threshold and the student is refused for somebody else's unfinished
+work. With a plain "anything outstanding defers the decision", a single unmarked
+sheet would defer the entire cohort, including students who passed weeks ago.
 
 ---
 

@@ -36,98 +36,6 @@ the end of the file.
 
 ---
 
-## E-2.1 · Only assignments count towards points
-
-> **Should talks, exams and achievements contribute nothing to a student's point
-> total?**
-
-**As built.** The service's `assessments` scope filters
-`assessable_type: "Assignment"`. Every other assessable is invisible to the
-point aggregation.
-
-**Code.** [the `assessments` scope][c2-assessments] ·
-[`aggregate_from_prefetched`][c2-aggregate]
-
-**Example.** *Analysis I* has ten homework assignments (120 points), one graded
-talk (20 points) and, from slice 4 on, an exam.
-
-- Hannah scores 90 on homework and 20 on her talk
-- her record shows **90 of 120**, 75 % — the talk is absent from both numbers
-- an eligibility rule of "at least 50 %" therefore judges homework only
-
-**Why it matters.** The term "performance record" suggests everything a student
-did, and a teacher configuring a percentage threshold will reasonably assume it
-covers all point-bearing work. Once slice 4 adds exams as `Pointable`, this
-becomes load-bearing: exam points will silently not count towards eligibility for
-the next exam.
-
-**Alternative.** Include every `Pointable` assessable, or make the set
-configurable per rule.
-
-**Status:** verify.
-
----
-
-## E-2.2 · Exempt participations shrink the denominator
-
-> **Should an exempted assignment reduce the maximum points rather than count as
-> zero?**
-
-**As built.** `aggregate_from_prefetched` collects the assessment IDs of
-`exempt` participations and removes those assessments from the `points_max` sum,
-which is the sum of each remaining assessment's `effective_total_points`.
-`reviewed` participations contribute to `points_total`.
-
-**Code.** [`aggregate_from_prefetched`][c2-aggregate]
-
-**Example.** Ten assignments, 12 points each (120 total). Ian is exempted from
-two on medical grounds and scores 84 on the remaining eight.
-
-- exempt assessments drop out of the maximum → `points_max` = **96**
-- `points_total` = 84 → **87.5 %**
-
-Had exemption counted as zero, he would sit at 70 % and might fail a 75 %
-threshold he was never meant to be measured against.
-
-**Why it matters.** This is the fair reading and almost certainly the intent —
-but it means two students can have percentages computed against different
-denominators, so the percentage is not comparable across students, only against
-a threshold.
-
-**Status:** verify.
-
----
-
-## E-2.3 · Only `reviewed` participations contribute points
-
-> **Should a graded-but-not-yet-reviewed participation count for nothing?**
-
-**As built.** Points are summed over participations whose status is `reviewed`.
-`pending` contributes nothing to the total but is *not* removed from the
-maximum.
-
-**Code.** [`aggregate_from_prefetched`][c2-aggregate]
-
-**Example.** Jonas hands in all ten assignments. Nine are graded; the tenth sits
-ungraded at the tutor's.
-
-- `points_total` counts nine → say 96
-- `points_max` still counts all ten → 120
-- record shows **80 %**
-
-His percentage is depressed purely by the tutor's backlog, and nothing in the
-record distinguishes "scored badly" from "not marked yet".
-
-**Why it matters.** Slice 3 turns this percentage into an eligibility decision.
-An unfinished grading queue therefore looks exactly like poor performance. Note
-that slice 3 handles this carefully for *achievements* (there is an explicit
-`ungraded` state) but not for points.
-
-**Status:** verify · consider whether the record should expose an
-"ungraded points" figure the way it exposes ungraded achievements.
-
----
-
 ## E-2.4 · An achievement is "ungraded" when no grade text exists at all
 
 > **Is absence of a grade the right definition of "not yet decided" for an
@@ -318,9 +226,6 @@ exactly where it would matter.
 
 | # | Decision | Status |
 |---|---|---|
-| E-2.1 | Only assignments count towards points | reconstructed |
-| E-2.2 | Exempt shrinks the denominator | reconstructed |
-| E-2.3 | Only `reviewed` contributes; ungraded depresses the percentage | reconstructed |
 | E-2.4 | "Ungraded" = no grade text at all | settled |
 | E-2.5 | Threshold change ⇒ synchronous full-lecture recompute | reconstructed |
 | E-2.6 | `Record#stale?` is a second, unrelated definition of stale | reconstructed |
@@ -328,10 +233,8 @@ exactly where it would matter.
 | E-2.8 | Non-members skipped; their records are never cleaned up | reconstructed |
 | E-2.9 | Percentage nil when unmeasurable, flattened to 0 downstream | reconstructed |
 
-**E-2.1 and E-2.3 deserve the most attention.** Both silently shape the number
-that slice 3 turns into an admission decision: the first by excluding whole
-categories of work, the second by making an unfinished grading queue
-indistinguishable from poor performance.
+**E-2.5 deserves the most attention.** Changing a threshold recomputes every
+record in the lecture, synchronously, in the request that saved the rule.
 
 <!-- ------------------------------------------------------------------ -->
 <!-- Code permalinks — all pinned to 73031867, the tip of                -->
