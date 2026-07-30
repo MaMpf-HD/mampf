@@ -11,25 +11,19 @@ module StudentPerformance
     def evaluate(record)
       return Result.new(proposed_status: :failed, details: {}) unless record
 
-      meets_points = points_met?(record)
-      achievement_status = achievements_status(record)
-
-      proposed = if achievement_status == :ungraded
-        :inconclusive
-      elsif meets_points && achievement_status == :met
-        :passed
-      else
-        :failed
-      end
+      points = points_status(record)
+      achievements = achievements_status(record)
 
       Result.new(
-        proposed_status: proposed,
+        proposed_status: propose(points, achievements),
         details: {
-          meets_points: meets_points,
-          meets_achievements: achievement_status == :met,
-          achievements_ungraded: achievement_status == :ungraded,
+          meets_points: points == :met,
+          points_pending: points == :pending,
+          meets_achievements: achievements == :met,
+          achievements_ungraded: achievements == :ungraded,
           points_total: record.points_total_materialized,
           points_max: record.points_max_materialized,
+          points_max_pending: record.points_max_pending_materialized,
           percentage: record.percentage_materialized,
           required_points: required_points_threshold,
           required_percentage: rule.min_percentage,
@@ -46,6 +40,22 @@ module StudentPerformance
 
     private
 
+      # A criterion nobody can satisfy any more settles the case; one that is
+      # merely unfinished defers it.
+      def propose(*statuses)
+        return :failed if statuses.include?(:not_met)
+        return :inconclusive if statuses.intersect?([:pending, :ungraded])
+
+        :passed
+      end
+
+      def points_status(record)
+        return :met if points_met?(record)
+        return :pending if points_still_reachable?(record)
+
+        :not_met
+      end
+
       def points_met?(record)
         if rule.min_points_absolute.present?
           (record.points_total_materialized || 0) >= rule.min_points_absolute
@@ -53,6 +63,26 @@ module StudentPerformance
           (record.percentage_materialized || 0) >= rule.min_percentage
         else
           true
+        end
+      end
+
+      # Refusing eligibility because a tutor is behind would be the record's
+      # fault, not the student's. Marking can only add points, and the sheets
+      # awaiting it are already counted in the maximum, so the best case is
+      # simply everything outstanding awarded in full.
+      def points_still_reachable?(record)
+        pending = record.points_max_pending_materialized || 0
+        return false if pending.zero?
+
+        best_total = (record.points_total_materialized || 0) + pending
+
+        if rule.min_points_absolute.present?
+          best_total >= rule.min_points_absolute
+        elsif rule.min_percentage.present?
+          max = record.points_max_materialized || 0
+          max.positive? && (best_total / max * 100) >= rule.min_percentage
+        else
+          false
         end
       end
 
