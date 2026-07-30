@@ -166,6 +166,99 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(response.body).to include(member.tutorial_name)
           expect(response.body).to include(non_member.tutorial_name)
         end
+
+        # These are the people staff have to chase: enrolled, so they show up at
+        # 0 %, but in no tutorial, so they cannot hand anything in.
+        it "filters down to people in no tutorial at all" do
+          get lecture_student_performance_records_path(lecture, tutorial_id: "none")
+
+          expect(response.body).to include(non_member.tutorial_name)
+          expect(response.body).not_to include(member.tutorial_name)
+        end
+
+        it "does not count a tutorial in another lecture as having one" do
+          other_lecture = FactoryBot.create(:lecture)
+          other_tutorial = FactoryBot.create(:tutorial, lecture: other_lecture)
+          FactoryBot.create(:tutorial_membership,
+                            tutorial: other_tutorial, user: non_member)
+
+          get lecture_student_performance_records_path(lecture, tutorial_id: "none")
+
+          expect(response.body).to include(non_member.tutorial_name)
+        end
+
+        it "shows everyone when no filter is given" do
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).to include(member.tutorial_name)
+          expect(response.body).to include(non_member.tutorial_name)
+        end
+      end
+
+      # An unmarked sheet holds back everyone at once, so the warning belongs on
+      # the assignment's column, not on each student's row.
+      context "with submissions still awaiting marking" do
+        let(:assignment) do
+          FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+        end
+        let(:assessment) do
+          FactoryBot.create(:assessment, :with_points, assessable: assignment,
+                                                       lecture: lecture)
+        end
+        let!(:task) do
+          FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+        end
+        let(:student) { FactoryBot.create(:confirmed_user) }
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture, user: student)
+        end
+
+        it "marks the assignment column when something is unmarked" do
+          FactoryBot.create(:assessment_participation, :submitted,
+                            assessment: assessment, user: student)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).to include("bi-hourglass-split")
+          expect(response.body).to include(
+            I18n.t("student_performance.records.index.awaiting_marking", count: 1)
+          )
+        end
+
+        it "does not mark the column once everything is marked" do
+          FactoryBot.create(:assessment_participation, :reviewed,
+                            assessment: assessment, user: student)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).not_to include("bi-hourglass-split")
+        end
+
+        it "does not mark the column for work that was never handed in" do
+          FactoryBot.create(:assessment_participation, :pending,
+                            assessment: assessment, user: student)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).not_to include("bi-hourglass-split")
+        end
+
+        it "counts only the students the filter shows" do
+          other = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:student_performance_record, lecture: lecture, user: other)
+          FactoryBot.create(:assessment_participation, :submitted,
+                            assessment: assessment, user: student)
+          FactoryBot.create(:assessment_participation, :submitted,
+                            assessment: assessment, user: other)
+
+          get lecture_student_performance_records_path(lecture, tutorial_id: "none")
+
+          expect(response.body).to include(
+            I18n.t("student_performance.records.index.awaiting_marking", count: 2)
+          )
+        end
       end
 
       context "with pagination" do
