@@ -25,7 +25,8 @@ de:
       index:
         subtitle: "Faktische Leistungsdaten, berechnet aus Bewertungen."
         generate_proposals: "Vorschläge generieren"
-        all_tutorials: "Alle Übungsgruppen"
+        all_participants: "Alle Teilnehmenden"
+        without_tutorial: "Ohne Übungsgruppe"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
         details: "Details"
         showing: "%{from}–%{to} von %{count} Studierenden"

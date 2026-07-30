@@ -2,6 +2,10 @@ module StudentPerformance
   # Controller for managing student performance records, including listing,
   # showing details, and recomputing records.
   class RecordsController < ApplicationController
+    # A lecture member without a tutorial cannot hand anything in, so they read
+    # as 0 % — the filter is how staff find them, not a tutorial id.
+    NO_TUTORIAL = "none".freeze
+
     before_action :set_lecture
     before_action :authorize_lecture
     before_action :use_lecture_locale
@@ -24,7 +28,9 @@ module StudentPerformance
                                "''), users.name) ASC"
                              ))
 
-      if params[:tutorial_id].present?
+      if params[:tutorial_id] == NO_TUTORIAL
+        scope = scope.where.not(user_id: tutorial_member_ids)
+      elsif params[:tutorial_id].present?
         tutorial = @lecture.tutorials.find_by(id: params[:tutorial_id])
 
         if tutorial
@@ -56,6 +62,10 @@ module StudentPerformance
     end
 
     private
+
+      def tutorial_member_ids
+        TutorialMembership.where(tutorial: @lecture.tutorials).select(:user_id)
+      end
 
       def set_lecture
         @lecture = Lecture.find_by(id: params[:lecture_id])

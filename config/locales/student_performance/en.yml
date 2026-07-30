@@ -25,7 +25,8 @@ en:
       index:
         subtitle: "Factual performance data computed from assessments."
         generate_proposals: "Generate Proposals"
-        all_tutorials: "All Tutorial Groups"
+        all_participants: "All participants"
+        without_tutorial: "Without tutorial group"
         empty: "No performance records have been computed yet."
         details: "Details"
         showing: "Showing %{from}–%{to} of %{count} students"

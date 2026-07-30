@@ -166,6 +166,33 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(response.body).to include(member.tutorial_name)
           expect(response.body).to include(non_member.tutorial_name)
         end
+
+        # These are the people staff have to chase: enrolled, so they show up at
+        # 0 %, but in no tutorial, so they cannot hand anything in.
+        it "filters down to people in no tutorial at all" do
+          get lecture_student_performance_records_path(lecture, tutorial_id: "none")
+
+          expect(response.body).to include(non_member.tutorial_name)
+          expect(response.body).not_to include(member.tutorial_name)
+        end
+
+        it "does not count a tutorial in another lecture as having one" do
+          other_lecture = FactoryBot.create(:lecture)
+          other_tutorial = FactoryBot.create(:tutorial, lecture: other_lecture)
+          FactoryBot.create(:tutorial_membership,
+                            tutorial: other_tutorial, user: non_member)
+
+          get lecture_student_performance_records_path(lecture, tutorial_id: "none")
+
+          expect(response.body).to include(non_member.tutorial_name)
+        end
+
+        it "shows everyone when no filter is given" do
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).to include(member.tutorial_name)
+          expect(response.body).to include(non_member.tutorial_name)
+        end
       end
 
       context "with pagination" do
