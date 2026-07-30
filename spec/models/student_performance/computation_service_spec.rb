@@ -154,6 +154,36 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
     end
 
+    context "with a point-bearing assessment on something other than an assignment" do
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assessment) do
+        FactoryBot.create(:assessment, :with_points, assessable: assignment,
+                                                     lecture: lecture)
+      end
+      let!(:task) do
+        FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+      end
+
+      let(:achievement) { FactoryBot.create(:achievement, lecture: lecture) }
+      let(:other_assessment) do
+        FactoryBot.create(:assessment, :with_points, assessable: achievement,
+                                                     lecture: lecture)
+      end
+      let!(:other_task) do
+        FactoryBot.create(:assessment_task, assessment: other_assessment,
+                                            max_points: 90)
+      end
+
+      it "leaves it out of the denominator" do
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+
+        expect(record.points_max_materialized).to eq(10)
+      end
+    end
+
     context "when called twice (upsert)" do
       let(:assignment) do
         FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
@@ -275,6 +305,90 @@ RSpec.describe(StudentPerformance::ComputationService) do
         compute
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
         expect(record.percentage_materialized).to be_within(0.01).of(75.0)
+      end
+    end
+
+    # A sheet that was handed in but is not fully marked contributes nothing to
+    # the total while still sitting in the maximum. Recording how much is
+    # outstanding is what lets eligibility tell a marking backlog from a fail.
+    describe "points still awaiting marking" do
+      let(:marked_assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:unmarked_assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:marked) do
+        FactoryBot.create(:assessment, :with_points, assessable: marked_assignment,
+                                                     lecture: lecture)
+      end
+      let(:unmarked) do
+        FactoryBot.create(:assessment, :with_points, assessable: unmarked_assignment,
+                                                     lecture: lecture)
+      end
+
+      let!(:marked_task) do
+        FactoryBot.create(:assessment_task, assessment: marked, max_points: 20)
+      end
+      let!(:unmarked_task) do
+        FactoryBot.create(:assessment_task, assessment: unmarked, max_points: 30)
+      end
+
+      let!(:marked_participation) do
+        FactoryBot.create(:assessment_participation, :reviewed,
+                          assessment: marked, user: user)
+      end
+      let!(:tp) do
+        FactoryBot.create(:assessment_task_point, task: marked_task,
+                                                  assessment_participation: marked_participation,
+                                                  points: 15)
+      end
+
+      let(:record) do
+        compute
+        StudentPerformance::Record.find_by(lecture: lecture, user: user)
+      end
+
+      it "counts a submitted but unmarked assessment" do
+        FactoryBot.create(:assessment_participation, :submitted,
+                          assessment: unmarked, user: user)
+
+        expect(record.points_max_pending_materialized).to eq(30)
+      end
+
+      it "does not count work that was never handed in" do
+        FactoryBot.create(:assessment_participation, :pending,
+                          assessment: unmarked, user: user)
+
+        expect(record.points_max_pending_materialized).to eq(0)
+      end
+
+      it "does not count an assessment without any participation" do
+        expect(record.points_max_pending_materialized).to eq(0)
+      end
+
+      it "stops counting once the assessment is marked" do
+        FactoryBot.create(:assessment_participation, :reviewed,
+                          assessment: unmarked, user: user)
+
+        expect(record.points_max_pending_materialized).to eq(0)
+      end
+
+      it "does not count an exempt assessment" do
+        FactoryBot.create(:assessment_participation, :exempt,
+                          assessment: unmarked, user: user)
+
+        expect(record.points_max_pending_materialized).to eq(0)
+      end
+
+      # The point of the figure: the total and the maximum stay untouched, so the
+      # percentage keeps meaning "share of the term".
+      it "leaves the total and the maximum alone" do
+        FactoryBot.create(:assessment_participation, :submitted,
+                          assessment: unmarked, user: user)
+
+        expect(record.points_total_materialized).to eq(15)
+        expect(record.points_max_materialized).to eq(50)
       end
     end
 
