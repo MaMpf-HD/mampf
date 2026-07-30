@@ -787,6 +787,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_21_000002) do
     t.bigint "user_id", null: false
     t.decimal "points_total_materialized", precision: 10, scale: 2
     t.decimal "points_max_materialized", precision: 10, scale: 2
+    t.decimal "points_max_pending_materialized", precision: 10, scale: 2
     t.decimal "percentage_materialized", precision: 5, scale: 2
     t.jsonb "achievements_met_ids", default: []
     t.jsonb "achievements_ungraded_ids", default: []
