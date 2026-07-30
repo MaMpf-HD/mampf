@@ -172,6 +172,25 @@ home here.
 Covered by `assessment_backfill_worker_spec` — eleven examples, including
 idempotency and that existing participations are never overwritten.
 
+~~~admonish danger "Concerns another PR: this seeding disables a feature on `muesli/tutor-grading-view`"
+On that branch a tutor can record that a student handed work in on paper. The
+button says "Mark as participated", and it works by creating a participation row
+for that student.
+
+The view decides whether to offer the button by checking whether such a row
+already exists. But the worker above creates one for every tutorial member of
+every expired assignment, and `config/schedule.yml` runs it every minute. So a
+minute after the deadline everyone has a row: the button never appears, and the
+counter of people not yet marked stays at zero.
+
+The row is the wrong signal. `submitted_at` is the right one — this slice already
+treats it as the only record of whether something was handed in, see [the display
+status entry](#submission-is-a-timestamp-so-the-display-status-is-derived). The
+digital path sets it on upload; the paper path would have to set it as well. Slice
+2 needs that same distinction to tell a sheet still being marked from one that was
+never handed in.
+~~~
+
 ### Entered points block deleting a task; the deadline does not
 
 A task is deletable until somebody has recorded a result for it. From then on
