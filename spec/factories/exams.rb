@@ -3,8 +3,13 @@ FactoryBot.define do
     association :lecture
     title { "#{Faker::Educator.subject} Exam #{Faker::Number.number(digits: 4)}" }
 
+    # Far enough out that a registration deadline still fits in front of it.
+    # The model derives one at `date - 3.days` and refuses it once it is in the
+    # past, and specs set their own up to a week ahead — a plain
+    # `Faker::Time.forward(days: 30)` drew inside that window often enough to
+    # turn whole suite runs red at random.
     trait :with_date do
-      date { Faker::Time.forward(days: 30) }
+      date { Faker::Time.between(from: 14.days.from_now, to: 45.days.from_now) }
     end
 
     trait :written do
