@@ -209,6 +209,8 @@ de:
     point_grid:
       total: "Gesamt"
     statistics_placeholder: "Statistiken sind noch nicht verfügbar"
+    statistics_analysis: "Statistiken & Analyse"
+    statistics_description: "Hier können Sie Statistiken und Analysen für diese Prüfung einsehen."
 
   roster:
     no_participants_yet: "Noch keine Teilnehmenden vorhanden."

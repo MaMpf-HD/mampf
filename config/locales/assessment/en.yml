@@ -209,6 +209,8 @@ en:
     point_grid:
       total: "Total"
     statistics_placeholder: "Statistics are not yet available"
+    statistics_analysis: "Statistics & Analysis"
+    statistics_description: "Here you can view statistics and analysis for this exam."
 
   roster:
     no_participants_yet: "No participants yet."
