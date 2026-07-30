@@ -49,20 +49,33 @@ the next slice lands.
 ~~~
 
 ~~~admonish warning "`roster.participants` has no German translation"
-English has it, German does not. The key has been in use since slice 3, but this
-slice adds a call site in `exams/_list.html.erb` that `i18n-tasks` picks up,
-which is why it surfaces here.
+English has it, German does not. This slice introduces the only call site,
+`exams/_list.html.erb:30`, so `i18n_spec` is red on every run of this branch and
+of slice 5 — while it is green on `next`, where nothing references the key.
+
+A one-line addition to `config/locales/roster/de.yml` fixes it. Note that the
+neighbouring `participants` keys in that file sit one level deeper and are
+different keys.
 ~~~
 
-~~~admonish warning "`exam_registration_spec` is flaky by construction"
+~~~admonish warning "Two exam specs are flaky by construction"
 The exam factory sets `date { Faker::Time.forward(days: 30) }` — a random point
-within the next 30 days. Examples that then set
-`registration_deadline = exam.date - 1.day` land in the past whenever the draw is
-less than a day out, and the deadline validation rejects them.
+within the next 30 days. Both failures come from that draw landing inside the
+**three-day** window that the surrounding code assumes is available:
 
-Demonstrated: the same file gives 0 failures on seed 222 and 2 on seed 333. This
-is why different examples failed on slice 4 and slice 5 — it is the dice, not the
-code. A fixed date in the affected examples fixes it.
+- `exam_registration_spec` passes a fixed `registration_deadline: 3.days.from_now`,
+  which falls *after* an exam drawn less than three days out
+- `exam_settings_component_spec` relies on the model default, [`date - 3.days`][c4-createcamp],
+  which lands *in the past* for the same draw, so opening the campaign is refused
+
+Measured: `Faker::Time.forward(days: 30)` returns a date under three days out in
+**92 of 1000 draws**, so each affected example fails about one run in eleven, and
+a full suite run shows a different subset each time. Demonstrated directly — with
+the date forced to +10 days the record is valid, at +1 day it is not, with the
+identical spec setup.
+
+Giving the affected examples a fixed date fixes both. The factory's random date is
+fine for specs that do not reason about the deadline.
 ~~~
 
 ---
