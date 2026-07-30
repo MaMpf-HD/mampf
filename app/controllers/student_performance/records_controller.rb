@@ -41,6 +41,7 @@ module StudentPerformance
 
       @pagy, @records = pagy(scope)
       load_assessment_statuses
+      @awaiting_marking = awaiting_marking_counts(scope)
       @standard_max = @assessments.sum(&:effective_total_points)
       @achievements = @lecture.achievements.order(:title)
     end
@@ -65,6 +66,19 @@ module StudentPerformance
 
       def tutorial_member_ids
         TutorialMembership.where(tutorial: @lecture.tutorials).select(:user_id)
+      end
+
+      # Per assignment, how many of the listed students handed in without being
+      # marked yet. Counted over the whole filtered set rather than the current
+      # page, because the number describes the sheet, not the page.
+      def awaiting_marking_counts(scope)
+        Assessment::Participation
+          .where(assessment_id: @assessments.select(:id),
+                 user_id: scope.reorder(nil).select(:user_id),
+                 status: :pending)
+          .where.not(submitted_at: nil)
+          .group(:assessment_id)
+          .count
       end
 
       def set_lecture

@@ -78,6 +78,18 @@
               >
                 <%= assessment.short_title %>
 
+                <% awaiting = @awaiting_marking[assessment.id].to_i %>
+                <% if awaiting.positive? %>
+                  <% label = t("student_performance.records.index.awaiting_marking",
+                               count: awaiting) %>
+                  <i
+                    class="bi bi-hourglass-split text-warning"
+                    title="<%= label %>"
+                    role="img"
+                    aria-label="<%= label %>"
+                  ></i>
+                <% end %>
+
                 <br>
 
                 <span class="fw-normal text-muted" style="font-size: 0.75em">

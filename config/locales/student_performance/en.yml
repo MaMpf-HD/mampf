@@ -27,6 +27,9 @@ en:
         generate_proposals: "Generate Proposals"
         all_participants: "All participants"
         without_tutorial: "Without tutorial group"
+        awaiting_marking:
+          one: "1 submission is not marked yet"
+          other: "%{count} submissions are not marked yet"
         empty: "No performance records have been computed yet."
         details: "Details"
         showing: "Showing %{from}–%{to} of %{count} students"

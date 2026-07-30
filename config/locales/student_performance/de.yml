@@ -27,6 +27,9 @@ de:
         generate_proposals: "Vorschläge generieren"
         all_participants: "Alle Teilnehmenden"
         without_tutorial: "Ohne Übungsgruppe"
+        awaiting_marking:
+          one: "1 Abgabe ist noch nicht bewertet"
+          other: "%{count} Abgaben sind noch nicht bewertet"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
         details: "Details"
         showing: "%{from}–%{to} von %{count} Studierenden"
