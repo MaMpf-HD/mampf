@@ -25,12 +25,21 @@ RSpec.describe("Registration::Policies", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
+      # Titles reach the page escaped, and Faker hands out English book titles
+      # with apostrophes in about one draw in twenty — "The Monkey's Raincoat"
+      # renders as "The Monkey&#39;s Raincoat" and an unescaped comparison misses
+      # it. Which language Faker picks follows the ambient I18n locale, so the
+      # same run is green or red depending on what ran before it.
+      def rendered(title)
+        ERB::Util.html_escape(title)
+      end
+
       it "lists only lectures from the same course for student performance policies" do
         get new_registration_campaign_policy_path(campaign)
 
-        expect(response.body).to include(lecture.title)
-        expect(response.body).to include(same_course_lecture.title)
-        expect(response.body).not_to include(other_course_lecture.title)
+        expect(response.body).to include(rendered(lecture.title))
+        expect(response.body).to include(rendered(same_course_lecture.title))
+        expect(response.body).not_to include(rendered(other_course_lecture.title))
       end
 
       it "preselects the current lecture for student performance policies" do
@@ -42,7 +51,7 @@ RSpec.describe("Registration::Policies", type: :request) do
         expect(response.body).to include('data-controller="selectize"')
         expect(response.body).to match(
           /<option(?=[^>]*value="#{lecture.id}")(?=[^>]*selected="selected")[^>]*>
-          #{Regexp.escape(lecture.title)}/x
+          #{Regexp.escape(rendered(lecture.title))}/x
         )
       end
 
