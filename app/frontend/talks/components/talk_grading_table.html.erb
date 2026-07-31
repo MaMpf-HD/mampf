@@ -1,0 +1,55 @@
+<%# app/components/talk_grading_table_component.html.erb %>
+
+<% if gradable_talks.any? %>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle grading-table">
+      <thead>
+        <tr>
+          <th><%= t("assessment.grade_talk_row.speaker") %></th>
+          <th class="text-center"><%= t("assessment.grade_talk_row.status") %></th>
+          <th class="text-center"><%= t("assessment.grade_talk_row.grade") %></th>
+          <th class="note-col"><%= t("assessment.grade_talk_row.note") %></th>
+          <th><%= t("assessment.grade_talk_row.graded_by") %></th>
+          <th><%= t("assessment.grade_talk_row.graded_at") %></th>
+          <th class="text-end"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% gradable_talks.each do |talk| %>
+          <tr class="table-group-header">
+            <td colspan="7"><strong><%= talk.title %></strong></td>
+          </tr>
+
+          <% talk.speakers.each do |speaker| %>
+            <%= render GradeTalkRowComponent.new(user: speaker, talk: talk) %>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<% if legacy_talks.any? %>
+  <p class="text-muted small mb-2">
+    <%= t('assessment.info.talks_without_assessment') %>
+  </p>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-4">
+      <thead>
+        <tr>
+          <th><%= t('basics.title') %></th>
+          <th><%= t('assessment.speakers') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% legacy_talks.each do |talk| %>
+          <tr>
+            <td><%= talk.title %></td>
+            <td><%= talk.speakers.map(&:tutorial_name).join(", ") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

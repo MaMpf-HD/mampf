@@ -148,6 +148,7 @@ de:
       no_task: "Aufgabe nicht gefunden."
     info:
       talks_created_in_roster: "Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab."
+      talks_without_assessment: "Für diese Vorträge ist noch keine Bewertung hinterlegt."
     grade_table:
       pending: "ausstehend"
       reviewed: "überprüft"
@@ -207,6 +208,15 @@ de:
     point_grid:
       total: "Gesamt"
     statistics_placeholder: "Statistiken sind noch nicht verfügbar"
+    grade_talk_row:
+      speaker: "Sprecher:in"
+      status: "Status"
+      grade: "Note"
+      note: "Notiz"
+      graded_by: "Bewertet von"
+      graded_at: "Bewertet am"
+      pending: "Ausstehend"
+    mark_absent: "Als abwesend markieren"
 
   activerecord:
     errors:

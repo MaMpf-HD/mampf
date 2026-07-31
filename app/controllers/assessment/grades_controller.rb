@@ -1,6 +1,6 @@
 module Assessment
   class GradesController < ApplicationController
-    before_action :set_talk_resource,
+    before_action :set_talk_and_user_resource,
                   only: [:update, :mark_absent, :mark_exempt, :refresh]
     before_action :set_locale
     before_action :authorize_assessment!,
@@ -11,47 +11,59 @@ module Assessment
       respond_with_flash(:alert, I18n.t("assessment.grades.invalid_params"))
     end
 
-    rescue_from Assessment::GradeEntryService::GradeEntryError,
-                Assessment::AbsenceHandling::AbsenceHandlingError do |e|
-      respond_with_flash(:alert, e.message)
-    end
+    # rescue_from Assessment::GradeEntryService::GradeEntryError,
+    #             Assessment::AbsenceHandling::AbsenceHandlingError do |e|
+    #   respond_with_flash(:alert, e.message)
+    # end
 
     def authorize_assessment!
       authorize! :grade, @lecture if @lecture.present?
     end
 
     def update
+      participation = find_or_create_participation
       Assessment::GradeEntryService.set_grade(
-        @participation, params[:grade], current_user, params[:comment]
+        participation, params[:grade], current_user, params[:comment]
       )
-      @participation = @participation.reload
+      @participation = participation.reload
       render_grade_update(replace_participation_row)
     end
 
     def mark_absent
-      # Assessment::AbsenceHandling.mark_absent(@participation, current_user)
-      @participation = @participation.reload
+      participation = find_or_create_participation
+      # Assessment::AbsenceHandling.mark_absent(participation, current_user)
+      @participation = participation.reload
       render_grade_update(replace_participation_row)
     end
 
     def mark_exempt
-      # Assessment::AbsenceHandling.mark_exempt(@participation, current_user)
-      @participation = @participation.reload
+      participation = find_or_create_participation
+      # Assessment::AbsenceHandling.mark_exempt(participation, current_user)
+      @participation = participation.reload
       render_grade_update(replace_participation_row)
     end
 
     def refresh
+      # Participation may not exist yet — that's fine, row just re-renders as "pending"
+      @participation = @talk.participations.find_by(user_id: @user.id)
       rerender_participation_row
     end
 
     private
 
+      def find_or_create_participation
+        @talk.participations.find_or_create_by!(user_id: @user.id) do |p|
+          p.assessment = @assessment
+        end
+      end
+
       def replace_participation_row
         turbo_stream.replace(
-          "participation-row-#{@participation.id}",
+          "participation-row-user-#{@user.id}",
           html: render_to_string(GradeTalkRowComponent.new(
-                                   participation: @participation,
-                                   talk: @talk
+                                   user: @user,
+                                   talk: @talk,
+                                   participation: @participation
                                  ))
         )
       end
@@ -69,45 +81,22 @@ module Assessment
         render turbo_stream: streams.flatten.compact + [stream_flash].compact
       end
 
-      def set_talk_resource
-        if params[:participation_id]
-          set_resources_from_participation
-        elsif params[:talk_id]
-          set_resources_from_talk
-        end
-      end
-
-      def set_resources_from_participation
-        @participation = Assessment::Participation.find_by(id: params[:participation_id])
-        unless @participation
-          return respond_with_flash(:alert,
-                                    t("assessment.grades.participation_not_found"))
-        end
-
-        @assessment = @participation.assessment
-        unless @assessment
-          return respond_with_flash(:alert,
-                                    t("assessment.grades.participation_missing_assessment"))
-        end
-
-        @talk = @assessment.assessable
-        unless @talk
-          return respond_with_flash(:alert,
-                                    t("assessment.grades.participation_missing_talk"))
-        end
-
-        @lecture = @talk.lecture
-      end
-
-      def set_resources_from_talk
+      def set_talk_and_user_resource
         @talk = Talk.find_by(id: params[:talk_id])
         return respond_with_flash(:alert, t("assessment.grades.talk_not_found")) unless @talk
 
         @lecture = @talk.lecture
         @assessment = @talk.assessment
-        return if @assessment
+        unless @assessment
+          return respond_with_flash(:alert, t("assessment.grades.talk_missing_assessment"))
+        end
 
-        respond_with_flash(:alert, t("assessment.grades.talk_missing_assessment"))
+        @user = User.find_by(id: params[:user_id])
+        return respond_with_flash(:alert, t("assessment.grades.user_not_found")) unless @user
+
+        return if @talk.speakers.exists?(id: @user.id)
+
+        respond_with_flash(:alert, t("assessment.grades.user_not_speaker"))
       end
 
       def current_ability
@@ -117,7 +106,6 @@ module Assessment
       def set_locale
         I18n.locale = @lecture&.locale_with_inheritance ||
                       @talk&.lecture&.locale_with_inheritance ||
-                      @assessment&.assessable&.lecture&.locale_with_inheritance ||
                       current_user.locale ||
                       I18n.default_locale
       end

@@ -145,7 +145,9 @@ en:
       no_assessment: "Assessment not found for this item."
       no_task: "Task not found."
     info:
-      talks_created_in_roster: "Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab."
+      talks_created_in_roster: "Talks with assigned speakers are listed here for grading purposes. 
+      Creation of talks happens in the Roster tab."
+      talks_without_assessment: "These talks don't have an assessment attached yet."
     grade_table:
       pending: "pending"
       reviewed: "reviewed"
@@ -205,6 +207,16 @@ en:
     point_grid:
       total: "Total"
     statistics_placeholder: "Statistics are not yet available"
+    grade_talk_row:
+      speaker: "Speaker"
+      status: "Status"
+      grade: "Grade"
+      note: "Note"
+      graded_by: "Graded by"
+      graded_at: "Graded at"
+      pending: "Pending"
+    mark_absent: "Mark absent"
+      
 
   activerecord:
     errors:

@@ -50,7 +50,11 @@
   <% end %>
 
   <% if single_tab? %>
-    <%= render AssessmentsIndexComponent.new(lecture: lecture) %>
+    <% if lecture.seminar? %>
+      <%= render GradeTalkRowComponent.new(seminar: lecture) %>
+    <% else %>
+      <%= render AssessmentsIndexComponent.new(lecture: lecture) %>
+    <% end %>
   <% else %>
     <div class="tab-content" id="assessmentOverviewTabsContent">
       <div
@@ -58,7 +62,11 @@
         id="assessments-list-pane"
         role="tabpanel"
       >
-        <%= render AssessmentsIndexComponent.new(lecture: lecture) %>
+        <% if lecture.seminar? %>
+          <%= render GradeTalkRowComponent.new(seminar: lecture) %>
+        <% else %>
+          <%= render AssessmentsIndexComponent.new(lecture: lecture) %>
+        <% end %>
       </div>
 
       <% if achievements_enabled? %>

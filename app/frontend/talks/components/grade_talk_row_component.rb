@@ -1,12 +1,9 @@
-# Renders a single participation row in the talk grading table
 class GradeTalkRowComponent < ViewComponent::Base
-  class MissingUserError < StandardError; end
-
-  def initialize(participation:, talk:)
+  def initialize(user:, talk:)
     super()
-    @participation = participation
+    @user = user
     @talk = talk
-    @user ||= @participation&.user
+    @participation = user.assessment_participation_in_assignment(talk.assignment)
   end
 
   def grading_enabled?
@@ -14,22 +11,35 @@ class GradeTalkRowComponent < ViewComponent::Base
   end
 
   def allow_grading?
-    grading_enabled? && can_grade? && !@participation.locked?
+    grading_enabled? && can_grade? && !locked?
+  end
+
+  def locked?
+    @participation&.locked? || false
   end
 
   def row_id
-    "participation-row-#{@participation.id}"
+    "participation-row-user-#{@user.id}"
   end
 
-  def status_label(participation)
-    I18n.t("assessment.grade_talk_row.#{participation.status}")
+  def status_label
+    return I18n.t("assessment.grade_talk_row.pending") unless @participation
+
+    I18n.t("assessment.grade_talk_row.#{@participation.status}")
   end
 
-  def grade_display(participation)
-    return "—" if participation.grade_text.blank?
+  def status_value
+    @participation&.status || :pending
+  end
 
-    I18n.t("assessment.grades.#{participation.grade_text}",
-           default: participation.grade_text)
+  def grade_text
+    @participation&.grade_text
+  end
+
+  def grade_display
+    return "—" if grade_text.blank?
+
+    I18n.t("assessment.grades.#{grade_text}", default: grade_text)
   end
 
   def grade_options
@@ -38,108 +48,99 @@ class GradeTalkRowComponent < ViewComponent::Base
     end
   end
 
-  def grade_select_input(participation, allow_grading)
+  def grade_select_input
     tag.select(
       name: "grade",
-      data: {
-        grade_talk_row_target: "grade",
-        action: "change->grade-talk-row#onGradeChanged"
-      },
       class: "form-select form-select-sm",
-      disabled: !allow_grading
+      disabled: !allow_grading?
     ) do
       safe_join(
         grade_options.map do |label, value|
-          tag.option(label, value: value, selected: value == participation.grade_text)
+          tag.option(label, value: value, selected: value == grade_text)
         end
       )
     end
   end
 
-  def note_input(participation, allow_grading)
+  def note_input
     tag.input(
       type: "text",
       autocomplete: "off",
       name: "comment",
-      value: participation.note,
-      data: {
-        grade_talk_row_target: "note",
-        action: "input->grade-talk-row#onNoteChanged"
-      },
+      value: @participation&.note,
       class: "form-control form-control-sm",
-      disabled: !allow_grading
+      disabled: !allow_grading?
     )
   end
 
-  def grader_display(participation)
-    participation.grader&.tutorial_name
+  def grader_display
+    @participation&.grader&.tutorial_name
   end
 
-  def graded_at_relative(participation)
-    return nil unless participation.graded_at
+  def graded_at_relative
+    return nil unless @participation&.graded_at
 
-    helpers.time_ago_in_words(participation.graded_at)
+    helpers.time_ago_in_words(@participation.graded_at)
   end
 
-  def graded_at_full(participation)
-    return nil unless participation.graded_at
+  def graded_at_full
+    return nil unless @participation&.graded_at
 
-    I18n.l(participation.graded_at, format: :short)
+    I18n.l(@participation.graded_at, format: :short)
   end
 
-  def badge_status_participation_color(status)
+  def badge_status_participation_color
     {
       pending: "warning",
       reviewed: "success",
       exempt: "info",
       absent: "info"
-    }[status&.to_sym]
+    }[status_value&.to_sym]
   end
 
-  def badge_status_participation_class(status)
-    "badge rounded-pill bg-#{badge_status_participation_color(status)}"
+  def badge_status_participation_class
+    "badge rounded-pill bg-#{badge_status_participation_color}"
   end
 
-  def save_row_button(allow_grading)
+  # Since there may be no participation yet, submit against user+talk;
+  # controller should find_or_create_by(user:, talk:) on first save.
+  def grade_form_url
+    helpers.grade_talk_user_path(@talk, @user)
+  end
+
+  def refresh_form_url
+    helpers.refresh_grade_talk_user_path(@talk, @user)
+  end
+
+  def mark_absent_url
+    helpers.mark_absent_talk_user_path(@talk, @user)
+  end
+
+  def save_row_button
     class_name = "btn btn-sm btn-success d-inline-flex align-items-center " \
                  "justify-content-center text-nowrap px-2 py-1 lh-1"
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip",
-                       grade_talk_row_target: "save",
-                       action: "click->grade-talk-row#saveRow" },
                title: helpers.t("buttons.save"),
-               disabled: !allow_grading) do
+               disabled: !allow_grading?) do
       tag.i(class: "bi bi-save")
     end
   end
 
-  def refresh_row_button(allow_grading)
+  def refresh_row_button
     class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
                  "justify-content-center text-nowrap px-2 py-1 lh-1"
     tag.button(type: "button",
                class: class_name,
                data: { bs_toggle: "tooltip", action: "click->grade-talk-row#refreshRow" },
                title: helpers.t("buttons.refresh"),
-               disabled: !allow_grading) do
+               disabled: !allow_grading?) do
       tag.i(class: "bi bi-arrow-clockwise")
-    end
-  end
-
-  def mark_absent_button(allow_grading)
-    class_name = "btn btn-sm btn-outline-danger d-inline-flex align-items-center " \
-                 "justify-content-center text-nowrap px-2 py-1 lh-1"
-    tag.button(type: "button",
-               class: class_name,
-               data: { bs_toggle: "tooltip", action: "click->grade-talk-row#markAbsent" },
-               title: helpers.t("assessment.mark_absent"),
-               disabled: !allow_grading) do
-      tag.i(class: "bi bi-person-x")
     end
   end
 
   def can_grade?
     user = helpers.current_user
-    user.admin? || user.can_grade_in_scope?(@lecture)
+    user.admin? || user.can_grade_in_scope?(@talk.lecture)
   end
 end
