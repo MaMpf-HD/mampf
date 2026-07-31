@@ -507,6 +507,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
             .not_to include(achievement.id)
         end
 
+        # Failing is a decision, not an absence of one. Landing in the ungraded
+        # list instead would tell eligibility to wait for a grade that is
+        # already there, and the decision would never resolve.
         it "excludes achievement when grade_text is fail" do
           participation = achievement.assessment
                                      .assessment_participations
@@ -519,6 +522,8 @@ RSpec.describe(StudentPerformance::ComputationService) do
           record = StudentPerformance::Record
                    .find_by(lecture: lecture, user: user)
           expect(record.achievements_met_ids).not_to include(achievement.id)
+          expect(record.achievements_ungraded_ids)
+            .not_to include(achievement.id)
         end
       end
 

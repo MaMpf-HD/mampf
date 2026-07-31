@@ -250,6 +250,16 @@ RSpec.describe(Achievement, type: :model) do
         .not_to receive(:compute_and_upsert_all_records!)
       achievement.update!(title: "Renamed")
     end
+
+    it "does not recompute while the grading flag is off" do
+      achievement = FactoryBot.create(:achievement, :numeric,
+                                      lecture: lecture, threshold: 10)
+      Flipper.disable(:assessment_grading)
+
+      expect_any_instance_of(StudentPerformance::ComputationService)
+        .not_to receive(:compute_and_upsert_all_records!)
+      achievement.update!(threshold: 20)
+    end
   end
 
   describe "assessable wiring" do
