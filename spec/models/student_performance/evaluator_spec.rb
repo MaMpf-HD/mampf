@@ -299,6 +299,82 @@ RSpec.describe(StudentPerformance::Evaluator) do
         end
       end
 
+      # Being exempt from everything is not the same as having earned nothing:
+      # the threshold has nothing left to measure, so a person has to decide.
+      context "when there is nothing to measure" do
+        it "defers rather than failing a student with no maximum at all" do
+          record = FactoryBot.create(:student_performance_record,
+                                     lecture: lecture,
+                                     points_total_materialized: 0,
+                                     points_max_materialized: 0,
+                                     points_max_pending_materialized: 0,
+                                     percentage_materialized: nil)
+
+          result = evaluator.evaluate(record)
+
+          expect(result.proposed_status).to eq(:inconclusive)
+        end
+
+        it "still fails a student who could have earned something" do
+          record = FactoryBot.create(:student_performance_record,
+                                     lecture: lecture,
+                                     points_total_materialized: 0,
+                                     points_max_materialized: 120,
+                                     points_max_pending_materialized: 0,
+                                     percentage_materialized: 0)
+
+          result = evaluator.evaluate(record)
+
+          expect(result.proposed_status).to eq(:failed)
+        end
+
+        context "under an absolute threshold" do
+          let(:rule) do
+            FactoryBot.create(:student_performance_rule, :active, :with_absolute_points,
+                              lecture: lecture, min_points_absolute: 60)
+          end
+
+          it "defers there too" do
+            record = FactoryBot.create(:student_performance_record,
+                                       lecture: lecture,
+                                       points_total_materialized: 0,
+                                       points_max_materialized: 0,
+                                       percentage_materialized: nil)
+
+            result = evaluator.evaluate(record)
+
+            expect(result.proposed_status).to eq(:inconclusive)
+          end
+        end
+
+        # A rule has to constrain something, so "no points threshold" means it
+        # asks for an achievement instead — and then a zero maximum is no
+        # obstacle, because points were never part of the question.
+        context "under a rule that only asks for an achievement" do
+          let(:achievement) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
+          let(:rule) do
+            FactoryBot.build(:student_performance_rule, :active, :without_criteria,
+                             lecture: lecture).tap do |r|
+              r.rule_achievements.build(achievement: achievement, position: 1)
+              r.save!
+            end
+          end
+
+          it "passes, since points were never asked for" do
+            record = FactoryBot.create(:student_performance_record,
+                                       lecture: lecture,
+                                       points_total_materialized: 0,
+                                       points_max_materialized: 0,
+                                       percentage_materialized: nil,
+                                       achievements_met_ids: [achievement.id])
+
+            result = evaluator.evaluate(record)
+
+            expect(result.proposed_status).to eq(:passed)
+          end
+        end
+      end
+
       context "when an achievement is missing outright" do
         let(:achievement) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
 
