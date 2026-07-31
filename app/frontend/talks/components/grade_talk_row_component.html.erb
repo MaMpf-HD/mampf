@@ -1,6 +1,11 @@
 <tr
   id="<%= row_id %>"
   is="turbo-frame"
+  data-id="<%= @user.id %>"
+  data-controller="grade-talk-row"
+  data-user-row-id="<%= @user.id %>"
+  data-action="dirty->talk-grading-table#rowDirty clean->talk-grading-table#rowClean"
+  data-status-filter-status="<%= status_value %>"
 >
   <!-- Column 1: Speaker name + copy email -->
   <td class="sticky-col team-col">
@@ -37,7 +42,17 @@
   <!-- Column 3: Grade (editable) -->
   <td class="text-center sticky-col grade-col">
     <% if allow_grading? %>
-      <%= grade_select_input %>
+      <%= tag.select(
+            name: "grade",
+            class: "form-select form-select-sm",
+            data: { grade_talk_row_target: "gradeInput", action: "change->grade-talk-row#onFieldChanged" }
+          ) do %>
+        <%= safe_join(
+              grade_options.map do |label, value|
+                tag.option(label, value: value, selected: value == grade_text)
+              end
+            ) %>
+      <% end %>
     <% else %>
       <%= grade_display %>
     <% end %>
@@ -46,7 +61,9 @@
   <!-- Column 4: Note (editable) -->
   <td class="note-col">
     <% if allow_grading? %>
-      <%= note_input %>
+      <%= text_field_tag "note", @participation&.note,
+                          class: "form-control form-control-sm",
+                          data: { grade_talk_row_target: "noteInput", action: "input->grade-talk-row#onFieldChanged" } %>
     <% else %>
       <span class="text-muted small"><%= @participation&.note %></span>
     <% end %>
@@ -71,15 +88,16 @@
       <% if can_grade? %>
         <%= form_with url: grade_form_url,
                     method: :patch,
+                    data: { turbo: true, grade_talk_row_target: "form" },
                     html: { style: "display:none;" } do %>
-          <input type="hidden" name="grade">
-          <input type="hidden" name="comment">
+          <input type="hidden" name="grade" data-grade-talk-row-target="gradePayload">
+          <input type="hidden" name="comment" data-grade-talk-row-target="notePayload">
         <% end %>
         <%= save_row_button %>
 
         <%= form_with url: refresh_form_url,
                     method: :patch,
-                    data: { turbo: true },
+                    data: { turbo: true, grade_talk_row_target: "refreshForm" },
                     html: { style: "display:none;" } %>
         <%= refresh_row_button %>
 

@@ -121,6 +121,7 @@ class GradeTalkRowComponent < ViewComponent::Base
                  "justify-content-center text-nowrap px-2 py-1 lh-1"
     tag.button(type: "button",
                class: class_name,
+               data: { action: "click->grade-talk-row#saveRow", grade_talk_row_target: "save" },
                title: helpers.t("buttons.save"),
                disabled: !allow_grading?) do
       tag.i(class: "bi bi-save")
