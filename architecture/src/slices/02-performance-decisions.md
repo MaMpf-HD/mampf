@@ -36,89 +36,6 @@ the end of the file.
 
 ---
 
-## E-2.4 · An achievement is "ungraded" when no grade text exists at all
-
-> **Is absence of a grade the right definition of "not yet decided" for an
-> achievement?**
-
-**As built.** `achievement_ids_ungraded` rejects achievements whose assessment
-has a participation with a non-blank `grade_text`; everything else counts as
-ungraded. `achievement_ids_met` independently checks the threshold.
-
-**Code.** [`achievement_ids_ungraded`][c2-ungraded] ·
-[`achievement_ids_met`][c2-met]
-
-**Example.** The achievement "Blackboard presentation" is boolean.
-
-- Klara's participation has `grade_text = "pass"` → met
-- Lena's has `grade_text = "fail"` → graded, **not** ungraded, and not met
-- Mia has no participation row, or one with a blank grade → **ungraded**
-
-That third case is exactly what slice 3 turns into `:inconclusive` and hence a
-pending certification.
-
-**Why it matters.** A student who simply was never entered is treated the same as
-one whose grading is genuinely outstanding. Since a lecture-wide seed creates
-participations for all members
-([E-2.7](#e-27--adding-an-achievement-seeds-a-participation-for-every-member)),
-the usual case is a blank grade rather than a missing row — but both land in the
-same bucket.
-
-**Status:** confirm — the branches are covered by
-`computation_service_spec`.
-
----
-
-## E-2.5 · Records are recomputed wholesale, not incrementally
-
-> **Should any change to an achievement's threshold trigger a full recomputation
-> for the entire lecture?**
-
-**As built.** An `after_commit` on `Achievement` calls
-`compute_and_upsert_all_records!` for the lecture whenever `threshold` or
-`value_type` changed, or the achievement was destroyed.
-
-**Code.** [the trigger condition][c2-shouldinvalidate] ·
-[the recompute][c2-invalidate] · [`compute_and_upsert_all_records!`][c2-all]
-
-**Example.** A lecture has 600 members. A teacher lowers an achievement's
-threshold from 60 to 50.
-
-- every one of the 600 records is recomputed and upserted, in batches of 100
-- this happens synchronously, inside the request that saved the achievement
-
-**Why it matters.** Correctness is bought with a synchronous full sweep. The
-service is written for it — it prefetches participations and task points to avoid
-N+1 — but the cost still scales with lecture size on a user-facing save. Editing
-an achievement's *title* is correctly exempt; only threshold and type trigger it.
-
-**Status:** verify.
-
----
-
-## E-2.6 · `Record#stale?` is advisory and unused downstream
-
-> **Is a seven-day age threshold the right notion of staleness, given that slice
-> 3 defines its own?**
-
-**As built.** `Record#stale?` returns true when `computed_at` is older than
-`STALE_THRESHOLD = 7.days`.
-
-**Code.** [`stale?`][c2-stale]
-
-**Example.** Slice 3's `Certification.stale` scope asks a completely different
-question: is `records.computed_at` newer than `certs.certified_at`? That
-comparison never consults `Record#stale?`, and a record can be "stale" by the
-seven-day rule while a certification based on it is perfectly current — or the
-reverse.
-
-**Why it matters.** Two unrelated definitions of the same word live one slice
-apart. Whichever is shown in the UI, a reader will assume they agree.
-
-**Status:** verify · worth renaming one of the two.
-
----
-
 ## E-2.7 · Adding an achievement seeds a participation for every member
 
 > **Should creating an achievement immediately create a row for every enrolled
@@ -144,10 +61,9 @@ opens with `<% if any_participations? %>` — with no rows it shows
 submission event that could create a row on the way past, lazy creation here
 would mean the first row could never come into being.
 
-Note it is *not* needed for the computation:
-[E-2.4](#e-24--an-achievement-is-ungraded-when-no-grade-text-exists-at-all)
-treats a missing row and a blank grade identically, so the performance records
-would come out the same either way.
+Note it is *not* needed for the computation, which treats a missing row and a
+blank grade identically — the performance records would come out the same either
+way.
 
 The cost is a bulk write on a single form submission, and 600 rows that may never
 be graded.
@@ -226,15 +142,12 @@ exactly where it would matter.
 
 | # | Decision | Status |
 |---|---|---|
-| E-2.4 | "Ungraded" = no grade text at all | settled |
-| E-2.5 | Threshold change ⇒ synchronous full-lecture recompute | reconstructed |
-| E-2.6 | `Record#stale?` is a second, unrelated definition of stale | reconstructed |
 | E-2.7 | Creating an achievement seeds every member | settled |
 | E-2.8 | Non-members skipped; their records are never cleaned up | reconstructed |
 | E-2.9 | Percentage nil when unmeasurable, flattened to 0 downstream | reconstructed |
 
-**E-2.5 deserves the most attention.** Changing a threshold recomputes every
-record in the lecture, synchronously, in the request that saved the rule.
+**E-2.8 deserves the most attention.** A record left behind by somebody who has
+left the lecture is never cleaned up, and nothing downstream expects one.
 
 <!-- ------------------------------------------------------------------ -->
 <!-- Code permalinks — all pinned to 73031867, the tip of                -->
