@@ -56,6 +56,8 @@ class Achievement < ApplicationRecord
     end
 
     def invalidate_performance_records
+      return unless Flipper.enabled?(:assessment_grading)
+
       StudentPerformance::ComputationService
         .new(lecture: lecture)
         .compute_and_upsert_all_records!
