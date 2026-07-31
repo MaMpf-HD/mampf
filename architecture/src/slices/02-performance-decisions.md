@@ -36,54 +36,6 @@ the end of the file.
 
 ---
 
-## E-2.7 · Adding an achievement seeds a participation for every member
-
-> **Should creating an achievement immediately create a row for every enrolled
-> student?**
-
-**As built.** `Achievement#setup_assessment` runs on create (behind the
-`assessment_grading` flag), calls `ensure_assessment!` and then seeds
-participations for all `lecture.members`.
-
-**Code.** [`setup_assessment`][c2-setup] ·
-[`Lecture#sync_student_performance_for_members!`][c2-sync] ·
-[the marking table][c2-marking]
-
-**Example.** A teacher adds "Blackboard presentation" to a lecture with 600
-members. 600 participation rows are inserted immediately, via slice 1's
-`insert_all` path. Students who enrol *later* get no row from this hook —
-`Lecture#sync_student_performance_for_members!`, in this same slice, covers them.
-
-**Why it matters.** The rows are what the grading surface is made of.
-`AchievementMarkingTableComponent` iterates the participations, and its template
-opens with `<% if any_participations? %>` — with no rows it shows
-"no participations" and offers nothing to click. Since an achievement has no
-submission event that could create a row on the way past, lazy creation here
-would mean the first row could never come into being.
-
-Note it is *not* needed for the computation, which treats a missing row and a
-blank grade identically — the performance records would come out the same either
-way.
-
-The cost is a bulk write on a single form submission, and 600 rows that may never
-be graded.
-
-~~~admonish note "This departs from the architecture book, on purpose"
-The book states in four places that participations are created **lazily, not
-eagerly** — "Does not eagerly seed participations", "Ensure participations are
-created lazily, not eagerly". That is written about *assignments*, where a
-submission creates the row, and assignments do follow it. For **exams** the book
-wants the opposite ("All exam participations exist *before* grading begins").
-
-Achievements are not covered either way, and they have no submission event — so
-the rule cannot apply as written. Seeding up front is the only shape that yields
-a usable grading table.
-~~~
-
-**Status:** confirm.
-
----
-
 ## E-2.8 · Non-members are silently skipped
 
 > **Should computing a record for a non-member do nothing rather than raise?**
@@ -142,7 +94,6 @@ exactly where it would matter.
 
 | # | Decision | Status |
 |---|---|---|
-| E-2.7 | Creating an achievement seeds every member | settled |
 | E-2.8 | Non-members skipped; their records are never cleaned up | reconstructed |
 | E-2.9 | Percentage nil when unmeasurable, flattened to 0 downstream | reconstructed |
 

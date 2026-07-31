@@ -1094,7 +1094,10 @@ end
 
 ### Lazy Participation Creation
 
-```admonish success "Why No Eager Seeding"
+```admonish success "Why assignments seed no participations"
+This is about assignments, and about talks, which behave the same way. Exams and
+achievements are seeded up front — see their lifecycles above.
+
 Participations are created **lazily** rather than on assignment creation for several reasons:
 
 1. **No timing assumptions:** Assignments can be created before, during, or after roster materialization
