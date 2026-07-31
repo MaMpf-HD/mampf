@@ -538,37 +538,52 @@ The "proposal calculator" for teachers: shows which students would pass/fail bas
 
 ### How the decision is reached
 
-Two criteria, each in one of three states, and one rule that weighs them: a
-criterion nobody can satisfy any more settles the case, one that is merely
-unfinished defers it.
+Two criteria, each in one of several states, and one rule that weighs them: a
+criterion nobody can satisfy any more settles the case, one that is merely open
+defers it.
 
 ```ruby
+      # Criteria that are open rather than missed.
+      UNDECIDED = [:pending, :ungraded, :not_measurable].freeze
+
       def evaluate(record)
         return Result.new(proposed_status: :failed, details: {}) unless record
 
         propose(points_status(record), achievements_status(record))
       end
 
-      # :met · :pending (marking outstanding) · :not_met
-      # :met · :ungraded (no grade recorded)   · :not_met
       def propose(*statuses)
         return :failed if statuses.include?(:not_met)
-        return :inconclusive if statuses.intersect?([:pending, :ungraded])
+        return :inconclusive if statuses.intersect?(UNDECIDED)
 
         :passed
       end
 ```
 
-`points_status` is `:pending` when the student is below the threshold but the
-points still awaiting marking — `points_max_pending_materialized` — would carry
-them over it. Marking only ever adds points, and the sheets awaiting it are
-already inside `points_max_materialized`, so the best case is simply everything
-outstanding awarded in full.
+| Criterion | States |
+|---|---|
+| points | `:met` · `:pending` (marking outstanding) · `:not_measurable` (nothing to measure) · `:not_met` |
+| achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
 
-That distinction matters in both directions. Without it, a tutor's backlog reads
-as a failed threshold and the student is refused for somebody else's unfinished
-work. With a plain "anything outstanding defers the decision", a single unmarked
-sheet would defer the entire cohort, including students who passed weeks ago.
+**`:pending`** means the student is below the threshold but the points still
+awaiting marking — `points_max_pending_materialized` — would carry them over it.
+Marking only ever adds points, and the sheets awaiting it are already inside
+`points_max_materialized`, so the best case is everything outstanding awarded in
+full. That distinction matters in both directions: without it a tutor's backlog
+reads as a failed threshold and the student is refused for somebody else's
+unfinished work, while a blunt "anything outstanding defers the decision" would
+defer the entire cohort over a single unmarked sheet.
+
+**`:not_measurable`** means `points_max_materialized` is zero — the student is
+exempt from every assignment, or the lecture has none yet. A share of nothing is
+not a shortfall, and neither a percentage nor an absolute threshold can be applied
+to it, so the case goes to a person. It also surfaces a rule that asks for a
+proportion of points a lecture does not have, which would otherwise fail every
+student in silence.
+
+A rule with no criterion at all is refused by the model, so "no points threshold"
+always means the rule asks for an achievement instead — and then a zero maximum is
+no obstacle, because points were never part of the question.
 
 ---
 

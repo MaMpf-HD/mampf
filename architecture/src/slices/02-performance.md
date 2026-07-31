@@ -5,8 +5,7 @@ An orientation map for the second Müsli slice (PR #1106, branch
 `muesli-02-performance-achievements`).
 
 Two sections below carry the design rationale: what the slice inherits from the
-architecture book, and what it decided itself. Points still being worked through
-are on [Before review](02-performance-decisions.md).
+architecture book, and what it decided itself.
 ```
 
 ## TL;DR
@@ -111,17 +110,16 @@ the record carries `..._materialized` columns rather than a status.
 stated guarantee is "recompute performance data on demand to ensure decisions use
 fresh facts". So the record is allowed to be stale between recomputations; what
 matters is that anything deciding on it recomputes first. *How much* gets
-recomputed, and when, is this slice's own choice — see
-[E-2.5](02-performance-decisions.md#e-25--records-are-recomputed-wholesale-not-incrementally).
+recomputed, and when, is this slice's own choice: changing an achievement's
+threshold or type recomputes every record in the lecture, synchronously. Measured
+on 400 students with twelve assignments, that sweep is 0.17 s and eleven queries,
+the query count being independent of lecture size.
 
 ## Decisions made in this slice
 
 Choices this branch made on its own, with the reasoning behind each. Unlike the
 section above, these *are* open to argument — if one looks wrong, this is the
 place to say so.
-
-*(Design points move here once they have been worked through. What is still in
-progress is listed under [Before review](02-performance-decisions.md).)*
 
 ### Unmarked work is recorded, not counted
 
@@ -152,6 +150,23 @@ a `submitted_at`. Paper hand-ins have no such timestamp today, so for them the
 figure stays zero — see the note on `muesli/tutor-grading-view` in
 [slice 1](01-assessment-core.md).
 
+### A percentage of nothing is nil, not zero
+
+`compute_percentage` returns `nil` rather than `0` when the maximum is zero. That
+happens to a student exempt from every assignment, and to everyone in a lecture
+that has no assignments yet.
+
+Zero would be a lie: it says the student earned none of what was asked, when in
+fact nothing was asked. Consider Bea, excused from both sheets of the term on
+medical grounds, next to Cem, who handed in neither. Their totals are identical —
+0 points — but Bea's maximum is 0 and Cem's is 40, and only the maximum tells them
+apart.
+
+Slice 3 reads that difference: a zero maximum makes the points criterion
+`:not_measurable`, which defers the eligibility decision instead of refusing it.
+So Cem is proposed ineligible and Bea's case goes to a person, which is where a
+full exemption belongs.
+
 ## New screens
 
 | Screen | What it does |
@@ -180,7 +195,6 @@ that grading a submission triggers a recomputation.
 2. `app/models/student_performance/record.rb` — tiny; note what it does *not* hold
 3. `app/models/student_performance/computation_service.rb` — the aggregation,
    read `assessments`, `aggregate_from_prefetched` and `achievement_ids_*` first
-4. [Before review](02-performance-decisions.md) — the points still being worked through
 
 ---
 
