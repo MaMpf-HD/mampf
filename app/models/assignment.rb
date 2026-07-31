@@ -47,6 +47,49 @@ class Assignment < ApplicationRecord
     User.where(id: submitter_ids)
   end
 
+  # all user that are applicable for this assignment
+  # -> all users that are in the lecture of this assignment
+  def applicable_user_ids
+    lecture.lecture_memberships.pluck(:user_id).uniq
+  end
+
+  def applicable_users
+    User.where(id: applicable_user_ids)
+  end
+
+  def applicable_user_ids_tutorial(tutorial)
+    tutorial.tutorial_memberships.pluck(:user_id).uniq
+  end
+
+  def applicable_user_ids_in_tutorials
+    lecture.tutorials.joins(:tutorial_memberships)
+           .pluck("tutorial_memberships.user_id").uniq
+  end
+
+  def applicable_user_ids_not_in_tutorials
+    applicable_user_ids - applicable_user_ids_in_tutorials
+  end
+
+  def applicable_users_not_in_tutorials
+    User.where(id: applicable_user_ids_not_in_tutorials)
+  end
+
+  def non_submitter_ids_in_tutorials
+    applicable_user_ids_in_tutorials - submitter_ids
+  end
+
+  def non_submitters_in_tutorials
+    User.where(id: non_submitter_ids_in_tutorials)
+  end
+
+  # non submitters of tutorial = users in tutorial_memberships \ submitters of assignment
+  def non_submitters_in_tutorial(tutorial)
+    User.joins(:tutorial_memberships)
+        .where(tutorial_memberships: { tutorial_id: tutorial.id })
+        .where.not(id: submitter_ids)
+        .order(:name)
+  end
+
   def past_deadline?
     deadline.present? && deadline < Time.zone.now
   end
@@ -67,6 +110,10 @@ class Assignment < ApplicationRecord
     !semiactive?
   end
   alias grading_open? totally_expired?
+
+  def assessable?
+    assessment != nil
+  end
 
   def in_grace_period?
     semiactive? && !active?

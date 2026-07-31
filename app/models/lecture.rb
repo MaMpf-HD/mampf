@@ -954,6 +954,10 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
+  def roster_eligible_tutorials?
+    tutorials.merge(Tutorial.roster_eligible).exists?
+  end
+
   private
 
     def initialize_submission_deletion_date

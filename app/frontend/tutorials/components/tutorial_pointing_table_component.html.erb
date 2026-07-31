@@ -1,0 +1,145 @@
+<%= helpers.turbo_frame_tag "grading-table" do %>
+  <!-- ── ZONE 1: has grading records ── -->
+  <% if grading_records? %>
+    <div data-controller="status-filter">
+      <% if grading_enabled? %>
+        <div class="d-flex gap-2 m-3 align-items-center">
+          <div class="d-flex align-items-center">
+            <input
+              type="text"
+              class="form-control form-control-sm w-auto"
+              placeholder="<%= t('assessment.grading_tutorial.filter_name') %>"
+              autocomplete="off"
+              data-action="input->status-filter#search"
+            >
+          </div>
+
+          <div
+            class="d-flex gap-2 align-items-center"
+            data-status-filter-target="activeFilters"
+          >
+          </div>
+        </div>
+      <% end %>
+
+      <div
+        class="table-wrapper"
+        data-mode="<%= @mode %>"
+        data-controller="table-fade"
+      >
+        <div class="table-overflow" data-table-fade-target="inner">
+          <table
+            class="table align-middle my-3"
+            data-cy="tutorial-submissions-table"
+          >
+            <thead style="background: #fafafa;">
+              <%= render(PointingTableHeaderComponent.new(
+                mode: @mode,
+                grading_enabled: grading_enabled?,
+                tasks: tasks,
+                total_max_points: total_max_points,
+                accepted_file_type: @assignment.accepted_file_type,
+                tutorials: @tutorials
+              )) %>
+            </thead>
+
+            <tbody>
+              <% if @mode == "tutor" %>
+                <% @stack.each do |submission| %>
+                  <%= render(SubmissionRowComponent.new(
+                      submission: submission, mode: @mode,
+                      assignment: @assignment, tutorial: @tutorial)) %>
+                <% end %>
+                <% @non_submitters.each do |user| %>
+                  <% if user.assessment_participation_in_assignment(@assignment) %>
+                    <%= render(ParticipationRowComponent.new(
+                        participation: user.assessment_participation_in_assignment(@assignment),
+                        mode: @mode, assignment: @assignment, tutorial: @tutorial)) %>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <% @tutorials.each do |tutorial| %>
+                  <% (@submissions_by_tutorial[tutorial] || []).each do |submission| %>
+                    <%= render(SubmissionRowComponent.new(
+                        submission: submission, mode: @mode,
+                        assignment: @assignment, tutorial: tutorial)) %>
+                  <% end %>
+
+                  <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
+                    <% if user.assessment_participation_in_assignment(@assignment) %>
+                      <%= render(ParticipationRowComponent.new(
+                        participation: user.assessment_participation_in_assignment(@assignment),
+                        mode: @mode, assignment: @assignment, tutorial: @tutorial)) %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="jumbotron mt-3">
+      <%= t('assessment.grading_tutorial.no_submissions') %>
+    </div>
+  <% end %>
+
+  <!-- ── ZONE 2: on roster, no submission ── -->
+  <% if grading_enabled? && (@non_submitters.present? || @non_tutorial_participants.present?) %>
+    <div class="card mt-3">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="bi bi-person-dash me-1"></i>
+          <%= t("assessment.grade_table.excluded_heading") %>
+        </h6>
+      </div>
+
+      <div class="card-body p-0">
+        <table class="table align-middle my-3">
+          <thead style="background: #fafafa;">
+            <tr>
+              <th class="grade-th"><%= t('basics.user') %></th>
+
+              <th class="text-start grade-th">
+                <%= t('assessment.grading_tutorial.excluded_reason') %>
+              </th>
+
+              <th class="text-end grade-th">
+                <%= t('assessment.grading_tutorial.actions') %>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @non_submitters.to_a.each do |user| %>
+              <%= render(layout: "tutorials/components/excluded_user_row",
+                       locals: { user: user,
+                                 reason: t('assessment.grading_tutorial.no_submission_badge') }) do %>
+                <% if user.assessment_participation_in_assignment(@assignment) %>
+                  <span
+                    style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; background:#eef7ee; font-size:12px; color:#2e7d32;"
+                  >
+                    <span class="material-icons" style="font-size: 14px;">
+                      check_circle
+                    </span>
+
+                    <%= t('assessment.grading_tutorial.participated') %>
+                  </span>
+                <% else %>
+                  <%= mark_as_participated_link(user) %>
+                <% end %>
+              <% end %>
+            <% end %>
+
+            <% @non_tutorial_participants.to_a.each do |user| %>
+              <%= render partial: "tutorials/components/excluded_user_row",
+                       locals: { user: user,
+                                 reason: t('assessment.grading_tutorial.no_tutorial_badge') } %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+<% end %>
