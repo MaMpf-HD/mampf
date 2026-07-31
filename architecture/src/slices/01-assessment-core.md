@@ -173,22 +173,60 @@ Covered by `assessment_backfill_worker_spec` — eleven examples, including
 idempotency and that existing participations are never overwritten.
 
 ~~~admonish danger "Concerns another PR: this seeding disables a feature on `muesli/tutor-grading-view`"
-On that branch a tutor can record that a student handed work in on paper. The
-button says "Mark as participated", and it works by creating a participation row
-for that student.
+**What that branch is trying to do.** With a paper assignment nobody uploads
+anything, so the system has no way of knowing who handed a sheet in. Without that,
+a student whose work is sitting in the tutor's pile is indistinguishable from one
+who brought nothing. The grading view therefore gives the tutor a button, "Mark as
+participated", and records the answer by **creating a participation row**:
 
-The view decides whether to offer the button by checking whether such a row
-already exists. But the worker above creates one for every tutorial member of
-every expired assignment, and `config/schedule.yml` runs it every minute. So a
-minute after the deadline everyone has a row: the button never appears, and the
-counter of people not yet marked stays at zero.
+```ruby
+def init_participation(assessment, user, tutorial)
+  participation = Participation.find_or_initialize_by(
+    assessment_id: assessment.id, user_id: user.id
+  )
+  participation.update!(tutorial_id: tutorial.id) if participation.new_record?
+  participation
+end
+```
 
-The row is the wrong signal. `submitted_at` is the right one — this slice already
-treats it as the only record of whether something was handed in, see [the display
-status entry](#submission-is-a-timestamp-so-the-display-status-is-derived). The
-digital path sets it on upload; the paper path would have to set it as well. Slice
-2 needs that same distinction to tell a sheet still being marked from one that was
-never handed in.
+Whether the button is offered at all is decided the same way — by asking whether a
+row is already there, with no further condition:
+
+```ruby
+def assessment_participation_in_assignment(assignment)
+  assessment_participations.where(assessment: assignment.assessment)&.first
+end
+```
+
+**Why it cannot work.** The worker described above creates exactly that row, for
+every tutorial member of every expired assignment, and `config/schedule.yml` runs
+it on `*/1 * * * *` — every minute. A minute after the deadline everyone has a
+row. The button is never offered, every non-submitter counts as having
+participated, and the "not yet marked" tally sits at zero for good.
+
+Neither change is wrong on its own. They simply use the same fact for two
+different statements — *this is due for grading* and *this was handed in* — which
+is the kind of collision that only surfaces when the branches meet, since both are
+green apart.
+
+**Why it reaches into slice 2.** `points_max_pending_materialized` recognises work
+awaiting marking as `pending` **and** `submitted_at` present. A paper assignment
+has no `submitted_at`, so for those lectures the figure is permanently zero and
+slice 3 cannot defer an eligibility decision that a marking backlog has distorted —
+exactly the case the column was added for.
+
+**What would fix it, on that branch.** Have `init_participation` set
+`submitted_at` as well, the way the upload path already does in
+`SubmissionsController`, and have the view ask for that instead of for the row.
+Then `submitted_at` means one thing everywhere — handed in, on paper or digitally
+— the seeding stops interfering, and slice 2's figure covers both kinds of
+assignment. It is also the convention this slice set: see [the display status
+entry](#submission-is-a-timestamp-so-the-display-status-is-derived), where
+`submitted_at` is deliberately the only record of whether something was handed in.
+
+Fixing it here instead — by seeding fewer rows — would be the wrong end. The
+worker creates them so that tutors have something to grade against; that is its
+purpose, not its mistake.
 ~~~
 
 ### Entered points block deleting a task; the deadline does not
