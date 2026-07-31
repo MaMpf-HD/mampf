@@ -2,6 +2,9 @@ module StudentPerformance
   class Evaluator
     Result = Struct.new(:proposed_status, :details, keyword_init: true)
 
+    # Criteria that are open rather than missed: nobody can be judged on them yet.
+    UNDECIDED = [:pending, :ungraded, :not_measurable].freeze
+
     attr_reader :rule
 
     def initialize(rule)
@@ -44,16 +47,24 @@ module StudentPerformance
       # merely unfinished defers it.
       def propose(*statuses)
         return :failed if statuses.include?(:not_met)
-        return :inconclusive if statuses.intersect?([:pending, :ungraded])
+        return :inconclusive if statuses.intersect?(UNDECIDED)
 
         :passed
       end
 
       def points_status(record)
         return :met if points_met?(record)
+        return :not_measurable if points_max_zero?(record)
         return :pending if points_still_reachable?(record)
 
         :not_met
+      end
+
+      # A share of nothing is not a shortfall. A student exempt from every
+      # assignment, or a lecture that has none yet, cannot be judged on points —
+      # that is for a person to decide, not for a threshold.
+      def points_max_zero?(record)
+        (record.points_max_materialized || 0).zero?
       end
 
       def points_met?(record)
