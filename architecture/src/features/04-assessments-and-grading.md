@@ -237,6 +237,15 @@ The `requires_submission` field controls whether students must upload files:
 - **Talks:** Always `false`. Presentations are graded live.
 
 When `requires_submission: false`, no file uploads occur and `submitted_at` remains `nil`. The Grading Tab shows only grading progress (not submission progress).
+
+**It freezes once the deadline has passed.** The flag imposes no obligation on
+students — nothing in the submission path consults it — so the reason is not to
+prevent a retroactive requirement. It is that the flag decides what teachers are
+shown about what already happened. Switched off afterwards, a table of 120
+uploaded files is replaced by "no submission required" while the files sit
+untouched underneath; switched on afterwards, 120 students appear as *not
+submitted* for work nobody asked them to upload. Only this one attribute is
+frozen; everything else on the assessment stays editable.
 ```
 
 ### Behavior Highlights
@@ -412,6 +421,13 @@ The `status` enum tracks a participation's position in the **grading workflow**.
 - `reviewed` + `submitted_at` nil → graded without file submission (paper, exam)
 
 This separation keeps the enum clean and future-proof (e.g. digital exam submissions would set `submitted_at` without needing a new status value).
+
+Views need a fifth value, because `pending` covers two quite different
+situations. `Participation#display_status` derives it rather than storing it:
+`pending` without a submission reads as `:not_submitted`, `pending` with one as
+`:pending_grading`, and every other status passes through. A fifth enum value
+would give one truth two homes — the status and the timestamp — which can drift;
+deriving keeps `submitted_at` the only record of whether something was handed in.
 ```
 
 ```admonish warning "Where absent applies"
@@ -982,8 +998,21 @@ The minimal "make me gradeable" interface that all graded work must implement.
 
 - Establishes the polymorphic link via `has_one :assessment, as: :assessable`
 - Provides a safe method to create/update the assessment without duplication
-- Does not eagerly seed participations—participations are created lazily on submission/grading
+- Seeds participations only where the type has no event that would create them — see the lifecycles above
 - Does not enforce whether points or grades are used—that's delegated to `Assessment::Pointable` and `Assessment::Gradable`
+- Refuses to let an assessable move to another lecture, because the assessment keeps its own copy of `lecture_id`
+
+```admonish warning "Why the lecture may not change"
+An assessment reaches its lecture only through `assessable.lecture`, and answering
+"all assessments of this lecture" that way means joining four tables and merging
+the results. It therefore keeps its own `lecture_id`, and that copy has to be held
+honest from both sides: the assessment refuses to be saved with a lecture that
+disagrees with its subject's, and the concern refuses to let the subject move at
+all. Without the second rule the assessment would keep pointing at the old
+lecture with nothing to notice, and one lecture's performance data would quietly
+count towards another. `Tutorial` has carried the same guard on the same attribute
+all along.
+```
 
 ### Example Implementation
 

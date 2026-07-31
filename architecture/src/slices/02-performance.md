@@ -4,8 +4,9 @@
 An orientation map for the second Müsli slice (PR #1106, branch
 `muesli-02-performance-achievements`).
 
-Two sections below carry the design rationale: what the slice inherits from the
-architecture book, and what it decided itself.
+[Before you read the code](#before-you-read-the-code) collects the places where
+the diff is easy to misread. The reasoning behind each rule lives in the feature
+chapters, linked from there.
 ```
 
 ## TL;DR
@@ -93,33 +94,33 @@ Only assignments count towards the points. Exams have points of their own from
 slice 4 on, but those are not included here: these totals are what decide who is
 admitted to the exam.
 
-## Following the architecture book
+## Before you read the code
 
-Two things below are the architecture design realised in code, not choices this
-PR makes. Read them as background; what the slice genuinely decides is the
-[section after this one](#decisions-made-in-this-slice).
+Four places where the diff is easy to misread. The reasoning behind each lives in
+[Student Performance](../features/05-student-performance.md); this page says what
+you need in order to read *this branch*.
 
-**A record holds facts, not a verdict.** The book describes
+### The record holds facts, and deliberately no verdict
+
 [`StudentPerformance::Record`](../features/05-student-performance.md#studentperformancerecord-activerecord-model)
-as a *materialised performance snapshot*: points earned, achievements met — and
-explicitly **not** an interpretation like "eligible" or "passed". That separation
-is what lets slice 3 add the judgement without touching the facts, and it is why
-the record carries `..._materialized` columns rather than a status.
+stores points earned and achievements met — never an interpretation like
+"eligible" or "passed". That is why every column is named `..._materialized` and
+why there is no status field to look for.
 
-**Correctness comes from recomputing, not from keeping in sync.** The book's
-stated guarantee is "recompute performance data on demand to ensure decisions use
-fresh facts". So the record is allowed to be stale between recomputations; what
-matters is that anything deciding on it recomputes first. *How much* gets
-recomputed, and when, is this slice's own choice: changing an achievement's
-threshold or type recomputes every record in the lecture, synchronously. Measured
-on 400 students with twelve assignments, that sweep is 0.17 s and eleven queries,
-the query count being independent of lecture size.
+The separation is what lets slice 3 add the judgement without touching the facts.
+If a number looks like it ought to carry a verdict, the verdict is in slice 3.
 
-## Decisions made in this slice
+### Staleness is expected; recomputing is the guarantee
 
-Choices this branch made on its own, with the reasoning behind each. Unlike the
-section above, these *are* open to argument — if one looks wrong, this is the
-place to say so.
+The record is allowed to be out of date between recomputations. Correctness comes
+from anything that decides on it recomputing first, not from keeping it in sync
+continuously — so a stale row is not a bug.
+
+*How much* is recomputed, and when, is this slice's own choice: changing an
+achievement's threshold or type sweeps every record in the lecture, synchronously,
+inside the request that saved it. Measured on 400 students with twelve
+assignments, that sweep is 0.17 s and eleven queries, the query count being
+independent of lecture size.
 
 ### Unmarked work is recorded, not counted
 

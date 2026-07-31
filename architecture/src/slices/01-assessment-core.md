@@ -6,8 +6,9 @@ An orientation map for the first Müsli slice (PR #1105, branch
 already exists, and which screens appear. Read it before the diff, not instead
 of it.
 
-Two sections below carry the design rationale: what the slice inherits from the
-architecture book, and what it decided itself.
+[Before you read the code](#before-you-read-the-code) collects the places where
+the diff is easy to misread. The reasoning behind each rule lives in the feature
+chapters, linked from there.
 ```
 
 ## TL;DR
@@ -59,44 +60,39 @@ Plus three concerns that form a capability ladder:
 enough. In slice 1 `Assignment` includes `Pointable` and `Talk` includes
 `Gradable`; slices 2 and 4 add `Achievement` and `Exam` on the same interface.
 
-## Following the architecture book
+## Before you read the code
 
-Four things below are the architecture design realised in code, not choices this
-PR makes. Read them as background: they tell you *why* the code looks the way it
-does, and they save you from weighing questions that were answered before the
-branch existed. What the slice genuinely decides is the
-[section after this one](#decisions-made-in-this-slice).
+Ten places where the diff is easy to misread — what the mechanism is, and what
+you would otherwise conclude. The reasoning behind each rule lives in the
+[Assessments & Grading chapter](../features/04-assessments-and-grading.md); this
+page says what you need in order to read *this branch*, and links there for the
+rest.
 
-| Design | Realised as | Reference |
-|---|---|---|
-| Capabilities are concerns, not columns | `Assessable` → `Pointable` / `Gradable`, opted into by `include` | [book](../features/04-assessments-and-grading.md#assessmentassessable-concern) · [code][c1-assessable] |
-| One assessment per assessable | `has_one … as: :assessable` + `ensure_assessment!` | [book](../features/04-assessments-and-grading.md#assessmentassessable-concern) · [code][c1-ensure] |
-| The German grade scale | inclusion validation plus a schema check constraint | [book](../features/04-assessments-and-grading.md#assessmentparticipation-activerecord-model) · [code][c1-grades] |
+### Capability is a property of the class, not of the row
 
-**Capabilities as concerns** means that whether something carries points or
-grades is a property of the *class*, not of the row. "Is this gradable?" is
-answered by `assessable.is_a?(Assessment::Gradable)` — exactly what
-`Participation` checks before allowing a numeric grade. Making a new kind of
-thing gradable is therefore a code change, never a setting, which is what keeps
-the answer identical for every row of a type.
+Whether something carries points or grades is decided by which concern it
+[includes][c1-assessable] — `Pointable`, `Gradable`, both. "Is this gradable?" is
+answered by `assessable.is_a?(Assessment::Gradable)`, which is exactly what
+`Participation` asks before allowing a numeric grade.
 
-**One assessment per assessable** is what every later slice relies on when it
-reaches through `assessable.assessment`. Two details are worth carrying into the
-review: the uniqueness is a convention held by a single code path rather than a
-database constraint — the index on `(assessable_type, assessable_id)` is not
-unique and no validation enforces it — and every caller is an `after_create`, so
-`ensure_assessment!` runs once per record and its idempotency is a safeguard
-rather than something in use.
+So making a new kind of thing gradable is a code change, never a setting. If you
+are looking for a column or a flag that switches it, there is none. See
+[the concern](../features/04-assessments-and-grading.md#assessmentassessable-concern).
 
-**The grade scale** skips 4.3 and 4.7: below 4.0 everything is 5.0. Slice 5
-repeats the same list as `GradeScheme::PASSING_GRADES` (without 5.0), so it now
-lives in two places.
+### One assessment per assessable — by convention, not by constraint
 
-## Decisions made in this slice
+Every later slice reaches through [`assessable.assessment`][c1-ensure] and relies
+on there being exactly one. Two details are worth carrying into the review: the
+index on `(assessable_type, assessable_id)` is **not** unique and no validation
+enforces the rule, so it is held by a single code path; and every caller is an
+`after_create`, so `ensure_assessment!` runs once per record and its idempotency
+is a safeguard rather than something currently in use.
 
-Choices this branch made on its own, with the reasoning behind each. Unlike the
-section above, these *are* open to argument — if one looks wrong, this is the
-place to say so.
+### The grade scale skips 4.3 and 4.7
+
+Below 4.0 everything is 5.0 — an [inclusion validation plus a schema check
+constraint][c1-grades] enforce it. Slice 5 repeats the same list as
+`GradeScheme::PASSING_GRADES` (without 5.0), so it now lives in two places.
 
 ### Grading opens only once nobody can still submit
 
@@ -107,14 +103,15 @@ change to `grade_numeric`, `grade_text`, `points_total`, `grader_id` or
 `graded_at`, and any move away from `pending`. `Assessment::TaskPoint` carries
 the same guard, so individual point entries are covered too.
 
-A tutor therefore cannot start grading while classmates can still submit or
-revise — no partial grading, no early leak of results. Because the guard blocks
-*changes* as well, it also constrains corrections made while an assignment is
-briefly reopened; that is the intended trade.
+Two things are easy to misread. The alias hides *which* deadline is meant —
+`friendly_deadline`, not `deadline` — so anything reasoning about the boundary has
+to account for the grace period. And the guard blocks *changes*, not just first
+entries, so it also constrains corrections while an assignment is briefly
+reopened.
 
 Assessables that do not [override `grading_open?`][c1-open] — `Talk` here, `Exam`
-and `Achievement` in later slices — are always open, which is the right default
-for things without a submission deadline.
+and `Achievement` in later slices — are always open. The rule is in
+[Grading Rules](../features/04-assessments-and-grading.md#grading-rules).
 
 Covered by `participation_spec` (`describe "the grading lifecycle guard"`) and
 `task_point_spec`.
@@ -123,14 +120,6 @@ Covered by `participation_spec` (`describe "the grading lifecycle guard"`) and
 
 [`effective_total_points`][c1-effective] is the sum of the tasks' `max_points`,
 full stop. There is no column to override it.
-
-The architecture book originally described an optional `total_points` column,
-"computed from tasks if blank". It was created by the migration but never
-written: no permit list accepted it, no form offered it, nothing in `app/`
-assigned it. Only specs set it, as a shortcut for "this exam is worth 60"
-without modelling the tasks — which produced test scenarios that could not occur
-in production. This slice drops the column and the specs build tasks instead;
-the book has been corrected to match.
 
 **A result may exceed the total, and that is intended.** `TaskPoint#points` has a
 floor of 0 and no ceiling against the task's `max_points` — that is how a bonus
@@ -264,9 +253,8 @@ views need five, because `pending` covers two quite different situations.
 no submission reads as `:not_submitted`, pending with one as `:pending_grading`,
 and every other status passes through unchanged.
 
-The alternative would be a fifth enum value maintained on submission. That gives
-two sources for one truth — the status and the timestamp — which can drift.
-Deriving keeps `submitted_at` the only record of whether something was handed in.
+Why it is derived rather than stored is in
+[the status workflow](../features/04-assessments-and-grading.md#status-workflow).
 
 Querying is barely affected: `submitted` is already a scope, so
 `pending.submitted` is exactly the "waiting to be marked" set and
@@ -296,14 +284,11 @@ That second copy has to be kept honest, from both sides:
 - [`lecture_matches_assessable`][c1-lecmatch] rejects saving an assessment whose
   lecture disagrees with its subject's.
 - [`lecture_id_immutable`][c1-lecimmutable] in `Assessable` rejects moving the
-  *subject* to another lecture at all. Without it the assessment would keep
-  pointing at the old lecture, with nothing to notice — the performance data of
-  one lecture quietly counted towards another.
+  *subject* to another lecture at all.
 
-The second rule follows `Tutorial`, which has carried the same guard for the same
-attribute all along, down to the `:immutable` error key. Because it lives in the
-concern it covers `Assignment` and `Talk` here, and `Achievement` and `Exam` as
-soon as those arrive.
+Because the second rule lives in the concern it covers `Assignment` and `Talk`
+here, and `Achievement` and `Exam` as soon as those arrive. Why the copy has to be
+frozen is in [the concern](../features/04-assessments-and-grading.md#assessmentassessable-concern).
 
 Note what this does *not* fix: `lecture_id` is still in `AssignmentsController`'s
 permit list, and `authorize_resource` runs against the record as loaded, before
@@ -330,11 +315,8 @@ an assignment is past its deadline. Only that one attribute is frozen; the guard
 is conditional on `requires_submission_changed?`, so everything else on the
 assessment stays editable.
 
-The point is not to stop a retroactive obligation — the flag imposes none — but
-to stop the grading view from misrepresenting what happened. Turned off after the
-fact, a table of 120 submitted files is replaced by "no submission required" while
-the files sit untouched underneath. Turned on after the fact, all 120 students
-appear as *not submitted*, for work nobody ever asked them to upload.
+What the freeze protects — the grading view's account of what actually happened —
+is in [the submission-support note](../features/04-assessments-and-grading.md#assessmentassessment-activerecord-model).
 
 As with task deletion, the block is not silent: the settings form renders the
 checkbox `disabled: assessable.past_deadline?` with a padlock and an explanation,
@@ -412,8 +394,8 @@ slice 2's computation service relies on heavily.
    lifecycle guard
 4. `app/models/assessment/task.rb` — the deletion guards
 5. `app/models/assessment/gradable.rb` — `set_grade!`, which later slices call
-6. [Decisions made in this slice](#decisions-made-in-this-slice) — the reasoning
-   behind what you just read
+6. [Before you read the code](#before-you-read-the-code) — the ten places where
+   what you just read is easy to misread
 
 Files you can skip: locale files, `db/schema.rb`,
 `app/frontend/js/mampf_routes.js`.
