@@ -36,31 +36,6 @@ the end of the file.
 
 ---
 
-## E-2.8 · Non-members are silently skipped
-
-> **Should computing a record for a non-member do nothing rather than raise?**
-
-**As built.** `compute_and_upsert_record_for` returns early unless the user is
-in `lecture.members`.
-
-**Code.** [`compute_and_upsert_record_for`][c2-forone]
-
-**Example.** A student leaves the lecture. A later grading callback fires for one
-of their old participations.
-
-- the guard sees they are no longer a member → returns
-- their existing record is **left untouched**, not deleted
-
-So a stale record for a departed student survives indefinitely, and slice 3's
-certification dashboard may still show them.
-
-**Why it matters.** The guard prevents creating records for outsiders, which is
-right, but it also means membership changes never clean up.
-
-**Status:** verify.
-
----
-
 ## E-2.9 · Percentage is nil when there is nothing to measure
 
 > **Should a student with no maximum points have a nil percentage rather than
@@ -94,11 +69,10 @@ exactly where it would matter.
 
 | # | Decision | Status |
 |---|---|---|
-| E-2.8 | Non-members skipped; their records are never cleaned up | reconstructed |
 | E-2.9 | Percentage nil when unmeasurable, flattened to 0 downstream | reconstructed |
 
-**E-2.8 deserves the most attention.** A record left behind by somebody who has
-left the lecture is never cleaned up, and nothing downstream expects one.
+**E-2.9 is the last one open.** A percentage of nil is the honest value for a
+student with nothing to measure, but slice 3 flattens it to zero and fails them.
 
 <!-- ------------------------------------------------------------------ -->
 <!-- Code permalinks — all pinned to 73031867, the tip of                -->
