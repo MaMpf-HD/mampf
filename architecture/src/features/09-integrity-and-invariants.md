@@ -37,6 +37,8 @@ add_index :registration_submissions,
 | Preference-based campaigns: each pending submission has unique rank | Unique index + validation |
 | Capacity never exceeded at allocation | Allocation algorithm respects `registerable.capacity` |
 | Campaign finalized exactly once | `finalize!` idempotent with status check |
+| A campaign holding an `Exam` item holds exactly one item | Validation on `Registration::Item` |
+| A campaign holding an `Exam` item is `first_come_first_served` | Validations on `Registration::Campaign` and `Registration::Item` |
 | `assigned_count` matches confirmed submissions | Background reconciliation job |
 | **Assigned users** = confirmed UserRegistrations (registration data) | Count from `Registration::UserRegistration.where(status: :confirmed)` |
 | **Allocated users** = materialized roster (domain data) | Count from `rosterable.allocated_user_ids` |

@@ -154,6 +154,22 @@ Enable students to register for an exam slot while enforcing eligibility and cap
 Exam registration typically requires students to meet certain criteria (e.g., earning 50% of homework points). This is handled by the student performance certification system documented in [Student Performance](05-student-performance.md). The eligibility check is enforced via a `Registration::Policy` with `kind: :student_performance`.
 ```
 
+```admonish warning "The shape of an exam campaign"
+An exam campaign holds one item — the exam — and its allocation mode is always
+`first_come_first_served`. Preference-based allocation ranks the items on offer,
+and here there is only ever the one, so there is nothing to rank.
+
+Both halves are model validations, checked from either side; see
+[Uniqueness Constraints](02-registration.md#uniqueness-constraints).
+
+The mode is also what makes eligibility apply at all.
+`Registration::FinalizationGuard#check` returns success for a preference-based
+campaign *before* it reaches the `ScreeningService`, so an exam campaign in that
+mode would admit every registrant, certification or not. That is a consequence
+of the rule rather than its reason, but it is the reason the rule is worth
+enforcing rather than merely intending.
+```
+
 ### Setup (Staff Actions)
 
 | Step | Action | Technical Details |
@@ -174,7 +190,7 @@ Exam registration typically requires students to meet certain criteria (e.g., ea
 3. If ineligible, student sees error message explaining why (e.g., "Certification pending" or "Certification failed")
 4. If eligible (status IN passed/forced_passed), student sees registration interface
 5. Student submits registration
-6. Registration is confirmed immediately (FCFS) or after deadline (preference-based, if multiple exam dates)
+6. Registration is confirmed immediately — exam campaigns are always first-come-first-served
 7. After registration closes, `materialize_allocation!` updates exam roster (allocation filtered to only certified students)
 
 ---
@@ -243,6 +259,11 @@ campaign.validate_certifications!  # raises if missing certifications
 ```
 
 ### Scenario 2: Multiple Exam Dates (Regular + Retake)
+
+Each exam carries its own campaign; there is no campaign that offers both and
+lets students rank them. Sitting the regular exam and the retake are separate
+decisions, so registering for one says nothing about the other.
+
 ```ruby
 regular_exam = lecture.exams.create!(
   title: "Regular Exam",
@@ -256,13 +277,9 @@ retake_exam = lecture.exams.create!(
   capacity: 50
 )
 
-campaign = lecture.registration_campaigns.create!(
-  title: "Exam Date Selection",
-  allocation_mode: :preference_based
-)
-
-campaign.registration_items.create!(registerable: regular_exam)
-campaign.registration_items.create!(registerable: retake_exam)
+# Creating the exam creates its campaign and the single item pointing at it.
+regular_exam.registration_campaign  # first_come_first_served, one item
+retake_exam.registration_campaign   # a separate campaign, likewise
 ```
 
 ---

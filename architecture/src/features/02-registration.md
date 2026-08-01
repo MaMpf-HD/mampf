@@ -496,9 +496,17 @@ end
 
 ### Uniqueness Constraints
 
-To ensure data integrity and prevent double-booking, the following constraint applies:
+To ensure data integrity and prevent double-booking, the following constraints apply:
 
 - **Global Uniqueness:** Any registerable (e.g., `Tutorial`, `Talk`, `Cohort`, or `Exam`) can be in **at most one** `Registration::Campaign`.
+- **One exam per campaign:** A campaign that already holds an `Exam` item takes no second one.
+- **Exam campaigns are first-come-first-served:** `allocation_mode` cannot become `preference_based` while an `Exam` item is present.
+
+The last two are checked from both ends, because neither model revalidates the
+other: the campaign refuses the mode change, and the item refuses a campaign
+that is preference-based or already has an exam. Before those validations
+existed, only a controller scope and the form's options kept these states out of
+reach, and a crafted request reached all of them.
 
 ### Usage Scenarios
 - **For a "Tutorial Registration" campaign:** A `Registration::Item` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
