@@ -1,7 +1,7 @@
 # Slice 4 — Decisions
 
 ```admonish question "How to read this page"
-Ten choices this slice makes where the code shows *what* happens but not why
+Nine choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -77,35 +77,6 @@ identical spec setup.
 Giving the affected examples a fixed date fixes both. The factory's random date is
 fine for specs that do not reason about the deadline.
 ~~~
-
----
-
-## E-4.1 · Creating an exam creates a registration campaign
-
-> **Should every exam get a campaign automatically, with opting out as the
-> exception?**
-
-**As built.** An `after_create` hook builds a `Registration::Campaign` plus one
-`Registration::Item` pointing at the exam, unless `skip_campaigns` is set. The
-campaign is saved with `validate: false` and is always
-`first_come_first_served`.
-
-**Code.** [`create_registration_campaign`][c4-createcamp]
-
-**Example.** A teacher fills in "Klausur Analysis I", date, capacity 200, and
-saves.
-
-- a draft campaign appears with a deadline of *exam date minus three days*
-- the exam shows a Registrations tab
-- ticking "manage participants manually" instead sets `skip_campaigns` and no
-  campaign is created at all
-
-**Why it matters.** It makes the common path one step, but the campaign is
-created with validations disabled, so an exam can produce a campaign that would
-not have passed its own model validations.
-
-**Status:** reconstructed · the `validate: false` deserves a sentence of
-justification in the code.
 
 ---
 
@@ -356,7 +327,6 @@ than the PR title suggests.
 
 | # | Decision | Status |
 |---|---|---|
-| E-4.1 | Exam auto-creates its campaign (`validate: false`) | reconstructed |
 | E-4.2 | Registration deadline is transient on the exam | reconstructed |
 | E-4.3 | Removal is soft after finalization, hard before | reconstructed |
 | E-4.4 | Re-adding revives the row and keeps the original source | reconstructed |

@@ -50,22 +50,21 @@ The exam equivalent of a Tutorial—it's both a thing students register for and 
 
 **1. As Registerable (Registration Target)**
 ```ruby
-# The parent lecture hosts the campaign
-lecture = Lecture.find(123)
-campaign = lecture.registration_campaigns.create!(
-  title: "Hauptklausur Registration",
-  allocation_mode: :first_come_first_served,
-  registration_deadline: 2.weeks.from_now
-)
-
-# The exam is the sole registerable item
+# Creating the exam is the whole step: an after_create hook adds the campaign,
+# hosted by the parent lecture, and the single item pointing back at the exam.
 exam = lecture.exams.create!(
   title: "Hauptklausur",
   date: 3.weeks.from_now,
   capacity: 200
 )
-campaign.registration_items.create!(registerable: exam)
+
+exam.registration_campaign            # draft, first_come_first_served
+exam.registration_campaign.registration_deadline  # exam date minus three days
 ```
+
+Passing `registration_deadline:` to the exam overrides that default, and
+`skip_campaigns: true` suppresses the campaign entirely — for exams whose
+participants are managed by hand.
 
 **2. As Rosterable (Student Tracking)**
 ```ruby
@@ -174,13 +173,12 @@ enforcing rather than merely intending.
 
 | Step | Action | Technical Details |
 |------|--------|-------------------|
-| 1 | Create exam | `lecture.exams.create!(title: "Hauptklausur", date: ..., capacity: 150)` |
-| 2 | Create campaign | `lecture.registration_campaigns.create!(...)` (lecture as campaignable) |
-| 3 | Create item | `campaign.registration_items.create!(registerable: exam)` |
-| 4 | Add eligibility policy | `campaign.registration_policies.create!(kind: :student_performance)` - see [Student Performance](05-student-performance.md) |
-| 5 | Create certifications | Teacher creates `StudentPerformance::Certification` records for eligible students (see [Student Performance](05-student-performance.md)) |
-| 6 | Pre-flight check | Before opening, verify all active users have certifications (see [End-to-End Workflow Phase 7](06-end-to-end-workflow.md#phase-7-teacher-certification)) |
-| 7 | Finalization filtering | On finalize, only allocate students with `Certification.status IN (:passed, :forced_passed)` |
+| 1 | Create exam | `lecture.exams.create!(title: "Hauptklausur", date: ..., capacity: 150)` — the campaign (lecture as campaignable) and its single item are created with it |
+| 2 | Check the registration deadline | Defaults to three days before the exam. For an exam less than three days out that default is already past, and the campaign cannot be opened until it is corrected |
+| 3 | Add eligibility policy | `campaign.registration_policies.create!(kind: :student_performance)` - see [Student Performance](05-student-performance.md) |
+| 4 | Create certifications | Teacher creates `StudentPerformance::Certification` records for eligible students (see [Student Performance](05-student-performance.md)) |
+| 5 | Pre-flight check | Before opening, verify all active users have certifications (see [End-to-End Workflow Phase 7](06-end-to-end-workflow.md#phase-7-teacher-certification)) |
+| 6 | Finalization filtering | On finalize, only allocate students with `Certification.status IN (:passed, :forced_passed)` |
 | Preconditions | `lecture.performance_total_points` must be set; certifications must exist for all active lecture users |
 
 ### Student Experience
