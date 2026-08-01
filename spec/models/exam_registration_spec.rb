@@ -189,6 +189,18 @@ RSpec.describe(Exam, type: :model) do
       expect(exam.exam_roster_entries).to include(roster_entry)
     end
 
+    it "keeps the original source campaign when they are added back by hand" do
+      campaign = exam.registration_campaign
+      campaign.update!(status: :completed)
+      roster_entry = exam.all_exam_roster_entries.find_by!(user: user)
+      roster_entry.update!(source_campaign: campaign)
+      exam.remove_user_from_roster!(user)
+
+      exam.add_user_to_roster!(user)
+
+      expect(roster_entry.reload.source_campaign).to eq(campaign)
+    end
+
     it "keeps destroying roster rows before finalization" do
       expect do
         exam.remove_user_from_roster!(user)
