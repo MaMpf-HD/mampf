@@ -12,6 +12,9 @@ module StudentPerformance
     validates :certified_by, presence: true, unless: :pending?
     validates :certified_at, presence: true, unless: :pending?
 
+    # A row that was never evaluated is the most out-of-date one there is, but
+    # `x > NULL` yields NULL rather than false and would drop it from every scope
+    # below. The nil case is therefore spelled out.
     scope :stale, lambda {
       record_table = Record.arel_table
       rule_table = Rule.arel_table
@@ -29,6 +32,7 @@ module StudentPerformance
       ).where(
         record_table[:computed_at].gt(cert_table[:certified_at])
           .or(rule_table[:updated_at].gt(cert_table[:certified_at]))
+          .or(cert_table[:certified_at].eq(nil))
       )
     }
 
@@ -40,7 +44,10 @@ module StudentPerformance
         cert_table.join(rule_table).on(
           rule_table[:id].eq(cert_table[:rule_id])
         ).join_sources
-      ).where(rule_table[:updated_at].gt(cert_table[:certified_at]))
+      ).where(
+        rule_table[:updated_at].gt(cert_table[:certified_at])
+          .or(cert_table[:certified_at].eq(nil))
+      )
     }
 
     scope :stale_from_data, lambda {
@@ -52,7 +59,10 @@ module StudentPerformance
           record_table[:lecture_id].eq(cert_table[:lecture_id])
             .and(record_table[:user_id].eq(cert_table[:user_id]))
         ).join_sources
-      ).where(record_table[:computed_at].gt(cert_table[:certified_at]))
+      ).where(
+        record_table[:computed_at].gt(cert_table[:certified_at])
+          .or(cert_table[:certified_at].eq(nil))
+      )
     }
 
     def self.passed?(lecture:, user:)

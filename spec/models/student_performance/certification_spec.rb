@@ -173,14 +173,18 @@ RSpec.describe(StudentPerformance::Certification, type: :model) do
       expect(described_class.stale).not_to include(cert)
     end
 
-    it "excludes pending certifications without certified_at" do
+    # Nothing has ever been computed for such a row, so any proposal it carries
+    # rests on nothing. Leaving it out of the scope would hide it from every
+    # re-evaluation for good.
+    it "includes a certification that was never evaluated" do
       FactoryBot.create(:student_performance_record,
                         lecture: lecture, user: user,
                         computed_at: 1.hour.ago)
       cert = FactoryBot.create(:student_performance_certification,
                                lecture: lecture, user: user)
 
-      expect(described_class.stale).not_to include(cert)
+      expect(cert.certified_at).to be_nil
+      expect(described_class.stale).to include(cert)
     end
 
     context "rule-change staleness" do
