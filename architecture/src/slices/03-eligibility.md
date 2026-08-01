@@ -6,8 +6,9 @@ An orientation map for the third Müsli slice (PR #1107, branch
 exists, and which screens appear. It is **not** a tutorial — read it before the
 diff, not instead of it.
 
-The judgement calls this slice makes are collected separately in
-[Slice 3 — Decisions](03-eligibility-decisions.md).
+[Before you read the code](#before-you-read-the-code) collects the places where
+the diff is easy to misread. The reasoning behind each rule lives in the feature
+chapters, linked from there.
 ```
 
 ## TL;DR
@@ -104,6 +105,97 @@ The seam towards slice 4 is worth holding on to while reviewing: slice 3 provide
 the *answer* ("is this student eligible?"), slice 4 provides the *question*
 ("finalize this exam roster").
 
+## Before you read the code
+
+Seven places where the diff is easy to misread. The reasoning behind each rule
+lives in [Student Performance](../features/05-student-performance.md); this page says what you need in order to read
+*this branch*.
+
+### An unmarked requirement makes a student pending, not ineligible
+
+`Evaluator#achievements_status` returns `:ungraded` when a required achievement
+has no grade yet. That becomes the proposal `:inconclusive`, stored as
+`Certification(status: :pending)` — the student lands in the **Open** column of
+the dashboard, not under *Not eligible*.
+
+Read the branch carefully here: `:inconclusive` has three sources, not one. An
+ungraded achievement, points still awaiting marking, and a points criterion with
+nothing to measure all end there. The rule that weighs them is in
+[how the decision is reached](../features/05-student-performance.md#how-the-decision-is-reached).
+
+If nobody ever grades the achievement the student stays pending indefinitely, and
+a finalization policy requiring a decided certification blocks the whole campaign
+rather than just that student. Treating ungraded as failed would shift that cost
+onto the student instead.
+
+### A policy naming several lectures requires all of them
+
+`StudentPerformanceHandler#evaluate` passes only when no configured lecture is
+left without a passed certification. With two lectures in one policy, passing one
+of them is not enough.
+
+The failure looks only at the lectures still outstanding, and among those a
+`failed` outranks a `pending`: the first settles the case, which is what turns a
+blocked registration into an outright rejection. The titles of the outstanding
+lectures travel in the result details.
+
+Note that the policy kind is filtered out of the campaign form
+(`available_policy_kinds`) until slice 4, so nothing configured today can reach
+this code.
+
+### `certified_at` on a pending row means "last evaluated"
+
+The column began as an audit field and the staleness scopes reused it. On a
+decided row both readings coincide; on a pending one only the second applies.
+
+The scopes compare with `>`, and `x > NULL` is NULL rather than false — so a row
+that was never evaluated is spelled out separately, or it would drop out of every
+scope and never be re-examined. It counts as stale, and the next evaluation fills
+the timestamp in.
+
+### Switching exam eligibility off keeps the data
+
+`Lecture#exam_eligibility_can_be_disabled` blocks only while a registration policy
+still refers to the lecture. Certifications and rules do not block: they record
+what happened, they decide nothing once the feature is off, and neither can be
+deleted through the interface — so making them an obstacle left teachers with no
+way out at all.
+
+Turning the switch off removes exactly one thing from the interface, the
+**Prüfungszulassungen** tab. The data stays and reappears if the switch goes back
+on, which is why the checkbox says how many certifications it is about to hide.
+
+### One active rule per lecture is a database truth
+
+A partial unique index on `lecture_id WHERE active = true`. Both
+`EvaluatorController#set_rule` and `RulesController#preview` fetch the rule with an
+unordered `.first`, which is only safe because a second active row cannot exist.
+
+A rule also has to constrain something — a threshold or at least one achievement.
+An empty one would certify every student in the lecture and was reachable from the
+form in two clicks.
+
+### One performance policy per campaign, enforced twice
+
+A model validation for a readable message, plus a partial unique index on
+`registration_campaign_id WHERE kind = 2` for the race. The check-then-act between
+`.exists?` and the insert is real: two requests interleaving would both pass the
+validation.
+
+The index is scoped to `kind = 2` only. The same race exists for
+`institutional_email` and is deliberately left as it was.
+
+### `threshold_mode` is stored, not derived
+
+An enum column, kept in agreement with the two value columns by one validation, so
+a rule can never claim a threshold it does not carry. Deriving the mode from
+whichever column is filled would work only while a single writer sets both
+together — and a rule with both columns NULL would be indistinguishable from a
+deliberate "no point threshold", making the form assert a decision nobody took.
+
+The enum carries `prefix: true` because a bare `none` would collide with
+ActiveRecord's own `none` scope.
+
 ## New screens
 
 All teacher-facing, all inside the lecture's **Assessments** tab unless noted.
@@ -160,7 +252,8 @@ stale. It is diagnostic only — it changes no data and drives no UI.
    into registration
 5. `app/controllers/student_performance/certifications_controller.rb` — the bulk
    actions, which is where the policy choices become visible
-6. [Slice 3 — Decisions](03-eligibility-decisions.md)
+6. [Before you read the code](#before-you-read-the-code) — the seven places
+   where what you just read is easy to misread
 
 Files you can skip: locale files, `db/schema.rb`, and
 `app/frontend/js/mampf_routes.js` — all generated or mechanical.

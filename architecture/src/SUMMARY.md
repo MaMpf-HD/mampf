@@ -23,7 +23,6 @@
 - [Slice 1 — Assessment Core](slices/01-assessment-core.md)
 - [Slice 2 — Achievements & Performance](slices/02-performance.md)
 - [Slice 3 — Exam Eligibility & Certification](slices/03-eligibility.md)
-  - [Decisions](slices/03-eligibility-decisions.md)
 - [Slice 4 — Exam Core & Registrations](slices/04-exam-core.md)
   - [Decisions](slices/04-exam-core-decisions.md)
 - [Slice 5 — Exam Gradability](slices/05-exam-grading.md)

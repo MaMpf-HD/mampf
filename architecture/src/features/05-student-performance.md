@@ -343,7 +343,8 @@ A configuration record that defines the criteria a student must meet to be eligi
 ### Behavior Highlights
 
 - Stored as a database record (not just JSONB config) for better querying and validation
-- One lecture can have one active rule at a time
+- One lecture can have one active rule at a time, enforced by a partial unique index on `lecture_id WHERE active` — the controllers fetch it with an unordered `.first`, which is only safe because the database rules a second one out
+- A rule must constrain something: a threshold or at least one required achievement. An empty rule would certify every student in the lecture, and it was reachable from the form in two clicks
 - References multiple achievements via join table (`student_performance_rule_achievements`)
 - Database-level integrity prevents deletion of achievements still referenced by rules
 - Enforces mutual exclusivity of percentage vs absolute point thresholds
@@ -640,6 +641,29 @@ the timestamp in.
   - Teacher reviews and applies changes manually via modal
   - No automatic updates to Certification table; teacher must confirm
 
+```admonish note "A manual decision is never overwritten by a sweep"
+Re-evaluating against the current rule skips every row with `source: :manual`. A
+teacher who admitted a student on a medical certificate keeps that decision when
+the threshold moves, which is the point of setting it by hand.
+
+The cost is the mirror image: a manual *mistake* is never corrected by the
+automatic path either. Such a row surfaces only in the stale counter, and the one
+action that clears the warning — "confirm manual decisions" — refreshes the
+timestamp without requiring anyone to look at the case again.
+```
+
+```admonish note "Switching exam eligibility off keeps the record"
+A lecture can stop using exam eligibility while certifications and rules exist:
+they are a record of what happened, and with the feature off they are hidden from
+the interface but decide nothing. Neither can be deleted through the interface
+anyway.
+
+What does block the switch is a **registration policy** still referring to the
+lecture, because that would go on admitting or refusing students on certifications
+nobody maintains. The error names the campaign, and removing the policy there is
+something the interface supports.
+```
+
 ### Example (conceptual)
 
 ```ruby
@@ -766,19 +790,29 @@ Once certifications are complete and the phase is open, evaluation is simple:
 ```ruby
 # Pseudo-code for Registration::Policy#evaluate(user) when kind == :student_performance
 def eval_student_performance(user)
-  lecture = Lecture.find(config["lecture_id"])
+  certifications = StudentPerformance::Certification.where(lecture: lectures, user: user)
+  outstanding = lectures_without_pass(certifications)
 
-  cert = StudentPerformance::Certification.find_by(lecture: lecture, user: user)
+  return pass_result(:certification_passed) if outstanding.empty?
 
-  if cert&.passed?
-    pass_result(:certification_passed)
-  else
-    fail_result(:certification_not_passed, "Lecture performance certification not passed")
-  end
+  fail_result(:certification_not_passed, …, outstanding_lectures: outstanding.map(&:title))
 end
 ```
 
-No Evaluator calls, no Service calls at registration time. Just a simple table lookup.
+No Evaluator calls, no Service calls at registration time. Just a table lookup.
+
+```admonish important "A policy naming several lectures requires all of them"
+`config["lecture_ids"]` may list more than one lecture, and every one of them has
+to be passed. A pass in one says nothing about another — for a two-semester
+prerequisite, admitting on half of it is not what the configuration expresses.
+
+Two things follow. The failure looks only at the lectures still outstanding, since
+a pass elsewhere must not soften the verdict; and among those a definitive
+`failed` outranks a `pending` one, because it settles the case and is therefore
+the difference between blocking a registration and rejecting it outright. The
+outstanding lecture titles travel in the result details, so the student is told
+which certification is missing rather than just that one is.
+```
 
 ### Flowchart: Student Performance Policy Flow
 
