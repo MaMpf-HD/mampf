@@ -21,6 +21,8 @@ class Exam < ApplicationRecord
   include Assessment::Pointable
   include Assessment::Gradable
 
+  # No column behind this — the campaign owns the deadline. The attribute only
+  # carries it between form and campaign; `load_registration_deadline` fills it.
   attr_accessor :registration_deadline, :reopen_after_deadline_fix
 
   validates :title, presence: true
