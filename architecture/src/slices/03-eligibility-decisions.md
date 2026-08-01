@@ -132,36 +132,6 @@ suppressing it.
 
 ---
 
-## E-3.4 · `certified_at` is set on undecided certifications
-
-> **May a `pending` row carry a timestamp although nothing was decided?**
-
-**As built.** Yes — on pending rows the column doubles as *"last evaluated at"*.
-`attributes_for_proposal` sets `certified_at: Time.current` even for
-`:inconclusive`, while leaving `certified_by` nil.
-
-**Code.** [`attributes_for_proposal`][c-attrs] · [the `stale` scope][c-stale] ·
-[the validation that permits nil][c-certvalid]
-
-**Example.** Dave has an ungraded requirement → `pending`, `certified_at` = today.
-
-- The teacher edits the rule tomorrow → `rules.updated_at > certs.certified_at`
-  → Dave shows up as **stale** and is re-evaluated. Correct.
-- With `certified_at = nil` — which the model explicitly permits
-  (`validates :certified_at, presence: true, unless: :pending?`) — the SQL
-  comparison `rules.updated_at > NULL` yields NULL, the row never matches the
-  `stale` scope, and Dave keeps an outdated proposal **forever**, invisibly.
-
-**Why it matters.** The column name says "certified", the semantics say
-"evaluated". Anyone reading the model in isolation will conclude the timestamp is
-wrong and may "fix" it to nil — which silently breaks staleness detection.
-
-**Alternative.** A dedicated `evaluated_at` column. That is a schema change that
-has to propagate through slices 4 and 5.
-
-**Status:** reconstructed · **no test pins the semantics.**
-
----
 
 ## E-3.5 · Several lectures in one policy mean OR
 
@@ -334,7 +304,6 @@ ordering in `points_met?` would turn that into an arbitrary winner.
 | E-3.1 | Ungraded ⇒ pending, not failed | settled |
 | E-3.2 | A rule must constrain something | settled *(was: untested)* |
 | E-3.3 | Manual decisions never auto-overwritten | settled |
-| E-3.4 | `certified_at` doubles as "last evaluated" | **reconstructed, untested** |
 | E-3.5 | Multi-lecture policies mean OR | settled |
 | E-3.6 | One active rule per lecture (DB index) | settled |
 | E-3.7 | One performance policy per campaign (model + index) | settled |
@@ -342,10 +311,8 @@ ordering in `points_met?` would turn that into an arbitrary winner.
 | E-3.9 | `threshold_mode` is a column | settled *(was: reconstructed)* |
 | E-3.10 | Percentage XOR absolute | settled |
 
-**E-3.4 is the one still needing attention.** It is a behavioural commitment with
-real consequences, it lacks a test, and it hides in a single line
-(`certified_at: Time.current`) that a reader working through 7,600 diff lines
-will almost certainly pass over.
+**Nothing here still needs a decision.** Every entry has been checked against the
+branch and carries a test; what remains is background for the reviewer.
 
 E-3.2 and E-3.9 were open when this page was first written; both have since been
 addressed — see the entries for what changed and why.

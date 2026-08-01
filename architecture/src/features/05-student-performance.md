@@ -605,11 +605,25 @@ and audit fields. Can be created early as `pending`, then resolved to
 | `status` | Enum | `pending`, `passed`, `failed` |
 | `source` | Enum | `computed` (from evaluator) or `manual` (teacher override) |
 | `certified_by_id` | FK User | Who set a non-pending certification |
-| `certified_at` | DateTime | When it was set (non-null unless pending) |
+| `certified_at` | DateTime | When it was set — and on a `pending` row, when it was last evaluated (see below) |
 | `rule_id` | FK (optional) | Rule in effect when set (may be null if rule deleted) |
 | `note` | Text | Optional human note |
 
 Uniqueness: one certification per (lecture_id, user_id).
+
+```admonish warning "`certified_at` carries a second meaning"
+The column began as an audit field — *when the teacher decided* — and the
+staleness scopes later reused it as *when this row was last brought up to date*.
+On a decided row the two coincide; on a `pending` one only the second applies, and
+after "confirm manual decisions" the timestamp moves without any new decision
+being made. Every write path sets it, so all three readings hold at once.
+
+The model permits nil, and the scopes must therefore spell that case out: `x >
+NULL` is NULL, not false, so a row that was never evaluated would drop out of
+every scope and never be re-examined. It counts as stale, which is the honest
+reading — nothing has been computed for it at all — and the next evaluation fills
+the timestamp in.
+```
 
 ### Behavior highlights
 
