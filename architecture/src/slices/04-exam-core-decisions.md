@@ -1,7 +1,7 @@
 # Slice 4 — Decisions
 
 ```admonish question "How to read this page"
-Nine choices this slice makes where the code shows *what* happens but not why
+Five choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -77,118 +77,6 @@ identical spec setup.
 Giving the affected examples a fixed date fixes both. The factory's random date is
 fine for specs that do not reason about the deadline.
 ~~~
-
----
-
-## E-4.2 · The registration deadline lives on the campaign, not the exam
-
-> **Is it right that `Exam#registration_deadline` is a form field with no
-> column behind it?**
-
-**As built.** `attr_accessor :registration_deadline`. Writing it triggers an
-`after_update` that pushes the value onto the campaign; reading it after a
-reload gives nil unless `load_registration_deadline` was called.
-
-**Code.** [the `attr_accessor`][c4-attrs] ·
-[`update_campaign_deadline`][c4-updatedeadline] ·
-[`registration_campaign` lookup][c4-camplookup]
-
-**Example.** A teacher edits the exam and moves the deadline a week later.
-
-- `exam.registration_deadline = …` → `after_update` → `campaign.update(...)`
-- reopening the form calls `load_registration_deadline`, which reads it back
-  *from the campaign*
-
-If a future caller sets the attribute without saving, or reads it without
-loading, it silently sees nil.
-
-**Why it matters.** One value, two homes, and the exam's copy is transient. It
-keeps the campaign authoritative, which is right, but the attribute looks like a
-column at every call site.
-
-**Status:** reconstructed.
-
----
-
-## E-4.3 · Roster removal is soft after finalization and hard before
-
-> **Should removing a participant destroy the row or only mark it excluded,
-> depending on the campaign's state?**
-
-**As built.** If the campaign is `completed`, the entry gets
-`excluded_at = Time.current`; otherwise it is destroyed outright.
-
-**Code.** [`remove_user_from_roster!`][c4-remove]
-
-**Example.** Two removals of the same student from the same exam:
-
-- **before finalization** — the row is deleted; nothing records that they were
-  ever registered
-- **after finalization** — the row survives with `excluded_at` set, appears
-  under "not on the exam roster" with the reason *removed from the exam roster*,
-  and can be added back
-
-**Why it matters.** After finalization an audit trail matters, because a
-removal reverses an allocation students have already seen. Before finalization
-nothing has been promised. The asymmetry is defensible but invisible — the same
-button does two different things.
-
-**Status:** reconstructed.
-
----
-
-## E-4.4 · Re-adding revives the excluded row and keeps its origin
-
-> **Should adding someone back reuse the old entry rather than creating a fresh
-> one?**
-
-**As built.** `add_user_to_roster!` uses `find_or_initialize_by(user:)` on the
-**unscoped** association, clears `excluded_at`, and only fills
-`source_campaign` if it is still blank (`||=`).
-
-**Code.** [`add_user_to_roster!`][c4-add]
-
-**Example.** Nina is allocated through the campaign, removed by hand, then added
-back manually.
-
-- her original row is revived, `excluded_at` cleared
-- `source_campaign` still points at the campaign that first admitted her, **not**
-  at the manual re-add
-
-So the roster remembers how she originally got in, which is what the campaign
-statistics rely on. The flip side: there is no record that she was ever removed
-once she is back.
-
-**Why it matters.** `||=` is the whole decision, and it is one character wide.
-
-**Status:** reconstructed.
-
----
-
-## E-4.5 · Grading data makes a participant unremovable
-
-> **Should the presence of grading data block removal by raising, rather than by
-> a validation?**
-
-**As built.** `ensure_participant_removable!` raises
-`Exam::ParticipantRemovalNotAllowedError` when the user appears in
-`participants_with_grading_data`.
-
-**Code.** [`remove_user_from_roster!`][c4-remove] ·
-[`participant_removable?`][c4-removable]
-
-**Example.** Olaf sat the exam and has points entered on three tasks. An
-assistant tries to remove him from the roster.
-
-- the exception propagates out of the model; the controller must catch it and
-  turn it into a flash message
-- the UI pre-empts this by rendering the remove button disabled with a tooltip
-
-**Why it matters.** An exception rather than a validation means every caller
-must know about it. It is the right severity — silently discarding grading data
-would be worse — but it puts the burden on the call sites.
-
-**Status:** settled.
 
 ---
 
@@ -327,10 +215,6 @@ than the PR title suggests.
 
 | # | Decision | Status |
 |---|---|---|
-| E-4.2 | Registration deadline is transient on the exam | reconstructed |
-| E-4.3 | Removal is soft after finalization, hard before | reconstructed |
-| E-4.4 | Re-adding revives the row and keeps the original source | reconstructed |
-| E-4.5 | Grading data blocks removal by raising | settled |
 | E-4.6 | Exam undeletable once roster or live campaign exists | settled |
 | E-4.7 | Exclusive per campaign, not across sibling exams | reconstructed |
 | E-4.8 | Lifecycle derived, not stored | reconstructed |
@@ -348,12 +232,6 @@ but reads like an oversight.
 <!-- ------------------------------------------------------------------ -->
 
 [c4-createcamp]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L177-L191
-[c4-attrs]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L24
-[c4-updatedeadline]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L170-L175
-[c4-camplookup]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L88-L90
-[c4-remove]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L65-L76
-[c4-add]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L57-L63
-[c4-removable]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L78-L86
 [c4-nondestruct]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L40-L47
 [c4-destroydraft]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L217-L222
 [c4-exclusive]: https://github.com/MaMpf-HD/mampf/blob/cb300a0c1721249a879590bb00d2c92f3855d944/app/models/exam.rb#L102-L104
