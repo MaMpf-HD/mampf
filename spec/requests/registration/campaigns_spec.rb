@@ -173,6 +173,20 @@ RSpec.describe("Registration::Campaigns", type: :request) do
       end
     end
 
+    context "when the campaign belongs to an exam" do
+      before { sign_in editor }
+
+      it "refuses to switch it to preference-based while it is still draft" do
+        exam_campaign = create(:exam, :with_date, lecture: lecture).registration_campaign
+
+        patch registration_campaign_path(exam_campaign),
+              params: { registration_campaign: { allocation_mode: "preference_based" } }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(exam_campaign.reload).to be_first_come_first_served
+      end
+    end
+
     context "as a student" do
       before { sign_in student }
 

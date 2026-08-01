@@ -664,6 +664,7 @@ de:
               cannot_revert_to_draft: "kann nicht in den Entwurfsmodus zurückgesetzt werden, sobald es geöffnet wurde"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
+              exams_are_first_come_first_served: "ist bei Klausuranmeldungen immer 'Direktanmeldung'"
         registration/policy:
           attributes:
             base:
@@ -678,6 +679,8 @@ de:
               registerable_not_managed_by_campaign: "Das Element ist für Anmeldeverfahren gesperrt."
               cannot_add_exam_to_non_exam_campaign: "Klausuren können nicht zu Anmeldeverfahren hinzugefügt werden, die bereits Tutorien, Vorträge oder andere Gruppen enthalten."
               cannot_add_non_exam_to_exam_campaign: "Tutorien, Vorträge und andere Gruppen können nicht zu Klausuranmeldungen hinzugefügt werden."
+              exam_requires_first_come_first_served_campaign: "Klausuren können nur zu Anmeldeverfahren mit Direktanmeldung hinzugefügt werden."
+              campaign_already_has_exam: "Das Anmeldeverfahren enthält bereits eine Klausur."
         registration/user_registration:
           attributes:
             registration_item:

@@ -39,6 +39,7 @@ module Registration
 
     validate :validate_registerable_allows_campaigns, on: :create
     validate :ensure_compatible_with_existing_items, on: :create
+    validate :ensure_exam_campaign_holds_one_exam, on: :create
     validate :validate_capacity_reduction, on: :update
     before_destroy :ensure_campaign_is_draft
 
@@ -139,6 +140,22 @@ module Registration
         elsif registerable_type != "Exam" && existing_types.include?("Exam")
           errors.add(:base, :cannot_add_non_exam_to_exam_campaign)
         end
+      end
+
+      # The campaign side refuses a mode change once it holds an exam; this is
+      # the same rule seen from the item, which no campaign validation runs for.
+      def ensure_exam_campaign_holds_one_exam
+        return unless registerable_type == "Exam" && registration_campaign
+
+        unless registration_campaign.first_come_first_served?
+          errors.add(:base, :exam_requires_first_come_first_served_campaign)
+        end
+
+        return unless registration_campaign.registration_items
+                                           .where.not(id: id)
+                                           .exists?(registerable_type: "Exam")
+
+        errors.add(:base, :campaign_already_has_exam)
       end
   end
 end

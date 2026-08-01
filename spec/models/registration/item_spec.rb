@@ -256,12 +256,16 @@ RSpec.describe(Registration::Item, type: :model) do
           )
         end
 
-        it "allows adding a second exam to an exam-only campaign" do
+        it "rejects adding a second exam to an exam-only campaign" do
           create(:registration_item, registration_campaign: campaign,
                                      registerable: exam1)
           item = build(:registration_item, registration_campaign: campaign,
                                            registerable: exam2)
-          expect(item).to be_valid
+          expect(item).not_to be_valid
+          expect(item.errors[:base]).to include(
+            I18n.t("activerecord.errors.models.registration/item" \
+                   ".attributes.base.campaign_already_has_exam")
+          )
         end
 
         it "allows adding multiple non-exam items to a campaign" do

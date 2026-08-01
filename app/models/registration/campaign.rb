@@ -63,6 +63,7 @@ module Registration
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
+    validate :exam_campaign_is_first_come_first_served
 
     before_destroy :ensure_campaign_is_draft, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
@@ -479,6 +480,15 @@ module Registration
         return unless allocation_mode_changed? && status_was != "draft"
 
         errors.add(:allocation_mode, :frozen)
+      end
+
+      # Preference-based allocation ranks the items on offer, and an exam
+      # campaign offers just the one — the exam itself.
+      def exam_campaign_is_first_come_first_served
+        return if first_come_first_served?
+        return unless registration_items.exists?(registerable_type: "Exam")
+
+        errors.add(:allocation_mode, :exams_are_first_come_first_served)
       end
 
       def cannot_revert_to_draft

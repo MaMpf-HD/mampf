@@ -660,6 +660,7 @@ en:
               cannot_revert_to_draft: "cannot be reverted to draft once opened"
             allocation_mode:
               frozen: "cannot be changed after registration process is opened"
+              exams_are_first_come_first_served: "is always first-come-first-served for exam registrations"
         registration/policy:
           attributes:
             base:
@@ -674,6 +675,8 @@ en:
               registerable_not_managed_by_campaign: "The item is locked for registration processes."
               cannot_add_exam_to_non_exam_campaign: "Exams cannot be added to campaigns that already contain tutorials, talks, or other groups."
               cannot_add_non_exam_to_exam_campaign: "Tutorials, talks, and other groups cannot be added to exam campaigns."
+              exam_requires_first_come_first_served_campaign: "Exams can only be added to first-come-first-served campaigns."
+              campaign_already_has_exam: "The campaign already contains an exam."
         registration/user_registration:
           attributes:
             registration_item:
