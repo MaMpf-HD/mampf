@@ -119,7 +119,9 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
                user: user)
       end
 
-      it "does not block when one of the selected lectures is passed" do
+      # Every lecture the policy names has to be passed, so one pass alongside an
+      # undecided second is not enough — and the campaign waits for that second.
+      it "blocks while one of the selected lectures is still undecided" do
         create(:student_performance_certification, :pending,
                lecture: other_lecture, user: user)
         create(:student_performance_certification, :passed,
@@ -127,11 +129,26 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
 
         result = described_class.new(campaign).check
 
+        expect(result.success?).to be(false)
+        expect(result.error_code).to eq(:policy_violation)
+      end
+
+      it "does not block once every selected lecture is passed" do
+        certifier = create(:confirmed_user)
+        [other_lecture, passed_lecture].each do |l|
+          create(:student_performance_certification, :passed,
+                 lecture: l, user: user, certified_by: certifier)
+        end
+
+        result = described_class.new(campaign).check
+
         expect(result.success?).to be(true)
         expect(result.blocker_violations).to be_empty
       end
 
-      it "blocks when no selected lecture is passed" do
+      # A lecture that is definitively failed cannot be salvaged by the pending
+      # one, so the student is rejected rather than the campaign held up.
+      it "rejects rather than blocking when one lecture is failed outright" do
         create(:student_performance_certification, :pending,
                lecture: other_lecture, user: user)
         create(:student_performance_certification, :failed,
@@ -139,8 +156,8 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
 
         result = described_class.new(campaign).check
 
-        expect(result.success?).to be(false)
-        expect(result.error_code).to eq(:policy_violation)
+        expect(result.blocker_violations).to be_empty
+        expect(result.auto_reject_violations.size).to eq(1)
       end
     end
 
