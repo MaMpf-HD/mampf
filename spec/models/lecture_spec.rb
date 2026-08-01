@@ -485,30 +485,34 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.update(uses_exam_eligibility: false)).to be(true)
     end
 
-    it "is blocked by an existing rule" do
-      create(:student_performance_rule, lecture: lecture)
+    # A rule and its certifications are a record of what happened. Disabling
+    # hides them from the interface without deleting anything, and neither can
+    # decide about a student on its own — so neither stands in the way.
+    it "is allowed with an existing rule, which is kept" do
+      rule = create(:student_performance_rule, lecture: lecture)
 
-      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
-      expect(lecture.errors[:uses_exam_eligibility]).to be_present
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+      expect(rule.reload).to be_persisted
     end
 
-    it "is blocked by an existing certification" do
+    it "is allowed with existing certifications, which are kept" do
       user = create(:confirmed_user)
       create(:lecture_membership, user: user, lecture: lecture)
-      create(:student_performance_certification, :passed,
-             lecture: lecture, user: user,
-             certified_by: create(:confirmed_user))
+      cert = create(:student_performance_certification, :passed,
+                    lecture: lecture, user: user,
+                    certified_by: create(:confirmed_user))
 
-      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
-      expect(lecture.errors[:uses_exam_eligibility]).to be_present
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+      expect(cert.reload).to be_passed
     end
 
     it "is blocked by a policy referencing the lecture" do
-      create(:registration_policy, :student_performance,
-             config: { "lecture_ids" => [lecture.id.to_s] })
+      policy = create(:registration_policy, :student_performance,
+                      config: { "lecture_ids" => [lecture.id.to_s] })
 
       expect(lecture.update(uses_exam_eligibility: false)).to be(false)
-      expect(lecture.errors[:uses_exam_eligibility]).to be_present
+      expect(lecture.errors[:uses_exam_eligibility].first)
+        .to include(policy.registration_campaign.campaignable.title)
     end
 
     it "is blocked by a policy using the legacy lecture_id config" do

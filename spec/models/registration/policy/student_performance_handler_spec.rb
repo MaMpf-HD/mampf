@@ -21,7 +21,9 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
       expect(result[:code]).to eq(:certification_passed)
     end
 
-    it "passes if user has a passed certification for any selected lecture" do
+    # Every configured lecture counts. A pass in one of them says nothing about
+    # the other, so it cannot stand in for it.
+    it "fails if only one of several selected lectures is passed" do
       policy.config["lecture_ids"] = [lecture.id.to_s, other_lecture.id.to_s]
 
       create(:student_performance_certification, :passed,
@@ -31,8 +33,42 @@ RSpec.describe(Registration::Policy::StudentPerformanceHandler, type: :model) do
 
       result = handler.evaluate(user)
 
+      expect(result[:pass]).to be(false)
+      expect(result[:details][:certification_status]).to eq(:missing)
+      expect(result[:details][:outstanding_lectures]).to eq([lecture.title])
+    end
+
+    it "passes once every selected lecture is passed" do
+      policy.config["lecture_ids"] = [lecture.id.to_s, other_lecture.id.to_s]
+      certifier = create(:confirmed_user)
+
+      [lecture, other_lecture].each do |l|
+        create(:student_performance_certification, :passed,
+               lecture: l, user: user, certified_by: certifier)
+      end
+
+      result = handler.evaluate(user)
+
       expect(result[:pass]).to be(true)
       expect(result[:code]).to eq(:certification_passed)
+    end
+
+    # One lecture cannot be passed any more, so the case is settled rather than
+    # merely open — which is what turns a blocker into an auto-reject.
+    it "reports a definitive failure even when another lecture is only pending" do
+      policy.config["lecture_ids"] = [lecture.id.to_s, other_lecture.id.to_s]
+
+      create(:student_performance_certification, :failed,
+             lecture: lecture, user: user, certified_by: create(:confirmed_user))
+      create(:student_performance_certification,
+             lecture: other_lecture, user: user, status: :pending)
+
+      result = handler.evaluate(user)
+
+      expect(result[:pass]).to be(false)
+      expect(result[:details][:certification_status]).to eq(:failed)
+      expect(result[:classification])
+        .to eq(Registration::ScreeningService::CLASSIFICATION_AUTO_REJECT)
     end
 
     it "fails if user has a failed certification" do
