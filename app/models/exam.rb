@@ -71,8 +71,11 @@ class Exam < ApplicationRecord
     return unless roster_entry
 
     if registration_campaign&.completed?
+      # Their seat was allocated and they have seen it, so the removal stays
+      # visible.
       roster_entry.update!(excluded_at: Time.current)
     else
+      # No campaign: the list is kept by hand anyway, and a mistake is retyped.
       roster_entry.destroy
     end
   end
