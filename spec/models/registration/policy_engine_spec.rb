@@ -116,7 +116,7 @@ RSpec.describe(Registration::PolicyEngine, type: :service) do
           .to eq(:missing)
       end
 
-      it "passes when user has passed any selected lecture" do
+      it "passes only once every selected lecture is passed" do
         FactoryBot.create(
           :registration_policy,
           :student_performance,
@@ -124,15 +124,19 @@ RSpec.describe(Registration::PolicyEngine, type: :service) do
           position: 1,
           config: { "lecture_ids" => [lecture.id.to_s, other_lecture.id.to_s] }
         )
+        certifier = FactoryBot.create(:confirmed_user)
         FactoryBot.create(:student_performance_certification, :passed,
-                          lecture: other_lecture,
-                          user: user,
-                          certified_by: FactoryBot.create(:confirmed_user))
+                          lecture: other_lecture, user: user,
+                          certified_by: certifier)
 
         engine = described_class.new(campaign)
-        result = engine.eligible?(user, phase: :registration)
+        expect(engine.eligible?(user, phase: :registration).pass).to be(false)
 
-        expect(result.pass).to be(true)
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: lecture, user: user, certified_by: certifier)
+
+        expect(described_class.new(campaign)
+                              .eligible?(user, phase: :registration).pass).to be(true)
       end
 
       it "evaluates during finalization phase" do
