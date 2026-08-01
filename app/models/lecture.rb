@@ -1069,18 +1069,23 @@ class Lecture < ApplicationRecord
       course.term_independent
     end
 
+    # Certifications and rules are records of what happened; switching the
+    # feature off hides them but harms nobody. A registration policy is an active
+    # dependency — it would keep admitting or refusing students on certifications
+    # nobody maintains any more — so only that blocks.
     def exam_eligibility_can_be_disabled
-      if student_performance_certifications.exists? ||
-         student_performance_rules.exists?
-        errors.add(:uses_exam_eligibility,
-                   :has_existing_data)
-        return
-      end
+      blocking = Registration::Policy.student_performance_for_lecture(id)
+                                     .includes(registration_campaign: :campaignable)
+      return if blocking.empty?
 
-      return unless Registration::Policy.student_performance_for_lecture(id).exists?
+      errors.add(:uses_exam_eligibility, :referenced_by_policies,
+                 campaigns: blocking_campaign_titles(blocking))
+    end
 
-      errors.add(:uses_exam_eligibility,
-                 :has_existing_data)
+    def blocking_campaign_titles(policies)
+      policies.filter_map do |policy|
+        policy.registration_campaign&.campaignable&.try(:title)
+      end.uniq.join(", ")
     end
 
     def absence_of_term
