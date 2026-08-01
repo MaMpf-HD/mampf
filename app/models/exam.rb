@@ -182,6 +182,9 @@ class Exam < ApplicationRecord
         status: :draft,
         registration_deadline: deadline
       )
+      # For an exam less than three days out the derived deadline is already
+      # past, and the campaign refuses that even as a draft. Opening validates
+      # again.
       campaign.save!(validate: false)
       Registration::Item.create!(
         registration_campaign: campaign,

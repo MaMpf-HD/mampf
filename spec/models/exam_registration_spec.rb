@@ -450,6 +450,13 @@ RSpec.describe(Exam, type: :model) do
           .to be_within(1.second).of(exam.date - 3.days)
       end
 
+      it "creates the campaign when the derived deadline is already past" do
+        exam = create(:exam, date: 2.days.from_now)
+
+        expect(exam.registration_campaign).to be_draft
+        expect(exam.registration_campaign.registration_deadline).to be < Time.current
+      end
+
       it "creates a registration item linked to the exam" do
         exam = create(:exam)
         item = Registration::Item.find_by(registerable: exam)
