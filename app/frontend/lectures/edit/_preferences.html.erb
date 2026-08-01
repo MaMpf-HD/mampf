@@ -197,6 +197,16 @@
           <%= helpdesk(t('admin.lecture.info.uses_exam_eligibility'),
                       false) %>
         </div>
+
+        <% if lecture.uses_exam_eligibility? %>
+          <% kept = lecture.student_performance_certifications.count %>
+          <% if kept.positive? %>
+            <div class="form-text text-warning-emphasis">
+              <i class="bi bi-info-circle me-1"></i>
+              <%= t('admin.lecture.info.eligibility_data_kept', count: kept) %>
+            </div>
+          <% end %>
+        <% end %>
       </div>
     </div>
   <% end %>

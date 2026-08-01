@@ -25,12 +25,13 @@ module Registration
         certifications = StudentPerformance::Certification.where(
           lecture: lectures, user: user
         )
+        outstanding = lectures_without_pass(certifications)
 
-        if certifications.passed.exists?
-          pass_result(:certification_passed)
-        else
-          fail_for_certification_status(certification_status(certifications))
-        end
+        return pass_result(:certification_passed) if outstanding.empty?
+
+        fail_for_certification_status(
+          certification_status(certifications, outstanding), outstanding
+        )
       end
 
       def validate
@@ -77,22 +78,35 @@ module Registration
           @lectures = lecture_ids.filter_map { |lecture_id| lectures_by_id[lecture_id] }
         end
 
-        def certification_status(certifications)
-          statuses = certifications.map { |certification| certification.status.to_sym }
-          return :pending if statuses.include?(:pending)
+        # Every configured lecture has to be passed, so what matters is which of
+        # them are not — a pass elsewhere cannot make up for them.
+        def lectures_without_pass(certifications)
+          passed_ids = certifications.passed.pluck(:lecture_id).to_set
+
+          lectures.reject { |lecture| passed_ids.include?(lecture.id) }
+        end
+
+        # A single definitive failure settles the case, because no later grading
+        # can turn it into a pass; anything else is still open.
+        def certification_status(certifications, outstanding)
+          statuses = certifications.where(lecture: outstanding)
+                                   .map { |certification| certification.status.to_sym }
           return :failed if statuses.include?(:failed)
+          return :pending if statuses.include?(:pending)
 
           :missing
         end
 
-        def fail_for_certification_status(status)
+        def fail_for_certification_status(status, outstanding)
           message = I18n.t("registration.policy.errors.certification_not_passed")
+          details = { certification_status: status,
+                      outstanding_lectures: outstanding.map(&:title) }
 
           if status == :failed
             fail_result(
               :certification_not_passed,
               message,
-              { certification_status: status },
+              details,
               classification: Registration::ScreeningService::CLASSIFICATION_AUTO_REJECT,
               reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
               reason_code: :certification_not_passed,
@@ -102,7 +116,7 @@ module Registration
             fail_result(
               :certification_not_passed,
               message,
-              { certification_status: status },
+              details,
               classification: Registration::ScreeningService::CLASSIFICATION_BLOCKER
             )
           end

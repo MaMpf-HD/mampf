@@ -654,6 +654,13 @@ en:
           If you check this box, exam eligibility tracking is enabled for
           this event series. Students can then receive certifications and
           registration policies can reference this event series.
+        eligibility_data_kept:
+          one: >
+            Disabling keeps 1 certification, but it will no longer be
+            reachable.
+          other: >
+            Disabling keeps %{count} certifications, but they will no longer be
+            reachable.
         submission_max_team_size: >
           Here you can enter how many people are maximally allowed for
           one submission. If you enter nothing, there will be no restriction on
@@ -3934,9 +3941,10 @@ en:
             teacher:
               required: 'You need to give a teacher.'
             uses_exam_eligibility:
-              has_existing_data: >
-                cannot be disabled because certifications, rules, or
-                registration policies already exist for this event series.
+              referenced_by_policies: >
+                cannot be disabled while a registration policy still refers to
+                this event series (%{campaigns}). Remove it there first —
+                certifications and rules are kept.
         lesson:
           attributes:
             date:
