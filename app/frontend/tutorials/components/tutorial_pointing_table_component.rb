@@ -36,7 +36,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def total_max_points
-    tasks.filter_map(&:max_points).sum
+    @assignment&.assessment&.effective_total_points || 0
   end
 
   def grading_records?
