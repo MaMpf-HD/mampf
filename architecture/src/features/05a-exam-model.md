@@ -360,8 +360,13 @@ Both phases are defined and tested, but nothing in this stack can trigger them.
 the point and grade entry lives in the separate tutor grading view.
 
 `graded` needs `assessment.results_published_at`. That column exists and is read
-by `results_published?`, but **no code anywhere writes it** — the action that
-releases results to students has still to be built.
+by `results_published?`, but **no code anywhere writes it** — releasing results
+is PR 8.10 on the student-facing side, see
+[Integration Strategy](integration-strategy.md#phase-3-assessment-student-prs--final).
+
+Neither gap is an oversight: the admin chain was cut so that everything about
+points and grades is read-only in these slices — PRs 8.3, 8.4 and 12.2 carry
+"read-only" in their names.
 
 So an exam in this stack comes to rest at `conducted`.
 ~~~

@@ -275,8 +275,30 @@ The `Assessment::GradeSchemeApplier` automatically detects whether `min_points` 
 
 ```admonish warning "Implementation Status"
 **Backend:** ✅ Already supported via `banded` scheme
-**Frontend:** 🚧 Planned - Interactive UI needs to be built
+**Frontend:** ✅ Shipped — two anchors plus a draggable histogram. The sketch below predates it and still shows bands with an upper bound; the shipped code does not.
 ```
+
+~~~admonish danger "The generator exists twice, and the tested copy is not the one that runs"
+`GradeScheme.two_point_auto` (Ruby) and `computeBands` (`grade_bands.js`) implement
+the same rule: spread the ten passing grades evenly between the passing and
+excellence thresholds, round each boundary to `points_step`, and prepend a 5.0
+band when passing is above zero.
+
+**Only the JavaScript runs.** The form builds the config in the browser and posts
+it as `config_json`; nothing in `app/` calls `two_point_auto`. **Only the Ruby is
+tested** — thirteen examples in `grade_scheme_spec`, none for the JavaScript, and
+the project has no unit-test runner for the frontend.
+
+They agree today: for passing 24, excellence 54 and step 1 both produce
+`0, 24, 27, 31, 34, 37, 41, 44, 47, 51, 54`. Nothing keeps them in step, so a
+change to one has to be carried to the other by hand.
+
+The input guards live in a third place, `scheme_form.controller.js`: numbers
+present, excellence above passing, passing not negative, excellence within the
+maximum, and range wide enough for the ten grades. `computeBands` itself checks
+nothing — given a range too narrow it silently produces duplicate thresholds, and
+with the anchors swapped it produces a descending scale.
+~~~
 
 ```admonish info "Design Philosophy"
 The backend only needs to support the `banded` scheme. The "curve generation" is purely a **frontend convenience feature** that produces valid `banded` configs by helping teachers visualize and set boundaries.

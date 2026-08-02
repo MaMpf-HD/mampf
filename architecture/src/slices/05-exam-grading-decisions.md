@@ -1,7 +1,7 @@
 # Slice 5 — Decisions
 
 ```admonish question "How to read this page"
-Two choices this slice makes where the code shows *what* happens but not why
+One choice this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -16,34 +16,6 @@ Permalinks are pinned to commit
 the tip of `muesli-05-exam-grading`. All URLs live in one block at the end of
 the file.
 ```
-
----
-
-## E-5.9 · `two_point_auto` spreads grades evenly and refuses narrow ranges
-
-> **Is an even spread between "passing" and "excellence" the right default
-> scheme generator?**
-
-**As built.** The ten passing grades are spread linearly between the two given
-point values, each boundary rounded to `points_step`. The method raises when the
-range is too narrow for the step, when boundaries would collapse, or when
-excellence exceeds the maximum.
-
-**Code.** [`two_point_auto`][c5-twopoint]
-
-**Example.** Passing 24, excellence 54, step 1 → nine intervals of 3.33 points,
-rounded to whole points: 24, 27, 30, 33, 37, 40, 44, 47, 51, 54. A 5.0 band from
-0 is prepended because passing is above zero.
-
-With passing 24 and excellence 30 the same call raises: nine boundaries cannot
-fit into six points at step 1.
-
-**Why it matters.** It encodes a pedagogical convention — equal point intervals
-per grade step — as the default. Raising rather than silently collapsing
-boundaries is the right call, but the errors are `ArgumentError` with English
-messages, so a controller must translate them.
-
-**Status:** reconstructed.
 
 ---
 
@@ -75,7 +47,6 @@ finding it in the code means going through the polymorphic association.
 
 | # | Decision | Status |
 |---|---|---|
-| E-5.9 | `two_point_auto` spreads evenly, raises on narrow ranges | reconstructed |
 | E-5.10 | Grading hangs off the assessment, not the exam | settled |
 
 <!-- ------------------------------------------------------------------ -->
@@ -83,5 +54,4 @@ finding it in the code means going through the polymorphic association.
 <!-- muesli-05-exam-grading. To re-pin, replace the SHA below.           -->
 <!-- ------------------------------------------------------------------ -->
 
-[c5-twopoint]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L30-L56
 [c5-pointgrad]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L69-L77
