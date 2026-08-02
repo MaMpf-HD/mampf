@@ -409,9 +409,32 @@ The `status` enum tracks a participation's position in the **grading workflow**.
 |--------|---------|--------|
 | *(no record)* | No participation exists | Student has not interacted with assessment |
 | `pending` | In grading pipeline, awaiting review | Roster seed (exams/talks), submission upload (assignments), deadline backfill job |
-| `reviewed` | All grading complete | Tutor/teacher marks grading done (all task points entered) |
+| `reviewed` | All grading complete | Tutor/teacher marks grading done (see below — what "complete" means depends on `requires_points`) |
 | `exempt` | Excused from assessment | Manual exemption (medical certificate, etc.) |
 | `absent` | Did not attend (in-person) | Teacher marks student as no-show (explicit action) |
+
+```admonish note "What `reviewed` requires, and when `points_total` is legitimately nil"
+Two kinds of assessment reach `reviewed` by different routes, and the enum does
+not distinguish them — `requires_points` does.
+
+**Points-based** (exam, assignment): tasks exist and carry the marks.
+`points_total` mirrors their sum, and "grading complete" means every task has
+been scored. A `reviewed` participation with no task points at all is a
+contradiction: the action that sets the status has to refuse it.
+
+**Single-grade** (seminar talk): there are no tasks. The grade sits on the
+participation itself, `requires_points` is false, and `points_total` stays nil
+permanently. That is the normal state, not a gap.
+
+`GradeSchemeApplier#compute_grade_for` cannot tell the two apart — it sees a nil
+total and falls back to 5.0. That fallback guards a state which must not arise
+in the first place, so the rule belongs to whatever sets the status, not to the
+applier.
+
+Neither route exists in this stack yet: `Gradable#set_grade!` is the only method
+that writes `reviewed`, and nothing calls it. Both the point entry and the talk
+grading are being built on the separate tutor grading branch.
+```
 
 ~~~admonish warning "`absent` and `exempt` are opposites, not shades of the same thing"
 Both mean the student did not sit the exam, and the grading treats them in

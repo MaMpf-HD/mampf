@@ -1,7 +1,7 @@
 # Slice 5 — Decisions
 
 ```admonish question "How to read this page"
-Eight choices this slice makes where the code shows *what* happens but not why
+Seven choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -16,33 +16,6 @@ Permalinks are pinned to commit
 the tip of `muesli-05-exam-grading`. All URLs live in one block at the end of
 the file.
 ```
-
----
-
-## E-5.3 · Missing points are a 5.0, not an error
-
-> **Should a reviewed participation with no `points_total` silently become a
-> failing grade?**
-
-**As built.** `compute_grade_for` returns 5.0 when `points_total` is nil, and
-again when a percentage scheme finds `effective_total_points` nil or zero.
-
-**Code.** [`compute_grade_for`][c5-compute]
-
-**Example.** Sam's participation was set to `reviewed` but no task points were
-ever entered, so `points_total` is nil.
-
-- the scheme is applied → Sam gets **5.0**
-- had the same participation stayed `pending`, it would not have been targeted at
-  all
-
-So a status set one click too early converts into a failing grade, with no
-warning in the preview.
-
-**Why it matters.** The three cases "scored zero", "not marked yet" and "no
-scheme applicable" all produce the identical stored outcome.
-
-**Status:** reconstructed.
 
 ---
 
@@ -241,7 +214,6 @@ finding it in the code means going through the polymorphic association.
 
 | # | Decision | Status |
 |---|---|---|
-| E-5.3 | Missing points ⇒ 5.0, indistinguishable from a real fail | reconstructed |
 | E-5.4 | An applied scheme is frozen | settled |
 | E-5.5 | Version hash ignores key order, not band order | reconstructed |
 | E-5.6 | Reviewed cannot become absent/exempt | settled |
@@ -250,15 +222,11 @@ finding it in the code means going through the polymorphic association.
 | E-5.9 | `two_point_auto` spreads evenly, raises on narrow ranges | reconstructed |
 | E-5.10 | Grading hangs off the assessment, not the exam | settled |
 
-**E-5.3 is the one to read first**: three quite different situations — scored
-zero, not marked yet, no scheme applicable — all end up stored as the same 5.0.
-
 <!-- ------------------------------------------------------------------ -->
 <!-- Code permalinks — all pinned to 25b9597e, the tip of                -->
 <!-- muesli-05-exam-grading. To re-pin, replace the SHA below.           -->
 <!-- ------------------------------------------------------------------ -->
 
-[c5-compute]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme_applier.rb#L117-L135
 [c5-immutable]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L60-L67
 [c5-hash]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L24-L28
 [c5-deepsort]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L86-L95

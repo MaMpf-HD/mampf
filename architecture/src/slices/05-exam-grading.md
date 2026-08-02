@@ -92,6 +92,41 @@ narrows its target to participations that have **no** grade yet, so grades
 entered or corrected by hand are not overwritten. See
 [Behavior Highlights](../features/05b-grading-schemes.md#behavior-highlights).
 
+~~~admonish danger "Concerns another PR: what `muesli/tutor-grading-view` has to honour"
+Nothing in slices 1–5 writes a grading state. No controller enters task points,
+none sets `reviewed`, none marks a participant absent or exempt —
+`Gradable#set_grade!` exists but has no caller. Everything that puts a
+participation into one of those states is being built on the tutor grading
+branch, for exams as well as for seminar talks.
+
+Two rules the model layer here already assumes, and which that branch has to keep:
+
+**"Grading complete" needs points, on a points-based assessment.** If a
+participation reaches `reviewed` with no task points at all, applying a scheme
+writes it a 5.0 — `compute_grade_for` sees a nil total and falls back. It cannot
+tell a premature click apart from a seminar talk, which legitimately has no
+points at all. So the action that sets the status has to refuse the empty case;
+the fallback is a guard, not a feature. See
+[what `reviewed` requires](../features/04-assessments-and-grading.md#status-workflow).
+
+**Excusing someone goes through `AbsenceHandling`, not through a status write.**
+`mark_exempt` clears `grade_numeric`, `grader` and `graded_at`, which is what
+takes back the 5.0 a no-show was given. Setting `status: :exempt` directly would
+leave the failing grade in place, and re-applying the scheme would not remove it
+either — exempt participations are never targeted.
+
+The model layer for absences is finished and specced; only the caller is missing:
+
+| Piece | State |
+|---|---|
+| `mark_absent(participation)` | done — sets `absent`, nulls `submitted_at` |
+| `mark_exempt(participation, note:)` | done — plus the note, and clears the grade |
+| Reviewed-transition guard | done — raises `InvalidTransitionError` |
+| `note` column for the certificate reference | migrated, unused |
+| `absent` / `exempt` enum values | done |
+| Model specs | `absence_handling_spec`, 10 examples |
+~~~
+
 ## New screens
 
 | Screen | What it does |
