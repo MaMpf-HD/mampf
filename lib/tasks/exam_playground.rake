@@ -298,10 +298,12 @@ namespace :exam do
 
     reviewable = assessment.assessment_participations.where(status: :reviewed)
     if reviewable.empty?
-      reviewable = assessment.assessment_participations.where(status: :pending)
-      reviewable.find_each do |participation|
-        participation.update!(status: :reviewed)
-      end
+      assessment.assessment_participations
+                .where(status: :pending)
+                .find_each { |participation| participation.update!(status: :reviewed) }
+      # Re-query: the relation above is lazy, and after the update it matches
+      # nothing, which would abort the seeding below on its first run.
+      reviewable = assessment.assessment_participations.where(status: :reviewed)
     end
 
     if reviewable.empty?

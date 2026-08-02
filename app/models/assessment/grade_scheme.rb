@@ -97,8 +97,16 @@ module Assessment
       # banded config schema:
       #   { "bands" => [{ "min_points" => 54, "grade" => "1.0" }, ...] }
       # or with percentages:
-      #   { "bands" => [{ "min_pct" => 90, "max_pct" => 100, "grade" => "1.0" }, ...] }
-      # All bands must use the same format (points xor percentages).
+      #   { "bands" => [{ "min_pct" => 90, "grade" => "1.0" }, ...] }
+      # All bands must use the same format (points xor percentages). A band is a
+      # lower bound only; the highest one a student reaches wins, so there is no
+      # upper key.
+      #
+      # Checked here is the shape, not the meaning: gaps, duplicate thresholds
+      # and grades outside the German scale all pass. For point bands that is
+      # covered by their generators (`two_point_auto` and the form), which emit
+      # canonical bands. Percentage bands have no generator, so anything writing
+      # them has to bring its own checks.
       def validate_banded_config
         return unless config.is_a?(Hash)
 
