@@ -107,6 +107,9 @@ de:
     no_assignments_yet: "Noch keine Hausaufgaben erstellt."
     no_assessables_yet: "Noch keine Bewertungen erstellt."
     submission_settings: "Abgabe-Einstellungen"
+    talk_grader:
+      assessment_not_talk: "Bewertung ist nicht für einen Vortrag."
+      init_participation_missing_args: "Bewertung, Benutzer und Vortrag müssen angegeben sein."
     task_points:
       update: "Punkte erfolgreich aktualisiert."
       submission_missing_tutorial: "Diese Abgabe ist keinem Tutorium zugeordnet."
@@ -143,9 +146,12 @@ de:
       user_not_found: "Benutzer nicht gefunden."
       no_participation: "Teilnahme nicht gefunden."
       user_cannot_grade: "Der Benutzer ist nicht berechtigt, in diesem Bereich zu bewerten."
+      not_gradable: "Diese Bewertung ist nicht bewertbar."
+      invalid_grade: "Ungültiger Notenwert"
     info:
       talks_created_in_roster: "Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab."
       talks_without_assessment: "Für diese Vorträge ist noch keine Bewertung hinterlegt."
+      grades_updated: "Noten erfolgreich aktualisiert."
     grade_table:
       pending: "ausstehend"
       reviewed: "überprüft"

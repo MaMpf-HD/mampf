@@ -22,7 +22,7 @@ module Assessment
 
     def update
       participation = find_or_create_participation
-      Assessment::GradeEntryService.set_grade(
+      TalkGraderService.set_grade(
         participation, params[:grade], current_user, params[:comment]
       )
       @participation = participation.reload
@@ -31,14 +31,14 @@ module Assessment
 
     def mark_absent
       participation = find_or_create_participation
-      # Assessment::AbsenceHandling.mark_absent(participation, current_user)
+      # AbsenceHandling.mark_absent(participation, current_user)
       @participation = participation.reload
       render_grade_update(replace_participation_row)
     end
 
     def mark_exempt
       participation = find_or_create_participation
-      # Assessment::AbsenceHandling.mark_exempt(participation, current_user)
+      # AbsenceHandling.mark_exempt(participation, current_user)
       @participation = participation.reload
       render_grade_update(replace_participation_row)
     end
@@ -52,9 +52,7 @@ module Assessment
     private
 
       def find_or_create_participation
-        @talk.participations.find_or_create_by!(user_id: @user.id) do |p|
-          p.assessment = @assessment
-        end
+        TalkGraderService.init_participation(@assessment, @user, @talk)
       end
 
       def replace_participation_row
@@ -77,7 +75,7 @@ module Assessment
       end
 
       def render_grade_update(*streams)
-        flash.now[:notice] = t("assessment.grades.update")
+        flash.now[:notice] = t("assessment.talk_grader.grades_updated")
         render turbo_stream: streams.flatten.compact + [stream_flash].compact
       end
 

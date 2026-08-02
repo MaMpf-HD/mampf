@@ -1,17 +1,16 @@
 module Assessment
   class GradeEntryService
-    # TODO: add validation permission lecture
-    # only support text grade for now
-
     VALID_GRADES_NUMERIC = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0].freeze
 
     def self.set_grade(participation, grade_info, grader, comment = nil)
       assessment = participation.assessment
 
-      unless assessment.gradable? # concern check
+      unless assessment&.assessable.is_a?(Gradable)
         raise(GradeEntryError,
-              I18n.t("assessment.grades.not_gradable", assessment_id: assessment.id))
+              I18n.t("assessment.errors.not_gradable", assessment_id: assessment.id))
       end
+
+      grade_info = validate_grade_info(grade_info)
 
       participation.update!(
         grade_text: grade_info[:grade_text],
@@ -21,6 +20,13 @@ module Assessment
         status: :reviewed,
         note: comment || participation.note
       )
+    end
+
+    def self.build_grade_info(grade_numeric: nil, grade_text: nil)
+      {
+        grade_numeric: grade_numeric,
+        grade_text: grade_text
+      }
     end
 
     def self.validate_grade_info(input_grade)
@@ -34,7 +40,7 @@ module Assessment
         }
       else
         raise(GradeEntryError,
-              I18n.t("assessment.grades.invalid_grade", grade: numeric_grade))
+              I18n.t("assessment.errors.invalid_grade", grade: numeric_grade))
       end
     end
 

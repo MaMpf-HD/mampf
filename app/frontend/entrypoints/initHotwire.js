@@ -116,6 +116,9 @@ window.Stimulus.register("table-fade", TableFadeController);
 import StatusFilterController from "~/tutorials/status_filter.controller.js";
 window.Stimulus.register("status-filter", StatusFilterController);
 
+import GradeTalkRowController from "~/talks/grade_talk_row.controller.js";
+window.Stimulus.register("grade-talk-row", GradeTalkRowController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

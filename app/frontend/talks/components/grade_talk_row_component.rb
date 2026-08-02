@@ -11,7 +11,8 @@ class GradeTalkRowComponent < ViewComponent::Base
   end
 
   def allow_grading?
-    grading_enabled? && can_grade? && !locked?
+    # grading_enabled? && can_grade? && !locked?
+    false
   end
 
   def locked?
@@ -23,23 +24,23 @@ class GradeTalkRowComponent < ViewComponent::Base
   end
 
   def status_label
-    return I18n.t("assessment.grade_talk_row.pending") unless @participation
+    return unless @participation
 
-    I18n.t("assessment.grade_talk_row.#{@participation.status}")
+    I18n.t("assessment.grade_table.#{@participation.status}")
   end
 
   def status_value
     @participation&.status || :pending
   end
 
-  def grade_text
-    @participation&.grade_text
+  def grade_numeric
+    @participation&.grade_numeric
   end
 
   def grade_display
-    return "—" if grade_text.blank?
+    return "—" if grade_numeric.blank?
 
-    I18n.t("assessment.grades.#{grade_text}", default: grade_text)
+    I18n.t("assessment.grades.#{grade_numeric}", default: grade_numeric)
   end
 
   def grade_options
@@ -56,7 +57,7 @@ class GradeTalkRowComponent < ViewComponent::Base
     ) do
       safe_join(
         grade_options.map do |label, value|
-          tag.option(label, value: value, selected: value == grade_text)
+          tag.option(label, value: value, selected: value == grade_numeric)
         end
       )
     end

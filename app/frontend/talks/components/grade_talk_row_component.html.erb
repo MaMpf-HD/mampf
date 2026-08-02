@@ -49,7 +49,7 @@
           ) do %>
         <%= safe_join(
               grade_options.map do |label, value|
-                tag.option(label, value: value, selected: value == grade_text)
+                tag.option(label, value: value, selected: value == grade_numeric)
               end
             ) %>
       <% end %>
