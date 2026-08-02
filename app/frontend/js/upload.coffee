@@ -337,6 +337,33 @@ bulkCorrectionUpload = (fileInput) ->
     $('#bulk-upload-area').show()
     return
 
+uploadFailureMessage = (elementSelector, xhr) ->
+  prefix = $(elementSelector).data('tr-failure') || ''
+  detail = xhr?.responseText || xhr?.response || ''
+  detail = detail.toString().trim()
+
+  return prefix if detail.length == 0
+
+  prefix + ' ' + detail
+
+currentUploadLocale = () ->
+  locale = document.body?.dataset?.locale
+  locale?.toString().trim()
+
+localizedUploadEndpoint = (endpoint) ->
+  locale = currentUploadLocale()
+  return endpoint unless locale
+
+  url = new URL(endpoint, window.location.origin)
+  return endpoint if url.searchParams.get('locale')?
+
+  url.searchParams.set('locale', locale)
+
+  if /^https?:\/\//.test(endpoint)
+    url.toString()
+  else
+    url.pathname + url.search + url.hash
+
 
 ###
 directUpload provides an interface to upload (multiple) files to an endpoint
@@ -368,6 +395,7 @@ window.directUpload = (
   single
   ) ->
     initBootstrapPopovers()
+    localizedEndpoint = localizedUploadEndpoint(endpoint)
     hiddenInput = document.getElementById(hiddenInputElement)
     hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
     fileInput =document.getElementById(fileInputElement)
@@ -431,13 +459,11 @@ window.directUpload = (
               xhr2.onload= onload(xhr2)
               xhr2.onerror =onerror
               xhr.upload.onprogress = onprogress
-              xhr2.open('POST', endpoint, true)
+              xhr2.open('POST', localizedEndpoint, true)
               xhr2.send(formData)
           else
             console.log(xhr)
-            alert(
-              $(progressBarElement).data('tr-failure') + xhr.response
-            )
+            alert(uploadFailureMessage(progressBarElement, xhr))
         xhr.onload = onload(xhr)
 
         xhr.onerror = onerror
@@ -445,7 +471,7 @@ window.directUpload = (
         f = fileInput.files[0]
         formData = new FormData()
         formData.append("file", f, f.name)
-        xhr.open('POST', endpoint, true)
+        xhr.open('POST', localizedEndpoint, true)
         xhr.send formData
       else
         alert(
@@ -564,7 +590,7 @@ window.userManuscriptUpload = (fileInput) ->
       name =[f.name for f in filez].join(".")
       formData.append("file", result, name)
       xhr = new XMLHttpRequest()
-      xhr.open('POST', '/submissions/upload', true)
+      xhr.open('POST', localizedUploadEndpoint('/submissions/upload'), true)
       xhr.onload =  () ->
         if (xhr.status == 200)
           hiddenInput.value = xhr.responseText
@@ -580,10 +606,7 @@ window.userManuscriptUpload = (fileInput) ->
               .removeClass('btn-primary')
               .addClass 'btn-outline-secondary'
         else
-          alert(
-            $('#userManuscript-uploadButton-call').data('tr-failure')
-            + xhr.responseText
-          )
+          alert(uploadFailureMessage('#userManuscript-uploadButton-call', xhr))
       xhr.onerror = (e) ->
         alert(
           $('#userManuscript-uploadButton-call').data('tr-failure')

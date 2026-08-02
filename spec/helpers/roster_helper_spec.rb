@@ -21,6 +21,28 @@ RSpec.describe(RosterHelper, type: :helper) do
     end
   end
 
+  describe "#show_muesli_transition_banner?" do
+    let(:term) { create(:term, :winter, year: 2026) }
+    let(:lecture) { instance_double("Lecture", term: term) }
+
+    after { Flipper.disable(:term_uses_mampf_registration) }
+
+    it "shows the banner while the term is not on MaMpf registration" do
+      expect(helper.show_muesli_transition_banner?(lecture)).to be(true)
+    end
+
+    it "hides the banner once the term is opted into MaMpf registration" do
+      Flipper.enable_actor(:term_uses_mampf_registration, term)
+
+      expect(helper.show_muesli_transition_banner?(lecture)).to be(false)
+    end
+
+    it "hides the banner when the lecture has no term (nothing to name)" do
+      expect(helper.show_muesli_transition_banner?(instance_double("Lecture", term: nil)))
+        .to be(false)
+    end
+  end
+
   describe "#roster_maintenance_frame_id" do
     it "handles single symbol" do
       expect(helper.roster_maintenance_frame_id(:tutorials)).to eq("roster_maintenance_tutorials")

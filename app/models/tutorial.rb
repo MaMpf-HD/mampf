@@ -1,5 +1,3 @@
-require "csv"
-
 class Tutorial < ApplicationRecord
   include Registration::Registerable
   include Rosters::Rosterable
@@ -48,7 +46,7 @@ class Tutorial < ApplicationRecord
   def teams_to_csv(assignment)
     submissions = Submission.where(tutorial: self, assignment: assignment)
                             .proper.order(:last_modification_by_users_at)
-    CSV.generate(headers: false) do |csv|
+    SafeCsv.generate(headers: false) do |csv|
       submissions.each do |s|
         csv << [s.team]
       end
@@ -74,6 +72,18 @@ class Tutorial < ApplicationRecord
 
   def exclusive_assignment?
     true
+  end
+
+  # A student can be in at most one tutorial per lecture (enforced by the
+  # unique index on tutorial_memberships (user_id, lecture_id)).
+  def roster_exclusive_within_lecture?
+    true
+  end
+
+  def conflicting_lecture_membership(user)
+    TutorialMembership.where(lecture: lecture, user: user)
+                      .where.not(tutorial: self)
+                      .first&.tutorial
   end
 
   private

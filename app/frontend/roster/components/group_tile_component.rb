@@ -195,6 +195,15 @@ class GroupTileComponent < ViewComponent::Base
     end
   end
 
+  # Explains the top-bar color on hover. Campaign (blue) tiles describe the
+  # registration process; every other tile mirrors the self-enrollment icon's
+  # tooltip, since the bar color and that icon track the same mode.
+  def top_bar_tooltip
+    return t("roster.tooltips.top_bar_campaign") if item
+
+    sm_tooltip
+  end
+
   def cohort_without_enrollment?
     registerable.is_a?(Cohort) && !registerable.propagate_to_lecture?
   end

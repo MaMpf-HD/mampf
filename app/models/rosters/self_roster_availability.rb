@@ -5,9 +5,14 @@ module Rosters
       @user = user
     end
 
+    # A membership only blocks new registration if joining a new slot would
+    # require leaving it — i.e. it belongs to a roster-exclusive pool
+    # (tutorials). Non-exclusive memberships (e.g. an interest cohort or a
+    # talk) can coexist with any new registration and never block it.
     def blocked_by_unremovable_assignment?
       rosterized_entries.any? do |rosterable|
-        rosterable.user_allocated?(@user) &&
+        rosterable.roster_exclusive_within_lecture? &&
+          rosterable.user_allocated?(@user) &&
           !rosterable.config_allow_self_remove?
       end
     end

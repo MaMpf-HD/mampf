@@ -29,6 +29,7 @@ class Voucher < ApplicationRecord
   before_create :add_expiration_datetime
   before_create :ensure_no_other_active_voucher
   before_create :ensure_speaker_vouchers_only_for_seminars
+  before_create :ensure_role_valid_for_lecture
 
   scope :active, lambda {
                    where("expires_at > ? AND invalidated_at IS NULL",
@@ -59,6 +60,10 @@ class Voucher < ApplicationRecord
     update(invalidated_at: Time.zone.now)
   end
 
+  def active?
+    invalidated_at.nil? && expires_at.present? && expires_at.future?
+  end
+
   private
 
     def generate_secure_hash
@@ -86,6 +91,15 @@ class Voucher < ApplicationRecord
       errors.add(:role,
                  I18n.t("activerecord.errors.models.voucher.attributes.role." \
                         "speaker_vouchers_only_for_seminars"))
+      throw(:abort)
+    end
+
+    def ensure_role_valid_for_lecture
+      return if role.to_sym.in?(self.class.roles_for_lecture(lecture))
+
+      errors.add(:role,
+                 I18n.t("activerecord.errors.models.voucher.attributes.role." \
+                        "invalid_for_lecture"))
       throw(:abort)
     end
 

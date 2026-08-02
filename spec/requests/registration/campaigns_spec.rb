@@ -654,4 +654,76 @@ RSpec.describe("Registration::Campaigns", type: :request) do
       end
     end
   end
+
+  describe "PATCH /campaigns/:id/self_service" do
+    let!(:campaign) do
+      create(:registration_campaign, :completed, :first_come_first_served,
+             campaignable: lecture, items_count: 2)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "opens self-service on all of the campaign's groups" do
+        patch self_service_registration_campaign_path(campaign),
+              params: { self_materialization_mode: "add_and_remove" }
+
+        modes = campaign.registerables.map(&:self_materialization_mode).uniq
+        expect(modes).to eq(["add_and_remove"])
+        expect(response).to redirect_to(registration_campaign_path(campaign))
+      end
+
+      it "responds with a turbo stream (the modal submission path)" do
+        patch self_service_registration_campaign_path(campaign),
+              params: { self_materialization_mode: "add_and_remove" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+        expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+          .to eq(["add_and_remove"])
+      end
+
+      it "rejects an unknown mode with a flash error" do
+        patch self_service_registration_campaign_path(campaign),
+              params: { self_materialization_mode: "nonsense" }, as: :turbo_stream
+
+        assert_flash_error
+        expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+          .to eq(["disabled"])
+      end
+
+      it "rejects a missing mode with a flash error" do
+        patch self_service_registration_campaign_path(campaign),
+              as: :turbo_stream
+
+        assert_flash_error
+        expect(campaign.registerables.map(&:self_materialization_mode).uniq)
+          .to eq(["disabled"])
+      end
+
+      it "refuses while the campaign is not completed" do
+        draft = create(:registration_campaign, :first_come_first_served,
+                       :with_items, campaignable: lecture, items_count: 2)
+
+        patch self_service_registration_campaign_path(draft),
+              params: { self_materialization_mode: "add_and_remove" },
+              as: :turbo_stream
+
+        assert_flash_error
+        expect(draft.registerables.map(&:self_materialization_mode).uniq)
+          .to eq(["disabled"])
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        patch self_service_registration_campaign_path(campaign),
+              params: { self_materialization_mode: "add_and_remove" }
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
 end

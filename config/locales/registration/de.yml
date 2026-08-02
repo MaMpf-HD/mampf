@@ -27,6 +27,20 @@ de:
       active_campaign_title: "Aktive Kampagnen"
       completed_description: "Der Anmeldezeitraum ist beendet und die Platzvergabe wurde abgeschlossen. Bitte nutze die Gruppenverwaltung, um Änderungen vorzunehmen."
       go_to_roster: "Zur Gruppenverwaltung"
+      self_service:
+        title: "Abgeschlossen — dürfen sich Studierende selbst ein- und austragen?"
+        description: "Aktuell ist die Selbsteinschreibung deaktiviert: Die Studierenden sind zugeteilt, können sich aber nicht selbst ein- oder austragen. Du kannst das jetzt für alle Gruppen des Anmeldeverfahrens erlauben — etwa zum eigenständigen Ausgleich oder für Nachrücker:innen. Einzelne Gruppen kannst Du später anpassen."
+        modes:
+          disabled: "Selbsteinschreibung deaktiviert"
+          add_only: "Nur Eintragen erlauben"
+          remove_only: "Nur Austragen erlauben"
+          add_and_remove: "Ein- & Austragen erlauben"
+        current_state_suffix: "(aktueller Zustand)"
+        keep_closed: "Selbsteinschreibung deaktiviert lassen"
+        apply: "Übernehmen"
+        updated: "Die Selbstverwaltungs-Einstellung der Gruppen wurde aktualisiert."
+        only_when_completed: "Die Selbstverwaltung kann erst nach Abschluss des Anmeldeverfahrens geändert werden."
+        failed: "Die Selbstverwaltungs-Einstellung konnte nicht aktualisiert werden."
       dissolved_enrolled: "zugeteilt"
       lecture_not_found: "Veranstaltung nicht gefunden."
       default_description: "Anmeldung"
@@ -51,13 +65,15 @@ de:
             Wenn Du unsicher bist, empfehlen wir Dir ein Anmeldeverfahren.
             Damit kannst Du ein klares Registrierungsfenster festlegen, die
             Nachfrage vor der endgültigen Zuteilung besser überblicken und
-            Regeln oder begrenzte Plätze fairer verwalten.
+            Regeln oder begrenzte Plätze fairer verwalten. Außerdem kannst Du
+            die Zuteilung automatisch anhand der Präferenzen der Studierenden
+            berechnen lassen.
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"
           mode: "Zuteilungsmodus"
-          opens_at: "Registrierungsbeginn"
-          deadline: "Registrierungsende"
+          opens_at: "Anmeldebeginn"
+          deadline: "Anmeldeschluss"
           status: "Status"
           registrations: "Anzahl Registrierungen"
       new:
@@ -69,8 +85,8 @@ de:
         edit_title: "Anmeldeverfahren bearbeiten"
         description: "Kurzbeschreibung"
         allocation_mode: "Zuteilungsmodus"
-        registration_opens_at: "Registrierungsbeginn"
-        registration_deadline: "Registrierungsende"
+        registration_opens_at: "Anmeldebeginn"
+        registration_deadline: "Anmeldeschluss"
         submit: "Speichern"
       allocation_mode:
         first_come_first_served: "Direktanmeldung"
@@ -261,8 +277,8 @@ de:
       index:
         title: "Anmeldungen"
         confirmed_cases: "Deine Anmeldung ist bestätigt für"
-        unassigned_notice: "Aktuell bist Du noch in keiner Gruppe eingetragen."
-        pending_preference_notice: "Aktuell bist Du noch in keiner Gruppe eingetragen. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
+        unassigned_notice: "Du wurdest noch keiner Gruppe zugeteilt."
+        pending_preference_notice: "Du wurdest noch keiner Gruppe zugeteilt. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
         fulfilled_preference_notice_html: "Wir konnten Deinen <em>%{rank}</em>-Wunsch erfüllen."
         fulfilled_preference_ranks:
           "1": "Erst"
@@ -323,12 +339,12 @@ de:
       not_eligible: "Nicht berechtigt"
       prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
       seats_remaining: "Verbleibende Plätze"
-      registered: "Registriert"
-      not_registered: "Nicht registriert"
+      registered: "Angemeldet"
+      not_registered: "Nicht angemeldet"
       blocked_tooltip: "Du kannst diesem Tutorium nicht beitreten, weil Du Dein Tutorium nicht verlassen kannst. Der Dozent hat das so eingerichtet."
-      register_now: "Jetzt registrieren"
+      register_now: "Jetzt anmelden"
       registration_blocked: "Nicht verfügbar"
-      withdraw: "Austreten"
+      withdraw: "Zurückziehen"
       closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
       ineligible_notice:
         title: "Anmeldung derzeit nicht möglich"
@@ -529,7 +545,67 @@ de:
         view_details: "Details"
     lecture:
       not_found: "Veranstaltung nicht gefunden."
+      home:
+        empty_title: "Starte hier"
+        empty_subscribed: >-
+          Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
+          dieser Seite. Materialien findest du in der Navigation der
+          Veranstaltung.
+        empty_unsubscribed: >-
+          Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
+          dieser Seite. Abonniere die Veranstaltung, um Materialien zu sehen.
+        news_indicator: "Neue Updates auf Home"
+        attachment_download: "Programm herunterladen (PDF)"
+        attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
+        staff_registration_title: "Was Studierende hier sehen"
+        staff_registration_hint: >-
+          Unterhalb Deines Intros sehen Studierende das Anmeldeverfahren und
+          ihren eigenen Status (offene Anmeldungen, zugeteilte Gruppe). Diese
+          Ansicht ist für jede Person individuell und wird Dir deshalb hier
+          nicht angezeigt.
+        staff_registration_manage: "Anmeldeverfahren verwalten"
+        intro_empty: >-
+          Die Startseite dieser Veranstaltung hat noch keinen Begrüßungstext und
+          kein Programm. Füge eine kurze Einführung hinzu, damit Studierende hier
+          mehr als eine leere Seite sehen.
+        intro_empty_campaign: >-
+          Für diese Veranstaltung läuft eine Anmeldung, aber Deine Startseite hat
+          keinen Begrüßungstext — genau das sehen Studierende vor der Anmeldung.
+          Füge eine kurze Einführung und Dein Programm hinzu.
+        subscribe_prompt: >-
+          Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
+          Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.
+    student_message:
+      title: "E-Mail an angemeldete Studierende"
+      audience:
+        zero: "Es haben sich noch keine Studierenden angemeldet."
+        one: "Geht an 1 angemeldete Person."
+        other: "Geht an %{count} angemeldete Personen."
+      copy_addresses: "E-Mail-Adressen kopieren"
+      addresses_copied: "Adressen in die Zwischenablage kopiert"
+      subject: "Betreff"
+      body: "Nachricht"
+      attachment: "Anhang (optional)"
+      attachment_hint: "Eine PDF-Datei, maximal 10 MB — z. B. ein Kursprogramm."
+      attachment_must_be_pdf: "muss eine PDF-Datei sein"
+      send:
+        one: "An 1 Person senden"
+        other: "An %{count} Personen senden"
+      sent:
+        one: "Deine Nachricht wird an 1 Person verschickt."
+        other: "Deine Nachricht wird an %{count} Personen verschickt."
+      no_recipients: "Es gibt noch keine angemeldeten Studierenden."
+      sent_messages: "Gesendete Nachrichten"
+      recipients:
+        one: "1 Empfänger(in)"
+        other: "%{count} Empfänger(innen)"
+      crosslink_html: >-
+        Du möchtest allen angemeldeten Studierenden eine E-Mail schreiben
+        (z. B. mit dem Kursprogramm)? Das geht im Tab %{link}.
   activerecord:
+    attributes:
+      registration/student_message:
+        attachment: "Anhang"
     errors:
       models:
         registration/campaign:

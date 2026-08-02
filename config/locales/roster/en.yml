@@ -50,8 +50,8 @@ en:
       all: 'All'
       unassigned: 'Without group'
     banners:
-      groups: 'MaMpf is integrating Müsli. Tutorials and groups will now be managed in this tab. Since registrations for the summer semester 2026 have not yet been carried out via MaMpf, the participant counts are currently 0, even if tutorials already exist. We recommend leaving this as is for this semester and, in particular, not starting any new registrations. Starting with winter semester 2026/27, registration for lectures and seminars can take place via MaMpf.'
-      participants: 'MaMpf is integrating Müsli. Since registrations for the summer semester 2026 have not yet been carried out via MaMpf, the participant list is empty. Starting with winter semester 2026/27, students will be able to register for lectures and seminars via MaMpf, and the participant list will fill automatically after registration.'
+      groups: 'MaMpf is integrating Müsli. Tutorials and groups will now be managed in this tab. Since registrations for %{term} have not yet been carried out via MaMpf, the participant counts are currently 0, even if tutorials already exist. We recommend leaving this as is for this semester and, in particular, not starting any new registrations. Starting with winter semester 2026/27, registration for lectures and seminars can take place via MaMpf.'
+      participants: 'MaMpf is integrating Müsli. Since registrations for %{term} have not yet been carried out via MaMpf, the participant list is empty. Starting with winter semester 2026/27, students will be able to register for lectures and seminars via MaMpf, and the participant list will fill automatically after registration.'
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
@@ -249,6 +249,7 @@ en:
       locked_manage_no_campaign: "Roster is locked (enable skip registration processes to manage directly)"
       edit_settings: "Edit Settings"
       edit_disabled_campaign: "Cannot edit settings during active registration process"
+      top_bar_campaign: "This group is part of a registration process"
       delete: "Delete"
       delete_disabled: "Cannot delete group (has participants or in registration process)"
       self_materialization_disabled_campaign: "Self-enrollment is disabled during active registration processes"

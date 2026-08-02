@@ -1,0 +1,14 @@
+en:
+  main:
+    next_term_banner:
+      heading:
+        one: "Lectures for %{term} are being published — the first one is already in MaMpf."
+        other: "Lectures for %{term} are being published — %{count} are already in MaMpf."
+      registration_intro: >-
+        Course registration can now also happen here in MaMpf (provided the relevant lecture offers this option).
+      transition_label: "Under construction"
+      transition_notice: >-
+        Müsli is heading into retirement. Bye-bye, Müsli! Over the next few weeks, we will be gradually rebuilding
+        MaMpf, so some parts may still feel a little unfinished for a while.
+      cta: "Browse next term's lectures"
+      dismiss: "Dismiss"

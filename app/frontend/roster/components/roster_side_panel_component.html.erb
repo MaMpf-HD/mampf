@@ -6,6 +6,7 @@
   data-tutorial-roster-panel-target="panelCard"
   <% if drag_controller? %>
     data-controller="roster-drag"
+    data-action="turbo:stream-render@document->roster-drag#refreshDropZones"
     data-roster-drag-source-type-value="<%= drag_source_type %>"
     data-roster-drag-source-id-value="<%= drag_source_id %>"
     data-roster-drag-move-path-value="<%= move_member_path_template unless panel_mode? %>"

@@ -6,7 +6,9 @@ module Vignettes
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :check_take_accessibility, only: [:take, :submit_answer]
     before_action :check_edit_accessibility,
-                  only: [:edit, :preview, :destroy, :publish, :update_slide_position, :duplicate]
+                  only: [:edit, :preview, :destroy, :publish, :update_slide_position,
+                         :duplicate, :export_statistics]
+    before_action :check_lecture_edit_accessibility, only: [:create]
     before_action :check_empty, only: [:publish, :take, :submit_answer]
     layout "vignettes/layouts/vignettes_navbar"
 
@@ -155,7 +157,7 @@ module Vignettes
       render json: { success: true }
     rescue StandardError => e
       Rails.logger.error("Slide position update failed: #{e.message}")
-      render json: { error: e.message }, status: :unprocessable_content
+      render json: { error: t("vignettes.slide_not_updated") }, status: :unprocessable_content
     end
 
     def export_statistics
@@ -291,6 +293,16 @@ module Vignettes
         return if current_user.in?(@questionnaire.lecture.editors_with_inheritance)
 
         redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    alert: t("vignettes.not_accessible")
+      end
+
+      # For #create there is no @questionnaire yet; authorize against the target
+      # lecture (@lecture is set by set_lecture) instead.
+      def check_lecture_edit_accessibility
+        return if current_user.admin
+        return if current_user.in?(@lecture.editors_with_inheritance)
+
+        redirect_to lecture_questionnaires_path(@lecture),
                     alert: t("vignettes.not_accessible")
       end
 

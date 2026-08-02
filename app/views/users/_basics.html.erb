@@ -51,10 +51,12 @@
     </div>
   </div>
 </div>
+<% if UploadEndpointAuthorization.authorized?(uploader_class: ProfileimageUploader, user: current_user) %>
 <%= t('admin.user.profile_image') %>
 <%= helpdesk(t('admin.user.info.profile_image'), false) %>
 <div class="row">
-<%= image_tag(user.image_url_with_host.presence ||
+<%= image_tag(user.original_image_file ?
+                          image_user_path(user, variant: "original") :
                           "/unknown-person.gif",
                           width: 128,
                           class: 'img-fluid mx-auto pt-3',
@@ -81,3 +83,4 @@
           </div>
           <%= render partial: 'users/upload_image',
                      locals: { user: user } %>
+<% end %>

@@ -236,6 +236,17 @@ ensure-db-container-running:
         docker compose up -d db
     fi
 
+# Ensures that the redis container is running (does not wait for readiness;
+# starts the redis container if not running)
+[private]
+ensure-redis-container-running:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/development/
+
+    if [ -z "$(docker compose ps --services --filter 'status=running' | grep redis)" ]; then
+        docker compose up -d redis
+    fi
+
 # Ensures that the MaMpf container is running
 [private]
 ensure-mampf-container-running:

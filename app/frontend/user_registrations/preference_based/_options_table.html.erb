@@ -1,9 +1,6 @@
 <div>
   <% disabled = local_assigns.fetch(:disabled, false) %>
 
-  <% registration_blocked_by_unremovable_assignment =
-       registration_blocked_by_unremovable_assignment?(campaign.campaignable) %>
-
   <div
     class="
       row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4
@@ -27,42 +24,35 @@
                    tile_title: tile_title,
                    tile_type: tile_type,
                    tile_metadata_rows: metadata_rows,
-                   **registration_blocked_tile_locals(
-                     registration_blocked_by_unremovable_assignment
-                   ),
                    tile_top_bar_class: "tutorial-gtile-top-bar--campaign",
                    tile_column_class: "registration-group-tile-col--student",
                    tile_actions_content: capture do
-                     if registration_blocked_by_unremovable_assignment
-                       concat(registration_blocked_action)
-                     else
-                       concat(content_tag(
-                         :div,
-                         class: "d-flex gap-1 flex-nowrap student-registration-rank-actions"
-                       ) do
-                         safe_join(ranks.map do |rank|
-                           button_tag(
-                             t("registration.user_registration.preference_rank_options.#{rank}"),
-                             type: "button",
-                             disabled: disabled || !campaign.open_for_registrations?,
-                             class: class_names(
-                               "btn btn-sm student-registration-rank-button",
-                               "btn-primary": selected_rank == rank,
-                               "btn-outline-primary": selected_rank != rank
-                             ),
-                             title: preference_rank_button_tooltip(rank),
-                             aria: { pressed: selected_rank == rank },
-                             data: {
-                               action: "preference-choices#choose",
-                               preference_choices_target: "button",
-                               item_id: item.id,
-                               item_title: tile_title,
-                               rank: rank
-                             }
-                           )
-                         end)
+                     concat(content_tag(
+                       :div,
+                       class: "d-flex gap-1 flex-nowrap student-registration-rank-actions"
+                     ) do
+                       safe_join(ranks.map do |rank|
+                         button_tag(
+                           t("registration.user_registration.preference_rank_options.#{rank}"),
+                           type: "button",
+                           disabled: disabled || !campaign.open_for_registrations?,
+                           class: class_names(
+                             "btn btn-sm student-registration-rank-button",
+                             "btn-primary": selected_rank == rank,
+                             "btn-outline-primary": selected_rank != rank
+                           ),
+                           title: preference_rank_button_tooltip(rank),
+                           aria: { pressed: selected_rank == rank },
+                           data: {
+                             action: "preference-choices#choose",
+                             preference_choices_target: "button",
+                             item_id: item.id,
+                             item_title: tile_title,
+                             rank: rank
+                           }
+                         )
                        end)
-                     end
+                     end)
                    end
                  } %>
     <% end %>

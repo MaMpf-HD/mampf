@@ -88,4 +88,49 @@ test.describe("student self-enrollment", () => {
       "There are currently no tutorials or groups available for registration.",
     )).toBeVisible();
   });
+
+  test("blocks joining an exclusive tutorial while stuck in an unremovable "
+    + "one, but keeps a coexisting cohort joinable", async ({ factory, student }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+
+    const stuck = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Fixed Tutorial",
+      skip_campaigns: true,
+      self_materialization_mode: "add_only",
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: stuck.id,
+      user_id: student.user.id,
+    });
+
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Switchable Tutorial",
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+
+    await factory.create("cohort", [], {
+      context_id: lecture.id,
+      context_type: "Lecture",
+      title: "Deepening Group",
+      skip_campaigns: true,
+      self_materialization_mode: "add_only",
+    });
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+
+    const tile = (title: string) =>
+      student.page.getByTestId("registration-group-tile").filter({ hasText: title });
+
+    await expect(tile("Switchable Tutorial")
+      .getByTestId("registration-blocked-action")).toBeVisible();
+    await expect(tile("Switchable Tutorial")
+      .getByRole("button", { name: "Register now" })).toHaveCount(0);
+
+    await expect(tile("Deepening Group")
+      .getByRole("button", { name: "Register now" })).toBeVisible();
+  });
 });

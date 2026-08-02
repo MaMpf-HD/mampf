@@ -7,6 +7,14 @@ module LecturesHelper
     RegistrationUserRegistrationAbility.new(current_user).can?(:index, lecture)
   end
 
+  # Whether the lecture currently has an open registration campaign
+  # (used e.g. for the badge on lecture search result cards).
+  def registration_open?(lecture)
+    return false unless Flipper.enabled?(:registration_campaigns)
+
+    lecture.registration_campaigns.any?(&:open_for_registrations?)
+  end
+
   # is the current user allowed to delete the given lecture and is it
   # irrelevant enough to be able to do so?
   def lecture_deletable?(lecture)

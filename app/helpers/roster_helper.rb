@@ -77,6 +77,15 @@ module RosterHelper
     end
   end
 
+  # The Müsli-transition banner explains why roster counts read 0 for the
+  # lecture's term while its registration did not run through MaMpf. Terms
+  # opted into MaMpf registration have real counts, so it is hidden for them;
+  # so is a term-less lecture, whose banner would have no term to name.
+  def show_muesli_transition_banner?(lecture)
+    term = lecture.term
+    term.present? && !Flipper.enabled?(:term_uses_mampf_registration, term)
+  end
+
   def roster_maintenance_frame_id(group_type)
     suffix = group_type.is_a?(Array) ? group_type.join("_") : group_type
     "roster_maintenance_#{suffix}"

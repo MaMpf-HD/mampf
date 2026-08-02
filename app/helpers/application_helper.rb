@@ -11,26 +11,6 @@ module ApplicationHelper
     Lecture.find_by(id: cookies[:current_lecture_id])
   end
 
-  # Returns the complete url for the media upload folder if in production
-  def host
-    if Rails.env.production?
-      # rubocop:disable Style/StringConcatenation
-      ENV.fetch("MEDIA_SERVER") + "/" + ENV.fetch("INSTANCE_NAME")
-      # rubocop:enable Style/StringConcatenation
-    else
-      ""
-    end
-  end
-
-  # The HTML download attribute only works for files within the domain of
-  # the webpage. Therefore, we use an apache redirect from an internal folder
-  # which is stored in the DOWNLOAD_LOCATION environment variable, to
-  # the actual media server.
-  # This is used for the download buttons for videos and manuscripts.
-  def download_host
-    Rails.env.production? ? ENV.fetch("DOWNLOAD_LOCATION") : ""
-  end
-
   # Returns the full title on a per-page basis.
   def full_title(page_title = "")
     return page_title if action_name == "play" && controller_name == "media"

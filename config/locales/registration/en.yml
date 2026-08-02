@@ -27,6 +27,20 @@ en:
       active_campaign_title: "Active registration process"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the group management to make any adjustments."
       go_to_roster: "Go to Roster"
+      self_service:
+        title: "Finalized — can students join and leave groups themselves?"
+        description: "Self-enrollment is currently disabled: students are assigned but cannot join or leave groups on their own. You can allow it now for all of the campaign's groups — e.g. to let them self-balance or admit latecomers. You can fine-tune each group later."
+        modes:
+          disabled: "Self-enrollment disabled"
+          add_only: "Allow joining only"
+          remove_only: "Allow leaving only"
+          add_and_remove: "Allow joining and leaving"
+        current_state_suffix: "(current state)"
+        keep_closed: "Keep self-enrollment disabled"
+        apply: "Apply"
+        updated: "Self-service setting updated for the campaign's groups."
+        only_when_completed: "Self-service can only be changed once the campaign is finalized."
+        failed: "Could not update the self-service setting."
       dissolved_enrolled: "enrolled"
       lecture_not_found: "Lecture not found."
       default_description: "Registration"
@@ -51,7 +65,9 @@ en:
             If you are unsure, we recommend choosing a registration process.
             It gives you a clear registration window, lets you review demand
             before assignments are finalized, and helps you handle
-            eligibility rules or limited capacities more fairly.
+            eligibility rules or limited capacities more fairly. It can also
+            assign students to groups automatically, based on the preferences
+            they submit.
         columns:
           description: "Short description"
           type: "Type"
@@ -261,8 +277,8 @@ en:
       index:
         title: "Registrations"
         confirmed_cases: "Your registration is confirmed for"
-        unassigned_notice: "You are not registered in any group yet."
-        pending_preference_notice: "You are not registered in any group yet. After the registration period ends, you will be assigned based on your preferences."
+        unassigned_notice: "You have not been assigned to a group yet."
+        pending_preference_notice: "You have not been assigned to a group yet. After the registration period ends, you will be assigned based on your preferences."
         fulfilled_preference_notice_html: "We could fulfill your <em>%{rank}</em> preference."
         fulfilled_preference_ranks:
           "1": "1st"
@@ -528,7 +544,64 @@ en:
         view_details: "Details"
     lecture:
       not_found: "Lecture not found."
+      home:
+        empty_title: "Start here"
+        empty_subscribed: >-
+          Lecture news and updates appear on this page. Materials are
+          available from the lecture navigation.
+        empty_unsubscribed: >-
+          Lecture news and updates appear on this page. Subscribe to access
+          the materials.
+        news_indicator: "New updates on Home"
+        attachment_download: "Download program (PDF)"
+        attachment_missing: "No program is attached to this lecture."
+        staff_registration_title: "What students see here"
+        staff_registration_hint: >-
+          Below your intro, students see the registration process and their own
+          status (open registrations, the group they were assigned to). That
+          view is personal to each student, so it is not shown to you here.
+        staff_registration_manage: "Manage registration processes"
+        intro_empty: >-
+          Your lecture home page has no welcome text or program yet. Add a short
+          intro so students landing here see more than an empty page.
+        intro_empty_campaign: >-
+          A registration is running for this lecture, but your home page has no
+          welcome text — this is what students see before they register. Add a
+          short intro and your program.
+        subscribe_prompt: >-
+          You have not subscribed to this lecture yet. Subscribing gives you
+          access to its materials — it is not a binding course registration.
+    student_message:
+      title: "Email to registered students"
+      audience:
+        zero: "No students have registered yet."
+        one: "Goes to 1 registered student."
+        other: "Goes to %{count} registered students."
+      copy_addresses: "Copy email addresses"
+      addresses_copied: "Addresses copied to clipboard"
+      subject: "Subject"
+      body: "Message"
+      attachment: "Attachment (optional)"
+      attachment_hint: "One PDF file, at most 10 MB — e.g. a course program."
+      attachment_must_be_pdf: "must be a PDF file"
+      send:
+        one: "Send to 1 student"
+        other: "Send to %{count} students"
+      sent:
+        one: "Your message is being sent to 1 student."
+        other: "Your message is being sent to %{count} students."
+      no_recipients: "There are no registered students to send to yet."
+      sent_messages: "Sent messages"
+      recipients:
+        one: "1 recipient"
+        other: "%{count} recipients"
+      crosslink_html: >-
+        You want to email all registered students (e.g. to send around a
+        course program)? You can do that in the %{link} tab.
   activerecord:
+    attributes:
+      registration/student_message:
+        attachment: "Attachment"
     errors:
       models:
         registration/campaign:

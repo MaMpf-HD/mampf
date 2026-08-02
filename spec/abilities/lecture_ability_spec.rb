@@ -6,19 +6,21 @@ RSpec.describe(LectureAbility) do
   let(:user) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all) }
 
-  it "allows subscribed students to self-materialize" do
-    create(:lecture_user_join, user: user, lecture: lecture)
-
+  it "allows students to self-materialize for published lectures" do
     expect(ability.can?(:self_materialize, lecture)).to be(true)
     expect(ability.can?(:enroll, lecture)).to be(true)
   end
 
-  it "does not allow users who are not subscribed to the lecture" do
-    expect(ability.can?(:self_materialize, lecture)).to be(false)
-    expect(ability.can?(:enroll, lecture)).to be(false)
+  it "does not require a subscription (registration is decoupled from " \
+     "content access)" do
+    passphrase_lecture = create(:lecture, :released_for_all,
+                                passphrase: "secret")
+
+    expect(ability.can?(:self_materialize, passphrase_lecture)).to be(true)
+    expect(ability.can?(:enroll, passphrase_lecture)).to be(true)
   end
 
-  it "does not allow students subscribed to an unpublished lecture" do
+  it "does not allow students to self-materialize for unpublished lectures" do
     unpublished_lecture = create(:lecture)
     create(:lecture_user_join, user: user, lecture: unpublished_lecture)
 

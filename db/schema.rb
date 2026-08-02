@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_27_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_18_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -392,6 +392,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_27_000000) do
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
     t.integer "self_materialization_mode", default: 0, null: false
+    t.text "home_intro"
+    t.text "home_attachment_data"
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -610,6 +612,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_27_000000) do
     t.index ["phase"], name: "index_registration_policies_on_phase"
     t.index ["registration_campaign_id", "position"], name: "index_registration_policies_position"
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
+  end
+
+  create_table "registration_student_messages", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "sender_id", null: false
+    t.string "subject", null: false
+    t.text "body", null: false
+    t.text "attachment_data"
+    t.string "recipient_emails", default: [], null: false, array: true
+    t.integer "recipients_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_registration_student_messages_on_lecture_id"
+    t.index ["sender_id"], name: "index_registration_student_messages_on_sender_id"
   end
 
   create_table "registration_user_registrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1239,13 +1255,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_27_000000) do
     t.index ["secure_hash"], name: "index_vouchers_on_secure_hash", unique: true
   end
 
-  create_table "vtt_containers", force: :cascade do |t|
-    t.text "table_of_contents_data"
-    t.text "references_data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "watchlist_entries", force: :cascade do |t|
     t.bigint "watchlist_id", null: false
     t.bigint "medium_id", null: false
@@ -1306,6 +1315,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_27_000000) do
   add_foreign_key "referrals", "media"
   add_foreign_key "registration_items", "registration_campaigns"
   add_foreign_key "registration_policies", "registration_campaigns"
+  add_foreign_key "registration_student_messages", "lectures"
+  add_foreign_key "registration_student_messages", "users", column: "sender_id"
   add_foreign_key "registration_user_registrations", "registration_campaigns"
   add_foreign_key "registration_user_registrations", "registration_items"
   add_foreign_key "registration_user_registrations", "registration_policies", column: "rejection_policy_id"

@@ -299,6 +299,38 @@ module Registration
       items.first&.registerable_type&.tableize || "tutorials"
     end
 
+    # The distinct groups (tutorials/cohorts/talks) this campaign allocates.
+    def registerables
+      registration_items.includes(:registerable).map(&:registerable).uniq
+    end
+
+    # The self-materialization mode shared by all of this campaign's groups,
+    # or nil if they differ. Used to preselect the post-finalization
+    # "open for self-service" prompt.
+    def shared_self_materialization_mode
+      modes = registerables.map(&:self_materialization_mode).uniq
+      modes.first if modes.one?
+    end
+
+    # Opens (or closes) student self-service on all of this campaign's groups
+    # at once. Only meaningful once the campaign is completed, since the groups
+    # are locked while a campaign is still running.
+    def apply_self_materialization_mode!(mode)
+      # to_s first: a missing mode would otherwise raise NoMethodError instead of
+      # the ArgumentError that callers rescue.
+      unless Rosters::Rosterable::SELF_MATERIALIZATION_MODES.key?(mode.to_s.to_sym)
+        raise(ArgumentError, "unknown self_materialization_mode: #{mode.inspect}")
+      end
+      return false unless completed?
+
+      transaction do
+        registerables.each do |registerable|
+          registerable.update!(self_materialization_mode: mode)
+        end
+      end
+      true
+    end
+
     private
 
       def remove_forced_assignments_with_preferences!

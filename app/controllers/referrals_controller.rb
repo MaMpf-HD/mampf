@@ -24,13 +24,18 @@ class ReferralsController < ApplicationController
   end
 
   def create
+    # Authorize before any side effect: update_item mutates a globally shared
+    # "link" Item, so it must not run until edit rights on the referral's medium
+    # are confirmed.
+    @referral = Referral.new(updated_params)
+    authorize! :create, @referral
+
     update_item if Item.find_by(id: @item_id)&.sort == "link"
     if @errors.present?
       render :update
       return
     end
-    @referral = Referral.new(updated_params)
-    authorize! :create, @referral
+
     @referral.save
     @errors = @referral.errors unless @referral.valid?
     render :update

@@ -42,6 +42,7 @@ class MainController < ApplicationController
                                        .sort
     end
     announcements
+    next_term_banner
     @talks = current_user.talks.includes(lecture: :term)
                          .select { |t| t.visible_for_user?(current_user) }
                          .sort_by do |t|
@@ -62,5 +63,23 @@ class MainController < ApplicationController
       @announcements = Announcement.where(on_main_page: true, lecture: nil)
                                    .pluck(:details)
                                    .join('<hr class="my-3" w-100>')
+    end
+
+    # Transitional banner pointing to the lectures of the upcoming term
+    # (see main/start/_next_term_banner). It is only shown when the
+    # feature flag is enabled and there is at least one lecture for the next
+    # term that is visible to students (i.e. published).
+    def next_term_banner
+      return unless Flipper.enabled?(:next_term_banner)
+
+      @next_term = Term.active&.next
+      return if @next_term.blank?
+
+      # matches Search::Filters::CurrentNextTermFilter: term-independent
+      # lectures (term: nil) are part of the results the banner links to,
+      # so they are part of the count as well
+      @next_term_lecture_count = Lecture.published
+                                        .where(term: [@next_term, nil])
+                                        .count
     end
 end

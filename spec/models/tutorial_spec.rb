@@ -13,6 +13,11 @@ RSpec.describe(Tutorial, type: :model) do
     expect(FactoryBot.build(:tutorial)).to be_valid
   end
 
+  it "is roster-exclusive within a lecture (one tutorial per student)" do
+    expect(FactoryBot.build(:tutorial).roster_exclusive_within_lecture?)
+      .to be(true)
+  end
+
   # test validations
 
   it "is invalid without a lecture" do
