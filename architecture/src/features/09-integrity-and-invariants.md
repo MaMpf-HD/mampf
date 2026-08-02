@@ -99,6 +99,8 @@ add_foreign_key :assessment_task_points, :assessment_participations, column: :pa
 | Task records exist only if `Assessment` has tasks | Validation |
 | Results visible only when `Assessment.results_published?` returns true | Controller authorization |
 | `Participation.submitted_at` persists across status changes | Never overwritten after initial set |
+| An `exempt` participation carries no grade | `AbsenceHandling#mark_exempt` clears `grade_numeric`, `grader`, `graded_at`; the applier never targets exempt rows |
+| An `absent` participation is a failed attempt (5.0) | Written by `GradeSchemeApplier#apply!`; status stays `absent` |
 
 ```admonish note "Multiple Choice Extension"
 For MC exam-specific constraints, see the [Multiple Choice Exams](05c-multiple-choice-exams.md) chapter.

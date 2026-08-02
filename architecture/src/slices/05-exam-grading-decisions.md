@@ -1,7 +1,7 @@
 # Slice 5 — Decisions
 
 ```admonish question "How to read this page"
-Ten choices this slice makes where the code shows *what* happens but not why
+Nine choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -44,76 +44,6 @@ no longer all follow the scheme, and nothing marks which ones deviate.
 
 **Status:** reconstructed · consider surfacing "n grades deviate from the active
 scheme".
-
----
-
-## E-5.2 · Absence is a 5.0, written like any other grade
-
-> **Should absent students be given a failing grade automatically rather than
-> left ungraded?**
-
-**As built.** `preview_all` proposes 5.0 for absent participations, and `apply!`
-writes it with the same grader and timestamp as computed grades.
-
-**Code.** [`preview_all`][c5-previewall] · [`apply!`][c5-apply]
-
-**Example.** Rachel is marked absent before the exam. Applying the scheme gives
-her `grade_numeric = 5.0`, `grader` = the applying teacher, `graded_at` = now.
-
-Nothing in the participation row distinguishes her 5.0 from a student who sat
-the exam and scored below every band.
-
-**Why it matters.** Whether a no-show is a failed attempt is an examination
-regulation question, not a technical one, and it differs between institutions
-and between first attempts and resits. The `exempt` status exists precisely for
-the other case — the excused absence, medical certificate and similar — and the
-read side treats it properly: the applier skips exempt participations rather
-than grading them, `ComputationService` drops them from the percentage
-denominator, and grade table and scheme summary render the two statuses
-distinctly.
-
-```admonish warning "Nobody can set either status yet"
-`Assessment::AbsenceHandling` provides `mark_absent` and `mark_exempt(note:)`,
-the `note` column for the certificate reference is migrated, and the
-reviewed-transition guard is in place and specced — but the module is included
-by no class outside its own spec, no controller calls it, and the grade table is
-display-only. In this slice the `absent` branch of the applier is therefore
-unreachable.
-
-That is not specific to absence: no controller in slices 1–5 writes task points
-or grades at all, apart from applying a scheme. The grading-input surface is
-being built separately on `muesli/tutor-grading-view`, which already fixes the
-interaction model — a `:grade` ability, service-layer writes, Turbo-Stream row
-refresh, and `mark_as_participated` as a participation-level member action.
-Absence belongs with that work; wiring it on its own would mean designing the
-table's interaction model twice.
-```
-
-### What is already built, for whoever wires it
-
-The model layer is finished and tested. Only the call site is missing, so none of
-this needs to be written again:
-
-| Piece | Where | State |
-|---|---|---|
-| `mark_absent(participation)` | [`absence_handling.rb`][c5-absence] | done — sets `status: :absent`, nulls `submitted_at` |
-| `mark_exempt(participation, note:)` | [`absence_handling.rb`][c5-absence] | done — same, plus the note when one is given |
-| Reviewed-transition guard | [`validate_not_reviewed!`][c5-nottransition] | done — raises `InvalidTransitionError` (E-5.6) |
-| `note` column for the certificate reference | [migration][c5-notecol] | migrated, unused |
-| `absent` / `exempt` enum values | [`participation.rb`][c5-statusenum] | done |
-| Model specs | [`absence_handling_spec.rb`][c5-absencespec] | 9 examples, incl. both refusals |
-
-What is missing is a caller: two member actions beside `mark_as_participated`
-that include the module (or delegate to a service, matching `PointEntryService`
-and `SubmissionGraderService` on that branch), the existing row-refresh helper
-for the response, a note field on the exempt action, and request specs for both
-actions, the reviewed refusal and authorization.
-
-`muesli/tutor-grading-view` currently contains no reference to `mark_absent`,
-`mark_exempt` or `AbsenceHandling`.
-
-**Status:** **open** — needs confirmation against the examination regulations,
-and the write path is a to-do on the point-entry branch.
 
 ---
 
@@ -217,17 +147,17 @@ certificate. Marking him exempt is:
 - refused with an exception
 - the supported route is to clear his grading data first
 
-Read this as a rule the code already enforces, not as a screen that exists — see
-[E-5.2](#e-52--absence-is-a-50-written-like-any-other-grade): the module holding
-both transitions is not yet called from anywhere, so in this slice the guard
-protects a path only its own spec can take.
+Read this as a rule the code already enforces, not as a screen that exists: the
+module holding both transitions is not yet called from anywhere, so in this
+slice the guard protects a path only its own spec can take. The write path is
+being built on `muesli/tutor-grading-view`.
 
 **Why it matters.** Both transitions null `submitted_at`, so allowing them from
 `reviewed` would strand a grade on a participation that claims nothing was
 handed in. Refusing is the safe direction, but the correct workflow — how to
 retract a grade — is not provided by this slice.
 
-**Status:** settled — the rule; the write path itself is a to-do (E-5.2).
+**Status:** settled — the rule; the write path itself is a to-do elsewhere.
 
 ---
 
@@ -340,7 +270,6 @@ finding it in the code means going through the polymorphic association.
 | # | Decision | Status |
 |---|---|---|
 | E-5.1 | Re-apply only fills gaps; manual grades survive | reconstructed |
-| E-5.2 | Absent ⇒ 5.0, written like any grade; no way to set the status yet | **open** |
 | E-5.3 | Missing points ⇒ 5.0, indistinguishable from a real fail | reconstructed |
 | E-5.4 | An applied scheme is frozen | settled |
 | E-5.5 | Version hash ignores key order, not band order | reconstructed |
@@ -350,10 +279,8 @@ finding it in the code means going through the polymorphic association.
 | E-5.9 | `two_point_auto` spreads evenly, raises on narrow ranges | reconstructed |
 | E-5.10 | Grading hangs off the assessment, not the exam | settled |
 
-**E-5.2 is the one that needs a human answer** — whether a no-show is a failed
-attempt is a matter of examination regulations, not of code. **E-5.3** is the
-technical counterpart: three quite different situations all end up stored as the
-same 5.0.
+**E-5.3 is the one to read first**: three quite different situations — scored
+zero, not marked yet, no scheme applicable — all end up stored as the same 5.0.
 
 <!-- ------------------------------------------------------------------ -->
 <!-- Code permalinks — all pinned to 25b9597e, the tip of                -->
@@ -361,7 +288,6 @@ same 5.0.
 <!-- ------------------------------------------------------------------ -->
 
 [c5-apply]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme_applier.rb#L69-L115
-[c5-previewall]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme_applier.rb#L38-L54
 [c5-compute]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme_applier.rb#L117-L135
 [c5-immutable]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L60-L67
 [c5-hash]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L24-L28
@@ -372,6 +298,3 @@ same 5.0.
 [c5-bandconfig]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L102-L139
 [c5-twopoint]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L30-L56
 [c5-pointgrad]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L69-L77
-[c5-notecol]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/db/migrate/20260720000004_add_note_to_assessment_participations.rb#L1-L5
-[c5-statusenum]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/participation.rb#L16-L21
-[c5-absencespec]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/spec/models/assessment/absence_handling_spec.rb#L1-L83

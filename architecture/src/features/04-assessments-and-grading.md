@@ -413,6 +413,29 @@ The `status` enum tracks a participation's position in the **grading workflow**.
 | `exempt` | Excused from assessment | Manual exemption (medical certificate, etc.) |
 | `absent` | Did not attend (in-person) | Teacher marks student as no-show (explicit action) |
 
+~~~admonish warning "`absent` and `exempt` are opposites, not shades of the same thing"
+Both mean the student did not sit the exam, and the grading treats them in
+opposite ways.
+
+**`absent` is a failed attempt.** Someone who registered and did not turn up has
+used up the attempt, so applying a grade scheme writes them a 5.0 with the same
+grader and timestamp as a computed grade. Their status stays `absent`, so the
+row and the grade table still say *nicht angetreten* — the grade alone does not
+distinguish them from someone who sat the exam and missed every band, but the
+participation does.
+
+**`exempt` is not a grade at all.** The applier skips exempt participations
+entirely, and `StudentPerformance::ComputationService` drops their assessment
+from the maximum rather than counting it as zero.
+
+**A certificate handed in afterwards moves a student between the two**, which is
+why `AbsenceHandling#mark_exempt` clears `grade_numeric`, `grader` and
+`graded_at`. Re-applying the scheme would not undo the 5.0 — exempt
+participations are never targeted — so the excusing itself has to. Nothing
+earned is lost: the way in from `reviewed` is refused outright, so the only
+grade this can clear is the automatic one.
+~~~
+
 ```admonish tip "Submission is orthogonal to status"
 `submitted_at` records whether and when the student delivered work. It is independent of `status`:
 - `pending` + `submitted_at` present → student submitted, not yet graded

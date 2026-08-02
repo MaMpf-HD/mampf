@@ -493,6 +493,7 @@ The "grade calculator" that transforms points into grades according to the confi
 ### Behavior Highlights
 
 - **Idempotent:** Checks `version_hash` before applying; on re-apply, only grades ungraded participations (preserves manual corrections, picks up late-reviewed students)
+- **Absence-aware:** Grades `absent` participations 5.0 — a registered no-show has used up the attempt — and skips `exempt` ones entirely. See [`absent` and `exempt` are opposites](04-assessments-and-grading.md#status-workflow)
 - **Transaction-safe:** Uses database transaction for consistency
 - **Efficient:** Single query to load all participations, batch updates
 - **Statistics:** Analyzes distribution for informed decision-making
