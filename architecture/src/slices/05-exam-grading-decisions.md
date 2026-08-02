@@ -1,7 +1,7 @@
 # Slice 5 — Decisions
 
 ```admonish question "How to read this page"
-Three choices this slice makes where the code shows *what* happens but not why
+Two choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -16,35 +16,6 @@ Permalinks are pinned to commit
 the tip of `muesli-05-exam-grading`. All URLs live in one block at the end of
 the file.
 ```
-
----
-
-## E-5.8 · Band values are validated for shape, and now for type
-
-> **Is validating that all bands use the same threshold key, plus that values
-> are numeric, sufficient?**
-
-**As built.** `validate_banded_config` requires a non-empty `bands` array, a
-consistent threshold key across all bands (`min_points` **xor** `min_pct`), a
-present `grade` on every band, and — since the XSS fix — that grade and
-threshold are numeric.
-
-**Code.** [`validate_banded_config`][c5-bandconfig]
-
-**Example.** These are rejected: an empty band list; a mix of `min_points` and
-`min_pct`; a band without a grade; a grade of
-`<img src=x onerror=alert(1)>`.
-
-These are **not** rejected: overlapping bands; gaps between bands; a band list
-with no 5.0 fallback; thresholds that exceed the assessment's maximum points.
-
-**Why it matters.** The shape is guarded, the *coverage* is not. A scheme whose
-lowest band starts at 10 points leaves everyone below 10 falling through to the
-`5.0` default in `compute_grade_for` — which happens to be correct, but by
-accident rather than by construction.
-
-**Status:** reconstructed · the numeric check is settled (three specs); the
-coverage gap is unaddressed.
 
 ---
 
@@ -104,7 +75,6 @@ finding it in the code means going through the polymorphic association.
 
 | # | Decision | Status |
 |---|---|---|
-| E-5.8 | Band shape and types validated; coverage is not | reconstructed |
 | E-5.9 | `two_point_auto` spreads evenly, raises on narrow ranges | reconstructed |
 | E-5.10 | Grading hangs off the assessment, not the exam | settled |
 
@@ -113,6 +83,5 @@ finding it in the code means going through the polymorphic association.
 <!-- muesli-05-exam-grading. To re-pin, replace the SHA below.           -->
 <!-- ------------------------------------------------------------------ -->
 
-[c5-bandconfig]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L102-L139
 [c5-twopoint]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L30-L56
 [c5-pointgrad]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L69-L77

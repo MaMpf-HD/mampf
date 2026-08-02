@@ -151,10 +151,35 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 
 | Scheme Type | Primary Use Case | Config Format | Status |
 |-------------|------------------|---------------|--------|
-| Absolute Points | Standard approach - fixed point thresholds | `min_points`/`max_points` | ✅ In use |
-| Percentage-Based | Cross-exam comparison | `min_pct`/`max_pct` | ✅ In use |
+| Absolute Points | Standard approach - fixed point thresholds | `min_points` | ✅ In use |
+| Percentage-Based | Cross-exam comparison | `min_pct` | ⚠️ Readable and applicable, but nothing creates one — see below |
 | Interactive Curve | UI convenience for teachers | Generates `banded` config | 🚧 Planned |
 | Percentile/Linear | Advanced statistical schemes | N/A | ⏸️ Future |
+
+~~~admonish warning "A band is a lower bound, and only point bands have a generator"
+**There is no upper key.** Both `apply_absolute_scheme` and
+`apply_percentage_scheme` sort the bands by threshold and take the highest one
+the student reaches. A `max_points` or `max_pct` written into a band is ignored —
+nothing reads it. Bands therefore need no upper end and cannot overlap; they
+partition the range by their lower bounds alone.
+
+**Validation guards the shape, not the meaning.** `validate_banded_config`
+checks that the bands array is non-empty, that every band uses the same
+threshold key, and that grade and threshold are numeric — the last since the XSS
+fix. It does *not* check for gaps, duplicate thresholds, coverage from zero, or
+that a grade is one of the German values.
+
+For point bands that is unproblematic, because they are always generated:
+`GradeScheme.two_point_auto` in Ruby and `computeBands` in the form's JavaScript
+build the same canonical, gapless list from the two anchors, and both refuse a
+range too narrow to separate the grades.
+
+**Percentage bands have no generator.** Nothing in the application creates one —
+they can be read, validated, applied and displayed, but only a seed, a console
+or a future importer can write one. That is precisely the path on which the
+missing semantic checks would bite, so anything that starts writing percentage
+schemes has to bring its own.
+~~~
 
 ### Absolute Cutoffs
 
@@ -166,15 +191,15 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 ```json
 {
   "bands": [
-    { "min_points": 54, "max_points": 60, "grade": "1.0" },
-    { "min_points": 48, "max_points": 53, "grade": "1.3" },
-    { "min_points": 42, "max_points": 47, "grade": "1.7" },
-    { "min_points": 36, "max_points": 41, "grade": "2.0" },
-    { "min_points": 33, "max_points": 35, "grade": "2.3" },
-    { "min_points": 30, "max_points": 32, "grade": "3.0" },
-    { "min_points": 27, "max_points": 29, "grade": "3.7" },
-    { "min_points": 24, "max_points": 26, "grade": "4.0" },
-    { "min_points": 0, "max_points": 23, "grade": "5.0" }
+    { "min_points": 54, "grade": "1.0" },
+    { "min_points": 48, "grade": "1.3" },
+    { "min_points": 42, "grade": "1.7" },
+    { "min_points": 36, "grade": "2.0" },
+    { "min_points": 33, "grade": "2.3" },
+    { "min_points": 30, "grade": "3.0" },
+    { "min_points": 27, "grade": "3.7" },
+    { "min_points": 24, "grade": "4.0" },
+    { "min_points": 0, "grade": "5.0" }
   ]
 }
 ```
@@ -184,7 +209,6 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
 | `min_points` | Integer | Lower boundary (inclusive) | 54 |
-| `max_points` | Integer | Upper boundary (inclusive) | 60 |
 | `grade` | String | German grade value | "1.0" |
 
 ```admonish success "Why absolute points are preferred"
@@ -214,15 +238,15 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 ```json
 {
   "bands": [
-    { "min_pct": 90, "max_pct": 100, "grade": "1.0" },
-    { "min_pct": 80, "max_pct": 89.99, "grade": "1.3" },
-    { "min_pct": 70, "max_pct": 79.99, "grade": "1.7" },
-    { "min_pct": 60, "max_pct": 69.99, "grade": "2.0" },
-    { "min_pct": 55, "max_pct": 59.99, "grade": "2.3" },
-    { "min_pct": 50, "max_pct": 54.99, "grade": "3.0" },
-    { "min_pct": 45, "max_pct": 49.99, "grade": "3.7" },
-    { "min_pct": 40, "max_pct": 44.99, "grade": "4.0" },
-    { "min_pct": 0, "max_pct": 39.99, "grade": "5.0" }
+    { "min_pct": 90, "grade": "1.0" },
+    { "min_pct": 80, "grade": "1.3" },
+    { "min_pct": 70, "grade": "1.7" },
+    { "min_pct": 60, "grade": "2.0" },
+    { "min_pct": 55, "grade": "2.3" },
+    { "min_pct": 50, "grade": "3.0" },
+    { "min_pct": 45, "grade": "3.7" },
+    { "min_pct": 40, "grade": "4.0" },
+    { "min_pct": 0, "grade": "5.0" }
   ]
 }
 ```
@@ -232,7 +256,6 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
 | `min_pct` | Float | Lower boundary percentage (inclusive) | 90.0 |
-| `max_pct` | Float | Upper boundary percentage (inclusive) | 100.0 |
 | `grade` | String | German grade value | "1.0" |
 
 **Grading example (same students, 60-point exam):**
@@ -245,7 +268,7 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 | Dave | 22 pts | 36.67% | 5.0 | Failed |
 
 ```admonish note "Detection Logic"
-The `Assessment::GradeSchemeApplier` automatically detects whether `min_points`/`max_points` or `min_pct`/`max_pct` is used by inspecting the first band. Both formats use the same `kind: :banded` enum value.
+The `Assessment::GradeSchemeApplier` automatically detects whether `min_points` or `min_pct` is used by inspecting the first band. Both formats use the same `kind: :banded` enum value.
 ```
 
 ### Interactive Curve Generation (Frontend Convenience)
@@ -579,14 +602,14 @@ flowchart TD
     CheckFormat -->|Neither| Fallback[Return grade 5.0 - malformed config]
 
     AbsoluteFlow --> SortAbsBands[Sort bands by min_points descending]
-    SortAbsBands --> FindAbsBand[Find band where:<br/>points >= min_points AND<br/>points <= max_points]
+    SortAbsBands --> FindAbsBand[Find highest band where:<br/>points >= min_points]
     FindAbsBand --> AbsFound{Band found?}
     AbsFound -->|Yes| ReturnAbsGrade[Return band grade]
     AbsFound -->|No| Return50Abs[Return grade 5.0]
 
     PercentageFlow --> CalcPct[Calculate percentage:<br/>points / max_points * 100]
     CalcPct --> SortPctBands[Sort bands by min_pct descending]
-    SortPctBands --> FindPctBand[Find band where:<br/>percentage >= min_pct AND<br/>percentage <= max_pct]
+    SortPctBands --> FindPctBand[Find highest band where:<br/>percentage >= min_pct]
     FindPctBand --> PctFound{Band found?}
     PctFound -->|Yes| ReturnPctGrade[Return band grade]
     PctFound -->|No| Return50Pct[Return grade 5.0]
@@ -692,13 +715,13 @@ module Assessment
 
   def apply_absolute_points_scheme(points)
     bands = @scheme.config["bands"].sort_by { |b| -b["min_points"] }
-    band = bands.find { |b| points >= b["min_points"] && points <= b["max_points"] }
+    band = bands.find { |b| points >= b["min_points"] }
     band ? band["grade"] : "5.0"
   end
 
   def apply_percentage_scheme(percentage)
     bands = @scheme.config["bands"].sort_by { |b| -b["min_pct"] }
-    band = bands.find { |b| percentage >= b["min_pct"] && percentage <= b["max_pct"] }
+    band = bands.find { |b| percentage >= b["min_pct"] }
     band ? band["grade"] : "5.0"
   end
 
