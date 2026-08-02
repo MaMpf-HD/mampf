@@ -81,18 +81,14 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
     end
 
     describe "Talk config" do
-      it "defines three rows" do
-        expect(config["Talk"].size).to eq(3)
+      it "defines a single date row (position is in the header, " \
+         "description is omitted)" do
+        expect(config["Talk"].size).to eq(1)
+        expect(config["Talk"].first[:header]).to eq("basics.date")
       end
 
-      it "evaluates fields correctly" do
-        pos_row, desc_row, date_row = config["Talk"]
-        expect(pos_row[:header]).to eq("basics.position")
-        expect(pos_row[:field].call(talk)).to eq(5)
-
-        expect(desc_row[:header]).to eq("basics.description")
-        expect(desc_row[:field].call(talk)).to eq("Deep Learning Overview")
-
+      it "evaluates the date field correctly" do
+        date_row = config["Talk"].first
         formatted = "Apr 10 2026, Apr 11 2026"
         expect(date_row[:field].call(talk)).to eq(formatted)
       end
@@ -127,11 +123,30 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
 
     it "maps talk metadata icons" do
       expect(helper.item_tile_metadata_rows(item_talk).pluck(:icon))
-        .to eq(["bi-list-ol", "bi-card-text", "bi-calendar-event"])
+        .to eq(["bi-calendar-event"])
+    end
+
+    it "labels every row so the tile can show a tooltip" do
+      rows = helper.item_tile_metadata_rows(item_talk)
+      expect(rows.pluck(:label)).to all(be_present)
     end
 
     it "falls back to a generic icon for unknown names" do
       expect(helper.send(:gtile_icon_for, "unknown")).to eq("bi-tag")
+    end
+  end
+
+  describe "blank metadata rows" do
+    let(:seminar) { create(:seminar) }
+    let(:talk_without_dates) do
+      create(:talk, lecture: seminar, position: 2, dates: [])
+    end
+    let(:item) { create(:registration_item, registerable: talk_without_dates) }
+
+    it "drops rows whose value is blank" do
+      rows = helper.item_tile_metadata_rows(item)
+
+      expect(rows).to be_empty
     end
   end
 
