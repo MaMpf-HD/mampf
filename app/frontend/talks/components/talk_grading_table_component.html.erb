@@ -46,7 +46,7 @@
                       </button>
                     </li>
 
-                    <% Assessment::Participation.statuses.each_key do |status| %>
+                    <% possible_statuses.each do |status| %>
                       <li>
                         <button
                           class="dropdown-item"
@@ -74,7 +74,7 @@
                 </tr>
 
                 <% talk.speakers.each do |speaker| %>
-            <%= render GradeTalkRowComponent.new(user: speaker, talk: talk) %>
+                  <%= render GradeTalkRowComponent.new(user: speaker, talk: talk) %>
                 <% end %>
               <% end %>
             </tbody>

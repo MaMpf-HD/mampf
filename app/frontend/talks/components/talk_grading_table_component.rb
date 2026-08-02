@@ -26,4 +26,8 @@ class TalkGradingTableComponent < ViewComponent::Base
   def tasks
     @assignment&.assessment&.persisted_tasks || []
   end
+
+  def possible_statuses
+    ["pending", "reviewed"]
+  end
 end
