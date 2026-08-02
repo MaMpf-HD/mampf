@@ -18,8 +18,8 @@ MaMpf needs a formal representation of exams that can:
 We introduce a new `Exam` model that:
 - **Belongs to a `Lecture`**: Each exam is scoped to a specific lecture offering
 - **Implements `Registration::Registerable`**: Acts as a registration target (students register for the exam)
-- **Implements `Roster::Rosterable`**: Manages the list of registered students
-- **Implements `Assessment::Assessable`**: Links to an `Assessment::Assessment` for grading
+- **Implements `Rosters::Rosterable`**: Manages the list of registered students
+- **Implements `Assessment::Pointable` and `Assessment::Gradable`**: Links to an `Assessment::Assessment` for points and grades. Both concerns include `Assessment::Assessable`, so the exam gets the shared assessment interface through them rather than directly
 
 The parent `Lecture` (which implements `Registration::Campaignable`) hosts the registration campaigns. Each exam (Hauptklausur, Nachklausur, etc.) gets its own campaign with that exam as the sole registerable item.
 
@@ -45,6 +45,13 @@ The exam equivalent of a Tutorial—it's both a thing students register for and 
 | `location` | String | Physical location or online meeting link |
 | `capacity` | Integer | Maximum number of exam participants (nullable; nil = unlimited) |
 | `description` | Text | Additional exam details and instructions |
+| `skip_campaigns` | Boolean | Participants are managed by hand; no registration campaign is created |
+| `self_materialization_mode` | Integer | Whether students may add or remove themselves (see [Rosters](03-rosters.md)) |
+
+There is deliberately **no** `registration_deadline` column: the deadline belongs
+to the campaign. `Exam#registration_deadline` is an `attr_accessor` that carries
+the value between the form and the campaign — see
+[Exam Registration Flow](#exam-registration-flow).
 
 ### Role in the System
 
@@ -69,17 +76,14 @@ participants are managed by hand.
 **2. As Rosterable (Student Tracking)**
 ```ruby
 # After allocation, students are materialized into the exam roster
-exam.roster_user_ids # => [101, 102, 103, ...]
+exam.allocated_user_ids # => [101, 102, 103, ...]
 ```
 
-**3. As Assessable (Grading Container)**
+**3. As Pointable and Gradable (Grading Container)**
 ```ruby
-# After the exam, link it to an assessment for grading
-assessment = Assessment::Assessment.create!(
-  assessable: exam,
-  lecture: exam.lecture,
-  title: "#{exam.title} Grading"
-)
+# Nothing to link: the assessment came into being with the exam
+exam.assessment                  # => Assessment::Assessment
+exam.assessment.requires_points  # => true
 ```
 
 ### Example Implementation
@@ -89,30 +93,47 @@ class Exam < ApplicationRecord
   belongs_to :lecture
 
   include Registration::Registerable
-  include Roster::Rosterable
-  include Assessment::Assessable
+  include Rosters::Rosterable
+  include Assessment::Pointable
+  include Assessment::Gradable
 
-  validates :lecture, presence: true
+  attr_accessor :registration_deadline, :reopen_after_deadline_fix
+
   validates :title, presence: true
-  validates :date, presence: true
   validates :capacity, numericality: { greater_than: 0, allow_nil: true }
+  validate :registration_deadline_before_exam_date
+  validate :registration_deadline_in_future
 
-  def materialize_allocation!(user_ids:, campaign:)
-    replace_roster!(
-      user_ids: user_ids,
-      source_type: "Registration::Campaign",
-      source_id: campaign.id
-    )
-  end
+  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
+  after_create :create_registration_campaign,
+               if: -> { !skip_campaigns && Flipper.enabled?(:registration_campaigns) }
+  after_update :update_campaign_deadline, if: -> { registration_deadline.present? && ... }
+  before_destroy :destroy_draft_campaign
 
-  def registration_open?
-    Time.current < registration_deadline
-  end
+  # ...
 
-  def past?
-    date < Time.current
-  end
+  private
+
+    def setup_assessment
+      ensure_pointbook!(requires_submission: false)
+    end
 end
+```
+
+`materialize_allocation!` and the roster methods come from `Rosters::Rosterable`;
+the exam only overrides `add_user_to_roster!` and `remove_user_from_roster!`.
+Note that `date` carries no presence validation — an exam may be entered before
+its date is fixed.
+
+```admonish tip "The assessment is created with the exam"
+`setup_assessment` runs on creation and calls `ensure_pointbook!`, which produces
+an `Assessment::Assessment` with `requires_points: true`. So an exam never exists
+with a roster but no gradebook, and the grading slice adds the grade scheme on
+top without touching this model.
+
+It is behind the `assessment_grading` flag. An exam created while the flag is off
+gets no assessment, and nothing creates one later — `ensure_pointbook!` is called
+from here and nowhere else.
 ```
 
 ### Database Migration
@@ -123,16 +144,18 @@ class CreateExams < ActiveRecord::Migration[7.0]
     create_table :exams do |t|
       t.references :lecture, null: false, foreign_key: true
       t.string :title, null: false
-      t.datetime :date, null: false
-      t.string :location
-      t.integer :capacity, null: false
-      t.datetime :registration_deadline
+      t.datetime :date
+      t.text :location
+      t.integer :capacity
       t.text :description
+      t.boolean :skip_campaigns, default: false, null: false
+      t.integer :self_materialization_mode, default: 0
 
       t.timestamps
     end
 
     add_index :exams, [:lecture_id, :date]
+    add_index :exams, :self_materialization_mode
   end
 end
 ```
@@ -203,11 +226,11 @@ Record and process exam grades using the assessment system.
 
 | Step | Action | Technical Details |
 |------|--------|-------------------|
-| 1 | Create assessment | `Assessment::Assessment.create!(assessable: exam, ...)` |
-| 2 | Seed participations | System creates `Assessment::Participation` for each registered student |
-| 3 | Define tasks | Staff creates `Assessment::Task` records (e.g., Problem 1, Problem 2) |
-| 4 | Enter grades | Tutors record `Assessment::TaskPoint` for each student/task |
-| 5 | Apply grade scheme | Staff applies `Assessment::GradeScheme` to convert points to letter grades |
+| — | Assessment already exists | Created with the exam by `setup_assessment`, see [Example Implementation](#example-implementation) |
+| 1 | Seed participations | System creates `Assessment::Participation` for each registered student |
+| 2 | Define tasks | Staff creates `Assessment::Task` records (e.g., Problem 1, Problem 2) |
+| 3 | Enter grades | Tutors record `Assessment::TaskPoint` for each student/task |
+| 4 | Apply grade scheme | Staff applies `Assessment::GradeScheme` to convert points to letter grades |
 
 ```admonish note "Multiple Choice Exam Extension"
 For exams with multiple choice components requiring legal compliance, see the [Multiple Choice Exams](05c-multiple-choice-exams.md) chapter for the two-stage grading process.

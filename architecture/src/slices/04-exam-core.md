@@ -2,8 +2,7 @@
 
 ```admonish info "What this page is"
 An orientation map for the fourth Müsli slice (PR #1109, branch
-`muesli-04-exam-core`). The judgement calls are collected in
-[Slice 4 — Decisions](04-exam-core-decisions.md).
+`muesli-04-exam-core`).
 ```
 
 ## TL;DR
@@ -119,7 +118,6 @@ and `Assessment::TasksController` are extended.
 3. `Exam#add_user_to_roster!` / `#remove_user_from_roster!` — the asymmetry is
    the heart of this slice
 4. `app/controllers/exams_controller.rb`
-5. [Slice 4 — Decisions](04-exam-core-decisions.md)
 
 ---
 
