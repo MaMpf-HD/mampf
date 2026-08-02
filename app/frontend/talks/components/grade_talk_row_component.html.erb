@@ -30,12 +30,14 @@
   </td>
 
   <td class="text-center">
-    <span
-      class="<%= badge_status_participation_class %>"
-      style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
-    >
-      <%= status_label %>
-    </span>
+    <% if status_label.present? %>
+      <span
+        class="<%= badge_status_participation_class %>"
+        style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
+      >
+        <%= status_label %>
+      </span>
+    <% end %>
   </td>
 
   <td class="text-center" style="min-width: 110px;">
@@ -43,10 +45,11 @@
       <%= tag.select(
             name: "grade",
             class: "form-select form-select-sm mx-auto",
-            style: "min-width: 90px;",
+            style: "min-width: 90px; width: 90px;",
             data: { grade_talk_row_target: "gradeInput", action: "change->grade-talk-row#onFieldChanged" }
           ) do %>
         <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
+
         <%= safe_join(
               grade_options.map do |label, value|
                 tag.option(label, value: value, selected: value == grade_numeric)
@@ -66,11 +69,15 @@
                           maxlength: 255,
                           data: { grade_talk_row_target: "noteInput", action: "input->grade-talk-row#onFieldChanged" } %>
     <% else %>
-      <span class="text-muted small text-truncate d-inline-block" style="max-width: 180px;" title="<%= @participation&.note %>">
+      <span
+        class="text-muted small text-truncate d-inline-block"
+        style="max-width: 180px;"
+        title="<%= @participation&.note %>"
+      >
         <%= @participation&.note.presence || "—" %>
       </span>
     <% end %>
-</td>
+  </td>
 
   <td class="text-muted small">
     <%= grader_display %>
@@ -106,7 +113,13 @@
         <%= form_with url: refresh_form_url,
                     method: :patch,
                     data: { turbo: true, grade_talk_row_target: "refreshForm" },
-                    html: { style: "display:none;" } %>
+                    html: { style: "display:none;" } do %>
+          <input
+            type="hidden"
+            name="grade"
+            data-grade-talk-row-target="gradePayload"
+          >
+        <% end %>
         <%= refresh_row_button %>
       <% end %>
     </div>

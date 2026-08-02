@@ -25,7 +25,6 @@ module Assessment
     end
 
     def refresh
-      @participation = @talk.participations.find_by(user_id: @user.id)
       rerender_participation_row
     end
 
