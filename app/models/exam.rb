@@ -37,7 +37,7 @@ class Exam < ApplicationRecord
                if: lambda {
                  registration_deadline.present? && Flipper.enabled?(:registration_campaigns)
                }
-  before_destroy :destroy_draft_campaign, prepend: true
+  before_destroy :destroy_draft_campaign
 
   def non_destructible_reason
     return :roster_not_empty unless roster_empty?

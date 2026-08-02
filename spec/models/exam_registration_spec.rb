@@ -650,6 +650,16 @@ RSpec.describe(Exam, type: :model) do
 
         expect(Registration::Item.find_by(id: item.id)).to be_nil
       end
+
+      it "keeps the draft campaign when the roster blocks the deletion" do
+        campaign = exam.registration_campaign
+        create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
+
+        expect(exam.destroy).to be(false)
+
+        expect(Exam.find_by(id: exam.id)).to be_present
+        expect(Registration::Campaign.find_by(id: campaign.id)).to be_present
+      end
     end
 
     context "when campaign has been opened" do
