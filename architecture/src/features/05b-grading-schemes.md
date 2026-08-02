@@ -26,7 +26,7 @@ We use a configurable scheme model with service-based application:
 - **Canonical Source:** `Assessment::GradeScheme` stores scheme configuration per assessment
 - **Banded Config:** JSON config defines grade bands with either absolute points or percentages
 - **Service-Based Application:** `Assessment::GradeSchemeApplier` iterates participations and computes grades
-- **Version Control:** Hash-based versioning prevents duplicate applications
+- **Version Control:** Each config change recomputes `version_hash`; a second `apply!` is made harmless by `applied_at`, not by the hash
 - **Override Respect:** Manual grades bypass scheme application
 - **Distribution Analysis:** Service provides statistics for informed decision-making
 - **Integration Point:** Updates `Assessment::Participation.grade_value` field
@@ -51,7 +51,7 @@ The main fields and methods of `Assessment::GradeScheme` are:
 | `assessment_id`  | DB column (FK)   | The assessment this scheme applies to                          |
 | `kind`           | DB column (Enum) | Scheme type: currently only `banded`                           |
 | `config`         | DB column (JSONB)| Scheme-specific configuration (bands, coefficients, etc.)      |
-| `version_hash`   | DB column        | MD5 hash of config for idempotency checking                    |
+| `version_hash`   | DB column        | MD5 hash of the config, recomputed on save; not read anywhere yet |
 | `applied_at`     | DB column        | Timestamp when scheme was last applied (nil if draft)          |
 | `applied_by_id`  | DB column (FK)   | User who applied the scheme                                    |
 | `active`         | DB column        | Boolean: whether this is the currently active scheme           |
@@ -64,7 +64,7 @@ The main fields and methods of `Assessment::GradeScheme` are:
 
 - Only one active scheme per assessment (enforced via validation)
 - Config structure varies by `kind` (see "Scheme Configurations" section below)
-- `version_hash` enables idempotency: applying identical config is a no-op
+- `version_hash` is an MD5 of the config, recomputed on save. Nothing reads it yet — the idempotency of a second `apply!` comes from `applied_at`, not from the hash. It is computed after sorting hash *keys*, so serialisation noise does not change it; the order of the bands array does count, which is safe because both generators (`two_point_auto` and the form's `computeBands`) build it the same way
 - Draft schemes (not applied) can be edited freely
 - Applied schemes are immutable (create new version to change) — this preserves the mapping, but a participation records only `grader_id` and `graded_at`, never the scheme that produced its grade. After a second scheme is applied, grades from both sit in the same table with nothing to tell them apart
 
@@ -138,7 +138,7 @@ end
 
 - **Applying scheme:** The professor finalizes: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_value` computed, `scheme.applied_at` is set.
 
-- **Preventing re-application:** Someone tries to apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service checks `version_hash`, sees it matches, and only grades participations that still have `grade_numeric IS NULL` (e.g. late-reviewed students). Already-graded participations (including manual corrections) are preserved.
+- **Preventing re-application:** Someone tries to apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. Because `applied_at` is set, the service narrows its target to participations that still have `grade_numeric IS NULL` (e.g. late-reviewed students). Already-graded participations (including manual corrections) are preserved.
 
 ---
 
@@ -492,7 +492,7 @@ The "grade calculator" that transforms points into grades according to the confi
 
 ### Behavior Highlights
 
-- **Idempotent:** Checks `version_hash` before applying; on re-apply, only grades ungraded participations (preserves manual corrections, picks up late-reviewed students)
+- **Idempotent:** Branches on `applied_at`; on re-apply, only grades ungraded participations (preserves manual corrections, picks up late-reviewed students)
 - **Absence-aware:** Grades `absent` participations 5.0 — a registered no-show has used up the attempt — and skips `exempt` ones entirely. See [`absent` and `exempt` are opposites](04-assessments-and-grading.md#status-workflow)
 - **Transaction-safe:** Uses database transaction for consistency
 - **Efficient:** Single query to load all participations, batch updates
@@ -534,7 +534,7 @@ flowchart TD
     Satisfied -->|Yes| Apply[Apply scheme to all participations]
     Apply --> Transaction[Database transaction starts]
 
-    Transaction --> CheckHash{version_hash<br/>already applied?}
+    Transaction --> CheckHash{applied_at<br/>already set?}
     CheckHash -->|Yes| CheckUngraded{Any ungraded<br/>participations?}
     CheckUngraded -->|No| SkipAll[Skip - nothing to do]
     CheckUngraded -->|Yes| IterateUngraded[Iterate ungraded participations]
@@ -663,7 +663,7 @@ module Assessment
   private
 
   def already_applied?
-    @scheme.applied? && @scheme.version_hash == @scheme.compute_hash
+    @scheme.applied?
   end
 
   def compute_grade_for(participation)
@@ -723,7 +723,7 @@ end
 
 - **Final application:** Professor applies: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_value` set.
 
-- **Idempotent reapplication:** System accidentally triggers apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service detects identical `version_hash` and returns immediately.
+- **Idempotent reapplication:** System accidentally triggers apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. With `applied_at` set and nothing left ungraded, the service returns immediately.
 
 ---
 
@@ -806,7 +806,7 @@ sequenceDiagram
     Applier->>Participation: compute proposed grades
     Applier-->>Professor: show grade preview
     Professor->>Applier: apply!(applied_by: professor)
-    Applier->>Applier: check version_hash (idempotency)
+    Applier->>Applier: check applied_at (idempotency)
     loop for each participation
         Applier->>Participation: update(grade_value: computed_grade)
     end

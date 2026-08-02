@@ -1,7 +1,7 @@
 # Slice 5 — Decisions
 
 ```admonish question "How to read this page"
-Six choices this slice makes where the code shows *what* happens but not why
+Five choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -16,35 +16,6 @@ Permalinks are pinned to commit
 the tip of `muesli-05-exam-grading`. All URLs live in one block at the end of
 the file.
 ```
-
----
-
-## E-5.5 · The version hash ignores band order
-
-> **Should reordering bands without changing them count as the same scheme?**
-
-**As built.** `compute_hash` MD5s the config after `deep_sort_keys`, which sorts
-hash keys recursively — so two configs that differ only in key order hash
-identically.
-
-**Code.** [`compute_hash`][c5-hash] · [`deep_sort_keys`][c5-deepsort]
-
-**Example.** A teacher rebuilds the same scheme in the UI and the band objects
-come back as `{"grade": …, "min_points": …}` instead of
-`{"min_points": …, "grade": …}`.
-
-- the JSON differs byte for byte
-- the hash is **identical**, so the scheme is recognised as unchanged
-
-Note the sort is applied to hash *keys*, not to the bands array — reordering the
-bands themselves does change the hash, even though the mapping they describe is
-the same.
-
-**Why it matters.** The hash is the identity used to tell "this grade came from
-that mapping". It is stable against serialisation noise but not against a
-semantically irrelevant reordering of the band list.
-
-**Status:** reconstructed.
 
 ---
 
@@ -187,7 +158,6 @@ finding it in the code means going through the polymorphic association.
 
 | # | Decision | Status |
 |---|---|---|
-| E-5.5 | Version hash ignores key order, not band order | reconstructed |
 | E-5.6 | Reviewed cannot become absent/exempt | settled |
 | E-5.7 | One active scheme, inactive ones accumulate | settled |
 | E-5.8 | Band shape and types validated; coverage is not | reconstructed |
@@ -199,8 +169,6 @@ finding it in the code means going through the polymorphic association.
 <!-- muesli-05-exam-grading. To re-pin, replace the SHA below.           -->
 <!-- ------------------------------------------------------------------ -->
 
-[c5-hash]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L24-L28
-[c5-deepsort]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L86-L95
 [c5-absence]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/absence_handling.rb#L5-L20
 [c5-nottransition]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/absence_handling.rb#L24-L30
 [c5-unique]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L11-L12
