@@ -78,8 +78,8 @@ RSpec.describe("Registration::Allocations", type: :request) do
         get registration_campaign_allocation_path(campaign)
         expect(response).to have_http_status(:success)
         expect(response.body).to include(I18n.t("registration.allocation.conflicts.title"))
-        expect(response.body).to include(conflicting_student.name)
-        expect(response.body).to include(tutorial.title)
+        expect(response.body).to include(ERB::Util.html_escape(conflicting_student.name))
+        expect(response.body).to include(ERB::Util.html_escape(tutorial.title))
       end
     end
 

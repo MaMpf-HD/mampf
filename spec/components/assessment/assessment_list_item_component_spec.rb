@@ -153,7 +153,7 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
 
     it "renders the component" do
       render_inline(component)
-      expect(rendered_content).to include(talk.title)
+      expect(rendered_content).to include(CGI.escapeHTML(talk.title))
     end
 
     it "returns speaker names" do
