@@ -1,7 +1,7 @@
 # Slice 5 — Decisions
 
 ```admonish question "How to read this page"
-Five choices this slice makes where the code shows *what* happens but not why
+Four choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -16,37 +16,6 @@ Permalinks are pinned to commit
 the tip of `muesli-05-exam-grading`. All URLs live in one block at the end of
 the file.
 ```
-
----
-
-## E-5.6 · Reviewed participations cannot be marked absent
-
-> **Should the transition from reviewed to absent or exempt be refused
-> outright?**
-
-**As built.** `validate_not_reviewed!` raises `InvalidTransitionError` with the
-message "would discard grading data".
-
-**Code.** [`mark_absent` / `mark_exempt`][c5-absence] ·
-[`validate_not_reviewed!`][c5-nottransition]
-
-**Example.** Tim is graded, then turns out to have been ill and produces a
-certificate. Marking him exempt is:
-
-- refused with an exception
-- the supported route is to clear his grading data first
-
-Read this as a rule the code already enforces, not as a screen that exists: the
-module holding both transitions is not yet called from anywhere, so in this
-slice the guard protects a path only its own spec can take. The write path is
-being built on `muesli/tutor-grading-view`.
-
-**Why it matters.** Both transitions null `submitted_at`, so allowing them from
-`reviewed` would strand a grade on a participation that claims nothing was
-handed in. Refusing is the safe direction, but the correct workflow — how to
-retract a grade — is not provided by this slice.
-
-**Status:** settled — the rule; the write path itself is a to-do elsewhere.
 
 ---
 
@@ -158,7 +127,6 @@ finding it in the code means going through the polymorphic association.
 
 | # | Decision | Status |
 |---|---|---|
-| E-5.6 | Reviewed cannot become absent/exempt | settled |
 | E-5.7 | One active scheme, inactive ones accumulate | settled |
 | E-5.8 | Band shape and types validated; coverage is not | reconstructed |
 | E-5.9 | `two_point_auto` spreads evenly, raises on narrow ranges | reconstructed |
@@ -169,8 +137,6 @@ finding it in the code means going through the polymorphic association.
 <!-- muesli-05-exam-grading. To re-pin, replace the SHA below.           -->
 <!-- ------------------------------------------------------------------ -->
 
-[c5-absence]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/absence_handling.rb#L5-L20
-[c5-nottransition]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/absence_handling.rb#L24-L30
 [c5-unique]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L11-L12
 [c5-bandconfig]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L102-L139
 [c5-twopoint]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L30-L56
