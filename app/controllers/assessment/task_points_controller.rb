@@ -111,7 +111,7 @@ module Assessment
 
     def mark_as_participated
       user = User.find_by(id: params[:user_id])
-      return respond_with_flash(:alert, t("assessment.task_points.user_not_found")) unless user
+      return respond_with_flash(:alert, t("assessment.errors.user_not_found")) unless user
 
       roster_tutorial = user.tutorial_rosterized(@lecture)
       unless roster_tutorial
@@ -197,12 +197,12 @@ module Assessment
 
         unless @tutorial
           return respond_with_flash(:alert,
-                                    t("assessment.task_points.tutorial_not_found"))
+                                    t("assessment.errors.no_tutorial"))
         end
 
         unless @assignment
           return respond_with_flash(:alert,
-                                    t("assessment.task_points.assignment_not_found"))
+                                    t("assessment.errors.no_assignment"))
         end
 
         @assessment = @assignment.assessment
@@ -215,7 +215,7 @@ module Assessment
         @submission = Submission.find_by(id: params[:submission_id])
         unless @submission
           return respond_with_flash(:alert,
-                                    t("assessment.task_points.submission_not_found"))
+                                    t("assessment.errors.no_submission"))
         end
 
         @assignment = @submission.assignment
@@ -240,7 +240,7 @@ module Assessment
         @participation = Participation.find_by(id: params[:participation_id])
         unless @participation
           return respond_with_flash(:alert,
-                                    t("assessment.task_points.participation_not_found"))
+                                    t("assessment.errors.no_participation"))
         end
 
         @assessment = @participation.assessment
@@ -265,7 +265,7 @@ module Assessment
         @assignment = Assignment.find_by(id: params[:assignment_id])
         unless @assignment
           return respond_with_flash(:alert,
-                                    t("assessment.task_points.assignment_not_found"))
+                                    t("assessment.errors.no_assignment"))
         end
 
         @tutorial = Tutorial.find_by(id: params[:tutorial_id])
