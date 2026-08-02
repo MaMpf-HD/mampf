@@ -1,7 +1,7 @@
 # Slice 5 — Decisions
 
 ```admonish question "How to read this page"
-Four choices this slice makes where the code shows *what* happens but not why
+Three choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -16,29 +16,6 @@ Permalinks are pinned to commit
 the tip of `muesli-05-exam-grading`. All URLs live in one block at the end of
 the file.
 ```
-
----
-
-## E-5.7 · One active scheme per assessment, and it may be none
-
-> **Should an assessment be allowed to have several schemes as long as only one
-> is active?**
-
-**As built.** A uniqueness validation scoped to `assessment_id` with
-`conditions: -> { where(active: true) }`, plus a partial unique index in the
-migration. Inactive schemes accumulate freely.
-
-**Code.** [the uniqueness validation][c5-unique]
-
-**Example.** An exam ends up with three schemes: the first draft (inactive), the
-one that was applied (inactive after being superseded), and the current active
-one. The history of what was tried is preserved, and only one can be in force.
-
-**Why it matters.** It is what makes the immutability of an applied scheme
-workable — corrections create rows rather than mutating them. Nothing prunes the
-old ones.
-
-**Status:** settled.
 
 ---
 
@@ -127,7 +104,6 @@ finding it in the code means going through the polymorphic association.
 
 | # | Decision | Status |
 |---|---|---|
-| E-5.7 | One active scheme, inactive ones accumulate | settled |
 | E-5.8 | Band shape and types validated; coverage is not | reconstructed |
 | E-5.9 | `two_point_auto` spreads evenly, raises on narrow ranges | reconstructed |
 | E-5.10 | Grading hangs off the assessment, not the exam | settled |
@@ -137,7 +113,6 @@ finding it in the code means going through the polymorphic association.
 <!-- muesli-05-exam-grading. To re-pin, replace the SHA below.           -->
 <!-- ------------------------------------------------------------------ -->
 
-[c5-unique]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L11-L12
 [c5-bandconfig]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L102-L139
 [c5-twopoint]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L30-L56
 [c5-pointgrad]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L69-L77

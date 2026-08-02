@@ -62,7 +62,7 @@ The main fields and methods of `Assessment::GradeScheme` are:
 
 ### Behavior Highlights
 
-- Only one active scheme per assessment (enforced via validation)
+- Only one active scheme per assessment, on both levels: a uniqueness validation scoped to the active ones, and a partial unique index (`idx_assessment_grade_schemes_one_active`, `WHERE active = true`). Inactive schemes accumulate freely, which is what makes the immutability of an applied scheme workable — a correction becomes a new row
 - Config structure varies by `kind` (see "Scheme Configurations" section below)
 - `version_hash` is an MD5 of the config, recomputed on save. Nothing reads it yet — the idempotency of a second `apply!` comes from `applied_at`, not from the hash. It is computed after sorting hash *keys*, so serialisation noise does not change it; the order of the bands array does count, which is safe because both generators (`two_point_auto` and the form's `computeBands`) build it the same way
 - Draft schemes (not applied) can be edited freely
@@ -79,7 +79,8 @@ module Assessment
     enum :kind, { banded: 0 }
 
     validates :config, presence: true
-    validates :assessment_id, uniqueness: true, if: :active?
+    validates :assessment_id, uniqueness: { conditions: -> { where(active: true) } },
+                              if: :active?
     validate :config_matches_kind
 
     before_save :compute_hash, if: :config_changed?

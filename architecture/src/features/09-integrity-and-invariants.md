@@ -84,6 +84,13 @@ add_index :assessment_task_points,
           unique: true,
           name: "idx_unique_task_point"
 
+# At most one active grade scheme per assessment; inactive ones accumulate
+add_index :assessment_grade_schemes,
+          :assessment_id,
+          unique: true,
+          where: "active = true",
+          name: "idx_assessment_grade_schemes_one_active"
+
 # Foreign key integrity
 add_foreign_key :assessment_tasks, :assessments
 add_foreign_key :assessment_task_points, :assessment_tasks, column: :task_id
