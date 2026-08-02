@@ -66,7 +66,7 @@ The main fields and methods of `Assessment::GradeScheme` are:
 - Config structure varies by `kind` (see "Scheme Configurations" section below)
 - `version_hash` enables idempotency: applying identical config is a no-op
 - Draft schemes (not applied) can be edited freely
-- Applied schemes are immutable (create new version to change)
+- Applied schemes are immutable (create new version to change) — this preserves the mapping, but a participation records only `grader_id` and `graded_at`, never the scheme that produced its grade. After a second scheme is applied, grades from both sit in the same table with nothing to tell them apart
 
 ### Example Implementation
 

@@ -1,7 +1,7 @@
 # Slice 5 — Decisions
 
 ```admonish question "How to read this page"
-Seven choices this slice makes where the code shows *what* happens but not why
+Six choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -16,33 +16,6 @@ Permalinks are pinned to commit
 the tip of `muesli-05-exam-grading`. All URLs live in one block at the end of
 the file.
 ```
-
----
-
-## E-5.4 · An applied scheme is frozen
-
-> **Should a scheme become immutable once it has been applied, except for
-> deactivating it?**
-
-**As built.** `immutable_when_applied` rejects any update once `applied_at_was`
-is present, except to `active`, `applied_at`, `applied_by_id` and `updated_at`.
-
-**Code.** [`immutable_when_applied`][c5-immutable]
-
-**Example.** A teacher applies a scheme, then wants to lower the 4.0 boundary by
-two points after complaints.
-
-- editing the existing scheme is refused
-- the supported path is to deactivate it and create a new one, then apply that
-
-The old scheme therefore survives as a record of what produced the original
-grades.
-
-**Why it matters.** It is what makes `version_hash` meaningful as an audit
-reference — a grade can be traced to a mapping that provably has not changed
-since. The cost is that every correction produces a new row.
-
-**Status:** settled.
 
 ---
 
@@ -121,7 +94,7 @@ migration. Inactive schemes accumulate freely.
 one that was applied (inactive after being superseded), and the current active
 one. The history of what was tried is preserved, and only one can be in force.
 
-**Why it matters.** It is what makes [E-5.4](#e-54--an-applied-scheme-is-frozen)
+**Why it matters.** It is what makes the immutability of an applied scheme
 workable — corrections create rows rather than mutating them. Nothing prunes the
 old ones.
 
@@ -214,7 +187,6 @@ finding it in the code means going through the polymorphic association.
 
 | # | Decision | Status |
 |---|---|---|
-| E-5.4 | An applied scheme is frozen | settled |
 | E-5.5 | Version hash ignores key order, not band order | reconstructed |
 | E-5.6 | Reviewed cannot become absent/exempt | settled |
 | E-5.7 | One active scheme, inactive ones accumulate | settled |
@@ -227,7 +199,6 @@ finding it in the code means going through the polymorphic association.
 <!-- muesli-05-exam-grading. To re-pin, replace the SHA below.           -->
 <!-- ------------------------------------------------------------------ -->
 
-[c5-immutable]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L60-L67
 [c5-hash]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L24-L28
 [c5-deepsort]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L86-L95
 [c5-absence]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/absence_handling.rb#L5-L20
