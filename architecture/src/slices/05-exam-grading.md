@@ -2,8 +2,7 @@
 
 ```admonish info "What this page is"
 An orientation map for the fifth Müsli slice (PR #1111, branch
-`muesli-05-exam-grading`). The judgement calls are collected in
-[Slice 5 — Decisions](05-exam-grading-decisions.md).
+`muesli-05-exam-grading`).
 ```
 
 ## TL;DR
@@ -41,8 +40,8 @@ never mixed:
 ```
 
 ```json
-{ "bands": [ { "min_pct": 90, "max_pct": 100, "grade": "1.0" },
-             { "min_pct": 0,  "max_pct": 39.99, "grade": "5.0" } ] }
+{ "bands": [ { "min_pct": 90, "grade": "1.0" },
+             { "min_pct": 0,  "grade": "5.0" } ] }
 ```
 
 `GradeScheme.two_point_auto` generates the absolute shape from an *excellence*
@@ -127,6 +126,54 @@ The model layer for absences is finished and specced; only the caller is missing
 | Model specs | `absence_handling_spec`, 10 examples |
 ~~~
 
+## Before you read the code
+
+Five places in this diff that look like working features but are groundwork. The
+rules behind them live in [Grading Schemes](../features/05b-grading-schemes.md)
+and [Assessments & Grading](../features/04-assessments-and-grading.md); this page
+says what you need in order to read *this branch*.
+
+### `two_point_auto` is never called
+
+The Ruby generator carries the algorithm, all five input guards and thirteen
+specs — and no caller. The bands a teacher actually gets are built in the
+browser by `computeBands`, which has no tests, and the input guards sit in a
+third file, `scheme_form.controller.js`. The two implementations agree today;
+nothing keeps them in step. See
+[the generator exists twice](../features/05b-grading-schemes.md#interactive-curve-generation-frontend-convenience).
+
+### Percentage bands can be read but not created
+
+`apply_percentage_scheme`, the validation and the summary all handle `min_pct`
+bands, and specs cover them. Nothing in the application writes one — there is no
+generator, and the form only offers points. A percentage scheme can therefore
+only arrive through a seed or the console.
+
+Note also that a band is a **lower bound only**. A `max_points` or `max_pct` key
+is ignored; the highest band a student reaches wins.
+
+### `version_hash` is written and never read
+
+It is recomputed on every config change and stored, but no code compares it. The
+idempotency of a second `apply!` comes from `applied_at`. Treat the column as
+prepared, not load-bearing.
+
+### The 5.0 fallbacks guard states that cannot arise here
+
+`compute_grade_for` returns 5.0 when `points_total` is nil, and again when a
+percentage scheme finds no maximum. Both are backstops: the first would mean a
+participation marked `reviewed` with nothing entered, which the action that sets
+the status has to refuse — and that action is not in this stack. Reading them as
+grading rules would be a mistake.
+
+### The absent branch of the applier is unreachable
+
+`apply!` grades `absent` participations 5.0 and skips `exempt` ones, and that is
+the right rule — see
+[`absent` and `exempt` are opposites](../features/04-assessments-and-grading.md#status-workflow).
+But nothing can set either status yet, so `absent_participations` is always
+empty. The box above says what the branch that wires it has to honour.
+
 ## New screens
 
 | Screen | What it does |
@@ -160,7 +207,6 @@ the preview renderer it delegates to.
 3. `app/models/assessment/absence_handling.rb` — short, but it defines what
    "absent" means for a grade
 4. `app/controllers/assessment/grade_schemes_controller.rb`
-5. [Slice 5 — Decisions](05-exam-grading-decisions.md)
 
 ---
 

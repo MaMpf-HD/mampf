@@ -25,7 +25,6 @@
 - [Slice 3 — Exam Eligibility & Certification](slices/03-eligibility.md)
 - [Slice 4 — Exam Core & Registrations](slices/04-exam-core.md)
 - [Slice 5 — Exam Gradability](slices/05-exam-grading.md)
-  - [Decisions](slices/05-exam-grading-decisions.md)
 
 ## Extensions (Optional Features)
 - [Multiple Choice Exams](features/05c-multiple-choice-exams.md)

@@ -29,7 +29,7 @@ We use a configurable scheme model with service-based application:
 - **Version Control:** Each config change recomputes `version_hash`; a second `apply!` is made harmless by `applied_at`, not by the hash
 - **Override Respect:** Manual grades bypass scheme application
 - **Distribution Analysis:** Service provides statistics for informed decision-making
-- **Integration Point:** Updates `Assessment::Participation.grade_value` field
+- **Integration Point:** Updates `Assessment::Participation.grade_numeric` field
 
 ---
 
@@ -137,7 +137,7 @@ end
 
 - **Adjusting cutoffs:** Seeing the exam was harder than expected, the professor lowers cutoffs: `scheme.update!(config: { bands: [...] })`. The `version_hash` updates automatically.
 
-- **Applying scheme:** The professor finalizes: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_value` computed, `scheme.applied_at` is set.
+- **Applying scheme:** The professor finalizes: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_numeric` computed, `scheme.applied_at` is set.
 
 - **Preventing re-application:** Someone tries to apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. Because `applied_at` is set, the service narrows its target to participations that still have `grade_numeric IS NULL` (e.g. late-reviewed students). Already-graded participations (including manual corrections) are preserved.
 
@@ -685,7 +685,7 @@ module Assessment
 
       participations.each do |participation|
         grade = compute_grade_for(participation)
-        participation.update!(grade_value: grade)
+        participation.update!(grade_numeric: grade)
       end
 
       @scheme.update!(applied_at: Time.current, applied_by: applied_by)
@@ -701,7 +701,7 @@ module Assessment
         points: p.points_total,
         percentage: percentage_for(p),
         proposed_grade: compute_grade_for(p),
-        current_grade: p.grade_value
+        current_grade: p.grade_numeric
       }
     end
   end
@@ -767,7 +767,7 @@ end
 
 - **Adjust and re-preview:** Professor lowers the passing threshold: `scheme.update!(config: { ... })`, then previews again. Now only 2 students fail, which seems fair.
 
-- **Final application:** Professor applies: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_value` set.
+- **Final application:** Professor applies: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_numeric` set.
 
 - **Idempotent reapplication:** System accidentally triggers apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. With `applied_at` set and nothing left ungraded, the service returns immediately.
 
@@ -781,8 +781,25 @@ Grading schemes extend the Assessment system by providing automated grade comput
 
 ### Relationship to Assessment::Gradable
 
+A scheme hangs off the **assessment**, never off the exam, and a validation
+requires the assessable to be **both** `Pointable` and `Gradable` — points to
+convert, and a grade to put the result in. That makes "gradable" a checkable
+property rather than a convention, and it is why the grading interface reached
+through an exam is really an assessment feature:
+
+| Assessable | `Pointable` | `Gradable` | Can carry a scheme |
+|---|---|---|---|
+| `Exam` | ✓ | ✓ | **yes** |
+| `Assignment` | ✓ | — | no |
+| `Talk` | — | ✓ | no |
+| `Achievement` | — | — | no |
+
+An assignment would only need to include `Gradable` as well; nothing else about
+schemes is exam-specific.
+
 The `Assessment::Gradable` concern already provides:
-- `grade_value` field on `Assessment::Participation`
+- `grade_numeric` and `grade_text` on `Assessment::Participation` — `set_grade!`
+  picks the numeric column for numeric values and the text column otherwise
 - Manual grade entry capability
 
 Grading schemes add:
@@ -854,7 +871,7 @@ sequenceDiagram
     Professor->>Applier: apply!(applied_by: professor)
     Applier->>Applier: check applied_at (idempotency)
     loop for each participation
-        Applier->>Participation: update(grade_value: computed_grade)
+        Applier->>Participation: update(grade_numeric: computed_grade)
     end
     Applier->>Scheme: update(applied_at, applied_by)
     end

@@ -243,19 +243,19 @@ An assessable type that tracks qualitative student accomplishments during a lect
 | Type         | Threshold Meaning                        | Participation Grade Encoding           | Example                          |
 |--------------|------------------------------------------|----------------------------------------|----------------------------------|
 | `boolean`    | Not used (always pass/fail)              | `"Pass"` or `"Fail"`                   | Blackboard presentation (yes/no) |
-| `numeric`    | Required count                           | Integer count as `grade_value`         | Attendance: 12 of 15             |
-| `percentage` | Required percentage (0-100)              | Percentage as `grade_value`            | Lab participation: 75%           |
+| `numeric`    | Required count                           | Integer count as `grade_text`         | Attendance: 12 of 15             |
+| `percentage` | Required percentage (0-100)              | Percentage as `grade_text`            | Lab participation: 75%           |
 
 ### Behavior Highlights
 
 - **Assessable Integration:** Each Achievement has one `Assessment::Assessment` record where `assessable_type = "Achievement"` and `assessable_id = achievement.id`
 - **Participation Seeding:** When created, participations are seeded for all students in the lecture roster
 - **Tutor Grading:** Tutors mark achievement completion via existing `Assessment::Participation` editing UI:
-  - Boolean: Check/uncheck "Completed" → sets `grade_value: "Pass"/"Fail"`
-  - Numeric: Enter count → sets `grade_value: <count>`
-  - Percentage: Enter percentage → sets `grade_value: <percentage>`
+  - Boolean: Check/uncheck "Completed" → sets `grade_text: "pass"/"fail"`
+  - Numeric: Enter count → sets `grade_text: <count>`
+  - Percentage: Enter percentage → sets `grade_text: <percentage>`
 - **No Tasks/Submissions:** Achievements do not use `Assessment::Task` (no per-task breakdown) and do not require file uploads (`requires_submission: false`)
-- **Eligibility Checking:** StudentPerformance::Service reads participation `grade_value` to determine if student meets threshold
+- **Eligibility Checking:** StudentPerformance::Service reads participation `grade_text` to determine if student meets threshold
 - **Deletion Protection:** Cannot delete achievement if referenced by any rule (`dependent: :restrict_with_error`). Database FK constraint provides additional layer (`on_delete: :restrict`)
 
 ### Example Implementation
@@ -294,15 +294,15 @@ class Achievement < ApplicationRecord
 
   def student_met_threshold?(user)
     participation = assessment.participations.find_by(user: user)
-    return false unless participation&.grade_value.present?
+    return false unless participation&.grade_text.present?
 
     case value_type
     when "boolean"
-      participation.grade_value == "Pass"
+      participation.grade_text == "pass"
     when "numeric"
-      participation.grade_value.to_i >= threshold
+      participation.grade_text.to_i >= threshold
     when "percentage"
-      participation.grade_value.to_f >= threshold
+      participation.grade_text.to_f >= threshold
     end
   end
 end
@@ -312,9 +312,9 @@ end
 
 - **Teacher creates achievement:** Navigate to Lecture → Assessments → New Assessment → select "Achievement". Enter title ("Blackboard Presentation"), choose value_type ("boolean"). System creates Achievement + Assessment + Participations for all students.
 
-- **Tutor marks completion:** In tutorial roster view, tutor sees participation list for "Blackboard Presentation" achievement. Checks box next to Emma's name → `participation.grade_value = "Pass"`.
+- **Tutor marks completion:** In tutorial roster view, tutor sees participation list for "Blackboard Presentation" achievement. Checks box next to Emma's name → `participation.grade_text = "pass"`.
 
-- **Eligibility computation:** StudentPerformance::Service calls `achievement.student_met_threshold?(emma)` which checks if Emma's participation has `grade_value: "Pass"`.
+- **Eligibility computation:** StudentPerformance::Service calls `achievement.student_met_threshold?(emma)` which checks if Emma's participation has `grade_text: "pass"`.
 
 ---
 

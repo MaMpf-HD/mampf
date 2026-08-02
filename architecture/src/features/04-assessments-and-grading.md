@@ -326,11 +326,11 @@ Assignments and exams are created on-demand during the semester. Talks must exis
 
 - **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. No file uploads occur and `submitted_at` remains `nil` for all participations.
 
-- **For an exam:** A teacher creates an `Exam` record via the "New Assessment" UI. The system creates both the `Exam` and a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_value` can be computed and stored for each student to represent the official exam grade.
+- **For an exam:** A teacher creates an `Exam` record via the "New Assessment" UI. The system creates both the `Exam` and a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_numeric` can be computed and stored for each student to represent the official exam grade.
 
 - **For a seminar talk:** A teacher creates a `Talk` record in the Content tab. The system automatically creates a linked `Assessment::Assessment` whose `assessable` is that talk, with `requires_points: false`. Later, the teacher records only a final grade for each speaker via the Assessments tab—no tasks or submissions are needed.
 
-- **For an achievement:** A teacher creates an `Achievement` record via the "New Assessment" UI (e.g., "Blackboard Presentation" with `value_type: boolean`). The system creates both the `Achievement` and a linked `Assessment::Assessment`, configured with `requires_points: false` and `requires_submission: false`. Participations are seeded for all students in the lecture. Tutors mark completion by setting each participation's `grade_value` to "Pass" or "Fail" (for boolean), or entering a count/percentage (for numeric/percentage types).
+- **For an achievement:** A teacher creates an `Achievement` record via the "New Assessment" UI (e.g., "Blackboard Presentation" with `value_type: boolean`). The system creates both the `Achievement` and a linked `Assessment::Assessment`, configured with `requires_points: false` and `requires_submission: false`. Participations are seeded for all students in the lecture. Tutors mark completion by setting each participation's `grade_text` to "pass" or "fail" (for boolean), or entering a count/percentage (also stored as `grade_text`).
 
 ---
 
@@ -776,7 +776,7 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 
 - **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:reviewed` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
-- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:reviewed`. Students can now see their points breakdown and final grade (if `grade_value` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
+- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:reviewed`. Students can now see their points breakdown and final grade (if `grade_numeric` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
 
 - **Per-tutorial publication (assignments):** Tutorial A completes grading on Monday. The tutor sets `results_published_at: Time.current` for all participations where `tutorial_id = tutorial_a.id`. Students in Tutorial A can now see their results. Tutorial B's students (with `tutorial_id = tutorial_b.id` and `results_published_at: nil`) still see "pending" status.
 
@@ -943,7 +943,7 @@ Points are allowed to exceed task maximum to support extra credit and bonus poin
 
 - **Recomputation trigger:** After saving a TaskPoint with 8 points, the `after_commit` callback automatically calls `assessment_participation.recompute_points_total!`, updating the student's aggregate score across all tasks.
 
-- **Handling complaints:** A student views their exam and submits a complaint about Question 2. The tutor reviews the work, agrees there was a grading error, and updates the `Assessment::TaskPoint` from 5 to 7 points. The `updated_at` timestamp records when the adjustment was made. The recomputation callback updates the student's `points_total` and potentially their final `grade_value`.
+- **Handling complaints:** A student views their exam and submits a complaint about Question 2. The tutor reviews the work, agrees there was a grading error, and updates the `Assessment::TaskPoint` from 5 to 7 points. The `updated_at` timestamp records when the adjustment was made. The recomputation callback updates the student's `points_total` and potentially their final `grade_numeric`.
 
 - **Audit trail:** Months later, a student appeals their grade. The teacher queries `task_point.submission` to retrieve the original PDF that was graded, verifying the points awarded match the work submitted.
 
@@ -1357,7 +1357,7 @@ A concern that extends `Assessment::Assessable` to enable recording a final grad
 - Includes `Assessment::Assessable` and builds on its interface
 - Defaults `requires_points` to `false` when creating the assessment, but retains `true` if it was already enabled (e.g., when combined with `Assessment::Pointable`)
 - No tasks or submissions are required
-- Directly updates `Assessment::Participation.grade_value` for each student
+- Writes `grade_numeric` when the value is a number and `grade_text` otherwise, and sets the participation to `reviewed` in the same update
 - Can be combined with `Assessment::Pointable` for exams that need both points and final grades
 
 ### Example Implementation
@@ -1381,7 +1381,7 @@ module Assessment
     a = assessment || raise("No gradebook; call ensure_gradebook! first")
     part = a.participations.find_or_create_by!(user_id: user.id)
     part.update!(
-      grade_value: value,
+      grade_numeric: value,
       grader_id: grader&.id,
       graded_at: Time.current,
       status: :reviewed
