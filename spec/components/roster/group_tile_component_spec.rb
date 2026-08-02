@@ -95,6 +95,76 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
+  describe "#date_text" do
+    it "is nil for rosterables without dates (e.g. tutorials)" do
+      expect(component.date_text).to be_nil
+    end
+
+    context "with a talk that has dates" do
+      let(:talk) do
+        build_stubbed(:talk, dates: [Time.zone.local(2026, 4, 10),
+                                     Time.zone.local(2026, 4, 11)])
+      end
+      let(:component) { described_class.new(registerable: talk) }
+
+      it "joins the formatted dates" do
+        expect(component.date_text).to eq("Apr 10 2026, Apr 11 2026")
+      end
+    end
+
+    context "with a talk that has no dates" do
+      let(:talk) { build_stubbed(:talk, dates: []) }
+      let(:component) { described_class.new(registerable: talk) }
+
+      it "is nil" do
+        expect(component.date_text).to be_nil
+      end
+    end
+  end
+
+  describe "teacher tile date line" do
+    let(:lecture) { create(:seminar) }
+    let(:talk) do
+      create(:talk, lecture: lecture, dates: [Time.zone.local(2026, 4, 10)])
+    end
+    let(:item) { create(:registration_item, registerable: talk) }
+
+    it "shows the talk date on the non-student tile" do
+      rendered = render_inline(described_class.new(registerable: talk, item: item))
+      date_line = rendered.css(".bi-calendar-event").first
+
+      expect(date_line).to be_present
+      expect(rendered.to_html).to include("Apr 10 2026")
+    end
+
+    it "labels the date for screen readers and hides the icon from them" do
+      rendered = render_inline(described_class.new(registerable: talk, item: item))
+
+      expect(rendered.css(".bi-calendar-event").first["aria-hidden"]).to eq("true")
+      expect(rendered.css(".visually-hidden").map(&:text))
+        .to include("#{I18n.t("basics.date")}:")
+    end
+  end
+
+  describe "student tile metadata rows" do
+    let(:tutorial) { build_stubbed(:tutorial, location: "INF 205") }
+    let(:rows) do
+      [{ label: "Date", value: "Jul 11 2026", icon: "bi-calendar-event" }]
+    end
+
+    it "labels the value for screen readers and hides the icon from them" do
+      rendered = render_inline(
+        described_class.new(registerable: tutorial, student_tile: true,
+                            tile_metadata_rows: rows)
+      )
+      row = rendered.css(".student-registration-tile-meta > div").first
+
+      expect(row.css("i").first["aria-hidden"]).to eq("true")
+      expect(row.css(".visually-hidden").text).to eq("Date:")
+      expect(row["title"]).to eq("Date")
+    end
+  end
+
   describe "#sm_mode" do
     it "returns the mode from registerable" do
       tutorial.self_materialization_mode = "add_only"

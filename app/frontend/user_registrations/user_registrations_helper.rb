@@ -13,14 +13,11 @@ module UserRegistrationsHelper
         field: ->(rosterable) { rosterable.location } }
     ],
     "Talk" => [
-      { header: "basics.position",
-        cell_class: "text-end",
-        icon: "looks_one",
-        field: ->(rosterable) { rosterable.position } },
-      { header: "basics.description",
-        icon: "description",
-        cell_class: "text-center",
-        field: ->(rosterable) { rosterable.description } },
+      # Position is shown in the tile header ("Talk N", see
+      # Registration::ItemsHelper#item_display_type). The description is
+      # intentionally omitted: it is a rich-text abstract, gated by
+      # `display_description` elsewhere, and does not belong in the compact
+      # registration tile.
       { header: "basics.date",
         icon: "event",
         field: lambda { |rosterable|
@@ -195,16 +192,19 @@ module UserRegistrationsHelper
     end
 
     def metadata_label_for(col)
-      return if col[:header] == "basics.description"
-
       t(col[:header])
     end
 
+    # Rows with a blank value are dropped so we never render a lone icon with
+    # no data next to it (e.g. a talk without a description or dates).
     def metadata_rows_for(type, rosterable)
-      TABLE_CONFIG[type].map do |col|
+      TABLE_CONFIG[type].filter_map do |col|
+        value = col[:field].call(rosterable)
+        next if value.blank?
+
         {
           label: metadata_label_for(col),
-          value: col[:field].call(rosterable),
+          value: value,
           icon: gtile_icon_for(col[:icon])
         }
       end
