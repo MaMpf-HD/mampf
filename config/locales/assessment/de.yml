@@ -135,6 +135,7 @@ de:
       invalid_task: "Ungültige Aufgabe %{task_id}."
       invalid_points_value: "Ungültiger Punktwert für Aufgabe %{task_id}."
       not_required_points: "Punkte können für Hausaufgaben, die keine Punkte erfordern, nicht eingetragen werden."
+      required_points: Für dieses %{assessable_type} müssen Punkte über Aufgaben eingegeben werden.
       participation_tutorial_mismatch: "Teilnahme %{participation_id} gehört nicht zum Tutorium %{tutorial_id}"
       submission_assignment_mismatch: "Abgabe %{submission_id} gehört nicht zur Hausaufgabe %{assignment_id}."
       submission_has_no_assignment: "Abgabe %{submission_id} hat keine zugehörige Hausaufgabe"

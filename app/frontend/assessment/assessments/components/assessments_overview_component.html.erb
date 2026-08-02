@@ -51,7 +51,7 @@
 
   <% if single_tab? %>
     <% if lecture.seminar? %>
-      <%= render GradeTalkRowComponent.new(seminar: lecture) %>
+      <%= render TalkGradingTableComponent.new(seminar: lecture) %>
     <% else %>
       <%= render AssessmentsIndexComponent.new(lecture: lecture) %>
     <% end %>
@@ -63,7 +63,7 @@
         role="tabpanel"
       >
         <% if lecture.seminar? %>
-          <%= render GradeTalkRowComponent.new(seminar: lecture) %>
+          <%= render TalkGradingTableComponent.new(seminar: lecture) %>
         <% else %>
           <%= render AssessmentsIndexComponent.new(lecture: lecture) %>
         <% end %>

@@ -1,9 +1,9 @@
 class GradeTalkRowComponent < ViewComponent::Base
-  def initialize(user:, talk:)
+  def initialize(user:, talk:, participation: nil)
     super()
     @user = user
     @talk = talk
-    @participation = user.assessment_participation_in_assignment(talk.assignment)
+    @participation = participation || user.assessment_participation_in_assessable(talk)
   end
 
   def grading_enabled?
@@ -43,7 +43,7 @@ class GradeTalkRowComponent < ViewComponent::Base
   end
 
   def grade_options
-    Assessment::GradeEntryService::VALID_TALK_GRADES.map do |g|
+    Assessment::GradeEntryService::VALID_GRADES_NUMERIC.map do |g|
       [I18n.t("assessment.grades.#{g}", default: g), g]
     end
   end

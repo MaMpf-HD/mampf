@@ -133,6 +133,7 @@ en:
       cannot_score_active_assignment: "Points cannot be entered for active assignments."
       user_not_found: "User not found."
       not_required_points: "Points cannot be entered for assignments that do not require points."
+      required_points: "This %{assessable_type} requires points to be entered by tasks."
       participation_tutorial_mismatch: "Participation %{participation_id} does not belong to tutorial %{tutorial_id}"
       submission_assignment_mismatch: "Submission %{submission_id} does not belong to assignment %{assignment_id}."
       submission_has_no_assignment: "Submission %{submission_id} has no associated assignment."
