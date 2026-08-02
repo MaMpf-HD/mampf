@@ -57,7 +57,7 @@ module Assessment
 
       def replace_participation_row
         turbo_stream.replace(
-          "participation-row-user-#{@user.id}",
+          "user-row-#{@user.id}",
           html: render_to_string(GradeTalkRowComponent.new(
                                    user: @user,
                                    talk: @talk,

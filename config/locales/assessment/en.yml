@@ -180,6 +180,8 @@ en:
         filter_all: "All"
         filter_pending: "Pending"
         filter_reviewed: "Reviewed"
+        filter_absent: "Absent"
+        filter_exempt: "Exempt"
       header_overview:
         submission:
           total: "submissions"
@@ -192,6 +194,8 @@ en:
           graded: "graded"
           pending: "pending"
       no_user_for_config: "No user for participation %{participation_id} on assignment %{assignment_id}"
+    grading_talk:
+      note_placeholder: "Add note..."
     grading_overview:
       submission_progress: "Submissions"
       submitted: "Submitted"

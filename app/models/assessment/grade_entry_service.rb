@@ -11,15 +11,28 @@ module Assessment
       end
 
       grade_info = validate_grade_info(grade_info)
+      status = calculate_status(participation, grade_info)
 
       participation.update!(
         grade_text: grade_info[:grade_text],
         grade_numeric: grade_info[:grade_numeric],
         grader_id: grader.id,
         graded_at: Time.current,
-        status: :reviewed,
+        status: status,
         note: comment || participation.note
       )
+    end
+
+    # Returns :reviewed if a grade is provided, :pending if no grade is provided,
+    # and retains the current status if the participation is exempt or absent.
+    def self.calculate_status(participation, new_grade_info)
+      if participation.exempt? || participation.absent?
+        participation.status
+      elsif new_grade_info[:grade_numeric].present? || new_grade_info[:grade_text].present?
+        :reviewed
+      else
+        :pending
+      end
     end
 
     def self.build_grade_info(grade_numeric: nil, grade_text: nil)
@@ -36,7 +49,12 @@ module Assessment
       if numeric_grade_f&.in?(VALID_GRADES_NUMERIC)
         {
           grade_numeric: numeric_grade_f,
-          grade_text: nil
+          grade_text: input_grade[:grade_text]
+        }
+      elsif numeric_grade.blank?
+        {
+          grade_numeric: nil,
+          grade_text: input_grade[:grade_text]
         }
       else
         raise(GradeEntryError,

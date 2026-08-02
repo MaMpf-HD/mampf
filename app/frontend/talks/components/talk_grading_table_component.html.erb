@@ -1,55 +1,119 @@
-<%# app/components/talk_grading_table_component.html.erb %>
+<%= helpers.turbo_frame_tag "talk-grading-table" do %>
+  <% if gradable_talks.any? %>
+    <div data-controller="status-filter">
+      <div class="d-flex gap-2 m-3 align-items-center">
+        <div class="d-flex align-items-center">
+          <input
+            type="text"
+            class="form-control form-control-sm w-auto"
+            placeholder="<%= t('assessment.grading_tutorial.filter_name') %>"
+            autocomplete="off"
+            data-action="input->status-filter#search"
+          >
+        </div>
 
-<% if gradable_talks.any? %>
-  <div class="table-responsive">
-    <table class="table table-hover align-middle grading-table">
-      <thead>
-        <tr>
-          <th><%= t("assessment.grade_talk_row.speaker") %></th>
-          <th class="text-center"><%= t("assessment.grade_talk_row.status") %></th>
-          <th class="text-center"><%= t("assessment.grade_talk_row.grade") %></th>
-          <th class="note-col"><%= t("assessment.grade_talk_row.note") %></th>
-          <th><%= t("assessment.grade_talk_row.graded_by") %></th>
-          <th><%= t("assessment.grade_talk_row.graded_at") %></th>
-          <th class="text-end"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% gradable_talks.each do |talk| %>
-          <tr class="table-group-header">
-            <td colspan="7"><strong><%= talk.title %></strong></td>
-          </tr>
+        <div
+          class="d-flex gap-2 align-items-center"
+          data-status-filter-target="activeFilters"
+        >
+        </div>
+      </div>
 
-          <% talk.speakers.each do |speaker| %>
+      <div class="table-wrapper" data-controller="table-fade">
+        <div class="table-overflow" data-table-fade-target="inner">
+          <table class="table table-hover align-middle my-3 grading-table">
+            <thead style="background: #fafafa;">
+              <tr>
+                <th class="grade-th"><%= t("assessment.grade_talk_row.speaker") %></th>
+                <th class="text-center grade-th">
+                  <%= t("assessment.grade_talk_row.status") %>
+
+                  <button
+                    class="btn btn-sm btn-link p-0 ms-1"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i class="bi bi-funnel"></i>
+                  </button>
+                  <ul class="dropdown-menu z-10">
+                    <li>
+                      <button
+                        class="dropdown-item"
+                        data-action="click->status-filter#filterStatus"
+                        data-status-filter-status-value="all"
+                      >
+                        <%= t('basics.all') %>
+                      </button>
+                    </li>
+
+                    <% Assessment::Participation.statuses.each_key do |status| %>
+                      <li>
+                        <button
+                          class="dropdown-item"
+                          data-action="click->status-filter#filterStatus"
+                          data-status-filter-status-value="<%= status %>"
+                        >
+                          <%= t("assessment.grading_tutorial.filter_options.filter_#{status}") %>
+                        </button>
+                      </li>
+                    <% end %>
+                  </ul>
+                </th>
+                <th class="text-center grade-th"><%= t("assessment.grade_talk_row.grade") %></th>
+                <th class="grade-th"><%= t("assessment.grade_talk_row.note") %></th>
+                <th class="grade-th"><%= t("assessment.grade_talk_row.graded_by") %></th>
+                <th class="grade-th"><%= t("assessment.grade_talk_row.graded_at") %></th>
+                <th class="text-end grade-th"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% gradable_talks.each do |talk| %>
+                <tr class="table-group-header">
+                  <td colspan="7"><strong><%= talk.title %></strong></td>
+                </tr>
+
+                <% talk.speakers.each do |speaker| %>
             <%= render GradeTalkRowComponent.new(user: speaker, talk: talk) %>
-          <% end %>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-<% end %>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="jumbotron mt-3">
+      <%= t('assessment.grading_tutorial.no_submissions') %>
+    </div>
+  <% end %>
 
-<% if legacy_talks.any? %>
-  <p class="text-muted small mb-2">
-    <%= t('assessment.info.talks_without_assessment') %>
-  </p>
+  <% if legacy_talks.any? %>
+    <div class="card mt-3">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="bi bi-person-dash me-1"></i>
+          <%= t('assessment.legacy_talks') %>
+        </h6>
+      </div>
 
-  <div class="table-responsive">
-    <table class="table table-hover align-middle mb-4">
-      <thead>
-        <tr>
-          <th><%= t('basics.title') %></th>
-          <th><%= t('assessment.speakers') %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% legacy_talks.each do |talk| %>
-          <tr>
-            <td><%= talk.title %></td>
-            <td><%= talk.speakers.map(&:tutorial_name).join(", ") %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+      <div class="card-body">
+        <p class="text-muted small mb-2">
+          <%= t('assessment.legacy_talks_info') %>
+        </p>
+
+        <table class="table align-middle mb-0">
+          <tbody>
+            <% legacy_talks.each do |talk| %>
+              <%= render AssessmentListItemComponent.new(
+                assessable: talk,
+                lecture: @seminar,
+                legacy: true
+              ) %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
 <% end %>

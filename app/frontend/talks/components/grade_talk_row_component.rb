@@ -11,8 +11,7 @@ class GradeTalkRowComponent < ViewComponent::Base
   end
 
   def allow_grading?
-    # grading_enabled? && can_grade? && !locked?
-    false
+    grading_enabled? && can_grade? && !locked?
   end
 
   def locked?
@@ -20,7 +19,7 @@ class GradeTalkRowComponent < ViewComponent::Base
   end
 
   def row_id
-    "participation-row-user-#{@user.id}"
+    "user-row-#{@user.id}"
   end
 
   def status_label
