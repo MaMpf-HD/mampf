@@ -24,7 +24,7 @@ module Assessment
         task_points.each do |task_id, points|
           unless valid_task_ids.include?(task_id)
             raise(PointEntryError,
-                  I18n.t("assessment.task_points.invalid_task", task_id: task_id))
+                  I18n.t("assessment.task_points.invalid_task_id", task_id: task_id))
           end
 
           tp = TaskPoint.find_or_initialize_by(

@@ -97,7 +97,7 @@ module Assessment
             authorize_tutorial!(participation.tutorial_id, scorer, validated_tutorial_ids)
           else
             raise(SubmissionGraderError,
-                  I18n.t("assessment.task_points.participation_missing_tutorial",
+                  I18n.t("assessment.task_points.participation_id_missing_tutorial",
                          participation_id: participation.id))
           end
 
@@ -129,33 +129,33 @@ module Assessment
         def validate_submission_present(submission)
           return if submission.present?
 
-          I18n.t("assessment.task_points.submission_missing")
+          I18n.t("assessment.errors.no_submission")
         end
 
         def validate_participation_present(participation)
           return if participation.present?
 
-          I18n.t("assessment.task_points.participation_missing")
+          I18n.t("assessment.errors.no_participation")
         end
 
         def validate_submission_has_assignment(submission, assignment)
           return if assignment.present?
 
-          I18n.t("assessment.task_points.submission_has_no_assignment",
+          I18n.t("assessment.task_points.submission_id_has_no_assignment",
                  submission_id: submission.id)
         end
 
         def validate_participation_has_assignment(participation, assignment)
           return if assignment.present?
 
-          I18n.t("assessment.task_points.participation_has_no_assignment",
+          I18n.t("assessment.task_points.participation_id_has_no_assignment",
                  participation_id: participation.id)
         end
 
         def validate_assignment_has_assessment(assignment, assessment)
           return if assessment.present?
 
-          I18n.t("assessment.task_points.assignment_has_no_assessment",
+          I18n.t("assessment.task_points.assignment_id_has_no_assessment",
                  assignment_id: assignment.id)
         end
 
@@ -174,7 +174,7 @@ module Assessment
         def validate_current_user_can_grade(scope, user)
           return if scope.nil? || user.can_grade_in_scope?(scope)
 
-          I18n.t("assessment.task_points.user_cannot_grade")
+          I18n.t("assessment.errors.user_cannot_grade")
         end
 
         # ── error raising ───────────────────────────────────────────────────
