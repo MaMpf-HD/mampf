@@ -365,6 +365,7 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 - Course-level aggregation (weighted composition across assessments)
 - Pass/fail rules (configurable requirements)
 - Bonus points system (extra credit with caps)
+- Deviation indicator (which stored grades no longer follow the active scheme after a manual correction — the summary's `grade_change_summary` compares two band sets against the students' points and never reads a stored grade, so it cannot answer this)
 
 ---
 

@@ -1,7 +1,7 @@
 # Slice 5 — Decisions
 
 ```admonish question "How to read this page"
-Nine choices this slice makes where the code shows *what* happens but not why
+Eight choices this slice makes where the code shows *what* happens but not why
 that option was picked or what it costs elsewhere. Each entry leads with a
 **question for the reviewer** and then answers it the way the branch currently
 does — they aim your reading rather than replace it.
@@ -16,34 +16,6 @@ Permalinks are pinned to commit
 the tip of `muesli-05-exam-grading`. All URLs live in one block at the end of
 the file.
 ```
-
----
-
-## E-5.1 · Re-applying a scheme spares already-graded participations
-
-> **Should a second application only fill in the gaps rather than recompute
-> everything?**
-
-**As built.** `apply!` branches on `already_applied?`. The first run targets all
-reviewed participations; every later run targets only those **without** a grade.
-
-**Code.** [`apply!`][c5-apply]
-
-**Example.** A scheme is applied to 200 exams. The teacher then corrects Quinn's
-grade by hand from 2.7 to 2.3 (a borderline case decided in conference). Two
-students are graded late and become reviewed afterwards. The teacher hits
-"apply" again.
-
-- the two late participations get their computed grades
-- **Quinn keeps 2.3** — the manual correction survives
-- the other 199 are untouched
-
-**Why it matters.** It makes the button safe to press twice, which matters when
-grading trickles in. The flip side: after a manual correction, the stored grades
-no longer all follow the scheme, and nothing marks which ones deviate.
-
-**Status:** reconstructed · consider surfacing "n grades deviate from the active
-scheme".
 
 ---
 
@@ -269,7 +241,6 @@ finding it in the code means going through the polymorphic association.
 
 | # | Decision | Status |
 |---|---|---|
-| E-5.1 | Re-apply only fills gaps; manual grades survive | reconstructed |
 | E-5.3 | Missing points ⇒ 5.0, indistinguishable from a real fail | reconstructed |
 | E-5.4 | An applied scheme is frozen | settled |
 | E-5.5 | Version hash ignores key order, not band order | reconstructed |
@@ -287,7 +258,6 @@ zero, not marked yet, no scheme applicable — all end up stored as the same 5.0
 <!-- muesli-05-exam-grading. To re-pin, replace the SHA below.           -->
 <!-- ------------------------------------------------------------------ -->
 
-[c5-apply]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme_applier.rb#L69-L115
 [c5-compute]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme_applier.rb#L117-L135
 [c5-immutable]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L60-L67
 [c5-hash]: https://github.com/MaMpf-HD/mampf/blob/25b9597ec69a791d3dd8ae841bae7c35d7c460f4/app/models/assessment/grade_scheme.rb#L24-L28

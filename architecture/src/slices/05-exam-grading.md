@@ -90,7 +90,7 @@ flowchart TD
 The second run is the interesting one: after `applied_at` is set, `apply!`
 narrows its target to participations that have **no** grade yet, so grades
 entered or corrected by hand are not overwritten. See
-[E-5.1](05-exam-grading-decisions.md#e-51--re-applying-a-scheme-spares-already-graded-participations).
+[Behavior Highlights](../features/05b-grading-schemes.md#behavior-highlights).
 
 ## New screens
 
