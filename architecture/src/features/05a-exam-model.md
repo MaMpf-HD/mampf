@@ -282,17 +282,66 @@ retake_exam.registration_campaign   # a separate campaign, likewise
 
 ---
 
-## State Diagram
+## Lifecycle
+
+An exam outlives its registration campaign. The campaign ends at finalization;
+the exam then still has to be sat, marked, and released to the students. That
+whole arc is what `Exam#status_phase` returns, and it is the only place the
+teacher sees it — the status column of the exam list on the lecture's edit page.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Created
-    Created --> RegistrationOpen : registration_deadline not reached
-    RegistrationOpen --> RegistrationClosed : deadline passed
-    RegistrationClosed --> Administered : exam date reached
-    Administered --> Graded : grades entered
-    Graded --> [*]
+    [*] --> draft
+    draft --> registration_open : campaign opened
+    registration_open --> registration_closed : campaign closed
+    registration_closed --> finalized : campaign finalized
+    finalized --> conducted : exam date passed
+    conducted --> grading : first participation marked
+    grading --> graded : results published
+    graded --> [*]
 ```
+
+### Where each phase comes from
+
+Three sources feed the phase, not one. While the campaign is still running it
+decides alone; once it is finalized — or was never created — the calendar and
+the assessment take over.
+
+| Phase | Derived from |
+|-------|--------------|
+| `draft` | Campaign is a draft |
+| `registration_open` | Campaign is open |
+| `registration_closed` | Campaign is closed or processing |
+| `finalized` | Campaign finalized, **or none at all**, and the exam date has not passed |
+| `conducted` | Exam date has passed |
+| `grading` | Any participation has reached `reviewed` |
+| `graded` | `assessment.results_published_at` is set |
+
+Note the fallback: an exam with `skip_campaigns: true` never has a campaign, so
+it reports `finalized` until its date passes. Nothing was ever finalized there —
+the phase only means "not open for registration, not yet sat".
+
+```admonish tip "Why the phase is computed, not stored"
+A column would have to be rewritten whenever the campaign changes status, when
+the first mark is entered, when results are published — and **when the clock
+passes the exam date**. Nothing fires at midnight, so a stored phase would be
+wrong on exam day, which is exactly the day anyone looks. Deriving it costs a
+query per exam, and the exam list is always scoped to one lecture, which holds a
+handful of exams.
+```
+
+~~~admonish warning "`grading` and `graded` are not reachable yet"
+Both phases are defined and tested, but nothing in this stack can trigger them.
+
+`grading` needs a participation at `reviewed`. No controller writes that status;
+the point and grade entry lives in the separate tutor grading view.
+
+`graded` needs `assessment.results_published_at`. That column exists and is read
+by `results_published?`, but **no code anywhere writes it** — the action that
+releases results to students has still to be built.
+
+So an exam in this stack comes to rest at `conducted`.
+~~~
 
 ---
 
