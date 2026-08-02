@@ -19,22 +19,6 @@ the file.
 
 ---
 
-## Defects to fix before review
-
-~~~admonish warning "`roster.participants` has no German translation"
-English has it, German does not — inherited from slice 4, where the same entry
-records it. Fixing it there carries it here.
-~~~
-
-~~~admonish warning "`exam_registration_spec` is flaky by construction"
-Also inherited: the exam factory randomises the exam date, so examples that set a
-deadline relative to it fail whenever the draw lands close to today. Different
-examples fail on slice 4 and slice 5 for that reason alone. See
-[slice 4](04-exam-core-decisions.md#defects-to-fix-before-review).
-~~~
-
----
-
 ## E-5.1 · Re-applying a scheme spares already-graded participations
 
 > **Should a second application only fill in the gaps rather than recompute
