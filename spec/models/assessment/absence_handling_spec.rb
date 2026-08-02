@@ -79,5 +79,24 @@ RSpec.describe(Assessment::AbsenceHandling) do
         .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError,
                         /would discard grading data/)
     end
+
+    it "takes back the 5.0 an applied scheme gave a no-show" do
+      exam = create(:exam, :with_date)
+      assessment = create(:assessment, :with_points,
+                          assessable: exam, lecture: exam.lecture)
+      absent = create(:assessment_participation,
+                      assessment: assessment, status: :absent)
+      absent.update!(grade_numeric: 5.0,
+                     grader: create(:confirmed_user),
+                     graded_at: Time.current)
+
+      test_service.mark_exempt(absent, note: "Attest")
+
+      absent.reload
+      expect(absent.status).to eq("exempt")
+      expect(absent.grade_numeric).to be_nil
+      expect(absent.grader).to be_nil
+      expect(absent.graded_at).to be_nil
+    end
   end
 end
