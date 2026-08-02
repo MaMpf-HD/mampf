@@ -189,6 +189,18 @@ RSpec.describe(Exam, type: :model) do
       expect(exam.exam_roster_entries).to include(roster_entry)
     end
 
+    it "keeps the original source campaign when they are added back by hand" do
+      campaign = exam.registration_campaign
+      campaign.update!(status: :completed)
+      roster_entry = exam.all_exam_roster_entries.find_by!(user: user)
+      roster_entry.update!(source_campaign: campaign)
+      exam.remove_user_from_roster!(user)
+
+      exam.add_user_to_roster!(user)
+
+      expect(roster_entry.reload.source_campaign).to eq(campaign)
+    end
+
     it "keeps destroying roster rows before finalization" do
       expect do
         exam.remove_user_from_roster!(user)
@@ -450,6 +462,13 @@ RSpec.describe(Exam, type: :model) do
           .to be_within(1.second).of(exam.date - 3.days)
       end
 
+      it "creates the campaign when the derived deadline is already past" do
+        exam = create(:exam, date: 2.days.from_now)
+
+        expect(exam.registration_campaign).to be_draft
+        expect(exam.registration_campaign.registration_deadline).to be < Time.current
+      end
+
       it "creates a registration item linked to the exam" do
         exam = create(:exam)
         item = Registration::Item.find_by(registerable: exam)
@@ -630,6 +649,16 @@ RSpec.describe(Exam, type: :model) do
         exam.destroy!
 
         expect(Registration::Item.find_by(id: item.id)).to be_nil
+      end
+
+      it "keeps the draft campaign when the roster blocks the deletion" do
+        campaign = exam.registration_campaign
+        create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
+
+        expect(exam.destroy).to be(false)
+
+        expect(Exam.find_by(id: exam.id)).to be_present
+        expect(Registration::Campaign.find_by(id: campaign.id)).to be_present
       end
     end
 

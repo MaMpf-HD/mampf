@@ -288,6 +288,31 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
       end
     end
 
+    context "when the student sits on a sibling exam's roster" do
+      let(:main_exam) { create(:exam, :with_date, lecture: lecture) }
+      let(:resit) { create(:exam, :with_date, lecture: lecture) }
+      let(:student) { create(:confirmed_user) }
+      let(:resit_campaign) { create(:registration_campaign, campaignable: lecture) }
+      let(:resit_item) do
+        create(:registration_item, registration_campaign: resit_campaign, registerable: resit)
+      end
+      let(:resit_dashboard) { described_class.new(resit_campaign) }
+
+      before do
+        main_exam.add_user_to_roster!(student)
+        create(:registration_user_registration,
+               registration_campaign: resit_campaign,
+               registration_item: resit_item,
+               user: student)
+      end
+
+      # Sitting the main exam and the resit are independent; neither allocation
+      # displaces the other, so this must not surface as a conflict.
+      it "returns empty array" do
+        expect(resit_dashboard.conflicting_registrations).to be_empty
+      end
+    end
+
     context "when there are no conflicts" do
       it "returns empty array" do
         expect(dashboard.conflicting_registrations).to be_empty

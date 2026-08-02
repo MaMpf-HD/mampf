@@ -47,6 +47,42 @@ RSpec.describe("Registration::Items", type: :request) do
           expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
         end
       end
+
+      context "with an exam" do
+        # With the flag off an exam gets neither its own campaign nor an item,
+        # and `skip_campaigns` stays false — which is what leaves it postable.
+        let(:loose_exam) do
+          Flipper.disable(:registration_campaigns)
+          exam = create(:exam, :with_date, lecture: lecture)
+          Flipper.enable(:registration_campaigns)
+          exam
+        end
+
+        def post_exam(target, exam)
+          post(registration_campaign_items_path(target),
+               params: { registration_item: { registerable_id: exam.id,
+                                              registerable_type: "Exam" } })
+        end
+
+        it "does not add it to a preference-based campaign" do
+          preference_campaign = create(:registration_campaign, :preference_based,
+                                       campaignable: lecture, status: :draft)
+          exam = loose_exam
+
+          expect do
+            post_exam(preference_campaign, exam)
+          end.not_to change(Registration::Item, :count)
+        end
+
+        it "does not add a second exam to an exam campaign" do
+          exam_campaign = create(:exam, :with_date, lecture: lecture).registration_campaign
+          exam = loose_exam
+
+          expect do
+            post_exam(exam_campaign, exam)
+          end.not_to change(Registration::Item, :count)
+        end
+      end
     end
 
     context "as a student" do

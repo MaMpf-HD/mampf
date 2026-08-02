@@ -21,6 +21,8 @@ class Exam < ApplicationRecord
   include Assessment::Pointable
   include Assessment::Gradable
 
+  # No column behind this — the campaign owns the deadline. The attribute only
+  # carries it between form and campaign; `load_registration_deadline` fills it.
   attr_accessor :registration_deadline, :reopen_after_deadline_fix
 
   validates :title, presence: true
@@ -35,7 +37,7 @@ class Exam < ApplicationRecord
                if: lambda {
                  registration_deadline.present? && Flipper.enabled?(:registration_campaigns)
                }
-  before_destroy :destroy_draft_campaign, prepend: true
+  before_destroy :destroy_draft_campaign
 
   def non_destructible_reason
     return :roster_not_empty unless roster_empty?
@@ -69,8 +71,11 @@ class Exam < ApplicationRecord
     return unless roster_entry
 
     if registration_campaign&.completed?
+      # Their seat was allocated and they have seen it, so the removal stays
+      # visible.
       roster_entry.update!(excluded_at: Time.current)
     else
+      # No campaign: the list is kept by hand anyway, and a mistake is retyped.
       roster_entry.destroy
     end
   end
@@ -182,6 +187,9 @@ class Exam < ApplicationRecord
         status: :draft,
         registration_deadline: deadline
       )
+      # For an exam less than three days out the derived deadline is already
+      # past, and the campaign refuses that even as a draft. Opening validates
+      # again.
       campaign.save!(validate: false)
       Registration::Item.create!(
         registration_campaign: campaign,
