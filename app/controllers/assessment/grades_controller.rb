@@ -1,20 +1,15 @@
 module Assessment
   class GradesController < ApplicationController
     before_action :set_talk_and_user_resource,
-                  only: [:update, :mark_absent, :mark_exempt, :refresh]
+                  only: [:update, :refresh]
     before_action :set_locale
     before_action :authorize_assessment!,
-                  only: [:update, :mark_absent, :mark_exempt]
+                  only: [:update]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
       respond_with_flash(:alert, I18n.t("assessment.grades.invalid_params"))
     end
-
-    # rescue_from Assessment::GradeEntryService::GradeEntryError,
-    #             Assessment::AbsenceHandling::AbsenceHandlingError do |e|
-    #   respond_with_flash(:alert, e.message)
-    # end
 
     def authorize_assessment!
       authorize! :grade, @lecture if @lecture.present?
@@ -29,22 +24,7 @@ module Assessment
       render_grade_update(replace_participation_row)
     end
 
-    def mark_absent
-      participation = find_or_create_participation
-      # AbsenceHandling.mark_absent(participation, current_user)
-      @participation = participation.reload
-      render_grade_update(replace_participation_row)
-    end
-
-    def mark_exempt
-      participation = find_or_create_participation
-      # AbsenceHandling.mark_exempt(participation, current_user)
-      @participation = participation.reload
-      render_grade_update(replace_participation_row)
-    end
-
     def refresh
-      # Participation may not exist yet — that's fine, row just re-renders as "pending"
       @participation = @talk.participations.find_by(user_id: @user.id)
       rerender_participation_row
     end

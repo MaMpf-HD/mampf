@@ -108,12 +108,6 @@
                     data: { turbo: true, grade_talk_row_target: "refreshForm" },
                     html: { style: "display:none;" } %>
         <%= refresh_row_button %>
-
-        <%= button_to t("assessment.mark_absent"),
-                    mark_absent_url,
-                    method: :patch,
-                    form: { data: { turbo: true } },
-                    class: "btn btn-sm btn-outline-danger" %>
       <% end %>
     </div>
   </td>

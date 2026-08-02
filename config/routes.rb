@@ -961,14 +961,6 @@ Rails.application.routes.draw do
         to: "assessment/grades#update",
         as: "grade_talk_user"
 
-  patch "talks/:talk_id/mark_absent_user/:user_id",
-        to: "assessment/grades#mark_absent",
-        as: "mark_absent_talk_user"
-
-  patch "talks/:talk_id/mark_exempt_user/:user_id",
-        to: "assessment/grades#mark_exempt",
-        as: "mark_exempt_talk_user"
-
   patch "talks/:talk_id/refresh_grade_user/:user_id",
         to: "assessment/grades#refresh",
         as: "refresh_grade_talk_user"
