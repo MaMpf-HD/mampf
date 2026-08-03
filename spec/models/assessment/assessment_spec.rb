@@ -82,6 +82,20 @@ RSpec.describe(Assessment::Assessment, type: :model) do
     end
   end
 
+  describe "#results_published?" do
+    it "is false until a publication timestamp is set" do
+      assessment = FactoryBot.create(:assessment)
+
+      expect(assessment.results_published?).to be(false)
+    end
+
+    it "is true once one is" do
+      assessment = FactoryBot.create(:assessment, :published)
+
+      expect(assessment.results_published?).to be(true)
+    end
+  end
+
   describe "delegation" do
     it "delegates title to assessable" do
       assignment = FactoryBot.create(:assignment, :with_lecture, title: "Homework 5")
