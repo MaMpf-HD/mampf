@@ -585,15 +585,13 @@ background jobs) that are better reviewed together:
     proposed status (passed/failed) per student. Generates bulk
     proposals for the teacher certification UI. Does NOT create
     Certifications.
-- Jobs:
-  - `PerformanceRecordUpdateJob`: recomputes Records after grade
-    changes (thin wrapper around `ComputationService`).
-  - `CertificationStaleCheckJob`: flags stale certifications when
-    Records change.
+- Jobs: none. Records are recomputed synchronously by `after_commit`
+  callbacks on the grading models, and staleness is derived by the
+  `Certification.stale` scope rather than stored.
 - Refs: [ComputationService](05-student-performance.md#lectureperformancecomputationservice-service),
   [Evaluator](05-student-performance.md#lectureperformanceevaluator-teacher-facing-proposal-generator),
   [Background jobs](09-integrity-and-invariants.md#recommended-background-jobs)
-- Acceptance: ComputationService computes points and achievements; upserts Records; handles missing data gracefully; works with points-only rules (no achievements). Evaluator generates proposals; does NOT create Certifications. Jobs run on schedule; recomputed Records are accurate; stale certifications flagged for teacher review.
+- Acceptance: ComputationService computes points and achievements; upserts Records; handles missing data gracefully; works with points-only rules (no achievements). Evaluator generates proposals; does NOT create Certifications. Recomputed Records are accurate; stale certifications surface for teacher review.
 ```
 
 ```admonish example "PR-10.3 — Read-only UI (Records + Evaluator + Rules read-only)"
