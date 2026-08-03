@@ -24,6 +24,11 @@ namespace :demo do
     Demo::SetupSupport.setup_performance!
   end
 
+  desc "Create an active eligibility rule and certify the demo students against it"
+  task eligibility: :environment do
+    Demo::SetupSupport.setup_eligibility!
+  end
+
   desc "Create the maximum available demo data for the current slice"
   task setup: :environment do
     Demo::SetupSupport.setup!
