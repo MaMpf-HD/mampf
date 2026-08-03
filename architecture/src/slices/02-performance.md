@@ -104,7 +104,7 @@ admitted to the exam.
 
 ## Before you read the code
 
-Four places where the diff is easy to misread. The reasoning behind each lives in
+Five places where the diff is easy to misread. The reasoning behind each lives in
 [Student Performance](../features/05-student-performance.md); this page says what
 you need in order to read *this branch*.
 
@@ -176,6 +176,29 @@ Slice 3 reads that difference: a zero maximum makes the points criterion
 So Cem is proposed ineligible and Bea's case goes to a person, which is where a
 full exemption belongs.
 
+### Nobody writes the achievement value yet
+
+`Assessment::Participation#grade_text` carries what a tutor recorded for an
+achievement — `pass` for a yes-or-no one, a number otherwise. This slice only
+ever *reads* it: the marking table renders it, the computation decides from it.
+No screen in slices 1 to 5 writes it, and neither does
+`muesli/tutor-grading-view`. The marking form arrives with the grading views.
+
+That makes the value a contract across branches, and `Achievement::PASSED` is
+where it is written down. Anything that records a yes-or-no achievement has to
+use that constant. A marking form writing `"Pass"` or `"bestanden"` instead
+would make every reader answer "not met" — quietly, because a value that is not
+the pass value is indistinguishable from a genuine fail.
+
+`Achievement#met_by?` is the single reader. It takes the recorded string and
+answers whether the achievement is cleared; the marking table and
+`ComputationService` both go through it, so what a tutor sees and what
+eligibility decides cannot drift apart. A decimal comma is read as a decimal
+point, because that is what a German keyboard produces, and a value that is no
+number at all is refused and logged rather than counted as zero — a wrong
+"not met" costs a student their exam admission, and the log line is the only
+trace of it.
+
 ## New screens
 
 | Screen | What it does |
@@ -195,8 +218,8 @@ that grading a submission triggers a recomputation.
 
 | Migration | Effect |
 |---|---|
-| `…000001_create_achievements` | table |
-| `…000002_create_student_performance_records` | table, with the two ID arrays |
+| `…000001_create_achievements` | table, one title per lecture |
+| `…000002_create_student_performance_records` | table, with the two ID arrays — empty, never null |
 
 ## Suggested reading order (~20 min)
 

@@ -137,8 +137,10 @@ by `grade_scheme_applier_spec`.
 [`seed_participations_from!`][c1-seed] writes rows with `insert_all` — one
 statement instead of one `create!` per student. Its only caller in this slice is
 `AssessmentBackfillWorker`: for an assignment whose deadline has passed and whose
-lecture still keeps submissions, it collects the tutorial memberships and seeds a
-participation for each member, carrying the tutorial along.
+lecture still keeps submissions, every roster member without a participation gets
+one, carrying the tutorial along. The worker finds those in a single anti-join
+rather than walking the assignments, because it runs every minute and in the
+steady state has to find nothing at all.
 
 Going straight to SQL means Rails does none of its usual work, which is visible
 in the method: the enum has to be written as `Participation.statuses[:pending]`
@@ -158,8 +160,9 @@ The one thing to carry forward: this is a second write path. A validation added
 to `Participation` later will not apply to seeded rows, and would need a second
 home here.
 
-Covered by `assessment_backfill_worker_spec` — eleven examples, including
-idempotency and that existing participations are never overwritten.
+Covered by `assessment_backfill_worker_spec` — thirteen examples, including
+idempotency, that existing participations are never overwritten, and that a
+second run does no work at all.
 
 ~~~admonish danger "Concerns another PR: this seeding disables a feature on `muesli/tutor-grading-view`"
 **What that branch is trying to do.** With a paper assignment nobody uploads
@@ -378,11 +381,10 @@ slice 2's computation service relies on heavily.
 
 | Migration | Effect |
 |---|---|
-| `…000000_create_assessment_assessments` | table, polymorphic assessable |
+| `…000000_create_assessment_assessments` | table, polymorphic assessable, one per assessable |
 | `…000001_create_assessment_tasks` | table |
 | `…000002_create_assessment_participations` | table |
 | `…000003_create_assessment_task_points` | table |
-| `…000004_add_note_to_assessment_participations` | column |
 | `…000005_add_index_on_deadline_and_deletion_date_to_assignments` | index |
 | `…000006_add_submission_deletion_date_to_lectures` | column (deletion-date feature) |
 
