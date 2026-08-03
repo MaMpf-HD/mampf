@@ -1,11 +1,23 @@
 class ExamCampaignUiState
   ACTIVE_CAMPAIGN_STATUSES = [:draft, :open, :closed, :processing].freeze
 
+  # While the campaign is running its own status drives the badge; afterwards
+  # the exam's phase does.
   CAMPAIGN_BADGE_CLASSES = {
     draft: "bg-secondary",
     open: "bg-success",
     closed: "bg-warning",
     processing: "bg-info"
+  }.freeze
+
+  STATUS_PHASE_BADGE_CLASSES = {
+    draft: "bg-secondary",
+    registration_open: "bg-primary",
+    registration_closed: "bg-info",
+    finalized: "bg-danger",
+    conducted: "bg-light text-dark border",
+    grading: "bg-white text-primary border border-primary",
+    graded: "bg-primary"
   }.freeze
 
   def initialize(exam:, registration_campaigns_enabled: Flipper.enabled?(:registration_campaigns))
@@ -44,7 +56,7 @@ class ExamCampaignUiState
     if active_campaign_status?
       CAMPAIGN_BADGE_CLASSES.fetch(campaign.status.to_sym)
     else
-      Exam::STATUS_PHASE_BADGE_CLASSES.fetch(exam.status_phase)
+      STATUS_PHASE_BADGE_CLASSES.fetch(exam.status_phase)
     end
   end
 

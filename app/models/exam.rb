@@ -1,3 +1,7 @@
+# A written examination of a lecture. Unlike an assignment it admits a fixed
+# set of people: registration runs through its own campaign, and once that is
+# finalized the list is maintained by hand — removals are kept as exclusions
+# rather than deleted, so a reversal stays visible.
 class Exam < ApplicationRecord
   class ParticipantRemovalNotAllowedError < StandardError; end
 
@@ -126,16 +130,6 @@ class Exam < ApplicationRecord
 
     :finalized
   end
-
-  STATUS_PHASE_BADGE_CLASSES = {
-    draft: "bg-secondary",
-    registration_open: "bg-primary",
-    registration_closed: "bg-info",
-    finalized: "bg-danger",
-    conducted: "bg-light text-dark border",
-    grading: "bg-white text-primary border border-primary",
-    graded: "bg-primary"
-  }.freeze
 
   private
 

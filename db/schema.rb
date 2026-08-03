@@ -353,9 +353,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_24_000001) do
     t.bigint "exam_id", null: false
     t.bigint "user_id", null: false
     t.uuid "source_campaign_id"
+    t.datetime "excluded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "excluded_at"
     t.index ["exam_id", "excluded_at"], name: "index_exam_roster_entries_on_exam_id_and_excluded_at"
     t.index ["exam_id"], name: "index_exam_roster_entries_on_exam_id"
     t.index ["source_campaign_id"], name: "index_exam_roster_entries_on_source_campaign_id"
