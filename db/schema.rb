@@ -114,7 +114,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_21_000002) do
     t.datetime "results_published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable"
+    t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable", unique: true
     t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
   end
 
@@ -132,9 +132,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_21_000002) do
     t.datetime "results_published_at"
     t.boolean "published", default: false, null: false
     t.boolean "locked", default: false, null: false
+    t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "note"
     t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
     t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
     t.index ["grader_id"], name: "index_assessment_participations_on_grader_id"

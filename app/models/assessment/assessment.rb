@@ -1,6 +1,7 @@
 module Assessment
-  # Represents a specific instance of a user participating in an assessment.
-  # It tracks the user's status, points, and grading information for that assessment.
+  # The gradebook of an assessable — an assignment, a talk or an exam. It owns
+  # the tasks that carry points and the participations that carry results, and
+  # it records whether the assessable is marked by points, by a grade, or both.
   class Assessment < ApplicationRecord
     belongs_to :assessable, polymorphic: true
     belongs_to :lecture
@@ -22,10 +23,6 @@ module Assessment
     def short_title
       parts = title.split(" ", 2)
       parts.length > 1 ? parts.last.presence || title.truncate(5) : title.truncate(5)
-    end
-
-    def results_published?
-      results_published_at.present?
     end
 
     # A preloaded association is summed in Ruby, because `sum(:max_points)` would
