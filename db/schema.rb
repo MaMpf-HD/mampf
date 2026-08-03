@@ -25,6 +25,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_22_000006) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["lecture_id", "title"], name: "index_achievements_on_lecture_and_title", unique: true
     t.index ["lecture_id"], name: "index_achievements_on_lecture_id"
   end
 
@@ -114,7 +115,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_22_000006) do
     t.datetime "results_published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable"
+    t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable", unique: true
     t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
   end
 
@@ -132,9 +133,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_22_000006) do
     t.datetime "results_published_at"
     t.boolean "published", default: false, null: false
     t.boolean "locked", default: false, null: false
+    t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "note"
     t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
     t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
     t.index ["grader_id"], name: "index_assessment_participations_on_grader_id"
@@ -808,8 +809,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_22_000006) do
     t.decimal "points_max_materialized", precision: 10, scale: 2
     t.decimal "points_max_pending_materialized", precision: 10, scale: 2
     t.decimal "percentage_materialized", precision: 5, scale: 2
-    t.jsonb "achievements_met_ids", default: []
-    t.jsonb "achievements_ungraded_ids", default: []
+    t.jsonb "achievements_met_ids", default: [], null: false
+    t.jsonb "achievements_ungraded_ids", default: [], null: false
     t.datetime "computed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

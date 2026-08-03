@@ -26,13 +26,10 @@ module StudentPerformance
       return if user_ids.empty?
 
       participations_by_user = prefetch_participations(user_ids)
-      points_by_participation = prefetch_task_points(
-        participations_by_user.values.flatten
-      )
 
       rows = user_ids.map do |uid|
         parts = participations_by_user.fetch(uid, [])
-        stats = aggregate_from_prefetched(parts, points_by_participation)
+        stats = aggregate_points_from(parts)
         grade_texts = achievement_participations_cache.fetch(uid, {})
         met_ids = achievement_ids_met(grade_texts)
         ungraded_ids = achievement_ids_ungraded(grade_texts)
@@ -64,20 +61,12 @@ module StudentPerformance
           .group_by(&:user_id)
       end
 
-      def prefetch_task_points(participations)
-        participations.each_with_object({}) do |p, acc|
-          acc[p.id] = p.points_total || BigDecimal("0")
-        end
-      end
-
-      def aggregate_from_prefetched(participations, points_lookup)
+      def aggregate_points_from(participations)
         status_map = participations.group_by(&:status)
         reviewed = status_map.fetch("reviewed", [])
         exempt = status_map.fetch("exempt", [])
 
-        points_total = reviewed.sum do |p|
-          points_lookup.fetch(p.id, BigDecimal("0"))
-        end
+        points_total = reviewed.sum { |p| p.points_total || BigDecimal("0") }
 
         exempt_assessment_ids = exempt.to_set(&:assessment_id)
         non_exempt = assessments.reject do |a|
@@ -114,8 +103,7 @@ module StudentPerformance
                                  :user_id, :points_total)
                          .to_a
 
-        points_lookup = prefetch_task_points(participations)
-        aggregate_from_prefetched(participations, points_lookup)
+        aggregate_points_from(participations)
       end
 
       def lecture_achievements
@@ -128,16 +116,7 @@ module StudentPerformance
         return [] if lecture_achievements.empty?
 
         lecture_achievements.select do |a|
-          next false unless a.assessment
-
-          gt = grade_texts[a.assessment.id]
-          next false if gt.blank?
-
-          case a.value_type
-          when "boolean"    then gt == "pass"
-          when "numeric"    then numeric_value(gt) >= a.threshold
-          when "percentage" then gt.to_f >= a.threshold
-          end
+          a.assessment && a.met_by?(grade_texts[a.assessment.id])
         end.map(&:id)
       end
 
@@ -187,12 +166,6 @@ module StudentPerformance
         (points_total / points_max * 100).round(2)
       end
 
-      def numeric_value(value)
-        BigDecimal(value.to_s)
-      rescue ArgumentError
-        BigDecimal("0")
-      end
-
       def build_row(user_id, stats, achievements_met_ids,
                     achievements_ungraded_ids)
         now = Time.current
@@ -209,8 +182,7 @@ module StudentPerformance
           percentage_materialized: percentage,
           achievements_met_ids: achievements_met_ids,
           achievements_ungraded_ids: achievements_ungraded_ids,
-          computed_at: now,
-          updated_at: now
+          computed_at: now
         }
       end
 

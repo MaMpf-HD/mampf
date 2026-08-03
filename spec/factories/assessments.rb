@@ -2,6 +2,13 @@ FactoryBot.define do
   factory :assessment, class: "Assessment::Assessment" do
     association :assessable, factory: [:assignment, :with_lecture]
     lecture { assessable.lecture }
+
+    # An assessable creates its own gradebook while the flag is on, and there is
+    # only ever one per assessable, so the factory takes that one over.
+    initialize_with do
+      (assessable.persisted? && assessable.assessment) ||
+        Assessment::Assessment.new(assessable: assessable)
+    end
     requires_points { false }
     requires_submission { false }
 
