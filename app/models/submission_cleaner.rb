@@ -42,7 +42,7 @@ class SubmissionCleaner
     return if @lectures.empty?
 
     @assignments = Assignment.where(lecture: @lectures)
-    @submitters = User.where(id: @assignments.flat_map(&:submitter_ids))
+    @submitters = User.where(id: submitter_ids_for(@assignments))
 
     @submissions = Submission.where(assignment: @assignments)
     @submissions.each(&:destroy!)
@@ -52,6 +52,14 @@ class SubmissionCleaner
   end
 
   private
+
+    # One query rather than one per assignment: the cleaner runs over a whole
+    # term's worth of them.
+    def submitter_ids_for(assignments)
+      UserSubmissionJoin.where(submission: Submission.where(assignment: assignments))
+                        .distinct
+                        .pluck(:user_id)
+    end
 
     def clear_props
       @assignments = nil
@@ -65,7 +73,7 @@ class SubmissionCleaner
       return if @lectures.empty?
 
       @assignments = Assignment.where(lecture: @lectures)
-      @submitters = User.where(id: @assignments.flat_map(&:submitter_ids))
+      @submitters = User.where(id: submitter_ids_for(@assignments))
     end
 
     def send_destruction_mail_to_submitters
