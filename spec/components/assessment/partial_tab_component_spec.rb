@@ -16,7 +16,7 @@ RSpec.describe(PartialTabComponent, type: :component) do
                 lecture: lecture }
     )
     render_inline(component)
-    expect(rendered_content).to include(assessment.assessable.title)
+    expect(rendered_content).to include(CGI.escapeHTML(assessment.assessable.title))
   end
 
   it "works without locals" do
