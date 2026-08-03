@@ -204,5 +204,4 @@ RSpec.describe(Achievement, type: :model) do
       expect(achievement.met_by?("5")).to be(false)
     end
   end
-
 end

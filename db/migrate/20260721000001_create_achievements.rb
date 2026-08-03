@@ -11,6 +11,8 @@ class CreateAchievements < ActiveRecord::Migration[8.0]
     end
 
     add_index :achievements, :lecture_id
+    add_index :achievements, [:lecture_id, :title], unique: true,
+                                                    name: "index_achievements_on_lecture_and_title"
     add_foreign_key :achievements, :lectures
   end
 end
