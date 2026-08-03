@@ -29,6 +29,11 @@ namespace :demo do
     Demo::SetupSupport.setup_eligibility!
   end
 
+  desc "Create demo exams with campaigns, registrations and a finalized roster"
+  task exams: :environment do
+    Demo::SetupSupport.setup_exams!
+  end
+
   desc "Create the maximum available demo data for the current slice"
   task setup: :environment do
     Demo::SetupSupport.setup!
