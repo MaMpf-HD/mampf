@@ -139,7 +139,7 @@ module Demo
       def demo_achievement_grade_text(achievement, quality)
         case achievement.value_type.to_s
         when "boolean"
-          quality > 0.5 ? "pass" : "fail"
+          quality > 0.5 ? Achievement::PASSED : "fail"
         when "numeric"
           max = (achievement.threshold * 1.5).ceil
           (quality * max).round.to_s

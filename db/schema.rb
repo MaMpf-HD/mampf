@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_21_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_21_000004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -25,6 +25,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_21_000002) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["lecture_id", "title"], name: "index_achievements_on_lecture_and_title", unique: true
     t.index ["lecture_id"], name: "index_achievements_on_lecture_id"
   end
 
@@ -789,8 +790,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_21_000002) do
     t.decimal "points_max_materialized", precision: 10, scale: 2
     t.decimal "points_max_pending_materialized", precision: 10, scale: 2
     t.decimal "percentage_materialized", precision: 5, scale: 2
-    t.jsonb "achievements_met_ids", default: []
-    t.jsonb "achievements_ungraded_ids", default: []
+    t.jsonb "achievements_met_ids", default: [], null: false
+    t.jsonb "achievements_ungraded_ids", default: [], null: false
     t.datetime "computed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

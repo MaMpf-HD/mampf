@@ -1,11 +1,19 @@
+# Something a student has to have done besides collecting points — held a
+# blackboard talk, handed in a project. It carries no points of its own; the
+# tutor records a value per student, and an eligibility rule can require it.
 class Achievement < ApplicationRecord
   include Assessment::Assessable
+
+  # What a tutor records for an achievement that is simply done or not done.
+  # Written by the marking view, read here — keep both ends on this constant.
+  PASSED = "pass".freeze
 
   belongs_to :lecture
 
   enum :value_type, { boolean: 0, numeric: 1, percentage: 2 }
 
   validates :title, :value_type, presence: true
+  validates :title, uniqueness: { scope: :lecture_id }
   validates :threshold,
             numericality: { greater_than: 0 },
             if: :numeric?
@@ -22,29 +30,39 @@ class Achievement < ApplicationRecord
                on: [:update, :destroy],
                if: :should_invalidate_performance_records?
 
-  def student_met_threshold?(user)
-    return false unless assessment
+  # A German keyboard writes 3,5 and means three and a half. Returns nil for
+  # anything that is no number at all, so callers can say so rather than
+  # counting it as zero.
+  def self.numeric_value(grade_text)
+    BigDecimal(grade_text.to_s.strip.tr(",", "."))
+  rescue ArgumentError
+    nil
+  end
 
-    participation = assessment.assessment_participations
-                              .find_by(user: user)
-    return false if participation.nil? || participation.grade_text.blank?
+  # The one place that decides whether a recorded value clears this
+  # achievement. The marking table and the performance computation both ask
+  # here, so the two cannot answer differently.
+  def met_by?(grade_text)
+    value = grade_text.to_s.strip
+    return false if value.blank?
+    return value == PASSED if boolean?
+    return false if threshold.nil?
 
-    case value_type
-    when "boolean"
-      participation.grade_text == "pass"
-    when "numeric"
-      numeric_value(participation.grade_text) >= threshold
-    when "percentage"
-      participation.grade_text.to_f >= threshold
-    end
+    number = self.class.numeric_value(value)
+    return refuse_unreadable(value) if number.nil?
+
+    number >= threshold
   end
 
   private
 
-    def numeric_value(value)
-      BigDecimal(value.to_s)
-    rescue ArgumentError
-      BigDecimal("0")
+    # Said out loud: a wrong "not met" here costs a student their exam
+    # admission, and there is nothing else to notice it by.
+    def refuse_unreadable(value)
+      Rails.logger.warn do
+        "Achievement #{id}: cannot read #{value.inspect} as a number"
+      end
+      false
     end
 
     def threshold_or_type_changed?

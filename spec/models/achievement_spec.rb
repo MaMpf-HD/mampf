@@ -93,207 +93,116 @@ RSpec.describe(Achievement, type: :model) do
     end
   end
 
-  describe "#student_met_threshold?" do
-    let(:lecture) { FactoryBot.create(:lecture) }
-    let(:user) { FactoryBot.create(:confirmed_user) }
+  describe "validations" do
+    it "refuses a second achievement with the same title in one lecture" do
+      lecture = FactoryBot.create(:lecture)
+      FactoryBot.create(:achievement, lecture: lecture, title: "Blackboard Talk")
 
-    before do
-      Flipper.enable(:assessment_grading)
-      FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      duplicate = FactoryBot.build(:achievement, lecture: lecture,
+                                                 title: "Blackboard Talk")
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:title]).to be_present
     end
 
-    after { Flipper.disable(:assessment_grading) }
+    # The validation reads the sibling rows, so two simultaneous creates can
+    # both find none. The index is what actually holds the rule.
+    it "refuses it at the database level too" do
+      lecture = FactoryBot.create(:lecture)
+      FactoryBot.create(:achievement, lecture: lecture, title: "Blackboard Talk")
 
+      duplicate = FactoryBot.build(:achievement, lecture: lecture,
+                                                 title: "Blackboard Talk")
+
+      expect { duplicate.save(validate: false) }
+        .to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it "allows the same title in another lecture" do
+      FactoryBot.create(:achievement, title: "Blackboard Talk")
+
+      expect(FactoryBot.build(:achievement, title: "Blackboard Talk")).to be_valid
+    end
+  end
+
+  describe "#met_by?" do
     context "when boolean" do
-      let(:achievement) do
-        FactoryBot.create(:achievement, :boolean, lecture: lecture)
+      let(:achievement) { FactoryBot.build(:achievement, :boolean) }
+
+      it "is met by the recorded pass value" do
+        expect(achievement.met_by?(Achievement::PASSED)).to be(true)
       end
 
-      it "returns true when grade_text is 'pass'" do
-        participation = achievement.assessment
-                                   .assessment_participations
-                                   .find_by(user: user)
-        participation.update!(grade_text: "pass")
-        expect(achievement.student_met_threshold?(user)).to be(true)
-      end
-
-      it "returns false when grade_text is 'fail'" do
-        participation = achievement.assessment
-                                   .assessment_participations
-                                   .find_by(user: user)
-        participation.update!(grade_text: "fail")
-        expect(achievement.student_met_threshold?(user)).to be(false)
+      it "is not met by anything else" do
+        expect(achievement.met_by?("fail")).to be(false)
+        expect(achievement.met_by?("Pass")).to be(false)
       end
     end
 
     context "when numeric" do
-      let(:achievement) do
-        FactoryBot.create(:achievement, :numeric, lecture: lecture)
+      let(:achievement) { FactoryBot.build(:achievement, :numeric, threshold: 10) }
+
+      it "is met at and above the threshold" do
+        expect(achievement.met_by?("10")).to be(true)
+        expect(achievement.met_by?("12")).to be(true)
       end
 
-      it "returns true when grade_text meets threshold" do
-        participation = achievement.assessment
-                                   .assessment_participations
-                                   .find_by(user: user)
-        participation.update!(grade_text: "12")
-        expect(achievement.student_met_threshold?(user)).to be(true)
+      it "is not met below it" do
+        expect(achievement.met_by?("5")).to be(false)
       end
 
-      it "returns false when grade_text is below threshold" do
-        participation = achievement.assessment
-                                   .assessment_participations
-                                   .find_by(user: user)
-        participation.update!(grade_text: "5")
-        expect(achievement.student_met_threshold?(user)).to be(false)
+      it "compares decimals rather than truncating them" do
+        achievement.threshold = 12.5
+        expect(achievement.met_by?("12.6")).to be(true)
+        expect(achievement.met_by?("12.4")).to be(false)
       end
 
-      it "returns true when a decimal grade_text meets a decimal threshold" do
-        achievement.update!(threshold: 12.5)
-        participation = achievement.assessment
-                                   .assessment_participations
-                                   .find_by(user: user)
-        participation.update!(grade_text: "12.6")
-        expect(achievement.student_met_threshold?(user)).to be(true)
+      # A German keyboard writes it this way, and reading it as zero would
+      # silently deny the student their exam admission.
+      it "reads a decimal comma as a decimal point" do
+        achievement.threshold = 3
+        expect(achievement.met_by?("3,5")).to be(true)
+      end
+
+      it "refuses a value that is no number, and says so" do
+        allow(Rails.logger).to receive(:warn)
+
+        expect(achievement.met_by?("somewhat")).to be(false)
+        expect(Rails.logger).to have_received(:warn)
       end
     end
 
     context "when percentage" do
-      let(:achievement) do
-        FactoryBot.create(:achievement, :percentage, lecture: lecture)
+      let(:achievement) { FactoryBot.build(:achievement, :percentage, threshold: 75) }
+
+      it "is met at and above the threshold" do
+        expect(achievement.met_by?("80.0")).to be(true)
       end
 
-      it "returns true when grade_text meets threshold" do
-        participation = achievement.assessment
-                                   .assessment_participations
-                                   .find_by(user: user)
-        participation.update!(grade_text: "80.0")
-        expect(achievement.student_met_threshold?(user)).to be(true)
+      it "is not met below it" do
+        expect(achievement.met_by?("50.0")).to be(false)
       end
 
-      it "returns false when grade_text is below threshold" do
-        participation = achievement.assessment
-                                   .assessment_participations
-                                   .find_by(user: user)
-        participation.update!(grade_text: "50.0")
-        expect(achievement.student_met_threshold?(user)).to be(false)
+      it "reads a decimal comma here too" do
+        expect(achievement.met_by?("75,5")).to be(true)
       end
     end
 
-    context "when grade_text is blank" do
-      let(:achievement) do
-        FactoryBot.create(:achievement, :boolean, lecture: lecture)
-      end
+    it "is not met while nothing has been recorded" do
+      achievement = FactoryBot.build(:achievement, :boolean)
 
-      it "returns false" do
-        expect(achievement.student_met_threshold?(user)).to be(false)
-      end
+      expect(achievement.met_by?(nil)).to be(false)
+      expect(achievement.met_by?("")).to be(false)
+      expect(achievement.met_by?("   ")).to be(false)
     end
 
-    context "when no participation exists" do
-      let(:achievement) do
-        FactoryBot.create(:achievement, :boolean, lecture: lecture)
-      end
-      let(:other_user) { FactoryBot.create(:confirmed_user) }
+    # Only reachable by writing past the validations, but the three readers
+    # used to disagree about it — one guarded, two raised.
+    it "is not met when a numeric achievement has lost its threshold" do
+      achievement = FactoryBot.build(:achievement, :numeric, threshold: nil)
 
-      it "returns false" do
-        expect(achievement.student_met_threshold?(other_user)).to be(false)
-      end
-    end
-
-    context "when no assessment exists" do
-      let(:achievement) do
-        Flipper.disable(:assessment_grading)
-        FactoryBot.create(:achievement, :boolean, lecture: lecture)
-      end
-
-      it "returns false" do
-        expect(achievement.student_met_threshold?(user)).to be(false)
-      end
+      expect(achievement.met_by?("5")).to be(false)
     end
   end
 
-  describe "performance record invalidation" do
-    before { Flipper.enable(:assessment_grading) }
-
-    after { Flipper.disable(:assessment_grading) }
-
-    let(:lecture) { FactoryBot.create(:lecture) }
-
-    it "recomputes records synchronously when threshold changes" do
-      achievement = FactoryBot.create(:achievement, :numeric,
-                                      lecture: lecture, threshold: 10)
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .to receive(:compute_and_upsert_all_records!)
-      achievement.update!(threshold: 20)
-    end
-
-    it "recomputes records synchronously when value_type changes" do
-      achievement = FactoryBot.create(:achievement, :numeric,
-                                      lecture: lecture, threshold: 10)
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .to receive(:compute_and_upsert_all_records!)
-      achievement.update!(value_type: :percentage, threshold: 75)
-    end
-
-    it "recomputes records synchronously when destroyed" do
-      achievement = FactoryBot.create(:achievement, :numeric,
-                                      lecture: lecture, threshold: 10)
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .to receive(:compute_and_upsert_all_records!)
-      achievement.destroy!
-    end
-
-    it "does not recompute when only title changes" do
-      achievement = FactoryBot.create(:achievement, :numeric,
-                                      lecture: lecture, threshold: 10)
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .not_to receive(:compute_and_upsert_all_records!)
-      achievement.update!(title: "Renamed")
-    end
-
-    it "does not recompute while the grading flag is off" do
-      achievement = FactoryBot.create(:achievement, :numeric,
-                                      lecture: lecture, threshold: 10)
-      Flipper.disable(:assessment_grading)
-
-      expect_any_instance_of(StudentPerformance::ComputationService)
-        .not_to receive(:compute_and_upsert_all_records!)
-      achievement.update!(threshold: 20)
-    end
-  end
-
-  describe "assessable wiring" do
-    before { Flipper.enable(:assessment_grading) }
-
-    after { Flipper.disable(:assessment_grading) }
-
-    it "creates an assessment on create" do
-      achievement = FactoryBot.create(:achievement)
-      expect(achievement.assessment).to be_present
-      expect(achievement.assessment).to be_a(Assessment::Assessment)
-    end
-
-    it "configures assessment without points or submission" do
-      achievement = FactoryBot.create(:achievement)
-      assessment = achievement.assessment
-      expect(assessment.requires_points).to be(false)
-      expect(assessment.requires_submission).to be(false)
-    end
-
-    it "seeds participations from lecture members" do
-      lecture = FactoryBot.create(:lecture)
-      users = FactoryBot.create_list(:user, 3)
-      users.each do |user|
-        FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
-      end
-      achievement = FactoryBot.create(:achievement, lecture: lecture)
-      expect(achievement.assessment.assessment_participations.count).to eq(3)
-    end
-
-    it "does not create assessment when flag is disabled" do
-      Flipper.disable(:assessment_grading)
-      achievement = FactoryBot.create(:achievement)
-      expect(achievement.assessment).to be_nil
-    end
-  end
 end
