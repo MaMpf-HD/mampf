@@ -13,7 +13,7 @@ class CreateAssessmentAssessments < ActiveRecord::Migration[8.0]
     end
 
     add_index :assessment_assessments, [:assessable_type, :assessable_id],
-              name: "index_assessments_on_assessable"
+              unique: true, name: "index_assessments_on_assessable"
     add_index :assessment_assessments, :lecture_id
 
     add_foreign_key :assessment_assessments, :lectures
