@@ -33,6 +33,7 @@ services:
       - RAILS_ENV=development
       - NODE_ENV=development
       - MAMPF_PORT=3001
+      - REDIS_URL=redis://redis:6379/1
       # Public HTTP port for the current stack and writable cache root for
       # runtime-specific state.
       - APP_HEALTHCHECK_PORT=3000
@@ -59,6 +60,7 @@ services:
       # seeking) when a front proxy serves it via X-Sendfile. Thruster is the
       # public port (3145, unchanged for Cypress/Playwright); Rails sits behind it.
       - MAMPF_PORT=3146
+      - REDIS_URL=redis://redis:6379/2
       - APP_HEALTHCHECK_PORT=3145
       - APP_CACHE_ROOT=/cache
       - ACTION_DISPATCH_X_SENDFILE_HEADER=X-Sendfile
