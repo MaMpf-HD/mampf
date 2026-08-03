@@ -129,6 +129,27 @@ RSpec.describe(Assessment::Participation, type: :model) do
         expect(participation.errors.of_kind?(:base, :early_grading_not_allowed)).to be(true)
       end
 
+      # A certificate handed in after the window closed has to take the no-show
+      # grade with it; clearing is not grading.
+      it "allows an exemption to clear an existing grade" do
+        # rubocop:disable Rails/SkipsModelValidations
+        participation.update_columns(status: :absent, grade_numeric: 5.0)
+        # rubocop:enable Rails/SkipsModelValidations
+        participation.reload
+
+        participation.assign_attributes(status: :exempt, grade_numeric: nil,
+                                        grader_id: nil, graded_at: nil)
+
+        expect(participation).to be_valid
+      end
+
+      it "still rejects an exemption that sets a grade" do
+        participation.assign_attributes(status: :exempt, grade_numeric: 1.0)
+
+        expect(participation).not_to be_valid
+        expect(participation.errors.of_kind?(:base, :early_grading_not_allowed)).to be(true)
+      end
+
       it "allows changes that are not grading data" do
         participation.submitted_at = Time.zone.now
 

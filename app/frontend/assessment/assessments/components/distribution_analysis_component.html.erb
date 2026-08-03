@@ -17,7 +17,7 @@
                           min-height: <%= bin[:min_height_px] %>px;
                           background-color: #0d6efd;
                           opacity: <%= bin[:count].zero? ? 0.25 : 1 %>;"
-                title="<%= bin[:low] %>\u2013<%= bin[:high] %> <%= t('assessment.distribution.points') %>: <%= bin[:count] %>"
+                title="<%= bin[:low] %>&ndash;<%= bin[:high] %> <%= t('assessment.distribution.points') %>: <%= bin[:count] %>"
                 data-bs-toggle="tooltip"
               ></div>
             <% end %>

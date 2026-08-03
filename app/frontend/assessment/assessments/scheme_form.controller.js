@@ -39,6 +39,7 @@ export default class extends Controller {
     maxPoints: Number,
     studentPoints: Array,
     passLabel: { type: String, default: "Pass rate" },
+    pointsLabel: { type: String, default: "pts" },
     failLabel: { type: String, default: "Fail rate" },
     regenerateHint: {
       type: String,
@@ -71,9 +72,10 @@ export default class extends Controller {
     this._baselineStep = this.pointsStepInputTarget.value;
 
     this._boundSubmit = this._onSubmit.bind(this);
-    this.element
-      .querySelector("form")
-      ?.addEventListener("submit", this._boundSubmit);
+    this._boundSubmitEnd = this._onSubmitEnd.bind(this);
+    const form = this.element.querySelector("form");
+    form?.addEventListener("submit", this._boundSubmit);
+    form?.addEventListener("turbo:submit-end", this._boundSubmitEnd);
 
     const raw = this._baselineConfig;
     if (!raw) return;
@@ -94,9 +96,9 @@ export default class extends Controller {
       document.removeEventListener("pointerup", this._boundUp);
     }
     if (this._boundSubmit) {
-      this.element
-        .querySelector("form")
-        ?.removeEventListener("submit", this._boundSubmit);
+      const form = this.element.querySelector("form");
+      form?.removeEventListener("submit", this._boundSubmit);
+      form?.removeEventListener("turbo:submit-end", this._boundSubmitEnd);
     }
   }
 
@@ -298,6 +300,7 @@ export default class extends Controller {
         this.manualBarsTarget,
         this.maxPointsValue,
         this.studentPointsValue,
+        this.pointsLabelValue,
       );
       renderAxis(this.manualAxisTarget, this.maxPointsValue);
     }
@@ -309,6 +312,7 @@ export default class extends Controller {
       studentPoints: this.studentPointsValue,
       passLabel: this.passLabelValue,
       failLabel: this.failLabelValue,
+      pointsLabel: this.pointsLabelValue,
     });
   }
 
@@ -328,9 +332,21 @@ export default class extends Controller {
   }
 
   _onSubmit() {
+    this._preSubmitConfig = this._baselineConfig;
+    this._preSubmitStep = this._baselineStep;
     this._baselineConfig = this.configFieldTarget.value;
     this._baselineStep = this.pointsStepInputTarget.value;
     this.submitButtonTarget.disabled = true;
+  }
+
+  // A request that never lands leaves the form untouched but the baseline
+  // advanced, so the button would stay off with nothing left to change.
+  _onSubmitEnd(event) {
+    if (event.detail?.success) return;
+
+    this._baselineConfig = this._preSubmitConfig;
+    this._baselineStep = this._preSubmitStep;
+    this._refreshSubmit();
   }
 
   _anchorType() {

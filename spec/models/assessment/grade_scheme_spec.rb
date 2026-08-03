@@ -52,8 +52,7 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
         "bands" => [{ "grade" => "1.0", "min_points" => 54 }]
       }
       reordered = {
-        "bands" => [{ "grade" => "1.0",
-                      "min_points" => 54 }]
+        "bands" => [{ "min_points" => 54, "grade" => "1.0" }]
       }
       s1 = FactoryBot.create(:assessment_grade_scheme, config: config)
       s2 = FactoryBot.create(:assessment_grade_scheme, config: reordered)
@@ -132,6 +131,20 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
         expect(scheme).not_to be_valid
       end
 
+      it "is invalid when config is not an object" do
+        scheme = FactoryBot.build(:assessment_grade_scheme, config: [1, 2])
+        expect(scheme).not_to be_valid
+        expect(scheme.errors[:config]).to be_present
+      end
+
+      # Reached through the controller, which parses whatever JSON arrives.
+      it "is invalid when a band is not an object" do
+        scheme = FactoryBot.build(:assessment_grade_scheme,
+                                  config: { "bands" => [1, 2] })
+        expect(scheme).not_to be_valid
+        expect(scheme.errors[:config]).to be_present
+      end
+
       it "is invalid when bands have no recognized keys" do
         scheme = FactoryBot.build(:assessment_grade_scheme,
                                   config: { "bands" => [{ "grade" => "1.0" }] })
@@ -207,6 +220,31 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
         expect(
           FactoryBot.build(:assessment_grade_scheme, :percentage)
         ).to be_valid
+      end
+    end
+
+    describe "band value coercion" do
+      # The applier sorts and compares thresholds, which a string cannot do.
+      it "stores numeric strings as numbers" do
+        scheme = FactoryBot.create(
+          :assessment_grade_scheme,
+          config: { "bands" => [{ "min_points" => "54", "grade" => "1.0" }] }
+        )
+
+        expect(scheme.reload.config["bands"].first["min_points"]).to eq(54.0)
+      end
+
+      it "grades without raising when the config arrived as strings" do
+        scheme = FactoryBot.create(
+          :assessment_grade_scheme,
+          config: { "bands" => [{ "min_points" => "30", "grade" => "4.0" }] }
+        )
+        participation = FactoryBot.create(:assessment_participation, :reviewed,
+                                          assessment: scheme.assessment,
+                                          points_total: 42)
+
+        applier = Assessment::GradeSchemeApplier.new(scheme)
+        expect(applier.compute_grade_for(participation)).to eq(4.0)
       end
     end
 
@@ -297,6 +335,18 @@ RSpec.describe(Assessment::GradeScheme, type: :model) do
     it "assigns 4.0 starting at the passing threshold" do
       band_four = config["bands"].find { |b| b["grade"] == "4.0" }
       expect(band_four["min_points"]).to eq(30)
+    end
+
+    # Rounding the outer boundaries to the step would move the two marks the
+    # teacher actually typed, and with them who passes.
+    it "keeps both marks exact when they are not multiples of the step" do
+      config = described_class.two_point_auto(
+        excellence: 55, passing: 27, max_points: 60, step: 2
+      )
+      bands = config["bands"].index_by { |b| b["grade"] }
+
+      expect(bands["4.0"]["min_points"]).to eq(27)
+      expect(bands["1.0"]["min_points"]).to eq(55)
     end
 
     it "assigns 5.0 below the passing threshold" do

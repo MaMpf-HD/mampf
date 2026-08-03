@@ -60,12 +60,16 @@ module Assessment
         # opens.
         return if assessment&.grading_open?
 
-        changed_grading_attributes =
-          changes.keys.intersect?(["grade_numeric", "grade_text",
-                                   "points_total", "grader_id", "graded_at"])
+        grading_attributes = changes.keys & ["grade_numeric", "grade_text",
+                                             "points_total", "grader_id", "graded_at"]
         becoming_reviewed = status_changed?(to: "reviewed")
 
-        return unless changed_grading_attributes || becoming_reviewed
+        # An excuse handed in after the window closed still has to take the
+        # no-show grade with it, and clearing is not grading.
+        return if status_changed?(to: "exempt") &&
+                  grading_attributes.all? { |attribute| self[attribute].nil? }
+
+        return unless grading_attributes.any? || becoming_reviewed
 
         errors.add(:base, :early_grading_not_allowed)
       end

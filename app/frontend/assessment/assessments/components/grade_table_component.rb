@@ -67,12 +67,12 @@ class GradeTableComponent < ViewComponent::Base
     excluded_participations.any?
   end
 
+  # Memoized because the template asks once per row, and over the same subset
+  # as `common_grader_name`, so the column and the notice cannot disagree.
   def show_grader_column?
-    grader_ids = displayed_participations
-                 .pluck(:grader_id)
-                 .compact
-                 .uniq
-    grader_ids.size > 1
+    return @show_grader_column if defined?(@show_grader_column)
+
+    @show_grader_column = distinct_grader_ids.size > 1
   end
 
   def show_graded_at_column?
@@ -173,12 +173,15 @@ class GradeTableComponent < ViewComponent::Base
   end
 
   def common_grader_name
-    grader_ids = gradeable_participations.pluck(:grader_id).compact.uniq
-    return nil unless grader_ids.size == 1
+    return nil unless distinct_grader_ids.size == 1
 
     gradeable_participations.find { |p| p.grader_id.present? }
                             &.grader
                             &.tutorial_name
+  end
+
+  def distinct_grader_ids
+    @distinct_grader_ids ||= gradeable_participations.pluck(:grader_id).compact.uniq
   end
 
   private

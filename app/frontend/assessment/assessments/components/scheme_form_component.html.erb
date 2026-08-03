@@ -3,6 +3,7 @@
   data-controller="assessments--scheme-form"
   data-assessments--scheme-form-max-points-value="<%= max_points %>"
   data-assessments--scheme-form-student-points-value="<%= student_points_json %>"
+  data-assessments--scheme-form-points-label-value="<%= t('assessment.distribution.points') %>"
   data-assessments--scheme-form-pass-label-value="<%= t('assessment.grade_scheme.summary.pass_rate') %>"
   data-assessments--scheme-form-fail-label-value="<%= t('assessment.grade_scheme.summary.fail_rate') %>"
   data-assessments--scheme-form-regenerate-hint-value="<%= t('assessment.grade_scheme.form.regenerate_hint') %>"
@@ -71,7 +72,7 @@
         class="d-flex align-items-center gap-2 mb-3"
         data-assessments--scheme-form-target="pointsStepRow"
       >
-        <label class="form-label fw-bold mb-0 text-nowrap">
+        <label class="form-label fw-bold mb-0 text-nowrap" for="grade-scheme-points-step">
           <%= t("assessment.grade_scheme.form.points_step_label") %>
         </label>
 
@@ -84,6 +85,7 @@
             min="0.01"
             step="any"
             value="<%= default_points_step %>"
+            id="grade-scheme-points-step"
             data-assessments--scheme-form-target="pointsStepInput"
             data-action="input->assessments--scheme-form#onStepChange"
           >
@@ -106,7 +108,7 @@
 
           <div class="row g-3 mb-4">
             <div class="col-xxl-6">
-              <label class="form-label fw-bold">
+              <label class="form-label fw-bold" for="grade-scheme-excellence">
                 <%= t("assessment.grade_scheme.form.excellence_label") %>
               </label>
 
@@ -118,6 +120,7 @@
                   value="<%= default_excellence %>"
                   min="0"
                   max="<%= max_points %>"
+                  id="grade-scheme-excellence"
                   data-assessments--scheme-form-target="excellenceInput"
                   data-action="input->assessments--scheme-form#markDirty"
                 >
@@ -133,7 +136,7 @@
             </div>
 
             <div class="col-xxl-6">
-              <label class="form-label fw-bold">
+              <label class="form-label fw-bold" for="grade-scheme-passing">
                 <%= t("assessment.grade_scheme.form.passing_label") %>
               </label>
 
@@ -145,6 +148,7 @@
                   value="<%= default_passing %>"
                   min="0"
                   max="<%= max_points %>"
+                  id="grade-scheme-passing"
                   data-assessments--scheme-form-target="passingInput"
                   data-action="input->assessments--scheme-form#markDirty"
                 >
@@ -252,7 +256,7 @@
 
           <div class="row g-3 mb-4">
             <div class="col-xxl-4">
-              <label class="form-label fw-bold">
+              <label class="form-label fw-bold" for="grade-scheme-anchor">
                 <%= t("assessment.grade_scheme.form.anchor_label") %>
               </label>
 
@@ -264,6 +268,7 @@
                   min="0"
                   max="<%= max_points %>"
                   value="<%= default_passing %>"
+                  id="grade-scheme-anchor"
                   data-assessments--scheme-form-target="anchorInput"
                   data-action="input->assessments--scheme-form#onAnchorDeltaChange"
                 >
@@ -282,7 +287,7 @@
             </div>
 
             <div class="col-xxl-4">
-              <label class="form-label fw-bold">
+              <label class="form-label fw-bold" for="grade-scheme-delta">
                 <%= t("assessment.grade_scheme.form.delta_label") %>
               </label>
 
@@ -294,6 +299,7 @@
                   min="0.01"
                   step="any"
                   value="5"
+                  id="grade-scheme-delta"
                   data-assessments--scheme-form-target="deltaInput"
                   data-action="input->assessments--scheme-form#onAnchorDeltaChange"
                 >
@@ -309,7 +315,7 @@
             </div>
 
             <div class="col-xxl-4">
-              <label class="form-label fw-bold">
+              <label class="form-label fw-bold" for="grade-scheme-derived">
                 <%= t("assessment.grade_scheme.form.derived_label") %>
               </label>
 
@@ -320,6 +326,7 @@
                   class="form-control"
                   readonly
                   tabindex="-1"
+                  id="grade-scheme-derived"
                   data-assessments--scheme-form-target="derivedInput"
                 >
 

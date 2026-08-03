@@ -15,6 +15,7 @@ module Assessment
     validate :immutable_when_applied, on: :update
     validate :assessable_must_be_pointable_and_gradable
 
+    before_validation :coerce_band_values
     before_save :compute_hash, if: :config_changed?
 
     def applied?
@@ -39,9 +40,17 @@ module Assessment
 
       raw_step = (excellence - passing).to_f / (PASSING_GRADES.size - 1)
 
+      last = PASSING_GRADES.size - 1
       bands = PASSING_GRADES.each_with_index.map do |grade, i|
-        raw = passing + (i * raw_step)
-        min_pts = (raw / step).round * step
+        # The two marks the teacher typed stay exact; only the boundaries
+        # between them are snapped to the step.
+        min_pts = if i.zero?
+          passing
+        elsif i == last
+          excellence
+        else
+          ((passing + (i * raw_step)) / step).round * step
+        end
         { "min_points" => min_pts, "grade" => grade.to_s }
       end
 
@@ -108,11 +117,19 @@ module Assessment
       # canonical bands. Percentage bands have no generator, so anything writing
       # them has to bring its own checks.
       def validate_banded_config
-        return unless config.is_a?(Hash)
+        unless config.is_a?(Hash)
+          errors.add(:config, "must be an object")
+          return
+        end
 
         bands = config["bands"]
         unless bands.is_a?(Array) && bands.any?
           errors.add(:config, "must have a non-empty bands array")
+          return
+        end
+
+        unless bands.all?(Hash)
+          errors.add(:config, "every band must be an object")
           return
         end
 
@@ -144,6 +161,27 @@ module Assessment
         return if bands.all? { |b| numeric_band_value?(b[key]) }
 
         errors.add(:config, "every band #{key} must be numeric")
+      end
+
+      # The config arrives as parsed JSON from a request body, so a threshold can
+      # come in as a string. Everything downstream sorts and compares it as a
+      # number, so it is made one here rather than at each reader.
+      def coerce_band_values
+        bands = config.is_a?(Hash) ? config["bands"] : nil
+        return unless bands.is_a?(Array)
+
+        config["bands"] = bands.map do |band|
+          next band unless band.is_a?(Hash)
+
+          band.each_with_object({}) do |(key, value), coerced|
+            coerced[key] = if ["min_points", "min_pct"].include?(key) &&
+                              numeric_band_value?(value)
+              value.to_f
+            else
+              value
+            end
+          end
+        end
       end
 
       def numeric_band_value?(value)

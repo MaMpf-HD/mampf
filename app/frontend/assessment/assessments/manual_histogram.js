@@ -1,6 +1,6 @@
 import { PASSING_GRADES, GRADE_MARKER_COLOR } from "./grade_bands";
 
-export function buildHistogramBars(container, maxPoints, studentPoints) {
+export function buildHistogramBars(container, maxPoints, studentPoints, pointsLabel) {
   if (maxPoints <= 0) return;
 
   const points = studentPoints.map(p => parseFloat(p));
@@ -25,7 +25,7 @@ export function buildHistogramBars(container, maxPoints, studentPoints) {
     return `<div class="flex-fill rounded-top"
       style="height: ${pct}%; min-height: ${minH}px;
              background-color: #0d6efd;"
-      title="${bin.low}\u2013${bin.high} pts: ${bin.count}"
+      title="${bin.low}\u2013${bin.high} ${pointsLabel}: ${bin.count}"
       data-bs-toggle="tooltip"></div>`;
   }).join("");
 }
@@ -113,14 +113,19 @@ export function placeMarkers(container, bands, maxPoints, onDragStart) {
         font-size: 0.6rem; color: ${color}; font-weight: bold;
         white-space: nowrap; background: rgba(255,255,255,0.85);
         border-radius: 2px; padding: 0 2px;
-        pointer-events: none;">${band.min_points}</span>
+        pointer-events: none;"></span>
       <span class="badge" style="
         position: absolute; bottom: 0; left: 50%;
         transform: translateX(-50%);
         font-size: 0.6rem; background: ${color};
         white-space: nowrap;
-        pointer-events: none;">${gs}</span>
+        pointer-events: none;"></span>
     `;
+
+    // Both labels come from the persisted config, so they are written as text
+    // rather than markup — same as the preview renderer does.
+    el.querySelector("[data-pts-label]").textContent = band.min_points;
+    el.querySelector(".badge").textContent = gs;
 
     el.addEventListener("pointerdown", onDragStart);
     container.appendChild(el);

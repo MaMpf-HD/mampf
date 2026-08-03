@@ -83,6 +83,22 @@ RSpec.describe(Assessment::Assessment, type: :model) do
     end
   end
 
+  describe "destroying" do
+    # The active-only `has_one` cannot clean up superseded schemes, and the
+    # foreign key refuses the delete without them.
+    it "takes every grade scheme with it, not only the active one" do
+      exam = FactoryBot.create(:exam, :with_date)
+      assessment = exam.assessment || exam.ensure_pointbook!
+      FactoryBot.create(:assessment_grade_scheme, assessment: assessment,
+                                                  active: true)
+      FactoryBot.create(:assessment_grade_scheme, assessment: assessment,
+                                                  active: false)
+
+      expect { assessment.destroy! }
+        .to change(Assessment::GradeScheme, :count).by(-2)
+    end
+  end
+
   describe "delegation" do
     it "delegates title to assessable" do
       assignment = FactoryBot.create(:assignment, :with_lecture, title: "Homework 5")

@@ -156,15 +156,17 @@ module Assessment
         @scheme.applied?
       end
 
+      # `to_f` on the thresholds: the model coerces them on write, but a row
+      # written before that did could still hold strings.
       def apply_absolute_scheme(points, bands)
-        sorted = bands.sort_by { |b| -b["min_points"] }
-        band = sorted.find { |b| points >= b["min_points"] }
+        sorted = bands.sort_by { |b| -b["min_points"].to_f }
+        band = sorted.find { |b| points >= b["min_points"].to_f }
         band ? band["grade"].to_f : 5.0
       end
 
       def apply_percentage_scheme(pct, bands)
-        sorted = bands.sort_by { |b| -b["min_pct"] }
-        band = sorted.find { |b| pct >= b["min_pct"] }
+        sorted = bands.sort_by { |b| -b["min_pct"].to_f }
+        band = sorted.find { |b| pct >= b["min_pct"].to_f }
         band ? band["grade"].to_f : 5.0
       end
 

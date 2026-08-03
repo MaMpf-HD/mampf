@@ -164,11 +164,11 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     end
 
     def apply_bands(rows, points)
-      sorted_desc = rows.sort_by { |b| -b["min_points"] }
+      sorted_desc = rows.sort_by { |b| -b["min_points"].to_f }
       result = rows.each_with_object({}) { |b, h| h[b["grade"]] = 0 }
 
       points.each do |pts|
-        band = sorted_desc.find { |b| pts >= b["min_points"] }
+        band = sorted_desc.find { |b| pts >= b["min_points"].to_f }
         result[band["grade"]] += 1 if band
       end
 
@@ -178,13 +178,13 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     def compute_grade_change_summary
       return blank_change_summary if pct_scheme? || reviewed_points.empty?
 
-      old_desc = applied_bands.sort_by { |b| -b["min_points"] }
-      new_desc = bands.sort_by { |b| -b["min_points"] }
+      old_desc = applied_bands.sort_by { |b| -b["min_points"].to_f }
+      new_desc = bands.sort_by { |b| -b["min_points"].to_f }
       result = blank_change_summary
 
       reviewed_points.each do |pts|
-        old_band = old_desc.find { |b| pts >= b["min_points"] }
-        new_band = new_desc.find { |b| pts >= b["min_points"] }
+        old_band = old_desc.find { |b| pts >= b["min_points"].to_f }
+        new_band = new_desc.find { |b| pts >= b["min_points"].to_f }
         next unless old_band && new_band
 
         old_grade = old_band["grade"].to_f

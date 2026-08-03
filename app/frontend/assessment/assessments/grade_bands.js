@@ -27,6 +27,7 @@ export const GRADE_MARKER_COLOR = {
   "3.3": "#ffc107",
   "3.7": "#ffc107",
   "4.0": "#dc3545",
+  "5.0": "#dc3545",
 };
 
 export function computeBands(excellence, passing, pointsStep = 1) {

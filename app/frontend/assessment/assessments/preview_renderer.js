@@ -1,6 +1,6 @@
 import { GRADE_BADGE_CLASS, countPerBand } from "./grade_bands";
 
-export function renderPreview(bands, tbody, { studentPoints, passLabel, failLabel }) {
+export function renderPreview(bands, tbody, { studentPoints, passLabel, failLabel, pointsLabel }) {
   const table = tbody.closest("table");
   tbody.innerHTML = "";
   const existingTfoot = table.querySelector("tfoot");
@@ -52,7 +52,7 @@ export function renderPreview(bands, tbody, { studentPoints, passLabel, failLabe
       <td class="text-end">${pct}%</td>
     `;
 
-    const threshold = `\u2265\u00a0${band.min_points} pts`;
+    const threshold = `\u2265\u00a0${band.min_points} ${pointsLabel}`;
 
     tr.querySelector(".badge").textContent = band.grade;
     tr.querySelector(".band-threshold").textContent = threshold;

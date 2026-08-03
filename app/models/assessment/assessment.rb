@@ -14,6 +14,11 @@ module Assessment
                                          inverse_of: :assessment
     has_many :task_points, through: :assessment_participations,
                            class_name: "Assessment::TaskPoint"
+    # Two readers of the same table: the scoped one is what the UI means by
+    # "the scheme", the unscoped one is what has to go when the assessment does.
+    has_many :grade_schemes, dependent: :destroy,
+                             class_name: "Assessment::GradeScheme",
+                             inverse_of: :assessment
     has_one :grade_scheme, -> { where(active: true) },
             class_name: "Assessment::GradeScheme",
             inverse_of: :assessment

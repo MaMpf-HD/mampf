@@ -15,7 +15,10 @@ class DistributionAnalysisComponent < ViewComponent::Base
 
   def distribution
     @distribution ||= begin
-      scheme = assessment.grade_scheme || assessment.build_grade_scheme(kind: :banded)
+      # `build_grade_scheme` would hang the throwaway onto the association and
+      # every later reader in this request would see it as the scheme.
+      scheme = grade_scheme ||
+               Assessment::GradeScheme.new(assessment: assessment, kind: :banded)
       Assessment::GradeSchemeApplier.new(scheme).analyze_distribution
     end
   end
