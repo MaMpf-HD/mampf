@@ -6,8 +6,16 @@ FactoryBot.define do
     # An assessable creates its own gradebook while the flag is on, and there is
     # only ever one per assessable, so the factory takes that one over.
     initialize_with do
-      (assessable.persisted? && assessable.assessment) ||
-        Assessment::Assessment.new(assessable: assessable)
+      # Queried rather than read off the association: `assessable.assessment`
+      # would cache its result on the object the example holds, and a cached
+      # nil survives the assessment this factory is about to create.
+      existing = assessable.persisted? &&
+                 Assessment::Assessment.find_by(
+                   assessable_type: assessable.class.name,
+                   assessable_id: assessable.id
+                 )
+
+      existing || Assessment::Assessment.new(assessable: assessable)
     end
     requires_points { false }
     requires_submission { false }
