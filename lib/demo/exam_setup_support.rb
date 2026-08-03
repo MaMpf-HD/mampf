@@ -76,9 +76,26 @@ module Demo
         Registration::Policy.where(registration_campaign_id: campaign_ids).delete_all
         Registration::Item.where(registration_campaign_id: campaign_ids).delete_all
         Registration::Campaign.where(id: campaign_ids).delete_all
-        Assessment::Assessment.where(assessable_type: "Exam",
-                                     assessable_id: exams.ids).delete_all
+        reset_exam_assessments!(exams)
         exams.delete_all
+      end
+
+      # Everything hanging off the gradebook, innermost first: once `demo:grading`
+      # has run, deleting the assessment alone hits the foreign keys — and by
+      # then the campaigns above are already gone, so an abort here is a mess.
+      def reset_exam_assessments!(exams)
+        assessment_ids = Assessment::Assessment
+                         .where(assessable_type: "Exam", assessable_id: exams.ids)
+                         .ids
+        participation_ids = Assessment::Participation
+                            .where(assessment_id: assessment_ids).select(:id)
+
+        Assessment::TaskPoint.where(assessment_participation_id: participation_ids)
+                             .delete_all
+        Assessment::Participation.where(assessment_id: assessment_ids).delete_all
+        Assessment::Task.where(assessment_id: assessment_ids).delete_all
+        Assessment::GradeScheme.where(assessment_id: assessment_ids).delete_all
+        Assessment::Assessment.where(id: assessment_ids).delete_all
       end
 
       def create_demo_exams!(lecture)

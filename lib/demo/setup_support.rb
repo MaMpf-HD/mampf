@@ -5,6 +5,7 @@ module Demo
     extend Demo::PerformanceSetupSupport
     extend Demo::EligibilitySetupSupport
     extend Demo::ExamSetupSupport
+    extend Demo::GradingSetupSupport
 
     LECTURE_CAMPAIGN_DESCRIPTION = "Demo Lecture Roster Campaign".freeze
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
@@ -52,6 +53,7 @@ module Demo
       setup_performance!
       setup_eligibility!
       setup_exams!
+      setup_grading!
     end
 
     private
