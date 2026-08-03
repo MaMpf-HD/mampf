@@ -181,6 +181,9 @@ class Exam < ApplicationRecord
     end
 
     def create_registration_campaign
+      # Without a date the deadline is a placeholder nobody chose. It stands in
+      # a draft campaign, where it decides nothing, and opening the campaign
+      # validates it — so a teacher who never fixes a date never opens on it.
       deadline = registration_deadline.presence || (date && (date - 3.days)) || 1.month.from_now
       campaign = Registration::Campaign.new(
         campaignable: lecture,
