@@ -9,9 +9,9 @@ module Assessment
     validates :max_points, numericality: { greater_than_or_equal_to: 0 }
     validate :assessment_requires_points
 
-    before_destroy :check_no_points_entered, prepend: true
+    after_create :reopen_reviewed_participations
 
-    after_create_commit :reopen_reviewed_participations
+    before_destroy :check_no_points_entered, prepend: true
 
     acts_as_list scope: :assessment
 
@@ -31,12 +31,15 @@ module Assessment
         throw(:abort) if points_entered?
       end
 
-      # A new task has no points anywhere, so nobody who counted as fully marked
-      # still is.
+      # Nobody has scored the new task yet, so nobody is fully marked any more.
+      # One statement rather than one per participation, inside the create
+      # transaction — the task and the reopening stand or fall together.
       def reopen_reviewed_participations
+        # rubocop:disable Rails/SkipsModelValidations
         assessment.assessment_participations
                   .where(status: :reviewed)
-                  .find_each { |participation| participation.update!(status: :pending) }
+                  .update_all(status: :pending, updated_at: Time.current)
+        # rubocop:enable Rails/SkipsModelValidations
       end
   end
 end
