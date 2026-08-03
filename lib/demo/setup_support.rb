@@ -3,6 +3,8 @@ module Demo
     extend self
     extend Demo::AssessmentSetupSupport
     extend Demo::PerformanceSetupSupport
+    extend Demo::EligibilitySetupSupport
+    extend Demo::ExamSetupSupport
 
     LECTURE_CAMPAIGN_DESCRIPTION = "Demo Lecture Roster Campaign".freeze
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
@@ -44,9 +46,12 @@ module Demo
 
     def setup!
       ensure_non_production!
+      reset_eligibility!
       setup_rosters!
       setup_assessment!
       setup_performance!
+      setup_eligibility!
+      setup_exams!
     end
 
     private
