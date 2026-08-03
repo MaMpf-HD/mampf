@@ -20,6 +20,10 @@ module Assessment
 
     delegate :title, to: :assessable
 
+    def results_published?
+      results_published_at.present?
+    end
+
     def short_title
       parts = title.split(" ", 2)
       parts.length > 1 ? parts.last.presence || title.truncate(5) : title.truncate(5)
