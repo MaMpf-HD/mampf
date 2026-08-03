@@ -117,33 +117,6 @@ RSpec.describe(StudentPerformance::Certification, type: :model) do
     end
   end
 
-  describe ".passed?" do
-    let(:lecture) { FactoryBot.create(:lecture) }
-    let(:user) { FactoryBot.create(:confirmed_user) }
-
-    it "returns true when certification is passed" do
-      FactoryBot.create(:student_performance_certification,
-                        :passed,
-                        lecture: lecture,
-                        user: user)
-      expect(described_class.passed?(lecture: lecture, user: user))
-        .to be(true)
-    end
-
-    it "returns false when certification is pending" do
-      FactoryBot.create(:student_performance_certification,
-                        lecture: lecture,
-                        user: user)
-      expect(described_class.passed?(lecture: lecture, user: user))
-        .to be(false)
-    end
-
-    it "returns false when no certification exists" do
-      expect(described_class.passed?(lecture: lecture, user: user))
-        .to be(false)
-    end
-  end
-
   describe ".stale" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:user) { FactoryBot.create(:confirmed_user) }

@@ -1,4 +1,6 @@
 module StudentPerformance
+  # One achievement a rule requires, in the order the teacher arranged them.
+  # Touching the rule on every change is what makes certifications go stale.
   class RuleAchievement < ApplicationRecord
     belongs_to :rule, class_name: "StudentPerformance::Rule", touch: true
     belongs_to :achievement

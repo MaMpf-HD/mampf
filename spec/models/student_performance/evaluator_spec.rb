@@ -400,10 +400,11 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
       let(:evaluator) { described_class.new(rule) }
 
-      it "proposes :failed with empty details" do
-        result = evaluator.evaluate(nil)
-        expect(result.proposed_status).to eq(:failed)
-        expect(result.details).to eq({})
+      # Answering "failed" would refuse a student their exam on the strength of
+      # a record nobody has written yet.
+      it "refuses to judge instead of proposing a status" do
+        expect { evaluator.evaluate(nil) }
+          .to raise_error(ArgumentError, /no performance record/)
       end
     end
 

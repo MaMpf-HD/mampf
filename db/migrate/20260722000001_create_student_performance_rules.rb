@@ -12,6 +12,10 @@ class CreateStudentPerformanceRules < ActiveRecord::Migration[8.0]
     end
 
     add_index :student_performance_rules, :lecture_id
+    add_index :student_performance_rules, :lecture_id,
+              unique: true,
+              where: "active = true",
+              name: "index_sp_rules_one_active_per_lecture"
     add_foreign_key :student_performance_rules, :lectures
   end
 end
