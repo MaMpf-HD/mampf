@@ -216,4 +216,28 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       expect(response).to redirect_to(exam_path(exam, tab: "grades"))
     end
   end
+
+  # A scheme is what turned points into the grades on record, so reading and
+  # deleting one are as much the editors' business as writing it.
+  describe "as a user who cannot edit the lecture" do
+    let!(:grade_scheme) { create(:assessment_grade_scheme, assessment: assessment) }
+
+    before { sign_in student }
+
+    it "refuses to show the scheme form" do
+      get edit_assessment_assessment_grade_scheme_path(assessment, grade_scheme),
+          as: :turbo_stream
+
+      expect(response).to redirect_to(root_path)
+    end
+
+    it "refuses to delete the scheme" do
+      expect do
+        delete(assessment_assessment_grade_scheme_path(assessment, grade_scheme),
+               as: :turbo_stream)
+      end.not_to change(Assessment::GradeScheme, :count)
+
+      expect(response).to redirect_to(root_path)
+    end
+  end
 end

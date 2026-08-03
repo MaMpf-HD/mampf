@@ -8,6 +8,7 @@ class CreateGradeSchemes < ActiveRecord::Migration[8.0]
       t.datetime :applied_at
       t.bigint :applied_by_id
       t.boolean :active, null: false, default: false
+      t.decimal :points_step, precision: 10, scale: 2, null: false, default: 1
 
       t.timestamps
     end

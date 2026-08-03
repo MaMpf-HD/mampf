@@ -127,9 +127,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_24_000001) do
     t.datetime "applied_at"
     t.bigint "applied_by_id"
     t.boolean "active", default: false, null: false
+    t.decimal "points_step", precision: 10, scale: 2, default: "1.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "points_step", precision: 10, scale: 2, default: "1.0", null: false
     t.index ["applied_by_id"], name: "index_assessment_grade_schemes_on_applied_by_id"
     t.index ["assessment_id"], name: "idx_assessment_grade_schemes_one_active", unique: true, where: "(active = true)"
     t.index ["assessment_id"], name: "index_assessment_grade_schemes_on_assessment_id"

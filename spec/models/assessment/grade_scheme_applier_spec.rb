@@ -52,12 +52,26 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
     end
   end
 
-  describe "#preview" do
+  describe "#compute_grade_for" do
+    # Only reachable by writing past the band validation, and the alternative
+    # would be to hand everyone a 5.0 on a scheme nobody can read.
+    it "refuses a config whose bands have neither points nor percentages" do
+      participation = create_reviewed_participation(points: 30)
+      # rubocop:disable Rails/SkipsModelValidations
+      scheme.update_column(:config, { "bands" => [{ "grade" => "1.0" }] })
+      # rubocop:enable Rails/SkipsModelValidations
+
+      expect { described_class.new(scheme.reload).compute_grade_for(participation) }
+        .to raise_error(ArgumentError, /no readable bands/)
+    end
+  end
+
+  describe "#preview_all" do
     it "returns proposed grades without persisting" do
       p1 = create_reviewed_participation(points: 55)
       p2 = create_reviewed_participation(points: 20)
 
-      result = applier.preview
+      result = applier.preview_all
 
       expect(result.size).to eq(2)
 

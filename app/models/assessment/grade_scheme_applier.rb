@@ -1,5 +1,13 @@
 module Assessment
+  # Turns points into grades for one assessment, using one scheme. It answers
+  # three questions and never more: what the marks look like now
+  # (`analyze_distribution`), what this scheme would make of them
+  # (`preview_all`), and — once — what it did make of them (`apply!`).
   class GradeSchemeApplier
+    # Nothing below the lowest band, nobody who did not turn up, and nothing
+    # that cannot be measured earns better than this.
+    FAILING_GRADE = 5.0
+
     def initialize(scheme)
       @scheme = scheme
       @assessment = scheme.assessment
@@ -24,17 +32,6 @@ module Assessment
       }
     end
 
-    def preview
-      reviewed_participations.map do |p|
-        {
-          user_id: p.user_id,
-          points: p.points_total,
-          current_grade: p.grade_numeric,
-          proposed_grade: compute_grade_for(p)
-        }
-      end
-    end
-
     def preview_all
       rows = reviewed_participations.map do |p|
         {
@@ -48,7 +45,7 @@ module Assessment
         {
           user_id: p.user_id,
           current_grade: p.grade_numeric,
-          proposed_grade: 5.0
+          proposed_grade: FAILING_GRADE
         }
       end
     end
@@ -97,7 +94,7 @@ module Assessment
 
         absent_target.find_each do |participation|
           participation.update!(
-            grade_numeric: 5.0,
+            grade_numeric: FAILING_GRADE,
             grader: applied_by,
             graded_at: now
           )
@@ -116,7 +113,7 @@ module Assessment
 
     def compute_grade_for(participation)
       points = participation.points_total
-      return 5.0 if points.nil?
+      return FAILING_GRADE if points.nil?
 
       bands = @scheme.config["bands"]
       first_band = bands.first
@@ -125,12 +122,15 @@ module Assessment
         apply_absolute_scheme(points, bands)
       elsif first_band.key?("min_pct")
         max = @assessment.effective_total_points
-        return 5.0 if max.nil? || max.zero?
+        return FAILING_GRADE if max.nil? || max.zero?
 
         pct = (points.to_f / max * 100).round(2)
         apply_percentage_scheme(pct, bands)
       else
-        5.0
+        # The validation admits only these two shapes, so a third one means the
+        # config was written past it. Grading everyone 5.0 on a scheme nobody
+        # can read is the one answer that must not be given quietly.
+        raise(ArgumentError, "grade scheme #{@scheme.id} has no readable bands")
       end
     end
 
@@ -161,13 +161,13 @@ module Assessment
       def apply_absolute_scheme(points, bands)
         sorted = bands.sort_by { |b| -b["min_points"].to_f }
         band = sorted.find { |b| points >= b["min_points"].to_f }
-        band ? band["grade"].to_f : 5.0
+        band ? band["grade"].to_f : FAILING_GRADE
       end
 
       def apply_percentage_scheme(pct, bands)
         sorted = bands.sort_by { |b| -b["min_pct"].to_f }
         band = sorted.find { |b| pct >= b["min_pct"].to_f }
-        band ? band["grade"].to_f : 5.0
+        band ? band["grade"].to_f : FAILING_GRADE
       end
 
       def median(sorted)
