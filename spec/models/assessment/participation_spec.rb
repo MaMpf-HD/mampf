@@ -244,10 +244,10 @@ RSpec.describe(Assessment::Participation, type: :model) do
       let(:assignment) do
         FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
       end
-      let(:assessment) do
-        FactoryBot.create(:assessment, assessable: assignment,
-                                       lecture: lecture)
-      end
+      # The assignment brings its own gradebook while the flag is on; building a
+      # second one would only try to unset `requires_submission` past the
+      # deadline, which the assessment refuses.
+      let(:assessment) { assignment.assessment }
       let!(:participation) do
         FactoryBot.create(:assessment_participation,
                           assessment: assessment, user: user)
