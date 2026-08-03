@@ -1,6 +1,6 @@
 <% ui_state = ExamCampaignUiState.new(exam: exam) %>
 
-<%= turbo_frame_tag "exam_#{exam.id}_registration_tab_label",
+<%= turbo_frame_tag Registration::Campaign.exam_registration_tab_label_frame_id(exam),
                     class: "d-inline" do %>
   <%= ui_state.registration_tab_label %>
 

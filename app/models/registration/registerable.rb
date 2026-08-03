@@ -12,7 +12,11 @@ module Registration
     end
 
     class_methods do
-      def exclusive_assignment?
+      # Whether allocating a user here takes them out of a sibling of the same
+      # kind — a second tutorial, say. Deliberately not the instance method
+      # `exclusive_assignment?`, which asks whether one registration per
+      # campaign is the limit; for an exam the two answers differ.
+      def displaces_sibling_assignment?
         false
       end
     end

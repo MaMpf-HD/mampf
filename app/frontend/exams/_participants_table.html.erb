@@ -94,7 +94,7 @@
 
               <tr
                 data-exams--registration-list-target="entry"
-                data-student-search="<%= "#{user.name} #{user.email}".downcase %>"
+                data-student-search="<%= "#{user.tutorial_name} #{user.email}".downcase %>"
               >
                 <td><%= user.tutorial_name.presence || user.email %></td>
                 <td class="text-muted"><%= user.email %></td>

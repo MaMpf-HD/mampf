@@ -268,6 +268,18 @@ RSpec.describe(Registration::Item, type: :model) do
           )
         end
 
+        # The validation reads the sibling rows, so two simultaneous creates can
+        # both find none. The index is what actually holds the rule.
+        it "rejects a second exam even when validation is skipped" do
+          create(:registration_item, registration_campaign: campaign,
+                                     registerable: exam1)
+          item = build(:registration_item, registration_campaign: campaign,
+                                           registerable: exam2)
+
+          expect { item.save(validate: false) }
+            .to raise_error(ActiveRecord::RecordNotUnique)
+        end
+
         it "allows adding multiple non-exam items to a campaign" do
           tutorial2 = create(:tutorial, lecture: lecture)
           create(:registration_item, registration_campaign: campaign,

@@ -2,7 +2,7 @@ class Tutorial < ApplicationRecord
   include Registration::Registerable
   include Rosters::Rosterable
 
-  def self.exclusive_assignment?
+  def self.displaces_sibling_assignment?
     true
   end
 

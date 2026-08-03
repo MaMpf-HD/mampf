@@ -1,5 +1,6 @@
 module Registration
   class AllocationsController < ApplicationController
+    include Registration::ExamFrameTargeting
     include Registration::RosterStreamRefreshable
 
     before_action :set_campaign
@@ -150,12 +151,12 @@ module Registration
           flash.now[:success] = t("registration.campaign.finalized")
           render turbo_stream: [
             turbo_stream.replace(
-              "exam_#{exam.id}_registration",
+              Registration::Campaign.exam_registration_frame_id(exam),
               partial: "exams/registration",
               locals: { exam: exam, lecture: lecture }
             ),
             turbo_stream.replace(
-              "exam_#{exam.id}_registration_tab_label",
+              Registration::Campaign.exam_registration_tab_label_frame_id(exam),
               partial: "exams/registration_tab_label",
               locals: { exam: exam }
             ),
@@ -245,15 +246,6 @@ module Registration
 
       def set_locale
         I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
-      end
-
-      def target_frame_id
-        params[:frame_id].presence || "campaigns_container"
-      end
-
-      def exam_campaign_context?
-        target_frame_id != "campaigns_container" &&
-          @campaign.exam_campaign?
       end
 
       def exam_workspace?

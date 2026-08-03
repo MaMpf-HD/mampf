@@ -160,7 +160,12 @@ class Exam < ApplicationRecord
       return if registration_deadline.blank?
 
       campaign = registration_campaign unless new_record?
-      return if campaign && (campaign.closed? || campaign.completed?)
+      # A closed campaign takes no registrations, so a date in the past is
+      # harmless there — unless the point of the edit is to reopen it.
+      if campaign && !reopen_after_deadline_fix &&
+         (campaign.closed? || campaign.completed?)
+        return
+      end
 
       parsed = if registration_deadline.is_a?(String)
         Time.zone.parse(registration_deadline)
@@ -176,7 +181,9 @@ class Exam < ApplicationRecord
       campaign = registration_campaign
       return unless campaign && !campaign.completed?
 
-      campaign.update(registration_deadline: registration_deadline)
+      # Bang: the validations above already cover every deadline the form can
+      # send, so a refusal here means the two have drifted apart.
+      campaign.update!(registration_deadline: registration_deadline)
     end
 
     def create_registration_campaign

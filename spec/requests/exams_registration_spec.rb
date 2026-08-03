@@ -155,6 +155,30 @@ RSpec.describe("Exams registration", type: :request) do
       expect(campaign.registration_deadline).to eq(original_deadline)
       expect(response).to have_http_status(:ok)
     end
+
+    it "refuses to reopen a closed campaign with a deadline in the past" do
+      campaign = exam.registration_campaign
+      campaign.update!(status: :closed)
+      original_deadline = campaign.registration_deadline
+
+      patch(exam_path(exam),
+            params: {
+              exam: {
+                registration_deadline: 1.day.ago.beginning_of_hour.strftime(
+                  "%Y-%m-%d %H:%M"
+                )
+              },
+              tab: "registration",
+              reopen_after_deadline_fix: "1"
+            },
+            as: :turbo_stream)
+
+      campaign.reload
+
+      expect(campaign).to be_closed
+      expect(campaign.registration_deadline).to eq(original_deadline)
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe "POST /exams/:id/participants" do

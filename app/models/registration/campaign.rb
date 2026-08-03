@@ -118,8 +118,19 @@ module Registration
       registration_items.find_by(registerable_type: "Exam")&.registerable
     end
 
+    # The three Turbo frames an exam's registration tab is made of. They are
+    # named here rather than spelled out at each end, because a target that
+    # stops matching updates nothing and reports nothing.
     def self.exam_workspace_frame_id(exam)
       "exam_#{exam.id}_allocation_workspace"
+    end
+
+    def self.exam_registration_frame_id(exam)
+      "exam_#{exam.id}_registration"
+    end
+
+    def self.exam_registration_tab_label_frame_id(exam)
+      "exam_#{exam.id}_registration_tab_label"
     end
 
     def exam_workspace_frame_id?(frame_id)
@@ -195,6 +206,7 @@ module Registration
         reject_pending_registrations!
 
         update!(status: :completed,
+                finalized_at: Time.current,
                 allocation_decided_at: allocation_decided_at || Time.current)
       end
     end

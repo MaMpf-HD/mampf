@@ -427,6 +427,13 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end.to change(campaign, :status).from("processing").to("completed")
     end
 
+    # `updated_at` moves with any later write, so the moment is recorded on its
+    # own column and the registration tab can report it.
+    it "records when it was finalized" do
+      expect { campaign.finalize! }
+        .to change { campaign.reload.finalized_at }.from(nil)
+    end
+
     it "updates pending registrations to rejected" do
       create(:registration_user_registration, registration_campaign: campaign, status: :pending)
       create(:registration_user_registration, registration_campaign: campaign, status: :confirmed)

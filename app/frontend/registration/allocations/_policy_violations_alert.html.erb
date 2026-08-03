@@ -2,91 +2,14 @@
 <% campaign = local_assigns[:campaign] %>
 <% allocation_source = local_assigns[:allocation_source] %>
 
-<% blocker_violations = dashboard.blocker_violations %>
+<% return unless dashboard.blockers? %>
 
-<% return unless blocker_violations.present? %>
-
-<% has_configuration_blockers = blocker_violations.any? do |violation|
-     violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
-   end %>
-
-<% has_user_blockers = blocker_violations.any? do |violation|
-     violation[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_USER
-   end %>
-
-<% display_violations = blocker_violations.uniq do |violation|
-     [violation[:user_id], violation[:policy]]
-   end %>
-
-<% grouped = display_violations.group_by { |violation| violation[:user_id] } %>
-
-<% policy_counts = display_violations.group_by { |violation| violation[:policy] }
-                                   .transform_values(&:size) %>
-
-<% perf_lecture = dashboard.performance_lecture %>
-
-<% certifications_by_user = if perf_lecture
-     StudentPerformance::Certification.where(
-       lecture: perf_lecture,
-       user_id: grouped.keys
-     ).index_by(&:user_id)
-   else
-     {}
-   end %>
-
-<% performance_entries = grouped.filter_map do |user_id, violations|
-     next unless violations.any? { |violation| violation[:policy] == "student_performance" }
-
-     first = violations.first
-     cert = certifications_by_user[user_id]
-     status_key = if cert&.failed?
-       :failed
-     elsif cert&.pending?
-       :pending
-     else
-       :no_cert
-     end
-
-     {
-       user_id: user_id,
-       first: first,
-       status_key: status_key,
-       other_violations: violations.reject do |violation|
-         violation[:policy] == "student_performance"
-       end,
-       can_defer: violations.none? do |violation|
-         violation[:blocker_kind] ==
-           Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
-       end
-     }
-   end.sort_by do |entry|
-     [
-       { no_cert: 0, pending: 1, failed: 2 }.fetch(entry[:status_key]),
-       entry[:first][:email].to_s
-     ]
-   end %>
-
-<% performance_status_counts = performance_entries.group_by do |entry|
-     entry[:status_key]
-   end.transform_values(&:size) %>
-
-<% show_additional_blockers = performance_entries.any? do |entry|
-     entry[:other_violations].present?
-   end %>
-
-<% other_entries = grouped.filter_map do |user_id, violations|
-     next if violations.any? { |violation| violation[:policy] == "student_performance" }
-
-     {
-       user_id: user_id,
-       first: violations.first,
-       violations: violations,
-       can_defer: violations.none? do |violation|
-         violation[:blocker_kind] ==
-           Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
-       end
-     }
-   end.sort_by { |entry| entry[:first][:email].to_s } %>
+<% report = dashboard.violation_report %>
+<% policy_counts = report.policy_counts %>
+<% performance_entries = report.performance_entries %>
+<% show_additional_blockers = report.additional_blockers %>
+<% other_entries = report.other_entries %>
+<% perf_lectures = dashboard.performance_lectures %>
 
 <div class="allocation-status-panel allocation-status-panel--danger">
   <i class="bi bi-exclamation-triangle-fill me-1"></i>
@@ -96,10 +19,10 @@
 
 
   <p class="mt-2 mb-2">
-    <strong><%= grouped.size %></strong>
+    <strong><%= report.user_count %></strong>
 
     <%= t("registration.allocation.errors.policy_violation_count",
-          count: grouped.size) %>
+          count: report.user_count) %>
 
     <small class="text-muted ms-1">
       (
@@ -137,7 +60,7 @@
   <% end %>
 
   <div class="small mb-3">
-    <% if has_configuration_blockers %>
+    <% if report.configuration_blockers %>
       <div class="mb-1">
         <strong>
           <%= t("registration.allocation.errors.policy_violation_config_title") %>
@@ -147,7 +70,7 @@
       </div>
     <% end %>
 
-    <% if has_user_blockers %>
+    <% if report.user_blockers %>
       <div>
         <%= t("registration.allocation.errors.policy_violation_user_desc") %>
       </div>
@@ -167,7 +90,7 @@
         </span>
 
         <% [:no_cert, :pending, :failed].each do |status_key| %>
-          <% count = performance_status_counts[status_key].to_i %>
+          <% count = report.performance_status_counts[status_key].to_i %>
           <% next if count.zero? %>
 
           <span class="badge text-bg-light border">
@@ -179,14 +102,16 @@
           </span>
         <% end %>
 
-        <% if perf_lecture %>
+        <% perf_lectures.each_with_index do |perf_lecture, index| %>
           <%= link_to t("registration.allocation.violations_table.go_to_certifications"),
                         edit_lecture_path(
                           perf_lecture,
                           tab: "assessments",
                           assessment_tab: "certifications"
                         ),
-                        class: "ms-md-auto small link-danger text-decoration-none",
+                        class: "small link-danger text-decoration-none " \
+                               "#{"ms-md-auto" if index.zero?}",
+                        title: perf_lecture.title,
                         data: { turbo_frame: "_top" } %>
         <% end %>
       </div>

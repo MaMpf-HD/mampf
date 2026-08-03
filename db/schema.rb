@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_23_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_24_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -694,6 +694,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_23_000002) do
     t.datetime "updated_at", null: false
     t.datetime "last_allocation_calculated_at"
     t.datetime "allocation_decided_at"
+    t.datetime "finalized_at"
     t.index ["allocation_mode"], name: "index_registration_campaigns_on_allocation_mode"
     t.index ["campaignable_type", "campaignable_id"], name: "index_registration_campaigns_on_campaignable"
     t.index ["status"], name: "index_registration_campaigns_on_status"
@@ -708,6 +709,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_23_000002) do
     t.integer "confirmed_registrations_count", default: 0, null: false
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_registerable", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
+    t.index ["registration_campaign_id"], name: "index_registration_items_on_unique_exam_per_campaign", unique: true, where: "((registerable_type)::text = 'Exam'::text)"
   end
 
   create_table "registration_policies", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
