@@ -78,8 +78,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           FactoryBot.create(:student_performance_record,
                             lecture: lecture, user: user_b)
           get lecture_student_performance_certifications_path(lecture)
-          expect(response.body).to include(user_a.tutorial_name)
-          expect(response.body).to include(user_b.tutorial_name)
+          expect(response.body).to include(CGI.escapeHTML(user_a.tutorial_name))
+          expect(response.body).to include(CGI.escapeHTML(user_b.tutorial_name))
         end
 
         context "with status filter" do
@@ -96,18 +96,18 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             get lecture_student_performance_certifications_path(
               lecture, status: "passed"
             )
-            expect(response.body).to include(user_a.tutorial_name)
-            expect(response.body).not_to include(user_b.tutorial_name)
-            expect(response.body).not_to include(user_c.tutorial_name)
+            expect(response.body).to include(CGI.escapeHTML(user_a.tutorial_name))
+            expect(response.body).not_to include(CGI.escapeHTML(user_b.tutorial_name))
+            expect(response.body).not_to include(CGI.escapeHTML(user_c.tutorial_name))
           end
 
           it "filters by failed status" do
             get lecture_student_performance_certifications_path(
               lecture, status: "failed"
             )
-            expect(response.body).not_to include(user_a.tutorial_name)
-            expect(response.body).to include(user_b.tutorial_name)
-            expect(response.body).not_to include(user_c.tutorial_name)
+            expect(response.body).not_to include(CGI.escapeHTML(user_a.tutorial_name))
+            expect(response.body).to include(CGI.escapeHTML(user_b.tutorial_name))
+            expect(response.body).not_to include(CGI.escapeHTML(user_c.tutorial_name))
           end
 
           it "filters by uncertified status" do
@@ -117,10 +117,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             get lecture_student_performance_certifications_path(
               lecture, status: "uncertified"
             )
-            expect(response.body).to include(uncertified_user.tutorial_name)
-            expect(response.body).not_to include(user_a.tutorial_name)
-            expect(response.body).not_to include(user_b.tutorial_name)
-            expect(response.body).to include(user_c.tutorial_name)
+            expect(response.body).to include(CGI.escapeHTML(uncertified_user.tutorial_name))
+            expect(response.body).not_to include(CGI.escapeHTML(user_a.tutorial_name))
+            expect(response.body).not_to include(CGI.escapeHTML(user_b.tutorial_name))
+            expect(response.body).to include(CGI.escapeHTML(user_c.tutorial_name))
           end
 
           it "filters by stale status" do
@@ -140,8 +140,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             get lecture_student_performance_certifications_path(
               lecture, status: "stale"
             )
-            expect(response.body).to include(user_a.tutorial_name)
-            expect(response.body).not_to include(user_b.tutorial_name)
+            expect(response.body).to include(CGI.escapeHTML(user_a.tutorial_name))
+            expect(response.body).not_to include(CGI.escapeHTML(user_b.tutorial_name))
           end
         end
 

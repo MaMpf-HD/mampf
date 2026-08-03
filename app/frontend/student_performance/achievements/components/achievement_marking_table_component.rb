@@ -29,17 +29,7 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def met?(participation)
-    return false if participation.grade_text.blank?
-    return false if threshold.blank? && !boolean?
-
-    case achievement.value_type
-    when "boolean"
-      participation.grade_text == "pass"
-    when "numeric"
-      numeric_value(participation.grade_text) >= threshold
-    when "percentage"
-      participation.grade_text.to_f >= threshold
-    end
+    achievement.met_by?(participation.grade_text)
   end
 
   def status_badge(participation)
@@ -75,13 +65,12 @@ class AchievementMarkingTableComponent < ViewComponent::Base
       "#{format("%.1f", value.to_f)}%"
     end
 
+    # An unreadable value is shown as the tutor typed it; turning it into a 0
+    # would claim they entered something they did not.
     def format_numeric(value)
-      numeric_value(value).to_s("F").sub(/\.0+\z/, "").sub(/(\.\d*?)0+\z/, "\\1")
-    end
+      number = Achievement.numeric_value(value)
+      return value.to_s if number.nil?
 
-    def numeric_value(value)
-      BigDecimal(value.to_s)
-    rescue ArgumentError
-      BigDecimal("0")
+      number.to_s("F").sub(/\.0+\z/, "").sub(/(\.\d*?)0+\z/, "\\1")
     end
 end

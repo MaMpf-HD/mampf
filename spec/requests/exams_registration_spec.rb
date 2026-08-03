@@ -190,6 +190,35 @@ RSpec.describe("Exams registration", type: :request) do
       campaign.update!(status: :completed)
     end
 
+    # Both actions change who may sit the exam, and the ability check on them
+    # is the only thing between an outsider and that list.
+    context "as a user who cannot edit the lecture" do
+      let(:outsider) { create(:confirmed_user) }
+
+      before { sign_in outsider }
+
+      it "refuses to add a participant" do
+        expect do
+          post(participants_exam_path(exam),
+               params: { user_id: student.id },
+               as: :turbo_stream)
+        end.not_to(change { exam.reload.all_exam_roster_entries.count })
+
+        expect(response).to redirect_to(root_path)
+      end
+
+      it "refuses to remove a participant" do
+        exam.add_user_to_roster!(student)
+
+        expect do
+          delete(remove_participant_exam_path(exam, user_id: student.id),
+                 as: :turbo_stream)
+        end.not_to(change { exam.reload.exam_roster_entries.count })
+
+        expect(response).to redirect_to(root_path)
+      end
+    end
+
     it "adds a rejected registration to the participants list by user id" do
       registration = create(
         :registration_user_registration,

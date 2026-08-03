@@ -1,3 +1,7 @@
+# A written examination of a lecture. Unlike an assignment it admits a fixed
+# set of people: registration runs through its own campaign, and once that is
+# finalized the list is maintained by hand — removals are kept as exclusions
+# rather than deleted, so a reversal stays visible.
 class Exam < ApplicationRecord
   class ParticipantRemovalNotAllowedError < StandardError; end
 
@@ -127,16 +131,6 @@ class Exam < ApplicationRecord
     :finalized
   end
 
-  STATUS_PHASE_BADGE_CLASSES = {
-    draft: "bg-secondary",
-    registration_open: "bg-primary",
-    registration_closed: "bg-info",
-    finalized: "bg-danger",
-    conducted: "bg-light text-dark border",
-    grading: "bg-white text-primary border border-primary",
-    graded: "bg-primary"
-  }.freeze
-
   private
 
     def setup_assessment
@@ -187,6 +181,9 @@ class Exam < ApplicationRecord
     end
 
     def create_registration_campaign
+      # Without a date the deadline is a placeholder nobody chose. It stands in
+      # a draft campaign, where it decides nothing, and opening the campaign
+      # validates it — so a teacher who never fixes a date never opens on it.
       deadline = registration_deadline.presence || (date && (date - 3.days)) || 1.month.from_now
       campaign = Registration::Campaign.new(
         campaignable: lecture,

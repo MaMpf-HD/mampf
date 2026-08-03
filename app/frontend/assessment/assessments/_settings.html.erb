@@ -30,8 +30,8 @@
               local: true,
               html: {
                 data: {
-                  controller: 'assessments--settings',
-                  action: 'turbo:submit-end->assessments--settings#resetAfterSave'
+                  controller: 'assessments--dirty-form',
+                  action: 'turbo:submit-end->assessments--dirty-form#resetAfterSave'
                 }
               } do |f| %>
   <input type="hidden" name="tab" value="settings">
@@ -45,8 +45,8 @@
                           class: 'form-control',
                           required: true,
                           data: {
-                            assessments__settings_target: 'title',
-                            action: 'input->assessments--settings#checkForChanges'
+                            assessments__dirty_form_target: 'field',
+                            action: 'input->assessments--dirty-form#checkForChanges'
                           } %>
       </div>
 
@@ -65,8 +65,8 @@
                 class: 'form-control td-input',
                 data: {
                   td_target: '#assessment-deadline-picker',
-                  assessments__settings_target: 'deadline',
-                  action: 'input->assessments--settings#checkForChanges change->assessments--settings#checkForChanges'
+                  assessments__dirty_form_target: 'field',
+                  action: 'input->assessments--dirty-form#checkForChanges change->assessments--dirty-form#checkForChanges'
                 },
                 value: assessable.deadline&.strftime("%Y-%m-%d %H:%M"),
                 autocomplete: 'off' %>
@@ -93,8 +93,8 @@
                      { include_blank: t('basics.select') },
                      { class: 'form-select selectize',
                        data: {
-                         assessments__settings_target: 'mediumId',
-                         action: 'change->assessments--settings#checkForChanges'
+                         assessments__dirty_form_target: 'field',
+                         action: 'change->assessments--dirty-form#checkForChanges'
                        } } %>
       </div>
 
@@ -108,8 +108,8 @@
                      { class: 'form-select',
                        disabled: assessable.past_deadline?,
                        data: {
-                         assessments__settings_target: 'acceptedFileType',
-                         action: 'change->assessments--settings#checkForChanges'
+                         assessments__dirty_form_target: 'field',
+                         action: 'change->assessments--dirty-form#checkForChanges'
                        } } %>
 
         <% if assessable.past_deadline? %>
@@ -130,8 +130,8 @@
                         checked: assessment.requires_submission,
                         disabled: assessable.past_deadline?,
                         data: {
-                          assessments__settings_target: 'requiresSubmission',
-                          action: 'change->assessments--settings#checkForChanges'
+                          assessments__dirty_form_target: 'field',
+                          action: 'change->assessments--dirty-form#checkForChanges'
                         } %>
 
         <%= f.label :requires_submission, t('assessment.requires_submission'), class: "form-check-label" %>
@@ -149,7 +149,7 @@
 
     <div
       class="col-12 mt-3 text-center d-none"
-      data-assessments--settings-target="warning"
+      data-assessments--dirty-form-target="warning"
     >
       <div class="alert alert-warning d-inline-block mb-2" role="alert">
         <i class="bi bi-exclamation-triangle me-2"></i>
@@ -159,14 +159,14 @@
 
     <div
       class="col-12 mt-4 text-center d-none"
-      data-assessments--settings-target="submitButton"
+      data-assessments--dirty-form-target="submitButton"
     >
       <%= f.submit t('assessment.form.submit'), class: "btn btn-primary me-2" %>
 
       <button
         type="button"
         class="btn btn-secondary"
-        data-action="click->assessments--settings#cancel"
+        data-action="click->assessments--dirty-form#cancel"
       >
         <%= t('buttons.cancel') %>
       </button>

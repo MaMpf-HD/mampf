@@ -1,9 +1,8 @@
 module StudentPerformance
   # Controller for evaluating student performance records based on defined rules.
   class EvaluatorController < ApplicationController
-    before_action :set_lecture
-    before_action :authorize_lecture
-    before_action :use_lecture_locale
+    include StudentPerformance::LectureScoped
+
     before_action :set_rule
 
     rescue_from CanCan::AccessDenied do |exception|
@@ -42,30 +41,16 @@ module StudentPerformance
       @preview_percentage = params.dig(:preview, :min_percentage)
       @preview_points = params.dig(:preview, :min_points_absolute)
 
-      preview_rule = build_preview_rule
+      preview = StudentPerformance::RuleChangePreview.new(
+        current_rule: @rule,
+        preview_rule: rule_with_preview_thresholds,
+        records: @lecture.student_performance_records.includes(:user).order(:created_at)
+      )
 
-      records = @lecture.student_performance_records
-                        .includes(:user)
-                        .order(:created_at)
-
-      current_eval = StudentPerformance::Evaluator.new(@rule)
-      preview_eval = StudentPerformance::Evaluator.new(preview_rule)
-
-      @changes = records.filter_map do |record|
-        current = current_eval.evaluate(record)
-        preview = preview_eval.evaluate(record)
-        next if current.proposed_status == preview.proposed_status
-
-        {
-          record: record,
-          from: current.proposed_status,
-          to: preview.proposed_status
-        }
-      end
-
-      @newly_passed = @changes.count { |c| c[:to] == :passed }
-      @newly_failed = @changes.count { |c| c[:to] == :failed }
-      @newly_inconclusive = @changes.count { |c| c[:to] == :inconclusive }
+      @changes = preview.changes
+      @newly_passed = preview.newly(:passed)
+      @newly_failed = preview.newly(:failed)
+      @newly_inconclusive = preview.newly(:inconclusive)
     end
 
     def single_proposal
@@ -91,23 +76,6 @@ module StudentPerformance
 
     private
 
-      def set_lecture
-        @lecture = Lecture.find_by(id: params[:lecture_id])
-        return if @lecture
-
-        redirect_to root_path,
-                    alert: I18n.t("student_performance.errors.no_lecture")
-      end
-
-      def authorize_lecture
-        authorize!(:edit, @lecture)
-      end
-
-      def use_lecture_locale
-        locale = @lecture&.locale_with_inheritance || I18n.default_locale
-        I18n.locale = locale
-      end
-
       def set_rule
         @rule = StudentPerformance::Rule
                 .where(lecture: @lecture, active: true)
@@ -115,7 +83,9 @@ module StudentPerformance
                 .first
       end
 
-      def build_preview_rule
+      # The saved rule with the what-if thresholds swapped in; its achievements
+      # stay as they are, because this screen does not offer to change them.
+      def rule_with_preview_thresholds
         pct = @preview_percentage.presence&.to_f
         pts = @preview_points.presence&.to_f
 

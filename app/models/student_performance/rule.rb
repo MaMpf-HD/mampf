@@ -1,4 +1,7 @@
 module StudentPerformance
+  # What a lecture asks of a student before they may sit its exam: a points
+  # threshold, a set of required achievements, or both. One rule is active per
+  # lecture; the earlier ones stay for the certifications that cite them.
   class Rule < ApplicationRecord
     belongs_to :lecture
 

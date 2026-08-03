@@ -15,6 +15,7 @@ class CreateAssessmentParticipations < ActiveRecord::Migration[8.0]
       t.datetime :results_published_at
       t.boolean :published, default: false, null: false
       t.boolean :locked, default: false, null: false
+      t.text :note
 
       t.timestamps
     end

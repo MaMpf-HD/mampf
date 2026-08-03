@@ -10,7 +10,9 @@
 <%= render "exams/delete_button", exam: exam %>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h3><%= exam.new_record? ? t("assessment.new_exam") : t("buttons.edit") %></h3>
+  <h3>
+    <%= exam.new_record? ? t("assessment.new_exam") : t("buttons.edit") %>
+  </h3>
 </div>
 
 <%= form_with model: exam,

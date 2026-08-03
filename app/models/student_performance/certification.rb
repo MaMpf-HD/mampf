@@ -1,4 +1,7 @@
 module StudentPerformance
+  # The decision on one student's exam admission in one lecture: who made it,
+  # when, and against which rule. A missing row means nobody has looked yet;
+  # `pending` means someone looked and could not decide.
   class Certification < ApplicationRecord
     enum :status, { pending: 0, passed: 1, failed: 2 }
     enum :source, { computed: 0, manual: 1 }
@@ -36,6 +39,9 @@ module StudentPerformance
       )
     }
 
+    # The two scopes below name the reason and are what the overview counts.
+    # They inner-join on purpose where `stale` outer-joins: a certification
+    # without a rule cannot be stale *from* a rule, but it is stale.
     scope :stale_from_rule, lambda {
       rule_table = Rule.arel_table
       cert_table = arel_table
@@ -64,9 +70,5 @@ module StudentPerformance
           .or(cert_table[:certified_at].eq(nil))
       )
     }
-
-    def self.passed?(lecture:, user:)
-      find_by(lecture: lecture, user: user)&.passed? || false
-    end
   end
 end

@@ -1,8 +1,7 @@
 module StudentPerformance
   class CertificationsController < ApplicationController
-    before_action :set_lecture
-    before_action :authorize_lecture
-    before_action :use_lecture_locale
+    include StudentPerformance::LectureScoped
+
     before_action :set_rule, only: [:index, :create, :bulk_accept,
                                     :bulk_reevaluate]
 
@@ -204,23 +203,6 @@ module StudentPerformance
           end
         end
         lecture_student_performance_certifications_path(@lecture)
-      end
-
-      def set_lecture
-        @lecture = Lecture.find_by(id: params[:lecture_id])
-        return if @lecture
-
-        redirect_to root_path,
-                    alert: I18n.t("student_performance.errors.no_lecture")
-      end
-
-      def authorize_lecture
-        authorize!(:edit, @lecture)
-      end
-
-      def use_lecture_locale
-        locale = @lecture&.locale_with_inheritance || I18n.default_locale
-        I18n.locale = locale
       end
 
       def set_rule

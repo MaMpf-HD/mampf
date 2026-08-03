@@ -3,7 +3,6 @@
       count: entries.size,
       empty_message: t("roster.no_participants_yet")
     ) do |list| %>
-
   <% list.with_columns do %>
     <th><%= t("basics.name") %></th>
     <th><%= t("basics.email") %></th>
@@ -11,6 +10,7 @@
 
   <% entries.each do |entry| %>
     <% user = entry.user %>
+
     <% list.with_row do %>
       <tr>
         <td><%= user.tutorial_name %></td>

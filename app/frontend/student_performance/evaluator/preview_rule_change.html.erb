@@ -270,27 +270,27 @@
             <tbody>
               <% @changes.each do |change| %>
                 <tr>
-                  <td><%= change[:record].user.tutorial_name %></td>
+                  <td><%= change.record.user.tutorial_name %></td>
 
                   <td class="text-end font-monospace">
                     <% if @rule.min_points_absolute.present? %>
                       <%= number_with_precision(
-                            change[:record].points_total_materialized,
+                            change.record.points_total_materialized,
                             precision: 1,
                             strip_insignificant_zeros: true) %>
                     <% else %>
                       <%= number_to_percentage(
-                            change[:record].percentage_materialized.to_f,
+                            change.record.percentage_materialized.to_f,
                             precision: 1) %>
                     <% end %>
                   </td>
 
                   <td class="text-center">
-                    <% if change[:from] == :passed %>
+                    <% if change.from == :passed %>
                       <span class="badge bg-success">
                         <%= t("student_performance.evaluator.status.passed") %>
                       </span>
-                    <% elsif change[:from] == :inconclusive %>
+                    <% elsif change.from == :inconclusive %>
                       <span class="badge bg-amber-subtle text-amber">
                         <%= t("student_performance.evaluator.status.inconclusive") %>
                       </span>
@@ -302,11 +302,11 @@
                   </td>
 
                   <td class="text-center">
-                    <% if change[:to] == :passed %>
+                    <% if change.to == :passed %>
                       <span class="badge bg-success">
                         <%= t("student_performance.evaluator.status.passed") %>
                       </span>
-                    <% elsif change[:to] == :inconclusive %>
+                    <% elsif change.to == :inconclusive %>
                       <span class="badge bg-amber-subtle text-amber">
                         <%= t("student_performance.evaluator.status.inconclusive") %>
                       </span>

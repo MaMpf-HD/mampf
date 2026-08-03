@@ -1,6 +1,6 @@
 module Assessment
-  # Provides shared functionality for models that can be graded and tracked in
-  # the assessment system.
+  # Makes an assessable carry a final grade — a talk, an exam — as opposed to
+  # only points. The grade lands on the participation, not here.
   module Gradable
     extend ActiveSupport::Concern
     include ::Assessment::Assessable
@@ -13,29 +13,33 @@ module Assessment
       )
     end
 
-    def set_grade!(user:, value: nil, grade_numeric: nil, grade_text: nil, grader: nil)
-      a = assessment || raise("No gradebook; call ensure_gradebook! first")
-      part = a.assessment_participations.find_or_create_by!(user_id: user.id)
+    # A grade is either a number on the German scale or a word like "passed",
+    # and which one it is follows from the value itself.
+    def set_grade!(user:, value:, grader: nil)
+      gradebook = assessment || raise("No gradebook; call ensure_gradebook! first")
+      # Not `create_or_find_by!`: that only rescues the database's unique
+      # violation, and the model's own uniqueness validation raises first.
+      participation = gradebook.assessment_participations
+                               .find_or_create_by!(user_id: user.id)
 
-      grade_attrs = {}
-
-      if value.present?
-        if value.is_a?(Numeric) || value.to_s.match?(/^\d+(\.\d+)?$/)
-          grade_attrs[:grade_numeric] = value.to_f
-        else
-          grade_attrs[:grade_text] = value.to_s
-        end
-      end
-
-      grade_attrs[:grade_numeric] = grade_numeric.to_f if grade_numeric.present?
-      grade_attrs[:grade_text] = grade_text.to_s if grade_text.present?
-
-      part.update!(
-        **grade_attrs,
+      participation.update!(
+        **grade_attributes_for(value),
         grader_id: grader&.id,
         graded_at: Time.current,
         status: :reviewed
       )
     end
+
+    private
+
+      def grade_attributes_for(value)
+        return { grade_numeric: value.to_f } if numeric_grade?(value)
+
+        { grade_text: value.to_s }
+      end
+
+      def numeric_grade?(value)
+        value.is_a?(Numeric) || value.to_s.match?(/\A\d+(\.\d+)?\z/)
+      end
   end
 end

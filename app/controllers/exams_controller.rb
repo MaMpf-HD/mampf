@@ -4,7 +4,6 @@ class ExamsController < ApplicationController
   before_action :set_lecture, only: [:index, :new]
   before_action :set_exam, only: [:show, :edit, :update, :destroy,
                                   :add_participant, :remove_participant]
-  authorize_resource except: :index
 
   def current_ability
     @current_ability ||= ExamAbility.new(current_user)

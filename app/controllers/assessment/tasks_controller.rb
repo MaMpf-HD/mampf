@@ -1,6 +1,9 @@
 module Assessment
   class TasksController < ApplicationController
     before_action :set_assessment
+    # Structural rather than per action: a forgotten `authorize!` leaves an
+    # endpoint open, and nothing fails to remind you.
+    before_action :authorize_assessment_update!
     before_action :set_task, only: [:edit, :update, :destroy, :cancel]
     before_action :set_locale
 
@@ -9,8 +12,6 @@ module Assessment
     end
 
     def edit
-      authorize! :update, @assessment
-
       index = task_display_index(@task)
 
       respond_to do |format|
@@ -29,8 +30,6 @@ module Assessment
     end
 
     def cancel
-      authorize! :update, @assessment
-
       index = task_display_index(@task)
 
       respond_to do |format|
@@ -45,8 +44,6 @@ module Assessment
     end
 
     def create
-      authorize! :update, @assessment
-
       @task = @assessment.tasks.build(task_params)
 
       if @task.save
@@ -66,10 +63,8 @@ module Assessment
     end
 
     def reorder
-      authorize! :update, @assessment
-
       task = @assessment.tasks.find(params[:task_id])
-      task.insert_at(params[:position].to_i)
+      task.insert_at(params[:position].to_i.clamp(1, @assessment.tasks.count))
 
       head :ok
     rescue ActiveRecord::RecordNotFound
@@ -77,8 +72,6 @@ module Assessment
     end
 
     def update
-      authorize! :update, @assessment
-
       if @task.update(task_params)
         redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.updated"))
       else
@@ -100,8 +93,6 @@ module Assessment
     end
 
     def destroy
-      authorize! :update, @assessment
-
       if @task.destroy
         redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.deleted"))
       else
@@ -110,6 +101,10 @@ module Assessment
     end
 
     private
+
+      def authorize_assessment_update!
+        authorize! :update, @assessment
+      end
 
       def set_assessment
         @assessment = ::Assessment::Assessment.find_by(id: params[:assessment_id])
@@ -136,8 +131,9 @@ module Assessment
       end
 
       def task_display_index(task)
-        index = @assessment.tasks.order(:position).pluck(:id).index(task.id)
-        index ? index + 1 : task.position
+        return task.position unless task.position
+
+        @assessment.tasks.where(position: ...task.position).count + 1
       end
 
       def redirect_to_dashboard(tab:, notice: nil, alert: nil)

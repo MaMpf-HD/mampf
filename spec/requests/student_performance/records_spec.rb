@@ -30,7 +30,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         FactoryBot.create(:student_performance_record,
                           lecture: lecture, user: user)
         get lecture_student_performance_records_path(lecture)
-        expect(response.body).to include(user.tutorial_name)
+        expect(response.body).to include(CGI.escapeHTML(user.tutorial_name))
       end
 
       it "does not include records from other lectures" do
@@ -39,7 +39,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         FactoryBot.create(:student_performance_record,
                           lecture: other_lecture, user: other_user)
         get lecture_student_performance_records_path(lecture)
-        expect(response.body).not_to include(other_user.tutorial_name)
+        expect(response.body).not_to include(CGI.escapeHTML(other_user.tutorial_name))
       end
 
       it "renders a dash when percentage is unavailable" do
@@ -149,8 +149,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           get lecture_student_performance_records_path(
             lecture, tutorial_id: tutorial.id
           )
-          expect(response.body).to include(member.tutorial_name)
-          expect(response.body).not_to include(non_member.tutorial_name)
+          expect(response.body).to include(CGI.escapeHTML(member.tutorial_name))
+          expect(response.body).not_to include(CGI.escapeHTML(non_member.tutorial_name))
         end
 
         it "ignores tutorial_ids from other lectures" do
@@ -163,8 +163,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             lecture, tutorial_id: other_tutorial.id
           )
 
-          expect(response.body).to include(member.tutorial_name)
-          expect(response.body).to include(non_member.tutorial_name)
+          expect(response.body).to include(CGI.escapeHTML(member.tutorial_name))
+          expect(response.body).to include(CGI.escapeHTML(non_member.tutorial_name))
         end
 
         # These are the people staff have to chase: enrolled, so they show up at
@@ -172,8 +172,8 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         it "filters down to people in no tutorial at all" do
           get lecture_student_performance_records_path(lecture, tutorial_id: "none")
 
-          expect(response.body).to include(non_member.tutorial_name)
-          expect(response.body).not_to include(member.tutorial_name)
+          expect(response.body).to include(CGI.escapeHTML(non_member.tutorial_name))
+          expect(response.body).not_to include(CGI.escapeHTML(member.tutorial_name))
         end
 
         it "does not count a tutorial in another lecture as having one" do
@@ -184,14 +184,14 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
           get lecture_student_performance_records_path(lecture, tutorial_id: "none")
 
-          expect(response.body).to include(non_member.tutorial_name)
+          expect(response.body).to include(CGI.escapeHTML(non_member.tutorial_name))
         end
 
         it "shows everyone when no filter is given" do
           get lecture_student_performance_records_path(lecture)
 
-          expect(response.body).to include(member.tutorial_name)
-          expect(response.body).to include(non_member.tutorial_name)
+          expect(response.body).to include(CGI.escapeHTML(member.tutorial_name))
+          expect(response.body).to include(CGI.escapeHTML(non_member.tutorial_name))
         end
       end
 

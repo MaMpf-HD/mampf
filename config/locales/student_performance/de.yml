@@ -14,7 +14,6 @@ de:
               must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
   student_performance:
     errors:
-      no_lecture: "Veranstaltung nicht gefunden."
       no_record: "Leistungsdatensatz nicht gefunden."
       no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
     records:

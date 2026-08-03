@@ -2,13 +2,12 @@ module StudentPerformance
   # Controller for managing student performance records, including listing,
   # showing details, and recomputing records.
   class RecordsController < ApplicationController
+    include StudentPerformance::LectureScoped
+
     # A lecture member without a tutorial cannot hand anything in, so they read
     # as 0 % — the filter is how staff find them, not a tutorial id.
     NO_TUTORIAL = "none".freeze
 
-    before_action :set_lecture
-    before_action :authorize_lecture
-    before_action :use_lecture_locale
     before_action :set_record, only: :show
 
     rescue_from CanCan::AccessDenied do |exception|
@@ -81,29 +80,12 @@ module StudentPerformance
           .count
       end
 
-      def set_lecture
-        @lecture = Lecture.find_by(id: params[:lecture_id])
-        return if @lecture
-
-        redirect_to root_path,
-                    alert: I18n.t("student_performance.errors.no_lecture")
-      end
-
       def set_record
         @record = @lecture.student_performance_records.find_by(id: params[:id])
         return if @record
 
         redirect_to lecture_student_performance_records_path(@lecture),
                     alert: I18n.t("student_performance.errors.no_record")
-      end
-
-      def authorize_lecture
-        authorize!(:edit, @lecture)
-      end
-
-      def use_lecture_locale
-        locale = @lecture&.locale_with_inheritance || I18n.default_locale
-        I18n.locale = locale
       end
 
       def recompute_single(user_id)

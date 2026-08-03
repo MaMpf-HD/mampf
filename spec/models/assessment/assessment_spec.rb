@@ -7,7 +7,7 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       expect(assessment).to be_valid
       expect(assessment.requires_points).to be(false)
       expect(assessment.requires_submission).to be(false)
-      expect(assessment.results_published?).to be(false)
+      expect(assessment.results_published_at).to be_nil
     end
 
     it "creates a valid assessment with points" do
@@ -20,7 +20,6 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       assessment = FactoryBot.create(:assessment, :published)
       expect(assessment).to be_valid
       expect(assessment.results_published_at).to be_present
-      expect(assessment.results_published?).to be(true)
     end
 
     it "creates a valid assessment with tasks" do
@@ -80,6 +79,20 @@ RSpec.describe(Assessment::Assessment, type: :model) do
           expect(assessment).to be_valid
         end
       end
+    end
+  end
+
+  describe "#results_published?" do
+    it "is false until a publication timestamp is set" do
+      assessment = FactoryBot.create(:assessment)
+
+      expect(assessment.results_published?).to be(false)
+    end
+
+    it "is true once one is" do
+      assessment = FactoryBot.create(:assessment, :published)
+
+      expect(assessment.results_published?).to be(true)
     end
   end
 
@@ -158,20 +171,6 @@ RSpec.describe(Assessment::Assessment, type: :model) do
 
       expect(count_queries { fresh.effective_total_points }).to eq(1)
       expect(fresh.tasks).not_to be_loaded
-    end
-  end
-
-  describe "publication" do
-    let(:assessment) { FactoryBot.create(:assessment) }
-
-    it "is not published by default" do
-      expect(assessment.results_published?).to be(false)
-      expect(assessment.results_published_at).to be_nil
-    end
-
-    it "is published when results_published_at is set" do
-      assessment.update(results_published_at: Time.current)
-      expect(assessment.results_published?).to be(true)
     end
   end
 
