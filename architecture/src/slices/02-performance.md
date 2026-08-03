@@ -73,6 +73,14 @@ next recomputation.
 boolean, a number compared against `threshold` for numeric, a percentage for
 percentage. So the same column carries three different meanings depending on the
 achievement.
+
+Nothing in this slice writes that column. `AchievementsController` manages the
+achievements themselves, `RecordsController` reads and recomputes, and the
+marking table contains no form, button or input. The marks you see in a seeded
+database come from a rake task. Entering them is part of the grading work on
+`muesli/tutor-grading-view` — see [Integration
+Strategy](../features/integration-strategy.md#layer-3-grading--performance-pr-chain),
+where the read-only steps are named as such.
 ~~~
 
 ## What feeds the numbers
@@ -172,7 +180,7 @@ full exemption belongs.
 
 | Screen | What it does |
 |---|---|
-| `student_performance/achievements` (index, form, components) | Create and manage achievements, enter per-student grades |
+| `student_performance/achievements` (index, form, components) | Create and manage achievements; the marking table shows who has been marked, read-only |
 | `student_performance/records` (index, show) | The Performance subtab: computed records, per-student detail |
 | `student_performance/components` | Shared badges and status chips |
 | `assessment/assessments/components` | Overview component gains the Performance and Achievements subtabs |
