@@ -92,11 +92,8 @@ window.Stimulus.register("profile", ProfileController);
 import LectureHighlightsController from "~/lectures/lecture_highlights.controller.js";
 window.Stimulus.register("lecture-highlights", LectureHighlightsController);
 
-import SubmissionSettingsController from "~/assessment/submission_settings.controller.js";
-window.Stimulus.register("assessments--submission-settings", SubmissionSettingsController);
-
-import SettingsController from "~/assessment/settings.controller.js";
-window.Stimulus.register("assessments--settings", SettingsController);
+import DirtyFormController from "~/assessment/dirty_form.controller.js";
+window.Stimulus.register("assessments--dirty-form", DirtyFormController);
 
 import PointsPrecisionController from "~/assessment/points_precision.controller.js";
 window.Stimulus.register("assessments--points-precision", PointsPrecisionController);

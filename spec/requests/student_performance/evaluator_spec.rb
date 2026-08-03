@@ -92,8 +92,8 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
             post bulk_proposals_lecture_student_performance_evaluator_path(
               lecture
             )
-            expect(response.body).to include(passing_user.tutorial_name)
-            expect(response.body).to include(failing_user.tutorial_name)
+            expect(response.body).to include(CGI.escapeHTML(passing_user.tutorial_name))
+            expect(response.body).to include(CGI.escapeHTML(failing_user.tutorial_name))
           end
 
           it "shows passed and failed badges" do
@@ -226,7 +226,7 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
           it "shows newly passed when lowering threshold" do
             post path, params: { preview: { min_percentage: 40 } }
             expect(response).to have_http_status(:success)
-            expect(response.body).to include(borderline_user.tutorial_name)
+            expect(response.body).to include(CGI.escapeHTML(borderline_user.tutorial_name))
           end
 
           it "shows the apply button when threshold differs" do
@@ -258,13 +258,13 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
 
           it "does not include students unaffected by the change" do
             post path, params: { preview: { min_percentage: 40 } }
-            expect(response.body).not_to include(passing_user.tutorial_name)
-            expect(response.body).not_to include(failing_user.tutorial_name)
+            expect(response.body).not_to include(CGI.escapeHTML(passing_user.tutorial_name))
+            expect(response.body).not_to include(CGI.escapeHTML(failing_user.tutorial_name))
           end
 
           it "shows newly failed when raising threshold" do
             post path, params: { preview: { min_percentage: 65 } }
-            expect(response.body).to include(passing_user.tutorial_name)
+            expect(response.body).to include(CGI.escapeHTML(passing_user.tutorial_name))
             expect(response.body).to include(
               I18n.t("student_performance.evaluator.status.failed")
             )
@@ -325,7 +325,7 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
         it "shows affected students when lowering threshold" do
           post path,
                params: { preview: { min_points_absolute: 50 } }
-          expect(response.body).to include(borderline_user.tutorial_name)
+          expect(response.body).to include(CGI.escapeHTML(borderline_user.tutorial_name))
         end
 
         it "shows the apply button for changed threshold" do
@@ -454,7 +454,7 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
 
           it "shows the student name" do
             get path, params: { record_id: record.id }
-            expect(response.body).to include(student.tutorial_name)
+            expect(response.body).to include(CGI.escapeHTML(student.tutorial_name))
           end
 
           it "shows the passed badge" do

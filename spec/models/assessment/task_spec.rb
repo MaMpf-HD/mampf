@@ -248,5 +248,20 @@ RSpec.describe(Assessment::Task, type: :model) do
 
       expect(participation.reload).to be_reviewed
     end
+
+    it "reopens them all in one statement" do
+      3.times do
+        FactoryBot.create(:assessment_participation, :reviewed, assessment: assessment)
+      end
+
+      updates = 0
+      subscription = ActiveSupport::Notifications.subscribe("sql.active_record") do |*, payload|
+        updates += 1 if payload[:sql].include?('UPDATE "assessment_participations"')
+      end
+      add_a_task
+      ActiveSupport::Notifications.unsubscribe(subscription)
+
+      expect(updates).to eq(1)
+    end
   end
 end

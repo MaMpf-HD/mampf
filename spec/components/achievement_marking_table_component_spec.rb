@@ -45,11 +45,15 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
                grade_text: nil)
       end
 
+      # Escaped, because Faker hands out names with apostrophes often enough
+      # for a raw comparison to fail on some runs and not others.
       it "renders a table with all participations" do
         render_inline(component)
-        expect(rendered_content).to include(passed.user.tutorial_name)
-        expect(rendered_content).to include(failed.user.tutorial_name)
-        expect(rendered_content).to include(unmarked.user.tutorial_name)
+
+        [passed, failed, unmarked].each do |participation|
+          expect(rendered_content)
+            .to include(CGI.escapeHTML(participation.user.tutorial_name))
+        end
       end
 
       it "shows check icon for pass" do

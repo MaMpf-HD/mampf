@@ -79,6 +79,7 @@
                 <%= assessment.short_title %>
 
                 <% awaiting = @awaiting_marking[assessment.id].to_i %>
+
                 <% if awaiting.positive? %>
                   <% label = t("student_performance.records.index.awaiting_marking",
                                count: awaiting) %>

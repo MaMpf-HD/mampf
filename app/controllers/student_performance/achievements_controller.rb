@@ -1,8 +1,7 @@
 module StudentPerformance
   class AchievementsController < ApplicationController
-    before_action :set_lecture
-    before_action :authorize_lecture
-    before_action :use_lecture_locale
+    include StudentPerformance::LectureScoped
+
     before_action :set_achievement, only: [:show, :update, :destroy]
 
     rescue_from CanCan::AccessDenied do |exception|
@@ -189,22 +188,6 @@ module StudentPerformance
     end
 
     private
-
-      def set_lecture
-        @lecture = Lecture.find_by(id: params[:lecture_id])
-        return if @lecture
-
-        redirect_to root_path,
-                    alert: I18n.t("controllers.no_lecture")
-      end
-
-      def authorize_lecture
-        authorize!(:edit, @lecture)
-      end
-
-      def use_lecture_locale
-        I18n.locale = @lecture&.locale_with_inheritance || I18n.default_locale
-      end
 
       def set_achievement
         @achievement = @lecture.achievements.find_by(id: params[:id])

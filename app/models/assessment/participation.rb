@@ -1,6 +1,6 @@
-# Represents a student's participation in an assessment. It tracks the student's
-# submission status, grade, and other relevant information.
 module Assessment
+  # One student's row in a gradebook: whether they turned up, what they scored
+  # and what they were given for it.
   class Participation < ApplicationRecord
     belongs_to :assessment, class_name: "Assessment::Assessment",
                             inverse_of: :assessment_participations
@@ -53,13 +53,12 @@ module Assessment
 
     private
 
+      # Nothing may be marked before the assessable says grading is open. Leaving
+      # `pending` counts as marking even when no grade is written with it, which
+      # is why the status is checked separately from the attribute list.
       def grading_lifecycle_must_be_open
-        # Allow new/pending changes to pass, or modifications when grading is explicitly open.
         return if assessment&.grading_open?
 
-        # An array intersection checks if any of the critical grading attributes were modified.
-        # "status_changed?(from: 'pending')" is evaluated manually, since `changes.keys` only
-        # checks if it changed at all.
         changed_grading_attributes =
           changes.keys.intersect?(["grade_numeric", "grade_text",
                                    "points_total", "grader_id", "graded_at"])

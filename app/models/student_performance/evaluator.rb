@@ -7,12 +7,18 @@ module StudentPerformance
 
     attr_reader :rule
 
+    # `rule` is a `Rule` or the duck-typed `PreviewRule`: anything answering
+    # `min_percentage`, `min_points_absolute` — at most one of them set — and
+    # `required_achievements`. The threshold mode is deliberately not part of
+    # that contract, since the preview has none.
     def initialize(rule)
       @rule = rule
     end
 
     def evaluate(record)
-      return Result.new(proposed_status: :failed, details: {}) unless record
+      # Not `failed`: no record is the absence of evidence, not evidence of
+      # failure, and quietly refusing someone their exam is the worse mistake.
+      raise(ArgumentError, "no performance record to evaluate") unless record
 
       points = points_status(record)
       achievements = achievements_status(record)
