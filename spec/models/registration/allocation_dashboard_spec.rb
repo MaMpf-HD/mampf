@@ -350,21 +350,63 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
     end
   end
 
-  describe "#performance_lecture" do
-    it "returns the first configured lecture, not an arbitrary match" do
-      lower_id_lecture = create(:lecture, :with_organizational_stuff)
-      higher_id_lecture = create(:lecture, :with_organizational_stuff)
+  describe "#performance_lectures" do
+    it "returns every configured lecture, not just the first" do
+      first_lecture = create(:lecture, :with_organizational_stuff)
+      second_lecture = create(:lecture, :with_organizational_stuff)
 
       create(:registration_policy, :student_performance,
              registration_campaign: campaign, active: true, phase: :finalization,
              config: { "lecture_ids" =>
-                         [higher_id_lecture.id.to_s, lower_id_lecture.id.to_s] })
+                         [second_lecture.id.to_s, first_lecture.id.to_s] })
 
-      expect(dashboard.performance_lecture).to eq(higher_id_lecture)
+      expect(dashboard.performance_lectures)
+        .to contain_exactly(first_lecture, second_lecture)
     end
 
-    it "is nil without a student_performance finalization policy" do
-      expect(dashboard.performance_lecture).to be_nil
+    it "is empty without a student_performance finalization policy" do
+      expect(dashboard.performance_lectures).to be_empty
+    end
+  end
+
+  describe "#violation_report" do
+    let(:campaign) do
+      create(:registration_campaign, :with_items, campaignable: lecture,
+                                                  status: :draft)
+    end
+    let(:student) { create(:confirmed_user) }
+    let(:passed_lecture) { create(:lecture, :with_organizational_stuff) }
+    let(:outstanding_lecture) { create(:lecture, :with_organizational_stuff) }
+
+    before do
+      create(:registration_policy, :student_performance, :for_finalization,
+             registration_campaign: campaign, active: true,
+             config: { "lecture_ids" => [passed_lecture.id.to_s,
+                                         outstanding_lecture.id.to_s] })
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             user: student)
+      create(:student_performance_certification, :passed,
+             lecture: passed_lecture, user: student,
+             certified_by: create(:confirmed_user))
+      create(:student_performance_certification, :pending,
+             lecture: outstanding_lecture, user: student)
+      campaign.update!(status: :closed)
+    end
+
+    # The pass covers one of the two lectures the policy names, and the guard
+    # blocks on the other, where the decision is still pending. Reading only the
+    # first configured lecture would find the pass and report no evidence at all.
+    it "reports the lecture that is still outstanding, not the one passed" do
+      entry = dashboard.violation_report.performance_entries.first
+
+      expect(entry[:user_id]).to eq(student.id)
+      expect(entry[:status_key]).to eq(:pending)
+    end
+
+    it "counts the student once" do
+      expect(dashboard.violation_report.user_count).to eq(1)
     end
   end
 

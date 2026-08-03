@@ -11,7 +11,7 @@ class ExamRegistrationTabComponent < ViewComponent::Base
   end
 
   def frame_id
-    @frame_id ||= "exam_#{exam.id}_registration"
+    @frame_id ||= Registration::Campaign.exam_registration_frame_id(exam)
   end
 
   def button_params
@@ -63,7 +63,7 @@ class ExamRegistrationTabComponent < ViewComponent::Base
       allocation_workspace_id: allocation_workspace_id,
       show_draft_badge: campaign.draft?,
       show_registration_status_badge: !campaign.draft? && !campaign.completed?,
-      finalized_on: campaign.completed? ? campaign.updated_at : nil,
+      finalized_on: campaign.finalized_at,
       registered_count: registered_count,
       show_open_action: campaign.draft?,
       show_close_action: campaign.open?,

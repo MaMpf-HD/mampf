@@ -43,8 +43,9 @@ RSpec.describe(Registration::Registerable) do
     end
 
     models.each do |model|
-      expect(model.exclusive_assignment?).to eq(model == Tutorial),
-                                             "#{model}.exclusive_assignment? is wrong"
+      expect(model.displaces_sibling_assignment?).to eq(model == Tutorial),
+                                                     "#{model}.displaces_sibling_assignment? " \
+                                                     "is wrong"
     end
   end
 end

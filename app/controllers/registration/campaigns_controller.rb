@@ -1,5 +1,6 @@
 module Registration
   class CampaignsController < ApplicationController
+    include Registration::ExamFrameTargeting
     include Registration::RosterStreamRefreshable
 
     before_action :set_lecture, only: [:index, :new, :create]
@@ -310,19 +311,14 @@ module Registration
         end
       end
 
-      def target_frame_id
-        params[:frame_id].presence || "campaigns_container"
-      end
-
-      def exam_campaign_context?
-        target_frame_id != "campaigns_container" &&
-          @campaign.exam_campaign?
-      end
-
+      # The three targets are derived from the exam, not taken from
+      # `params[:frame_id]`: a client naming "exam-settings" there would have the
+      # first and second replace fight over one element, and the loser's render
+      # is silently discarded.
       def render_exam_update(exam: @campaign.exam, status: :ok)
         render turbo_stream: [
           turbo_stream.replace(
-            target_frame_id,
+            Registration::Campaign.exam_registration_frame_id(exam),
             partial: "exams/registration",
             locals: { exam: exam, lecture: exam.lecture }
           ),
@@ -332,7 +328,7 @@ module Registration
             locals: { exam: exam, lecture: exam.lecture }
           ),
           turbo_stream.replace(
-            "exam_#{exam.id}_registration_tab_label",
+            Registration::Campaign.exam_registration_tab_label_frame_id(exam),
             partial: "exams/registration_tab_label",
             locals: { exam: exam }
           ),

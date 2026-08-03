@@ -589,13 +589,12 @@ background jobs) that are better reviewed together:
   - `Assessment::Participation`, `Assessment::TaskPoint`: per-user recompute
   - `Achievement`, `Assessment::Assessment`, `Assessment::Task`: full-lecture recompute
   - `LectureMembership`: create record on join, delete on leave
-- Jobs:
-  - `CertificationStaleCheckJob`: flags stale certifications when
-    Records change.
+- Jobs: none. Records are recomputed synchronously by the callbacks above, and
+  staleness is derived by the `Certification.stale` scope rather than stored.
 - Refs: [ComputationService](05-student-performance.md#lectureperformancecomputationservice-service),
   [Evaluator](05-student-performance.md#lectureperformanceevaluator-teacher-facing-proposal-generator),
   [Background jobs](09-integrity-and-invariants.md#recommended-background-jobs)
-- Acceptance: ComputationService computes points and achievements; upserts Records; handles missing data gracefully; works with points-only rules (no achievements). Evaluator generates proposals; does NOT create Certifications. `after_commit` callbacks keep Records current on grade/enrollment changes. Stale certifications flagged for teacher review.
+- Acceptance: ComputationService computes points and achievements; upserts Records; handles missing data gracefully; works with points-only rules (no achievements). Evaluator generates proposals; does NOT create Certifications. `after_commit` callbacks keep Records current on grade/enrollment changes. Stale certifications surface for teacher review.
 ```
 
 ```admonish example "PR-10.3 — Read-only UI (Records + Evaluator + Rules read-only)"

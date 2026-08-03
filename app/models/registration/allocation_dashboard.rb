@@ -1,5 +1,16 @@
 module Registration
   class AllocationDashboard
+    PERFORMANCE_POLICY = "student_performance".freeze
+    # Least evidence first: someone with nothing on file is the likeliest to be
+    # a mistake, someone who failed the likeliest to be correct.
+    PERFORMANCE_STATUS_ORDER = { no_cert: 0, pending: 1, failed: 2 }.freeze
+
+    ViolationReport = Struct.new(:user_count, :policy_counts,
+                                 :configuration_blockers, :user_blockers,
+                                 :performance_entries, :performance_status_counts,
+                                 :additional_blockers, :other_entries,
+                                 keyword_init: true)
+
     attr_reader :campaign
 
     def initialize(campaign)
@@ -69,13 +80,17 @@ module Registration
         @campaign.registration_policies.active.for_phase(:finalization)
     end
 
-    def performance_lecture
-      return @performance_lecture if defined?(@performance_lecture)
+    # All of them, not the first: the policy demands a pass in every lecture it
+    # names, so evidence about one of them says nothing about the rest.
+    def performance_lectures
+      return @performance_lectures if defined?(@performance_lectures)
 
-      perf_policy = finalization_policies.find { |p| p.kind == "student_performance" }
-      @performance_lecture = perf_policy&.lecture_ids&.then do |lecture_ids|
-        Lecture.find_by(id: lecture_ids.first)
-      end
+      perf_policy = finalization_policies.find { |p| p.kind == PERFORMANCE_POLICY }
+      @performance_lectures = perf_policy ? Lecture.where(id: perf_policy.lecture_ids).to_a : []
+    end
+
+    def violation_report
+      @violation_report ||= build_violation_report
     end
 
     def projected_auto_rejection_count
@@ -132,6 +147,86 @@ module Registration
 
     private
 
+      def build_violation_report
+        violations = blocker_violations.uniq { |v| [v[:user_id], v[:policy]] }
+        grouped = violations.group_by { |v| v[:user_id] }
+        performance = performance_violation_entries(grouped)
+
+        ViolationReport.new(
+          user_count: grouped.size,
+          policy_counts: violations.group_by { |v| v[:policy] }.transform_values(&:size),
+          configuration_blockers: violations.any? { |v| configuration_blocker?(v) },
+          user_blockers: violations.any? do |v|
+            v[:blocker_kind] == Registration::ScreeningService::BLOCKER_KIND_USER
+          end,
+          performance_entries: performance,
+          performance_status_counts: performance.group_by { |e| e[:status_key] }
+                                                .transform_values(&:size),
+          additional_blockers: performance.any? { |e| e[:other_violations].present? },
+          other_entries: other_violation_entries(grouped)
+        )
+      end
+
+      def performance_violation_entries(grouped)
+        certifications = certifications_by_user(grouped.keys)
+
+        entries = grouped.filter_map do |user_id, violations|
+          next unless violations.any? { |v| v[:policy] == PERFORMANCE_POLICY }
+
+          {
+            user_id: user_id,
+            first: violations.first,
+            status_key: performance_status_for(certifications[user_id].to_a),
+            other_violations: violations.reject { |v| v[:policy] == PERFORMANCE_POLICY },
+            can_defer: violations.none? { |v| configuration_blocker?(v) }
+          }
+        end
+
+        entries.sort_by do |entry|
+          [PERFORMANCE_STATUS_ORDER.fetch(entry[:status_key]), entry[:first][:email].to_s]
+        end
+      end
+
+      def other_violation_entries(grouped)
+        entries = grouped.filter_map do |user_id, violations|
+          next if violations.any? { |v| v[:policy] == PERFORMANCE_POLICY }
+
+          {
+            user_id: user_id,
+            first: violations.first,
+            violations: violations,
+            can_defer: violations.none? { |v| configuration_blocker?(v) }
+          }
+        end
+
+        entries.sort_by { |entry| entry[:first][:email].to_s }
+      end
+
+      def certifications_by_user(user_ids)
+        StudentPerformance::Certification
+          .where(lecture_id: performance_lectures.map(&:id), user_id: user_ids)
+          .group_by(&:user_id)
+      end
+
+      # What the handler blocked on: the lectures still without a pass. A pass
+      # elsewhere in the list cannot speak for them.
+      def performance_status_for(certifications)
+        passed_ids = certifications.select(&:passed?).map(&:lecture_id)
+        outstanding_ids = performance_lectures.map(&:id) - passed_ids
+        statuses = certifications.select { |c| outstanding_ids.include?(c.lecture_id) }
+                                 .map { |c| c.status.to_sym }
+
+        return :failed if statuses.include?(:failed)
+        return :pending if statuses.include?(:pending)
+
+        :no_cert
+      end
+
+      def configuration_blocker?(violation)
+        violation[:blocker_kind] ==
+          Registration::ScreeningService::BLOCKER_KIND_CONFIGURATION
+      end
+
       def current_registration_state_summary_items
         items = [
           {
@@ -182,19 +277,18 @@ module Registration
         return [] if @campaign.completed?
         return [] unless @campaign.campaignable.is_a?(Lecture)
 
-        registerable_class = first_registerable_class
-        return [] unless registerable_class&.exclusive_assignment?
+        classes = displacing_registerable_classes
+        return [] if classes.empty?
 
         registered_user_ids = @campaign.user_registrations.pluck(:user_id)
         return [] if registered_user_ids.empty?
 
-        lecture = @campaign.campaignable
-        siblings = lecture.public_send(registerable_class.model_name.plural)
-
         allocated_map = {}
-        siblings.find_each do |sibling|
-          (sibling.allocated_user_ids & registered_user_ids).each do |uid|
-            allocated_map[uid] = sibling
+        classes.each do |registerable_class|
+          siblings(registerable_class).find_each do |sibling|
+            (sibling.allocated_user_ids & registered_user_ids).each do |uid|
+              allocated_map[uid] = sibling
+            end
           end
         end
 
@@ -214,11 +308,30 @@ module Registration
         end
       end
 
-      def first_registerable_class
-        type_name = @campaign.registration_items.pick(:registerable_type)
-        type_name&.constantize
-      rescue NameError
-        nil
+      # Every type in the campaign, not one picked at random: a campaign holding
+      # both tutorials and talks would otherwise have half its conflicts
+      # scanned, or none, depending on which row came back first.
+      def displacing_registerable_classes
+        @campaign.registration_items
+                 .distinct
+                 .pluck(:registerable_type)
+                 .filter_map do |type_name|
+          klass = type_name&.safe_constantize
+          next unless klass.respond_to?(:displaces_sibling_assignment?)
+          next unless klass.displaces_sibling_assignment?
+
+          klass
+        end
+      end
+
+      # A registerable the lecture has no association for cannot have siblings
+      # to displace.
+      def siblings(registerable_class)
+        association = registerable_class.model_name.plural
+        lecture = @campaign.campaignable
+        return registerable_class.none unless lecture.respond_to?(association)
+
+        lecture.public_send(association)
       end
 
       def calculate_demand_per_item

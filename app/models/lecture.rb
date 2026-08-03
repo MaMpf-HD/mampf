@@ -1076,8 +1076,13 @@ class Lecture < ApplicationRecord
     # feature off hides them but harms nobody. A registration policy is an active
     # dependency — it would keep admitting or refusing students on certifications
     # nobody maintains any more — so only that blocks.
+    # A completed campaign is the exception: it has allocated its seats and is
+    # never screened again, so it would block for good with nothing left to undo.
     def exam_eligibility_can_be_disabled
       blocking = Registration::Policy.student_performance_for_lecture(id)
+                                     .joins(:registration_campaign)
+                                     .merge(Registration::Campaign
+                                              .where.not(status: :completed))
                                      .includes(registration_campaign: :campaignable)
       return if blocking.empty?
 

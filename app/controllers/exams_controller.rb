@@ -104,6 +104,9 @@ class ExamsController < ApplicationController
   def update
     authorize! :update, @exam
     reopen_after_deadline_fix = params[:reopen_after_deadline_fix].present?
+    # Set before validation, not only in the failure branch: the deadline rule
+    # reads it to decide whether a closed campaign may keep a past date.
+    @exam.reopen_after_deadline_fix = reopen_after_deadline_fix
     update_params = exam_update_params(reopen_after_deadline_fix: reopen_after_deadline_fix)
 
     respond_to do |format|
@@ -137,7 +140,6 @@ class ExamsController < ApplicationController
         end
       else
         format.turbo_stream do
-          @exam.reopen_after_deadline_fix = params[:reopen_after_deadline_fix].present?
           if ["settings", "registration"].include?(params[:tab])
             render turbo_stream: turbo_stream.update(
               "exams_container",

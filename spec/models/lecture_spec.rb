@@ -530,5 +530,21 @@ RSpec.describe(Lecture, type: :model) do
 
       expect(lecture.update(uses_exam_eligibility: false)).to be(true)
     end
+
+    it "is not blocked by a policy whose campaign has completed" do
+      policy = create(:registration_policy, :student_performance,
+                      config: { "lecture_ids" => [lecture.id.to_s] })
+      policy.registration_campaign.update!(status: :completed)
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+    end
+
+    it "is blocked by a policy whose campaign has only closed" do
+      policy = create(:registration_policy, :student_performance,
+                      config: { "lecture_ids" => [lecture.id.to_s] })
+      policy.registration_campaign.update!(status: :closed)
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+    end
   end
 end

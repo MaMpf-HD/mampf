@@ -1,5 +1,7 @@
 module Registration
   class PoliciesController < ApplicationController
+    include Registration::ExamFrameTargeting
+
     helper RegistrationPolicyHelper
     before_action :set_campaign
     before_action :set_locale
@@ -135,15 +137,6 @@ module Registration
         end
 
         registration_campaign_path(@campaign, anchor: "policies-tab")
-      end
-
-      def target_frame_id
-        params[:frame_id].presence || "campaigns_container"
-      end
-
-      def exam_campaign_context?
-        target_frame_id != "campaigns_container" &&
-          @campaign.exam_campaign?
       end
 
       def render_exam_update(partial)
