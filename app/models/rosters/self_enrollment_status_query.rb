@@ -5,7 +5,9 @@ module Rosters
   # of how many lectures or groups the page holds — the search renders many
   # cards and paginates on scroll, so per-card or per-group lookups would N+1.
   class SelfEnrollmentStatusQuery
-    # The group types a lecture can be joined through.
+    # The group types a lecture can be joined through. Listing them in Rosterable
+    # would autoload these models while they are including it; its TYPE_CLASS_MAP
+    # wraps its classes in lambdas for the same reason.
     ENROLLABLE_TYPES = [Tutorial, Talk, Cohort].freeze
 
     def initialize(user, lecture_ids)
