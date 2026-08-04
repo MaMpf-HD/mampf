@@ -5,13 +5,8 @@ module Rosters
   # of how many lectures or groups the page holds — the search renders many
   # cards and paginates on scroll, so per-card or per-group lookups would N+1.
   class SelfEnrollmentStatusQuery
-    # Per rosterable type: how to scope it to a lecture page.
-    ENROLLABLE_SOURCES = [
-      { klass: Tutorial, page_scope: ->(ids) { { lecture_id: ids } } },
-      { klass: Talk, page_scope: ->(ids) { { lecture_id: ids } } },
-      { klass: Cohort,
-        page_scope: ->(ids) { { context_type: "Lecture", context_id: ids } } }
-    ].freeze
+    # The group types a lecture can be joined through.
+    ENROLLABLE_TYPES = [Tutorial, Talk, Cohort].freeze
 
     def initialize(user, lecture_ids)
       @user = user
@@ -36,8 +31,8 @@ module Rosters
     def enrollable_lecture_ids
       return Set.new if @lecture_ids.empty?
 
-      ENROLLABLE_SOURCES.each_with_object(Set.new) do |source, ids|
-        collect_enrollable(source, ids)
+      ENROLLABLE_TYPES.each_with_object(Set.new) do |klass, ids|
+        collect_enrollable(klass, ids)
       end
     end
 
@@ -49,27 +44,24 @@ module Rosters
       end
 
       def talk_member_lecture_ids
-        Talk.where(lecture_id: @lecture_ids)
+        Talk.for_lectures(@lecture_ids)
             .joins(:speaker_talk_joins)
             .where(speaker_talk_joins: { speaker_id: @user.id })
             .distinct.pluck(:lecture_id)
       end
 
       def cohort_member_lecture_ids
-        Cohort.where(context_type: "Lecture", context_id: @lecture_ids)
+        Cohort.for_lectures(@lecture_ids)
               .joins(:cohort_memberships)
               .where(cohort_memberships: { user_id: @user.id })
               .distinct.pluck(:context_id)
       end
 
-      def collect_enrollable(source, ids)
-        candidates = source[:klass]
-                     .self_addable
-                     .where(source[:page_scope].call(@lecture_ids))
-                     .to_a
+      def collect_enrollable(klass, ids)
+        candidates = klass.for_lectures(@lecture_ids).self_addable.to_a
         return if candidates.empty?
 
-        counts = member_counts(source[:klass], candidates)
+        counts = member_counts(klass, candidates)
 
         candidates.each do |rosterable|
           # locked? short-circuits on skip_campaigns, which self-materialization

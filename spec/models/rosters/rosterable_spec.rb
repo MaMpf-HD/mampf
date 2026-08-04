@@ -311,6 +311,38 @@ RSpec.describe(Rosters::Rosterable) do
     end
   end
 
+  describe ".for_lectures" do
+    let(:lecture) { create(:lecture) }
+    let(:other_lecture) { create(:lecture) }
+
+    it "finds tutorials by their lecture" do
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:tutorial, lecture: other_lecture)
+
+      expect(Tutorial.for_lectures([lecture.id])).to contain_exactly(tutorial)
+    end
+
+    it "finds cohorts by their lecture context" do
+      cohort = create(:cohort, context: lecture)
+      create(:cohort, context: other_lecture)
+
+      expect(Cohort.for_lectures([lecture.id])).to contain_exactly(cohort)
+    end
+
+    it "does not mistake a non-lecture cohort context for a lecture" do
+      course = create(:course)
+      create(:cohort, context: course)
+
+      expect(Cohort.for_lectures([course.id])).to be_empty
+    end
+
+    it "finds lectures by their own id" do
+      create(:lecture)
+
+      expect(Lecture.for_lectures([lecture.id])).to contain_exactly(lecture)
+    end
+  end
+
   describe "capacity checks" do
     let(:rosterable) { create(:tutorial) }
 

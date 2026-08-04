@@ -146,6 +146,9 @@ class Lecture < ApplicationRecord
 
   scope :seminar, -> { where(sort: ["seminar", "oberseminar", "proseminar"]) }
 
+  # A lecture is its own rosterable, unlike tutorials, talks and cohorts.
+  scope :for_lectures, ->(lectures) { where(id: lectures) }
+
   include PgSearch::Model
 
   pg_search_scope :search_by_title,

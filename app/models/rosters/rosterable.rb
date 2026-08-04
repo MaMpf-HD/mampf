@@ -60,6 +60,9 @@ module Rosters
 
       scope :self_addable, -> { where(self_materialization_mode: SELF_ADD_MODES) }
 
+      # How this rosterable hangs off a lecture. Cohort and Lecture override it.
+      scope :for_lectures, ->(lectures) { where(lecture_id: lectures) }
+
       before_validation :enforce_consistency_between_modes
       validate :validate_skip_campaigns_switch
       validate :validate_self_materialization_switch
