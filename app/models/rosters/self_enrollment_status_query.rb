@@ -5,8 +5,6 @@ module Rosters
   # of how many lectures or groups the page holds — the search renders many
   # cards and paginates on scroll, so per-card or per-group lookups would N+1.
   class SelfEnrollmentStatusQuery
-    SELF_ADD_MODES = [:add_only, :add_and_remove].freeze
-
     # Per rosterable type: how to scope it to a lecture page.
     ENROLLABLE_SOURCES = [
       { klass: Tutorial, page_scope: ->(ids) { { lecture_id: ids } } },
@@ -66,8 +64,8 @@ module Rosters
 
       def collect_enrollable(source, ids)
         candidates = source[:klass]
+                     .self_addable
                      .where(source[:page_scope].call(@lecture_ids))
-                     .where(self_materialization_mode: SELF_ADD_MODES)
                      .to_a
         return if candidates.empty?
 
@@ -85,7 +83,6 @@ module Rosters
 
       # One grouped COUNT per type instead of rosterable.full?'s per-record
       # count. Keep the capacity check in sync with Rosters::Rosterable#full?.
-
       def member_counts(klass, candidates)
         klass.where(id: candidates.map(&:id))
              .joins(candidates.first.roster_association_name)

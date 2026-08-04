@@ -22,6 +22,11 @@ module Rosters
       add_and_remove: 3
     }.freeze
 
+    # Self-service subsets of the modes above. SELF_ADD_MODES is also what the
+    # self_addable scope queries, so predicate and SQL cannot drift apart.
+    SELF_ADD_MODES = [:add_only, :add_and_remove].freeze
+    SELF_REMOVE_MODES = [:remove_only, :add_and_remove].freeze
+
     def self.class_for(type)
       TYPE_CLASS_MAP[type]&.call
     end
@@ -52,6 +57,8 @@ module Rosters
       end
 
       enum :self_materialization_mode, SELF_MATERIALIZATION_MODES, prefix: true
+
+      scope :self_addable, -> { where(self_materialization_mode: SELF_ADD_MODES) }
 
       before_validation :enforce_consistency_between_modes
       validate :validate_skip_campaigns_switch
@@ -96,8 +103,7 @@ module Rosters
     end
 
     def config_allow_self_add?
-      self_materialization_mode_add_only? ||
-        self_materialization_mode_add_and_remove?
+      SELF_ADD_MODES.include?(self_materialization_mode.to_sym)
     end
 
     # guard for self-assignment possibility
@@ -110,8 +116,7 @@ module Rosters
     end
 
     def config_allow_self_remove?
-      self_materialization_mode_remove_only? ||
-        self_materialization_mode_add_and_remove?
+      SELF_REMOVE_MODES.include?(self_materialization_mode.to_sym)
     end
 
     # guard for self-removal possibility
