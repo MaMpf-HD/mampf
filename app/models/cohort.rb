@@ -22,6 +22,12 @@ class Cohort < ApplicationRecord
     context if context.is_a?(Lecture)
   end
 
+  # Like #lecture, but without loading the context — callers that only need the
+  # id are often iterating over many cohorts.
+  def lecture_id
+    context_id if context_type == "Lecture"
+  end
+
   def registration_title
     title
   end

@@ -82,7 +82,7 @@ module Rosters
           next if rosterable.locked?
           next if rosterable_full?(rosterable, counts[rosterable.id])
 
-          ids << lecture_id_for(rosterable)
+          ids << rosterable.lecture_id
         end
       end
 
@@ -97,10 +97,6 @@ module Rosters
 
       def rosterable_full?(rosterable, member_count)
         rosterable.capacity.present? && (member_count || 0) >= rosterable.capacity
-      end
-
-      def lecture_id_for(rosterable)
-        rosterable.is_a?(Cohort) ? rosterable.context_id : rosterable.lecture_id
       end
   end
 end
