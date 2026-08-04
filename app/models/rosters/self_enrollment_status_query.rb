@@ -64,15 +64,34 @@ module Rosters
         return if candidates.empty?
 
         counts = member_counts(klass, candidates)
+        locked = locked_ids(klass, candidates)
 
         candidates.each do |rosterable|
-          # locked? short-circuits on skip_campaigns, which self-materialization
-          # always sets, so this issues no query for these candidates.
-          next if rosterable.locked?
+          next if locked.include?(rosterable.id)
           next if rosterable.full_for_count?(counts[rosterable.id] || 0)
 
           ids << rosterable.lecture_id
         end
+      end
+
+      # locked? asks per record whether a completed campaign exists. Enabling
+      # self-enrollment normally sets skip_campaigns, and those are never
+      # locked — but a group that outlived a campaign can keep it unset, so
+      # answer for the whole batch instead of trusting that.
+      def locked_ids(klass, candidates)
+        managed = candidates.select(&:campaign_managed?)
+        return Set.new if managed.empty?
+
+        completed = Registration::Campaign
+                    .joins(:registration_items)
+                    .where(status: :completed,
+                           registration_items: {
+                             registerable_type: klass.name,
+                             registerable_id: managed.map(&:id)
+                           })
+                    .pluck("registration_items.registerable_id")
+
+        managed.to_set(&:id) - completed
       end
 
       # One grouped COUNT per type instead of rosterable.full?'s per-record

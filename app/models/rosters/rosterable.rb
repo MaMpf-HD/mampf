@@ -75,15 +75,17 @@ module Rosters
       !in_campaign? && roster_empty?
     end
 
+    # Whether campaigns, not manual edits, decide this roster. Models without
+    # skip_campaigns (e.g. Lecture) are not campaign-managed.
+    def campaign_managed?
+      respond_to?(:skip_campaigns) && !skip_campaigns?
+    end
+
     # Checks if the roster is locked for manual modifications.
-    # Models without skip_campaigns (e.g., Lecture) are never locked.
     # A roster is locked if campaigns are NOT skipped AND no campaign
     # has been completed yet.
     def locked?
-      return false unless respond_to?(:skip_campaigns)
-      return false if skip_campaigns?
-
-      !in_completed_campaign?
+      campaign_managed? && !in_completed_campaign?
     end
 
     # Whether holding a slot in this rosterable precludes holding another

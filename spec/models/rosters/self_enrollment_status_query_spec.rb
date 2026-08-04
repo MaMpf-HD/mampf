@@ -108,5 +108,49 @@ RSpec.describe(Rosters::SelfEnrollmentStatusQuery) do
       # batched counts keep it flat (candidate load + grouped count per type)
       expect(queries).to be <= 6
     end
+
+    context "with groups that did not skip campaigns" do
+      # Opening a group for self-enrollment usually sets skip_campaigns, but a
+      # group that outlived a completed campaign keeps it unset.
+      def post_campaign_lecture
+        group_lecture = create(:lecture)
+        campaign = create(:registration_campaign, :completed,
+                          campaignable: group_lecture)
+        campaign.registration_items.each do |item|
+          item.registerable.update!(self_materialization_mode: :add_only)
+        end
+        group_lecture
+      end
+
+      it "includes a lecture whose group outlived a completed campaign" do
+        group_lecture = post_campaign_lecture
+
+        expect(described_class.new(user, [group_lecture.id]).enrollable_lecture_ids)
+          .to contain_exactly(group_lecture.id)
+      end
+
+      it "excludes a lecture whose group is still awaiting its campaign" do
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        campaign.registration_items.each do |item|
+          # the model refuses this combination, which is what we want to prove
+          # the query does not rely on
+          item.registerable
+              .update_column(:self_materialization_mode, 1) # rubocop:disable Rails/SkipsModelValidations
+        end
+
+        expect(query.enrollable_lecture_ids).to be_empty
+      end
+
+      it "stays bounded instead of asking each group for its campaign" do
+        lectures = Array.new(4) { post_campaign_lecture }
+        wide_query = described_class.new(user, lectures.map(&:id))
+
+        queries = count_queries { wide_query.enrollable_lecture_ids }
+
+        expect(wide_query.enrollable_lecture_ids).to match_array(lectures.map(&:id))
+        # one campaign lookup per type, not one per group
+        expect(queries).to be <= 9
+      end
+    end
   end
 end

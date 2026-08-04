@@ -14,6 +14,20 @@ RSpec.describe(Rosters::Rosterable) do
     end
   end
 
+  describe "#campaign_managed?" do
+    it "is false for a rosterable that skips campaigns" do
+      expect(create(:tutorial, skip_campaigns: true)).not_to be_campaign_managed
+    end
+
+    it "is true for a rosterable left to the campaigns" do
+      expect(create(:tutorial, skip_campaigns: false)).to be_campaign_managed
+    end
+
+    it "is false for a lecture, which has no skip_campaigns" do
+      expect(create(:lecture)).not_to be_campaign_managed
+    end
+  end
+
   describe "#locked?" do
     let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 
