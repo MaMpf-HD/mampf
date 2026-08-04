@@ -75,23 +75,19 @@ module Rosters
           # locked? short-circuits on skip_campaigns, which self-materialization
           # always sets, so this issues no query for these candidates.
           next if rosterable.locked?
-          next if rosterable_full?(rosterable, counts[rosterable.id])
+          next if rosterable.full_for_count?(counts[rosterable.id] || 0)
 
           ids << rosterable.lecture_id
         end
       end
 
       # One grouped COUNT per type instead of rosterable.full?'s per-record
-      # count. Keep the capacity check in sync with Rosters::Rosterable#full?.
+      # count. Rosterables with an empty roster are absent from the result.
       def member_counts(klass, candidates)
         klass.where(id: candidates.map(&:id))
              .joins(candidates.first.roster_association_name)
              .group(klass.arel_table[:id])
              .count
-      end
-
-      def rosterable_full?(rosterable, member_count)
-        rosterable.capacity.present? && (member_count || 0) >= rosterable.capacity
       end
   end
 end

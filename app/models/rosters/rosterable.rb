@@ -285,10 +285,16 @@ module Rosters
 
     # Checks if the roster is full (reached or exceeded capacity).
     def full?
+      full_for_count?(roster_entries_count)
+    end
+
+    # Same check against a roster size the caller already knows, so that code
+    # counting many rosterables at once need not pay a query per record.
+    def full_for_count?(count)
       return false unless respond_to?(:capacity)
       return false if capacity.nil?
 
-      roster_entries_count >= capacity
+      count >= capacity
     end
 
     # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).

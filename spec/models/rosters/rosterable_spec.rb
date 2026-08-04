@@ -355,6 +355,22 @@ RSpec.describe(Rosters::Rosterable) do
         expect(rosterable.full?).to be(true)
       end
     end
+
+    describe "#full_for_count?" do
+      it "judges the given count rather than the roster" do
+        create_list(:tutorial_membership, 2, tutorial: rosterable)
+
+        expect(rosterable.full_for_count?(1)).to be(false)
+        expect(rosterable.full_for_count?(2)).to be(true)
+        expect(rosterable.full_for_count?(3)).to be(true)
+      end
+
+      it "returns false if capacity is nil" do
+        allow(rosterable).to receive(:capacity).and_return(nil)
+
+        expect(rosterable.full_for_count?(99)).to be(false)
+      end
+    end
   end
 
   describe "allow self materialization checks" do
