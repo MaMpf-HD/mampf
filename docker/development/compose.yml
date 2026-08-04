@@ -33,6 +33,8 @@ services:
       - RAILS_ENV=development
       - NODE_ENV=development
       - MAMPF_PORT=3001
+      # Each stack runs its own Sidekiq server, so they need separate Redis
+      # databases to keep them from fetching each other's jobs.
       - REDIS_URL=redis://redis:6379/1
       # Public HTTP port for the current stack and writable cache root for
       # runtime-specific state.
