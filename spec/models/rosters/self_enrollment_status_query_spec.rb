@@ -61,6 +61,14 @@ RSpec.describe(Rosters::SelfEnrollmentStatusQuery) do
       expect(query.enrollable_lecture_ids).to contain_exactly(lecture.id)
     end
 
+    it "includes a seminar with a self-enrollment talk" do
+      seminar = create(:seminar)
+      create(:talk, lecture: seminar, self_materialization_mode: :add_only)
+
+      expect(described_class.new(user, [seminar.id]).enrollable_lecture_ids)
+        .to contain_exactly(seminar.id)
+    end
+
     it "excludes a lecture whose groups have self-enrollment disabled" do
       create(:tutorial, lecture: lecture, self_materialization_mode: :disabled)
 
@@ -73,6 +81,16 @@ RSpec.describe(Rosters::SelfEnrollmentStatusQuery) do
       create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user))
 
       expect(query.enrollable_lecture_ids).to be_empty
+    end
+
+    it "excludes a seminar whose self-enrollment talk is full" do
+      seminar = create(:seminar)
+      talk = create(:talk, lecture: seminar, capacity: 1,
+                           self_materialization_mode: :add_only)
+      create(:speaker_talk_join, talk: talk, speaker: create(:confirmed_user))
+
+      expect(described_class.new(user, [seminar.id]).enrollable_lecture_ids)
+        .to be_empty
     end
 
     it "issues a bounded number of queries regardless of candidate count" do

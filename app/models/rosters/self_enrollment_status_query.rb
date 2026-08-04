@@ -7,14 +7,11 @@ module Rosters
   class SelfEnrollmentStatusQuery
     SELF_ADD_MODES = [:add_only, :add_and_remove].freeze
 
-    # Per rosterable type: how to scope it to a lecture page and which
-    # membership association counts towards capacity.
+    # Per rosterable type: how to scope it to a lecture page.
     ENROLLABLE_SOURCES = [
-      { klass: Tutorial, membership: :tutorial_memberships,
-        page_scope: ->(ids) { { lecture_id: ids } } },
-      { klass: Talk, membership: :speaker_talk_joins,
-        page_scope: ->(ids) { { lecture_id: ids } } },
-      { klass: Cohort, membership: :cohort_memberships,
+      { klass: Tutorial, page_scope: ->(ids) { { lecture_id: ids } } },
+      { klass: Talk, page_scope: ->(ids) { { lecture_id: ids } } },
+      { klass: Cohort,
         page_scope: ->(ids) { { context_type: "Lecture", context_id: ids } } }
     ].freeze
 
@@ -74,7 +71,7 @@ module Rosters
                      .to_a
         return if candidates.empty?
 
-        counts = member_counts(source, candidates.map(&:id))
+        counts = member_counts(source[:klass], candidates)
 
         candidates.each do |rosterable|
           # locked? short-circuits on skip_campaigns, which self-materialization
@@ -88,11 +85,12 @@ module Rosters
 
       # One grouped COUNT per type instead of rosterable.full?'s per-record
       # count. Keep the capacity check in sync with Rosters::Rosterable#full?.
-      def member_counts(source, candidate_ids)
-        source[:klass].where(id: candidate_ids)
-                      .joins(source[:membership])
-                      .group(source[:klass].arel_table[:id])
-                      .count
+
+      def member_counts(klass, candidates)
+        klass.where(id: candidates.map(&:id))
+             .joins(candidates.first.roster_association_name)
+             .group(klass.arel_table[:id])
+             .count
       end
 
       def rosterable_full?(rosterable, member_count)
