@@ -31,10 +31,13 @@ module Rosters
          .merge(cohort_member_lecture_ids)
     end
 
-    # Lectures with a group that still accepts self-enrollment (mode allows it,
-    # not locked, not full). Deliberately user-independent: the card consults
-    # this only for users who are not already rostered, so allow_self_add?'s
-    # "not already a member" clause is covered by that ordering.
+    # Lecture IDs with at least one group still open for self-enrollment (mode
+    # allows it, not locked, not full).
+    #
+    # Careful: this does not look at the user's own memberships, so it can call
+    # a group open that the user is already in. Only ask it for users you know
+    # are in no group of the lecture yet — the search card does, its "registered"
+    # branch runs first (_lecture.html.erb). Otherwise use allow_self_add?.
     def enrollable_lecture_ids
       return Set.new if @lecture_ids.empty?
 
