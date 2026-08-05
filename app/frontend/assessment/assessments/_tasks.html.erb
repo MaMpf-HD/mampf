@@ -50,6 +50,7 @@
     class="d-flex flex-column gap-2"
     data-controller="sortable"
     data-sortable-url-value="<%= reorder_assessment_assessment_tasks_path(assessment) %>"
+    data-sortable-error-message-value="<%= t('assessment.task.reorder_failed') %>"
   >
     <% tasks.each_with_index do |task, index| %>
       <%= render "assessment/tasks/task_card",

@@ -222,10 +222,6 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
       expect(stat.name).to eq("Tutorial A")
     end
 
-    it "returns unassigned label when tutorial is nil" do
-      nil_stat = described_class::TutorialStat.new(tutorial: nil, total: 5, submitted: 2)
-      expect(nil_stat.name).to eq(I18n.t("assessment.grading_overview.unassigned"))
-    end
   end
 
   describe "#deadline" do

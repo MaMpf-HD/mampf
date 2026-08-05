@@ -15,10 +15,16 @@
     </span>
   </div>
 
+  <%#
+    namespaced, because the form for a new task is on the page at the same
+    time and would otherwise claim the same field ids
+  %>
+
   <%= form_with model: task,
                 url: assessment_assessment_task_path(assessment, task),
                 method: :patch,
                 local: true,
+                namespace: dom_id(task),
                 html: { class: "card flex-grow-1" } do |f| %>
     <div class="card-body">
       <div class="row g-2">

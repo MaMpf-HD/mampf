@@ -56,7 +56,7 @@
       <i class="bi bi-exclamation-triangle me-2"></i>
       <%= t("assessment.grading_overview.no_participants_yet") %>
     </div>
-  <% elsif tutorials? && tutorial_stats.any? %>
+  <% else %>
     <table class="table table-hover">
       <thead>
         <tr>
@@ -90,15 +90,5 @@
         <% end %>
       </tbody>
     </table>
-  <% else %>
-    <div class="text-center text-muted py-3">
-      <p><%= t("assessment.grading_overview.no_tutorial_breakdown") %></p>
-
-      <p>
-        <strong><%= submitted_count %></strong>
-        <%= t("assessment.grading_overview.submitted").downcase %>,
-        <strong><%= missing_count %></strong> <%= missing_label.downcase %>
-      </p>
-    </div>
   <% end %>
 <% end %>

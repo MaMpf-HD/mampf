@@ -4,7 +4,7 @@
 class GradingOverviewComponent < ViewComponent::Base
   TutorialStat = Struct.new(:tutorial, :total, :submitted, keyword_init: true) do
     def name
-      tutorial&.title || I18n.t("assessment.grading_overview.unassigned")
+      tutorial.title
     end
 
     def missing
@@ -107,10 +107,6 @@ class GradingOverviewComponent < ViewComponent::Base
 
   def tutorial_stats
     @tutorial_stats ||= build_tutorial_stats
-  end
-
-  def tutorials?
-    lecture.tutorials.any?
   end
 
   private
