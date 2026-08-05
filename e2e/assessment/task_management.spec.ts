@@ -42,14 +42,14 @@ test.describe("assessment tasks", () => {
     await newTaskPoints.fill("");
     await expect(newTaskWarning).toBeHidden();
 
-    // the edit form carries its own copy of the controller
-    await dashboard.taskCard("Warm-up").getByTitle("Edit").click();
+    // the edit form carries its own copy of the controller, and its own field
+    // ids — reachable by label only because the form is namespaced
+    await dashboard.taskCard("Warm-up").getByRole("link", { name: "Edit" }).click();
     const editForm = dashboard.pane.locator(`#assessment_task_${task.id}`);
     const editWarning = editForm.getByText(PRECISION_WARNING);
     await expect(editWarning).toBeHidden();
 
-    // located by role, not by label: both task forms render the same field ids
-    await editForm.getByRole("spinbutton").fill("7.5555");
+    await editForm.getByLabel("Max Points").fill("7.5555");
     await expect(editWarning).toBeVisible();
   });
 
@@ -89,6 +89,29 @@ test.describe("assessment tasks", () => {
     await dashboard.open("Problem Set 1");
     await dashboard.tab("Tasks").click();
     await expect(dashboard.tasks).toHaveText([/Third/, /First/, /Second/]);
+  });
+
+  test("takes a dragged task back when the new order cannot be saved", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture, assessmentId }
+      = await createAssessedAssignment(factory, teacher.user.id);
+    await addTask(factory, assessmentId, "First", 10);
+    await addTask(factory, assessmentId, "Second", 10);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.open("Problem Set 1");
+    await dashboard.tab("Tasks").click();
+    await expect(dashboard.tasks).toHaveText([/First/, /Second/]);
+
+    await teacher.page.route("**/tasks/reorder", route => route.abort());
+    await dashboard.dragTaskAbove("Second", "First");
+
+    await expect(teacher.page.getByText("The new order could not be saved."))
+      .toBeVisible();
+    await expect(dashboard.tasks).toHaveText([/First/, /Second/]);
+    await expect(dashboard.taskPositions).toHaveText(["1.", "2."]);
   });
 
   test("adds a task and stays on the tasks tab", async ({ factory, teacher }) => {
