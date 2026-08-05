@@ -11,6 +11,16 @@ module Registration
       before_update :validate_capacity_change_via_items
     end
 
+    class_methods do
+      # Whether allocating a user here takes them out of a sibling of the same
+      # kind — a second tutorial, say. Deliberately not the instance method
+      # `exclusive_assignment?`, which asks whether one registration per
+      # campaign is the limit; for an exam the two answers differ.
+      def displaces_sibling_assignment?
+        false
+      end
+    end
+
     # Models including this concern must:
     # - Have a `capacity` integer column (nullable: nil = infinite capacity)
     # - Have a `skip_campaigns` boolean column (default: false, allows manual-only management)

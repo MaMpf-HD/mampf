@@ -47,6 +47,13 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    scope :non_exam, lambda {
+      where.not(
+        id: Registration::Item.where(registerable_type: "Exam")
+                              .select(:registration_campaign_id)
+      )
+    }
+
     validates :registration_deadline, :allocation_mode, :status, presence: true
     validates :description, length: { maximum: 100 }
 
@@ -56,6 +63,7 @@ module Registration
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
+    validate :exam_campaign_is_first_come_first_served
 
     before_destroy :ensure_campaign_is_draft, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
@@ -101,6 +109,34 @@ module Registration
       draft?
     end
 
+    def exam_campaign?
+      registration_items.where.not(registerable_type: "Exam").none? &&
+        registration_items.where(registerable_type: "Exam").any?
+    end
+
+    def exam
+      registration_items.find_by(registerable_type: "Exam")&.registerable
+    end
+
+    # The three Turbo frames an exam's registration tab is made of. They are
+    # named here rather than spelled out at each end, because a target that
+    # stops matching updates nothing and reports nothing.
+    def self.exam_workspace_frame_id(exam)
+      "exam_#{exam.id}_allocation_workspace"
+    end
+
+    def self.exam_registration_frame_id(exam)
+      "exam_#{exam.id}_registration"
+    end
+
+    def self.exam_registration_tab_label_frame_id(exam)
+      "exam_#{exam.id}_registration_tab_label"
+    end
+
+    def exam_workspace_frame_id?(frame_id)
+      exam_campaign? && frame_id == self.class.exam_workspace_frame_id(exam)
+    end
+
     def total_registrations_count
       return user_registrations.map(&:user_id).uniq.size if user_registrations.loaded?
 
@@ -140,7 +176,8 @@ module Registration
     end
 
     def user_registrations_grouped_by_user
-      user_registrations.includes(:user, :registration_item)
+      user_registrations.where.not(status: :rejected)
+                        .includes(:user, :registration_item)
                         .joins(:user)
                         .order("users.name")
                         .group_by(&:user)
@@ -169,7 +206,21 @@ module Registration
         reject_pending_registrations!
 
         update!(status: :completed,
+                finalized_at: Time.current,
                 allocation_decided_at: allocation_decided_at || Time.current)
+      end
+    end
+
+    def reopen!(registration_deadline: nil)
+      with_lock do
+        return if completed?
+
+        was_processing = processing?
+        attributes = { status: :open }
+        attributes[:registration_deadline] = registration_deadline if registration_deadline.present?
+
+        update!(attributes)
+        reset_allocation_results! if was_processing
       end
     end
 
@@ -441,6 +492,15 @@ module Registration
         return unless allocation_mode_changed? && status_was != "draft"
 
         errors.add(:allocation_mode, :frozen)
+      end
+
+      # Preference-based allocation ranks the items on offer, and an exam
+      # campaign offers just the one — the exam itself.
+      def exam_campaign_is_first_come_first_served
+        return if first_come_first_served?
+        return unless registration_items.exists?(registerable_type: "Exam")
+
+        errors.add(:allocation_mode, :exams_are_first_come_first_served)
       end
 
       def cannot_revert_to_draft

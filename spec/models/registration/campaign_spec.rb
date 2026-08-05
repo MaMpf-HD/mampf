@@ -427,6 +427,13 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end.to change(campaign, :status).from("processing").to("completed")
     end
 
+    # `updated_at` moves with any later write, so the moment is recorded on its
+    # own column and the registration tab can report it.
+    it "records when it was finalized" do
+      expect { campaign.finalize! }
+        .to change { campaign.reload.finalized_at }.from(nil)
+    end
+
     it "updates pending registrations to rejected" do
       create(:registration_user_registration, registration_campaign: campaign, status: :pending)
       create(:registration_user_registration, registration_campaign: campaign, status: :confirmed)
@@ -1032,6 +1039,59 @@ RSpec.describe(Registration::Campaign, type: :model) do
       second.update!(self_materialization_mode: :disabled)
 
       expect(campaign.shared_self_materialization_mode).to be_nil
+    end
+  end
+
+  describe ".non_exam" do
+    it "excludes campaigns whose items are all exams" do
+      lecture = create(:lecture)
+      exam = create(:exam, lecture: lecture)
+      exam_campaign = create(:registration_campaign, campaignable: lecture)
+      create(:registration_item,
+             registration_campaign: exam_campaign,
+             registerable: exam)
+
+      regular_campaign = create(:registration_campaign, campaignable: lecture)
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:registration_item,
+             registration_campaign: regular_campaign,
+             registerable: tutorial)
+
+      result = Registration::Campaign.non_exam
+      expect(result).to include(regular_campaign)
+      expect(result).not_to include(exam_campaign)
+    end
+
+    it "includes campaigns with no items" do
+      campaign = create(:registration_campaign)
+      expect(Registration::Campaign.non_exam).to include(campaign)
+    end
+  end
+
+  describe "#exam_campaign?" do
+    it "returns true when all items are exams" do
+      campaign = create(:registration_campaign)
+      exam = create(:exam)
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: exam)
+
+      expect(campaign.exam_campaign?).to be(true)
+    end
+
+    it "returns false when items are tutorials" do
+      campaign = create(:registration_campaign)
+      tutorial = create(:tutorial)
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial)
+
+      expect(campaign.exam_campaign?).to be(false)
+    end
+
+    it "returns false when no items exist" do
+      campaign = create(:registration_campaign)
+      expect(campaign.exam_campaign?).to be(false)
     end
   end
 end

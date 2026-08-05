@@ -29,7 +29,7 @@
                       {},
                       { class: 'form-select' } %>
         <div class="invalid-feedback"
-              id="lecture-term-error">
+              id="lecture-sort-error">
         </div>
       </div>
     <% end %>
@@ -66,6 +66,30 @@
         </div>
       </div>
     <% end %>
+  </div>
+  <div class="row">
+    <div class="col-auto mb-3">
+      <%= f.label :submission_deletion_date,
+                  t('admin.lecture.submission_deletion_date'),
+                  class: "form-label" %>
+      <%= helpdesk(t('admin.lecture.info.submission_deletion_date'),
+                   false) %>
+      <% current = lecture.submission_deletion_date
+                         &.strftime(I18n.t("date.formats.concise")) %>
+      <% dates = Term.possible_deletion_dates_localized %>
+      <% current = dates.last unless dates.include?(current) %>
+      <% dates.each do |date_str| %>
+        <div class="form-check">
+          <%= f.radio_button :submission_deletion_date, date_str,
+                             class: "form-check-input",
+                             checked: date_str == current %>
+          <%= f.label :submission_deletion_date,
+                      date_str,
+                      value: date_str,
+                      class: "form-check-label" %>
+        </div>
+      <% end %>
+    </div>
   </div>
   <div class="row">
     <div class="col-auto mb-3">
@@ -132,6 +156,31 @@
           <%= helpdesk(t('admin.lecture.info.disable_teacher_display'),
                       false) %>
         </div>
+      </div>
+    </div>
+  <% end %>
+  <% if Flipper.enabled?(:student_performance) && !lecture.seminar? %>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-check">
+          <%= f.check_box :uses_exam_eligibility,
+                          class: 'form-check-input' %>
+          <%= f.label :uses_exam_eligibility,
+                      t('admin.lecture.uses_exam_eligibility'),
+                      { class: 'form-check-label' } %>
+          <%= helpdesk(t('admin.lecture.info.uses_exam_eligibility'),
+                      false) %>
+        </div>
+
+        <% if lecture.uses_exam_eligibility? %>
+          <% kept = lecture.student_performance_certifications.count %>
+          <% if kept.positive? %>
+            <div class="form-text text-warning-emphasis">
+              <i class="bi bi-info-circle me-1"></i>
+              <%= t('admin.lecture.info.eligibility_data_kept', count: kept) %>
+            </div>
+          <% end %>
+        <% end %>
       </div>
     </div>
   <% end %>
