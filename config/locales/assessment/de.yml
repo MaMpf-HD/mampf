@@ -72,6 +72,7 @@ de:
       updated: "Aufgabe erfolgreich aktualisiert."
       deleted: "Aufgabe erfolgreich gelöscht."
       delete_failed: "Löschen der Aufgabe fehlgeschlagen."
+      reorder_failed: "Die neue Reihenfolge konnte nicht gespeichert werden. Bitte noch einmal versuchen."
       has_points: "Löschen nicht möglich: Es wurden bereits Punkte eingetragen."
       points_abbrev: "Pkt"
       description: "Aufgabenname"
@@ -128,10 +129,8 @@ de:
       submitted: "Abgegeben"
       missing: "Ausstehend"
       not_submitted: "Nicht abgegeben"
-      unassigned: "Nicht zugewiesen"
       no_submission_required: "Für diese Bewertung ist keine digitale Abgabe erforderlich."
       no_participants_yet: "Es wurden noch keine Teilnehmenden hinzugefügt. Teilnehmende werden aus den Vorlesungsanmeldungen übernommen."
-      no_tutorial_breakdown: "Keine Aufschlüsselung nach Tutorien verfügbar."
       deadline:
         due_in: "Fällig in %{time} (%{date})"
         due_soon: "Fällig in %{time} (%{date})"
@@ -155,6 +154,8 @@ de:
           attributes:
             base:
               early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
+            grade_numeric:
+              not_gradable: "kann hier nicht vergeben werden, dies wird nicht benotet"
         assessment/task_point:
           attributes:
             base:

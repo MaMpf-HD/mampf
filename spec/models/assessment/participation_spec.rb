@@ -43,6 +43,16 @@ RSpec.describe(Assessment::Participation, type: :model) do
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:user_id]).to be_present
     end
+
+    it "explains in words why a grade cannot go on something ungraded" do
+      participation = FactoryBot.build(:assessment_participation,
+                                       assessment: FactoryBot.create(:assessment,
+                                                                     :for_expired_assignment),
+                                       grade_numeric: 2.0)
+
+      expect(participation).not_to be_valid
+      expect(participation.errors[:grade_numeric].join).not_to include("translation missing")
+    end
   end
 
   describe "the grading lifecycle guard" do

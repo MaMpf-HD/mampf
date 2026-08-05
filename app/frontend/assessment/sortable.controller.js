@@ -4,6 +4,7 @@ import Sortable from "sortablejs";
 export default class extends Controller {
   static values = {
     url: String,
+    errorMessage: String,
   };
 
   connect() {
@@ -32,7 +33,7 @@ export default class extends Controller {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector("[name='csrf-token']").content,
+          "X-CSRF-Token": document.querySelector("meta[name='csrf-token']")?.content,
         },
         body: JSON.stringify({ task_id: taskId, position: newPosition }),
       });
@@ -43,7 +44,32 @@ export default class extends Controller {
     }
     catch (error) {
       console.error("Error updating order:", error);
+      this.putBack(event);
+      this.reportFailure();
     }
+  }
+
+  // The new order is on screen before it is saved, so a save that did not
+  // happen has to take the card back to where it was picked up.
+  putBack(event) {
+    const others = Array.from(this.element.querySelectorAll("[data-sortable-item]"))
+      .filter(item => item !== event.item);
+
+    this.element.insertBefore(event.item, others[event.oldIndex] || null);
+    this.updateIndexes(this.element.querySelectorAll("[data-sortable-item]"));
+  }
+
+  reportFailure() {
+    const container = document.getElementById("flash-messages");
+    if (!container) {
+      return;
+    }
+
+    const alert = document.createElement("div");
+    alert.className = "alert alert-danger";
+    alert.setAttribute("role", "alert");
+    alert.textContent = this.errorMessageValue;
+    container.prepend(alert);
   }
 
   updateIndexes(items) {

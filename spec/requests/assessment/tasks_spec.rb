@@ -131,6 +131,38 @@ RSpec.describe("Assessment::Tasks", type: :request) do
     end
   end
 
+  # A task appearing in or vanishing from the list is its own confirmation;
+  # only the failures have to say something.
+  describe "what the teacher is told afterwards" do
+    it "stays quiet about a task that was added" do
+      post assessment_assessment_tasks_path(assessment),
+           params: { assessment_task: { max_points: 10 } },
+           as: :turbo_stream
+
+      expect(flash[:notice]).to be_nil
+      expect(flash[:alert]).to be_nil
+    end
+
+    it "puts a failed deletion on the page it returns to" do
+      expired = create(:assignment, :with_lecture, :expired, lecture: lecture)
+      task = create(:assessment_task, assessment: expired.reload.assessment)
+      participation = create(:assessment_participation,
+                             assessment: expired.assessment, status: :reviewed,
+                             submitted_at: 1.day.ago)
+      create(:assessment_task_point, task: task,
+                                     assessment_participation: participation, points: 3)
+
+      delete assessment_assessment_task_path(expired.assessment, task),
+             as: :turbo_stream
+      get assessment_assessment_path(expired.assessment,
+                                     assessable_type: "Assignment",
+                                     assessable_id: expired.id),
+          as: :turbo_stream
+
+      expect(response.body).to include(I18n.t("assessment.task.delete_failed"))
+    end
+  end
+
   describe "POST /assessment/assessments/:assessment_id/tasks/reorder" do
     let!(:task1) { create(:assessment_task, assessment: assessment) }
     let!(:task2) { create(:assessment_task, assessment: assessment) }

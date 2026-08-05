@@ -108,6 +108,30 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response.media_type).to eq(Mime[:turbo_stream])
         expect(response.body).to include("assessments_container")
       end
+
+      it "answers a frame request with the dashboard itself" do
+        get assessment_assessment_path(assessment.id),
+            params: { assessable_type: "Assignment", assessable_id: assignment.id },
+            headers: { "Turbo-Frame" => "assessment-assessments-frame" }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("assessment-assessments-frame")
+        expect(response.body).to include("Test Assignment")
+      end
+
+      it "sends someone who opens the bare link to the lecture's assessment tab" do
+        get assessment_assessment_path(assessment.id),
+            params: { assessable_type: "Assignment", assessable_id: assignment.id,
+                      tab: "tasks" }
+
+        expect(response).to redirect_to(
+          edit_lecture_path(lecture, tab: "assessments",
+                                     assessment_id: assessment.id,
+                                     assessable_type: "Assignment",
+                                     assessable_id: assignment.id,
+                                     assessment_tab: "tasks")
+        )
+      end
     end
 
     context "as a student" do

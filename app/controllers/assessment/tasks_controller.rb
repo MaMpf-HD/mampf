@@ -47,7 +47,7 @@ module Assessment
       @task = @assessment.tasks.build(task_params)
 
       if @task.save
-        redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.created"))
+        redirect_to_dashboard(tab: "tasks")
       else
         respond_to do |format|
           format.html do
@@ -73,7 +73,7 @@ module Assessment
 
     def update
       if @task.update(task_params)
-        redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.updated"))
+        redirect_to_dashboard(tab: "tasks")
       else
         index = task_display_index(@task)
 
@@ -94,7 +94,7 @@ module Assessment
 
     def destroy
       if @task.destroy
-        redirect_to_dashboard(tab: "tasks", notice: I18n.t("assessment.task.deleted"))
+        redirect_to_dashboard(tab: "tasks")
       else
         redirect_to_dashboard(tab: "tasks", alert: I18n.t("assessment.task.delete_failed"))
       end
@@ -136,9 +136,8 @@ module Assessment
         @assessment.tasks.where(position: ...task.position).count + 1
       end
 
-      def redirect_to_dashboard(tab:, notice: nil, alert: nil)
+      def redirect_to_dashboard(tab:, alert: nil)
         assessable = @assessment.assessable
-        flash[:notice] = notice if notice
         flash[:alert] = alert if alert
 
         redirect_to assessment_assessment_path(

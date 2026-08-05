@@ -29,10 +29,7 @@
               method: :patch,
               local: true,
               html: {
-                data: {
-                  controller: 'assessments--dirty-form',
-                  action: 'turbo:submit-end->assessments--dirty-form#resetAfterSave'
-                }
+                data: { controller: 'assessments--dirty-form' }
               } do |f| %>
   <input type="hidden" name="tab" value="settings">
 
