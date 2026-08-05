@@ -36,16 +36,16 @@ class GradeTableComponent < ViewComponent::Base
     participation.grade_numeric ? participation.grade_numeric.to_s : "5.0"
   end
 
+  # A grade is either a number or a word — `set_grade!` writes one or the
+  # other, never both — so a missing number is not a missing grade.
   def grade_display(participation)
-    return "—" unless participation.grade_numeric
-
     text = participation.grade_text
     numeric = participation.grade_numeric
-    if text.present? && text != numeric.to_s
-      "#{numeric} (#{text})"
-    else
-      numeric.to_s
-    end
+
+    return text.presence || "—" if numeric.nil?
+    return "#{numeric} (#{text})" if text.present? && text != numeric.to_s
+
+    numeric.to_s
   end
 
   def grader_display(participation)

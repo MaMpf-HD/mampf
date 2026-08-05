@@ -70,6 +70,7 @@ en:
       updated: "Task updated successfully."
       deleted: "Task deleted successfully."
       delete_failed: "Failed to delete task."
+      reorder_failed: "The new order could not be saved. Please try again."
       has_points: "Cannot delete: Points have been entered for this task."
       points_abbrev: "pts"
       description: "Task name"
@@ -126,10 +127,8 @@ en:
       submitted: "Submitted"
       missing: "Missing"
       not_submitted: "Not submitted"
-      unassigned: "Unassigned"
       no_submission_required: "No digital submission required for this assessment."
       no_participants_yet: "No participants have been added yet. Participants are seeded from lecture subscriptions."
-      no_tutorial_breakdown: "No tutorial breakdown available."
       deadline:
         due_in: "Due in %{time} (%{date})"
         due_soon: "Due in %{time} (%{date})"
@@ -153,6 +152,8 @@ en:
           attributes:
             base:
               early_grading_not_allowed: "Grading is not permitted before the deadline"
+            grade_numeric:
+              not_gradable: "cannot be given here, this is not graded"
         assessment/task_point:
           attributes:
             base:
