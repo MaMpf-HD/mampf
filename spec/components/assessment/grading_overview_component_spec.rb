@@ -221,7 +221,6 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
     it "returns tutorial title as name" do
       expect(stat.name).to eq("Tutorial A")
     end
-
   end
 
   describe "#deadline" do
