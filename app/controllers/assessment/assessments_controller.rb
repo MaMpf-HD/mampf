@@ -40,14 +40,19 @@ module Assessment
       authorize! :show, @assessment
 
       @tasks = @assessment.tasks.order(:position)
+      @dashboard = build_dashboard_component(active_tab: params[:tab])
 
       respond_to do |format|
-        format.html
+        # The dashboard is a fragment of the lecture's assessment tab, never a
+        # page of its own, so anyone arriving directly is sent to that tab —
+        # which then loads this very action back into its frame.
+        format.html do
+          turbo_frame_request? ? render(:show) : redirect_to(dashboard_in_lecture_path)
+        end
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update(
-            "assessments_container",
-            build_dashboard_component(active_tab: params[:tab])
-          )
+          streams = [turbo_stream.update("assessments_container", @dashboard)]
+          streams << stream_flash if flash.present?
+          render turbo_stream: streams
         end
       end
     end
@@ -125,6 +130,15 @@ module Assessment
         return if @assessment
 
         redirect_to root_path, alert: I18n.t("assessment.errors.no_assessment")
+      end
+
+      def dashboard_in_lecture_path
+        edit_lecture_path(@lecture,
+                          tab: "assessments",
+                          assessment_id: @assessment.id,
+                          assessable_type: @assessable.class.name,
+                          assessable_id: @assessable.id,
+                          assessment_tab: params[:tab])
       end
 
       def build_dashboard_component(active_tab: nil)

@@ -39,15 +39,6 @@ export default class extends Controller {
     this.hideSubmitElements();
   }
 
-  resetAfterSave(event) {
-    if (!event.detail.success) {
-      return;
-    }
-
-    this.storeOriginalValues();
-    this.hideSubmitElements();
-  }
-
   showSubmitElements() {
     this.submitButtonTarget.classList.remove("d-none");
     this.warningTarget.classList.remove("d-none");
