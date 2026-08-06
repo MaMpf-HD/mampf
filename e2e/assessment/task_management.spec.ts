@@ -114,6 +114,45 @@ test.describe("assessment tasks", () => {
     await expect(dashboard.taskPositions).toHaveText(["1.", "2."]);
   });
 
+  test("edits a task and keeps the change", async ({ factory, teacher }) => {
+    const { lecture, assessmentId }
+      = await createAssessedAssignment(factory, teacher.user.id);
+    const task = await addTask(factory, assessmentId, "Warm-up", 10);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.open("Problem Set 1");
+    await dashboard.tab("Tasks").click();
+
+    await dashboard.taskCard("Warm-up").getByRole("link", { name: "Edit" }).click();
+    const editForm = dashboard.pane.locator(`#assessment_task_${task.id}`);
+    await editForm.getByLabel("Max Points").fill("15");
+    await editForm.getByLabel("Task name").fill("Warm-up, revised");
+    await editForm.getByRole("button", { name: "Save" }).click();
+
+    await expect(dashboard.tasks).toHaveText([/15 pts.*Warm-up, revised/s]);
+
+    await dashboard.open("Problem Set 1");
+    await dashboard.tab("Tasks").click();
+    await expect(dashboard.tasks).toHaveText([/15 pts.*Warm-up, revised/s]);
+  });
+
+  test("deletes a task and renumbers what is left", async ({ factory, teacher }) => {
+    const { lecture, assessmentId }
+      = await createAssessedAssignment(factory, teacher.user.id);
+    await addTask(factory, assessmentId, "First", 10);
+    await addTask(factory, assessmentId, "Second", 10);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.open("Problem Set 1");
+    await dashboard.tab("Tasks").click();
+
+    teacher.page.on("dialog", dialog => dialog.accept());
+    await dashboard.taskCard("First").getByRole("button", { name: "Delete" }).click();
+
+    await expect(dashboard.tasks).toHaveText([/Second/]);
+    await expect(dashboard.taskPositions).toHaveText(["1."]);
+  });
+
   test("adds a task and stays on the tasks tab", async ({ factory, teacher }) => {
     const { lecture } = await createAssessedAssignment(factory, teacher.user.id);
 

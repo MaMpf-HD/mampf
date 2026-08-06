@@ -27,6 +27,17 @@ export class AssessmentDashboardPage {
     await this.page.getByRole("link", { name: assignmentTitle, exact: true }).click();
   }
 
+  /** Everything the assessment tab streams into, dashboard or overview. */
+  get container(): Locator {
+    return this.page.locator("#assessments_container");
+  }
+
+  /** Assessments, achievements, performance, certifications. */
+  overviewTab(name: string): Locator {
+    return this.page.locator("#assessmentOverviewTabs")
+      .getByRole("tab", { name, exact: true });
+  }
+
   /** The lecture's own tabs wrap the dashboard's, so scope to the inner set. */
   get dashboard(): Locator {
     return this.page.locator("[data-cy='assessment-dashboard']");
