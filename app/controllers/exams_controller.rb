@@ -30,7 +30,11 @@ class ExamsController < ApplicationController
     set_exam_locale
 
     respond_to do |format|
-      format.html
+      # The dashboard is streamed into the lecture's exam tab and has no page of
+      # its own, so anyone arriving directly is sent to that tab.
+      format.html do
+        redirect_to edit_lecture_path(@exam.lecture, tab: "exams")
+      end
       format.turbo_stream do
         render turbo_stream: turbo_stream.update(
           "exams_container",

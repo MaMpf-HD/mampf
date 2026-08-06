@@ -199,6 +199,15 @@ RSpec.describe("Exams", type: :request) do
         expect(response.body).to include("exams_container")
         expect(response.body).to include("data-cy=\"assessment-dashboard\"")
       end
+
+      # The dashboard is a fragment of the lecture's exam tab, so a direct visit
+      # belongs there rather than on a page that does not exist.
+      it "sends a direct visit to the lecture's exam tab" do
+        get exam_path(exam)
+        expect(response).to redirect_to(
+          edit_lecture_path(exam.lecture, tab: "exams")
+        )
+      end
     end
 
     context "as an editor" do
