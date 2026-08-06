@@ -13,7 +13,6 @@ en:
     achievements:
       placeholder: 'Achievements will be displayed here in a later step.'
       flash:
-        created: 'Achievement created successfully.'
         updated: 'Achievement updated successfully.'
         destroyed: 'Achievement deleted successfully.'
       errors:

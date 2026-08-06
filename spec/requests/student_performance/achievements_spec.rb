@@ -124,17 +124,28 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
       it "creates an achievement" do
         expect do
           post(lecture_student_performance_achievements_path(lecture),
-               params: valid_params)
+               params: valid_params, as: :turbo_stream)
         end.to change(Achievement, :count).by(1)
       end
 
-      it "rejects invalid params" do
-        post lecture_student_performance_achievements_path(lecture),
-             params: { achievement: { title: "", value_type: "boolean" } }
-        expect(response).to redirect_to(
-          lecture_student_performance_achievements_path(lecture)
-        )
-        expect(flash[:alert]).to be_present
+      it "refuses a request that does not want a Turbo Stream" do
+        expect do
+          post(lecture_student_performance_achievements_path(lecture),
+               params: valid_params)
+        end.not_to change(Achievement, :count)
+
+        expect(response).to have_http_status(:not_acceptable)
+      end
+
+      it "hands the form back when the params are invalid" do
+        expect do
+          post(lecture_student_performance_achievements_path(lecture),
+               params: { achievement: { title: "", value_type: "boolean" } },
+               as: :turbo_stream)
+        end.not_to change(Achievement, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("achievement-form")
       end
     end
 
@@ -171,17 +182,18 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
 
       it "updates the achievement" do
         patch lecture_student_performance_achievement_path(lecture, achievement),
-              params: { achievement: { title: "Updated Title" } }
+              params: { achievement: { title: "Updated Title" } },
+              as: :turbo_stream
         expect(achievement.reload.title).to eq("Updated Title")
       end
 
-      it "rejects invalid params" do
+      it "keeps the title when the params are invalid" do
         patch lecture_student_performance_achievement_path(lecture, achievement),
-              params: { achievement: { title: "" } }
-        expect(response).to redirect_to(
-          lecture_student_performance_achievements_path(lecture)
-        )
-        expect(flash[:alert]).to be_present
+              params: { achievement: { title: "" } },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(achievement.reload.title).to be_present
       end
 
       it "returns an unprocessable turbo response for blank threshold" do
@@ -242,11 +254,11 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
         expect do
           delete(lecture_student_performance_achievement_path(
                    lecture, achievement
-                 ))
+                 ), as: :turbo_stream)
         end.to change(Achievement, :count).by(-1)
       end
 
-      it "keeps the destroy error in turbo responses" do
+      it "explains a refused destroy in words a teacher can act on" do
         allow_any_instance_of(Achievement).to receive(:destroy) do |record|
           record.errors.add(:base, "Achievement is still in use")
           false
@@ -258,7 +270,10 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
 
         expect(response).to have_http_status(:unprocessable_content)
         assert_flash_error
-        expect(response.body).to include("Achievement is still in use")
+        expect(response.body).to include(
+          I18n.t("assessment.achievements.errors.referenced_by_rules")
+        )
+        expect(response.body).not_to include("Achievement is still in use")
       end
 
       context "when referenced by a rule" do

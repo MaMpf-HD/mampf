@@ -13,7 +13,6 @@ de:
     achievements:
       placeholder: 'Zusatzkriterien werden in einem späteren Schritt hier angezeigt.'
       flash:
-        created: 'Zusatzkriterium erfolgreich erstellt.'
         updated: 'Zusatzkriterium erfolgreich aktualisiert.'
         destroyed: 'Zusatzkriterium erfolgreich gelöscht.'
       errors:
