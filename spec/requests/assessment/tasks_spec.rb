@@ -67,6 +67,17 @@ RSpec.describe("Assessment::Tasks", type: :request) do
       end
     end
 
+    context "without a Turbo Stream request" do
+      it "refuses to answer at all" do
+        expect do
+          post(assessment_assessment_tasks_path(assessment),
+               params: { assessment_task: { max_points: 7.5 } })
+        end.not_to change(Assessment::Task, :count)
+
+        expect(response).to have_http_status(:not_acceptable)
+      end
+    end
+
     context "with invalid parameters" do
       it "does not create a task" do
         expect do

@@ -6,6 +6,7 @@ module Assessment
     before_action :authorize_assessment_update!
     before_action :set_task, only: [:edit, :update, :destroy, :cancel]
     before_action :set_locale
+    before_action :require_turbo_stream, only: [:create, :update]
 
     def current_ability
       @current_ability ||= AssessmentAbility.new(current_user)
@@ -22,10 +23,8 @@ module Assessment
             locals: { task: @task, assessment: @assessment, index: index }
           )
         end
-        format.html do
-          render partial: "assessment/tasks/form",
-                 locals: { task: @task, assessment: @assessment, index: index }
-        end
+        # A bare form fragment is no use to anyone who arrives here directly.
+        format.html { redirect_to_dashboard(tab: "tasks") }
       end
     end
 
@@ -49,16 +48,9 @@ module Assessment
       if @task.save
         redirect_to_dashboard(tab: "tasks")
       else
-        respond_to do |format|
-          format.html do
-            redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
-          end
-          format.turbo_stream do
-            target, component = dashboard_turbo_args(tab: "tasks", task: @task)
-            render turbo_stream: turbo_stream.update(target, component),
-                   status: :unprocessable_content
-          end
-        end
+        target, component = dashboard_turbo_args(tab: "tasks", task: @task)
+        render turbo_stream: turbo_stream.update(target, component),
+               status: :unprocessable_content
       end
     end
 
@@ -77,18 +69,11 @@ module Assessment
       else
         index = task_display_index(@task)
 
-        respond_to do |format|
-          format.html do
-            redirect_to_dashboard(tab: "tasks", alert: @task.errors.full_messages.join(", "))
-          end
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              ActionView::RecordIdentifier.dom_id(@task),
-              partial: "assessment/tasks/form",
-              locals: { task: @task, assessment: @assessment, index: index }
-            ), status: :unprocessable_content
-          end
-        end
+        render turbo_stream: turbo_stream.replace(
+          ActionView::RecordIdentifier.dom_id(@task),
+          partial: "assessment/tasks/form",
+          locals: { task: @task, assessment: @assessment, index: index }
+        ), status: :unprocessable_content
       end
     end
 
@@ -104,6 +89,13 @@ module Assessment
 
       def authorize_assessment_update!
         authorize! :update, @assessment
+      end
+
+      # These actions answer with a Turbo Stream and nothing else. Saying so is
+      # more honest than handing a hand-written request a document it did not ask
+      # for.
+      def require_turbo_stream
+        head :not_acceptable unless request.format.turbo_stream?
       end
 
       def set_assessment
