@@ -115,9 +115,9 @@ de:
         failed: "Nicht zugelassen"
         inconclusive: "Zurückgestellt"
       deferral:
-        points_pending: "Bewertungen ausstehend"
+        points_pending: "Abgaben noch nicht bewertet"
         points_not_measurable: "Keine Punkte zu messen"
-        achievements_ungraded: "Zusatzkriterium unbewertet"
+        achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
       single_proposal:
         title: "Zulassungsvorschlag"
         back_to_record: "Zurück zum Datensatz"

@@ -115,9 +115,9 @@ en:
         failed: "Not Eligible"
         inconclusive: "Deferred"
       deferral:
-        points_pending: "Marking outstanding"
+        points_pending: "Submissions not marked yet"
         points_not_measurable: "No points to measure"
-        achievements_ungraded: "Achievement not graded"
+        achievements_ungraded: "Achievement not graded yet"
       single_proposal:
         title: "Eligibility Proposal"
         back_to_record: "Back to student record"
