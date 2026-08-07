@@ -481,13 +481,13 @@
 
                     <span class="small fw-medium">
                       <% if proposal.proposed_status == :passed %>
-                        <i class="bi bi-check-circle text-success me-1"></i>
+                        <i class="bi bi-check-circle-fill text-success me-1"></i>
                         <%= t("student_performance.evaluator.status.passed") %>
                       <% elsif proposal.proposed_status == :inconclusive %>
-                        <i class="bi bi-question-circle text-amber me-1"></i>
+                        <i class="bi bi-question-circle-fill text-amber me-1"></i>
                         <%= t("student_performance.evaluator.status.inconclusive") %>
                       <% else %>
-                        <i class="bi bi-x-circle text-danger me-1"></i>
+                        <i class="bi bi-x-circle-fill text-danger me-1"></i>
                         <%= t("student_performance.evaluator.status.failed") %>
                       <% end %>
                     </span>
@@ -519,7 +519,7 @@
                     <% if cert.pending? %>
                       <% proposal&.deferral_reasons&.each do |reason| %>
                         <span class="text-amber d-block">
-                          <i class="bi bi-question-circle-fill me-1"></i>
+                          <i class="bi bi-question-circle me-1"></i>
                           <%= t("student_performance.evaluator.deferral.#{reason}") %>
                         </span>
                       <% end %>

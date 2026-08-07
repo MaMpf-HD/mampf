@@ -76,7 +76,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
-          expect(response.body).to include("bi-check-circle-fill")
+          expect(response.body).to include(%(class="bi bi-check-circle text-success"))
           expect(response.body).to include(
             %(aria-label="#{I18n.t("student_performance.records.columns.achievement_met")}")
           )
@@ -99,7 +99,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
-          expect(response.body).to include("bi-x-circle")
+          expect(response.body).to include(%(class="bi bi-x-circle text-danger"))
           expect(response.body).to include(
             %(aria-label="#{I18n.t("student_performance.records.columns.achievement_not_met")}")
           )
@@ -122,7 +122,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
           get lecture_student_performance_records_path(lecture)
           expect(response.body).to include(achievement.title)
-          expect(response.body).to include("bi-question-circle")
+          expect(response.body).to include(%(class="bi bi-question-circle text-amber"))
           expect(response.body).to include(
             %(aria-label="#{I18n.t("student_performance.records.columns.achievement_ungraded")}")
           )
