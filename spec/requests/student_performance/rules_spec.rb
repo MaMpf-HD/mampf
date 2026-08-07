@@ -403,6 +403,44 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
                 } }
           expect(response.body).to include("rule-preview-frame")
         end
+
+        context "when a decision was set by hand" do
+          let(:teacher) { FactoryBot.create(:confirmed_user) }
+
+          before do
+            FactoryBot.create(:student_performance_certification, :passed,
+                              :manual,
+                              lecture: lecture,
+                              user: passing_record.user,
+                              certified_by: teacher)
+          end
+
+          it "keeps it out of the count it cannot move" do
+            patch preview_lecture_student_performance_rules_path(lecture),
+                  params: { rule: {
+                    threshold_mode: "percentage",
+                    min_percentage: "70"
+                  } }
+            expect(response.body).not_to include(
+              I18n.t("student_performance.rules.preview.newly_failed")
+            )
+          end
+
+          it "says the decision stands, and whose it is" do
+            patch preview_lecture_student_performance_rules_path(lecture),
+                  params: { rule: {
+                    threshold_mode: "percentage",
+                    min_percentage: "70"
+                  } }
+            expect(response.body).to include(
+              I18n.t("student_performance.rules.preview.manual_conflicts",
+                     count: 1)
+            )
+            expect(response.body).to include(
+              CGI.escapeHTML(passing_record.user.tutorial_name)
+            )
+          end
+        end
       end
 
       context "when adding an achievement requirement" do

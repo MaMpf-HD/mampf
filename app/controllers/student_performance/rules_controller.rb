@@ -61,10 +61,12 @@ module StudentPerformance
       preview = StudentPerformance::RuleChangePreview.new(
         current_rule: @rule,
         preview_rule: rule_from_form_params,
-        records: @lecture.student_performance_records.includes(:user).order(:created_at)
+        records: @lecture.student_performance_records.includes(:user).order(:created_at),
+        certifications: @lecture.student_performance_certifications
       )
 
       @changes = preview.changes
+      @manual_conflicts = preview.manual_conflicts
       @newly_passed = preview.newly(:passed)
       @newly_failed = preview.newly(:failed)
       @newly_inconclusive = preview.newly(:inconclusive)

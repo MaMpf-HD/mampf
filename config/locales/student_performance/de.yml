@@ -105,6 +105,9 @@ de:
         current_status: "Aktuell"
         new_status: "Mit neuer Regel"
         deferred_hint: "Zurückgestellt heißt: noch offen — die ausstehenden Bewertungen könnten die Schwelle noch erreichen. Eine höhere Schwelle kann deshalb aus zurückgestellt „nicht zugelassen“ machen und aus zugelassen „zurückgestellt“."
+        manual_conflicts:
+          one: "%{count} Einzelentscheidung widerspricht der neuen Regel und bleibt bestehen:"
+          other: "%{count} Einzelentscheidungen widersprechen der neuen Regel und bleiben bestehen:"
         no_changes: "Keine Studierenden würden mit diesen Einstellungen den Status wechseln."
         no_rule: "Speichern Sie zuerst eine Regel, um deren Auswirkung zu sehen."
     evaluator:

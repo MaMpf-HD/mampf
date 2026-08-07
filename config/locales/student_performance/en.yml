@@ -105,6 +105,9 @@ en:
         current_status: "Current"
         new_status: "With new rule"
         deferred_hint: "Deferred means the case is still open: the marks that are still outstanding could take the student over the threshold. Raising it can therefore turn deferred into not eligible, and eligible into deferred."
+        manual_conflicts:
+          one: "%{count} individual decision contradicts the new rule and stands:"
+          other: "%{count} individual decisions contradict the new rule and stand:"
         no_changes: "No students would change status with these settings."
         no_rule: "Save a rule first to preview its impact."
     evaluator:

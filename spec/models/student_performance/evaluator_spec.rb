@@ -69,7 +69,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
         result = evaluator.evaluate(record)
         expect(result.proposed_status).to eq(:passed)
         expect(result.details[:meets_points]).to be(true)
-        expect(result.details[:required_points]).to eq(60)
       end
 
       it "proposes :failed when points are below threshold" do
@@ -416,11 +415,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
       result = described_class.new(rule).evaluate(record)
       expected_keys = [:meets_points, :points_pending, :points_not_measurable,
-                       :meets_achievements, :achievements_ungraded,
-                       :points_total, :points_max, :points_max_pending,
-                       :percentage, :required_points, :required_percentage,
-                       :achievement_ids_met, :achievement_ids_ungraded,
-                       :achievement_ids_required]
+                       :meets_achievements, :achievements_ungraded]
       expect(result.details.keys).to match_array(expected_keys)
     end
   end

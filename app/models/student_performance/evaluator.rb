@@ -46,16 +46,7 @@ module StudentPerformance
           points_pending: points == :pending,
           points_not_measurable: points == :not_measurable,
           meets_achievements: achievements == :met,
-          achievements_ungraded: achievements == :ungraded,
-          points_total: record.points_total_materialized,
-          points_max: record.points_max_materialized,
-          points_max_pending: record.points_max_pending_materialized,
-          percentage: record.percentage_materialized,
-          required_points: required_points_threshold,
-          required_percentage: rule.min_percentage,
-          achievement_ids_met: record.achievements_met_ids,
-          achievement_ids_ungraded: Array(record.achievements_ungraded_ids),
-          achievement_ids_required: required_achievement_ids
+          achievements_ungraded: achievements == :ungraded
         }
       )
     end
@@ -136,10 +127,6 @@ module StudentPerformance
 
       def required_achievement_ids
         @required_achievement_ids ||= rule.required_achievements.pluck(:id)
-      end
-
-      def required_points_threshold
-        rule.min_points_absolute
       end
   end
 end
