@@ -114,6 +114,10 @@ en:
         passed: "Eligible"
         failed: "Not Eligible"
         inconclusive: "Deferred"
+      deferral:
+        points_pending: "Marking outstanding"
+        points_not_measurable: "No points to measure"
+        achievements_ungraded: "Achievement not graded"
       single_proposal:
         title: "Eligibility Proposal"
         back_to_record: "Back to student record"
@@ -172,10 +176,6 @@ en:
         pending: "Undecided"
         manual: "Individual decision"
         stale: "Outdated — reconciliation needed"
-      deferral:
-        points_pending: "Marking outstanding"
-        points_not_measurable: "No points to measure"
-        achievements_ungraded: "Achievement not graded"
       columns:
         proposed: "Proposed"
         rule_suggests: "Per rule:"

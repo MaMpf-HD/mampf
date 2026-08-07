@@ -3,14 +3,21 @@ module StudentPerformance
     # Criteria that are open rather than missed: nobody can be judged on them yet.
     UNDECIDED = [:pending, :ungraded, :not_measurable].freeze
 
-    DEFERRAL_REASONS = [:points_pending, :points_not_measurable,
-                        :achievements_ungraded].freeze
+    POINTS_DEFERRALS = [:points_pending, :points_not_measurable].freeze
+
+    DEFERRAL_REASONS = (POINTS_DEFERRALS + [:achievements_ungraded]).freeze
 
     Result = Struct.new(:proposed_status, :details, keyword_init: true) do
       def deferral_reasons
         return [] unless proposed_status == :inconclusive
 
         DEFERRAL_REASONS.select { |reason| details[reason] }
+      end
+
+      # Reads the points criterion on its own: a missed achievement settles the
+      # case without settling the points.
+      def points_deferral
+        POINTS_DEFERRALS.find { |reason| details[reason] }
       end
     end
 

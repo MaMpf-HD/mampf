@@ -114,6 +114,10 @@ de:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         inconclusive: "Zurückgestellt"
+      deferral:
+        points_pending: "Bewertungen ausstehend"
+        points_not_measurable: "Keine Punkte zu messen"
+        achievements_ungraded: "Zusatzkriterium unbewertet"
       single_proposal:
         title: "Zulassungsvorschlag"
         back_to_record: "Zurück zum Datensatz"
@@ -172,10 +176,6 @@ de:
         pending: "Offen"
         manual: "Einzelentscheidung"
         stale: "Nicht mehr aktuell — Abgleich erforderlich"
-      deferral:
-        points_pending: "Bewertungen ausstehend"
-        points_not_measurable: "Keine Punkte zu messen"
-        achievements_ungraded: "Zusatzkriterium unbewertet"
       columns:
         proposed: "Vorschlag"
         rule_suggests: "Laut Regel:"

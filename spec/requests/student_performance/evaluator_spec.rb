@@ -112,6 +112,82 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
           end
         end
 
+        context "when the marking still outstanding could carry the student" do
+          let!(:record) do
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: student,
+                              percentage_materialized: 30,
+                              points_total_materialized: 30,
+                              points_max_materialized: 100,
+                              points_max_pending_materialized: 40)
+          end
+
+          it "does not call the points check failed" do
+            get path, params: { record_id: record.id }
+            expect(response.body).not_to include(
+              I18n.t("student_performance.evaluator.status.failed")
+            )
+          end
+
+          it "names the outstanding marking as the reason" do
+            get path, params: { record_id: record.id }
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.deferral.points_pending")
+            )
+          end
+        end
+
+        context "when there are no points to measure" do
+          let!(:record) do
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: student,
+                              percentage_materialized: 0,
+                              points_total_materialized: 0,
+                              points_max_materialized: 0)
+          end
+
+          it "says so rather than calling the student failed" do
+            get path, params: { record_id: record.id }
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.deferral.points_not_measurable")
+            )
+            expect(response.body).not_to include(
+              I18n.t("student_performance.evaluator.status.failed")
+            )
+          end
+        end
+
+        context "when a missed achievement settles an otherwise open case" do
+          let(:achievement) { FactoryBot.create(:achievement, lecture: lecture) }
+
+          let!(:record) do
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: student,
+                              percentage_materialized: 30,
+                              points_total_materialized: 30,
+                              points_max_materialized: 100,
+                              points_max_pending_materialized: 40)
+          end
+
+          before do
+            FactoryBot.create(:student_performance_rule_achievement,
+                              rule: rule, achievement: achievement)
+          end
+
+          it "keeps the points check open even though the verdict is failed" do
+            get path, params: { record_id: record.id }
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.deferral.points_pending")
+            )
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.status.failed")
+            )
+          end
+        end
+
         context "with no achievements required" do
           let!(:record) do
             FactoryBot.create(:student_performance_record,

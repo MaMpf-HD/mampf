@@ -482,6 +482,33 @@ RSpec.describe(StudentPerformance::Evaluator) do
       expect(evaluator.evaluate(record).deferral_reasons).to be_empty
     end
 
+    it "reads the points criterion even when another one settles the case" do
+      achievement = FactoryBot.create(:achievement, lecture: lecture)
+      FactoryBot.create(:student_performance_rule_achievement,
+                        rule: rule, achievement: achievement)
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 30,
+                                 points_max_materialized: 100,
+                                 points_max_pending_materialized: 40,
+                                 percentage_materialized: 30)
+
+      result = evaluator.evaluate(record)
+      expect(result.proposed_status).to eq(:failed)
+      expect(result.deferral_reasons).to be_empty
+      expect(result.points_deferral).to eq(:points_pending)
+    end
+
+    it "leaves the points criterion silent once it is settled" do
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 30,
+                                 points_max_materialized: 100,
+                                 percentage_materialized: 30)
+
+      expect(evaluator.evaluate(record).points_deferral).to be_nil
+    end
+
     it "stays silent when a missed criterion settles an otherwise open case" do
       achievement = FactoryBot.create(:achievement, lecture: lecture)
       FactoryBot.create(:student_performance_rule_achievement,

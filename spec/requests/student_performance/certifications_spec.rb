@@ -493,7 +493,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           I18n.t("student_performance.certifications.columns.rule_suggests")
         end
         def deferral(reason)
-          I18n.t("student_performance.certifications.deferral.#{reason}")
+          I18n.t("student_performance.evaluator.deferral.#{reason}")
         end
 
         let!(:rule) do
@@ -629,7 +629,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture)
           StudentPerformance::Evaluator::DEFERRAL_REASONS.each do |reason|
             expect(response.body).not_to include(
-              I18n.t("student_performance.certifications.deferral.#{reason}")
+              I18n.t("student_performance.evaluator.deferral.#{reason}")
             )
           end
         end
