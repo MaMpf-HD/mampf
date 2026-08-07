@@ -452,6 +452,12 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.submission_deletion_date).to eq(date)
     end
 
+    it "initializes it even when validations are skipped" do
+      lecture = build(:lecture)
+      expect { lecture.save(validate: false) }.not_to raise_error
+      expect(lecture.reload.submission_deletion_date).to be_present
+    end
+
     it "fans out submission_deletion_date changes to assignments" do
       lecture = create(:lecture,
                        submission_deletion_date: 6.months.from_now.to_date)

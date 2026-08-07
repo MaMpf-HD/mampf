@@ -144,7 +144,7 @@ class Lecture < ApplicationRecord
                             greater_than: -1 },
             allow_nil: true
 
-  before_validation :initialize_submission_deletion_date
+  before_save :initialize_submission_deletion_date
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
