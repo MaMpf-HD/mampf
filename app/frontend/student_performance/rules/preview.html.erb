@@ -46,6 +46,84 @@
           </span>
         <% end %>
       </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">
+                <%= t("student_performance.records.columns.student") %>
+              </th>
+
+              <th scope="col" class="text-end">
+                <% if @rule.min_points_absolute.present? %>
+                  <%= t("student_performance.records.columns.points") %>
+                <% else %>
+                  <%= t("student_performance.records.columns.percentage") %>
+                <% end %>
+              </th>
+
+              <th scope="col" class="ps-4">
+                <%= t("student_performance.rules.preview.current_status") %>
+              </th>
+
+              <th scope="col">
+                <%= t("student_performance.rules.preview.new_status") %>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @changes.each do |change| %>
+              <tr>
+                <td><%= change.record.user.tutorial_name %></td>
+
+                <td class="text-end font-monospace">
+                  <% if @rule.min_points_absolute.present? %>
+                    <%= number_with_precision(
+                          change.record.points_total_materialized,
+                          precision: 1,
+                          strip_insignificant_zeros: true) %>
+                  <% else %>
+                    <%= number_to_percentage(
+                          change.record.percentage_materialized.to_f,
+                          precision: 1) %>
+                  <% end %>
+                </td>
+
+                <td class="ps-4">
+                  <% if change.from == :passed %>
+                    <i class="bi bi-check-circle-fill text-success me-1"></i>
+                    <%= t("student_performance.evaluator.status.passed") %>
+                  <% elsif change.from == :inconclusive %>
+                    <i class="bi bi-question-circle-fill text-amber me-1"></i>
+                    <%= t("student_performance.evaluator.status.inconclusive") %>
+                  <% else %>
+                    <i class="bi bi-x-circle-fill text-danger me-1"></i>
+                    <%= t("student_performance.evaluator.status.failed") %>
+                  <% end %>
+                </td>
+
+                <td>
+                  <% if change.to == :passed %>
+                    <i class="bi bi-check-circle-fill text-success me-1"></i>
+                    <%= t("student_performance.evaluator.status.passed") %>
+                  <% elsif change.to == :inconclusive %>
+                    <i class="bi bi-question-circle-fill text-amber me-1"></i>
+                    <%= t("student_performance.evaluator.status.inconclusive") %>
+                  <% else %>
+                    <i class="bi bi-x-circle-fill text-danger me-1"></i>
+                    <%= t("student_performance.evaluator.status.failed") %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted small mt-2 mb-0">
+        <i class="bi bi-info-circle me-1"></i>
+        <%= t("student_performance.rules.preview.deferred_hint") %>
+      </p>
     <% end %>
   <% end %>
 <% end %>

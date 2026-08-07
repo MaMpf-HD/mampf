@@ -127,6 +127,7 @@
               <input
                 type="number"
                 name="rule[min_percentage]"
+                aria-label="<%= t("student_performance.rules.edit.percentage_field") %>"
                 value="<%= @rule.min_percentage %>"
                 class="form-control<% if @rule.errors[:min_percentage].any? %> is-invalid <% end %>"
                 min="0"
@@ -150,6 +151,7 @@
               <input
                 type="number"
                 name="rule[min_points_absolute]"
+                aria-label="<%= t("student_performance.rules.edit.absolute_field") %>"
                 value="<%= @rule.min_points_absolute %>"
                 class="form-control<% if @rule.errors[:min_points_absolute].any? %> is-invalid <% end %>"
                 min="0"

@@ -37,7 +37,6 @@ de:
         achievement_ungraded: "Noch nicht bewertet"
       index:
         subtitle: "Faktische Leistungsdaten, berechnet aus Bewertungen."
-        generate_proposals: "Vorschläge generieren"
         all_participants: "Alle Teilnehmenden"
         without_tutorial: "Ohne Übungsgruppe"
         awaiting_marking:
@@ -90,6 +89,8 @@ de:
         absolute_mode: "Absolute Punkte"
         absolute_hint: "Studierende müssen diese Punktzahl erreichen."
         points_unit: "Pkt"
+        percentage_field: "Mindestprozentsatz"
+        absolute_field: "Mindestpunktzahl"
         achievements_section: "Erforderliche Zusatzkriterien"
         achievements_hint: "Wählen Sie, welche Zusatzkriterien Studierende erfüllen müssen."
       flash:
@@ -101,6 +102,9 @@ de:
         newly_passed: "neu zugelassen"
         newly_failed: "neu nicht zugelassen"
         newly_inconclusive: "neu zurückgestellt"
+        current_status: "Aktuell"
+        new_status: "Mit neuer Regel"
+        deferred_hint: "Zurückgestellt heißt: noch offen — die ausstehenden Bewertungen könnten die Schwelle noch erreichen. Eine höhere Schwelle kann deshalb aus zurückgestellt „nicht zugelassen“ machen und aus zugelassen „zurückgestellt“."
         no_changes: "Keine Studierenden würden mit diesen Einstellungen den Status wechseln."
         no_rule: "Speichern Sie zuerst eine Regel, um deren Auswirkung zu sehen."
     evaluator:
@@ -110,34 +114,6 @@ de:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         inconclusive: "Zurückgestellt"
-      bulk_proposals:
-        title: "Zulassungsvorschläge"
-        subtitle: "Alle Studierenden anhand der aktiven Zulassungsregel ausgewertet."
-        total: "Studierende gesamt"
-        passed: "Vorschlag: Zugelassen"
-        failed: "Vorschlag: Nicht zugelassen"
-        inconclusive: "Vorschlag: Zurückgestellt"
-        meets_points: "Punkte"
-        meets_achievements: "Zusatzkriterien"
-        proposal: "Vorschlag"
-        empty: "Keine Leistungsdaten zur Auswertung vorhanden."
-        info: "Diese Vorschläge sind schreibgeschützte Vorschauen. Zulassungen werden in einem zukünftigen Update erstellt."
-      preview_rule_change:
-        title: "Regeländerung vorschauen"
-        subtitle: "Sehen Sie, wie eine andere Schwelle die Zulassungsentscheidungen beeinflussen würde."
-        current_rule: "Aktuelle Regel"
-        try_percentage: "Anderen Prozentsatz ausprobieren"
-        try_points: "Andere Punktzahl ausprobieren"
-        preview: "Vorschau"
-        try_threshold: "Andere Schwelle ausprobieren"
-        total_changes: "Betroffene Studierende"
-        newly_passed: "Neu zugelassen"
-        newly_failed: "Neu nicht zugelassen"
-        newly_inconclusive: "Neu zurückgestellt"
-        current_status: "Aktuell"
-        new_status: "Mit neuer Regel"
-        no_changes: "Kein/e Studierende/r würde mit dieser Schwelle den Status ändern."
-        apply_threshold: "Diese Schwelle übernehmen"
       single_proposal:
         title: "Zulassungsvorschlag"
         back_to_record: "Zurück zum Datensatz"
@@ -193,10 +169,13 @@ de:
       status:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
-        pending: "Ausstehend"
+        pending: "Offen"
         manual: "Einzelentscheidung"
         stale: "Nicht mehr aktuell — Abgleich erforderlich"
-        input_missing: "Auto-Auswertung zurückgestellt — Eingaben fehlen (z. B. Tutorbewertung)"
+      deferral:
+        points_pending: "Bewertungen ausstehend"
+        points_not_measurable: "Keine Punkte zu messen"
+        achievements_ungraded: "Zusatzkriterium unbewertet"
       columns:
         proposed: "Vorschlag"
         rule_suggests: "Laut Regel:"
@@ -229,8 +208,8 @@ de:
           one: "%{count} Zulassung neu bewertet."
           other: "%{count} Zulassungen neu bewertet."
         bulk_inconclusive:
-          one: "%{count} Zulassung bleibt zurückgestellt (Eingaben fehlen)."
-          other: "%{count} Zulassungen bleiben zurückgestellt (Eingaben fehlen)."
+          one: "%{count} Zulassung bleibt zurückgestellt."
+          other: "%{count} Zulassungen bleiben zurückgestellt."
         reevaluated_inconclusive:
-          one: "%{count} Zulassung erneut zurückgestellt (Eingaben fehlen)."
-          other: "%{count} Zulassungen erneut zurückgestellt (Eingaben fehlen)."
+          one: "%{count} Zulassung erneut zurückgestellt."
+          other: "%{count} Zulassungen erneut zurückgestellt."

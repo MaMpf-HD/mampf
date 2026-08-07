@@ -37,7 +37,6 @@ en:
         achievement_ungraded: "Not yet graded"
       index:
         subtitle: "Factual performance data computed from assessments."
-        generate_proposals: "Generate Proposals"
         all_participants: "All participants"
         without_tutorial: "Without tutorial group"
         awaiting_marking:
@@ -90,6 +89,8 @@ en:
         absolute_mode: "Absolute points"
         absolute_hint: "Students must reach this number of points."
         points_unit: "pts"
+        percentage_field: "Minimum percentage"
+        absolute_field: "Minimum points"
         achievements_section: "Required Achievements"
         achievements_hint: "Select which achievements students must complete."
       flash:
@@ -101,6 +102,9 @@ en:
         newly_passed: "newly eligible"
         newly_failed: "newly ineligible"
         newly_inconclusive: "newly deferred"
+        current_status: "Current"
+        new_status: "With new rule"
+        deferred_hint: "Deferred means the case is still open: the marks that are still outstanding could take the student over the threshold. Raising it can therefore turn deferred into not eligible, and eligible into deferred."
         no_changes: "No students would change status with these settings."
         no_rule: "Save a rule first to preview its impact."
     evaluator:
@@ -110,34 +114,6 @@ en:
         passed: "Eligible"
         failed: "Not Eligible"
         inconclusive: "Deferred"
-      bulk_proposals:
-        title: "Eligibility Proposals"
-        subtitle: "Evaluated all students against the active eligibility rule."
-        total: "Total Students"
-        passed: "Proposed Eligible"
-        failed: "Proposed Not Eligible"
-        inconclusive: "Proposed Deferred"
-        meets_points: "Points"
-        meets_achievements: "Achievements"
-        proposal: "Proposal"
-        empty: "No performance records found to evaluate."
-        info: "These proposals are read-only previews. Certifications will be created in a future update."
-      preview_rule_change:
-        title: "Preview Rule Change"
-        subtitle: "See how a different threshold would affect eligibility outcomes."
-        current_rule: "Current rule"
-        try_percentage: "Try a different percentage"
-        try_points: "Try different points"
-        preview: "Preview"
-        try_threshold: "Try different threshold"
-        total_changes: "Students Affected"
-        newly_passed: "Newly Eligible"
-        newly_failed: "Newly Not Eligible"
-        newly_inconclusive: "Newly Deferred"
-        current_status: "Current"
-        new_status: "With new rule"
-        no_changes: "No students would change status with this threshold."
-        apply_threshold: "Apply this threshold"
       single_proposal:
         title: "Eligibility Proposal"
         back_to_record: "Back to student record"
@@ -193,10 +169,13 @@ en:
       status:
         passed: "Eligible"
         failed: "Not Eligible"
-        pending: "Pending"
+        pending: "Undecided"
         manual: "Individual decision"
         stale: "Outdated — reconciliation needed"
-        input_missing: "Auto-evaluation deferred — input missing (e.g. tutor grading)"
+      deferral:
+        points_pending: "Marking outstanding"
+        points_not_measurable: "No points to measure"
+        achievements_ungraded: "Achievement not graded"
       columns:
         proposed: "Proposed"
         rule_suggests: "Per rule:"
@@ -229,8 +208,8 @@ en:
           one: "%{count} decision re-evaluated."
           other: "%{count} decisions re-evaluated."
         bulk_inconclusive:
-          one: "%{count} decision left deferred (input missing)."
-          other: "%{count} decisions left deferred (input missing)."
+          one: "%{count} decision left deferred."
+          other: "%{count} decisions left deferred."
         reevaluated_inconclusive:
-          one: "%{count} decision deferred again (input missing)."
-          other: "%{count} decisions deferred again (input missing)."
+          one: "%{count} decision deferred again."
+          other: "%{count} decisions deferred again."

@@ -1,4 +1,7 @@
 <%= turbo_frame_tag "performance-records-frame" do %>
+  <%# a frame swap discards the layout, so a confirmation has to travel inside it %>
+  <%= render partial: "flash/message" if turbo_frame_request? %>
+
   <p class="text-muted small mb-2 mt-2">
     <%= t("student_performance.records.index.subtitle") %>
   </p>
