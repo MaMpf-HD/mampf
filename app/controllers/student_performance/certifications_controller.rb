@@ -104,7 +104,7 @@ module StudentPerformance
           if cert.persisted? &&
              (cert.manual? ||
               (!cert.pending? &&
-               cert.status.to_sym != result.proposed_status))
+               cert.disagrees_with?(result.proposed_status)))
             next
           end
 
@@ -282,23 +282,15 @@ module StudentPerformance
       end
 
       def attributes_for_proposal(proposed_status)
-        if proposed_status == :inconclusive
-          {
-            status: :pending,
-            source: :computed,
-            certified_by: nil,
-            certified_at: Time.current,
-            rule: @rule
-          }
-        else
-          {
-            status: proposed_status,
-            source: :computed,
-            certified_by: current_user,
-            certified_at: Time.current,
-            rule: @rule
-          }
-        end
+        status = Certification.status_for_proposal(proposed_status)
+
+        {
+          status: status,
+          source: :computed,
+          certified_by: status == :pending ? nil : current_user,
+          certified_at: Time.current,
+          rule: @rule
+        }
       end
 
       def bulk_accept_notice(created, inconclusive)

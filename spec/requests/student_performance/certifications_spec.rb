@@ -485,6 +485,155 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           expect(response.body).to include("Medical exemption")
         end
       end
+
+      context "with a pending certification" do
+        let(:achievement) { FactoryBot.create(:achievement, lecture: lecture) }
+        let(:undecided_user) { FactoryBot.create(:confirmed_user) }
+        let(:rule_suggests) do
+          I18n.t("student_performance.certifications.columns.rule_suggests")
+        end
+        def deferral(reason)
+          I18n.t("student_performance.certifications.deferral.#{reason}")
+        end
+
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: undecided_user,
+                            percentage_materialized: 80,
+                            points_total_materialized: 80,
+                            points_max_materialized: 100,
+                            achievements_ungraded_ids: [achievement.id])
+          FactoryBot.create(:student_performance_certification,
+                            lecture: lecture, user: undecided_user)
+        end
+
+        context "when the rule cannot decide either" do
+          before do
+            FactoryBot.create(:student_performance_rule_achievement,
+                              rule: rule, achievement: achievement)
+          end
+
+          it "does not claim the rule says something else" do
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).not_to include(rule_suggests)
+          end
+
+          it "names the unmarked achievement as the reason" do
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(deferral(:achievements_ungraded))
+          end
+        end
+
+        context "when there are no points to measure" do
+          let(:exempt_user) { FactoryBot.create(:confirmed_user) }
+
+          before do
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: exempt_user,
+                              percentage_materialized: 0,
+                              points_total_materialized: 0,
+                              points_max_materialized: 0)
+            FactoryBot.create(:student_performance_certification,
+                              lecture: lecture, user: exempt_user)
+          end
+
+          it "says so instead of blaming missing input" do
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(deferral(:points_not_measurable))
+            expect(response.body).not_to include(deferral(:points_pending))
+          end
+        end
+
+        context "when the marking still outstanding could carry the student" do
+          let(:awaited_user) { FactoryBot.create(:confirmed_user) }
+
+          before do
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: awaited_user,
+                              percentage_materialized: 30,
+                              points_total_materialized: 30,
+                              points_max_materialized: 100,
+                              points_max_pending_materialized: 40)
+            FactoryBot.create(:student_performance_certification,
+                              lecture: lecture, user: awaited_user)
+          end
+
+          it "points at the marking rather than at the student" do
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(deferral(:points_pending))
+          end
+        end
+
+        context "when the rule would let the student through" do
+          it "names what the rule says" do
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(rule_suggests)
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.status.passed")
+                 .downcase
+            )
+          end
+
+          it "offers no reason where there is nothing to explain" do
+            get lecture_student_performance_certifications_path(lecture)
+            StudentPerformance::Evaluator::DEFERRAL_REASONS.each do |reason|
+              expect(response.body).not_to include(deferral(reason))
+            end
+          end
+        end
+      end
+
+      context "with a decided certification the rule would now defer" do
+        let(:achievement) { FactoryBot.create(:achievement, lecture: lecture) }
+        let(:decided_user) { FactoryBot.create(:confirmed_user) }
+
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        before do
+          FactoryBot.create(:student_performance_rule_achievement,
+                            rule: rule, achievement: achievement)
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: decided_user,
+                            percentage_materialized: 80,
+                            points_total_materialized: 80,
+                            points_max_materialized: 100,
+                            achievements_ungraded_ids: [achievement.id])
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: decided_user)
+        end
+
+        it "says the rule disagrees" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.columns.rule_suggests")
+          )
+        end
+
+        it "does not reopen a settled row with the rule's reasons" do
+          get lecture_student_performance_certifications_path(lecture)
+          StudentPerformance::Evaluator::DEFERRAL_REASONS.each do |reason|
+            expect(response.body).not_to include(
+              I18n.t("student_performance.certifications.deferral.#{reason}")
+            )
+          end
+        end
+      end
     end
 
     context "as a student" do
@@ -700,6 +849,20 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(passed.source).to eq("computed")
         expect(passed.certified_by).to eq(editor)
         expect(failed.status).to eq("failed")
+      end
+
+      # The button is hidden without a rule, so this guard is only ever met by a
+      # request that did not come from the page.
+      it "refuses to accept proposals when no rule proposes anything" do
+        rule.update!(active: false)
+
+        expect do
+          post(bulk_accept_lecture_student_performance_certifications_path(
+                 lecture
+               ))
+        end.not_to change(StudentPerformance::Certification, :count)
+
+        expect(flash[:alert]).to eq(I18n.t("student_performance.evaluator.no_rule"))
       end
 
       it "skips manual overrides" do

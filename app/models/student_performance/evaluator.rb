@@ -1,9 +1,18 @@
 module StudentPerformance
   class Evaluator
-    Result = Struct.new(:proposed_status, :details, keyword_init: true)
-
     # Criteria that are open rather than missed: nobody can be judged on them yet.
     UNDECIDED = [:pending, :ungraded, :not_measurable].freeze
+
+    DEFERRAL_REASONS = [:points_pending, :points_not_measurable,
+                        :achievements_ungraded].freeze
+
+    Result = Struct.new(:proposed_status, :details, keyword_init: true) do
+      def deferral_reasons
+        return [] unless proposed_status == :inconclusive
+
+        DEFERRAL_REASONS.select { |reason| details[reason] }
+      end
+    end
 
     attr_reader :rule
 
@@ -28,6 +37,7 @@ module StudentPerformance
         details: {
           meets_points: points == :met,
           points_pending: points == :pending,
+          points_not_measurable: points == :not_measurable,
           meets_achievements: achievements == :met,
           achievements_ungraded: achievements == :ungraded,
           points_total: record.points_total_materialized,

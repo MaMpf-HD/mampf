@@ -117,6 +117,41 @@ RSpec.describe(StudentPerformance::Certification, type: :model) do
     end
   end
 
+  describe ".status_for_proposal" do
+    it "reads an inconclusive proposal as the pending status" do
+      expect(described_class.status_for_proposal(:inconclusive))
+        .to eq(:pending)
+    end
+
+    it "leaves a decided proposal as it is" do
+      expect(described_class.status_for_proposal(:passed)).to eq(:passed)
+      expect(described_class.status_for_proposal(:failed)).to eq(:failed)
+    end
+  end
+
+  describe "#disagrees_with?" do
+    it "sees no disagreement between pending and inconclusive" do
+      cert = FactoryBot.build(:student_performance_certification)
+      expect(cert).to be_pending
+      expect(cert.disagrees_with?(:inconclusive)).to be(false)
+    end
+
+    it "sees a disagreement when the rule would let a pending student pass" do
+      cert = FactoryBot.build(:student_performance_certification)
+      expect(cert.disagrees_with?(:passed)).to be(true)
+    end
+
+    it "sees a disagreement when the rule defers a decided student" do
+      cert = FactoryBot.build(:student_performance_certification, :passed)
+      expect(cert.disagrees_with?(:inconclusive)).to be(true)
+    end
+
+    it "sees no disagreement when both say the same" do
+      cert = FactoryBot.build(:student_performance_certification, :failed)
+      expect(cert.disagrees_with?(:failed)).to be(false)
+    end
+  end
+
   describe ".stale" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:user) { FactoryBot.create(:confirmed_user) }

@@ -415,12 +415,88 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                  lecture: lecture, percentage_materialized: 60)
 
       result = described_class.new(rule).evaluate(record)
-      expected_keys = [:meets_points, :points_pending, :meets_achievements,
-                       :achievements_ungraded, :points_total, :points_max,
-                       :points_max_pending, :percentage, :required_points,
-                       :required_percentage, :achievement_ids_met,
-                       :achievement_ids_ungraded, :achievement_ids_required]
+      expected_keys = [:meets_points, :points_pending, :points_not_measurable,
+                       :meets_achievements, :achievements_ungraded,
+                       :points_total, :points_max, :points_max_pending,
+                       :percentage, :required_points, :required_percentage,
+                       :achievement_ids_met, :achievement_ids_ungraded,
+                       :achievement_ids_required]
       expect(result.details.keys).to match_array(expected_keys)
+    end
+  end
+
+  describe "Result#deferral_reasons" do
+    let(:rule) do
+      FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                        lecture: lecture, min_percentage: 50)
+    end
+
+    let(:evaluator) { described_class.new(rule) }
+
+    it "names the outstanding marking that could still carry the student" do
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 30,
+                                 points_max_materialized: 100,
+                                 points_max_pending_materialized: 40,
+                                 percentage_materialized: 30)
+
+      expect(evaluator.evaluate(record).deferral_reasons)
+        .to eq([:points_pending])
+    end
+
+    it "names a maximum of zero as its own reason" do
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 0,
+                                 points_max_materialized: 0,
+                                 percentage_materialized: 0)
+
+      expect(evaluator.evaluate(record).deferral_reasons)
+        .to eq([:points_not_measurable])
+    end
+
+    it "names both criteria when both are open" do
+      achievement = FactoryBot.create(:achievement, lecture: lecture)
+      FactoryBot.create(:student_performance_rule_achievement,
+                        rule: rule, achievement: achievement)
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 30,
+                                 points_max_materialized: 100,
+                                 points_max_pending_materialized: 40,
+                                 percentage_materialized: 30,
+                                 achievements_ungraded_ids: [achievement.id])
+
+      expect(evaluator.evaluate(record).deferral_reasons)
+        .to eq([:points_pending, :achievements_ungraded])
+    end
+
+    it "stays silent on a decided proposal" do
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 60,
+                                 points_max_materialized: 100,
+                                 percentage_materialized: 60)
+
+      expect(evaluator.evaluate(record).deferral_reasons).to be_empty
+    end
+
+    it "stays silent when a missed criterion settles an otherwise open case" do
+      achievement = FactoryBot.create(:achievement, lecture: lecture)
+      FactoryBot.create(:student_performance_rule_achievement,
+                        rule: rule, achievement: achievement)
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 30,
+                                 points_max_materialized: 100,
+                                 percentage_materialized: 30,
+                                 achievements_ungraded_ids: [achievement.id])
+
+      result = evaluator.evaluate(record)
+      expect(result.proposed_status).to eq(:failed)
+      expect(result.details[:achievements_ungraded]).to be(true)
+      expect(result.deferral_reasons).to be_empty
     end
   end
 

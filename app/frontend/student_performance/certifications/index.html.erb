@@ -30,6 +30,9 @@
   </div>
 
   <%= turbo_frame_tag "rule-editor-frame" do %>
+    <%# a frame swap discards the layout, so the confirmation has to travel inside it %>
+    <%= render partial: "flash/message" if turbo_frame_request? %>
+
     <% if @rule %>
       <div class="bg-light rounded border mt-3 mb-4 py-2 px-3">
         <div class="d-flex justify-content-between align-items-center">
@@ -139,7 +142,7 @@
       ></div>
 
       <div
-        class="progress-bar bg-warning"
+        class="progress-bar bg-amber"
         role="progressbar"
         style="width: <%= (@uncertified_count.to_f / @total_students * 100) %>%;"
         aria-label="<%= t("student_performance.certifications.index.uncertified") %>"
@@ -421,7 +424,7 @@
                         </span>
                       <% when :pending %>
                         <span class="text-dark">
-                          <i class="bi bi-clock-fill text-warning me-1"></i>
+                          <i class="bi bi-clock-fill text-amber me-1"></i>
                           <%= t("student_performance.certifications.status.pending") %>
                         </span>
                       <% end %>
@@ -437,14 +440,6 @@
                         <i
                           class="bi bi-exclamation-triangle-fill text-warning ms-2 small"
                           title="<%= t('student_performance.certifications.status.stale') %>"
-                        ></i>
-                      <% end %>
-
-                      <% if cert.pending? && cert.source == "computed" &&
-                            proposal&.proposed_status == :inconclusive %>
-                        <i
-                          class="bi bi-question-circle-fill text-amber ms-2 small"
-                          title="<%= t('student_performance.certifications.status.input_missing') %>"
                         ></i>
                       <% end %>
                     </div>
@@ -505,7 +500,7 @@
               <td class="small" style="max-width: 180px">
                 <% if cert %>
                   <div data-certification-inline-target="display">
-                    <% if proposal && proposal.proposed_status != cert.status.to_sym %>
+                    <% if proposal && cert.disagrees_with?(proposal.proposed_status) %>
                       <span class="badge text-amber bg-amber-subtle fw-normal mb-1">
                         <i class="bi bi-arrow-left-right me-1"></i>
                         <%= t("student_performance.certifications.columns.rule_suggests") %>
@@ -519,6 +514,15 @@
                         <% end %>
                       </span>
                       <br>
+                    <% end %>
+
+                    <% if cert.pending? %>
+                      <% proposal&.deferral_reasons&.each do |reason| %>
+                        <span class="text-amber d-block">
+                          <i class="bi bi-question-circle-fill me-1"></i>
+                          <%= t("student_performance.certifications.deferral.#{reason}") %>
+                        </span>
+                      <% end %>
                     <% end %>
 
                     <span

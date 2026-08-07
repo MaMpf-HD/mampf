@@ -15,6 +15,14 @@ module StudentPerformance
     validates :certified_by, presence: true, unless: :pending?
     validates :certified_at, presence: true, unless: :pending?
 
+    def self.status_for_proposal(proposed_status)
+      proposed_status == :inconclusive ? :pending : proposed_status
+    end
+
+    def disagrees_with?(proposed_status)
+      status.to_sym != self.class.status_for_proposal(proposed_status)
+    end
+
     # A row that was never evaluated is the most out-of-date one there is, but
     # `x > NULL` yields NULL rather than false and would drop it from every scope
     # below. The nil case is therefore spelled out.
