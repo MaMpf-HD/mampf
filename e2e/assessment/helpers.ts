@@ -21,6 +21,18 @@ export async function createLecture(
   });
 }
 
+/** Exam eligibility is what puts the certification tab on the page at all. */
+export async function createEligibilityLecture(
+  factory: FactoryBot,
+  teacherId: number,
+): Promise<FactoryBotObject> {
+  return factory.create("lecture", ["released_for_all"], {
+    teacher_id: teacherId,
+    locale: "en",
+    uses_exam_eligibility: true,
+  });
+}
+
 export async function createAssessedAssignment(
   factory: FactoryBot,
   teacherId: number,
