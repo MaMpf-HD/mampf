@@ -420,7 +420,25 @@ RSpec.describe(StudentPerformance::Evaluator) do
     end
   end
 
-  describe "Result#deferral_reasons" do
+  describe "a threshold of zero" do
+    it "passes a student with nothing to measure, since points were not asked" do
+      lecture = FactoryBot.create(:lecture)
+      rule = FactoryBot.create(:student_performance_rule, :active,
+                               :with_percentage,
+                               lecture: lecture, min_percentage: 0)
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 0,
+                                 points_max_materialized: 0,
+                                 percentage_materialized: 0)
+
+      result = described_class.new(rule).evaluate(record)
+      expect(result.proposed_status).to eq(:passed)
+      expect(result.points_criterion_deferral).to be_nil
+    end
+  end
+
+  describe "Result#verdict_deferral_reasons" do
     let(:rule) do
       FactoryBot.create(:student_performance_rule, :active, :with_percentage,
                         lecture: lecture, min_percentage: 50)
@@ -436,7 +454,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                  points_max_pending_materialized: 40,
                                  percentage_materialized: 30)
 
-      expect(evaluator.evaluate(record).deferral_reasons)
+      expect(evaluator.evaluate(record).verdict_deferral_reasons)
         .to eq([:points_pending])
     end
 
@@ -447,7 +465,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                  points_max_materialized: 0,
                                  percentage_materialized: 0)
 
-      expect(evaluator.evaluate(record).deferral_reasons)
+      expect(evaluator.evaluate(record).verdict_deferral_reasons)
         .to eq([:points_not_measurable])
     end
 
@@ -463,7 +481,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                  percentage_materialized: 30,
                                  achievements_ungraded_ids: [achievement.id])
 
-      expect(evaluator.evaluate(record).deferral_reasons)
+      expect(evaluator.evaluate(record).verdict_deferral_reasons)
         .to eq([:points_pending, :achievements_ungraded])
     end
 
@@ -474,7 +492,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                  points_max_materialized: 100,
                                  percentage_materialized: 60)
 
-      expect(evaluator.evaluate(record).deferral_reasons).to be_empty
+      expect(evaluator.evaluate(record).verdict_deferral_reasons).to be_empty
     end
 
     it "reads the points criterion even when another one settles the case" do
@@ -490,8 +508,8 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
       result = evaluator.evaluate(record)
       expect(result.proposed_status).to eq(:failed)
-      expect(result.deferral_reasons).to be_empty
-      expect(result.points_deferral).to eq(:points_pending)
+      expect(result.verdict_deferral_reasons).to be_empty
+      expect(result.points_criterion_deferral).to eq(:points_pending)
     end
 
     it "leaves the points criterion silent once it is settled" do
@@ -501,7 +519,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                  points_max_materialized: 100,
                                  percentage_materialized: 30)
 
-      expect(evaluator.evaluate(record).points_deferral).to be_nil
+      expect(evaluator.evaluate(record).points_criterion_deferral).to be_nil
     end
 
     it "stays silent when a missed criterion settles an otherwise open case" do
@@ -518,7 +536,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       result = evaluator.evaluate(record)
       expect(result.proposed_status).to eq(:failed)
       expect(result.details[:achievements_ungraded]).to be(true)
-      expect(result.deferral_reasons).to be_empty
+      expect(result.verdict_deferral_reasons).to be_empty
     end
   end
 

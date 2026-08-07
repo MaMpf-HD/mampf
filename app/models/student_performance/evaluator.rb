@@ -8,15 +8,13 @@ module StudentPerformance
     DEFERRAL_REASONS = (POINTS_DEFERRALS + [:achievements_ungraded]).freeze
 
     Result = Struct.new(:proposed_status, :details, keyword_init: true) do
-      def deferral_reasons
+      def verdict_deferral_reasons
         return [] unless proposed_status == :inconclusive
 
         DEFERRAL_REASONS.select { |reason| details[reason] }
       end
 
-      # Reads the points criterion on its own: a missed achievement settles the
-      # case without settling the points.
-      def points_deferral
+      def points_criterion_deferral
         POINTS_DEFERRALS.find { |reason| details[reason] }
       end
     end

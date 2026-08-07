@@ -107,7 +107,7 @@
                   <i class="bi bi-check-circle-fill me-1"></i>
                   <%= t("student_performance.evaluator.status.passed") %>
                 </span>
-              <% elsif @result.points_deferral %>
+              <% elsif @result.points_criterion_deferral %>
                 <span class="text-amber fw-bold">
                   <i class="bi bi-question-circle-fill me-1"></i>
                   <%= t("student_performance.evaluator.status.inconclusive") %>
@@ -120,9 +120,9 @@
               <% end %>
             </div>
 
-            <% if @result.points_deferral %>
+            <% if @result.points_criterion_deferral %>
               <p class="text-amber small mb-0 mt-2">
-                <%= t("student_performance.evaluator.deferral.#{@result.points_deferral}") %>
+                <%= t("student_performance.evaluator.deferral.#{@result.points_criterion_deferral}") %>
               </p>
             <% end %>
           </div>

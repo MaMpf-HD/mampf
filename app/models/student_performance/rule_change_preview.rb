@@ -1,23 +1,35 @@
 module StudentPerformance
   # What a rule change would do to the current proposals, without saving
-  # anything. A decision set by hand is never swept, so its row is reported
-  # apart from the ones a re-evaluation would actually move.
+  # anything. A decision set by hand is never swept, so it is left out of the
+  # movement and reported separately where the new rule contradicts it.
   class RuleChangePreview
     Change = Struct.new(:record, :from, :to, keyword_init: true)
+    Conflict = Struct.new(:record, :decision, :proposed, keyword_init: true)
 
-    def initialize(current_rule:, preview_rule:, records:, certifications: [])
+    def initialize(current_rule:, preview_rule:, records:, certifications:)
       @current_evaluator = Evaluator.new(current_rule)
       @preview_evaluator = Evaluator.new(preview_rule)
       @records = records
-      @manual_user_ids = certifications.select(&:manual?).to_set(&:user_id)
+      @manual_certifications = certifications.select(&:manual?)
+                                             .index_by(&:user_id)
     end
 
     def changes
-      @changes ||= comparisons.reject { |change| settled_by_hand?(change) }
+      @changes ||= comparisons.reject { |change| settled_by_hand?(change.record) }
     end
 
     def manual_conflicts
-      @manual_conflicts ||= comparisons.select { |change| settled_by_hand?(change) }
+      @manual_conflicts ||= @records.filter_map do |record|
+        certification = @manual_certifications[record.user_id]
+        next unless certification
+
+        proposed = @preview_evaluator.evaluate(record).proposed_status
+        next unless certification.disagrees_with?(proposed)
+
+        Conflict.new(record: record,
+                     decision: certification.status.to_sym,
+                     proposed: proposed)
+      end
     end
 
     def newly(status)
@@ -36,8 +48,8 @@ module StudentPerformance
         end
       end
 
-      def settled_by_hand?(change)
-        @manual_user_ids.include?(change.record.user_id)
+      def settled_by_hand?(record)
+        @manual_certifications.key?(record.user_id)
       end
   end
 end

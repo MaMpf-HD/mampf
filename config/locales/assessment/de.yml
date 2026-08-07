@@ -40,7 +40,7 @@ de:
         status: 'Status'
         met: 'Erfüllt'
         not_met: 'Nicht erfüllt'
-        unmarked: 'Offen'
+        unmarked: 'Noch nicht bewertet'
         no_participations: 'Noch keine Teilnahmen vorhanden.'
     assignment: 'Hausaufgabe'
     assignments: 'Hausaufgaben'

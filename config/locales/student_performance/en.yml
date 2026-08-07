@@ -40,8 +40,8 @@ en:
         all_participants: "All participants"
         without_tutorial: "Without tutorial group"
         awaiting_marking:
-          one: "1 submission is not marked yet"
-          other: "%{count} submissions are not marked yet"
+          one: "1 submission is not graded yet"
+          other: "%{count} submissions are not graded yet"
         empty: "No performance records have been computed yet."
         details: "Details"
 
@@ -104,10 +104,13 @@ en:
         newly_inconclusive: "newly deferred"
         current_status: "Current"
         new_status: "With new rule"
-        deferred_hint: "Deferred means the case is still open: the marks that are still outstanding could take the student over the threshold. Raising it can therefore turn deferred into not eligible, and eligible into deferred."
+        deferred_hint: "Deferred means the case is still open: the grades that are still outstanding could take the student over the threshold. Raising it can therefore turn deferred into not eligible, and eligible into deferred."
         manual_conflicts:
           one: "%{count} individual decision contradicts the new rule and stands:"
           other: "%{count} individual decisions contradict the new rule and stand:"
+        and_more:
+          one: "and %{count} more"
+          other: "and %{count} more"
         no_changes: "No students would change status with these settings."
         no_rule: "Save a rule first to preview its impact."
     evaluator:
@@ -118,7 +121,7 @@ en:
         failed: "Not Eligible"
         inconclusive: "Deferred"
       deferral:
-        points_pending: "Submissions not marked yet"
+        points_pending: "Submissions not graded yet"
         points_not_measurable: "No points to measure"
         achievements_ungraded: "Achievement not graded yet"
       single_proposal:
