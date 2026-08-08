@@ -57,7 +57,9 @@ module UserRegistrationsHelper
   end
 
   def student_registration_instruction(campaign, items = [])
-    key = if campaign.first_come_first_served?
+    key = if campaign.exam_campaign?
+      "first_come_first_served_instruction_exam"
+    elsif campaign.first_come_first_served?
       "first_come_first_served_instruction"
     else
       "preference_instruction"

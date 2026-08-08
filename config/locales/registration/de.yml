@@ -336,6 +336,7 @@ de:
       campaign_main: "Anmeldeverfahren"
       eligibility_title: "Berechtigung"
       first_come_first_served_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
+      first_come_first_served_instruction_exam: "Melde Dich für diese Prüfung an. Dein Platz steht sofort fest."
       preference_instruction:
         one: "Ordne %{count} Option nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
         other: "Ordne %{count} Optionen nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
@@ -365,6 +366,7 @@ de:
       readonly_notice:
         title: "Anmeldung geschlossen"
         description: "Deine abgegebenen Auswahlentscheidungen bleiben hier sichtbar, während die Lehrperson die Anmeldungen prüft und die endgültige Zuteilung vorbereitet. Änderungen sind nicht mehr möglich."
+        description_exam: "Deine Anmeldung bleibt hier sichtbar, während die Lehrperson die Teilnehmendenliste bestätigt. Du kannst sie nicht mehr zurückziehen."
       finalization_policy_notice:
         title: "Deine Anmeldung würde derzeit bei der endgültigen Zuteilung abgelehnt"
         description: >-
@@ -385,7 +387,7 @@ de:
         policies:
           institutional_email_html: "E-Mail-Domain muss <em>%{domains}</em> sein"
           prerequisite_campaign_html: "Bestätigte Anmeldung in <em>%{campaign}</em>"
-          student_performance_html: "Status bei der Studierendenleistung muss <em>%{status}</em> sein"
+          student_performance_html: "Du musst in <em>%{lectures}</em> zur Prüfung zugelassen sein"
           generic_html: "Voraussetzung: <em>%{requirement}</em>"
         hints:
           institutional_email_registration_html: >-
@@ -428,9 +430,9 @@ de:
         prerequisite_not_met_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hattest Du keine bestätigte Anmeldung im Anmeldeverfahren <em>%{campaign}</em>. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
         prerequisite_campaign_not_found_html: "Das erforderliche vorausgesetzte Anmeldeverfahren <em>%{campaign}</em> ist derzeit nicht verfügbar. Bitte wende Dich an die Kursverwaltung."
         prerequisite_configuration_error: "Dieses Anmeldeverfahren hängt von einem vorausgesetzten Anmeldeverfahren ab, das nicht korrekt konfiguriert ist. Bitte wende Dich an die Kursverwaltung."
-        student_performance_failed_html: "Dein Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status <em>%{status}</em>. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
-        student_performance_failed_finalization_warning_html: "Dein aktueller Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status <em>%{status}</em>. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
-        student_performance_failed_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens entsprach Dein Status bei der Studierendenleistung nicht dem erforderlichen Status <em>%{status}</em>. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
+        student_performance_failed_html: "Du bist in <em>%{lectures}</em> nicht zur Prüfung zugelassen. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
+        student_performance_failed_finalization_warning_html: "Du bist in <em>%{lectures}</em> noch nicht zur Prüfung zugelassen. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
+        student_performance_failed_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung warst Du in <em>%{lectures}</em> nicht zur Prüfung zugelassen. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
         generic_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
         generic_finalization_warning_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
         generic_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hast Du die Voraussetzung <em>%{requirement}</em> nicht erfüllt. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."

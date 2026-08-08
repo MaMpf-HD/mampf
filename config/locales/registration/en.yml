@@ -336,6 +336,7 @@ en:
       campaign_main: "Registration process"
       eligibility_title: "Eligibility"
       first_come_first_served_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
+      first_come_first_served_instruction_exam: "Register for this exam. Your place is confirmed right away."
       preference_instruction:
         one: "Rank %{count} option. Allocation is calculated after the deadline."
         other: "Rank %{count} options. Allocation is calculated after the deadline."
@@ -365,6 +366,7 @@ en:
       readonly_notice:
         title: "Registration closed"
         description: "Your submitted choices stay visible here while the teacher reviews the registrations and finalizes the allocation. You can no longer make changes."
+        description_exam: "Your registration stays visible here while the teacher confirms the list of participants. You can no longer withdraw."
       finalization_policy_notice:
         title: "Your registration would currently fail at finalization"
         description: >-
@@ -385,7 +387,7 @@ en:
         policies:
           institutional_email_html: "Email domain must be <em>%{domains}</em>"
           prerequisite_campaign_html: "Confirmed registration in <em>%{campaign}</em>"
-          student_performance_html: "Student performance status must be <em>%{status}</em>"
+          student_performance_html: "You must be admitted to the exam in <em>%{lectures}</em>"
           generic_html: "Requirement: <em>%{requirement}</em>"
         hints:
           institutional_email_registration_html: >-
@@ -427,9 +429,9 @@ en:
         prerequisite_not_met_finalization_rejection_html: "At the time this registration process was finalized, you did not have a confirmed registration in <em>%{campaign}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
         prerequisite_campaign_not_found_html: "The required prerequisite registration <em>%{campaign}</em> is currently unavailable. Please contact the course administration."
         prerequisite_configuration_error: "This campaign depends on a prerequisite registration that is not configured correctly. Please contact the course administration."
-        student_performance_failed_html: "Your student performance status does not match the required status <em>%{status}</em>. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
-        student_performance_failed_finalization_warning_html: "Your current student performance status does not match the required status <em>%{status}</em>. If this remains unchanged when the registration process is finalized, your registration will be rejected."
-        student_performance_failed_finalization_rejection_html: "At the time this registration process was finalized, your student performance status did not match the required status <em>%{status}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
+        student_performance_failed_html: "You are not admitted to the exam in <em>%{lectures}</em>. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        student_performance_failed_finalization_warning_html: "You are not admitted to the exam in <em>%{lectures}</em> yet. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        student_performance_failed_finalization_rejection_html: "At the time this registration process was finalized, you were not admitted to the exam in <em>%{lectures}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
         generic_html: "You do not currently meet the <em>%{requirement}</em> requirement. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
         generic_finalization_warning_html: "You do not currently meet the <em>%{requirement}</em> requirement. If this remains unchanged when the registration process is finalized, your registration will be rejected."
         generic_finalization_rejection_html: "At the time this registration process was finalized, you did not meet the <em>%{requirement}</em> requirement. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."

@@ -45,7 +45,10 @@ module UserRegistrations
       I18n.t("registration.user_registration.messages.requirements_not_met")
     end
 
-    def check_unremovable_roster_assignment
+    def check_unremovable_roster_assignment(joining: nil)
+      return if joining.present? &&
+                !joining.roster_exclusive_within_lecture?
+
       return unless Rosters::SelfRosterAvailability
                     .new(@campaign.campaignable, @user)
                     .blocked_by_unremovable_assignment?

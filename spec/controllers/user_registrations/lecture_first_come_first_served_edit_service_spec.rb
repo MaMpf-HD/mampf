@@ -160,6 +160,30 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
         )
       end
 
+      it "lets the same user register for an exam all the same" do
+        lecture = campaign.campaignable
+        add_only_tutorial = create(:tutorial,
+                                   lecture: lecture,
+                                   skip_campaigns: true,
+                                   self_materialization_mode: :add_only)
+        add_only_tutorial.add_user_to_roster!(user)
+        exam = nil
+        Flipper.enable(:registration_campaigns)
+        begin
+          exam = create(:exam, :with_date, lecture: lecture)
+        ensure
+          Flipper.disable(:registration_campaigns)
+        end
+        exam_campaign = exam.registration_campaign
+        exam_campaign.update!(status: :open,
+                              registration_deadline: 1.week.from_now)
+        exam_item = exam_campaign.registration_items.first
+
+        result = described_class.new(exam_campaign, user).register!(exam_item)
+
+        expect(result.success?).to be(true)
+      end
+
       it "raises error if item has no capacity" do
         item.registerable.update!(capacity: 0)
         service = described_class.new(campaign, user)
