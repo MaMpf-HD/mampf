@@ -101,6 +101,30 @@ export async function scoreTask(
   });
 }
 
+/**
+ * Somebody with a computed record. Records are never created by hand in the
+ * interface, so a test that wants a row has to put one there. Deliberately no
+ * lecture membership: joining a lecture computes a record of its own, and two
+ * of them for one person do not fit past the uniqueness rule.
+ */
+export async function recordFor(
+  factory: FactoryBot,
+  lectureId: number,
+  name: string,
+  attributes: Record<string, unknown> = {},
+): Promise<{ user: FactoryBotObject; record: FactoryBotObject }> {
+  const user = await factory.create("confirmed_user", [], {
+    name_in_tutorials: name,
+  });
+  const record = await factory.create("student_performance_record", [], {
+    lecture_id: lectureId,
+    user_id: user.id,
+    ...attributes,
+  });
+
+  return { user, record };
+}
+
 export async function addTask(
   factory: FactoryBot,
   assessmentId: number,

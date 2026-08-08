@@ -1,4 +1,6 @@
 <%= turbo_frame_tag "performance-records-frame" do %>
+  <%= render partial: "flash/message" if turbo_frame_request? %>
+
   <div class="mb-3">
     <%= link_to lecture_student_performance_records_path(@lecture),
               class: "text-decoration-none" do %>
