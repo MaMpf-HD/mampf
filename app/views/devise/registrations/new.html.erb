@@ -7,24 +7,39 @@
 <%= form_for(resource, as: resource_name,
                        url: registration_path(resource_name),
                        html: { role: 'form' }) do |f| %>
+  <%= render layout: "devise/shared/password_strength_wrapper" do %>
+    <div class="form-floating mb-3">
+      <%= f.email_field :email, autofocus: true, required: true,
+                        class: "form-control", placeholder: "",
+                        data: {
+                          "password-strength-target": "email",
+                          "action": "input->password-strength#check"
+                        } %>
+      <%= f.label :email, t('devise.registrations.new.email') %>
+    </div>
 
-  <div class="form-floating mb-3">
-    <%= f.email_field :email, autofocus: true, required: true,
-                      class: "form-control", placeholder: "" %>
-    <%= f.label :email, t('.email') %>
-  </div>
+    <div class="form-floating mb-3">
+      <%= f.password_field :password, required: true,
+                           class: "form-control", placeholder: "",
+                           data: {
+                             "password-strength-target": "password",
+                             "action": "input->password-strength#check"
+                           } %>
+      <%= f.label :password, t('devise.registrations.new.password') %>
+      
+      <div class="progress mt-2" style="height: 5px;">
+        <div class="progress-bar" role="progressbar" style="width: 0%;" data-password-strength-target="meter"></div>
+      </div>
+      <div class="form-text" data-password-strength-target="feedback"></div>
+    </div>
 
-  <div class="form-floating mb-3">
-    <%= f.password_field :password, required: true,
-                         class: "form-control", placeholder: "" %>
-    <%= f.label :password, t('.password') %>
-  </div>
-
-  <div class="form-floating mb-3">
-    <%= f.password_field :password_confirmation, required: true,
-                         class: "form-control", placeholder: "" %>
-    <%= f.label :password_confirmation, t('.password_confirm') %>
-  </div>
+    <div class="form-floating mb-3">
+      <%= f.password_field :password_confirmation, required: true,
+                           class: "form-control", placeholder: "" %>
+      <%= f.label :password_confirmation,
+                  t('devise.registrations.new.password_confirm') %>
+    </div>
+  <% end %>
 
   <div class="form-check mb-3">
     <%= f.check_box :consents, required: true,

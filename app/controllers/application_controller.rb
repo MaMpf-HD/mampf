@@ -26,6 +26,8 @@ class ApplicationController < ActionController::Base
 
   include LocaleSetter
 
+  helper_method :devise_locale_switch_path
+
   etag { current_user.try(:id) }
 
   def current_user
@@ -165,6 +167,30 @@ class ApplicationController < ActionController::Base
     rescue StandardError => e
       Rails.logger.error("Failed to enqueue consumption " \
                          "medium_id=#{medium_id} mode=#{mode} sort=#{sort}: #{e.message}")
+    end
+
+    def devise_locale_switch_path(locale)
+      case [controller_name, action_name]
+      when ["registrations", "edit"], ["registrations", "update"]
+        edit_user_registration_path(locale: locale)
+      when ["registrations", "new"], ["registrations", "create"]
+        new_user_registration_path(locale: locale)
+      when ["sessions", "new"], ["sessions", "create"]
+        new_user_session_path(locale: locale)
+      when ["passwords", "new"], ["passwords", "create"]
+        new_user_password_path(locale: locale)
+      when ["passwords", "edit"], ["passwords", "update"]
+        user_params = params[:user]
+        token = params[:reset_password_token]
+        if user_params.is_a?(ActionController::Parameters)
+          token ||= user_params[:reset_password_token]
+        end
+        edit_user_password_path(locale: locale, reset_password_token: token)
+      when ["confirmations", "new"], ["confirmations", "create"]
+        new_user_confirmation_path(locale: locale)
+      else
+        url_for(locale: locale)
+      end
     end
 
     # Ensures that the current request is a Turbo Frame request.

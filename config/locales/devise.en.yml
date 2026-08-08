@@ -2,6 +2,12 @@
 
 en:
   devise:
+    passwords_strength:
+      weak: "Very weak"
+      fair: "Weak"
+      good: "Good"
+      strong: "Strong"
+      too_short: "Must be at least 15 characters"
     confirmations:
       confirmed: "Your email address has been successfully confirmed. Please take aminute to complete your profile."
       confirmed_and_signed_in: "Thank you for registering. You are now signed in."
@@ -139,6 +145,7 @@ en:
       expired: "has expired, please request a new one"
       not_found: "not found"
       not_locked: "was not locked"
+      password_too_weak: "is too weak"
       not_saved:
         one: "1 error prohibited this %{resource} from being saved:"
         other: "%{count} errors prohibited this %{resource} from being saved:"

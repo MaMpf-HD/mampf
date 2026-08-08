@@ -1,9 +1,18 @@
 require "rails_helper"
 
 RSpec.describe("Auth passwords", type: :request) do
+  around do |example|
+    Current.password_strength_validation_enabled = true
+    example.run
+  ensure
+    Current.reset
+  end
+
   before do
     ActionMailer::Base.deliveries.clear
   end
+
+  let(:new_password) { "super-secure-horse-battery-staple" }
 
   describe "POST /users/password" do
     it "sends reset instructions for an existing user" do
@@ -36,8 +45,8 @@ RSpec.describe("Auth passwords", type: :request) do
       put user_password_path, params: {
         user: {
           reset_password_token: token,
-          password: "new-password-123",
-          password_confirmation: "new-password-123"
+          password: new_password,
+          password_confirmation: new_password
         }
       }
 
@@ -45,7 +54,7 @@ RSpec.describe("Auth passwords", type: :request) do
 
       delete destroy_user_session_path
       post user_session_path,
-           params: { user: { email: user.email, password: "new-password-123" } }
+           params: { user: { email: user.email, password: new_password } }
 
       expect(response).to redirect_to(start_path)
     end
@@ -56,14 +65,14 @@ RSpec.describe("Auth passwords", type: :request) do
       put user_password_path, params: {
         user: {
           reset_password_token: "invalid-token",
-          password: "new-password-123",
-          password_confirmation: "new-password-123"
+          password: new_password,
+          password_confirmation: new_password
         }
       }
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include(I18n.t("devise.passwords.edit.change_password"))
-      expect(user.valid_password?("new-password-123")).to be(false)
+      expect(user.valid_password?(new_password)).to be(false)
     end
   end
 end

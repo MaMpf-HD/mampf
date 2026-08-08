@@ -705,6 +705,7 @@ GEM
     will_paginate (4.0.1)
     yaml (0.4.0)
     zeitwerk (2.8.2)
+    zxcvbn-ruby (1.4.0)
 
 PLATFORMS
   aarch64-linux-gnu
@@ -803,6 +804,7 @@ DEPENDENCIES
   vite_rails (~> 3.0, >= 3.0.17)
   vite_ruby (= 3.9.2)
   web-console (~> 4.2)
+  zxcvbn-ruby (~> 1.4)
 
 RUBY VERSION
   ruby 3.4.10

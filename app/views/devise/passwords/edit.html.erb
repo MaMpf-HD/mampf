@@ -7,20 +7,43 @@
                        html: { method: :put, role: 'form' }) do |f| %>
   <%= f.hidden_field :reset_password_token %>
 
-  <div class="form-group">
-    <%= f.label :password,
-                t('.new_password'),
-                class: "form-label" %>
-    <%= f.password_field :password,
-                         autofocus: true,
-                         class: 'form-control'  %>
-  </div>
+  <%= render layout: "devise/shared/password_strength_wrapper" do %>
+    <% if resource.email.present? %>
+      <input type="hidden" data-password-strength-target="email" value="<%= resource.email %>">
+    <% end %>
+    <% if resource.name.present? %>
+      <input type="hidden" data-password-strength-target="name" value="<%= resource.name %>">
+    <% end %>
 
-  <div class="mb-3">
-    <%= f.label :password_confirmation,
-                t('.confirm_new_password') %>
-    <%= f.password_field :password_confirmation, class: 'form-control'  %>
-  </div>
+    <div class="form-group mb-3">
+      <%= f.label :password,
+                  t('devise.passwords.edit.new_password'),
+                  class: "form-label" %>
+      <%= f.password_field :password,
+                           autofocus: true,
+                           class: 'form-control',
+                           data: {
+                             "password-strength-target": "password",
+                             "action": "input->password-strength#check"
+                           } %>
+      <div class="progress mt-2" style="height: 5px;">
+        <div class="progress-bar" role="progressbar" style="width: 0%;" data-password-strength-target="meter"></div>
+      </div>
+      <div class="form-text" data-password-strength-target="feedback"></div>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :password_confirmation,
+                  t('devise.passwords.edit.confirm_new_password') %>
+      <%= f.password_field :password_confirmation,
+                           class: 'form-control',
+                           data: {
+                             "password-strength-target": "passwordConfirmation",
+                             "action": "input->password-strength#check"
+                           } %>
+    </div>
+  <% end %>
+
   <div class="mb-3">
     <%= f.submit t('.change_password'),
                  class: 'btn btn-primary' %>
