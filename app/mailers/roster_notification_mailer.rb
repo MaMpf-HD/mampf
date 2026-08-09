@@ -54,19 +54,19 @@ class RosterNotificationMailer < ApplicationMailer
   end
 
   def added_to_group_email
-    email("roster.mailer.roster_added_to_group_email_subject")
+    email { t("roster.mailer.roster_added_to_group_email_subject", **subject_vars) }
   end
 
   def removed_from_group_email
-    email("roster.mailer.roster_removed_from_group_email_subject")
+    email { t("roster.mailer.roster_removed_from_group_email_subject", **subject_vars) }
   end
 
   def moved_between_groups_email
-    email("roster.mailer.roster_moved_between_groups_email_subject")
+    email { t("roster.mailer.roster_moved_between_groups_email_subject", **subject_vars) }
   end
 
   def removed_from_lecture_email
-    email("roster.mailer.roster_removed_from_lecture_email_subject")
+    email { t("roster.mailer.roster_removed_from_lecture_email_subject", **subject_vars) }
   end
 
   private
@@ -81,19 +81,22 @@ class RosterNotificationMailer < ApplicationMailer
       @lecture         = lecture_for_rosterable(@rosterable || @new_rosterable)
     end
 
-    def email(mail_template)
+    def email
       prepare_data(params)
       I18n.with_locale(@recipient.locale || I18n.default_locale) do
         mail(
           from: NotificationMailer.sender(@recipient.locale),
           to: @recipient.email,
-          subject: t(
-            mail_template,
-            rosterable_title: @rosterable&.title || @new_rosterable&.title,
-            lecture_title: @lecture&.title || ""
-          )
+          subject: yield
         )
       end
+    end
+
+    def subject_vars
+      {
+        rosterable_title: @rosterable&.title || @new_rosterable&.title,
+        lecture_title: @lecture&.title || ""
+      }
     end
 
     def lecture_for_rosterable(rosterable)
