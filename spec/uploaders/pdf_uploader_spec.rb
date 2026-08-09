@@ -103,4 +103,35 @@ RSpec.describe(PdfUploader) do
       expect(result).to be_nil
     end
   end
+
+  describe "screenshot derivative" do
+    it "renders the first page of the PDF" do
+      original = File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
+
+      derivatives = described_class::Attacher.derivatives_processor(:default)
+                                             .call(original)
+
+      expect(derivatives[:screenshot]).to be_present
+      expect(Vips::Image.new_from_file(derivatives[:screenshot].path).width)
+        .to be_positive
+    ensure
+      original.close
+    end
+  end
+
+  # Active Storage blocks libvips' unfuzzed loaders since Rails 8.0.5.1, which took
+  # the PDF loader with it and broke every manuscript upload.
+  describe "the libvips PDF loader" do
+    it "is available" do
+      expect { Vips::Image.pdfload("#{SPEC_FILES}/manuscript.pdf") }
+        .not_to raise_error
+    end
+
+    it "is the only unfuzzed loader we unblock" do
+      ["svgload", "magickload", "fitsload", "jxlload"].each do |loader|
+        expect { Vips::Image.public_send(loader, "#{SPEC_FILES}/manuscript.pdf") }
+          .to raise_error(Vips::Error, /blocked/), "#{loader} is no longer blocked"
+      end
+    end
+  end
 end
