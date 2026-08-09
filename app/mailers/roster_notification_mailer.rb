@@ -2,13 +2,11 @@ class RosterNotificationMailer < ApplicationMailer
   # Triggered whenever a user is added to / removed from / moved between group(s)
   # of a rosterable object
 
-  class << self
-    SUPPORTED_ROSTERABLES = [Lecture, Tutorial, Cohort, Talk].freeze
+  SUPPORTED_ROSTERABLES = [Lecture, Tutorial, Cohort, Talk].freeze
 
+  class << self
     def added(user, rosterable)
-      return log_unsupported(rosterable) unless SUPPORTED_ROSTERABLES.any? do |k|
-        rosterable.is_a?(k)
-      end
+      return log_unsupported(rosterable) unless supported?(rosterable)
 
       template = if rosterable.is_a?(Lecture)
         :added_to_lecture_email
@@ -22,9 +20,7 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     def removed(user, rosterable)
-      return log_unsupported(rosterable) unless SUPPORTED_ROSTERABLES.any? do |k|
-        rosterable.is_a?(k)
-      end
+      return log_unsupported(rosterable) unless supported?(rosterable)
 
       template = rosterable.is_a?(Lecture) ? :removed_from_lecture_email : :removed_from_group_email
 
@@ -35,13 +31,8 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     def moved(user, old_rosterable, new_rosterable)
-      return log_unsupported(old_rosterable) unless SUPPORTED_ROSTERABLES.any? do |k|
-        old_rosterable.is_a?(k)
-      end
-
-      return log_unsupported(new_rosterable) unless SUPPORTED_ROSTERABLES.any? do |k|
-        new_rosterable.is_a?(k)
-      end
+      return log_unsupported(old_rosterable) unless supported?(old_rosterable)
+      return log_unsupported(new_rosterable) unless supported?(new_rosterable)
 
       with(
         old_rosterable: old_rosterable,
@@ -49,6 +40,19 @@ class RosterNotificationMailer < ApplicationMailer
         recipient: user
       ).moved_between_groups_email.deliver_later
     end
+
+    def log_unsupported(rosterable)
+      Rails.logger.error(
+        "RosterNotificationMailer: Unsupported rosterable type: #{rosterable.class.name}"
+      )
+      nil
+    end
+
+    private
+
+      def supported?(rosterable)
+        SUPPORTED_ROSTERABLES.any? { |klass| rosterable.is_a?(klass) }
+      end
   end
 
   def added_to_group_email
@@ -69,12 +73,6 @@ class RosterNotificationMailer < ApplicationMailer
 
   def removed_from_lecture_email
     email("roster.mailer.roster_removed_from_lecture_email_subject")
-  end
-
-  def log_unsupported(rosterable)
-    Rails.logger.error(
-      "RosterNotificationMailer: Unsupported rosterable type: #{rosterable.class.name}"
-    )
   end
 
   private
