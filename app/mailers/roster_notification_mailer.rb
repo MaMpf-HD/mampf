@@ -1,7 +1,6 @@
+# Triggered whenever a user is added to / removed from / moved between group(s)
+# of a rosterable object
 class RosterNotificationMailer < ApplicationMailer
-  # Triggered whenever a user is added to / removed from / moved between group(s)
-  # of a rosterable object
-
   SUPPORTED_ROSTERABLES = [Lecture, Tutorial, Cohort, Talk].freeze
 
   class << self
