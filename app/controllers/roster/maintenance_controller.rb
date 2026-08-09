@@ -136,10 +136,13 @@ module Roster
         return
       end
 
-      Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
-
-      flash.now[:notice] = t("roster.messages.user_moved", user: user.info, target: target.title)
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
+      if Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
+        flash.now[:notice] = t("roster.messages.user_moved", user: user.info, target: target.title)
+        flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
+      else
+        flash.now[:alert] = t("roster.messages.user_not_moved",
+                              user: user.info, target: target.title)
+      end
 
       if @mparams.panel?
         render_with_streams(

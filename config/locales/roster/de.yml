@@ -305,6 +305,7 @@ de:
     messages:
       updated: "Einstellungen aktualisiert."
       user_moved: "%{user} wurde nach %{target} verschoben."
+      user_not_moved: "%{user} wurde nicht verschoben: die Person ist bereits in %{target} oder nicht mehr in der Gruppe, aus der Du sie verschoben hast."
       user_added: "%{user} wurde zu %{group} hinzugefügt."
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."

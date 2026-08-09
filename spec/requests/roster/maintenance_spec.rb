@@ -450,6 +450,48 @@ RSpec.describe("Roster::Maintenance", type: :request) do
     end
   end
 
+  describe "PATCH /cohorts/:id/roster/move_member" do
+    let(:source) { create(:cohort, context: lecture, skip_campaigns: true) }
+    let(:target) { create(:cohort, context: lecture, skip_campaigns: true) }
+    let(:member) { create(:confirmed_user) }
+
+    before { sign_in editor }
+
+    context "when the user is already in the target" do
+      before do
+        create(:cohort_membership, cohort: source, user: member)
+        create(:cohort_membership, cohort: target, user: member)
+      end
+
+      it "leaves both rosters untouched" do
+        expect do
+          patch(move_member_cohort_path(source, user_id: member.id),
+                params: { target_id: target.id, target_type: "Cohort" })
+        end.not_to(change { [source.members.count, target.members.count] })
+      end
+
+      it "says so instead of reporting success" do
+        patch move_member_cohort_path(source, user_id: member.id),
+              params: { target_id: target.id, target_type: "Cohort" }
+
+        expect(flash[:notice]).to be_nil
+        expect(flash[:alert]).to eq(
+          I18n.t("roster.messages.user_not_moved",
+                 user: member.info, target: target.title)
+        )
+      end
+
+      it "does not send an email" do
+        perform_enqueued_jobs do
+          expect do
+            patch(move_member_cohort_path(source, user_id: member.id),
+                  params: { target_id: target.id, target_type: "Cohort" })
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
+      end
+    end
+  end
+
   describe "POST /lectures/:id/roster/members" do
     let(:new_student) { create(:confirmed_user) }
 

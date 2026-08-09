@@ -301,6 +301,7 @@ en:
     messages:
       updated: "Settings updated."
       user_moved: "%{user} moved to %{target}."
+      user_not_moved: "%{user} was not moved: they are already in %{target}, or no longer in the group you moved them from."
       user_added: "%{user} added to %{group} successfully."
       user_added_to: "%{user} added to %{group}."
       user_already_member: "%{user} is already in %{group}."

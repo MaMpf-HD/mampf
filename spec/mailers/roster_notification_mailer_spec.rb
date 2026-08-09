@@ -228,7 +228,10 @@ describe RosterNotificationMailer do
 
       delivered = deliver(email)
 
-      expect(delivered.subject).to include(rosterable.title)
+      # Lecture#title carries a translated type prefix, so it has to be read in
+      # the locale the mail was rendered in.
+      expected_title = I18n.with_locale(user.locale) { rosterable.title }
+      expect(delivered.subject).to include(expected_title)
       expect(delivered_body(delivered)).to include("entfernt")
     end
   end

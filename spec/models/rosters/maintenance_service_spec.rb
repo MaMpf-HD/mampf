@@ -188,5 +188,76 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       expect(lock_order).to eq([["Tutorial", tutorial.id],
                                 ["Tutorial", other_tutorial.id]])
     end
+
+    describe "moves that would change nothing" do
+      let(:lecture) { create(:lecture) }
+      let(:cohort_a) { create(:cohort, context: lecture) }
+      let(:cohort_b) { create(:cohort, context: lecture) }
+
+      shared_examples "a move without effect" do
+        it "leaves both rosters untouched" do
+          expect do
+            subject.move_user!(user, source, target, force: true)
+          end.not_to(change do
+            [source.roster_entries.reload.count, target.roster_entries.reload.count]
+          end)
+        end
+
+        it "sends no notification and reports failure" do
+          expect do
+            expect(subject.move_user!(user, source, target, force: true)).to be(false)
+          end.not_to have_enqueued_mail(RosterNotificationMailer, :moved_between_groups_email)
+        end
+      end
+
+      context "when the user is already in the target" do
+        let(:source) { cohort_a }
+        let(:target) { cohort_b }
+
+        before do
+          subject.add_user!(user, cohort_a, force: true)
+          subject.add_user!(user, cohort_b, force: true)
+        end
+
+        it_behaves_like "a move without effect"
+      end
+
+      context "when the user is not in the source" do
+        let(:source) { cohort_a }
+        let(:target) { cohort_b }
+
+        before { subject.add_user!(user, cohort_b, force: true) }
+
+        it_behaves_like "a move without effect"
+      end
+
+      context "when source and target are the same" do
+        let(:source) { cohort_a }
+        let(:target) { cohort_a }
+
+        before { subject.add_user!(user, cohort_a, force: true) }
+
+        it_behaves_like "a move without effect"
+      end
+
+      context "when the source is the lecture itself" do
+        let(:source) { lecture }
+        let(:target) { cohort_b }
+        let(:tutorial_of_lecture) { create(:tutorial, lecture: lecture) }
+
+        before do
+          subject.add_user!(user, tutorial_of_lecture, force: true)
+          subject.add_user!(user, cohort_b, force: true)
+        end
+
+        it_behaves_like "a move without effect"
+
+        it "keeps the user in the subgroups of the lecture" do
+          expect do
+            subject.move_user!(user, lecture, cohort_b, force: true)
+          end.not_to(change { tutorial_of_lecture.roster_entries.reload.count })
+        end
+      end
+    end
   end
 end
