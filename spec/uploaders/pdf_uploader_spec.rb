@@ -103,4 +103,19 @@ RSpec.describe(PdfUploader) do
       expect(result).to be_nil
     end
   end
+
+  describe "screenshot derivative" do
+    it "renders the first page within the preview bounds" do
+      original = File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
+
+      derivatives = described_class::Attacher.derivatives_processor(:default)
+                                             .call(original)
+      image = Vips::Image.new_from_file(derivatives[:screenshot].path)
+
+      expect(image.width).to be <= 400
+      expect(image.height).to be <= 565
+    ensure
+      original.close
+    end
+  end
 end
