@@ -11,8 +11,8 @@ $('#tutorial-table').empty()
 	.append('<%= j render partial: "tutorials/table_wrapper",
 			locals: {
 			mode: "tutor",
-  		assignment: assignment,
-  		tutorial: tutorial} %>')
+  		assignment: @assignment,
+  		tutorial: @tutorial} %>')
 initBootstrapPopovers()
 <% end %>
 <% else %>

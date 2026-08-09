@@ -300,7 +300,7 @@ class SubmissionsController < ApplicationController
                 submission: @submission,
                 assignment: @assignment,
                 tutorial: @tutorial,
-                mode: params[:mode]
+                mode: params[:mode] || "tutor"
               )
             )
           )
