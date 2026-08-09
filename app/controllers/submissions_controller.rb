@@ -15,7 +15,9 @@ class SubmissionsController < ApplicationController
   before_action :check_if_assignments, only: :index
   before_action :check_student_status, only: :index
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
-  before_action :init_roster_cache, only: [:index]
+
+  include Rosters::RosterCaching
+
   authorize_resource
 
   class TutorialNotRosteredError < StandardError; end
@@ -259,16 +261,7 @@ class SubmissionsController < ApplicationController
     send_rejection_email(@submission.users)
   end
 
-  def roster_cache
-    @roster_cache ||= { enabled: {}, tutorial: {} }
-  end
-  helper_method :roster_cache
-
   private
-
-    def init_roster_cache
-      @roster_cache = { enabled: {}, tutorial: {} }
-    end
 
     def set_submission
       @submission = Submission.find_by(id: params[:id])
