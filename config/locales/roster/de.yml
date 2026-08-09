@@ -325,9 +325,8 @@ de:
       roster_added_to_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
-          Du wurdest der %{rosterable_type}-Gruppe
-          <strong>%{rosterable_title}</strong> in der Vorlesung
-          <strong>%{lecture_title}</strong> hinzugefügt.
+          Du wurdest zu <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> hinzugefügt.
         </p>
         <p>
           Du nimmst nun an dieser Gruppe teil.
@@ -335,17 +334,16 @@ de:
       roster_added_to_group_email_body: |
         Hallo %{name},
 
-        Du wurdest der %{rosterable_type}-Gruppe „%{rosterable_title}“
-        in der Vorlesung „%{lecture_title}“ hinzugefügt.
+        Du wurdest zu „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ hinzugefügt.
 
         Du nimmst nun an dieser Gruppe teil.
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
-          Du wurdest aus der %{rosterable_type}-Gruppe
-          <strong>%{rosterable_title}</strong> in der Vorlesung
-          <strong>%{lecture_title}</strong> entfernt.
+          Du wurdest aus <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> entfernt.
         </p>
         <p>
           Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
@@ -357,8 +355,8 @@ de:
       roster_removed_from_group_email_body: |
         Hallo %{name},
 
-        Du wurdest aus der %{rosterable_type}-Gruppe „%{rosterable_title}“
-        in der Vorlesung „%{lecture_title}“ entfernt.
+        Du wurdest aus „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ entfernt.
 
         Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
         wende Dich bitte an Deine Lehrperson oder das Support-Team.
@@ -368,10 +366,8 @@ de:
       roster_moved_between_groups_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
-          Du wurdest von der %{old_rosterable_type}-Gruppe
-          <strong>%{old_rosterable_title}</strong>
-          in die %{new_rosterable_type}-Gruppe
-          <strong>%{new_rosterable_title}</strong>
+          Du wurdest von <strong>%{old_rosterable_title}</strong>
+          nach <strong>%{new_rosterable_title}</strong>
           in der Vorlesung <strong>%{lecture_title}</strong> verschoben.
         </p>
         <p>
@@ -380,8 +376,7 @@ de:
       roster_moved_between_groups_email_body: |
         Hallo %{name},
 
-        Du wurdest von der %{old_rosterable_type}-Gruppe „%{old_rosterable_title}“
-        in die %{new_rosterable_type}-Gruppe „%{new_rosterable_title}“
+        Du wurdest von „%{old_rosterable_title}“ nach „%{new_rosterable_title}“
         in der Vorlesung „%{lecture_title}“ verschoben.
 
         Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.

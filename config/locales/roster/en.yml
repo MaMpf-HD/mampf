@@ -321,9 +321,8 @@ en:
       roster_added_to_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>
-          You have been added to the %{rosterable_type} group
-          <strong>%{rosterable_title}</strong> in the lecture
-          <strong>%{lecture_title}</strong>.
+          You have been added to <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
         </p>
         <p>
           You are now a participant in this group.
@@ -331,17 +330,16 @@ en:
       roster_added_to_group_email_body: |
         Hello %{name},
 
-        You have been added to the %{rosterable_type} group "%{rosterable_title}"
-        in the lecture "%{lecture_title}".
+        You have been added to "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
 
         You are now a participant in this group.
       roster_added_to_group_email_subject: 'Added to group %{rosterable_title} in %{lecture_title}'
       roster_removed_from_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>
-          You have been removed from the %{rosterable_type} group
-          <strong>%{rosterable_title}</strong> in the lecture
-          <strong>%{lecture_title}</strong>.
+          You have been removed from <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
         </p>
         <p>
           If you believe this was a mistake or if you have any questions,
@@ -353,8 +351,8 @@ en:
       roster_removed_from_group_email_body: |
         Hello %{name},
 
-        You have been removed from the %{rosterable_type} group
-        "%{rosterable_title}" in the lecture "%{lecture_title}".
+        You have been removed from "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
 
         If you believe this was a mistake or if you have any questions,
         please contact your instructor or the support team.
@@ -364,10 +362,8 @@ en:
       roster_moved_between_groups_email_body_html: |
         <p>Hello %{name},</p>
         <p>
-          You have been moved from the %{old_rosterable_type} group
-          <strong>%{old_rosterable_title}</strong>
-          to the %{new_rosterable_type} group
-          <strong>%{new_rosterable_title}</strong>
+          You have been moved from <strong>%{old_rosterable_title}</strong>
+          to <strong>%{new_rosterable_title}</strong>
           in the lecture <strong>%{lecture_title}</strong>.
         </p>
         <p>
@@ -376,8 +372,7 @@ en:
       roster_moved_between_groups_email_body: |
         Hello %{name},
 
-        You have been moved from the %{old_rosterable_type} group
-        "%{old_rosterable_title}" to the %{new_rosterable_type} group
+        You have been moved from "%{old_rosterable_title}" to
         "%{new_rosterable_title}" in the lecture "%{lecture_title}".
 
         Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.

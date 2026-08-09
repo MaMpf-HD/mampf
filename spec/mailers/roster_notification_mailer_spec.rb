@@ -269,4 +269,53 @@ describe RosterNotificationMailer do
       end
     end
   end
+
+  describe "the text part of a delivered mail" do
+    let(:rosterable) { create(:tutorial, title: "Übung 3") }
+
+    def text_part_of(email)
+      deliver(email).text_part.body.decoded
+    end
+
+    def expect_plain_text(body)
+      expect(body).to include("Alice")
+      expect(body).not_to match(%r{<[a-z/][^>]*>}i)
+    end
+
+    it "carries no markup when a user is added to a group" do
+      expect_plain_text(text_part_of(described_class.with(
+        rosterable: rosterable, recipient: user
+      ).added_to_group_email))
+    end
+
+    it "carries no markup when a user is removed from a group" do
+      expect_plain_text(text_part_of(described_class.with(
+        rosterable: rosterable, recipient: user
+      ).removed_from_group_email))
+    end
+
+    it "carries no markup when a user is removed from a lecture" do
+      expect_plain_text(text_part_of(described_class.with(
+        rosterable: create(:lecture), recipient: user
+      ).removed_from_lecture_email))
+    end
+
+    it "carries no markup when a user is moved between groups" do
+      expect_plain_text(text_part_of(described_class.with(
+        old_rosterable: rosterable,
+        new_rosterable: create(:tutorial, title: "Übung 7"),
+        recipient: user
+      ).moved_between_groups_email))
+    end
+
+    it "spells the group link out as a plain URL" do
+      talk = create(:talk)
+
+      body = text_part_of(described_class.with(
+        rosterable: talk, recipient: user
+      ).added_to_group_email)
+
+      expect(body).to match(%r{https?://\S*/talks/#{talk.id}})
+    end
+  end
 end
