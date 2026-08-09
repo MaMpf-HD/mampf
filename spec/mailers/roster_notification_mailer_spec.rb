@@ -186,13 +186,13 @@ describe RosterNotificationMailer do
     it "sends the correct email" do
       email = described_class.with(
         rosterable: rosterable,
-        recipient: user,
-        sender: "noreply@example.com"
+        recipient: user
       ).added_to_group_email
 
       delivered = deliver(email)
 
       expect(delivered.to).to eq([user.email])
+      expect(delivered[:from].value).to eq(NotificationMailer.sender(user.locale))
       expect(delivered.subject).to include("Übung 3")
       expect(delivered_body(delivered)).to include("hinzugefügt")
       expect(delivered_body(delivered)).to include("Alice")
@@ -205,8 +205,7 @@ describe RosterNotificationMailer do
     it "sends the correct email" do
       email = described_class.with(
         rosterable: rosterable,
-        recipient: user,
-        sender: "noreply@example.com"
+        recipient: user
       ).removed_from_group_email
 
       delivered = deliver(email)
@@ -222,8 +221,7 @@ describe RosterNotificationMailer do
     it "sends the correct email" do
       email = described_class.with(
         rosterable: rosterable,
-        recipient: user,
-        sender: "noreply@example.com"
+        recipient: user
       ).removed_from_lecture_email
 
       delivered = deliver(email)
@@ -244,8 +242,7 @@ describe RosterNotificationMailer do
       email = described_class.with(
         old_rosterable: old_group,
         new_rosterable: new_group,
-        recipient: user,
-        sender: "noreply@example.com"
+        recipient: user
       ).moved_between_groups_email
 
       delivered = deliver(email)
