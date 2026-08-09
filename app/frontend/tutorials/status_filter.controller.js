@@ -52,32 +52,33 @@ export default class extends Controller {
       chips.push(this.chipHtml("tutorial", this.selectedTutorialLabel || this.selectedTutorial));
     }
 
+    this.activeFiltersTarget.innerHTML = "";
+
     if (chips.length === 0) {
-      this.activeFiltersTarget.innerHTML = "";
       return;
     }
 
-    this.activeFiltersTarget.innerHTML = chips.join("") + `
-      <button
-        class="btn btn-sm btn-outline-secondary"
-        data-action="click->status-filter#clearAllFilters"
-      >
-        Clear all
-      </button>
-    `;
+    chips.forEach(chip => this.activeFiltersTarget.append(chip));
+
+    const clearAllBtn = document.createElement("button");
+    clearAllBtn.className = "btn btn-sm btn-outline-secondary";
+    clearAllBtn.dataset.action = "click->status-filter#clearAllFilters";
+    clearAllBtn.textContent = "Clear all";
+    this.activeFiltersTarget.append(clearAllBtn);
   }
 
   chipHtml(key, label) {
-    return `
-      <span class="badge bg-light text-dark border d-inline-flex align-items-center gap-1">
-        ${label}
-        <i
-          class="bi bi-x clickable"
-          data-action="click->status-filter#clearFilter"
-          data-filter-key="${key}"
-        ></i>
-      </span>
-    `;
+    const span = document.createElement("span");
+    span.className = "badge bg-light text-dark border d-inline-flex align-items-center gap-1";
+    span.append(document.createTextNode(label + " "));
+
+    const icon = document.createElement("i");
+    icon.className = "bi bi-x clickable";
+    icon.dataset.action = "click->status-filter#clearFilter";
+    icon.dataset.filterKey = key;
+    span.append(icon);
+
+    return span;
   }
 
   applySearchFilter() {
