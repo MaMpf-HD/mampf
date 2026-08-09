@@ -20,14 +20,6 @@ describe RosterNotificationMailer do
 
   describe ".added" do
     context "with a supported rosterable" do
-      it "enqueues an email for a Lecture" do
-        lecture = create(:lecture)
-
-        expect do
-          described_class.added(user, lecture)
-        end.to have_enqueued_mail(described_class, :added_to_lecture_email)
-      end
-
       it "enqueues an email for a Tutorial" do
         tutorial = create(:tutorial)
 
@@ -50,6 +42,16 @@ describe RosterNotificationMailer do
         expect do
           described_class.added(user, talk)
         end.to have_enqueued_mail(described_class, :added_to_group_email)
+      end
+    end
+
+    context "with a Lecture" do
+      it "enqueues no email" do
+        lecture = create(:lecture)
+
+        expect do
+          described_class.added(user, lecture)
+        end.not_to have_enqueued_mail
       end
     end
 
@@ -194,23 +196,6 @@ describe RosterNotificationMailer do
       expect(delivered.subject).to include("Übung 3")
       expect(delivered_body(delivered)).to include("hinzugefügt")
       expect(delivered_body(delivered)).to include("Alice")
-    end
-  end
-
-  describe "#added_to_lecture_email" do
-    let(:rosterable) { create(:lecture) }
-
-    it "sends the correct email" do
-      email = described_class.with(
-        rosterable: rosterable,
-        recipient: user,
-        sender: "noreply@example.com"
-      ).added_to_lecture_email
-
-      delivered = deliver(email)
-
-      expect(delivered.subject).to include(rosterable.title)
-      expect(delivered_body(delivered)).to include("hinzugefügt")
     end
   end
 

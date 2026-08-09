@@ -8,15 +8,13 @@ class RosterNotificationMailer < ApplicationMailer
     def added(user, rosterable)
       return log_unsupported(rosterable) unless supported?(rosterable)
 
-      template = if rosterable.is_a?(Lecture)
-        :added_to_lecture_email
-      else
-        :added_to_group_email
-      end
+      # A bare lecture roster entry grants no access, so there is nothing to announce.
+      return if rosterable.is_a?(Lecture)
+
       with(
         rosterable: rosterable,
         recipient: user
-      ).public_send(template).deliver_later
+      ).added_to_group_email.deliver_later
     end
 
     def removed(user, rosterable)
@@ -65,10 +63,6 @@ class RosterNotificationMailer < ApplicationMailer
 
   def moved_between_groups_email
     email("roster.mailer.roster_moved_between_groups_email_subject")
-  end
-
-  def added_to_lecture_email
-    email("roster.mailer.roster_added_to_lecture_email_subject")
   end
 
   def removed_from_lecture_email

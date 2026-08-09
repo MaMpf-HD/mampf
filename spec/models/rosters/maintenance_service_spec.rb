@@ -92,6 +92,22 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         end.not_to(change { lecture.members.count })
       end
     end
+
+    context "when the rosterable is the lecture itself" do
+      let(:lecture) { create(:lecture) }
+
+      it "creates a roster entry" do
+        expect do
+          subject.add_user!(user, lecture, force: true)
+        end.to change { lecture.roster_entries.count }.by(1)
+      end
+
+      it "grants no access to the lecture" do
+        expect do
+          subject.add_user!(user, lecture, force: true)
+        end.not_to(change { lecture.users.reload.count })
+      end
+    end
   end
 
   describe "#remove_user!" do
