@@ -37,6 +37,7 @@
 - [Student Dashboard](features/student_dashboard.md)
 
 ## Project Planning
+- [Roadmap](features/roadmap.md)
 - [Implementation Plan](features/plan.md)
 - [Implementation PR Roadmap](features/implementation-prs.md)
 - [Parallelization Strategy](features/parallelization.md)
