@@ -48,31 +48,6 @@ class GradeTalkRowComponent < ViewComponent::Base
     end
   end
 
-  def grade_select_input
-    tag.select(
-      name: "grade",
-      class: "form-select form-select-sm",
-      disabled: !allow_grading?
-    ) do
-      safe_join(
-        grade_options.map do |label, value|
-          tag.option(label, value: value, selected: value == grade_numeric)
-        end
-      )
-    end
-  end
-
-  def note_input
-    tag.input(
-      type: "text",
-      autocomplete: "off",
-      name: "comment",
-      value: @participation&.note,
-      class: "form-control form-control-sm",
-      disabled: !allow_grading?
-    )
-  end
-
   def grader_display
     @participation&.grader&.tutorial_name
   end
