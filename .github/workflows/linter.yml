@@ -144,11 +144,20 @@ jobs:
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
         run: yarn install --immutable
 
+      # Both herb commands stop at the first file excluded by .herb.yml and
+      # still exit 0, so a single excluded file in the list silently skips the
+      # check for every other file. Passing them one at a time keeps the
+      # exclusions where they belong — in .herb.yml — and still reports.
       - name: Run Herb Linter
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
         run: |
           echo "🚨 Running Herb Lint version: $(yarn run herb-lint --version)"
-          yarn run herb-lint ${{ steps.js-changed.outputs.changed-files }}
+          bin=$(yarn bin herb-lint)
+          status=0
+          for file in ${{ steps.js-changed.outputs.changed-files }}; do
+            "$bin" "$file" || status=1
+          done
+          exit $status
 
       - name: Run Herb Formatter
         if: ${{ steps.js-changed.outputs.changed-files != ''}}
@@ -156,4 +165,9 @@ jobs:
         # see issue: https://github.com/marcoroth/herb/issues/1177
         run: |
           echo "🚨 Running Herb Format version: $(yarn run herb-format --version)"
-          yarn run herb-format --config-file ./.herb.yml --check ${{ steps.js-changed.outputs.changed-files }}
+          bin=$(yarn bin herb-format)
+          status=0
+          for file in ${{ steps.js-changed.outputs.changed-files }}; do
+            "$bin" --config-file ./.herb.yml --check "$file" || status=1
+          done
+          exit $status
