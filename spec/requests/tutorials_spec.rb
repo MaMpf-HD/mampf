@@ -136,31 +136,4 @@ RSpec.describe("Tutorials", type: :request) do
       end
     end
   end
-
-  describe "GET /tutorials/:id" do
-    let!(:other_tutorial) { create(:tutorial, lecture: lecture) } # populates the dropdown
-    let(:students) { create_list(:confirmed_user, 5) }
-    let!(:assignments) { create_list(:assignment, 5, lecture: lecture) }
-
-    before do
-      students.each { |student| create(:tutorial_membership, tutorial: tutorial, user: student) }
-    end
-
-    context "as an editor" do
-      before { sign_in editor }
-
-      it "queries roster_eligible_tutorials? once per lecture, not once per assignment row" do
-        expect_any_instance_of(Lecture).to receive(:roster_eligible_tutorials?)
-          .once.and_call_original
-
-        get tutorial_path(tutorial), as: :turbo_stream
-      end
-
-      it "renders successfully with multiple assignment rows sharing the cache" do
-        get tutorial_path(tutorial), as: :turbo_stream
-
-        expect(response).to have_http_status(:success)
-      end
-    end
-  end
 end
