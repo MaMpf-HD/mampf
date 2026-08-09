@@ -26,10 +26,10 @@ We use a configurable scheme model with service-based application:
 - **Canonical Source:** `Assessment::GradeScheme` stores scheme configuration per assessment
 - **Banded Config:** JSON config defines grade bands with either absolute points or percentages
 - **Service-Based Application:** `Assessment::GradeSchemeApplier` iterates participations and computes grades
-- **Version Control:** Hash-based versioning prevents duplicate applications
+- **Version Control:** Each config change recomputes `version_hash`; a second `apply!` is made harmless by `applied_at`, not by the hash
 - **Override Respect:** Manual grades bypass scheme application
 - **Distribution Analysis:** Service provides statistics for informed decision-making
-- **Integration Point:** Updates `Assessment::Participation.grade_value` field
+- **Integration Point:** Updates `Assessment::Participation.grade_numeric` field
 
 ---
 
@@ -51,7 +51,7 @@ The main fields and methods of `Assessment::GradeScheme` are:
 | `assessment_id`  | DB column (FK)   | The assessment this scheme applies to                          |
 | `kind`           | DB column (Enum) | Scheme type: currently only `banded`                           |
 | `config`         | DB column (JSONB)| Scheme-specific configuration (bands, coefficients, etc.)      |
-| `version_hash`   | DB column        | MD5 hash of config for idempotency checking                    |
+| `version_hash`   | DB column        | MD5 hash of the config, recomputed on save; not read anywhere yet |
 | `applied_at`     | DB column        | Timestamp when scheme was last applied (nil if draft)          |
 | `applied_by_id`  | DB column (FK)   | User who applied the scheme                                    |
 | `active`         | DB column        | Boolean: whether this is the currently active scheme           |
@@ -62,11 +62,11 @@ The main fields and methods of `Assessment::GradeScheme` are:
 
 ### Behavior Highlights
 
-- Only one active scheme per assessment (enforced via validation)
+- Only one active scheme per assessment, on both levels: a uniqueness validation scoped to the active ones, and a partial unique index (`idx_assessment_grade_schemes_one_active`, `WHERE active = true`). Inactive schemes accumulate freely, which is what makes the immutability of an applied scheme workable — a correction becomes a new row
 - Config structure varies by `kind` (see "Scheme Configurations" section below)
-- `version_hash` enables idempotency: applying identical config is a no-op
+- `version_hash` is an MD5 of the config, recomputed on save. Nothing reads it yet — the idempotency of a second `apply!` comes from `applied_at`, not from the hash. It is computed after sorting hash *keys*, so serialisation noise does not change it; the order of the bands array does count, which is safe because both generators (`two_point_auto` and the form's `computeBands`) build it the same way
 - Draft schemes (not applied) can be edited freely
-- Applied schemes are immutable (create new version to change)
+- Applied schemes are immutable (create new version to change) — this preserves the mapping, but a participation records only `grader_id` and `graded_at`, never the scheme that produced its grade. After a second scheme is applied, grades from both sit in the same table with nothing to tell them apart
 
 ### Example Implementation
 
@@ -79,7 +79,8 @@ module Assessment
     enum :kind, { banded: 0 }
 
     validates :config, presence: true
-    validates :assessment_id, uniqueness: true, if: :active?
+    validates :assessment_id, uniqueness: { conditions: -> { where(active: true) } },
+                              if: :active?
     validate :config_matches_kind
 
     before_save :compute_hash, if: :config_changed?
@@ -136,9 +137,9 @@ end
 
 - **Adjusting cutoffs:** Seeing the exam was harder than expected, the professor lowers cutoffs: `scheme.update!(config: { bands: [...] })`. The `version_hash` updates automatically.
 
-- **Applying scheme:** The professor finalizes: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_value` computed, `scheme.applied_at` is set.
+- **Applying scheme:** The professor finalizes: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All participations get `grade_numeric` computed, `scheme.applied_at` is set.
 
-- **Preventing re-application:** Someone tries to apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service checks `version_hash`, sees it matches, and only grades participations that still have `grade_numeric IS NULL` (e.g. late-reviewed students). Already-graded participations (including manual corrections) are preserved.
+- **Preventing re-application:** Someone tries to apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. Because `applied_at` is set, the service narrows its target to participations that still have `grade_numeric IS NULL` (e.g. late-reviewed students). Already-graded participations (including manual corrections) are preserved.
 
 ---
 
@@ -150,10 +151,35 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 
 | Scheme Type | Primary Use Case | Config Format | Status |
 |-------------|------------------|---------------|--------|
-| Absolute Points | Standard approach - fixed point thresholds | `min_points`/`max_points` | ✅ In use |
-| Percentage-Based | Cross-exam comparison | `min_pct`/`max_pct` | ✅ In use |
+| Absolute Points | Standard approach - fixed point thresholds | `min_points` | ✅ In use |
+| Percentage-Based | Cross-exam comparison | `min_pct` | ⚠️ Readable and applicable, but nothing creates one — see below |
 | Interactive Curve | UI convenience for teachers | Generates `banded` config | 🚧 Planned |
 | Percentile/Linear | Advanced statistical schemes | N/A | ⏸️ Future |
+
+~~~admonish warning "A band is a lower bound, and only point bands have a generator"
+**There is no upper key.** Both `apply_absolute_scheme` and
+`apply_percentage_scheme` sort the bands by threshold and take the highest one
+the student reaches. A `max_points` or `max_pct` written into a band is ignored —
+nothing reads it. Bands therefore need no upper end and cannot overlap; they
+partition the range by their lower bounds alone.
+
+**Validation guards the shape, not the meaning.** `validate_banded_config`
+checks that the bands array is non-empty, that every band uses the same
+threshold key, and that grade and threshold are numeric — the last since the XSS
+fix. It does *not* check for gaps, duplicate thresholds, coverage from zero, or
+that a grade is one of the German values.
+
+For point bands that is unproblematic, because they are always generated:
+`GradeScheme.two_point_auto` in Ruby and `computeBands` in the form's JavaScript
+build the same canonical, gapless list from the two anchors, and both refuse a
+range too narrow to separate the grades.
+
+**Percentage bands have no generator.** Nothing in the application creates one —
+they can be read, validated, applied and displayed, but only a seed, a console
+or a future importer can write one. That is precisely the path on which the
+missing semantic checks would bite, so anything that starts writing percentage
+schemes has to bring its own.
+~~~
 
 ### Absolute Cutoffs
 
@@ -165,15 +191,15 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 ```json
 {
   "bands": [
-    { "min_points": 54, "max_points": 60, "grade": "1.0" },
-    { "min_points": 48, "max_points": 53, "grade": "1.3" },
-    { "min_points": 42, "max_points": 47, "grade": "1.7" },
-    { "min_points": 36, "max_points": 41, "grade": "2.0" },
-    { "min_points": 33, "max_points": 35, "grade": "2.3" },
-    { "min_points": 30, "max_points": 32, "grade": "3.0" },
-    { "min_points": 27, "max_points": 29, "grade": "3.7" },
-    { "min_points": 24, "max_points": 26, "grade": "4.0" },
-    { "min_points": 0, "max_points": 23, "grade": "5.0" }
+    { "min_points": 54, "grade": "1.0" },
+    { "min_points": 48, "grade": "1.3" },
+    { "min_points": 42, "grade": "1.7" },
+    { "min_points": 36, "grade": "2.0" },
+    { "min_points": 33, "grade": "2.3" },
+    { "min_points": 30, "grade": "3.0" },
+    { "min_points": 27, "grade": "3.7" },
+    { "min_points": 24, "grade": "4.0" },
+    { "min_points": 0, "grade": "5.0" }
   ]
 }
 ```
@@ -183,7 +209,6 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
 | `min_points` | Integer | Lower boundary (inclusive) | 54 |
-| `max_points` | Integer | Upper boundary (inclusive) | 60 |
 | `grade` | String | German grade value | "1.0" |
 
 ```admonish success "Why absolute points are preferred"
@@ -213,15 +238,15 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 ```json
 {
   "bands": [
-    { "min_pct": 90, "max_pct": 100, "grade": "1.0" },
-    { "min_pct": 80, "max_pct": 89.99, "grade": "1.3" },
-    { "min_pct": 70, "max_pct": 79.99, "grade": "1.7" },
-    { "min_pct": 60, "max_pct": 69.99, "grade": "2.0" },
-    { "min_pct": 55, "max_pct": 59.99, "grade": "2.3" },
-    { "min_pct": 50, "max_pct": 54.99, "grade": "3.0" },
-    { "min_pct": 45, "max_pct": 49.99, "grade": "3.7" },
-    { "min_pct": 40, "max_pct": 44.99, "grade": "4.0" },
-    { "min_pct": 0, "max_pct": 39.99, "grade": "5.0" }
+    { "min_pct": 90, "grade": "1.0" },
+    { "min_pct": 80, "grade": "1.3" },
+    { "min_pct": 70, "grade": "1.7" },
+    { "min_pct": 60, "grade": "2.0" },
+    { "min_pct": 55, "grade": "2.3" },
+    { "min_pct": 50, "grade": "3.0" },
+    { "min_pct": 45, "grade": "3.7" },
+    { "min_pct": 40, "grade": "4.0" },
+    { "min_pct": 0, "grade": "5.0" }
   ]
 }
 ```
@@ -231,7 +256,6 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
 | `min_pct` | Float | Lower boundary percentage (inclusive) | 90.0 |
-| `max_pct` | Float | Upper boundary percentage (inclusive) | 100.0 |
 | `grade` | String | German grade value | "1.0" |
 
 **Grading example (same students, 60-point exam):**
@@ -244,15 +268,37 @@ The `config` JSONB field contains scheme-specific configuration. Currently, MaMp
 | Dave | 22 pts | 36.67% | 5.0 | Failed |
 
 ```admonish note "Detection Logic"
-The `Assessment::GradeSchemeApplier` automatically detects whether `min_points`/`max_points` or `min_pct`/`max_pct` is used by inspecting the first band. Both formats use the same `kind: :banded` enum value.
+The `Assessment::GradeSchemeApplier` automatically detects whether `min_points` or `min_pct` is used by inspecting the first band. Both formats use the same `kind: :banded` enum value.
 ```
 
 ### Interactive Curve Generation (Frontend Convenience)
 
 ```admonish warning "Implementation Status"
 **Backend:** ✅ Already supported via `banded` scheme
-**Frontend:** 🚧 Planned - Interactive UI needs to be built
+**Frontend:** ✅ Shipped — two anchors plus a draggable histogram. The sketch below predates it and still shows bands with an upper bound; the shipped code does not.
 ```
+
+~~~admonish danger "The generator exists twice, and the tested copy is not the one that runs"
+`GradeScheme.two_point_auto` (Ruby) and `computeBands` (`grade_bands.js`) implement
+the same rule: spread the ten passing grades evenly between the passing and
+excellence thresholds, round each boundary to `points_step`, and prepend a 5.0
+band when passing is above zero.
+
+**Only the JavaScript runs.** The form builds the config in the browser and posts
+it as `config_json`; nothing in `app/` calls `two_point_auto`. **Only the Ruby is
+tested** — thirteen examples in `grade_scheme_spec`, none for the JavaScript, and
+the project has no unit-test runner for the frontend.
+
+They agree today: for passing 24, excellence 54 and step 1 both produce
+`0, 24, 27, 31, 34, 37, 41, 44, 47, 51, 54`. Nothing keeps them in step, so a
+change to one has to be carried to the other by hand.
+
+The input guards live in a third place, `scheme_form.controller.js`: numbers
+present, excellence above passing, passing not negative, excellence within the
+maximum, and range wide enough for the ten grades. `computeBands` itself checks
+nothing — given a range too narrow it silently produces duplicate thresholds, and
+with the anchors swapped it produces a descending scale.
+~~~
 
 ```admonish info "Design Philosophy"
 The backend only needs to support the `banded` scheme. The "curve generation" is purely a **frontend convenience feature** that produces valid `banded` configs by helping teachers visualize and set boundaries.
@@ -492,7 +538,8 @@ The "grade calculator" that transforms points into grades according to the confi
 
 ### Behavior Highlights
 
-- **Idempotent:** Checks `version_hash` before applying; on re-apply, only grades ungraded participations (preserves manual corrections, picks up late-reviewed students)
+- **Idempotent:** Branches on `applied_at`; on re-apply, only grades ungraded participations (preserves manual corrections, picks up late-reviewed students)
+- **Absence-aware:** Grades `absent` participations 5.0 — a registered no-show has used up the attempt — and skips `exempt` ones entirely. See [`absent` and `exempt` are opposites](04-assessments-and-grading.md#status-workflow)
 - **Transaction-safe:** Uses database transaction for consistency
 - **Efficient:** Single query to load all participations, batch updates
 - **Statistics:** Analyzes distribution for informed decision-making
@@ -533,7 +580,7 @@ flowchart TD
     Satisfied -->|Yes| Apply[Apply scheme to all participations]
     Apply --> Transaction[Database transaction starts]
 
-    Transaction --> CheckHash{version_hash<br/>already applied?}
+    Transaction --> CheckHash{applied_at<br/>already set?}
     CheckHash -->|Yes| CheckUngraded{Any ungraded<br/>participations?}
     CheckUngraded -->|No| SkipAll[Skip - nothing to do]
     CheckUngraded -->|Yes| IterateUngraded[Iterate ungraded participations]
@@ -577,14 +624,14 @@ flowchart TD
     CheckFormat -->|Neither| Fallback[Return grade 5.0 - malformed config]
 
     AbsoluteFlow --> SortAbsBands[Sort bands by min_points descending]
-    SortAbsBands --> FindAbsBand[Find band where:<br/>points >= min_points AND<br/>points <= max_points]
+    SortAbsBands --> FindAbsBand[Find highest band where:<br/>points >= min_points]
     FindAbsBand --> AbsFound{Band found?}
     AbsFound -->|Yes| ReturnAbsGrade[Return band grade]
     AbsFound -->|No| Return50Abs[Return grade 5.0]
 
     PercentageFlow --> CalcPct[Calculate percentage:<br/>points / max_points * 100]
     CalcPct --> SortPctBands[Sort bands by min_pct descending]
-    SortPctBands --> FindPctBand[Find band where:<br/>percentage >= min_pct AND<br/>percentage <= max_pct]
+    SortPctBands --> FindPctBand[Find highest band where:<br/>percentage >= min_pct]
     FindPctBand --> PctFound{Band found?}
     PctFound -->|Yes| ReturnPctGrade[Return band grade]
     PctFound -->|No| Return50Pct[Return grade 5.0]
@@ -638,7 +685,7 @@ module Assessment
 
       participations.each do |participation|
         grade = compute_grade_for(participation)
-        participation.update!(grade_value: grade)
+        participation.update!(grade_numeric: grade)
       end
 
       @scheme.update!(applied_at: Time.current, applied_by: applied_by)
@@ -654,7 +701,7 @@ module Assessment
         points: p.points_total,
         percentage: percentage_for(p),
         proposed_grade: compute_grade_for(p),
-        current_grade: p.grade_value
+        current_grade: p.grade_numeric
       }
     end
   end
@@ -662,7 +709,7 @@ module Assessment
   private
 
   def already_applied?
-    @scheme.applied? && @scheme.version_hash == @scheme.compute_hash
+    @scheme.applied?
   end
 
   def compute_grade_for(participation)
@@ -690,13 +737,13 @@ module Assessment
 
   def apply_absolute_points_scheme(points)
     bands = @scheme.config["bands"].sort_by { |b| -b["min_points"] }
-    band = bands.find { |b| points >= b["min_points"] && points <= b["max_points"] }
+    band = bands.find { |b| points >= b["min_points"] }
     band ? band["grade"] : "5.0"
   end
 
   def apply_percentage_scheme(percentage)
     bands = @scheme.config["bands"].sort_by { |b| -b["min_pct"] }
-    band = bands.find { |b| percentage >= b["min_pct"] && percentage <= b["max_pct"] }
+    band = bands.find { |b| percentage >= b["min_pct"] }
     band ? band["grade"] : "5.0"
   end
 
@@ -720,9 +767,9 @@ end
 
 - **Adjust and re-preview:** Professor lowers the passing threshold: `scheme.update!(config: { ... })`, then previews again. Now only 2 students fail, which seems fair.
 
-- **Final application:** Professor applies: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_value` set.
+- **Final application:** Professor applies: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. All 150 students get their `grade_numeric` set.
 
-- **Idempotent reapplication:** System accidentally triggers apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. The service detects identical `version_hash` and returns immediately.
+- **Idempotent reapplication:** System accidentally triggers apply again: `Assessment::GradeSchemeApplier.new(scheme).apply!(applied_by: professor)`. With `applied_at` set and nothing left ungraded, the service returns immediately.
 
 ---
 
@@ -734,8 +781,25 @@ Grading schemes extend the Assessment system by providing automated grade comput
 
 ### Relationship to Assessment::Gradable
 
+A scheme hangs off the **assessment**, never off the exam, and a validation
+requires the assessable to be **both** `Pointable` and `Gradable` — points to
+convert, and a grade to put the result in. That makes "gradable" a checkable
+property rather than a convention, and it is why the grading interface reached
+through an exam is really an assessment feature:
+
+| Assessable | `Pointable` | `Gradable` | Can carry a scheme |
+|---|---|---|---|
+| `Exam` | ✓ | ✓ | **yes** |
+| `Assignment` | ✓ | — | no |
+| `Talk` | — | ✓ | no |
+| `Achievement` | — | — | no |
+
+An assignment would only need to include `Gradable` as well; nothing else about
+schemes is exam-specific.
+
 The `Assessment::Gradable` concern already provides:
-- `grade_value` field on `Assessment::Participation`
+- `grade_numeric` and `grade_text` on `Assessment::Participation` — `set_grade!`
+  picks the numeric column for numeric values and the text column otherwise
 - Manual grade entry capability
 
 Grading schemes add:
@@ -805,9 +869,9 @@ sequenceDiagram
     Applier->>Participation: compute proposed grades
     Applier-->>Professor: show grade preview
     Professor->>Applier: apply!(applied_by: professor)
-    Applier->>Applier: check version_hash (idempotency)
+    Applier->>Applier: check applied_at (idempotency)
     loop for each participation
-        Applier->>Participation: update(grade_value: computed_grade)
+        Applier->>Participation: update(grade_numeric: computed_grade)
     end
     Applier->>Scheme: update(applied_at, applied_by)
     end
