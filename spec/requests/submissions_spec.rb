@@ -213,4 +213,42 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
   end
+
+  describe "GET /lectures/:id/submissions" do
+    let!(:assignments) { create_list(:assignment, 5, lecture: lecture, accepted_file_type: ".pdf") }
+
+    context "when feature flag enabled" do
+      before do
+        Flipper.enable(:roster_maintenance)
+        Flipper.enable(:registration_campaigns)
+        create(:tutorial_membership, tutorial: tutorial, user: user)
+        user.lectures << lecture
+      end
+
+      after do
+        Flipper.disable(:roster_maintenance)
+        Flipper.disable(:registration_campaigns)
+      end
+
+      it "queries roster_eligible_tutorials? once per lecture across all assignment rows" do
+        expect_any_instance_of(Lecture).to receive(:roster_eligible_tutorials?)
+          .once.and_call_original
+
+        get lecture_submissions_path(lecture)
+      end
+
+      it "queries tutorial_rosterized once per lecture across all assignment rows" do
+        expect_any_instance_of(User).to receive(:tutorial_rosterized)
+          .once.and_call_original
+
+        get lecture_submissions_path(lecture)
+      end
+
+      it "renders successfully with multiple assignment rows sharing the cache" do
+        get lecture_submissions_path(lecture)
+
+        expect(response).to have_http_status(:success)
+      end
+    end
+  end
 end
