@@ -315,11 +315,12 @@ de:
       end_mail_html: |
         <p>Mit freundlichen Grüßen,<br>Dein MaMpf-Team</p>
       end_mail: |
-        <p>Mit freundlichen Grüßen,<br>Dein MaMpf-Team</p>
+        Mit freundlichen Grüßen,
+        Dein MaMpf-Team
       link_text_html: |
         <p>Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}</p>
       link_text: |
-        <p>Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}</p>
+        Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}
       roster_added_to_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
@@ -331,15 +332,12 @@ de:
           Du nimmst nun an dieser Gruppe teil.
         </p>
       roster_added_to_group_email_body: |
-        <p>Hallo %{name},</p>
-        <p>
-          Du wurdest der %{rosterable_type}-Gruppe
-          <strong>%{rosterable_title}</strong> in der Vorlesung
-          <strong>%{lecture_title}</strong> hinzugefügt.
-        </p>
-        <p>
-          Du nimmst nun an dieser Gruppe teil.
-        </p>
+        Hallo %{name},
+
+        Du wurdest der %{rosterable_type}-Gruppe „%{rosterable_title}“
+        in der Vorlesung „%{lecture_title}“ hinzugefügt.
+
+        Du nimmst nun an dieser Gruppe teil.
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
@@ -356,19 +354,15 @@ de:
           Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
         </p>
       roster_removed_from_group_email_body: |
-        <p>Hallo %{name},</p>
-        <p>
-          Du wurdest aus der %{rosterable_type}-Gruppe
-          <strong>%{rosterable_title}</strong> in der Vorlesung
-          <strong>%{lecture_title}</strong> entfernt.
-        </p>
-        <p>
-          Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
-          wende Dich bitte an Deine Lehrperson oder das Support-Team.
-        </p>
-        <p>
-          Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
-        </p>
+        Hallo %{name},
+
+        Du wurdest aus der %{rosterable_type}-Gruppe „%{rosterable_title}“
+        in der Vorlesung „%{lecture_title}“ entfernt.
+
+        Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+        wende Dich bitte an Deine Lehrperson oder das Support-Team.
+
+        Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
       roster_moved_between_groups_email_body_html: |
         <p>Hallo %{name},</p>
@@ -383,17 +377,13 @@ de:
           Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
         </p>
       roster_moved_between_groups_email_body: |
-        <p>Hallo %{name},</p>
-        <p>
-          Du wurdest von der %{old_rosterable_type}-Gruppe
-          <strong>%{old_rosterable_title}</strong>
-          in die %{new_rosterable_type}-Gruppe
-          <strong>%{new_rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> verschoben.
-        </p>
-        <p>
-          Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
-        </p>
+        Hallo %{name},
+
+        Du wurdest von der %{old_rosterable_type}-Gruppe „%{old_rosterable_title}“
+        in die %{new_rosterable_type}-Gruppe „%{new_rosterable_title}“
+        in der Vorlesung „%{lecture_title}“ verschoben.
+
+        Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
       roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} in %{lecture_title} verschoben'
       roster_removed_from_lecture_email_body_html: |
         <p>Hallo %{name},</p>
@@ -406,13 +396,10 @@ de:
           wende Dich bitte an Deine Lehrperson oder das Support-Team.
         </p>
       roster_removed_from_lecture_email_body: |
-        <p>Hallo %{name},</p>
-        <p>
-          Du wurdest aus der Vorlesungsliste von
-          <strong>%{lecture_title}</strong> entfernt.
-        </p>
-        <p>
-          Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
-          wende Dich bitte an Deine Lehrperson oder das Support-Team.
-        </p>
+        Hallo %{name},
+
+        Du wurdest aus der Vorlesungsliste von „%{lecture_title}“ entfernt.
+
+        Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+        wende Dich bitte an Deine Lehrperson oder das Support-Team.
       roster_removed_from_lecture_email_subject: 'Entfernt aus der Veranstaltung %{lecture_title}'

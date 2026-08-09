@@ -253,4 +253,17 @@ describe RosterNotificationMailer do
       expect(delivered_body(delivered)).to include("Alice")
     end
   end
+
+  describe "the plain text translations" do
+    I18n.available_locales.each do |locale|
+      it "carry no markup in #{locale}" do
+        I18n.t("roster.mailer", locale: locale)
+            .reject { |key, _| key.to_s.end_with?("_html") }
+            .each do |key, value|
+          expect(value).not_to match(%r{<[a-z/][^>]*>}i),
+                               "roster.mailer.#{key} (#{locale}) contains markup: #{value.inspect}"
+        end
+      end
+    end
+  end
 end
