@@ -6,6 +6,10 @@ module Assessment
     included do
       has_one :assessment, as: :assessable, dependent: :destroy,
                            class_name: "Assessment::Assessment"
+
+      # The assessment keeps its own copy of lecture_id; that copy would go
+      # stale, silently, if the assessable moved to another lecture.
+      validate :lecture_id_immutable, on: :update
     end
 
     def ensure_assessment!(requires_points:, requires_submission: false)
@@ -22,5 +26,11 @@ module Assessment
     def grading_open?
       true
     end
+
+    private
+
+      def lecture_id_immutable
+        errors.add(:lecture_id, :immutable) if lecture_id_changed?
+      end
   end
 end

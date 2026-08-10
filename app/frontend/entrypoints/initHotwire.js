@@ -80,6 +80,9 @@ window.Stimulus.register("preference-choices", PreferenceChoicesController);
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
 
+import DismissWorkspaceController from "~/registration/allocations/dismiss_workspace.controller.js";
+window.Stimulus.register("dismiss-workspace", DismissWorkspaceController);
+
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
 
@@ -89,14 +92,23 @@ window.Stimulus.register("profile", ProfileController);
 import LectureHighlightsController from "~/lectures/lecture_highlights.controller.js";
 window.Stimulus.register("lecture-highlights", LectureHighlightsController);
 
-import SubmissionSettingsController from "~/assessment/submission_settings.controller.js";
-window.Stimulus.register("assessments--submission-settings", SubmissionSettingsController);
-
-import SettingsController from "~/assessment/settings.controller.js";
-window.Stimulus.register("assessments--settings", SettingsController);
+import DirtyFormController from "~/assessment/dirty_form.controller.js";
+window.Stimulus.register("assessments--dirty-form", DirtyFormController);
 
 import PointsPrecisionController from "~/assessment/points_precision.controller.js";
 window.Stimulus.register("assessments--points-precision", PointsPrecisionController);
+
+import SchemeFormController from "~/assessment/assessments/scheme_form.controller.js";
+window.Stimulus.register("assessments--scheme-form", SchemeFormController);
+
+import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
+window.Stimulus.register("achievement-form", AchievementFormController);
+
+import CertificationInlineController from "~/student_performance/certifications/certification_inline.controller.js";
+window.Stimulus.register("certification-inline", CertificationInlineController);
+
+import ThresholdModeController from "~/student_performance/rules/threshold-mode.controller.js";
+window.Stimulus.register("threshold-mode", ThresholdModeController);
 
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
@@ -112,6 +124,14 @@ window.Stimulus.register("table-fade", TableFadeController);
 
 import StatusFilterController from "~/tutorials/status_filter.controller.js";
 window.Stimulus.register("status-filter", StatusFilterController);
+import ExamFormController from "~/exams/form.controller.js";
+window.Stimulus.register("exams--form", ExamFormController);
+
+import ExamRegistrationSettingsController from "~/exams/registration_settings.controller.js";
+window.Stimulus.register("exams--registration-settings", ExamRegistrationSettingsController);
+
+import ExamRegistrationListController from "~/exams/registration_list.controller.js";
+window.Stimulus.register("exams--registration-list", ExamRegistrationListController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

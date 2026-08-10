@@ -124,6 +124,11 @@ Rails.application.routes.draw do
             post :reorder
           end
         end
+        resources :grade_schemes, only: [:new, :create, :edit, :update, :destroy] do
+          member do
+            patch :apply
+          end
+        end
       end
     end
   end
@@ -159,6 +164,18 @@ Rails.application.routes.draw do
   # divisions routes
 
   resources :divisions, except: [:show]
+
+  # exam routes
+  constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
+    resources :exams, only: [:index, :new, :show, :edit, :create, :update,
+                             :destroy] do
+      member do
+        post "participants", action: :add_participant
+        delete "participants/:user_id", action: :remove_participant,
+                                        as: :remove_participant
+      end
+    end
+  end
 
   # feedback routes
   resources :feedbacks, only: [:new, :create]
@@ -345,6 +362,35 @@ Rails.application.routes.draw do
       resources :student_messages,
                 controller: "registration/student_messages",
                 only: [:create]
+    end
+
+    constraints ->(_req) { Flipper.enabled?(:student_performance) } do
+      namespace :student_performance, path: "performance" do
+        resources :records, only: [:index, :show] do
+          collection do
+            post :recompute
+          end
+        end
+
+        resource :rules, only: [:edit, :update] do
+          patch :preview, on: :collection
+        end
+
+        resource :evaluator, only: [], controller: "evaluator" do
+          get :single_proposal, on: :member
+        end
+
+        resources :achievements,
+                  only: [:index, :new, :show, :create, :update, :destroy]
+
+        resources :certifications, only: [:index, :create, :update] do
+          collection do
+            post :bulk_accept
+            post :bulk_reevaluate
+            post :bulk_confirm_manual
+          end
+        end
+      end
     end
   end
 

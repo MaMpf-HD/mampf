@@ -383,14 +383,38 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureUserJoin.where(lecture: lecture, user: users.first).count)
         .to eq(1)
     end
+
+    it "fires LectureMembership callbacks (creates performance records)" do
+      Flipper.enable(:assessment_grading)
+      lecture.ensure_roster_membership!(users.map(&:id))
+
+      expect(StudentPerformance::Record.where(lecture: lecture).count)
+        .to eq(3)
+    ensure
+      Flipper.disable(:assessment_grading)
+    end
+
+    it "seeds existing achievement participations for new roster members" do
+      Flipper.enable(:assessment_grading)
+      achievement = create(:achievement, lecture: lecture)
+
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(achievement.assessment.assessment_participations, :count)
+        .by(3)
+    ensure
+      Flipper.disable(:assessment_grading)
+    end
   end
 
   describe "#registration_mail_recipients" do
     let(:lecture) { create(:lecture, :released_for_all) }
+    let(:users) { create_list(:confirmed_user, 3) }
     let(:campaign) do
       create(:registration_campaign, :open, :first_come_first_served,
              campaignable: lecture)
     end
+    let(:users) { create_list(:confirmed_user, 3) }
 
     it "includes campaign registrants with pending or confirmed status" do
       pending_user = create(:confirmed_user)
@@ -461,6 +485,12 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.submission_deletion_date).to eq(date)
     end
 
+    it "initializes it even when validations are skipped" do
+      lecture = build(:lecture)
+      expect { lecture.save(validate: false) }.not_to raise_error
+      expect(lecture.reload.submission_deletion_date).to be_present
+    end
+
     it "fans out submission_deletion_date changes to assignments" do
       lecture = create(:lecture,
                        submission_deletion_date: 6.months.from_now.to_date)
@@ -482,6 +512,78 @@ RSpec.describe(Lecture, type: :model) do
       lecture.update!(passphrase: "new-passphrase")
 
       expect(a1.reload.deletion_date).to eq(original_date)
+    end
+  end
+
+  describe "disabling uses_exam_eligibility" do
+    let(:lecture) do
+      create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)
+    end
+
+    it "is allowed when no dependent data exists" do
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+    end
+
+    # A rule and its certifications are a record of what happened. Disabling
+    # hides them from the interface without deleting anything, and neither can
+    # decide about a student on its own — so neither stands in the way.
+    it "is allowed with an existing rule, which is kept" do
+      rule = create(:student_performance_rule, lecture: lecture)
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+      expect(rule.reload).to be_persisted
+    end
+
+    it "is allowed with existing certifications, which are kept" do
+      user = create(:confirmed_user)
+      create(:lecture_membership, user: user, lecture: lecture)
+      cert = create(:student_performance_certification, :passed,
+                    lecture: lecture, user: user,
+                    certified_by: create(:confirmed_user))
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+      expect(cert.reload).to be_passed
+    end
+
+    it "is blocked by a policy referencing the lecture" do
+      policy = create(:registration_policy, :student_performance,
+                      config: { "lecture_ids" => [lecture.id.to_s] })
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+      expect(lecture.errors[:uses_exam_eligibility].first)
+        .to include(policy.registration_campaign.campaignable.title)
+    end
+
+    it "is blocked by a policy using the legacy lecture_id config" do
+      create(:registration_policy, :student_performance,
+             config: { "lecture_id" => lecture.id })
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+      expect(lecture.errors[:uses_exam_eligibility]).to be_present
+    end
+
+    it "is not blocked by a policy referencing a different lecture" do
+      other = create(:lecture, :with_organizational_stuff)
+      create(:registration_policy, :student_performance,
+             config: { "lecture_id" => other.id })
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+    end
+
+    it "is not blocked by a policy whose campaign has completed" do
+      policy = create(:registration_policy, :student_performance,
+                      config: { "lecture_ids" => [lecture.id.to_s] })
+      policy.registration_campaign.update!(status: :completed)
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+    end
+
+    it "is blocked by a policy whose campaign has only closed" do
+      policy = create(:registration_policy, :student_performance,
+                      config: { "lecture_ids" => [lecture.id.to_s] })
+      policy.registration_campaign.update!(status: :closed)
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
     end
   end
 end

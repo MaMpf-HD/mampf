@@ -15,7 +15,10 @@ module Assessment
 
     after_commit :refresh_participation_points_total,
                  on: [:create, :update, :destroy],
-                 if: :refresh_participation_points_total?
+                 if: -> { destroyed? || saved_change_to_points? }
+    after_commit :recompute_performance_record,
+                 on: [:create, :update, :destroy],
+                 if: -> { destroyed? || saved_change_to_points? }
 
     private
 
@@ -33,15 +36,27 @@ module Assessment
                     assessment_participation_id: assessment_participation_id
                   )
                   .sum(:points)
-
-        participation = ::Assessment::Participation.find_by(
-          id: assessment_participation_id
-        )
-        participation&.update!(points_total: sum)
+        # points_total mirrors committed task points and must stay in sync
+        # rubocop:disable Rails/SkipsModelValidations
+        ::Assessment::Participation
+          .where(id: assessment_participation_id)
+          .update_all(points_total: sum, updated_at: Time.current)
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
-      def refresh_participation_points_total?
-        destroyed? || saved_change_to_points?
+      def recompute_performance_record
+        participation = ::Assessment::Participation
+                        .includes({ assessment: :lecture }, :user)
+                        .find_by(id: assessment_participation_id)
+        return unless participation
+
+        lecture = participation.assessment&.lecture
+        return unless lecture && participation.user
+        return unless Flipper.enabled?(:assessment_grading)
+
+        StudentPerformance::ComputationService
+          .new(lecture: lecture)
+          .compute_and_upsert_record_for(participation.user)
       end
 
       def ensure_task_and_participation_match_assessment

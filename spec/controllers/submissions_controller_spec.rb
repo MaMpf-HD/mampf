@@ -14,6 +14,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
   end
 
   before do
+    create(:lecture_membership, user: user, lecture: lecture)
     create(:tutorial_membership, user: user, tutorial: tutorial)
   end
 
@@ -48,6 +49,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
 
     it "creates participations for all team members" do
       partner = create(:confirmed_user)
+      create(:lecture_membership, user: partner, lecture: lecture)
       create(:tutorial_membership, user: partner, tutorial: tutorial)
       submission.users << partner
 
@@ -62,6 +64,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
     it "creates participation for a specific user on join" do
       joiner = create(:confirmed_user)
       other_tutorial = create(:tutorial, lecture: lecture)
+      create(:lecture_membership, user: joiner, lecture: lecture)
       create(:tutorial_membership, user: joiner, tutorial: other_tutorial)
       submission.users << joiner
 
@@ -73,6 +76,16 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       participation = Assessment::Participation.last
       expect(participation.user).to eq(joiner)
       expect(participation.tutorial_id).to eq(other_tutorial.id)
+    end
+
+    it "does not create participations for users outside the lecture roster" do
+      outsider = create(:confirmed_user)
+      submission.users << outsider
+
+      expect do
+        controller_instance.send(:sync_assessment_participations,
+                                 users: [outsider])
+      end.not_to change(Assessment::Participation, :count)
     end
 
     it "does nothing when assignment has no assessment" do
@@ -123,6 +136,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
 
     it "clears submitted_at only for the leaving user" do
       partner = create(:confirmed_user)
+      create(:lecture_membership, user: partner, lecture: lecture)
       create(:tutorial_membership, user: partner, tutorial: tutorial)
       submission.users << partner
 

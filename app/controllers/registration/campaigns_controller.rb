@@ -1,5 +1,6 @@
 module Registration
   class CampaignsController < ApplicationController
+    include Registration::ExamFrameTargeting
     include Registration::RosterStreamRefreshable
 
     before_action :set_lecture, only: [:index, :new, :create]
@@ -13,7 +14,8 @@ module Registration
 
     def index
       authorize! :index, Registration::Campaign.new(campaignable: @lecture)
-      @campaigns = @lecture.registration_campaigns.includes(:registration_items)
+      @campaigns = @lecture.registration_campaigns.non_exam
+                           .includes(:registration_items)
                            .order(created_at: :desc)
 
       respond_to do |format|
@@ -28,8 +30,12 @@ module Registration
       respond_to do |format|
         format.html
         format.turbo_stream do
-          render_campaigns_index_turbo(lecture: @campaign.campaignable,
-                                       expanded_campaign_id: @campaign.id)
+          if exam_campaign_context?
+            render_exam_update
+          else
+            render_campaigns_index_turbo(lecture: @campaign.campaignable,
+                                         expanded_campaign_id: @campaign.id)
+          end
         end
       end
     end
@@ -60,6 +66,7 @@ module Registration
 
     def new
       @campaign = @lecture.registration_campaigns.build
+      @campaign.allocation_mode = :first_come_first_served
       authorize! :new, @campaign
 
       respond_to do |format|
@@ -135,10 +142,14 @@ module Registration
       end
 
       if @campaign.update(attributes)
-        respond_with_flash(:notice, t("registration.campaign.closed"),
-                           redirect_path: registration_campaign_path(@campaign)) do
-          evaluate_turbo_update_streams(lecture: @campaign.campaignable,
-                                        expanded_campaign_id: @campaign.id)
+        if exam_campaign_context?
+          render_exam_update
+        else
+          respond_with_flash(:notice, t("registration.campaign.closed"),
+                             redirect_path: registration_campaign_path(@campaign)) do
+            evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                          expanded_campaign_id: @campaign.id)
+          end
         end
       else
         respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
@@ -153,26 +164,25 @@ module Registration
         return
       end
 
-      was_processing = @campaign.processing?
+      @campaign.reopen!(registration_deadline: params[:registration_deadline])
 
-      attributes = { status: :open }
-      if params[:registration_deadline].present?
-        attributes[:registration_deadline] = params[:registration_deadline]
-      end
-
-      @campaign.transaction do
-        @campaign.update!(attributes)
-        @campaign.reset_allocation_results! if was_processing
-      end
-
-      respond_with_flash(:notice, t("registration.campaign.reopened"),
-                         redirect_path: registration_campaign_path(@campaign)) do
-        evaluate_turbo_update_streams(lecture: @campaign.campaignable,
-                                      expanded_campaign_id: @campaign.id)
+      if exam_campaign_context?
+        render_exam_update
+      else
+        respond_with_flash(:notice, t("registration.campaign.reopened"),
+                           redirect_path: registration_campaign_path(@campaign)) do
+          evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                        expanded_campaign_id: @campaign.id)
+        end
       end
     rescue ActiveRecord::RecordInvalid
-      respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
-                         redirect_path: registration_campaign_path(@campaign))
+      if exam_campaign_context?
+        render_exam_update(exam: exam_with_campaign_errors,
+                           status: :unprocessable_content)
+      else
+        respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
+                           redirect_path: registration_campaign_path(@campaign))
+      end
     end
 
     # Opens (or closes) student self-service on all of the campaign's groups
@@ -242,10 +252,14 @@ module Registration
 
       def update_status(status, success_message)
         if @campaign.update(status: status)
-          respond_with_flash(:notice, success_message,
-                             redirect_path: registration_campaign_path(@campaign)) do
-            evaluate_turbo_update_streams(lecture: @campaign.campaignable,
-                                          expanded_campaign_id: @campaign.id)
+          if exam_campaign_context?
+            render_exam_update
+          else
+            respond_with_flash(:notice, success_message,
+                               redirect_path: registration_campaign_path(@campaign)) do
+              evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                            expanded_campaign_id: @campaign.id)
+            end
           end
         else
           respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
@@ -295,6 +309,47 @@ module Registration
             ), status: :unprocessable_content
           end
         end
+      end
+
+      # The three targets are derived from the exam, not taken from
+      # `params[:frame_id]`: a client naming "exam-settings" there would have the
+      # first and second replace fight over one element, and the loser's render
+      # is silently discarded.
+      def render_exam_update(exam: @campaign.exam, status: :ok)
+        render turbo_stream: [
+          turbo_stream.replace(
+            Registration::Campaign.exam_registration_frame_id(exam),
+            partial: "exams/registration",
+            locals: { exam: exam, lecture: exam.lecture }
+          ),
+          turbo_stream.replace(
+            "exam-settings",
+            partial: "exams/settings",
+            locals: { exam: exam, lecture: exam.lecture }
+          ),
+          turbo_stream.replace(
+            Registration::Campaign.exam_registration_tab_label_frame_id(exam),
+            partial: "exams/registration_tab_label",
+            locals: { exam: exam }
+          ),
+          stream_flash
+        ].compact, status: status
+      end
+
+      def exam_with_campaign_errors
+        exam = @campaign.exam
+        exam.load_registration_deadline
+        exam.reopen_after_deadline_fix = true
+        exam.registration_deadline = params[:registration_deadline].presence ||
+                                     @campaign.registration_deadline
+
+        @campaign.errors.each do |error|
+          next unless error.attribute == :registration_deadline
+
+          exam.errors.add(:registration_deadline, error.type, **error.options)
+        end
+
+        exam
       end
   end
 end

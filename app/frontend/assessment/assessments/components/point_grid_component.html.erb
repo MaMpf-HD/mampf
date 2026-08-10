@@ -14,11 +14,10 @@
             <th><%= t("basics.tutorial") %></th>
           <% end %>
 
-          <% tasks.each_with_index do |task, index| %>
+          <% tasks.each_with_index do |task, i| %>
             <th class="text-center">
               <div>
-                <%= task.description.presence ||
-                    t("assessment.task.default_name", number: index + 1) %>
+                <%= task.description.presence || t("assessment.task.default_name", number: i + 1) %>
               </div>
 
               <small class="text-muted">

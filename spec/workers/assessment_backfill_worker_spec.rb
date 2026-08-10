@@ -89,6 +89,18 @@ RSpec.describe(AssessmentBackfillWorker) do
           .to eq(2)
       end
 
+      # The job fires every minute; once the roster is seeded it has to find
+      # nothing at all rather than re-deriving the same rows and letting the
+      # unique index throw them away.
+      it "does no work on a second run" do
+        described_class.new.perform
+
+        expect_any_instance_of(Assessment::Assessment)
+          .not_to receive(:seed_participations_from!)
+
+        described_class.new.perform
+      end
+
       it "picks up new roster member added after first backfill" do
         described_class.new.perform
         expect(Assessment::Participation.count).to eq(2)

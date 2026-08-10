@@ -1,6 +1,7 @@
 en:
   roster:
     title: "Participants/Groups"
+    participants: 'Participants'
     status: 'Status'
     group_category:
       tutorial: "Tutorial"
@@ -286,6 +287,7 @@ en:
       self_add_not_allowed: "Self-enrollment in this %{type} is not permitted for students."
       self_remove_not_allowed: "Self-leaving from this %{type} is not permitted for students."
       campaign_associated: "Self-enrollment is not available because this group is part of a registration process."
+      cannot_delete: "Cannot be deleted."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration process."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
@@ -307,3 +309,5 @@ en:
       user_removed: "%{user} removed successfully."
     self_enrollment:
       no_registration_options: "There are currently no tutorials or groups available for registration."
+    no_participants_yet: 'No participants have registered yet.'
+    registered: 'Registered'

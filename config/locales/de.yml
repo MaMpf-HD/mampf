@@ -749,6 +749,13 @@ de:
           diese Veranstaltung aktiviert. Studierende können dann
           Zertifizierungen erhalten und Anmeldebedingungen können auf
           diese Veranstaltung verweisen.
+        eligibility_data_kept:
+          one: >
+            Beim Deaktivieren bleibt 1 Zertifizierung erhalten, ist aber nicht
+            mehr erreichbar.
+          other: >
+            Beim Deaktivieren bleiben %{count} Zertifizierungen erhalten, sind
+            aber nicht mehr erreichbar.
         submission_max_team_size: >
           Hier kannst Du angeben, wieviele Personen maximal zu einer Abgabgruppe
           gehören dürfen. Wenn Du nichts angibst, gibt es keine Begrenzung.
@@ -4203,10 +4210,10 @@ de:
             teacher:
               required: 'Es muss ein(e) DozentIn angegeben werden.'
             uses_exam_eligibility:
-              has_existing_data: >
-                kann nicht deaktiviert werden, da bereits Zertifizierungen,
-                Regeln oder Anmeldebedingungen für diese Veranstaltung
-                existieren.
+              referenced_by_policies: >
+                kann nicht deaktiviert werden, solange eine Anmeldebedingung
+                auf diese Veranstaltung verweist (%{campaigns}). Entferne sie
+                dort zuerst — Zertifizierungen und Regeln bleiben erhalten.
         link:
           attributes:
             linked_medium:

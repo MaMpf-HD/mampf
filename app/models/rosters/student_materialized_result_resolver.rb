@@ -18,6 +18,11 @@ module Rosters
         lecture.talks
                .includes(:speakers, :members)
                .where(id: SpeakerTalkJoin.where(speaker_id: @user.id).select(:talk_id))
+               .to_a +
+        lecture.exams
+               .where(id: ExamRosterEntry.active
+                                         .where(user_id: @user.id)
+                                         .select(:exam_id))
                .to_a
 
       rosterables.presence

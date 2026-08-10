@@ -27,6 +27,43 @@ We use a unified grading model with clear separation of concerns:
 - **Roster Integration:** Participations are seeded from `Roster::Rosterable` models (tutorials, talks) or lecture rosters.
 - **Idempotent Operations:** Re-grading the same submission overwrites points consistently; totals are recomputed atomically.
 
+## Grading Rules
+
+Four rules hold across the whole assessment stack. None of them is visible in a
+single file, and each has been guessed wrongly at least once.
+
+**Grading opens only after the deadline has passed.** On an `Assignment`,
+`grading_open?` is an alias for `totally_expired?`, which becomes true once
+`friendly_deadline` — the deadline plus the lecture's `submission_grace_period` —
+is behind us. `Assessment::Participation` and `Assessment::TaskPoint` both refuse
+to be written before that. An assignment that is not yet due therefore cannot
+carry points at all.
+
+**Only `reviewed` participations contribute points.** A participation is
+`reviewed` once every task of its assessment carries a value, and it falls back to
+`pending` the moment one is cleared again — or when a task is added later, which
+leaves everyone who was finished with something unscored. An `exempt`
+participation removes its assessment from the maximum entirely; an exemption is
+not a zero. `pending` and `absent` contribute nothing while their assessment stays
+in the maximum.
+
+**Work handed in but not yet marked is recorded separately.** A `pending`
+participation that carries a `submitted_at` is waiting for a tutor rather than
+missing, and `points_max_pending_materialized` on the performance record adds up
+what that is worth. Without it a marking backlog is indistinguishable from work
+never done, and eligibility reads it as a failure.
+
+**The percentage is a share of the whole term.** `StudentPerformance::Record`
+divides by every assignment in the lecture, not by those already marked. In week
+three of twelve, a student with a perfect record still shows a low percentage.
+That is the intended reading: eligibility thresholds are stated as a share of the
+term's total points.
+
+**Only assignments count towards those points.** Talks and achievements carry
+grades rather than points. Exams do carry points of their own, but they stay out
+of the performance record deliberately — that record is what decides who is
+admitted to the exam.
+
 ---
 
 ## Tab Organization & Creation Contexts
@@ -185,13 +222,11 @@ The main fields and methods of `Assessment` are:
 | `title`                   | DB column         | Human-readable assessment title                                          |
 | `requires_points`         | DB column         | Boolean: whether this assessment tracks per-task points                  |
 | `requires_submission`     | DB column         | Boolean: whether students must upload files                              |
-| `total_points`            | DB column         | Optional maximum points (computed from tasks if blank)                   |
-| `results_published_at`    | DB column         | Timestamp when results were published (null = unpublished)               |
 | `results_published_at`    | DB column         | Timestamp when results were published (null = unpublished)               |
 | `participations`          | Association       | All student records for this assessment                                  |
 | `tasks`                   | Association       | Tasks (problems) for this assessment (only if `requires_points`)         |
 | `task_points`             | Association       | All task points through participations                                   |
-| `effective_total_points`  | Method            | Returns `total_points` or sum of task max_points                         |
+| `effective_total_points`  | Method            | Sum of the tasks' `max_points` — what the assessment is worth            |
 | `seed_participations_from!(user_ids:)` | Method | Creates participation records for given users                    |
 
 ```admonish warning "Submission Support - Configurable for Assignments"
@@ -202,6 +237,15 @@ The `requires_submission` field controls whether students must upload files:
 - **Talks:** Always `false`. Presentations are graded live.
 
 When `requires_submission: false`, no file uploads occur and `submitted_at` remains `nil`. The Grading Tab shows only grading progress (not submission progress).
+
+**It freezes once the deadline has passed.** The flag imposes no obligation on
+students — nothing in the submission path consults it — so the reason is not to
+prevent a retroactive requirement. It is that the flag decides what teachers are
+shown about what already happened. Switched off afterwards, a table of 120
+uploaded files is replaced by "no submission required" while the files sit
+untouched underneath; switched on afterwards, 120 students appear as *not
+submitted* for work nobody asked them to upload. Only this one attribute is
+frozen; everything else on the assessment stays editable.
 ```
 
 ### Behavior Highlights
@@ -229,8 +273,10 @@ module Assessment
   validates :title, presence: true
   validate :tasks_only_when_requires_points
 
+  # Block form, so a preloaded `tasks` association is reused;
+  # `sum(:max_points)` would issue a query even then.
   def effective_total_points
-    total_points.presence || tasks.sum(:max_points)
+    tasks.sum(&:max_points)
   end
 
   def results_published?
@@ -280,11 +326,11 @@ Assignments and exams are created on-demand during the semester. Talks must exis
 
 - **For a homework assignment (paper):** Same as above, but the teacher sets `requires_submission: false` in the Assessment Settings tab. Students hand in physical papers during tutorial sessions. Tutors enter points directly without expecting file uploads. No file uploads occur and `submitted_at` remains `nil` for all participations.
 
-- **For an exam:** A teacher creates an `Exam` record via the "New Assessment" UI. The system creates both the `Exam` and a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_value` can be computed and stored for each student to represent the official exam grade.
+- **For an exam:** A teacher creates an `Exam` record via the "New Assessment" UI. The system creates both the `Exam` and a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_numeric` can be computed and stored for each student to represent the official exam grade.
 
 - **For a seminar talk:** A teacher creates a `Talk` record in the Content tab. The system automatically creates a linked `Assessment::Assessment` whose `assessable` is that talk, with `requires_points: false`. Later, the teacher records only a final grade for each speaker via the Assessments tab—no tasks or submissions are needed.
 
-- **For an achievement:** A teacher creates an `Achievement` record via the "New Assessment" UI (e.g., "Blackboard Presentation" with `value_type: boolean`). The system creates both the `Achievement` and a linked `Assessment::Assessment`, configured with `requires_points: false` and `requires_submission: false`. Participations are seeded for all students in the lecture. Tutors mark completion by setting each participation's `grade_value` to "Pass" or "Fail" (for boolean), or entering a count/percentage (for numeric/percentage types).
+- **For an achievement:** A teacher creates an `Achievement` record via the "New Assessment" UI (e.g., "Blackboard Presentation" with `value_type: boolean`). The system creates both the `Achievement` and a linked `Assessment::Assessment`, configured with `requires_points: false` and `requires_submission: false`. Participations are seeded for all students in the lecture. Tutors mark completion by setting each participation's `grade_text` to "pass" or "fail" (for boolean), or entering a count/percentage (also stored as `grade_text`).
 
 ---
 
@@ -363,9 +409,55 @@ The `status` enum tracks a participation's position in the **grading workflow**.
 |--------|---------|--------|
 | *(no record)* | No participation exists | Student has not interacted with assessment |
 | `pending` | In grading pipeline, awaiting review | Roster seed (exams/talks), submission upload (assignments), deadline backfill job |
-| `reviewed` | All grading complete | Tutor/teacher marks grading done (all task points entered) |
+| `reviewed` | All grading complete | Tutor/teacher marks grading done (see below — what "complete" means depends on `requires_points`) |
 | `exempt` | Excused from assessment | Manual exemption (medical certificate, etc.) |
 | `absent` | Did not attend (in-person) | Teacher marks student as no-show (explicit action) |
+
+```admonish note "What `reviewed` requires, and when `points_total` is legitimately nil"
+Two kinds of assessment reach `reviewed` by different routes, and the enum does
+not distinguish them — `requires_points` does.
+
+**Points-based** (exam, assignment): tasks exist and carry the marks.
+`points_total` mirrors their sum, and "grading complete" means every task has
+been scored. A `reviewed` participation with no task points at all is a
+contradiction: the action that sets the status has to refuse it.
+
+**Single-grade** (seminar talk): there are no tasks. The grade sits on the
+participation itself, `requires_points` is false, and `points_total` stays nil
+permanently. That is the normal state, not a gap.
+
+`GradeSchemeApplier#compute_grade_for` cannot tell the two apart — it sees a nil
+total and falls back to 5.0. That fallback guards a state which must not arise
+in the first place, so the rule belongs to whatever sets the status, not to the
+applier.
+
+Neither route exists in this stack yet: `Gradable#set_grade!` is the only method
+that writes `reviewed`, and nothing calls it. Both the point entry and the talk
+grading are being built on the separate tutor grading branch.
+```
+
+~~~admonish warning "`absent` and `exempt` are opposites, not shades of the same thing"
+Both mean the student did not sit the exam, and the grading treats them in
+opposite ways.
+
+**`absent` is a failed attempt.** Someone who registered and did not turn up has
+used up the attempt, so applying a grade scheme writes them a 5.0 with the same
+grader and timestamp as a computed grade. Their status stays `absent`, so the
+row and the grade table still say *nicht angetreten* — the grade alone does not
+distinguish them from someone who sat the exam and missed every band, but the
+participation does.
+
+**`exempt` is not a grade at all.** The applier skips exempt participations
+entirely, and `StudentPerformance::ComputationService` drops their assessment
+from the maximum rather than counting it as zero.
+
+**A certificate handed in afterwards moves a student between the two**, which is
+why `AbsenceHandling#mark_exempt` clears `grade_numeric`, `grader` and
+`graded_at`. Re-applying the scheme would not undo the 5.0 — exempt
+participations are never targeted — so the excusing itself has to. Nothing
+earned is lost: the way in from `reviewed` is refused outright, so the only
+grade this can clear is the automatic one.
+~~~
 
 ```admonish tip "Submission is orthogonal to status"
 `submitted_at` records whether and when the student delivered work. It is independent of `status`:
@@ -375,6 +467,13 @@ The `status` enum tracks a participation's position in the **grading workflow**.
 - `reviewed` + `submitted_at` nil → graded without file submission (paper, exam)
 
 This separation keeps the enum clean and future-proof (e.g. digital exam submissions would set `submitted_at` without needing a new status value).
+
+Views need a fifth value, because `pending` covers two quite different
+situations. `Participation#display_status` derives it rather than storing it:
+`pending` without a submission reads as `:not_submitted`, `pending` with one as
+`:pending_grading`, and every other status passes through. A fifth enum value
+would give one truth two homes — the status and the timestamp — which can drift;
+deriving keeps `submitted_at` the only record of whether something was handed in.
 ```
 
 ```admonish warning "Where absent applies"
@@ -682,7 +781,7 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 
 - **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:reviewed` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
-- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:reviewed`. Students can now see their points breakdown and final grade (if `grade_value` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
+- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:reviewed`. Students can now see their points breakdown and final grade (if `grade_numeric` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
 
 - **Per-tutorial publication (assignments):** Tutorial A completes grading on Monday. The tutor sets `results_published_at: Time.current` for all participations where `tutorial_id = tutorial_a.id`. Students in Tutorial A can now see their results. Tutorial B's students (with `tutorial_id = tutorial_b.id` and `results_published_at: nil`) still see "pending" status.
 
@@ -755,7 +854,7 @@ For exams with multiple choice components requiring legal compliance, see the [M
 
 - **Exam with multiple questions:** An exam assessment has tasks for each question. A task titled "Question 3: Proof of Theorem" with `max_points: 8` allows tutors to grade that specific question independently across all students.
 
-- **Automatic total calculation:** If the assessment's `total_points` field is blank, calling `assessment.effective_total_points` sums all task `max_points` values (e.g., 10 + 15 + 8 = 33 total points).
+- **What an assessment is worth:** `assessment.effective_total_points` sums all task `max_points` values (e.g., 10 + 15 + 8 = 33 total points). Tasks are the only source — there is no separate column to override the total. Individual task points are *not* capped at the task maximum, which is how bonus tasks work, so a student's result may exceed the total.
 
 - **Reordering tasks:** Teachers can adjust the `position` field to reorder how tasks appear in the grading interface without changing the underlying data structure.
 
@@ -849,7 +948,7 @@ Points are allowed to exceed task maximum to support extra credit and bonus poin
 
 - **Recomputation trigger:** After saving a TaskPoint with 8 points, the `after_commit` callback automatically calls `assessment_participation.recompute_points_total!`, updating the student's aggregate score across all tasks.
 
-- **Handling complaints:** A student views their exam and submits a complaint about Question 2. The tutor reviews the work, agrees there was a grading error, and updates the `Assessment::TaskPoint` from 5 to 7 points. The `updated_at` timestamp records when the adjustment was made. The recomputation callback updates the student's `points_total` and potentially their final `grade_value`.
+- **Handling complaints:** A student views their exam and submits a complaint about Question 2. The tutor reviews the work, agrees there was a grading error, and updates the `Assessment::TaskPoint` from 5 to 7 points. The `updated_at` timestamp records when the adjustment was made. The recomputation callback updates the student's `points_total` and potentially their final `grade_numeric`.
 
 - **Audit trail:** Months later, a student appeals their grade. The teacher queries `task_point.submission` to retrieve the original PDF that was graded, verifying the points awarded match the work submitted.
 
@@ -950,8 +1049,21 @@ The minimal "make me gradeable" interface that all graded work must implement.
 
 - Establishes the polymorphic link via `has_one :assessment, as: :assessable`
 - Provides a safe method to create/update the assessment without duplication
-- Does not eagerly seed participations—participations are created lazily on submission/grading
+- Seeds participations only where the type has no event that would create them — see the lifecycles above
 - Does not enforce whether points or grades are used—that's delegated to `Assessment::Pointable` and `Assessment::Gradable`
+- Refuses to let an assessable move to another lecture, because the assessment keeps its own copy of `lecture_id`
+
+```admonish warning "Why the lecture may not change"
+An assessment reaches its lecture only through `assessable.lecture`, and answering
+"all assessments of this lecture" that way means joining four tables and merging
+the results. It therefore keeps its own `lecture_id`, and that copy has to be held
+honest from both sides: the assessment refuses to be saved with a lecture that
+disagrees with its subject's, and the concern refuses to let the subject move at
+all. Without the second rule the assessment would keep pointing at the old
+lecture with nothing to notice, and one lecture's performance data would quietly
+count towards another. `Tutorial` has carried the same guard on the same attribute
+all along.
+```
 
 ### Example Implementation
 
@@ -1062,7 +1174,10 @@ end
 
 ### Lazy Participation Creation
 
-```admonish success "Why No Eager Seeding"
+```admonish success "Why assignments seed no participations"
+This is about assignments, and about talks, which behave the same way. Exams and
+achievements are seeded up front — see their lifecycles above.
+
 Participations are created **lazily** rather than on assignment creation for several reasons:
 
 1. **No timing assumptions:** Assignments can be created before, during, or after roster materialization
@@ -1247,7 +1362,7 @@ A concern that extends `Assessment::Assessable` to enable recording a final grad
 - Includes `Assessment::Assessable` and builds on its interface
 - Defaults `requires_points` to `false` when creating the assessment, but retains `true` if it was already enabled (e.g., when combined with `Assessment::Pointable`)
 - No tasks or submissions are required
-- Directly updates `Assessment::Participation.grade_value` for each student
+- Writes `grade_numeric` when the value is a number and `grade_text` otherwise, and sets the participation to `reviewed` in the same update
 - Can be combined with `Assessment::Pointable` for exams that need both points and final grades
 
 ### Example Implementation
@@ -1271,7 +1386,7 @@ module Assessment
     a = assessment || raise("No gradebook; call ensure_gradebook! first")
     part = a.participations.find_or_create_by!(user_id: user.id)
     part.update!(
-      grade_value: value,
+      grade_numeric: value,
       grader_id: grader&.id,
       graded_at: Time.current,
       status: :reviewed
