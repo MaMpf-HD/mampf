@@ -3,8 +3,7 @@ require "rails_helper"
 RSpec.describe("Tutorials", type: :request) do
   let(:lecture) { create(:lecture) }
   let(:editor) { create(:confirmed_user) }
-  let(:tutor) { create(:confirmed_user) }
-  let!(:tutorial) { create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: lecture) }
+  let!(:tutorial) { create(:tutorial, lecture: lecture) }
 
   before do
     create(:editable_user_join, user: editor, editable: lecture)

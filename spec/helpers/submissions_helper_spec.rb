@@ -9,8 +9,6 @@ RSpec.describe(SubmissionsHelper, type: :helper) do
 
   before do
     allow(helper).to receive(:current_user).and_return(user)
-    cache = { enabled: {}, tutorial: {} }
-    helper.define_singleton_method(:roster_cache) { cache }
 
     Flipper.enable(:roster_maintenance)
     Flipper.enable(:registration_campaigns)

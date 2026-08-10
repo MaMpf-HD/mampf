@@ -136,7 +136,7 @@ RSpec.describe("Submissions", type: :request) do
           expect(response).to redirect_to(start_path)
           follow_redirect!
           expect(flash[:alert]).to eq(
-            I18n.t("submission.tutorial_not_assigned", lecture: lecture.title)
+            I18n.t("submission.tutorial_not_assigned")
           )
         end
       end
@@ -233,7 +233,7 @@ RSpec.describe("Submissions", type: :request) do
           expect(response).to redirect_to(start_path)
           follow_redirect!
           expect(flash[:alert]).to eq(
-            I18n.t("submission.tutorial_not_assigned", lecture: lecture.title)
+            I18n.t("submission.tutorial_not_assigned")
           )
         end
       end
