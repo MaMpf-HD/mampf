@@ -145,20 +145,24 @@ $(document).on("turbo:before-cache", function () {
   $(".tomselected").each(resetSelectized);
 });
 
-$(document).on("turbo:load", function () {
-  fillOptionsByAjax($(".selectize").filter(function () {
+/**
+ * Initializes every selectize below root that TomSelect has not claimed yet.
+ */
+function initSelectizeIn(root) {
+  fillOptionsByAjax($(root).find(".selectize").filter(function () {
     return !this.tomselect;
   }));
+}
+
+$(document).on("turbo:load", function () {
+  initSelectizeIn(document);
 });
 
 /**
  * Re-initializes TomSelect in updated Turbo Frames.
  */
 $(document).on("turbo:frame-load", function (event) {
-  const frame = event.target;
-  fillOptionsByAjax($(frame).find(".selectize").filter(function () {
-    return !this.tomselect;
-  }));
+  initSelectizeIn(event.target);
 });
 
 /**
@@ -179,8 +183,6 @@ document.addEventListener("turbo:before-stream-render", function (event) {
     const target = document.getElementById(targetId);
     if (!target) return;
 
-    fillOptionsByAjax($(target).find(".selectize").filter(function () {
-      return !this.tomselect;
-    }));
+    initSelectizeIn(target);
   };
 });
