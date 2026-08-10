@@ -1,5 +1,7 @@
 # Submissions Helper
 module SubmissionsHelper
+  include Rosters::RosterCaching
+
   def cancel_editing_submission_path(submission)
     return cancel_edit_submission_path(submission) if submission.persisted?
 
@@ -105,24 +107,16 @@ module SubmissionsHelper
   end
 
   def enabled_roster_for_lecture?(lecture)
-    if respond_to?(:roster_cache) && roster_cache
-      roster_cache[:enabled].fetch(lecture.id) do
-        roster_cache[:enabled][lecture.id] =
-          Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?
-      end
-    else
-      Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?
+    roster_cache[:enabled].fetch(lecture.id) do
+      roster_cache[:enabled][lecture.id] =
+        Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?
     end
   end
 
   def rostered_tutorial_for(lecture)
-    if respond_to?(:roster_cache) && roster_cache
-      roster_cache[:tutorial].fetch(lecture.id) do
-        roster_cache[:tutorial][lecture.id] =
-          enabled_roster_for_lecture?(lecture) ? current_user.tutorial_rosterized(lecture) : nil
-      end
-    else
-      enabled_roster_for_lecture?(lecture) ? current_user.tutorial_rosterized(lecture) : nil
+    roster_cache[:tutorial].fetch(lecture.id) do
+      roster_cache[:tutorial][lecture.id] =
+        enabled_roster_for_lecture?(lecture) ? current_user.tutorial_rosterized(lecture) : nil
     end
   end
 
