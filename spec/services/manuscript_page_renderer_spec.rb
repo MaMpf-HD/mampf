@@ -22,6 +22,21 @@ RSpec.describe(ManuscriptPageRenderer) do
       png&.close!
     end
 
+    # A page may declare 14400pt per side, which at DPI alone renders to 30000x30000
+    # and costs 5 GB — from a 458-byte file, well inside every upload size limit.
+    it "bounds the output for a page that declares an enormous size" do
+      started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      png = described_class.render_first_page("#{SPEC_FILES}/manuscript_huge_page.pdf")
+      elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
+
+      image = Vips::Image.new_from_file(png.path)
+      expect(image.width).to be <= described_class::MAX_WIDTH
+      expect(image.height).to be <= described_class::MAX_HEIGHT
+      expect(elapsed).to be < 5
+    ensure
+      png&.close!
+    end
+
     it "raises when the file is not a document mutool can draw" do
       expect { described_class.render_first_page("#{SPEC_FILES}/toc.vtt") }
         .to raise_error(described_class::RenderError, /exited with 1/)

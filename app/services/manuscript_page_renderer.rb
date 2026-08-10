@@ -9,6 +9,15 @@ class ManuscriptPageRenderer
 
   TIMEOUT = 20
   DPI = 150
+  # A 458-byte PDF may declare a 14400pt page, which at DPI alone renders to
+  # 30000x30000 and costs 5 GB. -w/-h cap that; twice the preview size leaves
+  # libvips something to downsample from. The rlimits catch a future caller
+  # that drops the caps.
+  MAX_WIDTH = 800
+  MAX_HEIGHT = 1130
+  MEMORY_LIMIT = 512 * 1024 * 1024
+  CPU_LIMIT = TIMEOUT
+  OUTPUT_LIMIT = 32 * 1024 * 1024
 
   class << self
     # Returns an open Tempfile holding the PNG. The caller owns it.
@@ -27,9 +36,13 @@ class ManuscriptPageRenderer
     private
 
       def draw(pdf_path, out_path)
-        pid = Process.spawn("mutool", "draw", "-F", "png", "-r", DPI.to_s,
+        pid = Process.spawn({}, "mutool", "draw", "-q", "-F", "png",
+                            "-r", DPI.to_s, "-w", MAX_WIDTH.to_s, "-h", MAX_HEIGHT.to_s,
                             "-o", out_path, pdf_path, "1",
-                            out: File::NULL, err: File::NULL, pgroup: true)
+                            out: File::NULL, err: File::NULL, pgroup: true,
+                            unsetenv_others: true, close_others: true,
+                            rlimit_as: MEMORY_LIMIT, rlimit_cpu: CPU_LIMIT,
+                            rlimit_fsize: OUTPUT_LIMIT)
         _pid, status = Timeout.timeout(TIMEOUT) { Process.wait2(pid) }
         return if status.success?
 
