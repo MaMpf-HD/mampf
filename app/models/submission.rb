@@ -111,6 +111,10 @@ class Submission < ApplicationRecord
     assignment.totally_expired? || correction.present? || accepted == false
   end
 
+  def valid_for_pointing?
+    in_time? || accepted
+  end
+
   # def file_path(downloadable)
   #	return unless manuscript
   # 	manuscript.to_io.path

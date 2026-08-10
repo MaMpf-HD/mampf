@@ -275,11 +275,6 @@ class SubmissionsController < ApplicationController
     @tutorial = @submission.tutorial
     @assignment = @submission.assignment
     send_acceptance_email(@submission.users)
-    if Flipper.enabled?(:assessment_grading) && @assignment&.assessment
-      Assessment::SubmissionGraderService
-        .init_participation_for_team(@submission,
-                                     @tutorial)
-    end
     rerender_submission_row
   end
 

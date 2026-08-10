@@ -5,6 +5,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   let(:admin) { create(:confirmed_user, admin: true) }
   let(:tutor) { create(:confirmed_user) }
   let(:student) { create(:confirmed_user) }
+  let(:student2) { create(:confirmed_user) }
 
   let(:lecture) { create(:lecture, teacher: teacher) }
   let(:tutorial) { create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: lecture) }
@@ -18,10 +19,18 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   let(:submission) do
     create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
   end
+  let(:late_rejected_submission) do
+    create(:submission, assignment: assignment, tutorial: tutorial, users: [student2],
+                        created_at: assignment.deadline + 2.hours, accepted: false)
+  end
 
   let(:component_tutor) do
     described_class.new(submission: submission, assignment: assignment, tutorial: tutorial,
                         mode: "tutor")
+  end
+  let(:component_late_rejected) do
+    described_class.new(submission: late_rejected_submission, assignment: assignment,
+                        tutorial: tutorial, mode: "tutor")
   end
   let(:component_teacher) do
     described_class.new(submission: submission, assignment: assignment, tutorial: tutorial,
@@ -81,16 +90,32 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     context "when assignment is active" do
       before { allow(assignment).to receive(:active?).and_return(true) }
 
-      it "returns false" do
-        expect(component_tutor.allow_grading?).to eq(false)
+      it "returns false regardless of submission" do
+        expect(component_late_rejected.allow_grading?).to eq(false)
       end
     end
 
     context "when assignment is not active" do
       before { allow(assignment).to receive(:active?).and_return(false) }
 
-      it "returns true" do
-        expect(component_tutor.allow_grading?).to eq(true)
+      context "and submission is valid for pointing" do
+        it "returns true" do
+          expect(component_tutor.allow_grading?).to eq(true)
+        end
+      end
+
+      context "and submission is not valid for pointing" do
+        it "returns false" do
+          expect(component_late_rejected.allow_grading?).to eq(false)
+        end
+      end
+
+      context "and submission is nil" do
+        let(:submission) { nil }
+
+        it "returns nil/falsey" do
+          expect(component_tutor.allow_grading?).to be_falsey
+        end
       end
     end
   end
