@@ -42,8 +42,8 @@ RSpec.describe(SubmissionsHelper, type: :helper) do
   describe "#rostered_tutorial_for" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
 
-    it "only queries tutorial_rosterized once per lecture (memoized)" do
-      expect(user).to receive(:tutorial_rosterized).once.with(lecture).and_return(tutorial)
+    it "only queries rostered_tutorial_in once per lecture (memoized)" do
+      expect(user).to receive(:rostered_tutorial_in).once.with(lecture).and_return(tutorial)
 
       first  = helper.rostered_tutorial_for(lecture)
       second = helper.rostered_tutorial_for(lecture)
@@ -59,9 +59,9 @@ RSpec.describe(SubmissionsHelper, type: :helper) do
       expect(helper.rostered_tutorial_for(other_lecture)).to eq(other_tutorial)
     end
 
-    it "returns nil without querying tutorial_rosterized when lecture is not roster-eligible" do
+    it "returns nil without querying rostered_tutorial_in when lecture is not roster-eligible" do
       not_eligible_lecture = create(:lecture)
-      expect(user).not_to receive(:tutorial_rosterized)
+      expect(user).not_to receive(:rostered_tutorial_in)
 
       expect(helper.rostered_tutorial_for(not_eligible_lecture)).to be_nil
     end
