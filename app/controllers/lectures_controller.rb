@@ -11,6 +11,7 @@ class LecturesController < ApplicationController
   before_action :set_view_locale, only: [:edit, :show, :outline, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
+  before_action :require_turbo_frame, only: [:new]
   layout "administration"
 
   def current_ability
@@ -47,13 +48,9 @@ class LecturesController < ApplicationController
       @lecture.annotations_status = 0
     end
 
-    if turbo_frame_request?
-      render turbo_stream: turbo_stream.update(turbo_frame_request_id,
-                                               partial: "lectures/new/new",
-                                               locals: { lecture: @lecture, from: @from })
-    else
-      head :bad_request
-    end
+    render turbo_stream: turbo_stream.update(turbo_frame_request_id,
+                                             partial: "lectures/new/new",
+                                             locals: { lecture: @lecture, from: @from })
   end
 
   def edit

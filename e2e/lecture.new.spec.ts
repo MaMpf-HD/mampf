@@ -17,6 +17,37 @@ test.describe("New lecture as admin", () => {
     await page.goto(`/courses/${course.id}/edit`);
     await testCreateNewLecture(page, user, course, term, true);
   });
+
+  test("Leaves the course edit page usable after creating a lecture", async ({
+    factory,
+    admin: { page, user },
+  }) => {
+    const course = await factory.create("course");
+    const term = await factory.create("term");
+
+    await page.goto(`/courses/${course.id}/edit`);
+    await testCreateNewLecture(page, user, course, term, true);
+
+    await expect(page.getByRole("dialog", { name: "Create an event series" })).toBeHidden();
+    await expect(page.getByRole("link", { name: user.name })).toBeVisible();
+  });
+
+  test("Closes the new lecture dialog without creating anything", async ({
+    factory,
+    admin: { page },
+  }) => {
+    const course = await factory.create("course");
+    await factory.create("term");
+
+    await page.goto(`/courses/${course.id}/edit`);
+
+    const dialog = page.getByRole("dialog", { name: "Create an event series" });
+    await page.getByTestId("new-lecture-button-course-edit").click();
+    await expect(dialog).toBeVisible();
+
+    await dialog.getByRole("button", { name: "Close" }).click();
+    await expect(dialog).toBeHidden();
+  });
 });
 
 test.describe("New lecture as teacher (course editor)", () => {

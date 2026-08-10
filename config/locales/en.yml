@@ -3878,10 +3878,11 @@ en:
         lecture:
           attributes:
             course:
+              required: 'You need to give a course.'
+            course_id:
               taken: >
                 An event series with the same combination of course, term and teacher
                 already exists.
-              required: 'You need to give a course.'
               already_present: >
                 For courses that are term independent there can be only one
                 'event series'.

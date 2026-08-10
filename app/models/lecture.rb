@@ -100,7 +100,7 @@ class Lecture < ApplicationRecord
 
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
-  validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
+  validates :course_id, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
 
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
@@ -122,8 +122,6 @@ class Lecture < ApplicationRecord
             numericality: { only_integer: true,
                             greater_than: -1 },
             allow_nil: true
-
-  after_validation :map_association_errors_to_foreign_keys
 
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
@@ -1037,22 +1035,7 @@ class Lecture < ApplicationRecord
     def only_one_lecture
       return unless Lecture.where(course: course).any?
 
-      errors.add(:course, :already_present)
-    end
-
-    def map_association_errors_to_foreign_keys
-      map_error(:course, :course_id)
-      map_error(:course, :term_id)
-      map_error(:term, :term_id)
-      map_error(:teacher, :teacher_id)
-    end
-
-    def map_error(source, target)
-      return if errors[source].blank?
-
-      errors[source].each do |error_message|
-        errors.add(target, error_message) unless errors[target].include?(error_message)
-      end
+      errors.add(:course_id, :already_present)
     end
 
     def older_than?(timespan)

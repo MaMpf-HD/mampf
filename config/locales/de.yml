@@ -4096,10 +4096,11 @@ de:
         lecture:
           attributes:
             course:
+              required: 'Es muss ein Modul angegeben werden.'
+            course_id:
               taken: >
                 Eine Veranstaltung mit derselben Kombination aus Modul, Semester
                 DozentIn und Typ existiert bereits.
-              required: 'Es muss ein Modul angegeben werden.'
               already_present: >
                 Für Module mit der Eigenschaft 'semesterunabhängig' kann es
                 höchstens eine Veranstaltung geben.
