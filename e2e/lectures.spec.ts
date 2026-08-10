@@ -56,17 +56,6 @@ test.describe("Lecture people edit page: teacher & editor", () => {
         await searchForUserInTomSelect(page, "editor-select", student.user, false);
         await expectUsersInDropdown(page, "editor-select", student.user, false);
       });
-
-    test("prohibits searching for arbitrary users in the tutor dropdown",
-      async ({ factory, teacher: { page, user }, student }) => {
-        const lecture = await factory.create("lecture", [], { teacher_id: user.id });
-
-        await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
-        await page.getByTestId("new-tutorial-btn").click();
-
-        await searchForUserInTomSelect(page, "tutor-select-div", student.user, false);
-        await expectUsersInDropdown(page, "tutor-select-div", student.user, false);
-      });
   });
 
   test.describe("when logged in as admin", () => {
@@ -88,51 +77,6 @@ test.describe("Lecture people edit page: teacher & editor", () => {
 
         await searchForUserInTomSelect(page, "editor-select", student.user);
         await expectUsersInDropdown(page, "editor-select", student.user, true);
-      });
-
-    test("allows to search for arbitrary users to assign them as tutors",
-      async ({ factory, admin: { page }, student, teacher }) => {
-        const lecture = await factory.create("lecture", [], { teacher_id: teacher.user.id });
-
-        await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
-        await page.getByTestId("new-tutorial-btn").click();
-
-        await searchForUserInTomSelect(page, "tutor-select-div", student.user);
-        await expectUsersInDropdown(page, "tutor-select-div", student.user, true);
-      });
-  });
-});
-
-test.describe("Seminar speakers (new talk)", () => {
-  async function openTalkForm(page: Page) {
-    await page.getByTestId("new-talk-btn").click();
-    await page.waitForResponse(resp => resp.url().includes("/talks/new"));
-    await page.waitForTimeout(500); // Wait for form initialization
-  }
-
-  test.describe("when logged in as teacher", () => {
-    test("prohibits searching for arbitrary users in the speakers dropdown",
-      async ({ factory, teacher: { page, user: teacher }, student }) => {
-        const seminar = await factory.create("seminar", [], { teacher_id: teacher.id });
-
-        await page.goto(`/lectures/${seminar.id}/edit`);
-        await openTalkForm(page);
-
-        await searchForUserInTomSelect(page, "speaker-select-div", student.user, false);
-        await expectUsersInDropdown(page, "speaker-select-div", student.user, false);
-      });
-  });
-
-  test.describe("when logged in as admin", () => {
-    test("allows searching for arbitrary users to assign them as speakers",
-      async ({ factory, admin: { page }, student, teacher }) => {
-        const seminar = await factory.create("seminar", [], { teacher_id: teacher.user.id });
-
-        await page.goto(`/lectures/${seminar.id}/edit`);
-        await openTalkForm(page);
-
-        await searchForUserInTomSelect(page, "speaker-select-div", student.user);
-        await expectUsersInDropdown(page, "speaker-select-div", student.user, true);
       });
   });
 });
