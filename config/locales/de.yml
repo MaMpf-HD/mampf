@@ -2942,6 +2942,12 @@ de:
       bei.
     nothing_here_past: >
       Zu dieser Hausaufgabe hast Du nichts abgegeben.
+    tutorial_needed: >
+      Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb nichts
+      abgeben.
+    tutorial_not_assigned: >
+      Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb keine
+      Abgabe anlegen oder einer beitreten.
     invitations_to: Einladungen an
     joined_successfully: >
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.

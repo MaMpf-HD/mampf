@@ -920,6 +920,10 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
+  def roster_eligible_tutorials?
+    tutorials.merge(Tutorial.roster_eligible).exists?
+  end
+
   private
 
     # used for after save callback
