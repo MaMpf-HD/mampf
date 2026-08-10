@@ -8,6 +8,9 @@ app/frontend/js/mampf_routes.js
 # Ignore bundler config.
 /.bundle
 
+# Generated according to whether the sibling infrastructure repo is available.
+/.devcontainer/compose.mampf-infra.yml
+
 /db/csv/*
 /db/backups/*
 !/backups/.gitkeep

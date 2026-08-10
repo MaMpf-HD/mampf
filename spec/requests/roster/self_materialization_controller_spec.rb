@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe("Roster::SelfMaterializationController", type: :request) do
-  let(:user)    { create(:confirmed_user_en) }
+  let(:user) { create(:confirmed_user_en) }
   let(:lecture) { create(:lecture, :released_for_all) }
   let(:tutorial) do
     create(:tutorial,
@@ -88,6 +88,14 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect(response.body).to include(I18n.t("roster.errors.item_locked"))
       end
 
+      it "does not send an email" do
+        perform_enqueued_jobs do
+          expect do
+            post(self_add_tutorial_path(camp_tutorial), as: :turbo_stream)
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
+      end
+
       it "does not add the user" do
         expect do
           post(self_add_tutorial_path(camp_tutorial), as: :turbo_stream)
@@ -141,6 +149,14 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           post(self_add_tutorial_path(tutorial), as: :turbo_stream)
         end.not_to(change { tutorial.members.count })
       end
+
+      it "does not send an email" do
+        perform_enqueued_jobs do
+          expect do
+            post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
+      end
     end
 
     context "when user is already a member of this tutorial" do
@@ -168,6 +184,23 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect(response.body).to include(
           I18n.t("registration.user_registration.index.confirmed_cases", locale: :en)
         )
+      end
+    end
+
+    context "when self-add succeeds and should send email" do
+      it "sends an email" do
+        perform_enqueued_jobs do
+          expect do
+            post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
+        email = ActionMailer::Base.deliveries.last
+        expected_subject = I18n.with_locale(user.locale) do
+          I18n.t("roster.mailer.roster_added_to_group_email_subject",
+                 rosterable_title: tutorial.title,
+                 lecture_title: lecture.title)
+        end
+        expect(email.subject).to eq(expected_subject)
       end
     end
   end
@@ -226,6 +259,30 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect do
           delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
         end.not_to(change { tutorial.members.count })
+      end
+      it "does not send an email" do
+        perform_enqueued_jobs do
+          expect do
+            delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
+      end
+    end
+
+    context "when self-remove succeeds and should send email" do
+      it "sends an email" do
+        perform_enqueued_jobs do
+          expect do
+            delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
+        email = ActionMailer::Base.deliveries.last
+        expected_subject = I18n.with_locale(user.locale) do
+          I18n.t("roster.mailer.roster_removed_from_group_email_subject",
+                 rosterable_title: tutorial.title,
+                 lecture_title: lecture.title)
+        end
+        expect(email.subject).to eq(expected_subject)
       end
     end
   end

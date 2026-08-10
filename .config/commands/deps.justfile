@@ -17,7 +17,7 @@ update-gems:
 
 # Updates Node.js packages
 update-nodejs:
-    yarn upgrade
+    yarn up
 
 # Simulates a production asset build
 simulate-production-asset-build:
