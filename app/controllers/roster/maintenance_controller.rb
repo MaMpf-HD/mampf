@@ -337,10 +337,8 @@ module Roster
 
         lecture_id = if @rosterable.is_a?(Lecture)
           @rosterable.id
-        elsif @rosterable.respond_to?(:lecture_id) && @rosterable.lecture_id
+        else
           @rosterable.lecture_id
-        elsif @rosterable.is_a?(Cohort)
-          @rosterable.context_id
         end
 
         @lecture = Rosters::RosterableResolver.eager_load_lecture(lecture_id)
