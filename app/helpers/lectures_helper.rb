@@ -8,7 +8,7 @@ module LecturesHelper
   end
 
   # Whether the lecture currently has an open registration campaign
-  # (used e.g. for the badge on lecture search result cards).
+  # (one building block of the search-card badges, see _lecture.html.erb).
   def registration_open?(lecture)
     return false unless Flipper.enabled?(:registration_campaigns)
 
