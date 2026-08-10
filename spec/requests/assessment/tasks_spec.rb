@@ -15,6 +15,47 @@ RSpec.describe("Assessment::Tasks", type: :request) do
     Flipper.disable(:assessment_grading)
   end
 
+  # Every action of this controller writes to someone else's lecture if the
+  # filter is missing, so the check is pinned per verb rather than once.
+  describe "as a user who cannot edit the lecture" do
+    let(:outsider) { create(:confirmed_user) }
+    let!(:task) { create(:assessment_task, assessment: assessment, max_points: 5) }
+
+    before { sign_in outsider }
+
+    it "refuses to create a task" do
+      expect do
+        post(assessment_assessment_tasks_path(assessment),
+             params: { assessment_task: { max_points: 7.5 } },
+             as: :turbo_stream)
+      end.not_to change(Assessment::Task, :count)
+
+      expect(response).to redirect_to(root_path)
+    end
+
+    it "refuses to update a task" do
+      patch(assessment_assessment_task_path(assessment, task),
+            params: { assessment_task: { max_points: 99 } },
+            as: :turbo_stream)
+
+      expect(task.reload.max_points).to eq(5)
+      expect(response).to redirect_to(root_path)
+    end
+
+    it "refuses to delete a task" do
+      expect do
+        delete(assessment_assessment_task_path(assessment, task), as: :turbo_stream)
+      end.not_to change(Assessment::Task, :count)
+    end
+
+    it "refuses to reorder tasks" do
+      post(reorder_assessment_assessment_tasks_path(assessment),
+           params: { task_id: task.id, position: 1 })
+
+      expect(response).not_to have_http_status(:ok)
+    end
+  end
+
   describe "POST /assessment/assessments/:assessment_id/tasks" do
     context "with valid parameters" do
       it "creates a task" do
@@ -23,6 +64,17 @@ RSpec.describe("Assessment::Tasks", type: :request) do
                params: { assessment_task: { max_points: 7.5 } },
                as: :turbo_stream)
         end.to change(Assessment::Task, :count).by(1)
+      end
+    end
+
+    context "without a Turbo Stream request" do
+      it "refuses to answer at all" do
+        expect do
+          post(assessment_assessment_tasks_path(assessment),
+               params: { assessment_task: { max_points: 7.5 } })
+        end.not_to change(Assessment::Task, :count)
+
+        expect(response).to have_http_status(:not_acceptable)
       end
     end
 
@@ -87,6 +139,38 @@ RSpec.describe("Assessment::Tasks", type: :request) do
         delete(assessment_assessment_task_path(assessment, task),
                as: :turbo_stream)
       end.to change(Assessment::Task, :count).by(-1)
+    end
+  end
+
+  # A task appearing in or vanishing from the list is its own confirmation;
+  # only the failures have to say something.
+  describe "what the teacher is told afterwards" do
+    it "stays quiet about a task that was added" do
+      post assessment_assessment_tasks_path(assessment),
+           params: { assessment_task: { max_points: 10 } },
+           as: :turbo_stream
+
+      expect(flash[:notice]).to be_nil
+      expect(flash[:alert]).to be_nil
+    end
+
+    it "puts a failed deletion on the page it returns to" do
+      expired = create(:assignment, :with_lecture, :expired, lecture: lecture)
+      task = create(:assessment_task, assessment: expired.reload.assessment)
+      participation = create(:assessment_participation,
+                             assessment: expired.assessment, status: :reviewed,
+                             submitted_at: 1.day.ago)
+      create(:assessment_task_point, task: task,
+                                     assessment_participation: participation, points: 3)
+
+      delete assessment_assessment_task_path(expired.assessment, task),
+             as: :turbo_stream
+      get assessment_assessment_path(expired.assessment,
+                                     assessable_type: "Assignment",
+                                     assessable_id: expired.id),
+          as: :turbo_stream
+
+      expect(response.body).to include(I18n.t("assessment.task.delete_failed"))
     end
   end
 

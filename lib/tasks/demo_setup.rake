@@ -24,6 +24,21 @@ namespace :demo do
     Demo::SetupSupport.setup_performance!
   end
 
+  desc "Create an active eligibility rule and certify the demo students against it"
+  task eligibility: :environment do
+    Demo::SetupSupport.setup_eligibility!
+  end
+
+  desc "Create demo exams with campaigns, registrations and a finalized roster"
+  task exams: :environment do
+    Demo::SetupSupport.setup_exams!
+  end
+
+  desc "Grade the finalized demo exam by applying a banded grading scheme"
+  task grading: :environment do
+    Demo::SetupSupport.setup_grading!
+  end
+
   desc "Create the maximum available demo data for the current slice"
   task setup: :environment do
     Demo::SetupSupport.setup!

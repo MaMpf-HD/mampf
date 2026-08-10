@@ -26,13 +26,10 @@ module StudentPerformance
       return if user_ids.empty?
 
       participations_by_user = prefetch_participations(user_ids)
-      points_by_participation = prefetch_task_points(
-        participations_by_user.values.flatten
-      )
 
       rows = user_ids.map do |uid|
         parts = participations_by_user.fetch(uid, [])
-        stats = aggregate_from_prefetched(parts, points_by_participation)
+        stats = aggregate_points_from(parts)
         grade_texts = achievement_participations_cache.fetch(uid, {})
         met_ids = achievement_ids_met(grade_texts)
         ungraded_ids = achievement_ids_ungraded(grade_texts)
@@ -46,6 +43,8 @@ module StudentPerformance
 
     private
 
+      # Assignments only. Exams carry points as well, but exam eligibility is
+      # earned from assignments, so exam points never count towards it.
       def assessments
         @assessments ||= Assessment::Assessment
                          .where(lecture_id: lecture.id,
@@ -62,28 +61,38 @@ module StudentPerformance
           .group_by(&:user_id)
       end
 
-      def prefetch_task_points(participations)
-        participations.each_with_object({}) do |p, acc|
-          acc[p.id] = p.points_total || BigDecimal("0")
-        end
-      end
-
-      def aggregate_from_prefetched(participations, points_lookup)
+      def aggregate_points_from(participations)
         status_map = participations.group_by(&:status)
         reviewed = status_map.fetch("reviewed", [])
         exempt = status_map.fetch("exempt", [])
 
-        points_total = reviewed.sum do |p|
-          points_lookup.fetch(p.id, BigDecimal("0"))
-        end
+        points_total = reviewed.sum { |p| p.points_total || BigDecimal("0") }
 
         exempt_assessment_ids = exempt.to_set(&:assessment_id)
         non_exempt = assessments.reject do |a|
           exempt_assessment_ids.include?(a.id)
         end
-        points_max = non_exempt.sum { |a| effective_max(a) }
+        points_max = non_exempt.sum(&:effective_total_points)
 
-        { points_total: points_total, points_max: points_max }
+        {
+          points_total: points_total,
+          points_max: points_max,
+          points_max_pending: pending_points(status_map, non_exempt)
+        }
+      end
+
+      # What is handed in but not marked yet. Without it a marking backlog is
+      # indistinguishable from work never done, and eligibility reads it as a
+      # fail. A submission counts as awaiting marking until every one of its
+      # tasks is scored, which is what leaves the participation on `pending`.
+      def pending_points(status_map, non_exempt)
+        awaiting = status_map.fetch("pending", [])
+                             .select { |p| p.submitted_at.present? }
+                             .to_set(&:assessment_id)
+        return BigDecimal("0") if awaiting.empty?
+
+        non_exempt.select { |a| awaiting.include?(a.id) }
+                  .sum(&:effective_total_points)
       end
 
       def aggregate_points(user)
@@ -94,8 +103,7 @@ module StudentPerformance
                                  :user_id, :points_total)
                          .to_a
 
-        points_lookup = prefetch_task_points(participations)
-        aggregate_from_prefetched(participations, points_lookup)
+        aggregate_points_from(participations)
       end
 
       def lecture_achievements
@@ -108,16 +116,7 @@ module StudentPerformance
         return [] if lecture_achievements.empty?
 
         lecture_achievements.select do |a|
-          next false unless a.assessment
-
-          gt = grade_texts[a.assessment.id]
-          next false if gt.blank?
-
-          case a.value_type
-          when "boolean"    then gt == "pass"
-          when "numeric"    then numeric_value(gt) >= a.threshold
-          when "percentage" then gt.to_f >= a.threshold
-          end
+          a.assessment && a.met_by?(grade_texts[a.assessment.id])
         end.map(&:id)
       end
 
@@ -161,20 +160,10 @@ module StudentPerformance
         end
       end
 
-      def effective_max(assessment)
-        assessment.total_points || assessment.tasks.sum(&:max_points)
-      end
-
       def compute_percentage(points_total, points_max)
         return nil if points_max.nil? || points_max.zero?
 
         (points_total / points_max * 100).round(2)
-      end
-
-      def numeric_value(value)
-        BigDecimal(value.to_s)
-      rescue ArgumentError
-        BigDecimal("0")
       end
 
       def build_row(user_id, stats, achievements_met_ids,
@@ -189,11 +178,11 @@ module StudentPerformance
           user_id: user_id,
           points_total_materialized: stats[:points_total],
           points_max_materialized: stats[:points_max],
+          points_max_pending_materialized: stats[:points_max_pending],
           percentage_materialized: percentage,
           achievements_met_ids: achievements_met_ids,
           achievements_ungraded_ids: achievements_ungraded_ids,
-          computed_at: now,
-          updated_at: now
+          computed_at: now
         }
       end
 

@@ -109,7 +109,10 @@ RSpec.describe(Assessment::Task, type: :model) do
       expect(Assessment::TaskPoint.find_by(id: tp.id)).to be_present
     end
 
-    context "when assignment deadline has passed" do
+    # The deadline on its own does not protect a task: a question that turns out
+    # to be unsolvable has to be removable afterwards, and by then nobody will
+    # have marked it.
+    context "when the assignment deadline has passed" do
       let!(:assignment) do
         FactoryBot.create(:assignment, :with_lecture,
                           deadline: 1.hour.from_now)
@@ -124,22 +127,22 @@ RSpec.describe(Assessment::Task, type: :model) do
         FactoryBot.create(:assessment_task, assessment: assessment)
       end
 
-      before { Timecop.travel(2.hours.from_now) }
+      # friendly_deadline is deadline plus the lecture's grace period, which is
+      # what grading_open? keys off — entering points earlier would be refused.
+      before { Timecop.travel(assignment.friendly_deadline + 1.minute) }
       after { Timecop.return }
 
-      it "cannot be destroyed" do
+      it "can still be destroyed while no points have been entered" do
+        expect(past_deadline_task.destroy).to be_truthy
+        expect(Assessment::Task.find_by(id: past_deadline_task.id)).to be_nil
+      end
+
+      it "cannot be destroyed once points have been entered" do
+        FactoryBot.create(:assessment_task_point,
+                          task: past_deadline_task, points: 8)
+
         expect(past_deadline_task.destroy).to be(false)
         expect(past_deadline_task.reload).to be_persisted
-      end
-
-      it "reports deadline_passed? as true" do
-        expect(past_deadline_task.deadline_passed?).to be(true)
-      end
-    end
-
-    context "when assignment deadline has not passed" do
-      it "reports deadline_passed? as false" do
-        expect(task.deadline_passed?).to be(false)
       end
     end
   end
@@ -185,6 +188,80 @@ RSpec.describe(Assessment::Task, type: :model) do
 
         expect(service).to have_received(:compute_and_upsert_all_records!)
       end
+    end
+  end
+
+  # Nothing stops a teacher from adding a task after grading has begun. The new
+  # task has no points anywhere, so anyone who counted as fully marked no longer
+  # is and has to go back into the tutor's queue.
+  describe "adding a task once participations exist" do
+    let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
+    let!(:existing_task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+
+    def add_a_task
+      FactoryBot.create(:assessment_task, assessment: assessment)
+    end
+
+    it "sends a reviewed participation back to pending" do
+      participation = FactoryBot.create(:assessment_participation, :reviewed,
+                                        assessment: assessment)
+
+      add_a_task
+
+      expect(participation.reload).to be_pending
+    end
+
+    it "leaves an exempt participation alone" do
+      participation = FactoryBot.create(:assessment_participation, :exempt,
+                                        assessment: assessment)
+
+      add_a_task
+
+      expect(participation.reload).to be_exempt
+    end
+
+    it "leaves an absent participation alone" do
+      participation = FactoryBot.create(:assessment_participation, :absent,
+                                        assessment: assessment)
+
+      add_a_task
+
+      expect(participation.reload).to be_absent
+    end
+
+    it "does not reach into another assessment" do
+      other = FactoryBot.create(:assessment, :gradable, requires_points: true)
+      participation = FactoryBot.create(:assessment_participation, :reviewed,
+                                        assessment: other)
+
+      add_a_task
+
+      expect(participation.reload).to be_reviewed
+    end
+
+    # Only a new task leaves something unscored; editing one does not.
+    it "does not reopen when an existing task is edited" do
+      participation = FactoryBot.create(:assessment_participation, :reviewed,
+                                        assessment: assessment)
+
+      existing_task.update!(max_points: 42)
+
+      expect(participation.reload).to be_reviewed
+    end
+
+    it "reopens them all in one statement" do
+      3.times do
+        FactoryBot.create(:assessment_participation, :reviewed, assessment: assessment)
+      end
+
+      updates = 0
+      subscription = ActiveSupport::Notifications.subscribe("sql.active_record") do |*, payload|
+        updates += 1 if payload[:sql].include?('UPDATE "assessment_participations"')
+      end
+      add_a_task
+      ActiveSupport::Notifications.unsubscribe(subscription)
+
+      expect(updates).to eq(1)
     end
   end
 end

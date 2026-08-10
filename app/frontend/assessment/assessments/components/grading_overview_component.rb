@@ -2,7 +2,34 @@
 # Calculates the number of expected submissions, how many have been submitted,
 # how many are missing, and provides information about the deadline.
 class GradingOverviewComponent < ViewComponent::Base
-  include ApplicationHelper
+  TutorialStat = Struct.new(:tutorial, :total, :submitted, keyword_init: true) do
+    def name
+      tutorial.title
+    end
+
+    def missing
+      total - submitted
+    end
+
+    def progress_bar_color
+      GradingOverviewComponent.progress_bar_color(submitted, total)
+    end
+
+    def progress_percentage
+      GradingOverviewComponent.progress_percentage(submitted, total)
+    end
+  end
+
+  # The same two rules apply to the course as a whole and to each tutorial.
+  def self.progress_bar_color(done, expected)
+    expected.positive? && done >= expected ? :success : :secondary
+  end
+
+  def self.progress_percentage(done, expected)
+    return 0 if expected.zero?
+
+    (done.to_f / expected * 100).round
+  end
 
   def initialize(assessment:, lecture:)
     super()
@@ -32,29 +59,34 @@ class GradingOverviewComponent < ViewComponent::Base
     end
   end
 
+  DeadlineStatus = Struct.new(:phase, :icon, :color, keyword_init: true)
+
+  DEADLINE_STATUSES = {
+    urgent: DeadlineStatus.new(phase: :urgent, icon: "bi-exclamation-triangle",
+                               color: "text-warning"),
+    open: DeadlineStatus.new(phase: :open, icon: "bi-hourglass-split",
+                             color: "text-muted"),
+    just_closed: DeadlineStatus.new(phase: :just_closed, icon: "bi-inbox",
+                                    color: "text-muted"),
+    grading: DeadlineStatus.new(phase: :grading, icon: "bi-check-circle",
+                                color: "text-success")
+  }.freeze
+
   def deadline_status
     return nil unless deadline
 
-    now = Time.current
-    if deadline > now
-      remaining = deadline - now
-      if remaining < 24.hours
-        { phase: :urgent, icon: "bi-exclamation-triangle", color: "text-warning" }
-      else
-        { phase: :open, icon: "bi-hourglass-split", color: "text-muted" }
-      end
-    else
-      elapsed = now - deadline
-      if elapsed < 24.hours
-        { phase: :just_closed, icon: "bi-inbox", color: "text-muted" }
-      else
-        { phase: :grading, icon: "bi-check-circle", color: "text-success" }
-      end
-    end
+    DEADLINE_STATUSES.fetch(deadline_phase)
   end
 
   def progress_bar_color
-    total_expected.positive? && submitted_count >= total_expected ? :success : :secondary
+    self.class.progress_bar_color(submitted_count, total_expected)
+  end
+
+  def deadline_phase
+    now = Time.current
+    return (deadline - now) < 24.hours ? :urgent : :open if deadline > now
+
+    (now - deadline) < 24.hours ? :just_closed : :grading
   end
 
   def total_expected
@@ -70,37 +102,11 @@ class GradingOverviewComponent < ViewComponent::Base
   end
 
   def progress_percentage
-    return 0 if total_expected.zero?
-
-    (submitted_count.to_f / total_expected * 100).round
+    self.class.progress_percentage(submitted_count, total_expected)
   end
 
   def tutorial_stats
     @tutorial_stats ||= build_tutorial_stats
-  end
-
-  def tutorials?
-    lecture.tutorials.any?
-  end
-
-  TutorialStat = Struct.new(:tutorial, :total, :submitted, keyword_init: true) do
-    def name
-      tutorial&.title || I18n.t("assessment.grading_overview.unassigned")
-    end
-
-    def missing
-      total - submitted
-    end
-
-    def progress_bar_color
-      total.positive? && submitted >= total ? :success : :secondary
-    end
-
-    def progress_percentage
-      return 0 if total.zero?
-
-      (submitted.to_f / total * 100).round
-    end
   end
 
   private
@@ -110,28 +116,31 @@ class GradingOverviewComponent < ViewComponent::Base
     end
 
     def roster_memberships
-      @roster_memberships ||= TutorialMembership.where(tutorial_id: lecture.tutorial_ids)
+      @roster_memberships ||= TutorialMembership.where(
+        tutorial_id: lecture.tutorial_ids
+      )
     end
 
     def build_tutorial_stats
       stats = []
 
       membership_counts = roster_memberships.group(:tutorial_id).count
-      submission_counts =
-        participations
-        .where.not(tutorial_id: nil)
-        .where.not(submitted_at: nil)
-        .group(:tutorial_id)
-        .count
+      submission_counts = participations
+                          .where.not(tutorial_id: nil)
+                          .where.not(submitted_at: nil)
+                          .group(:tutorial_id)
+                          .count
 
       lecture.tutorials.includes(:tutors).order(:title).each do |tutorial|
         total = membership_counts[tutorial.id] || 0
         next if total.zero?
 
+        submitted = submission_counts[tutorial.id] || 0
+
         stats << TutorialStat.new(
           tutorial: tutorial,
           total: total,
-          submitted: submission_counts[tutorial.id] || 0
+          submitted: submitted
         )
       end
 

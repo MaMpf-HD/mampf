@@ -1,7 +1,19 @@
 de:
+  activerecord:
+    errors:
+      models:
+        student_performance/rule:
+          attributes:
+            base:
+              percentage_and_absolute_exclusive: "Es kann nicht gleichzeitig ein Prozent- und ein absoluter Punkteschwellwert angegeben werden"
+              no_criteria: "Die Regel braucht mindestens ein Kriterium: einen Punkteschwellwert oder ein Zusatzkriterium. Ohne Kriterium würden alle Studierenden zugelassen."
+              threshold_without_mode: "Es ist ein Punkteschwellwert gesetzt, obwohl kein Schwellenmodus gewählt wurde"
+        student_performance/rule_achievement:
+          attributes:
+            achievement:
+              must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
   student_performance:
     errors:
-      no_lecture: "Veranstaltung nicht gefunden."
       no_record: "Leistungsdatensatz nicht gefunden."
       no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
     records:
@@ -13,6 +25,7 @@ de:
         points: "Punkte"
         percentage: "Prozent"
         assessments: "Bewertungen"
+
         reviewed: "Bewertet"
         graded: "bewertet"
         pending_grading: "Noch nicht bewertet"
@@ -24,15 +37,20 @@ de:
         achievement_ungraded: "Noch nicht bewertet"
       index:
         subtitle: "Faktische Leistungsdaten, berechnet aus Bewertungen."
-        generate_proposals: "Vorschläge generieren"
-        all_tutorials: "Alle Übungsgruppen"
+        all_participants: "Alle Teilnehmenden"
+        without_tutorial: "Ohne Übungsgruppe"
+        awaiting_marking:
+          one: "1 Abgabe ist noch nicht bewertet"
+          other: "%{count} Abgaben sind noch nicht bewertet"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
         details: "Details"
+
         showing: "%{from}–%{to} von %{count} Studierenden"
       show:
         back: "Zurück zur Übersicht"
         recompute: "Datensatz neu berechnen"
         recompute_hint: "Nur als Fallback: Verwende dies, wenn die angezeigten Daten veraltet oder fehlerhaft wirken."
+        review_proposal: "Vorschlag prüfen"
         total_points: "Gesamtpunkte"
         out_of: "von %{max} möglichen"
         percentage: "Prozent"
@@ -46,5 +64,158 @@ de:
         view_correction: "Korrektur ansehen"
         total_row: "Gesamt"
         last_computed: "Zuletzt berechnet vor %{time}."
+
       recompute:
         single: "Neuberechnung für diese/n Studierende/n abgeschlossen."
+    rules:
+      show:
+        of_total_points: "der Gesamtpunkte erforderlich"
+        points_absolute: "Punkte erforderlich (absolut)"
+        edit_button: "Regel bearbeiten"
+        value_types:
+          boolean: "Erforderlich"
+          numeric: "min. %{threshold}"
+          percentage: "min. %{threshold}%"
+      edit:
+        title: "Zulassungsregel bearbeiten"
+        subtitle: "Kriterien konfigurieren, die Studierende erfüllen müssen, um die Prüfungszulassung zu erhalten."
+        cancel: "Abbrechen"
+        save: "Regel speichern"
+        threshold_section: "Punkteschwelle"
+        none_mode: "Keine Punkteschwelle"
+        none_hint: "Zulassung wird ausschließlich anhand der Zusatzkriterien bestimmt."
+        percentage_mode: "Prozent der Gesamtpunkte"
+        percentage_hint: "Studierende müssen diesen Prozentsatz der Gesamtpunkte erreichen."
+        absolute_mode: "Absolute Punkte"
+        absolute_hint: "Studierende müssen diese Punktzahl erreichen."
+        points_unit: "Pkt"
+        percentage_field: "Mindestprozentsatz"
+        absolute_field: "Mindestpunktzahl"
+        achievements_section: "Erforderliche Zusatzkriterien"
+        achievements_hint: "Wählen Sie, welche Zusatzkriterien Studierende erfüllen müssen."
+      flash:
+        updated: "Zulassungsregel aktualisiert."
+      preview:
+        button: "Vorschau"
+        impact: "Auswirkung"
+        affected: "betroffen"
+        newly_passed: "neu zugelassen"
+        newly_failed: "neu nicht zugelassen"
+        newly_inconclusive: "neu zurückgestellt"
+        current_status: "Aktuell"
+        new_status: "Mit neuer Regel"
+        deferred_hint: "Zurückgestellt heißt: noch offen — die ausstehenden Bewertungen könnten die Schwelle noch erreichen. Eine höhere Schwelle kann deshalb aus zurückgestellt „nicht zugelassen“ machen und aus zugelassen „zurückgestellt“."
+        manual_conflicts:
+          one: "%{count} Einzelentscheidung widerspricht der neuen Regel und bleibt bestehen:"
+          other: "%{count} Einzelentscheidungen widersprechen der neuen Regel und bleiben bestehen:"
+        and_more:
+          one: "und %{count} weitere"
+          other: "und %{count} weitere"
+        no_changes: "Keine Studierenden würden mit diesen Einstellungen den Status wechseln."
+        no_rule: "Speichern Sie zuerst eine Regel, um deren Auswirkung zu sehen."
+    evaluator:
+      no_rule: "Keine aktive Zulassungsregel konfiguriert. Bitte richten Sie zuerst eine Regel ein."
+      back_to_records: "Zurück zur Übersicht"
+      status:
+        passed: "Zugelassen"
+        failed: "Nicht zugelassen"
+        inconclusive: "Zurückgestellt"
+      deferral:
+        points_pending: "Abgaben noch nicht bewertet"
+        points_not_measurable: "Keine Punkte zu messen"
+        achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
+      single_proposal:
+        title: "Zulassungsvorschlag"
+        back_to_record: "Zurück zum Datensatz"
+        points_check: "Punkte-Prüfung"
+        student_points: "Punkte (Studierende/r)"
+        student_percentage: "Prozent (Studierende/r)"
+        required: "Erforderlich"
+        result: "Ergebnis"
+        achievements_check: "Zusatzkriterien-Prüfung"
+        no_achievements_required: "Die aktuelle Regel erfordert keine Zusatzkriterien."
+        info: "Dieser Vorschlag ist eine schreibgeschützte Vorschau. Zulassungen werden in einem zukünftigen Update erstellt."
+    certifications:
+      back_to_dashboard: "Zurück zum Dashboard"
+      index:
+        subtitle: "Zulassungsvorschläge prüfen und Studierende zulassen."
+        total: "Studierende gesamt"
+        passed: "Zugelassen"
+        failed: "Nicht zugelassen"
+        uncertified: "Offen"
+        stale: "Veraltet"
+        stale_hint: "Zugelassen bevor Regel oder Daten geändert wurden"
+        bulk_accept: "Offene Vorschläge akzeptieren"
+        proposed_passed: "zugelassen"
+        proposed_failed: "nicht zugelassen"
+        proposed_inconclusive: "zurückgestellt"
+        accept: "Akzeptieren"
+        override: "Überschreiben"
+        certify_pass: "Zulassen"
+        certify_fail: "Nicht zulassen"
+        edit_certification: "Entscheidung bearbeiten"
+        save: "Speichern"
+        cancel: "Abbrechen"
+        empty: "Keine Studierenden-Datensätze gefunden."
+        rule_info: "Zulassungsregel"
+        setup_rule: "Regel einrichten"
+        no_rule_hint: "Du kannst Zulassungen jederzeit manuell pro Studierende:r erfassen — auch ohne Regel."
+        required_achievements_label: "Zusatzkriterien"
+        stale_rule_warning:
+          one: "Zulassungsregel wurde geändert — %{count} Zulassung ist nicht mehr aktuell."
+          other: "Zulassungsregel wurde geändert — %{count} Zulassungen sind nicht mehr aktuell."
+        stale_rule_manual_warning:
+          one: "%{count} manuelle Einzelentscheidung sollte nach Regeländerung überprüft werden."
+          other: "%{count} manuelle Einzelentscheidungen sollten nach Regeländerung überprüft werden."
+        stale_data_warning:
+          one: "Leistungsdaten wurden aktualisiert — %{count} Zulassung ist nicht mehr aktuell."
+          other: "Leistungsdaten wurden aktualisiert — %{count} Zulassungen sind nicht mehr aktuell."
+        stale_data_manual_warning:
+          one: "%{count} manuelle Einzelentscheidung sollte nach Datenänderung überprüft werden."
+          other: "%{count} manuelle Einzelentscheidungen sollten nach Datenänderung überprüft werden."
+        reevaluate_rules: "Mit aktueller Regel abgleichen"
+        reevaluate_data: "Mit aktuellen Daten abgleichen"
+        confirm_manual: "Einzelentscheidungen bestätigen"
+      status:
+        passed: "Zugelassen"
+        failed: "Nicht zugelassen"
+        pending: "Offen"
+        manual: "Einzelentscheidung"
+        stale: "Nicht mehr aktuell — Abgleich erforderlich"
+      columns:
+        proposed: "Vorschlag"
+        rule_suggests: "Laut Regel:"
+        certification: "Zulassung"
+        note: "Anmerkung"
+      filters:
+        all: "Alle"
+        passed: "Zugelassen"
+        failed: "Nicht zugelassen"
+        stale: "Veraltet"
+        uncertified: "Offen"
+      override:
+        title: "Manuell überschreiben"
+        status: "Status"
+        note: "Anmerkung"
+        note_hint: "Empfohlen bei manuellen Überschreibungen."
+        cancel: "Abbrechen"
+        save: "Überschreibung speichern"
+      flash:
+        created: "Zulassung gespeichert."
+        updated: "Zulassung aktualisiert."
+        manual_exists: "Für diese/n Studierende/n existiert bereits eine manuelle Entscheidung. Nutzen Sie die Bearbeitungsfunktion, um sie zu ändern."
+        bulk_accepted:
+          one: "%{count} Zulassung akzeptiert."
+          other: "%{count} Zulassungen akzeptiert."
+        confirmed:
+          one: "%{count} Einzelentscheidung bestätigt."
+          other: "%{count} Einzelentscheidungen bestätigt."
+        reevaluated:
+          one: "%{count} Zulassung neu bewertet."
+          other: "%{count} Zulassungen neu bewertet."
+        bulk_inconclusive:
+          one: "%{count} Zulassung bleibt zurückgestellt."
+          other: "%{count} Zulassungen bleiben zurückgestellt."
+        reevaluated_inconclusive:
+          one: "%{count} Zulassung erneut zurückgestellt."
+          other: "%{count} Zulassungen erneut zurückgestellt."

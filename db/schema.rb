@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_24_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -25,6 +25,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["lecture_id", "title"], name: "index_achievements_on_lecture_and_title", unique: true
     t.index ["lecture_id"], name: "index_achievements_on_lecture_id"
   end
 
@@ -111,12 +112,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
     t.bigint "lecture_id", null: false
     t.boolean "requires_points", default: false, null: false
     t.boolean "requires_submission", default: false, null: false
-    t.decimal "total_points", precision: 10, scale: 2
     t.datetime "results_published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable"
+    t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable", unique: true
     t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
+  end
+
+  create_table "assessment_grade_schemes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "assessment_id", null: false
+    t.integer "kind", default: 0, null: false
+    t.jsonb "config", default: {}, null: false
+    t.string "version_hash"
+    t.datetime "applied_at"
+    t.bigint "applied_by_id"
+    t.boolean "active", default: false, null: false
+    t.decimal "points_step", precision: 10, scale: 2, default: "1.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["applied_by_id"], name: "index_assessment_grade_schemes_on_applied_by_id"
+    t.index ["assessment_id"], name: "idx_assessment_grade_schemes_one_active", unique: true, where: "(active = true)"
+    t.index ["assessment_id"], name: "index_assessment_grade_schemes_on_assessment_id"
   end
 
   create_table "assessment_participations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -133,9 +149,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
     t.datetime "results_published_at"
     t.boolean "published", default: false, null: false
     t.boolean "locked", default: false, null: false
+    t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "note"
     t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
     t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
     t.index ["grader_id"], name: "index_assessment_participations_on_grader_id"
@@ -349,6 +365,36 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
     t.index ["editable_id", "editable_type"], name: "polymorphic_editable_idx"
   end
 
+  create_table "exam_roster_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "exam_id", null: false
+    t.bigint "user_id", null: false
+    t.uuid "source_campaign_id"
+    t.datetime "excluded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exam_id", "excluded_at"], name: "index_exam_roster_entries_on_exam_id_and_excluded_at"
+    t.index ["exam_id"], name: "index_exam_roster_entries_on_exam_id"
+    t.index ["source_campaign_id"], name: "index_exam_roster_entries_on_source_campaign_id"
+    t.index ["user_id", "exam_id"], name: "index_exam_roster_entries_on_user_id_and_exam_id", unique: true
+    t.index ["user_id"], name: "index_exam_roster_entries_on_user_id"
+  end
+
+  create_table "exams", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.string "title", null: false
+    t.datetime "date"
+    t.text "location"
+    t.integer "capacity"
+    t.text "description"
+    t.boolean "skip_campaigns", default: false, null: false
+    t.integer "self_materialization_mode", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id", "date"], name: "index_exams_on_lecture_id_and_date"
+    t.index ["lecture_id"], name: "index_exams_on_lecture_id"
+    t.index ["self_materialization_mode"], name: "index_exams_on_self_materialization_mode"
+  end
+
   create_table "feedbacks", force: :cascade do |t|
     t.text "title"
     t.text "feedback"
@@ -475,6 +521,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
     t.text "home_intro"
     t.text "home_attachment_data"
     t.date "submission_deletion_date", null: false
+    t.boolean "uses_exam_eligibility", default: true, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["submission_deletion_date"], name: "index_lectures_on_submission_deletion_date"
@@ -664,6 +711,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
     t.datetime "updated_at", null: false
     t.datetime "last_allocation_calculated_at"
     t.datetime "allocation_decided_at"
+    t.datetime "finalized_at"
     t.index ["allocation_mode"], name: "index_registration_campaigns_on_allocation_mode"
     t.index ["campaignable_type", "campaignable_id"], name: "index_registration_campaigns_on_campaignable"
     t.index ["status"], name: "index_registration_campaigns_on_status"
@@ -678,6 +726,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
     t.integer "confirmed_registrations_count", default: 0, null: false
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_unique_registerable", unique: true
     t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
+    t.index ["registration_campaign_id"], name: "index_registration_items_on_unique_exam_per_campaign", unique: true, where: "((registerable_type)::text = 'Exam'::text)"
   end
 
   create_table "registration_policies", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -693,6 +742,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
     t.index ["kind"], name: "index_registration_policies_on_kind"
     t.index ["phase"], name: "index_registration_policies_on_phase"
     t.index ["registration_campaign_id", "position"], name: "index_registration_policies_position"
+    t.index ["registration_campaign_id"], name: "index_one_student_performance_policy_per_campaign", unique: true, where: "(kind = 2)"
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
@@ -783,19 +833,59 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
   end
 
+  create_table "student_performance_certifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "user_id", null: false
+    t.integer "status", default: 0, null: false
+    t.integer "source", default: 0, null: false
+    t.bigint "certified_by_id"
+    t.datetime "certified_at"
+    t.uuid "rule_id"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["certified_by_id"], name: "index_certifications_on_certified_by"
+    t.index ["lecture_id", "user_id"], name: "index_certifications_on_lecture_and_user", unique: true
+    t.index ["rule_id"], name: "index_certifications_on_rule"
+    t.index ["user_id"], name: "index_certifications_on_user"
+  end
+
   create_table "student_performance_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "lecture_id", null: false
     t.bigint "user_id", null: false
     t.decimal "points_total_materialized", precision: 10, scale: 2
     t.decimal "points_max_materialized", precision: 10, scale: 2
+    t.decimal "points_max_pending_materialized", precision: 10, scale: 2
     t.decimal "percentage_materialized", precision: 5, scale: 2
-    t.jsonb "achievements_met_ids", default: []
-    t.jsonb "achievements_ungraded_ids", default: []
+    t.jsonb "achievements_met_ids", default: [], null: false
+    t.jsonb "achievements_ungraded_ids", default: [], null: false
     t.datetime "computed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lecture_id", "user_id"], name: "index_performance_records_on_lecture_and_user", unique: true
     t.index ["user_id"], name: "index_student_performance_records_on_user_id"
+  end
+
+  create_table "student_performance_rule_achievements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "rule_id", null: false
+    t.bigint "achievement_id", null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["achievement_id"], name: "index_rule_achievements_on_achievement"
+    t.index ["rule_id", "achievement_id"], name: "index_rule_achievements_on_rule_and_achievement", unique: true
+  end
+
+  create_table "student_performance_rules", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.decimal "min_percentage", precision: 5, scale: 2
+    t.decimal "min_points_absolute", precision: 10, scale: 2
+    t.integer "threshold_mode", default: 2, null: false
+    t.boolean "active", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_sp_rules_one_active_per_lecture", unique: true, where: "(active = true)"
+    t.index ["lecture_id"], name: "index_student_performance_rules_on_lecture_id"
   end
 
   create_table "subject_translations", force: :cascade do |t|
@@ -1382,6 +1472,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assessment_assessments", "lectures"
+  add_foreign_key "assessment_grade_schemes", "assessment_assessments", column: "assessment_id"
+  add_foreign_key "assessment_grade_schemes", "users", column: "applied_by_id"
   add_foreign_key "assessment_participations", "assessment_assessments", column: "assessment_id"
   add_foreign_key "assessment_participations", "tutorials"
   add_foreign_key "assessment_participations", "users"
@@ -1401,6 +1493,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
+  add_foreign_key "exam_roster_entries", "exams"
+  add_foreign_key "exam_roster_entries", "registration_campaigns", column: "source_campaign_id"
+  add_foreign_key "exam_roster_entries", "users"
+  add_foreign_key "exams", "lectures"
   add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
@@ -1432,8 +1528,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_20_000006) do
   add_foreign_key "speaker_talk_joins", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
+  add_foreign_key "student_performance_certifications", "lectures"
+  add_foreign_key "student_performance_certifications", "student_performance_rules", column: "rule_id"
+  add_foreign_key "student_performance_certifications", "users"
+  add_foreign_key "student_performance_certifications", "users", column: "certified_by_id"
   add_foreign_key "student_performance_records", "lectures"
   add_foreign_key "student_performance_records", "users"
+  add_foreign_key "student_performance_rule_achievements", "achievements", on_delete: :restrict
+  add_foreign_key "student_performance_rule_achievements", "student_performance_rules", column: "rule_id"
+  add_foreign_key "student_performance_rules", "lectures"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
   add_foreign_key "talk_tag_joins", "tags"

@@ -1,11 +1,8 @@
 module Rosters
+  # One roster lookup per lecture per rendered response. It lives on the view, not
+  # on the controller: the view object spans the whole render, so every partial
+  # shares the cache no matter which controller started it.
   module RosterCaching
-    extend ActiveSupport::Concern
-
-    included do
-      helper_method :roster_cache
-    end
-
     def roster_cache
       @roster_cache ||= { enabled: {}, tutorial: {} }
     end

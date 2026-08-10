@@ -79,7 +79,7 @@ class RegistrationCampaignsCardBodyIndexComponent < ViewComponent::Base
     end
 
     def campaigns
-      @campaigns ||= lecture.registration_campaigns.order(created_at: :desc).to_a
+      @campaigns ||= lecture.registration_campaigns.non_exam.order(created_at: :desc).to_a
     end
 
     def selected_campaign_section?

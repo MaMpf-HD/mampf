@@ -15,8 +15,9 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   # Business rule: grading is only allowed once the assignment is no longer active
+  # and the submission is valid for pointing (i.e. not late or rejected)
   def allow_grading?
-    !@assignment.active?
+    !@assignment.active? && @submission&.valid_for_pointing?
   end
 
   def tasks

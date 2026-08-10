@@ -1,6 +1,7 @@
 module Assessment
-  # Represents a specific instance of a user participating in an assessment.
-  # It tracks the user's status, points, and grading information for that assessment.
+  # The gradebook of an assessable — an assignment, a talk or an exam. It owns
+  # the tasks that carry points and the participations that carry results, and
+  # it records whether the assessable is marked by points, by a grade, or both.
   class Assessment < ApplicationRecord
     belongs_to :assessable, polymorphic: true
     belongs_to :lecture
@@ -14,31 +15,47 @@ module Assessment
                                          inverse_of: :assessment
     has_many :task_points, through: :assessment_participations,
                            class_name: "Assessment::TaskPoint"
+    # Two readers of the same table: the scoped one is what the UI means by
+    # "the scheme", the unscoped one is what has to go when the assessment does.
+    has_many :grade_schemes, dependent: :destroy,
+                             class_name: "Assessment::GradeScheme",
+                             inverse_of: :assessment
+    has_one :grade_scheme, -> { where(active: true) },
+            class_name: "Assessment::GradeScheme",
+            inverse_of: :assessment
 
     accepts_nested_attributes_for :assessable
 
     delegate :title, to: :assessable
+
+    def results_published?
+      results_published_at.present?
+    end
 
     def short_title
       parts = title.split(" ", 2)
       parts.length > 1 ? parts.last.presence || title.truncate(5) : title.truncate(5)
     end
 
-    def results_published?
-      results_published_at.present?
-    end
-
+    # A preloaded association is summed in Ruby, because `sum(:max_points)` would
+    # issue a query even then. The nil guard belongs to that path only: the task
+    # form builds a blank task into a loaded association before saving it, and
+    # `build` never marks an unloaded one as loaded.
     def effective_total_points
-      total_points || tasks.sum(:max_points)
+      return tasks.sum { |task| task.max_points || 0 } if tasks.loaded?
+
+      tasks.sum(:max_points) || 0
     end
 
     validate :lecture_matches_assessable
     validate :requires_submission_locked_after_deadline,
              if: -> { requires_submission_changed? }
 
+    # A task's own callback covers changes to what an assessment is worth;
+    # what is left here is the assessment disappearing entirely.
     after_commit :recompute_all_performance_records,
-                 on: [:destroy, :update],
-                 if: :should_recompute_performance_records?
+                 on: :destroy,
+                 if: -> { assessable_type == "Assignment" }
 
     def seed_participations_from!(user_ids:, tutorial_mapping: {},
                                   recompute: true)
@@ -89,12 +106,6 @@ module Assessment
         return unless assessable.is_a?(Assignment) && assessable.past_deadline?
 
         errors.add(:requires_submission, :locked_after_deadline)
-      end
-
-      def should_recompute_performance_records?
-        return false unless assessable_type == "Assignment"
-
-        destroyed? || saved_change_to_total_points?
       end
 
       def recompute_all_performance_records

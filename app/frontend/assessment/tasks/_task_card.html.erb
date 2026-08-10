@@ -38,6 +38,7 @@
           <%= link_to edit_assessment_assessment_task_path(assessment, task),
                       class: "btn btn-sm btn-outline-primary",
                       title: t('basics.edit'),
+                      aria: { label: t('basics.edit') },
                       data: { turbo_stream: true } do %>
             <i class="far fa-edit"></i>
           <% end %>
@@ -53,21 +54,7 @@
                 class="btn btn-sm btn-outline-secondary"
                 disabled
                 style="pointer-events: none;"
-              >
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </span>
-          <% elsif task.deadline_passed? %>
-            <span
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="<%= t('assessment.locked_after_deadline') %>"
-            >
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-secondary"
-                disabled
-                style="pointer-events: none;"
+                aria-label="<%= t('basics.delete') %>"
               >
                 <i class="fas fa-trash-alt"></i>
               </button>
@@ -77,6 +64,7 @@
                           method: :delete,
                           class: "btn btn-sm btn-outline-danger",
                           title: t('basics.delete'),
+                          aria: { label: t('basics.delete') },
                           data: { turbo_confirm: t('basics.confirm_delete') } do %>
               <i class="fas fa-trash-alt"></i>
             <% end %>

@@ -1,4 +1,7 @@
 <%= turbo_frame_tag "performance-records-frame" do %>
+  <%# a frame swap discards the layout, so a confirmation has to travel inside it %>
+  <%= render partial: "flash/message" if turbo_frame_request? %>
+
   <p class="text-muted small mb-2 mt-2">
     <%= t("student_performance.records.index.subtitle") %>
   </p>
@@ -15,7 +18,7 @@
           data-action="change->auto-submit-form#submit"
         >
           <option value="">
-            <%= t("student_performance.records.index.all_tutorials") %>
+            <%= t("student_performance.records.index.all_participants") %>
           </option>
 
           <% @lecture.tutorials.each do |tutorial| %>
@@ -28,6 +31,15 @@
               <%= tutorial.title %>
             </option>
           <% end %>
+
+          <option
+            value="none"
+            <% if params[:tutorial_id] == "none" %>
+              selected
+            <% end %>
+          >
+            <%= t("student_performance.records.index.without_tutorial") %>
+          </option>
         </select>
       <% end %>
     </div>
@@ -68,6 +80,19 @@
                 title="<%= assessment.title %>"
               >
                 <%= assessment.short_title %>
+
+                <% awaiting = @awaiting_marking[assessment.id].to_i %>
+
+                <% if awaiting.positive? %>
+                  <% label = t("student_performance.records.index.awaiting_marking",
+                               count: awaiting) %>
+                  <i
+                    class="bi bi-hourglass-split text-warning"
+                    title="<%= label %>"
+                    role="img"
+                    aria-label="<%= label %>"
+                  ></i>
+                <% end %>
 
                 <br>
 
@@ -156,7 +181,7 @@
                 >
                   <% if met %>
                     <i
-                      class="bi bi-check-circle-fill text-success"
+                      class="bi bi-check-circle text-success"
                       role="img"
                       aria-label="<%= status_text %>"
                     ></i>

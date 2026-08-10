@@ -37,6 +37,9 @@ add_index :registration_submissions,
 | Preference-based campaigns: each pending submission has unique rank | Unique index + validation |
 | Capacity never exceeded at allocation | Allocation algorithm respects `registerable.capacity` |
 | Campaign finalized exactly once | `finalize!` idempotent with status check |
+| A campaign holding an `Exam` item holds exactly one item | Validation on `Registration::Item` |
+| A campaign holding an `Exam` item is `first_come_first_served` | Validations on `Registration::Campaign` and `Registration::Item` |
+| Only `Tutorial` displaces a sibling assignment (`self.exclusive_assignment?`) | Concern default `false`; pinned by `registerable_spec` |
 | `assigned_count` matches confirmed submissions | Background reconciliation job |
 | **Assigned users** = confirmed UserRegistrations (registration data) | Count from `Registration::UserRegistration.where(status: :confirmed)` |
 | **Allocated users** = materialized roster (domain data) | Count from `rosterable.allocated_user_ids` |
@@ -91,6 +94,13 @@ add_index :assessment_task_points,
           unique: true,
           name: "idx_unique_task_point"
 
+# At most one active grade scheme per assessment; inactive ones accumulate
+add_index :assessment_grade_schemes,
+          :assessment_id,
+          unique: true,
+          where: "active = true",
+          name: "idx_assessment_grade_schemes_one_active"
+
 # Foreign key integrity
 add_foreign_key :assessment_tasks, :assessments
 add_foreign_key :assessment_task_points, :assessment_tasks, column: :task_id
@@ -106,6 +116,8 @@ add_foreign_key :assessment_task_points, :assessment_participations, column: :pa
 | Task records exist only if `Assessment` has tasks | Validation |
 | Results visible only when `Assessment.results_published?` returns true | Controller authorization |
 | `Participation.submitted_at` persists across status changes | Never overwritten after initial set |
+| An `exempt` participation carries no grade | `AbsenceHandling#mark_exempt` clears `grade_numeric`, `grader`, `graded_at`; the applier never targets exempt rows |
+| An `absent` participation is a failed attempt (5.0) | Written by `GradeSchemeApplier#apply!`; status stays `absent` |
 
 ```admonish note "Multiple Choice Extension"
 For MC exam-specific constraints, see the [Multiple Choice Exams](05c-multiple-choice-exams.md) chapter.
@@ -220,9 +232,7 @@ add_foreign_key :student_performance_certifications,
 ### Recommended Background Jobs
 
 ```admonish tip "Implementation placement"
-`CertificationStaleCheckJob` is
-implemented as part of Step 10 (Student Performance). The remaining
-jobs listed here are implemented alongside the features they support
+The jobs listed here are implemented alongside the features they support
 (e.g., `RecountAssignedJob` in Step 5, `ParticipationTotalsJob` in
 Step 8). An admin integrity dashboard for monitoring these jobs is a
 future extension.
@@ -232,13 +242,18 @@ Performance record recomputation does **not** require a background job:
 `Assessment::TaskPoint`, `Achievement`, `Assessment::Assessment`,
 `Assessment::Task`, `LectureMembership`) call `ComputationService`
 synchronously.
+
+Stale certifications need no job either. `Certification.stale` derives
+staleness by comparing `certified_at` against the record and the rule, so
+there is nothing to flag and nothing to keep current. Step 10's
+certification overview evaluates the scope on each request and separates
+stale-by-rule from stale-by-data.
 ```
 
 | Job | Purpose | Frequency |
 |-----|---------|-----------|
 | `RecountAssignedJob` | Recompute `assigned_count` from confirmed submissions | Hourly |
 | `ParticipationTotalsJob` | Verify `total_points` matches sum of task points | Daily |
-| `CertificationStaleCheckJob` | Flag certifications for review when Records change | After record updates |
 | `OrphanTaskPointsJob` | Detect task points with missing participation/task | Weekly |
 | `RosterIntegrityJob` | Check roster user counts vs. capacities | Daily |
 

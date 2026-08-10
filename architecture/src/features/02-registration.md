@@ -496,9 +496,17 @@ end
 
 ### Uniqueness Constraints
 
-To ensure data integrity and prevent double-booking, the following constraint applies:
+To ensure data integrity and prevent double-booking, the following constraints apply:
 
 - **Global Uniqueness:** Any registerable (e.g., `Tutorial`, `Talk`, `Cohort`, or `Exam`) can be in **at most one** `Registration::Campaign`.
+- **One exam per campaign:** A campaign that already holds an `Exam` item takes no second one.
+- **Exam campaigns are first-come-first-served:** `allocation_mode` cannot become `preference_based` while an `Exam` item is present.
+
+The last two are checked from both ends, because neither model revalidates the
+other: the campaign refuses the mode change, and the item refuses a campaign
+that is preference-based or already has an exam. Before those validations
+existed, only a controller scope and the form's options kept these states out of
+reach, and a crafted request reached all of them.
 
 ### Usage Scenarios
 - **For a "Tutorial Registration" campaign:** A `Registration::Item` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
@@ -548,6 +556,34 @@ The actual group or event a user is enrolled in, such as a specific tutorial gro
 | `materialize_allocation!(user_ids:, campaign:)` | Persists the authoritative roster for this campaign.   | Yes      |
 | `allocated_user_ids`                        | Current materialized users from domain roster (delegates to roster system). | Yes |
 | `full?`                                     | Convenience helper based on the current roster size.   | Optional |
+| `exclusive_assignment?` (instance)          | One registration per user per campaign.                | Yes      |
+| `self.exclusive_assignment?` (class)        | Allocating here displaces a sibling assignment.        | Optional; defaults to `false` |
+
+~~~admonish warning "Two methods called `exclusive_assignment?`"
+They share a name and answer different questions. Read the receiver, not the
+name.
+
+**The instance method** means *one registration per user per campaign*.
+`UserRegistration` copies it into the `exclusive_assignment` column, which backs
+a unique index on `(registration_campaign_id, user_id)` — so this one is a
+database guarantee. Every registerable except `Cohort` answers `true`.
+
+**The class method** means *allocating someone here displaces whatever sibling of
+the same kind they already hold in this lecture*.
+`AllocationDashboard#conflicting_registrations` consults it before warning the
+teacher, and returns early when it is `false`.
+
+Only `Tutorial` defines the class method, because only a tutorial displaces one:
+`tutorial_memberships` is unique on `(user_id, lecture_id)`, so a second
+allocation genuinely replaces the first. `Exam`, `Talk` and `Cohort` define the
+instance method alone and inherit `false` from this concern — a student may sit
+the main exam and the resit, or give two talks, and neither allocation removes
+the other.
+
+The asymmetry reads like an oversight, and adding the class method to one of the
+others would switch on warnings that describe nothing. `registerable_spec` pins
+it: only `Tutorial` may answer `true`.
+~~~
 
 #### Example Implementation
 
@@ -905,7 +941,7 @@ Unlike other policies, `student_performance` requires data preparation before th
 ```
 
 ```admonish tip "Freshness vs certification"
-The `student_performance` policy checks the Certification table at runtime (no JIT recomputation during registration). Facts (Record) are updated by background jobs or teacher-triggered recomputation. This keeps registration fast and deterministic.
+The `student_performance` policy checks the Certification table at runtime (no JIT recomputation during registration). Facts (Record) are kept current automatically via `after_commit` callbacks on grading models. This keeps registration fast and deterministic.
 ```
 
 ### Example Implementation

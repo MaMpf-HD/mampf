@@ -16,8 +16,6 @@ class SubmissionsController < ApplicationController
   before_action :check_student_status, only: :index
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
-  include Rosters::RosterCaching
-
   authorize_resource
 
   class TutorialNotRosteredError < StandardError; end

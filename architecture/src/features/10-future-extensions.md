@@ -345,6 +345,7 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 
 **Future Extensions:**
 
+- Rule versioning (on edit, deactivate old rule + create new one; certifications keep FK to historical rule for true audit trail; leverages existing `active` column and partial unique index)
 - Multiple concurrent certification policies (AND/OR logic expression builder)
 - Incremental recompute (listen to grade changes, auto-update stale certifications)
 - Student-facing certification preview (before registration opens, show provisional status)
@@ -365,6 +366,8 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 - Course-level aggregation (weighted composition across assessments)
 - Pass/fail rules (configurable requirements)
 - Bonus points system (extra credit with caps)
+- Deviation indicator (which stored grades no longer follow the active scheme after a manual correction — the summary's `grade_change_summary` compares two band sets against the students' points and never reads a stored grade, so it cannot answer this)
+- Scheme reference on the participation (freezing an applied scheme keeps the mapping, but no grade points back at it; once a second scheme has been applied, grades from both are indistinguishable in the table)
 
 ---
 

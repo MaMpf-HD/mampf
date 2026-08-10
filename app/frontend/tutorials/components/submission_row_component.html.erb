@@ -146,7 +146,7 @@
       <!-- accept / reject late submissions -->
       <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
         <%= render partial: 'submissions/other_actions',
-                  locals: { submission: @submission } %>
+                  locals: { submission: @submission, mode: @mode } %>
       <% end %>
     </div>
   </td>

@@ -102,6 +102,18 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
       expect(service).not_to have_received(:compute_and_upsert_record_for)
     end
 
+    it "refreshes points_total when a task point is destroyed" do
+      other_task = FactoryBot.create(:assessment_task,
+                                     assessment: participation.assessment)
+      other_point = FactoryBot.create(:assessment_task_point,
+                                      task: other_task,
+                                      assessment_participation: participation)
+
+      expect { other_point.destroy! }
+        .to change { participation.reload.points_total }
+        .to(task_point.points)
+    end
+
     it "refreshes points_total even when participation validations are closed" do
       # rubocop:disable Rails/SkipsModelValidations
       participation.update_column(:points_total, nil)
@@ -112,6 +124,32 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
       task_point.send(:refresh_participation_points_total)
 
       expect(participation.reload.points_total).to eq(task_point.points)
+    end
+  end
+
+  describe "the grading lifecycle guard" do
+    def task_point_for(assessment)
+      task = FactoryBot.create(:assessment_task, assessment: assessment)
+      participation = FactoryBot.create(:assessment_participation, assessment: assessment)
+      FactoryBot.build(:assessment_task_point, task: task,
+                                               assessment_participation: participation,
+                                               points: 5)
+    end
+
+    it "rejects points while the assignment can still be submitted to" do
+      # The default assignment factory puts the deadline 30 days out.
+      assessment = FactoryBot.create(:assessment, requires_points: true)
+      task_point = task_point_for(assessment)
+
+      expect(task_point).not_to be_valid
+      expect(task_point.errors.of_kind?(:base, :early_grading_not_allowed)).to be(true)
+    end
+
+    it "accepts points once the deadline and the grace period have passed" do
+      assessment = FactoryBot.create(:assessment, :for_expired_assignment,
+                                     requires_points: true)
+
+      expect(task_point_for(assessment)).to be_valid
     end
   end
 end

@@ -1,0 +1,71 @@
+<div id="exam-settings">
+  <% if show_info_bar? %>
+    <div
+      class="
+        d-flex flex-wrap align-items-center gap-2 mb-3 px-2 py-2
+        <%= info_bar_background_class %> rounded border text-muted small
+      "
+    >
+      <span>
+        <i class="bi bi-calendar-event me-1"></i>
+        <%= display_date %>
+      </span>
+
+      <span class="text-black-50">·</span>
+
+      <span>
+        <i class="bi bi-geo-alt me-1"></i>
+        <%= display_location %>
+      </span>
+
+      <span class="text-black-50">·</span>
+
+      <span>
+        <i class="bi bi-people me-1"></i>
+        <%= participant_count %>
+
+        <% if exam.capacity %>
+          /
+          <%= exam.capacity %>
+        <% end %>
+
+        <%= participant_count_label %>
+      </span>
+
+      <% if needs_opening? %>
+        <span class="text-black-50">·</span>
+        <span class="text-warning-emphasis fw-semibold">
+          <i class="bi bi-exclamation-triangle-fill me-1"></i>
+          <%= t("assessment.settings_tab.registration_hint.inline") %>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if show_back_button? %>
+    <div class="mb-3">
+      <%= link_to back_path,
+                  class: "btn btn-sm btn-outline-secondary",
+                  role: "button",
+                  data: { turbo_stream: true } do %>
+        <i class="bi bi-arrow-left"></i> <%= t("back") %>
+      <% end %>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3><%= t("assessment.new_exam") %></h3>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-12">
+      <%= render "exams/delete_button", exam: exam if show_delete_button? %>
+
+      <%= form_with model: exam,
+                    url: form_url,
+                    html: { id: "exam-form" },
+                    data: { turbo: true, controller: "exams--form" } do |f| %>
+        <%= render "exams/form_fields", f: f, exam: exam %>
+      <% end %>
+    </div>
+  </div>
+</div>

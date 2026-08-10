@@ -92,9 +92,21 @@ class Lecture < ApplicationRecord
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
 
+  # a lecture has many exams (scheduled assessment events)
+  has_many :exams, dependent: :destroy
+
   has_many :student_performance_records,
            class_name: "StudentPerformance::Record",
            dependent: :destroy
+  has_many :student_performance_certifications,
+           class_name: "StudentPerformance::Certification",
+           dependent: :destroy
+  has_many :student_performance_rules,
+           class_name: "StudentPerformance::Rule",
+           dependent: :destroy
+  has_one :active_performance_rule,
+          -> { where(active: true) },
+          class_name: "StudentPerformance::Rule"
   has_many :achievements, dependent: :destroy
 
   # a lecture has many vouchers that can be redeemed to promote
@@ -118,6 +130,10 @@ class Lecture < ApplicationRecord
 
   validate :only_one_lecture, if: :term_independent?, on: :create
 
+  validate :exam_eligibility_can_be_disabled, if: lambda {
+    uses_exam_eligibility_changed? && !uses_exam_eligibility?
+  }
+
   validates :submission_max_team_size,
             numericality: { only_integer: true,
                             greater_than: 0 },
@@ -128,7 +144,7 @@ class Lecture < ApplicationRecord
                             greater_than: -1 },
             allow_nil: true
 
-  before_validation :initialize_submission_deletion_date
+  before_save :initialize_submission_deletion_date
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
@@ -1062,6 +1078,30 @@ class Lecture < ApplicationRecord
       return false unless course
 
       course.term_independent
+    end
+
+    # Certifications and rules are records of what happened; switching the
+    # feature off hides them but harms nobody. A registration policy is an active
+    # dependency — it would keep admitting or refusing students on certifications
+    # nobody maintains any more — so only that blocks.
+    # A completed campaign is the exception: it has allocated its seats and is
+    # never screened again, so it would block for good with nothing left to undo.
+    def exam_eligibility_can_be_disabled
+      blocking = Registration::Policy.student_performance_for_lecture(id)
+                                     .joins(:registration_campaign)
+                                     .merge(Registration::Campaign
+                                              .where.not(status: :completed))
+                                     .includes(registration_campaign: :campaignable)
+      return if blocking.empty?
+
+      errors.add(:uses_exam_eligibility, :referenced_by_policies,
+                 campaigns: blocking_campaign_titles(blocking))
+    end
+
+    def blocking_campaign_titles(policies)
+      policies.filter_map do |policy|
+        policy.registration_campaign&.campaignable&.try(:title)
+      end.uniq.join(", ")
     end
 
     def absence_of_term

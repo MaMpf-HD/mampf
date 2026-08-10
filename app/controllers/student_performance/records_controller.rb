@@ -2,9 +2,12 @@ module StudentPerformance
   # Controller for managing student performance records, including listing,
   # showing details, and recomputing records.
   class RecordsController < ApplicationController
-    before_action :set_lecture
-    before_action :authorize_lecture
-    before_action :use_lecture_locale
+    include StudentPerformance::LectureScoped
+
+    # A lecture member without a tutorial cannot hand anything in, so they read
+    # as 0 % — the filter is how staff find them, not a tutorial id.
+    NO_TUTORIAL = "none".freeze
+
     before_action :set_record, only: :show
 
     rescue_from CanCan::AccessDenied do |exception|
@@ -24,7 +27,9 @@ module StudentPerformance
                                "''), users.name) ASC"
                              ))
 
-      if params[:tutorial_id].present?
+      if params[:tutorial_id] == NO_TUTORIAL
+        scope = scope.where.not(user_id: tutorial_member_ids)
+      elsif params[:tutorial_id].present?
         tutorial = @lecture.tutorials.find_by(id: params[:tutorial_id])
 
         if tutorial
@@ -35,6 +40,7 @@ module StudentPerformance
 
       @pagy, @records = pagy(scope)
       load_assessment_statuses
+      @awaiting_marking = awaiting_marking_counts(scope)
       @standard_max = @assessments.sum(&:effective_total_points)
       @achievements = @lecture.achievements.order(:title)
     end
@@ -57,12 +63,21 @@ module StudentPerformance
 
     private
 
-      def set_lecture
-        @lecture = Lecture.find_by(id: params[:lecture_id])
-        return if @lecture
+      def tutorial_member_ids
+        TutorialMembership.where(tutorial: @lecture.tutorials).select(:user_id)
+      end
 
-        redirect_to root_path,
-                    alert: I18n.t("student_performance.errors.no_lecture")
+      # Per assignment, how many of the listed students handed in without being
+      # marked yet. Counted over the whole filtered set rather than the current
+      # page, because the number describes the sheet, not the page.
+      def awaiting_marking_counts(scope)
+        Assessment::Participation
+          .where(assessment_id: @assessments.select(:id),
+                 user_id: scope.reorder(nil).select(:user_id),
+                 status: :pending)
+          .where.not(submitted_at: nil)
+          .group(:assessment_id)
+          .count
       end
 
       def set_record
@@ -71,15 +86,6 @@ module StudentPerformance
 
         redirect_to lecture_student_performance_records_path(@lecture),
                     alert: I18n.t("student_performance.errors.no_record")
-      end
-
-      def authorize_lecture
-        authorize!(:edit, @lecture)
-      end
-
-      def use_lecture_locale
-        locale = @lecture&.locale_with_inheritance || I18n.default_locale
-        I18n.locale = locale
       end
 
       def recompute_single(user_id)

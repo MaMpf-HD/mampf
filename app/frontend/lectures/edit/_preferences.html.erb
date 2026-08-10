@@ -29,7 +29,7 @@
                       {},
                       { class: 'form-select' } %>
         <div class="invalid-feedback"
-              id="lecture-term-error">
+              id="lecture-sort-error">
         </div>
       </div>
     <% end %>
@@ -156,6 +156,31 @@
           <%= helpdesk(t('admin.lecture.info.disable_teacher_display'),
                       false) %>
         </div>
+      </div>
+    </div>
+  <% end %>
+  <% if Flipper.enabled?(:student_performance) && !lecture.seminar? %>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-check">
+          <%= f.check_box :uses_exam_eligibility,
+                          class: 'form-check-input' %>
+          <%= f.label :uses_exam_eligibility,
+                      t('admin.lecture.uses_exam_eligibility'),
+                      { class: 'form-check-label' } %>
+          <%= helpdesk(t('admin.lecture.info.uses_exam_eligibility'),
+                      false) %>
+        </div>
+
+        <% if lecture.uses_exam_eligibility? %>
+          <% kept = lecture.student_performance_certifications.count %>
+          <% if kept.positive? %>
+            <div class="form-text text-warning-emphasis">
+              <i class="bi bi-info-circle me-1"></i>
+              <%= t('admin.lecture.info.eligibility_data_kept', count: kept) %>
+            </div>
+          <% end %>
+        <% end %>
       </div>
     </div>
   <% end %>
