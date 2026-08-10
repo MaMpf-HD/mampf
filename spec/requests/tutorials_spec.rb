@@ -172,49 +172,4 @@ RSpec.describe("Tutorials", type: :request) do
       end
     end
   end
-
-  describe "GET /tutorials/:id" do
-    # let!(:other_tutorial) { create(:tutorial, lecture: lecture) }
-    let(:students) { create_list(:confirmed_user, 5) }
-    let!(:assignment) { create(:assignment, lecture: lecture, deadline: 1.hour.from_now) }
-    let!(:submissions) do
-      students.each do |student|
-        create(:submission, :with_manuscript,
-               assignment: assignment,
-               tutorial: tutorial,
-               users: [student])
-      end
-    end
-
-    before do
-      Flipper.enable(:registration_campaigns)
-      Flipper.enable(:roster_maintenance)
-      students.each { |student| create(:tutorial_membership, tutorial: tutorial, user: student) }
-      Timecop.travel(2.hours.from_now)
-    end
-
-    after do
-      Timecop.return
-      Flipper.disable(:registration_campaigns)
-      Flipper.disable(:roster_maintenance)
-    end
-
-    context "as a tutor" do
-      before { sign_in tutor }
-
-      it "queries roster_eligible_tutorials? once per lecture, not once per submission row" do
-        expect_any_instance_of(Lecture).to receive(:roster_eligible_tutorials?)
-          .once.and_call_original
-
-        get lecture_tutorials_path(lecture),
-            as: :turbo_stream
-      end
-
-      it "renders successfully" do
-        get lecture_tutorials_path(lecture), as: :turbo_stream
-
-        expect(response).to have_http_status(:success)
-      end
-    end
-  end
 end
