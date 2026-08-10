@@ -15,7 +15,9 @@ class SubmissionsController < ApplicationController
   before_action :check_if_assignments, only: :index
   before_action :check_student_status, only: :index
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
-  before_action :init_roster_cache, only: [:index]
+
+  include Rosters::RosterCaching
+
   authorize_resource
 
   class TutorialNotRosteredError < StandardError; end
@@ -286,11 +288,6 @@ class SubmissionsController < ApplicationController
     rerender_submission_row
   end
 
-  def roster_cache
-    @roster_cache ||= { enabled: {}, tutorial: {} }
-  end
-  helper_method :roster_cache
-
   private
 
     def rerender_submission_row
@@ -303,16 +300,12 @@ class SubmissionsController < ApplicationController
                 submission: @submission,
                 assignment: @assignment,
                 tutorial: @tutorial,
-                mode: params[:mode]
+                mode: params[:mode] || "tutor"
               )
             )
           )
         end
       end
-    end
-
-    def init_roster_cache
-      @roster_cache = { enabled: {}, tutorial: {} }
     end
 
     def set_submission

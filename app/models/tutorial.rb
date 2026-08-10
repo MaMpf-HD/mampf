@@ -92,12 +92,6 @@ class Tutorial < ApplicationRecord
                       .first&.tutorial
   end
 
-  def roster_eligible?
-    tutorial_memberships.exists? ||
-      in_campaign? ||
-      !self_materialization_mode_disabled?
-  end
-
   def graders_with_inheritance
     (tutors + lecture.graders_with_inheritance).uniq
   end

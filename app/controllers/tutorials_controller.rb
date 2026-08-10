@@ -4,6 +4,8 @@ class TutorialsController < ApplicationController
 
   helper RosterHelper
 
+  include Rosters::RosterCaching
+
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit,
                                       :bulk_download_submissions,
                                       :bulk_download_corrections,
