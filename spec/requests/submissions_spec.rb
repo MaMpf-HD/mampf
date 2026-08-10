@@ -158,6 +158,45 @@ RSpec.describe("Submissions", type: :request) do
     end
   end
 
+  describe "a student without a rostered tutorial" do
+    let!(:assignment) { create(:assignment, lecture: lecture, accepted_file_type: ".pdf") }
+    let(:rostered) { create(:confirmed_user) }
+    let(:foreign_submission) do
+      create(:submission, assignment: assignment, tutorial: tutorial)
+        .tap { |s| s.users << rostered }
+    end
+
+    before do
+      create(:tutorial_membership, tutorial: tutorial, user: rostered)
+      user.lectures << lecture
+      Flipper.enable(:roster_maintenance)
+      Flipper.enable(:registration_campaigns)
+    end
+
+    after do
+      Flipper.disable(:roster_maintenance)
+      Flipper.disable(:registration_campaigns)
+    end
+
+    it "is not offered a way to create or join a submission" do
+      get lecture_submissions_path(lecture)
+
+      expect(response.body).not_to include("create-submission")
+      expect(response.body).not_to include("submission-join")
+      expect(response.body).to include(I18n.t("submission.tutorial_needed"))
+    end
+
+    it "cannot join by code, which is also how an invitation is accepted" do
+      foreign_submission
+
+      expect do
+        post(join_submission_path(format: :js),
+             params: { join: { code: foreign_submission.token,
+                               assignment_id: assignment.id } })
+      end.not_to change(UserSubmissionJoin, :count)
+    end
+  end
+
   describe "PATCH /submissions/:id" do
     let(:submission) do
       create(:submission, assignment: assignment, tutorial: tutorial, users: [user])
@@ -187,8 +226,9 @@ RSpec.describe("Submissions", type: :request) do
         end
 
         it "does not update the submission and redirects to lecture submissions with an alert" do
+          # The form sends no tutorial_id in roster mode.
           patch submission_path(submission, format: :js),
-                params: update_params(tutorial_id: other_tutorial.id)
+                params: { submission: { manuscript: "" } }
 
           expect(response).to redirect_to(start_path)
           follow_redirect!

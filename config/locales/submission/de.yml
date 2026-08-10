@@ -1,4 +1,3 @@
 de:
   submission:
-    enroll_first: 'Sie müssen sich zuerst in einem Tutorium anmelden, um zu dieser Hausaufgabe abgeben zu können.'
-    enroll: 'Anmelden'
+    tutorial_needed: 'Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb nichts abgeben.'

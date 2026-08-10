@@ -2765,7 +2765,8 @@ en:
     nothing_here_past: >
       Nothing was submitted for this assignment.
     tutorial_not_assigned: >
-      You have not joined a tutorial for this lecture, therefore you cannot join a submission for this assignment.
+      You are not in a tutorial for this event series, so you cannot create or
+      join a submission.
     invitations_to: Invitations to
     joined_successfully: >
       You successfully joined the submission to %{assignment}.

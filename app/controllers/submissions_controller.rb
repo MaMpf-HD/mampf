@@ -274,30 +274,29 @@ class SubmissionsController < ApplicationController
 
     def submission_create_params
       permitted = params.expect(submission: [:tutorial_id, :assignment_id])
-      assignment_id = permitted[:assignment_id]
-      assignment = Assignment.find_by(id: assignment_id)
-      lecture = assignment&.lecture
+      lecture = Assignment.find_by(id: permitted[:assignment_id])&.lecture
+      return permitted unless roster_managed?(lecture)
 
-      if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
-        tutorial = current_user.tutorial_rosterized(lecture)
-        raise(TutorialNotRosteredError) if tutorial.nil?
-
-        permitted[:tutorial_id] = tutorial.id
-      end
-      permitted
+      permitted.merge(tutorial_id: rostered_tutorial!(lecture).id)
     end
 
     # disallow modification of assignment
     def submission_update_params
-      permitted = params.expect(submission: [:tutorial_id])
       lecture = @submission.assignment.lecture
-      if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
-        tutorial = current_user.tutorial_rosterized(lecture)
-        raise(TutorialNotRosteredError) if tutorial.nil?
+      # The form has no tutorial field in roster mode, so there is nothing to expect.
+      return { tutorial_id: rostered_tutorial!(lecture).id } if roster_managed?(lecture)
 
-        permitted[:tutorial_id] = tutorial.id
-      end
-      permitted
+      params.expect(submission: [:tutorial_id])
+    end
+
+    # Whether the roster decides which tutorial a submission belongs to, rather
+    # than the student picking one.
+    def roster_managed?(lecture)
+      Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
+    end
+
+    def rostered_tutorial!(lecture)
+      current_user.tutorial_rosterized(lecture) || raise(TutorialNotRosteredError)
     end
 
     # disallow modification of assignment
@@ -434,6 +433,10 @@ class SubmissionsController < ApplicationController
     def check_code_and_join
       check_code_validity
       return if @error
+
+      # Joining by code (which is also how an invitation is accepted) would place
+      # the submission in a tutorial the user is not a member of.
+      rostered_tutorial!(@assignment.lecture) if roster_managed?(@assignment.lecture)
 
       @join = UserSubmissionJoin.new(user: current_user,
                                      submission: @submission)

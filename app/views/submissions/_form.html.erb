@@ -1,5 +1,5 @@
 <% roster_eligible = enabled_roster_for_lecture?(lecture) %>
-<% enrolled_tutorial = current_user.tutorial_rosterized(lecture) %>
+<% enrolled_tutorial = rostered_tutorial_for(lecture) %>
 
 <%= form_with model: submission do |f| %>
   <div class="card-body submissionBody"
@@ -9,16 +9,9 @@
         <%= f.label :tutorial_id,
                     t('basics.tutorial') %>
         <% if roster_eligible %>
-          <% if enrolled_tutorial %>
-            <p>
-              <%= enrolled_tutorial.title_with_tutors %>
-            </p>
-          <% else %>
-            <p>
-              <%= t('submission.enroll_first') %>
-            </p>
-            <%= link_to t('submission.enroll'), lecture_enrollment_path(lecture), class: 'btn btn-primary' %>
-          <% end %>
+          <p>
+            <%= enrolled_tutorial.title_with_tutors %>
+          </p>
         <% else %>
           <%= f.select :tutorial_id,
                      options_for_select(tutorials_selection(lecture),
@@ -164,11 +157,9 @@
   </div>
   <div class="card-footer submissionFooter text-center p-2"
        data-id="<%= assignment.id %>">
-    <% unless roster_eligible && !enrolled_tutorial %>
-      <%= f.submit t('buttons.save'),
-                    class: 'btn btn-primary',
-                    "data-cy": "save-submission" %>
-    <% end %>
+    <%= f.submit t('buttons.save'),
+                  class: 'btn btn-primary',
+                  "data-cy": "save-submission" %>
     <%= link_to t('buttons.cancel'),
                 cancel_editing_submission_path(submission),
                 class: 'btn btn-secondary',
