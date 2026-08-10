@@ -115,7 +115,7 @@ module SubmissionsHelper
   def rostered_tutorial_for(lecture)
     roster_cache[:tutorial].fetch(lecture.id) do
       roster_cache[:tutorial][lecture.id] =
-        enabled_roster_for_lecture?(lecture) ? current_user.tutorial_rosterized(lecture) : nil
+        enabled_roster_for_lecture?(lecture) ? current_user.rostered_tutorial_in(lecture) : nil
     end
   end
 

@@ -277,8 +277,8 @@ RSpec.describe("Submissions", type: :request) do
         get lecture_submissions_path(lecture)
       end
 
-      it "queries tutorial_rosterized once per lecture across all assignment rows" do
-        expect_any_instance_of(User).to receive(:tutorial_rosterized)
+      it "queries rostered_tutorial_in once per lecture across all assignment rows" do
+        expect_any_instance_of(User).to receive(:rostered_tutorial_in)
           .once.and_call_original
 
         get lecture_submissions_path(lecture)

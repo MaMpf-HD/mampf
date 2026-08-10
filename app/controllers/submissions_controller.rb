@@ -290,7 +290,7 @@ class SubmissionsController < ApplicationController
     end
 
     def rostered_tutorial!(lecture)
-      current_user.tutorial_rosterized(lecture) || raise(TutorialNotRosteredError)
+      current_user.rostered_tutorial_in(lecture) || raise(TutorialNotRosteredError)
     end
 
     # disallow modification of assignment
