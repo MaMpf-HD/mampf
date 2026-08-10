@@ -1,7 +1,18 @@
 de:
   lecture:
+    edit:
+      announcements_audience_hint: >-
+        Mitteilungen erreichen alle, die diese Veranstaltung abonniert haben —
+        als Benachrichtigung in MaMpf immer, per E-Mail jedoch nur diejenigen,
+        die E-Mail-Benachrichtigungen für Mitteilungen aktiviert haben.
     search:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...
+      term_filter: Semesterfilter für Vorlesungen
+      current_term: Aktuelles Semester
+      next_term: Nächstes Semester
+      registration_open: Anmeldung offen
+      registered: Angemeldet
+      subscribed: Abonniert
       scroll_for_more_results: Scrolle nach unten für mehr Ergebnisse
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.

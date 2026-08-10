@@ -26,6 +26,10 @@ plugins:
   - rubocop-performance
   - rubocop-rails
 
+# Project-local custom cops (plain require, not a plugin gem).
+require:
+  - ../lib/rubocop/cop/mampf/no_raw_csv.rb
+
 AllCops:
   # While default cops are automatically included, they are not "configured"
   # by default (only on each next major version of RuboCop). Therefore, we
@@ -139,3 +143,14 @@ Style/SymbolArray:
 
 Style/WordArray:
   EnforcedStyle: brackets
+
+#############################################
+# Mampf (project-local custom cops)
+#############################################
+
+# Forbid raw CSV.generate / CSV.open; use SafeCsv.generate (auto-sanitizes rows
+# against CSV formula injection). SafeCsv itself is the one allowed wrapper.
+Mampf/NoRawCsv:
+  Enabled: true
+  Exclude:
+    - "../app/services/safe_csv.rb"

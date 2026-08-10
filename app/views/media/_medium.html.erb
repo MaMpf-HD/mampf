@@ -139,7 +139,7 @@
 
         <!-- Screenshots -->
         <% if medium.screenshot.present? %>
-          <%= image_tag(medium.screenshot_url_with_host,
+          <%= image_tag(screenshot_medium_path(medium, sort: "video"),
                         alt: "Card image cap",
                         class: "mampf-card-image") %>
         <% elsif medium.manuscript.present? %>
@@ -183,6 +183,7 @@
           <% end %>
         </div>
       </div>
+    <% end %> <!-- end of caching -->
 
       <div class="card-footer text-center">
         <div id="media-box-footer">
@@ -190,7 +191,6 @@
                      locals: { medium: medium,
                                ref_link: ref_link } %>
         </div>
-    <% end %> <!-- end of caching -->
 
         <% if medium.commontator_thread.comments.present? %>
           <hr class="media-hr">

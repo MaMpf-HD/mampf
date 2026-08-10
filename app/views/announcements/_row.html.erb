@@ -5,7 +5,7 @@
   <%= announcement.announcer.name %>
 </div>
 <div class="col-5">
-  <%= announcement.details.html_safe %>
+  <%= sanitize(announcement.details) %>
 </div>
 <div class="col-1">
   <%= ballot_box(announcement.on_main_page) %>

@@ -19,7 +19,10 @@
       </div>
       <div class="modal-body">
         <img class="img-fluid mb-3"
-             src="<%= medium.screenshot_url_with_host %>">
+             alt="<%= medium.title_for_viewers.presence ||
+                      medium.description.presence ||
+                      'Screenshot of video' %>"
+             src="<%= screenshot_medium_path(medium, sort: "video") %>">
       </div>
     </div>
   </div>

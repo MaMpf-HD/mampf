@@ -293,9 +293,12 @@ class Item < ApplicationRecord
     Referral.where(item: self).map(&:medium)
   end
 
-  def related_items_visible?
-    !related_items&.first&.medium&.published?.nil? &&
-      !related_items&.first&.medium&.locked?
+  def related_items_visible?(user = nil)
+    related_medium = related_items&.first&.medium
+    return false if related_medium.nil?
+    return related_medium.free? if user.nil? || !user.persisted?
+
+    related_medium.visible_for_user?(user)
   end
 
   private
@@ -447,7 +450,10 @@ class Item < ApplicationRecord
 
     def start_time_not_too_late
       return true if start_time_not_required
-      return true if start_time.total_seconds <= medium.video.metadata["duration"]
+
+      duration = medium.video.metadata["duration"]
+      return true if duration.nil?
+      return true if start_time.total_seconds <= duration
 
       errors.add(:start_time, :too_late)
       false

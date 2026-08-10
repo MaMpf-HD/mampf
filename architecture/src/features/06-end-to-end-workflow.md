@@ -170,7 +170,7 @@ Service creates `Assessment::TaskPoint` for each team member automatically. Poin
 |--------|------------|
 | Mode | `requires_points: false` (grade-only mode) |
 | Seeding | Seed from talk speaker roster |
-| Grading | Record final `grade_value` directly on `Assessment::Participation` |
+| Grading | Record final `grade_numeric` directly on `Assessment::Participation` |
 
 ---
 
@@ -425,7 +425,7 @@ Staff analyzes score distribution (histogram, percentiles), then creates and app
 | Analyze | View distribution statistics and histogram |
 | Configure | Create `Assessment::GradeScheme` with absolute point bands or percentage cutoffs |
 | Apply | Call `Assessment::GradeSchemeApplier.apply!(scheme)` |
-| Result | Service computes `grade_value` for each participation based on points |
+| Result | Service computes `grade_numeric` for each participation based on points |
 | Override | Manual adjustments possible for exceptional cases |
 
 ```admonish note "Multiple Choice Exam Extension"
@@ -433,7 +433,7 @@ For exams with multiple choice components requiring legal compliance, see the [M
 ```
 
 **Final Result:**
-- Students have both granular points (`TaskPoint` records) and final grade (`Participation#grade_value`)
+- Students have both granular points (`TaskPoint` records) and final grade (`Participation#grade_numeric`)
 
 ---
 

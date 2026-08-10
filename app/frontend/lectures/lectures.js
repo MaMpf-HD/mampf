@@ -112,68 +112,6 @@ $(document).on("turbo:load", function () {
     $("#show-media-button").hide();
   });
 
-  // mousenter over a medium -> colorize lessons and tags
-  $('[id^="lecture-medium_"]').on("mouseenter", function () {
-    if (this.dataset.type === "Lesson") {
-      const lessonId = this.dataset.id;
-      $('.lecture-lesson[data-id="' + lessonId + '"]')
-        .removeClass("bg-secondary")
-        .addClass("bg-info");
-    }
-    const tags = $(this).data("tags");
-    for (const t of tags) {
-      $('.lecture-tag[data-id="' + t + '"]').removeClass("bg-light")
-        .addClass("bg-warning");
-    }
-  });
-
-  // mouseleave over lesson -> restore original color of lessons and tags
-  $('[id^="lecture-medium_"]').on("mouseleave", function () {
-    if (this.dataset.type === "Lesson") {
-      const lessonId = this.dataset.id;
-      $('.lecture-lesson[data-id="' + lessonId + '"]').removeClass("bg-info")
-        .addClass("bg-secondary");
-    }
-    const tags = $(this).data("tags");
-    for (const t of tags) {
-      $('.lecture-tag[data-id="' + t + '"]').removeClass("bg-warning");
-    }
-  });
-
-  // mouseenter over lesson -> colorize tags
-  $('[id^="lecture-lesson_"]').on("mouseenter", function () {
-    const tags = $(this).data("tags");
-    for (const t of tags) {
-      $('.lecture-tag[data-id="' + t + '"]').addClass("bg-warning");
-    }
-  });
-
-  // mouseleave over lesson -> restore original color of tags
-  $('[id^="lecture-lesson_"]').on("mouseleave", function () {
-    const tags = $(this).data("tags");
-    for (const t of tags) {
-      $('.lecture-tag[data-id="' + t + '"]').removeClass("bg-warning");
-    }
-  });
-
-  // mouseenter over tag -> colorize lessons
-  $('[id^="lecture-tag_"]').on("mouseenter", function () {
-    const lessons = $(this).data("lessons");
-    for (const l of lessons) {
-      $('.lecture-lesson[data-id="' + l + '"]').removeClass("bg-secondary")
-        .addClass("bg-info");
-    }
-  });
-
-  // mouseleave over tag -> restore original color of lessons
-  $('[id^="lecture-tag_"]').on("mouseleave", function () {
-    const lessons = $(this).data("lessons");
-    for (const l of lessons) {
-      $('.lecture-lesson[data-id="' + l + '"]').removeClass("bg-info")
-        .addClass("bg-secondary");
-    }
-  });
-
   const userModalContent = document.getElementById("lectureUserModalContent");
   if (userModalContent && (userModalContent.dataset.filled === "false")) {
     const lectureId = userModalContent.dataset.lecture;

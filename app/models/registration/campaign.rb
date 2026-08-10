@@ -3,6 +3,15 @@ module Registration
   # Acts as a container for configuration (deadlines, allocation mode),
   # rules (policies), and the resulting user registrations.
   class Campaign < ApplicationRecord
+    class FinalizationBlockedError < StandardError
+      attr_reader :screening_result
+
+      def initialize(screening_result)
+        @screening_result = screening_result
+        super("Finalization blocked by policy violations")
+      end
+    end
+
     belongs_to :campaignable, polymorphic: true
 
     has_many :registration_items,
@@ -16,11 +25,13 @@ module Registration
     # indexes in the UserRegistration table in the schema):
     # - in preference  mode,  the same preference_rank cannot be used twice by
     #   the same user in the same campaign.
-    # - in FCFS mode, the same user cannot register twice in the same campaign.
+    # - in first-come-first-served mode, the same user cannot register twice in the same campaign.
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
              dependent: :destroy,
              inverse_of: :registration_campaign
+
+    has_many :users, -> { distinct }, through: :user_registrations
 
     has_many :registration_policies,
              class_name: "Registration::Policy",
@@ -36,8 +47,29 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
-    validates :title, :registration_deadline, :allocation_mode, :status, presence: true
-    validates :planning_only, inclusion: { in: [true, false] }
+    validates :registration_deadline, :allocation_mode, :status, presence: true
+    validates :description, length: { maximum: 100 }
+
+    validate :allocation_mode_frozen, on: :update
+    validate :cannot_revert_to_draft, on: :update
+    validate :ensure_editable, on: :update
+    validate :registration_deadline_future_if_open
+    validate :prerequisites_not_draft, if: :open?
+    validate :items_present_before_open, if: -> { status_changed? && open? }
+
+    before_destroy :ensure_campaign_is_draft, prepend: true
+    before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
+    before_destroy :collect_registerables_for_release, prepend: true
+    after_destroy :release_registerables_from_campaign
+
+    def locale_with_inheritance
+      campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
+    end
+
+    def student_facing_title
+      description.to_s.strip.presence ||
+        I18n.t("registration.user_registration.campaign_main")
+    end
 
     def evaluate_policies_for(user, phase: :registration)
       policy_engine.eligible?(user, phase: phase)
@@ -47,14 +79,437 @@ module Registration
       evaluate_policies_for(user, phase: phase).pass
     end
 
+    def open_for_registrations?
+      open? && registration_deadline > Time.current
+    end
+
+    def open_for_withdrawals?
+      open_for_registrations?
+    end
+
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
 
+    def user_registration_confirmed_for_group_type?(user, group_type)
+      user_registrations.joins(:registration_item)
+                        .where(user_id: user.id, status: :confirmed)
+                        .exists?(registration_items: { registerable_type: group_type })
+    end
+
+    def can_be_deleted?
+      draft?
+    end
+
+    def total_registrations_count
+      return user_registrations.map(&:user_id).uniq.size if user_registrations.loaded?
+
+      user_registrations.distinct.count(:user_id)
+    end
+
+    def confirmed_count
+      user_registrations.confirmed.distinct.count(:user_id)
+    end
+
+    def pending_count
+      # Users with at least one pending registration, but no confirmed registration.
+      # This covers:
+      # - Preference mode: All applicants before allocation (since none are confirmed).
+      # - first-come-first-served mode: Users on the waitlist who haven't secured
+      # a spot elsewhere in this campaign.
+      user_registrations.pending
+                        .where.not(user_id: user_registrations.confirmed.select(:user_id))
+                        .distinct
+                        .count(:user_id)
+    end
+
+    def rejected_count
+      # Users with at least one rejected registration, but no confirmed or pending registration.
+      # This explicitly queries for :rejected state, ensuring we don't count possibly other future
+      # states.
+      user_registrations.rejected
+                        .where.not(user_id: user_registrations
+                        .where(status: [:confirmed,
+                                        :pending]).select(:user_id))
+                        .distinct
+                        .count(:user_id)
+    end
+
+    def open_rejected_count
+      open_rejected_registrations.distinct.count(:user_id)
+    end
+
+    def user_registrations_grouped_by_user
+      user_registrations.includes(:user, :registration_item)
+                        .joins(:user)
+                        .order("users.name")
+                        .group_by(&:user)
+    end
+
+    def finalize!
+      with_lock do
+        return if completed?
+
+        if first_come_first_served?
+          screening = Registration::ScreeningService.new(
+            self,
+            registrations: user_registrations.where.not(status: :rejected)
+          ).call
+
+          # Finalization re-screens under lock because the UI pre-check does not
+          # lock campaign state. If blockers appear now, we stop before applying
+          # auto-rejections to avoid leaving a partially changed rejection state.
+          raise(FinalizationBlockedError, screening) if screening.blocked?
+
+          apply_rejections!(screening.auto_reject_violations)
+        end
+
+        Registration::AllocationMaterializer.new(self).materialize!
+
+        reject_pending_registrations!
+
+        update!(status: :completed,
+                allocation_decided_at: allocation_decided_at || Time.current)
+      end
+    end
+
+    def apply_rejections!(violations,
+                          default_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY)
+      return if violations.empty?
+
+      now = Time.current
+      registrations_by_id = user_registrations.where(
+        id: violations.pluck(:registration_id)
+      ).index_by(&:id)
+
+      violations.each do |violation|
+        registration = registrations_by_id.fetch(violation[:registration_id]) do
+          raise(ActiveRecord::RecordNotFound,
+                "Couldn't find Registration::UserRegistration " \
+                "with id=#{violation[:registration_id]}")
+        end
+
+        registration.reject!(
+          reason_type: violation[:reason_type] || default_reason_type,
+          reason_code: violation[:reason_code].to_s,
+          reason_label: violation[:reason_label] || violation[:message],
+          rejection_policy_id: violation[:policy_id],
+          rejected_at: now
+        )
+      end
+    end
+
+    def reset_registrations_for_allocation!(clear_manual_rejections: false)
+      remove_forced_assignments_with_preferences!
+
+      reset_registrations_to_pending!(
+        user_registrations.where(status: [:pending, :confirmed])
+      )
+
+      rejected_scope = user_registrations.where(status: :rejected)
+      unless clear_manual_rejections
+        rejected_scope = rejected_scope.where.not(
+          rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL
+        )
+      end
+      reset_registrations_to_pending!(rejected_scope)
+    end
+
+    def reset_allocation_results!
+      with_lock do
+        reset_registrations_for_allocation!(clear_manual_rejections: true)
+
+        # rubocop:disable Rails/SkipsModelValidations
+        registration_items.update_all(
+          confirmed_registrations_count: 0,
+          updated_at: Time.current
+        )
+
+        update_columns(last_allocation_calculated_at: nil,
+                       allocation_decided_at: nil)
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+    end
+
+    # Returns users registered in this campaign who are not currently allocated
+    # to any matching registerable within the campaignable.
+    #
+    # Lecture roster membership alone does not affect this query. A user is only
+    # considered assigned once they appear in the allocated user IDs of the
+    # relevant tutorials, talks, or cohorts, whether that happened manually or
+    # through another campaign. A user is considered unassigned if they haven't
+    # secured a spot in any of the campaign's registerables, even if they are
+    # members of the lecture roster. Open rejected registrations are excluded
+    # and shown in the rejected queue instead.
+    #
+    # When preload_registrations is true, the returned relation also eager-loads
+    # the registration data needed by the "unassigned side panel" and orders by
+    # name and email.
+    def unassigned_users(preload_registrations: false)
+      return User.none if draft?
+
+      allocated_ids = registerable_types.flat_map do |type|
+        allocated_user_ids_for_type(type)
+      end.uniq
+
+      relation = users.where.not(id: allocated_ids)
+                      .where.not(id: open_rejected_registrations.select(:user_id))
+      return relation unless preload_registrations
+
+      relation.includes(
+        user_registrations: [
+          :registration_campaign,
+          { registration_item: :registerable }
+        ]
+      ).order(:name, :email)
+    end
+
+    def rejected_users(preload_registrations: false)
+      return User.none if draft?
+
+      relation = users.where(
+        id: open_rejected_registrations.select(:user_id)
+      )
+      return relation unless preload_registrations
+
+      relation.includes(
+        user_registrations: [
+          :registration_campaign,
+          { registration_item: :registerable }
+        ]
+      ).order(:name, :email)
+    end
+
+    def open_rejected_registrations
+      active_user_ids = user_registrations.where(status: [:confirmed, :pending])
+                                          .select(:user_id)
+
+      user_registrations.rejected
+                        .with_open_rejection_reason
+                        .where(rejection_overridden_at: nil)
+                        .where.not(user_id: active_user_ids)
+    end
+
+    def roster_group_type
+      items = if association(:registration_items).loaded?
+        registration_items
+      else
+        registration_items.limit(1)
+      end
+      items.first&.registerable_type&.tableize || "tutorials"
+    end
+
+    # The distinct groups (tutorials/cohorts/talks) this campaign allocates.
+    def registerables
+      registration_items.includes(:registerable).map(&:registerable).uniq
+    end
+
+    # The self-materialization mode shared by all of this campaign's groups,
+    # or nil if they differ. Used to preselect the post-finalization
+    # "open for self-service" prompt.
+    def shared_self_materialization_mode
+      modes = registerables.map(&:self_materialization_mode).uniq
+      modes.first if modes.one?
+    end
+
+    # Opens (or closes) student self-service on all of this campaign's groups
+    # at once. Only meaningful once the campaign is completed, since the groups
+    # are locked while a campaign is still running.
+    def apply_self_materialization_mode!(mode)
+      # to_s first: a missing mode would otherwise raise NoMethodError instead of
+      # the ArgumentError that callers rescue.
+      unless Rosters::Rosterable::SELF_MATERIALIZATION_MODES.key?(mode.to_s.to_sym)
+        raise(ArgumentError, "unknown self_materialization_mode: #{mode.inspect}")
+      end
+      return false unless completed?
+
+      transaction do
+        registerables.each do |registerable|
+          registerable.update!(self_materialization_mode: mode)
+        end
+      end
+      true
+    end
+
     private
+
+      def remove_forced_assignments_with_preferences!
+        subquery = Registration::UserRegistration
+                   .select(:user_id)
+                   .where(registration_campaign_id: id)
+                   .group(:user_id)
+                   .having("count(*) > 1")
+
+        user_registrations
+          .where(preference_rank: nil)
+          .where(user_id: subquery)
+          .delete_all
+      end
+
+      def reset_registrations_to_pending!(scope)
+        # rubocop:disable Rails/SkipsModelValidations
+        scope.update_all(
+          status: :pending,
+          rejection_reason_type: nil,
+          rejection_reason_code: nil,
+          rejection_reason_label: nil,
+          rejection_policy_id: nil,
+          rejected_at: nil,
+          rejection_overridden_at: nil,
+          updated_at: Time.current
+        )
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      def reject_pending_registrations!
+        now = Time.current
+
+        # Safe here because this scope only contains pending rows, so bypassing
+        # per-record callbacks cannot affect confirmed registration counters
+        # rubocop:disable Rails/SkipsModelValidations
+        user_registrations.pending.update_all(
+          status: Registration::UserRegistration.statuses[:rejected],
+          rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY,
+          rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
+          rejection_reason_label: Registration::UserRegistration.resolve_rejection_reason_label(
+            reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+          ),
+          rejected_at: now,
+          rejection_overridden_at: nil,
+          updated_at: now
+        )
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      def ensure_editable
+        return unless status_was == "completed"
+        return unless changed?
+
+        errors.add(:base, :already_finalized)
+      end
+
+      def prerequisites_not_draft
+        prereq_ids = registration_policies.select { |p| p.kind == "prerequisite_campaign" }
+                                          .filter_map { |p| p.prerequisite_campaign_id.presence }
+
+        return if prereq_ids.empty?
+
+        Registration::Campaign.where(id: prereq_ids, status: :draft).find_each do |prereq|
+          errors.add(:base, :prerequisite_is_draft, description: prereq.description)
+        end
+      end
+
+      def ensure_not_referenced_as_prerequisite
+        referencing_policies = Registration::Policy
+                               .referencing_campaign(id)
+                               .where.not(registration_campaign_id: id)
+                               .includes(:registration_campaign)
+
+        return unless referencing_policies.any?
+
+        descriptions = referencing_policies.filter_map { |p| p.registration_campaign&.description }
+                                           .uniq.join(", ")
+        errors.add(:base, :referenced_as_prerequisite, descriptions: descriptions)
+        throw(:abort)
+      end
+
+      def collect_registerables_for_release
+        @registerables_to_release = registration_items
+                                    .filter_map(&:registerable)
+                                    .select { |r| r.respond_to?(:skip_campaigns) }
+      end
+
+      def release_registerables_from_campaign
+        return if @registerables_to_release.blank?
+
+        ids_by_type = @registerables_to_release.group_by(&:class)
+        ids_by_type.each do |klass, records|
+          # rubocop:disable Rails/SkipsModelValidations
+          klass.where(id: records.map(&:id)).update_all(skip_campaigns: true)
+          # rubocop:enable Rails/SkipsModelValidations
+        end
+      end
+
+      def ensure_campaign_is_draft
+        return if draft?
+
+        errors.add(:base, :cannot_delete_active_campaign)
+        throw(:abort)
+      end
+
+      def allocation_mode_frozen
+        return unless allocation_mode_changed? && status_was != "draft"
+
+        errors.add(:allocation_mode, :frozen)
+      end
+
+      def cannot_revert_to_draft
+        return unless status_changed? && draft?
+
+        errors.add(:status, :cannot_revert_to_draft)
+      end
+
+      def registration_deadline_future_if_open
+        return unless open? || (draft? && registration_deadline_changed?)
+        return unless registration_deadline_changed? || status_changed?
+        return if registration_deadline.blank?
+
+        return unless registration_deadline <= Time.current
+
+        errors.add(:registration_deadline, :must_be_in_future)
+      end
+
+      def items_present_before_open
+        return unless registration_items.empty?
+
+        errors.add(:base, :no_items)
+      end
 
       def policy_engine
         @policy_engine ||= Registration::PolicyEngine.new(self)
+      end
+
+      def registerable_types
+        if registration_items.loaded?
+          registration_items.map(&:registerable_type).uniq
+        else
+          registration_items.pluck(:registerable_type).uniq
+        end
+      end
+
+      def allocated_user_ids_for_type(type)
+        assoc = type.tableize.to_sym
+
+        # Optimization: Use eager-loaded associations on the campaignable logic
+        if campaignable.respond_to?(assoc) && campaignable.association(assoc).loaded?
+          return campaignable.public_send(assoc).flat_map(&:allocated_user_ids)
+        end
+
+        klass = Rosters::Rosterable.class_for(type)
+        return [] unless klass
+
+        scope = fetch_scope_for_type(klass, type)
+        fetch_ids_from_scope(klass, scope)
+      end
+
+      def fetch_scope_for_type(klass, type)
+        if type == "Cohort"
+          klass.where(context: campaignable)
+        else
+          klass.where(lecture: campaignable)
+        end
+      end
+
+      def fetch_ids_from_scope(klass, scope)
+        # Optimization: Use direct SQL join if the standard :members association exists.
+        # This avoids N+1 queries on instances.
+        if klass.reflect_on_association(:members)
+          scope.joins(:members).pluck("users.id")
+        else
+          # Fallback: Load instances and use the Rosterable interface.
+          # This is slower but guarantees correctness if the association name differs.
+          scope.flat_map(&:allocated_user_ids)
+        end
       end
   end
 end

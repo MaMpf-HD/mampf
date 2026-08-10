@@ -1,32 +1,33 @@
 #!/usr/bin/env bash
-set -e
+set -Eeuo pipefail
 cd /workspaces/mampf/
 
 check_for_preseeds() {
   echo "💾  Checking for preseeds (in development env)"
 
   # Database preseed
-  if [[ "${DB_SQL_PRESEED_URL}" ]]; then
+  if [[ -n "${DB_SQL_PRESEED_URL:-}" ]]; then
     if [[ -f "${DB_SQL_PRESEED_URL}" ]]; then
       echo "💾  Found DB preseed file: $DB_SQL_PRESEED_URL"
-      latest=$DB_SQL_PRESEED_URL
+      latest="$DB_SQL_PRESEED_URL"
     else
       echo "💾  Found DB preseed at URL: $DB_SQL_PRESEED_URL"
       mkdir -pv db/backups/development
-      wget --content-disposition --directory-prefix=db/backups/development/ --timestamping $DB_SQL_PRESEED_URL
+      wget --content-disposition --directory-prefix=db/backups/development/ --timestamping "$DB_SQL_PRESEED_URL"
+      latest=""
       for file in db/backups/development/*.sql; do
-        [[ $file -nt $latest ]] && latest=$file
+        [[ -z "$latest" || $file -nt $latest ]] && latest=$file
       done
     fi
 
-    bundle exec rails db:restore pattern=$(echo $latest | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
+    bundle exec rails db:restore pattern="$(echo "$latest" | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)"
     bundle exec rails db:migrate
   fi
 
   # Files (uploads) preseed
-  if [[ "${UPLOADS_PRESEED_URL}" ]]; then
-    echo "💾  Found upload preseed at URL: $UPLOAD_PRESEED_URL"
-    wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega $UPLOADS_PRESEED_URL
+  if [[ -n "${UPLOADS_PRESEED_URL:-}" ]]; then
+    echo "💾  Found upload preseed at URL: $UPLOADS_PRESEED_URL"
+    wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega "$UPLOADS_PRESEED_URL"
     mkdir -p public/uploads
     bsdtar -xvf public/uploads.zip -s'|[^/]*/||' -C public/uploads
   fi
@@ -44,11 +45,45 @@ fi
 
 echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 
+ensure_bundle_volume_permissions() {
+  local bundle_owner expected_owner
+
+  sudo mkdir -p /usr/local/bundle
+
+  bundle_owner=$(stat -c "%u:%g" /usr/local/bundle)
+  expected_owner="$(id -u):$(id -g)"
+
+  if [[ "$bundle_owner" != "$expected_owner" ]]; then
+    echo "🔐  Fixing Bundler volume ownership"
+    sudo chown -R "$expected_owner" /usr/local/bundle
+  fi
+}
+
+ensure_corepack_yarn() {
+  local package_manager
+
+  if ! command -v corepack >/dev/null 2>&1; then
+    return
+  fi
+
+  package_manager=$(node -p "require('./package.json').packageManager || ''")
+  if [[ "$package_manager" != yarn@* ]]; then
+    return
+  fi
+
+  echo "🧰  Activating $package_manager via Corepack"
+  COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack enable >/dev/null 2>&1 || true
+  COREPACK_ENABLE_DOWNLOAD_PROMPT=0 corepack prepare "$package_manager" --activate
+}
+
+ensure_bundle_volume_permissions
+
 echo "📦  Installing Ruby gems (via bundle)"
 bundle install
 
 echo "📦  Installing Node.js modules (via yarn)"
-yarn install --production=false
+ensure_corepack_yarn
+yarn install
 
 echo "🕖  Waiting for Redis to come online"
 wait-for-it redis:6379 -t 30 || exit 1
@@ -66,6 +101,11 @@ bundle exec rails db:create:interactions
 bundle exec rails db:create
 
 check_for_preseeds
+
+echo "🛠️  Preparing development database"
+bundle exec rails db:prepare
+
+echo "🛠️  Loading test database schema"
 RAILS_ENV="test" bundle exec rails db:schema:load
 
 echo "✅  Finished initialization of MaMpf in environment: $RAILS_ENV"

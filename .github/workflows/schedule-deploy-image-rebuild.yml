@@ -1,0 +1,41 @@
+name: Schedule Deploy Image Rebuild
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_ref:
+        description: Branch to rebuild
+        required: false
+        # Weekly OS-patch rebuild of the current baseline. Stays on thruster until
+        # cutover, then becomes a matrix over the live baselines (next -> staging,
+        # main -> production). Not pre-switched to next/main: the cron fires on a
+        # schedule, not on code arrival, so it must not target a branch that does
+        # not have the baseline yet.
+        default: deploy/app-baseline-thruster
+        type: string
+  schedule:
+    - cron: "17 3 * * 1"
+
+jobs:
+  dispatch-build:
+    name: Dispatch deploy image rebuild
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    env:
+      # TODO(cutover): rebuild both baselines via a matrix (next, main); see build_ref above.
+      BUILD_REF: ${{ inputs.build_ref || 'deploy/app-baseline-thruster' }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      # Force an OS security refresh so the weekly rebuild actually re-pulls the
+      # base image and applies fresh apt security updates, instead of reusing the
+      # layer cache (which would rebuild an identical, unpatched image). This is
+      # what makes the schedule worth having; build-deploy-image maps the flag to
+      # `pull: true` + a cache-busting build-arg.
+      - name: Dispatch build-deploy-image workflow on target branch
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/build-deploy-image.yml/dispatches" \
+            --method POST \
+            -f "ref=${BUILD_REF}" \
+            -f "inputs[os_security_refresh]=true"

@@ -24,7 +24,7 @@
     },
     // Disable VSCode-native JS validation since our JS files might include
     // ERB syntax, that would otherwise be flagged as invalid
-    "javascript.validate.enable": false,
+    "js/ts.validate.enabled": false,
     //////////////////////////////////////
     // HTML & ERB
     //////////////////////////////////////
@@ -44,10 +44,10 @@
         "editor.formatOnSave": true
     },
     "rubyLsp.formatter": "rubocop",
-    // https://shopify.github.io/ruby-lsp/version-managers.html#custom-activation
     "rubyLsp.rubyVersionManager": {
-        "identifier": "custom"
+        "identifier": "none"
     },
+    "rubyLsp.customRubyCommand": "export PATH=/usr/local/bin:$PATH",
     "rubyLsp.rubyExecutablePath": "/usr/local/bin/ruby",
     "rubyLsp.enabledFeatures": {
         "codeActions": true,
@@ -74,15 +74,15 @@
     },
     "rubyLsp.addonSettings": {
         "Ruby LSP RSpec": {
-            "rspecCommand": "VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec --format documentation"
+            "rspecCommand": "env VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec --format documentation"
         }
     },
+    "testing.coverageToolbarEnabled": true,
     //////////////////////////////////////
     // Files
     //////////////////////////////////////
     "files.exclude": {
         "node_modules/": true,
-        "pdfcomprezzor/": true,
         "coverage/": true,
         ".docker/": true
     },
@@ -163,7 +163,6 @@
         "mampftest",
         "pagy",
         "Pagy",
-        "pdfcomprezzor",
         "pgadmin",
         "preseed",
         "preseeds",

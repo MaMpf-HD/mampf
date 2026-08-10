@@ -28,6 +28,6 @@
 		</div>
 	</div>
 	<div class="card-body">
-		<%= announcement.details.html_safe %>
+		<%= sanitize(announcement.details) %>
 	</div>
 </div>

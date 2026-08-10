@@ -1,0 +1,75 @@
+<div class="table-responsive mb-4">
+  <table class="table table-hover mb-0 align-middle">
+    <thead class="table-light">
+      <tr>
+        <th scope="col" class="border-top-0"><%= t("basics.name") %></th>
+        <th scope="col" class="border-top-0"><%= t("basics.email") %></th>
+
+        <th scope="col" class="border-top-0">
+          <%= t("roster.columns.groups") %>
+        </th>
+
+        <th scope="col" class="border-top-0 text-end">
+          <%= t("basics.actions") %>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if component.participants.empty? %>
+        <tr>
+          <td colspan="4" class="text-center py-4 text-muted border-bottom-0">
+            <%= t("roster.details.empty") %>
+          </td>
+        </tr>
+      <% else %>
+        <% component.participants.each do |membership| %>
+          <% user = membership.user %>
+
+          <tr data-cy="participant-row-<%= user.id %>">
+            <td><%= user.tutorial_name %></td>
+            <td><%= user.email %></td>
+
+            <td>
+              <% groups = component.participant_groups(user) %>
+
+              <% if groups.any? %>
+                <% groups.each do |group| %>
+                  <%= component.helpers.roster_group_badge(group,
+                                                           component.group_type) %>
+                <% end %>
+              <% else %>
+                <span class="text-muted small">
+                  <%= t("roster.stats.status_unassigned") %>
+                </span>
+              <% end %>
+            </td>
+
+            <td class="text-end">
+              <div class="d-flex justify-content-end gap-2">
+                <%= button_to component.helpers.remove_member_lecture_path(component.lecture,
+                                                                           user),
+                              method: :delete,
+                              params: { source: :participants,
+                                        group_type: component.group_type,
+                                        page: component.pagy.page },
+                              class: "btn btn-sm btn-outline-danger",
+                              title: t('roster.tooltips.kick_from_lecture'),
+                              data: { bs_toggle: "tooltip",
+                                      turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<% if (nav = component.pagination_nav) %>
+  <div class="d-flex justify-content-center pb-3">
+    <%== nav %>
+  </div>
+<% end %>

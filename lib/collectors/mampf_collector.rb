@@ -23,6 +23,21 @@ class MampfCollector < PrometheusExporter::Server::TypeCollector
                                                                     "number of submissions")
     submissions_count_gauge.observe(Submission.count)
 
-    [user_count_gauge, medium_count_gauge, tag_count_gauge, submissions_count_gauge]
+    lectures_count_gauge = PrometheusExporter::Metric::Gauge.new("lecture_count",
+                                                                 "number of lectures")
+    lectures_count_gauge.observe(Lecture.count)
+
+    consumptions_count_gauge = PrometheusExporter::Metric::Gauge.new("consumption_count",
+                                                                     "number of consumptions")
+    consumptions_count_gauge.observe(Consumption.count)
+
+    [
+      user_count_gauge,
+      medium_count_gauge,
+      tag_count_gauge,
+      submissions_count_gauge,
+      lectures_count_gauge,
+      consumptions_count_gauge
+    ]
   end
 end

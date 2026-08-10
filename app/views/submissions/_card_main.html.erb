@@ -1,3 +1,6 @@
+<% roster_eligible = enabled_roster_for_lecture?(assignment.lecture) %>
+<% enrolled_tutorial = rostered_tutorial_for(assignment.lecture) %>
+
 <div class="card-body submissionBody"
      data-id="<%= assignment.id %>">
 
@@ -132,6 +135,8 @@
       <%= t('submission.nothing_here') %>
     <% elsif assignment.active? %>
       <%= t('submission.nothing_here') %>
+    <% elsif roster_eligible && enrolled_tutorial.nil? %>
+      <%= t('submission.tutorial_not_assigned') %>
     <% else %>
       <%= t('submission.nothing_here_past') %>
     <% end %>
@@ -179,6 +184,10 @@
                                 color: 'btn-outline-danger',
                                 cy: "submission-leave" } %>
           <% end %>
+        <% elsif roster_eligible && enrolled_tutorial.nil? %>
+          <span class="text-muted">
+            <%= t('submission.tutorial_needed') %>
+          </span>
         <% else %>
           <%= link_to t('buttons.create'),
                       new_submission_path(params:
