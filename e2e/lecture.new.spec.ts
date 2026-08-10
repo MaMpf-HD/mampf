@@ -44,7 +44,9 @@ async function testCreateNewLecture(
   term: any,
   isCoursePrefilled: boolean,
 ) {
-  const button = "new-lecture-button-admin-index";
+  const button = isCoursePrefilled
+    ? "new-lecture-button-course-edit"
+    : "new-lecture-button-admin-index";
 
   const lectureNewPromise = isCoursePrefilled
     ? page.waitForResponse(
@@ -59,10 +61,10 @@ async function testCreateNewLecture(
     await selectDiv.selectOption({ label: course.title });
   }
 
-  await page.click("body", { position: { x: 0, y: 0 } }); // click outside to close dropdown
+  await page.keyboard.press("Escape"); // close the course dropdown
   await page.getByTestId("new-lecture-submit").click();
 
-  const alert = page.locator("div.alert");
+  const alert = page.getByRole("alert");
   await expect(alert).toBeVisible();
   await expect(alert).toContainText(course.title);
   await expect(alert).toContainText(term.season);

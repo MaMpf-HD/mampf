@@ -3,7 +3,7 @@ import { Modal } from "bootstrap";
 import * as Turbo from "@hotwired/turbo";
 
 /**
- * Don't use this controller!
+ * Don't copy this controller for new modals!
  *
  * Controller for opening modals with Turbo content.
  */

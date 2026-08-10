@@ -36,8 +36,6 @@ $(document).on 'turbo:load', ->
     location.reload(true)
     return
 
-
-
   $(document).on 'change', '#search_course_tag_ids', ->
     courseId = $(this).data('course')
     tagIds = $('#search_course_tag_ids').val()

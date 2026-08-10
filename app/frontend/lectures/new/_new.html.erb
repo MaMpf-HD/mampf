@@ -36,13 +36,13 @@
                       { class: "selectize form-select",
                         disabled: from == 'course',
                         required: true,
-                        data: { testid: 'new-lecture-course-select', terminfo: Course.pluck(:id, :term_independent) } 
+                        data: { testid: 'new-lecture-course-select', terminfo: Course.pluck(:id, :term_independent) }
                         } %>
           <% if from == 'course' %>
             <%= f.hidden_field :course_id, value: lecture.course.id %>
           <% end %>
         </div>
-        <div class="col-4" id="newLectureTerm"  
+        <div class="col-4" id="newLectureTerm"
             style="<%= term_independent ? 'display: none;' : '' %>">
           <%= f.label :term_id,
                       t('basics.term'),
@@ -73,7 +73,7 @@
         <div class="col-12 text-center">
           <%= f.submit t('buttons.save'),
                 class: 'btn btn-primary',
-                "data-cy": 'new-lecture-submit', 
+                "data-cy": 'new-lecture-submit',
                 "data-testid": 'new-lecture-submit' %>
           <% if from == 'course' %>
             <button type="button"
