@@ -22,6 +22,11 @@ module Rosters
       add_and_remove: 3
     }.freeze
 
+    # Self-service subsets of the modes above. SELF_ADD_MODES is also what the
+    # self_addable scope queries, so predicate and SQL cannot drift apart.
+    SELF_ADD_MODES = [:add_only, :add_and_remove].freeze
+    SELF_REMOVE_MODES = [:remove_only, :add_and_remove].freeze
+
     def self.class_for(type)
       TYPE_CLASS_MAP[type]&.call
     end
@@ -53,6 +58,12 @@ module Rosters
 
       enum :self_materialization_mode, SELF_MATERIALIZATION_MODES, prefix: true
 
+      scope :self_addable, -> { where(self_materialization_mode: SELF_ADD_MODES) }
+
+      # Restricts to the rosterables of the given lectures. Cohort and Lecture
+      # reference their lecture differently and override this.
+      scope :for_lectures, ->(lectures) { where(lecture_id: lectures) }
+
       before_validation :enforce_consistency_between_modes
       validate :validate_skip_campaigns_switch
       validate :validate_self_materialization_switch
@@ -64,15 +75,17 @@ module Rosters
       !in_campaign? && roster_empty?
     end
 
+    # Whether campaigns, not manual edits, decide this roster. Models without
+    # skip_campaigns (e.g. Lecture) are not campaign-managed.
+    def campaign_managed?
+      respond_to?(:skip_campaigns) && !skip_campaigns?
+    end
+
     # Checks if the roster is locked for manual modifications.
-    # Models without skip_campaigns (e.g., Lecture) are never locked.
     # A roster is locked if campaigns are NOT skipped AND no campaign
     # has been completed yet.
     def locked?
-      return false unless respond_to?(:skip_campaigns)
-      return false if skip_campaigns?
-
-      !in_completed_campaign?
+      campaign_managed? && !in_completed_campaign?
     end
 
     # Whether holding a slot in this rosterable precludes holding another
@@ -96,8 +109,7 @@ module Rosters
     end
 
     def config_allow_self_add?
-      self_materialization_mode_add_only? ||
-        self_materialization_mode_add_and_remove?
+      SELF_ADD_MODES.include?(self_materialization_mode.to_sym)
     end
 
     # guard for self-assignment possibility
@@ -110,8 +122,7 @@ module Rosters
     end
 
     def config_allow_self_remove?
-      self_materialization_mode_remove_only? ||
-        self_materialization_mode_add_and_remove?
+      SELF_REMOVE_MODES.include?(self_materialization_mode.to_sym)
     end
 
     # guard for self-removal possibility
@@ -280,10 +291,16 @@ module Rosters
 
     # Checks if the roster is full (reached or exceeded capacity).
     def full?
+      full_for_count?(roster_entries_count)
+    end
+
+    # Same check against a roster size the caller already knows, so that code
+    # counting many rosterables at once need not pay a query per record.
+    def full_for_count?(count)
       return false unless respond_to?(:capacity)
       return false if capacity.nil?
 
-      roster_entries_count >= capacity
+      count >= capacity
     end
 
     # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).

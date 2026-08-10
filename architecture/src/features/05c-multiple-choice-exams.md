@@ -215,7 +215,7 @@ module Assessment
 
         if mc_percentage < mc_threshold
           participation.update!(
-            grade_value: 5.0,
+            grade_numeric: 5.0,
             passed: false,
             failure_reason: "MC threshold not met (#{(mc_threshold * 100).round}%)"
           )
@@ -228,7 +228,7 @@ module Assessment
         final_grade = (@exam.mc_weight * mc_grade) +
                       ((1 - @exam.mc_weight) * regular_grade)
 
-        participation.update!(grade_value: final_grade, passed: final_grade <= 4.0)
+        participation.update!(grade_numeric: final_grade, passed: final_grade <= 4.0)
       end
     end
 

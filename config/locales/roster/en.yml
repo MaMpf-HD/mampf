@@ -301,9 +301,97 @@ en:
     messages:
       updated: "Settings updated."
       user_moved: "%{user} moved to %{target}."
+      user_not_moved: "%{user} was not moved: they are already in %{target}, or no longer in the group you moved them from."
       user_added: "%{user} added to %{group} successfully."
       user_added_to: "%{user} added to %{group}."
       user_already_member: "%{user} is already in %{group}."
       user_removed: "%{user} removed successfully."
     self_enrollment:
       no_registration_options: "There are currently no tutorials or groups available for registration."
+    mailer:
+      end_mail_html: |
+        <p>With kind regards,<br>Your MaMpf-Team</p>
+      end_mail: |
+        With kind regards,
+        Your MaMpf-Team
+      link_text_html: |
+        <p>You can access your new group here: %{rosterable_link}</p>
+      link_text: |
+        You can access your new group here: %{rosterable_link}
+      roster_added_to_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been added to <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          You are now a participant in this group.
+        </p>
+      roster_added_to_group_email_body: |
+        Hello %{name},
+
+        You have been added to "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+
+        You are now a participant in this group.
+      roster_added_to_group_email_subject: 'Added to group %{rosterable_title} in %{lecture_title}'
+      roster_removed_from_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
+      roster_removed_from_group_email_body: |
+        Hello %{name},
+
+        You have been removed from "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+
+        If you believe this was a mistake or if you have any questions,
+        please contact your instructor or the support team.
+
+        Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+      roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title} in %{lecture_title}'
+      roster_moved_between_groups_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been moved from <strong>%{old_rosterable_title}</strong>
+          to <strong>%{new_rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
+      roster_moved_between_groups_email_body: |
+        Hello %{name},
+
+        You have been moved from "%{old_rosterable_title}" to
+        "%{new_rosterable_title}" in the lecture "%{lecture_title}".
+
+        Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+      roster_moved_between_groups_email_subject: 'Moved to group %{rosterable_title} in %{lecture_title}'
+      roster_removed_from_lecture_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from the lecture roster of
+          <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+      roster_removed_from_lecture_email_body: |
+        Hello %{name},
+
+        You have been removed from the lecture roster of "%{lecture_title}".
+
+        If you believe this was a mistake or if you have any questions,
+        please contact your instructor or the support team.
+      roster_removed_from_lecture_email_subject: 'Removed from lecture %{lecture_title}'
