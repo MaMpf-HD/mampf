@@ -11,6 +11,7 @@ class ParticipationRowComponent < ViewComponent::Base
     if @mode == "tutor"
       @tutorial = tutorial
     elsif @mode == "teacher"
+      @tutorial = tutorial
       @lecture = assignment.lecture
     end
 
@@ -117,10 +118,6 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def can_grade?
     user = helpers.current_user
-    if @mode == "tutor"
-      user.admin? || user.can_grade_in_scope?(@tutorial)
-    elsif @mode == "teacher"
-      user.admin? || user.can_grade_in_scope?(@lecture)
-    end
+    user.admin? || user.can_grade_in_scope?(@tutorial)
   end
 end
