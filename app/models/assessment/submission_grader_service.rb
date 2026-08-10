@@ -79,6 +79,23 @@ module Assessment
         participation
       end
 
+      def init_participation_for_team(submission, tutorial)
+        if submission&.assignment&.assessment.nil? || tutorial.nil?
+          raise(SubmissionGraderError,
+                I18n.t("assessment.task_points.init_participation_missing_args"))
+        end
+
+        users = submission.users
+
+        users.each do |user|
+          participation = Participation.find_or_initialize_by(
+            assessment_id: submission&.assignment&.assessment&.id,
+            user_id: user.id
+          )
+          participation.update!(tutorial_id: tutorial.id) if participation.new_record?
+        end
+      end
+
       private
 
         # ── entry routing helpers ──────────────────────────────────────────
