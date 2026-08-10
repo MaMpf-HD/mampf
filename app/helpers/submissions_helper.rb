@@ -108,8 +108,7 @@ module SubmissionsHelper
 
   def enabled_roster_for_lecture?(lecture)
     roster_cache[:enabled].fetch(lecture.id) do
-      roster_cache[:enabled][lecture.id] =
-        Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?
+      roster_cache[:enabled][lecture.id] = lecture.roster_managed?
     end
   end
 

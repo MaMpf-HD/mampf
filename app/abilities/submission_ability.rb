@@ -24,9 +24,8 @@ class SubmissionAbility
     end
 
     can :move, Submission do |submission|
-      lecture = submission.assignment.lecture
       user.in?(submission.tutorial.tutors) &&
-        !(Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?)
+        !submission.tutorial.lecture.roster_managed?
     end
 
     can [:show_manuscript, :show_correction], Submission do |submission|

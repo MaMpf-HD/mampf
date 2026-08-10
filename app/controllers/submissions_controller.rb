@@ -275,7 +275,7 @@ class SubmissionsController < ApplicationController
     def submission_create_params
       permitted = params.expect(submission: [:tutorial_id, :assignment_id])
       lecture = Assignment.find_by(id: permitted[:assignment_id])&.lecture
-      return permitted unless roster_managed?(lecture)
+      return permitted unless lecture&.roster_managed?
 
       permitted.merge(tutorial_id: rostered_tutorial!(lecture).id)
     end
@@ -284,15 +284,9 @@ class SubmissionsController < ApplicationController
     def submission_update_params
       lecture = @submission.assignment.lecture
       # The form has no tutorial field in roster mode, so there is nothing to expect.
-      return { tutorial_id: rostered_tutorial!(lecture).id } if roster_managed?(lecture)
+      return { tutorial_id: rostered_tutorial!(lecture).id } if lecture&.roster_managed?
 
       params.expect(submission: [:tutorial_id])
-    end
-
-    # Whether the roster decides which tutorial a submission belongs to, rather
-    # than the student picking one.
-    def roster_managed?(lecture)
-      Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
     end
 
     def rostered_tutorial!(lecture)
@@ -436,7 +430,7 @@ class SubmissionsController < ApplicationController
 
       # Joining by code (which is also how an invitation is accepted) would place
       # the submission in a tutorial the user is not a member of.
-      rostered_tutorial!(@assignment.lecture) if roster_managed?(@assignment.lecture)
+      rostered_tutorial!(@assignment.lecture) if @assignment.lecture.roster_managed?
 
       @join = UserSubmissionJoin.new(user: current_user,
                                      submission: @submission)
