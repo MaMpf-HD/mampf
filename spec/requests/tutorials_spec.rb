@@ -3,10 +3,46 @@ require "rails_helper"
 RSpec.describe("Tutorials", type: :request) do
   let(:lecture) { create(:lecture) }
   let(:editor) { create(:confirmed_user) }
-  let!(:tutorial) { create(:tutorial, lecture: lecture) }
+  let(:tutor) { create(:confirmed_user) }
+  let!(:tutorial) { create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: lecture) }
 
   before do
     create(:editable_user_join, user: editor, editable: lecture)
+  end
+
+  describe "GET /lectures/:id/tutorials" do
+    let(:assignment) { create(:assignment, lecture: lecture, accepted_file_type: ".pdf") }
+
+    context "when feature flag enabled" do
+      before do
+        Flipper.enable(:roster_maintenance)
+        Flipper.enable(:registration_campaigns)
+        # The submission rows only render their action menu for a tutor of the
+        # group, and #index lists submissions that carry a manuscript.
+        tutorial.tutors << editor
+        5.times do
+          student = create(:confirmed_user)
+          create(:tutorial_membership, tutorial: tutorial, user: student)
+          create(:submission, :with_manuscript, assignment: assignment,
+                                                tutorial: tutorial).users << student
+        end
+        sign_in editor
+      end
+
+      after do
+        Flipper.disable(:roster_maintenance)
+        Flipper.disable(:registration_campaigns)
+      end
+
+      it "queries roster_eligible_tutorials? once per lecture across all submission rows" do
+        expect_any_instance_of(Lecture).to receive(:roster_eligible_tutorials?)
+          .once.and_call_original
+
+        get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+        expect(response).to have_http_status(:success)
+      end
+    end
   end
 
   describe "GET /tutorials/new" do
