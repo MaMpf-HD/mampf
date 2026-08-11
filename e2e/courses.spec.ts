@@ -71,6 +71,12 @@ test("can set course image", async ({ factory, admin: { page } }) => {
   await page.getByRole("button", { name: "Upload" }).click();
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("image.png")).toBeVisible();
+
+  // the saved form comes back through a frame swap, which does not fire
+  // turbo:load — without a rewired upload the next file silently goes nowhere
+  await expect(page.locator("#image-preview"))
+    .toHaveAttribute("src", /\/courses\/\d+\/image\/original/);
+  await expect(page.locator("#upload-image")).toHaveCSS("display", "none");
 });
 
 test("can detach course image", async ({ factory, admin: { page } }) => {
