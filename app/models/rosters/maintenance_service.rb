@@ -4,26 +4,44 @@ module Rosters
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
 
+    # Raised to unwind the move. ActiveRecord::Rollback cannot do that job here:
+    # the nested with_lock transactions swallow it and commit anyway.
+    class MoveWithoutEffectError < StandardError; end
+
     def add_user!(user, rosterable, force: false, source_campaign_id: nil)
-      rosterable.with_lock do
+      added = rosterable.with_lock do
         add_user_without_lock!(user,
                                rosterable,
                                force: force,
                                source_campaign_id: source_campaign_id)
       end
+      RosterNotificationMailer.added(user, rosterable) if added
+      added
     end
 
     def remove_user!(user, rosterable)
-      rosterable.with_lock do
+      removed = rosterable.with_lock do
         remove_user_without_lock!(user, rosterable)
       end
+      RosterNotificationMailer.removed(user, rosterable) if removed
+      removed
     end
 
     def move_user!(user, from_rosterable, to_rosterable, force: false)
+      return false if from_rosterable == to_rosterable
+
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
-        remove_user_without_lock!(user, from_rosterable)
-        add_user_without_lock!(user, to_rosterable, force: force)
+        raise(MoveWithoutEffectError) unless user_in_roster?(user, from_rosterable)
+
+        removed = remove_user_without_lock!(user, from_rosterable)
+        added   = add_user_without_lock!(user, to_rosterable, force: force)
+
+        raise(MoveWithoutEffectError) unless removed && added
       end
+      RosterNotificationMailer.moved(user, from_rosterable, to_rosterable)
+      true
+    rescue MoveWithoutEffectError
+      false
     end
 
     private
@@ -51,12 +69,13 @@ module Rosters
       end
 
       def remove_user_without_lock!(user, rosterable)
-        rosterable.remove_user_from_roster!(user)
+        removed = rosterable.remove_user_from_roster!(user)
         cascade_removal_from_subgroups!(user, rosterable)
+        removed
       end
 
       def lock_rosterables_in_order(*rosterables, &)
-        ActiveRecord::Base.transaction do
+        ActiveRecord::Base.transaction(requires_new: true) do
           sorted_rosterables = rosterables.uniq.sort_by { |r| [r.class.name, r.id.to_i] }
           lock_rosterables_recursively(sorted_rosterables, 0, &)
         end
@@ -65,11 +84,10 @@ module Rosters
       def lock_rosterables_recursively(sorted_rosterables, index, &)
         if index >= sorted_rosterables.length
           yield
-          return
-        end
-
-        sorted_rosterables[index].with_lock do
-          lock_rosterables_recursively(sorted_rosterables, index + 1, &)
+        else
+          sorted_rosterables[index].with_lock do
+            lock_rosterables_recursively(sorted_rosterables, index + 1, &)
+          end
         end
       end
 

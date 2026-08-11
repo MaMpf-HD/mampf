@@ -1,5 +1,7 @@
 en:
   mampf: 'MaMpf'
+  modals:
+    load_error: 'The content could not be loaded.'
   views:
     pagination:
       first: "&laquo; First"
@@ -2764,6 +2766,12 @@ en:
       There is nothing here yet. Create a new submission or join one.
     nothing_here_past: >
       Nothing was submitted for this assignment.
+    tutorial_needed: >
+      You are not in a tutorial for this event series, so you cannot submit
+      anything.
+    tutorial_not_assigned: >
+      You are not in a tutorial for this event series, so you cannot create or
+      join a submission.
     invitations_to: Invitations to
     joined_successfully: >
       You successfully joined the submission to %{assignment}.
@@ -3870,13 +3878,22 @@ en:
         lecture:
           attributes:
             course:
+              required: 'You need to give a course.'
+            course_id:
               taken: >
                 An event series with the same combination of course, term and teacher
                 already exists.
-              required: 'You need to give a course.'
               already_present: >
                 For courses that are term independent there can be only one
                 'event series'.
+            teacher_id:
+              taken: >
+                An event series with the same combination of course, term and teacher
+                already exists.
+            term_id:
+              taken: >
+                An event series with the same combination of course, term and teacher
+                already exists.
             content_mode:
               inclusion: 'Invalid mode.'
             term:

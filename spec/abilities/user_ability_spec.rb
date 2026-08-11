@@ -35,4 +35,22 @@ RSpec.describe(UserAbility) do
       expect(anonymous.can?(:image, other)).to be(false)
     end
   end
+
+  # Searching this fills a select with everyone on the platform, so it is the
+  # rule that keeps teachers from enumerating all users.
+  describe ":fill_user_select" do
+    it "lets an admin search all users" do
+      admin = create(:confirmed_user, admin: true)
+
+      expect(described_class.new(admin).can?(:fill_user_select, User.new)).to be(true)
+    end
+
+    it "denies it to a teacher" do
+      expect(described_class.new(teacher).can?(:fill_user_select, User.new)).to be(false)
+    end
+
+    it "denies it to an ordinary user" do
+      expect(ability.can?(:fill_user_select, User.new)).to be(false)
+    end
+  end
 end

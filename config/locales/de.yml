@@ -1,5 +1,7 @@
 de:
   mampf: 'MaMpf'
+  modals:
+    load_error: 'Der Inhalt konnte nicht geladen werden.'
   views:
     pagination:
       first: "&laquo; Erste"
@@ -2942,6 +2944,12 @@ de:
       bei.
     nothing_here_past: >
       Zu dieser Hausaufgabe hast Du nichts abgegeben.
+    tutorial_needed: >
+      Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb nichts
+      abgeben.
+    tutorial_not_assigned: >
+      Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb keine
+      Abgabe anlegen oder einer beitreten.
     invitations_to: Einladungen an
     joined_successfully: >
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
@@ -4088,13 +4096,22 @@ de:
         lecture:
           attributes:
             course:
+              required: 'Es muss ein Modul angegeben werden.'
+            course_id:
               taken: >
                 Eine Veranstaltung mit derselben Kombination aus Modul, Semester
                 DozentIn und Typ existiert bereits.
-              required: 'Es muss ein Modul angegeben werden.'
               already_present: >
                 Für Module mit der Eigenschaft 'semesterunabhängig' kann es
                 höchstens eine Veranstaltung geben.
+            teacher_id:
+              taken: >
+                Eine Veranstaltung mit derselben Kombination aus Modul, Semester
+                DozentIn und Typ existiert bereits.
+            term_id:
+              taken: >
+                Eine Veranstaltung mit derselben Kombination aus Modul, Semester
+                DozentIn und Typ existiert bereits.
             content_mode:
               inclusion: 'Ungültiger Modus.'
             term:

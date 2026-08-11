@@ -1,5 +1,5 @@
 import { Component } from "~/js/thyme/components/component";
-import { onVideoMetadataLoaded } from "~/js/thyme/utility";
+import { onVideoMetadataLoaded } from "~/js/thyme/video_events";
 import { secondsToTime } from "../utility";
 
 export class SeekBar extends Component {

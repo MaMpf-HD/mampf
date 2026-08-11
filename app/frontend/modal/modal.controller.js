@@ -43,15 +43,22 @@ export default class extends Controller {
     if (this.modal && this.element.isConnected) {
       this.element.querySelector("form")?.reset();
 
+      const container = document.getElementById("modal-container");
+
+      if (!container?.contains(this.element)) {
+        // A modal that lives in the page outlives the submission, so it has to
+        // be hidden. Disposing it would leave it on screen with nothing left
+        // to close it.
+        this.modal.hide();
+        return;
+      }
+
       // Dispose modal immediately to prevent Bootstrap trying to access
       // removed DOM elements during hide animation
       this.modal.dispose();
 
       // Clear modal container
-      const container = document.getElementById("modal-container");
-      if (container) {
-        container.innerHTML = "";
-      }
+      container.innerHTML = "";
 
       // Remove backdrop manually if it exists
       const backdrop = document.querySelector(".modal-backdrop");
