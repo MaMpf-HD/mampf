@@ -45,6 +45,6 @@ test("can upload a manuscript and extract structure from it",
     await expect(page.getByText(CHAPTER1)).toBeVisible();
     await page.getByRole("link", { name: SECTION1 }).click();
     await expect(page.getByText("§1.1")).toBeVisible();
-    await expect(page.getByText("Blub")).toBeVisible();
+    await expect(page.getByText("Blub", { exact: true })).toBeVisible();
     await expect(page.getByText("Space")).toBeVisible();
   });

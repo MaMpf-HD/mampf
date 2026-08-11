@@ -185,6 +185,15 @@ geogebraUpload = (fileInput) ->
     true
   )
 
+# Also called from the courses-edit Stimulus controller: a turbo frame swap
+# replaces the form without firing turbo:load, and an unwired file input silently
+# keeps the previously uploaded file.
+window.initCourseImageUpload = ->
+  image = document.getElementById('upload-image')
+  return unless image? and image.style.display isnt 'none'
+  imageUpload image, '/screenshots/upload', 'course'
+  return
+
 imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
   # set everything up
   uploadArea = document.getElementById('image-uploadArea')
@@ -659,7 +668,7 @@ $(document).on 'turbo:load', ->
   uploadPath = "/screenshots/upload"
   uploadPath = "/profile_image/upload" if image2?
   imageUpload image2, uploadPath, "user" if image2?
-  imageUpload image, uploadPath, "course" if image?
+  window.initCourseImageUpload()
   bulkCorrectionUpload bulkCorrection if bulkCorrection?
 
   return

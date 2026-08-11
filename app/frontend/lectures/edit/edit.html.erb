@@ -41,7 +41,7 @@
       <% end %>
 
       <% component.with_tab(name: "settings", label: t("basics.preferences")) do %>
-        <div class="container small-width lecture-pane">
+        <div class="container small-width lecture-pane" id="edit_preferences">
           <%= render partial: 'lectures/edit/preferences', locals: { lecture: @lecture } %>
         </div>
       <% end %>
@@ -51,7 +51,7 @@
 
       <% component.with_tab(name: "people", label: people_label) do %>
         <div class="container small-width lecture-pane">
-          <%= render partial: 'lectures/edit/people', locals: { lecture: @lecture } %>
+          <div id="edit_people"><%= render partial: 'lectures/edit/people', locals: { lecture: @lecture } %></div>
           <% unless show_new_roster %>
             <%= render partial: 'lectures/edit/tutorials', locals: { lecture: @lecture } %>
           <% end %>

@@ -17,10 +17,15 @@ class SubmissionAbility
       user.in?(submission.users) && !submission.not_updatable?
     end
 
-    can [:add_correction, :delete_correction, :select_tutorial, :move,
+    can [:add_correction, :delete_correction, :select_tutorial,
          :cancel_action, :accept, :reject, :edit_correction,
          :cancel_edit_correction], Submission do |submission|
       user.in?(submission.tutorial.tutors)
+    end
+
+    can :move, Submission do |submission|
+      user.in?(submission.tutorial.tutors) &&
+        !submission.tutorial.lecture.roster_managed?
     end
 
     can [:show_manuscript, :show_correction], Submission do |submission|

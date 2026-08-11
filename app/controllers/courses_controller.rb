@@ -4,11 +4,20 @@ class CoursesController < ApplicationController
   before_action :set_course_admin, only: [:edit, :update, :destroy]
   before_action :check_if_enough_questions, only: [:take_random_quiz]
   before_action :check_for_consent, except: [:image]
+  before_action :redirect_direct_search_visits, only: [:search]
   authorize_resource except: [:create, :search]
   layout "administration"
 
   def current_ability
     @current_ability ||= CourseAbility.new(current_user)
+  end
+
+  def new
+    @course = Course.new
+    authorize! :new, @course
+
+    render turbo_stream: turbo_stream.update(@course, partial: "courses/new",
+                                                      locals: { course: @course })
   end
 
   def edit
@@ -18,26 +27,44 @@ class CoursesController < ApplicationController
   def create
     @course = Course.new(course_params)
     authorize! :create, @course
-    @course.save
-    if @course.valid?
+    if @course.save
       # set organizational_concept to default
       set_organizational_defaults
-      redirect_to administration_path,
-                  notice: I18n.t("controllers.created_course_success",
-                                 course: @course.title,
-                                 editors: @course.editors.map(&:name)
-                                                         .join(", "))
-      return
+
+      flash.now[:notice] = I18n.t("controllers.created_course_success",
+                                  course: @course.title,
+                                  editors: @course.editors.map(&:name)
+                                                          .join(", "))
+      courses = current_user.edited_courses.natural_sort_by(&:title)
+
+      render turbo_stream: [
+        stream_flash,
+        turbo_stream.update(Course.new, ""),
+        turbo_stream.update("courses",
+                            partial: "administration/index/courses_card",
+                            locals: { courses: courses }),
+        turbo_stream.replace("courses-count",
+                             partial: "administration/index/courses_count",
+                             locals: { count: courses.size })
+      ]
+    else
+      render turbo_stream: turbo_stream.update(Course.new,
+                                               partial: "courses/new",
+                                               locals: { course: @course }),
+             status: :unprocessable_content
     end
-    @errors = @course.errors
   end
 
   def update
     I18n.locale = @course.locale || I18n.default_locale
     old_image_data = @course.image_data
     @course.update(course_params)
-    @errors = @course.errors
-    return unless @errors.empty?
+    if @course.errors.present?
+      render partial: "courses/form",
+             locals: { course: @course },
+             status: :unprocessable_content
+      return
+    end
 
     @course.update(image: nil) if params[:course][:detach_image] == "true"
     changed_image = @course.image_data != old_image_data
@@ -45,7 +72,9 @@ class CoursesController < ApplicationController
       @course.image_derivatives!
       @course.save
     end
-    @errors = @course.errors
+
+    render partial: "courses/form",
+           locals: { course: @course }
   end
 
   def destroy
@@ -64,7 +93,11 @@ class CoursesController < ApplicationController
 
   def render_question_counter
     tags = Tag.where(id: tag_params[:tag_ids])
-    @count = @course.question_count(tags)
+    count = @course.question_count(tags)
+
+    render turbo_stream: turbo_stream.update("question_counter",
+                                             partial: "courses/question_counter",
+                                             locals: { count: count })
   end
 
   def search
@@ -77,12 +110,11 @@ class CoursesController < ApplicationController
       options: { default_per_page: 20 }
     )
 
-    respond_to do |format|
-      format.js
-      format.html do
-        redirect_to :root, alert: I18n.t("controllers.search_only_js")
-      end
-    end
+    render turbo_stream: turbo_stream.update(
+      "courses-search-results",
+      partial: "courses/search/results",
+      locals: { courses: @courses, pagy: @pagy }
+    )
   end
 
   def image
@@ -171,5 +203,14 @@ class CoursesController < ApplicationController
 
     def check_for_consent
       redirect_to consent_profile_path unless current_user.consents
+    end
+
+    # Results only make sense inside their frame. Visiting the URL directly
+    # would put raw turbo stream markup on the screen, so send people to the
+    # search field instead, as the other three searches do.
+    def redirect_direct_search_visits
+      return if turbo_frame_request?
+
+      redirect_to :root, alert: I18n.t("controllers.search_only_js")
     end
 end
