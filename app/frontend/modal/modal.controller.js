@@ -4,15 +4,15 @@ import { Modal } from "bootstrap";
 export default class extends Controller {
   static values = {
     showOnConnect: Boolean,
-    // A modal holding more than one form closes on the wrong one otherwise, so
-    // it opts out here and binds hideModalOnSuccess to the form that owns it.
-    preventEventListener: Boolean,
+    // A modal holding more than one form would close on the wrong one, so it
+    // opts out here and binds hideModalOnSuccess to the form that owns it.
+    keepOpenOnSubmit: Boolean,
   };
 
   connect() {
     this.modal = Modal.getOrCreateInstance(this.element);
     this.boundHideModalOnSuccess = this.hideModalOnSuccess.bind(this);
-    if (!this.preventEventListenerValue) {
+    if (!this.keepOpenOnSubmitValue) {
       this.element.addEventListener(
         "turbo:submit-end", this.boundHideModalOnSuccess,
       );
