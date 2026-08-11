@@ -1,23 +1,20 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["select"];
+  static targets = ["select", "counter"];
+  static values = { url: String };
 
-  async selectionChanged({ target } = {}) {
-    const select = target || this.selectTarget;
-    const urlTemplate = select?.dataset.questionCounterUrl;
-    if (!urlTemplate) return;
-
-    if (select.selectedOptions.length === 0) {
-      document.getElementById("question_counter")?.replaceChildren();
+  async selectionChanged() {
+    if (this.selectTarget.selectedOptions.length === 0) {
+      this.counterTarget.replaceChildren();
       return;
     }
 
     this.abortController?.abort();
     this.abortController = new AbortController();
 
-    const url = new URL(urlTemplate, window.location.href);
-    for (const option of select.selectedOptions) {
+    const url = new URL(this.urlValue, window.location.href);
+    for (const option of this.selectTarget.selectedOptions) {
       url.searchParams.append("tag_ids[]", option.value);
     }
 
@@ -28,7 +25,7 @@ export default class extends Controller {
       });
 
       if (response.ok) {
-        window.Turbo?.renderStreamMessage?.(await response.text());
+        window.Turbo.renderStreamMessage(await response.text());
       }
     }
     catch (e) {

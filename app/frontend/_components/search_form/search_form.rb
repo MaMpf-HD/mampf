@@ -49,7 +49,7 @@ module SearchForm
       component
     }
 
-    attr_reader :url, :scope, :method, :remote, :context, :hidden_fields,
+    attr_reader :url, :scope, :method, :context, :hidden_fields,
                 :container_class, :turbo_frame
 
     # Initializes a new SearchForm component.
@@ -57,20 +57,18 @@ module SearchForm
     # @param url [String] The form submission URL
     # @param scope [Symbol] The form scope for parameter namespacing (default: :search)
     # @param method [Symbol] HTTP method for form submission (default: :get)
-    # @param remote [Boolean] Whether to submit via AJAX (default: true)
     # @param context [String, nil] Context identifier for styling and behavior
     # @param container_class [String] CSS classes for the main container div
     # @param turbo_frame [String, nil] Id of the turbo frame the results go into.
     #   Only pass it where such a frame exists; the other searches still answer
     #   with JavaScript and write into a plain container.
     # rubocop:disable Metrics/ParameterLists
-    def initialize(url:, scope: :search, method: :get, remote: true, context: nil,
+    def initialize(url:, scope: :search, method: :get, context: nil,
                    container_class: "row mb-3 p-2", turbo_frame: nil)
       super()
       @url = url
       @scope = scope
       @method = method
-      @remote = remote
       @turbo_frame = turbo_frame
       @context = context || SecureRandom.hex(4)
       @form_state = Services::FormState.new(context: @context)

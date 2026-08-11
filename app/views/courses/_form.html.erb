@@ -2,8 +2,7 @@
   <%= form_with model: course,
           html: { id: 'course-form',
             data: { controller: 'courses-edit',
-              action: 'change->courses-edit#onFormChange',
-              'courses-edit-target': 'form' } } do |f| %>
+              action: 'change->courses-edit#onFormChange' } } do |f| %>
     <div class="row p-2 mb-3">
       <div class="col-3">
         <h4 class="ps-2">

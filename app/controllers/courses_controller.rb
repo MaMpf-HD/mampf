@@ -44,8 +44,6 @@ class CoursesController < ApplicationController
                                                       .natural_sort_by(&:title) })
       ]
     else
-      @errors = @course.errors
-
       render turbo_stream: turbo_stream.update(Course.new,
                                                partial: "courses/new",
                                                locals: { course: @course }),
@@ -57,8 +55,7 @@ class CoursesController < ApplicationController
     I18n.locale = @course.locale || I18n.default_locale
     old_image_data = @course.image_data
     @course.update(course_params)
-    @errors = @course.errors
-    if @errors.present?
+    if @course.errors.present?
       render partial: "courses/form",
              locals: { course: @course },
              status: :unprocessable_content
@@ -71,7 +68,6 @@ class CoursesController < ApplicationController
       @course.image_derivatives!
       @course.save
     end
-    @errors = @course.errors
 
     render partial: "courses/form",
            locals: { course: @course }

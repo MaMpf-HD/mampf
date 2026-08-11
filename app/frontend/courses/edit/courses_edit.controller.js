@@ -6,7 +6,6 @@ export default class extends Controller {
     "newLectureButton",
     "newMediumButton",
     "newTagButton",
-    "form",
     "trixEditor",
     "imagePreview",
     "imageMeta",
@@ -34,9 +33,6 @@ export default class extends Controller {
     if (this.hasImagePreviewTarget) this.imagePreviewTarget.style.display = "none";
     if (this.hasDetachImageInputTarget) this.detachImageInputTarget.value = "true";
     this.showWarning();
-
-    const userWarning = document.getElementById("user-basics-warning");
-    if (userWarning) userWarning.style.display = "block";
   }
 
   showWarning() {
