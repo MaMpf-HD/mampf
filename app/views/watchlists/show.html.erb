@@ -37,9 +37,11 @@
     </div>
   <% end %>
   <% if @watchlist_entries.present? %>
-    <div class="row pt-2 ps-4 pe-4" 
+    <div class="row pt-2 ps-4 pe-4"
          id="sortableWatchlistMedia"
-         data-controller="watchlist-sortable">
+         data-controller="watchlist-sortable"
+         data-watchlist-sortable-watchlist-id-value="<%= @watchlist.id %>"
+         data-watchlist-sortable-owned-value="<%= @watchlist.owned_by?(current_user) %>">
       <% @watchlist_entries.each do |entry| %>
         <div class="media-grid pb-2" data-id="<%= entry.id %>">
           <%= render partial: 'media/medium',

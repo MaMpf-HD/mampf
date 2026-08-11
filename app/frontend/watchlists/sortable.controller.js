@@ -2,21 +2,23 @@ import { Controller } from "@hotwired/stimulus";
 import Sortable from "sortablejs";
 
 export default class extends Controller {
+  static values = {
+    watchlistId: Number,
+    // Convenience only — WatchlistsController#update_order authorizes as well.
+    owned: Boolean,
+  };
+
   connect() {
-    const id = document.getElementById("watchlistButton")?.dataset.id;
-    const owned = document.getElementById("watchlistButton")?.dataset.owned;
-    const sortableElement = this.element;
+    if (!this.ownedValue) return;
 
-    if (owned !== "true" || !sortableElement) return;
-
-    Sortable.create(sortableElement, {
+    Sortable.create(this.element, {
       handle: ".mampf-card-header",
       animation: 150,
-      onUpdate: () => this.updateOrder(id),
+      onUpdate: () => this.updateOrder(),
     });
   }
 
-  async updateOrder(id) {
+  async updateOrder() {
     const params = new URLSearchParams(window.location.search);
     const order = Array.from(
       this.element.querySelectorAll(".media-grid"),
@@ -33,7 +35,7 @@ export default class extends Controller {
       },
       body: JSON.stringify({
         order,
-        id,
+        id: this.watchlistIdValue,
         reverse: params.get("reverse") || "false",
         per: params.get("per") || "10",
         page: params.get("page") || "1",

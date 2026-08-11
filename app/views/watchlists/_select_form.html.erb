@@ -11,12 +11,13 @@
     <div class="input-group mb-3">
       <% has_errors = @watchlist_entry.present? && @watchlist_entry.errors.any? %>
       <% select_class = has_errors ? 'form-select is-invalid' : 'form-select' %>
+      <% own_watchlists = Watchlist.where(user: current_user).to_a %>
 
-      <% if Watchlist.where(user: current_user).exists? %>
-        <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist&.id),
+      <% if own_watchlists.any? %>
+        <%= f.select :watchlist_id, options_from_collection_for_select(own_watchlists, :id, :name, @watchlist&.id),
                      {}, { class: select_class, id: 'watchlistSelect' } %>
       <% else %>
-        <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
+        <%= f.select :watchlist_id, options_from_collection_for_select(own_watchlists, :id, :name),
                      { prompt: t('watchlist.none')}, { class: select_class, disabled: true } %>
       <% end %>
       <div class="input-group-append">

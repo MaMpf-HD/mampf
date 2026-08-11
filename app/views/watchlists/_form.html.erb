@@ -1,7 +1,4 @@
-<% watchlist = local_assigns[:watchlist] || @watchlist || Watchlist.new %>
-<% medium = local_assigns[:medium] || @medium %>
-<% is_edit = watchlist.persisted? %>
-
+<%# locals: (watchlist:, medium:) %>
 <%= form_with model: watchlist,
               id: 'watchlistForm' do |f| %>
   <% if medium.present? %>
@@ -19,7 +16,7 @@
                       id: 'watchlistNameField',
                       required: true %>
       </div>
-      <% if !is_edit && medium.present? %>
+      <% if medium.present? && !watchlist.persisted? %>
         <div class="input-group-append">
           <%= f.submit t('watchlist.create'),
                       class: 'btn btn-primary',

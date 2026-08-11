@@ -1,6 +1,4 @@
-<% watchlist = local_assigns[:watchlist] || @watchlist %>
-<% medium = local_assigns[:medium] || @medium %>
-<% context = (local_assigns[:context] || (watchlist&.persisted? ? :edit : :new)).to_sym %>
+<%# locals: (context:) %>
 <% is_edit = context == :edit %>
 
 <div class="modal fade"
