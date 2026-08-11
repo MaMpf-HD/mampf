@@ -30,12 +30,13 @@ export class WatchlistsPage {
   }
 
   async editWatchlist(newName: string, newDescription: string = "") {
+    const dialog = this.page.locator("#editWatchlistModal");
+
     await this.page.getByRole("button", { name: "Change" }).click();
-    await this.page.waitForLoadState("networkidle");
     await this.page.getByRole("textbox", { name: "Enter name" }).fill(newName);
     await this.page.getByRole("textbox", { name: "Enter description (optional)" }).fill(newDescription);
     await this.page.getByRole("button", { name: "Save changes" }).click();
-    await this.page.waitForLoadState("networkidle");
+    await expect(dialog).toBeHidden();
   }
 
   async toggleVisibility() {
@@ -47,16 +48,32 @@ export class WatchlistsPage {
   }
 
   async deleteWatchlist(accept = true) {
+    const deleteLink = this.page.getByRole("link", { name: "Delete" });
+
     this.page.once("dialog", dialog => accept ? dialog.accept() : dialog.dismiss());
-    await this.page.getByRole("link", { name: "Delete" }).click();
-    await this.page.waitForLoadState("networkidle");
+    await deleteLink.click();
+
+    if (accept) {
+      await expect(this.page.locator("#flash-messages").getByRole("alert")).toBeVisible();
+    }
+    else {
+      // nothing is requested, so give the page something to be true about
+      await expect(deleteLink).toBeVisible();
+    }
   }
 
   async deleteWatchlistEntry(accept = true) {
-    this.page.once("dialog", dialog => accept ? dialog.accept() : dialog.dismiss());
     const deleteButton = this.page.getByTitle("Remove medium from watchlist").first();
+
+    this.page.once("dialog", dialog => accept ? dialog.accept() : dialog.dismiss());
     await deleteButton.click();
-    await this.page.waitForLoadState("networkidle");
+
+    if (accept) {
+      await expect(this.page.locator("#flash-messages").getByRole("alert")).toBeVisible();
+    }
+    else {
+      await expect(deleteButton).toBeVisible();
+    }
   }
 
   async getWatchlistName(): Promise<string | null> {
