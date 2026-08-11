@@ -4,6 +4,7 @@ class CoursesController < ApplicationController
   before_action :set_course_admin, only: [:edit, :update, :destroy]
   before_action :check_if_enough_questions, only: [:take_random_quiz]
   before_action :check_for_consent, except: [:image]
+  before_action :redirect_direct_search_visits, only: [:search]
   authorize_resource except: [:create, :search]
   layout "administration"
 
@@ -94,15 +95,9 @@ class CoursesController < ApplicationController
     tags = Tag.where(id: tag_params[:tag_ids])
     count = @course.question_count(tags)
 
-    text = if count > 1
-      t("quiz.questions_for_tags", count: count)
-    elsif count == 1
-      t("quiz.question_for_tags")
-    else
-      t("quiz.no_question_for_tags")
-    end
-
-    render turbo_stream: turbo_stream.update("question_counter", text)
+    render turbo_stream: turbo_stream.update("question_counter",
+                                             partial: "courses/question_counter",
+                                             locals: { count: count })
   end
 
   def search
@@ -208,5 +203,14 @@ class CoursesController < ApplicationController
 
     def check_for_consent
       redirect_to consent_profile_path unless current_user.consents
+    end
+
+    # Results only make sense inside their frame. Visiting the URL directly
+    # would put raw turbo stream markup on the screen, so send people to the
+    # search field instead, as the other three searches do.
+    def redirect_direct_search_visits
+      return if turbo_frame_request?
+
+      redirect_to :root, alert: I18n.t("controllers.search_only_js")
     end
 end
