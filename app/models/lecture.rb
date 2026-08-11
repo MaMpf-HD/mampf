@@ -920,6 +920,16 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
+  def roster_eligible_tutorials?
+    tutorials.merge(Tutorial.roster_eligible).exists?
+  end
+
+  # Whether the roster decides which tutorial a student belongs to, rather than
+  # the student picking one.
+  def roster_managed?
+    Flipper.enabled?(:roster_maintenance) && roster_eligible_tutorials?
+  end
+
   private
 
     # used for after save callback
