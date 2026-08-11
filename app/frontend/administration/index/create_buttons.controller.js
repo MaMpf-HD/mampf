@@ -2,11 +2,15 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   connect() {
-    this.hide();
+    this.onLectureSuccess = () => {
+      this.show();
+      this.resetFrame();
+    };
+    document.addEventListener("lecture:new:success", this.onLectureSuccess);
   }
 
   disconnect() {
-    this.show();
+    document.removeEventListener("lecture:new:success", this.onLectureSuccess);
   }
 
   hide() {
@@ -22,12 +26,18 @@ export default class extends Controller {
   cancel(event) {
     event.preventDefault();
     this.show();
-    document.getElementById("new_course")?.replaceChildren();
+    this.resetFrame();
   }
 
-  submitEnd(event) {
-    if (event.detail.success) {
-      this.show();
-    }
+  /**
+   * Empties the lecture frame. Dropping the src matters as much as the
+   * children: Turbo caches the page on the way out and refetches any frame
+   * that still points somewhere, so the form would be back after a click on
+   * the browser's back button.
+   */
+  resetFrame() {
+    const frame = document.getElementById("new_lecture");
+    frame?.removeAttribute("src");
+    frame?.replaceChildren();
   }
 }

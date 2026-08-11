@@ -1,0 +1,127 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+.registration-group-tile-col {
+  max-width: 13rem;
+  position: relative;
+  z-index: 1;
+
+  &:hover, &:focus-within {
+    z-index: 10;
+  }
+
+  @include media-breakpoint-down(md) {
+    max-width: none;
+  }
+
+  & .card {
+    height: auto !important;
+
+    @include media-breakpoint-up(md) {
+      aspect-ratio: 1 / 1;
+    }
+  }
+}
+
+.registration-group-tile-col--student {
+  max-width: 16rem;
+
+  & .card {
+    height: 100% !important;
+    aspect-ratio: auto !important;
+  }
+}
+
+.tutorial-gtile {
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+              border-color 0.12s ease;
+
+  &:hover, &:focus-within {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+    z-index: 10;
+
+    .tutorial-gtile-actions {
+      opacity: 1;
+    }
+  }
+}
+
+.tutorial-gtile--student {
+  cursor: default;
+
+  .tutorial-gtile-actions {
+    opacity: 1;
+  }
+}
+
+.tutorial-gtile--without-enrollment {
+  border-left: 2px dashed var(--bs-border-color);
+}
+
+.tutorial-gtile--selected {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2),
+              0 4px 16px rgba(0, 0, 0, 0.14);
+}
+
+.tutorial-gtile-top-bar {
+  height: 5px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.tutorial-gtile-top-bar--campaign {
+  background: var(--bs-primary);
+}
+
+.tutorial-gtile-top-bar--self-enrollment {
+  background: var(--bs-success);
+}
+
+.tutorial-gtile-top-bar--free {
+  background: var(--bs-secondary);
+}
+
+.tutorial-gtile-type {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-gray-500);
+  font-weight: 600;
+}
+
+.tutorial-gtile-name {
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0;
+}
+
+.tutorial-gtile-sm-dropdown {
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.tutorial-gtile-sm-menu {
+  font-size: 0.875rem;
+}
+
+.tutorial-roster-wishes {
+  max-width: 250px;
+}
+
+.tutorial-gtile-actions {
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+@media (hover: none) {
+  .tutorial-gtile-actions {
+    opacity: 1;
+  }
+}

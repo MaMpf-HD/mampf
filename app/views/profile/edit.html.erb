@@ -1,4 +1,8 @@
 <%= vite_stylesheet_tag "styles/profile.scss" %>
+<% profile_form_actions = [
+  "input->profile#showChangeBanner",
+  "change->profile#showChangeBanner"
+].join(" ") %>
 
 <div class="container-md">
 
@@ -23,7 +27,9 @@
   </div>
 
   <%= bootstrap_form_with url: profile_update_path, scope: 'user',
-                        html: { id: 'profileForm'} do |f| %>
+                        html: { id: 'profileForm',
+                                data: { controller: 'profile',
+            action: profile_form_actions } } do |f| %>
 
   <div class="row display-flex mb-md-3">
 
@@ -32,6 +38,7 @@
       <%= f.submit t('profile.changes_made_btn'),
             class: 'btn btn-warning mt-3 w-100 d-none text-wrap',
             id: "profileChange",
+          data: { profile_target: 'changeButton' },
             "data-cy": "profile-change-submit" %>
     </div>
 
@@ -114,6 +121,7 @@
     <div class="w-100 mt-3 mb-3 d-md-none">
       <%= f.submit t('profile.changes_made_btn'),
         class: 'btn btn-warning w-100 d-none text-wrap',
+        data: { profile_target: 'changeButton' },
         id: "profileChangeBottom" %>
     </div>
 
@@ -130,5 +138,3 @@
 
 <!-- 🔘 User Request Data Modal -->
 <%= render partial: 'profile/request_data_modal' %>
-
-<%= vite_javascript_tag "js/profile" %>

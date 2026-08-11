@@ -73,7 +73,7 @@
               </h5>
             </div>
             <div class="card-body">
-              <%= @talk.description&.html_safe %>
+              <%= sanitize(@talk.description) %>
             </div>
           </div>
         </div>

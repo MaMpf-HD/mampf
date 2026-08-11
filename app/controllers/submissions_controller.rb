@@ -1,5 +1,10 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
+  # Throttle group-join code entry so the short join token cannot be brute-forced.
+  rate_limit to: 10, within: 1.minute, only: [:join, :redeem_code],
+             by: -> { current_user&.id || request.remote_ip },
+             with: -> { redirect_to :start, alert: I18n.t("submission.too_many_attempts") }
+
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
                                           :redeem_code, :join, :cancel_new]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
@@ -10,7 +15,13 @@ class SubmissionsController < ApplicationController
   before_action :check_if_assignments, only: :index
   before_action :check_student_status, only: :index
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
+
   authorize_resource
+
+  class TutorialNotRosteredError < StandardError; end
+  rescue_from TutorialNotRosteredError do
+    redirect_to :start, alert: t("submission.tutorial_not_assigned")
+  end
 
   def current_ability
     @current_ability ||= SubmissionAbility.new(current_user)
@@ -41,6 +52,10 @@ class SubmissionsController < ApplicationController
 
   def create
     @submission = Submission.new(submission_create_params)
+    # authorize_resource only sees the Submission class here (no @submission is
+    # preloaded for :create), so re-authorize the built instance to run the
+    # enrollment check in SubmissionAbility.
+    authorize! :create, @submission
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
     @too_late = @submission.not_updatable?
@@ -69,6 +84,8 @@ class SubmissionsController < ApplicationController
   def update
     return if @too_late
 
+    update_params = submission_update_params
+
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
@@ -82,7 +99,7 @@ class SubmissionsController < ApplicationController
       @errors = @submission.errors
       return unless @submission.valid?
     end
-    @submission.update(submission_update_params)
+    @submission.update(update_params)
     if @submission.valid?
       @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == "true"
@@ -149,10 +166,9 @@ class SubmissionsController < ApplicationController
 
   def show_manuscript
     if @submission&.manuscript
-      send_file(@submission.manuscript.to_io,
-                type: @submission.manuscript_mime_type,
-                disposition: @disposition,
-                filename: @submission.manuscript_filename)
+      send_stored_file(@submission.manuscript,
+                       disposition: @disposition,
+                       fallback: @submission.manuscript_filename || "manuscript")
     elsif @submission
       redirect_to :start, alert: t("submission.no_manuscript_yet")
     else
@@ -162,10 +178,9 @@ class SubmissionsController < ApplicationController
 
   def show_correction
     if @submission&.correction
-      send_file(@submission.correction.to_io,
-                type: @submission.correction_mime_type,
-                disposition: @disposition,
-                filename: @submission.correction_filename)
+      send_stored_file(@submission.correction,
+                       disposition: @disposition,
+                       fallback: @submission.correction_filename || "correction")
     elsif @submission
       redirect_to :start, alert: t("submission.no_correction_yet")
     else
@@ -258,12 +273,24 @@ class SubmissionsController < ApplicationController
     end
 
     def submission_create_params
-      params.expect(submission: [:tutorial_id, :assignment_id])
+      permitted = params.expect(submission: [:tutorial_id, :assignment_id])
+      lecture = Assignment.find_by(id: permitted[:assignment_id])&.lecture
+      return permitted unless lecture&.roster_managed?
+
+      permitted.merge(tutorial_id: rostered_tutorial!(lecture).id)
     end
 
     # disallow modification of assignment
     def submission_update_params
+      lecture = @submission.assignment.lecture
+      # The form has no tutorial field in roster mode, so there is nothing to expect.
+      return { tutorial_id: rostered_tutorial!(lecture).id } if lecture&.roster_managed?
+
       params.expect(submission: [:tutorial_id])
+    end
+
+    def rostered_tutorial!(lecture)
+      current_user.rostered_tutorial_in(lecture) || raise(TutorialNotRosteredError)
     end
 
     # disallow modification of assignment
@@ -315,7 +342,9 @@ class SubmissionsController < ApplicationController
     end
 
     def send_invitation_emails
-      invitees = User.where(id: invitation_params[:invitee_ids])
+      requested_ids = invitation_params[:invitee_ids].map(&:to_i)
+      invitees = @submission.admissible_invitees(current_user)
+                            .select { |i| requested_ids.include?(i.id) }
       invitees.each do |i|
         NotificationMailer.with(recipient: i,
                                 locale: i.locale,
@@ -325,7 +354,7 @@ class SubmissionsController < ApplicationController
                           .submission_invitation_email.deliver_later
       end
       @submission.update(invited_user_ids: @submission.invited_user_ids |
-                                             invitees.pluck(:id))
+                                             invitees.map(&:id))
     end
 
     def send_upload_email(users)
@@ -390,7 +419,7 @@ class SubmissionsController < ApplicationController
         @error = I18n.t("submission.already_corrected")
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
-      elsif !@submission.tutorial.lecture.in?(current_user.lectures)
+      elsif !current_user.proper_student_in?(@submission.tutorial.lecture)
         @error = I18n.t("submission.lecture_not_subscribed")
       end
     end
@@ -398,6 +427,10 @@ class SubmissionsController < ApplicationController
     def check_code_and_join
       check_code_validity
       return if @error
+
+      # Joining by code (which is also how an invitation is accepted) would place
+      # the submission in a tutorial the user is not a member of.
+      rostered_tutorial!(@assignment.lecture) if @assignment.lecture.roster_managed?
 
       @join = UserSubmissionJoin.new(user: current_user,
                                      submission: @submission)

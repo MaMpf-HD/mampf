@@ -1,0 +1,341 @@
+require "rails_helper"
+
+RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: :service) do
+  around do |example|
+    I18n.with_locale(:en) { example.run }
+  end
+
+  let(:user) { FactoryBot.create(:user, email: "student@mampf.edu", locale: "en") }
+  let(:lecture) { FactoryBot.create(:lecture) }
+  let(:seminar) { FactoryBot.create(:seminar) }
+
+  describe "planning cohort registration" do
+    let(:campaign) do
+      create(:registration_campaign,
+             campaignable: seminar,
+             status: :draft,
+             allocation_mode: :first_come_first_served,
+             description: "Stage 1: Planning",
+             registration_deadline: 1.week.from_now)
+    end
+    let(:planning_cohort) do
+      create(:cohort,
+             context: seminar,
+             propagate_to_lecture: false,
+             capacity: nil)
+    end
+    let!(:item) do
+      create(:registration_item, registration_campaign: campaign, registerable: planning_cohort)
+    end
+    it "creates a confirmed registration" do
+      campaign.update!(status: :open)
+      service = described_class.new(campaign, user)
+
+      expect do
+        service.register!(item)
+      end.to change { Registration::UserRegistration.count }.by(1)
+
+      registration = Registration::UserRegistration.last
+      expect(registration.user).to eq(user)
+      expect(registration.registration_campaign).to eq(campaign)
+      expect(registration.registration_item).to eq(item)
+      expect(registration.status).to eq("confirmed")
+    end
+
+    it "fully deletes a registration on withdraw" do
+      campaign.update!(status: :open)
+      service = described_class.new(campaign, user)
+      register_result = service.register!(item)
+
+      expect(register_result.success?).to be(true)
+      expect(Registration::UserRegistration.first).to be_present
+      expect do
+        service.withdraw!(item)
+      end.to change { Registration::UserRegistration.count }.by(-1)
+    end
+  end
+
+  describe "tutorial campaign registration" do
+    let(:campaign) { FactoryBot.create(:registration_campaign, :open) }
+    let(:campaign_draft) do
+      create(:registration_campaign, :draft, :with_items)
+    end
+    let(:item) { campaign.registration_items.first }
+    let(:item2) { campaign.registration_items.second }
+
+    it "creates a confirmed registration when validations pass, case no user registration" do
+      service = described_class.new(campaign, user)
+
+      expect do
+        service.register!(item)
+      end.to change { Registration::UserRegistration.count }.by(1)
+
+      registration = Registration::UserRegistration.last
+      expect(registration.user).to eq(user)
+      expect(registration.registration_campaign).to eq(campaign)
+      expect(registration.registration_item).to eq(item)
+      expect(registration.status).to eq("confirmed")
+    end
+
+    it "serializes concurrent registrations for the same user and campaign" do
+      item_ids = Queue.new
+      [item.id, item2.id].each { |item_id| item_ids << item_id }
+
+      values = run_concurrently do
+        I18n.with_locale(:en) do
+          service = described_class.new(
+            Registration::Campaign.find(campaign.id),
+            User.find(user.id)
+          )
+
+          service.register!(Registration::Item.find(item_ids.pop))
+        end
+      end
+
+      expect(values).to all(be_a(UserRegistrations::Handler::Result))
+      expect(values.map(&:success?)).to contain_exactly(true, false)
+      expect(values.find { |result| !result.success? }.errors).to include(
+        I18n.t("registration.user_registration.messages.already_registered")
+      )
+      expect(Registration::UserRegistration.where(registration_campaign: campaign,
+                                                  user: user).count).to eq(1)
+    end
+
+    context "given preference based campaign" do
+      let(:campaign_pb) do
+        create(:registration_campaign, :open, allocation_mode: :preference_based)
+      end
+
+      it "raises error if campaign is in preference based mode" do
+        service = described_class.new(campaign_pb, user)
+        result = service.register!(item)
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.not_first_come_first_served_mode")
+        )
+      end
+    end
+
+    context "invalid cases" do
+      it "raises error if campaign is closed" do
+        service = described_class.new(campaign_draft, user)
+
+        result = service.register!(item)
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.campaign_not_opened")
+        )
+      end
+
+      it "raises error if user already registered for another item" do
+        Registration::UserRegistration.create!(
+          registration_campaign: campaign,
+          registration_item: item2,
+          user: user,
+          status: :confirmed
+        )
+
+        service = described_class.new(campaign, user)
+
+        result = service.register!(item)
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.already_registered")
+        )
+      end
+
+      it "rejects registration when the user cannot leave their current tutorial" do
+        add_only_tutorial = create(:tutorial,
+                                   lecture: campaign.campaignable,
+                                   skip_campaigns: true,
+                                   self_materialization_mode: :add_only)
+        add_only_tutorial.add_user_to_roster!(user)
+        service = described_class.new(campaign, user)
+
+        result = service.register!(item)
+
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.unremovable_assignment")
+        )
+      end
+
+      it "raises error if item has no capacity" do
+        item.registerable.update!(capacity: 0)
+        service = described_class.new(campaign, user)
+
+        result = service.register!(item)
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(I18n.t("registration.user_registration.messages.no_slots"))
+      end
+    end
+  end
+
+  describe "withdraw tutorial campaign" do
+    let(:campaign) { FactoryBot.create(:registration_campaign, :open) }
+    let(:item) { campaign.registration_items.first }
+    let(:item2) { campaign.registration_items.second }
+
+    context "given preference based campaign" do
+      let(:campaign_pb) do
+        create(:registration_campaign, :open, allocation_mode: :preference_based)
+      end
+
+      it "raises error if campaign is in preference based mode" do
+        service = described_class.new(campaign_pb, user)
+        result = service.withdraw!(item)
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.not_first_come_first_served_mode")
+        )
+      end
+    end
+
+    context "registered item" do
+      before do
+        Registration::UserRegistration.create!(
+          registration_campaign: campaign,
+          registration_item: item,
+          user: user,
+          status: :confirmed
+        )
+      end
+
+      it "deletes registration" do
+        service = described_class.new(campaign, user)
+        service.withdraw!(item)
+        expect(Registration::UserRegistration.first).to be_nil
+      end
+
+      it "raises error if campaign is closed" do
+        campaign.update!(status: :closed)
+        service = described_class.new(campaign, user)
+        result = service.withdraw!(item)
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.campaign_not_opened")
+        )
+      end
+    end
+
+    context "registered another item" do
+      before do
+        Registration::UserRegistration.create!(
+          registration_campaign: campaign,
+          registration_item: item2,
+          user: user,
+          status: :confirmed
+        )
+      end
+
+      it "returns an error if incorrect item is given" do
+        service = described_class.new(campaign, user)
+
+        result = service.withdraw!(item)
+
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(I18n.t("registration.user_registration.none"))
+      end
+    end
+  end
+
+  describe "take action on the campaign with predecessor and successor" do
+    let(:campaign_parent) do
+      FactoryBot.create(:registration_campaign, :open)
+    end
+    let(:campaign_child) do
+      FactoryBot.create(:registration_campaign, :open, :with_prerequisite_policy,
+                        parent_campaign: campaign_parent)
+    end
+    let(:item_child) { campaign_child.registration_items.first }
+    let(:item_parent) { campaign_parent.registration_items.first }
+
+    let(:policy) { campaign_child.registration_policies.find_by(kind: :prerequisite_campaign) }
+
+    before(:each) do
+      Registration::UserRegistration.delete_all
+    end
+
+    it "expect id of preq policy of child match parent id" do
+      expect(policy.config["prerequisite_campaign_id"]).to eq(campaign_parent.id)
+    end
+
+    it "fail to register child if parent has not been registered" do
+      service = described_class.new(campaign_child, user)
+      result = service.register!(item_child)
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(
+        I18n.t("registration.user_registration.messages.requirements_not_met")
+      )
+    end
+
+    it "success to register child if parent has been registered" do
+      service_parent = described_class.new(campaign_parent, user)
+      service_parent.register!(item_parent)
+      service = described_class.new(campaign_child, user)
+      result = service.register!(item_child)
+      expect(result.success?).to be(true)
+    end
+  end
+  describe "campaign with cohort and tutorial items" do
+    let(:campaign) do
+      create(:registration_campaign, :draft, campaignable: lecture)
+    end
+
+    let(:cohort) do
+      create(:cohort,
+             context: seminar,
+             propagate_to_lecture: true,
+             capacity: nil)
+    end
+
+    let(:tutorial) do
+      create(:tutorial,
+             lecture: lecture,
+             capacity: 20)
+    end
+
+    let!(:item_cohort) do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: cohort)
+    end
+
+    let!(:item_tutorial) do
+      create(:registration_item,
+             registration_campaign: campaign,
+             registerable: tutorial)
+    end
+
+    before do
+      campaign.update!(status: :open)
+    end
+
+    it "allows registering for cohort" do
+      service = described_class.new(campaign, user)
+      result = service.register!(item_cohort)
+      expect(result.success?).to be(true)
+      registration = Registration::UserRegistration.last
+      expect(registration.registration_item).to eq(item_cohort)
+      expect(registration.status).to eq("confirmed")
+    end
+
+    it "allow registering for cohort when tutorial registration is confirmed" do
+      Registration::UserRegistration.create!(
+        registration_campaign: campaign,
+        registration_item: item_tutorial,
+        user: user,
+        status: :confirmed
+      )
+      service = described_class.new(campaign, user)
+      result = service.register!(item_cohort)
+      expect(result.success?).to be(true)
+      registration1 = Registration::UserRegistration.last
+      registration2 = Registration::UserRegistration.second_to_last
+      expect([registration1.registration_item, registration2.registration_item])
+        .to include(item_cohort)
+      expect(registration1.status).to eq("confirmed")
+      expect(registration2.status).to eq("confirmed")
+    end
+  end
+end

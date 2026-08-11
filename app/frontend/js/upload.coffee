@@ -337,6 +337,33 @@ bulkCorrectionUpload = (fileInput) ->
     $('#bulk-upload-area').show()
     return
 
+uploadFailureMessage = (elementSelector, xhr) ->
+  prefix = $(elementSelector).data('tr-failure') || ''
+  detail = xhr?.responseText || xhr?.response || ''
+  detail = detail.toString().trim()
+
+  return prefix if detail.length == 0
+
+  prefix + ' ' + detail
+
+currentUploadLocale = () ->
+  locale = document.body?.dataset?.locale
+  locale?.toString().trim()
+
+localizedUploadEndpoint = (endpoint) ->
+  locale = currentUploadLocale()
+  return endpoint unless locale
+
+  url = new URL(endpoint, window.location.origin)
+  return endpoint if url.searchParams.get('locale')?
+
+  url.searchParams.set('locale', locale)
+
+  if /^https?:\/\//.test(endpoint)
+    url.toString()
+  else
+    url.pathname + url.search + url.hash
+
 
 ###
 directUpload provides an interface to upload (multiple) files to an endpoint
@@ -368,6 +395,7 @@ window.directUpload = (
   single
   ) ->
     initBootstrapPopovers()
+    localizedEndpoint = localizedUploadEndpoint(endpoint)
     hiddenInput = document.getElementById(hiddenInputElement)
     hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
     fileInput =document.getElementById(fileInputElement)
@@ -431,13 +459,11 @@ window.directUpload = (
               xhr2.onload= onload(xhr2)
               xhr2.onerror =onerror
               xhr.upload.onprogress = onprogress
-              xhr2.open('POST', endpoint, true)
+              xhr2.open('POST', localizedEndpoint, true)
               xhr2.send(formData)
           else
             console.log(xhr)
-            alert(
-              $(progressBarElement).data('tr-failure') + xhr.response
-            )
+            alert(uploadFailureMessage(progressBarElement, xhr))
         xhr.onload = onload(xhr)
 
         xhr.onerror = onerror
@@ -445,7 +471,7 @@ window.directUpload = (
         f = fileInput.files[0]
         formData = new FormData()
         formData.append("file", f, f.name)
-        xhr.open('POST', endpoint, true)
+        xhr.open('POST', localizedEndpoint, true)
         xhr.send formData
       else
         alert(
@@ -509,7 +535,6 @@ window.userManuscriptUpload = (fileInput) ->
 
   renderOptimization = (file) ->
     $('#multiple-files-selected').hide()
-    $('#files-merge').hide()
     name= file.name
     if file.name == undefined
       name =[f.name for f in filez].join(".")
@@ -535,10 +560,11 @@ window.userManuscriptUpload = (fileInput) ->
     else if file.type == 'application/pdf'
       if file.size > 20000000
         $('#file-size-way-too-big').show()
+        $('#file-permission-field').hide()
+        $('#submission-final-upload-dialogue').hide()
       else
         $('#file-size-too-big').show()
         $('#userManuscript-uploadButton-call').prop('disabled',false)
-      $('#file-optimize').show()
     else
       $('#file-size-way-too-big').show()
       $('#file-permission-field').hide()
@@ -549,14 +575,22 @@ window.userManuscriptUpload = (fileInput) ->
     if merged != undefined && result == undefined
       result = merged
     if result== undefined || newFile
-      result =document.getElementById('upload-userManuscript').files[0]
+      selectedFiles = document.getElementById('upload-userManuscript').files
+      if selectedFiles.length != 1
+        message = if selectedFiles.length > 1
+          $('#multiple-files-selected').text().trim()
+        else
+          $('#userManuscript-uploadButton-call').data('tr-failure')
+        alert(message)
+        return
+      result = selectedFiles[0]
     if $("#file-permission-checkbox").is(":checked")
       #Upload blob
       formData = new FormData()
       name =[f.name for f in filez].join(".")
       formData.append("file", result, name)
       xhr = new XMLHttpRequest()
-      xhr.open('POST', '/submissions/upload', true)
+      xhr.open('POST', localizedUploadEndpoint('/submissions/upload'), true)
       xhr.onload =  () ->
         if (xhr.status == 200)
           hiddenInput.value = xhr.responseText
@@ -572,10 +606,7 @@ window.userManuscriptUpload = (fileInput) ->
               .removeClass('btn-primary')
               .addClass 'btn-outline-secondary'
         else
-          alert(
-            $('#userManuscript-uploadButton-call').data('tr-failure')
-            + xhr.responseText
-          )
+          alert(uploadFailureMessage('#userManuscript-uploadButton-call', xhr))
       xhr.onerror = (e) ->
         alert(
           $('#userManuscript-uploadButton-call').data('tr-failure')
@@ -590,115 +621,6 @@ window.userManuscriptUpload = (fileInput) ->
         $('#userManuscript-uploadButton-call').data 'tr-missing-consent'
       )
 
-  $("#log-btn").on 'click',() ->
-    $("#userManuscript-optimize-log").toggle()
-  $("#log-merge-btn").on 'click',() ->
-    $("#userManuscript-merge-log").toggle()
-  $('#userManuscript-merge-btn').on 'click',(e) ->
-    e.preventDefault()
-    newFile = false
-
-    workingText = $('#userManuscript-merge-btn').data('tr-working')
-    $('#userManuscript-merge-btn').text(workingText)
-    $('#userManuscript-merge-btn').prop("disabled", true)
-    $('#userManuscript-merge-btn').removeClass('btn-primary')
-    .addClass 'btn-outline-secondary'
-
-    reader = new FileReader()
-    readFileIntoFiles = ->
-      if @result
-        arrayBuffer = @result
-        array = new Uint8Array(arrayBuffer)
-        console.log files.push(array)
-        reader.onload = readFileIntoFiles
-        if files.length < filez.length
-          reader.readAsArrayBuffer filez[files.length]
-        else
-          worker = new Worker('/pdfcomprezzor/worker.js')
-          worker.addEventListener 'message', ((e) ->
-            console.log(e.data)
-            if e.data.type == 'log'
-              $('#userManuscript-merge-btn').html(
-                workingText +
-                ".".repeat(progressOptimize + 1) +
-                "&nbsp;".repeat(2-progressOptimize)
-              )
-              progressOptimize = (progressOptimize+1)%3
-              $('#userManuscript-merge-log').append(
-                $("<div><small>" + e.data.message + "</div></small>")
-              )
-            if e.data.type == "result"
-              merged = new Blob([e.data.result], type: 'application/pdf')
-              $('#merging-help-text').hide()
-              renderOptimization(merged)
-          ), false
-          action = if files.length > 1 then 'merge' else 'compress'
-          r = worker.postMessage(
-            array: files
-            action: action)
-      return
-    reader.onload = readFileIntoFiles
-    reader.readAsArrayBuffer(filez[0])
-
-  $('#userManuscript-optimize-btn').on 'click',(e) ->
-    e.preventDefault()
-    newFile = false
-    file = document.getElementById('upload-userManuscript').files[0]
-    console.log file
-    workingText = $('#userManuscript-optimize-btn').data('tr-working')
-    $('#userManuscript-optimize-btn').text(workingText)
-    $('#userManuscript-optimize-btn').prop("disabled", true)
-    $('#userManuscript-optimize-btn').removeClass('btn-primary')
-    .addClass 'btn-outline-secondary'
-
-    reader = new FileReader()
-    reader.onload = () ->
-      arrayBuffer = this.result
-      array = new Uint8Array(arrayBuffer)
-      worker = new Worker('/pdfcomprezzor/worker.js')
-      worker.addEventListener 'message', ((e) ->
-        console.log 'Worker said: ', e
-        if e.data.type == 'log'
-          $('#userManuscript-optimize-btn').html(
-            workingText +
-            ".".repeat(progressOptimize + 1) +
-            "&nbsp;".repeat(2-progressOptimize)
-          )
-          progressOptimize = (progressOptimize+1)%3
-          $('#userManuscript-optimize-log').append(
-            $("<div><small>" + e.data.message + "</div></small>")
-          )
-        else if e.data.type == 'result'
-          $('#userManuscript-optimize-btn').text(
-            formatBytes(e.data.result.length)
-          )
-          result = new Blob([e.data.result], type: 'application/pdf')
-          $('#optimization-help-text').hide()
-          if e.data.result.length> 20000000
-            alert(
-              $('#userManuscript-optimize-btn').data 'tr-failed'
-            )
-          else
-            $('#userManuscript-uploadButton-call').prop('disabled',false)
-            name =[f.name for f in filez].join(".")
-            $("#userManuscriptMetadata").text(
-              name + "(" + formatBytes(result.size) + ")"
-            )
-            $('#userManuscript-uploadButton-call')
-              .removeClass('btn-outline-secondary')
-              .addClass 'btn-primary'
-            $('#file-size-correct').show()
-            $('#file-size-way-too-big').hide()
-            $('#file-size-too-big').hide()
-        return
-      ), false
-      worker.postMessage
-        array: [array]
-    if merged
-      reader.readAsArrayBuffer(merged)
-    else
-      reader.readAsArrayBuffer(file)
-
   $('#upload-userManuscript').change () ->
     $('#userManuscript-uploadButton-call').text $('#userManuscript-uploadButton-call').data('tr-upload')
     newFile = true
@@ -710,11 +632,8 @@ window.userManuscriptUpload = (fileInput) ->
     if this.files.length > 1
       $('#userManuscript-status').show(400)
       $('#multiple-files-selected').show()
-      $('#files-merge').show()
-      $('#file-size-correct').hide()
-      $('#file-size-way-too-big').hide()
-      $('#file-size-too-big').hide()
-      $('#file-optimize').hide()
+      $('#file-permission-field').hide()
+      $('#submission-final-upload-dialogue').hide()
       renderMultipleFiles()
     else
       renderOptimization(this.files[0])

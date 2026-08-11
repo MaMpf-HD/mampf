@@ -11,6 +11,51 @@
                           turbo_stream: true,
                           lecture_search_target: "form" } do |f| %>
 
+      <div id="lecture-search-term-filter"
+           class="btn-group mb-3"
+           role="group"
+           aria-label="<%= t('lecture.search.term_filter') %>">
+        <%= radio_button_tag "search[term_scope]", "current", false,
+                             class: "btn-check",
+                             id: "lecture-search-current-term",
+                             autocomplete: "off",
+                             data: {
+                               action: "pointerdown->lecture-search#rememberTermFilterState " \
+                                       "click->lecture-search#toggleTermFilter " \
+                                       "keydown.space->lecture-search#clearTermFilterWithKeyboard " \
+                                       "change->lecture-search#search"
+                             } %>
+        <%= label_tag "lecture-search-current-term",
+                      class: "btn btn-outline-primary lecture-search-term-filter-label",
+                      data: {
+                        action: "pointerdown->lecture-search#rememberTermFilterState " \
+                                "click->lecture-search#toggleTermFilter"
+                      } do %>
+           <i class="fas fa-check lecture-search-filter-check" aria-hidden="true"></i>
+          <span><%= t('lecture.search.current_term') %></span>
+        <% end %>
+
+        <%= radio_button_tag "search[term_scope]", "next", true,
+                             class: "btn-check",
+                             id: "lecture-search-next-term",
+                             autocomplete: "off",
+                             data: {
+                               action: "pointerdown->lecture-search#rememberTermFilterState " \
+                                       "click->lecture-search#toggleTermFilter " \
+                                       "keydown.space->lecture-search#clearTermFilterWithKeyboard " \
+                                       "change->lecture-search#search"
+                             } %>
+        <%= label_tag "lecture-search-next-term",
+                      class: "btn btn-outline-primary lecture-search-term-filter-label",
+                      data: {
+                        action: "pointerdown->lecture-search#rememberTermFilterState " \
+                                "click->lecture-search#toggleTermFilter"
+                      } do %>
+           <i class="fas fa-check lecture-search-filter-check" aria-hidden="true"></i>
+          <span><%= t('lecture.search.next_term') %></span>
+        <% end %>
+      </div>
+
       <div id="lecture-search-input-group">
         <%= f.text_field "search[fulltext]",
                           class: "form-control",

@@ -5,6 +5,7 @@ FactoryBot.define do
     association :term
 
     content_mode { "video" }
+    locale { "en" }
     sort { "lecture" }
 
     transient do

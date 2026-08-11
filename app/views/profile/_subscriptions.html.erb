@@ -48,6 +48,7 @@
         <div id="<%= 'program-' + p.id.to_s + '-collapse' %>"
              class="collapse programCollapse"
              data-program="<%= p.id %>"
+             data-action="show.bs.collapse->profile#moveCourseCardsIntoProgram"
              data-bs-parent="#subscriptionsAccordion">
           <div class="accordion-body">
             <%= render partial: 'profile/divisions',

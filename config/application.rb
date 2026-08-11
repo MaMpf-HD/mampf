@@ -14,6 +14,7 @@ module Mampf
     backend_paths = Rails.root.glob("app/models/**/")
     backend_paths -= Rails.root.glob("app/models/vignettes/**/")
     backend_paths -= Rails.root.glob("app/models/registration/**/")
+    backend_paths -= Rails.root.glob("app/models/rosters/**/")
     frontend_paths = Rails.root.glob("app/frontend/**/")
     # For ViewComponents to work correctly with namespaces, we only load the
     # main components directory, but not any subdirectories.
@@ -24,13 +25,14 @@ module Mampf
     config.eager_load_paths += load_paths
 
     # Autoload lib extensions path
-    config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "scrapers", "tasks"])
+    config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "tasks", "rubocop"])
 
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
     config.i18n.raise_on_missing_translations = false
     config.time_zone = "Berlin"
+    config.active_storage.variant_processor = :vips
 
     # Message serializing. Starting with Rails 7.2, the default is :json.
     # See: https://guides.rubyonrails.org/v7.1/configuring.html#config-active-support-message-serializer
@@ -55,28 +57,6 @@ module Mampf
         }
       }
     }
-    config.to_prepare do
-      # some monkey patches for sidekiq-cron
-      # see https://github.com/ondrejbartas/sidekiq-cron/issues/310
-      Sidekiq::Cron::Job.class_eval do
-        def self.all
-          job_hashes = nil
-          Sidekiq.redis do |conn|
-            set_members = conn.smembers(jobs_key)
-            job_hashes = conn.pipelined do |pipeline|
-              set_members.each do |key|
-                pipeline.hgetall(key)
-              end
-            end
-          end
-          job_hashes.compact.reject(&:empty?).collect do |h|
-            # no need to fetch missing args from redis since we just got
-            # this hash from there
-            Sidekiq::Cron::Job.new(h.merge(fetch_missing_args: false))
-          end
-        end
-      end
-    end
     # Make sure that our custom commontator controllers are loaded
     # instead of the default ones
     # see https://github.com/lml/commontator/issues/200#issuecomment-1231456146

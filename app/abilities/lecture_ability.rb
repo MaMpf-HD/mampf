@@ -1,5 +1,6 @@
 class LectureAbility
   include CanCan::Ability
+  include StudentRegistrationParticipant
 
   def initialize(user)
     clear_aliased_actions
@@ -33,6 +34,10 @@ class LectureAbility
 
     can :subscribe_page, Lecture do |lecture|
       lecture.published? || user.active_teachable_editor?
+    end
+
+    can [:self_materialize, :enroll], Lecture do |lecture|
+      student_registration_participant?(user, lecture)
     end
   end
 end

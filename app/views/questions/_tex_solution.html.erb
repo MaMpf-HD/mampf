@@ -7,7 +7,9 @@
   </div>
   <div class="col-12 text-center" id="solution-tex">
     $$
-      <%= solution.content.tex&.html_safe %>
+      <%# Default escaping is sufficient here because it forces pure text for KaTeX. %>
+      <%# Rails sanitize method would allow HTML tags that could break math rendering. %>
+      <%= solution.content.tex %>
     $$
   </div>
 </div>

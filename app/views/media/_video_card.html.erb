@@ -19,11 +19,8 @@
               </i>
             </a>
             <div class="download-button d-none d-md-block">
-              <a href="<%= medium.video_download_url %>"
-                 download="<%= video_download_file(medium) %>"
-                 class="triggerDownload"
-                 data-medium="<%= medium.id %>"
-                 data-sort="video">
+              <a href="<%= download_medium_path(medium, sort: "video") %>"
+                 data-turbo="false">
                 <span>
                   <span class="badge bg-secondary"
                         data-bs-toggle="tooltip"
@@ -41,7 +38,7 @@
     <% if medium.screenshot.present? %>
       <a href="<%= play_medium_path(medium) %>"
          target="_blank">
-         <%= image_tag medium.screenshot_url_with_host,
+         <%= image_tag screenshot_medium_path(medium, sort: "video"),
                        id: "screenshot-preview",
                        alt: t('basics.screenshot'),
                        class: "card-img-top video-thumbnail" %>

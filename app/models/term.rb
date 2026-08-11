@@ -58,6 +58,12 @@ class Term < ApplicationRecord
     Term.find_by(year: previous_year, season: previous_season)
   end
 
+  def next
+    next_year = season == "SS" ? year : year + 1
+    next_season = season == "SS" ? "WS" : "SS"
+    Term.find_by(year: next_year, season: next_season)
+  end
+
   def assignments
     Assignment.where(lecture: lectures)
   end

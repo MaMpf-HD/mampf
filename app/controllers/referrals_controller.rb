@@ -24,13 +24,18 @@ class ReferralsController < ApplicationController
   end
 
   def create
+    # Authorize before any side effect: update_item mutates a globally shared
+    # "link" Item, so it must not run until edit rights on the referral's medium
+    # are confirmed.
+    @referral = Referral.new(updated_params)
+    authorize! :create, @referral
+
     update_item if Item.find_by(id: @item_id)&.sort == "link"
     if @errors.present?
       render :update
       return
     end
-    @referral = Referral.new(updated_params)
-    authorize! :create, @referral
+
     @referral.save
     @errors = @referral.errors unless @referral.valid?
     render :update
@@ -59,11 +64,19 @@ class ReferralsController < ApplicationController
   def list_items
     authorize! :list_items, Referral.new
     teachable_id = params[:teachable_id].to_s.split("-")
+
+    allowed_types = {
+      "Course" => Course,
+      "Lecture" => Lecture,
+      "Lesson" => Lesson,
+      "Talk" => Talk
+    }
+
     if teachable_id[0] == "external"
       result = Item.where(medium: nil).pluck(:description, :id)
-    else
-      @teachable = teachable_id[0].constantize.find_by(id: teachable_id[1])
-      result = @teachable.media_items_with_inheritance
+    elsif allowed_types.key?(teachable_id[0])
+      @teachable = allowed_types[teachable_id[0]].find_by(id: teachable_id[1])
+      result = @teachable&.media_items_with_inheritance
     end
     result ||= Item.none
     render json: result.map { |i| { value: i.second, text: i.first } }

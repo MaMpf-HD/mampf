@@ -10,6 +10,30 @@
         padding: 8px 6px;
     }
 
+    .sidebar-item__label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.15rem;
+        min-width: 0;
+    }
+
+    .sidebar-item__badge {
+        display: inline-block;
+        min-width: 1.35rem;
+        height: 1.35rem;
+        padding: 0 0.35rem;
+        margin-left: 0.5rem;
+        border-radius: 999px;
+        background-color: #4E6ED9;
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1.35rem;
+        text-align: center;
+        flex-shrink: 0;
+        vertical-align: middle;
+    }
+
     &:hover {
         border-radius: 8px;
         background-color: #EBF0FE;

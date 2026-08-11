@@ -7,6 +7,15 @@ class ApplicationController < ActionController::Base
   include Pagy::Method
   include Flash
 
+  # Content types allowed to render inline in the browser. Anything else served
+  # inline is downgraded so a stored user blob whose real content is HTML/SVG/etc.
+  # cannot execute as our own origin (a content-sniffed text/html submission served
+  # inline would run as the viewing tutor).
+  INLINE_SAFE_MIME_TYPES = [
+    "application/pdf", "image/png", "image/jpeg", "image/gif",
+    "video/mp4", "application/zip"
+  ].freeze
+
   before_action :store_user_location!, if: :storable_location?
   # The callback which stores the current location must be added before you
   # authenticate the user as `authenticate_user!` (or whatever your resource is)
@@ -72,6 +81,21 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "Mon, 01 Jan 1990 00:00:00 GMT"
   end
 
+  # Helper to refresh the campaigns tab content via Turbo Stream
+  # NOTE: This should be moved to a better place once we refactor the
+  # whole streaming logic for campaigns and rosters (e.g. the StreamOrchestrator,
+  # see the docs).
+  def refresh_campaigns_index_stream(lecture)
+    return nil unless lecture
+
+    turbo_stream.update("campaigns_container",
+                        partial: "registration/campaigns/card_body_index",
+                        locals: {
+                          lecture: lecture,
+                          registration_section: params[:registration_section]
+                        })
+  end
+
   protected
 
     def configure_permitted_parameters
@@ -80,6 +104,39 @@ class ApplicationController < ActionController::Base
     end
 
   private
+
+    def download_path(file)
+      return file.storage.path(file.id) if file.storage.respond_to?(:path)
+
+      file.to_io.path
+    end
+
+    def send_stored_file(file, disposition:, fallback:)
+      mime_type = file.metadata["mime_type"].to_s.presence
+
+      if disposition == "inline" && mime_type &&
+         INLINE_SAFE_MIME_TYPES.exclude?(mime_type)
+        if mime_type.start_with?("text/")
+          mime_type = "text/plain; charset=utf-8"
+        else
+          disposition = "attachment"
+        end
+      end
+
+      options = { disposition: disposition, filename: stored_filename(file, fallback) }
+      options[:type] = mime_type if mime_type
+
+      # Serving hygiene: never let the browser content-type-sniff a stored
+      # upload (e.g. an mp4) into an executable/HTML interpretation.
+      response.headers["X-Content-Type-Options"] = "nosniff"
+      send_file(download_path(file), **options)
+    end
+
+    def stored_filename(file, fallback)
+      filename = File.basename(file.metadata["filename"].to_s.tr("\\", "/"))
+
+      ActiveStorage::Filename.wrap(filename.presence || fallback).sanitized
+    end
 
     # It's important that the location is NOT stored if:
     # - The request method is not GET (non idempotent)
@@ -101,6 +158,13 @@ class ApplicationController < ActionController::Base
     # https://stackoverflow.com/a/69313330/
     def set_current_user
       Current.user = current_user
+    end
+
+    def enqueue_consumption(medium_id, mode, sort)
+      ConsumptionSaver.perform_async(medium_id, mode, sort)
+    rescue StandardError => e
+      Rails.logger.error("Failed to enqueue consumption " \
+                         "medium_id=#{medium_id} mode=#{mode} sort=#{sort}: #{e.message}")
     end
 
     # Ensures that the current request is a Turbo Frame request.

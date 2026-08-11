@@ -16,6 +16,10 @@ class CourseAbility
       !user.generic?
     end
 
+    can :image, Course do
+      true
+    end
+
     can [:render_question_counter, :take_random_quiz], Course do |course|
       !user.generic? || course.subscribed_by?(user)
     end

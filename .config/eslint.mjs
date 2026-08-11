@@ -51,16 +51,16 @@ export default tseslint.config(
     // Globally ignore the following paths
     ignores: [
       "node_modules/",
-      "pdfcomprezzor/",
       "tmp/",
       "public/packs/",
       "public/packs-test/",
       "public/uploads/",
-      "public/pdfcomprezzor/",
       ...ignoreFilesWithSprocketRequireSyntax,
       ...ignoreCypressArchivedTests,
       "spec/cypress/**",
       "architecture/src/js/mermaid.min.js",
+      "architecture/book/**",
+      "app/frontend/js/mampf_routes.js"
     ],
   },
   {

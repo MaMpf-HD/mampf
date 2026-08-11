@@ -1,0 +1,6 @@
+<%= render RegistrationCampaignsCardBodyIndexComponent.new(
+             lecture: lecture,
+             new_campaign: local_assigns[:new_campaign],
+             registration_section: local_assigns[:registration_section] ||
+                                   params[:registration_section]
+           ) %>

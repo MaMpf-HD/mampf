@@ -19,7 +19,7 @@
     </div>
     <div class="card-body">
       <% unless chapter.details.blank? %>
-        <%= chapter.details.html_safe %>
+        <%= sanitize(chapter.details) %>
       <% end %>
       <ul class="list-group mt-2">
         <% chapter.sections.each do |s| %>

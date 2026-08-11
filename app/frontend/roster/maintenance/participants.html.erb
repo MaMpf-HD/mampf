@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "roster_participants_panel" do %>
+  <%= vite_stylesheet_tag "roster/roster.scss" %>
+
+  <%= render RosterParticipantsComponent.new(**@participants_component_args) %>
+<% end %>
