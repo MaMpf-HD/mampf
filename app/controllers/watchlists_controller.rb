@@ -35,17 +35,13 @@ class WatchlistsController < ApplicationController
     @watchlist = Watchlist.new
     @medium = Medium.find_by(id: params[:medium_id])
 
-    render template: "watchlists/_form",
-           locals: { watchlist: @watchlist, context: :new },
-           layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def edit
     authorize! :edit, @watchlist
 
-    render template: "watchlists/_form",
-           locals: { watchlist: @watchlist, context: :edit },
-           layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def create
@@ -69,13 +65,14 @@ class WatchlistsController < ApplicationController
             render turbo_stream: [turbo_stream.prepend("flash-messages",
                                                        partial: "flash/message"),
                                   turbo_stream.update("watchlist_form_add",
-                                                      template: "watchlists/_add_form")]
+                                                      partial: "watchlists/add_form")]
           end
         else
-          @context = :new
-          render turbo_stream: turbo_stream.update(turbo_frame_request_id,
-                                                   template: "watchlists/_form"),
-                 status: :unprocessable_content
+          render turbo_stream: turbo_stream.update(
+            turbo_frame_request_id,
+            partial: "watchlists/form",
+            locals: { watchlist: @watchlist, medium: @medium }
+          ), status: :unprocessable_content
         end
       end
     end
@@ -99,10 +96,11 @@ class WatchlistsController < ApplicationController
                                                 template: "watchlists/show",
                                                 locals: { watchlist: @watchlist })]
     else
-      render turbo_stream: turbo_stream.update(turbo_frame_request_id,
-                                               template: "watchlists/_form",
-                                               locals: { watchlist: @watchlist, context: :edit }),
-             status: :unprocessable_content
+      render turbo_stream: turbo_stream.update(
+        turbo_frame_request_id,
+        partial: "watchlists/form",
+        locals: { watchlist: @watchlist, medium: nil }
+      ), status: :unprocessable_content
     end
   end
 
@@ -123,9 +121,7 @@ class WatchlistsController < ApplicationController
     @watchlists = current_user.watchlists
     @medium = Medium.find_by(id: params[:medium_id])
 
-    render template: "watchlists/_add_form",
-           locals: { watchlist: @watchlist, context: :new },
-           layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def update_order
