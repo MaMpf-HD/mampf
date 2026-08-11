@@ -144,18 +144,15 @@ class WatchlistsController < ApplicationController
       entry.update(medium_position: index + shift)
     end
 
-    @watchlists = current_user.watchlists
-    @pagy, @watchlist_entries = paginated_results
-    @media = @watchlist_entries.pluck(:medium_id)
-
-    render template: "watchlists/show"
+    # The browser has already moved the card; it only needs to know we kept it.
+    head :no_content
   end
 
   def change_visibility
     authorize! :change_visibility, @watchlist
-    @watchlist.update(public: params[:public])
+    @watchlist.update!(public: params[:public])
 
-    render json: { success: @watchlist.public? }
+    head :no_content
   end
 
   private

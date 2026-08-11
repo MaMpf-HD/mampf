@@ -16,7 +16,7 @@ export default class extends Controller {
     });
   }
 
-  updateOrder(id) {
+  async updateOrder(id) {
     const params = new URLSearchParams(window.location.search);
     const order = Array.from(
       this.element.querySelectorAll(".media-grid"),
@@ -24,10 +24,10 @@ export default class extends Controller {
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
 
-    fetch("/watchlists/rearrange", {
+    const response = await fetch("/watchlists/rearrange", {
       method: "PATCH",
       headers: {
-        "Accept": "text/html",
+        "Accept": "application/json",
         "Content-Type": "application/json",
         "X-CSRF-Token": csrfToken,
       },
@@ -39,5 +39,9 @@ export default class extends Controller {
         page: params.get("page") || "1",
       }),
     });
+
+    if (!response.ok) {
+      console.error(`watchlist-sortable: the new order was not saved (${response.status})`);
+    }
   }
 }
