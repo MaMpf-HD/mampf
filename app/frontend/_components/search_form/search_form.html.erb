@@ -1,8 +1,8 @@
 <%= form_with url: url,
               scope: scope,
               method: method,
-              data: { 
-                turbo_frame: "#{context}-search-results",
+              data: {
+                turbo_frame: turbo_frame,
                 controller: "search-form"
               },
               html: { 
