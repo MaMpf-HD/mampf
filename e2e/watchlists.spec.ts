@@ -17,7 +17,7 @@ test.describe("create Watchlists", () => {
 
   test("can not create watchlist with duplicate name", async ({ factory, student: { page, user } }) => {
     const watchlistName = "Duplicate Name Watchlist";
-    await factory.create("watchlist", [], { user: user, name: watchlistName });
+    await factory.create("watchlist", [], { user_id: user.id, name: watchlistName });
     const watchlistsPage = new WatchlistsPage(page);
     await watchlistsPage.goto();
     await watchlistsPage.createWatchlist(watchlistName, "Second watchlist with the same name.", false);
@@ -27,7 +27,7 @@ test.describe("create Watchlists", () => {
 
 test.describe("edit Watchlists", () => {
   test("can change watchlist name and description", async ({ factory, student: { page, user } }) => {
-    await factory.create("watchlist", [], { user: user });
+    await factory.create("watchlist", [], { user_id: user.id });
     const watchlistsPage = new WatchlistsPage(page);
     await watchlistsPage.goto();
     await watchlistsPage.editWatchlist("Updated Watchlist Name", "Updated description.");
@@ -38,7 +38,7 @@ test.describe("edit Watchlists", () => {
   });
 
   test("can change visibility of watchlist", async ({ factory, student: { page, user } }) => {
-    const watchlist = await factory.create("watchlist", [], { user: user });
+    const watchlist = await factory.create("watchlist", [], { user_id: user.id });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
     await watchlistsPage.goto();
     await expect(watchlistsPage.isPublic()).resolves.toBe(false);
@@ -49,8 +49,8 @@ test.describe("edit Watchlists", () => {
   });
 
   test("can delete watchlist", async ({ factory, student: { page, user } }) => {
-    const watchlist1 = await factory.create("watchlist", [], { user: user, name: "Watchlist 1" });
-    await factory.create("watchlist", [], { user: user, name: "Watchlist 2" });
+    const watchlist1 = await factory.create("watchlist", [], { user_id: user.id, name: "Watchlist 1" });
+    await factory.create("watchlist", [], { user_id: user.id, name: "Watchlist 2" });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist1.id}`);
     await watchlistsPage.goto();
     await watchlistsPage.deleteWatchlist();
@@ -60,7 +60,7 @@ test.describe("edit Watchlists", () => {
   });
 
   test("can not delete watchlist when deletion is cancelled", async ({ factory, student: { page, user } }) => {
-    const watchlist = await factory.create("watchlist", [], { user: user, name: "Watchlist to Delete" });
+    const watchlist = await factory.create("watchlist", [], { user_id: user.id, name: "Watchlist to Delete" });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
     await watchlistsPage.goto();
     await watchlistsPage.deleteWatchlist(false);
@@ -71,7 +71,7 @@ test.describe("edit Watchlists", () => {
 test.describe("view Watchlists", () => {
   test("can view public watchlist of other user", async ({ factory, student: { page }, student2: { user: student2User, page: student2Page } }) => {
     const publicWatchlist = await factory.create("watchlist", [], {
-      user: student2User,
+      user_id: student2User.id,
       public: true,
       name: "Public Watchlist",
     });
@@ -86,7 +86,7 @@ test.describe("view Watchlists", () => {
 
   test("can not view private watchlist of other user", async ({ factory, student: { page }, student2: { user: student2User } }) => {
     const privateWatchlist = await factory.create("watchlist", [], {
-      user: student2User,
+      user_id: student2User.id,
       public: false,
       name: "Private Watchlist",
     });
@@ -96,7 +96,7 @@ test.describe("view Watchlists", () => {
   });
 
   test("can drag and drop watchlist entries to change their order", async ({ factory, student: { page, user } }) => {
-    const watchlist = await factory.create("watchlist", [], { user: user });
+    const watchlist = await factory.create("watchlist", [], { user_id: user.id });
     const medium1 = await factory.create("lecture_medium", ["released"]);
     const medium2 = await factory.create("lecture_medium", ["released"]);
     const medium3 = await factory.create("lecture_medium", ["released"]);
@@ -117,15 +117,20 @@ test.describe("view Watchlists", () => {
     });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
     await watchlistsPage.goto();
+    const saved = page.waitForResponse(r => r.url().includes("/watchlists/rearrange"));
     await watchlistsPage.swapEntries(entry1.id, entry2.id);
     const newOrder = [entry2.id, entry1.id, entry3.id];
-    await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(newOrder);
+    await expect.poll(() => watchlistsPage.getEntryOrder()).toEqual(newOrder);
+
+    // the new order is saved in the background; reloading before it lands
+    // would read the old one back
+    await saved;
     await page.reload();
-    await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(newOrder);
+    await expect.poll(() => watchlistsPage.getEntryOrder()).toEqual(newOrder);
   });
 
-  test("can not drag and drop watchlist entries, when other user owns the watchlist", async ({ factory, student: { page }, student2: { user: student2User, page: student2Page } }) => {
-    const watchlist = await factory.create("watchlist", [], { user: student2User, public: true });
+  test("can not drag and drop watchlist entries, when other user owns the watchlist", async ({ factory, student: { page }, student2: { user: student2User } }) => {
+    const watchlist = await factory.create("watchlist", [], { user_id: student2User.id, public: true });
     const medium1 = await factory.create("lecture_medium", ["released"]);
     const medium2 = await factory.create("lecture_medium", ["released"]);
     const medium3 = await factory.create("lecture_medium", ["released"]);
@@ -154,7 +159,7 @@ test.describe("view Watchlists", () => {
   });
 
   test("can reverse order of watchlist with button", async ({ factory, student: { page, user } }) => {
-    const watchlist = await factory.create("watchlist", [], { user: user });
+    const watchlist = await factory.create("watchlist", [], { user_id: user.id });
     const medium1 = await factory.create("lecture_medium", ["released"]);
     const medium2 = await factory.create("lecture_medium", ["released"]);
     const medium3 = await factory.create("lecture_medium", ["released"]);
@@ -177,8 +182,7 @@ test.describe("view Watchlists", () => {
     await watchlistsPage.goto();
     await page.getByRole("link", { name: "reverse order" }).click();
     const newOrder = [entry3.id, entry2.id, entry1.id];
-    await page.waitForResponse(response => response.url().includes("/watchlists") && response.status() === 200);
-    await expect(watchlistsPage.getEntryOrder()).resolves.toEqual(newOrder);
+    await expect.poll(() => watchlistsPage.getEntryOrder()).toEqual(newOrder);
   });
 });
 
@@ -191,7 +195,7 @@ test.describe("manage Watchlist entries", () => {
       ["with_lecture_by_id", "with_manuscript", "released"],
       { lecture_id: lecture.id, sort: "Script" },
     );
-    const watchlist = await factory.create("watchlist", [], { user: user });
+    const watchlist = await factory.create("watchlist", [], { user_id: user.id });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
 
     const lecturePage = new LecturePage(page, lecture.id);
@@ -211,7 +215,7 @@ test.describe("manage Watchlist entries", () => {
       ["with_lecture_by_id", "with_manuscript", "released"],
       { lecture_id: lecture.id, sort: "Script" },
     );
-    const watchlist = await factory.create("watchlist", [], { user: user });
+    const watchlist = await factory.create("watchlist", [], { user_id: user.id });
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
 
     const lecturePage = new LecturePage(page, lecture.id);
@@ -223,7 +227,7 @@ test.describe("manage Watchlist entries", () => {
   });
 
   test("can delete watchlist entry", async ({ factory, student: { page, user } }) => {
-    const watchlist = await factory.create("watchlist", [], { user: user });
+    const watchlist = await factory.create("watchlist", [], { user_id: user.id });
     const medium = await factory.create("lecture_medium", ["released"]);
     await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
@@ -235,7 +239,7 @@ test.describe("manage Watchlist entries", () => {
     await expect(page.getByRole("alert").filter({ hasText: "The medium was removed from" })).toBeVisible();
   });
   test("can not delete watchlist entry when deletion is cancelled", async ({ factory, student: { page, user } }) => {
-    const watchlist = await factory.create("watchlist", [], { user: user });
+    const watchlist = await factory.create("watchlist", [], { user_id: user.id });
     const medium = await factory.create("lecture_medium", ["released"]);
     await factory.create("watchlist_entry", [], {
       watchlist_id: watchlist.id,
