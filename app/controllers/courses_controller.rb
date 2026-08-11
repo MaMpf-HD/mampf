@@ -35,13 +35,17 @@ class CoursesController < ApplicationController
                                   course: @course.title,
                                   editors: @course.editors.map(&:name)
                                                           .join(", "))
+      courses = current_user.edited_courses.natural_sort_by(&:title)
+
       render turbo_stream: [
         stream_flash,
         turbo_stream.update(Course.new, ""),
         turbo_stream.update("courses",
                             partial: "administration/index/courses_card",
-                            locals: { courses: current_user.edited_courses
-                                                      .natural_sort_by(&:title) })
+                            locals: { courses: courses }),
+        turbo_stream.replace("courses-count",
+                             partial: "administration/index/courses_count",
+                             locals: { count: courses.size })
       ]
     else
       render turbo_stream: turbo_stream.update(Course.new,

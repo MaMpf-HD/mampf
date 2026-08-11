@@ -16,16 +16,13 @@
       <%= f.label :title, t('basics.title'),
                   class: "form-label" %>
       <%= helpdesk(t('admin.course.info.title'), false) %>
-      <%= f.text_field :title, { class: "form-control",
-                                id: 'new_course_title' } %>
-
+      <%= f.text_field :title, { class: "form-control" } %>
     </div>
     <div class="col-12 mb-3">
       <%= f.label :short_title, t('basics.short_title'),
                   class: "form-label" %>
       <%= helpdesk(t('admin.course.info.short_title'), false) %>
-      <%= f.text_field :short_title, { class: "form-control",
-                                id: 'new_course_short_title' } %>
+      <%= f.text_field :short_title, { class: "form-control" } %>
     </div>
     <div class="col-12 mb-3">
       <%= f.label :editor_ids,

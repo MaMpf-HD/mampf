@@ -25,10 +25,13 @@ test("can set editor in course", async ({ factory, admin: { page }, teacher: { u
 test("can create course", async ({ admin: { page } }) => {
   await page.goto("/administration");
   await page.getByTitle("Create Course").click();
-  await page.locator('input[name="course[title]"]').fill("Lineare Algebra I");
-  await page.locator('input[name="course[short_title]"]').fill("LA I");
-  await page.locator("#new-course-form").getByRole("button", { name: "Save" }).click();
+  const form = page.locator("#new-course-form");
+  await form.getByLabel("Title", { exact: true }).fill("Lineare Algebra I");
+  await form.getByLabel("Short title").fill("LA I");
+  await form.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("link", { name: "Lineare Algebra I" })).toBeVisible();
+  // the count sits outside the list frame and has to be streamed along
+  await expect(page.locator("#courses-count")).toHaveText("(1)");
 });
 
 // One creation at a time: both cards' plus buttons step aside for either form.

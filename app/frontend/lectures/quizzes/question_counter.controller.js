@@ -5,12 +5,14 @@ export default class extends Controller {
   static values = { url: String };
 
   async selectionChanged() {
+    // A reply still in flight would otherwise overwrite whatever we do next.
+    this.abortController?.abort();
+
     if (this.selectTarget.selectedOptions.length === 0) {
       this.counterTarget.replaceChildren();
       return;
     }
 
-    this.abortController?.abort();
     this.abortController = new AbortController();
 
     const url = new URL(this.urlValue, window.location.href);
