@@ -4042,6 +4042,9 @@ en:
             medium_id:
               taken:
                 is already in this watchlist.
+            watchlist:
+              required: >
+                must be created first.
         watchlist:
           attributes:
             name:

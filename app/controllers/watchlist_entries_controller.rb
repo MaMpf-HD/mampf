@@ -11,7 +11,10 @@ class WatchlistEntriesController < ApplicationController
     @medium = Medium.find_by(id: params[:watchlist_entry][:medium_id])
     @watchlist_entry.medium = @medium
 
-    authorize! :create, @watchlist_entry
+    # Authorization is about the watchlist. Without one there is nothing to
+    # decide and nothing gets created either, so let validation say so instead
+    # of throwing the person out of the modal.
+    authorize!(:create, @watchlist_entry) if @watchlist_entry.watchlist
 
     unless @watchlist_entry.valid?
       return render turbo_stream: turbo_stream.update("watchlist_form_add",

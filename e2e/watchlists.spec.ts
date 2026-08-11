@@ -247,3 +247,26 @@ test.describe("manage Watchlist entries", () => {
     await expect(page.getByRole("alert").filter({ hasText: "The medium was removed from" })).not.toBeVisible();
   });
 });
+
+test.describe("watchlist entries without a watchlist", () => {
+  test("keeps the dialog open and says what is missing", async ({
+    factory,
+    student: { page },
+    teacher: { user: teacheruser },
+  }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"],
+      { teacher_id: teacheruser.id, content_mode: "manuscript" });
+    const medium = await factory.create("lecture_medium",
+      ["with_lecture_by_id", "with_manuscript", "released"],
+      { lecture_id: lecture.id, sort: "Script" });
+
+    const lecturePage = new LecturePage(page, lecture.id);
+    await lecturePage.subscribe();
+    await lecturePage.gotoManuscript();
+    await page.locator(`a[href="/watchlists/add_medium/${medium.id}"]`).click();
+    await page.getByRole("button", { name: "Add to my watchlist" }).click();
+
+    await expect(page.getByText("Watchlist must be created first")).toBeVisible();
+    await expect(page.locator("#addWatchlistModal")).toBeVisible();
+  });
+});
