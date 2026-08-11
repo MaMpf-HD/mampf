@@ -138,7 +138,7 @@ Rails.application.routes.draw do
       to: "courses#image",
       as: "image_course"
 
-  resources :courses, except: [:index, :show, :new]
+  resources :courses, except: [:index, :show]
 
   # divisions routes
 

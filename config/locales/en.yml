@@ -2360,12 +2360,10 @@ en:
       exist.
     question_tags: >
       Available tags
-    questions_for_tags: >
-      %{count} questions have been found for the selected tags.
-    question_for_tags: >
-      One question has been found for the selected tags.
-    no_question_for_tags: >
-      No question has been found for the selected_tags.
+    questions_for_tags:
+      zero: 'No question has been found for the selected tags.'
+      one: 'One question has been found for the selected tags.'
+      other: '%{count} questions have been found for the selected tags.'
     quiz_shortened: >
       The test will be shortened, therefore.
     level:
