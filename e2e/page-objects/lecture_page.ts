@@ -1,4 +1,4 @@
-import { Page } from "../_support/fixtures";
+import { expect, Page } from "../_support/fixtures";
 
 export class LecturePage {
   readonly page: Page;
@@ -23,7 +23,9 @@ export class LecturePage {
 
   async subscribe() {
     await this.goto();
-    await this.page.getByRole("button", { name: "subscribe event series" }).click();
+    const subscribeButton = this.page.getByRole("button", { name: "subscribe lecture" });
+    await subscribeButton.click();
+    await expect(subscribeButton).toHaveCount(0);
   }
 
   async addMediaToWatchlist(mediumID: number, watchlistName: string, submit = true) {

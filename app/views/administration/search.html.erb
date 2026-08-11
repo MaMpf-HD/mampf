@@ -63,8 +63,7 @@
     </div>
     <div id="courseSearchArea">
       <%= render partial: 'search/course_search_form' %>
-      <div id="course-search-results">
-      </div>
+      <%= turbo_frame_tag "courses-search-results" %>
     </div>
   </div>
   <div class="tab-pane fade <%= show_tab(@tags) %>" id="tag_search">

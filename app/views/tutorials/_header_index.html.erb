@@ -76,12 +76,14 @@
                                         class: 'btn btn-primary ms-3',
                                         id: 'export-teams' %>
 <% end %>
-<%# Certificate check button %>
-<%= link_to t('tutorial.certificate_check'),
-            validate_certificate_as_tutor_path( params:
-                                                  { lecture_id: @lecture.id }),
-                                                class: 'btn btn-primary ms-3',
-                                                remote: true %>
+<% if Flipper.enabled?(:quiz_certificates) %>
+  <%# Certificate check button %>
+  <%= link_to t('tutorial.certificate_check'),
+              validate_certificate_as_tutor_path( params:
+                                                    { lecture_id: @lecture.id }),
+                                                  class: 'btn btn-primary ms-3',
+                                                  remote: true %>
+<% end %>
 <% if current_user.in?(@tutorial.tutors) %>
   <%# Deadline and grace period warnings %>
   <% if @assignment.active? || @assignment.in_grace_period? %>

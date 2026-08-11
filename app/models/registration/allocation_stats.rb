@@ -1,0 +1,172 @@
+module Registration
+  class AllocationStats
+    attr_reader :total_registrations, :assigned_users, :unassigned_users,
+                :rejected_users, :eligible_users, :global_avg_rank,
+                :percent_top_choice,
+                :preference_counts, :items, :unassigned_user_ids,
+                :rejected_user_ids
+
+    def initialize(campaign, assignment, rejected_user_ids: [])
+      @campaign = campaign
+      @assignment = assignment
+      @rejected_user_ids = Array(rejected_user_ids).uniq
+      calculate
+    end
+
+    def assigned_percentage
+      return 0 if eligible_users.zero?
+
+      (assigned_users.to_f / eligible_users * 100)
+    end
+
+    def unassigned_percentage
+      return 0 if total_registrations.zero?
+
+      (unassigned_users.to_f / total_registrations * 100)
+    end
+
+    def percentage_of_assigned(count)
+      return 0 unless assigned_users.positive?
+
+      (count.to_f / assigned_users * 100)
+    end
+
+    def item_stats
+      mapped_items = @campaign.registration_items.includes(:registerable).map do |item|
+        stats = @items[item.id] || { count: 0 }
+        capacity = item.capacity
+        {
+          item: item,
+          count: stats[:count],
+          capacity: capacity,
+          percentage: if capacity.present? && capacity.positive?
+                        (stats[:count].to_f / capacity * 100)
+                      end
+        }
+      end
+
+      mapped_items.sort_by do |data|
+        Rosters::RegisterableOrdering.item_sort_key(data[:item])
+      end
+    end
+
+    private
+
+      def calculate
+        if @campaign.first_come_first_served?
+          calculate_first_come_first_served
+        else
+          calculate_preference_based
+        end
+      end
+
+      def calculate_first_come_first_served
+        @total_registrations = @campaign.total_registrations_count
+        @assigned_users = @assignment.size
+
+        # In first-come-first-served mode, unassigned users are those who have
+        # registrations but are not in the assignment list (e.g. rejected or pending if any)
+        all_user_ids = @campaign.user_registrations.distinct.pluck(:user_id)
+        @rejected_user_ids &= all_user_ids
+        @rejected_users = @rejected_user_ids.size
+        @eligible_users = all_user_ids.size - @rejected_users
+        @unassigned_user_ids = all_user_ids - @assignment.keys - @rejected_user_ids
+        @unassigned_users = @unassigned_user_ids.size
+
+        @preference_counts = Hash.new(0)
+        @items = {}
+        @global_avg_rank = 0
+        @percent_top_choice = 0
+
+        @assignment.each_value do |item_id|
+          update_item_stats(item_id, :first_come_first_served)
+        end
+      end
+
+      def calculate_preference_based
+        user_preferences = @campaign.user_registrations
+                                    .where.not(preference_rank: nil)
+                                    .includes(:registration_item)
+                                    .order(:preference_rank)
+                                    .group_by(&:user_id)
+                                    .transform_values do |regs|
+          regs.map(&:registration_item_id)
+        end
+
+        @total_registrations = user_preferences.keys.size
+        @assigned_users = @assignment.size
+        @rejected_user_ids &= user_preferences.keys
+        @rejected_users = @rejected_user_ids.size
+        @eligible_users = user_preferences.keys.size - @rejected_users
+        @unassigned_user_ids = user_preferences.keys - @assignment.keys - @rejected_user_ids
+        @unassigned_users = @unassigned_user_ids.size
+        @preference_counts = Hash.new(0)
+        @items = {}
+        @global_avg_rank = 0
+        @percent_top_choice = 0
+
+        @assignment.each do |user_id, item_id|
+          process_assignment(user_id, item_id, user_preferences)
+        end
+
+        calculate_averages
+        calculate_global_metrics
+      end
+
+      def process_assignment(user_id, item_id, user_preferences)
+        prefs = user_preferences[user_id] || []
+        rank_index = prefs.index(item_id)
+        rank = rank_index ? rank_index + 1 : :forced
+
+        @preference_counts[rank] += 1
+        update_item_stats(item_id, rank)
+      end
+
+      def update_item_stats(item_id, rank)
+        @items[item_id] ||= { count: 0, sum_rank: 0, forced: 0 }
+        @items[item_id][:count] += 1
+
+        if rank == :forced
+          @items[item_id][:forced] += 1
+        elsif rank == :first_come_first_served
+          # No rank stats for first-come-first-served campaigns
+        else
+          @items[item_id][:sum_rank] += rank
+        end
+      end
+
+      def calculate_averages
+        @items.each_value do |data|
+          valid_ranks = data[:count] - data[:forced]
+          data[:avg_rank] = if valid_ranks.positive?
+            (data[:sum_rank].to_f / valid_ranks).round(2)
+          else
+            0
+          end
+          data.delete(:sum_rank)
+        end
+      end
+
+      def calculate_global_metrics
+        return if @assigned_users.zero?
+
+        # Global Average Rank (lower is better)
+        # We exclude forced assignments from the average to avoid skewing
+        sum_rank = @preference_counts.sum do |rank, count|
+          rank == :forced ? 0 : rank * count
+        end
+
+        non_forced = @assigned_users - (@preference_counts[:forced] || 0)
+
+        @global_avg_rank = if non_forced.positive?
+          (sum_rank.to_f / non_forced).round(2)
+        else
+          0
+        end
+
+        # Percent Top Choice
+        top_choice_count = @preference_counts[1] || 0
+        @percent_top_choice = (top_choice_count.to_f / @assigned_users * 100).round(2)
+      end
+  end
+end

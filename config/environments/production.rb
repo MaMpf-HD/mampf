@@ -33,9 +33,9 @@ Rails.application.configure do
   # Cache assets for far-future expiry since they are all digest stamped.
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
 
-  # Specifies the header that your server uses for sending files.
-  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
-  config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
+  # Specifies the header that your proxy uses for sending files.
+  config.action_dispatch.x_sendfile_header =
+    ENV.fetch("ACTION_DISPATCH_X_SENDFILE_HEADER", "X-Accel-Redirect")
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :production
@@ -48,8 +48,14 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
-  # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.ssl_options = {
+    hsts: false,
+    redirect: {
+      exclude: lambda do |request|
+        ["/up", "/ready"].include?(request.path)
+      end
+    }
+  }
 
   # Log to STDOUT with the current request id as a default log tag.
   if ENV["RAILS_LOG_TO_STDOUT"].present?
@@ -86,7 +92,10 @@ Rails.application.configure do
 
   config.action_mailer.smtp_settings = {
     address: ENV.fetch("MAILSERVER"),
-    port: 25,
+    port: ENV.fetch("MAILSERVER_PORT", "587").to_i,
+    authentication: :plain,
+    enable_starttls_auto: true,
+    openssl_verify_mode: "peer",
     user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),
     password: ENV.fetch("MAMPF_EMAIL_PASSWORD")
   }
@@ -100,20 +109,17 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.after_initialize do
-    production_name = ENV.fetch("PRODUCTION_NAME", nil)
-    Rails.logger.info("PRODUCTION_NAME: #{production_name}")
+    instance_name = ENV.fetch("INSTANCE_NAME", nil)
+    Rails.logger.info("INSTANCE_NAME: #{instance_name}")
   end
 
   # See https://github.com/rails/rails/issues/52728
   config.active_record.attributes_for_inspect = :all
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.hosts = [ENV.fetch("URL_HOST")]
+  # Skip host authorization for the health/readiness probes (reached with a non-domain Host).
+  config.host_authorization = { exclude: ->(request) { ["/up", "/ready"].include?(request.path) } }
 
   Rails.application.config.active_support.to_time_preserves_timezone = :offset
 end

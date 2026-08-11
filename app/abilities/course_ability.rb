@@ -4,7 +4,7 @@ class CourseAbility
   def initialize(user)
     clear_aliased_actions
 
-    can [:create, :destroy], Course do
+    can [:new, :create, :destroy], Course do
       user.admin?
     end
 
@@ -14,6 +14,10 @@ class CourseAbility
 
     can [:search], Course do
       !user.generic?
+    end
+
+    can :image, Course do
+      true
     end
 
     can [:render_question_counter, :take_random_quiz], Course do |course|

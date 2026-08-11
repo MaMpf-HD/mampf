@@ -1,0 +1,6 @@
+<%= @message.body %>
+
+--
+<%= t("mailer.student_message_footer",
+      sender: @message.sender.name,
+      lecture: @lecture.title_for_viewers) %>

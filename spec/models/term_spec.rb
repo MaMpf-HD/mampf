@@ -104,4 +104,36 @@ RSpec.describe(Term, type: :model) do
   #     expect(term.to_label_short).to eq('SS 17')
   #   end
   # end
+
+  describe "#next" do
+    context "when term is a summer term" do
+      it "returns the winter term of the same year" do
+        summer = create(:term, season: "SS", year: 2023)
+        winter = create(:term, season: "WS", year: 2023)
+
+        expect(summer.next).to eq(winter)
+      end
+
+      it "returns nil if next term does not exist" do
+        summer = create(:term, season: "SS", year: 2023)
+
+        expect(summer.next).to be_nil
+      end
+    end
+
+    context "when term is a winter term" do
+      it "returns the summer term of the next year" do
+        winter = create(:term, season: "WS", year: 2023)
+        next_summer = create(:term, season: "SS", year: 2024)
+
+        expect(winter.next).to eq(next_summer)
+      end
+
+      it "returns nil if next term does not exist" do
+        winter = create(:term, season: "WS", year: 2023)
+
+        expect(winter.next).to be_nil
+      end
+    end
+  end
 end

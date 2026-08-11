@@ -1,8 +1,44 @@
 require "rails_helper"
 
 RSpec.describe(User, type: :model) do
+  def fixture_file(name)
+    Rails.root.join(SPEC_FILES, name).open("rb")
+  end
+
   it "has a valid factory" do
     expect(FactoryBot.build(:user)).to be_valid
+  end
+
+  it "uses the profile image uploader for user images" do
+    user = build(:user)
+    file = fixture_file("image.png")
+
+    user.image = file
+
+    expect(user.image_attacher).to be_a(ProfileimageUploader::Attacher)
+    expect(user).to be_valid
+    expect(user.image.metadata["mime_type"]).to eq("image/png")
+  ensure
+    file&.close
+  end
+
+  it "rejects forged clean-scan metadata on cached profile images" do
+    cached_upload = ProfileimageUploader.upload(
+      fixture_file("image.png"),
+      :cache
+    )
+    user = build(:user)
+    forged_data = cached_upload.data.deep_dup
+    forged_data["metadata"]["malware_scan"] = { "status" => "clean" }
+
+    user.image = forged_data.to_json
+
+    expect(user).not_to be_valid
+    expect(user.errors[:image]).to include(
+      I18n.t("submission.upload_failure_scan_required", locale: I18n.locale)
+    )
+  ensure
+    cached_upload&.delete
   end
 
   # test validations - SOME ARE MISSING
@@ -49,6 +85,26 @@ RSpec.describe(User, type: :model) do
     it "has correct number of lectures when called with lecture_count param" do
       user = FactoryBot.build(:user, :with_lectures, lecture_count: 3)
       expect(user.lectures.size).to eq(3)
+    end
+  end
+
+  describe "#rostered_tutorial_in" do
+    let(:lecture)   { create(:lecture) }
+    let(:tutorial)  { create(:tutorial, lecture: lecture) }
+    let(:user)      { create(:user) }
+
+    context "when user is rostered to a tutorial in the lecture" do
+      before { create(:tutorial_membership, user: user, tutorial: tutorial) }
+
+      it "returns the tutorial" do
+        expect(user.rostered_tutorial_in(lecture)).to eq(tutorial)
+      end
+    end
+
+    context "when user is not rostered to a tutorial in the lecture" do
+      it "returns nil" do
+        expect(user.rostered_tutorial_in(lecture)).to be_nil
+      end
     end
   end
 
@@ -187,6 +243,32 @@ RSpec.describe(User, type: :model) do
                         registration_campaign: campaign)
 
       expect(user.registration_campaigns).to include(campaign)
+    end
+  end
+
+  describe "#subscribe_lecture!" do
+    it "creates at most one join under concurrent calls" do
+      user = create(:confirmed_user)
+      lecture = create(:lecture)
+
+      values = run_concurrently do
+        User.find(user.id).subscribe_lecture!(Lecture.find(lecture.id))
+      end
+
+      expect(values).to contain_exactly(true, false)
+      expect(LectureUserJoin.where(user: user, lecture: lecture).count).to eq(1)
+    end
+  end
+
+  describe "Roster associations" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    it "has many enrolled_lectures" do
+      expect(user).to respond_to(:enrolled_lectures)
+    end
+
+    it "has many enrolled_tutorials" do
+      expect(user).to respond_to(:enrolled_tutorials)
     end
   end
 end

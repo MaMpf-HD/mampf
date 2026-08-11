@@ -1,0 +1,74 @@
+# 🎈 Repository Overview
+
+MaMpf combines and connects various e-learning services: lecture videos and scripts with content outlines, a comprehensive collection of multiple choice questions and assignments including guided proofs and much more. It provides features for organizing, tagging, and interconnecting mathematical teaching materials. The platform is tailored for university-level mathematics education.
+
+Müsli is a system previously used to handle tutorial groups for lectures & to assign grades for exams. This system will be integrated into MaMpf.
+
+
+# 🎈 Libraries & Frameworks
+
+## Backend
+- Ruby on Rails.
+- Asset bundling via Vite (vite_rails).
+
+## Frontend
+- JavaScript & CoffeeScript (there are some files using CoffeeScript, but don't ever suggest CoffeeScript for new files. Use JavaScript instead. If a user wants to modify a CoffeeScript file, give a hint to say that moving on to JavaScript is desirable).
+- SCSS for styling.
+- HTML ERB for view templates. We use ViewComponents for React-like components.
+- Hotwire framework (Turbo Drive/Frames/Streams & Stimulus). Use `.controller.js` as suffix for Stimulus controllers.
+
+## Testing
+
+- RSpec (Ruby). Always run specs with: `VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec ...`. NEVER EVER run specs with: `bundle exec rspec ...` alone, this will wipe the development database.
+- We used Cypress for frontend testing, but are currently migrating to Playwright. For Playwright tests, make sure to use page.locator() as little as possible, and rather rely on the page.getBy*() methods, e.g. page.getByRole(), page.getByText(), etc. This will make the tests more robust and less prone to breakage when we change the UI.
+
+## Linting
+
+We have our own linting setup via RuboCop and ESLint.
+
+
+# 🎈 Code structure
+
+We follow most Ruby on Rails conventions. The main code is in the `app/` folder. Tests are in the `spec/` folder. We deviate from Rails conventions in the following ways:
+- We aggregate frontend-related code together topic-wise in `app/frontend/`, e.g. `app/frontend/lectures/`. See the `app/frontend/Readme.md` for more details.
+- ViewComponents are to be found in `app/frontend/_components/` or (for single-purpose components) in subfolders of `app/frontend/`.
+
+
+# 🎈 Code standard
+
+In general, follow the Ruby on Rails best practices. Prefer `"` over `'` for strings, unless you need to use single quotes to avoid escaping.
+
+## Line length
+
+Although we have linters for it, output code directly with line lengths up to 80 characters (soft limit), but a hard upper limit of 100 chars.
+
+## Migration files
+
+For the filename of migration files, always use the current date, but all-zeros as timestamp, e.g. `20250905000000_create_some_table.rb`. For multiple migrations, update the last 4 digits to be 0001, 0002, etc. for each migration created on the same day. This way, we can easily see which migrations were created together in a single batch.
+
+## Comments
+
+Never delete any existing comments. For newly generated code, prefer self-explanatory code with docstrings over individual line comments.
+
+## Architecture
+
+Favor simplicity over convoluted and hard-to-understand architectures. Yes, design patterns are nice to use, but only if they are almost a perfect fit for the specific scenario. Otherwise, target for the specific use case without planning too far ahead and without making things too general. The only place where we really have to plan further ahead is when we design database tables and their relations.
+
+## Locale
+
+We offer MaMpf both in English and German. When you add new user-facing text, always add it in both languages. For German, we address to users with "Du" (informal "you"), not "Sie". Playwright Tests should only rely on the English locale, i.e. only construct factory objects with English locale, and only check for English text in the UI.
+
+
+# 🎈 About you as an assistant
+
+## Answers
+
+In general, keep your answers short and concise. We don't expect prose, we are technical developers. Don't bloat your response up by words like "sophisticated", "convenient", "provides a user-friendly way", "making it suitable for". Don't start your responses with something like "Yes, I can do that for you". Don't apologize if you make mistakes, just acknowledge them in a very short sentence, e.g. by saying "Indeed, ...", then move on.
+
+## Uncertainties
+
+If you are not sure of something, you are free to admit it instead of being overly confident of your abilities. You may underpin your statements by providing some reference links (but not always and not too many of them in one response).
+
+## Implement
+
+You can directly propose some code changes instead of asking developers for permission à la "Should I implement this for you?". For very big changes, you should still ask for confirmation first (while outlining a short plan of what you will do). But in general, we can always refine later on.

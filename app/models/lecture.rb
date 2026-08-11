@@ -2,7 +2,8 @@
 class Lecture < ApplicationRecord
   include ApplicationHelper
   include Registration::Campaignable
-  include Registration::Registerable
+  include Rosters::Rosterable
+  include LectureHomeAttachmentUploader[:home_attachment]
 
   belongs_to :course
 
@@ -60,6 +61,15 @@ class Lecture < ApplicationRecord
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, -> { distinct }, through: :lecture_user_joins
 
+  # Roster associations
+  has_many :lecture_memberships, dependent: :destroy
+  has_many :members, through: :lecture_memberships, source: :user
+
+  # messages from the lecture staff to registered students
+  has_many :registration_student_messages,
+           class_name: "Registration::StudentMessage",
+           dependent: :destroy
+
   # a lecture has many users who have starred it (fans)
   has_many :user_favorite_lecture_joins, dependent: :destroy
   has_many :fans, -> { distinct }, through: :user_favorite_lecture_joins,
@@ -86,9 +96,19 @@ class Lecture < ApplicationRecord
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
 
+  has_many :cohorts, as: :context, dependent: :destroy
+
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
-  validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
+  validates :course_id, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
+
+  # The same clash again, because editing splits the combination across panes:
+  # the term lives under Preferences, the teacher under People, and neither
+  # pane can show a message that belongs to a field it does not offer.
+  validates :term_id, uniqueness: { scope: [:course_id, :teacher_id, :sort] },
+                      on: :update
+  validates :teacher_id, uniqueness: { scope: [:course_id, :term_id, :sort] },
+                         on: :update
 
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
@@ -133,6 +153,10 @@ class Lecture < ApplicationRecord
   scope :restricted, -> { where.not(passphrase: ["", nil]) }
 
   scope :seminar, -> { where(sort: ["seminar", "oberseminar", "proseminar"]) }
+
+  # A lecture is the record the other rosterables point their lecture_id at,
+  # so it matches on its own id.
+  scope :for_lectures, ->(lectures) { where(id: lectures) }
 
   include PgSearch::Model
 
@@ -206,6 +230,10 @@ class Lecture < ApplicationRecord
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
       short_title
     end
+  end
+
+  def registration_title
+    title_for_viewers
   end
 
   def locale_with_inheritance
@@ -521,6 +549,24 @@ class Lecture < ApplicationRecord
     false
   end
 
+  # Trix leaves wrapper markup ("<div><br></div>") behind for an editor that was
+  # emptied again, which a plain #present? would count as content.
+  def home_intro_present?
+    ActionView::Base.full_sanitizer
+                    .sanitize(home_intro.to_s)
+                    .gsub("&nbsp;", " ")
+                    .strip
+                    .present?
+  end
+
+  def home_content?
+    home_intro_present? || home_attachment.present?
+  end
+
+  def home_attachment_filename
+    home_attachment&.metadata&.fetch("filename", nil)
+  end
+
   # returns path for show action of the lecture's course,
   def path(user)
     return unless user.lectures.include?(self)
@@ -784,6 +830,51 @@ class Lecture < ApplicationRecord
     touch
   end
 
+  def ensure_roster_membership!(user_ids)
+    # Efficiently insert missing memberships (ignoring duplicates)
+    # Note: Requires a unique index on [:user_id, :lecture_id]
+    attributes = user_ids.map do |uid|
+      { user_id: uid, lecture_id: id }
+    end
+
+    return if attributes.empty?
+
+    # Rails handles timestamps automatically.
+    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
+    # created_at/updated_at for existing members.
+    # rubocop:disable Rails/SkipsModelValidations
+    transaction do
+      LectureMembership.insert_all(
+        attributes,
+        unique_by: [:user_id, :lecture_id]
+      )
+
+      # Roster membership implies a subscription: members need access to the
+      # lecture's content, even when subscribing is gated by a passphrase
+      # (a roster seat is a stronger credential than a shared passphrase).
+      LectureUserJoin.insert_all(
+        attributes,
+        unique_by: [:lecture_id, :user_id]
+      )
+    end
+    # rubocop:enable Rails/SkipsModelValidations
+  end
+
+  # All students that lecture staff can reach by registration mail:
+  # everyone with a pending or confirmed registration in one of the
+  # lecture's campaigns, plus everyone on the roster (union, deduplicated).
+  # Before finalization this is "everyone who signed up", afterwards it
+  # also covers manually added roster members.
+  def registration_mail_recipients
+    registered_ids = Registration::UserRegistration
+                     .where(registration_campaign: registration_campaigns,
+                            status: [:pending, :confirmed])
+                     .select(:user_id)
+    member_ids = lecture_memberships.select(:user_id)
+
+    User.where(id: registered_ids).or(User.where(id: member_ids))
+  end
+
   def eligible_as_tutors
     (tutors + Redemption.tutors_by_redemption_in(self) + editors + [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
@@ -831,6 +922,20 @@ class Lecture < ApplicationRecord
 
   def vignettes?
     vignettes_questionnaires.any?
+  end
+
+  def roster_entries
+    lecture_memberships
+  end
+
+  def roster_eligible_tutorials?
+    tutorials.merge(Tutorial.roster_eligible).exists?
+  end
+
+  # Whether the roster decides which tutorial a student belongs to, rather than
+  # the student picking one.
+  def roster_managed?
+    Flipper.enabled?(:roster_maintenance) && roster_eligible_tutorials?
   end
 
   private
@@ -938,7 +1043,7 @@ class Lecture < ApplicationRecord
     def only_one_lecture
       return unless Lecture.where(course: course).any?
 
-      errors.add(:course, :already_present)
+      errors.add(:course_id, :already_present)
     end
 
     def older_than?(timespan)

@@ -7,10 +7,16 @@ include:
 services:
   app:
     command: "sleep infinity"
+    environment:
+      # Relocate Claude Code's data dir into the persisted volume below so
+      # sessions, todos and login survive a devcontainer rebuild.
+      CLAUDE_CONFIG_DIR: /workspaces/claude
     volumes:
       # Persist bash history
       # https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
       - mampf-command-history:/workspaces/commandhistory/
+      # Persist Claude Code data (see CLAUDE_CONFIG_DIR above)
+      - claude-code:/workspaces/claude
 
   app-test:
     command: "RUBY_DEBUG_ENABLE=0 /workspaces/mampf/docker/development/init-and-run.sh | tee /proc/1/fd/1"
@@ -26,3 +32,4 @@ services:
 
 volumes:
   mampf-command-history:
+  claude-code:

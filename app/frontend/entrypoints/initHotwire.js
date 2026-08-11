@@ -8,6 +8,9 @@ window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);
 
+import LectureHomeFormController from "~/lectures/edit/home_form.controller.js";
+window.Stimulus.register("lecture-home-form", LectureHomeFormController);
+
 import MediaButtonSortController from "~/lectures/edit/media/media_button_sort.controller.js";
 window.Stimulus.register("media-button-sort", MediaButtonSortController);
 
@@ -16,6 +19,9 @@ window.Stimulus.register("search-form", SearchFormController);
 
 import ModalController from "~/modal/modal.controller.js";
 window.Stimulus.register("modal", ModalController);
+
+import TurboModalController from "~/modal/turbo_modal.controller.js";
+window.Stimulus.register("turbo-modal", TurboModalController);
 
 import FlashMessagesController from "~/flash/_messages.controller.js";
 window.Stimulus.register("flash-messages", FlashMessagesController);
@@ -32,14 +38,80 @@ window.Stimulus.register("vignettes-multiple-choice", VignettesMultipleChoiceCon
 import WatchlistSortableController from "~/watchlists/sortable.controller.js";
 window.Stimulus.register("watchlist-sortable", WatchlistSortableController);
 
-import AutoSubmitFormController from "~/controllers/auto_submit_form_controller.js";
-window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
+import SubmitOnChangeController from "~/controllers/submit_on_change.controller.js";
+window.Stimulus.register("submit-on-change", SubmitOnChangeController);
 
 import VignettesNumberController from "~/vignettes/slides/form/question/types/_number.controller.js";
 window.Stimulus.register("vignettes-number", VignettesNumberController);
 
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
+
+import QuestionCounterController from "~/lectures/quizzes/question_counter.controller.js";
+window.Stimulus.register("question-counter", QuestionCounterController);
+
+import CoursesEditController from "~/courses/edit/courses_edit.controller.js";
+window.Stimulus.register("courses-edit", CoursesEditController);
+
+import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
+window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
+
+import SortablePoliciesController from "~/registration/policies/sortable_policies.controller.js";
+window.Stimulus.register("sortable-policies", SortablePoliciesController);
+
+import RegisterableTypeHelpController from "~/registration/registerable_type_help.controller.js";
+window.Stimulus.register("registerable-type-help", RegisterableTypeHelpController);
+
+import CollapseController from "~/registration/collapse.controller.js";
+window.Stimulus.register("collapse", CollapseController);
+
+import BsPopoverController from "~/controllers/bs_popover.controller.js";
+window.Stimulus.register("bs-popover", BsPopoverController);
+
+import RowClickController from "~/controllers/row_click.controller.js";
+window.Stimulus.register("row-click", RowClickController);
+
+import DatetimepickerController from "~/controllers/datetimepicker.controller.js";
+window.Stimulus.register("datetimepicker", DatetimepickerController);
+
+import CapacityGuardController from "~/roster/capacity_guard.controller.js";
+window.Stimulus.register("capacity-guard", CapacityGuardController);
+
+import TutorialRosterPanelController from "~/registration/campaigns/tutorial_roster_panel.controller.js";
+window.Stimulus.register("tutorial-roster-panel", TutorialRosterPanelController);
+
+import CampaignDissolveController from "~/registration/campaigns/campaign_dissolve.controller.js";
+window.Stimulus.register("campaign-dissolve", CampaignDissolveController);
+
+import RosterDragController from "~/roster/roster_drag.controller.js";
+window.Stimulus.register("roster-drag", RosterDragController);
+
+import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
+window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
+
+import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
+window.Stimulus.register("preference-choices", PreferenceChoicesController);
+
+import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
+window.Stimulus.register("capacity-editor", CapacityEditorController);
+
+import SelectizeController from "~/controllers/selectize.controller.js";
+window.Stimulus.register("selectize", SelectizeController);
+
+import ProfileController from "~/profile/profile.controller.js";
+window.Stimulus.register("profile", ProfileController);
+
+import LectureHighlightsController from "~/lectures/lecture_highlights.controller.js";
+window.Stimulus.register("lecture-highlights", LectureHighlightsController);
+
+import AdministrationIndexCreateButtonsController from "~/administration/index/create_buttons.controller.js";
+window.Stimulus.register("administration-index-create-buttons", AdministrationIndexCreateButtonsController);
+
+import MediaDownloadButtonController from "~/media/download_button.controller.js";
+window.Stimulus.register("media-download-button", MediaDownloadButtonController);
+
+import LecturesNewFormController from "~/lectures/new/_form.controller.js";
+window.Stimulus.register("lectures-new-form", LecturesNewFormController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

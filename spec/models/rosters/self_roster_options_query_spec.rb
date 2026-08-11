@@ -1,0 +1,93 @@
+require "rails_helper"
+
+RSpec.describe(Rosters::SelfRosterOptionsQuery) do
+  describe "#call" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture) }
+
+    let!(:add_only_tutorial) do
+      create(:tutorial,
+             lecture: lecture,
+             title: "Tutorial A",
+             skip_campaigns: true,
+             self_materialization_mode: :add_only)
+    end
+
+    let!(:add_and_remove_tutorial) do
+      create(:tutorial,
+             lecture: lecture,
+             title: "Tutorial B",
+             skip_campaigns: true,
+             self_materialization_mode: :add_and_remove)
+    end
+
+    let!(:remove_only_tutorial) do
+      create(:tutorial,
+             lecture: lecture,
+             title: "Tutorial C",
+             skip_campaigns: true,
+             self_materialization_mode: :remove_only)
+    end
+
+    let!(:allocated_remove_only_tutorial) do
+      create(:tutorial,
+             lecture: lecture,
+             title: "Tutorial D",
+             skip_campaigns: true,
+             self_materialization_mode: :remove_only)
+    end
+
+    let!(:disabled_tutorial) do
+      create(:tutorial,
+             lecture: lecture,
+             title: "Tutorial E",
+             skip_campaigns: true,
+             self_materialization_mode: :disabled)
+    end
+
+    before do
+      allocated_remove_only_tutorial.add_user_to_roster!(user)
+    end
+
+    it "returns joinable rosterables and withdraw-only rosterables the user can leave" do
+      result = described_class.new(lecture, user).call
+
+      expect(result).to contain_exactly(
+        add_only_tutorial,
+        add_and_remove_tutorial,
+        allocated_remove_only_tutorial
+      )
+    end
+
+    it "sorts registerable options before withdraw-only and full options" do
+      full_tutorial = create(:tutorial,
+                             lecture: lecture,
+                             title: "Tutorial Z",
+                             skip_campaigns: true,
+                             self_materialization_mode: :add_only,
+                             capacity: 1)
+      full_tutorial.add_user_to_roster!(create(:confirmed_user))
+
+      result = described_class.new(lecture, user).call
+
+      expect(result).to eq([
+                             add_only_tutorial,
+                             add_and_remove_tutorial,
+                             allocated_remove_only_tutorial,
+                             full_tutorial
+                           ])
+    end
+
+    it "still returns visible options when the user is in a join-only tutorial" do
+      blocked_user = create(:confirmed_user)
+      add_only_tutorial.add_user_to_roster!(blocked_user)
+
+      result = described_class.new(lecture, blocked_user).call
+
+      expect(result).to contain_exactly(
+        add_only_tutorial,
+        add_and_remove_tutorial
+      )
+    end
+  end
+end

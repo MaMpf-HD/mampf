@@ -29,7 +29,6 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
     let fill_path = "";
     let courseId = 0;
     let loaded = false;
-    let locale = null;
 
     if (this.dataset.drag === "true") {
       plugins = ["remove_button", "drag_drop"];
@@ -45,9 +44,8 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
       send_data = false;
       loaded = false;
       if (this.dataset.model === "tag") {
-        locale = this.dataset.locale;
         fill_path = Routes.fill_tag_select_path({
-          locale: locale,
+          locale: this.dataset.locale,
         });
         send_data = true;
       }
@@ -147,6 +145,44 @@ $(document).on("turbo:before-cache", function () {
   $(".tomselected").each(resetSelectized);
 });
 
+/**
+ * Initializes every selectize below root that TomSelect has not claimed yet.
+ */
+function initSelectizeIn(root) {
+  fillOptionsByAjax($(root).find(".selectize").filter(function () {
+    return !this.tomselect;
+  }));
+}
+
 $(document).on("turbo:load", function () {
-  fillOptionsByAjax($(".selectize"));
+  initSelectizeIn(document);
+});
+
+/**
+ * Re-initializes TomSelect in updated Turbo Frames.
+ */
+$(document).on("turbo:frame-load", function (event) {
+  initSelectizeIn(event.target);
+});
+
+/**
+ * Intercepts Turbo Stream render events to re-initialize TomSelect on updated elements.
+ */
+document.addEventListener("turbo:before-stream-render", function (event) {
+  const stream = event.target;
+  const originalRender = event.detail.render;
+
+  // Initialize immediately after render to prevent FOUC (Flash of Unstyled Content)
+  // Since this happens in the same execution tick, the browser won't paint the unstyled element
+  event.detail.render = function (currentElement) {
+    originalRender(currentElement);
+
+    const targetId = stream.getAttribute("target");
+    if (!targetId) return;
+
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    initSelectizeIn(target);
+  };
 });

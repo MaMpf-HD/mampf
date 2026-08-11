@@ -1,17 +1,4 @@
-/**
- * Adds an event listener for the loadedmetadata event on a video element.
- * If the video metadata is already loaded (readyState >= 1), the callback
- * is executed immediately and no event listener is attached. Otherwise,
- * it attaches a one-time event listener that waits for the event to fire.
- */
-export function onVideoMetadataLoaded(video, callback) {
-  if (video.readyState >= 1) {
-    callback();
-  }
-  else {
-    video.addEventListener("loadedmetadata", callback, { once: true });
-  }
-}
+import { onVideoMetadataLoaded } from "./video_events";
 
 /**
  * Mixes all colors in the array "colors"
