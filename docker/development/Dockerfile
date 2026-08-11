@@ -42,7 +42,7 @@ RUN which yarn; yarn --version
 # Install other dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
-        ffmpeg qpdf shared-mime-info \
+        ffmpeg qpdf mupdf-tools shared-mime-info \
         libarchive-tools wget wait-for-it graphviz libvips42 lsof \
     && rm -rf /var/lib/apt/lists/*
 

@@ -70,7 +70,7 @@ en:
     text_html: >
       &copy; MaMpf Team. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
-      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
+      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}, %{mupdf}.
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
   sponsors:
