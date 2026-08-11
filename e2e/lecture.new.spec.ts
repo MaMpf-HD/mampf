@@ -18,6 +18,34 @@ test.describe("New lecture as admin", () => {
     await testCreateNewLecture(page, user, course, term, true);
   });
 
+  // The form is fetched into a turbo frame, and Turbo refetches any frame that
+  // still carries a src when it restores a cached page. Emptying the frame is
+  // therefore not enough — otherwise the form is back after the back button.
+  test("Leaves nothing behind that would fetch the form back", async ({
+    factory,
+    admin: { page },
+  }) => {
+    const course = await factory.create("course");
+    await factory.create("term");
+    const frame = page.locator("#new_lecture");
+
+    await page.goto("/administration");
+    await page.getByTestId("new-lecture-button-admin-index").click();
+    await expect(page.getByTestId("new-lecture-submit")).toBeVisible();
+    await expect(frame).toHaveAttribute("src", /lectures\/new/);
+
+    await page.getByRole("button", { name: "Cancel" }).click();
+    await expect(page.getByTestId("new-lecture-submit")).toBeHidden();
+    await expect(frame).not.toHaveAttribute("src", /./);
+
+    await page.getByTestId("new-lecture-button-admin-index").click();
+    await page.getByTestId("new-lecture-course-select").selectOption({ label: course.title });
+    await page.keyboard.press("Escape");
+    await page.getByTestId("new-lecture-submit").click();
+    await expect(page.getByRole("alert")).toBeVisible();
+    await expect(frame).not.toHaveAttribute("src", /./);
+  });
+
   test("Leaves the course edit page usable after creating a lecture", async ({
     factory,
     admin: { page, user },
