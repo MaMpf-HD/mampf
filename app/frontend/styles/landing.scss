@@ -64,6 +64,27 @@
     width: 100% !important;
 }
 
+.login-button-row {
+    display: grid;
+    grid-template-columns: minmax(5rem, 1fr) minmax(0, 4fr);
+
+    .devise-button {
+        width: auto !important;
+    }
+
+    &__primary,
+    &__playwright {
+        min-width: 0;
+    }
+
+    &__playwright {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        white-space: normal;
+    }
+}
+
 
 #announcement-box {
     z-index: 1;
