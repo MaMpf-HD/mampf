@@ -101,6 +101,9 @@ window.Stimulus.register("lecture-highlights", LectureHighlightsController);
 import AdministrationIndexCreateButtonsController from "~/administration/index/create_buttons.controller.js";
 window.Stimulus.register("administration-index-create-buttons", AdministrationIndexCreateButtonsController);
 
+import MediaDownloadButtonController from "~/media/download_button.controller.js";
+window.Stimulus.register("media-download-button", MediaDownloadButtonController);
+
 import LecturesNewFormController from "~/lectures/new/_form.controller.js";
 window.Stimulus.register("lectures-new-form", LecturesNewFormController);
 
