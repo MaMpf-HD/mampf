@@ -6,13 +6,13 @@
      data-controller="modal"
      tabindex="-1"
      role="dialog"
-     aria-labelledby="watchlistModalLabel" aria-hidden="true"
+     aria-labelledby="<%= "#{context}WatchlistModalLabel" %>" aria-hidden="true"
      data-keyboard="true">
   <div class="modal-dialog modal-sm"
        role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">
+        <h5 class="modal-title" id="<%= "#{context}WatchlistModalLabel" %>">
           <%= is_edit ? t('watchlist.change') : t('watchlist.create') %>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
