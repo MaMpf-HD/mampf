@@ -20,6 +20,9 @@ window.Stimulus.register("search-form", SearchFormController);
 import ModalController from "~/modal/modal.controller.js";
 window.Stimulus.register("modal", ModalController);
 
+import TurboModalController from "~/modal/turbo_modal.controller.js";
+window.Stimulus.register("turbo-modal", TurboModalController);
+
 import FlashMessagesController from "~/flash/_messages.controller.js";
 window.Stimulus.register("flash-messages", FlashMessagesController);
 
@@ -88,6 +91,12 @@ window.Stimulus.register("profile", ProfileController);
 
 import LectureHighlightsController from "~/lectures/lecture_highlights.controller.js";
 window.Stimulus.register("lecture-highlights", LectureHighlightsController);
+
+import AdministrationIndexCreateButtonsController from "~/administration/index/create_buttons.controller.js";
+window.Stimulus.register("administration-index-create-buttons", AdministrationIndexCreateButtonsController);
+
+import LecturesNewFormController from "~/lectures/new/_form.controller.js";
+window.Stimulus.register("lectures-new-form", LecturesNewFormController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

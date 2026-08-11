@@ -1,5 +1,7 @@
 de:
   mampf: 'MaMpf'
+  modals:
+    load_error: 'Der Inhalt konnte nicht geladen werden.'
   views:
     pagination:
       first: "&laquo; Erste"
@@ -4094,13 +4096,22 @@ de:
         lecture:
           attributes:
             course:
+              required: 'Es muss ein Modul angegeben werden.'
+            course_id:
               taken: >
                 Eine Veranstaltung mit derselben Kombination aus Modul, Semester
                 DozentIn und Typ existiert bereits.
-              required: 'Es muss ein Modul angegeben werden.'
               already_present: >
                 Für Module mit der Eigenschaft 'semesterunabhängig' kann es
                 höchstens eine Veranstaltung geben.
+            teacher_id:
+              taken: >
+                Eine Veranstaltung mit derselben Kombination aus Modul, Semester
+                DozentIn und Typ existiert bereits.
+            term_id:
+              taken: >
+                Eine Veranstaltung mit derselben Kombination aus Modul, Semester
+                DozentIn und Typ existiert bereits.
             content_mode:
               inclusion: 'Ungültiger Modus.'
             term:
