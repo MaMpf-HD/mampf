@@ -330,6 +330,93 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "POST /lectures" do
+    let(:course) { create(:course) }
+    let(:term) { create(:term) }
+    let(:attributes) do
+      { course_id: course.id, term_id: term.id, teacher_id: user.id,
+        sort: "lecture", from: "course", content_mode: "video" }
+    end
+
+    it "creates the lecture and updates the course's lecture list" do
+      expect do
+        post(lectures_path, params: { lecture: attributes }, as: :turbo_stream)
+      end.to change(Lecture, :count).by(1)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("course_lectures")
+    end
+
+    context "when the teacher already gives that lecture in that term" do
+      before { create(:lecture, **attributes.except(:from, :content_mode)) }
+
+      it "renders the form again with the course field marked" do
+        expect do
+          post(lectures_path, params: { lecture: attributes }, as: :turbo_stream)
+        end.not_to change(Lecture, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
+      end
+    end
+  end
+
+  describe "PATCH /lectures/:id" do
+    let(:teacher) { create(:confirmed_user) }
+    let(:course) { create(:course) }
+    let(:term) { create(:term, :winter, year: 2026) }
+    let(:other_term) { create(:term, :summer, year: 2027) }
+    let(:lecture) do
+      create(:lecture, course: course, teacher: teacher, term: term, sort: "lecture")
+    end
+
+    context "when the new term is already taken by the same teacher and course" do
+      before do
+        create(:lecture, course: course, teacher: teacher, term: other_term,
+                         sort: "lecture")
+      end
+
+      it "marks the term field instead of claiming a server error" do
+        patch lecture_path(lecture),
+              params: { lecture: { term_id: other_term.id, sort: "lecture",
+                                   content_mode: "video" },
+                        subpage: "settings" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*lecture_term_id/)
+        expect(response.body).to include(I18n.t("activerecord.errors.models.lecture" \
+                                                ".attributes.term_id.taken").strip)
+        expect(response.body).not_to include(I18n.t("errors.unknown"))
+      end
+
+      it "marks the teacher field when the clash is created from the people pane" do
+        other_teacher = create(:confirmed_user)
+        create(:lecture, course: course, teacher: other_teacher, term: term,
+                         sort: "lecture")
+
+        patch lecture_path(lecture),
+              params: { lecture: { teacher_id: other_teacher.id }, subpage: "people" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*lecture_teacher_id/)
+        expect(response.body).not_to include(I18n.t("errors.unknown"))
+      end
+
+      it "leaves the people pane alone" do
+        patch lecture_path(lecture),
+              params: { lecture: { term_id: other_term.id, sort: "lecture",
+                                   content_mode: "video" },
+                        subpage: "settings" },
+              as: :turbo_stream
+
+        expect(response.body).to include("edit_preferences")
+        expect(response.body).not_to include("edit_people")
+      end
+    end
+  end
+
   describe "lecture routes" do
     let(:lecture) { create(:lecture) }
 
