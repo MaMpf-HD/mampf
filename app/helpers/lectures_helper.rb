@@ -192,7 +192,8 @@ module LecturesHelper
         concat(t("basics.teacher"))
         concat(helpdesk(t("admin.lecture.info.teacher_fixed"), false))
       end
-      p2 = content_tag(:p, lecture.teacher&.info || "", "data-testid": "teacher-info")
+      p2 = content_tag(:p, lecture.teacher&.info || "",
+                       "data-cy": "teacher-info", "data-testid": "teacher-info")
     end
 
     p1 + p2
