@@ -330,6 +330,38 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "POST /lectures" do
+    let(:course) { create(:course) }
+    let(:term) { create(:term) }
+    let(:attributes) do
+      { course_id: course.id, term_id: term.id, teacher_id: user.id,
+        sort: "lecture", from: "course", content_mode: "video" }
+    end
+
+    it "creates the lecture and updates the course's lecture list" do
+      expect do
+        post(lectures_path, params: { lecture: attributes }, as: :turbo_stream)
+      end.to change(Lecture, :count).by(1)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("course_lectures")
+    end
+
+    context "when the teacher already gives that lecture in that term" do
+      before { create(:lecture, **attributes.except(:from, :content_mode)) }
+
+      it "renders the form again with the course field marked" do
+        expect do
+          post(lectures_path, params: { lecture: attributes }, as: :turbo_stream)
+        end.not_to change(Lecture, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("new-lecture-course-select")
+        expect(response.body).to include("is-invalid")
+      end
+    end
+  end
+
   describe "lecture routes" do
     let(:lecture) { create(:lecture) }
 

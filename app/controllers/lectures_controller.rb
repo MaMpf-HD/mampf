@@ -100,9 +100,8 @@ class LecturesController < ApplicationController
       @from = params.dig(:lecture, :from)
 
       render turbo_stream: turbo_stream.update(turbo_frame_request_id,
-                                               template: "lectures/new/_new", locals: {
-                                                 lecture: @lecture, from: @from
-                                               }),
+                                               partial: "lectures/new/new",
+                                               locals: { lecture: @lecture, from: @from }),
              status: :unprocessable_content
     end
   end
