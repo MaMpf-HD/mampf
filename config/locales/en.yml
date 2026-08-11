@@ -3886,6 +3886,14 @@ en:
               already_present: >
                 For courses that are term independent there can be only one
                 'event series'.
+            teacher_id:
+              taken: >
+                An event series with the same combination of course, term and teacher
+                already exists.
+            term_id:
+              taken: >
+                An event series with the same combination of course, term and teacher
+                already exists.
             content_mode:
               inclusion: 'Invalid mode.'
             term:

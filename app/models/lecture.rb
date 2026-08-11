@@ -102,6 +102,14 @@ class Lecture < ApplicationRecord
   # of the same sort twice
   validates :course_id, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
 
+  # The same clash again, because editing splits the combination across panes:
+  # the term lives under Preferences, the teacher under People, and neither
+  # pane can show a message that belongs to a field it does not offer.
+  validates :term_id, uniqueness: { scope: [:course_id, :teacher_id, :sort] },
+                      on: :update
+  validates :teacher_id, uniqueness: { scope: [:course_id, :term_id, :sort] },
+                         on: :update
+
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
   validates :sort, inclusion: { in: ["lecture", "seminar", "oberseminar",

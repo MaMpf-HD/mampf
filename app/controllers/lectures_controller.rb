@@ -142,14 +142,15 @@ class LecturesController < ApplicationController
 
     @terms = Term.select_terms
 
-    render turbo_stream: [
-      turbo_stream.update("edit_preferences", template: "lectures/edit/_preferences", locals: {
-                            lecture: @lecture
-                          }),
-      turbo_stream.update("edit_people", template: "lectures/edit/_people", locals: {
-                            lecture: @lecture
-                          })
-    ], status: :unprocessable_content
+    pane, partial = if params[:subpage] == "people"
+      ["edit_people", "lectures/edit/people"]
+    else
+      ["edit_preferences", "lectures/edit/preferences"]
+    end
+
+    render turbo_stream: turbo_stream.update(pane, partial: partial,
+                                                   locals: { lecture: @lecture }),
+           status: :unprocessable_content
   end
 
   def publish
