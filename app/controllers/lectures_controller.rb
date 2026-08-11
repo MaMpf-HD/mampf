@@ -11,6 +11,7 @@ class LecturesController < ApplicationController
   before_action :set_view_locale, only: [:edit, :show, :outline, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
+  before_action :require_turbo_frame, only: [:new]
   layout "administration"
 
   def current_ability
@@ -47,9 +48,9 @@ class LecturesController < ApplicationController
       @lecture.annotations_status = 0
     end
 
-    respond_to do |format|
-      format.js { render template: "lectures/new/new" }
-    end
+    render turbo_stream: turbo_stream.update(turbo_frame_request_id,
+                                             partial: "lectures/new/new",
+                                             locals: { lecture: @lecture, from: @from })
   end
 
   def edit
@@ -66,31 +67,42 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new(lecture_params)
     @lecture.teacher = current_user unless current_user.admin?
     authorize! :create, @lecture
-    @lecture.save
 
-    if @lecture.valid?
+    if @lecture.save
       @lecture.update(sort: "special") if @lecture.course.term_independent
       # set organizational_concept to default
       set_organizational_defaults
       # set language to default language
       set_language
-      # depending on where the create action was triggered from, return
-      # to admin index view or edit course view
-      unless params[:lecture][:from] == "course"
-        redirect_to administration_path,
-                    notice: I18n.t("controllers.created_lecture_success",
-                                   lecture: @lecture.title_with_teacher)
-        return
-      end
-      redirect_to edit_course_path(@lecture.course),
-                  notice: I18n.t("controllers.created_lecture_success",
-                                 lecture: @lecture.title_with_teacher)
-      return
-    end
 
-    @errors = @lecture.errors
-    respond_to do |format|
-      format.js { render template: "lectures/create/create" }
+      flash.now[:notice] = I18n.t("controllers.created_lecture_success",
+                                  lecture: @lecture.title_with_teacher)
+
+      streams = []
+
+      if params.dig(:lecture, :from) == "course"
+        streams << turbo_stream.update("course_lectures",
+                                       partial: "courses/lectures_list",
+                                       locals: { course: @lecture.course })
+        streams << turbo_stream.update(Lecture.new,
+                                       partial: "spinner/loading")
+      else
+        streams << turbo_stream.update("lectures",
+                                       partial: "administration/index/lectures_list")
+        streams << turbo_stream.update(Lecture.new, "")
+      end
+
+      streams << turbo_stream.prepend("flash-messages",
+                                      partial: "flash/message")
+
+      render turbo_stream: streams
+    else
+      @from = params.dig(:lecture, :from)
+
+      render turbo_stream: turbo_stream.update(turbo_frame_request_id,
+                                               partial: "lectures/new/new",
+                                               locals: { lecture: @lecture, from: @from }),
+             status: :unprocessable_content
     end
   end
 
@@ -128,9 +140,17 @@ class LecturesController < ApplicationController
       return
     end
 
-    respond_to do |format|
-      format.js { render template: "lectures/update/update" }
+    @terms = Term.select_terms
+
+    pane, partial = if params[:subpage] == "people"
+      ["edit_people", "lectures/edit/people"]
+    else
+      ["edit_preferences", "lectures/edit/preferences"]
     end
+
+    render turbo_stream: turbo_stream.update(pane, partial: partial,
+                                                   locals: { lecture: @lecture }),
+           status: :unprocessable_content
   end
 
   def publish
@@ -214,9 +234,15 @@ class LecturesController < ApplicationController
     @lecture.reload
     @lecture.touch
 
-    respond_to do |format|
-      format.js { render template: "lectures/import/import_media" }
-    end
+    render turbo_stream: [
+      turbo_stream.update("importedMediaTable",
+                          partial: "lectures/import/imported_media",
+                          locals: { media: @lecture.imported_media,
+                                    lecture: @lecture }),
+      turbo_stream.replace("importMedia",
+                           helpers.import_media_badge(@lecture)),
+      turbo_stream.update("media-search-results", "")
+    ]
   end
 
   def remove_imported_medium
@@ -226,9 +252,14 @@ class LecturesController < ApplicationController
     @lecture.reload
     @lecture.touch
 
-    respond_to do |format|
-      format.js { render template: "lectures/import/remove_imported_medium" }
-    end
+    render turbo_stream: [
+      turbo_stream.update("importedMediaTable",
+                          partial: "lectures/import/imported_media",
+                          locals: { media: @lecture.imported_media,
+                                    lecture: @lecture }),
+      turbo_stream.replace("importMedia",
+                           helpers.import_media_badge(@lecture))
+    ]
   end
 
   def show_subscribers
@@ -284,6 +315,11 @@ class LecturesController < ApplicationController
                                          campaignable_id: page_lecture_ids })
         .pluck("registration_campaigns.campaignable_id")
         .to_set
+    end
+    if Flipper.enabled?(:roster_maintenance)
+      status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
+      @rosterized_lecture_ids = status.rosterized_lecture_ids
+      @self_enrollable_lecture_ids = status.enrollable_lecture_ids
     end
 
     respond_to do |format|
