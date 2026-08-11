@@ -15,6 +15,28 @@ test.describe("create Watchlists", () => {
     await watchlistsPage.createWatchlist("Another Test Watchlist");
   });
 
+  test("reports a duplicate name when renaming, even after the create form was opened", async ({
+    factory,
+    student: { page, user },
+  }) => {
+    await factory.create("watchlist", [], { user_id: user.id, name: "Taken" });
+    const watchlist = await factory.create("watchlist", [], { user_id: user.id, name: "Mine" });
+    const dialog = page.locator("#editWatchlistModal");
+
+    await page.goto(`/watchlists/${watchlist.id}`);
+    // loads a second form into the page — both must stay tellable apart
+    await page.locator("#openNewWatchlistForm").click();
+    await page.getByRole("textbox", { name: "Enter name" }).waitFor();
+    await page.locator("#newWatchlistModal").getByText("Close").click();
+
+    await page.getByRole("button", { name: "Change" }).click();
+    await dialog.getByRole("textbox", { name: "Enter name" }).fill("Taken");
+    await dialog.getByRole("button", { name: "Save changes" }).click();
+
+    await expect(page.getByText("A watchlist with that name already exists")).toBeVisible();
+    await expect(dialog).toBeVisible();
+  });
+
   test("can not create watchlist with duplicate name", async ({ factory, student: { page, user } }) => {
     const watchlistName = "Duplicate Name Watchlist";
     await factory.create("watchlist", [], { user_id: user.id, name: watchlistName });

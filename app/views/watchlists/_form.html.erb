@@ -1,6 +1,8 @@
-<%# locals: (watchlist:, medium:) %>
+<%# locals: (watchlist:, medium:, context:) %>
+<%# The two modals sit in the page side by side, so the id has to say which
+    form the footer button belongs to. %>
 <%= form_with model: watchlist,
-              id: 'watchlistForm' do |f| %>
+              id: "watchlistForm_#{context}" do |f| %>
   <% if medium.present? %>
     <%= f.hidden_field :medium_id, value: medium.id %>
   <% end %>

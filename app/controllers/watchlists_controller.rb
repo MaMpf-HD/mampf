@@ -71,7 +71,7 @@ class WatchlistsController < ApplicationController
           render turbo_stream: turbo_stream.update(
             turbo_frame_request_id,
             partial: "watchlists/form",
-            locals: { watchlist: @watchlist, medium: @medium }
+            locals: { watchlist: @watchlist, medium: @medium, context: :new }
           ), status: :unprocessable_content
         end
       end
@@ -98,7 +98,7 @@ class WatchlistsController < ApplicationController
       render turbo_stream: turbo_stream.update(
         turbo_frame_request_id,
         partial: "watchlists/form",
-        locals: { watchlist: @watchlist, medium: nil }
+        locals: { watchlist: @watchlist, medium: nil, context: :edit }
       ), status: :unprocessable_content
     end
   end

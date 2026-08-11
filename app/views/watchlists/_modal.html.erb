@@ -27,7 +27,7 @@
           <button class="btn btn-primary"
                   id="<%= is_edit ? 'confirmChangeWatchlistButton' : 'newWatchlistButton' %>"
                   type="submit"
-                  form="watchlistForm"><%= is_edit ? t('watchlist.save_change') : t('watchlist.create') %></button>
+                  form="<%= "watchlistForm_#{context}" %>"><%= is_edit ? t('watchlist.save_change') : t('watchlist.create') %></button>
           <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal"><%= t('watchlist.close') %></button>
         </div>
       </div>
