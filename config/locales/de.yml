@@ -4271,6 +4271,9 @@ de:
             medium_id:
               taken:
                 ist schon in dieser Watchlist.
+            watchlist:
+              required: >
+                muss zuerst angelegt werden.
         watchlist:
           attributes:
             name:
