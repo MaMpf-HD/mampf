@@ -14,17 +14,27 @@ export default class extends Controller {
     Sortable.create(this.element, {
       handle: ".mampf-card-header",
       animation: 150,
-      onUpdate: () => this.updateOrder(),
+      onUpdate: () => this.queueOrder(),
     });
   }
 
-  async updateOrder() {
+  /**
+   * Two quick drops must not race: the second order would be persisted first
+   * and then overwritten by the first one arriving late.
+   */
+  queueOrder() {
+    this.pending = (this.pending ?? Promise.resolve()).then(() => this.sendOrder());
+    return this.pending;
+  }
+
+  async sendOrder() {
     const params = new URLSearchParams(window.location.search);
     const order = Array.from(
       this.element.querySelectorAll(".media-grid"),
     ).map(el => el.dataset.id);
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
+    // absent where forgery protection is off, e.g. the test environment
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
     const response = await fetch("/watchlists/rearrange", {
       method: "PATCH",

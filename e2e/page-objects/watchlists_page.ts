@@ -15,8 +15,6 @@ export class WatchlistsPage {
 
   async createWatchlist(name: string, description: string = "", check = true) {
     await this.page.locator("#openNewWatchlistForm").click();
-    await this.page.waitForResponse(response => response.url().includes("/watchlists/new"));
-
     await this.page.getByRole("textbox", { name: "Enter name" }).fill(name);
     await this.page.getByRole("textbox", { name: "Enter description (optional)" }).fill(description);
     await this.page.getByRole("button", { name: "Create", exact: true }).click();
@@ -40,7 +38,10 @@ export class WatchlistsPage {
   }
 
   async toggleVisibility() {
+    // the caller may reload right after, and the change is saved in the background
+    const saved = this.page.waitForResponse(r => r.url().includes("change_visiblity"));
     await this.page.getByRole("checkbox", { name: "Public" }).click();
+    await saved;
   }
 
   async isPublic(): Promise<boolean> {

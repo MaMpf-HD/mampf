@@ -56,7 +56,7 @@ test.describe("edit Watchlists", () => {
     await expect(page.getByRole("button", { name: "Updated Watchlist Name" })).toBeVisible();
     await expect(page.getByText("Watchlist was changed")).toBeVisible();
     await page.getByRole("button", { name: "Description" }).click();
-    await expect(page.locator("#collapseDescription div").filter({ hasText: "Updated description." })).toBeVisible();
+    await expect(page.getByText("Updated description.")).toBeVisible();
   });
 
   test("can change visibility of watchlist", async ({ factory, student: { page, user } }) => {
@@ -282,18 +282,18 @@ test.describe("watchlist entries without a watchlist", () => {
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"],
       { teacher_id: teacheruser.id, content_mode: "manuscript" });
-    const medium = await factory.create("lecture_medium",
+    await factory.create("lecture_medium",
       ["with_lecture_by_id", "with_manuscript", "released"],
       { lecture_id: lecture.id, sort: "Script" });
 
     const lecturePage = new LecturePage(page, lecture.id);
     await lecturePage.subscribe();
     await lecturePage.gotoManuscript();
-    await page.locator(`a[href="/watchlists/add_medium/${medium.id}"]`).click();
+    await page.getByTitle("Add to my watchlist").click();
     await page.getByRole("button", { name: "Add to my watchlist" }).click();
 
     await expect(page.getByText("Watchlist must be created first")).toBeVisible();
-    await expect(page.locator("#addWatchlistModal")).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "Add to my watchlist" })).toBeVisible();
   });
 });
 
@@ -305,14 +305,14 @@ test.describe("creating a watchlist from inside the add dialog", () => {
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"],
       { teacher_id: teacheruser.id, content_mode: "manuscript" });
-    const medium = await factory.create("lecture_medium",
+    await factory.create("lecture_medium",
       ["with_lecture_by_id", "with_manuscript", "released"],
       { lecture_id: lecture.id, sort: "Script" });
 
     const lecturePage = new LecturePage(page, lecture.id);
     await lecturePage.subscribe();
     await lecturePage.gotoManuscript();
-    await page.locator(`a[href="/watchlists/add_medium/${medium.id}"]`).click();
+    await page.getByTitle("Add to my watchlist").click();
 
     await page.locator("#openNewWatchlistForm").click();
     await page.getByRole("textbox", { name: "Enter name" }).fill("From the dialog");
@@ -320,7 +320,7 @@ test.describe("creating a watchlist from inside the add dialog", () => {
 
     // the new watchlist form lives inside the add dialog, so the dialog must
     // not take its submission for its own
-    await expect(page.locator("#addWatchlistModal")).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "Add to my watchlist" })).toBeVisible();
     await expect(page.locator("#watchlistSelect")).toContainText("From the dialog");
   });
 });

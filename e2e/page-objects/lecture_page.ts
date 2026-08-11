@@ -29,10 +29,9 @@ export class LecturePage {
   }
 
   async addMediaToWatchlist(mediumID: number, watchlistName: string, submit = true) {
-    await this.page.locator(`a[href="/watchlists/add_medium/${mediumID}"]`).hover();
-    await this.page.waitForResponse(response => response.url().includes(`/watchlists/add_medium/${mediumID}`));
     await this.page.locator(`a[href="/watchlists/add_medium/${mediumID}"]`).click();
-    await this.page.locator("#watchlistSelect").selectOption(watchlistName);
+    // the select arrives with the frame, so waiting for it is the whole wait
+    await this.page.locator("#watchlistSelect").selectOption({ label: watchlistName });
     if (submit) {
       await this.page.getByRole("button", { name: "Add to my watchlist" }).click();
     }
