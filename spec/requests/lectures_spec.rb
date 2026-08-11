@@ -356,8 +356,7 @@ RSpec.describe("Lectures", type: :request) do
         end.not_to change(Lecture, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(response.body).to include("new-lecture-course-select")
-        expect(response.body).to include("is-invalid")
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
       end
     end
   end
@@ -385,7 +384,7 @@ RSpec.describe("Lectures", type: :request) do
               as: :turbo_stream
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(response.body).to include("is-invalid")
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*lecture_term_id/)
         expect(response.body).to include(I18n.t("activerecord.errors.models.lecture" \
                                                 ".attributes.term_id.taken").strip)
         expect(response.body).not_to include(I18n.t("errors.unknown"))
