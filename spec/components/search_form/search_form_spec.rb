@@ -18,7 +18,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
       it "sets default values for optional parameters" do
         expect(search_form.scope).to eq(:search)
         expect(search_form.method).to eq(:get)
-        expect(search_form.remote).to be(true)
+        expect(search_form.turbo_frame).to be_nil
         expect(search_form.container_class).to eq("row mb-3 p-2")
         expect(search_form.hidden_fields).to eq({})
       end
@@ -39,7 +39,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
           url: "/custom_search",
           scope: :media_search,
           method: :post,
-          remote: false,
+          turbo_frame: "media-search-results",
           context: "media",
           container_class: "custom-container"
         }
@@ -50,7 +50,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
         expect(custom_search_form.url).to eq("/custom_search")
         expect(custom_search_form.scope).to eq(:media_search)
         expect(custom_search_form.method).to eq(:post)
-        expect(custom_search_form.remote).to be(false)
+        expect(custom_search_form.turbo_frame).to eq("media-search-results")
         expect(custom_search_form.context).to eq("media")
         expect(custom_search_form.container_class).to eq("custom-container")
       end

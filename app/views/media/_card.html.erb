@@ -20,7 +20,9 @@
                         role: "button",
                         id: 'create-new-medium',
                         title: t('buttons.create_medium'),
-                        data: { toggle: 'tooltip', media_button_sort_target: "newMedium" },
+                        data: { toggle: 'tooltip',
+                          media_button_sort_target: "newMedium",
+                          'courses-edit-target': 'newMediumButton' },
                         remote: true %>
           <% end %>
           <% if collapsible %>

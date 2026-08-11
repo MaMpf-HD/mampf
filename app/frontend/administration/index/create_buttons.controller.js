@@ -4,7 +4,7 @@ export default class extends Controller {
   connect() {
     this.onLectureSuccess = () => {
       this.show();
-      this.resetFrame();
+      this.resetFrames();
     };
     document.addEventListener("lecture:new:success", this.onLectureSuccess);
   }
@@ -26,18 +26,27 @@ export default class extends Controller {
   cancel(event) {
     event.preventDefault();
     this.show();
-    this.resetFrame();
+    this.resetFrames();
+  }
+
+  submitEnd(event) {
+    if (!event.detail.success) return;
+
+    this.show();
+    this.resetFrames();
   }
 
   /**
-   * Empties the lecture frame. Dropping the src matters as much as the
+   * Empties both creation frames. Dropping the src matters as much as the
    * children: Turbo caches the page on the way out and refetches any frame
    * that still points somewhere, so the form would be back after a click on
    * the browser's back button.
    */
-  resetFrame() {
-    const frame = document.getElementById("new_lecture");
-    frame?.removeAttribute("src");
-    frame?.replaceChildren();
+  resetFrames() {
+    ["new_lecture", "new_course"].forEach((id) => {
+      const frame = document.getElementById(id);
+      frame?.removeAttribute("src");
+      frame?.replaceChildren();
+    });
   }
 }
