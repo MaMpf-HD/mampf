@@ -1,5 +1,4 @@
-<div class="bg-green-lighten-4 p-3 mb-3 rounded"
-  data-controller="administration--index--create-buttons">
+<div class="bg-green-lighten-4 p-3 mb-3 rounded">
 <div class="row">
   <div class="col-12">
     <h6>
@@ -10,7 +9,7 @@
 <%= form_with model: course,
               html: { id: 'new-course-form' },
         data: { turbo: true,
-          action: 'turbo:submit-end->administration--index--create-buttons#submitEnd' },
+          action: 'turbo:submit-end->administration-index-create-buttons#submitEnd' },
               local: true do |f| %>
   <div class="row">
     <div class="col-12 mb-3">
@@ -80,7 +79,7 @@
                   class: 'btn btn-secondary',
                   data: { turbo_frame: dom_id(Course.new),
                           role: 'button',
-                          action: 'click->administration--index--create-buttons#cancel' } %>
+                          action: 'click->administration-index-create-buttons#cancel' } %>
     </div>
   </div>
 <% end %>

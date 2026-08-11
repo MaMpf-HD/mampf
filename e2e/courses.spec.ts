@@ -31,6 +31,32 @@ test("can create course", async ({ admin: { page } }) => {
   await expect(page.getByRole("link", { name: "Lineare Algebra I" })).toBeVisible();
 });
 
+// One creation at a time: both cards' plus buttons step aside for either form.
+test("hides both create buttons while the course form is open", async ({
+  factory,
+  admin: { page },
+}) => {
+  await factory.create("course");
+  await factory.create("term");
+
+  const lecturePlus = page.getByTitle("Create an event series");
+  const coursePlus = page.getByTitle("Create Course");
+
+  await page.goto("/administration");
+  await expect(lecturePlus).toBeVisible();
+  await expect(coursePlus).toBeVisible();
+
+  await coursePlus.click();
+  await expect(page.getByRole("heading", { name: "Create new course" })).toBeVisible();
+  await expect(lecturePlus).toBeHidden();
+  await expect(coursePlus).toBeHidden();
+
+  await page.getByRole("link", { name: "Cancel" }).click();
+  await expect(page.getByRole("heading", { name: "Create new course" })).toBeHidden();
+  await expect(lecturePlus).toBeVisible();
+  await expect(coursePlus).toBeVisible();
+});
+
 test("can set course image", async ({ factory, admin: { page } }) => {
   const course = await factory.create("course");
   const term = await factory.create("term");
