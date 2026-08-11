@@ -60,7 +60,7 @@ class WatchlistsController < ApplicationController
             render turbo_stream: [turbo_stream.prepend("flash-messages",
                                                        partial: "flash/message"),
                                   turbo_stream.update("watchlist",
-                                                      template: "watchlists/show")]
+                                                      partial: "watchlists/watchlist")]
           else
             render turbo_stream: [turbo_stream.prepend("flash-messages",
                                                        partial: "flash/message"),
@@ -93,8 +93,7 @@ class WatchlistsController < ApplicationController
       render turbo_stream: [turbo_stream.prepend("flash-messages",
                                                  partial: "flash/message"),
                             turbo_stream.update("watchlist",
-                                                template: "watchlists/show",
-                                                locals: { watchlist: @watchlist })]
+                                                partial: "watchlists/watchlist")]
     else
       render turbo_stream: turbo_stream.update(
         turbo_frame_request_id,
