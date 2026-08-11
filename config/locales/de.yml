@@ -69,7 +69,7 @@ de:
     text_html: >
       &copy; MaMpf Team. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
-      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
+      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}, %{mupdf}.
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
   sponsors:

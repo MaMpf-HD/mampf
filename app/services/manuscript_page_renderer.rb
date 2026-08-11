@@ -9,12 +9,16 @@ class ManuscriptPageRenderer
 
   TIMEOUT = 20
   DPI = 150
+  # The size the stored preview is downsampled to. Cards show it at up to
+  # 200px tall, so this leaves room for high-density displays.
+  PREVIEW_WIDTH = 800
+  PREVIEW_HEIGHT = 1130
   # A 458-byte PDF may declare a 14400pt page, which at DPI alone renders to
   # 30000x30000 and costs 5 GB. -w/-h cap that; twice the preview size leaves
   # libvips something to downsample from. The rlimits catch a future caller
   # that drops the caps.
-  MAX_WIDTH = 800
-  MAX_HEIGHT = 1130
+  MAX_WIDTH = PREVIEW_WIDTH * 2
+  MAX_HEIGHT = PREVIEW_HEIGHT * 2
   MEMORY_LIMIT = 512 * 1024 * 1024
   CPU_LIMIT = TIMEOUT
   OUTPUT_LIMIT = 32 * 1024 * 1024

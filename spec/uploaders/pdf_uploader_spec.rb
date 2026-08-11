@@ -112,8 +112,8 @@ RSpec.describe(PdfUploader) do
                                              .call(original)
       image = Vips::Image.new_from_file(derivatives[:screenshot].path)
 
-      expect(image.width).to be <= 400
-      expect(image.height).to be <= 565
+      expect(image.width).to be <= ManuscriptPageRenderer::PREVIEW_WIDTH
+      expect(image.height).to be <= ManuscriptPageRenderer::PREVIEW_HEIGHT
     ensure
       original.close
     end
