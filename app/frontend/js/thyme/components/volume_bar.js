@@ -1,5 +1,5 @@
 import { Component } from "~/js/thyme/components/component";
-import { onVideoMetadataLoaded } from "~/js/thyme/utility";
+import { onVideoMetadataLoaded } from "~/js/thyme/video_events";
 
 export class VolumeBar extends Component {
   add() {

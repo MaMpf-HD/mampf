@@ -1,4 +1,5 @@
-import { renderLatex, onVideoMetadataLoaded } from "./utility";
+import { onTrackReady } from "./video_events";
+import { renderLatex } from "./utility";
 
 /**
   This file wraps up most functionality of the thyme player(s) concerning metadata.
@@ -14,41 +15,7 @@ export class MetadataManager {
    * It receives a boolean value that indicates whether metadata is present.
    */
   load(onLoad) {
-    const metadata = this.#getMetadata();
-    const metadataManager = this;
-    let notified = false;
-
-    // Tie "metadata is ready" to the metadata track element itself, not to a
-    // single video event: onVideoMetadataLoaded/canplay can fire before the track
-    // has parsed its cues (readyState 2), notably when the video is already
-    // buffered (e.g. under test). The old code only called onLoad from the
-    // loadedmetadata handler, and only if the track was ready at that instant;
-    // otherwise onLoad never fired and onVideoDataReady hung. Listening to the
-    // track's own load/error events makes onLoad fire exactly once.
-    const notifyIfReady = () => {
-      if (notified) {
-        return;
-      }
-      if (metadata.readyState === 2) {
-        notified = true;
-        metadataManager.#displayMetadata();
-        if (onLoad) {
-          onLoad(metadata.track ? (metadata.track.cues.length > 0) : false);
-        }
-      }
-      else if (metadata.readyState === 3) {
-        notified = true;
-        if (onLoad) {
-          onLoad(false);
-        }
-      }
-    };
-
-    notifyIfReady();
-    metadata.addEventListener("load", notifyIfReady);
-    metadata.addEventListener("error", notifyIfReady);
-    onVideoMetadataLoaded(thymeAttributes.video, notifyIfReady);
-    thymeAttributes.video.addEventListener("canplay", notifyIfReady);
+    onTrackReady(this.#getMetadata(), () => this.#displayMetadata(), onLoad);
   }
 
   /* returns the jQuery object of all metadata elements that start before the
