@@ -146,6 +146,10 @@ class Talk < ApplicationRecord
     true
   end
 
+  def assessable?
+    assessment != nil
+  end
+
   private
 
     def touch_lecture

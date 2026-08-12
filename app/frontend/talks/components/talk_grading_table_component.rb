@@ -13,10 +13,6 @@ class TalkGradingTableComponent < ViewComponent::Base
     @legacy_talks ||= @talks.select { |t| t.speakers.any? && t.assessment.blank? }
   end
 
-  def grading_enabled?
-    Flipper.enabled?(:assessment_grading) && @assignment.assessable?
-  end
-
   def possible_statuses
     ["pending", "reviewed"]
   end

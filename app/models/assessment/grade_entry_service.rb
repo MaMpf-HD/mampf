@@ -7,7 +7,7 @@ module Assessment
 
       unless assessment&.assessable.is_a?(Gradable)
         raise(GradeEntryError,
-              I18n.t("assessment.errors.not_gradable", assessment_id: assessment.id))
+              I18n.t("assessment.errors.not_gradable", assessment_id: assessment&.id))
       end
 
       grade_info = validate_grade_info(grade_info)
