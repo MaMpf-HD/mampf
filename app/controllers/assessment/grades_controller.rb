@@ -4,11 +4,11 @@ module Assessment
                   only: [:update, :refresh]
     before_action :set_locale
     before_action :authorize_assessment!,
-                  only: [:update]
+                  only: [:update, :refresh]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
-      respond_with_flash(:alert, I18n.t("assessment.grades.invalid_params"))
+      respond_with_flash(:alert, I18n.t("assessment.errors.invalid_request_params"))
     end
 
     def authorize_assessment!
