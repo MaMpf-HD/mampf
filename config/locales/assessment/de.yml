@@ -8,7 +8,7 @@ de:
       achievements: "Zusatzkriterien"
       certifications: "Prüfungszulassungen"
     assessments: 'Testate'
-subtitle:
+    subtitle:
       assignments: 'Hausaufgabenblätter, Bewertungen und Punktevergabe verwalten.'
     achievements:
       placeholder: 'Zusatzkriterien werden in einem späteren Schritt hier angezeigt.'

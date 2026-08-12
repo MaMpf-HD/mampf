@@ -8,7 +8,7 @@ en:
       achievements: "Achievements"
       certifications: "Exam Eligibility"
     assessments: 'Assessments'
-subtitle:
+    subtitle:
       assignments: 'Manage homework sheets, grading, and point allocation.'
     achievements:
       placeholder: 'Achievements will be displayed here in a later step.'
