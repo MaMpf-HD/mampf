@@ -221,7 +221,6 @@ en:
       assessment_does_not_require_points: 'Assessment %{assessment_id} does not accept points.'
       invalid_task_id: 'Invalid task %{task_id}.'
       invalid_points_value: 'Invalid points value for task %{task_id}.'
-      invalid_submission_params: 'Invalid request parameters.'
       assessment_not_found: 'Assessment for this assignment not found.'
       cannot_score_active_assignment: 'Points cannot be entered for active assignments.'
       not_required_points: 'Points cannot be entered for assignments that do not require points.'
@@ -241,6 +240,7 @@ en:
       user_not_found: 'User not found.'
       no_participation: 'Participation not found.'
       user_cannot_grade: 'The user is not authorized to grade in this scope.'
+      invalid_request_params: 'Invalid request parameters.'
     info:
       talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
     grade_table:

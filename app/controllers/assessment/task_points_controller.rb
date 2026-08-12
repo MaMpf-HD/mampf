@@ -13,7 +13,7 @@ module Assessment
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
-      respond_with_flash(:alert, I18n.t("assessment.task_points.invalid_submission_params"))
+      respond_with_flash(:alert, I18n.t("assessment.errors.invalid_request_params"))
     end
 
     rescue_from SubmissionGraderService::SubmissionGraderError,
@@ -32,7 +32,7 @@ module Assessment
         begin
           records = JSON.parse(params[:submissions] || "[]")
         rescue JSON::ParserError
-          respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+          respond_with_flash(:alert, t("assessment.errors.invalid_request_params"))
           return
         end
         SubmissionGraderService.score_multi_teams_by_types!(records, current_user)
@@ -45,7 +45,7 @@ module Assessment
       begin
         task_points = JSON.parse(params[:task_points] || "{}")
       rescue JSON::ParserError
-        respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+        respond_with_flash(:alert, t("assessment.errors.invalid_request_params"))
         return
       end
       case params[:type]
@@ -76,7 +76,7 @@ module Assessment
       begin
         task_points = JSON.parse(params[:task_points] || "{}")
       rescue JSON::ParserError
-        respond_with_flash(:alert, t("assessment.task_points.invalid_submission_params"))
+        respond_with_flash(:alert, t("assessment.errors.invalid_request_params"))
         return
       end
       case params[:type]

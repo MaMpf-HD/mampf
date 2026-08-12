@@ -218,7 +218,6 @@ de:
       user_not_rostered: 'Dieser Benutzer ist keinem Tutorium für diese Vorlesung zugeordnet.'
       assessment_not_found: 'Bewertung für diese Hausaufgabe nicht gefunden.'
       cannot_score_active_assignment: 'Punkte können für aktive Hausaufgaben nicht eingetragen werden.'
-      invalid_submission_params: 'Ungültige Anfrageparameter.'
       participation_id_missing_tutorial: 'Teilnahme %{participation_id} ist keinem Tutorium zugeordnet. Eine Bewertung ist nur möglich, wenn der Benutzer einem Tutorium zugeordnet ist.'
       init_participation_missing_args: 'Bewertung, Benutzer und Tutorium müssen angegeben sein.'
       assessment_does_not_require_points: 'Bewertung %{assessment_id} erfordert keine Punkteingabe.'
@@ -241,6 +240,7 @@ de:
       user_not_found: 'Benutzer nicht gefunden.'
       no_participation: 'Teilnahme nicht gefunden.'
       user_cannot_grade: 'Der Benutzer ist nicht berechtigt, in diesem Bereich zu bewerten.'
+      invalid_request_params: 'Ungültige Anfrageparameter.'
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
     grade_table:
