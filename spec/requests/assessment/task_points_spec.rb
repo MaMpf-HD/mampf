@@ -115,7 +115,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include(
-            I18n.t("assessment.task_points.invalid_submission_params")
+            I18n.t("assessment.errors.invalid_request_params")
           )
         end
       end
@@ -197,7 +197,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             expect(response).to have_http_status(:success)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
-              I18n.t("assessment.task_points.invalid_submission_params")
+              I18n.t("assessment.errors.invalid_request_params")
             )
           end
         end
@@ -259,7 +259,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             expect(response).to have_http_status(:success)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
-              I18n.t("assessment.task_points.invalid_submission_params")
+              I18n.t("assessment.errors.invalid_request_params")
             )
           end
         end
@@ -330,7 +330,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             expect(response).to have_http_status(:success)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
-              I18n.t("assessment.task_points.invalid_submission_params")
+              I18n.t("assessment.errors.invalid_request_params")
             )
           end
         end
@@ -392,7 +392,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             expect(response).to have_http_status(:success)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
-              I18n.t("assessment.task_points.invalid_submission_params")
+              I18n.t("assessment.errors.invalid_request_params")
             )
           end
         end
@@ -441,7 +441,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               as: :turbo_stream
         expect(response).to have_http_status(:success)
         expect(response.media_type).to eq(Mime[:turbo_stream])
-        expect(response.body).to include(I18n.t("assessment.task_points.invalid_submission_params"))
+        expect(response.body).to include(I18n.t("assessment.errors.invalid_request_params"))
       end
     end
   end
@@ -467,7 +467,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               as: :turbo_stream
         expect(response).to have_http_status(:success)
         expect(response.media_type).to eq(Mime[:turbo_stream])
-        expect(response.body).to include(I18n.t("assessment.task_points.invalid_submission_params"))
+        expect(response.body).to include(I18n.t("assessment.errors.invalid_request_params"))
       end
     end
   end
