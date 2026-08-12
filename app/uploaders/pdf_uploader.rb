@@ -82,10 +82,20 @@ class PdfUploader < Shrine
 
   # extract a screenshot from pdf and store it beside the pdf
   Attacher.derivatives_processor do |original|
-    screenshot = ImageProcessing::Vips.source(original).loader(page: 0, dpi: 150)
-                                      .convert("png")
-                                      .resize_to_limit!(400, 565)
-    { screenshot: screenshot }
+    page = ManuscriptPageRenderer.render_first_page(original.path)
+    begin
+      # The renderer already hands us a PNG. Naming the format here is not a
+      # conversion, it only spares Vips from deriving it from the file.
+      screenshot = ImageProcessing::Vips.source(page.path)
+                                        .convert("png")
+                                        .resize_to_limit!(
+                                          ManuscriptPageRenderer::PREVIEW_WIDTH,
+                                          ManuscriptPageRenderer::PREVIEW_HEIGHT
+                                        )
+      { screenshot: screenshot }
+    ensure
+      page.close!
+    end
   end
 
   private

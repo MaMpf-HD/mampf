@@ -19,7 +19,8 @@ module Dev
       def all_users_for_impersonation_cache_key
         [
           "dev/impersonate_dropdown/all_users",
-          User.maximum(:updated_at)&.utc&.to_i
+          User.maximum(:updated_at)&.utc&.to_i,
+          User.maximum(:id)
         ]
       end
 

@@ -26,25 +26,30 @@
                          data: { course: @course.id } } %>
         </div>
       </div>
-      <% if @course.question_tags.count.positive? %>
-        <%= f.label :search_course_tag_ids,
-                    t('quiz.compile_tags'),
-                    class: "form-label" %>
-        <%= helpdesk(t('quiz.info.compile_tags'), false) %>
-        <%= f.select :search_course_tag_ids,
-                     [[]],
-                     {},
-                     { multiple: true,
-                       id: 'search_course_tag_ids',
-                       class: 'selectize',
-                       data: { ajax: true,
-                               filled: false,
-                               model: 'course_tag',
-                               course: @course.id,
-                               placeholder: t('basics.enter_two_letters'),
-                               no_results: t('basics.no_results') } } %>
-      <% end %>
-      <div id="questionCounter">
+      <div data-controller="question-counter"
+           data-question-counter-url-value="<%= render_question_counter_path(@course) %>">
+        <% if @course.question_tags.count.positive? %>
+          <%= f.label :search_course_tag_ids,
+                      t('quiz.compile_tags'),
+                      class: "form-label" %>
+          <%= helpdesk(t('quiz.info.compile_tags'), false) %>
+          <%= f.select :search_course_tag_ids,
+                       [[]],
+                       {},
+                       { multiple: true,
+                         id: 'search_course_tag_ids',
+                         class: 'selectize',
+                         data: { ajax: true,
+                                 action: 'change->question-counter#selectionChanged',
+                                 question_counter_target: 'select',
+                                 filled: false,
+                                 model: 'course_tag',
+                                 course: @course.id,
+                                 placeholder: t('basics.enter_two_letters'),
+                                 no_results: t('basics.no_results') } } %>
+        <% end %>
+        <%= turbo_frame_tag "question_counter",
+                            data: { question_counter_target: 'counter' } %>
       </div>
       <div class="row">
         <div class="col-12 text-center">
