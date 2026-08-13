@@ -1,6 +1,6 @@
 # Roadmap
 
-```admonish info "Last reconciled: 2026-08-09"
+```admonish info "Last reconciled: 2026-08-13"
 Against the working tree, `next`, and the open pull requests — not against the
 other planning chapters. Those describe what was intended and are still worth
 reading for that; this one describes what is left.
@@ -33,7 +33,64 @@ names, swap them in — the point is that the waiting is visible either way.
 
 ---
 
-## Now — close the chain
+## The shape of what is left
+
+Everything below is one chain. Points have to be writable before anything can be
+published, and nothing can be published before a student has a page to read it
+on. The two halves are split that way here: what puts data in, and what lets
+someone see it.
+
+```mermaid
+graph TD
+    I["Merge the Müsli integration<br/>PR #1211"]
+
+    subgraph Writing["Writing — teachers and tutors"]
+        direction TB
+        TUT["Points for tutorial groups<br/>PR #1150"]
+        TALK["Grades for talks<br/>PR #1196"]
+        EXAM["Points and grades for exams<br/>nothing written"]
+        ACH["Marking achievements<br/>nothing written"]
+    end
+
+    subgraph Reading["Reading — students"]
+        direction TB
+        PUB["Publication<br/>nothing written"]
+        RES["What a student sees<br/>points · grade · submission · achievements<br/>nothing written"]
+        DASH["Dashboards<br/>no specification"]
+    end
+
+    I --> TUT --> TALK
+    I --> EXAM
+    I --> ACH
+    TUT --> PUB
+    EXAM --> PUB
+    PUB --> RES
+    RES --> DASH
+
+    classDef inpr fill:#dbeafe,stroke:#1d4ed8,color:#1e3a5f
+    classDef todo fill:#fee2e2,stroke:#b91c1c,color:#5f1d1d
+    classDef spec fill:#fef3c7,stroke:#b45309,color:#5f3d0d
+    class I,TUT,TALK inpr
+    class EXAM,ACH,PUB,RES todo
+    class DASH spec
+```
+
+---
+
+| # | Function | Who uses it | Where it stands | Waiting on |
+|---|---|---|---|---|
+| 1 | Merge the Müsli integration | — | PR #1211 | a decision to merge |
+| 2 | Points for tutorial groups | tutors | PR #1150, code complete | a reviewer |
+| 3 | Grades for talks | teachers | PR #1196, draft, stacked on 2 | entry 2, then a reviewer |
+| 4 | Points and grades for exams | teachers | nothing written | entry 1, then code |
+| 5 | Marking achievements | teachers, tutors | nothing written | entry 1, then code |
+| 6 | Publication | the switch itself | nothing written | code |
+| 7 | What a student sees — points, grade, submission, achievements | the participant | nothing written | entry 6, then code and a design call |
+| 8 | Dashboards | everyone, differently | nothing written | a specification |
+
+---
+
+## Writing — teachers and tutors
 
 Nothing in the merged tree writes a point. Every point in the system comes from
 `lib/demo`. Grade schemes, performance records and the whole eligibility chain
@@ -42,101 +99,81 @@ built on a floor nobody has stood on.
 
 ### 1 · Merge the Müsli integration
 
-**Blocked until this lands** — every other Müsli entry, which either builds on it
-or conflicts with it.
+The five former slices in one branch, with the Playwright suite for the
+assessment area and its own round of review. Every other entry either builds on
+it or conflicts with it, so nothing below can start until it lands.
 
-**Where it is** — PR #1211. The five former slices in one branch, with the
-Playwright suite for the assessment area and its own round of review.
+### 2 · Points for tutorial groups
 
-**What it needs** — a merge. One end-to-end spec is red for a reason that
-predates the branch (see [CI health](#ci-health)); say so in the description
-rather than leaving a reviewer to find it.
+The read-only point grid, the grade scheme pipeline, and the performance and
+eligibility chain are all fed by hand-entered points that no interface can
+produce. This is that interface — for tutorial groups, and nothing else. Talks,
+exams and achievements each need their own path; entries 3 to 5 are those paths.
 
-**Waiting on** — a decision to merge.
+Open since May. Before a review it needs a duplicate `note` migration dropped —
+the integration branch folded that column into the create-table migration — and a
+rolled-back schema version fixed. CI has still never run for it: the test
+workflow fires for pull requests based on `main` or `next` only, and this one
+targets the integration branch.
 
-### 2 · Point entry
+### 3 · Grades for talks
 
-**Blocked until this lands** — the read-only point grid, the grade scheme
-pipeline, and the performance and eligibility chain are all fed by hand-entered
-points that no interface can produce.
+The same surface for talks. Grades can otherwise be written for a whole cohort by
+applying a scheme, and in no other way — there is no path for a single
+correction.
 
-**Where it is** — PR #1150, open since May, code complete. Every review thread on
-it is a bot or the author.
+### 4 · Points and grades for exams
 
-**What it needs** — retargeting onto the integration branch, which is also what
-makes CI run for the first time: the test workflow fires for pull requests based
-on `main` or `next` only, and this one targets a slice branch. Then a duplicate
-`note` migration to drop (the integration branch folded that column into the
-create-table migration), a rolled-back schema version to fix, and a human
-review.
+An exam can be registered for, scheduled, and graded by applying a scheme to a
+whole cohort. A single result cannot be entered or corrected by hand at all. This
+is the exam-shaped version of what entries 2 and 3 build: points per
+participation, the grade beside them, and the correction path the scheme-wide
+application does not offer.
 
-**Waiting on** — a reviewer.
+### 5 · Marking achievements
 
-### 3 · Grade entry
-
-**Blocked until this lands** — grades can be written for a whole cohort by
-applying a scheme, and in no other way. There is no path for a single correction.
-
-**Where it is** — PR #1196, draft, conflicting against its own base.
-
-**What it needs** — entry 2 first; it is stacked on it.
-
-**Waiting on** — entry 2, then a reviewer.
+Achievements exist, the marking view exists, and the service that feeds them into
+performance records exists. Nothing marks one except a seed, so the eligibility
+rules that count achievements count only fixtures.
 
 ---
 
-## Next — make it visible to students
+## Reading — students
 
 The assessment surface is teacher-only from end to end. `AssessmentAbility`
 grants everything through the lecture's edit right, and no route reaches a
 student.
 
-### 4 · Publication
+### 6 · Publication
 
-**Blocked until this lands** — students see nothing. `results_published_at`
-already decides whether an exam counts as graded, and no production code sets it.
+`results_published_at` already decides whether an exam counts as graded, and no
+production code sets it. What is missing is an action to publish and one to
+withdraw, on the assessment, with the guard that says who may.
 
-**What it needs** — an action to publish and one to withdraw, on the assessment,
-with the guard that says who may.
+### 7 · What a student sees
 
-**Waiting on** — code.
+A student cannot see their own points, grade, submission state or achievements
+anywhere, and all four belong on the same page. This needs the student's own view
+of a participation, and an ability that grants it to the participant rather than
+to the lecture's staff. For achievements that includes progress: what is earned,
+and what is still open.
 
-### 5 · Student results
+It is also where the submission page has to be rebuilt rather than extended.
+Today it answers one question — did I hand something in — and results have no
+place on it. A student looking for a point, a grade and a submission state will
+look in one place, and that place is the wrong shape for two of the three.
 
-**Blocked until this lands** — a student cannot see their own points, grade or
-achievements anywhere.
+### 8 · Dashboards
 
-**What it needs** — entry 4 first, then the student's own view of a
-participation, and an ability that grants it to the participant rather than to
-the lecture's staff.
-
-**Waiting on** — entry 4, then code.
-
----
-
-## Alongside — the cheapest work available
-
-Two pull requests based on `next` are small, green, and have been sitting on
-requested changes. They are the only items here that cost nothing to finish.
-
-### 6 · Submission interface simplification
-
-**Where it is** — PR #1116. Touches the same submission views that entry 2
-rewrites; the longer it waits, the worse that conflict gets.
-
-**Waiting on** — the author, then a reviewer.
-
-### 7 · Roster change notifications
-
-**Where it is** — PR #1187. Nothing of it is merged.
-
-**Waiting on** — the author, then a reviewer.
+The largest untouched block, and the only one where no code exists at all. Worth
+re-specifying before starting: the chapters describing it were written before the
+assessment area existed and assume screens that were never built.
 
 ---
 
-## Then
+## Then — what is left over from registration
 
-### 8 · Exam registration, second pass
+### Exam registration, second pass
 
 Making an exam the fourth thing a student can register for — next to tutorials,
 talks and cohorts — left four screens half-fitting. The defects are fixed. What
@@ -151,23 +188,7 @@ that it would not be reviewed inside a very large diff:
   is not, deliberately, and registration is decoupled from content access
 - the tutorial-flavoured styling an exam tile inherits
 
-**Waiting on** — entry 1, then a design call.
-
-### 9 · Achievements for students
-
-The teacher's side is complete: achievements, marking view, and the service that
-feeds them into performance records. The student's side does not exist — no
-progress view, and no way to mark an achievement other than through seeds.
-
-**Waiting on** — entry 5, which establishes how a student reaches their own data.
-
-### 10 · Dashboards
-
-The largest untouched block, and the only one where no code exists at all. Worth
-re-specifying before starting: the chapters describing it were written before the
-assessment area existed and assume screens that were never built.
-
-**Waiting on** — a specification.
+It waits on entry 1, then a design call.
 
 ---
 
@@ -175,19 +196,20 @@ assessment area existed and assume screens that were never built.
 
 ### CI health
 
-One end-to-end spec fails on `next` and is not on the skip list, so continuous
-integration is red for a reason unrelated to any current work. Reproduced on a
-clean `next` — checking the branch out is not enough on its own, the test
-database has to be loaded from that branch's schema first, or the failure is a
-different one. Either fix it or skip it; a permanently red pipeline hides real
-regressions.
+The two named failures are gone. The end-to-end spec that had been red on `next`
+was a blocked PDF loader, replaced by a separate rasterizer in PR #1216; the
+strict-mode violation that followed — a second login button whose accessible name
+contains the first one's — was PR #1218. Both are merged.
 
-The Playwright suite also fails intermittently — roughly two runs in eleven,
-always the same shape: a test times out with a navigation in flight. Measured and
-excluded: browser memory, server latency, asset serving, recompilation after an
-edit, background jobs, disk, CPU, and unhandled dialogs. Not reproducible on
-demand. Recorded here so the next person does not start the search from the
-beginning.
+What remains is the intermittent one: the Playwright suite fails roughly two runs
+in eleven, always the same shape, a test timing out with a navigation in flight.
+Measured and excluded: browser memory, server latency, asset serving,
+recompilation after an edit, background jobs, disk, CPU, and unhandled dialogs.
+Not reproducible on demand. Recorded here so the next person does not start the
+search from the beginning.
+
+A permanently red pipeline hides real regressions, so the rule stands: fix it or
+skip it, and say which in the pull request.
 
 ### The book
 
