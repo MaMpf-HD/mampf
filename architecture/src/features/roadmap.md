@@ -54,7 +54,6 @@ graph TD
 
     subgraph Reading["Reading — students"]
         direction TB
-        PUB["Publication<br/>nothing written"]
         RES["What a student sees<br/>points · grade · submission · achievements<br/>nothing written"]
         DASH["Dashboards<br/>no specification"]
     end
@@ -62,16 +61,16 @@ graph TD
     I --> TUT --> TALK
     I --> EXAM
     I --> ACH
-    TUT --> PUB
-    EXAM --> PUB
-    PUB --> RES
+    TUT --> RES
+    EXAM --> RES
+    ACH --> RES
     RES --> DASH
 
     classDef inpr fill:#dbeafe,stroke:#1d4ed8,color:#1e3a5f
     classDef todo fill:#fee2e2,stroke:#b91c1c,color:#5f1d1d
     classDef spec fill:#fef3c7,stroke:#b45309,color:#5f3d0d
     class I,TUT,TALK inpr
-    class EXAM,ACH,PUB,RES todo
+    class EXAM,ACH,RES todo
     class DASH spec
 ```
 
@@ -84,9 +83,8 @@ graph TD
 | 3 | Grades for talks | teachers | PR #1196, draft, stacked on 2 | entry 2, then a reviewer |
 | 4 | Points and grades for exams | teachers | nothing written | entry 1, then code |
 | 5 | Marking achievements | teachers, tutors | nothing written | entry 1, then code |
-| 6 | Publication | the switch itself | nothing written | code |
-| 7 | What a student sees — points, grade, submission, achievements | the participant | nothing written | entry 6, then code and a design call |
-| 8 | Dashboards | everyone, differently | nothing written | a specification |
+| 6 | What a student sees — points, grade, submission, achievements | the participant | nothing written | entries 2 to 5, then code and a design call |
+| 7 | Dashboards | everyone, differently | nothing written | a specification |
 
 ---
 
@@ -130,6 +128,11 @@ is the exam-shaped version of what entries 2 and 3 build: points per
 participation, the grade beside them, and the correction path the scheme-wide
 application does not offer.
 
+Publishing belongs here too, as two buttons rather than a project of its own.
+`results_published_at` is written by nothing but factories today, and
+`Exam#status` is its only reader — it decides when an exam counts as graded, and
+so when a student may see the result. Tutorial points need no such switch.
+
 ### 5 · Marking achievements
 
 Achievements exist, the marking view exists, and the service that feeds them into
@@ -144,26 +147,21 @@ The assessment surface is teacher-only from end to end. `AssessmentAbility`
 grants everything through the lecture's edit right, and no route reaches a
 student.
 
-### 6 · Publication
-
-`results_published_at` already decides whether an exam counts as graded, and no
-production code sets it. What is missing is an action to publish and one to
-withdraw, on the assessment, with the guard that says who may.
-
-### 7 · What a student sees
+### 6 · What a student sees
 
 A student cannot see their own points, grade, submission state or achievements
-anywhere, and all four belong on the same page. This needs the student's own view
-of a participation, and an ability that grants it to the participant rather than
-to the lecture's staff. For achievements that includes progress: what is earned,
-and what is still open.
+anywhere, and all four belong on the same page. Nothing here can start before
+something writes them, so this waits on entries 2 to 5. What it needs is the
+student's own view of a participation, and an ability that grants it to the
+participant rather than to the lecture's staff. For achievements that includes
+progress: what is earned, and what is still open.
 
 It is also where the submission page has to be rebuilt rather than extended.
 Today it answers one question — did I hand something in — and results have no
 place on it. A student looking for a point, a grade and a submission state will
 look in one place, and that place is the wrong shape for two of the three.
 
-### 8 · Dashboards
+### 7 · Dashboards
 
 The largest untouched block, and the only one where no code exists at all. Worth
 re-specifying before starting: the chapters describing it were written before the
