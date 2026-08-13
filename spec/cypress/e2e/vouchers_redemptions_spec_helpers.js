@@ -92,11 +92,11 @@ export function selectClaimsAndSubmit(entityIds) {
   cy.getBySelector("flash-notice").should("be.visible");
 }
 
-// Verifies that the tutorials or talks that were claimed are
-// displayed in the lecture edit page and contain the user's name
+// Verifies that the talks that were claimed are displayed in the
+// lecture edit page and contain the user's name
 // (and all the other ones do not)
 // If totalCount is specified, it is used to check the total number of
-// tutorials or talks in the lecture.
+// talks in the lecture.
 export function verifyClaimsContainUserName(context, claimIds, totalCount = 3) {
   cy.getBySelector("talk-header").should("have.length", totalCount).each(($el) => {
     const dataId = parseInt($el.attr("data-id"), 10);

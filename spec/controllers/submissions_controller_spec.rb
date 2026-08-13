@@ -21,7 +21,7 @@ describe SubmissionsController do
                         assignment_id: assignment.id }
         )
       end
-      it "uses tutorial_id with from the params" do
+      it "uses the tutorial_id from the params" do
         permitted = controller.send(:submission_create_params)
         expect(permitted[:tutorial_id]).to eq(other_tutorial.id)
       end
@@ -34,7 +34,7 @@ describe SubmissionsController do
                         assignment_id: assignment.id }
         )
       end
-      it "uses tutorial_id with from the params" do
+      it "uses the tutorial_id from the params" do
         controller.instance_variable_set(:@submission, submission)
         permitted = controller.send(:submission_update_params)
         expect(permitted[:tutorial_id]).to eq(other_tutorial.id)
