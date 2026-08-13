@@ -9,7 +9,6 @@ RSpec.describe("Registration::Items", type: :request) do
   let(:tutorial) { create(:tutorial, lecture: lecture) }
 
   before do
-    Flipper.enable(:registration_campaigns)
     create(:editable_user_join, user: editor, editable: lecture)
   end
 

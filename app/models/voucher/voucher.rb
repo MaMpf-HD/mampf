@@ -42,11 +42,7 @@ class Voucher < ApplicationRecord
   self.implicit_order_column = :created_at
 
   def self.roles_for_lecture(lecture)
-    if lecture.seminar?
-      return ROLE_HASH.keys - [:tutor] if Flipper.enabled?(:roster_maintenance)
-
-      return ROLE_HASH.keys
-    end
+    return ROLE_HASH.keys - [:tutor] if lecture.seminar?
 
     ROLE_HASH.keys - [:speaker]
   end

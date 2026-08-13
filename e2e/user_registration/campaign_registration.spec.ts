@@ -1,5 +1,4 @@
 import { Page, test, expect } from "../_support/fixtures";
-import { enableFeature } from "../_support/backend";
 import { confirmationLinkFor } from "../_support/mail";
 import {
   createReleasedLecture,
@@ -54,11 +53,6 @@ async function admitRejectedStudentThroughTeacherRoster(
 }
 
 test.describe("campaign registration", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "registration_campaigns");
-    await enableFeature(request, "roster_maintenance");
-  });
-
   test("can be opened from the lecture home tab", async ({ factory, student }) => {
     const lecture = await createReleasedLecture(factory);
     await subscribeToLecture(factory, lecture, student.user.id);
