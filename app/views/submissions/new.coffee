@@ -4,14 +4,15 @@ $('.submissionMain[data-id="<%= @assignment.id %>"]').empty()
                                   assignment: @assignment,
                                   lecture: @lecture } %>')
 
-new TomSelect('#submission_tutorial_id',
-  sortField:
-    field: 'text'
-    direction: 'asc'
-  render:
-    no_results: (data, escape) ->
-      '<div class="no-results"><%= t("basics.no_results") %></div>'
-)
+if document.getElementById('submission_tutorial_id')
+  new TomSelect('#submission_tutorial_id',
+    sortField:
+      field: 'text'
+      direction: 'asc'
+    render:
+      no_results: (data, escape) ->
+        '<div class="no-results"><%= t("basics.no_results") %></div>'
+  )
 
 new TomSelect('#submission_invitee_ids',
   sortField:

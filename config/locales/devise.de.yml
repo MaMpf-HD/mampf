@@ -108,6 +108,10 @@ de:
         password: 'Passwort'
         remember: 'Erinnere Dich an mich'
         login: 'Login'
+        login_as_last_playwright_user: 'Als zuletzt erstellter Playwright-Nutzer einloggen'
+      playwright_user:
+        signed_in: 'Du bist als zuletzt erstellter Playwright-Nutzer angemeldet.'
+        not_found: 'Kein Playwright-Nutzer gefunden.'
     shared:
       links:
         login: 'Login'

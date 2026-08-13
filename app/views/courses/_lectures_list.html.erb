@@ -1,0 +1,28 @@
+<% if course.lectures.exists? %>
+  <ul>
+    <% course.lectures_by_date.each do |l| %>
+      <li>
+        <%= link_to l.term_teacher_info,
+                    edit_lecture_path(l),
+                    class: lectures_color(l),
+                    data: { turbo_frame: "_top" } %>
+      </li>
+    <% end %>
+  </ul>
+  <% if course.term_independent %>
+    <%= t('admin.course.term_independence') %>
+    <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+  <% end %>
+<% else %>
+  <%= t('admin.course.no_lectures') %>
+  <% if local_assigns[:f].present? %>
+    <div class="form-check">
+      <%= f.check_box :term_independent,
+                      class: 'form-check-input' %>
+      <%= f.label :term_independent,
+                  t('admin.course.term_independent'),
+                  { class: 'form-check-label' } %>
+      <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+    </div>
+  <% end %>
+<% end %>

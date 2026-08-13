@@ -111,6 +111,10 @@ en:
         password: "Password"
         remember: "Remember me"
         login: "Login"
+        login_as_last_playwright_user: "Login as last created Playwright user"
+      playwright_user:
+        signed_in: "Signed in as last created Playwright user."
+        not_found: "No Playwright user found."
     shared:
       links:
         login: "Login"

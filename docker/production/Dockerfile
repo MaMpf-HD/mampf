@@ -134,7 +134,7 @@ ENTRYPOINT ["/usr/src/app/docker/production/entrypoint-app.sh"]
 ARG OS_SECURITY_REFRESH=
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ffmpeg qpdf rsync shared-mime-info libvips42 && \
+        ffmpeg qpdf mupdf-tools rsync shared-mime-info libvips42 && \
     if [ -n "${OS_SECURITY_REFRESH}" ]; then apt-get upgrade -y; fi && \
     rm -rf /var/lib/apt/lists/*
 

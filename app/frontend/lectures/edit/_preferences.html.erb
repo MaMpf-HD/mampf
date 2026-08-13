@@ -1,4 +1,6 @@
 <%= form_with model: lecture,
+              local: true,
+              data: { turbo: true },
               html: { id: 'lecture-preferences-form' } do |f| %>
   <div class="row">
     <h3 class="lecture-pane-header"><%= t('basics.preferences') %></h3>
@@ -14,9 +16,6 @@
                                         lecture.term&.id),
                       {},
                       { class: 'form-select' } %>
-        <div class="invalid-feedback"
-              id="lecture-term-error">
-        </div>
       </div>
     <% end %>
     <% unless lecture.course.term_independent %>
@@ -28,9 +27,6 @@
                       options_for_select(Lecture.select_sorts, lecture.sort),
                       {},
                       { class: 'form-select' } %>
-        <div class="invalid-feedback"
-              id="lecture-term-error">
-        </div>
       </div>
     <% end %>
     <% unless lecture.seminar? %>
