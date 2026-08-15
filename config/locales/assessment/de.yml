@@ -278,16 +278,15 @@ de:
         filter_pending: 'Ausstehend'
         filter_reviewed: 'Überprüft'
       header_overview:
-        submission:
-          total: 'Abgaben'
-          graded: 'benotet'
-          pending: 'ausstehend'
-        non_submitters:
-          total: 'Personen haben nicht abgegeben'
-          participated: 'teilgenommen'
-          not_participated: 'noch nicht bewertet'
-          graded: 'benotet'
-          pending: 'ausstehend'
+        title: 'Bewertung'
+        progress: '%{graded} von %{total}'
+        open:
+          one: '1 offen'
+          other: '%{count} offen'
+        unmarked:
+          one: '1 nicht als teilgenommen markiert'
+          other: '%{count} nicht als teilgenommen markiert'
+        done: 'Alles bewertet'
       no_user_for_config: 'Keine Benutzer für Teilnahme %{participation_id} an Hausaufgabe %{assignment_id}'
     grading_overview:
       submission_progress: 'Abgaben'

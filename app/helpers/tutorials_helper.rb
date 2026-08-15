@@ -48,40 +48,30 @@ module TutorialsHelper
     end
   end
 
+  # What is left to grade, and the two ways something can still be open: it is
+  # waiting for points, or its author has not been marked as having taken part
+  # at all and cannot be graded yet.
   def overview_info(tutorial, assignment)
-    stack = assignment&.submissions&.where(tutorial: tutorial)&.proper
-                      &.order(:last_modification_by_users_at)
-    non_submitters = assignment.non_submitters_in_tutorial(tutorial)
+    submissions = assignment&.submissions&.where(tutorial: tutorial)&.proper.to_a
+    non_submitters = assignment.non_submitters_in_tutorial(tutorial).to_a
 
-    num_submissions = stack.size
-    num_submissions_with_points = stack.count do |s|
-      s.participations && s.participations.first&.status == "reviewed"
-    end
-    num_submissions_without_points = num_submissions - num_submissions_with_points
+    graded = submissions.count { |s| s.participations&.first&.status == "reviewed" }
+    marked = 0
 
-    num_non_submitters = non_submitters.size
-    num_participated = non_submitters.count do |u|
-      u.assessment_participation_in_assignment(assignment)
-    end
-    num_not_participated = num_non_submitters - num_participated
-    num_participated_with_points = non_submitters.count do |u|
-      u.assessment_participation_in_assignment(assignment)&.status == "reviewed"
-    end
-    num_participated_without_points = num_participated - num_participated_with_points
+    non_submitters.each do |user|
+      participation = user.assessment_participation_in_assignment(assignment)
+      next unless participation
 
-    {
-      submissions: {
-        total: num_submissions,
-        graded: num_submissions_with_points,
-        pending: num_submissions_without_points
-      },
-      non_submitters: {
-        total: num_non_submitters,
-        participated: num_participated,
-        graded: num_participated_with_points,
-        pending: num_participated_without_points,
-        not_marked: num_not_participated
-      }
-    }
+      marked += 1
+      graded += 1 if participation.status == "reviewed"
+    end
+
+    gradable = submissions.size + marked
+
+    { gradable: gradable,
+      graded: graded,
+      open: gradable - graded,
+      unmarked: non_submitters.size - marked,
+      percent: gradable.positive? ? (100.0 * graded / gradable).round : 0 }
   end
 end

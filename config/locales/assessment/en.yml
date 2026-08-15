@@ -278,16 +278,15 @@ en:
         filter_pending: 'Pending'
         filter_reviewed: 'Reviewed'
       header_overview:
-        submission:
-          total: 'submissions'
-          graded: 'graded'
-          pending: 'pending'
-        non_submitters:
-          total: 'people have not submitted'
-          participated: 'participated'
-          not_participated: 'not yet marked'
-          graded: 'graded'
-          pending: 'pending'
+        title: 'Grading'
+        progress: '%{graded} of %{total}'
+        open:
+          one: '1 to grade'
+          other: '%{count} to grade'
+        unmarked:
+          one: '1 not marked as participated'
+          other: '%{count} not marked as participated'
+        done: 'Everything graded'
       no_user_for_config: 'No user for participation %{participation_id} on assignment %{assignment_id}'
     grading_overview:
       submission_progress: 'Submissions'

@@ -37,49 +37,46 @@
     <% if grading_enabled?(@assignment) %>
       <!-- Overview -->
       <% info = overview_info(@tutorial, @assignment) %>
-      <div class="border rounded-3 bg-light p-2 h-100 mt-3 overview-card">
-        <div class="small mb-2">
-          <span class="badge bg-primary">
-            <%= info[:submissions][:total] %>
+      <div class="border rounded-3 bg-light p-3 mt-3 overview-card">
+        <div class="d-flex justify-content-between align-items-baseline mb-2">
+          <span class="fw-semibold">
+            <%= t('assessment.grading_tutorial.header_overview.title') %>
           </span>
-          <%= t('assessment.grading_tutorial.header_overview.submission.total') %>
-          <span class="mx-2">—</span>
-          <span class="text-success">
-            <%= info[:submissions][:graded] %>
+          <span class="small text-muted">
+            <%= t('assessment.grading_tutorial.header_overview.progress',
+                  graded: info[:graded], total: info[:gradable]) %>
           </span>
-          <%= t('assessment.grading_tutorial.header_overview.submission.graded') %>
-          <span class="mx-1">•</span>
-          <span class="text-warning">
-            <%= info[:submissions][:pending] %>
-          </span>
-          <%= t('assessment.grading_tutorial.header_overview.submission.pending') %>
         </div>
 
-        <hr class="my-2">
-        <div class="small text-muted">
-          <span class="badge bg-secondary">
-            <%= info[:non_submitters][:total] %>
-          </span>
-          <%= t('assessment.grading_tutorial.header_overview.non_submitters.total') %>
-          <span class="mx-2">—</span>
-          <strong><%= info[:non_submitters][:participated] %></strong>
-          <%= t('assessment.grading_tutorial.header_overview.non_submitters.participated') %>
-          (
-          <span class="text-success">
-            <%= info[:non_submitters][:graded] %>
-          </span>
-          <%= t('assessment.grading_tutorial.header_overview.non_submitters.graded') %>
-          •
-          <span class="text-warning">
-            <%= info[:non_submitters][:pending] %>
-          </span>
-          <%= t('assessment.grading_tutorial.header_overview.non_submitters.pending') %>
-          )
+        <div class="progress overview-progress"
+             role="progressbar"
+             aria-valuenow="<%= info[:percent] %>"
+             aria-valuemin="0"
+             aria-valuemax="100">
+          <div class="progress-bar bg-success" style="width: <%= info[:percent] %>%"></div>
+        </div>
 
-          <span class="mx-1">•</span>
+        <div class="d-flex flex-wrap gap-2 mt-2 small">
+          <% if info[:open].positive? %>
+            <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis">
+              <%= t('assessment.grading_tutorial.header_overview.open',
+                    count: info[:open]) %>
+            </span>
+          <% end %>
 
-          <strong><%= info[:non_submitters][:not_marked] %></strong>
-          <%= t('assessment.grading_tutorial.header_overview.non_submitters.not_participated') %>
+          <% if info[:unmarked].positive? %>
+            <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis">
+              <%= t('assessment.grading_tutorial.header_overview.unmarked',
+                    count: info[:unmarked]) %>
+            </span>
+          <% end %>
+
+          <% if info[:open].zero? && info[:unmarked].zero? %>
+            <span class="badge rounded-pill bg-success-subtle text-success-emphasis">
+              <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>
+              <%= t('assessment.grading_tutorial.header_overview.done') %>
+            </span>
+          <% end %>
         </div>
       </div>
     <% end %>
