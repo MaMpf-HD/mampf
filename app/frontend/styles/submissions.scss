@@ -291,3 +291,9 @@ input[type="file"] {
     padding-right: 2.5rem;
   }
 }
+
+// The overview box states a handful of counts; stretched across a wide page it
+// reads as a banner rather than a summary.
+.overview-card {
+  max-width: 42rem;
+}

@@ -1,6 +1,6 @@
-<div class="row justify-content-between">
+<div class="row g-3 mx-0 mt-2">
   <!-- Assignment Selector -->
-  <div class="col-md-4 m-3">
+  <div class="col-12 col-md-5 col-xl-4">
     <h5 class="form-label fw-semibold mb-1"><%= t('basics.assignment') %></h5>
 
     <% if @assignments.size > 1 %>
@@ -19,7 +19,7 @@
   </div>
 
   <!-- Tutorial Selector -->
-  <div class="col-md-4 m-3">
+  <div class="col-12 col-md-5 col-xl-4">
     <h5 class="form-label fw-semibold mb-1"><%= t('categories.tutorials') %></h5>
 
     <% if @tutorials.size > 1 %>
@@ -37,7 +37,7 @@
     <% if grading_enabled?(@assignment) %>
       <!-- Overview -->
       <% info = overview_info(@tutorial, @assignment) %>
-      <div class="border rounded-3 bg-light p-2 h-100 m-3">
+      <div class="border rounded-3 bg-light p-2 h-100 mt-3 overview-card">
         <div class="small mb-2">
           <span class="badge bg-primary">
             <%= info[:submissions][:total] %>
