@@ -5,6 +5,9 @@ window.Stimulus = Application.start();
 import LectureSidebarController from "~/lectures/show/_sidebar.controller.js";
 window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 
+import SidebarCollapseController from "~/lectures/show/sidebar_collapse.controller.js";
+window.Stimulus.register("sidebar-collapse", SidebarCollapseController);
+
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);
 

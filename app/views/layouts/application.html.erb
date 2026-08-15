@@ -12,7 +12,9 @@
     <%= render partial: "shared/navbar" %>
 
     <div class="d-flex container-fluid flex-grow-1">
-      <div class="row" id="main-content-row">
+      <div class="row" id="main-content-row"
+           data-controller="sidebar-collapse"
+           data-sidebar-collapse-collapsed-class="sidebar-collapsed">
 
         <% lecture = @lecture || current_lecture %>
         <% if lecture %>
@@ -26,6 +28,18 @@
         <% end %>
 
         <main class="col-sm-8 ml-auto col-md-9 col-xl-10 pt-3" role="main">
+          <% if lecture %>
+            <button type="button"
+                    class="btn btn-sm btn-light sidebar-collapse-toggle"
+                    data-sidebar-collapse-target="toggle"
+                    data-action="sidebar-collapse#toggle"
+                    data-bs-toggle="tooltip"
+                    aria-expanded="true"
+                    aria-controls="sidebar-container"
+                    title="<%= t('buttons.toggle_sidebar') %>">
+              <i class="bi bi-layout-sidebar-inset"></i>
+            </button>
+          <% end %>
           <%= turbo_frame_tag "main", target: "_top", data: { turbo_action: "advance" } do %>
             <%= yield %>
           <% end %>

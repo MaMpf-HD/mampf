@@ -3575,6 +3575,7 @@ en:
     edit_cohort: 'Edit Group'
     save: 'Save'
     refresh: 'Refresh'
+    toggle_sidebar: 'Collapse or expand the sidebar'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
     save_and_edit: 'Save and Edit'

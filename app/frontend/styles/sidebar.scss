@@ -69,3 +69,22 @@
 .nav-link.disabled a {
     color: #cacaca;
 }
+// Collapsing the sidebar: the grid columns stay in the markup, so the collapsed
+// state overrides their width rather than swapping classes at runtime.
+.sidebar-collapse-toggle {
+    float: right;
+    margin-left: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+#main-content-row.sidebar-collapsed {
+    #sidebar-container {
+        display: none;
+    }
+
+    > main {
+        flex: 1 0 100%;
+        max-width: 100%;
+        width: 100%;
+    }
+}
