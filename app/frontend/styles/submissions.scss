@@ -266,3 +266,28 @@ input[type="file"] {
 .z-10 {
   z-index: 10 !important;
 }
+
+// "Special cases" table: unlike the grading table above it, this one has three
+// short columns and no reason to span the page — it sizes to its content.
+.excluded-body {
+  overflow-x: auto;
+}
+
+.excluded-table {
+  width: auto;
+  margin-inline: 1rem;
+
+  thead {
+    background: #fafafa;
+  }
+
+  .excluded-name,
+  .excluded-action {
+    white-space: nowrap;
+  }
+
+  .excluded-reason {
+    white-space: nowrap;
+    padding-right: 2.5rem;
+  }
+}

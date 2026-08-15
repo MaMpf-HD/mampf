@@ -1,5 +1,5 @@
 <tr>
-  <td class="sticky-col team-col">
+  <td class="excluded-name">
     <%= user.tutorial_name %>
 
     <i
@@ -14,11 +14,11 @@
     </i>
   </td>
 
-  <td class="text-start sticky-col action-col">
+  <td class="excluded-reason text-start">
     <%= reason %>
   </td>
 
-  <td class="text-end">
+  <td class="excluded-action text-end">
     <%= yield if block_given? %>
   </td>
 </tr>
