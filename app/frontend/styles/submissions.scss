@@ -267,28 +267,31 @@ input[type="file"] {
   z-index: 10 !important;
 }
 
-// "Special cases" table: unlike the grading table above it, this one has three
-// short columns and no reason to span the page — it sizes to its content.
+// "Special cases" is a short three-column list. The grading table above it has
+// to span the page because of its task columns; this one does not, so the card
+// is what gets bounded — and the table then fills it comfortably.
+.excluded-card {
+  max-width: 52rem;
+}
+
 .excluded-body {
   overflow-x: auto;
 }
 
 .excluded-table {
-  width: auto;
-  margin-inline: 1rem;
-
   thead {
     background: #fafafa;
+  }
+
+  // The reason takes the slack, so the actions stay aligned on the right edge
+  // where their column heading sits.
+  .excluded-reason {
+    width: 100%;
   }
 
   .excluded-name,
   .excluded-action {
     white-space: nowrap;
-  }
-
-  .excluded-reason {
-    white-space: nowrap;
-    padding-right: 2.5rem;
   }
 }
 
