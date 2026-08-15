@@ -19,7 +19,7 @@
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <span class="sidebar-item__label">
         <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t("basics.home") %>
+        <span class="sidebar-item__text"><%= t("basics.home") %></span>
       </span>
       <% if home_updates_count.positive? %>
         <span class="sidebar-item__badge"
@@ -40,7 +40,7 @@
       <%= link_to url_for(fullpath),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
         <i class="bi bi-book<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('basics.outline') %>
+        <span class="sidebar-item__text"><%= t('basics.outline') %></span>
       <% end %>
     </li>
   <% end %>
@@ -54,7 +54,7 @@
     <%= link_to url_for(fullpath),
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <i class="bi bi-collection-play<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.lesson_material.plural') %>
+      <span class="sidebar-item__text"><%= t('categories.lesson_material.plural') %></span>
     <% end %>
   </li>
 
@@ -67,7 +67,7 @@
     <%= link_to url_for(fullpath),
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <i class="bi bi-file-earmark<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.script.singular') %>
+      <span class="sidebar-item__text"><%= t('categories.script.singular') %></span>
     <% end %>
   </li>
 
@@ -83,7 +83,7 @@
     <%= link_to url_for(fullpath),
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <i class="bi bi-pencil<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.exercise.plural') %>
+      <span class="sidebar-item__text"><%= t('categories.exercise.plural') %></span>
     <% end %>
   </li>
 
@@ -108,7 +108,7 @@
       <%= link_to url_for(path),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
         <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= link_text %>
+        <span class="sidebar-item__text"><%= link_text %></span>
       <% end %>
     </li>
   <% end %>
@@ -118,7 +118,7 @@
     <li class="sidebar-item nav-link <%= !content_accessible || !lecture.muesli ? "disabled" : ""%>">
       <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" rel="noopener noreferrer">
         <i class="bi bi-list-check"></i>
-        <%= t('categories.muesli') %>
+        <span class="sidebar-item__text"><%= t('categories.muesli') %></span>
       </a>
     </li>
   <% end %>
@@ -135,7 +135,7 @@
     <%= link_to url_for(fullpath),
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <i class="bi bi-question-square<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.quiz.plural') %>
+      <span class="sidebar-item__text"><%= t('categories.quiz.plural') %></span>
     <% end %>
   </li>
 
@@ -151,7 +151,7 @@
     <%= link_to url_for(path),
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <i class="bi bi-star<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.test.singular') %>
+      <span class="sidebar-item__text"><%= t('categories.test.singular') %></span>
     <% end %>
   </li>
 
@@ -164,7 +164,7 @@
     <%= link_to url_for(fullpath),
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <i class="bi bi-mortarboard<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.worked_example.plural') %>
+      <span class="sidebar-item__text"><%= t('categories.worked_example.plural') %></span>
     <% end %>
   </li>
 
@@ -177,7 +177,7 @@
     <%= link_to url_for(fullpath),
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <i class="bi bi-layers<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.repetition.singular') %>
+      <span class="sidebar-item__text"><%= t('categories.repetition.singular') %></span>
     <% end %>
   </li>
 
@@ -190,7 +190,7 @@
     <%= link_to url_for(fullpath),
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <i class="bi bi-circle<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.miscellaneous.singular') %>
+      <span class="sidebar-item__text"><%= t('categories.miscellaneous.singular') %></span>
     <% end %>
   </li>
 
@@ -205,7 +205,7 @@
       <a href="<%= url_for(path)%>" target="_blank">
         <%# Will never become active as this is an external link %>
         <i class="bi bi-chat"></i>
-        <%= t('categories.board') %>
+        <span class="sidebar-item__text"><%= t('categories.board') %></span>
       </a>
     </li>
 
@@ -217,7 +217,7 @@
       <%= link_to url_for(path),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
         <i class="bi bi-megaphone<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('categories.announcements') %>
+        <span class="sidebar-item__text"><%= t('categories.announcements') %></span>
       <% end %>
     </li>
 
@@ -229,7 +229,7 @@
       <%= link_to url_for(path),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
         <i class="bi bi-info-square<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('categories.organizational_html') %>
+        <span class="sidebar-item__text"><%= t('categories.organizational_html') %></span>
       <% end %>
     </li>
 
@@ -241,7 +241,7 @@
       <%= link_to url_for(path),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
         <i class="bi bi-hexagon<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('categories.course') %>
+        <span class="sidebar-item__text"><%= t('categories.course') %></span>
       <% end %>
     </li>
   <% end %>
