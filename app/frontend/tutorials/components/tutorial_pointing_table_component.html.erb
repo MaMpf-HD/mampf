@@ -73,8 +73,8 @@
                   <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
                     <% if user.assessment_participation_in_assignment(@assignment) %>
                       <%= render(ParticipationRowComponent.new(
-                          participation: user.assessment_participation_in_assignment(@assignment),
-                          mode: @mode, assignment: @assignment, tutorial: tutorial)) %>
+                        participation: user.assessment_participation_in_assignment(@assignment),
+                        mode: @mode, assignment: @assignment, tutorial: tutorial)) %>
                     <% end %>
                   <% end %>
                 <% end %>
