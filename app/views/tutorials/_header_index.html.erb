@@ -126,10 +126,12 @@
       <% end %>
 
       <!-- Certificate Check -->
-      <%= link_to validate_certificate_as_tutor_path(params: { lecture_id: @lecture.id }),
-                  class: "btn btn-outline-secondary btn-sm", remote: true do %>
-        <i class="bi bi-patch-check me-1"></i>
-        <%= t('tutorial.certificate_check') %>
+      <% if Flipper.enabled?(:quiz_certificates) %>
+        <%= link_to validate_certificate_as_tutor_path(params: { lecture_id: @lecture.id }),
+                    class: "btn btn-outline-secondary btn-sm", remote: true do %>
+          <i class="bi bi-patch-check me-1"></i>
+          <%= t('tutorial.certificate_check') %>
+        <% end %>
       <% end %>
 
       <!-- Save bulk changes -->
@@ -166,14 +168,6 @@
       <%= t('tutorial.grace_period_warning', friendly_deadline: l(@assignment.friendly_deadline, format: :short)) %>
     <% end %>
   </div>
-<% end %>
-<% if Flipper.enabled?(:quiz_certificates) %>
-  <%# Certificate check button %>
-  <%= link_to t('tutorial.certificate_check'),
-              validate_certificate_as_tutor_path( params:
-                                                    { lecture_id: @lecture.id }),
-                                                  class: 'btn btn-primary ms-3',
-                                                  remote: true %>
 <% end %>
 <% if current_user.in?(@tutorial.tutors) %>
   <div class="card mt-3" id="bulk-upload-area">
