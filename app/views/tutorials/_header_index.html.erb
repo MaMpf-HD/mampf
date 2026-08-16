@@ -97,8 +97,9 @@
   <% end %>
 
   <div class="col-12 col-lg-7">
-    <!-- Name filter: the controller sits on the page, since it also reaches
-         the status dropdown inside the table head -->
+    <!-- The table's own toolbar: what it shows, and what commits it. The filter
+         controller sits on the page, since it also reaches the status dropdown
+         inside the table head. -->
     <% if grading_enabled?(@assignment) %>
       <div class="d-flex gap-2 align-items-center mb-3">
         <input
@@ -114,6 +115,23 @@
           data-status-filter-target="activeFilters"
         >
         </div>
+
+        <button class="btn btn-success text-nowrap flex-shrink-0"
+                <%= @assignment.active? ? 'disabled' : '' %>
+                data-submission-table-target="bulkSave"
+                data-action="click->submission-table#submitAll">
+          <i class="bi bi-save me-1"></i>
+          <%= t('assessment.grading_tutorial.save_all') %>
+        </button>
+
+        <%= form_with url: point_multi_submissions_tutorial_path,
+                      method: :patch,
+                      data: { turbo: true, submission_table_target: "form" } do %>
+          <input type="hidden" name="submissions" data-submission-table-target="payload">
+          <input type="hidden" name="assignment_id" value="<%= @assignment.id %>">
+          <input type="hidden" name="tutorial_id" value="<%= @tutorial.id %>">
+          <input type="hidden" name="mode" value="tutor">
+        <% end %>
       </div>
     <% end %>
 
@@ -167,25 +185,6 @@
         <% end %>
       <% end %>
 
-      <!-- Save bulk changes -->
-      <% if grading_enabled?(@assignment) %>
-        <button class="btn btn-success btn-sm"
-                <%= @assignment.active? ? 'disabled' : '' %>
-                data-submission-table-target="bulkSave"
-                data-action="click->submission-table#submitAll">
-          <i class="bi bi-save me-1"></i>
-          Save All Changes
-        </button>
-
-        <%= form_with url: point_multi_submissions_tutorial_path,
-                      method: :patch,
-                      data: { turbo: true, submission_table_target: "form" } do %>
-          <input type="hidden" name="submissions" data-submission-table-target="payload">
-          <input type="hidden" name="assignment_id" value="<%= @assignment.id %>">
-          <input type="hidden" name="tutorial_id" value="<%= @tutorial.id %>">
-          <input type="hidden" name="mode" value="tutor">
-        <% end %>
-      <% end %>
     </div>
   </div>
 </div>
