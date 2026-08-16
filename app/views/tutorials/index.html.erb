@@ -7,13 +7,14 @@
                          tutorial: @tutorial,
                          stack: @stack } %>
     </div>
-  </div>
-  <div id="tutorial-table" class="m-3">
-    <%= render TutorialPointingTableComponent.new(
-      mode: "tutor",
-      assignment: @assignment,
-      tutorial: @tutorial
-    ) %>
+
+    <div id="tutorial-table" class="col-12 mt-3">
+      <%= render TutorialPointingTableComponent.new(
+        mode: "tutor",
+        assignment: @assignment,
+        tutorial: @tutorial
+      ) %>
+    </div>
   </div>
 </div>
 <% else %>
