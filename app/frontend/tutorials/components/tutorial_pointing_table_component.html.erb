@@ -1,8 +1,8 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <!-- ── ZONE 1: has grading records ── -->
   <% if grading_records? %>
-    <div data-controller="status-filter">
-      <% if grading_enabled? %>
+    <%= tag.div(data: filter_controller_data) do %>
+      <% if grading_enabled? && @render_filter %>
         <div class="d-flex gap-2 mb-3 align-items-center">
           <div class="d-flex align-items-center">
             <input
@@ -78,7 +78,7 @@
           </table>
         </div>
       </div>
-    </div>
+    <% end %>
   <% else %>
     <div class="jumbotron mt-3">
       <%= t('assessment.grading_tutorial.no_submissions') %>

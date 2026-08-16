@@ -3,10 +3,11 @@
 # Also includes the zone for non-submitters with the possibility to mark them as participated
 class TutorialPointingTableComponent < ViewComponent::Base
   def initialize(assignment:, mode:,
-                 tutorial: nil)
+                 tutorial: nil, render_filter: true)
     super()
     @mode = mode
     @assignment = assignment
+    @render_filter = render_filter
 
     if @mode == "tutor"
       @tutorial = tutorial
@@ -25,6 +26,16 @@ class TutorialPointingTableComponent < ViewComponent::Base
       end
       @non_tutorial_participants = assignment.applicable_users_not_in_tutorials
     end
+  end
+
+  # The status filter has to enclose both its controls and the rows it hides —
+  # the status dropdown in the table head talks to the same controller. So when
+  # the page brings its own filter, it owns the controller too; two nested ones
+  # would each keep their own idea of what is currently filtered.
+  def filter_controller_data
+    return {} unless @render_filter
+
+    { controller: "status-filter" }
   end
 
   def grading_enabled?

@@ -1,5 +1,5 @@
 <% if @assignments.present? %>
-<div data-controller="submission-table">
+<div data-controller="submission-table status-filter">
   <div class="row">
     <div class="col-12">
       <%= render partial: 'tutorials/header_index',
@@ -12,7 +12,8 @@
       <%= render TutorialPointingTableComponent.new(
         mode: "tutor",
         assignment: @assignment,
-        tutorial: @tutorial
+        tutorial: @tutorial,
+        render_filter: false
       ) %>
     </div>
   </div>

@@ -96,8 +96,28 @@
     </div>
   <% end %>
 
-  <!-- Action Buttons -->
   <div class="col-12 col-lg-7">
+    <!-- Name filter: the controller sits on the page, since it also reaches
+         the status dropdown inside the table head -->
+    <% if grading_enabled?(@assignment) %>
+      <div class="d-flex gap-2 align-items-center mb-3">
+        <input
+          type="search"
+          class="form-control w-100"
+          placeholder="<%= t('assessment.grading_tutorial.filter_name') %>"
+          autocomplete="off"
+          data-action="input->status-filter#search"
+        >
+
+        <div
+          class="d-flex gap-2 align-items-center flex-shrink-0"
+          data-status-filter-target="activeFilters"
+        >
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Action Buttons -->
     <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
       <% if @stack.present? %>
         <!-- Bulk Download Submissions -->
