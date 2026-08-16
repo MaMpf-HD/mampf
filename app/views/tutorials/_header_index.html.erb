@@ -71,6 +71,20 @@
             </span>
           <% end %>
 
+          <% if info[:exempt].positive? %>
+            <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
+              <%= t('assessment.grading_tutorial.header_overview.exempt',
+                    count: info[:exempt]) %>
+            </span>
+          <% end %>
+
+          <% if info[:absent].positive? %>
+            <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
+              <%= t('assessment.grading_tutorial.header_overview.absent',
+                    count: info[:absent]) %>
+            </span>
+          <% end %>
+
           <% if info[:open].zero? && info[:unmarked].zero? %>
             <span class="badge rounded-pill bg-success-subtle text-success-emphasis">
               <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>

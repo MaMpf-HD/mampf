@@ -286,6 +286,12 @@ de:
         unmarked:
           one: '1 nicht als teilgenommen markiert'
           other: '%{count} nicht als teilgenommen markiert'
+        exempt:
+          one: '1 entschuldigt'
+          other: '%{count} entschuldigt'
+        absent:
+          one: '1 nicht angetreten'
+          other: '%{count} nicht angetreten'
         done: 'Alles bewertet'
       no_user_for_config: 'Keine Benutzer für Teilnahme %{participation_id} an Hausaufgabe %{assignment_id}'
     grading_overview:

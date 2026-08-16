@@ -48,14 +48,14 @@ module TutorialsHelper
     end
   end
 
-  # What is left to grade, and the two ways something can still be open: it is
-  # waiting for points, or its author has not been marked as having taken part
-  # at all and cannot be graded yet.
+  # What is left to grade. Absent and excused participations are settled, so
+  # they leave the count entirely — but they are reported, because a tutor who
+  # only reads the box would otherwise not find them again in the table.
   def overview_info(tutorial, assignment)
     submissions = assignment&.submissions&.where(tutorial: tutorial)&.proper.to_a
     non_submitters = assignment.non_submitters_in_tutorial(tutorial).to_a
 
-    graded = submissions.count { |s| s.participations&.first&.status == "reviewed" }
+    statuses = submissions.map { |s| s.participations&.first&.status }
     marked = 0
 
     non_submitters.each do |user|
@@ -63,15 +63,20 @@ module TutorialsHelper
       next unless participation
 
       marked += 1
-      graded += 1 if participation.status == "reviewed"
+      statuses << participation.status
     end
 
-    gradable = submissions.size + marked
+    absent = statuses.count("absent")
+    exempt = statuses.count("exempt")
+    graded = statuses.count("reviewed")
+    gradable = statuses.size - absent - exempt
 
     { gradable: gradable,
       graded: graded,
       open: gradable - graded,
       unmarked: non_submitters.size - marked,
+      absent: absent,
+      exempt: exempt,
       percent: gradable.positive? ? (100.0 * graded / gradable).round : 0 }
   end
 end

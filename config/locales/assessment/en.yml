@@ -286,6 +286,12 @@ en:
         unmarked:
           one: '1 not marked as participated'
           other: '%{count} not marked as participated'
+        exempt:
+          one: '1 excused'
+          other: '%{count} excused'
+        absent:
+          one: '1 did not turn up'
+          other: '%{count} did not turn up'
         done: 'Everything graded'
       no_user_for_config: 'No user for participation %{participation_id} on assignment %{assignment_id}'
     grading_overview:
