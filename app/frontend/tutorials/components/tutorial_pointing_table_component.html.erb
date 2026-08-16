@@ -69,7 +69,7 @@
                     <% if user.assessment_participation_in_assignment(@assignment) %>
                       <%= render(ParticipationRowComponent.new(
                         participation: user.assessment_participation_in_assignment(@assignment),
-                        mode: @mode, assignment: @assignment, tutorial: @tutorial)) %>
+                        mode: @mode, assignment: @assignment, tutorial: tutorial)) %>
                     <% end %>
                   <% end %>
                 <% end %>
