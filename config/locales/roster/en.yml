@@ -279,6 +279,7 @@ en:
       active_campaign_exists: 'Self-Enrollment cannot be enabled because an active registration process already handles enrollment.'
       capacity_exceeded: "Group capacity exceeded."
       lecture_has_other_roster_entry: "You are already enrolled in another group of this lecture and cannot join another group at the same time."
+      grading_data_present: "This person already has a result here. Delete it first if you really want to remove or move them."
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."
       user_not_found: "Student not found."

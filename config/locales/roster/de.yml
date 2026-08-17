@@ -283,6 +283,7 @@ de:
       active_campaign_exists: 'Selbsteinschreibung kann nicht aktiviert werden, da bereits ein aktives Anmeldeverfahren läuft.'
       capacity_exceeded: "Gruppenkapazität überschritten."
       lecture_has_other_roster_entry: 'Du bist bereits in einer anderen Gruppe dieser Veranstaltung eingeschrieben. Bitte verlasse zuerst die andere Gruppe, bevor Du dieser beitrittst.'
+      grading_data_present: "Für diese Person liegt hier bereits eine Bewertung vor. Lösche sie zuerst, wenn Du die Person wirklich entfernen oder verschieben willst."
       target_not_found: "Zielgruppe nicht gefunden."
       target_locked: "Zielgruppe ist gesperrt."
       user_not_found: "Studierende/r nicht gefunden."

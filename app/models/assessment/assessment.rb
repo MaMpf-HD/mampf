@@ -26,6 +26,25 @@ module Assessment
 
     accepts_nested_attributes_for :assessable
 
+    # Whether anything has been recorded for this user that removing them would
+    # throw away. `pending` with nothing entered is the empty state, so it does
+    # not count; every other status is a decision somebody made.
+    def grading_data_for?(participation)
+      return false unless participation
+      return true if participation.task_points.any?
+      return true if participation.points_total.present?
+      return true if participation.grade_numeric.present?
+      return true if participation.grade_text.present?
+
+      !participation.pending?
+    end
+
+    def grading_data_for_user?(user)
+      grading_data_for?(assessment_participations
+                          .includes(:task_points)
+                          .find_by(user_id: user.id))
+    end
+
     delegate :title, to: :assessable
 
     def results_published?

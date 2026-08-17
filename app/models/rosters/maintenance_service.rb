@@ -3,6 +3,7 @@ module Rosters
     # Manages manual roster operations (add, remove, move) while enforcing capacity
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
+    class GradingDataPresentError < StandardError; end
 
     def add_user!(user, rosterable, force: false, source_campaign_id: nil)
       rosterable.with_lock do
@@ -15,18 +16,33 @@ module Rosters
 
     def remove_user!(user, rosterable)
       rosterable.with_lock do
+        ensure_no_grading_data!(user, rosterable)
         remove_user_without_lock!(user, rosterable)
       end
     end
 
     def move_user!(user, from_rosterable, to_rosterable, force: false)
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
+        ensure_no_grading_data!(user, from_rosterable)
         remove_user_without_lock!(user, from_rosterable)
         add_user_without_lock!(user, to_rosterable, force: force)
       end
     end
 
     private
+
+      # Only rosterables that *are* the assessable can lose a result this way —
+      # a talk or an exam owns its assessment, so leaving it means leaving the
+      # gradebook behind. A tutorial is merely where a result is graded; the
+      # assessment belongs to the assignment and survives the move.
+      def ensure_no_grading_data!(user, rosterable)
+        assessment = rosterable.try(:assessment)
+        return unless assessment&.grading_data_for_user?(user)
+
+        raise(GradingDataPresentError,
+              "#{rosterable.class.name} #{rosterable.id} holds grading data " \
+              "for user #{user.id}")
+      end
 
       def user_in_roster?(user, rosterable)
         rosterable.roster_entries.exists?(rosterable.roster_user_id_column => user.id)

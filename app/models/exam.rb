@@ -213,17 +213,8 @@ class Exam < ApplicationRecord
       @participants_with_grading_data ||= assessment.assessment_participations
                                                     .includes(:task_points)
                                                     .filter_map do |participation|
-        participation.user_id if grading_data_for?(participation)
+        participation.user_id if assessment.grading_data_for?(participation)
       end
-    end
-
-    def grading_data_for?(participation)
-      return true if participation.task_points.any?
-      return true if participation.points_total.present?
-      return true if participation.grade_numeric.present?
-      return true if participation.grade_text.present?
-
-      !participation.pending?
     end
 
     def destroy_draft_campaign
