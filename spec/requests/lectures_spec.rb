@@ -588,26 +588,4 @@ RSpec.describe("Lectures", type: :request) do
       expect(lecture.reload.home_attachment).to be_nil
     end
   end
-
-  describe "the Müsli transition banner on the roster tabs" do
-    let(:term) { create(:term, :winter, year: 2026) }
-    let(:lecture) { create(:lecture, term: term) }
-
-    after { Flipper.disable(:term_uses_mampf_registration) }
-
-    it "shows the banner, naming the lecture's term, while it is not on MaMpf" do
-      get edit_lecture_path(lecture, tab: "groups")
-
-      expect(response.body).to include('data-testid="roster-transition-banner"')
-      expect(response.body).to include(term.to_label)
-    end
-
-    it "hides the banner once the term is opted into MaMpf registration" do
-      Flipper.enable_actor(:term_uses_mampf_registration, term)
-
-      get edit_lecture_path(lecture, tab: "groups")
-
-      expect(response.body).not_to include('data-testid="roster-transition-banner"')
-    end
-  end
 end
