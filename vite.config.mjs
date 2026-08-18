@@ -43,7 +43,7 @@ export default defineConfig({
           "mixed-decls",
           "color-functions",
           "global-builtin",
-          "if-function"
+          "if-function",
         ],
       },
     },
