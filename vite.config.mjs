@@ -40,7 +40,6 @@ export default defineConfig({
         silenceDeprecations: [
           "legacy-js-api",
           "import",
-          "mixed-decls",
           "color-functions",
           "global-builtin",
           "if-function",
