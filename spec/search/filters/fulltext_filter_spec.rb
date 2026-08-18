@@ -2,9 +2,15 @@ require "rails_helper"
 
 RSpec.describe(Search::Filters::FulltextFilter, type: :filter) do
   describe "#filter" do
-    let!(:course1) { create(:course, title: "Introduction to Ruby") }
-    let!(:course2) { create(:course, title: "Advanced Ruby Programming") }
-    let!(:course3) { create(:course, title: "Web Development with Rails") }
+    let!(:course1) do
+      create(:course, title: "Introduction to Ruby", short_title: "Ruby Intro")
+    end
+    let!(:course2) do
+      create(:course, title: "Advanced Ruby Programming", short_title: "Ruby Advanced")
+    end
+    let!(:course3) do
+      create(:course, title: "Web Development with Rails", short_title: "Rails Web Dev")
+    end
     let(:user) { create(:confirmed_user) }
     let(:scope) { Course.all }
 
