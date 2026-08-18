@@ -1,3 +1,5 @@
+<%= vite_stylesheet_tag "search/index.scss" %>
+
 <div class="container-md small-width">
   <div class="accordion" id="subscriptionsAccordion">
 
@@ -34,18 +36,25 @@
                                 data: { action: "input->auto-submit-form#debouncedSubmit",
                                         auto_submit_form_target: "searchInput" } %>
           <% end %>
-          <%= turbo_frame_tag "tag-search-results" do %>
-            <% if @search_too_short %>
-              <div class="text-danger small">
-                <%= t('search.term_too_short') %>
-              </div>
-            <% elsif @tags %>
-              <%= render partial: 'search/tag_search_results',
-                         locals: { tags: @tags,
-                                   filtered_tags: @filtered_tags,
-                                   search_string: @search_string } %>
+          <div class="tag-search-results-wrapper">
+            <%= turbo_frame_tag "tag-search-results", target: "_top" do %>
+              <% if @search_too_short %>
+                <div class="text-danger small">
+                  <%= t('search.term_too_short') %>
+                </div>
+              <% elsif @tags %>
+                <%= render partial: 'search/tag_search_results',
+                           locals: { tags: @tags,
+                                     filtered_tags: @filtered_tags,
+                                     search_string: @search_string } %>
+              <% end %>
             <% end %>
-          <% end %>
+            <div class="tag-search-spinner">
+              <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

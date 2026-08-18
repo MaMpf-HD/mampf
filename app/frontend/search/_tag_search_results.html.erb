@@ -1,22 +1,19 @@
-<%= t('search.info',
-      search_string: search_string,
-      count: filtered_tags.count) %>
-
-<% if tags.count != filtered_tags.count %>
-  <%= t('search.omitted_html',
-        profile: link_to(t('search.settings'), edit_profile_path),
-        count: tags.count - filtered_tags.count) %>
-<% end %>
-
 <% if filtered_tags.present? %>
-  <div class="row">
-    <div class="col-12 pt-3 pb-3">
-      <%= render partial: 'tags/tags',
-                 locals: { related_tags: filtered_tags,
-                           tags_description:
-                             t('search.results', search_string: search_string),
-                           small: true,
-                           card: false } %>
-    </div>
-  </div>
+  <% filtered_tags.natural_sort_by(&:title).each do |t| %>
+    <%= link_to t.short_title,
+                tag_path(t),
+                class: "badge text-dark lecture-tag",
+                data: { toggle: 'tooltip',
+                        placement: 'top' },
+                title: t.title %>
+  <% end %>
+<% else %>
+  <%= t('search.info',
+        search_string: search_string,
+        count: filtered_tags.count) %>
+  <% if tags.count != filtered_tags.count %>
+    <%= t('search.omitted_html',
+          profile: link_to(t('search.settings'), edit_profile_path),
+          count: tags.count - filtered_tags.count) %>
+  <% end %>
 <% end %>
