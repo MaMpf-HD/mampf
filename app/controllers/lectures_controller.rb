@@ -306,21 +306,17 @@ class LecturesController < ApplicationController
       current_user.lecture_user_joins
                   .where(lecture_id: page_lecture_ids)
                   .pluck(:lecture_id).to_set
-    if Flipper.enabled?(:registration_campaigns)
-      @registered_lecture_ids =
-        Registration::UserRegistration
-        .where(user: current_user, status: [:pending, :confirmed])
-        .joins(:registration_campaign)
-        .where(registration_campaigns: { campaignable_type: "Lecture",
-                                         campaignable_id: page_lecture_ids })
-        .pluck("registration_campaigns.campaignable_id")
-        .to_set
-    end
-    if Flipper.enabled?(:roster_maintenance)
-      status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
-      @rosterized_lecture_ids = status.rosterized_lecture_ids
-      @self_enrollable_lecture_ids = status.enrollable_lecture_ids
-    end
+    @registered_lecture_ids =
+      Registration::UserRegistration
+      .where(user: current_user, status: [:pending, :confirmed])
+      .joins(:registration_campaign)
+      .where(registration_campaigns: { campaignable_type: "Lecture",
+                                       campaignable_id: page_lecture_ids })
+      .pluck("registration_campaigns.campaignable_id")
+      .to_set
+    status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
+    @rosterized_lecture_ids = status.rosterized_lecture_ids
+    @self_enrollable_lecture_ids = status.enrollable_lecture_ids
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }

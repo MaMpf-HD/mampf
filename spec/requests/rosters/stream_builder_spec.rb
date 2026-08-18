@@ -6,7 +6,6 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
   let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
 
   before do
-    Flipper.enable(:roster_maintenance)
     create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
     lecture.reload
