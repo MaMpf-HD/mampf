@@ -2,7 +2,6 @@
 module LecturesHelper
   def registration_sidebar_visible?(lecture)
     return false unless lecture && user_signed_in?
-    return false unless Flipper.enabled?(:registration_campaigns)
 
     RegistrationUserRegistrationAbility.new(current_user).can?(:index, lecture)
   end
@@ -10,8 +9,6 @@ module LecturesHelper
   # Whether the lecture currently has an open registration campaign
   # (one building block of the search-card badges, see _lecture.html.erb).
   def registration_open?(lecture)
-    return false unless Flipper.enabled?(:registration_campaigns)
-
     lecture.registration_campaigns.any?(&:open_for_registrations?)
   end
 

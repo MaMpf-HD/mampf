@@ -6,7 +6,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   let(:student) { create(:confirmed_user, locale: "en") }
 
   before do
-    Flipper.enable(:roster_maintenance)
     create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
     lecture.reload
