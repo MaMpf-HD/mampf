@@ -166,7 +166,12 @@ class LecturesController < ApplicationController
   end
 
   def destroy
-    @lecture.destroy
+    unless @lecture.destroy
+      redirect_to edit_lecture_path(@lecture, tab: "campaigns"),
+                  alert: lecture_destruction_error
+      return
+    end
+
     # destroy all notifications related to this lecture
     destroy_notifications
     redirect_to administration_path
@@ -495,6 +500,17 @@ class LecturesController < ApplicationController
                                 locale: l,
                                 lecture: @lecture)
                           .new_lecture_email.deliver_later
+      end
+    end
+
+    # A lecture is kept alive by anything its destroy cascade refuses to take
+    # with it; registration processes past the point of no return are by far the
+    # most common case, so name them instead of failing silently.
+    def lecture_destruction_error
+      if @lecture.registration_campaigns.any? { |campaign| !campaign.discardable? }
+        t("controllers.lectures.destruction_failed_campaigns")
+      else
+        t("controllers.lectures.destruction_failed")
       end
     end
 
