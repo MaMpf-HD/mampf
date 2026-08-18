@@ -241,6 +241,15 @@ RSpec.describe(Tutorial, type: :model) do
       expect(tutorial.destruction_blockers).to include(:submissions)
     end
 
+    it "reports a correction whose manuscript was detached again" do
+      submission = create(:valid_submission, :with_manuscript, :with_correction,
+                          tutorial: tutorial,
+                          assignment: create(:assignment, lecture: lecture))
+      submission.update!(manuscript: nil)
+
+      expect(tutorial.destruction_blockers).to include(:submissions)
+    end
+
     it "reports campaign membership separately from the rest" do
       campaign = create(:registration_campaign, campaignable: lecture)
       create(:registration_item, registration_campaign: campaign, registerable: tutorial)

@@ -43,11 +43,11 @@ class Tutorial < ApplicationRecord
     tutors.map(&:tutorial_name).join(", ")
   end
 
-  # Submissions with uploads are the one thing a tutorial carries that cannot be
+  # Uploaded submissions are the one thing a tutorial carries that cannot be
   # recreated; tutor assignments and voucher claims are links, not content.
   def destruction_blockers
     blockers = super
-    blockers << :submissions if submissions.proper.exists?
+    blockers << :submissions if submissions.with_uploads.exists?
     blockers
   end
 

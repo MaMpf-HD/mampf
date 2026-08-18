@@ -12,6 +12,13 @@ class Submission < ApplicationRecord
 
   scope :proper, -> { where.not(manuscript_data: nil) }
 
+  # Anything a user uploaded and could not put back: the student's manuscript or
+  # the tutor's correction. A manuscript can be detached again, which leaves a
+  # correction behind that #proper no longer sees.
+  scope :with_uploads, lambda {
+    where.not(manuscript_data: nil).or(where.not(correction_data: nil))
+  }
+
   validate :matching_lecture, if: :tutorial
 
   before_create :set_token

@@ -1413,7 +1413,19 @@ The group tile of a campaign item offers both, with separate confirmations:
 - **Remove from registration process** (`DELETE .../items/:id`) destroys only the
   `Registration::Item`. The `Talk`/`Tutorial`/`Cohort` survives and gets
   `skip_campaigns: true`, mirroring what discarding a campaign does to its
-  groups.
+  groups. The flag is what unlocks manual roster maintenance: `locked?` asks
+  `campaign_managed?`, which only looks at `skip_campaigns`, not at whether the
+  group is still in a campaign at all.
+
+```admonish warning "skip_campaigns is a one-way street"
+Nothing sets `skip_campaigns` back to `false`: it is assigned once at creation
+time from the section a group was created in, and appears in no permitted
+parameter list. `can_unskip_campaigns?` exists but has no caller. A group that
+left a campaign can therefore be managed manually but cannot be put into a
+campaign again — `validate_registerable_allows_campaigns` rejects it. Worth
+revisiting together with `locked?`, which arguably should treat a group that is
+in no campaign as unlocked regardless of the flag.
+```
 - **Delete group completely** (`DELETE .../items/:id/with_registerable`) does the
   same and then destroys the registerable, in one transaction: either both go or
   neither.
@@ -1424,7 +1436,7 @@ type-specific models add to them:
 
 | Type | Blockers on top of "roster not empty" |
 |------|----------------------------------------|
-| `Tutorial` | submissions with uploads (`Submission#proper`) |
+| `Tutorial` | submissions carrying an upload (`Submission.with_uploads` — manuscript *or* correction) |
 | `Talk` | attached media |
 | `Cohort` | — (members are the roster) |
 
