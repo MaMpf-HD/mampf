@@ -127,6 +127,14 @@ class Talk < ApplicationRecord
     speakers << speaker unless speaker.in?(speakers)
   end
 
+  # Deleting a talk takes its media with it, and there is no way to get them
+  # back, so they have to be moved or deleted deliberately first.
+  def destruction_blockers
+    blockers = super
+    blockers << :media if media.exists?
+    blockers
+  end
+
   def roster_entries
     speaker_talk_joins
   end

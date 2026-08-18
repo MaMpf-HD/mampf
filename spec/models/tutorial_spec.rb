@@ -226,4 +226,27 @@ RSpec.describe(Tutorial, type: :model) do
       expect(tutorial.errors.added?(:lecture_id, :immutable)).to be(true)
     end
   end
+  describe "#destruction_blockers" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+    it "is empty for a bare tutorial" do
+      expect(tutorial.destruction_blockers).to be_empty
+    end
+
+    it "reports submissions with uploads" do
+      create(:valid_submission, :with_manuscript,
+             tutorial: tutorial, assignment: create(:assignment, lecture: lecture))
+
+      expect(tutorial.destruction_blockers).to include(:submissions)
+    end
+
+    it "reports campaign membership separately from the rest" do
+      campaign = create(:registration_campaign, campaignable: lecture)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+
+      expect(tutorial.destruction_blockers).to eq([:in_campaign])
+      expect(tutorial.destruction_blockers_outside_campaign).to be_empty
+    end
+  end
 end

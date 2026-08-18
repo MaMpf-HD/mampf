@@ -27,6 +27,14 @@ module Rosters
     SELF_ADD_MODES = [:add_only, :add_and_remove].freeze
     SELF_REMOVE_MODES = [:remove_only, :add_and_remove].freeze
 
+    # Translation keys explaining each destruction blocker to the user.
+    DESTRUCTION_BLOCKER_KEYS = {
+      in_campaign: "roster.errors.cannot_delete_in_campaign",
+      roster_not_empty: "roster.errors.cannot_delete_not_empty",
+      submissions: "controllers.tutorials.errors.cannot_delete_with_submissions",
+      media: "roster.errors.cannot_delete_with_media"
+    }.freeze
+
     def self.class_for(type)
       TYPE_CLASS_MAP[type]&.call
     end
@@ -70,9 +78,29 @@ module Rosters
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
 
+    # Reasons that rule out destroying this rosterable, in the order they are
+    # reported. Models add their own type-specific blockers on top of these.
+    def destruction_blockers
+      blockers = []
+      blockers << :in_campaign if in_campaign?
+      blockers << :roster_not_empty unless roster_empty?
+      blockers
+    end
+
+    # The blockers that would remain once this rosterable is taken out of its
+    # campaign - what "remove from the campaign and delete the group" has to
+    # satisfy.
+    def destruction_blockers_outside_campaign
+      destruction_blockers - [:in_campaign]
+    end
+
+    def destruction_blocker_messages(blockers = destruction_blockers)
+      blockers.map { |blocker| I18n.t(DESTRUCTION_BLOCKER_KEYS.fetch(blocker)) }
+    end
+
     # Checks if the item can be safely destroyed.
     def destructible?
-      !in_campaign? && roster_empty?
+      destruction_blockers.empty?
     end
 
     # Whether campaigns, not manual edits, decide this roster. Models without
@@ -362,14 +390,12 @@ module Rosters
       end
 
       def enforce_rosterable_destruction_constraints
-        if in_campaign?
-          errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
-          throw(:abort)
+        blockers = destruction_blockers
+        return if blockers.empty?
+
+        destruction_blocker_messages(blockers).each do |message|
+          errors.add(:base, message)
         end
-
-        return if roster_empty?
-
-        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
         throw(:abort)
       end
 

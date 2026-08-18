@@ -288,6 +288,7 @@ en:
       campaign_associated: "Self-enrollment is not available because this group is part of a registration process."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration process."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
+      cannot_delete_with_media: "Cannot be deleted because media are attached to it."
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
       cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to registration process mode. Please disable self-enrollment first or keep skip registration processes enabled."
     warnings:
