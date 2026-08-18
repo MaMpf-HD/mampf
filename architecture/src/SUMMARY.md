@@ -29,6 +29,10 @@
 ## Extensions (Optional Features)
 - [Multiple Choice Exams](features/05c-multiple-choice-exams.md)
 
+## Point Entry for Exams
+- [Point Entry for Exams](features/13-point-entry-generalisation.md)
+  - [The Extraction, Step by Step](features/13a-point-entry-extraction-steps.md)
+
 ## Future Development
 - [Future Extensions](features/10-future-extensions.md)
 
