@@ -110,24 +110,64 @@ into the other today; only the demo seeder ever has. Without that projection an 
 point table has nothing to render at all, which is why it comes before the table rather
 than after it.
 
-## The axes
+## Both halves of marking, and what an exam needs of each
 
-The useful cut is not tutor against teacher. Stated in full there are two axes:
+An exam is the only assessable that is *both* pointable and gradable, so it is the only
+one where the two halves of marking meet. They are built the same way, and both stop at
+the same place:
+
+| | generic core | assessable-specific wrapper | interface |
+|---|---|---|---|
+| points | `PointEntryService` — takes a participation, submission optional | `SubmissionGraderService` — the team fan-out | tutorial pointing table |
+| grades | `GradeEntryService` — takes a participation, checks only that the assessable is `Gradable` | `TalkGraderService` — resolves and authorises through the talk | talk grading table |
+
+Both cores would serve an exam today. Both wrappers are for something an exam does not
+have — a submission, a talk — and both interfaces are written against the wrapper rather
+than the core.
+
+### The grade half is not simply derived
+
+An exam grade usually comes out of a grade scheme: points, bands, grade. That path
+exists and works — the grading tab renders the scheme editor beside `GradeTableComponent`,
+and `GradeScheme` requires an assessable that is both pointable and gradable, which only
+an exam is.
+
+```admonish important title="A scheme cannot be the only way in"
+Entering a grade by hand has to remain possible for an exam, because a scheme is often
+the wrong instrument:
+
+- With five candidates nobody builds a distribution. The grade is a judgement, written
+  down directly.
+- An oral examination produces no points at all. There is nothing for a scheme to band.
+- A single case — a hardship, an appeal, a re-mark — needs a correction that does not
+  disturb everyone else's grade.
+
+`GradeSchemeApplier` already assumes this: it narrows to participations that have **no**
+grade yet, so a hand-entered grade survives a scheme being applied afterwards. What is
+missing is any way to enter one.
+```
+
+An exam without tasks is a legitimate exam, not a misconfigured one. Anything that
+reasons about "no task carries points" has to leave room for it.
+
+### The axes, stated in full
 
 | assessable | what is entered | what carries it | permission scope |
 |---|---|---|---|
 | Assignment | task points | submission (team) or participation (person) | tutorial or lecture |
-| Exam | task points | participation | lecture |
+| Exam | task points, **or a grade directly** | participation | lecture |
 | Talk | one final grade | participation | lecture |
 
-Assignment and exam share the participation row and `PointEntryService`. The submission
-fan-out stays in `SubmissionGraderService`. Talk keeps its own grade-entry path, because
-entering one final grade is not the same act as entering task points.
+Assignment and exam share the participation point row and `PointEntryService`. Exam and
+talk share `GradeEntryService` and, once the talk row loses its talk, a participation
+grade row. The submission fan-out stays in `SubmissionGraderService`, the talk
+resolution in `TalkGraderService`.
 
 `mode:` scales along *who is looking*. The axis that keeps arriving is *what is being
-assessed*, and a flag carries only one axis. Talk grading meets the same wall from the
-other side as soon as it needs a view for whoever supervises a talk, beside the teacher
-view it has now.
+assessed*, and a flag carries only one axis.
+
+Talk grading meets the same wall from the other side as soon as it needs a view for
+whoever supervises a talk, beside the teacher view it has now.
 
 ```admonish note title="What deliberately stays"
 `SubmissionGraderService` keeps its name and its submission-shaped API. It is the

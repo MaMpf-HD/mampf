@@ -32,6 +32,14 @@ feature and expects a nil total. The measured value is `0.0`; the guard has to c
 both.
 ```
 
+```admonish caution title="Do not overreach"
+The guard belongs to the points-driven promotion — the path that runs when points are
+entered. An exam with no tasks is legitimate (an oral examination has nothing to score),
+and it must still be gradable by hand. Manual grading sets the status through
+`GradeEntryService` and never touches this method, so the two do not collide as long as
+the guard is written about *points*, not about the assessment.
+```
+
 Not reachable through the interface today — the row's save button never becomes enabled
 without inputs to dirty — so this closes a latent gap rather than a live defect. It is
 worth closing before exams arrive, because a premature `reviewed` enters
@@ -107,6 +115,27 @@ directly would leave a failing grade that re-applying a scheme will not remove e
 
 `PointGridComponent` needs to stop treating a missing `submitted_at` as absence from the
 table, and to stop showing a tutorial column for assessables that have no tutorials.
+
+## 8 · A grade a person can type
+
+The exam grade normally comes out of a scheme, but a scheme is the wrong instrument for
+a cohort of five, for an oral examination that produced no points, and for a single
+correction after the fact. Entering a grade by hand has to be possible.
+
+`GradeEntryService.set_grade` is already generic — it asks only that the assessable is
+`Gradable` — and `GradeSchemeApplier` already narrows to participations without a grade,
+so a typed grade survives a scheme applied afterwards. What is missing is everything
+above the service:
+
+- `TalkGraderService` resolves and authorises through the talk; an exam needs the same
+  service scoped to the lecture instead. The talk wrapper stays where it is.
+- The grades controller finds a `Talk` from `params[:talk_id]` before it does anything
+  else. Derive the assessable from the participation, exactly as step 4 does for points.
+- `GradeTalkRowComponent` takes a talk. Loosened the same way as the point row in step 3,
+  it becomes a participation grade row that serves both.
+
+This is the point-entry work over again on the other axis, and the same rule decides it:
+a component that resolves its own subject can only ever serve one kind of assessable.
 
 ## Afterwards, if it still grates
 
