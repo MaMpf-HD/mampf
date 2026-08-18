@@ -62,3 +62,12 @@
         color: #ffe5ed;
     }
 }
+
+// Admin-level announcements, shown full-width above the navbar on every page.
+.site-announcement-banner {
+    border: 0;
+    margin-bottom: 0;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-weight: 500;
+}

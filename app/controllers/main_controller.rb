@@ -41,7 +41,6 @@ class MainController < ApplicationController
                                                                    :term)
                                        .sort
     end
-    announcements
     next_term_banner
     @talks = current_user.talks.includes(lecture: :term)
                          .select { |t| t.visible_for_user?(current_user) }
