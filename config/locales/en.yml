@@ -187,7 +187,7 @@ en:
         Only the last 25 recently updated media are shown.
         You can find more by doing a %{media_search} or in your
         %{profile}.
-      media_search: 'Search media'
+      media_search: 'Media Search'
       user_profile: 'user profile'
       no_media: >
         You are not listed as an editor for any media.
@@ -1008,7 +1008,7 @@ en:
       sort: 'Type'
       edited_by: 'edited by %{editors}'
       publish: 'Publish Medium'
-      media_search: 'Search Media'
+      media_search: 'Media Search'
       create: 'Create Medium'
       edit: 'Edit Medium'
       edit_tags: 'Edit Tags'
@@ -1987,7 +1987,7 @@ en:
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
     my_talks: My talks
-    media_search: Search media
+    media_search: Media Search
     my_data: What data is stored about me?
     data_explanation: >
       We store some data about you at MaMpf to enable you to use the platform.
