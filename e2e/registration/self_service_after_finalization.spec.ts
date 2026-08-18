@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test, Page } from "../_support/fixtures";
 import { FactoryBot, FactoryBotObject } from "../_support/factorybot";
 
@@ -8,11 +7,6 @@ import { FactoryBot, FactoryBotObject } from "../_support/factorybot";
  * teacher decide.
  */
 test.describe("self-enrollment prompt after finalization", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "roster_maintenance");
-    await enableFeature(request, "registration_campaigns");
-  });
-
   async function finalizeCampaign(
     page: Page, factory: FactoryBot, teacherId: number,
   ): Promise<FactoryBotObject> {

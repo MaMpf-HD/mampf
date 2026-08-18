@@ -5,7 +5,6 @@ RSpec.describe("Lecture deletion", type: :request) do
   let(:editor) { create(:confirmed_user) }
 
   before do
-    Flipper.enable(:registration_campaigns)
     create(:editable_user_join, user: editor, editable: lecture)
     sign_in editor
   end

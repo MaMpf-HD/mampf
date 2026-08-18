@@ -2,7 +2,10 @@ import FactoryBot from "../support/factorybot";
 import Timecop from "../support/timecop";
 
 const ROLES = ["tutor", "editor", "teacher", "speaker"];
-const ROLES_WITHOUT_SEMINAR = ROLES.filter(role => role !== "speaker");
+// A seminar's groups are talks, so it offers no tutor role; conversely,
+// only a seminar has speakers.
+const LECTURE_ROLES = ROLES.filter(role => role !== "speaker");
+const SEMINAR_ROLES = ROLES.filter(role => role !== "tutor");
 
 function createLectureScenario(context, type = "lecture") {
   cy.createUserAndLogin("teacher").as("teacher");
@@ -52,7 +55,7 @@ context("When the lecture is not a seminar", () => {
     it("shows buttons for creating tutor, editor and teacher vouchers", function () {
       cy.contains(this.vouchers).should("be.visible");
 
-      ROLES_WITHOUT_SEMINAR.forEach((role) => {
+      LECTURE_ROLES.forEach((role) => {
         cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
       });
 
@@ -60,20 +63,20 @@ context("When the lecture is not a seminar", () => {
     });
 
     it("displays the voucher and invalidate button after the create button is clicked", function () {
-      ROLES_WITHOUT_SEMINAR.forEach((role) => {
+      LECTURE_ROLES.forEach((role) => {
         testCreateVoucher(role);
       });
     });
 
     it("displays that there is no active voucher after the invalidate button is clicked", function () {
-      ROLES_WITHOUT_SEMINAR.forEach((role) => {
+      LECTURE_ROLES.forEach((role) => {
         testCreateVoucher(role);
         testInvalidateVoucher(role);
       });
     });
 
     it.skip("copies the voucher hash to the clipboard", function () {
-      ROLES_WITHOUT_SEMINAR.forEach((role) => {
+      LECTURE_ROLES.forEach((role) => {
         cy.getBySelector(`create-${role}-voucher-btn`).click();
         cy.getBySelector(`${role}-voucher-secure-hash`).then(($hash) => {
           const hashText = $hash.text();
@@ -91,21 +94,24 @@ context("When the lecture is a seminar", () => {
   });
 
   describe("People tab in lecture edit page", () => {
-    it("shows buttons for creating tutor, editor, teacher, and speaker vouchers", function () {
+    it("shows buttons for creating editor, teacher and speaker vouchers", function () {
       cy.contains(this.vouchers).should("be.visible");
-      ROLES.forEach((role) => {
+
+      SEMINAR_ROLES.forEach((role) => {
         cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
       });
+
+      cy.getBySelector("create-tutor-voucher-btn").should("not.exist");
     });
 
     it("displays the voucher and invalidate button after the create button is clicked", function () {
-      ROLES.forEach((role) => {
+      SEMINAR_ROLES.forEach((role) => {
         testCreateVoucher(role);
       });
     });
 
     it("displays that there is no active voucher after the invalidate button is clicked", function () {
-      ROLES.forEach((role) => {
+      SEMINAR_ROLES.forEach((role) => {
         testCreateVoucher(role);
         testInvalidateVoucher(role);
       });
@@ -123,7 +129,7 @@ context("When traveling into the future", () => {
   });
 
   it("does not show expired vouchers (far in the future)", function () {
-    ROLES.forEach((role) => {
+    SEMINAR_ROLES.forEach((role) => {
       testCreateVoucher(role);
     });
 
@@ -131,14 +137,14 @@ context("When traveling into the future", () => {
     // This is just a sanity check where we travel *far* into the future.
     Timecop.moveAheadDays(1000).then(() => {
       cy.reload();
-      ROLES.forEach((role) => {
+      SEMINAR_ROLES.forEach((role) => {
         assertVoucherNotShown(role);
       });
     });
   });
 
   it("does not show expired vouchers (near future)", function () {
-    ROLES.forEach((role) => {
+    SEMINAR_ROLES.forEach((role) => {
       testCreateVoucher(role);
       textExpiresAtWithTimeTravel(role);
     });

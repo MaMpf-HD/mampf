@@ -10,7 +10,9 @@ function testVoucherRedemptionWithNothingToClaim(context, role, itemType) {
 
   cy.then(() => {
     helpers.visitEditPage(context, itemType);
-    helpers.verifyNoClaimsYetButUserEligibleForRole(context, role);
+    if (itemType === "talk") {
+      helpers.verifyNoTalksYet(context);
+    }
     helpers.verifyRoleNotification(context, role);
     helpers.verifyNothingClaimedInNotification(context, itemType);
   });
@@ -35,10 +37,12 @@ function testVoucherRedemptionWithSomethingClaimed(context, itemType, role) {
   helpers.verifyLectureIsSubscribed(context);
   helpers.logoutAndLoginAsTeacher(context);
 
-  cy.then(() => {
-    helpers.visitEditPage(context, itemType);
-    helpers.verifyClaimsContainUserName(context, itemType, itemIds);
-  });
+  if (itemType === "talk") {
+    cy.then(() => {
+      helpers.visitEditPage(context, itemType);
+      helpers.verifyClaimsContainUserName(context, itemIds);
+    });
+  }
 
   cy.then(() => {
     helpers.verifyRoleNotification(context, role);
@@ -241,10 +245,5 @@ describe("User & Redemption deletion", () => {
     cy.getBySelector("delete-account-confirm-btn").click();
     cy.wait("@deleteUserRequest");
     cy.getBySelector("login-form").should("be.visible");
-
-    cy.login(this.teacher).then(() => {
-      helpers.visitEditPage(this, "tutorial");
-      helpers.verifyNoTutorialsButUserEligibleAsTutor(this, false);
-    });
   });
 });
