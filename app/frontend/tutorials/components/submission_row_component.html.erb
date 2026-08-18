@@ -11,14 +11,25 @@
   data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
 >
   <!-- Column 1: User names + copy emails + late icon -->
-  <td class="sticky-col team-col">
+  <td class="sticky-col team-col"> <%# herb:disable html-no-duplicate-attributes %>
     <div class="row">
       <div
         class="d-flex flex-column justify-content-between"
         style="width: fit-content;"
       >
         <% @submission.users.each do |user| %>
-          <div style="width: fit-content;"><%= user.tutorial_name %></div>
+          <div style="width: fit-content;">
+            <%= user.tutorial_name %>
+            <% movement = movement_info_for_user(user) %>
+
+            <% if movement %>
+              <i
+                class="bi bi-info-circle me-2 ps-1"
+                title="<%= movement %>"
+                data-bs-toggle="tooltip"
+              ></i>
+            <% end %>
+          </div>
         <% end %>
       </div>
 
@@ -74,7 +85,7 @@
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% for assignment_task in tasks %>
-      <td class="sticky-col task-col"> <%# herb:disable html-no-duplicate-attributes %>
+      <td class="sticky-col task-col">
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
     <% end %>

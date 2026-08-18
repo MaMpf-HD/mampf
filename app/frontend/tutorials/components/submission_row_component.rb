@@ -5,6 +5,7 @@ class SubmissionRowComponent < ViewComponent::Base
     @submission = submission
     @assignment = assignment
     @tutorial = tutorial
+    @lecture = @tutorial.lecture
     @mode = mode || "tutor"
   end
 
@@ -118,13 +119,16 @@ class SubmissionRowComponent < ViewComponent::Base
     return {} unless @assignment.past_deadline?
 
     helpers.users_movement_map_cache.fetch(@assignment.id) do
-      lecture_memberships = @tutorial.lecture.lecture_memberships.to_a
-      participations = @assignment.assessment_participations.to_a
-      membership_user_ids = lecture_memberships.map(&:user_id)
+      tutorial_memberships = @lecture.tutorials
+        .includes(:tutorial_memberships)
+        .flat_map(&:tutorial_memberships)
+      participations = @assignment.assessment&.assessment_participations&.to_a
+      return {} if participations.nil?
+
       participation_user_ids = participations.map(&:user_id)
 
-      (participation_user_ids - membership_user_ids).each_with_object({}) do |user_id, result|
-        current_tutorial = lecture_memberships.find { |m| m.user_id == user_id }&.tutorial
+      participation_user_ids.each_with_object({}) do |user_id, result|
+        current_tutorial = tutorial_memberships.find { |m| m.user_id == user_id }&.tutorial
         old_tutorial = participations.find { |p| p.user_id == user_id }&.tutorial
         next unless current_tutorial&.id != old_tutorial&.id
 

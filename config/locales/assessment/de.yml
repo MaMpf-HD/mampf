@@ -289,6 +289,8 @@ de:
           graded: 'benotet'
           pending: 'ausstehend'
       no_user_for_config: 'Keine Benutzer für Teilnahme %{participation_id} an Hausaufgabe %{assignment_id}'
+      user_moved_tutorial: 'In Tutorium %{old_tutorial} eingereicht, in Tutorium %{new_tutorial} verschoben.'
+      no_tutorial: 'N/A'
     grading_overview:
       submission_progress: 'Abgaben'
       submitted: 'Abgegeben'

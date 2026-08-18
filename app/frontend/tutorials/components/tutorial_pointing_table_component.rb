@@ -10,6 +10,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
     if @mode == "tutor"
       @tutorial = tutorial
+      @lecture = @tutorial.lecture
       @stack = assignment&.submissions&.where(tutorial: @tutorial)&.proper
                          &.order(:last_modification_by_users_at)
       @non_submitters = assignment&.non_submitters_in_tutorial(@tutorial)
@@ -73,6 +74,33 @@ class TutorialPointingTableComponent < ViewComponent::Base
                   content_tag(:span, "check", class: "material-icons", style: "font-size: 14px;"),
                   t("assessment.grading_tutorial.mark_as_participated")
                 ])
+    end
+  end
+
+  def users_movement_map
+    return {} unless @assignment.past_deadline?
+
+    helpers.users_movement_map_cache.fetch(@assignment.id) do
+      lecture_memberships = @lecture.lecture_memberships.to_a
+      participations = @assignment.assessment&.assessment_participations&.to_a
+      return {} if participations.nil?
+
+      membership_user_ids = lecture_memberships.map(&:user_id)
+      participation_user_ids = participations.map(&:user_id)
+
+      (participation_user_ids - membership_user_ids).each_with_object({}) do |user_id, result|
+        current_tutorial = lecture_memberships.find { |m| m.user_id == user_id }&.tutorial
+        old_tutorial = participations.find { |p| p.user_id == user_id }&.tutorial
+        next unless current_tutorial&.id != old_tutorial&.id
+
+        old_title = old_tutorial&.title
+        new_title = current_tutorial&.title
+
+        result[user_id] = {
+          old_tutorial_title: old_title || t("assessment.grading_tutorial.no_tutorial"),
+          new_tutorial_title: new_title || t("assessment.grading_tutorial.no_tutorial")
+        }
+      end
     end
   end
 end
