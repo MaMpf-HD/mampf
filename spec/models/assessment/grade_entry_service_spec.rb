@@ -3,7 +3,9 @@ require "rails_helper"
 RSpec.describe(Assessment::GradeEntryService, type: :model) do
   let(:assessment) { FactoryBot.create(:assessment, :gradable) }
   let(:participation) { FactoryBot.create(:assessment_participation, assessment: assessment) }
-  let(:grader) { FactoryBot.create(:confirmed_user) }
+  let(:grader) do
+    FactoryBot.create(:confirmed_user, locale: :en)
+  end
 
   describe ".set_grade" do
     context "when the assessable is not Gradable" do
@@ -239,7 +241,8 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
       it "raises GradeEntryError" do
         expect do
           described_class.validate_grade_info(grade_numeric: "2.5")
-        end.to raise_error(Assessment::GradeEntryService::GradeEntryError, /invalid_grade/)
+        end.to raise_error(Assessment::GradeEntryService::GradeEntryError,
+                           /Invalid grade|Ungültiger Notenwert/)
       end
     end
 
