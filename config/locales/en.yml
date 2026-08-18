@@ -3288,6 +3288,7 @@ en:
     home: "Home"
     clear: "Clear"
     close: "Close"
+    loading: "Loading..."
     capacity: 'Capacity'
     division: 'Division'
     location: 'Location'

@@ -3496,6 +3496,7 @@ de:
     home: "Home"
     clear: "Löschen"
     close: "Schließen"
+    loading: "Lädt..."
     capacity: 'Kapazität'
     division: 'Teilbereich'
     location: 'Ort'
