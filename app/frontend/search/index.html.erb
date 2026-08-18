@@ -1,26 +1,56 @@
 <div class="container-md small-width">
-  <%= t('search.info',
-        search_string: @search_string,
-        count: @filtered_tags.count) %>
-  <% if @tags.count != @filtered_tags.count %>
-    <%= t('search.omitted_html',
-          profile: link_to(t('search.settings'), edit_profile_path),
-          count: @tags.count - @filtered_tags.count) %>
-  <% end %>
-  <% if @filtered_tags.present? %>
-    <div class="row">
-      <div class="col-12 pt-3 pb-3">
-        <%= render partial: 'tags/tags',
-                   locals: { related_tags: @filtered_tags,
-                             tags_description:
-                               t('search.results',
-                                 search_string: @search_string),
-                             small: true } %>
+  <div class="accordion" id="subscriptionsAccordion">
+
+    <!-- Tag Search -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <button class="accordion-button <%= 'collapsed' unless @search_string.present? %>"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseTagSearch"
+                aria-expanded="<%= @search_string.present? %>"
+                aria-controls="collapseTagSearch">
+          <h4 class="<%= text_dark_link(@search_string.present?) %>"
+              id="tagSearchLink">
+            <%= t('search.tag_search') %>
+          </h4>
+        </button>
+      </div>
+      <div class="<%= show_collapse(@search_string.present?) %> subscriptionsCollapse"
+           id="collapseTagSearch"
+           data-bs-parent="#subscriptionsAccordion"
+           data-link="#tagSearchLink">
+        <div class="accordion-body" data-controller="auto-submit-form">
+          <%= form_with url: search_index_path,
+                        method: :get,
+                        class: "mb-3",
+                        id: "tagSearchForm",
+                        data: { turbo_frame: "tag-search-results",
+                                auto_submit_form_target: "form" } do %>
+            <%= search_field_tag :search,
+                                @search_string,
+                                class: "form-control",
+                                placeholder: t('navbar.search'),
+                                data: { action: "input->auto-submit-form#debouncedSubmit",
+                                        auto_submit_form_target: "searchInput" } %>
+          <% end %>
+          <%= turbo_frame_tag "tag-search-results" do %>
+            <% if @search_too_short %>
+              <div class="text-danger small">
+                <%= t('search.term_too_short') %>
+              </div>
+            <% elsif @tags %>
+              <%= render partial: 'search/tag_search_results',
+                         locals: { tags: @tags,
+                                   filtered_tags: @filtered_tags,
+                                   search_string: @search_string } %>
+            <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
-  <% end %>
 
-  <div class="accordion" id="subscriptionsAccordion">
+    <!-- Lecture Search -->
     <div class="accordion-item">
       <div class="accordion-header">
         <button class="accordion-button collapsed"
@@ -46,6 +76,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Media Search -->
     <div class="accordion-item mb-3">
       <div class="accordion-header">
         <button class="accordion-button collapsed"

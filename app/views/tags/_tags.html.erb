@@ -1,26 +1,40 @@
-<div class="card bg-light">
-  <div class="card-header bg-generic-card-header">
-    <h5>
-      <%= tags_description %>
-    </h5>
-  </div>
-  <div class="card-body"
-       id="relatedTagsBody"
-       style="max-height: <%= small ? '20vh' : '50vh' %>">
-    <% if related_tags.any? %>
-      <% related_tags.natural_sort_by(&:title).each do |t| %>
-        <%= link_to t.short_title,
-                    tag_path(t),
-                    class: "badge text-dark lecture-tag",
-                    data: { toggle: 'tooltip',
-                            placement: 'top'},
-                    title: t.title %>
-        <% unless small %>
-          <br>
-        <% end %>
+<% tags_list = capture do %>
+  <% if related_tags.any? %>
+    <% related_tags.natural_sort_by(&:title).each do |t| %>
+      <%= link_to t.short_title,
+                  tag_path(t),
+                  class: "badge text-dark lecture-tag",
+                  data: { toggle: 'tooltip',
+                          placement: 'top'},
+                  title: t.title %>
+      <% unless small %>
+        <br>
       <% end %>
-    <% else %>
-      <%= t('no_related_tags') %>
     <% end %>
+  <% else %>
+    <%= t('no_related_tags') %>
+  <% end %>
+<% end %>
+
+<% if local_assigns.fetch(:card, true) %>
+  <div class="card bg-light">
+    <div class="card-header bg-generic-card-header">
+      <h5>
+        <%= tags_description %>
+      </h5>
+    </div>
+    <div class="card-body"
+         id="relatedTagsBody"
+         style="max-height: <%= small ? '20vh' : '50vh' %>">
+      <%= tags_list %>
+    </div>
   </div>
-</div>
+<% else %>
+  <h5>
+    <%= tags_description %>
+  </h5>
+  <div id="relatedTagsBody"
+       style="max-height: <%= small ? '20vh' : '50vh' %>">
+    <%= tags_list %>
+  </div>
+<% end %>
