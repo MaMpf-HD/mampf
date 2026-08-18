@@ -211,7 +211,10 @@ Campaigns transition through several states to ensure data integrity and fair us
 | Action | Freeze Point | Modification Rules |
 |--------|--------------|-------------------|
 | Add item | Never | Can always add new items. Gives students more options without invalidating existing choices. |
-| Remove item | After `draft` | Current implementation only allows item removal while the campaign is still `draft`. |
+| Remove item | `processing` | An item can leave its campaign while the campaign is `draft`, `open` or `closed`, as long as nobody registered for it, no allocation has been computed, and (outside `draft`) at least one other item remains. |
+
+Removing an item and deleting the group behind it are two separate actions, see
+"Campaign, Item and Registerable" below.
 
 ##### Capacity Constraints
 
@@ -244,7 +247,9 @@ end
 ```
 
 **Item Removal:**
-- Current implementation blocks item removal outside `draft`
+- `Registration::Item#removal_blocker` names the first rule that stops a removal
+  (`:status`, `:registrations`, `:allocation`, `:last_item`); the UI shows that
+  reason on the disabled button.
 - Alternative future approach: Soft-delete (set `active: false`) instead of destroying
 
 **UI Feedback:**
@@ -1368,6 +1373,67 @@ end
 
 ---
 
+## Campaign, Item and Registerable
+
+Three different things can be deleted, and they mean three different things:
+
+| Object | What it is | What deleting it means |
+|--------|------------|------------------------|
+| `Registration::Campaign` | The registration process: deadline, allocation mode, rules | The process disappears. Its items and policies go with it; its groups stay. |
+| `Registration::Item` | A group's entry in the catalog of one campaign | The group leaves the campaign. The group itself stays and falls back to manual management (`skip_campaigns: true`). |
+| Registerable (`Tutorial`, `Talk`, `Cohort`) | The group itself, with its roster and content | The group is gone, including its roster entries and everything that hangs off it. |
+
+### Discarding a campaign
+
+Deleting a campaign is only refused once it holds something that exists nowhere
+else. `Registration::Campaign#discardable?` allows it while:
+
+- the status is `draft`, `open` or `closed` (never `processing` or `completed`),
+- no `Registration::UserRegistration` exists, in any status,
+- no allocation has been computed (`last_allocation_calculated_at`,
+  `allocation_decided_at`) and none has been materialized into a roster
+  (`source_campaign_id` on any roster join),
+- no other campaign names it as a prerequisite.
+
+In the UI, a `draft` campaign is "deleted" and an already opened one is
+"discarded"; both run the same code path. Check and delete happen under a row
+lock on the campaign, so a registration arriving in parallel cannot slip past
+the check — the foreign key from `registration_user_registrations` makes the
+insert wait for that lock.
+
+A campaign that cannot be discarded also keeps its whole `Lecture` alive:
+`Lecture has_many :registration_campaigns, dependent: :destroy`, and the guard
+aborts the cascade. `LecturesController#destroy` checks the return value of
+`destroy` and names the campaigns as the reason.
+
+### Removing from the campaign vs. deleting the group
+
+The group tile of a campaign item offers both, with separate confirmations:
+
+- **Remove from registration process** (`DELETE .../items/:id`) destroys only the
+  `Registration::Item`. The `Talk`/`Tutorial`/`Cohort` survives and gets
+  `skip_campaigns: true`, mirroring what discarding a campaign does to its
+  groups.
+- **Delete group completely** (`DELETE .../items/:id/with_registerable`) does the
+  same and then destroys the registerable, in one transaction: either both go or
+  neither.
+
+The second action has to clear the item rules *and* the registerable's own
+rules. `Rosters::Rosterable#destruction_blockers` collects those, and the
+type-specific models add to them:
+
+| Type | Blockers on top of "roster not empty" |
+|------|----------------------------------------|
+| `Tutorial` | submissions with uploads (`Submission#proper`) |
+| `Talk` | attached media |
+| `Cohort` | — (members are the roster) |
+
+`in_campaign?` is a blocker too, which is why the full deletion removes the item
+first: inside the transaction the group is no longer campaign-managed, so its
+own guard can decide on the remaining grounds.
+
+---
+
 ## Campaign Lifecycle (State Diagram)
 
 ```mermaid
@@ -1375,13 +1441,29 @@ stateDiagram-v2
     [*] --> draft
     draft --> open: open
     open --> closed: close (manual or at deadline)
+    closed --> open: reopen
+    closed --> processing: allocate (preference-based)
+    processing --> open: reopen (resets allocation results)
     closed --> completed: finalize! (optional)
+    processing --> completed: finalize!
+    draft --> [*]: delete
+    open --> [*]: discard
+    closed --> [*]: discard
 
     note right of closed
         All campaigns can be finalized.
         Planning cohorts simply don't propagate to lecture.
     end note
+
+    note right of processing
+        From here on there is no way back to nothing:
+        processing and completed campaigns cannot be discarded.
+    end note
 ```
+
+A campaign never returns to `draft` (`cannot_revert_to_draft`). Discarding is
+therefore the only way out of `open`/`closed`, and only while no registrations
+and no allocation exist.
 
 ## ERD
 
