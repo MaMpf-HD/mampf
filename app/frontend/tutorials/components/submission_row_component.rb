@@ -17,7 +17,7 @@ class SubmissionRowComponent < ViewComponent::Base
   # Business rule: grading is only allowed once the assignment is no longer active
   # and the submission is valid for pointing (i.e. not late or rejected)
   def allow_grading?
-    !@assignment.active? && @submission&.valid_for_pointing?
+    @submission.valid_for_pointing? && @assignment.grading_open?
   end
 
   def tasks
@@ -112,5 +112,41 @@ class SubmissionRowComponent < ViewComponent::Base
   def can_grade?
     user = helpers.current_user
     user.admin? || user.can_grade_in_scope?(@tutorial)
+  end
+
+  def users_movement_map
+    return {} unless @assignment.past_deadline?
+
+    helpers.users_movement_map_cache.fetch(@assignment.id) do
+      lecture_memberships = @tutorial.lecture.lecture_memberships.to_a
+      participations = @assignment.assessment_participations.to_a
+      membership_user_ids = lecture_memberships.map(&:user_id)
+      participation_user_ids = participations.map(&:user_id)
+
+      (participation_user_ids - membership_user_ids).each_with_object({}) do |user_id, result|
+        current_tutorial = lecture_memberships.find { |m| m.user_id == user_id }&.tutorial
+        old_tutorial = participations.find { |p| p.user_id == user_id }&.tutorial
+        next unless current_tutorial&.id != old_tutorial&.id
+
+        old_title = old_tutorial&.title
+        new_title = current_tutorial&.title
+
+        result[user_id] = {
+          old_tutorial_title: old_title || t("assessment.grading_tutorial.no_tutorial"),
+          new_tutorial_title: new_title || t("assessment.grading_tutorial.no_tutorial")
+        }
+      end
+    end
+  end
+
+  def movement_info_for_user(user)
+    movement = users_movement_map[user.id]
+    return nil unless movement
+
+    old_tutorial_title = movement[:old_tutorial_title]
+    new_tutorial_title = movement[:new_tutorial_title]
+    t("assessment.grading_tutorial.user_moved_tutorial",
+      old_tutorial: old_tutorial_title || t("assessment.grading_tutorial.no_tutorial"),
+      new_tutorial: new_tutorial_title || t("assessment.grading_tutorial.no_tutorial"))
   end
 end
