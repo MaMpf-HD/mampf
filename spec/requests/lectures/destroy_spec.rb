@@ -21,6 +21,31 @@ RSpec.describe("Lecture deletion", type: :request) do
     end
   end
 
+  context "with an assignment that has uploads" do
+    before do
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:valid_submission, :with_manuscript,
+             tutorial: tutorial, assignment: create(:assignment, lecture: lecture))
+    end
+
+    it "keeps the lecture and says so instead of raising" do
+      expect { delete(lecture_path(lecture)) }.not_to change(Lecture, :count)
+
+      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+      expect(flash[:alert]).to eq(I18n.t("controllers.lectures.destruction_failed"))
+    end
+  end
+
+  context "with an empty assignment" do
+    before { create(:assignment, lecture: lecture) }
+
+    it "deletes the lecture together with it" do
+      expect { delete(lecture_path(lecture)) }.to change(Lecture, :count).by(-1)
+                                                                         .and(change(Assignment,
+                                                                                     :count).by(-1))
+    end
+  end
+
   context "with a campaign that students already registered for" do
     let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
     let!(:notification) { create(:notification, notifiable: lecture) }
