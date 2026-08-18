@@ -6,8 +6,10 @@ de:
       created: "Anmeldeverfahren erfolgreich erstellt."
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
       destroyed: "Anmeldeverfahren erfolgreich gelöscht."
+      discarded: "Anmeldeverfahren verworfen. Die Gruppen bleiben erhalten und können jetzt manuell verwaltet werden."
       cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
       confirm_delete: "Bist Du sicher, dass Du dieses Anmeldeverfahren löschen möchtest? Die zugehörigen Gruppen werden nicht gelöscht und können danach manuell verwaltet werden."
+      confirm_discard: "Dieses Anmeldeverfahren verwerfen? Es wird mitsamt seinen Anmeldeeinstellungen und Regeln gelöscht. Die Gruppen selbst bleiben bestehen und können danach manuell verwaltet werden. Das geht nur, weil sich bisher niemand angemeldet hat."
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
@@ -100,6 +102,7 @@ de:
         planning: "Planung"
       actions:
         open: "Anmeldung starten"
+        discard: "Anmeldeverfahren verwerfen"
         close: "Anmeldung beenden"
         reopen: "Anmeldung erneut öffnen"
         finalize: "Zuteilung durchführen"
@@ -113,6 +116,11 @@ de:
         submit: "Bestätigen"
       confirmations:
         open: "Bist Du sicher, dass Du die Anmeldung öffnen möchtest? Studierende können sich sofort anmelden."
+        open_consequences_intro: "Ab diesem Zeitpunkt gilt:"
+        open_consequences:
+          - "Konfiguration, Regeln und Auswahlmodus können nicht mehr geändert werden."
+          - "Gruppen, für die bereits Anmeldungen vorliegen, können nicht mehr aus dem Verfahren entfernt werden."
+          - "Das gesamte Verfahren kann nur verworfen werden, solange überhaupt keine Anmeldungen existieren."
         close: "Bist Du sicher, dass Du die Anmeldung beenden möchtest? Es werden keine neuen Anmeldungen mehr angenommen."
         close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Du das Verfahren jetzt schließt, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Bist Du sicher?"
         reopen: "Bist Du sicher, dass Du die Anmeldung erneut öffnen möchtest?"
@@ -614,7 +622,9 @@ de:
             base:
               frozen: "Die Anmeldeverfahrenskonfiguration kann nicht mehr geändert werden, sobald sie nicht mehr im Entwurfsmodus ist."
               already_finalized: "Das Anmeldeverfahren ist bereits abgeschlossen."
-              cannot_delete_active_campaign: "Ein Anmeldeverfahren, das nicht im Entwurfsmodus ist, kann nicht gelöscht werden."
+              cannot_delete_active_campaign: "Ein Anmeldeverfahren kann nicht mehr gelöscht werden, während es zugeteilt wird oder nachdem es abgeschlossen wurde."
+              cannot_discard_with_registrations: "Ein Anmeldeverfahren, für das sich bereits Studierende angemeldet haben, kann nicht verworfen werden."
+              cannot_discard_after_allocation: "Ein Anmeldeverfahren kann nicht mehr verworfen werden, sobald eine Zuteilung berechnet wurde."
               referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für folgende Anmeldeverfahren ist: %{descriptions}."
               prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{description}' noch im Entwurfsmodus ist."
               no_items: "Das Anmeldeverfahren kann nicht geöffnet werden, da keine Einträge hinzugefügt wurden."

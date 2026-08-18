@@ -104,22 +104,27 @@ module Registration
       end
     end
 
+    # Deletes a draft campaign, or discards an already opened one. Both are the
+    # same operation; only the wording differs, see #discardable?.
     def destroy
-      unless @campaign.can_be_deleted?
-        respond_with_flash(:alert, t("registration.campaign.cannot_delete"),
-                           redirect_path: registration_campaign_path(@campaign))
-        return
+      lecture = @campaign.campaignable
+      was_draft = @campaign.draft?
+      destroyed = false
+
+      # The lock keeps a registration arriving in parallel from slipping in
+      # between the discardable? check and the delete.
+      @campaign.with_lock do
+        destroyed = @campaign.destroy
       end
 
-      lecture = @campaign.campaignable
-
-      if @campaign.destroy
-        respond_with_flash(:notice, t("registration.campaign.destroyed"),
+      if destroyed
+        message = was_draft ? "destroyed" : "discarded"
+        respond_with_flash(:notice, t("registration.campaign.#{message}"),
                            redirect_path: lecture_registration_campaigns_path(lecture)) do
           evaluate_turbo_update_streams(lecture: lecture)
         end
       else
-        respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
+        respond_with_flash(:alert, campaign_destruction_error,
                            redirect_path: registration_campaign_path(@campaign))
       end
     end
@@ -199,6 +204,11 @@ module Registration
     end
 
     private
+
+      def campaign_destruction_error
+        @campaign.errors.full_messages.presence&.join(", ") ||
+          t("registration.campaign.cannot_delete")
+      end
 
       def set_lecture
         @lecture = Lecture.find_by(id: params[:lecture_id])

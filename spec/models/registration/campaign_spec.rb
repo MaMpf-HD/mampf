@@ -185,10 +185,44 @@ RSpec.describe(Registration::Campaign, type: :model) do
   end
 
   describe "deletion protection" do
-    it "prevents deletion if not draft" do
-      campaign = create(:registration_campaign, :open)
+    it "prevents deletion while the allocation is being processed" do
+      campaign = create(:registration_campaign, :processing)
       expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
       expect(campaign.errors.added?(:base, :cannot_delete_active_campaign)).to be(true)
+    end
+
+    it "prevents deletion once it has been finalized" do
+      campaign = create(:registration_campaign, :completed)
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_delete_active_campaign)).to be(true)
+    end
+
+    it "prevents deletion if students have registered" do
+      campaign = create(:registration_campaign, :open)
+      create(:registration_user_registration,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_discard_with_registrations)).to be(true)
+    end
+
+    it "prevents deletion once an allocation has been computed" do
+      campaign = create(:registration_campaign, :closed)
+      campaign.update_columns(last_allocation_calculated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_discard_after_allocation)).to be(true)
+    end
+
+    it "prevents deletion once an allocation has been materialized" do
+      campaign = create(:registration_campaign, :closed)
+      create(:tutorial_membership,
+             tutorial: campaign.registration_items.first.registerable,
+             source_campaign_id: campaign.id)
+
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_discard_after_allocation)).to be(true)
     end
 
     it "prevents deletion if referenced as prerequisite" do
@@ -1032,6 +1066,64 @@ RSpec.describe(Registration::Campaign, type: :model) do
       second.update!(self_materialization_mode: :disabled)
 
       expect(campaign.shared_self_materialization_mode).to be_nil
+    end
+  end
+  describe "#discardable?" do
+    it "is true for a draft campaign" do
+      expect(create(:registration_campaign)).to be_discardable
+    end
+
+    it "is true for an open campaign nobody has registered for" do
+      expect(create(:registration_campaign, :open)).to be_discardable
+    end
+
+    it "is true for a closed campaign nobody has registered for" do
+      expect(create(:registration_campaign, :closed)).to be_discardable
+    end
+
+    it "is false while the allocation is being processed" do
+      expect(create(:registration_campaign, :processing)).not_to be_discardable
+    end
+
+    it "is false once finalized" do
+      expect(create(:registration_campaign, :completed)).not_to be_discardable
+    end
+
+    it "is false with a rejected registration" do
+      campaign = create(:registration_campaign, :open)
+      create(:registration_user_registration, :rejected,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(campaign).not_to be_discardable
+      expect(campaign.discard_blocker).to eq(:registrations)
+    end
+
+    it "is false when another campaign depends on it" do
+      prereq = create(:registration_campaign)
+      dependent = create(:registration_campaign)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: dependent,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      expect(prereq).not_to be_discardable
+      expect(prereq.discard_blocker).to eq(:prerequisite)
+    end
+  end
+
+  describe "discarding" do
+    let(:campaign) { create(:registration_campaign, :with_items) }
+
+    it "deletes items and policies but keeps the groups" do
+      create(:registration_policy, :institutional_email, registration_campaign: campaign)
+      campaign.update!(status: :open)
+      tutorials = campaign.registerables
+
+      expect { campaign.destroy }.to change(Registration::Item, :count).by(-3)
+      expect(Registration::Policy.where(registration_campaign_id: campaign.id)).to be_empty
+
+      expect(Tutorial.where(id: tutorials.map(&:id)).count).to eq(3)
+      expect(tutorials.map { |t| t.reload.skip_campaigns }).to all(be(true))
     end
   end
 end

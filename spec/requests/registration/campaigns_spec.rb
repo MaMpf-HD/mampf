@@ -287,8 +287,47 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         end
       end
 
-      context "when campaign is open" do
+      context "when campaign is open and nobody has registered" do
         let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
+
+        it "discards the campaign" do
+          expect do
+            delete(registration_campaign_path(campaign))
+          end.to change(Registration::Campaign, :count).by(-1)
+
+          expect(response).to redirect_to(lecture_registration_campaigns_path(lecture))
+          follow_redirect!
+          expect(response.body).to include(I18n.t("registration.campaign.discarded"))
+        end
+
+        it "keeps the campaign's groups and hands them back to manual management" do
+          tutorials = campaign.registration_items.map(&:registerable)
+
+          delete(registration_campaign_path(campaign))
+
+          expect(Tutorial.where(id: tutorials.map(&:id)).count).to eq(tutorials.size)
+          expect(tutorials.map { |t| t.reload.skip_campaigns }).to all(be(true))
+        end
+      end
+
+      context "when campaign is closed and nobody has registered" do
+        let!(:campaign) { create(:registration_campaign, :closed, campaignable: lecture) }
+
+        it "discards the campaign" do
+          expect do
+            delete(registration_campaign_path(campaign))
+          end.to change(Registration::Campaign, :count).by(-1)
+        end
+      end
+
+      context "when students have registered" do
+        let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
+
+        before do
+          create(:registration_user_registration,
+                 registration_campaign: campaign,
+                 registration_item: campaign.registration_items.first)
+        end
 
         it "does not destroy the campaign" do
           expect do
@@ -296,7 +335,42 @@ RSpec.describe("Registration::Campaigns", type: :request) do
           end.not_to change(Registration::Campaign, :count)
 
           expect(response).to redirect_to(registration_campaign_path(campaign))
-          expect(flash[:alert]).to be_present
+          follow_redirect!
+          expect(response.body)
+            .to include(I18n.t("activerecord.errors.models.registration/campaign" \
+                               ".attributes.base.cannot_discard_with_registrations"))
+        end
+      end
+
+      context "when an allocation has been computed" do
+        let!(:campaign) { create(:registration_campaign, :closed, campaignable: lecture) }
+
+        before do
+          # rubocop:disable Rails/SkipsModelValidations
+          campaign.update_columns(last_allocation_calculated_at: Time.current)
+          # rubocop:enable Rails/SkipsModelValidations
+        end
+
+        it "does not destroy the campaign" do
+          expect do
+            delete(registration_campaign_path(campaign))
+          end.not_to change(Registration::Campaign, :count)
+
+          follow_redirect!
+          expect(response.body)
+            .to include(I18n.t("activerecord.errors.models.registration/campaign" \
+                               ".attributes.base.cannot_discard_after_allocation"))
+        end
+      end
+
+      context "when the campaign is being processed" do
+        let!(:campaign) { create(:registration_campaign, :processing, campaignable: lecture) }
+
+        it "responds with error" do
+          delete registration_campaign_path(campaign), as: :turbo_stream
+          expect(response).to have_http_status(:ok)
+          assert_flash_error
+          expect(Registration::Campaign.exists?(campaign.id)).to be(true)
         end
       end
 
@@ -316,8 +390,6 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         before do
           allow_any_instance_of(Registration::Campaign)
             .to receive(:destroy).and_return(false)
-          allow_any_instance_of(Registration::Campaign)
-            .to receive(:can_be_deleted?).and_return(true)
         end
 
         it "responds with error" do

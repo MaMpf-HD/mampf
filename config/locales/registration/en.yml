@@ -6,8 +6,10 @@ en:
       created: "Registration process created successfully."
       create_failed: "Registration process could not be created."
       destroyed: "Registration process deleted successfully."
+      discarded: "Registration process discarded. Its groups were kept and can now be managed manually."
       cannot_delete: "Registration process cannot be deleted."
       confirm_delete: "Are you sure you want to delete this registration process? Its groups will not be deleted and can be managed manually afterwards."
+      confirm_discard: "Discard this registration process? It will be deleted along with its groups' registration settings and rules. The groups themselves are kept and can be managed manually afterwards. This is only possible because nobody has registered yet."
       opened: "Registration process opened."
       closed: "Registration process closed."
       reopened: "Registration process reopened."
@@ -100,6 +102,7 @@ en:
         planning: "Planning"
       actions:
         open: "Start Registration"
+        discard: "Discard registration process"
         close: "End Registration"
         reopen: "Reopen Registration"
         finalize: "Finalize Allocation"
@@ -113,6 +116,11 @@ en:
         submit: "Confirm"
       confirmations:
         open: "Are you sure you want to open registration? Students will be able to register immediately."
+        open_consequences_intro: "From that moment on:"
+        open_consequences:
+          - "Settings, rules and the allocation mode can no longer be changed."
+          - "Groups that already have registrations can no longer be removed from the process."
+          - "The whole process can only be discarded as long as nobody has registered at all."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
         close_early: "The registration deadline has not passed yet. Closing the registration process now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
@@ -610,7 +618,9 @@ en:
             base:
               frozen: "Registration process configuration cannot be changed once it is no longer in draft mode."
               already_finalized: "Registration process is already finalized."
-              cannot_delete_active_campaign: "Cannot delete a registration process that is not in draft mode."
+              cannot_delete_active_campaign: "Cannot delete a registration process while it is being processed or after it has been finalized."
+              cannot_discard_with_registrations: "Cannot discard a registration process that students have already registered for."
+              cannot_discard_after_allocation: "Cannot discard a registration process once an allocation has been computed."
               referenced_as_prerequisite: "Cannot delete registration process because it is a prerequisite for the following registration processes: %{descriptions}."
               prerequisite_is_draft: "Cannot open registration process because the prerequisite registration process '%{description}' is still in draft mode."
               no_items: "Cannot open registration process because no items have been added."

@@ -117,10 +117,27 @@ module Registration
 
     def campaign_open_confirmation(campaign)
       msg = t("registration.campaign.confirmations.open")
+      msg += "\n\n#{t("registration.campaign.confirmations.open_consequences_intro")}"
+      t("registration.campaign.confirmations.open_consequences").each do |line|
+        msg += "\n\u2022 #{line}"
+      end
       if campaign.registration_items.any? { |i| i.capacity.nil? }
         msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
       end
       msg
+    end
+
+    # A draft campaign is simply deleted; an opened one is discarded, which is
+    # the same operation but a different promise to the teacher.
+    def campaign_discard_confirmation(campaign)
+      key = campaign.draft? ? "confirm_delete" : "confirm_discard"
+      t("registration.campaign.#{key}")
+    end
+
+    def campaign_discard_title(campaign)
+      return t("buttons.delete") if campaign.draft?
+
+      t("registration.campaign.actions.discard")
     end
 
     def campaign_finalize_confirmation

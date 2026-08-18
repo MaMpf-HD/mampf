@@ -9,17 +9,17 @@
         <i class="bi bi-pencil"></i>
       <% end %>
 
-      <% if campaign.can_be_deleted? %>
+      <% if campaign.discardable? %>
         <%= button_to registration_campaign_path(campaign),
                       method: :delete,
                       form: { class: "d-inline" },
                       data: {
-                        turbo_confirm: t("registration.campaign.confirm_delete"),
+                        turbo_confirm: campaign_discard_confirmation(campaign),
                         turbo_stream: true
                       },
                       class: "btn btn-sm btn-outline-danger",
-                      title: t("buttons.delete"),
-                      aria: { label: t("buttons.delete") } do %>
+                      title: campaign_discard_title(campaign),
+                      aria: { label: campaign_discard_title(campaign) } do %>
           <i class="bi bi-trash"></i>
         <% end %>
       <% end %>

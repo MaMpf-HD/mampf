@@ -47,9 +47,19 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    DISCARDABLE_STATUSES = ["draft", "open", "closed"].freeze
+
     # Roster join models that record which campaign materialized an entry.
     MATERIALIZED_ROSTER_MODELS = ["TutorialMembership", "SpeakerTalkJoin",
                                   "CohortMembership", "LectureMembership"].freeze
+
+    # :prerequisite is deliberately absent - ensure_not_referenced_as_prerequisite
+    # runs first and names the depending campaigns.
+    DISCARD_BLOCKER_ERRORS = {
+      status: :cannot_delete_active_campaign,
+      registrations: :cannot_discard_with_registrations,
+      allocation: :cannot_discard_after_allocation
+    }.freeze
 
     validates :registration_deadline, :allocation_mode, :status, presence: true
     validates :description, length: { maximum: 100 }
@@ -61,7 +71,7 @@ module Registration
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
 
-    before_destroy :ensure_campaign_is_draft, prepend: true
+    before_destroy :ensure_campaign_is_discardable, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
     before_destroy :collect_registerables_for_release, prepend: true
     after_destroy :release_registerables_from_campaign
@@ -101,8 +111,24 @@ module Registration
                         .exists?(registration_items: { registerable_type: group_type })
     end
 
-    def can_be_deleted?
-      draft?
+    # Discarding throws away the whole registration process - campaign, items,
+    # policies - and hands its groups back to manual management. It stays
+    # available after opening, but only while nothing of student consequence
+    # has happened yet: the moment somebody registers or an allocation exists,
+    # the campaign is the only record of it.
+    def discardable?
+      discard_blocker.nil?
+    end
+
+    # The first reason that rules out discarding, or nil. Drives the guard's
+    # error message and the wording of the button in the UI.
+    def discard_blocker
+      return :status unless status.in?(DISCARDABLE_STATUSES)
+      return :registrations if user_registrations.exists?
+      return :allocation if allocation_present?
+      return :prerequisite if referencing_prerequisite_policies.exists?
+
+      nil
     end
 
     # Whether an allocation has been computed or written into any roster.
@@ -344,6 +370,11 @@ module Registration
 
     private
 
+      def referencing_prerequisite_policies
+        Registration::Policy.referencing_campaign(id)
+                            .where.not(registration_campaign_id: id)
+      end
+
       def materialized_roster_entries?
         MATERIALIZED_ROSTER_MODELS.any? do |model|
           model.constantize.exists?(source_campaign_id: id)
@@ -417,9 +448,7 @@ module Registration
       end
 
       def ensure_not_referenced_as_prerequisite
-        referencing_policies = Registration::Policy
-                               .referencing_campaign(id)
-                               .where.not(registration_campaign_id: id)
+        referencing_policies = referencing_prerequisite_policies
                                .includes(:registration_campaign)
 
         return unless referencing_policies.any?
@@ -447,10 +476,11 @@ module Registration
         end
       end
 
-      def ensure_campaign_is_draft
-        return if draft?
+      def ensure_campaign_is_discardable
+        error = DISCARD_BLOCKER_ERRORS[discard_blocker]
+        return if error.nil?
 
-        errors.add(:base, :cannot_delete_active_campaign)
+        errors.add(:base, error)
         throw(:abort)
       end
 
