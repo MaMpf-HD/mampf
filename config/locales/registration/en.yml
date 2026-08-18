@@ -251,14 +251,15 @@ en:
         lecture: "Lecture"
         lecture_signup: "General Signup"
       actions:
-        remove_from_campaign: "Delete group"
+        remove_from_campaign: "Remove from registration process"
+        delete_group: "Delete group completely"
       created: "Item added successfully."
       destroyed: "Group deleted successfully."
+      removed_from_campaign: "Group removed from the registration process. It can now be managed manually."
       updated: "Item updated successfully."
       invalid_type: "Invalid type."
-      cannot_destroy: "Cannot remove item because the registration process is not in draft mode."
-      confirm_delete: "Are you sure you want to remove this item?"
-      confirm_remove: "Are you sure you want to permanently delete this group? This action cannot be undone."
+      confirm_remove_from_campaign: "Remove this group from the registration process? The group itself is kept and can be managed manually afterwards."
+      confirm_delete_group: "Delete this group completely? It will be taken out of the registration process and then permanently deleted, together with everything that belongs to it. This action cannot be undone."
       select_type: "Select a group type..."
       attributes:
         capacity_optional: "Capacity (optional)"
@@ -631,6 +632,10 @@ en:
             base:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration process is no longer in draft mode."
+              cannot_remove_in_status: "Cannot be removed while the registration process is being processed or after it has been finalized."
+              cannot_remove_with_registrations: "Cannot be removed because students have already registered for it."
+              cannot_remove_after_allocation: "Cannot be removed because an allocation has already been computed."
+              cannot_remove_last_item: "Cannot be removed because a running registration process needs at least one group."
               registerable_not_managed_by_campaign: "The item is locked for registration processes."
         registration/user_registration:
           attributes:

@@ -376,6 +376,7 @@ Rails.application.routes.draw do
                 only: [:create, :destroy, :update] do
         member do
           get :roster
+          delete :with_registerable, action: :destroy_with_registerable
         end
       end
 

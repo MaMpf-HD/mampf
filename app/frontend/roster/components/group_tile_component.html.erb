@@ -228,6 +228,26 @@
             <% end %>
           <% end %>
 
+          <% if remove_path && remove_disabled? %>
+            <span title="<%= remove_disabled_title %>" data-bs-toggle="tooltip">
+              <button
+                class="btn btn-sm btn-outline-secondary opacity-50"
+                type="button"
+                style="cursor: not-allowed;"
+                disabled
+              >
+                <i class="bi bi-box-arrow-left"></i>
+              </button>
+            </span>
+          <% elsif remove_path %>
+            <%= link_to remove_path,
+                    class: "btn btn-sm btn-outline-secondary",
+                    title: remove_title,
+                    data: remove_data do %>
+              <i class="bi bi-box-arrow-left"></i>
+            <% end %>
+          <% end %>
+
           <% if delete_path && delete_disabled? %>
             <span title="<%= delete_disabled_title %>" data-bs-toggle="tooltip">
               <button

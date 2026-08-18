@@ -47,6 +47,10 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    # Roster join models that record which campaign materialized an entry.
+    MATERIALIZED_ROSTER_MODELS = ["TutorialMembership", "SpeakerTalkJoin",
+                                  "CohortMembership", "LectureMembership"].freeze
+
     validates :registration_deadline, :allocation_mode, :status, presence: true
     validates :description, length: { maximum: 100 }
 
@@ -99,6 +103,13 @@ module Registration
 
     def can_be_deleted?
       draft?
+    end
+
+    # Whether an allocation has been computed or written into any roster.
+    def allocation_present?
+      last_allocation_calculated_at.present? ||
+        allocation_decided_at.present? ||
+        materialized_roster_entries?
     end
 
     def total_registrations_count
@@ -332,6 +343,12 @@ module Registration
     end
 
     private
+
+      def materialized_roster_entries?
+        MATERIALIZED_ROSTER_MODELS.any? do |model|
+          model.constantize.exists?(source_campaign_id: id)
+        end
+      end
 
       def remove_forced_assignments_with_preferences!
         subquery = Registration::UserRegistration

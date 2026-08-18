@@ -251,14 +251,15 @@ de:
         lecture: "Vorlesung"
         lecture_signup: "Vorlesungseinschreibung"
       actions:
-        remove_from_campaign: "Gruppe löschen"
+        remove_from_campaign: "Aus dem Anmeldeverfahren entfernen"
+        delete_group: "Gruppe vollständig löschen"
       created: "Element erfolgreich hinzugefügt."
       destroyed: "Gruppe erfolgreich gelöscht."
+      removed_from_campaign: "Gruppe aus dem Anmeldeverfahren entfernt. Sie kann jetzt manuell verwaltet werden."
       updated: "Element erfolgreich aktualisiert."
       invalid_type: "Ungültiger Typ."
-      cannot_destroy: "Element kann nicht entfernt werden, da das Anmeldeverfahren nicht im Entwurfsmodus ist."
-      confirm_delete: "Bist Du sicher, dass Du dieses Element entfernen möchtest?"
-      confirm_remove: "Bist Du sicher, dass Du diese Gruppe endgültig löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
+      confirm_remove_from_campaign: "Diese Gruppe aus dem Anmeldeverfahren entfernen? Die Gruppe selbst bleibt bestehen und kann danach manuell verwaltet werden."
+      confirm_delete_group: "Diese Gruppe vollständig löschen? Sie wird aus dem Anmeldeverfahren genommen und anschließend endgültig gelöscht, mitsamt allem, was zu ihr gehört. Diese Aktion kann nicht rückgängig gemacht werden."
       select_type: "Gruppenart auswählen..."
       attributes:
         capacity_optional: "Kapazität (optional)"
@@ -635,6 +636,10 @@ de:
             base:
               capacity_too_low: "Kapazität darf nicht niedriger sein als die Anzahl der bestätigten Anmeldungen (%{count})."
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
+              cannot_remove_in_status: "Kann nicht entfernt werden, während das Anmeldeverfahren zugeteilt wird oder nachdem es abgeschlossen wurde."
+              cannot_remove_with_registrations: "Kann nicht entfernt werden, da sich bereits Studierende dafür angemeldet haben."
+              cannot_remove_after_allocation: "Kann nicht entfernt werden, da bereits eine Zuteilung berechnet wurde."
+              cannot_remove_last_item: "Kann nicht entfernt werden, da ein laufendes Anmeldeverfahren mindestens eine Gruppe braucht."
               registerable_not_managed_by_campaign: "Das Element ist für Anmeldeverfahren gesperrt."
         registration/user_registration:
           attributes:

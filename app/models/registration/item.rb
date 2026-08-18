@@ -39,7 +39,61 @@ module Registration
 
     validate :validate_registerable_allows_campaigns, on: :create
     validate :validate_capacity_reduction, on: :update
-    before_destroy :ensure_campaign_is_draft
+    # Prepended so it runs before the dependent user_registrations are gone -
+    # they are exactly what the guard has to see.
+    before_destroy :ensure_item_is_removable, prepend: true
+
+    REMOVABLE_CAMPAIGN_STATUSES = ["draft", "open", "closed"].freeze
+
+    REMOVAL_BLOCKER_ERRORS = {
+      status: :cannot_remove_in_status,
+      registrations: :cannot_remove_with_registrations,
+      allocation: :cannot_remove_after_allocation,
+      last_item: :cannot_remove_last_item
+    }.freeze
+
+    # Whether this item may leave its campaign. Nobody loses anything as long as
+    # no registration points at it and no allocation has been computed; a
+    # running campaign must keep at least one item to remain registerable.
+    def removable?
+      removal_blocker.nil?
+    end
+
+    # The first reason that rules out removal, or nil.
+    def removal_blocker
+      campaign = registration_campaign
+      return :status unless campaign.status.in?(REMOVABLE_CAMPAIGN_STATUSES)
+      return :registrations if user_registrations.exists?
+      return :allocation if campaign.allocation_present?
+      return nil if campaign.draft?
+      return :last_item unless campaign.registration_items.where.not(id: id).exists?
+
+      nil
+    end
+
+    def removal_blocker_message
+      error = REMOVAL_BLOCKER_ERRORS[removal_blocker]
+      return if error.nil?
+
+      I18n.t("activerecord.errors.models.registration/item.attributes.base.#{error}")
+    end
+
+    # Takes this item out of its campaign and - if requested - deletes the group
+    # behind it as well. Either both go or neither. The campaign row stays
+    # locked across check and delete, so a registration arriving in parallel
+    # cannot invalidate the decision after it was made.
+    def remove(delete_registerable: false)
+      group = registerable
+      removed = false
+
+      registration_campaign.with_lock do
+        removed = perform_removal(group, delete_registerable)
+        raise(ActiveRecord::Rollback) unless removed
+      end
+
+      release_from_campaign_management(group) if removed && !delete_registerable
+      removed
+    end
 
     def item_capacity_used
       confirmed_registrations_count
@@ -108,10 +162,34 @@ module Registration
         errors.add(:base, :capacity_too_low, count: confirmed_count)
       end
 
-      def ensure_campaign_is_draft
-        return if registration_campaign.draft?
+      def perform_removal(group, delete_registerable)
+        # #destroy runs ensure_item_is_removable, which records the reason.
+        return false unless destroy
+        return true unless delete_registerable
 
-        errors.add(:base, :frozen)
+        # The item is gone inside this transaction, so the group no longer
+        # counts as campaign-managed and its own guards can decide.
+        group.registration_items.reset
+        group.destroy && group.destroyed?
+      end
+
+      # A group that is no longer part of any campaign falls back to manual
+      # management, mirroring what discarding a whole campaign does.
+      def release_from_campaign_management(group)
+        return unless group.respond_to?(:skip_campaigns)
+
+        # rubocop:disable Rails/SkipsModelValidations
+        group.class.where(id: group.id).update_all(skip_campaigns: true)
+        # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      def ensure_item_is_removable
+        # When the campaign itself is being discarded, its own guard has already
+        # decided; the item rules would only re-check a campaign that is gone.
+        return if destroyed_by_association
+        return if removable?
+
+        errors.add(:base, REMOVAL_BLOCKER_ERRORS.fetch(removal_blocker))
         throw(:abort)
       end
 
