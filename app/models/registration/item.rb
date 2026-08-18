@@ -82,6 +82,9 @@ module Registration
     # behind it as well. Either both go or neither. The campaign row stays
     # locked across check and delete, so a registration arriving in parallel
     # cannot invalidate the decision after it was made.
+    #
+    # Call this from a controller action, not from inside another transaction:
+    # the rollback on failure relies on with_lock opening a real one.
     def remove(delete_registerable: false)
       group = registerable
       removed = false
@@ -89,9 +92,13 @@ module Registration
       registration_campaign.with_lock do
         removed = perform_removal(group, delete_registerable)
         raise(ActiveRecord::Rollback) unless removed
+
+        # Still under the lock: between committing the removal and releasing the
+        # group, it could otherwise be picked up by another campaign and end up
+        # campaign-managed and skip_campaigns at the same time.
+        release_from_campaign_management(group) unless delete_registerable
       end
 
-      release_from_campaign_management(group) if removed && !delete_registerable
       removed
     end
 
