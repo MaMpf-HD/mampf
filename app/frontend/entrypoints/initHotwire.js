@@ -133,6 +133,9 @@ window.Stimulus.register("exams--registration-settings", ExamRegistrationSetting
 import ExamRegistrationListController from "~/exams/registration_list.controller.js";
 window.Stimulus.register("exams--registration-list", ExamRegistrationListController);
 
+import GradeTalkRowController from "~/talks/grade_talk_row.controller.js";
+window.Stimulus.register("grade-talk-row", GradeTalkRowController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

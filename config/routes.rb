@@ -990,6 +990,14 @@ Rails.application.routes.draw do
     end
   end
 
+  patch "talks/:talk_id/grade_user/:user_id",
+        to: "assessment/grades#update",
+        as: "grade_talk_user"
+
+  patch "talks/:talk_id/refresh_grade_user/:user_id",
+        to: "assessment/grades#refresh",
+        as: "refresh_grade_talk_user"
+
   # tutorials routes
 
   get "tutorials/:id/cancel_edit",

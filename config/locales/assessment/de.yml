@@ -197,7 +197,7 @@ de:
       user_not_found: 'Kein:e Nutzer:in mit dieser E-Mail-Adresse gefunden.'
       already_registered: 'Diese Person ist bereits angemeldet.'
       open_review_hint: 'Hier siehst Du die aktuellen Anmeldungen. Eine bearbeitbare Prüfungsliste für manuelle Änderungen steht erst später zur Verfügung.'
-      closed_review_hint: 'Hier siehst Du die aktuellen Anmeldungen. Über „Prüfen & Abschließen“ prüfst Du im nächsten Schritt die Richtlinien und kannst offene Richtlinienfälle bei Bedarf vorläufig ablehnen. Eine bearbeitbare Prüfungsliste für weitere manuelle Änderungen steht erst danach zur Verfügung.'
+      closed_review_hint: 'Hier siehst Du die aktuellen Anmeldungen. Über „Prüfen & Abschließen" prüfst Du im nächsten Schritt die Richtlinien und kannst offene Richtlinienfälle bei Bedarf vorläufig ablehnen. Eine bearbeitbare Prüfungsliste für weitere manuelle Änderungen steht erst danach zur Verfügung.'
       post_finalization_hint: 'Dies ist die bearbeitbare Prüfungsliste. Hier kannst Du Studierende hinzufügen, entfernen und nachvollziehen, wer aktuell nicht auf der Prüfungsliste steht.'
       not_on_roster_heading: 'Nicht auf der Prüfungsliste'
       certification_not_passed_reason: 'Prüfungszulassung nicht erteilt'
@@ -206,6 +206,10 @@ de:
       rejected_heading: 'Abgelehnte Anmeldungen'
     no_assessables_yet: 'Noch keine Bewertungen erstellt.'
     submission_settings: 'Abgabe-Einstellungen'
+    talk_grader:
+      assessment_not_talk: 'Bewertung ist nicht für einen Vortrag.'
+      init_participation_missing_args: 'Bewertung, Benutzer und Vortrag müssen angegeben sein.'
+      grades_updated: 'Noten erfolgreich aktualisiert.'
     task_points:
       update: 'Punkte erfolgreich aktualisiert.'
       submission_missing_tutorial: 'Diese Abgabe ist keinem Tutorium zugeordnet.'
@@ -240,9 +244,12 @@ de:
       user_not_found: 'Benutzer nicht gefunden.'
       no_participation: 'Teilnahme nicht gefunden.'
       user_cannot_grade: 'Der Benutzer ist nicht berechtigt, in diesem Bereich zu bewerten.'
+      not_gradable: 'Diese Bewertung ist nicht bewertbar.'
+      invalid_grade: 'Ungültiger Notenwert'
       invalid_request_params: 'Ungültige Anfrageparameter.'
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
+      talks_without_assessment: 'Für diese Vorträge ist noch keine Bewertung hinterlegt.'
     grade_table:
       pending: 'ausstehend'
       reviewed: 'überprüft'
@@ -274,21 +281,25 @@ de:
       confirm_unsaved_changes: 'Ungespeicherte Änderungen in der Punktetabelle gehen verloren. Fortfahren?'
       filter_name: 'Name filtern'
       filter_options:
-        filter_all: 'Alle'
-        filter_pending: 'Ausstehend'
-        filter_reviewed: 'Überprüft'
+        filter_all: "Alle"
+        filter_pending: "Ausstehend"
+        filter_reviewed: "Überprüft"
+        filter_absent: "Nicht angetreten"
+        filter_exempt: "Entschuldigt"
       header_overview:
         submission:
           total: 'Abgaben'
           graded: 'benotet'
           pending: 'ausstehend'
         non_submitters:
-          total: 'Personen haben nicht abgegeben'
-          participated: 'teilgenommen'
-          not_participated: 'noch nicht bewertet'
-          graded: 'benotet'
-          pending: 'ausstehend'
-      no_user_for_config: 'Keine Benutzer für Teilnahme %{participation_id} an Hausaufgabe %{assignment_id}'
+          total: "Personen haben nicht abgegeben"
+          participated: "teilgenommen"
+          not_participated: "noch nicht bewertet"
+          graded: "benotet"
+          pending: "ausstehend"
+      no_user_for_config: "Keine Benutzer für Teilnahme %{participation_id} an Hausaufgabe %{assignment_id}"
+    grading_talk:
+      note_placeholder: "Notiz hinzufügen..."
     grading_overview:
       submission_progress: 'Abgaben'
       submitted: 'Abgegeben'
@@ -430,9 +441,18 @@ de:
     statistics_analysis: 'Statistiken & Analyse'
     no_points_yet: 'Noch keine Punkte eingetragen.'
     point_grid:
-      total: 'Gesamt'
+      total: "Gesamt"
     statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
     statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
+    grade_talk_row:
+      speaker: "Sprecher:in"
+      status: "Status"
+      grade: "Note"
+      note: "Notiz"
+      graded_by: "Bewertet von"
+      graded_at: "Bewertet am"
+      pending: "Ausstehend"
+    mark_absent: "Als abwesend markieren"
 
   activerecord:
     errors:
