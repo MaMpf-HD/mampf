@@ -87,6 +87,7 @@ class Lecture < ApplicationRecord
 
   # a lecture has many tutorials
   has_many :tutorials, -> { order(:title) },
+           dependent: :destroy,
            inverse_of: :lecture
 
   # a lecture has many assignments (e.g. exercises with deadlines)
