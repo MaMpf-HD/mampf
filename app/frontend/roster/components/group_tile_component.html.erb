@@ -90,6 +90,7 @@
   <% else %>
     <div
       class="<%= card_classes %>"
+      data-testid="group-tile"
       data-tutorial-roster-panel-target="tile"
       data-action="click->tutorial-roster-panel#openFromTile"
       data-roster-key="<%= roster_key %>"
@@ -234,6 +235,7 @@
                 class="btn btn-sm btn-outline-secondary opacity-50"
                 type="button"
                 style="cursor: not-allowed;"
+                aria-label="<%= remove_title %>"
                 disabled
               >
                 <i class="bi bi-box-arrow-left"></i>
@@ -243,6 +245,7 @@
             <%= link_to remove_path,
                     class: "btn btn-sm btn-outline-secondary",
                     title: remove_title,
+                    aria: { label: remove_title },
                     data: remove_data do %>
               <i class="bi bi-box-arrow-left"></i>
             <% end %>
@@ -254,6 +257,7 @@
                 class="btn btn-sm btn-outline-danger opacity-50"
                 type="button"
                 style="cursor: not-allowed;"
+                aria-label="<%= delete_title %>"
                 disabled
               >
                 <i class="bi bi-trash"></i>
@@ -263,6 +267,7 @@
             <%= link_to delete_path,
                     class: "btn btn-sm btn-danger",
                     title: delete_title,
+                    aria: { label: delete_title },
                     data: delete_data do %>
               <i class="bi bi-trash"></i>
             <% end %>

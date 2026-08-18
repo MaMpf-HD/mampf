@@ -1,0 +1,197 @@
+import { expect, test, Page } from "../_support/fixtures";
+import { FactoryBot, FactoryBotObject } from "../_support/factorybot";
+
+/**
+ * A teacher who set up the wrong groups or opened a registration process by
+ * mistake has to be able to get out of it again: discard the whole process,
+ * take a single group out of it, or delete that group for good.
+ */
+test.describe("getting out of a registration process", () => {
+  interface Setup {
+    lecture: FactoryBotObject;
+    campaign: FactoryBotObject;
+    tutorials: FactoryBotObject[];
+    items: FactoryBotObject[];
+  }
+
+  async function setUpCampaign(
+    factory: FactoryBot, teacherId: number, tutorialTitles: string[],
+  ): Promise<Setup> {
+    const lecture = await factory.create("lecture", [], { teacher_id: teacherId });
+    const campaign = await factory.create(
+      "registration_campaign", ["first_come_first_served"],
+      {
+        campaignable_type: "Lecture",
+        campaignable_id: lecture.id,
+        description: "Tutorial registration",
+      },
+    );
+
+    const tutorials: FactoryBotObject[] = [];
+    const items: FactoryBotObject[] = [];
+    for (const title of tutorialTitles) {
+      const tutorial = await factory.create("tutorial", [], {
+        lecture_id: lecture.id,
+        title,
+        capacity: 5,
+      });
+      items.push(await factory.create("registration_item", [], {
+        registration_campaign_id: campaign.id,
+        registerable_type: "Tutorial",
+        registerable_id: tutorial.id,
+      }));
+      tutorials.push(tutorial);
+    }
+
+    return { lecture, campaign, tutorials, items };
+  }
+
+  function tile(page: Page, title: string) {
+    return page.getByTestId("group-tile").filter({ hasText: title });
+  }
+
+  function noCampaignSection(page: Page) {
+    return page.getByTestId("registration-no-campaign-section");
+  }
+
+  test("spells out what opening a registration process freezes",
+    async ({ factory, teacher: { page, user } }) => {
+      const { lecture, campaign } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);
+
+      let confirmation = "";
+      page.once("dialog", async (dialog) => {
+        confirmation = dialog.message();
+        await dialog.accept();
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await page.getByRole("button", { name: "Start Registration" }).click();
+
+      await expect(page.getByText("Registration process opened.")).toBeVisible();
+      expect(await campaign.__call("status")).toBe("open");
+
+      expect(confirmation).toContain(
+        "Settings, rules and the allocation mode can no longer be changed.");
+      expect(confirmation).toContain(
+        "Groups that already have registrations can no longer be removed from the process.");
+      expect(confirmation).toContain(
+        "The whole process can only be discarded as long as nobody has registered at all.");
+    });
+
+  test("discards a process that was opened by mistake and keeps its groups",
+    async ({ factory, teacher: { page, user } }) => {
+      const { lecture, campaign } = await setUpCampaign(
+        factory, user.id, ["Monday Tutorial", "Tuesday Tutorial"]);
+      await campaign.__call("open!");
+
+      page.on("dialog", dialog => dialog.accept());
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await page.getByRole("button", { name: "Discard registration process" }).click();
+
+      await expect(page.getByText("Tutorial registration")).toBeHidden();
+      await expect(noCampaignSection(page).getByText("Monday Tutorial")).toBeVisible();
+      await expect(noCampaignSection(page).getByText("Tuesday Tutorial")).toBeVisible();
+
+      const tutorials = await lecture.__call("tutorials") as unknown[];
+      expect(tutorials).toHaveLength(2);
+    });
+
+  test("offers deletion only as long as nothing depends on the process",
+    async ({ factory, student, teacher: { page, user } }) => {
+      const { lecture, campaign, items } = await setUpCampaign(
+        factory, user.id, ["Monday Tutorial", "Tuesday Tutorial"]);
+      await campaign.__call("open!");
+      await factory.create("registration_user_registration", [], {
+        user_id: student.user.id,
+        registration_campaign_id: campaign.id,
+        registration_item_id: items[0].id,
+        status: "confirmed",
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+
+      await expect(
+        page.getByRole("button", { name: "Discard registration process" }),
+      ).toBeHidden();
+
+      // the group that was registered for is pinned, the other one is not
+      const pinned = tile(page, "Monday Tutorial");
+      await expect(
+        pinned.getByRole("button", { name: "Remove from registration process" }),
+      ).toBeDisabled();
+      await expect(
+        pinned.getByRole("button", { name: "Delete group completely" }),
+      ).toBeDisabled();
+      // deleting the group inherits the reason the item cannot leave the process
+      await expect(
+        pinned.getByTitle("Cannot be removed because students have already registered for it."),
+      ).toHaveCount(2);
+      await expect(
+        tile(page, "Tuesday Tutorial")
+          .getByRole("link", { name: "Remove from registration process" }),
+      ).toBeVisible();
+    });
+
+  test("takes a group out of the process without deleting it",
+    async ({ factory, teacher: { page, user } }) => {
+      const { lecture } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);
+
+      page.on("dialog", dialog => dialog.accept());
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await expect(noCampaignSection(page).getByText("Monday Tutorial")).toBeHidden();
+
+      await tile(page, "Monday Tutorial")
+        .getByRole("link", { name: "Remove from registration process" }).click();
+
+      await expect(page.getByText(
+        "Group removed from the registration process. It can now be managed manually.",
+      )).toBeVisible();
+      await expect(noCampaignSection(page).getByText("Monday Tutorial")).toBeVisible();
+
+      const tutorials = await lecture.__call("tutorials") as unknown[];
+      expect(tutorials).toHaveLength(1);
+    });
+
+  test("deletes a group together with its entry in the process",
+    async ({ factory, teacher: { page, user } }) => {
+      const { lecture } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);
+
+      page.on("dialog", dialog => dialog.accept());
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await tile(page, "Monday Tutorial")
+        .getByRole("link", { name: "Delete group completely" }).click();
+
+      await expect(page.getByText("Group deleted successfully.")).toBeVisible();
+      await expect(page.getByText("Monday Tutorial")).toBeHidden();
+
+      const tutorials = await lecture.__call("tutorials") as unknown[];
+      expect(tutorials).toHaveLength(0);
+    });
+
+  test("refuses to delete a group that still has participants",
+    async ({ factory, student, teacher: { page, user } }) => {
+      const { lecture, tutorials } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorials[0].id,
+        user_id: student.user.id,
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+
+      const occupied = tile(page, "Monday Tutorial");
+      await expect(
+        occupied.getByRole("button", { name: "Delete group completely" }),
+      ).toBeDisabled();
+      await expect(
+        occupied.getByTitle("Cannot be deleted because there are participants."),
+      ).toBeVisible();
+      // taking it out of the process is still allowed - that loses nothing
+      await expect(
+        tile(page, "Monday Tutorial")
+          .getByRole("link", { name: "Remove from registration process" }),
+      ).toBeVisible();
+    });
+});
