@@ -11,6 +11,10 @@ module Assessment
       respond_with_flash(:alert, I18n.t("assessment.errors.invalid_request_params"))
     end
 
+    rescue_from Assessment::GradeEntryService::GradeEntryError do |e|
+      respond_with_flash(:alert, e.message)
+    end
+
     def authorize_assessment!
       authorize! :grade, @lecture if @lecture.present?
     end
