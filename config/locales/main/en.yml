@@ -1,5 +1,11 @@
 en:
   main:
+    start:
+      no_lectures: >-
+        You have not subscribed to any event series or talks of the current
+        term yet.
+      registration_open: "Registration open — register now"
+      homework_due: "Homework due %{date}"
     next_term_banner:
       heading:
         one: "Lectures for %{term} are being published — the first one is already in MaMpf."

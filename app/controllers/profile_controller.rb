@@ -106,11 +106,6 @@ class ProfileController < ApplicationController
 
   def unsubscribe_lecture
     @success = current_user.unsubscribe_lecture!(@lecture)
-    @none_left = case @parent
-                 when "current_subscribed" then current_user.current_subscribed_lectures
-                                                            .empty?
-                 when "inactive" then current_user.inactive_lectures.empty?
-    end
   end
 
   def star_lecture

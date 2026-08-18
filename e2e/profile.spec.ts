@@ -122,7 +122,8 @@ test.describe("Module settings", () => {
       const courseName = "Happy Calculus 101";
       const division = await factory.create("division", [], { name: divisionName });
       const course = await factory.create("course", ["with_division"], { title: courseName, division_id: division.id });
-      const lecture = await factory.create("lecture", ["released_for_all"], { course_id: course.id });
+      const term = await factory.create("term", ["summer", "active"], { year: 2025 });
+      const lecture = await factory.create("lecture", ["released_for_all"], { course_id: course.id, term_id: term.id });
       const teacher = await lecture.__call("teacher");
 
       const profilePage = new ProfilePage(page);
@@ -135,8 +136,8 @@ test.describe("Module settings", () => {
       await profilePage.save();
 
       await page.goto("/");
-      const furtherSubscribed = page.getByTestId("further-subscribed");
-      await expect(furtherSubscribed).toContainText(courseName);
-      await expect(furtherSubscribed).toContainText(teacher.name);
+      const dashboard = page.getByTestId("dashboard-lectures");
+      await expect(dashboard).toContainText(courseName);
+      await expect(dashboard).toContainText(teacher.name);
     });
 });

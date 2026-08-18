@@ -690,6 +690,35 @@ class Lecture < ApplicationRecord
     in?(user.lectures)
   end
 
+  # A single status symbol summarizing the user's registration state across
+  # this lecture's (non-draft) registration campaigns, for compact display
+  # (e.g. on the student dashboard). Returns nil if there is nothing to show:
+  # no campaigns, or a campaign that isn't open yet and no registration at all.
+  def registration_status_for(user)
+    campaigns = registration_campaigns.where.not(status: :draft)
+    return if campaigns.empty?
+
+    regs = Registration::UserRegistration.where(user: user,
+                                                registration_campaign: campaigns)
+
+    return :confirmed if regs.confirmed.exists?
+    return :pending if regs.pending.exists?
+    return :open if campaigns.any?(&:open_for_registrations?)
+
+    :rejected if regs.rejected.exists?
+  end
+
+  # The deadline of the next assignment the user has not yet submitted for,
+  # among this lecture's current assignments (the nearest upcoming deadline
+  # group). Returns nil if there is nothing pending.
+  def next_pending_assignment_deadline_for(user)
+    assignments = current_assignments
+    return if assignments.empty?
+    return if assignments.all? { |a| a.submission(user).present? }
+
+    assignments.first.deadline
+  end
+
   def term_to_label
     return term.to_label if term
 

@@ -1,0 +1,64 @@
+<div class="card mb-3 lecture-dashboard-card"
+     data-lecture-id="<%= lecture.id %>"
+     data-testid="lecture-dashboard-card">
+  <div class="row g-0 flex-column flex-sm-row">
+    <div class="col-12 col-sm-3 col-md-2 lecture-dashboard-card__image-col">
+      <%= image_tag image_url,
+                    class: "lecture-dashboard-card__image",
+                    alt: lecture.title_no_term %>
+    </div>
+    <div class="col-12 col-sm">
+      <div class="card-body">
+        <div class="position-absolute top-0 end-0 p-2 lecture-dashboard-card__actions">
+          <% if favorite? %>
+            <%= link_to "",
+                        unstar_lecture_path(params: { lecture: { id: lecture.id,
+                                                                 parent: "dashboard" } }),
+                        class: "bi bi-bookmark-fill text-warning link-icon",
+                        method: :patch,
+                        remote: true,
+                        title: t("profile.unstar_lecture"),
+                        "aria-label": t("profile.unstar_lecture"),
+                        data: { toggle: "tooltip", placement: "bottom" } %>
+          <% else %>
+            <%= link_to "",
+                        star_lecture_path(params: { lecture: { id: lecture.id,
+                                                               parent: "dashboard" } }),
+                        class: "bi bi-bookmark text-muted link-icon",
+                        method: :patch,
+                        remote: true,
+                        title: t("profile.star_lecture"),
+                        "aria-label": t("profile.star_lecture"),
+                        data: { toggle: "tooltip", placement: "bottom" } %>
+          <% end %>
+        </div>
+
+        <h5 class="mb-0 pe-5">
+          <%= link_to lecture.title_no_term,
+                      lecture_path(lecture),
+                      class: "text-dark text-decoration-none stretched-link" %>
+        </h5>
+        <% if show_teacher? %>
+          <div class="text-muted small mb-3"><%= lecture.teacher.name %></div>
+        <% end %>
+
+        <div class="d-flex flex-column flex-sm-row gap-2 gap-sm-4">
+          <% if registration_status %>
+            <div class="small">
+              <i class="bi <%= registration_status_icon %> me-1" aria-hidden="true"></i>
+              <%= registration_status_label %>
+            </div>
+          <% end %>
+
+          <% if homework_due_soon? %>
+            <div class="small">
+              <i class="bi bi-alarm text-danger me-1" aria-hidden="true"></i>
+              <%= t("main.start.homework_due",
+                    date: I18n.l(next_assignment_deadline, format: :long)) %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

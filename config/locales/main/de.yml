@@ -1,5 +1,11 @@
 de:
   main:
+    start:
+      no_lectures: >-
+        Du hast noch keine Veranstaltungen oder Vorträge des aktuellen
+        Semesters abonniert.
+      registration_open: "Anmeldung offen — jetzt anmelden"
+      homework_due: "Hausaufgabe fällig am %{date}"
     next_term_banner:
       heading:
         one: "Die Veranstaltungen für das %{term} werden gerade veröffentlicht — die erste ist schon in MaMpf."

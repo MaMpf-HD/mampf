@@ -620,8 +620,9 @@ class User < ApplicationRecord
   end
 
   def current_subscribed_lectures
-    active_lectures.includes(:course, :term).natural_sort_by(&:title) +
-      lectures.where(term: nil).natural_sort_by(&:title)
+    active_lectures.includes(:course, :term, :teacher).natural_sort_by(&:title) +
+      lectures.where(term: nil).includes(:course, :teacher)
+              .natural_sort_by(&:title)
   end
 
   def current_subscribable_lectures

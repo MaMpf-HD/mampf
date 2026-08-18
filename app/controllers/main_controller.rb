@@ -35,12 +35,7 @@ class MainController < ApplicationController
   end
 
   def start
-    @current_stuff = current_user.current_subscribed_lectures
-    if @current_stuff.empty?
-      @inactive_lectures = current_user.inactive_lectures.includes(:course,
-                                                                   :term)
-                                       .sort
-    end
+    @lectures = current_user.current_subscribed_lectures
     announcements
     next_term_banner
     @talks = current_user.talks.includes(lecture: :term)

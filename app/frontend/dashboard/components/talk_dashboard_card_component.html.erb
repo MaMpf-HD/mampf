@@ -1,0 +1,47 @@
+<div class="card mb-3 lecture-dashboard-card"
+     data-testid="talk-dashboard-card">
+  <div class="row g-0 flex-column flex-sm-row">
+    <div class="col-12 col-sm-3 col-md-2 lecture-dashboard-card__image-col">
+      <%= image_tag image_url,
+                    class: "lecture-dashboard-card__image",
+                    alt: talk.title %>
+    </div>
+    <div class="col-12 col-sm">
+      <div class="card-body">
+        <div class="position-absolute top-0 end-0 p-2 lecture-dashboard-card__actions">
+          <%= link_to "",
+                      assemble_talk_path(talk),
+                      class: "bi bi-pencil text-muted link-icon",
+                      title: t("buttons.edit"),
+                      "aria-label": t("buttons.edit"),
+                      data: { toggle: "tooltip", placement: "bottom" } %>
+        </div>
+
+        <h5 class="mb-0 pe-5">
+          <%= link_to talk.title,
+                      talk_path(talk),
+                      class: "text-dark text-decoration-none stretched-link" %>
+        </h5>
+        <div class="text-muted small mb-3">
+          <%= talk.lecture.title_term_info_no_type %>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row gap-2 gap-sm-4">
+          <% if talk.dates.any? %>
+            <div class="small">
+              <i class="bi bi-calendar-event me-1" aria-hidden="true"></i>
+              <%= dates_text %>
+            </div>
+          <% end %>
+
+          <% if cospeaker? %>
+            <div class="small">
+              <i class="bi bi-people me-1" aria-hidden="true"></i>
+              <%= cospeaker_text %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

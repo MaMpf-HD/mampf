@@ -1,3 +1,68 @@
+@import "~/styles/branding";
+
+// Bootstrap has no built-in "image on the left, filling the card's height"
+// variant (only .card-img-top/-bottom), so the responsive image placement
+// (full width on top when stacked, left column filling the height once
+// side-by-side) is defined here, together with the brand-colored border and
+// hover elevation for the whole (now fully clickable, via .stretched-link)
+// card.
+.lecture-dashboard-card {
+    // clips the image's square corners to the card's own rounded corners
+    overflow: hidden;
+    border: 2px solid $mampf-blue;
+    transition: box-shadow 0.15s ease;
+
+    &:hover {
+        box-shadow: 0 0.5rem 1rem mampf-blue(0.25);
+    }
+
+    &__image-col {
+        border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+    }
+
+    &__image {
+        display: block;
+        width: 100%;
+        height: 12rem;
+        object-fit: cover;
+    }
+
+    // keeps the star/unstar toggle clickable above the card's stretched-link
+    &__actions {
+        z-index: 2;
+    }
+}
+
+@media (min-width: 576px) {
+    .lecture-dashboard-card__image-col {
+        border-bottom: 0;
+        border-right: var(--bs-border-width) solid var(--bs-border-color);
+    }
+
+    .lecture-dashboard-card__image {
+        height: 100%;
+        min-height: 6rem;
+    }
+}
+
+.link-icon {
+    text-decoration: none;
+}
+
+// Reserves the first viewport for the dashboard cards: the navbar (56px)
+// is the only fixed element above this wrapper, so subtracting it (plus
+// main's own pt-3) makes this wrapper's bottom edge line up with the
+// viewport's bottom edge. #go-to-lecture-search then sticks to that edge
+// via margin-top: auto, while the actual search widget below it only
+// comes into view once the user scrolls past this first screen.
+.dashboard-hero {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 56px - 1rem);
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
 #go-to-lecture-search {
     text-decoration: none;
     display: flex;
@@ -8,6 +73,7 @@
     transition: color 0.3s ease;
     padding-bottom: 2em;
     padding-top: 2em;
+    margin-top: auto;
 
     &:hover {
         color: #333;
