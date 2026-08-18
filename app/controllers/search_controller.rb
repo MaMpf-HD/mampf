@@ -2,6 +2,7 @@
 class SearchController < ApplicationController
   authorize_resource class: false
   before_action :check_for_consent
+  layout "application_no_sidebar"
 
   rescue_from ActionController::ParameterMissing do |_exception|
     redirect_back_or_to root_path, alert: I18n.t("controllers.no_search_term")
