@@ -71,14 +71,13 @@ module Registration
       end
     end
 
-    # Takes the group out of the registration process and leaves it in place for
-    # manual management.
+    # Leaves the group in place, for manual management.
     def destroy
       remove_item(delete_registerable: false,
                   notice: t("registration.item.removed_from_campaign"))
     end
 
-    # Takes the group out of the registration process and deletes it for good.
+    # Takes the group out and then deletes it, in one transaction.
     def destroy_with_registerable
       authorize! :destroy, @item.registerable
 

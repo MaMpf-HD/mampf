@@ -114,8 +114,8 @@ module Registration
       end
 
       def ensure_campaign_is_draft
-        # When the campaign itself is discarded, its rules go with it - only a
-        # standalone deletion has to respect the draft rule.
+        # Discarding the campaign takes its rules with it; only a standalone
+        # deletion has to respect the draft rule.
         return if destroyed_by_association
         return unless registration_campaign && !registration_campaign.draft?
 

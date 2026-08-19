@@ -127,8 +127,6 @@ module Registration
       msg
     end
 
-    # A draft campaign is simply deleted; an opened one is discarded, which is
-    # the same operation but a different promise to the teacher.
     def campaign_discard_confirmation(campaign)
       key = campaign.draft? ? "confirm_delete" : "confirm_discard"
       t("registration.campaign.#{key}")

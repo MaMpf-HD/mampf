@@ -27,7 +27,6 @@ module Rosters
     SELF_ADD_MODES = [:add_only, :add_and_remove].freeze
     SELF_REMOVE_MODES = [:remove_only, :add_and_remove].freeze
 
-    # Translation keys explaining each destruction blocker to the user.
     DESTRUCTION_BLOCKER_KEYS = {
       in_campaign: "roster.errors.cannot_delete_in_campaign",
       roster_not_empty: "roster.errors.cannot_delete_not_empty",
@@ -78,8 +77,7 @@ module Rosters
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
 
-    # Reasons that rule out destroying this rosterable, in the order they are
-    # reported. Models add their own type-specific blockers on top of these.
+    # Models add their own type-specific blockers on top of these.
     def destruction_blockers
       blockers = []
       blockers << :in_campaign if in_campaign?
@@ -87,9 +85,7 @@ module Rosters
       blockers
     end
 
-    # The blockers that would remain once this rosterable is taken out of its
-    # campaign - what "remove from the campaign and delete the group" has to
-    # satisfy.
+    # What "remove from the campaign and delete the group" has to satisfy.
     def destruction_blockers_outside_campaign
       destruction_blockers - [:in_campaign]
     end

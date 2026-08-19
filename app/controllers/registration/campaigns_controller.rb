@@ -104,15 +104,13 @@ module Registration
       end
     end
 
-    # Deletes a draft campaign, or discards an already opened one. Both are the
-    # same operation; only the wording differs, see #discardable?.
+    # Deletes a draft campaign, or discards an already opened one - the same
+    # operation, a different promise to the teacher.
     def destroy
       lecture = @campaign.campaignable
       was_draft = @campaign.draft?
       destroyed = false
 
-      # The lock keeps a registration arriving in parallel from slipping in
-      # between the discardable? check and the delete.
       @campaign.with_lock do
         destroyed = @campaign.destroy
       end
@@ -180,13 +178,11 @@ module Registration
                          redirect_path: registration_campaign_path(@campaign))
     end
 
-    # Takes an opened process back to draft so its configuration and its groups
-    # can be changed again. The model decides whether that is still harmless.
+    # Unfreezes an opened campaign so its configuration and groups can be
+    # changed again. The model decides whether that is still harmless.
     def revert_to_draft
       reverted = false
 
-      # Same lock as discarding: without it a registration arriving in parallel
-      # lands after the check and leaves a draft that somebody registered for.
       @campaign.with_lock do
         reverted = @campaign.update(status: :draft)
       end
