@@ -127,8 +127,8 @@ class ParticipationRowComponent < ViewComponent::Base
 
     helpers.users_movement_map_cache.fetch(@assignment.id) do
       tutorial_memberships = @lecture.tutorials
-        .includes(:tutorial_memberships)
-        .flat_map(&:tutorial_memberships)
+                                     .includes(:tutorial_memberships)
+                                     .flat_map(&:tutorial_memberships)
       participations = @assignment.assessment&.assessment_participations&.to_a
       return {} if participations.nil?
 

@@ -11,7 +11,7 @@
   data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
 >
   <!-- Column 1: User names + copy emails + late icon -->
-  <td class="sticky-col team-col"> <%# herb:disable html-no-duplicate-attributes %>
+  <td class="sticky-col team-col">
     <div class="row">
       <div
         class="d-flex flex-column justify-content-between"
@@ -85,7 +85,7 @@
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% for assignment_task in tasks %>
-      <td class="sticky-col task-col">
+      <td class="sticky-col task-col"><%# herb:disable html-no-duplicate-attributes %>
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
     <% end %>
