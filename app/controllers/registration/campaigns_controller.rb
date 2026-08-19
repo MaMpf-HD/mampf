@@ -183,7 +183,24 @@ module Registration
     # Takes an opened process back to draft so its configuration and its groups
     # can be changed again. The model decides whether that is still harmless.
     def revert_to_draft
-      update_status(:draft, t("registration.campaign.reverted_to_draft"))
+      reverted = false
+
+      # Same lock as discarding: without it a registration arriving in parallel
+      # lands after the check and leaves a draft that somebody registered for.
+      @campaign.with_lock do
+        reverted = @campaign.update(status: :draft)
+      end
+
+      if reverted
+        respond_with_flash(:notice, t("registration.campaign.reverted_to_draft"),
+                           redirect_path: registration_campaign_path(@campaign)) do
+          evaluate_turbo_update_streams(lecture: @campaign.campaignable,
+                                        expanded_campaign_id: @campaign.id)
+        end
+      else
+        respond_with_flash(:alert, @campaign.errors.full_messages.join(", "),
+                           redirect_path: registration_campaign_path(@campaign))
+      end
     end
 
     # Opens (or closes) student self-service on all of the campaign's groups
