@@ -86,6 +86,8 @@ module Assessment
             @participation, task_points, current_user
           )
         end
+        @participation = @participation.reload
+        @assignment = @participation.assessment&.assessable
         render_task_points_update(
           turbo_stream.replace(
             "participation-row-#{@participation.id}",

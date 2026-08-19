@@ -46,7 +46,7 @@ module Assessment
           validate_submission_has_assignment(submission, assignment),
           validate_assignment_has_assessment(assignment, assessment),
           validate_assessment_requires_points(assessment),
-          validate_assignment_inactive(assignment)
+          validate_assignment_grading_open(assignment)
         )
 
         enter_points_for_each_team_member!(assessment, submission, points_by_task_id, scorer)
@@ -59,7 +59,7 @@ module Assessment
 
         raise_if_errors!(
           validate_participation_has_assignment(participation, assignment),
-          validate_assignment_inactive(assignment)
+          validate_assignment_grading_open(assignment)
         )
 
         PointEntryService.enter_points(participation, points_by_task_id, scorer, nil)
@@ -165,10 +165,10 @@ module Assessment
           I18n.t("assessment.task_points.not_required_points")
         end
 
-        def validate_assignment_inactive(assignment)
-          return if assignment.nil? || !assignment.active?
+        def validate_assignment_grading_open(assignment)
+          return if assignment.nil? || assignment.grading_open?
 
-          I18n.t("assessment.task_points.cannot_score_active_assignment")
+          I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
         end
 
         def validate_current_user_can_grade(scope, user)

@@ -4,12 +4,12 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
   let(:teacher) { create(:confirmed_user) }
   let(:tutor) { create(:confirmed_user) }
 
-  let(:lecture) { create(:lecture, teacher: teacher) }
+  let(:lecture) { create(:lecture, teacher: teacher, submission_grace_period: 70) }
   let!(:assignment) do
-    create(:assignment, :with_lecture, lecture: lecture, deadline: 1.hour.from_now)
+    FactoryBot.create(:assignment, deadline: 1.hour.from_now, lecture: lecture)
   end
   let!(:assessment) do
-    create(:assessment, requires_points: true, assessable: assignment, lecture: lecture)
+    FactoryBot.create(:assessment, :with_points, assessable: assignment)
   end
   let!(:task) { create(:assessment_task, assessment: assessment) }
 
@@ -53,8 +53,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       sign_in tutor
     end
 
-    context "when assignment is inactive" do
-      before { Timecop.travel(2.hours.from_now) }
+    context "after grace period" do
+      before { Timecop.travel(3.hours.from_now) }
       after { Timecop.return }
 
       context "with a submission target" do
@@ -115,7 +115,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include(
-            I18n.t("assessment.errors.invalid_request_params")
+            I18n.t("assessment.errors.no_assignment")
           )
         end
       end
@@ -131,7 +131,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
     end
 
-    context "when assignment is active" do
+    context "before deadline" do
       let(:submission) do
         create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
       end
@@ -148,7 +148,33 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response).to have_http_status(:success)
         expect(response.media_type).to eq(Mime[:turbo_stream])
         expect(response.body).to include(
-          I18n.t("assessment.task_points.cannot_score_active_assignment")
+          I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
+        )
+      end
+    end
+
+    context "after deadline before grace period" do
+      let(:submission) do
+        create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
+      end
+      let(:payload) do
+        [{ "target" => "submission",
+           "id" => submission.id,
+           "task_points" => { task.id => "7" } }].to_json
+      end
+
+      before { Timecop.travel(2.hours.from_now) }
+      after { Timecop.return }
+
+      it "returns turbo_stream with alert" do
+        patch point_multi_submissions_tutorial_path,
+              params: { tutorial_id: tutorial.id, assignment_id: assignment.id,
+                        submissions: payload },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+        expect(response.body).to include(
+          I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
         )
       end
     end
@@ -166,10 +192,10 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         sign_in tutor
       end
 
-      context "when assignment is inactive" do
+      context "after grace period" do
         before do
           sign_in teacher
-          Timecop.travel(2.hours.from_now)
+          Timecop.travel(3.hours.from_now)
         end
         after { Timecop.return }
 
@@ -197,13 +223,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             expect(response).to have_http_status(:success)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
-              I18n.t("assessment.errors.invalid_request_params")
+              I18n.t("assessment.errors.no_submission")
             )
           end
         end
       end
 
-      context "when assignment is active" do
+      context "before deadline" do
         it "calls SubmissionGraderService.score_tasks_by_submission!" do
           expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
             .and_return(nil)
@@ -219,7 +245,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include(
-            I18n.t("assessment.task_points.cannot_score_active_assignment")
+            I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
           )
         end
       end
@@ -227,10 +253,10 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
     context "as teacher" do
       before { sign_in teacher }
-      context "when assignment is inactive" do
+      context "after grace period" do
         before do
           sign_in teacher
-          Timecop.travel(2.hours.from_now)
+          Timecop.travel(3.hours.from_now)
         end
         after { Timecop.return }
 
@@ -259,13 +285,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             expect(response).to have_http_status(:success)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
-              I18n.t("assessment.errors.invalid_request_params")
+              I18n.t("assessment.errors.no_submission")
             )
           end
         end
       end
 
-      context "when assignment is active" do
+      context "before deadline" do
         it "calls SubmissionGraderService.score_tasks_by_submission!" do
           expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
             .and_return(nil)
@@ -281,7 +307,30 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include(
-            I18n.t("assessment.task_points.cannot_score_active_assignment")
+            I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
+          )
+        end
+      end
+
+      context "after deadline before grace period" do
+        before { Timecop.travel(2.hours.from_now) }
+        after { Timecop.return }
+        it "calls SubmissionGraderService.score_tasks_by_submission!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
+            .and_return(nil)
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json, mode: "teacher" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream alert" do
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json, mode: "teacher" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+          expect(response.body).to include(
+            I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
           )
         end
       end
@@ -301,9 +350,9 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         student.reload
       end
 
-      context "when assignment is inactive" do
+      context "after grace period" do
         before do
-          Timecop.travel(2.hours.from_now)
+          Timecop.travel(3.hours.from_now)
         end
         after { Timecop.return }
 
@@ -312,12 +361,15 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           patch point_user_tutorial_path(participation),
                 params: { task_points: { task.id => "6" }.to_json, mode: "teacher" },
                 as: :turbo_stream
+          expect(participation.assessment.assessable).to eq(assignment)
+          expect(assignment.grading_open?).to eq(true)
         end
 
         it "returns turbo_stream success" do
           patch point_user_tutorial_path(participation),
                 params: { task_points: { task.id => "6" }.to_json, mode: "teacher" },
                 as: :turbo_stream
+          puts response.body if response.status == 500
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
         end
@@ -330,13 +382,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             expect(response).to have_http_status(:success)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
-              I18n.t("assessment.errors.invalid_request_params")
+              I18n.t("assessment.errors.no_participation")
             )
           end
         end
       end
 
-      context "when assignment is active" do
+      context "before deadline" do
         it "calls SubmissionGraderService.score_tasks_by_participation!" do
           expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
           patch point_user_tutorial_path(participation),
@@ -351,7 +403,29 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include(
-            I18n.t("assessment.task_points.cannot_score_active_assignment")
+            I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
+          )
+        end
+      end
+
+      context "after deadline before grace period" do
+        before { Timecop.travel(2.hours.from_now) }
+        after { Timecop.return }
+        it "calls SubmissionGraderService.score_tasks_by_participation!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "teacher" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream alert" do
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "teacher" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+          expect(response.body).to include(
+            I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
           )
         end
       end
@@ -363,9 +437,9 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         sign_in tutor
       end
 
-      context "when assignment is inactive" do
+      context "after grace period" do
         before do
-          Timecop.travel(2.hours.from_now)
+          Timecop.travel(3.hours.from_now)
         end
         after { Timecop.return }
 
@@ -392,13 +466,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             expect(response).to have_http_status(:success)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
-              I18n.t("assessment.errors.invalid_request_params")
+              I18n.t("assessment.errors.no_participation")
             )
           end
         end
       end
 
-      context "when assignment is active" do
+      context "before deadline" do
         it "calls SubmissionGraderService.score_tasks_by_participation!" do
           expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
           patch point_user_tutorial_path(participation),
@@ -413,7 +487,29 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include(
-            I18n.t("assessment.task_points.cannot_score_active_assignment")
+            I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
+          )
+        end
+      end
+
+      context "after deadline before grace period" do
+        before { Timecop.travel(2.hours.from_now) }
+        after { Timecop.return }
+        it "calls SubmissionGraderService.score_tasks_by_participation!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "tutor" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream alert" do
+          patch point_user_tutorial_path(participation),
+                params: { task_points: { task.id => "6" }.to_json, mode: "tutor" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+          expect(response.body).to include(
+            I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
           )
         end
       end
@@ -441,7 +537,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               as: :turbo_stream
         expect(response).to have_http_status(:success)
         expect(response.media_type).to eq(Mime[:turbo_stream])
-        expect(response.body).to include(I18n.t("assessment.errors.invalid_request_params"))
+        expect(response.body).to include(I18n.t("assessment.errors.no_submission"))
       end
     end
   end
@@ -467,7 +563,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               as: :turbo_stream
         expect(response).to have_http_status(:success)
         expect(response.media_type).to eq(Mime[:turbo_stream])
-        expect(response.body).to include(I18n.t("assessment.errors.invalid_request_params"))
+        expect(response.body).to include(I18n.t("assessment.errors.no_participation"))
       end
     end
   end
@@ -534,13 +630,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     context "when user cannot edit lecture (student)" do
       before do
         sign_in student
-        Timecop.travel(2.hours.from_now)
       end
       after { Timecop.return }
 
       it "redirects point_submission to root" do
         submission = create(:submission, assignment: assignment, tutorial: tutorial,
                                          users: [student])
+        Timecop.travel(3.hours.from_now)
         patch point_submission_tutorial_path(submission),
               params: { task_points: { task.id => "8" }.to_json },
               as: :turbo_stream
@@ -550,6 +646,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       it "redirects point_user to root" do
         participation = create(:assessment_participation, assessment: assessment, user: student,
                                                           tutorial: tutorial)
+        Timecop.travel(3.hours.from_now)
         patch point_user_tutorial_path(participation),
               params: { task_points: { task.id => "6" }.to_json },
               as: :turbo_stream
@@ -569,7 +666,6 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       before do
         tutorial.tutors << tutor
         sign_in tutor
-        Timecop.travel(2.hours.from_now)
       end
 
       after { Timecop.return }
@@ -577,6 +673,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       it "allows point_submission" do
         submission = create(:submission, assignment: assignment, tutorial: tutorial,
                                          users: [student])
+        Timecop.travel(3.hours.from_now)
         patch point_submission_tutorial_path(submission),
               params: { task_points: { task.id => "8" }.to_json },
               as: :turbo_stream
@@ -586,6 +683,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       it "allows point_user" do
         participation = create(:assessment_participation, assessment: assessment, user: student,
                                                           tutorial: tutorial)
+        Timecop.travel(3.hours.from_now)
         patch point_user_tutorial_path(participation),
               params: { task_points: { task.id => "6" }.to_json },
               as: :turbo_stream
@@ -607,7 +705,6 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       before do
         lecture.update(teacher: teacher)
         sign_in teacher
-        Timecop.travel(2.hours.from_now)
       end
 
       after { Timecop.return }
@@ -615,15 +712,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       it "allows point_submission" do
         submission = create(:submission, assignment: assignment, tutorial: tutorial,
                                          users: [student])
+        Timecop.travel(3.hours.from_now)
         patch point_submission_tutorial_path(submission),
               params: { task_points: { task.id => "8" }.to_json },
               as: :turbo_stream
+
         expect(response).to have_http_status(:success)
       end
 
       it "allows point_user" do
-        participation = create(:assessment_participation, assessment: assessment, user: student,
-                                                          tutorial: tutorial)
+        Timecop.travel(3.hours.from_now)
+        participation = create(:assessment_participation, :submitted,
+                               assessment: assessment, tutorial: tutorial, user: student)
+
         patch point_user_tutorial_path(participation),
               params: { task_points: { task.id => "6" }.to_json },
               as: :turbo_stream
@@ -645,7 +746,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         before do
           lecture.update(teacher: teacher)
           sign_in other_teacher
-          Timecop.travel(2.hours.from_now)
+          Timecop.travel(3.hours.from_now)
         end
 
         after { Timecop.return }
