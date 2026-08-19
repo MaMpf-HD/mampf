@@ -91,8 +91,6 @@ class GroupTileComponent < ViewComponent::Base
     helpers.roster_edit_group_path(registerable)
   end
 
-  # Deleting the group for good. For a campaign item this also takes the item
-  # out of the campaign first, which is why it has its own route.
   def delete_path
     if item
       helpers.with_registerable_registration_campaign_item_path(
@@ -103,7 +101,6 @@ class GroupTileComponent < ViewComponent::Base
     end
   end
 
-  # Only shown for campaign items: keep the group, drop its campaign entry.
   def remove_path
     return unless item
 
@@ -123,11 +120,11 @@ class GroupTileComponent < ViewComponent::Base
   end
 
   def remove_disabled?
-    item.removal_blocker_message.present?
+    remove_blocker_message.present?
   end
 
   def remove_disabled_title
-    item.removal_blocker_message
+    remove_blocker_message
   end
 
   def delete_data
@@ -163,13 +160,19 @@ class GroupTileComponent < ViewComponent::Base
     t("registration.item.actions.remove_from_campaign")
   end
 
-  # Deleting a group that sits in a campaign has to clear both hurdles: the
-  # item may leave the campaign, and the group itself carries nothing worth
-  # keeping.
+  # The item recomputes on every call, and the tile needs the answer thrice.
+  def remove_blocker_message
+    return @remove_blocker_message if defined?(@remove_blocker_message)
+
+    @remove_blocker_message = item&.removal_blocker_message
+  end
+
+  # Two hurdles: the item may leave the campaign, and the group itself carries
+  # nothing worth keeping.
   def delete_blocker_messages
     @delete_blocker_messages ||=
       if item
-        Array(item.removal_blocker_message) +
+        Array(remove_blocker_message) +
           registerable.destruction_blocker_messages(
             registerable.destruction_blockers_outside_campaign
           )
