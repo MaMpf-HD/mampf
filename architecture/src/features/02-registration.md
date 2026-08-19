@@ -1409,15 +1409,23 @@ A draft whose deadline has meanwhile passed simply fails to open again
 (`registration_deadline_future_if_open`), which is where that belongs.
 
 In the UI, a `draft` campaign is "deleted" and an already opened one is
-"discarded"; both run the same code path. Check and delete happen under a row
-lock on the campaign, so a registration arriving in parallel cannot slip past
-the check — the foreign key from `registration_user_registrations` makes the
-insert wait for that lock.
+"discarded"; both run the same code path.
+
+Discarding, reverting to draft and removing an item all decide on "nobody has
+registered" and then write. All three therefore take a row lock on the campaign
+and keep it across check and write. The registration services take the same
+lock before validating, which is what makes the two sides wait for each other;
+the foreign key from `registration_user_registrations` alone does not close the
+window, because it only constrains the insert, not the gap between an
+application-level check and that insert.
 
 A campaign that cannot be discarded also keeps its whole `Lecture` alive:
 `Lecture has_many :registration_campaigns, dependent: :destroy`, and the guard
 aborts the cascade. `LecturesController#destroy` checks the return value of
-`destroy` and names the campaigns as the reason.
+`destroy` and names the campaigns as the reason. It deliberately suggests no
+remedy: once registrations or an allocation exist there is none — discarding is
+barred by exactly that data, and finalizing puts the campaign into `completed`,
+which bars deletion for good.
 
 ### Removing from the campaign vs. deleting the group
 
@@ -1430,14 +1438,26 @@ The group tile of a campaign item offers both, with separate confirmations:
   `campaign_managed?`, which only looks at `skip_campaigns`, not at whether the
   group is still in a campaign at all.
 
-```admonish warning "skip_campaigns is a one-way street"
-Nothing sets `skip_campaigns` back to `false`: it is assigned once at creation
-time from the section a group was created in, and appears in no permitted
-parameter list. `can_unskip_campaigns?` exists but has no caller. A group that
-left a campaign can therefore be managed manually but cannot be put into a
-campaign again — `validate_registerable_allows_campaigns` rejects it. Worth
-revisiting together with `locked?`, which arguably should treat a group that is
-in no campaign as unlocked regardless of the flag.
+```admonish warning "A group that left a campaign cannot go back into one"
+Two separate barriers, and the second is the one that matters:
+
+1. `skip_campaigns` is never set back to `false`. It is assigned once at
+   creation time from the section a group was created in, appears in no
+   permitted parameter list, and `can_unskip_campaigns?` has no caller. So
+   `validate_registerable_allows_campaigns` rejects the group. This exists
+   because the flag does double duty: it also decides `campaign_managed?` and
+   hence `locked?`, so releasing a group has to set it or the group would stay
+   locked with no campaign left to manage it.
+2. There is no way to put an *existing* group into a campaign at all. A
+   `Registration::Item` is only ever built while a group is being created, in
+   `apply_registration_context` (see `TutorialsController#create` and its
+   siblings). `Registration::ItemsController#create` accepts a
+   `registerable_id`, but no view links to it.
+
+Reusing a group in a new campaign therefore needs both: separating the flag's
+two meanings (`campaign_managed?` asking whether the group is in a campaign at
+all) *and* a way to attach an existing group. Fixing only the flag changes
+nothing a user can see.
 ```
 - **Delete group completely** (`DELETE .../items/:id/with_registerable`) does the
   same and then destroys the registerable, in one transaction: either both go or

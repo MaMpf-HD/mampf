@@ -3772,9 +3772,9 @@ en:
         not be removed - for example groups with participants, submissions or
         media.
       destruction_failed_campaigns: >
-        The event series could not be deleted because it still has registration
-        processes that students have registered for or that have already been
-        allocated. Please finish or discard them first.
+        The event series could not be deleted because it has registration processes
+        that students have registered for or that have already been allocated. As
+        long as that data is kept, the event series cannot be deleted.
     tutorials:
       created: 'Tutorial successfully created.'
       updated: 'Tutorial successfully updated.'
