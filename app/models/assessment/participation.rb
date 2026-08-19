@@ -62,6 +62,8 @@ module Assessment
       return if absent? || exempt?
 
       task_ids = assessment.tasks.pluck(:id)
+      return if task_ids.empty?
+
       points_by_task_id = task_points.pluck(:task_id, :points).to_h
       missing_scored_tasks = task_ids.any? { |task_id| points_by_task_id[task_id].nil? }
 

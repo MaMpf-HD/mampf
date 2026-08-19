@@ -267,6 +267,19 @@ RSpec.describe(Assessment::Participation, type: :model) do
           participation.update_status_if_all_scored!
           expect(participation.status).to eq("exempt")
         end
+        it "if there are no tasks, keeps the status as pending" do
+          assignment_empty =
+            FactoryBot.create(:valid_assignment, deadline: 1.hour.from_now)
+          assessment_empty =
+            FactoryBot.create(:assessment, assessable: assignment_empty, requires_points: true)
+          participation_empty =
+            FactoryBot.create(:assessment_participation,
+                              assessment: assessment_empty, user: user,
+                              status: :pending,
+                              points_total: nil)
+          participation_empty.update_status_if_all_scored!
+          expect(participation_empty.status).to eq("pending")
+        end
       end
     end
 
