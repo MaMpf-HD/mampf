@@ -628,17 +628,16 @@ de:
               cannot_delete_active_campaign: "Ein Anmeldeverfahren kann nicht mehr gelöscht werden, während es zugeteilt wird oder nachdem es abgeschlossen wurde."
               cannot_discard_with_registrations: "Ein Anmeldeverfahren, für das sich bereits Studierende angemeldet haben, kann nicht verworfen werden."
               cannot_discard_after_allocation: "Ein Anmeldeverfahren kann nicht mehr verworfen werden, sobald eine Zuteilung berechnet wurde."
+              cannot_revert_with_registrations: "Ein Anmeldeverfahren, für das sich bereits Studierende angemeldet haben, kann nicht in den Entwurf zurückgenommen werden."
+              cannot_revert_after_allocation: "Ein Anmeldeverfahren kann nicht in den Entwurf zurückgenommen werden, sobald eine Zuteilung berechnet wurde."
+              cannot_revert_as_prerequisite: "Ein Anmeldeverfahren kann nicht in den Entwurf zurückgenommen werden, solange ein anderes Anmeldeverfahren es voraussetzt."
+              cannot_revert_to_draft: "Ein Anmeldeverfahren kann von hier aus nicht in den Entwurf zurückgenommen werden."
               referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für folgende Anmeldeverfahren ist: %{descriptions}."
               prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{description}' noch im Entwurfsmodus ist."
               no_items: "Das Anmeldeverfahren kann nicht geöffnet werden, da keine Einträge hinzugefügt wurden."
               already_has_real_campaign: "Es existiert bereits ein reguläres Anmeldeverfahren für diesen Kontext. Es ist nur ein reguläres Verfahren erlaubt."
             registration_deadline:
               must_be_in_future: "muss in der Zukunft liegen"
-            status:
-              cannot_revert_to_draft: "kann von hier aus nicht in den Entwurf zurückgenommen werden"
-              cannot_revert_with_registrations: "kann nicht in den Entwurf zurückgenommen werden, da sich bereits Studierende angemeldet haben"
-              cannot_revert_after_allocation: "kann nicht in den Entwurf zurückgenommen werden, da bereits eine Zuteilung berechnet wurde"
-              cannot_revert_as_prerequisite: "kann nicht in den Entwurf zurückgenommen werden, da ein anderes Anmeldeverfahren es voraussetzt"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
         registration/policy:

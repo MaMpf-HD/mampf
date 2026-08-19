@@ -52,14 +52,8 @@ module Registration
       last_item: :cannot_remove_last_item
     }.freeze
 
-    # Whether this item may leave its campaign. Nobody loses anything as long as
-    # no registration points at it and no allocation has been computed; a
-    # running campaign must keep at least one item to remain registerable.
-    def removable?
-      removal_blocker.nil?
-    end
-
-    # The first reason that rules out removal, or nil.
+    # A running campaign must keep at least one item to stay registerable;
+    # otherwise nothing is lost while no registration points at this one.
     def removal_blocker
       campaign = registration_campaign
       return :status unless campaign.status.in?(REMOVABLE_CAMPAIGN_STATUSES)
@@ -75,16 +69,14 @@ module Registration
       error = REMOVAL_BLOCKER_ERRORS[removal_blocker]
       return if error.nil?
 
-      I18n.t("activerecord.errors.models.registration/item.attributes.base.#{error}")
+      errors.generate_message(:base, error)
     end
 
     # Takes this item out of its campaign and - if requested - deletes the group
-    # behind it as well. Either both go or neither. The campaign row stays
-    # locked across check and delete, so a registration arriving in parallel
-    # cannot invalidate the decision after it was made.
-    #
-    # Call this from a controller action, not from inside another transaction:
-    # the rollback on failure relies on with_lock opening a real one.
+    # behind it. Either both go or neither. The lock is what keeps a parallel
+    # registration from invalidating the decision after it was made, and the
+    # rollback needs with_lock to open the transaction, so do not call this
+    # from inside another one.
     def remove(delete_registerable: false)
       group = registerable
       removed = false
@@ -93,9 +85,6 @@ module Registration
         removed = perform_removal(group, delete_registerable)
         raise(ActiveRecord::Rollback) unless removed
 
-        # Still under the lock: between committing the removal and releasing the
-        # group, it could otherwise be picked up by another campaign and end up
-        # campaign-managed and skip_campaigns at the same time.
         release_from_campaign_management(group) unless delete_registerable
       end
 
@@ -170,33 +159,31 @@ module Registration
       end
 
       def perform_removal(group, delete_registerable)
-        # #destroy runs ensure_item_is_removable, which records the reason.
         return false unless destroy
         return true unless delete_registerable
 
-        # The item is gone inside this transaction, so the group no longer
-        # counts as campaign-managed and its own guards can decide.
+        # The item is gone inside this transaction, so the group's own guards
+        # decide from here on.
         group.registration_items.reset
         group.destroy && group.destroyed?
       end
 
-      # A group that is no longer part of any campaign falls back to manual
-      # management, mirroring what discarding a whole campaign does.
       def release_from_campaign_management(group)
         return unless group.respond_to?(:skip_campaigns)
 
-        # rubocop:disable Rails/SkipsModelValidations
-        group.class.where(id: group.id).update_all(skip_campaigns: true)
-        # rubocop:enable Rails/SkipsModelValidations
+        group.registration_items.reset
+        group.update!(skip_campaigns: true)
       end
 
       def ensure_item_is_removable
         # When the campaign itself is being discarded, its own guard has already
         # decided; the item rules would only re-check a campaign that is gone.
         return if destroyed_by_association
-        return if removable?
 
-        errors.add(:base, REMOVAL_BLOCKER_ERRORS.fetch(removal_blocker))
+        blocker = removal_blocker
+        return if blocker.nil?
+
+        errors.add(:base, REMOVAL_BLOCKER_ERRORS.fetch(blocker))
         throw(:abort)
       end
 

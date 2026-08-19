@@ -624,17 +624,16 @@ en:
               cannot_delete_active_campaign: "Cannot delete a registration process while it is being processed or after it has been finalized."
               cannot_discard_with_registrations: "Cannot discard a registration process that students have already registered for."
               cannot_discard_after_allocation: "Cannot discard a registration process once an allocation has been computed."
+              cannot_revert_with_registrations: "Cannot take a registration process back to draft that students have already registered for."
+              cannot_revert_after_allocation: "Cannot take a registration process back to draft once an allocation has been computed."
+              cannot_revert_as_prerequisite: "Cannot take a registration process back to draft while another registration process requires it."
+              cannot_revert_to_draft: "Cannot take a registration process back to draft from here."
               referenced_as_prerequisite: "Cannot delete registration process because it is a prerequisite for the following registration processes: %{descriptions}."
               prerequisite_is_draft: "Cannot open registration process because the prerequisite registration process '%{description}' is still in draft mode."
               no_items: "Cannot open registration process because no items have been added."
               already_has_real_campaign: "A standard registration process already exists for this context. Only one standard registration process is allowed."
             registration_deadline:
               must_be_in_future: "must be in the future"
-            status:
-              cannot_revert_to_draft: "cannot be reverted to draft from here"
-              cannot_revert_with_registrations: "cannot be reverted to draft because students have already registered"
-              cannot_revert_after_allocation: "cannot be reverted to draft because an allocation has already been computed"
-              cannot_revert_as_prerequisite: "cannot be reverted to draft because another registration process requires it"
             allocation_mode:
               frozen: "cannot be changed after registration process is opened"
         registration/policy:

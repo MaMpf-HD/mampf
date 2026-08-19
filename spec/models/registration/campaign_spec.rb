@@ -254,7 +254,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
       campaign.status = :draft
       expect(campaign).not_to be_valid
-      expect(campaign.errors.added?(:status, :cannot_revert_with_registrations))
+      expect(campaign.errors.added?(:base, :cannot_revert_with_registrations))
         .to be(true)
     end
 
@@ -1215,7 +1215,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
              registration_item: campaign.registration_items.first)
 
       expect(campaign.update(status: :draft)).to be(false)
-      expect(campaign.errors.added?(:status, :cannot_revert_with_registrations))
+      expect(campaign.errors.added?(:base, :cannot_revert_with_registrations))
         .to be(true)
       expect(campaign.reload).to be_open
     end
