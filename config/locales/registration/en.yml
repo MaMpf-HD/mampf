@@ -9,6 +9,7 @@ en:
       discarded: "Registration process discarded. Its groups were kept and can now be managed manually."
       cannot_delete: "Registration process cannot be deleted."
       confirm_delete: "Are you sure you want to delete this registration process? Its groups will not be deleted and can be managed manually afterwards."
+      confirm_revert_to_draft: "Take this registration process back to draft? Students cannot register while it is a draft, and you can change its settings, rules and groups again. Nothing is lost, because nobody has registered yet."
       confirm_discard: "Discard this registration process? It will be deleted along with its groups' registration settings and rules. The groups themselves are kept and can be managed manually afterwards. This is only possible because nobody has registered yet."
       opened: "Registration process opened."
       closed: "Registration process closed."
@@ -104,6 +105,7 @@ en:
       actions:
         open: "Start Registration"
         discard: "Discard registration process"
+        revert_to_draft: "Back to draft"
         close: "End Registration"
         reopen: "Reopen Registration"
         finalize: "Finalize Allocation"

@@ -134,6 +134,10 @@ module Registration
       t("registration.campaign.#{key}")
     end
 
+    def campaign_revert_confirmation
+      t("registration.campaign.confirm_revert_to_draft")
+    end
+
     def campaign_discard_title(campaign)
       return t("buttons.delete") if campaign.draft?
 

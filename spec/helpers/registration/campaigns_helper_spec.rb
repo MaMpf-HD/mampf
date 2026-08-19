@@ -190,6 +190,11 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
       expect(helper.campaign_discard_confirmation(open_campaign))
         .to eq(I18n.t("registration.campaign.confirm_discard"))
     end
+
+    it "promises that reverting to draft loses nothing" do
+      expect(helper.campaign_revert_confirmation)
+        .to eq(I18n.t("registration.campaign.confirm_revert_to_draft"))
+    end
   end
 
   describe "buttons" do
