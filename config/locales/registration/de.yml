@@ -13,6 +13,7 @@ de:
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
+      reverted_to_draft: "Anmeldeverfahren zurück im Entwurf. Du kannst Einstellungen und Gruppen wieder ändern."
       finalized: "Anmeldeverfahren erfolgreich abgeschlossen."
       finalization_summary:
         rejected:
@@ -632,7 +633,10 @@ de:
             registration_deadline:
               must_be_in_future: "muss in der Zukunft liegen"
             status:
-              cannot_revert_to_draft: "kann nicht in den Entwurfsmodus zurückgesetzt werden, sobald es geöffnet wurde"
+              cannot_revert_to_draft: "kann von hier aus nicht in den Entwurf zurückgenommen werden"
+              cannot_revert_with_registrations: "kann nicht in den Entwurf zurückgenommen werden, da sich bereits Studierende angemeldet haben"
+              cannot_revert_after_allocation: "kann nicht in den Entwurf zurückgenommen werden, da bereits eine Zuteilung berechnet wurde"
+              cannot_revert_as_prerequisite: "kann nicht in den Entwurf zurückgenommen werden, da ein anderes Anmeldeverfahren es voraussetzt"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
         registration/policy:

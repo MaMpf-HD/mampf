@@ -13,6 +13,7 @@ en:
       opened: "Registration process opened."
       closed: "Registration process closed."
       reopened: "Registration process reopened."
+      reverted_to_draft: "Registration process taken back to draft. You can change its settings and its groups again."
       finalized: "Registration process finalized successfully."
       finalization_summary:
         rejected:
@@ -628,7 +629,10 @@ en:
             registration_deadline:
               must_be_in_future: "must be in the future"
             status:
-              cannot_revert_to_draft: "cannot be reverted to draft once opened"
+              cannot_revert_to_draft: "cannot be reverted to draft from here"
+              cannot_revert_with_registrations: "cannot be reverted to draft because students have already registered"
+              cannot_revert_after_allocation: "cannot be reverted to draft because an allocation has already been computed"
+              cannot_revert_as_prerequisite: "cannot be reverted to draft because another registration process requires it"
             allocation_mode:
               frozen: "cannot be changed after registration process is opened"
         registration/policy:

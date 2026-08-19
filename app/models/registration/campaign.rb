@@ -49,6 +49,10 @@ module Registration
 
     DISCARDABLE_STATUSES = ["draft", "open", "closed"].freeze
 
+    # Statuses a campaign can be taken back to draft from. Draft is absent
+    # because it is already there, not because the step would be unsafe.
+    REVERTIBLE_STATUSES = ["open", "closed"].freeze
+
     # Roster join models that record which campaign materialized an entry.
     MATERIALIZED_ROSTER_MODELS = ["TutorialMembership", "SpeakerTalkJoin",
                                   "CohortMembership", "LectureMembership"].freeze
@@ -59,6 +63,13 @@ module Registration
       status: :cannot_delete_active_campaign,
       registrations: :cannot_discard_with_registrations,
       allocation: :cannot_discard_after_allocation
+    }.freeze
+
+    REVERT_BLOCKER_ERRORS = {
+      status: :cannot_revert_to_draft,
+      registrations: :cannot_revert_with_registrations,
+      allocation: :cannot_revert_after_allocation,
+      prerequisite: :cannot_revert_as_prerequisite
     }.freeze
 
     validates :registration_deadline, :allocation_mode, :status, presence: true
@@ -124,11 +135,25 @@ module Registration
     # error message and the wording of the button in the UI.
     def discard_blocker
       return :status unless status.in?(DISCARDABLE_STATUSES)
-      return :registrations if user_registrations.exists?
-      return :allocation if allocation_present?
-      return :prerequisite if referencing_prerequisite_policies.exists?
 
-      nil
+      data_blocker
+    end
+
+    # Taking a campaign back to draft unfreezes its configuration and its
+    # groups. It is the milder half of discarding and asks the same of the
+    # data: as long as throwing the whole process away would lose nothing,
+    # editing it again loses nothing either.
+    def revertible_to_draft?
+      revert_blocker.nil?
+    end
+
+    # The first reason that rules out going back to draft, or nil. Reads the
+    # status the record had before the change, so it also answers for the very
+    # update that attempts the step.
+    def revert_blocker
+      return :status unless status_was.in?(REVERTIBLE_STATUSES)
+
+      data_blocker
     end
 
     # Whether an allocation has been computed or written into any roster.
@@ -370,6 +395,17 @@ module Registration
 
     private
 
+      # What both discarding and reverting to draft ask about: whether anything
+      # exists that only this campaign records. Shared so the two rules cannot
+      # drift apart.
+      def data_blocker
+        return :registrations if user_registrations.exists?
+        return :allocation if allocation_present?
+        return :prerequisite if referencing_prerequisite_policies.exists?
+
+        nil
+      end
+
       def referencing_prerequisite_policies
         Registration::Policy.referencing_campaign(id)
                             .where.not(registration_campaign_id: id)
@@ -492,8 +528,9 @@ module Registration
 
       def cannot_revert_to_draft
         return unless status_changed? && draft?
+        return if revert_blocker.nil?
 
-        errors.add(:status, :cannot_revert_to_draft)
+        errors.add(:status, REVERT_BLOCKER_ERRORS.fetch(revert_blocker))
       end
 
       def registration_deadline_future_if_open

@@ -641,6 +641,63 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
   end
 
+  describe "PATCH /campaigns/:id/revert_to_draft" do
+    let!(:campaign) do
+      create(:registration_campaign, :open, campaignable: lecture)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "takes an opened campaign back to draft" do
+        patch revert_to_draft_registration_campaign_path(campaign)
+
+        expect(campaign.reload).to be_draft
+        expect(flash[:notice]).to be_present
+      end
+
+      it "takes a closed campaign back to draft" do
+        campaign.update!(status: :closed)
+
+        patch revert_to_draft_registration_campaign_path(campaign)
+
+        expect(campaign.reload).to be_draft
+      end
+
+      it "refuses once a student has registered" do
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first)
+
+        patch revert_to_draft_registration_campaign_path(campaign)
+
+        expect(campaign.reload).to be_open
+        expect(flash[:alert]).to be_present
+      end
+
+      it "refuses while the allocation is being processed" do
+        campaign.update!(status: :processing,
+                         last_allocation_calculated_at: 1.hour.ago)
+
+        patch revert_to_draft_registration_campaign_path(campaign)
+
+        expect(campaign.reload).to be_processing
+        expect(flash[:alert]).to be_present
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "is not allowed" do
+        patch revert_to_draft_registration_campaign_path(campaign)
+
+        expect(campaign.reload).to be_open
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+  end
+
   describe "PATCH /campaigns/:id/reopen" do
     let!(:campaign) do
       create(:registration_campaign, :closed, campaignable: lecture,

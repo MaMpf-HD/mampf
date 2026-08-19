@@ -180,6 +180,12 @@ module Registration
                          redirect_path: registration_campaign_path(@campaign))
     end
 
+    # Takes an opened process back to draft so its configuration and its groups
+    # can be changed again. The model decides whether that is still harmless.
+    def revert_to_draft
+      update_status(:draft, t("registration.campaign.reverted_to_draft"))
+    end
+
     # Opens (or closes) student self-service on all of the campaign's groups
     # once it is completed, so students are not silently locked into their
     # allocated group.
