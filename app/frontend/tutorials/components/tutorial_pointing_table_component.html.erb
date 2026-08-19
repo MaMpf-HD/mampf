@@ -53,13 +53,12 @@
                 <% end %>
 
                 <!-- Non-submitters -->
-                <% if @assignment.past_deadline? %>
-                  <% @non_submitters.each do |user| %>
-                    <% if user.assessment_participation_in_assignment(@assignment) %>
-                      <%= render(ParticipationRowComponent.new(
+
+                <% @non_submitters.each do |user| %>
+                  <% if user.assessment_participation_in_assignment(@assignment) %>
+                    <%= render(ParticipationRowComponent.new(
                         participation: user.assessment_participation_in_assignment(@assignment),
                         mode: @mode, assignment: @assignment, tutorial: @tutorial)) %>
-                    <% end %>
                   <% end %>
                 <% end %>
               <% else %>
@@ -73,22 +72,11 @@
                   <% end %>
 
                   <!-- Non-submitters -->
-                  <% if @assignment.past_deadline? %>
-                    <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
-                      <% if user.assessment_participation_in_assignment(@assignment) %>
-                        <%= render(ParticipationRowComponent.new(
+                  <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
+                    <% if user.assessment_participation_in_assignment(@assignment) %>
+                      <%= render(ParticipationRowComponent.new(
                           participation: user.assessment_participation_in_assignment(@assignment),
                           mode: @mode, assignment: @assignment, tutorial: tutorial)) %>
-                      <% else %>
-                        <!-- potential case for 1 min delay of assessment_backfill_worker -->
-                        <%= render(NonSubmitterRowComponent.new(
-                            user: user, mode: @mode, assignment: @assignment, tutorial: tutorial)) %>
-                      <% end %>
-                    <% end %>
-                  <% else %>
-                    <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
-                      <%= render(NonSubmitterRowComponent.new(
-                          user: user, mode: @mode, assignment: @assignment, tutorial: tutorial)) %>
                     <% end %>
                   <% end %>
                 <% end %>
