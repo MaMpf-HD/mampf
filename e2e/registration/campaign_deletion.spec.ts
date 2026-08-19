@@ -75,7 +75,7 @@ test.describe("getting out of a registration process", () => {
       expect(confirmation).toContain(
         "Groups that already have registrations can no longer be removed from the process.");
       expect(confirmation).toContain(
-        "The whole process can only be discarded as long as nobody has registered at all.");
+        "you can still take the process back to draft or discard it entirely.");
     });
 
   test("discards a process that was opened by mistake and keeps its groups",
@@ -169,6 +169,37 @@ test.describe("getting out of a registration process", () => {
 
       const tutorials = await lecture.__call("tutorials") as unknown[];
       expect(tutorials).toHaveLength(0);
+    });
+
+  test("takes a process back to draft to get at its last group",
+    async ({ factory, teacher: { page, user } }) => {
+      const { lecture, campaign } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);
+      await campaign.__call("open!");
+
+      page.on("dialog", dialog => dialog.accept());
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+
+      // a running process needs a group, so both actions are barred - and say so
+      const onlyGroup = tile(page, "Monday Tutorial");
+      await expect(
+        onlyGroup.getByRole("button", { name: "Remove from registration process" }),
+      ).toBeDisabled();
+      await expect(
+        onlyGroup.getByTitle(/Take the process back to draft to change its groups/),
+      ).toHaveCount(2);
+
+      await page.getByRole("button", { name: "Back to draft" }).click();
+      await expect(page.getByText(
+        "Registration process taken back to draft. You can change its settings and its groups again.",
+      )).toBeVisible();
+      expect(await campaign.__call("status")).toBe("draft");
+
+      await tile(page, "Monday Tutorial")
+        .getByRole("link", { name: "Delete group completely" }).click();
+
+      await expect(page.getByText("Group deleted successfully.")).toBeVisible();
+      expect(await lecture.__call("tutorials")).toHaveLength(0);
     });
 
   test("refuses to delete a group that still has participants",

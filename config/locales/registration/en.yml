@@ -123,7 +123,7 @@ en:
         open_consequences:
           - "Settings, rules and the allocation mode can no longer be changed."
           - "Groups that already have registrations can no longer be removed from the process."
-          - "The whole process can only be discarded as long as nobody has registered at all."
+          - "As long as nobody has registered at all, you can still take the process back to draft or discard it entirely."
         close: "Are you sure you want to end registration? No new registrations will be accepted."
         close_early: "The registration deadline has not passed yet. Closing the registration process now will set the deadline to the current time. Are you sure?"
         reopen: "Are you sure you want to reopen registration?"
@@ -651,7 +651,7 @@ en:
               cannot_remove_in_status: "Cannot be removed while the registration process is being processed or after it has been finalized."
               cannot_remove_with_registrations: "Cannot be removed because students have already registered for it."
               cannot_remove_after_allocation: "Cannot be removed because an allocation has already been computed."
-              cannot_remove_last_item: "Cannot be removed because a running registration process needs at least one group."
+              cannot_remove_last_item: "Cannot be removed because a running registration process needs at least one group. Take the process back to draft to change its groups."
               registerable_not_managed_by_campaign: "The item is locked for registration processes."
         registration/user_registration:
           attributes:

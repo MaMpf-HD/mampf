@@ -123,7 +123,7 @@ de:
         open_consequences:
           - "Konfiguration, Regeln und Auswahlmodus können nicht mehr geändert werden."
           - "Gruppen, für die bereits Anmeldungen vorliegen, können nicht mehr aus dem Verfahren entfernt werden."
-          - "Das gesamte Verfahren kann nur verworfen werden, solange überhaupt keine Anmeldungen existieren."
+          - "Solange überhaupt keine Anmeldungen existieren, kannst Du das Verfahren zurück in den Entwurf nehmen oder ganz verwerfen."
         close: "Bist Du sicher, dass Du die Anmeldung beenden möchtest? Es werden keine neuen Anmeldungen mehr angenommen."
         close_early: "Die Anmeldefrist ist noch nicht abgelaufen. Wenn Du das Verfahren jetzt schließt, wird die Frist auf den aktuellen Zeitpunkt gesetzt. Bist Du sicher?"
         reopen: "Bist Du sicher, dass Du die Anmeldung erneut öffnen möchtest?"
@@ -655,7 +655,7 @@ de:
               cannot_remove_in_status: "Kann nicht entfernt werden, während das Anmeldeverfahren zugeteilt wird oder nachdem es abgeschlossen wurde."
               cannot_remove_with_registrations: "Kann nicht entfernt werden, da sich bereits Studierende dafür angemeldet haben."
               cannot_remove_after_allocation: "Kann nicht entfernt werden, da bereits eine Zuteilung berechnet wurde."
-              cannot_remove_last_item: "Kann nicht entfernt werden, da ein laufendes Anmeldeverfahren mindestens eine Gruppe braucht."
+              cannot_remove_last_item: "Kann nicht entfernt werden, da ein laufendes Anmeldeverfahren mindestens eine Gruppe braucht. Nimm das Verfahren zurück in den Entwurf, um die Gruppen zu ändern."
               registerable_not_managed_by_campaign: "Das Element ist für Anmeldeverfahren gesperrt."
         registration/user_registration:
           attributes:
