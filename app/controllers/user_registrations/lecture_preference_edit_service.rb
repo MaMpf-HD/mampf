@@ -4,6 +4,10 @@ module UserRegistrations
   class LecturePreferenceEditService < Handler
     def update!(pref_items)
       ActiveRecord::Base.transaction do
+        # Same lock the first-come service takes: it makes the campaign's own
+        # status checks - and discarding or reverting it - wait for each other
+        # instead of deciding on a state that the other side is changing.
+        @campaign.lock!
         errors = validate_update(pref_items)
         return Result.new(false, errors) unless errors.empty?
 
