@@ -83,30 +83,4 @@
       <% end %>
     </div>
   <% end %>
-
-  <% if campaign.revertible_to_draft? || campaign.discardable? %>
-    <div class="d-flex flex-wrap gap-2 mb-3 registration-campaign-exit-actions">
-      <% if campaign.revertible_to_draft? %>
-        <%= button_to t("registration.campaign.actions.revert_to_draft"),
-                      revert_to_draft_registration_campaign_path(campaign),
-                      method: :patch,
-                      data: {
-                        turbo_confirm: campaign_revert_confirmation,
-                        turbo_stream: true
-                      },
-                      class: "btn btn-sm btn-outline-secondary" %>
-      <% end %>
-
-      <% if campaign.discardable? %>
-        <%= button_to campaign_discard_title(campaign),
-                      registration_campaign_path(campaign),
-                      method: :delete,
-                      data: {
-                        turbo_confirm: campaign_discard_confirmation(campaign),
-                        turbo_stream: true
-                      },
-                      class: "btn btn-sm btn-outline-danger" %>
-      <% end %>
-    </div>
-  <% end %>
 </div>
