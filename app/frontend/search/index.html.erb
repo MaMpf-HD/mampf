@@ -33,6 +33,7 @@
                                 @search_string,
                                 class: "form-control",
                                 placeholder: t('navbar.search'),
+                                "aria-label": t('search.tag_search'),
                                 data: { action: "input->auto-submit-form#debouncedSubmit",
                                         auto_submit_form_target: "searchInput" } %>
           <% end %>
