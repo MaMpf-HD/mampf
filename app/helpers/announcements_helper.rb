@@ -2,7 +2,8 @@
 module AnnouncementsHelper
   # Returns joined HTML of all admin-level announcements shown above the navbar.
   def site_announcements_html
-    Announcement.active_on_main.pluck(:details).join('<hr class="my-2">')
+    @site_announcements_html ||=
+      Announcement.active_on_main.pluck(:details).join('<hr class="my-2">')
   end
 
   # create text for notification about new announcement in notification dropdown
