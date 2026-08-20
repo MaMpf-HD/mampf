@@ -7,11 +7,6 @@ class MainController < ApplicationController
     @current_ability ||= MainAbility.new(current_user)
   end
 
-  def home
-    cookies[:locale] = current_user.locale if user_signed_in?
-    announcements
-  end
-
   def error
     redirect_to :root, alert: I18n.t("controllers.no_page")
   end
@@ -41,7 +36,6 @@ class MainController < ApplicationController
                                                                    :term)
                                        .sort
     end
-    announcements
     next_term_banner
     @talks = current_user.talks.includes(lecture: :term)
                          .select { |t| t.visible_for_user?(current_user) }
@@ -57,12 +51,6 @@ class MainController < ApplicationController
       return unless user_signed_in?
 
       redirect_to consent_profile_path unless current_user.consents
-    end
-
-    def announcements
-      @announcements = Announcement.where(on_main_page: true, lecture: nil)
-                                   .pluck(:details)
-                                   .join('<hr class="my-3" w-100>')
     end
 
     # Transitional banner pointing to the lectures of the upcoming term

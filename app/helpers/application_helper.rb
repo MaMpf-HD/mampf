@@ -306,15 +306,6 @@ module ApplicationHelper
                 &.first&.term_independent
   end
 
-  def main_page_announcements
-    megaphone_icon_str = '<i class="bi bi-megaphone p-2"></i>'
-    separator_str = "<hr class=\"my-3 w-100\">#{megaphone_icon_str}"
-    Announcement.active_on_main
-                .pluck(:details)
-                .join(separator_str)
-                .prepend(megaphone_icon_str)
-  end
-
   # Navbar items styling based on which page we are on
   # https://gist.github.com/mynameispj/5692162
   ACTIVE_CSS_CLASS = "active-item".freeze
