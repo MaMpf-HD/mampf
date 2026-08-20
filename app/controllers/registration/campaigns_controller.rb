@@ -104,8 +104,6 @@ module Registration
       end
     end
 
-    # Deletes a draft campaign, or discards an already opened one - the same
-    # operation, a different promise to the teacher.
     def destroy
       lecture = @campaign.campaignable
       was_draft = @campaign.draft?
