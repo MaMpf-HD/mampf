@@ -54,7 +54,8 @@ module Registration
     DISCARD_BLOCKER_ERRORS = {
       status: :cannot_delete_active_campaign,
       registrations: :cannot_discard_with_registrations,
-      allocation: :cannot_discard_after_allocation
+      allocation: :cannot_discard_after_allocation,
+      prerequisite: :cannot_discard_as_prerequisite
     }.freeze
 
     REVERT_BLOCKER_ERRORS = {
@@ -494,14 +495,10 @@ module Registration
       end
 
       def ensure_campaign_is_discardable
-        # The one blocker without an entry is :prerequisite, and it never gets
-        # here: the before_destroy callbacks are all prepended, so the one
-        # declared after this - ensure_not_referenced_as_prerequisite - runs
-        # first and aborts with a message naming the campaigns in the way.
-        error = DISCARD_BLOCKER_ERRORS[discard_blocker]
-        return if error.nil?
+        blocker = discard_blocker
+        return if blocker.nil?
 
-        errors.add(:base, error)
+        errors.add(:base, DISCARD_BLOCKER_ERRORS.fetch(blocker))
         throw(:abort)
       end
 

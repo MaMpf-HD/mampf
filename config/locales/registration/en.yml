@@ -624,6 +624,7 @@ en:
               cannot_delete_active_campaign: "Cannot delete a registration process while it is being processed or after it has been finalized."
               cannot_discard_with_registrations: "Cannot discard a registration process that students have already registered for."
               cannot_discard_after_allocation: "Cannot discard a registration process once an allocation has been computed."
+              cannot_discard_as_prerequisite: "Cannot discard a registration process while another registration process requires it."
               cannot_revert_with_registrations: "Cannot take a registration process back to draft that students have already registered for."
               cannot_revert_after_allocation: "Cannot take a registration process back to draft once an allocation has been computed."
               cannot_revert_as_prerequisite: "Cannot take a registration process back to draft while another registration process requires it."
