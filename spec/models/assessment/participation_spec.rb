@@ -212,11 +212,8 @@ RSpec.describe(Assessment::Participation, type: :model) do
     let(:user) { FactoryBot.create(:confirmed_user) }
 
     before do
-      Flipper.enable(:assessment_grading)
       FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
     end
-
-    after { Flipper.disable(:assessment_grading) }
 
     context "when grade_text changes on an achievement participation" do
       let(:achievement) do
@@ -338,14 +335,6 @@ RSpec.describe(Assessment::Participation, type: :model) do
         .to receive(:new)
         .with(lecture: participation.assessment.lecture)
         .and_return(service)
-    end
-
-    it "is gated by the assessment_grading flag" do
-      Flipper.disable(:assessment_grading)
-
-      participation.send(:recompute_performance_record)
-
-      expect(service).not_to have_received(:compute_and_upsert_record_for)
     end
   end
 end

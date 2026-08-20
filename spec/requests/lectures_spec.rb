@@ -598,14 +598,6 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     context "with turbo_stream request and assessments subpage" do
-      before do
-        Flipper.enable(:assessment_grading)
-      end
-
-      after do
-        Flipper.disable(:assessment_grading)
-      end
-
       it "updates lecture submission settings" do
         patch lecture_path(lecture),
               params: {

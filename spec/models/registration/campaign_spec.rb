@@ -1045,7 +1045,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
   describe ".non_exam" do
     it "excludes campaigns whose items are all exams" do
       lecture = create(:lecture)
-      exam = create(:exam, lecture: lecture)
+      exam = create(:exam, :without_campaign, lecture: lecture)
       exam_campaign = create(:registration_campaign, campaignable: lecture)
       create(:registration_item,
              registration_campaign: exam_campaign,
@@ -1071,7 +1071,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
   describe "#exam_campaign?" do
     it "returns true when all items are exams" do
       campaign = create(:registration_campaign)
-      exam = create(:exam)
+      exam = create(:exam, :without_campaign)
       create(:registration_item,
              registration_campaign: campaign,
              registerable: exam)

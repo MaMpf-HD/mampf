@@ -20,6 +20,6 @@ class AchievementDashboardComponent < ViewComponent::Base
   end
 
   def grading_enabled?
-    Flipper.enabled?(:assessment_grading) && achievement.assessment.present?
+    achievement.assessment.present?
   end
 end

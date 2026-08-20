@@ -565,8 +565,16 @@ class LecturesController < ApplicationController
     end
 
     def handle_failed_update
-      respond_to do |format|
-        format.js { render template: "lectures/update/update" }
+      @terms = Term.select_terms
+
+      pane, partial = if params[:subpage] == "people"
+        ["edit_people", "lectures/edit/people"]
+      else
+        ["edit_preferences", "lectures/edit/preferences"]
       end
+
+      render turbo_stream: turbo_stream.update(pane, partial: partial,
+                                                     locals: { lecture: @lecture }),
+             status: :unprocessable_content
     end
 end

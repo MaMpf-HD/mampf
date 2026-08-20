@@ -6,9 +6,6 @@ RSpec.describe(TasksTabComponent, type: :component) do
   let(:assignment) { create(:valid_assignment, lecture: lecture) }
   let(:assessment) { assignment.reload.assessment }
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   context "when assessment is present" do
     let(:component) do
       described_class.new(

@@ -3,15 +3,6 @@ require "rails_helper"
 RSpec.describe(ExamSettingsComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
-
-  before do
-    Flipper.enable(:registration_campaigns)
-  end
-
-  after do
-    Flipper.disable(:registration_campaigns)
-  end
-
   context "with an existing exam" do
     let(:exam) do
       create(:exam, :with_capacity, :with_date,

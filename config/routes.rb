@@ -122,21 +122,19 @@ Rails.application.routes.draw do
   resources :assignments, only: [:new, :edit, :create, :update, :destroy]
 
   # assessment routes
-  constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
-    namespace :assessment do
-      resources :assessments, only: [:index, :show, :update] do
-        resources :tasks, except: [:index] do
-          member do
-            get :cancel
-          end
-          collection do
-            post :reorder
-          end
+  namespace :assessment do
+    resources :assessments, only: [:index, :show, :update] do
+      resources :tasks, except: [:index] do
+        member do
+          get :cancel
         end
-        resources :grade_schemes, only: [:new, :create, :edit, :update, :destroy] do
-          member do
-            patch :apply
-          end
+        collection do
+          post :reorder
+        end
+      end
+      resources :grade_schemes, only: [:new, :create, :edit, :update, :destroy] do
+        member do
+          patch :apply
         end
       end
     end
@@ -175,14 +173,12 @@ Rails.application.routes.draw do
   resources :divisions, except: [:show]
 
   # exam routes
-  constraints ->(_req) { Flipper.enabled?(:assessment_grading) } do
-    resources :exams, only: [:index, :new, :show, :edit, :create, :update,
-                             :destroy] do
-      member do
-        post "participants", action: :add_participant
-        delete "participants/:user_id", action: :remove_participant,
-                                        as: :remove_participant
-      end
+  resources :exams, only: [:index, :new, :show, :edit, :create, :update,
+                           :destroy] do
+    member do
+      post "participants", action: :add_participant
+      delete "participants/:user_id", action: :remove_participant,
+                                      as: :remove_participant
     end
   end
 
@@ -387,7 +383,6 @@ Rails.application.routes.draw do
         end
       end
     end
-
 
     resources :campaigns,
               controller: "registration/campaigns",

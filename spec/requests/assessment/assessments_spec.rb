@@ -1,14 +1,6 @@
 require "rails_helper"
 
 RSpec.describe("Assessment::Assessments", type: :request) do
-  before do
-    Flipper.enable(:assessment_grading)
-  end
-
-  after do
-    Flipper.disable(:assessment_grading)
-  end
-
   let(:teacher) { create(:confirmed_user) }
   let(:editor) { create(:confirmed_user) }
   let(:student) { create(:confirmed_user) }
@@ -77,18 +69,6 @@ RSpec.describe("Assessment::Assessments", type: :request) do
           get assessment_assessments_path(lecture_id: 99_999)
           expect(response).to redirect_to(root_path)
         end
-      end
-    end
-
-    context "when feature flag is disabled" do
-      before do
-        Flipper.disable(:assessment_grading)
-        sign_in teacher
-      end
-
-      it "redirects to root (route not found)" do
-        get assessment_assessments_path(lecture_id: lecture.id)
-        expect(response).to redirect_to(root_path)
       end
     end
   end

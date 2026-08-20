@@ -6,9 +6,6 @@ RSpec.describe(SchemeFormComponent, type: :component) do
   let(:exam) { create(:exam, lecture: lecture) }
   let(:assessment) { exam.reload.assessment }
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   describe "new scheme (not persisted)" do
     let(:grade_scheme) do
       assessment.build_grade_scheme(kind: :banded)

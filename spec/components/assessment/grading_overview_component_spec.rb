@@ -15,16 +15,10 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
   let(:user3) { create(:confirmed_user) }
 
   before do
-    Flipper.enable(:assessment_grading)
     create(:tutorial_membership, tutorial: tutorial1, user: user1)
     create(:tutorial_membership, tutorial: tutorial1, user: user2)
     create(:tutorial_membership, tutorial: tutorial2, user: user3)
   end
-
-  after do
-    Flipper.disable(:assessment_grading)
-  end
-
   def stats_for(title)
     component.tutorial_stats.find { |stat| stat.name == title }
   end

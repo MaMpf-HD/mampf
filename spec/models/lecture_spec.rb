@@ -385,25 +385,19 @@ RSpec.describe(Lecture, type: :model) do
     end
 
     it "fires LectureMembership callbacks (creates performance records)" do
-      Flipper.enable(:assessment_grading)
       lecture.ensure_roster_membership!(users.map(&:id))
 
       expect(StudentPerformance::Record.where(lecture: lecture).count)
         .to eq(3)
-    ensure
-      Flipper.disable(:assessment_grading)
     end
 
     it "seeds existing achievement participations for new roster members" do
-      Flipper.enable(:assessment_grading)
       achievement = create(:achievement, lecture: lecture)
 
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
       end.to change(achievement.assessment.assessment_participations, :count)
         .by(3)
-    ensure
-      Flipper.disable(:assessment_grading)
     end
   end
 

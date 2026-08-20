@@ -3,11 +3,6 @@ require "rails_helper"
 RSpec.describe(AssessmentsOverviewComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
-
-  after do
-    Flipper.disable(:student_performance)
-  end
-
   describe "#assessments_tab_label" do
     it "returns assignments label for regular lectures" do
       component = described_class.new(lecture: lecture)
@@ -28,8 +23,6 @@ RSpec.describe(AssessmentsOverviewComponent, type: :component) do
 
   describe "#resolve_tab" do
     context "when student_performance is enabled" do
-      before { Flipper.enable(:student_performance) }
-
       it "accepts :performance as active tab" do
         component = described_class.new(
           lecture: lecture, active_tab: :performance
@@ -49,31 +42,6 @@ RSpec.describe(AssessmentsOverviewComponent, type: :component) do
           lecture: lecture, active_tab: :achievements
         )
         expect(component.active_tab).to eq(:achievements)
-      end
-    end
-
-    context "when student_performance is disabled" do
-      before { Flipper.disable(:student_performance) }
-
-      it "falls back to :assessments when :performance is requested" do
-        component = described_class.new(
-          lecture: lecture, active_tab: :performance
-        )
-        expect(component.active_tab).to eq(:assessments)
-      end
-
-      it "falls back to :assessments when :rules is requested" do
-        component = described_class.new(
-          lecture: lecture, active_tab: :rules
-        )
-        expect(component.active_tab).to eq(:assessments)
-      end
-
-      it "falls back to :assessments when :achievements requested" do
-        component = described_class.new(
-          lecture: lecture, active_tab: :achievements
-        )
-        expect(component.active_tab).to eq(:assessments)
       end
     end
 
@@ -97,8 +65,6 @@ RSpec.describe(AssessmentsOverviewComponent, type: :component) do
     end
 
     context "when student_performance is enabled" do
-      before { Flipper.enable(:student_performance) }
-
       it "includes all tabs in the correct order" do
         component = described_class.new(lecture: lecture)
         tabs = component.visible_tabs
@@ -109,18 +75,7 @@ RSpec.describe(AssessmentsOverviewComponent, type: :component) do
       end
     end
 
-    context "when student_performance is disabled" do
-      before { Flipper.disable(:student_performance) }
-
-      it "does not include achievements" do
-        component = described_class.new(lecture: lecture)
-        expect(component.visible_tabs).not_to include(:achievements)
-      end
-    end
-
     context "for a seminar with student_performance enabled" do
-      before { Flipper.enable(:student_performance) }
-
       let(:seminar) do
         create(:lecture, :released_for_all,
                teacher: teacher, sort: "seminar")
@@ -147,15 +102,8 @@ RSpec.describe(AssessmentsOverviewComponent, type: :component) do
 
   describe "#single_tab?" do
     it "is false for a lecture with student_performance enabled" do
-      Flipper.enable(:student_performance)
       component = described_class.new(lecture: lecture)
       expect(component.single_tab?).to be(false)
-    end
-
-    it "is true when student_performance is disabled" do
-      Flipper.disable(:student_performance)
-      component = described_class.new(lecture: lecture)
-      expect(component.single_tab?).to be(true)
     end
   end
 end

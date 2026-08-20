@@ -470,10 +470,6 @@ RSpec.describe(StudentPerformance::ComputationService) do
   end
 
   describe "achievement evaluation" do
-    before { Flipper.enable(:assessment_grading) }
-
-    after { Flipper.disable(:assessment_grading) }
-
     describe "#compute_and_upsert_record_for" do
       context "with a boolean achievement" do
         let!(:achievement) do

@@ -7,7 +7,7 @@ class Talk < ApplicationRecord
   belongs_to :lecture, touch: true
 
   before_save :remove_duplicate_dates
-  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
+  after_create :setup_assessment
 
   has_many :speaker_talk_joins, dependent: :destroy
   has_many :speakers, through: :speaker_talk_joins

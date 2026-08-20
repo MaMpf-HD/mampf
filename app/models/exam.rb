@@ -34,13 +34,10 @@ class Exam < ApplicationRecord
   validate :registration_deadline_before_exam_date
   validate :registration_deadline_in_future
 
-  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
-  after_create :create_registration_campaign,
-               if: -> { !skip_campaigns && Flipper.enabled?(:registration_campaigns) }
+  after_create :setup_assessment
+  after_create :create_registration_campaign, if: -> { !skip_campaigns }
   after_update :update_campaign_deadline,
-               if: lambda {
-                 registration_deadline.present? && Flipper.enabled?(:registration_campaigns)
-               }
+               if: -> { registration_deadline.present? }
   before_destroy :destroy_draft_campaign
 
   def non_destructible_reason

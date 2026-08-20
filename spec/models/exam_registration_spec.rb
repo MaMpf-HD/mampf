@@ -155,14 +155,8 @@ RSpec.describe(Exam, type: :model) do
     let(:user) { create(:confirmed_user) }
 
     before do
-      Flipper.enable(:registration_campaigns)
       create(:exam_roster_entry, exam: exam, user: user)
     end
-
-    after do
-      Flipper.disable(:registration_campaigns)
-    end
-
     it "soft-removes participants after finalization" do
       exam.registration_campaign.update!(status: :completed)
       roster_entry = exam.all_exam_roster_entries.find_by!(user: user)
@@ -491,23 +485,15 @@ RSpec.describe(Exam, type: :model) do
         expect(Registration::Item.where(registerable: exam)).not_to exist
       end
     end
-
-    context "when registration_campaigns flag is disabled" do
-      before do
-        allow(Flipper).to receive(:enabled?).and_call_original
-        allow(Flipper).to receive(:enabled?)
-          .with(:registration_campaigns).and_return(false)
-      end
-
-      it "does not create a campaign" do
-        expect(create(:exam).registration_campaign).to be_nil
-      end
-    end
   end
 
   describe "destructibility" do
     let(:lecture) { create(:lecture) }
-    let(:exam) { create(:exam, lecture: lecture) }
+    # These contexts describe an exam outside any campaign, so the one it
+    # builds for itself has to go.
+    let(:exam) do
+      create(:exam, lecture: lecture).tap { |e| e.registration_campaign&.destroy }
+    end
 
     context "when exam has no roster entries and is not in a campaign" do
       it "is destructible" do
@@ -614,12 +600,6 @@ RSpec.describe(Exam, type: :model) do
 
   describe "destroy with draft campaign" do
     let(:lecture) { create(:lecture) }
-
-    before do
-      allow(Flipper).to receive(:enabled?).and_call_original
-      allow(Flipper).to receive(:enabled?)
-        .with(:registration_campaigns).and_return(true)
-    end
 
     context "when auto-created campaign is still draft" do
       let(:exam) { create(:exam, :with_date, lecture: lecture) }

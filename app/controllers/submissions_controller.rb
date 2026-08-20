@@ -495,8 +495,6 @@ class SubmissionsController < ApplicationController
     end
 
     def clear_submitted_at(users)
-      return unless Flipper.enabled?(:assessment_grading)
-
       assessment = @submission&.assignment&.assessment
       return unless assessment
 
@@ -506,8 +504,6 @@ class SubmissionsController < ApplicationController
     end
 
     def sync_assessment_participations(users: nil)
-      return unless Flipper.enabled?(:assessment_grading)
-
       assignment = @submission&.assignment
       assessment = assignment&.assessment
       return unless assessment

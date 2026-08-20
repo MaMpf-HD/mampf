@@ -84,7 +84,8 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
     let(:participation) { task_point.assessment_participation }
     let(:service) do
       instance_double(StudentPerformance::ComputationService,
-                      compute_and_upsert_record_for: true)
+                      compute_and_upsert_record_for: true,
+                      compute_and_upsert_all_records!: true)
     end
 
     before do
@@ -93,15 +94,6 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
         .with(lecture: participation.assessment.lecture)
         .and_return(service)
     end
-
-    it "is gated by the assessment_grading flag" do
-      Flipper.disable(:assessment_grading)
-
-      task_point.send(:recompute_performance_record)
-
-      expect(service).not_to have_received(:compute_and_upsert_record_for)
-    end
-
     it "refreshes points_total when a task point is destroyed" do
       other_task = FactoryBot.create(:assessment_task,
                                      assessment: participation.assessment)

@@ -18,7 +18,9 @@ FactoryBot.define do
       existing || Assessment::Assessment.new(assessable: assessable)
     end
     requires_points { false }
-    requires_submission { false }
+    # Taking over an existing gradebook must not flip this: an expired
+    # assignment refuses the change.
+    requires_submission { assessable.try(:requires_submission) || false }
 
     trait :with_points do
       requires_points { true }

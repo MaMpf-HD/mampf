@@ -6,7 +6,9 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       assessment = FactoryBot.create(:assessment)
       expect(assessment).to be_valid
       expect(assessment.requires_points).to be(false)
-      expect(assessment.requires_submission).to be(false)
+      # The factory takes over the gradebook the assignment built, and an
+      # assignment requires a submission unless told otherwise.
+      expect(assessment.requires_submission).to be(true)
       expect(assessment.results_published_at).to be_nil
     end
 
@@ -187,21 +189,9 @@ RSpec.describe(Assessment::Assessment, type: :model) do
         .with(lecture: assessment.lecture)
         .and_return(service)
     end
-
-    it "is gated by the assessment_grading flag" do
-      Flipper.disable(:assessment_grading)
-
-      assessment.send(:recompute_all_performance_records)
-
-      expect(service).not_to have_received(:compute_and_upsert_all_records!)
-    end
-
     # What an assessment is worth now follows from its tasks, and Task has its
     # own callback for that. Destroying the assessment is what is left here.
     context "when the assessment is destroyed" do
-      before { Flipper.enable(:assessment_grading) }
-      after { Flipper.disable(:assessment_grading) }
-
       it "recomputes for an assignment" do
         assessment.destroy
 

@@ -892,8 +892,6 @@ class Lecture < ApplicationRecord
   end
 
   def sync_student_performance_for_members!(user_ids)
-    return unless Flipper.enabled?(:assessment_grading)
-
     new_user_ids = user_ids.uniq
     return if new_user_ids.empty?
 

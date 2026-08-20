@@ -268,7 +268,7 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
     end
 
     context "when campaign has exam items" do
-      let(:exam) { create(:exam, lecture: lecture) }
+      let(:exam) { create(:exam, :without_campaign, lecture: lecture) }
       let(:student) { create(:confirmed_user) }
       let(:exam_campaign) do
         create(:registration_campaign, campaignable: lecture).tap do |c|
@@ -289,8 +289,8 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
     end
 
     context "when the student sits on a sibling exam's roster" do
-      let(:main_exam) { create(:exam, :with_date, lecture: lecture) }
-      let(:resit) { create(:exam, :with_date, lecture: lecture) }
+      let(:main_exam) { create(:exam, :with_date, :without_campaign, lecture: lecture) }
+      let(:resit) { create(:exam, :with_date, :without_campaign, lecture: lecture) }
       let(:student) { create(:confirmed_user) }
       let(:resit_campaign) { create(:registration_campaign, campaignable: lecture) }
       let(:resit_item) do

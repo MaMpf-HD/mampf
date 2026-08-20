@@ -6,15 +6,6 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
   let(:lecture) { create(:lecture, teacher: teacher) }
   let(:exam) { create(:exam, lecture: lecture) }
   let(:assessment) { create(:assessment, :for_exam, assessable: exam, lecture: lecture) }
-
-  before do
-    Flipper.enable(:assessment_grading)
-  end
-
-  after do
-    Flipper.disable(:assessment_grading)
-  end
-
   let(:valid_config) do
     {
       "bands" => [

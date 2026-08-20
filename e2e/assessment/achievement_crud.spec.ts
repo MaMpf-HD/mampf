@@ -1,4 +1,3 @@
-import { disableFeature, enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { createLecture } from "./helpers";
@@ -9,11 +8,6 @@ import { createLecture } from "./helpers";
  * on its own tab of the lecture's assessment area.
  */
 test.describe("achievements", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-    await enableFeature(request, "student_performance");
-  });
-
   test("creates one and shows it in the list", async ({ factory, teacher }) => {
     const lecture = await createLecture(factory, teacher.user.id);
 
@@ -99,23 +93,6 @@ test.describe("achievements", () => {
     await expect(teacher.page.getByText("No achievements defined yet."))
       .toBeVisible();
   });
-
-  test("hides the tab when student performance is switched off", async ({
-    request,
-    factory,
-    teacher,
-  }) => {
-    const lecture = await createLecture(factory, teacher.user.id);
-
-    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
-    await page.gotoOverview();
-    await expect(page.overviewTab("Achievements")).toBeVisible();
-
-    await disableFeature(request, "student_performance");
-    await page.gotoOverview();
-    await expect(page.overviewTab("Achievements")).toHaveCount(0);
-  });
-
   test("opens one by clicking its row, not just its link", async ({
     factory,
     teacher,

@@ -5,10 +5,6 @@ RSpec.describe(Rosters::MaintenanceService) do
   let(:student) { create(:confirmed_user) }
   let(:grader) { create(:confirmed_user) }
 
-  before { Flipper.enable(:assessment_grading) }
-
-  after { Flipper.disable(:assessment_grading) }
-
   describe "a rosterable that owns its assessment" do
     let(:seminar) { create(:seminar) }
     let(:talk) { create(:talk, lecture: seminar) }

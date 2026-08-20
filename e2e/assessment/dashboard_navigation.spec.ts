@@ -1,4 +1,3 @@
-import { disableFeature, enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { addTask, createAssessedAssignment, createLegacyAssignment } from "./helpers";
@@ -9,12 +8,8 @@ import { addTask, createAssessedAssignment, createLegacyAssignment } from "./hel
  * inside it. All of it is Turbo, so the server sees only fragments.
  */
 test.describe("finding the way around the assessment area", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-  });
-
-  test("replaces the old assignments tab, and gives it back when switched off",
-    async ({ request, factory, teacher }) => {
+  test("replaces the old assignments tab",
+    async ({ factory, teacher }) => {
       const { lecture } = await createAssessedAssignment(factory, teacher.user.id);
       const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
 
@@ -25,12 +20,6 @@ test.describe("finding the way around the assessment area", () => {
       await dashboard.gotoOverview();
       await expect(teacher.page.getByRole("link", { name: "Problem Set 1" }))
         .toBeVisible();
-
-      await disableFeature(request, "assessment_grading");
-      await teacher.page.goto(`/lectures/${lecture.id}/edit`);
-
-      await expect(teacher.page.getByRole("tab", { name: "Assignments" })).toBeVisible();
-      await expect(teacher.page.getByRole("tab", { name: "Assessments" })).toHaveCount(0);
     });
 
   test("opens a sheet by clicking anywhere on its row", async ({
@@ -51,15 +40,11 @@ test.describe("finding the way around the assessment area", () => {
   });
 
   test("leaves a sheet from the old system alone", async ({
-    request,
     factory,
     teacher,
   }) => {
-    // created while the flag was off, so no assessment was ever built for it
-    await disableFeature(request, "assessment_grading");
     const { lecture } = await createLegacyAssignment(factory, teacher.user.id,
       "Ancient Sheet");
-    await enableFeature(request, "assessment_grading");
 
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.gotoOverview();

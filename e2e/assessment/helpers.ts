@@ -65,7 +65,7 @@ export async function createLegacyAssignment(
     teacher_id: teacherId,
     locale: "en",
   });
-  const assignment = await factory.create("assignment", [], {
+  const assignment = await factory.create("assignment", ["without_assessment"], {
     lecture_id: lecture.id,
     title,
   });

@@ -15,8 +15,6 @@ class LectureMembership < ApplicationRecord
     end
 
     def delete_performance_record
-      return unless Flipper.enabled?(:assessment_grading)
-
       StudentPerformance::Record
         .where(lecture_id: lecture_id, user_id: user_id)
         .delete_all

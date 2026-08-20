@@ -12,9 +12,6 @@ RSpec.describe(DistributionAnalysisComponent, type: :component) do
     end
   end
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   let(:component) { described_class.new(assessment: assessment) }
 
   def create_reviewed(points:)

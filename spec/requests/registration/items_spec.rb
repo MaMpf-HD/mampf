@@ -51,9 +51,7 @@ RSpec.describe("Registration::Items", type: :request) do
         # With the flag off an exam gets neither its own campaign nor an item,
         # and `skip_campaigns` stays false — which is what leaves it postable.
         let(:loose_exam) do
-          Flipper.disable(:registration_campaigns)
           exam = create(:exam, :with_date, lecture: lecture)
-          Flipper.enable(:registration_campaigns)
           exam
         end
 

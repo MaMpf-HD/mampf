@@ -3,9 +3,6 @@ require "rails_helper"
 RSpec.describe(AchievementMarkingTableComponent, type: :component) do
   let(:lecture) { create(:lecture, :released_for_all) }
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   context "with a boolean achievement" do
     let(:achievement) { create(:achievement, :boolean, lecture: lecture) }
     let(:assessment) do

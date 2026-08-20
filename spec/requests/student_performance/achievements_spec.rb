@@ -6,16 +6,10 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
   let(:student) { FactoryBot.create(:confirmed_user) }
 
   before do
-    Flipper.enable(:student_performance)
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
     lecture.reload
   end
-
-  after do
-    Flipper.disable(:student_performance)
-  end
-
   describe "GET /lectures/:lecture_id/performance/achievements" do
     context "as an editor" do
       before { sign_in editor }
@@ -278,7 +272,6 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
 
       context "when referenced by a rule" do
         before do
-          Flipper.enable(:student_performance)
           rule = create(:student_performance_rule, lecture: lecture)
           create(:student_performance_rule_achievement,
                  rule: rule, achievement: achievement)
@@ -310,18 +303,6 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
         )
         expect(response).to redirect_to(root_path)
       end
-    end
-  end
-
-  describe "feature flag disabled" do
-    before do
-      Flipper.disable(:student_performance)
-      sign_in editor
-    end
-
-    it "does not route to achievements index" do
-      get lecture_student_performance_achievements_path(lecture)
-      expect(response).to redirect_to(root_path)
     end
   end
 end
