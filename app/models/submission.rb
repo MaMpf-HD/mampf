@@ -12,9 +12,9 @@ class Submission < ApplicationRecord
 
   scope :proper, -> { where.not(manuscript_data: nil) }
 
-  # Anything a user uploaded and could not put back: the student's manuscript or
-  # the tutor's correction. A manuscript can be detached again, which leaves a
-  # correction behind that #proper no longer sees.
+  # Submissions that still hold a file. Detaching a manuscript leaves the
+  # tutor's correction behind, which #proper does not see - and a deleted
+  # correction cannot be restored.
   scope :with_uploads, lambda {
     where.not(manuscript_data: nil).or(where.not(correction_data: nil))
   }
