@@ -270,6 +270,7 @@ de:
       no_submissions: 'Keine Abgaben für diese Hausaufgabe.'
       no_submission_zone: 'Keine Abgaben'
       no_submission_badge: 'Keine Abgabe'
+      has_been_moved_badge: ' Wurde in ein anderes Tutorium verschoben'
       no_tutorial_badge: 'Keinem Übungsgruppe zugeordnet'
       participated: 'teilgenommen'
       mark_as_participated: 'Als teilgenommen markieren'
@@ -292,6 +293,8 @@ de:
           graded: 'benotet'
           pending: 'ausstehend'
       no_user_for_config: 'Keine Benutzer für Teilnahme %{participation_id} an Hausaufgabe %{assignment_id}'
+      user_moved_tutorial: 'In Tutorium %{old_tutorial} eingereicht, in Tutorium %{new_tutorial} verschoben.'
+      no_tutorial: 'N/A'
     grading_overview:
       submission_progress: 'Abgaben'
       submitted: 'Abgegeben'

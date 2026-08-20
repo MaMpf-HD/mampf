@@ -5,6 +5,7 @@ class SubmissionRowComponent < ViewComponent::Base
     @submission = submission
     @assignment = assignment
     @tutorial = tutorial
+    @lecture = @tutorial.lecture
     @mode = mode || "tutor"
   end
 
@@ -112,5 +113,48 @@ class SubmissionRowComponent < ViewComponent::Base
   def can_grade?
     user = helpers.current_user
     user.admin? || user.can_grade_in_scope?(@tutorial)
+  end
+
+  def users_movement_map
+    return {} unless @assignment.past_deadline?
+
+    helpers.users_movement_map_cache.fetch(@assignment.id) do
+      tutorial_memberships = @lecture.tutorials
+                                     .includes(:tutorial_memberships)
+                                     .flat_map(&:tutorial_memberships)
+      participations = @assignment.assessment&.assessment_participations&.to_a
+      return {} if participations.nil?
+
+      participation_user_ids = participations.map(&:user_id)
+      member_user_ids = tutorial_memberships.map(&:user_id)
+
+      ids = (participation_user_ids | member_user_ids) - (participation_user_ids & member_user_ids)
+
+      ids.each_with_object({}) do |user_id, result|
+        current_tutorial = tutorial_memberships.find { |m| m.user_id == user_id }&.tutorial
+        old_tutorial = participations.find { |p| p.user_id == user_id }&.tutorial
+        next unless current_tutorial&.id != old_tutorial&.id
+
+        result[user_id] = {
+          old_tutorial_id: old_tutorial&.id,
+          new_tutorial_id: current_tutorial&.id,
+          old_tutorial_title: old_tutorial&.title ||
+                              t("assessment.grading_tutorial.no_tutorial"),
+          new_tutorial_title: current_tutorial&.title ||
+                              t("assessment.grading_tutorial.no_tutorial")
+        }
+      end
+    end
+  end
+
+  def movement_info_for_user(user)
+    movement = users_movement_map[user.id]
+    return nil unless movement
+
+    old_tutorial_title = movement[:old_tutorial_title]
+    new_tutorial_title = movement[:new_tutorial_title]
+    t("assessment.grading_tutorial.user_moved_tutorial",
+      old_tutorial: old_tutorial_title || t("assessment.grading_tutorial.no_tutorial"),
+      new_tutorial: new_tutorial_title || t("assessment.grading_tutorial.no_tutorial"))
   end
 end

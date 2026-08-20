@@ -1,6 +1,7 @@
 # Submissions Helper
 module SubmissionsHelper
   include Rosters::RosterCaching
+  include Rosters::UsersMovementCaching
 
   def cancel_editing_submission_path(submission)
     return cancel_edit_submission_path(submission) if submission.persisted?

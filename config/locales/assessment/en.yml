@@ -270,6 +270,7 @@ en:
       no_submissions: 'No submissions for this assignment.'
       no_submission_zone: 'No submissions'
       no_submission_badge: 'No submission'
+      has_been_moved_badge: ' Has been moved to another tutorial'
       no_tutorial_badge: 'Not belonging to any tutorial'
       participated: 'participated'
       mark_as_participated: 'Mark as participated'
@@ -292,6 +293,8 @@ en:
           graded: 'graded'
           pending: 'pending'
       no_user_for_config: 'No user for participation %{participation_id} on assignment %{assignment_id}'
+      user_moved_tutorial: 'submitted in tutorial %{old_tutorial}, moved to tutorial %{new_tutorial}'
+      no_tutorial: 'N/A'
     grading_overview:
       submission_progress: 'Submissions'
       submitted: 'Submitted'

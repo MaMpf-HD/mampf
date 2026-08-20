@@ -14,6 +14,16 @@
     <div class="d-flex justify-content-between">
       <%= @user.tutorial_name %>
 
+      <% movement = movement_info_for_user(@user) %>
+
+      <% if movement %>
+        <i
+          class="bi bi-info-circle me-2 ps-1"
+          title="<%= movement %>"
+          data-bs-toggle="tooltip"
+        ></i>
+      <% end %>
+
       <i
         class="
           clipboardpopup bi bi-clipboard clickable

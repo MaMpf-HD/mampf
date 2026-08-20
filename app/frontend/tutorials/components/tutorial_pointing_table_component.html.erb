@@ -44,11 +44,15 @@
 
             <tbody>
               <% if @mode == "tutor" %>
+                <!-- TUTOR -->
+                <!-- Submissions -->
                 <% @stack.each do |submission| %>
                   <%= render(SubmissionRowComponent.new(
                       submission: submission, mode: @mode,
                       assignment: @assignment, tutorial: @tutorial)) %>
                 <% end %>
+
+                <!-- Non-submitters + have grading records -->
                 <% @non_submitters.each do |user| %>
                   <% if user.assessment_participation_in_assignment(@assignment) %>
                     <%= render(ParticipationRowComponent.new(
@@ -57,18 +61,20 @@
                   <% end %>
                 <% end %>
               <% else %>
+                <!-- TEACHER -->
                 <% @tutorials.each do |tutorial| %>
+                  <!-- Submissions -->
                   <% (@submissions_by_tutorial[tutorial] || []).each do |submission| %>
                     <%= render(SubmissionRowComponent.new(
                         submission: submission, mode: @mode,
                         assignment: @assignment, tutorial: tutorial)) %>
                   <% end %>
-
+                  <!-- Non-submitters + have grading records -->
                   <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
                     <% if user.assessment_participation_in_assignment(@assignment) %>
                       <%= render(ParticipationRowComponent.new(
-                        participation: user.assessment_participation_in_assignment(@assignment),
-                        mode: @mode, assignment: @assignment, tutorial: tutorial)) %>
+                          participation: user.assessment_participation_in_assignment(@assignment),
+                          mode: @mode, assignment: @assignment, tutorial: tutorial)) %>
                     <% end %>
                   <% end %>
                 <% end %>
@@ -111,10 +117,11 @@
           </thead>
 
           <tbody>
+            <!-- Non-submitters have or not have grading records -->
             <% @non_submitters.to_a.each do |user| %>
               <%= render(layout: "tutorials/components/excluded_user_row",
                        locals: { user: user,
-                                 reason: t('assessment.grading_tutorial.no_submission_badge') }) do %>
+                                 reason: non_submitter_status(user) }) do %>
                 <% if user.assessment_participation_in_assignment(@assignment) %>
                   <%= remove_participated_link(user) %>
                 <% else %>
