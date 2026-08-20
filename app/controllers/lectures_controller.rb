@@ -499,8 +499,6 @@ class LecturesController < ApplicationController
       end
     end
 
-    # Registration processes past the point of no return are by far the most
-    # common reason the cascade refuses, so name them.
     def lecture_destruction_error
       if @lecture.registration_campaigns.any? { |campaign| !campaign.discardable? }
         t("controllers.lectures.destruction_failed_campaigns")
