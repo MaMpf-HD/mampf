@@ -91,71 +91,51 @@ RSpec.describe("Lectures", type: :request) do
             as: :turbo_stream)
       end
 
-      context "when the feature flag is enabled" do
-        before do
-          Flipper.enable(:registration_campaigns)
-        end
+      it "shows a badge for lectures with an open registration campaign" do
+        create(:registration_campaign, :open, :first_come_first_served,
+               campaignable: lecture_algebra)
 
-        after do
-          Flipper.disable(:registration_campaigns)
-        end
+        search_algebra
 
-        it "shows a badge for lectures with an open registration campaign" do
-          create(:registration_campaign, :open, :first_come_first_served,
-                 campaignable: lecture_algebra)
-
-          search_algebra
-
-          expect(response.body).to include("lecture-search-registration-badge")
-        end
-
-        it "does not show a badge for draft campaigns" do
-          create(:registration_campaign, :first_come_first_served,
-                 campaignable: lecture_algebra)
-
-          search_algebra
-
-          expect(response.body)
-            .not_to include("lecture-search-registration-badge")
-        end
-
-        it "shows a registered badge instead when the user has registered" do
-          campaign = create(:registration_campaign, :open,
-                            :first_come_first_served,
-                            campaignable: lecture_algebra)
-          create(:registration_user_registration,
-                 registration_campaign: campaign, user: user)
-
-          search_algebra
-
-          expect(response.body).to include("lecture-search-registered-badge")
-          expect(response.body)
-            .not_to include("lecture-search-registration-badge")
-        end
-
-        it "still shows the open badge when the registration was rejected" do
-          campaign = create(:registration_campaign, :open,
-                            :first_come_first_served,
-                            campaignable: lecture_algebra)
-          create(:registration_user_registration, :rejected,
-                 registration_campaign: campaign, user: user)
-
-          search_algebra
-
-          expect(response.body).to include("lecture-search-registration-badge")
-          expect(response.body)
-            .not_to include("lecture-search-registered-badge")
-        end
+        expect(response.body).to include("lecture-search-registration-badge")
       end
 
-      it "does not show a badge when the feature flag is disabled" do
-        create(:registration_campaign, :open, :first_come_first_served,
+      it "does not show a badge for draft campaigns" do
+        create(:registration_campaign, :first_come_first_served,
                campaignable: lecture_algebra)
 
         search_algebra
 
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
+      end
+
+      it "shows a registered badge instead when the user has registered" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body)
+          .not_to include("lecture-search-registration-badge")
+      end
+
+      it "still shows the open badge when the registration was rejected" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :rejected,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registration-badge")
+        expect(response.body)
+          .not_to include("lecture-search-registered-badge")
       end
     end
 
@@ -165,10 +145,6 @@ RSpec.describe("Lectures", type: :request) do
             params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
             as: :turbo_stream)
       end
-
-      before { Flipper.enable(:roster_maintenance) }
-
-      after { Flipper.disable(:roster_maintenance) }
 
       it "shows the open badge for a lecture with a self-enrollment group" do
         create(:tutorial, lecture: lecture_algebra,
@@ -276,7 +252,6 @@ RSpec.describe("Lectures", type: :request) do
     let(:lecture) { create(:lecture, :released_for_all, locale: "en") }
 
     before do
-      Flipper.enable(:registration_campaigns)
       create(:lecture_user_join, user: user, lecture: lecture)
       create(:lecture_medium,
              teachable: lecture,
@@ -611,33 +586,6 @@ RSpec.describe("Lectures", type: :request) do
             params: { lecture: { remove_home_attachment: "1" }, subpage: "home" }
 
       expect(lecture.reload.home_attachment).to be_nil
-    end
-  end
-
-  describe "the Müsli transition banner on the roster tabs" do
-    let(:term) { create(:term, :winter, year: 2026) }
-    let(:lecture) { create(:lecture, term: term) }
-
-    before { Flipper.enable(:roster_maintenance) }
-
-    after do
-      Flipper.disable(:roster_maintenance)
-      Flipper.disable(:term_uses_mampf_registration)
-    end
-
-    it "shows the banner, naming the lecture's term, while it is not on MaMpf" do
-      get edit_lecture_path(lecture, tab: "groups")
-
-      expect(response.body).to include('data-testid="roster-transition-banner"')
-      expect(response.body).to include(term.to_label)
-    end
-
-    it "hides the banner once the term is opted into MaMpf registration" do
-      Flipper.enable_actor(:term_uses_mampf_registration, term)
-
-      get edit_lecture_path(lecture, tab: "groups")
-
-      expect(response.body).not_to include('data-testid="roster-transition-banner"')
     end
   end
 end
