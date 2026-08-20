@@ -25,6 +25,12 @@ class Tutorial < ApplicationRecord
   validate :lecture_must_not_be_seminar
   validate :lecture_id_immutable, on: :update
 
+  scope :roster_eligible, lambda {
+    where(id: unscoped.joins(:tutorial_memberships).select(:id))
+      .or(where(id: unscoped.joins(:registration_items).select(:id)))
+      .or(where.not(self_materialization_mode: "disabled"))
+  }
+
   def title_with_tutors
     return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
 
@@ -88,6 +94,10 @@ class Tutorial < ApplicationRecord
     TutorialMembership.where(lecture: lecture, user: user)
                       .where.not(tutorial: self)
                       .first&.tutorial
+  end
+
+  def graders_with_inheritance
+    (tutors + lecture.graders_with_inheritance).uniq
   end
 
   private

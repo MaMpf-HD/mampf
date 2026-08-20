@@ -553,6 +553,10 @@ class Lecture < ApplicationRecord
     ([teacher] + editors.to_a + course.editors).to_a
   end
 
+  def graders_with_inheritance
+    [teacher]
+  end
+
   # the next methods provide user related information about the lecture
 
   def edited_by?(user)
@@ -964,6 +968,10 @@ class Lecture < ApplicationRecord
 
   def roster_entries
     lecture_memberships
+  end
+
+  def roster_eligible_tutorials?
+    tutorials.merge(Tutorial.roster_eligible).exists?
   end
 
   private

@@ -119,6 +119,22 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response.body).to include("Test Assignment")
       end
 
+      it "renders the points tab when a non-submitter has been marked as participated" do
+        tutorial = create(:tutorial, lecture: lecture)
+        student = create(:confirmed_user)
+        create(:tutorial_membership, tutorial: tutorial, user: student)
+        assignment.assessment.tasks.create!(max_points: 10, position: 1)
+        Assessment::Participation.create!(assessment: assignment.assessment,
+                                          user: student, tutorial: tutorial)
+
+        get assessment_assessment_path(assessment.id),
+            params: { assessable_type: "Assignment", assessable_id: assignment.id,
+                      tab: "points" },
+            headers: { "Turbo-Frame" => "assessment-assessments-frame" }
+
+        expect(response).to have_http_status(:success)
+      end
+
       it "sends someone who opens the bare link to the lecture's assessment tab" do
         get assessment_assessment_path(assessment.id),
             params: { assessable_type: "Assignment", assessable_id: assignment.id,

@@ -1,5 +1,8 @@
 # Submissions Helper
 module SubmissionsHelper
+  include Rosters::RosterCaching
+  include Rosters::UsersMovementCaching
+
   def cancel_editing_submission_path(submission)
     return cancel_edit_submission_path(submission) if submission.persisted?
 
@@ -102,6 +105,38 @@ module SubmissionsHelper
     return false if submission&.correction
 
     true
+  end
+
+  def required_roster_for_submission?
+    Flipper.enabled?(:assessment_grading)
+  end
+
+  def extract_task_points(submission, assessment_task)
+    submission_points = submission.graded_tasks_points
+    submission_points.find do |sp|
+      sp.task_id == assessment_task.id
+    end&.points
+  end
+
+  def extract_task_points_participation(participation, assessment_task)
+    submission_points = participation.graded_tasks_points
+    submission_points.find do |sp|
+      sp.task_id == assessment_task.id
+    end&.points
+  end
+
+  def enabled_roster_for_lecture?(lecture)
+    roster_cache[:enabled].fetch(lecture.id) do
+      roster_cache[:enabled][lecture.id] =
+        Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?
+    end
+  end
+
+  def rostered_tutorial_for(lecture)
+    roster_cache[:tutorial].fetch(lecture.id) do
+      roster_cache[:tutorial][lecture.id] =
+        enabled_roster_for_lecture?(lecture) ? current_user.tutorial_rosterized(lecture) : nil
+    end
   end
 
   def submission_late_color(submission)

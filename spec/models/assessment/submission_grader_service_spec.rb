@@ -1,0 +1,709 @@
+require "rails_helper"
+
+RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
+  let(:lecture) { FactoryBot.create(:lecture, submission_grace_period: 70) }
+  let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
+  let(:scorer) { FactoryBot.create(:confirmed_user) }
+
+  let(:assignment) do
+    FactoryBot.create(:assignment, deadline: 1.hour.from_now, lecture: lecture)
+  end
+  let(:assessment) do
+    FactoryBot.create(:assessment, :with_points, assessable: assignment, requires_submission: true)
+  end
+  let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+
+  let(:points_by_task_id) { { task.id => "7" } }
+
+  before do
+    Flipper.enable(:assessment_grading)
+    Flipper.enable(:registration_campaigns)
+    Flipper.enable(:roster_maintenance)
+    assignment.reload
+  end
+
+  after do
+    Flipper.disable(:assessment_grading)
+    Flipper.disable(:registration_campaigns)
+    Flipper.disable(:roster_maintenance)
+  end
+
+  describe ".init_participation" do
+    let!(:user) { FactoryBot.create(:confirmed_user) }
+    let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
+
+    before do
+      allow(user).to receive(:can_grade_in_scope?).and_return(true)
+      Timecop.travel(3.hours.from_now)
+    end
+    after { Timecop.return }
+
+    context "with invalid arguments" do
+      it "raises SubmissionGraderError when assessment is nil" do
+        expect do
+          described_class.init_participation(nil, user, tutorial)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                           I18n.t("assessment.task_points.init_participation_missing_args"))
+      end
+
+      it "raises SubmissionGraderError when user is nil" do
+        expect do
+          described_class.init_participation(assessment, nil, tutorial)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                           I18n.t("assessment.task_points.init_participation_missing_args"))
+      end
+
+      it "raises SubmissionGraderError when tutorial is nil" do
+        expect do
+          described_class.init_participation(assessment, user, nil)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                           I18n.t("assessment.task_points.init_participation_missing_args"))
+      end
+    end
+
+    context "when no participation exists" do
+      it "creates and persists a new participation" do
+        expect do
+          described_class.init_participation(assessment, user, tutorial)
+        end.to change(Assessment::Participation, :count).by(1)
+      end
+
+      it "returns a persisted participation" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result).to be_persisted
+      end
+
+      it "associates the participation with the correct assessment and user" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.assessment_id).to eq(assessment.id)
+        expect(result.user_id).to eq(user.id)
+      end
+
+      it "sets the tutorial_id on the new participation" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.tutorial_id).to eq(tutorial.id)
+      end
+
+      it "sets the submitted_at" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.submitted_at).to be_within(1.second).of(Time.current)
+      end
+    end
+
+    context "when a participation already exists with no task points" do
+      let!(:existing) do
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment,
+                          user: user,
+                          tutorial: tutorial)
+      end
+
+      it "returns the existing participation" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.id).to eq(existing.id)
+      end
+
+      it "does not create a duplicate participation" do
+        expect do
+          described_class.init_participation(assessment, user, tutorial)
+        end.not_to change(Assessment::Participation, :count)
+      end
+
+      it "does not overwrite the existing submitted_at" do
+        original_submitted_at = existing.submitted_at
+        Timecop.travel(1.day.from_now) do
+          result = described_class.init_participation(assessment, user, tutorial)
+          expect(result.submitted_at).to eq(original_submitted_at)
+        end
+        Timecop.return
+      end
+    end
+
+    context "when the existing participation already has task points with points" do
+      let!(:existing) do
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment,
+                          user: user,
+                          tutorial: tutorial)
+      end
+      let!(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+      let!(:task_point) do
+        FactoryBot.create(:assessment_task_point,
+                          assessment_participation: existing, task: task, points: 5)
+      end
+
+      it "returns the existing participation without altering its task points" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.id).to eq(existing.id)
+        expect(result.task_points).to include(task_point)
+      end
+
+      it "does not create additional task points" do
+        expect do
+          described_class.init_participation(assessment, user, tutorial)
+        end.not_to change(Assessment::TaskPoint, :count)
+      end
+
+      it "does not create a duplicate participation" do
+        expect do
+          described_class.init_participation(assessment, user, tutorial)
+        end.not_to change(Assessment::Participation, :count)
+      end
+    end
+  end
+
+  describe ".remove_participation" do
+    let!(:user) { FactoryBot.create(:confirmed_user) }
+    let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
+
+    before do
+      allow(user).to receive(:can_grade_in_scope?).and_return(true)
+      Timecop.travel(3.hours.from_now)
+    end
+    after { Timecop.return }
+
+    context "with invalid arguments" do
+      it "raises SubmissionGraderError when participation is nil" do
+        expect do
+          described_class.remove_participation(nil)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
+    end
+
+    context "when the participation has no task points" do
+      let!(:participation) do
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment,
+                          user: user,
+                          tutorial: tutorial)
+      end
+
+      it "destroys the participation" do
+        described_class.remove_participation(participation)
+        expect(Assessment::Participation.exists?(participation.id)).to be(false)
+      end
+
+      it "decreases the participation count by 1" do
+        participation
+        expect do
+          described_class.remove_participation(participation)
+        end.to change(Assessment::Participation, :count).by(-1)
+      end
+    end
+
+    context "when the participation has task points" do
+      let!(:participation) do
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment,
+                          user: user,
+                          tutorial: tutorial)
+      end
+      let!(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+
+      context "with points assigned" do
+        let!(:task_point) do
+          FactoryBot.create(:assessment_task_point,
+                            assessment_participation: participation, task: task, points: 5)
+        end
+
+        it "raises SubmissionGraderError" do
+          expect do
+            described_class.remove_participation(participation)
+          end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                             I18n.t("assessment.task_points.participation_has_task_points"))
+        end
+
+        it "does not destroy the participation" do
+          begin
+            described_class.remove_participation(participation)
+          rescue Assessment::SubmissionGraderService::SubmissionGraderError
+            nil
+          end
+          expect(Assessment::Participation.exists?(participation.id)).to be(true)
+        end
+
+        it "does not destroy the task points" do
+          begin
+            described_class.remove_participation(participation)
+          rescue Assessment::SubmissionGraderService::SubmissionGraderError
+            nil
+          end
+          expect(Assessment::TaskPoint.exists?(task_point.id)).to be(true)
+        end
+      end
+
+      context "with nil points" do
+        let!(:task_point) do
+          FactoryBot.create(:assessment_task_point,
+                            assessment_participation: participation, task: task, points: nil)
+        end
+
+        it "destroys the participation" do
+          begin
+            described_class.remove_participation(participation)
+          rescue Assessment::SubmissionGraderService::SubmissionGraderError
+            nil
+          end
+          expect(Assessment::Participation.exists?(participation.id)).to be(false)
+        end
+
+        it "decreases the participation count by 1" do
+          participation
+          expect do
+            described_class.remove_participation(participation)
+          end.to change(Assessment::Participation, :count).by(-1)
+        end
+
+        it "destroys the task points" do
+          described_class.remove_participation(participation)
+          expect(Assessment::TaskPoint.exists?(task_point.id)).to be(false)
+        end
+      end
+
+      context "with a mix of nil and non-nil points" do
+        let!(:task2) { FactoryBot.create(:assessment_task, assessment: assessment) }
+        let!(:task_point_nil) do
+          FactoryBot.create(:assessment_task_point,
+                            assessment_participation: participation, task: task, points: nil)
+        end
+        let!(:task_point_with_points) do
+          FactoryBot.create(:assessment_task_point,
+                            assessment_participation: participation, task: task2, points: 3)
+        end
+
+        it "raises SubmissionGraderError" do
+          expect do
+            described_class.remove_participation(participation)
+          end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                             I18n.t("assessment.task_points.participation_has_task_points"))
+        end
+
+        it "does not destroy the participation" do
+          begin
+            described_class.remove_participation(participation)
+          rescue Assessment::SubmissionGraderService::SubmissionGraderError
+            nil
+          end
+          expect(Assessment::Participation.exists?(participation.id)).to be(true)
+        end
+      end
+    end
+  end
+
+  describe ".score_tasks_by_participation!" do
+    context "before deadline" do
+      before do
+        @participation = FactoryBot.create(:assessment_participation,
+                                           assessment: assessment,
+                                           user: FactoryBot.create(:confirmed_user),
+                                           status: :pending)
+      end
+
+      context "when participation is nil, should reject the request" do
+        subject { described_class.score_tasks_by_participation!(nil, points_by_task_id, scorer) }
+
+        it "raises SubmissionGraderError" do
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        end
+
+        it "does not call PointEntryService" do
+          expect(Assessment::PointEntryService).not_to receive(:enter_points)
+          begin
+            subject
+          rescue StandardError
+            nil
+          end
+        end
+
+        it "does not create any participations" do
+          expect do
+            subject
+          rescue StandardError
+            nil
+          end.not_to change(Assessment::Participation, :count)
+        end
+      end
+
+      context "when participation has no resolvable assignment" do
+        before { allow(@participation).to receive(:assessment).and_return(nil) }
+
+        subject do
+          described_class.score_tasks_by_participation!(@participation, points_by_task_id, scorer)
+        end
+
+        it "raises SubmissionGraderError" do
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        end
+
+        it "does not call PointEntryService" do
+          expect(Assessment::PointEntryService).not_to receive(:enter_points)
+          begin
+            subject
+          rescue StandardError
+            nil
+          end
+        end
+      end
+
+      context "when participation and assignment are valid" do
+        subject do
+          described_class.score_tasks_by_participation!(@participation, points_by_task_id,
+                                                        scorer)
+        end
+        it "not calls PointEntryService.enter_points and throw SubmissionGraderError" do
+          expect(Assessment::PointEntryService).not_to receive(:enter_points)
+
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        end
+      end
+    end
+
+    context "after grace period" do
+      let!(:participation) do
+        FactoryBot.create(
+          :assessment_participation,
+          assessment: assessment,
+          user: FactoryBot.create(:confirmed_user),
+          status: :pending
+        )
+      end
+      subject do
+        described_class.score_tasks_by_participation!(participation, points_by_task_id, scorer)
+      end
+
+      before do
+        Timecop.travel(3.hours.from_now)
+      end
+      after { Timecop.return }
+
+      it "calls PointEntryService.enter_points with the existing participation" do
+        expect(participation.assessment.assessable).to eq(assignment)
+        expect(Assessment::PointEntryService).to receive(:enter_points).once
+        subject
+      end
+    end
+  end
+
+  describe ".score_tasks_by_submission!" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    context "after grace period" do
+      before do
+        @submission = FactoryBot.create(:submission, :with_manuscript,
+                                        assignment: assignment,
+                                        tutorial: tutorial, users: [user])
+        Timecop.travel(3.hours.from_now)
+      end
+      after { Timecop.return }
+
+      context "when submission is nil" do
+        subject { described_class.score_tasks_by_submission!(nil, points_by_task_id, scorer) }
+
+        it "raises SubmissionGraderError" do
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        end
+
+        it "does not create any participations" do
+          expect do
+            subject
+          rescue StandardError
+            nil
+          end.not_to change(Assessment::Participation, :count)
+        end
+      end
+
+      context "when submission and assignment are valid" do
+        context "when submission has 1 user" do
+          subject do
+            described_class.score_tasks_by_submission!(@submission, points_by_task_id, scorer)
+          end
+          it "calls PointEntryService.enter_points for each user on the submission" do
+            expect(Assessment::PointEntryService).to receive(:enter_points).once.with(
+              an_instance_of(Assessment::Participation),
+              points_by_task_id,
+              scorer,
+              @submission
+            )
+
+            subject
+          end
+
+          it "passes the submission through to PointEntryService" do
+            allow(Assessment::PointEntryService).to receive(:enter_points)
+
+            subject
+
+            expect(Assessment::PointEntryService).to have_received(:enter_points)
+              .with(anything, anything, anything, @submission)
+          end
+        end
+
+        context "when the submission has multiple users (team submission)" do
+          let(:user2) { FactoryBot.create(:confirmed_user) }
+          let(:user3) { FactoryBot.create(:confirmed_user) }
+          let(:submission_multi) do
+            FactoryBot.create(:submission, :with_manuscript,
+                              assignment: assignment,
+                              tutorial: tutorial,
+                              users: [user3, user2])
+          end
+          subject do
+            described_class.score_tasks_by_submission!(submission_multi, points_by_task_id,
+                                                       scorer)
+          end
+          it "calls PointEntryService once per team member" do
+            expect(Assessment::PointEntryService).to receive(:enter_points).twice
+
+            subject
+          end
+        end
+      end
+    end
+
+    context "before deadline" do
+      before do
+        @submission = FactoryBot.create(:submission, :with_manuscript,
+                                        assignment: assignment,
+                                        tutorial: tutorial,
+                                        users: [user])
+      end
+      subject do
+        described_class.score_tasks_by_submission!(@submission, points_by_task_id, scorer)
+      end
+
+      it "raises SubmissionGraderError" do
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
+
+      it "does not create any participations" do
+        expect do
+          subject
+        rescue StandardError
+          nil
+        end.not_to change(Assessment::Participation, :count)
+      end
+    end
+
+    context "after deadline before grace period" do
+      before do
+        @submission = FactoryBot.create(:submission, :with_manuscript,
+                                        assignment: assignment,
+                                        tutorial: tutorial,
+                                        users: [user])
+        Timecop.travel(2.hours.from_now)
+      end
+      after { Timecop.return }
+      subject do
+        described_class.score_tasks_by_submission!(@submission, points_by_task_id, scorer)
+      end
+
+      it "raises SubmissionGraderError" do
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
+
+      it "does not create any participations" do
+        expect do
+          subject
+        rescue StandardError
+          nil
+        end.not_to change(Assessment::Participation, :count)
+      end
+    end
+  end
+
+  describe ".score_tasks_by_types!" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      @submission = FactoryBot.create(:submission, :with_manuscript,
+                                      assignment: assignment,
+                                      tutorial: tutorial,
+                                      users: [user])
+      @participation = FactoryBot.create(:assessment_participation,
+                                         assessment: assessment,
+                                         user: user,
+                                         tutorial: tutorial)
+      @submission.reload
+      @participation.reload
+      assessment.reload
+      allow(scorer).to receive(:can_grade_in_scope?).and_return(true)
+      Timecop.travel(3.hours.from_now)
+    end
+    after { Timecop.return }
+
+    let(:validated_tutorials_ids) { [] }
+
+    context "when target is submission" do
+      subject do
+        described_class.score_tasks_by_types!(
+          { "target" => "submission", "id" => @submission.id, "task_points" => points_by_task_id },
+          scorer,
+          validated_tutorials_ids
+        )
+      end
+
+      it "delegates to score_tasks_by_submission!" do
+        expect(described_class).to receive(:score_tasks_by_submission!).once.with(
+          @submission,
+          points_by_task_id,
+          scorer
+        )
+        subject
+      end
+
+      it "raises ActiveRecord::RecordNotFound when the submission id does not exist" do
+        entry = { "target" => "submission", "id" => 999_999, "task_points" => points_by_task_id }
+        expect do
+          described_class.score_tasks_by_types!(entry, scorer, validated_tutorials_ids)
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "raises SubmissionGraderError when the scorer cannot grade the submission's tutorial" do
+        allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
+
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
+
+      it "adds the tutorial id to validated_tutorials_ids on success" do
+        allow(Assessment::PointEntryService).to receive(:enter_points)
+
+        subject
+
+        expect(validated_tutorials_ids).to include(tutorial.id)
+      end
+
+      it "does not re-validate a tutorial already in validated_tutorials_ids" do
+        allow(Assessment::PointEntryService).to receive(:enter_points)
+        validated_tutorials_ids << tutorial.id
+        expect(Tutorial).not_to receive(:find)
+        subject
+      end
+    end
+
+    context "when target is participation" do
+      subject do
+        described_class.score_tasks_by_types!(
+          { "target" => "participation", "id" => @participation.id,
+            "task_points" => points_by_task_id },
+          scorer,
+          validated_tutorials_ids
+        )
+      end
+
+      it "delegates to score_tasks_by_participation!" do
+        expect(described_class).to receive(:score_tasks_by_participation!).once.with(
+          @participation,
+          points_by_task_id,
+          scorer
+        )
+        subject
+      end
+
+      it "raises ActiveRecord::RecordNotFound when the participation id does not exist" do
+        entry = { "target" => "participation", "id" => 999_999,
+                  "task_points" => points_by_task_id }
+        expect do
+          described_class.score_tasks_by_types!(entry, scorer, validated_tutorials_ids)
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "raises SubmissionGraderError when the scorer cannot grade the participation's tutorial" do
+        allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
+
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
+
+      it "adds the tutorial id to validated_tutorials_ids on success" do
+        subject
+        expect(validated_tutorials_ids).to include(tutorial.id)
+      end
+
+      context "when participation has no tutorial_id (falls back to lecture)" do
+        let!(:participation_no_tutorial) do
+          FactoryBot.create(:assessment_participation, assessment: assessment, user:
+            FactoryBot.create(:confirmed_user), tutorial: nil)
+        end
+
+        subject do
+          described_class.score_tasks_by_types!(
+            { "target" => "participation", "id" => participation_no_tutorial.id,
+              "task_points" => points_by_task_id },
+            scorer,
+            validated_tutorials_ids
+          )
+        end
+
+        it "raises SubmissionGraderError when the scorer cannot grade the lecture" do
+          allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        end
+      end
+    end
+
+    context "when target is unknown" do
+      subject do
+        described_class.score_tasks_by_types!(
+          { "target" => "unknown", "id" => @submission.id, "task_points" => points_by_task_id },
+          scorer,
+          validated_tutorials_ids
+        )
+      end
+
+      it "raises SubmissionGraderError" do
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
+
+      it "does not call score_tasks_by_submission!" do
+        expect(described_class).not_to receive(:score_tasks_by_submission!)
+        begin
+          subject
+        rescue StandardError
+          nil
+        end
+      end
+
+      it "does not call score_tasks_by_participation!" do
+        expect(described_class).not_to receive(:score_tasks_by_participation!)
+        begin
+          subject
+        rescue StandardError
+          nil
+        end
+      end
+    end
+  end
+
+  describe ".score_multi_teams_by_types!" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      @submission = FactoryBot.create(:submission, :with_manuscript,
+                                      assignment: assignment,
+                                      tutorial: tutorial,
+                                      users: [user])
+      allow(scorer).to receive(:can_grade_in_scope?).and_return(true)
+      Timecop.travel(2.hours.from_now)
+    end
+    after { Timecop.return }
+
+    let(:records) do
+      [{ "target" => "submission", "id" => @submission.id,
+         "task_points" => { task.id => "7" } }]
+    end
+
+    it "wraps processing in a transaction and calls score_tasks_by_types! for each record" do
+      expect(described_class).to receive(:score_tasks_by_types!).once
+      described_class.score_multi_teams_by_types!(records, scorer)
+    end
+
+    it "rolls back all changes if one record raises" do
+      bad_records = records + [{ "target" => "submission", "id" => 999_999, "task_points" => {} }]
+
+      expect do
+        described_class.score_multi_teams_by_types!(bad_records, scorer)
+      rescue StandardError
+        nil
+      end.not_to change(Assessment::Participation, :count)
+    end
+  end
+end

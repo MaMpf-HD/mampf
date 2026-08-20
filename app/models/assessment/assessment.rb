@@ -88,6 +88,10 @@ module Assessment
       recompute_all_performance_records if recompute
     end
 
+    def persisted_tasks
+      tasks.order(:position)
+    end
+
     private
 
       def lecture_matches_assessable

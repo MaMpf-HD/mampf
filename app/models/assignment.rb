@@ -47,6 +47,34 @@ class Assignment < ApplicationRecord
     User.where(id: submitter_ids)
   end
 
+  def user_ids_in_lecture_from_memberships
+    lecture.lecture_memberships.pluck(:user_id).uniq
+  end
+
+  def applicable_users_not_in_tutorials
+    if past_deadline?
+      applicable_users_not_in_tutorials_postdeadline
+    else
+      applicable_users_not_in_tutorials_predeadline
+    end
+  end
+
+  def non_submitters_in_tutorials
+    if past_deadline?
+      non_submitters_in_tutorials_postdeadline
+    else
+      non_submitters_in_tutorials_predeadline
+    end
+  end
+
+  def non_submitters_in_tutorial(tutorial)
+    if past_deadline?
+      non_submitters_in_tutorial_postdeadline(tutorial)
+    else
+      non_submitters_in_tutorial_predeadline(tutorial)
+    end
+  end
+
   def past_deadline?
     deadline.present? && deadline < Time.zone.now
   end
@@ -67,6 +95,10 @@ class Assignment < ApplicationRecord
     !semiactive?
   end
   alias grading_open? totally_expired?
+
+  def assessable?
+    assessment != nil
+  end
 
   def in_grace_period?
     semiactive? && !active?
@@ -197,5 +229,68 @@ class Assignment < ApplicationRecord
 
     def setup_assessment
       ensure_pointbook!(requires_submission: requires_submission)
+    end
+
+    def non_submitters_in_tutorial_predeadline(tutorial)
+      non_submitters_in_tutorial_from_memberships(tutorial)
+    end
+
+    def non_submitters_in_tutorial_postdeadline(tutorial)
+      non_submitters_in_tutorial_from_participations(tutorial)
+    end
+
+    def non_submitters_in_tutorial_from_participations(tutorial)
+      User
+        .joins(:assessment_participations)
+        .where(assessment_participations: { assessment_id: assessment.id,
+                                            tutorial_id: tutorial.id })
+        .where.not(id: submitter_ids)
+        .order(:name)
+    end
+
+    def non_submitters_in_tutorial_from_memberships(tutorial)
+      User.joins(:tutorial_memberships)
+          .where(tutorial_memberships: { tutorial_id: tutorial.id })
+          .where.not(id: submitter_ids)
+          .order(:name)
+    end
+
+    def non_submitter_ids_in_tutorials_from_memberships
+      user_ids_in_tutorials_from_memberships - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorials_from_participations
+      user_ids_in_tutorials_from_participations - submitter_ids
+    end
+
+    def non_submitters_in_tutorials_predeadline
+      User.where(id: non_submitter_ids_in_tutorials_from_memberships)
+    end
+
+    def non_submitters_in_tutorials_postdeadline
+      User.where(id: non_submitter_ids_in_tutorials_from_participations)
+    end
+
+    def user_ids_in_tutorials_from_memberships
+      lecture.tutorials.joins(:tutorial_memberships)
+             .pluck("tutorial_memberships.user_id").uniq
+    end
+
+    def user_ids_in_tutorials_from_participations
+      tutorial_ids = lecture.tutorials.pluck(:id)
+      AssessmentParticipation
+        .where(assessment_id: assessment.id, tutorial_id: tutorial_ids)
+        .distinct
+        .pluck(:user_id)
+    end
+
+    def applicable_users_not_in_tutorials_predeadline
+      ids = user_ids_in_lecture_from_memberships - user_ids_in_tutorials_from_memberships
+      User.where(id: ids)
+    end
+
+    def applicable_users_not_in_tutorials_postdeadline
+      ids = user_ids_in_lecture_from_memberships - user_ids_in_tutorials_from_participations
+      User.where(id: ids)
     end
 end

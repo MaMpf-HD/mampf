@@ -16,6 +16,22 @@ class Submission < ApplicationRecord
 
   before_create :set_token
 
+  delegate :assessment, to: :assignment
+
+  def participations
+    return unless assignment.assessable?
+
+    users.map do |user|
+      Assessment::Participation.find_by(assessment: assignment.assessment, user: user)
+    end
+  end
+
+  def graded_tasks_points
+    return unless assignment.assessable?
+
+    Assessment::TaskPoint.where(submission: self)
+  end
+
   def partners_of_user(user)
     return unless user.in?(users)
 
@@ -93,6 +109,10 @@ class Submission < ApplicationRecord
     return false if assignment.active?
 
     assignment.totally_expired? || correction.present? || accepted == false
+  end
+
+  def valid_for_pointing?
+    in_time? || accepted == true
   end
 
   # def file_path(downloadable)
