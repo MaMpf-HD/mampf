@@ -32,39 +32,261 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     let!(:user) { FactoryBot.create(:confirmed_user) }
     let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
 
-    it "creates and persists a new participation when none exists" do
-      expect do
-        described_class.init_participation(assessment_active, user, tutorial)
-      end.to change(Assessment::Participation, :count).by(1)
+    before do
+      allow(user).to receive(:can_grade_in_scope?).and_return(true)
+      Timecop.travel(3.hours.from_now)
+    end
+    after { Timecop.return }
+
+    context "with invalid arguments" do
+      it "raises SubmissionGraderError when assessment is nil" do
+        expect do
+          described_class.init_participation(nil, user, tutorial)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                           I18n.t("assessment.task_points.init_participation_missing_args"))
+      end
+
+      it "raises SubmissionGraderError when user is nil" do
+        expect do
+          described_class.init_participation(assessment, nil, tutorial)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                           I18n.t("assessment.task_points.init_participation_missing_args"))
+      end
+
+      it "raises SubmissionGraderError when tutorial is nil" do
+        expect do
+          described_class.init_participation(assessment, user, nil)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                           I18n.t("assessment.task_points.init_participation_missing_args"))
+      end
     end
 
-    it "returns a persisted participation" do
-      result = described_class.init_participation(assessment_active, user, tutorial)
-      expect(result).to be_persisted
+    context "when no participation exists" do
+      it "creates and persists a new participation" do
+        expect do
+          described_class.init_participation(assessment, user, tutorial)
+        end.to change(Assessment::Participation, :count).by(1)
+      end
+
+      it "returns a persisted participation" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result).to be_persisted
+      end
+
+      it "associates the participation with the correct assessment and user" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.assessment_id).to eq(assessment.id)
+        expect(result.user_id).to eq(user.id)
+      end
+
+      it "sets the tutorial_id on the new participation" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.tutorial_id).to eq(tutorial.id)
+      end
+
+      it "sets the submitted_at" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.submitted_at).to be_within(1.second).of(Time.current)
+      end
     end
 
-    it "associates the participation with the correct assessment and user" do
-      result = described_class.init_participation(assessment_active, user, tutorial)
-      expect(result.assessment_id).to eq(assessment_active.id)
-      expect(result.user_id).to eq(user.id)
+    context "when a participation already exists with no task points" do
+      let!(:existing) do
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment,
+                          user: user,
+                          tutorial: tutorial)
+      end
+
+      it "returns the existing participation" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.id).to eq(existing.id)
+      end
+
+      it "does not create a duplicate participation" do
+        expect do
+          described_class.init_participation(assessment, user, tutorial)
+        end.not_to change(Assessment::Participation, :count)
+      end
+
+      it "does not overwrite the existing submitted_at" do
+        original_submitted_at = existing.submitted_at
+        Timecop.travel(1.day.from_now) do
+          result = described_class.init_participation(assessment, user, tutorial)
+          expect(result.submitted_at).to eq(original_submitted_at)
+        end
+        Timecop.return
+      end
     end
 
-    it "returns the existing participation when one already exists" do
-      existing = FactoryBot.create(:assessment_participation,
-                                   assessment: assessment_active,
-                                   user: user,
-                                   tutorial: tutorial)
-      result = described_class.init_participation(assessment_active, user, tutorial)
-      expect(result.id).to eq(existing.id)
+    context "when the existing participation already has task points with points" do
+      let!(:existing) do
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment,
+                          user: user,
+                          tutorial: tutorial)
+      end
+      let!(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+      let!(:task_point) do
+        FactoryBot.create(:assessment_task_point,
+                          assessment_participation: existing, task: task, points: 5)
+      end
+
+      it "returns the existing participation without altering its task points" do
+        result = described_class.init_participation(assessment, user, tutorial)
+        expect(result.id).to eq(existing.id)
+        expect(result.task_points).to include(task_point)
+      end
+
+      it "does not create additional task points" do
+        expect do
+          described_class.init_participation(assessment, user, tutorial)
+        end.not_to change(Assessment::TaskPoint, :count)
+      end
+
+      it "does not create a duplicate participation" do
+        expect do
+          described_class.init_participation(assessment, user, tutorial)
+        end.not_to change(Assessment::Participation, :count)
+      end
+    end
+  end
+
+  describe ".remove_participation" do
+    let!(:user) { FactoryBot.create(:confirmed_user) }
+    let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
+
+    before do
+      allow(user).to receive(:can_grade_in_scope?).and_return(true)
+      Timecop.travel(3.hours.from_now)
+    end
+    after { Timecop.return }
+
+    context "with invalid arguments" do
+      it "raises SubmissionGraderError when participation is nil" do
+        expect do
+          described_class.remove_participation(nil)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      end
     end
 
-    it "does not create a duplicate when participation already exists" do
-      FactoryBot.create(:assessment_participation, assessment: assessment_active, user: user,
-                                                   tutorial: tutorial)
+    context "when the participation has no task points" do
+      let!(:participation) do
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment,
+                          user: user,
+                          tutorial: tutorial)
+      end
 
-      expect do
-        described_class.init_participation(assessment_active, user, tutorial)
-      end.not_to change(Assessment::Participation, :count)
+      it "destroys the participation" do
+        described_class.remove_participation(participation)
+        expect(Assessment::Participation.exists?(participation.id)).to be(false)
+      end
+
+      it "decreases the participation count by 1" do
+        participation
+        expect do
+          described_class.remove_participation(participation)
+        end.to change(Assessment::Participation, :count).by(-1)
+      end
+    end
+
+    context "when the participation has task points" do
+      let!(:participation) do
+        FactoryBot.create(:assessment_participation,
+                          assessment: assessment,
+                          user: user,
+                          tutorial: tutorial)
+      end
+      let!(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+
+      context "with points assigned" do
+        let!(:task_point) do
+          FactoryBot.create(:assessment_task_point,
+                            assessment_participation: participation, task: task, points: 5)
+        end
+
+        it "raises SubmissionGraderError" do
+          expect do
+            described_class.remove_participation(participation)
+          end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                             I18n.t("assessment.task_points.participation_has_task_points"))
+        end
+
+        it "does not destroy the participation" do
+          begin
+            described_class.remove_participation(participation)
+          rescue Assessment::SubmissionGraderService::SubmissionGraderError
+            nil
+          end
+          expect(Assessment::Participation.exists?(participation.id)).to be(true)
+        end
+
+        it "does not destroy the task points" do
+          begin
+            described_class.remove_participation(participation)
+          rescue Assessment::SubmissionGraderService::SubmissionGraderError
+            nil
+          end
+          expect(Assessment::TaskPoint.exists?(task_point.id)).to be(true)
+        end
+      end
+
+      context "with nil points" do
+        let!(:task_point) do
+          FactoryBot.create(:assessment_task_point,
+                            assessment_participation: participation, task: task, points: nil)
+        end
+
+        it "destroys the participation" do
+          begin
+            described_class.remove_participation(participation)
+          rescue Assessment::SubmissionGraderService::SubmissionGraderError
+            nil
+          end
+          expect(Assessment::Participation.exists?(participation.id)).to be(false)
+        end
+
+        it "decreases the participation count by 1" do
+          participation
+          expect do
+            described_class.remove_participation(participation)
+          end.to change(Assessment::Participation, :count).by(-1)
+        end
+
+        it "destroys the task points" do
+          described_class.remove_participation(participation)
+          expect(Assessment::TaskPoint.exists?(task_point.id)).to be(false)
+        end
+      end
+
+      context "with a mix of nil and non-nil points" do
+        let!(:task2) { FactoryBot.create(:assessment_task, assessment: assessment) }
+        let!(:task_point_nil) do
+          FactoryBot.create(:assessment_task_point,
+                            assessment_participation: participation, task: task, points: nil)
+        end
+        let!(:task_point_with_points) do
+          FactoryBot.create(:assessment_task_point,
+                            assessment_participation: participation, task: task2, points: 3)
+        end
+
+        it "raises SubmissionGraderError" do
+          expect do
+            described_class.remove_participation(participation)
+          end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                             I18n.t("assessment.task_points.participation_has_task_points"))
+        end
+
+        it "does not destroy the participation" do
+          begin
+            described_class.remove_participation(participation)
+          rescue Assessment::SubmissionGraderService::SubmissionGraderError
+            nil
+          end
+          expect(Assessment::Participation.exists?(participation.id)).to be(true)
+        end
+      end
     end
   end
 

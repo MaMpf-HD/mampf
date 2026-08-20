@@ -76,4 +76,24 @@ class TutorialPointingTableComponent < ViewComponent::Base
                 ])
     end
   end
+
+  def remove_participated_link(user)
+    @participation = user.assessment_participation_in_assignment(@assignment)
+    return unless @participation
+
+    path = remove_participation_path(
+      participation_id: @participation.id,
+      mode: @mode
+    )
+
+    link_to(path,
+            style: LINK_STYLE,
+            data: { turbo_method: :patch,
+                    turbo_confirm: t("assessment.grading_tutorial.confirm_unsaved_changes") }) do
+      safe_join([
+                  content_tag(:span, "close", class: "material-icons", style: "font-size: 14px;"),
+                  t("assessment.grading_tutorial.remove_participated")
+                ])
+    end
+  end
 end

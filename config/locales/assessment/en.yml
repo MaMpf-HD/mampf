@@ -229,6 +229,8 @@ en:
       submission_id_has_no_assignment: 'Submission %{submission_id} has no associated assignment.'
       assignment_id_has_no_assessment: 'Assignment %{assignment_id} has no associated assessment.'
       participation_id_has_no_assignment: 'Participation %{participation_id} has no associated assignment.'
+      participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
+      participation_removed: 'Participation of student has been revoked.'
     errors:
       feature_not_available: 'Assessment feature is not available.'
       no_assessable: 'Assignment or talk not found.'
@@ -271,6 +273,7 @@ en:
       no_tutorial_badge: 'Not belonging to any tutorial'
       participated: 'participated'
       mark_as_participated: 'Mark as participated'
+      remove_participated: 'Remove participation record'
       confirm_unsaved_changes: 'Unsaved changes in the grading table will be lost. Continue?'
       filter_name: 'Filter by name'
       filter_options:

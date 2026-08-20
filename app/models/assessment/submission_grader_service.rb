@@ -75,8 +75,23 @@ module Assessment
           assessment_id: assessment.id,
           user_id: user.id
         )
-        participation.update!(tutorial_id: tutorial.id) if participation.new_record?
+        if participation.new_record?
+          participation.update!(tutorial_id: tutorial.id,
+                                submitted_at: Time.current)
+        end
         participation
+      end
+
+      def remove_participation(participation)
+        raise_if_errors!(validate_participation_present(participation))
+        task_points = participation.task_points
+        if task_points.empty? || task_points.all? { |tp| tp.points.nil? }
+          task_points.destroy_all
+          participation.destroy!
+        else
+          raise(SubmissionGraderError,
+                I18n.t("assessment.task_points.participation_has_task_points"))
+        end
       end
 
       private
