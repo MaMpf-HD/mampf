@@ -119,12 +119,22 @@ class GroupTileComponent < ViewComponent::Base
     delete_blocker_messages.to_sentence
   end
 
+  # A blocked button keeps its place in the tab order, so its name has to
+  # carry the reason - the tooltip on the wrapper is mouse-only.
+  def delete_disabled_label
+    "#{delete_title}: #{delete_disabled_title}"
+  end
+
   def remove_disabled?
     remove_blocker_message.present?
   end
 
   def remove_disabled_title
     remove_blocker_message
+  end
+
+  def remove_disabled_label
+    "#{remove_title}: #{remove_disabled_title}"
   end
 
   def delete_data

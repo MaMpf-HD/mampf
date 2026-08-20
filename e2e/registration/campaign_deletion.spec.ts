@@ -118,13 +118,19 @@ test.describe("getting out of a registration process", () => {
         page.getByRole("button", { name: "Discard registration process" }),
       ).toBeHidden();
 
-      // the group that was registered for is pinned, the other one is not
+      // the group that was registered for is pinned, the other one is not. A
+      // blocked button keeps its place in the tab order, so its name carries
+      // the reason - the tooltip on the wrapper is mouse-only.
       const pinned = tile(page, "Monday Tutorial");
       await expect(
-        pinned.getByRole("button", { name: "Remove from registration process" }),
+        pinned.getByRole("button", {
+          name: "Remove from registration process: Cannot be removed because students "
+            + "have already registered for it.",
+          exact: true,
+        }),
       ).toBeDisabled();
       await expect(
-        pinned.getByRole("button", { name: "Delete group completely" }),
+        pinned.getByRole("button", { name: "Delete group completely:" }),
       ).toBeDisabled();
       // deleting the group inherits the reason the item cannot leave the process
       await expect(
@@ -192,7 +198,8 @@ test.describe("getting out of a registration process", () => {
         onlyGroup.getByTitle(/Take the process back to draft to change its groups/),
       ).toHaveCount(2);
 
-      await page.getByRole("button", { name: "Back to draft" }).click();
+      // exact, because a blocked button's name now quotes this action as the way out
+      await page.getByRole("button", { name: "Back to draft", exact: true }).click();
       await expect(page.getByText(
         "Registration process taken back to draft. You can change its settings and its groups again.",
       )).toBeVisible();
