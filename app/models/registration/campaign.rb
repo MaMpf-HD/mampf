@@ -52,10 +52,6 @@ module Registration
     # Draft is absent because it is already there, not because it would be unsafe.
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
 
-    # Roster join models that record which campaign materialized an entry.
-    MATERIALIZED_ROSTER_MODELS = ["TutorialMembership", "SpeakerTalkJoin",
-                                  "CohortMembership", "LectureMembership"].freeze
-
     # :prerequisite is deliberately absent - ensure_not_referenced_as_prerequisite
     # runs first and names the depending campaigns.
     DISCARD_BLOCKER_ERRORS = {
@@ -400,9 +396,13 @@ module Registration
                             .where.not(registration_campaign_id: id)
       end
 
+      # Every roster join model carries source_campaign_id, so asking each of
+      # them covers whatever types this campaign's items point at.
       def materialized_roster_entries?
-        MATERIALIZED_ROSTER_MODELS.any? do |model|
-          model.constantize.exists?(source_campaign_id: id)
+        Rosters::Rosterable::TYPES.any? do |type|
+          Rosters::Rosterable.class_for(type)
+                             .roster_join_class
+                             .exists?(source_campaign_id: id)
         end
       end
 

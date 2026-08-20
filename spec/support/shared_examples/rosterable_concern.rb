@@ -33,6 +33,14 @@ RSpec.shared_examples("a rosterable model") do
       expect(rosterable.class.reflect_on_association(rosterable.roster_association_name))
         .to be_present
     end
+
+    # Registration::Campaign asks every roster join model whether it holds an
+    # entry it materialized. A type whose join model lacks the column would be
+    # missed there, and the campaign would look discardable although it is not.
+    it "roster entries record the campaign that materialized them" do
+      expect(rosterable.class.roster_join_class.column_names)
+        .to include("source_campaign_id")
+    end
   end
 
   describe "#allocated_user_ids" do

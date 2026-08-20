@@ -38,6 +38,19 @@ module Rosters
       TYPE_CLASS_MAP[type]&.call
     end
 
+    class_methods do
+      # Override if the association name doesn't follow the pattern
+      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
+      def roster_association_name
+        :"#{name.underscore}_memberships"
+      end
+
+      # The join model that holds this rosterable's roster entries.
+      def roster_join_class
+        reflect_on_association(roster_association_name).klass
+      end
+    end
+
     # Models including this concern must:
     # - Implement #roster_entries (returns ActiveRecord::Relation)
     #
@@ -57,11 +70,7 @@ module Rosters
         :user_id
       end
 
-      # Override this method if the association name doesn't follow the pattern
-      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
-      def roster_association_name
-        :"#{self.class.name.underscore}_memberships"
-      end
+      delegate :roster_association_name, to: :class
 
       enum :self_materialization_mode, SELF_MATERIALIZATION_MODES, prefix: true
 
