@@ -1136,7 +1136,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
     # Both guards look their blocker up with fetch, so a fifth reason added to
     # data_blocker fails here rather than letting a campaign through.
     it "cover every reason the two rules can report" do
-      reported = %i[status registrations allocation prerequisite]
+      reported = [:status, :registrations, :allocation, :prerequisite]
 
       expect(described_class::DISCARD_BLOCKER_ERRORS.keys).to match_array(reported)
       expect(described_class::REVERT_BLOCKER_ERRORS.keys).to match_array(reported)
