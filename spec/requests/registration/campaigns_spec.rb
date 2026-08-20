@@ -641,6 +641,22 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
   end
 
+  describe "DELETE /campaigns/:id when the campaign is gone by the time it is locked" do
+    # set_campaign finds without a lock, so the row can disappear before
+    # with_lock reloads it. Only a stub opens that window in one process.
+    it "says so instead of raising" do
+      campaign = create(:registration_campaign, campaignable: lecture)
+      sign_in editor
+      allow_any_instance_of(Registration::Campaign)
+        .to receive(:with_lock).and_raise(ActiveRecord::RecordNotFound)
+
+      delete(registration_campaign_path(campaign))
+
+      expect(Registration::Campaign.exists?(campaign.id)).to be(true)
+      expect(flash[:alert]).to eq(I18n.t("registration.campaign.not_found"))
+    end
+  end
+
   describe "PATCH /campaigns/:id/revert_to_draft" do
     let!(:campaign) do
       create(:registration_campaign, :open, campaignable: lecture)

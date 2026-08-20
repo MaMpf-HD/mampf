@@ -7,6 +7,13 @@ module Registration
     before_action :set_locale
     authorize_resource class: "Registration::Campaign", except: [:index, :new, :create]
 
+    # set_campaign finds without locking, so a campaign deleted in between
+    # surfaces here, when with_lock reloads it.
+    rescue_from ActiveRecord::RecordNotFound do
+      respond_with_flash(:alert, t("registration.campaign.not_found"),
+                         redirect_path: root_path)
+    end
+
     def current_ability
       @current_ability ||= RegistrationCampaignAbility.new(current_user)
     end
