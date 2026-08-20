@@ -114,8 +114,9 @@ module Registration
       end
 
       def ensure_campaign_is_draft
-        # Discarding the campaign takes its rules with it; only a standalone
-        # deletion has to respect the draft rule.
+        # Set when the campaign is being destroyed and takes its policies
+        # along. ensure_campaign_is_discardable decided that; this guard only
+        # covers deleting a single policy out of an opened campaign.
         return if destroyed_by_association
         return unless registration_campaign && !registration_campaign.draft?
 

@@ -172,8 +172,9 @@ module Registration
       end
 
       def ensure_item_is_removable
-        # When the campaign itself is being discarded, its own guard has already
-        # decided; the item rules would only re-check a campaign that is gone.
+        # Set when the campaign is being destroyed and takes its items along.
+        # ensure_campaign_is_discardable decided that; this guard only covers
+        # taking a single item out of a campaign that stays.
         return if destroyed_by_association
 
         blocker = removal_blocker
