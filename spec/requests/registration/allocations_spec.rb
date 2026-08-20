@@ -7,7 +7,6 @@ RSpec.describe("Registration::Allocations", type: :request) do
   let!(:campaign) { create(:registration_campaign, :closed, campaignable: lecture) }
 
   before do
-    Flipper.enable(:registration_campaigns)
     create(:editable_user_join, user: editor, editable: lecture)
   end
 
