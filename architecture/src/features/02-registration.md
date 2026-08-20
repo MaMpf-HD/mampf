@@ -211,12 +211,7 @@ Campaigns transition through several states to ensure data integrity and fair us
 | Action | Freeze Point | Modification Rules |
 |--------|--------------|-------------------|
 | Add item | Never | Can always add new items. Gives students more options without invalidating existing choices. |
-| Remove item | `processing` | An item can leave its campaign while the campaign is `draft`, `open` or `closed`, as long as nobody registered for it, no allocation has been computed, and (outside `draft`) at least one other item remains. |
-
-Removing an item and deleting the group behind it are two separate actions, see
-"Campaign, Item and Registerable" below. The "at least one other item" rule is
-not a dead end: taking the campaign back to draft lifts it, which is what the
-blocked button says.
+| Remove item | After `draft` | Current implementation only allows item removal while the campaign is still `draft`. |
 
 ##### Capacity Constraints
 
@@ -249,9 +244,7 @@ end
 ```
 
 **Item Removal:**
-- `Registration::Item#removal_blocker` names the first rule that stops a removal
-  (`:status`, `:registrations`, `:allocation`, `:last_item`); the UI shows that
-  reason on the disabled button.
+- Current implementation blocks item removal outside `draft`
 - Alternative future approach: Soft-delete (set `active: false`) instead of destroying
 
 **UI Feedback:**
@@ -1375,110 +1368,6 @@ end
 
 ---
 
-## Campaign, Item and Registerable
-
-Three different things can be deleted, and they mean three different things:
-
-| Object | What it is | What deleting it means |
-|--------|------------|------------------------|
-| `Registration::Campaign` | The registration process: deadline, allocation mode, rules | The process disappears. Its items and policies go with it; its groups stay. |
-| `Registration::Item` | A group's entry in the catalog of one campaign | The group leaves the campaign. The group itself stays and falls back to manual management (`skip_campaigns: true`). |
-| Registerable (`Tutorial`, `Talk`, `Cohort`) | The group itself, with its roster and content | The group is gone, including its roster entries and everything that hangs off it. |
-
-### Discarding a campaign, and taking it back to draft
-
-Deleting a campaign is only refused once it holds something that exists nowhere
-else. Those three data questions live in `#data_blocker` and are asked by two
-rules, so they cannot drift apart:
-
-- no `Registration::UserRegistration` exists, in any status,
-- no allocation has been computed (`last_allocation_calculated_at`,
-  `allocation_decided_at`) and none has been materialized into a roster
-  (`source_campaign_id` on any roster join),
-- no other campaign names it as a prerequisite.
-
-`#discardable?` adds that the status is `draft`, `open` or `closed` (never
-`processing` or `completed`). `#revertible_to_draft?` adds that the status
-*was* `open` or `closed`, reading `status_was` so it can also answer for the
-very update that attempts the step.
-
-The two are offered side by side, because whatever makes throwing the process
-away harmless makes editing it again harmless too. Reverting is the milder
-half: it keeps deadline, mode, rules and groups and merely unfreezes them.
-A draft whose deadline has meanwhile passed simply fails to open again
-(`registration_deadline_future_if_open`), which is where that belongs.
-
-In the UI, a `draft` campaign is "deleted" and an already opened one is
-"discarded"; both run the same code path.
-
-Discarding, reverting to draft and removing an item all decide on "nobody has
-registered" and then write. All three therefore take a row lock on the campaign
-and keep it across check and write. The registration services take the same
-lock before validating, which is what makes the two sides wait for each other;
-the foreign key from `registration_user_registrations` alone does not close the
-window, because it only constrains the insert, not the gap between an
-application-level check and that insert.
-
-A campaign that cannot be discarded also keeps its whole `Lecture` alive:
-`Lecture has_many :registration_campaigns, dependent: :destroy`, and the guard
-aborts the cascade. `LecturesController#destroy` checks the return value of
-`destroy` and names the campaigns as the reason. It deliberately suggests no
-remedy: once registrations or an allocation exist there is none — discarding is
-barred by exactly that data, and finalizing puts the campaign into `completed`,
-which bars deletion for good.
-
-### Removing from the campaign vs. deleting the group
-
-The group tile of a campaign item offers both, with separate confirmations:
-
-- **Remove from registration process** (`DELETE .../items/:id`) destroys only the
-  `Registration::Item`. The `Talk`/`Tutorial`/`Cohort` survives and gets
-  `skip_campaigns: true`, mirroring what discarding a campaign does to its
-  groups. The flag is what unlocks manual roster maintenance: `locked?` asks
-  `campaign_managed?`, which only looks at `skip_campaigns`, not at whether the
-  group is still in a campaign at all.
-
-```admonish warning "A group that left a campaign cannot go back into one"
-Two separate barriers, and the second is the one that matters:
-
-1. `skip_campaigns` is never set back to `false`. It is assigned once at
-   creation time from the section a group was created in, appears in no
-   permitted parameter list, and `can_unskip_campaigns?` has no caller. So
-   `validate_registerable_allows_campaigns` rejects the group. This exists
-   because the flag does double duty: it also decides `campaign_managed?` and
-   hence `locked?`, so releasing a group has to set it or the group would stay
-   locked with no campaign left to manage it.
-2. There is no way to put an *existing* group into a campaign at all. A
-   `Registration::Item` is only ever built while a group is being created, in
-   `apply_registration_context` (see `TutorialsController#create` and its
-   siblings). `Registration::ItemsController#create` accepts a
-   `registerable_id`, but no view links to it.
-
-Reusing a group in a new campaign therefore needs both: separating the flag's
-two meanings (`campaign_managed?` asking whether the group is in a campaign at
-all) *and* a way to attach an existing group. Fixing only the flag changes
-nothing a user can see.
-```
-- **Delete group completely** (`DELETE .../items/:id/with_registerable`) does the
-  same and then destroys the registerable, in one transaction: either both go or
-  neither.
-
-The second action has to clear the item rules *and* the registerable's own
-rules. `Rosters::Rosterable#destruction_blockers` collects those, and the
-type-specific models add to them:
-
-| Type | Blockers on top of "roster not empty" |
-|------|----------------------------------------|
-| `Tutorial` | submissions carrying an upload (`Submission.with_uploads` — manuscript *or* correction) |
-| `Talk` | attached media |
-| `Cohort` | — (members are the roster) |
-
-`in_campaign?` is a blocker too, which is why the full deletion removes the item
-first: inside the transaction the group is no longer campaign-managed, so its
-own guard can decide on the remaining grounds.
-
----
-
 ## Campaign Lifecycle (State Diagram)
 
 ```mermaid
@@ -1486,32 +1375,13 @@ stateDiagram-v2
     [*] --> draft
     draft --> open: open
     open --> closed: close (manual or at deadline)
-    closed --> open: reopen
-    closed --> processing: allocate (preference-based)
-    processing --> open: reopen (resets allocation results)
     closed --> completed: finalize! (optional)
-    processing --> completed: finalize!
-    draft --> [*]: delete
-    open --> [*]: discard
-    closed --> [*]: discard
-    open --> draft: revert_to_draft
-    closed --> draft: revert_to_draft
 
     note right of closed
         All campaigns can be finalized.
         Planning cohorts simply don't propagate to lecture.
     end note
-
-    note right of processing
-        From here on there is no way back to nothing:
-        processing and completed campaigns cannot be discarded.
-    end note
 ```
-
-A campaign returns to `draft` only while nothing of student consequence exists
-— the same condition under which it could be discarded outright
-(`cannot_revert_to_draft`). Once a registration or an allocation is there,
-`open`/`closed` are one-way, and `processing`/`completed` always are.
 
 ## ERD
 
