@@ -229,6 +229,8 @@ de:
       submission_id_has_no_assignment: 'Abgabe %{submission_id} hat keine zugehörige Hausaufgabe'
       assignment_id_has_no_assessment: 'Hausaufgabe %{assignment_id} hat keine zugehörige Bewertung'
       participation_id_has_no_assignment: 'Teilnahme %{participation_id} hat keine zugehörige Hausaufgabe'
+      participation_has_task_points: 'Für diese Teilnahme wurden bereits Punkte eingetragen, daher kann sie nicht gelöscht werden.'
+      participation_removed: 'Die Teilnahme des Studierenden wurde widerrufen.'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
       no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'
@@ -271,6 +273,7 @@ de:
       no_tutorial_badge: 'Keinem Übungsgruppe zugeordnet'
       participated: 'teilgenommen'
       mark_as_participated: 'Als teilgenommen markieren'
+      remove_participated: 'Teilnahme entfernen'
       confirm_unsaved_changes: 'Ungespeicherte Änderungen in der Punktetabelle gehen verloren. Fortfahren?'
       filter_name: 'Name filtern'
       filter_options:

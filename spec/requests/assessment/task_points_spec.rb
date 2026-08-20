@@ -594,13 +594,195 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
 
       context "when user is not found" do
-        it "calls init_participation with nil user and does not raise" do
+        it "does not call init_participation" do
+          expect(Assessment::SubmissionGraderService).not_to receive(:init_participation)
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id,
+                          user_id: 999_999, mode: "tutor" },
+                as: :turbo_stream
+        end
+
+        it "sets an alert flash message" do
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id,
+                          user_id: 999_999, mode: "tutor" },
+                as: :turbo_stream
+          expect(flash[:alert]).to eq(I18n.t("assessment.errors.user_not_found"))
+        end
+
+        it "returns turbo_stream without raising" do
           patch mark_user_as_participated_path,
                 params: { assignment_id: assignment.id,
                           user_id: 999_999, mode: "tutor" },
                 as: :turbo_stream
           expect(response.media_type).to eq(Mime[:turbo_stream])
         end
+      end
+
+      context "when user is not rostered in the lecture" do
+        let!(:unrostered_student) { FactoryBot.create(:confirmed_user) }
+
+        it "does not call init_participation" do
+          expect(Assessment::SubmissionGraderService).not_to receive(:init_participation)
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id,
+                          user_id: unrostered_student.id, mode: "tutor" },
+                as: :turbo_stream
+        end
+
+        it "sets an alert flash message" do
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id,
+                          user_id: unrostered_student.id, mode: "tutor" },
+                as: :turbo_stream
+          expect(flash[:alert]).to eq(I18n.t("assessment.task_points.user_not_rostered"))
+        end
+      end
+    end
+  end
+
+  # PATCH remove_participated
+  describe "PATCH /participations/remove_participated" do
+    before do
+      tutorial.tutors << tutor
+      sign_in tutor
+    end
+
+    let!(:participation) do
+      FactoryBot.create(:assessment_participation,
+                        assessment: assessment,
+                        user: student,
+                        tutorial: tutorial)
+    end
+
+    it "calls SubmissionGraderService.remove_participation" do
+      expect(Assessment::SubmissionGraderService).to receive(:remove_participation)
+        .and_return(participation)
+      patch remove_participation_path(participation),
+            as: :turbo_stream
+    end
+
+    it "returns turbo_stream success" do
+      patch remove_participation_path(participation),
+            as: :turbo_stream
+      expect(response).to have_http_status(:success)
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+    end
+
+    it "sets a notice flash message when removal succeeds" do
+      patch remove_participation_path(participation),
+            as: :turbo_stream
+      expect(flash[:notice]).to eq(I18n.t("assessment.task_points.participation_removed"))
+    end
+
+    context "when remove_participation returns nil" do
+      let(:fake_participation) { double("Assessment::Participation") }
+
+      it "does not set a notice flash message" do
+        patch remove_participation_path(fake_participation),
+              as: :turbo_stream
+        expect(flash[:notice]).to be_nil
+      end
+
+      it "returns turbo_stream response" do
+        patch remove_participation_path(fake_participation),
+              as: :turbo_stream
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+      end
+    end
+
+    context "when the participation has task points with points assigned" do
+      let!(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+
+      before do
+        Timecop.travel(3.hours.from_now)
+        create(:assessment_task_point,
+               assessment_participation: participation, task: task, points: 0)
+      end
+      after { Timecop.return }
+
+      it "does not throw an error and sets an alert flash message with the error text" do
+        expect do
+          patch(remove_participation_path(participation), as: :turbo_stream)
+          expect(flash[:alert]).to eq(
+            I18n.t("assessment.task_points.participation_has_task_points")
+          )
+        end.not_to raise_error
+      end
+
+      it "does not destroy the participation" do
+        begin
+          patch(remove_participation_path(participation), as: :turbo_stream)
+        rescue Assessment::SubmissionGraderService::SubmissionGraderError
+          nil
+        end
+        expect(Assessment::Participation.exists?(participation.id)).to be(true)
+      end
+
+      it "does not destroy the task point" do
+        begin
+          patch(remove_participation_path(participation), as: :turbo_stream)
+        rescue Assessment::SubmissionGraderService::SubmissionGraderError
+          nil
+        end
+        expect(Assessment::TaskPoint.exists?(assessment_participation_id: participation.id))
+          .to be(true)
+      end
+    end
+
+    context "when the participation has task points with nil points" do
+      let!(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+
+      before do
+        Timecop.travel(3.hours.from_now)
+        create(:assessment_task_point,
+               assessment_participation: participation, task: task, points: nil)
+      end
+      after { Timecop.return }
+
+      it "destroys the participation" do
+        patch remove_participation_path(participation), as: :turbo_stream
+        expect(Assessment::Participation.exists?(participation.id)).to be(false)
+      end
+
+      it "destroys the task point" do
+        patch remove_participation_path(participation), as: :turbo_stream
+        expect(Assessment::TaskPoint.exists?(assessment_participation_id: participation.id))
+          .to be(false)
+      end
+    end
+
+    context "when the participation has task points with empty points" do
+      let!(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+
+      before do
+        Timecop.travel(3.hours.from_now)
+        create(:assessment_task_point,
+               assessment_participation: participation, task: task, points: "")
+      end
+      after { Timecop.return }
+
+      it "destroys the participation" do
+        patch remove_participation_path(participation), as: :turbo_stream
+        expect(Assessment::Participation.exists?(participation.id)).to be(false)
+      end
+
+      it "destroys the task point" do
+        patch remove_participation_path(participation), as: :turbo_stream
+        expect(Assessment::TaskPoint.exists?(assessment_participation_id: participation.id))
+          .to be(false)
+      end
+
+      it "sets a notice flash message" do
+        patch remove_participation_path(participation), as: :turbo_stream
+        expect(flash[:notice]).to eq(I18n.t("assessment.task_points.participation_removed"))
+      end
+    end
+
+    context "when the participation has no task points" do
+      it "destroys the participation" do
+        patch remove_participation_path(participation), as: :turbo_stream
+        expect(Assessment::Participation.exists?(participation.id)).to be(false)
       end
     end
   end

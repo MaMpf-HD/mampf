@@ -3,13 +3,14 @@ module Assessment
     before_action :set_assignment_resource,
                   only: [:update_team_multi, :update_team,
                          :update_user, :refresh_submission,
-                         :refresh_user, :mark_as_participated]
+                         :refresh_user, :mark_as_participated, :remove_participated]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update_team_multi,
                                                  :update_team,
                                                  :update_user,
                                                  :refresh_submission,
-                                                 :refresh_user]
+                                                 :refresh_user,
+                                                 :remove_participated]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
@@ -124,6 +125,15 @@ module Assessment
       authorize! :grade, roster_tutorial
       @tutorial = roster_tutorial
       SubmissionGraderService.init_participation(@assessment, user, @tutorial)
+      rerender_submission_table
+    end
+
+    def remove_participated
+      removed_participation = SubmissionGraderService.remove_participation(@participation)
+      if removed_participation
+        flash.now[:notice] =
+          t("assessment.task_points.participation_removed")
+      end
       rerender_submission_table
     end
 
