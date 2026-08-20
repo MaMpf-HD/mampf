@@ -1,5 +1,7 @@
 en:
   search:
+    tag_search: 'Tag Search'
+    term_too_short: 'Please enter at least 2 characters.'
     results: 'Search results for the tag %{search_string}'
     info: >
       Your search for the tag %{search_string} has returned %{count} results.
