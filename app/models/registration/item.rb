@@ -37,6 +37,7 @@ module Registration
                 scope: :registerable_type
               }
 
+    validate :validate_registerable_is_registerable, on: :create
     validate :validate_registerable_allows_campaigns, on: :create
     validate :validate_capacity_reduction, on: :update
     # Prepended so it runs before the dependent user_registrations are gone -
@@ -157,6 +158,10 @@ module Registration
         return false unless destroy
         return true unless delete_registerable
 
+        # Rosters::MaintenanceService locks the group to add a member, so hold
+        # it here too - otherwise one arrives between the blocker check and
+        # the destroy.
+        group.lock!
         # The item is gone inside this transaction, so the group's own guards
         # decide from here on.
         group.registration_items.reset
@@ -181,6 +186,15 @@ module Registration
 
         errors.add(:base, REMOVAL_BLOCKER_ERRORS.fetch(blocker))
         throw(:abort)
+      end
+
+      # Registration::Registerable is what makes a model a campaign target -
+      # a Lecture is a rosterable but not one of these, and the deletion path
+      # would take the whole lecture with it.
+      def validate_registerable_is_registerable
+        return if registerable.nil? || registerable.is_a?(Registration::Registerable)
+
+        errors.add(:registerable, :not_registerable)
       end
 
       # Registerables that have the skip_campaigns flag set are excluded from

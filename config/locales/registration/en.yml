@@ -645,6 +645,8 @@ en:
           attributes:
             registerable_id:
               taken: "This item is already part of a registration process."
+            registerable:
+              not_registerable: "cannot be part of a registration process"
             base:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration process is no longer in draft mode."
