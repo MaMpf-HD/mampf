@@ -70,42 +70,10 @@
           <% end %>
 
           <!-- Watchlist -->
-          <% if from == "watchlist" %>
-            <% if @watchlist.owned_by?(current_user) %>
-              <%= link_to '',
-                          watchlist_entry_path(entry,
-                                              watchlist: @watchlist.id,
-                                              reverse: params[:reverse],
-                                              all: params[:all],
-                                              page: params[:page],
-                                              per: params[:per]),
-                          class: 'btn bi bi-x-circle-fill',
-                          style: 'text-decoration: none;',
-                          data: { toggle: 'tooltip',
-                                  placement: 'bottom',
-                                  confirm: t('watchlist_entry.remove_confirm') },
-                          title: t('watchlist_entry.remove'),
-                          method: :delete %>
-            <% end %>
-          <% else %>
-            <% if !medium.containing_watchlists(current_user).empty? %>
-              <%= link_to '',
-                          watchlist_path(medium.containing_watchlists(current_user).first),
-                          class: 'btn p-2 bi bi-bookmark-fill',
-                          data: { toggle: 'tooltip',
-                                  placement: 'bottom' },
-                          title: t('watchlist_entry.list',
-                                  count: medium.containing_watchlists(current_user).size,
-                                  watchlists: medium.containing_watchlists_names(current_user).join(", ")) %>
-            <% end %>
-            <%= link_to '',
-                        add_medium_to_watchlist_path(medium),
-                        class: 'btn p-2 bi bi-tv-fill',
-                        data: { toggle: 'tooltip',
-                                placement: 'bottom' },
-                        title: t('watchlist.add'),
-                        remote: true %>
-          <% end %>
+          <div id="<%= "watchlist_header_#{medium.id}" %>" class="d-flex align-items-center">
+            <%= render partial: "media/medium/watchlist_header",
+                      locals: { medium: medium, from: local_assigns[:from], entry: local_assigns[:entry]} %>
+          </div>
         </div>
       </div>
       <% if medium.teachable.is_a?(Talk) %>

@@ -14,6 +14,20 @@ RSpec.describe(Rosters::Rosterable) do
     end
   end
 
+  describe "#campaign_managed?" do
+    it "is false for a rosterable that skips campaigns" do
+      expect(create(:tutorial, skip_campaigns: true)).not_to be_campaign_managed
+    end
+
+    it "is true for a rosterable left to the campaigns" do
+      expect(create(:tutorial, skip_campaigns: false)).to be_campaign_managed
+    end
+
+    it "is false for a lecture, which has no skip_campaigns" do
+      expect(create(:lecture)).not_to be_campaign_managed
+    end
+  end
+
   describe "#locked?" do
     let(:rosterable) { create(:tutorial, skip_campaigns: true) }
 
@@ -311,6 +325,38 @@ RSpec.describe(Rosters::Rosterable) do
     end
   end
 
+  describe ".for_lectures" do
+    let(:lecture) { create(:lecture) }
+    let(:other_lecture) { create(:lecture) }
+
+    it "finds tutorials by their lecture" do
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:tutorial, lecture: other_lecture)
+
+      expect(Tutorial.for_lectures([lecture.id])).to contain_exactly(tutorial)
+    end
+
+    it "finds cohorts by their lecture context" do
+      cohort = create(:cohort, context: lecture)
+      create(:cohort, context: other_lecture)
+
+      expect(Cohort.for_lectures([lecture.id])).to contain_exactly(cohort)
+    end
+
+    it "does not mistake a non-lecture cohort context for a lecture" do
+      course = create(:course)
+      create(:cohort, context: course)
+
+      expect(Cohort.for_lectures([course.id])).to be_empty
+    end
+
+    it "finds lectures by their own id" do
+      create(:lecture)
+
+      expect(Lecture.for_lectures([lecture.id])).to contain_exactly(lecture)
+    end
+  end
+
   describe "capacity checks" do
     let(:rosterable) { create(:tutorial) }
 
@@ -353,6 +399,22 @@ RSpec.describe(Rosters::Rosterable) do
       it "returns true when over capacity" do
         create_list(:tutorial_membership, 3, tutorial: rosterable)
         expect(rosterable.full?).to be(true)
+      end
+    end
+
+    describe "#full_for_count?" do
+      it "judges the given count rather than the roster" do
+        create_list(:tutorial_membership, 2, tutorial: rosterable)
+
+        expect(rosterable.full_for_count?(1)).to be(false)
+        expect(rosterable.full_for_count?(2)).to be(true)
+        expect(rosterable.full_for_count?(3)).to be(true)
+      end
+
+      it "returns false if capacity is nil" do
+        allow(rosterable).to receive(:capacity).and_return(nil)
+
+        expect(rosterable.full_for_count?(99)).to be(false)
       end
     end
   end

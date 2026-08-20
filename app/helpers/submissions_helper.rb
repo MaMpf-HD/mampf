@@ -1,5 +1,7 @@
 # Submissions Helper
 module SubmissionsHelper
+  include Rosters::RosterCaching
+
   def cancel_editing_submission_path(submission)
     return cancel_edit_submission_path(submission) if submission.persisted?
 
@@ -102,6 +104,19 @@ module SubmissionsHelper
     return false if submission&.correction
 
     true
+  end
+
+  def enabled_roster_for_lecture?(lecture)
+    roster_cache[:enabled].fetch(lecture.id) do
+      roster_cache[:enabled][lecture.id] = lecture.roster_managed?
+    end
+  end
+
+  def rostered_tutorial_for(lecture)
+    roster_cache[:tutorial].fetch(lecture.id) do
+      roster_cache[:tutorial][lecture.id] =
+        enabled_roster_for_lecture?(lecture) ? current_user.rostered_tutorial_in(lecture) : nil
+    end
   end
 
   def submission_late_color(submission)

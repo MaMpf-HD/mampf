@@ -130,6 +130,31 @@ RSpec.describe(Tutorial, type: :model) do
     end
   end
 
+  describe ".roster_eligible" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+    it "returns true if tutorial has any memberships" do
+      create(:tutorial_membership, tutorial: tutorial)
+      expect(Tutorial.roster_eligible).to include(tutorial)
+    end
+
+    it "returns true if tutorial is in a campaign" do
+      campaign = create(:registration_campaign, campaignable: lecture)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      expect(Tutorial.roster_eligible).to include(tutorial)
+    end
+
+    it "returns true if self_materialization_mode is set and not 'disabled'" do
+      tutorial.update!(self_materialization_mode: "add_and_remove")
+      expect(Tutorial.roster_eligible).to include(tutorial)
+    end
+
+    it "returns false if none of the above applies" do
+      expect(Tutorial.roster_eligible).not_to include(tutorial)
+    end
+  end
+
   describe "#add_user_to_roster!" do
     let(:lecture) { create(:lecture) }
     let(:tutorial) { create(:tutorial, lecture: lecture) }

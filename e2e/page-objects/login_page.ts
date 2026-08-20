@@ -16,6 +16,6 @@ export class LoginPage {
     if (password) {
       await this.page.getByLabel("Password", { exact: true }).fill(password);
     }
-    await this.page.getByRole("button", { name: "Login" }).click();
+    await this.page.getByRole("button", { name: "Login", exact: true }).click();
   }
 }
