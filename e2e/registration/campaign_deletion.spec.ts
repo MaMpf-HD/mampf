@@ -17,7 +17,10 @@ test.describe("getting out of a registration process", () => {
   async function setUpCampaign(
     factory: FactoryBot, teacherId: number, tutorialTitles: string[],
   ): Promise<Setup> {
-    const lecture = await factory.create("lecture", [], { teacher_id: teacherId });
+    const lecture = await factory.create("lecture", [], {
+      teacher_id: teacherId,
+      locale: "en",
+    });
     const campaign = await factory.create(
       "registration_campaign", ["first_come_first_served"],
       {
