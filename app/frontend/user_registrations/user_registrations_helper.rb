@@ -31,6 +31,18 @@ module UserRegistrationsHelper
         icon: "description",
         cell_class: "text-center",
         field: ->(rosterable) { rosterable.description } }
+    ],
+    "Exam" => [
+      { header: "basics.date",
+        icon: "event",
+        field: lambda { |rosterable|
+          rosterable.date && I18n.l(rosterable.date,
+                                    format: :student_registration)
+        } },
+      { header: "basics.location",
+        cell_class: "text-start fw-semibold",
+        icon: "location",
+        field: ->(rosterable) { rosterable.location } }
     ]
   }.freeze
 
@@ -45,7 +57,9 @@ module UserRegistrationsHelper
   end
 
   def student_registration_instruction(campaign, items = [])
-    key = if campaign.first_come_first_served?
+    key = if campaign.exam_campaign?
+      "first_come_first_served_instruction_exam"
+    elsif campaign.first_come_first_served?
       "first_come_first_served_instruction"
     else
       "preference_instruction"
@@ -198,7 +212,7 @@ module UserRegistrationsHelper
     # Rows with a blank value are dropped so we never render a lone icon with
     # no data next to it (e.g. a talk without a description or dates).
     def metadata_rows_for(type, rosterable)
-      TABLE_CONFIG[type].filter_map do |col|
+      TABLE_CONFIG.fetch(type).filter_map do |col|
         value = col[:field].call(rosterable)
         next if value.blank?
 

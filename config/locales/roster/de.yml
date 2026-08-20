@@ -1,6 +1,7 @@
 de:
   roster:
-    title: 'Teilnehmende/Gruppen'
+    title: 'Teilnehmende'
+    participants: 'Teilnehmende'
     status: 'Status'
     group_category:
       tutorial: "Tutorium"
@@ -55,7 +56,7 @@ de:
     lifecycle_help:
       title: "Lebenszyklus"
       toggle: "Lebenszyklus"
-      intro: "Folge diesen Schritten, um Teilnehmerlisten zu erstellen und zu verwalten."
+      intro: "Folge diesen Schritten, um Teilnahmelisten zu erstellen und zu verwalten."
       phase1:
         title: "Gruppenerstellung"
         description_html: "Erstelle Deine %{link} über das Dashboard unten."
@@ -66,7 +67,7 @@ de:
         link_text: "Einschreibemethoden"
       phase3:
         title: "Verwaltung"
-        description_html: "Verwalte Deine Teilnehmerlisten während des Semesters manuell. Details unter %{link}."
+        description_html: "Verwalte Deine Teilnahmelisten während des Semesters manuell. Details unter %{link}."
         link_text: "Verwaltung"
     roster_help:
       title: "Einschreibemethoden"
@@ -79,16 +80,16 @@ de:
         intro: "Verschiedene Gruppentypen dienen unterschiedlichen Zwecken in Deiner Veranstaltungsstruktur."
         tutorials:
           title: "Tutorien"
-          description: "Wöchentliche Übungsgruppen. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
+          description: "Wöchentliche Übungsgruppen. Studierende werden automatisch in die Teilnahmeliste der Veranstaltung übernommen."
         talks:
           title: "Vorträge"
-          description: "Seminarvorträge. Vortragende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
+          description: "Seminarvorträge. Vortragende werden automatisch in die Teilnahmeliste der Veranstaltung übernommen."
         flexible:
           title: "Flexible Gruppen"
-          description: "Für verschiedene Zwecke wie Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge), Bedarfserhebung, Wartelisten, Ergänzungsgruppen (z.B. 'Wiederholende') oder Sonderprojekte. Du kannst selbst festlegen, ob Mitglieder automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
+          description: "Für verschiedene Zwecke wie Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge), Bedarfserhebung, Wartelisten, Ergänzungsgruppen (z.B. 'Wiederholende') oder Sonderprojekte. Du kannst selbst festlegen, ob Mitglieder automatisch in die Teilnahmeliste der Veranstaltung übernommen werden sollen."
         superset_principle:
           title: "Obermengenprinzip"
-          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
+          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnahmeliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
         sticky_enrollment:
           title: "Feste Einschreibung"
           description: "Sobald eine Person in der Veranstaltung eingeschrieben ist (über Tutorium, Vortrag oder Gruppe mit Einschreibung), bleibt sie eingeschrieben, auch wenn sie später alle Gruppen verlässt. So bleibt dokumentiert, wer zu irgendeinem Zeitpunkt eingeschrieben war. Um eine Person vollständig zu entfernen, verwende die Entfernen-Aktion im Tab 'Eingeschriebene'."
@@ -279,6 +280,7 @@ de:
       active_campaign_exists: 'Selbsteinschreibung kann nicht aktiviert werden, da bereits ein aktives Anmeldeverfahren läuft.'
       capacity_exceeded: "Gruppenkapazität überschritten."
       lecture_has_other_roster_entry: 'Du bist bereits in einer anderen Gruppe dieser Veranstaltung eingeschrieben. Bitte verlasse zuerst die andere Gruppe, bevor Du dieser beitrittst.'
+      grading_data_present: "Für diese Person liegt hier bereits eine Bewertung vor. Lösche sie zuerst, wenn Du die Person wirklich entfernen oder verschieben willst."
       target_not_found: "Zielgruppe nicht gefunden."
       target_locked: "Zielgruppe ist gesperrt."
       user_not_found: "Studierende/r nicht gefunden."
@@ -287,6 +289,7 @@ de:
       self_add_not_allowed: "Die Selbstanmeldung zu diesem %{type} ist für Studierende nicht erlaubt."
       self_remove_not_allowed: "Das selbstständige Verlassen dieses %{type} ist für Studierende nicht erlaubt."
       campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
+      cannot_delete: "Kann nicht gelöscht werden."
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
       lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
@@ -309,6 +312,9 @@ de:
       user_removed: "%{user} erfolgreich entfernt."
     self_enrollment:
       no_registration_options: "Derzeit sind keine Tutorien oder Gruppen zur Anmeldung verfügbar."
+
+    no_participants_yet: 'Es haben sich noch keine Teilnehmer registriert.'
+    registered: 'Registriert'
     mailer:
       end_mail_html: |
         <p>Mit freundlichen Grüßen,<br>Dein MaMpf-Team</p>

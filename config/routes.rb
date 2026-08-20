@@ -121,6 +121,25 @@ Rails.application.routes.draw do
 
   resources :assignments, only: [:new, :edit, :create, :update, :destroy]
 
+  # assessment routes
+  namespace :assessment do
+    resources :assessments, only: [:index, :show, :update] do
+      resources :tasks, except: [:index] do
+        member do
+          get :cancel
+        end
+        collection do
+          post :reorder
+        end
+      end
+      resources :grade_schemes, only: [:new, :create, :edit, :update, :destroy] do
+        member do
+          patch :apply
+        end
+      end
+    end
+  end
+
   # chapters routes
 
   get "chapters/:id/list_sections",
@@ -152,6 +171,16 @@ Rails.application.routes.draw do
   # divisions routes
 
   resources :divisions, except: [:show]
+
+  # exam routes
+  resources :exams, only: [:index, :new, :show, :edit, :create, :update,
+                           :destroy] do
+    member do
+      post "participants", action: :add_participant
+      delete "participants/:user_id", action: :remove_participant,
+                                      as: :remove_participant
+    end
+  end
 
   # feedback routes
   resources :feedbacks, only: [:new, :create]
@@ -325,6 +354,33 @@ Rails.application.routes.draw do
         post "members", action: :add_member, as: :add_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
+      end
+    end
+
+    namespace :student_performance, path: "performance" do
+      resources :records, only: [:index, :show] do
+        collection do
+          post :recompute
+        end
+      end
+
+      resource :rules, only: [:edit, :update] do
+        patch :preview, on: :collection
+      end
+
+      resource :evaluator, only: [], controller: "evaluator" do
+        get :single_proposal, on: :member
+      end
+
+      resources :achievements,
+                only: [:index, :new, :show, :create, :update, :destroy]
+
+      resources :certifications, only: [:index, :create, :update] do
+        collection do
+          post :bulk_accept
+          post :bulk_reevaluate
+          post :bulk_confirm_manual
+        end
       end
     end
 

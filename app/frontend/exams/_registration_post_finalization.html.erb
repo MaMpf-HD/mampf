@@ -1,0 +1,72 @@
+<hr class="my-4">
+
+<div class="small text-muted d-flex align-items-start gap-2 mb-3">
+  <i class="bi bi-info-circle"></i>
+  <span><%= t("assessment.registration_tab.post_finalization_hint") %></span>
+</div>
+
+<%= render "exams/participants_table",
+           entries: exam.exam_roster_entries.includes(:user)
+                        .joins(:user).merge(User.order(:name)),
+           editable: true,
+           exam: exam %>
+
+<% not_on_roster_entries = local_assigns.fetch(:not_on_roster_entries) %>
+
+<% if not_on_roster_entries.any? %>
+  <h6 class="text-muted fw-semibold small text-uppercase mt-4 mb-2">
+    <i class="bi bi-person-slash me-1"></i>
+    <%= t("assessment.registration_tab.not_on_roster_heading") %>
+
+    <span class="badge bg-secondary ms-1">
+      <%= not_on_roster_entries.count %>
+    </span>
+  </h6>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th><%= t("basics.name") %></th>
+          <th><%= t("basics.email") %></th>
+          <th><%= t("registration.user_registration.reason") %></th>
+          <th class="text-end"><%= t("basics.actions") %></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% not_on_roster_entries.each do |entry| %>
+          <tr>
+            <td><%= entry[:user].name %></td>
+            <td class="text-muted"><%= entry[:user].email %></td>
+            <td><%= entry[:reason_label] %></td>
+
+            <td class="text-end">
+              <%= button_to participants_exam_path(exam),
+                            method: :post,
+                            params: { user_id: entry[:user].id },
+                            class: "btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1",
+                            title: t("assessment.registration_tab.add_to_participants_tooltip"),
+                            aria: {
+                              label: t("assessment.registration_tab.add_to_participants_tooltip")
+                            },
+                            form: {
+                              class: "d-inline-block mb-0",
+                              data: {
+                                turbo_confirm: t(
+                                  "assessment.registration_tab.add_to_participants_confirm"
+                                )
+                              }
+                            } do %>
+                <i class="bi bi-plus-lg"></i>
+
+                <span>
+                  <%= t("assessment.registration_tab.add_to_participants_button") %>
+                </span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

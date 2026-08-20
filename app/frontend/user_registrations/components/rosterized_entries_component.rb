@@ -179,6 +179,8 @@ class RosterizedEntriesComponent < ViewComponent::Base
     end
 
     def entry_participants_row(rosterable)
+      return unless rosterable.respond_to?(:members)
+
       {
         icon: "bi-people",
         label: t("basics.participants"),

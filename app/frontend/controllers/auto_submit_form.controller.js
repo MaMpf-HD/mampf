@@ -6,6 +6,11 @@ export default class extends Controller {
   static targets = ["form", "searchInput", "clearButton", "filterInput"];
   static values = { delay: Number };
 
+  submit(event) {
+    const form = event.target.form || this.element;
+    form?.requestSubmit();
+  }
+
   connect() {
     if (!this.hasFormTarget || !this.hasSearchInputTarget) return;
 

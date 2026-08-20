@@ -2,6 +2,10 @@ class Tutorial < ApplicationRecord
   include Registration::Registerable
   include Rosters::Rosterable
 
+  def self.displaces_sibling_assignment?
+    true
+  end
+
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy

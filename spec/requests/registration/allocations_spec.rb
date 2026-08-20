@@ -18,6 +18,25 @@ RSpec.describe("Registration::Allocations", type: :request) do
         get registration_campaign_allocation_path(campaign)
         expect(response).to have_http_status(:success)
       end
+
+      it "renders exam workspace content without nesting the workspace container id" do
+        exam = create(:exam, :with_date, lecture: lecture)
+        exam_campaign = exam.registration_campaign
+        exam_campaign.update!(status: :closed)
+
+        get registration_campaign_allocation_path(
+          exam_campaign,
+          frame_id: Registration::Campaign.exam_workspace_frame_id(exam)
+        ), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(
+          %(target="#{Registration::Campaign.exam_workspace_frame_id(exam)}")
+        )
+        expect(response.body.scan(/id="#{Registration::Campaign.exam_workspace_frame_id(exam)}"/).size)
+          .to eq(0)
+        expect(response.body).to include("data-controller=\"dismiss-workspace\"")
+      end
     end
 
     context "as a student" do
@@ -58,8 +77,8 @@ RSpec.describe("Registration::Allocations", type: :request) do
         get registration_campaign_allocation_path(campaign)
         expect(response).to have_http_status(:success)
         expect(response.body).to include(I18n.t("registration.allocation.conflicts.title"))
-        expect(response.body).to include(conflicting_student.name)
-        expect(response.body).to include(tutorial.title)
+        expect(response.body).to include(ERB::Util.html_escape(conflicting_student.name))
+        expect(response.body).to include(ERB::Util.html_escape(tutorial.title))
       end
     end
 
@@ -128,6 +147,8 @@ RSpec.describe("Registration::Allocations", type: :request) do
         get registration_campaign_allocation_path(campaign)
 
         expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to include(I18n.t("registration.allocation.perf_evidence.no_cert"))
         expect(response.body)
           .to include(I18n.t("registration.user_registration.actions.defer_due_to_blocker"))
         expect(response.body)
