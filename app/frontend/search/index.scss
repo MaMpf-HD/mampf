@@ -1,0 +1,20 @@
+.tag-search-results-wrapper {
+  position: relative;
+  min-height: 1.5rem;
+
+  turbo-frame#tag-search-results[busy] {
+    visibility: hidden;
+  }
+
+  .tag-search-spinner {
+    display: none;
+  }
+
+  // Show a spinner over the results while a search is being performed.
+  &:has(turbo-frame#tag-search-results[busy]) .tag-search-spinner {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+  }
+}
