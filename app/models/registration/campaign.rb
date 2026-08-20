@@ -51,8 +51,6 @@ module Registration
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
 
-    # :prerequisite is deliberately absent - ensure_not_referenced_as_prerequisite
-    # runs first and names the depending campaigns.
     DISCARD_BLOCKER_ERRORS = {
       status: :cannot_delete_active_campaign,
       registrations: :cannot_discard_with_registrations,
@@ -496,6 +494,10 @@ module Registration
       end
 
       def ensure_campaign_is_discardable
+        # The one blocker without an entry is :prerequisite, and it never gets
+        # here: the before_destroy callbacks are all prepended, so the one
+        # declared after this - ensure_not_referenced_as_prerequisite - runs
+        # first and aborts with a message naming the campaigns in the way.
         error = DISCARD_BLOCKER_ERRORS[discard_blocker]
         return if error.nil?
 
