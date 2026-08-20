@@ -10,17 +10,20 @@ class SearchController < ApplicationController
 
   def index
     @search_string = params.permit(:search)[:search] if turbo_frame_request?
-    return if @search_string.blank?
 
-    if @search_string.length > 1
-      @tags = Tag.search_by_title(@search_string)
+    if @search_string.present?
+      if @search_string.length > 1
+        @tags = Tag.search_by_title(@search_string)
 
-      # Determine which of the found tags can be seen by the user
-      # (taking into account their preferences and subscribed courses).
-      @filtered_tags = current_user.filter_tags(@tags)
-    else
-      @search_too_short = true
+        # Determine which of the found tags can be seen by the user
+        # (taking into account their preferences and subscribed courses).
+        @filtered_tags = current_user.filter_tags(@tags)
+      else
+        @search_too_short = true
+      end
     end
+
+    render partial: "tag_search_frame" if turbo_frame_request?
   end
 
   private

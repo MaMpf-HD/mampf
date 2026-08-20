@@ -38,18 +38,7 @@
                                         auto_submit_form_target: "searchInput" } %>
           <% end %>
           <div class="tag-search-results-wrapper">
-            <%= turbo_frame_tag "tag-search-results", target: "_top" do %>
-              <% if @search_too_short %>
-                <div class="text-danger small">
-                  <%= t('search.term_too_short') %>
-                </div>
-              <% elsif @tags %>
-                <%= render partial: 'search/tag_search_results',
-                           locals: { tags: @tags,
-                                     filtered_tags: @filtered_tags,
-                                     search_string: @search_string } %>
-              <% end %>
-            <% end %>
+            <%= render partial: 'search/tag_search_frame' %>
             <div class="tag-search-spinner">
               <div class="spinner-border spinner-border-sm text-secondary" role="status">
                 <span class="visually-hidden"><%= t('basics.loading') %></span>
