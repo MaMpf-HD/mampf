@@ -298,7 +298,7 @@ en:
     messages:
       updated: "Settings updated."
       user_moved: "%{user} moved to %{target}."
-      user_moved_between_tutorials: "%{user} moved to %{target}. Work already handed in to %{source} stays there and is corrected there."
+      user_moved_between_tutorials: "%{user} moved to %{target}. Work already handed in to %{source} stays there, unless it is edited again before the deadline."
       user_not_moved: "%{user} was not moved: they are already in %{target}, or no longer in the group you moved them from."
       user_added: "%{user} added to %{group} successfully."
       user_added_to: "%{user} added to %{group}."
@@ -383,8 +383,9 @@ en:
           <strong>%{new_rosterable_title}</strong>.
         </p>
         <p>
-          Work already handed in to you stays with you and is corrected by you. From the
-          next submission on, %{participant_name} counts in %{new_rosterable_title}.
+          Work already handed in to you stays with you and is corrected by you, unless
+          it is edited again before the deadline. From the next submission on,
+          %{participant_name} counts in %{new_rosterable_title}.
         </p>
       roster_participant_left_group_email_body: |
         Hello %{name},
@@ -392,8 +393,9 @@ en:
         %{participant_name} has left your group "%{old_rosterable_title}" in the lecture
         "%{lecture_title}" and is now in "%{new_rosterable_title}".
 
-        Work already handed in to you stays with you and is corrected by you. From the
-        next submission on, %{participant_name} counts in "%{new_rosterable_title}".
+        Work already handed in to you stays with you and is corrected by you, unless it
+        is edited again before the deadline. From the next submission on,
+        %{participant_name} counts in "%{new_rosterable_title}".
       roster_participant_left_group_email_subject: '%{participant_name} has left group %{rosterable_title} in %{lecture_title}'
       roster_participant_joined_group_email_body_html: |
         <p>Hello %{name},</p>
@@ -404,7 +406,8 @@ en:
         </p>
         <p>
           Work already handed in stays with %{old_rosterable_title} and is corrected
-          there. From the next submission on, %{participant_name} counts with you.
+          there, unless it is edited again before the deadline. From the next
+          submission on, %{participant_name} counts with you.
         </p>
       roster_participant_joined_group_email_body: |
         Hello %{name},
@@ -413,7 +416,8 @@ en:
         "%{lecture_title}", previously in "%{old_rosterable_title}".
 
         Work already handed in stays with "%{old_rosterable_title}" and is corrected
-        there. From the next submission on, %{participant_name} counts with you.
+        there, unless it is edited again before the deadline. From the next submission
+        on, %{participant_name} counts with you.
       roster_participant_joined_group_email_subject: '%{participant_name} is new in group %{rosterable_title} in %{lecture_title}'
       roster_removed_from_lecture_email_body_html: |
         <p>Hello %{name},</p>
