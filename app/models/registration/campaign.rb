@@ -494,6 +494,10 @@ module Registration
       end
 
       def ensure_campaign_is_discardable
+        # Also reached from Lecture's dependent: :destroy, which holds no lock
+        # of its own - without this the decision can be stale by the time the
+        # rows go.
+        lock!
         blocker = discard_blocker
         return if blocker.nil?
 
