@@ -12,6 +12,8 @@ test.describe("lecture content for an editor who is not subscribed", () => {
       organizational_concept: "<p>Exercise sheets appear on Wednesdays</p>",
     });
 
+    expect(await lecture.__call("subscribed_by?", user)).toBe(false);
+
     await page.goto(`/lectures/${lecture.id}`);
     await page.getByRole("link", { name: "General Information" }).click();
 
@@ -22,6 +24,8 @@ test.describe("lecture content for an editor who is not subscribed", () => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: user.id,
     });
+
+    expect(await lecture.__call("subscribed_by?", user)).toBe(false);
 
     await page.goto(`/lectures/${lecture.id}`);
     await page.getByRole("link", { name: "Course" }).click();
