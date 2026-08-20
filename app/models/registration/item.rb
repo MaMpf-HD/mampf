@@ -52,8 +52,6 @@ module Registration
       last_item: :cannot_remove_last_item
     }.freeze
 
-    # A running campaign must keep at least one item to stay registerable;
-    # otherwise nothing is lost while no registration points at this one.
     def removal_blocker
       campaign = registration_campaign
       return :status unless campaign.status.in?(REMOVABLE_CAMPAIGN_STATUSES)
@@ -72,11 +70,9 @@ module Registration
       errors.generate_message(:base, error)
     end
 
-    # Takes this item out of its campaign and - if requested - deletes the group
-    # behind it. Either both go or neither. The lock is what keeps a parallel
-    # registration from invalidating the decision after it was made, and the
-    # rollback needs with_lock to open the transaction, so do not call this
-    # from inside another one.
+    # The lock keeps a parallel registration from invalidating the decision
+    # after it was made, and the rollback needs with_lock to open the
+    # transaction - so do not call this from inside another one.
     def remove(delete_registerable: false)
       group = registerable
       removed = false

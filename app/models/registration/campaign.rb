@@ -49,7 +49,6 @@ module Registration
 
     DISCARDABLE_STATUSES = ["draft", "open", "closed"].freeze
 
-    # Draft is absent because it is already there, not because it would be unsafe.
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
 
     # :prerequisite is deliberately absent - ensure_not_referenced_as_prerequisite
@@ -117,9 +116,8 @@ module Registration
                         .exists?(registration_items: { registerable_type: group_type })
     end
 
-    # Throws away campaign, items and policies and hands the groups back to
-    # manual management. Stays available after opening because up to the first
-    # registration the campaign records nothing that exists nowhere else.
+    # Still available after opening because until the first registration the
+    # campaign records nothing that exists nowhere else.
     def discardable?
       discard_blocker.nil?
     end
@@ -130,8 +128,6 @@ module Registration
       data_blocker
     end
 
-    # The milder half of discarding: unfreezes configuration and groups instead
-    # of throwing them away, and asks the same of the data.
     def revertible_to_draft?
       revert_blocker.nil?
     end
@@ -382,7 +378,6 @@ module Registration
 
     private
 
-      # Shared by discarding and reverting so the two rules cannot drift apart.
       def data_blocker
         return :registrations if user_registrations.exists?
         return :allocation if allocation_present?
@@ -396,8 +391,7 @@ module Registration
                             .where.not(registration_campaign_id: id)
       end
 
-      # Every roster join model carries source_campaign_id, so asking each of
-      # them covers whatever types this campaign's items point at.
+      # Asking every type covers whatever this campaign's items point at.
       def materialized_roster_entries?
         Rosters::Rosterable::TYPES.any? do |type|
           Rosters::Rosterable.class_for(type)
