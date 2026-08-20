@@ -4,8 +4,9 @@ module UserRegistrations
   class LecturePreferenceEditService < Handler
     def update!(pref_items)
       ActiveRecord::Base.transaction do
-        # Registering locks the campaign so that discarding or reverting it
-        # cannot decide on a state this transaction is about to change.
+        # The validation below reads the campaign's status; the inserts trust
+        # it. Discarding the campaign or taking it back to draft would land in
+        # that gap, so both sides take this lock and whoever comes second waits.
         @campaign.lock!
         errors = validate_update(pref_items)
         return Result.new(false, errors) unless errors.empty?
