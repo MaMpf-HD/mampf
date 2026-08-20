@@ -187,7 +187,7 @@ en:
         Only the last 25 recently updated media are shown.
         You can find more by doing a %{media_search} or in your
         %{profile}.
-      media_search: 'Search media'
+      media_search: 'Media Search'
       user_profile: 'user profile'
       no_media: >
         You are not listed as an editor for any media.
@@ -1033,7 +1033,7 @@ en:
       sort: 'Type'
       edited_by: 'edited by %{editors}'
       publish: 'Publish Medium'
-      media_search: 'Search Media'
+      media_search: 'Media Search'
       create: 'Create Medium'
       edit: 'Edit Medium'
       edit_tags: 'Edit Tags'
@@ -2019,7 +2019,7 @@ en:
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
     my_talks: My talks
-    media_search: Search media
+    media_search: Media Search
     my_data: What data is stored about me?
     data_explanation: >
       We store some data about you at MaMpf to enable you to use the platform.
@@ -3322,6 +3322,7 @@ en:
     home: "Home"
     clear: "Clear"
     close: "Close"
+    loading: "Loading..."
     capacity: 'Capacity'
     division: 'Division'
     location: 'Location'
@@ -3770,12 +3771,8 @@ en:
     quiz_has_error: >
       This quiz has an error.
     no_remark: 'There is no remark with this id.'
-    no_search_term: >
-      You have searched without a search term. That does not work.
     search_only_js: >
       Directly accessing search results is not possible. Please use the search field.
-    search_term_short: >
-      Your search term should have at least two letters.
     no_section: 'There is no section with this id.'
     no_tag: 'There is no tag with this id.'
     no_removal_rights: >
