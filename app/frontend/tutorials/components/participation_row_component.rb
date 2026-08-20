@@ -10,6 +10,7 @@ class ParticipationRowComponent < ViewComponent::Base
     @user ||= @participation&.user
     if @mode == "tutor"
       @tutorial = tutorial
+      @lecture = @tutorial.lecture
     elsif @mode == "teacher"
       @tutorial = tutorial
       @lecture = assignment.lecture
@@ -29,7 +30,7 @@ class ParticipationRowComponent < ViewComponent::Base
 
   # Determines if grading is allowed for the current assignment
   def allow_grading?
-    !@assignment.active?
+    @assignment.grading_open?
   end
 
   def extract_task_points_participation(assessment_task)

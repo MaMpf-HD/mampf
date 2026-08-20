@@ -6,7 +6,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
   let(:tutor) { create(:confirmed_user) }
   let(:student) { create(:confirmed_user) }
 
-  let(:lecture) { create(:lecture, teacher: teacher) }
+  let(:lecture) { create(:lecture, teacher: teacher, submission_grace_period: 70) }
   let(:tutorial) { create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: lecture) }
 
   let!(:assignment) do
@@ -114,16 +114,24 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     before do
       allow(vc_test_controller).to receive(:current_user).and_return(tutor)
     end
-    context "when assignment is active" do
-      before { allow(assignment).to receive(:active?).and_return(true) }
+    context "before deadline" do
+      it "returns false" do
+        expect(component_tutor.allow_grading?).to eq(false)
+      end
+    end
+
+    context "after deadline and before grace period" do
+      before { Timecop.travel(2.hours.from_now) }
+      after { Timecop.return }
 
       it "returns false" do
         expect(component_tutor.allow_grading?).to eq(false)
       end
     end
 
-    context "when assignment is not active" do
-      before { allow(assignment).to receive(:active?).and_return(false) }
+    context "after grace period" do
+      before { Timecop.travel(3.hours.from_now) }
+      after { Timecop.return }
 
       it "returns true" do
         expect(component_tutor.allow_grading?).to eq(true)

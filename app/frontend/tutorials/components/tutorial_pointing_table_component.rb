@@ -10,6 +10,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
     if @mode == "tutor"
       @tutorial = tutorial
+      @lecture = @tutorial.lecture
       @stack = assignment&.submissions&.where(tutorial: @tutorial)&.proper
                          &.order(:last_modification_by_users_at)
       @non_submitters = assignment&.non_submitters_in_tutorial(@tutorial)

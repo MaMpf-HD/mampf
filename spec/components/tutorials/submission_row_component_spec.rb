@@ -7,7 +7,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   let(:student) { create(:confirmed_user) }
   let(:student2) { create(:confirmed_user) }
 
-  let(:lecture) { create(:lecture, teacher: teacher) }
+  let(:lecture) { create(:lecture, teacher: teacher, submission_grace_period: 70) }
   let(:tutorial) { create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: lecture) }
   let!(:assignment) do
     create(:assignment, :with_lecture, lecture: lecture, deadline: 1.hour.from_now)
@@ -17,7 +17,8 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   end
 
   let(:submission) do
-    create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
+    create(:submission, assignment: assignment, tutorial: tutorial, users: [student],
+                        created_at: assignment.deadline)
   end
   let(:late_rejected_submission) do
     create(:submission, assignment: assignment, tutorial: tutorial, users: [student2],
@@ -87,16 +88,24 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   end
 
   describe "#allow_grading?" do
-    context "when assignment is active" do
-      before { allow(assignment).to receive(:active?).and_return(true) }
-
+    context "before deadline" do
       it "returns false regardless of submission" do
-        expect(component_late_rejected.allow_grading?).to eq(false)
+        expect(component_tutor.allow_grading?).to eq(false)
       end
     end
 
-    context "when assignment is not active" do
-      before { allow(assignment).to receive(:active?).and_return(false) }
+    context "after deadline and before grace period" do
+      before { Timecop.travel(2.hours.from_now) }
+      after { Timecop.return }
+
+      it "returns false" do
+        expect(component_tutor.allow_grading?).to eq(false)
+      end
+    end
+
+    context "after grace period" do
+      before { Timecop.travel(3.hours.from_now) }
+      after { Timecop.return }
 
       context "and submission is valid for pointing" do
         it "returns true" do
@@ -107,14 +116,6 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       context "and submission is not valid for pointing" do
         it "returns false" do
           expect(component_late_rejected.allow_grading?).to eq(false)
-        end
-      end
-
-      context "and submission is nil" do
-        let(:submission) { nil }
-
-        it "returns nil/falsey" do
-          expect(component_tutor.allow_grading?).to be_falsey
         end
       end
     end
