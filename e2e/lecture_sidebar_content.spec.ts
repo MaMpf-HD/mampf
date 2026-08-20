@@ -1,9 +1,8 @@
 import { expect, test } from "./_support/fixtures";
 
-// #1231: the sidebar enables these entries for anyone who may edit the lecture,
-// but LectureAbility grants them to subscribers only. An editor who never
-// subscribed to their own lecture is redirected away, the redirect carries no
-// matching frame, and Turbo writes "Content missing" into the sidebar's target.
+/**
+ * See regression #1231.
+ */
 test.describe("lecture content for an editor who is not subscribed", () => {
   test("opens the general information", async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
