@@ -1,0 +1,6 @@
+<% announcements_html = site_announcements_html %>
+<% if announcements_html.present? %>
+  <div class="alert alert-warning" id="site-announcement-banner" role="alert">
+    <%= sanitize(announcements_html) %>
+  </div>
+<% end %>
