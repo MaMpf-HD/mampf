@@ -115,8 +115,6 @@ module Registration
                         .exists?(registration_items: { registerable_type: group_type })
     end
 
-    # Still available after opening because until the first registration the
-    # campaign records nothing that exists nowhere else.
     def discardable?
       discard_blocker.nil?
     end
@@ -131,8 +129,9 @@ module Registration
       revert_blocker.nil?
     end
 
-    # The validation passes the previous status, because by then the record
-    # already carries the one it is trying to reach.
+    # from_status is for cannot_revert_to_draft: while that validation runs,
+    # the record already carries :draft, so it has to ask about the status it
+    # is leaving rather than the one it holds.
     def revert_blocker(from_status = status)
       return :status unless from_status.in?(REVERTIBLE_STATUSES)
 
