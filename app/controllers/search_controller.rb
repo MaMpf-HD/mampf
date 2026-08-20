@@ -9,7 +9,7 @@ class SearchController < ApplicationController
   end
 
   def index
-    @search_string = params.permit(:search)[:search]
+    @search_string = params.permit(:search)[:search] if turbo_frame_request?
     return if @search_string.blank?
 
     if @search_string.length > 1
