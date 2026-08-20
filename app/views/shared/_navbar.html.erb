@@ -1,6 +1,8 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
 <%= vite_stylesheet_tag "styles/navbar.scss" %>
 
+<%= render partial: "shared/announcement_banner" %>
+
 <%= render partial: "feedbacks/form/modal" %>
 
 <div class="navbars-container">
