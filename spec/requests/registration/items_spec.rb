@@ -169,6 +169,16 @@ RSpec.describe("Registration::Items", type: :request) do
 
           expect(tutorial.reload.skip_campaigns).to be(true)
         end
+
+        it "reports a group that cannot be saved instead of raising" do
+          tutorial.update_columns(title: "") # rubocop:disable Rails/SkipsModelValidations
+
+          expect do
+            delete(registration_campaign_item_path(campaign, item))
+          end.not_to change(Registration::Item, :count)
+
+          expect(flash[:alert]).to be_present
+        end
       end
 
       context "when campaign is open" do

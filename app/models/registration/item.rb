@@ -79,9 +79,8 @@ module Registration
 
       registration_campaign.with_lock do
         removed = perform_removal(group, delete_registerable)
+        removed = release_from_campaign_management(group) if removed && !delete_registerable
         raise(ActiveRecord::Rollback) unless removed
-
-        release_from_campaign_management(group) unless delete_registerable
       end
 
       removed
@@ -165,10 +164,10 @@ module Registration
       end
 
       def release_from_campaign_management(group)
-        return unless group.respond_to?(:skip_campaigns)
+        return true unless group.respond_to?(:skip_campaigns)
 
         group.registration_items.reset
-        group.update!(skip_campaigns: true)
+        group.update(skip_campaigns: true)
       end
 
       def ensure_item_is_removable
