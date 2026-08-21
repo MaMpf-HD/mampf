@@ -15,9 +15,15 @@ update-bundler:
 update-gems:
     bundle update --all
 
-# Updates Node.js packages
+# Updates Node.js packages within the ranges declared in package.json
 update-nodejs:
-    yarn up
+    yarn up -R '*'
+
+# Unlike `update-nodejs` this can pull in major versions, so read the
+# changelogs and expect to fix things.
+# Raises the ranges in package.json themselves to the newest versions
+update-nodejs-ranges:
+    yarn up '*'
 
 # Simulates a production asset build
 simulate-production-asset-build:
