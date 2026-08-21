@@ -12,35 +12,26 @@ RSpec.describe("Tutorials", type: :request) do
   describe "GET /lectures/:id/tutorials" do
     let(:assignment) { create(:assignment, lecture: lecture, accepted_file_type: ".pdf") }
 
-    context "when feature flag enabled" do
-      before do
-        Flipper.enable(:roster_maintenance)
-        Flipper.enable(:registration_campaigns)
-        # The submission rows only render their action menu for a tutor of the
-        # group, and #index lists submissions that carry a manuscript.
-        tutorial.tutors << editor
-        5.times do
-          student = create(:confirmed_user)
-          create(:tutorial_membership, tutorial: tutorial, user: student)
-          create(:submission, :with_manuscript, assignment: assignment,
-                                                tutorial: tutorial).users << student
-        end
-        sign_in editor
+    before do
+      # The submission rows only render their action menu for a tutor of the
+      # group, and #index lists submissions that carry a manuscript.
+      tutorial.tutors << editor
+      5.times do
+        student = create(:confirmed_user)
+        create(:tutorial_membership, tutorial: tutorial, user: student)
+        create(:submission, :with_manuscript, assignment: assignment,
+                                              tutorial: tutorial).users << student
       end
+      sign_in editor
+    end
 
-      after do
-        Flipper.disable(:roster_maintenance)
-        Flipper.disable(:registration_campaigns)
-      end
+    it "queries roster_managed? once per lecture across all submission rows" do
+      expect_any_instance_of(Lecture).to receive(:roster_managed?)
+        .once.and_call_original
 
-      it "queries roster_eligible_tutorials? once per lecture across all submission rows" do
-        expect_any_instance_of(Lecture).to receive(:roster_eligible_tutorials?)
-          .once.and_call_original
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
 
-        get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
-
-        expect(response).to have_http_status(:success)
-      end
+      expect(response).to have_http_status(:success)
     end
   end
 
@@ -51,6 +42,28 @@ RSpec.describe("Tutorials", type: :request) do
       it "returns http success" do
         get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
         expect(response).to have_http_status(:success)
+      end
+
+      context "with a user who became a tutor by redeeming a voucher" do
+        let(:redeemer) { create(:confirmed_user, name_in_tutorials: "Ada L.") }
+        let!(:redemption) do
+          Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture),
+                             user: redeemer)
+        end
+
+        it "offers them in the tutor select, under their tutorial name" do
+          get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
+
+          expect(response.body).to include("Ada L.")
+        end
+
+        it "stops offering them once the account is gone" do
+          redeemer.destroy
+
+          get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
+
+          expect(response.body).not_to include("Ada L.")
+        end
       end
     end
   end

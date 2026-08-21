@@ -6,7 +6,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
   let(:student) { create(:confirmed_user, locale: "en") }
 
   before do
-    Flipper.enable(:roster_maintenance)
     create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
     lecture.reload
@@ -374,9 +373,22 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         patch move_member_tutorial_path(source, user_id: member.id),
               params: { target_id: target.id }
         expect(flash[:notice]).to eq(
-          I18n.t("roster.messages.user_moved",
-                 user: member.info, target: target.title)
+          I18n.t("roster.messages.user_moved_between_tutorials",
+                 user: member.info, target: target.title, source: source.title)
         )
+      end
+
+      it "notifies the tutors of both tutorials" do
+        old_tutor = create(:tutor_tutorial_join, tutorial: source).tutor
+        new_tutor = create(:tutor_tutorial_join, tutorial: target).tutor
+
+        perform_enqueued_jobs do
+          patch(move_member_tutorial_path(source, user_id: member.id),
+                params: { target_id: target.id })
+        end
+
+        recipients = ActionMailer::Base.deliveries.flat_map(&:to)
+        expect(recipients).to include(member.email, old_tutor.email, new_tutor.email)
       end
 
       context "when target is locked" do

@@ -93,7 +93,7 @@ class GroupTileComponent < ViewComponent::Base
 
   def delete_path
     if item
-      helpers.registration_campaign_item_path(
+      helpers.with_registerable_registration_campaign_item_path(
         item.registration_campaign, item
       )
     else
@@ -101,31 +101,45 @@ class GroupTileComponent < ViewComponent::Base
     end
   end
 
+  def remove_path
+    return unless item
+
+    helpers.registration_campaign_item_path(item.registration_campaign, item)
+  end
+
   def add_member_path
     helpers.roster_add_member_path(registerable)
   end
 
   def delete_disabled?
-    if item
-      !item.registration_campaign.draft?
-    else
-      !registerable.destructible?
-    end
+    delete_blocker_messages.any?
   end
 
   def delete_disabled_title
-    if item
-      t("registration.item.cannot_destroy")
-    elsif registerable.in_campaign?
-      t("roster.errors.cannot_delete_in_campaign")
-    else
-      t("roster.errors.cannot_delete_not_empty")
-    end
+    delete_blocker_messages.to_sentence
+  end
+
+  # A blocked button keeps its place in the tab order, so its name has to
+  # carry the reason - the tooltip on the wrapper is mouse-only.
+  def delete_disabled_label
+    "#{delete_title}: #{delete_disabled_title}"
+  end
+
+  def remove_disabled?
+    remove_blocker_message.present?
+  end
+
+  def remove_disabled_title
+    remove_blocker_message
+  end
+
+  def remove_disabled_label
+    "#{remove_title}: #{remove_disabled_title}"
   end
 
   def delete_data
     confirm_key = if item
-      "registration.item.confirm_remove"
+      "registration.item.confirm_delete_group"
     else
       "roster.actions.confirm_delete_group"
     end
@@ -136,12 +150,45 @@ class GroupTileComponent < ViewComponent::Base
     }
   end
 
+  def remove_data
+    {
+      turbo_method: :delete,
+      turbo_confirm: t("registration.item.confirm_remove_from_campaign"),
+      bs_toggle: "tooltip"
+    }
+  end
+
   def delete_title
     if item
-      t("registration.item.actions.remove_from_campaign")
+      t("registration.item.actions.delete_group")
     else
       t("roster.tooltips.delete")
     end
+  end
+
+  def remove_title
+    t("registration.item.actions.remove_from_campaign")
+  end
+
+  # The item recomputes on every call, and the tile needs the answer thrice.
+  def remove_blocker_message
+    return @remove_blocker_message if defined?(@remove_blocker_message)
+
+    @remove_blocker_message = item&.removal_blocker_message
+  end
+
+  # Two hurdles: the item may leave the campaign, and the group itself carries
+  # nothing worth keeping.
+  def delete_blocker_messages
+    @delete_blocker_messages ||=
+      if item
+        Array(remove_blocker_message) +
+          registerable.destruction_blocker_messages(
+            registerable.destruction_blockers_outside_campaign
+          )
+      else
+        registerable.destruction_blocker_messages
+      end
   end
 
   def registration_count

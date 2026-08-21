@@ -3496,6 +3496,7 @@ de:
     home: "Home"
     clear: "Löschen"
     close: "Schließen"
+    loading: "Lädt..."
     capacity: 'Kapazität'
     division: 'Teilbereich'
     location: 'Ort'
@@ -3854,7 +3855,6 @@ de:
       Achtung, es gibt ungespeicherte Änderungen!
   confirmation:
     generic: 'Bist Du sicher?'
-    delete_talk: 'Bist Du sicher, dass Du diesen Vortrag löschen möchtest?'
     delete_graph: >
       Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
       nicht das Medium.
@@ -3938,12 +3938,8 @@ de:
     quiz_has_error: >
       Dieses Quiz hat einen Fehler.
     no_remark: 'Eine Bemerkung mit der angeforderten id existiert nicht.'
-    no_search_term: >
-      Du hast eine Suche ohne Suchbegriff gestartet. Das funktioniert nicht.
     search_only_js: >
       Der direkte Aufruf von Suchergebnissen ist nicht möglich. Bitte benutze das Suchfeld.
-    search_term_short: >
-      Dein Suchbegriff sollte aus mindestens zwei Buchstaben bestehen.
     no_section: 'Ein Abschnitt mit der angeforderten id existiert nicht.'
     no_tag: 'Ein Begriff mit der angeforderten id existiert nicht.'
     no_removal_rights: >
@@ -3979,6 +3975,15 @@ de:
     become_editor_success: 'Dein Editorenstatus wurde geupdatet.'
     become_teacher_success: 'Dein DozentInnenstatus wurde geupdatet.'
     become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
+    lectures:
+      destruction_failed: >
+        Die Veranstaltung konnte nicht gelöscht werden, weil sich Inhalte nicht
+        entfernen ließen – etwa Gruppen mit Teilnehmern, Abgaben oder Medien.
+      destruction_failed_campaigns: >
+        Die Veranstaltung konnte nicht gelöscht werden, da zu ihr Anmeldeverfahren
+        gehören, für die bereits Anmeldungen vorliegen oder eine Zuteilung berechnet
+        wurde. Solange diese Daten aufbewahrt werden, lässt sich die Veranstaltung
+        nicht löschen.
     tutorials:
       created: 'Tutorium erfolgreich erstellt.'
       updated: 'Tutorium erfolgreich aktualisiert.'

@@ -87,10 +87,11 @@ class Lecture < ApplicationRecord
 
   # a lecture has many tutorials
   has_many :tutorials, -> { order(:title) },
+           dependent: :destroy,
            inverse_of: :lecture
 
   # a lecture has many assignments (e.g. exercises with deadlines)
-  has_many :assignments
+  has_many :assignments, dependent: :destroy
 
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
@@ -928,14 +929,10 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
-  def roster_eligible_tutorials?
-    tutorials.merge(Tutorial.roster_eligible).exists?
-  end
-
   # Whether the roster decides which tutorial a student belongs to, rather than
   # the student picking one.
   def roster_managed?
-    Flipper.enabled?(:roster_maintenance) && roster_eligible_tutorials?
+    tutorials.merge(Tutorial.roster_eligible).exists?
   end
 
   private

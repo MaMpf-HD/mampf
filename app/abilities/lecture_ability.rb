@@ -29,7 +29,7 @@ class LectureAbility
 
     can [:show_announcements, :organizational, :show_random_quizzes,
          :display_course], Lecture do |lecture|
-      lecture.in?(user.lectures)
+      lecture.in?(user.lectures) || user.can_edit?(lecture)
     end
 
     can :subscribe_page, Lecture do |lecture|

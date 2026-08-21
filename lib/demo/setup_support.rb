@@ -5,7 +5,6 @@ module Demo
     LECTURE_CAMPAIGN_DESCRIPTION = "Demo Lecture Roster Campaign".freeze
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
     SEMINAR_COURSE_TITLE = "Demo Roster Seminar".freeze
-    ROSTER_ENABLED_FLAGS = ["roster_maintenance", "registration_campaigns"].freeze
     LECTURE_TUTORIAL_CAPACITIES = [10, 8, 8, 6].freeze
     LECTURE_TUTORIAL_TITLES = [
       "Demo Tutorial 1",
@@ -15,11 +14,6 @@ module Demo
     ].freeze
     SEMINAR_TALK_TITLES = (1..10).map { |i| "Demo Talk #{i}" }.freeze
 
-    def setup_flags!
-      ensure_non_production!
-      configure_feature_flags!(enabled: ROSTER_ENABLED_FLAGS)
-    end
-
     def setup_campaigns!
       ensure_non_production!
       Demo::CampaignSetupSupport.setup!
@@ -27,7 +21,6 @@ module Demo
 
     def setup_rosters!
       ensure_non_production!
-      setup_flags!
 
       Rails.logger.debug("=== Demo Roster Setup ===")
       Demo::QuietLoggingSupport.with_quiet_logging do
@@ -49,36 +42,6 @@ module Demo
         abort("Cannot run in production!") if Rails.env.production?
       end
       # rubocop:enable Rails/Exit
-
-      def configure_feature_flags!(enabled:, disabled: [])
-        messages = []
-
-        Rails.logger.debug("Configuring feature flags...")
-        Demo::QuietLoggingSupport.with_quiet_logging do
-          enabled.each do |flag|
-            feature = ensure_feature_exists!(flag)
-            feature.enable
-            messages << "  enabled #{flag}"
-          end
-
-          disabled.each do |flag|
-            feature = ensure_feature_exists!(flag)
-            feature.disable
-            messages << "  disabled #{flag}"
-          end
-        end
-
-        messages.each do |message|
-          Rails.logger.debug(message)
-        end
-        Rails.logger.debug("")
-      end
-
-      def ensure_feature_exists!(flag)
-        feature_name = flag.to_s
-        Flipper::Adapters::ActiveRecord::Feature.find_or_create_by!(key: feature_name)
-        Flipper[feature_name]
-      end
 
       def lecture!
         lecture = Lecture.find_by(id: 1)

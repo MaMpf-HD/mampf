@@ -27,8 +27,28 @@ module Rosters
     SELF_ADD_MODES = [:add_only, :add_and_remove].freeze
     SELF_REMOVE_MODES = [:remove_only, :add_and_remove].freeze
 
+    DESTRUCTION_BLOCKER_KEYS = {
+      in_campaign: "roster.errors.cannot_delete_in_campaign",
+      roster_not_empty: "roster.errors.cannot_delete_not_empty",
+      submissions: "controllers.tutorials.errors.cannot_delete_with_submissions",
+      media: "roster.errors.cannot_delete_with_media"
+    }.freeze
+
     def self.class_for(type)
       TYPE_CLASS_MAP[type]&.call
+    end
+
+    class_methods do
+      # Override if the association name doesn't follow the pattern
+      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
+      def roster_association_name
+        :"#{name.underscore}_memberships"
+      end
+
+      # The join model that holds this rosterable's roster entries.
+      def roster_join_class
+        reflect_on_association(roster_association_name).klass
+      end
     end
 
     # Models including this concern must:
@@ -50,11 +70,7 @@ module Rosters
         :user_id
       end
 
-      # Override this method if the association name doesn't follow the pattern
-      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
-      def roster_association_name
-        :"#{self.class.name.underscore}_memberships"
-      end
+      delegate :roster_association_name, to: :class
 
       enum :self_materialization_mode, SELF_MATERIALIZATION_MODES, prefix: true
 
@@ -70,9 +86,26 @@ module Rosters
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
 
+    # Models add their own type-specific blockers on top of these.
+    def destruction_blockers
+      blockers = []
+      blockers << :in_campaign if in_campaign?
+      blockers << :roster_not_empty unless roster_empty?
+      blockers
+    end
+
+    # What "remove from the campaign and delete the group" has to satisfy.
+    def destruction_blockers_outside_campaign
+      destruction_blockers - [:in_campaign]
+    end
+
+    def destruction_blocker_messages(blockers = destruction_blockers)
+      blockers.map { |blocker| I18n.t(DESTRUCTION_BLOCKER_KEYS.fetch(blocker)) }
+    end
+
     # Checks if the item can be safely destroyed.
     def destructible?
-      !in_campaign? && roster_empty?
+      destruction_blockers.empty?
     end
 
     # Whether campaigns, not manual edits, decide this roster. Models without
@@ -362,14 +395,12 @@ module Rosters
       end
 
       def enforce_rosterable_destruction_constraints
-        if in_campaign?
-          errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
-          throw(:abort)
+        blockers = destruction_blockers
+        return if blockers.empty?
+
+        destruction_blocker_messages(blockers).each do |message|
+          errors.add(:base, message)
         end
-
-        return if roster_empty?
-
-        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
         throw(:abort)
       end
 

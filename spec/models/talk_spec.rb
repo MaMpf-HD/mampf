@@ -272,4 +272,28 @@ RSpec.describe(Talk, type: :model) do
       expect(lecture.lecture_memberships.where(user: user)).to exist
     end
   end
+  describe "#destruction_blockers" do
+    let(:seminar) { create(:lecture, :is_seminar) }
+    let(:talk) { create(:talk, lecture: seminar) }
+
+    it "is empty for a bare talk" do
+      expect(talk.destruction_blockers).to be_empty
+      expect(talk).to be_destructible
+    end
+
+    it "reports attached media, which destroy would take with it" do
+      create(:medium, :with_description, :with_editors, teachable: talk, sort: "Lecture")
+
+      expect(talk.destruction_blockers).to include(:media)
+      expect { talk.destroy }.not_to change(described_class, :count)
+      expect(talk.errors[:base])
+        .to include(I18n.t("roster.errors.cannot_delete_with_media"))
+    end
+
+    it "reports speakers" do
+      talk.add_user_to_roster!(create(:confirmed_user))
+
+      expect(talk.destruction_blockers).to include(:roster_not_empty)
+    end
+  end
 end
