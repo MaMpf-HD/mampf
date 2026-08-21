@@ -90,6 +90,7 @@
   <% else %>
     <div
       class="<%= card_classes %>"
+      data-testid="group-tile"
       data-tutorial-roster-panel-target="tile"
       data-action="click->tutorial-roster-panel#openFromTile"
       data-roster-key="<%= roster_key %>"
@@ -228,13 +229,36 @@
             <% end %>
           <% end %>
 
+          <% if remove_path && remove_disabled? %>
+            <span title="<%= remove_disabled_title %>" data-bs-toggle="tooltip">
+              <button
+                class="btn btn-sm btn-outline-secondary opacity-50"
+                type="button"
+                style="cursor: not-allowed;"
+                aria-label="<%= remove_disabled_label %>"
+                aria-disabled="true"
+              >
+                <i class="bi bi-box-arrow-left"></i>
+              </button>
+            </span>
+          <% elsif remove_path %>
+            <%= link_to remove_path,
+                    class: "btn btn-sm btn-outline-secondary",
+                    title: remove_title,
+                    aria: { label: remove_title },
+                    data: remove_data do %>
+              <i class="bi bi-box-arrow-left"></i>
+            <% end %>
+          <% end %>
+
           <% if delete_path && delete_disabled? %>
             <span title="<%= delete_disabled_title %>" data-bs-toggle="tooltip">
               <button
                 class="btn btn-sm btn-outline-danger opacity-50"
                 type="button"
                 style="cursor: not-allowed;"
-                disabled
+                aria-label="<%= delete_disabled_label %>"
+                aria-disabled="true"
               >
                 <i class="bi bi-trash"></i>
               </button>
@@ -243,6 +267,7 @@
             <%= link_to delete_path,
                     class: "btn btn-sm btn-danger",
                     title: delete_title,
+                    aria: { label: delete_title },
                     data: delete_data do %>
               <i class="bi bi-trash"></i>
             <% end %>
