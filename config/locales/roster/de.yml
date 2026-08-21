@@ -303,6 +303,7 @@ de:
     messages:
       updated: "Einstellungen aktualisiert."
       user_moved: "%{user} wurde nach %{target} verschoben."
+      user_moved_between_tutorials: "%{user} wurde nach %{target} verschoben. Bereits in %{source} eingereichte Abgaben bleiben dort, sofern sie nicht vor Fristende noch einmal bearbeitet werden."
       user_not_moved: "%{user} wurde nicht verschoben: die Person ist bereits in %{target} oder nicht mehr in der Gruppe, aus der Du sie verschoben hast."
       user_added: "%{user} wurde zu %{group} hinzugefügt."
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
@@ -379,6 +380,50 @@ de:
 
         Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
       roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} in %{lecture_title} verschoben'
+      roster_participant_left_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          %{participant_name} hat Deine Gruppe <strong>%{old_rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> verlassen und ist jetzt in
+          <strong>%{new_rosterable_title}</strong>.
+        </p>
+        <p>
+          Bereits bei Dir eingereichte Abgaben bleiben bei Dir und werden von Dir
+          korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
+          Ab der nächsten Abgabe zählt %{participant_name} in %{new_rosterable_title}.
+        </p>
+      roster_participant_left_group_email_body: |
+        Hallo %{name},
+
+        %{participant_name} hat Deine Gruppe „%{old_rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ verlassen und ist jetzt in „%{new_rosterable_title}“.
+
+        Bereits bei Dir eingereichte Abgaben bleiben bei Dir und werden von Dir
+        korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
+        Ab der nächsten Abgabe zählt %{participant_name} in „%{new_rosterable_title}“.
+      roster_participant_left_group_email_subject: '%{participant_name} hat die Gruppe %{rosterable_title} in %{lecture_title} verlassen'
+      roster_participant_joined_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          %{participant_name} ist neu in Deiner Gruppe <strong>%{new_rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong>, zuvor in
+          <strong>%{old_rosterable_title}</strong>.
+        </p>
+        <p>
+          Bereits eingereichte Abgaben bleiben in %{old_rosterable_title} und werden dort
+          korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
+          Ab der nächsten Abgabe zählt %{participant_name} bei Dir.
+        </p>
+      roster_participant_joined_group_email_body: |
+        Hallo %{name},
+
+        %{participant_name} ist neu in Deiner Gruppe „%{new_rosterable_title}“ in der
+        Vorlesung „%{lecture_title}“, zuvor in „%{old_rosterable_title}“.
+
+        Bereits eingereichte Abgaben bleiben in „%{old_rosterable_title}“ und werden dort
+        korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
+        Ab der nächsten Abgabe zählt %{participant_name} bei Dir.
+      roster_participant_joined_group_email_subject: '%{participant_name} ist neu in der Gruppe %{rosterable_title} in %{lecture_title}'
       roster_removed_from_lecture_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
