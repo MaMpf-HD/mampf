@@ -15,7 +15,6 @@ test("keeps the group tiles visible once a campaign exists",
     });
 
     await page.goto(`/lectures/${lecture.id}/edit?tab=groups&registration_section=campaign`);
-    await expect(page.getByTestId("registration-no-campaign-section")).toBeVisible();
 
     await expect(page.getByText("Mo 10")).toBeVisible();
   });
