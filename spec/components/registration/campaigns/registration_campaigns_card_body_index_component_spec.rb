@@ -43,5 +43,29 @@ RSpec.describe(RegistrationCampaignsCardBodyIndexComponent, type: :component) do
       expect(component.collapse_campaign_section?).to be(true)
       expect(component.collapse_no_campaign_section?).to be(false)
     end
+
+    it "keeps the no-campaign section open while a campaign is active" do
+      lecture = create(:lecture)
+      create(:registration_campaign, campaignable: lecture)
+      tutorial = create(:tutorial, lecture: lecture)
+
+      component = described_class.new(lecture: lecture,
+                                      registration_section: "campaign")
+
+      allow(component).to receive(:no_campaign_groups).and_return([tutorial])
+
+      expect(component.collapse_no_campaign_section?).to be(false)
+    end
+
+    it "folds the no-campaign section away when no group is left outside" do
+      lecture = create(:lecture)
+      create(:registration_campaign, campaignable: lecture)
+
+      component = described_class.new(lecture: lecture)
+
+      allow(component).to receive(:no_campaign_groups).and_return([])
+
+      expect(component.collapse_no_campaign_section?).to be(true)
+    end
   end
 end
