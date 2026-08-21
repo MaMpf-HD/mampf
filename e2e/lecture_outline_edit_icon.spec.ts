@@ -25,8 +25,9 @@ test.describe("the edit icon on the outline", () => {
       const icon = page.getByRole("link", { name: "Edit" });
       await expect(icon).toBeVisible();
 
-      const headingBox = (await heading.boundingBox())!;
-      const iconBox = (await icon.boundingBox())!;
+      const headingBox = await heading.boundingBox();
+      const iconBox = await icon.boundingBox();
+      if (!headingBox || !iconBox) throw new Error("heading or icon not rendered");
 
       // Beside the heading rather than flushed to the far end of the row.
       expect(iconBox.x - (headingBox.x + headingBox.width)).toBeLessThan(24);
