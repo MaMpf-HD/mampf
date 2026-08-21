@@ -358,29 +358,51 @@ RSpec.describe(GroupTileComponent, type: :component) do
   describe "#delete_disabled?" do
     context "without an item (no-campaign group)" do
       it "is false when registerable is destructible" do
-        allow(tutorial).to receive(:destructible?).and_return(true)
+        allow(tutorial).to receive(:destruction_blockers).and_return([])
         expect(component.delete_disabled?).to be(false)
       end
 
       it "is true when registerable is not destructible" do
-        allow(tutorial).to receive(:destructible?).and_return(false)
+        allow(tutorial).to receive(:destruction_blockers).and_return([:roster_not_empty])
         expect(component.delete_disabled?).to be(true)
       end
     end
 
     context "with a campaign item" do
-      let(:campaign) { double("campaign") }
-      let(:item) { double("item", registration_campaign: campaign) }
+      let(:item) { double("item", removal_blocker_message: nil) }
 
-      it "is false when campaign is draft" do
-        allow(campaign).to receive(:draft?).and_return(true)
+      before do
+        allow(tutorial).to receive(:destruction_blockers).and_return([:in_campaign])
+      end
+
+      it "is false when neither the item nor the group is blocked" do
         expect(component.delete_disabled?).to be(false)
       end
 
-      it "is true when campaign is not draft" do
-        allow(campaign).to receive(:draft?).and_return(false)
+      it "is true when the item cannot leave the campaign" do
+        allow(item).to receive(:removal_blocker_message).and_return("nope")
         expect(component.delete_disabled?).to be(true)
       end
+
+      it "is true when the group itself carries data worth keeping" do
+        allow(tutorial).to receive(:destruction_blockers)
+          .and_return([:in_campaign, :submissions])
+        expect(component.delete_disabled?).to be(true)
+      end
+    end
+  end
+
+  describe "#remove_disabled?" do
+    let(:item) { double("item", removal_blocker_message: nil) }
+
+    it "is false while the item may leave the campaign" do
+      expect(component.remove_disabled?).to be(false)
+    end
+
+    it "is true once the item is pinned to the campaign" do
+      allow(item).to receive(:removal_blocker_message).and_return("nope")
+      expect(component.remove_disabled?).to be(true)
+      expect(component.remove_disabled_title).to eq("nope")
     end
   end
 end

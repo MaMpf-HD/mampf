@@ -3763,6 +3763,15 @@ en:
       Your teacher status has been updated.
     become_speaker_success: >
       Your speaker status has been updated.
+    lectures:
+      destruction_failed: >
+        The event series could not be deleted because some of its content could
+        not be removed - for example groups with participants, submissions or
+        media.
+      destruction_failed_campaigns: >
+        The event series could not be deleted because it has registration processes
+        that students have registered for or that have already been allocated. As
+        long as that data is kept, the event series cannot be deleted.
     tutorials:
       created: 'Tutorial successfully created.'
       updated: 'Tutorial successfully updated.'

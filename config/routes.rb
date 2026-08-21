@@ -345,6 +345,7 @@ Rails.application.routes.draw do
       patch :open
       patch :close
       patch :reopen
+      patch :revert_to_draft
       patch :self_service
       get :rejected
       get :unassigned
@@ -371,6 +372,7 @@ Rails.application.routes.draw do
               only: [:create, :destroy, :update] do
       member do
         get :roster
+        delete :with_registerable, action: :destroy_with_registerable
       end
     end
 

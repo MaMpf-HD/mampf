@@ -3,7 +3,8 @@ module Registration
     helper RosterHelper
     before_action :set_campaign
     before_action :set_locale
-    before_action :set_item, only: [:destroy, :update, :roster]
+    before_action :set_item, only: [:destroy, :destroy_with_registerable,
+                                    :update, :roster]
     authorize_resource class: "Registration::Item", except: [:create]
 
     def current_ability
@@ -70,37 +71,18 @@ module Registration
       end
     end
 
+    # Leaves the group in place, for manual management.
     def destroy
-      unless @campaign.draft?
-        respond_with_flash(:alert,
-                           t("activerecord.errors.models.registration/item.attributes.base.frozen"),
-                           redirect_path: after_action_path)
-        return
-      end
+      remove_item(delete_registerable: false,
+                  notice: t("registration.item.removed_from_campaign"))
+    end
 
-      registerable = @item.registerable
-      authorize! :destroy, registerable
-      success = false
+    # Takes the group out and then deletes it, in one transaction.
+    def destroy_with_registerable
+      authorize! :destroy, @item.registerable
 
-      ActiveRecord::Base.transaction do
-        success = @item.destroy
-        raise(ActiveRecord::Rollback) unless success
-
-        success = registerable.destroy
-        raise(ActiveRecord::Rollback) unless success
-      end
-
-      if success
-        respond_with_flash(:notice, t("registration.item.destroyed"),
-                           redirect_path: after_action_path) do
-          render_campaigns_container
-        end
-      else
-        errors = (@item.errors.full_messages +
-                  registerable.errors.full_messages).uniq
-        respond_with_flash(:alert, errors.to_sentence,
-                           redirect_path: after_action_path)
-      end
+      remove_item(delete_registerable: true,
+                  notice: t("registration.item.destroyed"))
     end
 
     def roster
@@ -127,6 +109,22 @@ module Registration
     end
 
     private
+
+      def remove_item(delete_registerable:, notice:)
+        registerable = @item.registerable
+
+        if @item.remove(delete_registerable: delete_registerable)
+          respond_with_flash(:notice, notice,
+                             redirect_path: after_action_path) do
+            render_campaigns_container
+          end
+        else
+          errors = (@item.errors.full_messages +
+                    registerable.errors.full_messages).uniq
+          respond_with_flash(:alert, errors.to_sentence,
+                             redirect_path: after_action_path)
+        end
+      end
 
       def create_existing_item
         @item = @campaign.registration_items.build(item_params)

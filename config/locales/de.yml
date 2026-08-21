@@ -3975,6 +3975,15 @@ de:
     become_editor_success: 'Dein Editorenstatus wurde geupdatet.'
     become_teacher_success: 'Dein DozentInnenstatus wurde geupdatet.'
     become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
+    lectures:
+      destruction_failed: >
+        Die Veranstaltung konnte nicht gelöscht werden, weil sich Inhalte nicht
+        entfernen ließen – etwa Gruppen mit Teilnehmern, Abgaben oder Medien.
+      destruction_failed_campaigns: >
+        Die Veranstaltung konnte nicht gelöscht werden, da zu ihr Anmeldeverfahren
+        gehören, für die bereits Anmeldungen vorliegen oder eine Zuteilung berechnet
+        wurde. Solange diese Daten aufbewahrt werden, lässt sich die Veranstaltung
+        nicht löschen.
     tutorials:
       created: 'Tutorium erfolgreich erstellt.'
       updated: 'Tutorium erfolgreich aktualisiert.'
