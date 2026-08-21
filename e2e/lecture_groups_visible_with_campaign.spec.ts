@@ -1,8 +1,9 @@
 import { expect, test } from "./_support/fixtures";
 
-// The groups tab keeps `registration_section=campaign` in the URL once that
-// section has been chosen. As soon as a campaign exists, that combination
-// collapses the section holding the group tiles, so the tutorials look gone.
+// The tab keeps `registration_section=campaign` in the URL once that section
+// has been chosen, which is why the test carries it. The group tiles stay
+// visible beside it; only a section with nothing left outside the campaigns
+// folds away.
 test("keeps the group tiles visible once a campaign exists",
   async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", [], {
