@@ -1,18 +1,20 @@
 <div class="card bg-mdb-color-lighten-6">
   <div class="card-header">
-    <h5 class="mb-0 d-flex align-items-center gap-2">
-      <%= t("admin.lecture.#{lecture.sort}_content") %>
+    <div class="d-flex align-items-center gap-2">
+      <h5 class="mb-0">
+        <%= t("admin.lecture.#{lecture.sort}_content") %>
+      </h5>
       <% if current_user.can_edit?(lecture) %>
         <%= link_to "",
                     edit_lecture_path(lecture),
-                    class: "far fa-edit text-dark",
+                    class: "far fa-edit text-dark fs-5",
                     data: { toggle: "tooltip",
                             placement: "bottom" },
               "aria-label": t("buttons.edit"),
                     title: t("buttons.edit"),
                     style: "text-decoration: none;" %>
       <% end %>
-    </h5>
+    </div>
   </div>
   <div class="card-body">
     <% if lecture.seminar? %>
