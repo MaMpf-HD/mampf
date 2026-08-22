@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_18_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_20_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1104,9 +1104,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_18_000000) do
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
     t.date "deletion_date"
+    t.integer "failed_attempts", default: 0, null: false
+    t.string "unlock_token"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
   create_table "vignettes_answers", force: :cascade do |t|
