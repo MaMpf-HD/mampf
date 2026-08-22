@@ -8,7 +8,9 @@
 <% end %>
 
 <!-- Slide -->
-<%= form_with(model: @answer, id: "vignettes-answer-form",
+<%# The scope is fixed: a rejected answer comes back as its subclass, and the
+    field names must not change with it. %>
+<%= form_with(model: @answer, scope: :vignettes_answer, id: "vignettes-answer-form",
               url: submit_answer_questionnaire_url(@questionnaire),
               data: { preview: @preview || false },
               local: true) do |form| %>

@@ -457,11 +457,13 @@ module Vignettes
 
       # Returns false when the answer could not be saved and a response has
       # already been rendered.
+      # Built as the subclass rather than stamped with a type afterwards:
+      # assigning `type` to a base instance leaves it a Vignettes::Answer, and
+      # the answer's own validations never run.
       def save_answer
-        @answer = @slide.answers.build
-        @answer.question = @slide.question
-        @answer.type = @slide.question.type.gsub("Question", "Answer")
-        @answer.user_answer = current_run
+        @answer = @slide.question.answer_class.new(slide: @slide,
+                                                   question: @slide.question,
+                                                   user_answer: current_run)
         @answer.assign_attributes(answer_params.except(:slide_id))
 
         return true if @answer.save

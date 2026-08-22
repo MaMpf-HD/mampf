@@ -160,6 +160,18 @@ RSpec.describe("Vignettes::Questionnaires", type: :request) do
         expect(answer.slide_statistic.time_on_slide).to eq(4)
       end
 
+      it "refuses an empty answer and keeps the tracked controls" do
+        post decide_consent_questionnaire_path(questionnaire), params: { consent: "new" }
+
+        expect do
+          post(submit_answer_questionnaire_path(questionnaire),
+               params: answer_params(slides.first, ""))
+        end.not_to change(Vignettes::Answer, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("time-on-slide-field")
+      end
+
       it "moves on to the next slide" do
         post decide_consent_questionnaire_path(questionnaire), params: { consent: "new" }
         post submit_answer_questionnaire_path(questionnaire),

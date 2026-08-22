@@ -16,6 +16,12 @@ module Vignettes
 
     self.abstract_class = false
 
+    # Answers are single table inheritance too, and each kind of question takes
+    # exactly one kind of them.
+    def answer_class
+      raise(NotImplementedError, "#{self.class} does not say which answer it takes")
+    end
+
     def question_text_required?
       type.present? && type != ""
     end
