@@ -166,11 +166,8 @@ test.describe("Vignettes Exports", () => {
 
     expect(row3.codename).toBe(codename);
     expect(row3.slideTitle).toBe("MC slide");
-    // The slide is left one second short because of "BUG (Vignettes)" (search
-    // the code for this string): the timer keeps running while the info slide
-    // fades away.
-    expect(row3.timeOnSlide).toBe("34"); // why not 35 ?!
-    expect(row3.timeOnInfoSlide).toBe(`{"${infoSlide.id}":5}`);
+    expect(row3.timeOnSlide).toBe(String(2 + 4 + 29));
+    expect(row3.timeOnInfoSlide).toBe(`{"${infoSlide.id}":${2 + 3}}`);
     expect(row3.totalTimeOnSlide).toBe(String(2 + 2 + 4 + 3 + 29));
     expect(row3.infoSlideAccessCount).toBe(`{"${infoSlide.id}":2}`);
     expect(row3.infoSlideFirstAccessTime).toBe(`{"${infoSlide.id}":2}`);

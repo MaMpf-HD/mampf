@@ -223,9 +223,9 @@ function registerStatisticsHandler(stats) {
     return;
   }
   infoSlideModals.each(function () {
-    // BUG (Vignettes): this should rather be hide.bs.modal to get the correct time
-    // will leave it here for backwards compatibility and to not skew existing data
-    $(this).on("hidden.bs.modal", function () {
+    // The timer stops when the dialog starts closing, not when it has faded
+    // out, which used to add the animation to every visit.
+    $(this).on("hide.bs.modal", function () {
       const id = $(this).attr("data-info-slide-id");
       stats.stopInfoSlideTimer(id);
       stats.unfreezeSlideTime();
