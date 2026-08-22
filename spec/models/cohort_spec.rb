@@ -93,6 +93,19 @@ RSpec.describe(Cohort, type: :model) do
     end
   end
 
+  describe "#lecture_id" do
+    it "returns the context id if the context is a Lecture" do
+      lecture = create(:lecture)
+      cohort = build(:cohort, context: lecture)
+      expect(cohort.lecture_id).to eq(lecture.id)
+    end
+
+    it "returns nil if the context is not a Lecture" do
+      cohort = build(:cohort, context: create(:course))
+      expect(cohort.lecture_id).to be_nil
+    end
+  end
+
   describe "#materialize_allocation!" do
     let(:lecture) { create(:lecture) }
     let(:campaign) { create(:registration_campaign) }

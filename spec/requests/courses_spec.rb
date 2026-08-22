@@ -59,14 +59,18 @@ RSpec.describe("Courses", type: :request) do
   end
 
   describe "GET /courses/search" do
-    context "with a JS/XHR request" do
+    context "from within the results frame" do
+      let(:frame_headers) { { "Turbo-Frame" => "courses-search-results" } }
+
       it "returns a successful response" do
-        get search_courses_path, params: { search: { fulltext: "Physics" } }, xhr: true
+        get search_courses_path, params: { search: { fulltext: "Physics" } },
+                                 headers: frame_headers
         expect(response).to have_http_status(:ok)
       end
 
       it "returns the correct courses in the response body" do
-        get search_courses_path, params: { search: { fulltext: "Physics" } }, xhr: true
+        get search_courses_path, params: { search: { fulltext: "Physics" } },
+                                 headers: frame_headers
         expect(response.body).to include(course_physics.title)
         expect(response.body).not_to include(course_chemistry.title)
       end
@@ -82,6 +86,33 @@ RSpec.describe("Courses", type: :request) do
         get search_courses_path, params: { search: { fulltext: "Physics" } }
         expect(flash[:alert]).to eq(I18n.t("controllers.search_only_js"))
       end
+    end
+  end
+
+  describe "GET /courses/:id/render_question_counter" do
+    let(:course) { create(:course) }
+    let(:tag) { create(:tag) }
+
+    def counter_text(count)
+      allow_any_instance_of(Course).to receive(:question_count).and_return(count)
+
+      get(render_question_counter_path(course), params: { tag_ids: [tag.id] },
+                                                as: :turbo_stream)
+
+      expect(response).to have_http_status(:success)
+      Nokogiri::HTML(response.body).text.strip
+    end
+
+    it "names no question when there is none" do
+      expect(counter_text(0)).to eq("No question has been found for the selected tags.")
+    end
+
+    it "keeps the singular for a single question" do
+      expect(counter_text(1)).to eq("One question has been found for the selected tags.")
+    end
+
+    it "counts the questions otherwise" do
+      expect(counter_text(5)).to eq("5 questions have been found for the selected tags.")
     end
   end
 

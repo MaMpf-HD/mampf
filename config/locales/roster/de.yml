@@ -49,9 +49,6 @@ de:
     filters:
       all: 'Alle'
       unassigned: 'Ohne Gruppe'
-    banners:
-      groups: "MaMpf integriert Müsli. In diesem Tab werden ab jetzt die Tutorien und Gruppen verwaltet. Da die Anmeldungen im %{term} noch nicht über MaMpf durchgeführt wurden, stehen die Teilnehmerzahlen derzeit auf 0, auch wenn bereits Tutorien existieren. Wir empfehlen, dies in diesem Semester so zu belassen und insbesondere keine neuen Anmeldungen mehr zu starten. Ab dem WS 2026/27 kann die Registrierung für Vorlesungen und Seminare über MaMpf erfolgen."
-      participants: "MaMpf integriert Müsli. Da die Anmeldungen im %{term} noch nicht über MaMpf durchgeführt wurden, ist die Teilnehmerliste leer. Ab dem WS 2026/27 können sich Studierende über MaMpf für Vorlesungen und Seminare registrieren, und die Teilnehmerliste wird sich nach der Anmeldung automatisch füllen."
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'
@@ -292,6 +289,7 @@ de:
       campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
+      cannot_delete_with_media: "Kann nicht gelöscht werden, da Medien daran hängen."
       lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
       cannot_enable_both_campaign_and_self_materialization: "Selbsteinschreibung kann nicht aktiviert werden, während auf Anmeldeverfahren-Modus umgestellt wird. Bitte deaktiviere zuerst die Selbsteinschreibung oder behalte 'Anmeldeverfahren überspringen' aktiviert."
     warnings:
@@ -305,9 +303,142 @@ de:
     messages:
       updated: "Einstellungen aktualisiert."
       user_moved: "%{user} wurde nach %{target} verschoben."
+      user_moved_between_tutorials: "%{user} wurde nach %{target} verschoben. Bereits in %{source} eingereichte Abgaben bleiben dort, sofern sie nicht vor Fristende noch einmal bearbeitet werden."
+      user_not_moved: "%{user} wurde nicht verschoben: die Person ist bereits in %{target} oder nicht mehr in der Gruppe, aus der Du sie verschoben hast."
       user_added: "%{user} wurde zu %{group} hinzugefügt."
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
     self_enrollment:
       no_registration_options: "Derzeit sind keine Tutorien oder Gruppen zur Anmeldung verfügbar."
+    mailer:
+      end_mail_html: |
+        <p>Mit freundlichen Grüßen,<br>Dein MaMpf-Team</p>
+      end_mail: |
+        Mit freundlichen Grüßen,
+        Dein MaMpf-Team
+      link_text_html: |
+        <p>Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}</p>
+      link_text: |
+        Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}
+      roster_added_to_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest zu <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> hinzugefügt.
+        </p>
+        <p>
+          Du nimmst nun an dieser Gruppe teil.
+        </p>
+      roster_added_to_group_email_body: |
+        Hallo %{name},
+
+        Du wurdest zu „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ hinzugefügt.
+
+        Du nimmst nun an dieser Gruppe teil.
+      roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{lecture_title} hinzugefügt'
+      roster_removed_from_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest aus <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> entfernt.
+        </p>
+        <p>
+          Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+          wende Dich bitte an Deine Lehrperson oder das Support-Team.
+        </p>
+        <p>
+          Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        </p>
+      roster_removed_from_group_email_body: |
+        Hallo %{name},
+
+        Du wurdest aus „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ entfernt.
+
+        Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+        wende Dich bitte an Deine Lehrperson oder das Support-Team.
+
+        Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+      roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
+      roster_moved_between_groups_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest von <strong>%{old_rosterable_title}</strong>
+          nach <strong>%{new_rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> verschoben.
+        </p>
+        <p>
+          Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        </p>
+      roster_moved_between_groups_email_body: |
+        Hallo %{name},
+
+        Du wurdest von „%{old_rosterable_title}“ nach „%{new_rosterable_title}“
+        in der Vorlesung „%{lecture_title}“ verschoben.
+
+        Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+      roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} in %{lecture_title} verschoben'
+      roster_participant_left_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          %{participant_name} hat Deine Gruppe <strong>%{old_rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> verlassen und ist jetzt in
+          <strong>%{new_rosterable_title}</strong>.
+        </p>
+        <p>
+          Bereits bei Dir eingereichte Abgaben bleiben bei Dir und werden von Dir
+          korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
+          Ab der nächsten Abgabe zählt %{participant_name} in %{new_rosterable_title}.
+        </p>
+      roster_participant_left_group_email_body: |
+        Hallo %{name},
+
+        %{participant_name} hat Deine Gruppe „%{old_rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ verlassen und ist jetzt in „%{new_rosterable_title}“.
+
+        Bereits bei Dir eingereichte Abgaben bleiben bei Dir und werden von Dir
+        korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
+        Ab der nächsten Abgabe zählt %{participant_name} in „%{new_rosterable_title}“.
+      roster_participant_left_group_email_subject: '%{participant_name} hat die Gruppe %{rosterable_title} in %{lecture_title} verlassen'
+      roster_participant_joined_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          %{participant_name} ist neu in Deiner Gruppe <strong>%{new_rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong>, zuvor in
+          <strong>%{old_rosterable_title}</strong>.
+        </p>
+        <p>
+          Bereits eingereichte Abgaben bleiben in %{old_rosterable_title} und werden dort
+          korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
+          Ab der nächsten Abgabe zählt %{participant_name} bei Dir.
+        </p>
+      roster_participant_joined_group_email_body: |
+        Hallo %{name},
+
+        %{participant_name} ist neu in Deiner Gruppe „%{new_rosterable_title}“ in der
+        Vorlesung „%{lecture_title}“, zuvor in „%{old_rosterable_title}“.
+
+        Bereits eingereichte Abgaben bleiben in „%{old_rosterable_title}“ und werden dort
+        korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
+        Ab der nächsten Abgabe zählt %{participant_name} bei Dir.
+      roster_participant_joined_group_email_subject: '%{participant_name} ist neu in der Gruppe %{rosterable_title} in %{lecture_title}'
+      roster_removed_from_lecture_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest aus der Vorlesungsliste von
+          <strong>%{lecture_title}</strong> entfernt.
+        </p>
+        <p>
+          Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+          wende Dich bitte an Deine Lehrperson oder das Support-Team.
+        </p>
+      roster_removed_from_lecture_email_body: |
+        Hallo %{name},
+
+        Du wurdest aus der Vorlesungsliste von „%{lecture_title}“ entfernt.
+
+        Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+        wende Dich bitte an Deine Lehrperson oder das Support-Team.
+      roster_removed_from_lecture_email_subject: 'Entfernt aus der Veranstaltung %{lecture_title}'

@@ -108,8 +108,11 @@ The “contract” required by the maintenance service, defining how to read and
 | `can_skip_campaigns?`, `can_unskip_campaigns?` | Provided | Guardrail helpers for toggling management mode. |
 | `self_materialization_mode` | Provided (enum) | Controls student self-service roster access: `disabled`, `add_only`, `remove_only`, `add_and_remove`. |
 | `destructible?` | Provided | Returns whether the group can be safely destroyed. |
+| `destruction_blockers` | Provided (extendable) | The reasons that rule out destruction (`:in_campaign`, `:roster_not_empty`, plus type-specific ones such as `:submissions` and `:media`). Models override it by appending to `super`. |
+| `destruction_blockers_outside_campaign` | Provided | The same list without `:in_campaign` — what "remove from the campaign and delete the group" has to satisfy. |
 
 ### Behavior Highlights
+- **Deletion Guard:** `enforce_rosterable_destruction_constraints` aborts the destroy and records one error per entry in `destruction_blockers`, so the user learns every reason at once instead of one at a time. `Tutorial` adds submissions with uploads, `Talk` adds attached media — both would otherwise be destroyed silently by their `dependent: :destroy` associations. Voucher claims are deliberately *not* blockers: they are links into a redemption that no UI can clear, so blocking on them would make the group undeletable forever.
 - **Explicit Contract:** The concern requires `#roster_entries`. Optional overrides exist for nonstandard user-key or association names.
 - **Registration Integration:** Provides `allocated_user_ids` and `materialize_allocation!` to satisfy the `Registration::Registerable` interface, allowing rosters to be managed by the registration system.
 - **Campaign Tracking:** The `materialize_allocation!` method adds missing users with `source_campaign_id`, removes excess users for the same campaign only, and preserves manually-added entries or entries from other campaigns.

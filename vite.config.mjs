@@ -4,7 +4,9 @@ import { coffee } from "vite-plugin-coffee3";
 import FullReload from "vite-plugin-full-reload";
 import RubyPlugin from "vite-plugin-ruby";
 
-// also see config/vite.rb
+// GEM_PATHS is set by config/vite.rb, so a bare `vite build` resolves no gem
+// asset at all and dies on the first @import from one. Build through
+// `bundle exec vite build`.
 const gemPaths = JSON.parse(process.env.GEM_PATHS || "[]");
 
 export default defineConfig({
@@ -40,9 +42,9 @@ export default defineConfig({
         silenceDeprecations: [
           "legacy-js-api",
           "import",
-          "mixed-decls",
           "color-functions",
           "global-builtin",
+          "if-function",
         ],
       },
     },

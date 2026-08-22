@@ -49,9 +49,6 @@ en:
     filters:
       all: 'All'
       unassigned: 'Without group'
-    banners:
-      groups: 'MaMpf is integrating Müsli. Tutorials and groups will now be managed in this tab. Since registrations for %{term} have not yet been carried out via MaMpf, the participant counts are currently 0, even if tutorials already exist. We recommend leaving this as is for this semester and, in particular, not starting any new registrations. Starting with winter semester 2026/27, registration for lectures and seminars can take place via MaMpf.'
-      participants: 'MaMpf is integrating Müsli. Since registrations for %{term} have not yet been carried out via MaMpf, the participant list is empty. Starting with winter semester 2026/27, students will be able to register for lectures and seminars via MaMpf, and the participant list will fill automatically after registration.'
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'
@@ -288,6 +285,7 @@ en:
       campaign_associated: "Self-enrollment is not available because this group is part of a registration process."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration process."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
+      cannot_delete_with_media: "Cannot be deleted because media are attached to it."
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
       cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to registration process mode. Please disable self-enrollment first or keep skip registration processes enabled."
     warnings:
@@ -301,9 +299,142 @@ en:
     messages:
       updated: "Settings updated."
       user_moved: "%{user} moved to %{target}."
+      user_moved_between_tutorials: "%{user} moved to %{target}. Work already handed in to %{source} stays there, unless it is edited again before the deadline."
+      user_not_moved: "%{user} was not moved: they are already in %{target}, or no longer in the group you moved them from."
       user_added: "%{user} added to %{group} successfully."
       user_added_to: "%{user} added to %{group}."
       user_already_member: "%{user} is already in %{group}."
       user_removed: "%{user} removed successfully."
     self_enrollment:
       no_registration_options: "There are currently no tutorials or groups available for registration."
+    mailer:
+      end_mail_html: |
+        <p>With kind regards,<br>Your MaMpf-Team</p>
+      end_mail: |
+        With kind regards,
+        Your MaMpf-Team
+      link_text_html: |
+        <p>You can access your new group here: %{rosterable_link}</p>
+      link_text: |
+        You can access your new group here: %{rosterable_link}
+      roster_added_to_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been added to <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          You are now a participant in this group.
+        </p>
+      roster_added_to_group_email_body: |
+        Hello %{name},
+
+        You have been added to "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+
+        You are now a participant in this group.
+      roster_added_to_group_email_subject: 'Added to group %{rosterable_title} in %{lecture_title}'
+      roster_removed_from_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
+      roster_removed_from_group_email_body: |
+        Hello %{name},
+
+        You have been removed from "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+
+        If you believe this was a mistake or if you have any questions,
+        please contact your instructor or the support team.
+
+        Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+      roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title} in %{lecture_title}'
+      roster_moved_between_groups_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been moved from <strong>%{old_rosterable_title}</strong>
+          to <strong>%{new_rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+        </p>
+      roster_moved_between_groups_email_body: |
+        Hello %{name},
+
+        You have been moved from "%{old_rosterable_title}" to
+        "%{new_rosterable_title}" in the lecture "%{lecture_title}".
+
+        Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
+      roster_moved_between_groups_email_subject: 'Moved to group %{rosterable_title} in %{lecture_title}'
+      roster_participant_left_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          %{participant_name} has left your group <strong>%{old_rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong> and is now in
+          <strong>%{new_rosterable_title}</strong>.
+        </p>
+        <p>
+          Work already handed in to you stays with you and is corrected by you, unless
+          it is edited again before the deadline. From the next submission on,
+          %{participant_name} counts in %{new_rosterable_title}.
+        </p>
+      roster_participant_left_group_email_body: |
+        Hello %{name},
+
+        %{participant_name} has left your group "%{old_rosterable_title}" in the lecture
+        "%{lecture_title}" and is now in "%{new_rosterable_title}".
+
+        Work already handed in to you stays with you and is corrected by you, unless it
+        is edited again before the deadline. From the next submission on,
+        %{participant_name} counts in "%{new_rosterable_title}".
+      roster_participant_left_group_email_subject: '%{participant_name} has left group %{rosterable_title} in %{lecture_title}'
+      roster_participant_joined_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          %{participant_name} is new in your group <strong>%{new_rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>, previously in
+          <strong>%{old_rosterable_title}</strong>.
+        </p>
+        <p>
+          Work already handed in stays with %{old_rosterable_title} and is corrected
+          there, unless it is edited again before the deadline. From the next
+          submission on, %{participant_name} counts with you.
+        </p>
+      roster_participant_joined_group_email_body: |
+        Hello %{name},
+
+        %{participant_name} is new in your group "%{new_rosterable_title}" in the lecture
+        "%{lecture_title}", previously in "%{old_rosterable_title}".
+
+        Work already handed in stays with "%{old_rosterable_title}" and is corrected
+        there, unless it is edited again before the deadline. From the next submission
+        on, %{participant_name} counts with you.
+      roster_participant_joined_group_email_subject: '%{participant_name} is new in group %{rosterable_title} in %{lecture_title}'
+      roster_removed_from_lecture_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from the lecture roster of
+          <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+      roster_removed_from_lecture_email_body: |
+        Hello %{name},
+
+        You have been removed from the lecture roster of "%{lecture_title}".
+
+        If you believe this was a mistake or if you have any questions,
+        please contact your instructor or the support team.
+      roster_removed_from_lecture_email_subject: 'Removed from lecture %{lecture_title}'

@@ -22,8 +22,33 @@ module Rosters
       add_and_remove: 3
     }.freeze
 
+    # Self-service subsets of the modes above. SELF_ADD_MODES is also what the
+    # self_addable scope queries, so predicate and SQL cannot drift apart.
+    SELF_ADD_MODES = [:add_only, :add_and_remove].freeze
+    SELF_REMOVE_MODES = [:remove_only, :add_and_remove].freeze
+
+    DESTRUCTION_BLOCKER_KEYS = {
+      in_campaign: "roster.errors.cannot_delete_in_campaign",
+      roster_not_empty: "roster.errors.cannot_delete_not_empty",
+      submissions: "controllers.tutorials.errors.cannot_delete_with_submissions",
+      media: "roster.errors.cannot_delete_with_media"
+    }.freeze
+
     def self.class_for(type)
       TYPE_CLASS_MAP[type]&.call
+    end
+
+    class_methods do
+      # Override if the association name doesn't follow the pattern
+      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
+      def roster_association_name
+        :"#{name.underscore}_memberships"
+      end
+
+      # The join model that holds this rosterable's roster entries.
+      def roster_join_class
+        reflect_on_association(roster_association_name).klass
+      end
     end
 
     # Models including this concern must:
@@ -45,13 +70,15 @@ module Rosters
         :user_id
       end
 
-      # Override this method if the association name doesn't follow the pattern
-      # #{model_name}_memberships (e.g., Talk uses :speaker_talk_joins)
-      def roster_association_name
-        :"#{self.class.name.underscore}_memberships"
-      end
+      delegate :roster_association_name, to: :class
 
       enum :self_materialization_mode, SELF_MATERIALIZATION_MODES, prefix: true
+
+      scope :self_addable, -> { where(self_materialization_mode: SELF_ADD_MODES) }
+
+      # Restricts to the rosterables of the given lectures. Cohort and Lecture
+      # reference their lecture differently and override this.
+      scope :for_lectures, ->(lectures) { where(lecture_id: lectures) }
 
       before_validation :enforce_consistency_between_modes
       validate :validate_skip_campaigns_switch
@@ -59,20 +86,39 @@ module Rosters
       before_destroy :enforce_rosterable_destruction_constraints, prepend: true
     end
 
+    # Models add their own type-specific blockers on top of these.
+    def destruction_blockers
+      blockers = []
+      blockers << :in_campaign if in_campaign?
+      blockers << :roster_not_empty unless roster_empty?
+      blockers
+    end
+
+    # What "remove from the campaign and delete the group" has to satisfy.
+    def destruction_blockers_outside_campaign
+      destruction_blockers - [:in_campaign]
+    end
+
+    def destruction_blocker_messages(blockers = destruction_blockers)
+      blockers.map { |blocker| I18n.t(DESTRUCTION_BLOCKER_KEYS.fetch(blocker)) }
+    end
+
     # Checks if the item can be safely destroyed.
     def destructible?
-      !in_campaign? && roster_empty?
+      destruction_blockers.empty?
+    end
+
+    # Whether campaigns, not manual edits, decide this roster. Models without
+    # skip_campaigns (e.g. Lecture) are not campaign-managed.
+    def campaign_managed?
+      respond_to?(:skip_campaigns) && !skip_campaigns?
     end
 
     # Checks if the roster is locked for manual modifications.
-    # Models without skip_campaigns (e.g., Lecture) are never locked.
     # A roster is locked if campaigns are NOT skipped AND no campaign
     # has been completed yet.
     def locked?
-      return false unless respond_to?(:skip_campaigns)
-      return false if skip_campaigns?
-
-      !in_completed_campaign?
+      campaign_managed? && !in_completed_campaign?
     end
 
     # Whether holding a slot in this rosterable precludes holding another
@@ -96,8 +142,7 @@ module Rosters
     end
 
     def config_allow_self_add?
-      self_materialization_mode_add_only? ||
-        self_materialization_mode_add_and_remove?
+      SELF_ADD_MODES.include?(self_materialization_mode.to_sym)
     end
 
     # guard for self-assignment possibility
@@ -110,8 +155,7 @@ module Rosters
     end
 
     def config_allow_self_remove?
-      self_materialization_mode_remove_only? ||
-        self_materialization_mode_add_and_remove?
+      SELF_REMOVE_MODES.include?(self_materialization_mode.to_sym)
     end
 
     # guard for self-removal possibility
@@ -280,10 +324,16 @@ module Rosters
 
     # Checks if the roster is full (reached or exceeded capacity).
     def full?
+      full_for_count?(roster_entries_count)
+    end
+
+    # Same check against a roster size the caller already knows, so that code
+    # counting many rosterables at once need not pay a query per record.
+    def full_for_count?(count)
       return false unless respond_to?(:capacity)
       return false if capacity.nil?
 
-      roster_entries_count >= capacity
+      count >= capacity
     end
 
     # Returns the group type symbol for this rosterable (e.g. :tutorials, :talks).
@@ -345,14 +395,12 @@ module Rosters
       end
 
       def enforce_rosterable_destruction_constraints
-        if in_campaign?
-          errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
-          throw(:abort)
+        blockers = destruction_blockers
+        return if blockers.empty?
+
+        destruction_blocker_messages(blockers).each do |message|
+          errors.add(:base, message)
         end
-
-        return if roster_empty?
-
-        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
         throw(:abort)
       end
 

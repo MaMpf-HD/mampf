@@ -1,4 +1,5 @@
-import { onVideoMetadataLoaded, renderLatex } from "./utility";
+import { onTrackReady } from "./video_events";
+import { renderLatex } from "./utility";
 
 /**
   This file wraps up most functionality of the thyme player(s) concerning chapters.
@@ -15,29 +16,7 @@ export class ChapterManager {
    * It receives a boolean value that indicates whether chapters are present.
    */
   load(onLoad) {
-    let initialChapters = true;
-    const chapters = this.#getChapters();
-    const chapterManager = this;
-    /* after video metadata have been loaded, display chapters in the interactive area
-     Originally (and more appropriately, according to the standards),
-     only the 'loadedmetadata' event was used. However, Firefox triggers this event too soon,
-     i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
-     for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
-    onVideoMetadataLoaded(thymeAttributes.video, function () {
-      if (initialChapters && chapters.readyState === 2) {
-        chapterManager.#displayChapters();
-        initialChapters = false;
-        if (onLoad) {
-          onLoad(chapters.track ? (chapters.track.cues.length > 0) : false);
-        }
-      }
-    });
-    thymeAttributes.video.addEventListener("canplay", function () {
-      if (initialChapters && chapters.readyState === 2) {
-        chapterManager.#displayChapters();
-        initialChapters = false;
-      }
-    });
+    onTrackReady(this.#getChapters(), () => this.#displayChapters(), onLoad);
   }
 
   previousChapterStart() {
