@@ -10,9 +10,8 @@
           locals: { lecture: @lecture } %>
     </div>
 
-    <% active_tab = params[:tab] || (@lecture.sort == "vignettes" ? "vignettes" : "content") %>
-    <% is_vignette_lecture = @lecture.sort == "vignettes" %>
-    <%= render LectureTabsComponent.new(active_tab, is_vignette_lecture) do |component| %>
+    <% active_tab = params[:tab] || "content" %>
+    <%= render LectureTabsComponent.new(active_tab) do |component| %>
 
       <% component.with_tab(name: "content", label: t("content")) do %>
         <div class="row px-4 py-2">
@@ -102,29 +101,11 @@
         </div>
       <% end %>
 
-      <% if @lecture.sort == "vignettes" %>
-        <% component.with_tab(name: "vignettes", label: t("vignettes.vignettes")) do %>
-          <div class="container small-width lecture-pane mb-3">
-            <%= render partial: 'vignettes/questionnaires/manage/manage',
-                       locals: { lecture: @lecture } %>
-          </div>
-          <div class="container small-width lecture-pane mb-3">
-            <%= render partial: 'lectures/edit/link_to_lecture',
-                       locals: { lecture: @lecture } %>
-          </div>
-          <div class="container small-width lecture-pane">
-            <%= render partial: 'vignettes/completion_message/form',
-                       locals: { lecture: @lecture } %>
-          </div>
-        <% end %>
-      <% end %>
-
     <% end %>
   <% end %>
 
   <!-- Modals -->
   <%= render partial: 'media/modal' %>
-  <%= render 'vignettes/questionnaires/new/vignette_modal', lecture: @lecture %>
   <%= render partial: 'sections/content_modal' %>
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/edit/publish',

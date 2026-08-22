@@ -13,7 +13,11 @@
               data: { preview: @preview || false },
               local: true) do |form| %>
 
-<div id="vignette-take-card" class="container-md small-width card">
+<div id="vignette-take-card" class="container-md small-width card"
+     data-controller="vignettes-position"
+     data-vignettes-position-questionnaire-value="<%= @questionnaire.id %>"
+     data-vignettes-position-position-value="<%= @slide.position %>"
+     data-vignettes-position-last-value="<%= @slide.last_position? %>">
 
     <!-- Header -->
     <% progress = [((@slide.position.to_f - 1) / @questionnaire.slides.count * 100).round, 0].max %>
@@ -61,8 +65,8 @@
         </p>
 
         <%= form.hidden_field :slide_id, value: @slide.id %>
+        <%# Only a tracked run carries these; without them nothing is measured. %>
         <%= form.fields_for :slide_statistic do |stat_form| %>
-            <%= stat_form.hidden_field :user_id, value: current_user.id %>
             <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
             <%= stat_form.hidden_field :total_time_on_slide, id: "total-time-on-slide-field" %>
             <%= stat_form.hidden_field :time_on_info_slides, id: "time-on-info-slides-field" %>
@@ -86,33 +90,61 @@
         <% end %>
 
         <!-- Navigation -->
-        <% unless @preview %>
-            <div class="d-flex justify-content-end mt-3">
-                <!-- TODO: Do a better differentiation here -->
-                <% unless @slide.id == @questionnaire.last_slide.id %>
-                    <%= form.button type: "submit", 
-                        class: "btn btn-primary slide-footer-btn",
-                        title: t("vignettes.next_slide"),
-                        data: { bs_toggle: "tooltip" } do %>
-                        <i class="bi bi-arrow-right fs-5"></i>
-                    <% end %>
-                <% else %>
-                    <!-- For final slide button -->
-                    <%= form.button type: "submit", 
-                        class: "btn btn-success slide-footer-btn",
-                        title: t("vignettes.submit_answer"),
-                        data: { bs_toggle: "tooltip" } do %>
-                        <i class="bi bi-check2-circle fs-5"></i>
-                    <% end %>
-                <% end %>
-            </div>
-        <% else %>
+        <%# Bootstrap's tooltip takes the title attribute away once it
+            initialises, so the advance controls carry their name twice. %>
+        <% if @preview %>
             <div class="d-flex justify-content-end mt-3">
                 <%= link_to t("vignettes.return_to_edit"),
                     edit_questionnaire_path(@questionnaire), class: "btn" %>
                 <%= link_to t("vignettes.next_slide"),
                     preview_questionnaire_path(@questionnaire, position: @position.to_i + 1),
-                    class: "btn slide-footer-btn", id: "vignettes-next-slide-preview" %>
+                    class: "btn slide-footer-btn vignettes-advance-link",
+                    id: "vignettes-next-slide-preview" %>
+            </div>
+        <% elsif @tracked %>
+            <div class="d-flex justify-content-end mt-3">
+                <% if @slide.last_position? %>
+                    <%= form.button type: "submit",
+                        class: "btn btn-success slide-footer-btn",
+                        title: t("vignettes.finish"),
+                        "aria-label": t("vignettes.finish"),
+                        data: { bs_toggle: "tooltip",
+                                action: "vignettes-position#advance" } do %>
+                        <i class="bi bi-check2-circle fs-5"></i>
+                    <% end %>
+                <% else %>
+                    <%= form.button type: "submit",
+                        class: "btn btn-primary slide-footer-btn",
+                        title: t("vignettes.next_slide"),
+                        "aria-label": t("vignettes.next_slide"),
+                        data: { bs_toggle: "tooltip" } do %>
+                        <i class="bi bi-arrow-right fs-5"></i>
+                    <% end %>
+                <% end %>
+            </div>
+        <% else %>
+            <%# Nothing is stored for this run, so the answer is never sent:
+                the slides advance by link instead of by form submission. %>
+            <div class="d-flex justify-content-end mt-3">
+                <% if @slide.last_position? %>
+                    <%= link_to finish_questionnaire_path(@questionnaire),
+                        class: "btn btn-success slide-footer-btn vignettes-advance-link",
+                        title: t("vignettes.finish"),
+                        "aria-label": t("vignettes.finish"),
+                        data: { bs_toggle: "tooltip",
+                                action: "vignettes-position#advance" } do %>
+                        <i class="bi bi-check2-circle fs-5"></i>
+                    <% end %>
+                <% else %>
+                    <%= link_to take_questionnaire_path(@questionnaire,
+                                                        position: @slide.position + 1),
+                        class: "btn btn-primary slide-footer-btn vignettes-advance-link",
+                        title: t("vignettes.next_slide"),
+                        "aria-label": t("vignettes.next_slide"),
+                        data: { bs_toggle: "tooltip" } do %>
+                        <i class="bi bi-arrow-right fs-5"></i>
+                    <% end %>
+                <% end %>
             </div>
         <% end %>
     </div>

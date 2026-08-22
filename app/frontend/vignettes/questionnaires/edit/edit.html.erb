@@ -1,17 +1,17 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.7/Sortable.min.js"
         integrity="sha384-DgmC6Xe2bSN2WjTDXzWYbUbxyhNP+NNkGDR/g78pCXV7E7rcVTGxVg0uIVCUUcBc"
         crossorigin="anonymous"></script>
-<%= vite_javascript_tag "vignettes/questionnaires/edit/edit.js" %>
 <%= vite_javascript_tag "vignettes/questionnaires/edit/change_detection.js" %>
 <%= vite_stylesheet_tag "vignettes/questionnaires/edit/edit.scss" %>
 
-<% lecture_edit_path = edit_lecture_path(@questionnaire.lecture, anchor: 'vignettes') %>
+<% overview_path = lecture_questionnaires_path(@questionnaire.lecture) %>
 
 
 <div class="container-md small-width" id="vignettes-wrapper">
   <!-- Back Button -->
-  <a href="<%= lecture_edit_path %>" id="vignettes-back-btn"
+  <a href="<%= overview_path %>" id="vignettes-back-btn"
     class="btn btn-outline-secondary"
+    data-turbo-frame="main"
     data-navigate-away-message="<%= t('vignettes.unsaved_changes_navigation') %>">
     <i class="bi bi-arrow-left"></i>
     <%= t("buttons.back") %>
@@ -77,22 +77,128 @@
     </div>
   </div>
 
-  <!-- 🎈 Info Slides -->
-  <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.info_slides") %></h2>
+  <!-- 🎈 Data collection -->
+  <h2 class="fs-4 fw-bold mt-4 mb-2"><%= t("vignettes.consent.heading") %></h2>
 
-  <div class="accordion" id="info_slides">
-    <% @questionnaire.info_slides.each() do |info_slide| %>
-      <%= turbo_frame_tag info_slide, src: turbo_slide_edit_url(info_slide) %>
+  <%# Once the vignette is locked, so is what students agreed to: the wording
+      they consented under must not change underneath them. Duplicating is the
+      way out, and it carries the text along. %>
+  <% if @questionnaire.editable %>
+    <%= form_with model: @questionnaire,
+                  url: questionnaire_path(@questionnaire),
+                  method: :patch,
+                  local: true,
+                  id: "vignettes-consent-form",
+                  data: { controller: "vignettes-data-collection",
+                          action: "submit->vignettes-data-collection#guard" } do |form| %>
+      <div class="form-check mb-3">
+        <%= form.check_box :data_collection, class: "form-check-input",
+                           data: { vignettes_data_collection_target: "toggle",
+                                   action: "change->vignettes-data-collection#refresh" } %>
+        <%= form.label :data_collection, t("vignettes.consent.data_collection"),
+                       class: "form-check-label fw-semibold" %>
+        <p class="text-muted mb-0"><%= t("vignettes.consent.data_collection_hint") %></p>
+      </div>
+
+      <div class="mb-3" data-vignettes-data-collection-target="text">
+        <%# A trix-editor is a custom element, so a plain label/for pair leaves it
+            without an accessible name. %>
+        <%= form.label :consent_text, t("vignettes.consent.text_label"),
+                       id: "consent-text-label", class: "form-label fw-semibold" %>
+        <p class="text-muted"><%= t("vignettes.consent.text_hint") %></p>
+        <%= form.rich_textarea :consent_text,
+                               "aria-labelledby": "consent-text-label",
+                               data: { vignettes_data_collection_target: "editor" } %>
+        <p class="text-danger mt-2" hidden
+           data-vignettes-data-collection-target="error">
+          <%= t("vignettes.consent.text_required") %>
+        </p>
+      </div>
+
+      <%# Two Save buttons on one page: they need names of their own. %>
+      <%= form.submit t("buttons.save"), class: "btn btn-primary",
+                      "aria-label": t("vignettes.consent.save") %>
     <% end %>
-  </div>
+  <% else %>
+    <div class="form-check mb-3">
+      <%= check_box_tag "data_collection_locked", "1", @questionnaire.data_collection?,
+                        disabled: true, class: "form-check-input" %>
+      <%= label_tag "data_collection_locked", t("vignettes.consent.data_collection"),
+                    class: "form-check-label fw-semibold" %>
+    </div>
 
-  <%= button_to new_questionnaire_info_slide_path(@questionnaire),
-      method: :get,
-      data: { "turbo-stream": true },
-      class: "btn btn-outline-primary mt-2",
-      disabled: !@questionnaire.editable do %>
-    <i class="bi bi-plus-circle"></i>
-    <%= t("vignettes.create_new_info_slide") %>
+    <% if @questionnaire.data_collection? %>
+      <p class="fw-semibold mb-1"><%= t("vignettes.consent.text_label") %></p>
+      <div class="trix-content mb-3"><%= @questionnaire.consent_text %></div>
+    <% end %>
+  <% end %>
+
+  <!-- 🎈 Closing note -->
+  <h2 class="fs-4 fw-bold mt-4 mb-2"><%= t("vignettes.closing.heading_edit") %></h2>
+
+  <%# Stays editable on a locked vignette: it is not part of what students
+      worked on, and forgetting it should not cost a duplicate. %>
+  <%= form_with model: @questionnaire,
+                url: update_closing_text_questionnaire_path(@questionnaire),
+                method: :patch,
+                local: true,
+                id: "vignettes-closing-form" do |form| %>
+    <div class="mb-3">
+      <%= form.label :closing_text, t("vignettes.closing.text_label"),
+                     id: "closing-text-label", class: "form-label fw-semibold" %>
+      <p class="text-muted"><%= t("vignettes.closing.text_hint") %></p>
+      <%= form.rich_textarea :closing_text,
+                             "aria-labelledby": "closing-text-label" %>
+    </div>
+
+    <%= form.submit t("buttons.save"), class: "btn btn-primary",
+                    "aria-label": t("vignettes.closing.save") %>
+  <% end %>
+
+  <% if @questionnaire.data_collection? %>
+    <h2 class="fs-4 fw-bold mt-4 mb-2"><%= t("vignettes.consent.revoke_heading") %></h2>
+    <p class="text-muted"><%= t("vignettes.consent.revoke_hint") %></p>
+
+    <%= form_with url: revoke_consent_questionnaire_path(@questionnaire),
+                  method: :post,
+                  local: true,
+                  class: "row row-cols-md-auto g-2 align-items-center" do |form| %>
+      <div class="col-12">
+        <%= form.label :pseudonym, t("vignettes.consent.codename"),
+                       class: "visually-hidden" %>
+        <%= form.text_field :pseudonym, class: "form-control font-monospace",
+                            required: true, autocomplete: "off",
+                            placeholder: t("vignettes.consent.codename") %>
+      </div>
+      <div class="col-12">
+        <%= form.submit t("vignettes.consent.revoke_submit"),
+                        class: "btn btn-outline-danger",
+                        data: { turbo_confirm: t("vignettes.consent.revoke_confirm") } %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%# A locked vignette without info slides has nothing to show here at all;
+      the lock next to the title says why. %>
+  <% if @questionnaire.editable || @questionnaire.info_slides.any? %>
+    <!-- 🎈 Info Slides -->
+    <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.info_slides") %></h2>
+
+    <div class="accordion" id="info_slides">
+      <% @questionnaire.info_slides.each() do |info_slide| %>
+        <%= turbo_frame_tag info_slide, src: turbo_slide_edit_url(info_slide) %>
+      <% end %>
+    </div>
+
+    <% if @questionnaire.editable %>
+      <%= button_to new_questionnaire_info_slide_path(@questionnaire),
+          method: :get,
+          data: { "turbo-stream": true },
+          class: "btn btn-outline-primary mt-2" do %>
+        <i class="bi bi-plus-circle"></i>
+        <%= t("vignettes.create_new_info_slide") %>
+      <% end %>
+    <% end %>
   <% end %>
 
   <!-- 🎈 Slides -->
@@ -102,8 +208,9 @@
   <% end %>
 
   <div class="accordion" id="slides"
-       data-questionnaire-id="<%= @questionnaire.id %>"
-       data-questionnaire-editable="<%= @questionnaire.editable %>">
+       data-controller="vignettes-slides-sortable"
+       data-vignettes-slides-sortable-questionnaire-value="<%= @questionnaire.id %>"
+       data-vignettes-slides-sortable-editable-value="<%= @questionnaire.editable %>">
     <% @slides.each() do |slide| %>
       <!-- The div is needed such that slide drag animations work -->
       <div>
@@ -112,13 +219,14 @@
     <% end %>
   </div>
 
-  <%= button_to new_questionnaire_slide_path(@questionnaire),
-      method: :get,
-      data: { "turbo-stream": true },
-      class: "btn btn-outline-primary mt-2",
-      disabled: !@questionnaire.editable do %>
-    <i class="bi bi-plus-circle"></i>
-    <%= t("vignettes.create_new_slide") %>
+  <% if @questionnaire.editable %>
+    <%= button_to new_questionnaire_slide_path(@questionnaire),
+        method: :get,
+        data: { "turbo-stream": true },
+        class: "btn btn-outline-primary mt-2" do %>
+      <i class="bi bi-plus-circle"></i>
+      <%= t("vignettes.create_new_slide") %>
+    <% end %>
   <% end %>
 </div>
 
@@ -187,7 +295,8 @@
         <h5 class="modal-title" id="duplicateModalLabel"><%= t("vignettes.duplicate") %></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <%= form_with url: duplicate_questionnaire_path(@questionnaire), method: :post do |form| %>
+      <%= form_with url: duplicate_questionnaire_path(@questionnaire),
+                    method: :post, local: true do |form| %>
         <div class="modal-body">
           <div class="form-floating mb-3">
             <%= form.text_field :title, class: 'form-control', required: true,

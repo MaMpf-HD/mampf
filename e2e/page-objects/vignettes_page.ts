@@ -42,6 +42,9 @@ export type QuestionnaireCsvRow = {
   likertScaleOption: string;
 };
 
+/** The generated code, as the codename page groups it for reading. */
+export const CODENAME_PATTERN = /^[2-9A-HJ-NP-Z]{4}-[2-9A-HJ-NP-Z]{4}-[2-9A-HJ-NP-Z]{4}$/;
+
 export type QuestionnaireCsvExport = {
   headers: string[];
   rows: QuestionnaireCsvRow[];
@@ -49,30 +52,70 @@ export type QuestionnaireCsvExport = {
 
 export class VignettesPage {
   readonly page: Page;
+  /** The slide the reader is on, so submit() can wait for the next one. */
+  private position = 1;
 
   constructor(page: Page) {
     this.page = page;
   }
 
-  async setPersonalCode(lectureId: number, personalCode: string) {
+  async openOverview(lectureId: number) {
     await this.page.goto(`/lectures/${lectureId}/questionnaires`);
-    await this.page.getByRole("textbox").first().fill(personalCode);
-    await this.page.getByRole("button", { name: "Save" }).click();
   }
 
-  async openQuestionnaire(name: string) {
-    const pageUrl = this.page.url();
-    if (!pageUrl.endsWith("questionnaires")) {
-      throw new Error(
-        `Unexpected page URL before opening questionnaire: ${pageUrl}`,
-      );
-    }
+  row(title: string) {
+    return this.page.getByRole("listitem").filter({ hasText: title });
+  }
 
-    const takePagePromise = this.page.waitForResponse(response =>
-      response.url().includes("take"),
-    );
-    await this.page.getByRole("link", { name }).click();
-    await takePagePromise;
+  /** Opens the vignette; lands on the consent page if it collects data. */
+  async openQuestionnaire(title: string) {
+    await this.row(title).getByRole("link", { name: /Start|Continue/ }).click();
+    await this.page.waitForURL(/\/(take|consent)/);
+    this.readPosition();
+  }
+
+  async declineDataCollection() {
+    await this.page.getByRole("radio", { name: "No." }).check();
+    await this.page.getByRole("button", { name: "Continue" }).click();
+    await this.reachTakePage();
+  }
+
+  /** Consents, and returns the code the way the CSV stores it. */
+  async consentWithNewCode(): Promise<string> {
+    await this.page.getByRole("radio", { name: "Yes, and I need a code." }).check();
+    await this.page.getByRole("button", { name: "Continue" }).click();
+    await this.page.waitForURL(/\/codename/);
+
+    return await this.acknowledgeCode();
+  }
+
+  /** Notes the code down and moves on into the vignette. */
+  async acknowledgeCode(): Promise<string> {
+    const shown = await this.page.getByText(CODENAME_PATTERN).innerText();
+    await this.page.getByRole("link", { name: "I have written the code down" }).click();
+    await this.reachTakePage();
+
+    return shown.replaceAll("-", "");
+  }
+
+  async consentWithExistingCode(code: string) {
+    await this.page.getByRole("radio", { name: "Yes, and I already have a code." }).check();
+    await this.page.getByRole("textbox", { name: "Code" }).fill(code);
+    await this.page.getByRole("button", { name: "Continue" }).click();
+    await this.reachTakePage();
+  }
+
+  private async reachTakePage() {
+    await this.page.waitForURL(/\/take/);
+    // The slide's timings start when its script initialises, so nothing may
+    // touch the clock before that.
+    await this.page.locator("#vignettes-answer-form[data-vignette-take-ready]").waitFor();
+    this.readPosition();
+  }
+
+  private readPosition() {
+    const match = /[?&]position=(\d+)/.exec(this.page.url());
+    this.position = match ? Number(match[1]) : 1;
   }
 
   async enableMockClock() {
@@ -116,22 +159,18 @@ export class VignettesPage {
   }
 
   async submit(isLastSlide = false) {
-    let takeNextSlidePromise;
-    if (!isLastSlide) {
-      takeNextSlidePromise = this.page.waitForResponse(response =>
-        response.url().endsWith("/take"),
-      );
+    // The control is a button for a tracked run and a link for an untracked
+    // one; both carry the same label.
+    await this.page.getByLabel(isLastSlide ? "Finish vignette" : "Next slide").click();
+
+    if (isLastSlide) {
+      await this.page.waitForURL(/\/finish/);
+      return;
     }
 
-    const nextSlideButton = this.page.getByTitle("Next slide");
-    if (await nextSlideButton.isVisible()) {
-      await nextSlideButton.click();
-    }
-    else {
-      await this.page.getByTitle("Submit answer").click();
-    }
-
-    await takeNextSlidePromise;
+    this.position += 1;
+    await this.page.waitForURL(new RegExp(`[?&]position=${this.position}(&|$)`));
+    await this.page.locator("#vignettes-answer-form[data-vignette-take-ready]").waitFor();
   }
 
   async exportQuestionnaireCsv(questionnaireId: number): Promise<string[][]> {

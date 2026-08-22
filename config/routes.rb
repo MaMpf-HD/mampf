@@ -688,23 +688,20 @@ Rails.application.routes.draw do
   get "questionnaires/:id/preview",
       to: "vignettes/questionnaires#preview",
       as: "preview_questionnaire"
-  post "lectures/:id/questionnaires/set_codename",
-       to: "vignettes/codenames#set_codename",
-       as: "set_lecture_codename"
-  post "lectures/:id/questionnaires/set_completion_message",
-       to: "vignettes/completion_message#set_completion_message",
-       as: "set_lecture_completion_message"
-  delete "lectures/:id/questionnaires/destroy_completion_message",
-         to: "vignettes/completion_message#destroy",
-         as: "destroy_lecture_completion_message"
 
   scope module: "vignettes", path: "" do
     resources :questionnaires, only: [:create, :edit, :update, :destroy] do
       member do
         get :export_statistics
+        get :consent
+        post :decide_consent
+        get :codename
+        get :finish
+        post :revoke_consent
         post :submit_answer
         post :duplicate
         patch :publish
+        patch :update_closing_text
         patch :update_slide_position
       end
       resources :info_slides, only: [:new, :create, :edit, :update, :destroy]

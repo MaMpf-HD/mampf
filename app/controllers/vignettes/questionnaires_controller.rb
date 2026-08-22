@@ -1,55 +1,76 @@
 module Vignettes
   class QuestionnairesController < ApplicationController
+    TAKE_ACTIONS = [:take, :submit_answer, :finish, :consent, :decide_consent,
+                    :codename].freeze
+
     before_action :set_questionnaire,
-                  only: [:take, :preview, :submit_answer, :edit, :publish, :export_statistics,
-                         :update_slide_position, :destroy, :duplicate]
+                  only: [:take, :preview, :submit_answer, :finish, :consent,
+                         :decide_consent, :codename, :edit, :update,
+                         :update_closing_text, :publish, :export_statistics,
+                         :update_slide_position, :destroy, :duplicate,
+                         :revoke_consent]
     before_action :set_lecture, only: [:index, :new, :create]
-    before_action :check_take_accessibility, only: [:take, :submit_answer]
+    before_action :check_take_accessibility, only: TAKE_ACTIONS
+    before_action :check_index_accessibility, only: [:index]
     before_action :check_edit_accessibility,
-                  only: [:edit, :preview, :destroy, :publish, :update_slide_position,
-                         :duplicate, :export_statistics]
-    before_action :check_lecture_edit_accessibility, only: [:create]
-    before_action :check_empty, only: [:publish, :take, :submit_answer]
-    layout "vignettes/layouts/vignettes_navbar"
+                  only: [:create, :edit, :update, :update_closing_text, :preview,
+                         :destroy, :publish, :update_slide_position, :duplicate,
+                         :export_statistics, :revoke_consent]
+    before_action :check_empty, only: TAKE_ACTIONS + [:publish]
+    before_action :check_editable, only: [:update]
 
     def index
-      @questionnaires = @lecture.vignettes_questionnaires.where(published: true).order(title: :desc)
+      @editor = current_user.can_edit?(@lecture)
+      @questionnaires = @lecture.vignettes_questionnaires.order(:title)
+      @questionnaires = @questionnaires.where(published: true) unless @editor
 
-      render template: "vignettes/questionnaires/index/index"
+      render template: "vignettes/questionnaires/index/index",
+             layout: lecture_layout
     end
 
     def take
-      unless user_has_codename?(current_user, @questionnaire.lecture)
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    alert: t("vignettes.codenames.please_set_codename")
-        return
-      end
+      return redirect_to(consent_questionnaire_path(@questionnaire)) if consent_pending?
 
-      user_answer = current_user.vignettes_user_answers
-                                .find_or_create_by(user: current_user,
-                                                   questionnaire: @questionnaire)
-
-      # Vignettes was already fully answered by user
-      if user_answer.last_slide_answered?
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    notice: t("vignettes.already_answered")
-        return
-      end
-
-      first_unanswered_slide = user_answer.first_unanswered_slide
-      # This case should never happen
-      if first_unanswered_slide.nil?
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    notice: t("vignettes.no_slides")
-        return
-      end
-
-      @slide = first_unanswered_slide
+      @slide = slide_at(params[:position])
+      @tracked = tracked?
       @answer = @slide.answers.build
-      @answer.build_slide_statistic
+      @answer.build_slide_statistic if @tracked
 
       render template: "vignettes/questionnaires/take/take",
-             layout: "application_no_sidebar"
+             layout: lecture_layout
+    end
+
+    def consent
+      return redirect_to(take_questionnaire_path(@questionnaire)) unless consent_pending?
+
+      render template: "vignettes/questionnaires/consent/consent",
+             layout: lecture_layout
+    end
+
+    def decide_consent
+      return redirect_to(take_questionnaire_path(@questionnaire)) unless consent_pending?
+
+      case params[:consent]
+      when "decline"
+        decide!(false)
+        redirect_to take_questionnaire_path(@questionnaire)
+      when "new"
+        decide!(start_run(Codename.generate!).id)
+        redirect_to codename_questionnaire_path(@questionnaire)
+      when "existing"
+        claim_existing_codename
+      else
+        redirect_to consent_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.consent.undecided")
+      end
+    end
+
+    def codename
+      @codename = current_run&.codename
+      return redirect_to(consent_questionnaire_path(@questionnaire)) unless @codename
+
+      render template: "vignettes/questionnaires/consent/codename",
+             layout: lecture_layout
     end
 
     def preview
@@ -60,12 +81,7 @@ module Vignettes
       end
 
       @preview = true
-      @position =
-        if params[:position].present?
-          params[:position].to_i
-        else
-          1
-        end
+      @position = params[:position].presence&.to_i || 1
 
       if @position > @questionnaire.slides.maximum(:position) || @position < 1
         redirect_to edit_questionnaire_path(@questionnaire)
@@ -76,41 +92,32 @@ module Vignettes
       @answer = @slide.answers.build
 
       render :take, template: "vignettes/questionnaires/take/take",
-                    layout: "application_no_sidebar"
+                    layout: lecture_layout
     end
 
+    # Only a tracked run ever posts. An untracked one advances by link, so its
+    # answers never reach the server, not even the request log.
     def submit_answer
+      return redirect_to(consent_questionnaire_path(@questionnaire)) if consent_pending?
+      return redirect_to(take_questionnaire_path(@questionnaire)) unless tracked?
+
+      # Set for the sake of the re-render below, which goes through the take
+      # template and would otherwise offer the untracked controls.
+      @tracked = true
       @slide = @questionnaire.slides.find(answer_params[:slide_id])
 
-      @answer = @slide.answers.build
-      @answer.question = @slide.question
-      @answer.type = @slide.question.type.gsub("Question", "Answer")
-      @user_answer = current_user.vignettes_user_answers.find_by(user: current_user,
-                                                                 questionnaire: @questionnaire)
-      @answer.user_answer = @user_answer
-      @answer.assign_attributes(answer_params.except(:slide_id))
+      return unless save_answer
 
-      # Check if user already answered this slide
-      if @user_answer.answered_slide_ids.include?(@slide.id)
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    notice: t("vignettes.already_answered")
-        return
-      end
+      return redirect_to(finish_questionnaire_path(@questionnaire)) if @slide.last_position?
 
-      unless @answer.save
-        Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }
-        render :take, template: "vignettes/questionnaires/take/take",
-                      status: :unprocessable_content
-        return
-      end
+      redirect_to take_questionnaire_path(@questionnaire, position: @slide.position + 1)
+    end
 
-      if @slide.last_position?
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    notice: t("vignettes.answered")
-        return
-      end
+    def finish
+      @codename = current_run&.codename
 
-      redirect_to take_questionnaire_path(@questionnaire)
+      render template: "vignettes/questionnaires/finish/finish",
+             layout: lecture_layout
     end
 
     def publish
@@ -172,7 +179,7 @@ module Vignettes
     def edit
       @slides = @questionnaire.slides.order(:position)
 
-      render template: "vignettes/questionnaires/edit/edit", layout: "administration"
+      render template: "vignettes/questionnaires/edit/edit", layout: lecture_layout
     end
 
     def create
@@ -181,8 +188,42 @@ module Vignettes
         @questionnaire.lecture.touch
         redirect_to edit_questionnaire_path(@questionnaire)
       else
-        redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
+        redirect_to lecture_questionnaires_path(@lecture),
                     alert: t("vignettes.questionnaire_not_created")
+      end
+    end
+
+    def update
+      if @questionnaire.update(data_collection_params)
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    notice: t("vignettes.consent.saved")
+      else
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.consent.not_saved")
+      end
+    end
+
+    # Consent has to be revocable, and the codename is the only handle anyone
+    # has on the data: there is no user to look it up by.
+    def revoke_consent
+      pseudonym = Codename.normalize(params[:pseudonym])
+      codename = Codename.find_by(pseudonym: pseudonym) if pseudonym
+      runs = codename ? @questionnaire.user_answers.where(codename: codename) : []
+      count = runs.size
+      runs.each(&:destroy)
+      codename.destroy if codename && codename.user_answers.reload.empty?
+
+      redirect_to edit_questionnaire_path(@questionnaire),
+                  notice: t("vignettes.consent.revoked", count: count)
+    end
+
+    def update_closing_text
+      if @questionnaire.update(closing_text_params)
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    notice: t("vignettes.closing.saved")
+      else
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.closing.not_saved")
       end
     end
 
@@ -190,11 +231,9 @@ module Vignettes
       @lecture = @questionnaire.lecture
       if @questionnaire.destroy
         @lecture.touch
-        redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
-                    notice: t("vignettes.deleted")
+        redirect_to lecture_questionnaires_path(@lecture), notice: t("vignettes.deleted")
       else
-        redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
-                    alert: t("vignettes.not_deleted")
+        redirect_to lecture_questionnaires_path(@lecture), alert: t("vignettes.not_deleted")
       end
     end
 
@@ -205,6 +244,7 @@ module Vignettes
         new_questionnaire.title = new_title
         new_questionnaire.published = false
         new_questionnaire.editable = true
+        new_questionnaire.consent_text = @questionnaire.consent_text
         new_questionnaire.save!
 
         # Update lecture cache to show the new questionnaire
@@ -248,7 +288,7 @@ module Vignettes
           end
         end
 
-        redirect_to edit_lecture_path(@questionnaire.lecture, anchor: "vignettes"),
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
                     notice: t("vignettes.duplicated")
       end
     rescue StandardError => e
@@ -262,58 +302,88 @@ module Vignettes
       def set_questionnaire
         @questionnaire = Questionnaire.find_by(id: params[:id])
 
-        return if @questionnaire
+        if @questionnaire
+          @lecture = @questionnaire.lecture
+          return
+        end
 
         redirect_to :root, alert: t("vignettes.not_found")
+      end
+
+      # Vignettes are lecture content, so they sit next to the lecture sidebar
+      # like media or the general information do.
+      def lecture_layout
+        turbo_frame_request? ? "turbo_frame" : "application"
       end
 
       def set_lecture
         @lecture = Lecture.find_by(id: params[:lecture_id])
 
-        unless @lecture
-          redirect_to :root, alert: t("vignettes.no_lecture")
-          return
-        end
+        return if @lecture
 
-        return if @lecture.sort == "vignettes"
+        redirect_to :root, alert: t("vignettes.no_lecture")
+      end
 
-        redirect_to :root, alert: t("vignettes.not_vignettes_lecture")
+      # Vignettes are part of the lecture's content: whoever gets to see the
+      # lecture gets to see them, once the lecture says it has any. Editors keep
+      # their way in either way, so switching the checkbox off cannot strand
+      # what they have already written.
+      def content_accessible?
+        return true if current_user.can_edit?(@lecture)
+
+        @lecture.vignettes? && @lecture.in?(current_user.lectures)
+      end
+
+      def check_index_accessibility
+        return if content_accessible?
+
+        redirect_to lecture_home_path(@lecture), alert: t("vignettes.not_accessible")
       end
 
       def check_take_accessibility
-        return if @questionnaire.published &&
-                  (current_user.admin || current_user.in?(@questionnaire.lecture.users))
+        return if @questionnaire.published && content_accessible?
 
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    alert: t("vignettes.not_accessible")
+        redirect_to lecture_home_path(@lecture), alert: t("vignettes.not_accessible")
       end
 
+      # @lecture is the questionnaire's lecture, or, for #create where there is
+      # no questionnaire yet, the one it is about to be created in.
       def check_edit_accessibility
-        return if current_user.admin
-        return if current_user.in?(@questionnaire.lecture.editors_with_inheritance)
+        return if current_user.can_edit?(@lecture)
 
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    alert: t("vignettes.not_accessible")
+        redirect_to lecture_home_path(@lecture), alert: t("vignettes.not_accessible")
       end
 
-      # For #create there is no @questionnaire yet; authorize against the target
-      # lecture (@lecture is set by set_lecture) instead.
-      def check_lecture_edit_accessibility
-        return if current_user.admin
-        return if current_user.in?(@lecture.editors_with_inheritance)
+      # What students agreed to is frozen with the rest of the vignette. The way
+      # to change it is to duplicate, which unlocks the copy.
+      def check_editable
+        return if @questionnaire.editable
 
-        redirect_to lecture_questionnaires_path(@lecture),
-                    alert: t("vignettes.not_accessible")
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.not_editable")
       end
 
       def check_empty
         return unless @questionnaire.slides.empty?
 
-        redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.no_slides")
+        target = if current_user.can_edit?(@lecture)
+          edit_questionnaire_path(@questionnaire)
+        else
+          lecture_questionnaires_path(@lecture)
+        end
+        redirect_to target, alert: t("vignettes.no_slides")
       end
 
       def questionnaire_params
         params.permit(:title, :lecture_id)
+      end
+
+      def data_collection_params
+        params.expect(vignettes_questionnaire: [:data_collection, :consent_text])
+      end
+
+      def closing_text_params
+        params.expect(vignettes_questionnaire: [:closing_text])
       end
 
       def answer_params
@@ -321,13 +391,86 @@ module Vignettes
           .expect(vignettes_answer: [:slide_id, :text, :likert_scale_value,
                                      { option_ids: [],
                                        slide_statistic_attributes:
-                                     [:user_id, :time_on_slide, :total_time_on_slide,
+                                     [:time_on_slide, :total_time_on_slide,
                                       :time_on_info_slides, :info_slides_access_count,
                                       :info_slides_first_access_time] }])
       end
 
-      def user_has_codename?(user, lecture)
-        Vignettes::Codename.find_by(user: user, lecture: lecture).present?
+      # The position comes from the browser's memory, so it may well be stale
+      # or made up; anything we cannot place falls back to the first slide.
+      def slide_at(position)
+        slides = @questionnaire.slides.order(:position)
+        slides.find_by(position: position.to_i) || slides.first
+      end
+
+      # The consent decision lives in the session and nowhere else. A tracked
+      # run is identified by its user answer, which hangs off a codename that
+      # carries no user id, so the database never learns who answered.
+
+      def decisions
+        session[:vignettes_consent] ||= {}
+      end
+
+      def decision
+        decisions[@questionnaire.id.to_s]
+      end
+
+      def decide!(value)
+        decisions[@questionnaire.id.to_s] = value
+      end
+
+      def consent_pending?
+        @questionnaire.collecting? && decision.nil?
+      end
+
+      # Asks the questionnaire again rather than trusting the session: a
+      # consent text emptied mid-session must stop the collection at once.
+      def tracked?
+        @questionnaire.collecting? && current_run.present?
+      end
+
+      def current_run
+        return @current_run if defined?(@current_run)
+
+        @current_run =
+          if decision.is_a?(Integer)
+            UserAnswer.includes(:codename)
+                      .find_by(id: decision, vignettes_questionnaire_id: @questionnaire.id)
+          end
+      end
+
+      def start_run(codename)
+        UserAnswer.create!(codename: codename, questionnaire: @questionnaire)
+      end
+
+      def claim_existing_codename
+        codename = Codename.claim(params[:pseudonym])
+        unless codename
+          redirect_to consent_questionnaire_path(@questionnaire),
+                      alert: t("vignettes.consent.malformed_codename")
+          return
+        end
+
+        decide!(start_run(codename).id)
+        redirect_to take_questionnaire_path(@questionnaire)
+      end
+
+      # Returns false when the answer could not be saved and a response has
+      # already been rendered.
+      def save_answer
+        @answer = @slide.answers.build
+        @answer.question = @slide.question
+        @answer.type = @slide.question.type.gsub("Question", "Answer")
+        @answer.user_answer = current_run
+        @answer.assign_attributes(answer_params.except(:slide_id))
+
+        return true if @answer.save
+
+        Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }
+        render :take, template: "vignettes/questionnaires/take/take",
+                      layout: lecture_layout,
+                      status: :unprocessable_content
+        false
       end
   end
 end

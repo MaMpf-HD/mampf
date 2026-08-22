@@ -1,13 +1,17 @@
 const VIGNETTE_FORM_ID = "#vignettes-answer-form";
 const CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
 const TEXT_ANSWER_ID = "vignettes_answer_text";
+const READY_ATTRIBUTE = "data-vignette-take-ready";
 
 function initializeVignetteTake() {
   const form = $(VIGNETTE_FORM_ID);
-  if (form.length === 0 || form.data("vignetteTakeInitialized")) {
+  // The attribute rather than jQuery's data store, so that "the slide is ready
+  // to be answered" is readable from the outside -- the timings only start
+  // here, and a test driving a mock clock has to wait for it.
+  if (form.length === 0 || form.attr(READY_ATTRIBUTE)) {
     return;
   }
-  form.data("vignetteTakeInitialized", true);
+  form.attr(READY_ATTRIBUTE, "true");
 
   form.submit((event) => {
     return validateForm(event);
@@ -15,10 +19,13 @@ function initializeVignetteTake() {
 
   registerTextAnswerValidator();
   registerMultipleChoiceAnswerValidator();
-  testFormValidityOnPreview();
+  registerAdvanceLinkValidation();
 
-  const stats = new VignetteSlideStatistics();
-  registerStatisticsHandler(stats);
+  // Only a tracked run renders the statistic fields. Without them there is
+  // nothing to measure and nothing to send.
+  if (document.getElementById("time-on-slide-field")) {
+    registerStatisticsHandler(new VignetteSlideStatistics());
+  }
 }
 
 // turbo-rails bug: https://github.com/hotwired/turbo-rails/issues/781
@@ -47,11 +54,13 @@ function validateForm(event) {
   return true;
 }
 
-function testFormValidityOnPreview() {
-  const previewNext = $("#vignettes-next-slide-preview");
-  if (previewNext.length === 0) return;
+// The preview and the untracked run advance by link, not by submitting the
+// form, so they need the same validation bound to the link itself.
+function registerAdvanceLinkValidation() {
+  const advanceLinks = $(".vignettes-advance-link");
+  if (advanceLinks.length === 0) return;
 
-  previewNext.click((event) => {
+  advanceLinks.click((event) => {
     return validateForm(event);
   });
 }

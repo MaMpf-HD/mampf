@@ -18,7 +18,7 @@ module Vignettes
       data = [
         answer.id,
         answer.created_at.strftime("%Y-%m-%d %H:%M"),
-        Codename.user_codename(answer.user_answer.user, answer.user_answer.questionnaire.lecture),
+        answer.user_answer.codename.pseudonym,
         answer.slide.position,
         answer.slide.title,
         answer.slide_statistic.total_time_on_slide,
