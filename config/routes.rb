@@ -705,9 +705,7 @@ Rails.application.routes.draw do
         patch :update_slide_position
       end
       resources :info_slides, only: [:new, :create, :edit, :update, :destroy]
-      resources :slides, only: [:new, :create, :edit, :update, :destroy] do
-        resources :answers, only: [:new, :create]
-      end
+      resources :slides, only: [:new, :create, :edit, :update, :destroy]
     end
   end
 

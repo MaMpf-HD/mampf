@@ -2559,7 +2559,6 @@ de:
     questionnaire_not_created: >
       Ein neuer Fragebogen konnte nicht erstellt werden. Bitte versuche es
       später erneut.
-    slide: 'Folie'
     slides: 'Folien'
     info_slides: 'Info-Folien'
     info_slide_not_updated: "Info-Folie konnte nicht aktualisiert werden"
@@ -2567,7 +2566,6 @@ de:
     slide_content: 'Inhalt'
     create_new: "Neue Vignette erstellen"
     duplicate_new_questionnaire_title: "Neuer Fragebogentitel"
-    destroy_answer: 'Antwort wurde gelöscht'
     no_slides: 'Keine Folien zum Beantworten'
     not_found: 'Der angeforderte Fragebogen wurde nicht gefunden'
     no_lecture: 'Die angeforderte Vorlesung wurde nicht gefunden'
@@ -2575,8 +2573,6 @@ de:
     create_new_slide: 'Neue Folie'
     info_slide_created: 'Info-Folie wurde erstellt.'
     info_slide_not_created: 'Info-Folie konnte nicht erstellt werden.'
-    info_slide_updated: 'Info-Folie wurde aktualisiert.'
-    slide_updated: 'Folie wurde erfolgreich aktualisiert.'
     slide_created: 'Folie wurde erfolgreich erstellt.'
     slide_not_created: 'Folie konnte nicht erstellt werden.'
     published: 'Vignette wurde erfolgreich veröffentlicht.'
@@ -2601,7 +2597,6 @@ de:
     no_slides: "Vignette ist leer"
     not_deleted: 'Vignette konnte nicht gelöscht werden'
     slide_not_updated: 'Folie konnte nicht aktualisiert werden'
-    slide_deleted: 'Folie wurde erfolgreich gelöscht.'
     slide_not_deleted: 'Folie konnte nicht gelöscht werden.'
     slide_confirm_delete: >
       Bist Du sicher, dass Du diese Folie löschen möchtest?
@@ -2633,13 +2628,11 @@ de:
     update_slide: "Folie aktualisieren"
     delete_slide: "Folie löschen"
     add_multiple_choice_option: "Multiple choice option hinzufügen"
-    additional_information: "Zusätzliche Informationen"
     next_slide: "Nächste Folie"
     return_to_edit: "Zurück zur Bearbeitung"
 
     info_slide_empty_title: "Titel fehlt"
     info_slide_empty_icon: "Symbol fehlt"
-    info_slide_deleted: "Info-Folie wurde erfolgreich gelöscht"
     info_slide_not_deleted: "Info-Folie konnte nicht gelöscht werden"
     info_slide_confirm_delete: >
       Bist Du sicher, dass Du diese Info-Folie löschen möchtest?
@@ -2663,7 +2656,6 @@ de:
     confirm_publication: "Vignette veröffentlichen"
 
     question_type: "Fragetyp"
-    question_type_selection: "Auswahl für Fragetyp"
     your_question: "Deine Frage"
     question_types:
       none: "Keine Antwort"
@@ -2684,8 +2676,6 @@ de:
     min_number: "Minimalwert"
     max_number: "Maximalwert"
     number_range_help: "Min/Max-Felder leer lassen für unbegrenzten Bereich"
-    your_answer: "Deine Antwort"
-    your_numeric_answer: "Deine Antwort"
     number_range_between: "Gib eine Zahl zwischen %{min} und %{max} ein"
     number_range_min: "Gib eine Zahl größer oder gleich %{min} ein"
     number_range_max: "Gib eine Zahl kleiner oder gleich %{max} ein"

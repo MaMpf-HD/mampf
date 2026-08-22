@@ -2,14 +2,6 @@ import { readFile } from "node:fs/promises";
 import { Page } from "../_support/fixtures";
 import { parseCsv } from "../_support/csv";
 
-export type SlideStats = {
-  timeOnSlide: number;
-  totalTimeOnSlide: number;
-  timeOnInfoSlides: string;
-  infoSlidesAccessCount: string;
-  infoSlidesFirstAccessTime: string;
-};
-
 export const QUESTIONNAIRE_CSV_HEADERS = [
   "Answer ID",
   "Created At",
