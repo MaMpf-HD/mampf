@@ -222,6 +222,45 @@ test.describe("Vignettes", () => {
       await expect(student.page.getByRole("heading", { name: "Vignettes" })).toBeVisible();
     });
 
+  test("a preview leaves the reader's resume position alone",
+    async ({ factory, student, teacher }) => {
+      const lecture = await createLecture(factory, teacher.user.id, student.user.id, true);
+      const questionnaire = await createVignette(factory, lecture.id, "Quiet vignette", false);
+      const key = `vignettes.position.${questionnaire.id}`;
+
+      await teacher.page.goto(`/questionnaires/${questionnaire.id}/preview`);
+      await expect(teacher.page.getByText("Question 1")).toBeVisible();
+
+      expect(await teacher.page.evaluate(k => window.localStorage.getItem(k), key))
+        .toBeNull();
+    });
+
+  test("the resume position survives a rejected answer and goes on the closing page",
+    async ({ factory, student, teacher }) => {
+      const lecture = await createLecture(factory, teacher.user.id, student.user.id, true);
+      const questionnaire = await createVignette(factory, lecture.id, "Study vignette", true);
+      const key = `vignettes.position.${questionnaire.id}`;
+      const stored = () => student.page.evaluate(k => window.localStorage.getItem(k), key);
+
+      const studentVignettes = new VignettesPage(student.page);
+      await studentVignettes.openOverview(lecture.id);
+      await studentVignettes.openQuestionnaire("Study vignette");
+      await studentVignettes.consentWithNewCode();
+      await studentVignettes.answerText("first");
+      await studentVignettes.submit();
+
+      // An empty answer is refused, and the reader keeps their place.
+      await student.page.getByRole("textbox").fill("");
+      await student.page.getByLabel("Finish vignette").click();
+      await expect(student.page.getByText("Question 2")).toBeVisible();
+      expect(await stored()).toBe("2");
+
+      await studentVignettes.answerText("second");
+      await studentVignettes.submit(true);
+      await expect(student.page.getByRole("heading", { name: "All done" })).toBeVisible();
+      expect(await stored()).toBeNull();
+    });
+
   test("the browser remembers which slide the reader stopped at",
     async ({ factory, student, teacher }) => {
       const lecture = await createLecture(factory, teacher.user.id, student.user.id, true);

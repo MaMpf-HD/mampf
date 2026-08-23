@@ -15,11 +15,14 @@
               data: { preview: @preview || false },
               local: true) do |form| %>
 
+<%# A preview is the editor looking at their own vignette; it must not touch
+    the reader's resume position. %>
 <div id="vignette-take-card" class="container-md small-width card"
-     data-controller="vignettes-position"
-     data-vignettes-position-questionnaire-value="<%= @questionnaire.id %>"
-     data-vignettes-position-position-value="<%= @slide.position %>"
-     data-vignettes-position-last-value="<%= @slide.last_position? %>">
+     <%= tag.attributes(data: {
+           controller: ("vignettes-position" unless @preview),
+           vignettes_position_questionnaire_value: @questionnaire.id,
+           vignettes_position_position_value: @slide.position
+         }) %>>
 
     <!-- Header -->
     <% progress = [((@slide.position.to_f - 1) / @questionnaire.slides.count * 100).round, 0].max %>
@@ -110,8 +113,7 @@
                         class: "btn btn-success slide-footer-btn",
                         title: t("vignettes.finish"),
                         "aria-label": t("vignettes.finish"),
-                        data: { bs_toggle: "tooltip",
-                                action: "vignettes-position#advance" } do %>
+                        data: { bs_toggle: "tooltip" } do %>
                         <i class="bi bi-check2-circle fs-5"></i>
                     <% end %>
                 <% else %>
@@ -133,8 +135,7 @@
                         class: "btn btn-success slide-footer-btn vignettes-advance-link",
                         title: t("vignettes.finish"),
                         "aria-label": t("vignettes.finish"),
-                        data: { bs_toggle: "tooltip",
-                                action: "vignettes-position#advance" } do %>
+                        data: { bs_toggle: "tooltip" } do %>
                         <i class="bi bi-check2-circle fs-5"></i>
                     <% end %>
                 <% else %>

@@ -3,24 +3,20 @@ import { Controller } from "@hotwired/stimulus";
 export const POSITION_KEY_PREFIX = "vignettes.position.";
 
 /**
- * Keeps the slide position in the browser so a vignette can be resumed.
- * Nothing else is kept, and it is dropped as soon as the vignette is done.
+ * Keeps the slide position in the browser so a vignette can be resumed, and
+ * drops it again on the closing page -- that is, once the vignette really is
+ * over, rather than when the last button was pressed and the answer might
+ * still be rejected.
  */
 export default class extends Controller {
   static values = {
     questionnaire: Number,
     position: Number,
-    last: Boolean,
+    finished: Boolean,
   };
 
   connect() {
-    this.write(this.positionValue);
-  }
-
-  advance() {
-    if (this.lastValue) {
-      this.write(null);
-    }
+    this.write(this.finishedValue ? null : this.positionValue);
   }
 
   // A private window throws on any access, and the vignette has to work there
