@@ -104,60 +104,14 @@ class TutorialPointingTableComponent < ViewComponent::Base
     return {} unless @assignment.past_deadline?
 
     helpers.users_movement_map_cache.fetch(@assignment.id) do
-      tutorial_memberships = @lecture.tutorials
-                                     .includes(:tutorial_memberships)
-                                     .flat_map(&:tutorial_memberships)
-      participations = @assignment.assessment&.assessment_participations&.to_a
-      return {} if participations.nil?
-
-      participation_user_ids = participations.map(&:user_id)
-      member_user_ids = tutorial_memberships.map(&:user_id)
-
-      ids = (participation_user_ids | member_user_ids) - (participation_user_ids & member_user_ids)
-
-      ids.each_with_object({}) do |user_id, result|
-        current_tutorial = tutorial_memberships.find { |m| m.user_id == user_id }&.tutorial
-        old_tutorial = participations.find { |p| p.user_id == user_id }&.tutorial
-        next unless current_tutorial&.id != old_tutorial&.id
-
-        result[user_id] = {
-          old_tutorial_id: old_tutorial&.id,
-          new_tutorial_id: current_tutorial&.id,
-          old_tutorial_title: old_tutorial&.title ||
-                              t("assessment.grading_tutorial.no_tutorial"),
-          new_tutorial_title: current_tutorial&.title ||
-                              t("assessment.grading_tutorial.no_tutorial")
-        }
-      end
+      helpers.calculate_user_movement_map_assignment(@assignment, @lecture)
     end
   end
 
-  # TODO: fix messaging for this
   def non_submitter_status(user)
     movement = users_movement_map[user.id]
     return unless movement
 
-    # if this tutorial == new_tutorial
-    # -> non-submitter    + no participation in this tutorial for this assignment
-    #                     + currently in this tutorial membership
-    # -> non-submitter
-    #
-    # for this case actually we cannot decide if user is allwed to be graded or not,
-    # as there is possibly that he is late submitter -> allowed
-    # / or he has been moved to this tutorial -> not allowed
-    unless @tutorial.id == movement[:old_tutorial_id]
-      return t("assessment.grading_tutorial.no_submission_badge")
-    end
-
-    # if this tutorial == old_tutorial
-    # -> non-submitter  + has participation in this tutorial for this assignment
-    #                   + currently not in this tutorial membership
-    # -> non-submitter + has been moved
-    #
-    # only possible if he used to be in this tutorial and has participation record
-    # from the background fill, or the tutor has explicitly marked him as participated,
-    # but now he has been moved to another tutorial
-    t("assessment.grading_tutorial.no_submission_badge") +
-      t("assessment.grading_tutorial.has_been_moved_badge")
+    helpers.non_submitter_status(movement, @tutorial)
   end
 end
