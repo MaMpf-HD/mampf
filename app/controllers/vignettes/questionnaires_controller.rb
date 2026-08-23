@@ -9,7 +9,7 @@ module Vignettes
                          :update_closing_text, :publish, :export_statistics,
                          :update_slide_position, :destroy, :duplicate,
                          :revoke_consent]
-    before_action :set_lecture, only: [:index, :new, :create]
+    before_action :set_lecture, only: [:index, :create]
     before_action :check_take_accessibility, only: TAKE_ACTIONS
     before_action :check_index_accessibility, only: [:index]
     before_action :check_edit_accessibility,
@@ -170,10 +170,6 @@ module Vignettes
     def export_statistics
       csv_data = @questionnaire.answer_data_csv
       send_data(csv_data, filename: "questionnaire-#{@questionnaire.id}-answers.csv")
-    end
-
-    def new
-      @questionnaire = Questionnaire.new
     end
 
     def edit
