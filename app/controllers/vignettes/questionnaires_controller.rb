@@ -106,7 +106,9 @@ module Vignettes
       @tracked = true
       @slide = @questionnaire.slides.find(answer_params[:slide_id])
 
-      return unless save_answer
+      # Going back and submitting a slide twice must not write it twice; the
+      # first answer stands and the reader simply moves on.
+      return unless answered_already? || save_answer
 
       return redirect_to(finish_questionnaire_path(@questionnaire)) if @slide.last_position?
 
@@ -449,6 +451,10 @@ module Vignettes
 
         decide!(start_run(codename).id)
         redirect_to take_questionnaire_path(@questionnaire)
+      end
+
+      def answered_already?
+        current_run.answers.exists?(vignettes_slide_id: @slide.id)
       end
 
       # Returns false when the answer could not be saved and a response has

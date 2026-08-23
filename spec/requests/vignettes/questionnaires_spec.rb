@@ -172,6 +172,21 @@ RSpec.describe("Vignettes::Questionnaires", type: :request) do
         expect(response.body).to include("time-on-slide-field")
       end
 
+      it "writes one answer per slide, however often a slide is submitted" do
+        post decide_consent_questionnaire_path(questionnaire), params: { consent: "new" }
+        post(submit_answer_questionnaire_path(questionnaire),
+             params: answer_params(slides.first, "first thought"))
+
+        expect do
+          post(submit_answer_questionnaire_path(questionnaire),
+               params: answer_params(slides.first, "second thought"))
+        end.not_to change(Vignettes::Answer, :count)
+
+        expect(Vignettes::Answer.last.text).to eq("first thought")
+        expect(response).to redirect_to(take_questionnaire_path(questionnaire,
+                                                                position: slides.second.position))
+      end
+
       it "moves on to the next slide" do
         post decide_consent_questionnaire_path(questionnaire), params: { consent: "new" }
         post submit_answer_questionnaire_path(questionnaire),

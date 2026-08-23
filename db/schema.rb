@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_22_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_23_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1121,6 +1121,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_22_000001) do
     t.datetime "updated_at", null: false
     t.index ["vignettes_question_id"], name: "index_vignettes_answers_on_vignettes_question_id"
     t.index ["vignettes_slide_id"], name: "index_vignettes_answers_on_vignettes_slide_id"
+    t.index ["vignettes_user_answer_id", "vignettes_slide_id"], name: "index_vignettes_answers_on_run_and_slide", unique: true
     t.index ["vignettes_user_answer_id"], name: "index_vignettes_answers_on_vignettes_user_answer_id"
   end
 
