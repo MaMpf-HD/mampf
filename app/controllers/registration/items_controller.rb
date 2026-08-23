@@ -181,7 +181,7 @@ module Registration
       def after_action_path
         if @campaign.campaignable.is_a?(Lecture)
           edit_lecture_path(@campaign.campaignable,
-                            tab: "campaigns")
+                            tab: "groups")
         else
           registration_campaign_path(@campaign)
         end

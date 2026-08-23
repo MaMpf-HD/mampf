@@ -167,7 +167,7 @@ class LecturesController < ApplicationController
 
   def destroy
     unless @lecture.destroy
-      redirect_to edit_lecture_path(@lecture, tab: "campaigns"),
+      redirect_to edit_lecture_path(@lecture, tab: "groups"),
                   alert: lecture_destruction_error
       return
     end

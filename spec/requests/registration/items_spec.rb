@@ -30,7 +30,7 @@ RSpec.describe("Registration::Items", type: :request) do
           post(registration_campaign_items_path(campaign), params: valid_params)
         end.to change(Registration::Item, :count).by(1)
 
-        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
         follow_redirect!
         expect(response.body).to include(I18n.t("registration.item.created"))
       end
@@ -43,7 +43,7 @@ RSpec.describe("Registration::Items", type: :request) do
                  })
           end.not_to change(Registration::Item, :count)
 
-          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
         end
       end
     end
@@ -82,7 +82,7 @@ RSpec.describe("Registration::Items", type: :request) do
         }
 
         expect(item.reload.capacity).to eq(42)
-        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
       end
 
       it "allows setting capacity to unlimited (nil)" do
@@ -91,7 +91,7 @@ RSpec.describe("Registration::Items", type: :request) do
         }
 
         expect(item.reload.capacity).to be_nil
-        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
       end
 
       context "when update fails (e.g. capacity too low)" do
@@ -108,7 +108,7 @@ RSpec.describe("Registration::Items", type: :request) do
           }
 
           expect(item.reload.capacity).to eq(10)
-          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
           follow_redirect!
           expect(response.body)
             .to include(I18n.t(
@@ -138,7 +138,7 @@ RSpec.describe("Registration::Items", type: :request) do
         patch registration_campaign_item_path(campaign, id: -1), params: {
           registration_item: { capacity: 42 }
         }
-        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
         expect(flash[:alert]).to eq(I18n.t("registration.item.not_found"))
       end
     end
@@ -159,7 +159,7 @@ RSpec.describe("Registration::Items", type: :request) do
           end.to change(Registration::Item, :count).by(-1)
 
           expect(Tutorial.exists?(tutorial.id)).to be(true)
-          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
           follow_redirect!
           expect(response.body).to include(I18n.t("registration.item.removed_from_campaign"))
         end
@@ -273,7 +273,7 @@ RSpec.describe("Registration::Items", type: :request) do
 
       it "redirects to campaign items tab with error" do
         delete registration_campaign_item_path(campaign, id: -1)
-        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
         expect(flash[:alert]).to eq(I18n.t("registration.item.not_found"))
       end
     end

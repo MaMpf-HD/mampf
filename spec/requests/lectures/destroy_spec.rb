@@ -30,7 +30,7 @@ RSpec.describe("Lecture deletion", type: :request) do
     it "keeps the lecture and says so instead of raising" do
       expect { delete(lecture_path(lecture)) }.not_to change(Lecture, :count)
 
-      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
       expect(flash[:alert]).to eq(I18n.t("controllers.lectures.destruction_failed"))
     end
   end
@@ -58,7 +58,7 @@ RSpec.describe("Lecture deletion", type: :request) do
     it "keeps the lecture and explains why" do
       expect { delete(lecture_path(lecture)) }.not_to change(Lecture, :count)
 
-      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
       expect(flash[:alert])
         .to eq(I18n.t("controllers.lectures.destruction_failed_campaigns"))
     end
