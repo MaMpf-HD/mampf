@@ -2856,6 +2856,9 @@ en:
       %{accepted_mime_types}.
     correction_size_too_big: >
       The uploaded file is too big. Maximum file size is 15 MB.
+    invalid_transcript: The uploaded file is not a valid WebVTT transcript.
+    transcript_too_many_cues: >
+      The transcript contains too many cues (maximum is %{max_cues}).
     too_late_no_saving:
       The due date for this assignment has expired, therefore this change
       cannot be saved.

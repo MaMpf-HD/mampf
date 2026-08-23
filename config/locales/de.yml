@@ -3034,6 +3034,9 @@ de:
       Datei vom MIME Type %{accepted_mime_types}.
     correction_size_too_big: >
       Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
+    invalid_transcript: Die hochgeladene Datei ist kein gültiges WebVTT-Transkript.
+    transcript_too_many_cues: >
+      Das Transkript enthält zu viele Cues (maximal %{max_cues}).
     too_late_no_saving: >
       Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
       abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
