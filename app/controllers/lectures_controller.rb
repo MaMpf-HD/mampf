@@ -168,13 +168,14 @@ class LecturesController < ApplicationController
   def destroy
     unless @lecture.destroy
       redirect_to edit_lecture_path(@lecture, tab: "groups"),
-                  alert: lecture_destruction_error
+                  alert: lecture_destruction_error,
+                  status: :see_other
       return
     end
 
     # destroy all notifications related to this lecture
     destroy_notifications
-    redirect_to administration_path
+    redirect_to administration_path, status: :see_other
   end
 
   # add forum for this lecture
@@ -500,11 +501,11 @@ class LecturesController < ApplicationController
     end
 
     def lecture_destruction_error
-      if @lecture.registration_campaigns.any? { |campaign| !campaign.discardable? }
-        t("controllers.lectures.destruction_failed_campaigns")
-      else
-        t("controllers.lectures.destruction_failed")
-      end
+      required_elsewhere = @lecture.registration_campaigns
+                                   .any? { |campaign| campaign.discard_blocker == :prerequisite }
+      return t("controllers.lectures.destruction_failed_prerequisite") if required_elsewhere
+
+      t("controllers.lectures.destruction_failed")
     end
 
     # destroy all notifications related to this lecture

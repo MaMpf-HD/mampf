@@ -341,13 +341,13 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         end
       end
 
-      context "when an allocation has been computed" do
+      context "when an allocation reached a roster" do
         let!(:campaign) { create(:registration_campaign, :closed, campaignable: lecture) }
 
         before do
-          # rubocop:disable Rails/SkipsModelValidations
-          campaign.update_columns(last_allocation_calculated_at: Time.current)
-          # rubocop:enable Rails/SkipsModelValidations
+          create(:tutorial_membership,
+                 tutorial: campaign.registration_items.first.registerable,
+                 source_campaign: campaign)
         end
 
         it "does not destroy the campaign" do

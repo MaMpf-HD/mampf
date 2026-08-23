@@ -207,12 +207,13 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.errors.added?(:base, :cannot_discard_with_registrations)).to be(true)
     end
 
-    it "prevents deletion once an allocation has been computed" do
+    # A computed allocation over nobody allocated nobody; only what reached a
+    # roster is worth protecting, and that is the example below.
+    it "allows deletion when only the allocation timestamp is set" do
       campaign = create(:registration_campaign, :closed)
       campaign.update_columns(last_allocation_calculated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
 
-      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
-      expect(campaign.errors.added?(:base, :cannot_discard_after_allocation)).to be(true)
+      expect { campaign.destroy }.to change(Registration::Campaign, :count).by(-1)
     end
 
     it "prevents deletion once an allocation has been materialized" do
@@ -1177,9 +1178,11 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.revert_blocker).to eq(:registrations)
     end
 
-    it "is false once an allocation has been computed" do
+    it "is false once an allocation reached a roster" do
       campaign = create(:registration_campaign, :open)
-      campaign.update_columns(last_allocation_calculated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+      create(:tutorial_membership,
+             tutorial: campaign.registration_items.first.registerable,
+             source_campaign: campaign)
 
       expect(campaign.reload).not_to be_revertible_to_draft
       expect(campaign.revert_blocker).to eq(:allocation)

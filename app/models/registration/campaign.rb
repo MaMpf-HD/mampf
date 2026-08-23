@@ -378,7 +378,12 @@ module Registration
 
       def data_blocker
         return :registrations if user_registrations.exists?
-        return :allocation if allocation_present?
+        # Not allocation_present?: past this line there are no registrations, so
+        # a computed allocation cannot have allocated anybody and its timestamp
+        # protects nothing. Entries written into a roster do - their
+        # registrations may have gone since. Registration::Item asks the wider
+        # question, where the timestamp means "an allocation this item was in".
+        return :allocation if materialized_roster_entries?
         return :prerequisite if referencing_prerequisite_policies.exists?
 
         nil
@@ -494,9 +499,13 @@ module Registration
       end
 
       def ensure_campaign_is_discardable
-        # Also reached from Lecture's dependent: :destroy, which holds no lock
-        # of its own - without this the decision can be stale by the time the
-        # rows go.
+        # Set when the lecture is being destroyed and takes its campaigns along.
+        # Its own rules decided that; what is left for this one is discarding a
+        # campaign on its own. ensure_not_referenced_as_prerequisite still runs:
+        # a campaign that another one requires is not only this lecture's
+        # business.
+        return if destroyed_by_association
+
         lock!
         blocker = discard_blocker
         return if blocker.nil?

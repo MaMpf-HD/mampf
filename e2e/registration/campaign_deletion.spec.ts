@@ -217,7 +217,7 @@ test.describe("getting out of a registration process", () => {
   // does not run again - so after a refused deletion every talk card ended up
   // stacked in the same spot.
   test("lays the seminar's talks out after a refused deletion",
-    async ({ factory, student, teacher: { page, user } }) => {
+    async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
         locale: "en",
@@ -230,18 +230,16 @@ test.describe("getting out of a registration process", () => {
         "registration_campaign", ["first_come_first_served"],
         { campaignable_type: "Lecture", campaignable_id: lecture.id },
       );
-      const item = await factory.create("registration_item", [], {
+      await factory.create("registration_item", [], {
         registration_campaign_id: campaign.id,
         registerable_type: "Talk",
         registerable_id: talks[0].id,
       });
-      await campaign.__call("open!");
-      // a registration is what keeps the campaign, and with it the lecture
-      await factory.create("registration_user_registration", [], {
-        user_id: student.user.id,
-        registration_campaign_id: campaign.id,
-        registration_item_id: item.id,
-        status: "confirmed",
+      // another process requiring this one is what still refuses the deletion
+      const other = await factory.create("registration_campaign", []);
+      await factory.create("registration_policy", ["prerequisite_campaign"], {
+        registration_campaign_id: other.id,
+        config: { prerequisite_campaign_id: campaign.id },
       });
 
       page.on("dialog", dialog => dialog.accept());
@@ -259,6 +257,48 @@ test.describe("getting out of a registration process", () => {
       expect(first).not.toBeNull();
       expect(second).not.toBeNull();
       expect([first?.x, first?.y]).not.toEqual([second?.x, second?.y]);
+    });
+
+  // The last dead end of the report: the seminar itself could not be deleted,
+  // because a finalized process vetoed the cascade.
+  test("deletes a seminar whose registration process is over",
+    async ({ factory, student, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", ["is_seminar"], {
+        teacher_id: user.id,
+        locale: "en",
+      });
+      const talk = await factory.create("talk", [], {
+        lecture_id: lecture.id, title: "Nobody's Talk",
+      });
+      const campaign = await factory.create(
+        "registration_campaign", ["first_come_first_served"],
+        { campaignable_type: "Lecture", campaignable_id: lecture.id },
+      );
+      const item = await factory.create("registration_item", [], {
+        registration_campaign_id: campaign.id,
+        registerable_type: "Talk",
+        registerable_id: talk.id,
+      });
+      await campaign.__call("open!");
+      await factory.create("registration_user_registration", [], {
+        user_id: student.user.id,
+        registration_campaign_id: campaign.id,
+        registration_item_id: item.id,
+        status: "confirmed",
+      });
+      await campaign.__call("completed!");
+
+      let confirmation = "";
+      page.once("dialog", async (dialog) => {
+        confirmation = dialog.message();
+        await dialog.accept();
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await page.getByRole("link", { name: "Delete", exact: true }).first().click();
+
+      await expect(page).not.toHaveURL(/lectures/);
+      expect(confirmation).toContain("1 registration processes with 1 registrations");
     });
 
   // The complaint from production: after finalizing, the talks nobody took are
