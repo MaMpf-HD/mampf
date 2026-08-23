@@ -279,6 +279,30 @@ RSpec.describe("Registration::Items", type: :request) do
     end
   end
 
+  # A talk is listed twice on a seminar's edit page, and this route deletes one
+  # of them just as TalksController#destroy does.
+  describe "DELETE .../items/:id/with_registerable on a seminar" do
+    let(:seminar) { create(:seminar) }
+    let(:talk) { create(:talk, lecture: seminar) }
+    let(:talk_campaign) { create(:registration_campaign, campaignable: seminar) }
+    let!(:talk_item) do
+      create(:registration_item, registration_campaign: talk_campaign, registerable: talk)
+    end
+
+    before do
+      create(:editable_user_join, user: editor, editable: seminar)
+      sign_in editor
+    end
+
+    it "refreshes the content list along with the tiles" do
+      delete(with_registerable_registration_campaign_item_path(talk_campaign, talk_item),
+             as: :turbo_stream)
+
+      expect(Talk.exists?(talk.id)).to be(false)
+      expect(response.body).to include("lecture-content-card")
+    end
+  end
+
   describe "DELETE .../items/:id/with_registerable" do
     let(:delete_path) do
       with_registerable_registration_campaign_item_path(campaign, item)
