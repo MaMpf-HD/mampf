@@ -1,12 +1,16 @@
 # MediaController
 class MediaController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:add_transcript]
   skip_before_action :authenticate_user!, only: [:play, :screenshot,
                                                  :chapters_vtt,
                                                  :references_vtt, :display,
                                                  :stream_video,
+                                                 :stream_transcript,
                                                  :inline_manuscript,
                                                  :geogebra, :inline_geogebra,
-                                                 :download]
+                                                 :download,
+                                                 :transcription_stream_video,
+                                                 :add_transcript]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
                                       :fill_media_select,
@@ -22,15 +26,20 @@ class MediaController < ApplicationController
                                              :chapters_vtt,
                                              :references_vtt, :display,
                                              :stream_video,
+                                             :stream_transcript,
                                              :inline_manuscript,
                                              :geogebra, :inline_geogebra,
-                                             :download]
+                                             :download,
+                                             :transcription_stream_video,
+                                             :add_transcript]
   after_action :store_access, only: [:play, :display]
   authorize_resource except: [:index, :new, :create, :search,
                               :fill_teachable_select, :fill_media_select,
                               :fill_medium_preview, :render_medium_actions,
                               :render_import_media, :render_import_vertex,
-                              :cancel_import_media, :cancel_import_vertex]
+                              :cancel_import_media, :cancel_import_vertex,
+                              :transcription_stream_video,
+                              :add_transcript]
   layout "administration"
 
   def current_ability
@@ -263,6 +272,41 @@ class MediaController < ApplicationController
     end
   end
 
+  def transcribe
+    return head :not_found unless Rails.env.development? || Rails.env.test?
+
+    authorize! :transcribe, @medium
+    unless @medium.transcribable?
+      redirect_back_or_to(root_path, alert: "Medium cannot be transcribed.")
+      return
+    end
+
+    @medium.update!(transcription_attempts: 0, transcription_error: nil)
+    MampfsearchIngestJob.perform_later(@medium.id)
+    head :accepted
+  end
+
+  def add_transcript
+    return unless verify_search_api_token!
+    return unless verify_transcription_token!(purpose: :transcript)
+
+    if params[:transcript].present?
+      old_transcript = @medium.transcript
+      @medium.transcript = params[:transcript]
+      @medium.transcription_status = :completed
+      @medium.transcription_attempts = 0
+      @medium.transcription_error = nil
+      if @medium.save
+        old_transcript&.delete
+        head :ok
+      else
+        render json: { errors: @medium.errors.full_messages }, status: :unprocessable_content
+      end
+    else
+      head :bad_request
+    end
+  end
+
   # play the video using thyme player
   def play
     if @medium.video.nil?
@@ -311,6 +355,25 @@ class MediaController < ApplicationController
     end
 
     send_stored_file(@medium.video, disposition: "inline", fallback: "video")
+    prevent_caching unless @medium.free?
+  end
+
+  def transcription_stream_video
+    return unless verify_search_api_token!
+    return unless verify_transcription_token!(purpose: :video)
+    return head :not_found if @medium.video.nil?
+
+    send_stored_file(@medium.video, disposition: "inline", fallback: "video")
+    prevent_caching
+  end
+
+  def stream_transcript
+    if @medium.transcript.nil?
+      head :not_found
+      return
+    end
+
+    send_stored_file(@medium.transcript, disposition: "inline", fallback: "transcript")
     prevent_caching unless @medium.free?
   end
 
@@ -624,6 +687,31 @@ class MediaController < ApplicationController
   end
 
   private
+
+    def verify_search_api_token!
+      auth_header = request.authorization
+      if auth_header.blank? || !auth_header.start_with?("Bearer ")
+        head :unauthorized
+        return false
+      end
+
+      token = auth_header.delete_prefix("Bearer ").strip
+      SearchApiToken.verify!(token, scope: request.path)
+      true
+    rescue SearchApiToken::InvalidTokenError, SearchClient::ServiceUnavailableError
+      head :unauthorized
+      false
+    end
+
+    def verify_transcription_token!(purpose:)
+      payload = TranscriptionToken.verify!(params[:token], purpose: purpose)
+      return true if payload.fetch("medium_id").to_i == @medium.id
+
+      raise(TranscriptionToken::InvalidTokenError)
+    rescue TranscriptionToken::InvalidTokenError
+      head :forbidden
+      false
+    end
 
     def medium_params
       params.expect(medium: [:sort, :description, :video, :manuscript,

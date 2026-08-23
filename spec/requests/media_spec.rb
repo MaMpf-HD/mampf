@@ -267,6 +267,208 @@ RSpec.describe("Media", type: :request) do
     end
   end
 
+  describe "GET /media/:id/video/transcription_stream" do
+    let(:medium) { create(:lecture_medium, :with_video) }
+    let(:secret) { "test-secret-key-at-least-32-characters-long" }
+    let(:auth_headers) do
+      token = SearchApiToken.generate(
+        scope: transcription_stream_video_medium_path(medium)
+      )
+      { "Authorization" => "Bearer #{token}" }
+    end
+
+    around do |example|
+      original = ENV["MAMPFSEARCH_API_SECRET"]
+      ENV["MAMPFSEARCH_API_SECRET"] = secret
+      example.run
+    ensure
+      ENV["MAMPFSEARCH_API_SECRET"] = original
+    end
+
+    it "serves a video with a valid transcription token and valid search API bearer header" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :video,
+        ttl: 5.minutes
+      )
+
+      get transcription_stream_video_medium_path(medium),
+          params: { token: token },
+          headers: auth_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq("video/mp4")
+      expect(response.headers["Cache-Control"]).to eq("no-cache, no-store")
+    end
+
+    it "rejects a request missing the Authorization header" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :video,
+        ttl: 5.minutes
+      )
+
+      get transcription_stream_video_medium_path(medium), params: { token: token }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "rejects a request with an invalid SearchApiToken" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :video,
+        ttl: 5.minutes
+      )
+
+      get transcription_stream_video_medium_path(medium),
+          params: { token: token },
+          headers: { "Authorization" => "Bearer invalid.token" }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "rejects a missing transcription token when authorized" do
+      get transcription_stream_video_medium_path(medium), headers: auth_headers
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "rejects a transcription token for another medium" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id + 1,
+        purpose: :video,
+        ttl: 5.minutes
+      )
+
+      get transcription_stream_video_medium_path(medium),
+          params: { token: token },
+          headers: auth_headers
+
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
+  describe "POST /media/:id/transcribe" do
+    let(:medium) { create(:lecture_medium, :with_video) }
+
+    it "enqueues MampfsearchIngestJob and returns accepted" do
+      expect(MampfsearchIngestJob).to receive(:perform_later).with(medium.id)
+
+      post transcribe_medium_path(medium)
+
+      expect(response).to have_http_status(:accepted)
+    end
+
+    it "returns not found in production" do
+      target_medium = medium
+      allow(Rails.env).to receive(:development?).and_return(false)
+      allow(Rails.env).to receive(:test?).and_return(false)
+      expect(MampfsearchIngestJob).not_to receive(:perform_later)
+
+      post transcribe_medium_path(target_medium)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "redirects when medium is not transcribable" do
+      videoless_medium = create(:lecture_medium, video: nil)
+
+      post transcribe_medium_path(videoless_medium)
+
+      expect(response).to have_http_status(:redirect)
+      expect(flash[:alert]).to eq("Medium cannot be transcribed.")
+    end
+  end
+
+  describe "POST /api/webhooks/media/:id/transcripts" do
+    let(:medium) { create(:lecture_medium, :with_video) }
+    let(:secret) { "test-secret-key-at-least-32-characters-long" }
+    let(:auth_headers) do
+      token = SearchApiToken.generate(scope: add_transcript_path(medium))
+      { "Authorization" => "Bearer #{token}" }
+    end
+
+    around do |example|
+      original = ENV["MAMPFSEARCH_API_SECRET"]
+      ENV["MAMPFSEARCH_API_SECRET"] = secret
+      example.run
+    ensure
+      ENV["MAMPFSEARCH_API_SECRET"] = original
+    end
+
+    it "rejects a callback without an Authorization header" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcript,
+        ttl: 5.minutes
+      )
+
+      post add_transcript_path(medium), params: { token: token, transcript: "WEBVTT" }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "rejects a callback without a valid transcription token" do
+      post add_transcript_path(medium),
+           params: { transcript: "WEBVTT" },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "rejects a video token" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :video,
+        ttl: 5.minutes
+      )
+
+      post add_transcript_path(medium),
+           params: {
+             token: token,
+             transcript: "WEBVTT"
+           },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "accepts a valid vtt upload with valid tokens" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcript,
+        ttl: 5.minutes
+      )
+      file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "toc.vtt"),
+                                          "text/vtt")
+
+      post add_transcript_path(medium),
+           params: { token: token, transcript: file },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "rejects an upload that is not a valid vtt" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcript,
+        ttl: 5.minutes
+      )
+      file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
+                                          "text/vtt")
+
+      post add_transcript_path(medium),
+           params: { token: token, transcript: file },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(JSON.parse(response.body)["errors"]).to include(
+        "Transcript #{I18n.t("submission.invalid_transcript")}"
+      )
+    end
+  end
+
   describe "GET /media/:id/download/:sort" do
     let(:restricted_medium) { create(:lecture_medium, :with_manuscript) }
     let(:free_medium) { create(:lecture_medium, :with_manuscript, :released) }
