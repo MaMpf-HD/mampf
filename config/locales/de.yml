@@ -741,6 +741,15 @@ de:
           LaTeX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       no_talks: Es sind noch keine Vorträge vorhanden.
+      confirm_delete_with_campaigns: >
+        Mitgelöscht werden dabei: %{campaigns} mit %{registrations}. Bist Du sicher?
+      confirm_delete_campaigns_count:
+        one: 1 Anmeldeverfahren
+        other: "%{count} Anmeldeverfahren"
+      confirm_delete_registrations_count:
+        one: 1 Anmeldung
+        other: "%{count} Anmeldungen"
+      talks_managed_in_groups_html: Vorträge werden im Reiter %{link} angelegt und gelöscht.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
       additional_tags: >
@@ -3979,11 +3988,9 @@ de:
       destruction_failed: >
         Die Veranstaltung konnte nicht gelöscht werden, weil sich Inhalte nicht
         entfernen ließen – etwa Gruppen mit Teilnehmern, Abgaben oder Medien.
-      destruction_failed_campaigns: >
-        Die Veranstaltung konnte nicht gelöscht werden, da zu ihr Anmeldeverfahren
-        gehören, für die bereits Anmeldungen vorliegen oder eine Zuteilung berechnet
-        wurde. Solange diese Daten aufbewahrt werden, lässt sich die Veranstaltung
-        nicht löschen.
+      destruction_failed_prerequisite: >
+        Die Veranstaltung konnte nicht gelöscht werden, da eines ihrer Anmeldeverfahren
+        von einem Anmeldeverfahren einer anderen Veranstaltung vorausgesetzt wird.
     tutorials:
       created: 'Tutorium erfolgreich erstellt.'
       updated: 'Tutorium erfolgreich aktualisiert.'

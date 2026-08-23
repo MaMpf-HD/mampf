@@ -47,7 +47,7 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
-    DISCARDABLE_STATUSES = ["draft", "open", "closed"].freeze
+    DISCARDABLE_STATUSES = ["draft", "open", "closed", "completed"].freeze
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
 
@@ -136,6 +136,11 @@ module Registration
       return :status unless from_status.in?(REVERTIBLE_STATUSES)
 
       data_blocker
+    end
+
+    # Whether a campaign of another lecture requires this one as a prerequisite.
+    def required_by_other_campaign?
+      surviving_prerequisite_policies.exists?
     end
 
     def allocation_present?
@@ -378,7 +383,9 @@ module Registration
 
       def data_blocker
         return :registrations if user_registrations.exists?
-        return :allocation if allocation_present?
+        # Not the allocation timestamps: with no registrations, an allocation
+        # cannot have allocated anybody.
+        return :allocation if materialized_roster_entries?
         return :prerequisite if referencing_prerequisite_policies.exists?
 
         nil
@@ -387,6 +394,16 @@ module Registration
       def referencing_prerequisite_policies
         Registration::Policy.referencing_campaign(id)
                             .where.not(registration_campaign_id: id)
+      end
+
+      # Policies that still exist after this campaign's campaignable is deleted,
+      # i.e. those belonging to a campaign of a different lecture.
+      def surviving_prerequisite_policies
+        referencing_prerequisite_policies
+          .joins(:registration_campaign)
+          .where.not("registration_campaigns.campaignable_type = :type " \
+                     "AND registration_campaigns.campaignable_id = :id",
+                     type: campaignable_type, id: campaignable_id)
       end
 
       # Asking every type covers whatever this campaign's items point at.
@@ -465,8 +482,12 @@ module Registration
       end
 
       def ensure_not_referenced_as_prerequisite
-        referencing_policies = referencing_prerequisite_policies
-                               .includes(:registration_campaign)
+        scope = if destroyed_by_association
+          surviving_prerequisite_policies
+        else
+          referencing_prerequisite_policies
+        end
+        referencing_policies = scope.includes(:registration_campaign)
 
         return unless referencing_policies.any?
 
@@ -494,15 +515,25 @@ module Registration
       end
 
       def ensure_campaign_is_discardable
-        # Also reached from Lecture's dependent: :destroy, which holds no lock
-        # of its own - without this the decision can be stale by the time the
-        # rows go.
+        # lock! reloads the record, and reloading clears
+        # destroyed_by_association - so read it before locking.
+        by_association = destroyed_by_association
+
         lock!
-        blocker = discard_blocker
+
+        blocker = by_association ? cascade_blocker : discard_blocker
         return if blocker.nil?
 
         errors.add(:base, DISCARD_BLOCKER_ERRORS.fetch(blocker))
         throw(:abort)
+      end
+
+      # The lecture is being deleted and takes this campaign along; its own
+      # rules decided that. What still has to hold is the foreign key: roster
+      # rows point here through source_campaign_id, and the lecture deletes
+      # campaigns before the groups that hold those rows.
+      def cascade_blocker
+        :allocation if materialized_roster_entries?
       end
 
       def allocation_mode_frozen

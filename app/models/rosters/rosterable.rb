@@ -89,7 +89,7 @@ module Rosters
     # Models add their own type-specific blockers on top of these.
     def destruction_blockers
       blockers = []
-      blockers << :in_campaign if in_campaign?
+      blockers << :in_campaign if in_active_campaign?
       blockers << :roster_not_empty unless roster_empty?
       blockers
     end
@@ -213,6 +213,16 @@ module Rosters
       return false unless respond_to?(:registration_items)
 
       registration_items.exists?
+    end
+
+    # Whether a campaign that has not been finalized holds this group. A
+    # finalized one no longer decides its roster.
+    def in_active_campaign?
+      return false unless respond_to?(:registration_items)
+
+      registration_items.joins(:registration_campaign)
+                        .where.not(registration_campaigns: { status: :completed })
+                        .exists?
     end
 
     # Checks if the item is associated with a completed campaign.
