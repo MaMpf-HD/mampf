@@ -22,11 +22,13 @@ module Mampfsearch
         ttl: TranscriptionToken::TRANSCRIPT_TTL
       )
 
-      video_stream_path = Rails.application.routes.url_helpers.transcription_stream_video_medium_path(@medium)
-      transcript_upload_path = Rails.application.routes.url_helpers.add_transcript_path(@medium)
+      routes = Rails.application.routes.url_helpers
+      video_stream_path = routes.transcription_stream_video_medium_path(@medium)
+      transcript_upload_path = routes.add_transcript_path(@medium)
 
       video_url = "#{base_url}#{video_stream_path}?token=#{ERB::Util.url_encode(video_token)}"
-      transcript_upload_url = "#{base_url}#{transcript_upload_path}?token=#{ERB::Util.url_encode(transcript_token)}"
+      transcript_upload_url = "#{base_url}#{transcript_upload_path}?" \
+                              "token=#{ERB::Util.url_encode(transcript_token)}"
 
       hierarchy = resolve_teachable_hierarchy
 

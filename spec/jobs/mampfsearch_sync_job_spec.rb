@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe MampfsearchSyncJob, :mampfsearch, type: :job do
+RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
   let(:search_client) { instance_double(SearchClient) }
 
   before do
@@ -45,8 +45,8 @@ RSpec.describe MampfsearchSyncJob, :mampfsearch, type: :job do
     end
 
     it "enqueues next batch of un-transcribed media" do
-      media = FactoryBot.create_list(:valid_medium, 3, :with_video,
-                                     transcription_status: :not_transcribed)
+      FactoryBot.create_list(:valid_medium, 3, :with_video,
+                             transcription_status: :not_transcribed)
 
       RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
 
@@ -73,11 +73,13 @@ RSpec.describe MampfsearchSyncJob, :mampfsearch, type: :job do
   end
 
   describe "#reconcile_search_index" do
-    it "enqueues MampfsearchDeleteJob for orphaned IDs and MampfsearchIngestJob for missing completed media" do
-      existing_medium = FactoryBot.create(:valid_medium, :with_video, transcription_status: :completed)
-      missing_medium = FactoryBot.create(:valid_medium, :with_video, transcription_status: :completed)
+    it "enqueues delete jobs for orphaned IDs and ingest jobs for missing media" do
+      existing_medium = FactoryBot.create(:valid_medium, :with_video,
+                                          transcription_status: :completed)
+      missing_medium = FactoryBot.create(:valid_medium, :with_video,
+                                         transcription_status: :completed)
       videoless_medium = FactoryBot.create(:valid_medium, video: nil)
-      non_existent_id = 99999
+      non_existent_id = 99_999
 
       allow(search_client).to receive(:list_media_rails_ids)
         .and_return([existing_medium.id, videoless_medium.id, non_existent_id])
@@ -91,8 +93,11 @@ RSpec.describe MampfsearchSyncJob, :mampfsearch, type: :job do
     end
 
     it "logs a warning and recovers gracefully when search client raises MampfSearchError" do
-      allow(search_client).to receive(:list_media_rails_ids).and_raise(SearchClient::MampfSearchError, "Connection failed")
-      expect(Rails.logger).to receive(:warn).with(/Search index reconciliation skipped.*Connection failed/)
+      allow(search_client).to receive(:list_media_rails_ids).and_raise(
+        SearchClient::MampfSearchError, "Connection failed"
+      )
+      expect(Rails.logger).to receive(:warn)
+        .with(/Search index reconciliation skipped.*Connection failed/)
 
       expect { described_class.perform_now }.not_to raise_error
     end

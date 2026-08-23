@@ -278,7 +278,7 @@ RSpec.describe("Media", type: :request) do
     end
 
     around do |example|
-      original = ENV["MAMPFSEARCH_API_SECRET"]
+      original = ENV.fetch("MAMPFSEARCH_API_SECRET", nil)
       ENV["MAMPFSEARCH_API_SECRET"] = secret
       example.run
     ensure
@@ -361,8 +361,7 @@ RSpec.describe("Media", type: :request) do
 
     it "returns not found in production" do
       target_medium = medium
-      allow(Rails.env).to receive(:development?).and_return(false)
-      allow(Rails.env).to receive(:test?).and_return(false)
+      allow(Rails.env).to receive(:local?).and_return(false)
       expect(MampfsearchIngestJob).not_to receive(:perform_later)
 
       post transcribe_medium_path(target_medium)
@@ -389,7 +388,7 @@ RSpec.describe("Media", type: :request) do
     end
 
     around do |example|
-      original = ENV["MAMPFSEARCH_API_SECRET"]
+      original = ENV.fetch("MAMPFSEARCH_API_SECRET", nil)
       ENV["MAMPFSEARCH_API_SECRET"] = secret
       example.run
     ensure

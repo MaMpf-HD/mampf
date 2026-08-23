@@ -31,6 +31,7 @@ class SearchClient
     end
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def transcribe_lesson(media_rails_id:, course_rails_id:, video_url:,
                         transcript_upload_url:, lecture_rails_id: nil, lesson_rails_id: nil)
     payload = {
@@ -47,6 +48,7 @@ class SearchClient
       client.post("/lesson/ingest", params: payload)
     end
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def delete_media(media_rails_id)
     perform_request(scope: "/lesson/media/#{media_rails_id}") do |client|
@@ -100,7 +102,8 @@ class SearchClient
       when 400..422
         raise(InvalidQueryError, "Invalid search parameters (HTTP #{response.status.code}).")
       when 500..599
-        raise(InvalidResponseError, "The search engine encountered an internal error (HTTP #{response.status.code}).")
+        raise(InvalidResponseError,
+              "The search engine encountered an internal error (HTTP #{response.status.code}).")
       else
         raise(MampfSearchError, "Unexpected search failure (HTTP #{response.status.code}).")
       end

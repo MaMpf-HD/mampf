@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe TranscriptUploader, :mampfsearch do
+RSpec.describe(TranscriptUploader, :mampfsearch) do
   def fixture_file(name)
     Rails.root.join(SPEC_FILES, name).open("rb")
   end
@@ -54,7 +54,7 @@ RSpec.describe TranscriptUploader, :mampfsearch do
   end
 
   it "rejects transcripts with too many cues" do
-    cues = (TranscriptUploader::MAX_CUES + 1).times.map do
+    cues = Array.new(TranscriptUploader::MAX_CUES + 1) do
       "00:00:00.000 --> 00:00:01.000\n"
     end
     file = tempfile("WEBVTT\n\n#{cues.join("\n")}")

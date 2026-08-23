@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe TranscriptionToken, :mampfsearch do
+RSpec.describe(TranscriptionToken, :mampfsearch) do
   describe ".verify!" do
     it "verifies a token for its intended medium and purpose" do
       token = described_class.generate(

@@ -7,7 +7,7 @@ class SearchApiToken
 
   class << self
     def generate(scope:, ttl: TOKEN_TTL)
-      secret = ENV["MAMPFSEARCH_API_SECRET"]
+      secret = ENV.fetch("MAMPFSEARCH_API_SECRET", nil)
       if secret.blank?
         raise(SearchClient::ServiceUnavailableError,
               "MAMPFSEARCH_API_SECRET is not configured.")
@@ -25,7 +25,7 @@ class SearchApiToken
     end
 
     def verify!(token, scope:, purpose: PURPOSE)
-      secret = ENV["MAMPFSEARCH_API_SECRET"]
+      secret = ENV.fetch("MAMPFSEARCH_API_SECRET", nil)
       if secret.blank?
         raise(SearchClient::ServiceUnavailableError,
               "MAMPFSEARCH_API_SECRET is not configured.")

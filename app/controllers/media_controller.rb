@@ -273,7 +273,7 @@ class MediaController < ApplicationController
   end
 
   def transcribe
-    return head :not_found unless Rails.env.development? || Rails.env.test?
+    return head :not_found unless Rails.env.local?
 
     authorize! :transcribe, @medium
     unless @medium.transcribable?

@@ -1,10 +1,10 @@
 require "rails_helper"
 
-RSpec.describe SearchApiToken, :mampfsearch do
+RSpec.describe(SearchApiToken, :mampfsearch) do
   let(:secret) { "test-secret-key-at-least-32-characters-long" }
 
   around do |example|
-    original = ENV["MAMPFSEARCH_API_SECRET"]
+    original = ENV.fetch("MAMPFSEARCH_API_SECRET", nil)
     ENV["MAMPFSEARCH_API_SECRET"] = secret
     example.run
   ensure
@@ -65,11 +65,13 @@ RSpec.describe SearchApiToken, :mampfsearch do
 
       expect do
         described_class.generate(scope: "/lesson/search")
-      end.to raise_error(SearchClient::ServiceUnavailableError, /MAMPFSEARCH_API_SECRET is not configured/)
+      end.to raise_error(SearchClient::ServiceUnavailableError,
+                         /MAMPFSEARCH_API_SECRET is not configured/)
 
       expect do
         described_class.verify!("any.token", scope: "/lesson/search")
-      end.to raise_error(SearchClient::ServiceUnavailableError, /MAMPFSEARCH_API_SECRET is not configured/)
+      end.to raise_error(SearchClient::ServiceUnavailableError,
+                         /MAMPFSEARCH_API_SECRET is not configured/)
     end
   end
 end

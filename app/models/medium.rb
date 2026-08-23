@@ -173,12 +173,12 @@ class Medium < ApplicationRecord
                   }
   scope :needs_transcription, lambda {
                                 where(transcription_status: [:not_transcribed, :failed_temporarily])
-                                  .where("transcription_attempts < ?", SearchClient::MAX_TRANSCRIPTION_ATTEMPTS)
+                                  .where(transcription_attempts: ...SearchClient::MAX_TRANSCRIPTION_ATTEMPTS)
                                   .where.not(video_data: nil)
                               }
   scope :stuck_transcriptions, lambda {
                                  where(transcription_status: :queued)
-                                   .where("transcription_requested_at < ?", SearchClient::STUCK_TRANSCRIPTION_TIMEOUT.ago)
+                                   .where(transcription_requested_at: ...SearchClient::STUCK_TRANSCRIPTION_TIMEOUT.ago)
                                }
 
   include PgSearch::Model

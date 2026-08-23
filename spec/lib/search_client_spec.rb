@@ -1,12 +1,12 @@
 require "rails_helper"
 
-RSpec.describe SearchClient, :mampfsearch do
+RSpec.describe(SearchClient, :mampfsearch) do
   let(:base_url) { "http://localhost:8000" }
   let(:client) { described_class.send(:new, base_url: base_url) }
 
   describe "#initialize" do
     it "uses MAMPFSEARCH_BASE_URL env var by default" do
-      original = ENV["MAMPFSEARCH_BASE_URL"]
+      original = ENV.fetch("MAMPFSEARCH_BASE_URL", nil)
       begin
         ENV["MAMPFSEARCH_BASE_URL"] = "http://example.com:8000"
         instance = described_class.send(:new)
@@ -29,12 +29,13 @@ RSpec.describe SearchClient, :mampfsearch do
       fake_client = double("client")
       allow(fake_client).to receive(:headers).and_return(fake_client)
       expect(fake_client).to receive(:post).with("/lesson/ingest", params: {
-        media_rails_id: 1,
-        lecture_rails_id: 2,
-        course_rails_id: 3,
-        video_url: "http://video.url",
-        transcript_upload_url: "http://upload.url"
-      }).and_return(fake_response(200, '{"status":"queued"}'))
+                                                   media_rails_id: 1,
+                                                   lecture_rails_id: 2,
+                                                   course_rails_id: 3,
+                                                   video_url: "http://video.url",
+                                                   transcript_upload_url: "http://upload.url"
+                                                 }).and_return(fake_response(200,
+                                                                             '{"status":"queued"}'))
 
       allow(pool).to receive(:with) { |&block| block.call(fake_client) }
 
@@ -53,11 +54,12 @@ RSpec.describe SearchClient, :mampfsearch do
       fake_http = double("http")
       allow(fake_http).to receive(:headers).and_return(fake_http)
       expect(fake_http).to receive(:post).with("/lesson/ingest", params: {
-        media_rails_id: 1,
-        course_rails_id: 3,
-        video_url: "http://video.url",
-        transcript_upload_url: "http://upload.url"
-      }).and_return(fake_response(200, '{"status":"queued"}'))
+                                                 media_rails_id: 1,
+                                                 course_rails_id: 3,
+                                                 video_url: "http://video.url",
+                                                 transcript_upload_url: "http://upload.url"
+                                               }).and_return(fake_response(200,
+                                                                           '{"status":"queued"}'))
 
       allow(pool).to receive(:with) { |&block| block.call(fake_http) }
 
@@ -108,7 +110,12 @@ RSpec.describe SearchClient, :mampfsearch do
       fake_client = double("client")
       allow(fake_client).to receive(:headers).and_return(fake_client)
       expect(fake_client).to receive(:delete).with("/lesson/media/42")
-        .and_return(fake_response(200, '{"status":"deleted","media_rails_id":42}'))
+                                             .and_return(
+                                               fake_response(
+                                                 200,
+                                                 '{"status":"deleted","media_rails_id":42}'
+                                               )
+                                             )
 
       allow(pool).to receive(:with) { |&block| block.call(fake_client) }
 
@@ -129,7 +136,8 @@ RSpec.describe SearchClient, :mampfsearch do
       fake_client = double("client")
       allow(fake_client).to receive(:headers).and_return(fake_client)
       expect(fake_client).to receive(:post).with("/lesson/list")
-        .and_return(fake_response(200, '{"media_rails_ids":[1,2,3]}'))
+                                           .and_return(fake_response(200,
+                                                                     '{"media_rails_ids":[1,2,3]}'))
 
       allow(pool).to receive(:with) { |&block| block.call(fake_client) }
 
@@ -140,7 +148,7 @@ RSpec.describe SearchClient, :mampfsearch do
       fake_client = double("client")
       allow(fake_client).to receive(:headers).and_return(fake_client)
       expect(fake_client).to receive(:post).with("/lesson/list")
-        .and_return(fake_response(200, '{}'))
+                                           .and_return(fake_response(200, "{}"))
 
       allow(pool).to receive(:with) { |&block| block.call(fake_client) }
 
@@ -181,7 +189,7 @@ RSpec.describe SearchClient, :mampfsearch do
     let(:secret) { "test-secret-key-at-least-32-characters-long" }
 
     around do |example|
-      original = ENV["MAMPFSEARCH_API_SECRET"]
+      original = ENV.fetch("MAMPFSEARCH_API_SECRET", nil)
       ENV["MAMPFSEARCH_API_SECRET"] = secret
       example.run
     ensure
@@ -204,12 +212,13 @@ RSpec.describe SearchClient, :mampfsearch do
         fake_http
       end
       expect(fake_http).to receive(:post).with("/lesson/ingest", params: {
-        media_rails_id: 1,
-        course_rails_id: 3,
-        video_url: "http://video.url",
-        transcript_upload_url: "http://upload.url",
-        lecture_rails_id: 2
-      }).and_return(fake_response(200, '{"status":"queued"}'))
+                                                 media_rails_id: 1,
+                                                 course_rails_id: 3,
+                                                 video_url: "http://video.url",
+                                                 transcript_upload_url: "http://upload.url",
+                                                 lecture_rails_id: 2
+                                               }).and_return(fake_response(200,
+                                                                           '{"status":"queued"}'))
 
       allow(pool).to receive(:with) { |&block| block.call(fake_http) }
 
@@ -230,7 +239,12 @@ RSpec.describe SearchClient, :mampfsearch do
         fake_http
       end
       expect(fake_http).to receive(:delete).with("/lesson/media/42")
-        .and_return(fake_response(200, '{"status":"deleted","media_rails_id":42}'))
+                                           .and_return(
+                                             fake_response(
+                                               200,
+                                               '{"status":"deleted","media_rails_id":42}'
+                                             )
+                                           )
 
       allow(pool).to receive(:with) { |&block| block.call(fake_http) }
 
@@ -248,7 +262,8 @@ RSpec.describe SearchClient, :mampfsearch do
         fake_http
       end
       expect(fake_http).to receive(:post).with("/lesson/list")
-        .and_return(fake_response(200, '{"media_rails_ids":[1,2,3]}'))
+                                         .and_return(fake_response(200,
+                                                                   '{"media_rails_ids":[1,2,3]}'))
 
       allow(pool).to receive(:with) { |&block| block.call(fake_http) }
 
@@ -259,7 +274,7 @@ RSpec.describe SearchClient, :mampfsearch do
       fake_http = double("http")
       expect(fake_http).not_to receive(:headers)
       expect(fake_http).to receive(:get).with("/ready")
-        .and_return(fake_response(200, '{"status":"ok"}'))
+                                        .and_return(fake_response(200, '{"status":"ok"}'))
 
       allow(pool).to receive(:with) { |&block| block.call(fake_http) }
 

@@ -389,11 +389,14 @@ RSpec.describe(Medium, type: :model) do
     end
 
     it "identifies media needing transcription in needs_transcription scope" do
-      m1 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :not_transcribed, transcription_attempts: 0)
-      m2 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_temporarily, transcription_attempts: 1)
+      m1 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :not_transcribed,
+                                                         transcription_attempts: 0)
+      m2 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_temporarily,
+                                                         transcription_attempts: 1)
       m3 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :completed)
       m4 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_permanently)
-      m5 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_temporarily, transcription_attempts: 3)
+      m5 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_temporarily,
+                                                         transcription_attempts: 3)
       m6 = FactoryBot.create(:valid_medium, video: nil, transcription_status: :not_transcribed)
 
       results = Medium.needs_transcription
@@ -402,9 +405,21 @@ RSpec.describe(Medium, type: :model) do
     end
 
     it "identifies stuck media in stuck_transcriptions scope" do
-      stuck = FactoryBot.create(:valid_medium, :with_video, transcription_status: :queued, transcription_requested_at: 3.hours.ago)
-      recent = FactoryBot.create(:valid_medium, :with_video, transcription_status: :queued, transcription_requested_at: 10.minutes.ago)
-      completed = FactoryBot.create(:valid_medium, :with_video, transcription_status: :completed, transcription_requested_at: 3.hours.ago)
+      stuck = FactoryBot.create(
+        :valid_medium, :with_video,
+        transcription_status: :queued,
+        transcription_requested_at: 3.hours.ago
+      )
+      recent = FactoryBot.create(
+        :valid_medium, :with_video,
+        transcription_status: :queued,
+        transcription_requested_at: 10.minutes.ago
+      )
+      completed = FactoryBot.create(
+        :valid_medium, :with_video,
+        transcription_status: :completed,
+        transcription_requested_at: 3.hours.ago
+      )
 
       results = Medium.stuck_transcriptions
       expect(results).to include(stuck)
@@ -420,12 +435,12 @@ RSpec.describe(Medium, type: :model) do
   describe "#transcribable?", :mampfsearch do
     it "returns true when video is present" do
       medium = FactoryBot.create(:valid_medium, :with_video)
-      expect(medium.transcribable?).to be true
+      expect(medium.transcribable?).to be(true)
     end
 
     it "returns false when video is absent" do
       medium = FactoryBot.create(:valid_medium, video: nil)
-      expect(medium.transcribable?).to be false
+      expect(medium.transcribable?).to be(false)
     end
   end
 
@@ -461,6 +476,3 @@ RSpec.describe(Medium, type: :model) do
     end
   end
 end
-
-
-

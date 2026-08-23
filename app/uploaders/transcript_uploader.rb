@@ -5,7 +5,14 @@ class TranscriptUploader < Shrine
   # Cue timing lines look like "00:00:11.120 --> 00:00:42.771" with an optional
   # trailing set of cue settings. Both minutes- and hours-based timestamps are
   # valid WebVTT.
-  TIMESTAMP_LINE = /\A(?:\d{1,2}:)?\d{2}:\d{2}\.\d{3} --> (?:\d{1,2}:)?\d{2}:\d{2}\.\d{3}(?:\s+.*)?\z/
+  TIMESTAMP_LINE = /
+    \A
+    (?:\d{1,2}:)?\d{2}:\d{2}\.\d{3}
+    \s-->\s
+    (?:\d{1,2}:)?\d{2}:\d{2}\.\d{3}
+    (?:\s+.*)?
+    \z
+  /x
 
   plugin :determine_mime_type, analyzer: :marcel
   plugin :validation_helpers
@@ -21,9 +28,9 @@ class TranscriptUploader < Shrine
                       accepted_mime_types: ACCEPTED_MIME_TYPES.join(", "))
     )
     validate_extension_inclusion ["vtt"],
-                                message: I18n.t("submission.wrong_file_type",
-                                                file_type: extension ? ".#{extension}" : "",
-                                                accepted_file_type: ".vtt")
+                                 message: I18n.t("submission.wrong_file_type",
+                                                 file_type: extension ? ".#{extension}" : "",
+                                                 accepted_file_type: ".vtt")
     validate_max_size MAX_SIZE, message: I18n.t("package.too_big")
 
     error = TranscriptUploader.structure_error(file)
@@ -38,8 +45,10 @@ class TranscriptUploader < Shrine
       content = content.dup.force_encoding(Encoding::UTF_8)
       return I18n.t("submission.invalid_transcript") unless content.valid_encoding?
 
-      lines = content.sub(/\A\uFEFF/, "").lines
-      return I18n.t("submission.invalid_transcript") unless lines.first.to_s.lstrip.start_with?("WEBVTT")
+      lines = content.delete_prefix("﻿").lines
+      unless lines.first.to_s.lstrip.start_with?("WEBVTT")
+        return I18n.t("submission.invalid_transcript")
+      end
 
       cue_count = 0
       lines.each do |line|

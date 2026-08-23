@@ -11,4 +11,3 @@ class AddTranscriptDataToMedia < ActiveRecord::Migration[8.0]
               name: "index_media_on_pending_transcriptions"
   end
 end
-

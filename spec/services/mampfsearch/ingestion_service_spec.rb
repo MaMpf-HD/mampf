@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Mampfsearch::IngestionService, :mampfsearch do
+RSpec.describe(Mampfsearch::IngestionService, :mampfsearch) do
   let(:search_client) { instance_double(SearchClient) }
 
   before do
@@ -28,8 +28,12 @@ RSpec.describe Mampfsearch::IngestionService, :mampfsearch do
           lesson_rails_id: lesson.id,
           lecture_rails_id: lecture.id,
           course_rails_id: course.id,
-          video_url: a_string_matching(%r{/media/#{medium.id}/video/transcription_stream\?token=}),
-          transcript_upload_url: a_string_matching(%r{/api/webhooks/media/#{medium.id}/transcripts\?token=})
+          video_url: a_string_matching(
+            %r{/media/#{medium.id}/video/transcription_stream\?token=}
+          ),
+          transcript_upload_url: a_string_matching(
+            %r{/api/webhooks/media/#{medium.id}/transcripts\?token=}
+          )
         )
       )
 
