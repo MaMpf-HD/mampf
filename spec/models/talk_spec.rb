@@ -295,5 +295,46 @@ RSpec.describe(Talk, type: :model) do
 
       expect(talk.destruction_blockers).to include(:roster_not_empty)
     end
+
+    context "with a registration campaign" do
+      let(:campaign) do
+        create(:registration_campaign, campaignable: seminar,
+                                       allocation_mode: :first_come_first_served)
+      end
+
+      before do
+        create(:registration_item, registration_campaign: campaign, registerable: talk)
+      end
+
+      it "reports a campaign that is still running" do
+        campaign.update!(status: :open)
+
+        expect(talk.reload.destruction_blockers).to include(:in_campaign)
+      end
+
+      # Once the process is finalized its groups already appear as manually
+      # managed and their rosters are editable, so the process must not be the
+      # thing that keeps an empty talk alive.
+      it "does not report a campaign that is finalized" do
+        campaign.update!(status: :completed)
+
+        expect(talk.reload.destruction_blockers).to be_empty
+      end
+
+      it "takes its campaign entry with it when it is deleted" do
+        campaign.update!(status: :completed)
+
+        expect { talk.reload.destroy }.to change(Registration::Item, :count).by(-1)
+        expect(described_class.exists?(talk.id)).to be(false)
+      end
+
+      it "still refuses while somebody holds the talk" do
+        campaign.update!(status: :completed)
+        talk.add_user_to_roster!(create(:confirmed_user))
+
+        expect(talk.reload.destruction_blockers).to include(:roster_not_empty)
+        expect { talk.destroy }.not_to change(described_class, :count)
+      end
+    end
   end
 end

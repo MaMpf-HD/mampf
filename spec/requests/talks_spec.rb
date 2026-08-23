@@ -81,6 +81,44 @@ RSpec.describe("Talks", type: :request) do
         expect(response).to have_http_status(:ok)
         expect(response.media_type).to eq(Mime[:turbo_stream])
       end
+
+      context "when the talk was part of a registration process" do
+        let(:campaign) do
+          create(:registration_campaign, campaignable: lecture,
+                                         allocation_mode: :first_come_first_served)
+        end
+        let!(:item) do
+          create(:registration_item, registration_campaign: campaign, registerable: talk)
+        end
+
+        it "refuses while the process is still running" do
+          campaign.update!(status: :open)
+
+          expect do
+            delete(talk_path(talk), as: :turbo_stream)
+          end.not_to change(Talk, :count)
+        end
+
+        it "deletes it once the process is finalized" do
+          campaign.update!(status: :open)
+          campaign.update!(status: :completed)
+
+          expect do
+            delete(talk_path(talk), as: :turbo_stream)
+          end.to change(Talk, :count).by(-1)
+             .and(change(Registration::Item, :count).by(-1))
+        end
+
+        it "still refuses a finalized process's talk that somebody holds" do
+          campaign.update!(status: :open)
+          campaign.update!(status: :completed)
+          talk.add_user_to_roster!(create(:confirmed_user))
+
+          expect do
+            delete(talk_path(talk), as: :turbo_stream)
+          end.not_to change(Talk, :count)
+        end
+      end
     end
 
     describe "PATCH /talks/:id" do

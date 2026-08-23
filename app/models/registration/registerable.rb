@@ -6,7 +6,12 @@ module Registration
     extend ActiveSupport::Concern
 
     included do
-      has_many :registration_items, as: :registerable, class_name: "Registration::Item"
+      # Nothing else clears these: the association is polymorphic, so no foreign
+      # key catches a group that is deleted out from under its items.
+      has_many :registration_items,
+               as: :registerable,
+               class_name: "Registration::Item",
+               dependent: :destroy
 
       before_update :validate_capacity_change_via_items
     end
