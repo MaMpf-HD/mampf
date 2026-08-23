@@ -65,4 +65,37 @@ RSpec.shared_examples("a registerable model") do
       end
     end
   end
+
+  describe "deletion while a campaign knows it" do
+    let(:registerable) { create(described_class.name.underscore.to_sym) }
+    let(:campaign) { create(:registration_campaign, :first_come_first_served) }
+    let!(:item) do
+      create(:registration_item, registration_campaign: campaign, registerable: registerable)
+    end
+
+    it "is refused while the process is running" do
+      campaign.update!(status: :open)
+
+      expect(registerable.reload.destruction_blockers).to include(:in_campaign)
+      expect { registerable.destroy }.not_to change(described_class, :count)
+    end
+
+    # A finalized process is over: its groups are already listed as manually
+    # managed and their rosters are editable, so it must not be what keeps an
+    # empty group alive.
+    it "is allowed once the process is finalized" do
+      campaign.update!(status: :open)
+      campaign.update!(status: :completed)
+
+      expect(registerable.reload.destruction_blockers).not_to include(:in_campaign)
+      expect { registerable.destroy }.to change(described_class, :count).by(-1)
+    end
+
+    it "takes its campaign entry with it, which no foreign key would clear" do
+      campaign.update!(status: :open)
+      campaign.update!(status: :completed)
+
+      expect { registerable.reload.destroy }.to change(Registration::Item, :count).by(-1)
+    end
+  end
 end
