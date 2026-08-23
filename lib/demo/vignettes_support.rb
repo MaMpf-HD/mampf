@@ -65,13 +65,20 @@ module Demo
       # Rebuilt from scratch every run, so the states stay the ones described
       # here however much was clicked around in between.
       def wipe_previous!(lecture)
-        lecture.vignettes_questionnaires
-               .where("title LIKE ?", "#{TITLE_PREFIX}%")
-               .destroy_all
-        # Codenames outlive the vignettes they answered, so the orphans of the
-        # previous run would pile up. Nothing else in MaMpf keeps a codename
-        # without answers around.
-        Vignettes::Codename.where.missing(:user_answers).destroy_all
+        questionnaires = lecture.vignettes_questionnaires
+                                .where("title LIKE ?", "#{TITLE_PREFIX}%")
+        # Codenames outlive the vignettes they answered, so the previous run's
+        # would pile up. Only the ones this task handed out, though: a real
+        # student's code exists from the moment they consent, before any answer
+        # is stored, and deleting it would cost them their data.
+        codenames = Vignettes::Codename
+                    .joins(:user_answers)
+                    .where(vignettes_user_answers: { vignettes_questionnaire_id: questionnaires })
+                    .distinct
+                    .to_a
+
+        questionnaires.destroy_all
+        codenames.each { |codename| codename.destroy if codename.user_answers.reload.empty? }
       end
 
       def build_all!(lecture)
