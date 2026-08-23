@@ -276,7 +276,7 @@ test.describe("getting out of a registration process", () => {
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await expect(page.getByText("Tutorial registration")).toBeVisible();
 
-      await page.getByRole("button", { name: "Discard registration process" }).click();
+      await page.getByRole("link", { name: "Discard registration process" }).click();
 
       await expect(page.getByText("Tutorial registration")).toBeHidden();
       expect(confirmation).toContain("Nobody registered for it");

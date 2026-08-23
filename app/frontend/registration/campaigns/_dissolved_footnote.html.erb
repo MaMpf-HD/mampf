@@ -85,22 +85,22 @@
         <span class="dissolved-campaign-pill-sep">&middot;</span>
         <span><%= summary %></span>
       <% end %>
-    </span>
 
-    <%# only a process that reached nobody: everything else is a record %>
-    <% if campaign.discardable? %>
-      <%= button_to registration_campaign_path(campaign),
-                    method: :delete,
-                    form: { class: "d-inline" },
+      <%# only a process that reached nobody: everything else is a record %>
+      <% if campaign.discardable? %>
+        <span class="dissolved-campaign-pill-sep">&middot;</span>
+        <%= link_to registration_campaign_path(campaign),
+                    class: "text-reset text-decoration-none",
+                    title: campaign_discard_title(campaign),
+                    aria: { label: campaign_discard_title(campaign) },
                     data: {
+                      turbo_method: :delete,
                       turbo_confirm: campaign_discard_confirmation(campaign),
                       turbo_stream: true
-                    },
-                    class: "btn btn-sm btn-link p-0 ms-2 text-danger",
-                    title: campaign_discard_title(campaign),
-                    aria: { label: campaign_discard_title(campaign) } do %>
-        <i class="bi bi-trash"></i>
+                    } do %>
+          <i class="bi bi-trash text-danger"></i>
+        <% end %>
       <% end %>
-    <% end %>
+    </span>
   </div>
 </div>
