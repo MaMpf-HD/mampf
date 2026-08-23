@@ -1423,19 +1423,33 @@ the foreign key from `registration_user_registrations` alone does not close the
 window, because it only constrains the insert, not the gap between an
 application-level check and that insert.
 
-A `Lecture` takes its campaigns with it. `ensure_campaign_is_discardable` steps
-aside when `destroyed_by_association` is set, the same way an item and a policy
-step aside for their campaign: what only exists because of the lecture goes with
-it, and what the lecture is worth protecting from it guards itself —
-`lecture_deletable?` asks for no lessons and no media. The flag has to be read
-*before* the lock, because `lock!` reloads and the reload clears it.
+A `Lecture` takes its campaigns with it. `ensure_campaign_is_discardable` drops
+most of its questions when `destroyed_by_association` is set, the same way an
+item and a policy step aside for their campaign: what only exists because of the
+lecture goes with it, and what the lecture is worth protecting from it guards
+itself — `lecture_deletable?` asks for no lessons and no media. The flag has to
+be read *before* the lock, because `lock!` reloads and the reload clears it.
 
-`ensure_not_referenced_as_prerequisite` does not step aside, and is therefore
-the only reason a lecture deletion still fails: a campaign that another
-lecture's campaign requires is not only this lecture's business.
-`LecturesController#destroy` asks `#required_by_other_campaign?` for the
-message rather than `#discard_blocker`, which reports the first reason it finds
-and would hide this one behind registrations.
+Two campaign-level reasons survive that cascade:
+
+- **Roster entries** (`#cascade_blocker`). `tutorial_memberships`,
+  `cohort_memberships`, `speaker_talk_joins` and `lecture_memberships` reference
+  the campaign through `source_campaign_id` with a restrictive foreign key, and
+  a lecture deletes its campaigns *before* the groups that hold those rows. So
+  the cascade still asks `#materialized_roster_entries?`; without it the delete
+  raises `ActiveRecord::InvalidForeignKey` instead of refusing. The teacher's
+  way out is the same one the groups demand anyway: take the members out, and
+  the references go with them.
+- **A prerequisite from another lecture**
+  (`ensure_not_referenced_as_prerequisite`). Such a campaign is not only this
+  lecture's business. Within one lecture both sides go in the same cascade, so
+  those references are ignored — and since the form only offers campaigns of the
+  same campaignable, that is the ordinary case.
+
+`LecturesController#destroy` asks `#required_by_other_campaign?` for the message
+rather than `#discard_blocker`, which reports the first reason it finds and
+would hide this one behind registrations. For a roster entry it falls back to
+the general message, which already names groups with participants.
 
 ### Removing from the campaign vs. deleting the group
 
