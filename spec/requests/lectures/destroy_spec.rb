@@ -95,6 +95,33 @@ RSpec.describe("Lecture deletion", type: :request) do
     end
   end
 
+  # Roster rows point at the campaign through source_campaign_id, and the
+  # cascade deletes campaigns before the groups that hold those rows.
+  context "with a campaign whose allocation is still in a roster" do
+    let!(:campaign) { create(:registration_campaign, campaignable: lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let!(:membership) do
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user),
+                                   source_campaign: campaign)
+    end
+
+    it "refuses instead of running into the foreign key" do
+      expect { delete(lecture_path(lecture)) }.not_to raise_error
+
+      expect(Lecture.exists?(lecture.id)).to be(true)
+      expect(flash[:alert]).to eq(I18n.t("controllers.lectures.destruction_failed"))
+    end
+
+    it "deletes once the allocated members are out" do
+      membership.destroy
+
+      delete(lecture_path(lecture))
+
+      expect(Lecture.exists?(lecture.id)).to be(false)
+    end
+  end
+
   context "with a campaign that another event series requires" do
     let!(:campaign) { create(:registration_campaign, :with_items, campaignable: lecture) }
     let!(:notification) { create(:notification, notifiable: lecture) }

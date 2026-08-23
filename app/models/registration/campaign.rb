@@ -521,15 +521,19 @@ module Registration
 
         lock!
 
-        # The lecture is being deleted and takes this campaign along. Whether
-        # that is allowed was decided by the lecture's own rules.
-        return if by_association
-
-        blocker = discard_blocker
+        blocker = by_association ? cascade_blocker : discard_blocker
         return if blocker.nil?
 
         errors.add(:base, DISCARD_BLOCKER_ERRORS.fetch(blocker))
         throw(:abort)
+      end
+
+      # The lecture is being deleted and takes this campaign along; its own
+      # rules decided that. What still has to hold is the foreign key: roster
+      # rows point here through source_campaign_id, and the lecture deletes
+      # campaigns before the groups that hold those rows.
+      def cascade_blocker
+        :allocation if materialized_roster_entries?
       end
 
       def allocation_mode_frozen
