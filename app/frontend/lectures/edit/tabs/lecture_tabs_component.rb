@@ -3,8 +3,19 @@ class LectureTabsComponent < ViewComponent::Base
 
   def initialize(active_tab, is_vignette_lecture)
     super()
-    @active_tab = active_tab
+    @requested_tab = active_tab
     @is_vignette_lecture = is_vignette_lecture
+  end
+
+  # A name that matches no tab would leave every pane hidden, which reads as a
+  # blank page - and the browser lays the hidden content out wrongly.
+  def active_tab
+    @active_tab ||=
+      if tabs.any? { |tab| tab.name == @requested_tab }
+        @requested_tab
+      else
+        @is_vignette_lecture ? "vignettes" : "content"
+      end
   end
 
   class TabComponent < ViewComponent::Base

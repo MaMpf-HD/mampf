@@ -30,7 +30,7 @@ RSpec.describe("Lecture deletion", type: :request) do
     it "keeps the lecture and says so instead of raising" do
       expect { delete(lecture_path(lecture)) }.not_to change(Lecture, :count)
 
-      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
       expect(flash[:alert]).to eq(I18n.t("controllers.lectures.destruction_failed"))
     end
   end
@@ -45,9 +45,10 @@ RSpec.describe("Lecture deletion", type: :request) do
     end
   end
 
+  # A campaign exists because of its lecture. Deleting the lecture is guarded by
+  # the lecture's own rules, and what only lives underneath it goes along.
   context "with a campaign that students already registered for" do
     let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
-    let!(:notification) { create(:notification, notifiable: lecture) }
 
     before do
       create(:registration_user_registration,
@@ -55,12 +56,88 @@ RSpec.describe("Lecture deletion", type: :request) do
              registration_item: campaign.registration_items.first)
     end
 
-    it "keeps the lecture and explains why" do
+    it "deletes the lecture, the campaign and its registrations" do
+      delete(lecture_path(lecture))
+
+      expect(Lecture.exists?(lecture.id)).to be(false)
+      expect(Registration::Campaign.exists?(campaign.id)).to be(false)
+      expect(Registration::UserRegistration.count).to eq(0)
+    end
+  end
+
+  context "with a completed campaign" do
+    let!(:campaign) { create(:registration_campaign, :completed, campaignable: lecture) }
+
+    it "deletes the lecture together with it" do
+      delete(lecture_path(lecture))
+
+      expect(Lecture.exists?(lecture.id)).to be(false)
+      expect(Registration::Campaign.exists?(campaign.id)).to be(false)
+    end
+  end
+
+  # The form only offers campaigns of the same event series as a prerequisite,
+  # so this is the ordinary shape - and it must not stop the lecture from going.
+  context "with one of its campaigns required by another of its own" do
+    let!(:prerequisite) { create(:registration_campaign, campaignable: lecture) }
+
+    before do
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: create(:registration_campaign, campaignable: lecture),
+             config: { "prerequisite_campaign_id" => prerequisite.id })
+    end
+
+    it "deletes the lecture with both of them" do
+      delete(lecture_path(lecture))
+
+      expect(Lecture.exists?(lecture.id)).to be(false)
+      expect(Registration::Campaign.count).to eq(0)
+    end
+  end
+
+  # Roster rows point at the campaign through source_campaign_id, and the
+  # cascade deletes campaigns before the groups that hold those rows.
+  context "with a campaign whose allocation is still in a roster" do
+    let!(:campaign) { create(:registration_campaign, campaignable: lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let!(:membership) do
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user),
+                                   source_campaign: campaign)
+    end
+
+    it "refuses instead of running into the foreign key" do
+      expect { delete(lecture_path(lecture)) }.not_to raise_error
+
+      expect(Lecture.exists?(lecture.id)).to be(true)
+      expect(flash[:alert]).to eq(I18n.t("controllers.lectures.destruction_failed"))
+    end
+
+    it "deletes once the allocated members are out" do
+      membership.destroy
+
+      delete(lecture_path(lecture))
+
+      expect(Lecture.exists?(lecture.id)).to be(false)
+    end
+  end
+
+  context "with a campaign that another event series requires" do
+    let!(:campaign) { create(:registration_campaign, :with_items, campaignable: lecture) }
+    let!(:notification) { create(:notification, notifiable: lecture) }
+
+    before do
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: create(:registration_campaign),
+             config: { "prerequisite_campaign_id" => campaign.id })
+    end
+
+    it "keeps the lecture and says which case it is" do
       expect { delete(lecture_path(lecture)) }.not_to change(Lecture, :count)
 
-      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
       expect(flash[:alert])
-        .to eq(I18n.t("controllers.lectures.destruction_failed_campaigns"))
+        .to eq(I18n.t("controllers.lectures.destruction_failed_prerequisite"))
     end
 
     it "keeps the lecture's notifications" do
@@ -68,33 +145,20 @@ RSpec.describe("Lecture deletion", type: :request) do
 
       expect(Notification.exists?(notification.id)).to be(true)
     end
-  end
 
-  context "with a campaign whose allocation was computed" do
-    let!(:campaign) { create(:registration_campaign, :closed, campaignable: lecture) }
+    # discard_blocker reports the first reason it finds, and registrations come
+    # first - but the cascade walks past those, so the message must not.
+    it "says so even when the campaign also has registrations" do
+      campaign.update!(status: :open)
+      create(:registration_user_registration,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
 
-    before do
-      # rubocop:disable Rails/SkipsModelValidations
-      campaign.update_columns(last_allocation_calculated_at: Time.current)
-      # rubocop:enable Rails/SkipsModelValidations
-    end
+      delete(lecture_path(lecture))
 
-    it "keeps the lecture and explains why" do
-      expect { delete(lecture_path(lecture)) }.not_to change(Lecture, :count)
-
+      expect(Lecture.exists?(lecture.id)).to be(true)
       expect(flash[:alert])
-        .to eq(I18n.t("controllers.lectures.destruction_failed_campaigns"))
-    end
-  end
-
-  context "with a completed campaign" do
-    let!(:campaign) { create(:registration_campaign, :completed, campaignable: lecture) }
-
-    it "keeps the lecture and explains why" do
-      expect { delete(lecture_path(lecture)) }.not_to change(Lecture, :count)
-
-      expect(flash[:alert])
-        .to eq(I18n.t("controllers.lectures.destruction_failed_campaigns"))
+        .to eq(I18n.t("controllers.lectures.destruction_failed_prerequisite"))
     end
   end
 

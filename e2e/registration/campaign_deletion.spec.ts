@@ -212,6 +212,161 @@ test.describe("getting out of a registration process", () => {
       expect(await lecture.__call("tutorials")).toHaveLength(0);
     });
 
+  // Masonry measures the content grid once, while the tab it sits in is still
+  // hidden. Re-laying it out was bound on DOM ready, which a Turbo redirect
+  // does not run again - so after a refused deletion every talk card ended up
+  // stacked in the same spot.
+  test("lays the seminar's talks out after a refused deletion",
+    async ({ factory, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", ["is_seminar"], {
+        teacher_id: user.id,
+        locale: "en",
+      });
+      const talks = [];
+      for (const title of ["First Talk", "Second Talk"]) {
+        talks.push(await factory.create("talk", [], { lecture_id: lecture.id, title }));
+      }
+      const campaign = await factory.create(
+        "registration_campaign", ["first_come_first_served"],
+        { campaignable_type: "Lecture", campaignable_id: lecture.id },
+      );
+      await factory.create("registration_item", [], {
+        registration_campaign_id: campaign.id,
+        registerable_type: "Talk",
+        registerable_id: talks[0].id,
+      });
+      // a campaign of another lecture requiring this one still refuses the deletion
+      const other = await factory.create("registration_campaign", []);
+      await factory.create("registration_policy", ["prerequisite_campaign"], {
+        registration_campaign_id: other.id,
+        config: { prerequisite_campaign_id: campaign.id },
+      });
+
+      page.on("dialog", dialog => dialog.accept());
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await page.getByRole("link", { name: "Delete", exact: true }).first().click();
+      await expect(page.getByText("could not be deleted")).toBeVisible();
+
+      await page.getByTestId("content-tab-btn").click();
+
+      // At this width the two cards end up in different columns. Stacked, they
+      // sit on top of each other; the layout runs when the pane appears, so
+      // poll rather than measure once.
+      await expect.poll(async () => {
+        const first = await page.getByText("Talk 1. First Talk").boundingBox();
+        const second = await page.getByText("Talk 2. Second Talk").boundingBox();
+        return first && second ? second.x - first.x : 0;
+      }).toBeGreaterThan(200);
+    });
+
+  // A campaign finalized without a single registration leaves a line above the
+  // groups for good.
+  test("discards a finished process that reached nobody",
+    async ({ factory, teacher: { page, user } }) => {
+      const { lecture, campaign } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);
+      await campaign.__call("open!");
+      await campaign.__call("completed!");
+
+      let confirmation = "";
+      page.once("dialog", async (dialog) => {
+        confirmation = dialog.message();
+        await dialog.accept();
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await expect(page.getByText("Tutorial registration")).toBeVisible();
+
+      await page.getByRole("link", { name: "Discard registration process" }).click();
+
+      await expect(page.getByText("Tutorial registration")).toBeHidden();
+      expect(confirmation).toContain("Nobody registered for it");
+      // the group it managed is still there
+      expect(await lecture.__call("tutorials")).toHaveLength(1);
+    });
+
+  // The last dead end of the report: the seminar itself could not be deleted,
+  // because a finalized campaign vetoed the cascade.
+  test("deletes a seminar whose registration process is over",
+    async ({ factory, student, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", ["is_seminar"], {
+        teacher_id: user.id,
+        locale: "en",
+      });
+      const talk = await factory.create("talk", [], {
+        lecture_id: lecture.id, title: "Nobody's Talk",
+      });
+      const campaign = await factory.create(
+        "registration_campaign", ["first_come_first_served"],
+        { campaignable_type: "Lecture", campaignable_id: lecture.id },
+      );
+      const item = await factory.create("registration_item", [], {
+        registration_campaign_id: campaign.id,
+        registerable_type: "Talk",
+        registerable_id: talk.id,
+      });
+      await campaign.__call("open!");
+      await factory.create("registration_user_registration", [], {
+        user_id: student.user.id,
+        registration_campaign_id: campaign.id,
+        registration_item_id: item.id,
+        status: "confirmed",
+      });
+      await campaign.__call("completed!");
+
+      let confirmation = "";
+      page.once("dialog", async (dialog) => {
+        confirmation = dialog.message();
+        await dialog.accept();
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await page.getByRole("link", { name: "Delete", exact: true }).first().click();
+
+      // a teacher is no admin, so the administration path sends them to the start
+      await expect(page).toHaveURL(/:\d+\/$/);
+      expect(confirmation).toContain("1 registration process with 1 registration");
+    });
+
+  // The complaint from production: after finalizing, the talks nobody took are
+  // still there and nothing can remove them.
+  test("deletes a talk nobody took once the process is finalized",
+    async ({ factory, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", ["is_seminar"], {
+        teacher_id: user.id,
+        locale: "en",
+      });
+      const campaign = await factory.create(
+        "registration_campaign", ["first_come_first_served"],
+        {
+          campaignable_type: "Lecture",
+          campaignable_id: lecture.id,
+          description: "Talk assignment",
+        },
+      );
+      const talk = await factory.create("talk", [], {
+        lecture_id: lecture.id,
+        title: "Nobody's Talk",
+      });
+      await factory.create("registration_item", [], {
+        registration_campaign_id: campaign.id,
+        registerable_type: "Talk",
+        registerable_id: talk.id,
+      });
+      await campaign.__call("open!");
+      await campaign.__call("completed!");
+
+      page.on("dialog", dialog => dialog.accept());
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await tile(page, "Nobody's Talk")
+        .getByRole("link", { name: "Delete", exact: true }).click();
+
+      // gone from the group tiles and from the seminar's content list above them
+      await expect(page.getByText("Nobody's Talk")).toHaveCount(0);
+      expect(await lecture.__call("talks")).toHaveLength(0);
+    });
+
   test("refuses to delete a group that still has participants",
     async ({ factory, student, teacher: { page, user } }) => {
       const { lecture, tutorials } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);
