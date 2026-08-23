@@ -235,7 +235,7 @@ test.describe("getting out of a registration process", () => {
         registerable_type: "Talk",
         registerable_id: talks[0].id,
       });
-      // another process requiring this one is what still refuses the deletion
+      // a campaign of another lecture requiring this one still refuses the deletion
       const other = await factory.create("registration_campaign", []);
       await factory.create("registration_policy", ["prerequisite_campaign"], {
         registration_campaign_id: other.id,
@@ -259,8 +259,8 @@ test.describe("getting out of a registration process", () => {
       expect([first?.x, first?.y]).not.toEqual([second?.x, second?.y]);
     });
 
-  // A process that was finalized without ever being used leaves a line above
-  // the groups for good; it records nothing, so it can go.
+  // A campaign finalized without a single registration leaves a line above the
+  // groups for good.
   test("discards a finished process that reached nobody",
     async ({ factory, teacher: { page, user } }) => {
       const { lecture, campaign } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);
@@ -285,7 +285,7 @@ test.describe("getting out of a registration process", () => {
     });
 
   // The last dead end of the report: the seminar itself could not be deleted,
-  // because a finalized process vetoed the cascade.
+  // because a finalized campaign vetoed the cascade.
   test("deletes a seminar whose registration process is over",
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {

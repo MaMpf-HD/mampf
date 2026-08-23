@@ -86,7 +86,7 @@
         <span><%= summary %></span>
       <% end %>
 
-      <%# only a process that reached nobody: everything else is a record %>
+      <%# a completed campaign is discardable only while nobody registered %>
       <% if campaign.discardable? %>
         <span class="dissolved-campaign-pill-sep">&middot;</span>
         <%= link_to registration_campaign_path(campaign),

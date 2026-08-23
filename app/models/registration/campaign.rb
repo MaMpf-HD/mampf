@@ -47,7 +47,6 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
-    # processing is absent: an allocation is running against these rows.
     DISCARDABLE_STATUSES = ["draft", "open", "closed", "completed"].freeze
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
@@ -139,8 +138,7 @@ module Registration
       data_blocker
     end
 
-    # Asked instead of discard_blocker, which reports the first reason it finds
-    # and would hide this one behind registrations.
+    # Whether a campaign of another lecture requires this one as a prerequisite.
     def required_by_other_campaign?
       surviving_prerequisite_policies.exists?
     end
@@ -385,9 +383,8 @@ module Registration
 
       def data_blocker
         return :registrations if user_registrations.exists?
-        # Not allocation_present?: past this line there are no registrations, so
-        # a computed allocation allocated nobody. Roster entries can outlive
-        # theirs, which is why those still count.
+        # Not the allocation timestamps: with no registrations, an allocation
+        # cannot have allocated anybody.
         return :allocation if materialized_roster_entries?
         return :prerequisite if referencing_prerequisite_policies.exists?
 
@@ -399,9 +396,8 @@ module Registration
                             .where.not(registration_campaign_id: id)
       end
 
-      # Those that outlive this campaignable's deletion. The form only offers
-      # campaigns of the same campaignable, so in practice a reference goes away
-      # with the lecture that holds both sides.
+      # Policies that still exist after this campaign's campaignable is deleted,
+      # i.e. those belonging to a campaign of a different lecture.
       def surviving_prerequisite_policies
         referencing_prerequisite_policies
           .joins(:registration_campaign)
@@ -519,13 +515,14 @@ module Registration
       end
 
       def ensure_campaign_is_discardable
-        # Read before the lock: lock! reloads, and the reload clears it.
+        # lock! reloads the record, and reloading clears
+        # destroyed_by_association - so read it before locking.
         by_association = destroyed_by_association
 
         lock!
 
-        # The lecture decided that case; ensure_not_referenced_as_prerequisite
-        # still runs.
+        # The lecture is being deleted and takes this campaign along. Whether
+        # that is allowed was decided by the lecture's own rules.
         return if by_association
 
         blocker = discard_blocker

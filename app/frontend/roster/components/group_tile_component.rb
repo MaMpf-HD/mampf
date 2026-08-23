@@ -157,8 +157,8 @@ class GroupTileComponent < ViewComponent::Base
                    count: campaign_registrations["confirmed"].to_i))
   end
 
-  # A group whose process is over keeps its entries, and deleting the group
-  # takes them along - so the confirmation says how many.
+  # Registrations per status. A completed campaign leaves them on the group,
+  # and deleting the group deletes them, so the confirmation counts them.
   def campaign_registrations
     @campaign_registrations ||=
       Registration::UserRegistration

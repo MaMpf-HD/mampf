@@ -1091,8 +1091,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(create(:registration_campaign, :processing)).not_to be_discardable
     end
 
-    # A finished process that reached nobody records nothing; one that reached
-    # somebody is caught by the checks below, not by its status.
+    # completed no longer bars discarding by itself; the checks below do.
     it "is true for a finalized campaign nobody registered for" do
       expect(create(:registration_campaign, :completed)).to be_discardable
     end

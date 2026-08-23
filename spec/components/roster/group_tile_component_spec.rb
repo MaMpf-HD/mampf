@@ -407,8 +407,8 @@ RSpec.describe(GroupTileComponent, type: :component) do
         .to eq(I18n.t("roster.actions.confirm_delete_group"))
     end
 
-    # The entries of a finished process go with the group, and the teacher is
-    # the one who knows whether that history still matters.
+    # A completed campaign's registrations are deleted with the group, and the
+    # teacher is the one who knows whether that history still matters.
     it "names the entries a finished process left behind" do
       campaign = create(:registration_campaign, campaignable: seminar,
                                                 allocation_mode: :first_come_first_served)

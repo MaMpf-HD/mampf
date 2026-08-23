@@ -215,8 +215,8 @@ module Rosters
       registration_items.exists?
     end
 
-    # Whether a campaign still decides this roster. A finalized one does not -
-    # its groups are listed as manually managed and their rosters are editable.
+    # Whether a campaign that has not been finalized holds this group. A
+    # finalized one no longer decides its roster.
     def in_active_campaign?
       return false unless respond_to?(:registration_items)
 

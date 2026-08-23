@@ -80,9 +80,8 @@ RSpec.shared_examples("a registerable model") do
       expect { registerable.destroy }.not_to change(described_class, :count)
     end
 
-    # A finalized process is over: its groups are already listed as manually
-    # managed and their rosters are editable, so it must not be what keeps an
-    # empty group alive.
+    # A finalized campaign no longer decides its groups' rosters, so it must
+    # not be what keeps an empty group alive either.
     it "is allowed once the process is finalized" do
       campaign.update!(status: :open)
       campaign.update!(status: :completed)

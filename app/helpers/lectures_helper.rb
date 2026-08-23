@@ -12,8 +12,8 @@ module LecturesHelper
     lecture.registration_campaigns.any?(&:open_for_registrations?)
   end
 
-  # Deleting a lecture takes its registration processes along, so the question
-  # names them.
+  # Deleting a lecture deletes its campaigns and every registration in them,
+  # so the confirmation counts both.
   def lecture_destruction_confirmation(lecture)
     campaigns = lecture.registration_campaigns.count
     return t("confirmation.generic") if campaigns.zero?

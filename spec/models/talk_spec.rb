@@ -296,9 +296,9 @@ RSpec.describe(Talk, type: :model) do
       expect(talk.destruction_blockers).to include(:roster_not_empty)
     end
 
-    # The campaign states themselves are covered for every registerable in the
-    # shared example; what is talk-specific is that its own blockers still
-    # apply once the process no longer holds it.
+    # The campaign states are covered for every registerable in the shared
+    # example; what is talk-specific is that its own blockers still apply once
+    # the campaign no longer holds it.
     it "still refuses a finalized process's talk that somebody holds" do
       campaign = create(:registration_campaign, campaignable: seminar,
                                                 allocation_mode: :first_come_first_served)

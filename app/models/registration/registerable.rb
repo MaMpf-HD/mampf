@@ -6,8 +6,8 @@ module Registration
     extend ActiveSupport::Concern
 
     included do
-      # Nothing else clears these: the association is polymorphic, so no foreign
-      # key catches a group that is deleted out from under its items.
+      # dependent: :destroy because the association is polymorphic - no foreign
+      # key would delete an item when the group it points at is deleted.
       has_many :registration_items,
                as: :registerable,
                class_name: "Registration::Item",
