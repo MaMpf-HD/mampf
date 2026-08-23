@@ -501,8 +501,7 @@ class LecturesController < ApplicationController
     end
 
     def lecture_destruction_error
-      required_elsewhere = @lecture.registration_campaigns
-                                   .any? { |campaign| campaign.discard_blocker == :prerequisite }
+      required_elsewhere = @lecture.registration_campaigns.any?(&:required_by_other_campaign?)
       return t("controllers.lectures.destruction_failed_prerequisite") if required_elsewhere
 
       t("controllers.lectures.destruction_failed")

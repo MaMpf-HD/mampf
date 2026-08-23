@@ -77,7 +77,7 @@ RSpec.describe("Lecture deletion", type: :request) do
   end
 
   context "with a campaign that another event series requires" do
-    let!(:campaign) { create(:registration_campaign, campaignable: lecture) }
+    let!(:campaign) { create(:registration_campaign, :with_items, campaignable: lecture) }
     let!(:notification) { create(:notification, notifiable: lecture) }
 
     before do
@@ -98,6 +98,21 @@ RSpec.describe("Lecture deletion", type: :request) do
       delete(lecture_path(lecture))
 
       expect(Notification.exists?(notification.id)).to be(true)
+    end
+
+    # discard_blocker reports the first reason it finds, and registrations come
+    # first - but the cascade walks past those, so the message must not.
+    it "says so even when the campaign also has registrations" do
+      campaign.update!(status: :open)
+      create(:registration_user_registration,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      delete(lecture_path(lecture))
+
+      expect(Lecture.exists?(lecture.id)).to be(true)
+      expect(flash[:alert])
+        .to eq(I18n.t("controllers.lectures.destruction_failed_prerequisite"))
     end
   end
 

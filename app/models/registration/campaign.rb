@@ -139,6 +139,13 @@ module Registration
       data_blocker
     end
 
+    # Whether another campaign names this one as a prerequisite. discard_blocker
+    # reports the first reason it finds, so a campaign with registrations hides
+    # this one - and it is the reason that survives a lecture's cascade.
+    def required_by_other_campaign?
+      referencing_prerequisite_policies.exists?
+    end
+
     def allocation_present?
       last_allocation_calculated_at.present? ||
         allocation_decided_at.present? ||
@@ -501,13 +508,20 @@ module Registration
 
       def ensure_campaign_is_discardable
         # Set when the lecture is being destroyed and takes its campaigns along.
-        # Its own rules decided that; what is left for this one is discarding a
-        # campaign on its own. ensure_not_referenced_as_prerequisite still runs:
-        # a campaign that another one requires is not only this lecture's
-        # business.
-        return if destroyed_by_association
+        # Read before the lock: lock! reloads, and the reload clears it.
+        by_association = destroyed_by_association
 
+        # Before anything decides, and on the cascade too: the registration
+        # services take this lock before they validate, so without it one of
+        # them can commit a registration while the rows below are going.
         lock!
+
+        # The lecture's own rules decided that case; what is left for this one
+        # is discarding a campaign by itself. ensure_not_referenced_as_prerequisite
+        # still runs - a campaign that another one requires is not only this
+        # lecture's business.
+        return if by_association
+
         blocker = discard_blocker
         return if blocker.nil?
 
