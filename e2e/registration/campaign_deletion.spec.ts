@@ -250,13 +250,14 @@ test.describe("getting out of a registration process", () => {
 
       await page.getByTestId("content-tab-btn").click();
 
-      const first = await page.getByText("Talk 1. First Talk").boundingBox();
-      const second = await page.getByText("Talk 2. Second Talk").boundingBox();
-
-      // side by side at this width; stacked means both sit at the same point
-      expect(first).not.toBeNull();
-      expect(second).not.toBeNull();
-      expect([first?.x, first?.y]).not.toEqual([second?.x, second?.y]);
+      // At this width the two cards end up in different columns. Stacked, they
+      // sit on top of each other; the layout runs when the pane appears, so
+      // poll rather than measure once.
+      await expect.poll(async () => {
+        const first = await page.getByText("Talk 1. First Talk").boundingBox();
+        const second = await page.getByText("Talk 2. Second Talk").boundingBox();
+        return first && second ? second.x - first.x : 0;
+      }).toBeGreaterThan(200);
     });
 
   // A campaign finalized without a single registration leaves a line above the
