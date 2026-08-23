@@ -51,7 +51,9 @@
         </p>
 
         <%= form.hidden_field :slide_id, value: @slide.id %>
-        <%# Only a tracked run carries these; without them nothing is measured. %>
+        <%# Only a tracked run has a slide statistic built for it (see #take), so
+            fields_for renders nothing at all for the others -- and take.js only
+            starts measuring when it finds these fields. %>
         <%= form.fields_for :slide_statistic do |stat_form| %>
             <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
             <%= stat_form.hidden_field :total_time_on_slide, id: "total-time-on-slide-field" %>
