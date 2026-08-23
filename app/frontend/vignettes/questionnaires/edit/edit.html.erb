@@ -23,12 +23,17 @@
       <h1 class="fs-3 fw-bold m-0 me-2">
         <%= @questionnaire.title%>
         <% if !@questionnaire.editable %>
-        <i class="bi bi-lock-fill text-secondary fs-4 m-0"
-           tabindex="0"
-           data-bs-toggle="popover"
-           data-bs-trigger="hover focus"
-           data-bs-title="<%= t('vignettes.editing_locked') %>"
-           data-bs-content="<%= t('vignettes.editing_locked_info') %>"></i>
+        <%# A focusable icon with a popover is a button; saying so gives it a
+            name for screen readers as well. %>
+        <button type="button"
+                class="btn btn-link p-0 align-baseline text-secondary"
+                aria-label="<%= t('vignettes.editing_locked') %>"
+                data-bs-toggle="popover"
+                data-bs-trigger="hover focus"
+                data-bs-title="<%= t('vignettes.editing_locked') %>"
+                data-bs-content="<%= t('vignettes.editing_locked_info') %>">
+          <i class="bi bi-lock-fill fs-4 m-0"></i>
+        </button>
         <% end %>
       </h1>
 

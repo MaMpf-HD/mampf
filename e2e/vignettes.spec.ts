@@ -193,7 +193,8 @@ test.describe("Vignettes", () => {
       await expect(teacher.page.getByRole("checkbox", { name: "Data collection possible" }))
         .toBeDisabled();
       // The lock next to the title is what explains it.
-      await expect(teacher.page.locator("[data-bs-toggle='popover']")).toBeVisible();
+      await expect(teacher.page.getByRole("button", { name: "Editing locked" }))
+        .toBeVisible();
     });
 
   test("the last slide leads to a closing page, with the code for next time",

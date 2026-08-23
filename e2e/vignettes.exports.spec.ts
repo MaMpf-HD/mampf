@@ -13,6 +13,7 @@ test.describe("Vignettes Exports", () => {
     teacherVignettes = new VignettesPage(teacher.page);
 
     const lecture = await factory.create("lecture", ["released_for_all"], {
+      locale: "en",
       teacher_id: teacher.user.id,
       vignettes: true,
     });
