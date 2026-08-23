@@ -139,10 +139,8 @@ module Registration
       data_blocker
     end
 
-    # Whether a campaign of a *different* lecture names this one as a
-    # prerequisite - the only reference a lecture's deletion cannot dissolve.
-    # discard_blocker reports the first reason it finds, so a campaign with
-    # registrations would hide this one.
+    # Asked instead of discard_blocker, which reports the first reason it finds
+    # and would hide this one behind registrations.
     def required_by_other_campaign?
       surviving_prerequisite_policies.exists?
     end
@@ -388,10 +386,8 @@ module Registration
       def data_blocker
         return :registrations if user_registrations.exists?
         # Not allocation_present?: past this line there are no registrations, so
-        # a computed allocation cannot have allocated anybody and its timestamp
-        # protects nothing. Entries written into a roster do - their
-        # registrations may have gone since. Registration::Item asks the wider
-        # question, where the timestamp means "an allocation this item was in".
+        # a computed allocation allocated nobody. Roster entries can outlive
+        # theirs, which is why those still count.
         return :allocation if materialized_roster_entries?
         return :prerequisite if referencing_prerequisite_policies.exists?
 
@@ -404,8 +400,8 @@ module Registration
       end
 
       # Those that outlive this campaignable's deletion. The form only offers
-      # campaigns of the same campaignable as a prerequisite, so in practice a
-      # reference goes away together with the lecture that holds both sides.
+      # campaigns of the same campaignable, so in practice a reference goes away
+      # with the lecture that holds both sides.
       def surviving_prerequisite_policies
         referencing_prerequisite_policies
           .joins(:registration_campaign)
@@ -523,19 +519,13 @@ module Registration
       end
 
       def ensure_campaign_is_discardable
-        # Set when the lecture is being destroyed and takes its campaigns along.
         # Read before the lock: lock! reloads, and the reload clears it.
         by_association = destroyed_by_association
 
-        # Before anything decides, and on the cascade too: the registration
-        # services take this lock before they validate, so without it one of
-        # them can commit a registration while the rows below are going.
         lock!
 
-        # The lecture's own rules decided that case; what is left for this one
-        # is discarding a campaign by itself. ensure_not_referenced_as_prerequisite
-        # still runs - a campaign that another one requires is not only this
-        # lecture's business.
+        # The lecture decided that case; ensure_not_referenced_as_prerequisite
+        # still runs.
         return if by_association
 
         blocker = discard_blocker

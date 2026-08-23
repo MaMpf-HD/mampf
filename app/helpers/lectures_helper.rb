@@ -12,8 +12,8 @@ module LecturesHelper
     lecture.registration_campaigns.any?(&:open_for_registrations?)
   end
 
-  # Deleting a lecture takes its registration processes along, and their
-  # records exist nowhere else - so the question names them.
+  # Deleting a lecture takes its registration processes along, so the question
+  # names them.
   def lecture_destruction_confirmation(lecture)
     campaigns = lecture.registration_campaigns.count
     return t("confirmation.generic") if campaigns.zero?
