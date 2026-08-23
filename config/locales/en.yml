@@ -684,8 +684,14 @@ en:
       no_chapters: 'There are no chapters yet.'
       no_talks: 'There are no talks yet.'
       confirm_delete_with_campaigns: >
-        This event series has %{campaigns} registration processes with
-        %{registrations} registrations. Deleting it deletes those as well. Are you sure?
+        Deleting this event series also deletes %{campaigns} with %{registrations}.
+        Are you sure?
+      confirm_delete_campaigns_count:
+        one: 1 registration process
+        other: "%{count} registration processes"
+      confirm_delete_registrations_count:
+        one: 1 registration
+        other: "%{count} registrations"
       talks_managed_in_groups_html: 'Talks are created and deleted in the %{link} tab.'
       orphaned_lessons: 'Orphaned Sessions'
       related_tags: 'Related tags'

@@ -742,8 +742,13 @@ de:
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       no_talks: Es sind noch keine Vorträge vorhanden.
       confirm_delete_with_campaigns: >
-        Zu dieser Veranstaltung gehören %{campaigns} Anmeldeverfahren mit
-        %{registrations} Anmeldungen. Beim Löschen verschwinden sie mit. Bist Du sicher?
+        Mitgelöscht werden dabei: %{campaigns} mit %{registrations}. Bist Du sicher?
+      confirm_delete_campaigns_count:
+        one: 1 Anmeldeverfahren
+        other: "%{count} Anmeldeverfahren"
+      confirm_delete_registrations_count:
+        one: 1 Anmeldung
+        other: "%{count} Anmeldungen"
       talks_managed_in_groups_html: Vorträge werden im Reiter %{link} angelegt und gelöscht.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'

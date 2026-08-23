@@ -18,10 +18,13 @@ module LecturesHelper
     campaigns = lecture.registration_campaigns.count
     return t("confirmation.generic") if campaigns.zero?
 
+    registrations = Registration::UserRegistration
+                    .where(registration_campaign: lecture.registration_campaigns).count
+
     t("admin.lecture.confirm_delete_with_campaigns",
-      campaigns: campaigns,
-      registrations: Registration::UserRegistration
-                     .where(registration_campaign: lecture.registration_campaigns).count)
+      campaigns: t("admin.lecture.confirm_delete_campaigns_count", count: campaigns),
+      registrations: t("admin.lecture.confirm_delete_registrations_count",
+                       count: registrations))
   end
 
   # is the current user allowed to delete the given lecture and is it

@@ -422,7 +422,10 @@ RSpec.describe(GroupTileComponent, type: :component) do
 
       expect(rendered_confirmation)
         .to eq(I18n.t("roster.actions.confirm_delete_group_with_registrations",
-                      total: 2, confirmed: 1))
+                      total: I18n.t("roster.actions.confirm_delete_group_total_count",
+                                    count: 2),
+                      confirmed: I18n.t("roster.actions.confirm_delete_group_confirmed_count",
+                                        count: 1)))
     end
   end
 

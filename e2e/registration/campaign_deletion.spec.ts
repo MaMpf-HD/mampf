@@ -323,7 +323,7 @@ test.describe("getting out of a registration process", () => {
       await page.getByRole("link", { name: "Delete", exact: true }).first().click();
 
       await expect(page).not.toHaveURL(/lectures/);
-      expect(confirmation).toContain("1 registration processes with 1 registrations");
+      expect(confirmation).toContain("1 registration process with 1 registration");
     });
 
   // The complaint from production: after finalizing, the talks nobody took are

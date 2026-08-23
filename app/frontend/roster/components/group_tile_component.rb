@@ -152,7 +152,9 @@ class GroupTileComponent < ViewComponent::Base
     return t("roster.actions.confirm_delete_group") if total.zero?
 
     t("roster.actions.confirm_delete_group_with_registrations",
-      total: total, confirmed: campaign_registrations["confirmed"].to_i)
+      total: t("roster.actions.confirm_delete_group_total_count", count: total),
+      confirmed: t("roster.actions.confirm_delete_group_confirmed_count",
+                   count: campaign_registrations["confirmed"].to_i))
   end
 
   # A group whose process is over keeps its entries, and deleting the group
