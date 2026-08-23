@@ -1,19 +1,22 @@
+const VIGNETTE_CARD_ID = "#vignette-take-card";
 const VIGNETTE_FORM_ID = "#vignettes-answer-form";
 const CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
 const TEXT_ANSWER_ID = "vignettes_answer_text";
 const READY_ATTRIBUTE = "data-vignette-take-ready";
 
 function initializeVignetteTake() {
-  const form = $(VIGNETTE_FORM_ID);
+  // The card, not the form: an untracked run renders its fields outside one,
+  // so that nothing it types can be submitted at all.
+  const card = $(VIGNETTE_CARD_ID);
   // The attribute rather than jQuery's data store, so that "the slide is ready
   // to be answered" is readable from the outside -- the timings only start
   // here, and a test driving a mock clock has to wait for it.
-  if (form.length === 0 || form.attr(READY_ATTRIBUTE)) {
+  if (card.length === 0 || card.attr(READY_ATTRIBUTE)) {
     return;
   }
-  form.attr(READY_ATTRIBUTE, "true");
+  card.attr(READY_ATTRIBUTE, "true");
 
-  form.submit((event) => {
+  $(VIGNETTE_FORM_ID).submit((event) => {
     return validateForm(event);
   });
 
@@ -38,15 +41,18 @@ $(document).ready(initializeVignetteTake);
 ////////////////////////////////////////////////////////////////////////////////
 
 function validateForm(event) {
-  const form = document.querySelector(VIGNETTE_FORM_ID);
+  const card = document.querySelector(VIGNETTE_CARD_ID);
   const isValidFirstCheck = validateTextAnswer();
 
   if (isValidFirstCheck) {
-    const checkboxes = $(form).find(CHECK_BOXES_ID);
-    validateMultipleChoiceAnswer(checkboxes);
+    validateMultipleChoiceAnswer($(card).find(CHECK_BOXES_ID));
   }
 
-  if (!form.reportValidity()) {
+  // No form to ask, so the fields are asked one by one; reportValidity also
+  // shows the browser's own message on the first one that objects.
+  const fields = card.querySelectorAll("input, select, textarea");
+  const invalid = [...fields].find(field => !field.reportValidity());
+  if (invalid) {
     event.preventDefault();
     return false;
   }
@@ -232,12 +238,8 @@ function registerStatisticsHandler(stats) {
     });
   });
 
-  // Form Submission
-  $(VIGNETTE_FORM_ID).submit((e) => {
-    if ($(VIGNETTE_FORM_ID).data("preview")) {
-      e.preventDefault();
-      return;
-    }
+  // Form Submission -- only a tracked run has a form to begin with.
+  $(VIGNETTE_FORM_ID).submit(() => {
     // Take rest of time into account
     if (stats.slideStartTime) {
       stats.freezeSlideTime();

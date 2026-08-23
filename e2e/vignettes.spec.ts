@@ -262,6 +262,36 @@ test.describe("Vignettes", () => {
       expect(await stored()).toBeNull();
     });
 
+  test("an untracked run cannot send its answer, not even with the Enter key",
+    async ({ factory, student, teacher }) => {
+      const lecture = await createLecture(factory, teacher.user.id, student.user.id, true);
+      const questionnaire = await factory.create("vignettes_questionnaire", [], {
+        lecture_id: lecture.id, title: "Numbers", published: true, editable: true,
+        data_collection: false,
+      });
+      const slide = await factory.create("vignettes_slide", [], {
+        vignettes_questionnaire_id: questionnaire.id, title: "Slide 1", position: 1,
+      });
+      await factory.create("vignettes_number_question", [], {
+        vignettes_slide_id: slide.id, question_text: "Question 1", only_integer: true,
+      });
+
+      const posted: string[] = [];
+      student.page.on("request", request => {
+        if (request.method() === "POST") posted.push(request.url());
+      });
+
+      const studentVignettes = new VignettesPage(student.page);
+      await studentVignettes.openOverview(lecture.id);
+      await studentVignettes.openQuestionnaire("Numbers");
+
+      await student.page.getByRole("spinbutton").fill("42");
+      await student.page.getByRole("spinbutton").press("Enter");
+
+      await expect(student.page.getByText("Question 1")).toBeVisible();
+      expect(posted).toEqual([]);
+    });
+
   test("the browser remembers which slide the reader stopped at",
     async ({ factory, student, teacher }) => {
       const lecture = await createLecture(factory, teacher.user.id, student.user.id, true);

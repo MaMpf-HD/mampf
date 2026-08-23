@@ -101,7 +101,7 @@ export class VignettesPage {
     await this.page.waitForURL(/\/take/);
     // The slide's timings start when its script initialises, so nothing may
     // touch the clock before that.
-    await this.page.locator("#vignettes-answer-form[data-vignette-take-ready]").waitFor();
+    await this.page.locator("#vignette-take-card[data-vignette-take-ready]").waitFor();
     this.readPosition();
   }
 
@@ -162,7 +162,7 @@ export class VignettesPage {
 
     this.position += 1;
     await this.page.waitForURL(new RegExp(`[?&]position=${this.position}(&|$)`));
-    await this.page.locator("#vignettes-answer-form[data-vignette-take-ready]").waitFor();
+    await this.page.locator("#vignette-take-card[data-vignette-take-ready]").waitFor();
   }
 
   async exportQuestionnaireCsv(questionnaireId: number): Promise<string[][]> {

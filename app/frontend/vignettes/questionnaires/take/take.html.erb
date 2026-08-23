@@ -8,150 +8,18 @@
 <% end %>
 
 <!-- Slide -->
-<%# The scope is fixed: a rejected answer comes back as its subclass, and the
-    field names must not change with it. %>
-<%= form_with(model: @answer, scope: :vignettes_answer, id: "vignettes-answer-form",
-              url: submit_answer_questionnaire_url(@questionnaire),
-              data: { preview: @preview || false },
-              local: true) do |form| %>
-
-<%# A preview is the editor looking at their own vignette; it must not touch
-    the reader's resume position. %>
-<div id="vignette-take-card" class="container-md small-width card"
-     <%= tag.attributes(data: {
-           controller: ("vignettes-position" unless @preview),
-           vignettes_position_questionnaire_value: @questionnaire.id,
-           vignettes_position_position_value: @slide.position
-         }) %>>
-
-    <!-- Header -->
-    <% progress = [((@slide.position.to_f - 1) / @questionnaire.slides.count * 100).round, 0].max %>
-
-    <div id="vignettes-progress" class="progress"
-        role="progressbar" aria-label="Questionnaire progress"
-        aria-valuenow="<%= progress %>" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-bar progress-bar-striped"
-            style="width: <%= progress %>%">
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="card-body">
-        <%= @slide.content %>
-    </div>
-
-    <!-- Additional information section -->
-    <% if @slide.info_slides.any? %>
-    <div class="card-body">
-        <div class="d-flex flex-wrap align-items-center w-100">
-
-            <% @slide.info_slides.each_with_index do |info_slide, index| %>
-            <button type="button"
-                    class="btn open-info-slide-btn d-flex align-items-center"
-                    title="Find information about: <%= info_slide.title %>"
-                    data-bs-toggle="modal"
-                    data-bs-target="#vignette-info-slide-modal-<%= index %>"
-                    data-info-slide-id="<%= info_slide.id %>">
-                <%= vite_image_tag select_info_slide_icon_path(info_slide),
-                    class: "me-2 vignettes-info-slides-icon" %>
-                <p class="mb-0 text-start">
-                    <%= info_slide.title %>
-                </p>
-            </button>
-            <% end %>
-        </div>
-    </div>
-    <% end %>
-
-    <!-- Answer Section -->
-    <div class="card-footer vignette-answer">
-        <p>
-            <%= format_question_text(@slide.question.question_text) %>
-        </p>
-
-        <%= form.hidden_field :slide_id, value: @slide.id %>
-        <%# Only a tracked run carries these; without them nothing is measured. %>
-        <%= form.fields_for :slide_statistic do |stat_form| %>
-            <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
-            <%= stat_form.hidden_field :total_time_on_slide, id: "total-time-on-slide-field" %>
-            <%= stat_form.hidden_field :time_on_info_slides, id: "time-on-info-slides-field" %>
-            <%= stat_form.hidden_field :info_slides_access_count, id:"info-slides-access-count-field" %>
-            <%= stat_form.hidden_field :info_slides_first_access_time, id: "info-slides-first-access-times-field" %>
-        <% end %>
-
-        <% case @slide.question.type %>
-            <% when "Vignettes::TextQuestion" %>
-                <%= render partial: 'vignettes/questionnaires/take/answer_types/text',
-                           locals: { f: form } %>
-            <% when "Vignettes::NumberQuestion" %>
-                <%= render partial: 'vignettes/questionnaires/take/answer_types/number',
-                           locals: { f: form } %>
-            <% when "Vignettes::MultipleChoiceQuestion" %>
-                <%= render partial: 'vignettes/questionnaires/take/answer_types/multiple_choice',
-                           locals: { f: form } %>
-            <% when "Vignettes::LikertScaleQuestion" %>
-                <%= render partial: 'vignettes/questionnaires/take/answer_types/likert_scale',  
-                           locals: { f: form } %>
-        <% end %>
-
-        <!-- Navigation -->
-        <%# Bootstrap's tooltip takes the title attribute away once it
-            initialises, so the advance controls carry their name twice. %>
-        <% if @preview %>
-            <div class="d-flex justify-content-end mt-3">
-                <%= link_to t("vignettes.return_to_edit"),
-                    edit_questionnaire_path(@questionnaire), class: "btn" %>
-                <%= link_to t("vignettes.next_slide"),
-                    preview_questionnaire_path(@questionnaire, position: @position.to_i + 1),
-                    class: "btn slide-footer-btn vignettes-advance-link",
-                    id: "vignettes-next-slide-preview" %>
-            </div>
-        <% elsif @tracked %>
-            <div class="d-flex justify-content-end mt-3">
-                <% if @slide.last_position? %>
-                    <%= form.button type: "submit",
-                        class: "btn btn-success slide-footer-btn",
-                        title: t("vignettes.finish"),
-                        "aria-label": t("vignettes.finish"),
-                        data: { bs_toggle: "tooltip" } do %>
-                        <i class="bi bi-check2-circle fs-5"></i>
-                    <% end %>
-                <% else %>
-                    <%= form.button type: "submit",
-                        class: "btn btn-primary slide-footer-btn",
-                        title: t("vignettes.next_slide"),
-                        "aria-label": t("vignettes.next_slide"),
-                        data: { bs_toggle: "tooltip" } do %>
-                        <i class="bi bi-arrow-right fs-5"></i>
-                    <% end %>
-                <% end %>
-            </div>
-        <% else %>
-            <%# Nothing is stored for this run, so the answer is never sent:
-                the slides advance by link instead of by form submission. %>
-            <div class="d-flex justify-content-end mt-3">
-                <% if @slide.last_position? %>
-                    <%= link_to finish_questionnaire_path(@questionnaire),
-                        class: "btn btn-success slide-footer-btn vignettes-advance-link",
-                        title: t("vignettes.finish"),
-                        "aria-label": t("vignettes.finish"),
-                        data: { bs_toggle: "tooltip" } do %>
-                        <i class="bi bi-check2-circle fs-5"></i>
-                    <% end %>
-                <% else %>
-                    <%= link_to take_questionnaire_path(@questionnaire,
-                                                        position: @slide.position + 1),
-                        class: "btn btn-primary slide-footer-btn vignettes-advance-link",
-                        title: t("vignettes.next_slide"),
-                        "aria-label": t("vignettes.next_slide"),
-                        data: { bs_toggle: "tooltip" } do %>
-                        <i class="bi bi-arrow-right fs-5"></i>
-                    <% end %>
-                <% end %>
-            </div>
-        <% end %>
-    </div>
-
-</div>
-
+<%# A tracked run posts its answer, so it needs a form. An untracked one and
+    a preview must not be able to submit at all -- not even by pressing Enter
+    in a number field -- so their fields are rendered outside one. %>
+<% if @tracked %>
+  <%= form_with(model: @answer, scope: :vignettes_answer, id: "vignettes-answer-form",
+                url: submit_answer_questionnaire_url(@questionnaire),
+                local: true) do |form| %>
+    <%= render "vignettes/questionnaires/take/card", form: form %>
+  <% end %>
+<% else %>
+  <%= fields(scope: :vignettes_answer, model: @answer) do |form| %>
+    <%= render "vignettes/questionnaires/take/card", form: form %>
+  <% end %>
 <% end %>
+
