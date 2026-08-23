@@ -143,12 +143,15 @@ module Registration
 
       def render_campaigns_container
         @campaign.reload
-        turbo_stream.update("campaigns_container",
-                            partial: "registration/campaigns/card_body_index",
-                            locals: {
-                              lecture: @campaign.campaignable,
-                              expanded_campaign_id: @campaign.id
-                            })
+        [
+          turbo_stream.update("campaigns_container",
+                              partial: "registration/campaigns/card_body_index",
+                              locals: {
+                                lecture: @campaign.campaignable,
+                                expanded_campaign_id: @campaign.id
+                              }),
+          refresh_seminar_content_stream(@campaign.campaignable)
+        ].compact
       end
 
       def set_campaign
@@ -181,7 +184,7 @@ module Registration
       def after_action_path
         if @campaign.campaignable.is_a?(Lecture)
           edit_lecture_path(@campaign.campaignable,
-                            tab: "campaigns")
+                            tab: "groups")
         else
           registration_campaign_path(@campaign)
         end
