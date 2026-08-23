@@ -10,6 +10,7 @@ de:
       cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
       confirm_delete: "Bist Du sicher, dass Du dieses Anmeldeverfahren löschen möchtest? Die zugehörigen Gruppen werden nicht gelöscht und können danach manuell verwaltet werden."
       confirm_revert_to_draft: "Dieses Anmeldeverfahren zurück in den Entwurf nehmen? Solange es Entwurf ist, können sich Studierende nicht anmelden, und Du kannst Einstellungen, Regeln und Gruppen wieder ändern. Es geht nichts verloren, da sich bisher niemand angemeldet hat."
+      confirm_discard_untouched: "Dieses abgeschlossene Anmeldeverfahren verwerfen? Es hat niemanden erreicht - keine Anmeldungen, keine Zuteilung -, seine Aufzeichnung hält also nichts fest."
       confirm_discard: "Dieses Anmeldeverfahren verwerfen? Es wird mitsamt seinen Anmeldeeinstellungen und Regeln gelöscht. Die Gruppen selbst bleiben bestehen und können danach manuell verwaltet werden. Das geht nur, weil sich bisher niemand angemeldet hat."
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
@@ -625,7 +626,7 @@ de:
             base:
               frozen: "Die Anmeldeverfahrenskonfiguration kann nicht mehr geändert werden, sobald sie nicht mehr im Entwurfsmodus ist."
               already_finalized: "Das Anmeldeverfahren ist bereits abgeschlossen."
-              cannot_delete_active_campaign: "Ein Anmeldeverfahren kann nicht mehr gelöscht werden, während es zugeteilt wird oder nachdem es abgeschlossen wurde."
+              cannot_delete_active_campaign: "Ein Anmeldeverfahren kann nicht gelöscht werden, während seine Zuteilung berechnet wird."
               cannot_discard_with_registrations: "Ein Anmeldeverfahren, für das sich bereits Studierende angemeldet haben, kann nicht verworfen werden."
               cannot_discard_after_allocation: "Ein Anmeldeverfahren kann nicht mehr verworfen werden, sobald eine Zuteilung berechnet wurde."
               cannot_discard_as_prerequisite: "Ein Anmeldeverfahren kann nicht verworfen werden, solange ein anderes Anmeldeverfahren es voraussetzt."

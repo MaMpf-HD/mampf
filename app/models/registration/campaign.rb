@@ -47,7 +47,8 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
-    DISCARDABLE_STATUSES = ["draft", "open", "closed"].freeze
+    # processing is absent: an allocation is running against these rows.
+    DISCARDABLE_STATUSES = ["draft", "open", "closed", "completed"].freeze
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
 

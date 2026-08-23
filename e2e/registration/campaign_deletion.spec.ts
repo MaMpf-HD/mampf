@@ -259,6 +259,31 @@ test.describe("getting out of a registration process", () => {
       expect([first?.x, first?.y]).not.toEqual([second?.x, second?.y]);
     });
 
+  // A process that was finalized without ever being used leaves a line above
+  // the groups for good; it records nothing, so it can go.
+  test("discards a finished process that reached nobody",
+    async ({ factory, teacher: { page, user } }) => {
+      const { lecture, campaign } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);
+      await campaign.__call("open!");
+      await campaign.__call("completed!");
+
+      let confirmation = "";
+      page.once("dialog", async (dialog) => {
+        confirmation = dialog.message();
+        await dialog.accept();
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await expect(page.getByText("Tutorial registration")).toBeVisible();
+
+      await page.getByRole("button", { name: "Discard registration process" }).click();
+
+      await expect(page.getByText("Tutorial registration")).toBeHidden();
+      expect(confirmation).toContain("Nobody registered for it");
+      // the group it managed is still there
+      expect(await lecture.__call("tutorials")).toHaveLength(1);
+    });
+
   // The last dead end of the report: the seminar itself could not be deleted,
   // because a finalized process vetoed the cascade.
   test("deletes a seminar whose registration process is over",

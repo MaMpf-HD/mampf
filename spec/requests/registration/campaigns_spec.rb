@@ -374,8 +374,12 @@ RSpec.describe("Registration::Campaigns", type: :request) do
       end
 
       context "when it cannot be deleted" do
+        let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
+
         before do
-          campaign.update!(status: :completed)
+          create(:registration_user_registration,
+                 registration_campaign: campaign,
+                 registration_item: campaign.registration_items.first)
         end
 
         it "responds with error" do

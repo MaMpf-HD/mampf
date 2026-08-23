@@ -128,7 +128,13 @@ module Registration
     end
 
     def campaign_discard_confirmation(campaign)
-      key = campaign.draft? ? "confirm_delete" : "confirm_discard"
+      key = if campaign.draft?
+        "confirm_delete"
+      elsif campaign.completed?
+        "confirm_discard_untouched"
+      else
+        "confirm_discard"
+      end
       t("registration.campaign.#{key}")
     end
 

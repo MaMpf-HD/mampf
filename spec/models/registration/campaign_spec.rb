@@ -191,10 +191,10 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.errors.added?(:base, :cannot_delete_active_campaign)).to be(true)
     end
 
-    it "prevents deletion once it has been finalized" do
+    it "allows deletion of a finalized campaign that reached nobody" do
       campaign = create(:registration_campaign, :completed)
-      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
-      expect(campaign.errors.added?(:base, :cannot_delete_active_campaign)).to be(true)
+
+      expect { campaign.destroy }.to change(Registration::Campaign, :count).by(-1)
     end
 
     it "prevents deletion if students have registered" do
@@ -1091,8 +1091,30 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(create(:registration_campaign, :processing)).not_to be_discardable
     end
 
-    it "is false once finalized" do
-      expect(create(:registration_campaign, :completed)).not_to be_discardable
+    # A finished process that reached nobody records nothing; one that reached
+    # somebody is caught by the checks below, not by its status.
+    it "is true for a finalized campaign nobody registered for" do
+      expect(create(:registration_campaign, :completed)).to be_discardable
+    end
+
+    it "is false for a finalized campaign somebody registered for" do
+      campaign = create(:registration_campaign, :completed)
+      create(:registration_user_registration,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(campaign).not_to be_discardable
+      expect(campaign.discard_blocker).to eq(:registrations)
+    end
+
+    it "is false for a finalized campaign whose allocation reached a roster" do
+      campaign = create(:registration_campaign, :completed)
+      create(:tutorial_membership,
+             tutorial: campaign.registration_items.first.registerable,
+             source_campaign: campaign)
+
+      expect(campaign).not_to be_discardable
+      expect(campaign.discard_blocker).to eq(:allocation)
     end
 
     it "is false with a rejected registration" do
