@@ -121,8 +121,9 @@ class TalksController < ApplicationController
           streams = []
           streams << stream_flash if flash.present?
           streams << refresh_campaigns_index_stream(@talk.lecture)
+          streams << refresh_seminar_content_stream(@talk.lecture)
           streams << turbo_stream.update("modal-container", "")
-          render turbo_stream: streams
+          render turbo_stream: streams.compact
         end
       end
       return

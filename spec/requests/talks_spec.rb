@@ -142,6 +142,12 @@ RSpec.describe("Talks", type: :request) do
     describe "PATCH /talks/:id" do
       let(:valid_attributes) { { title: "Updated Talk", capacity: 30 } }
 
+      it "refreshes the seminar's content list as well" do
+        patch(talk_path(talk), params: { talk: valid_attributes }, as: :turbo_stream)
+
+        expect(response.body).to include("lecture-content-card")
+      end
+
       it "updates the requested talk" do
         patch talk_path(talk),
               params: { talk: valid_attributes },
