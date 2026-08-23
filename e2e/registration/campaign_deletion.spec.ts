@@ -322,7 +322,8 @@ test.describe("getting out of a registration process", () => {
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByRole("link", { name: "Delete", exact: true }).first().click();
 
-      await expect(page).not.toHaveURL(/lectures/);
+      // a teacher is no admin, so the administration path sends them to the start
+      await expect(page).toHaveURL(/:\d+\/$/);
       expect(confirmation).toContain("1 registration process with 1 registration");
     });
 

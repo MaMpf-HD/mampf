@@ -92,7 +92,7 @@ class TalksController < ApplicationController
       format.turbo_stream do
         group_type = parse_group_type
         streams = create_turbo_streams(group_type, saved)
-        render turbo_stream: streams.compact, status: saved ? :ok : :unprocessable_content
+        render turbo_stream: streams, status: saved ? :ok : :unprocessable_content
       end
     end
   end
@@ -123,7 +123,7 @@ class TalksController < ApplicationController
           streams << refresh_campaigns_index_stream(@talk.lecture)
           streams << refresh_seminar_content_stream(@talk.lecture)
           streams << turbo_stream.update("modal-container", "")
-          render turbo_stream: streams.compact
+          render turbo_stream: streams
         end
       end
       return
@@ -162,7 +162,7 @@ class TalksController < ApplicationController
         streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(lecture)
         streams << refresh_seminar_content_stream(lecture)
-        render turbo_stream: streams.compact
+        render turbo_stream: streams
       end
     end
   end

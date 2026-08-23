@@ -11,7 +11,11 @@ class LectureTabsComponent < ViewComponent::Base
   # blank page - and the browser lays the hidden content out wrongly.
   def active_tab
     @active_tab ||=
-      tabs.any? { |tab| tab.name == @requested_tab } ? @requested_tab : tabs.first&.name
+      if tabs.any? { |tab| tab.name == @requested_tab }
+        @requested_tab
+      else
+        @is_vignette_lecture ? "vignettes" : "content"
+      end
   end
 
   class TabComponent < ViewComponent::Base
