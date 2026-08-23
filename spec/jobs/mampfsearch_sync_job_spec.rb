@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe MampfsearchSyncJob, type: :job do
+RSpec.describe MampfsearchSyncJob, :mampfsearch, type: :job do
   let(:search_client) { instance_double(SearchClient) }
 
   before do

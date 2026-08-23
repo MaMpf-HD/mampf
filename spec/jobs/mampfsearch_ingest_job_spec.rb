@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe MampfsearchIngestJob, type: :job do
+RSpec.describe MampfsearchIngestJob, :mampfsearch, type: :job do
   let(:medium) { FactoryBot.create(:valid_medium, :with_video) }
 
   before do

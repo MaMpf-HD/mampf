@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(SearchApiToken) do
+RSpec.describe SearchApiToken, :mampfsearch do
   let(:secret) { "test-secret-key-at-least-32-characters-long" }
 
   around do |example|

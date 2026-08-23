@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(TranscriptUploader) do
+RSpec.describe TranscriptUploader, :mampfsearch do
   def fixture_file(name)
     Rails.root.join(SPEC_FILES, name).open("rb")
   end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(MampfsearchHealth) do
+RSpec.describe MampfsearchHealth, :mampfsearch do
   describe ".search_available? / .ingest_available?" do
     it "defaults to available when no health state is cached" do
       Rails.cache.delete(MampfsearchHealth::CACHE_KEY)

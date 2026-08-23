@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe MampfsearchHealthJob, type: :job do
+RSpec.describe MampfsearchHealthJob, :mampfsearch, type: :job do
   describe "#perform" do
     it "delegates to MampfsearchHealth.new.call" do
       health_service = instance_double(MampfsearchHealth)

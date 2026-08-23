@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SearchClient do
+RSpec.describe SearchClient, :mampfsearch do
   let(:base_url) { "http://localhost:8000" }
   let(:client) { described_class.send(:new, base_url: base_url) }
 

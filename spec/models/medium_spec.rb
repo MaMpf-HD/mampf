@@ -120,7 +120,7 @@ RSpec.describe(Medium, type: :model) do
       )
     end
 
-    it "returns the Rails transcript stream path" do
+    it "returns the Rails transcript stream path", :mampfsearch do
       medium = FactoryBot.create(:lecture_medium)
       allow(medium).to receive(:transcript).and_return(instance_double(
                                                          TranscriptUploader::UploadedFile,
@@ -378,7 +378,7 @@ RSpec.describe(Medium, type: :model) do
     end
   end
 
-  describe "transcription scopes and callbacks" do
+  describe "transcription scopes and callbacks", :mampfsearch do
     it "defines transcription_status enum with correct mapping" do
       medium = FactoryBot.build(:medium)
       expect(medium).to respond_to(:not_transcribed?)
@@ -417,7 +417,7 @@ RSpec.describe(Medium, type: :model) do
     end
   end
 
-  describe "#transcribable?" do
+  describe "#transcribable?", :mampfsearch do
     it "returns true when video is present" do
       medium = FactoryBot.create(:valid_medium, :with_video)
       expect(medium.transcribable?).to be true
@@ -429,7 +429,7 @@ RSpec.describe(Medium, type: :model) do
     end
   end
 
-  describe "#handle_video_attachment_change" do
+  describe "#handle_video_attachment_change", :mampfsearch do
     it "resets transcription state and enqueues delete job when video is detached" do
       medium = FactoryBot.create(:valid_medium, :with_video,
                                  transcription_status: :completed,

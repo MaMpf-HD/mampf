@@ -267,7 +267,7 @@ RSpec.describe("Media", type: :request) do
     end
   end
 
-  describe "GET /media/:id/video/transcription_stream" do
+  describe "GET /media/:id/video/transcription_stream", :mampfsearch do
     let(:medium) { create(:lecture_medium, :with_video) }
     let(:secret) { "test-secret-key-at-least-32-characters-long" }
     let(:auth_headers) do
@@ -348,7 +348,7 @@ RSpec.describe("Media", type: :request) do
     end
   end
 
-  describe "POST /media/:id/transcribe" do
+  describe "POST /media/:id/transcribe", :mampfsearch do
     let(:medium) { create(:lecture_medium, :with_video) }
 
     it "enqueues MampfsearchIngestJob and returns accepted" do
@@ -380,7 +380,7 @@ RSpec.describe("Media", type: :request) do
     end
   end
 
-  describe "POST /api/webhooks/media/:id/transcripts" do
+  describe "POST /api/webhooks/media/:id/transcripts", :mampfsearch do
     let(:medium) { create(:lecture_medium, :with_video) }
     let(:secret) { "test-secret-key-at-least-32-characters-long" }
     let(:auth_headers) do

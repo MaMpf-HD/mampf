@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Mampfsearch::IngestionService do
+RSpec.describe Mampfsearch::IngestionService, :mampfsearch do
   let(:search_client) { instance_double(SearchClient) }
 
   before do
