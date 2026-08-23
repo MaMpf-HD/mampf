@@ -741,6 +741,7 @@ de:
           LaTeX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       no_talks: Es sind noch keine Vorträge vorhanden.
+      talks_managed_in_groups_html: Vorträge werden im Reiter %{link} angelegt und gelöscht.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
       additional_tags: >
