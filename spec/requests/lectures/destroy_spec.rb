@@ -76,6 +76,25 @@ RSpec.describe("Lecture deletion", type: :request) do
     end
   end
 
+  # The form only offers campaigns of the same event series as a prerequisite,
+  # so this is the ordinary shape - and it must not stop the lecture from going.
+  context "with one of its campaigns required by another of its own" do
+    let!(:prerequisite) { create(:registration_campaign, campaignable: lecture) }
+
+    before do
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: create(:registration_campaign, campaignable: lecture),
+             config: { "prerequisite_campaign_id" => prerequisite.id })
+    end
+
+    it "deletes the lecture with both of them" do
+      delete(lecture_path(lecture))
+
+      expect(Lecture.exists?(lecture.id)).to be(false)
+      expect(Registration::Campaign.count).to eq(0)
+    end
+  end
+
   context "with a campaign that another event series requires" do
     let!(:campaign) { create(:registration_campaign, :with_items, campaignable: lecture) }
     let!(:notification) { create(:notification, notifiable: lecture) }

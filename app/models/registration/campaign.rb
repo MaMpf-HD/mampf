@@ -139,11 +139,12 @@ module Registration
       data_blocker
     end
 
-    # Whether another campaign names this one as a prerequisite. discard_blocker
-    # reports the first reason it finds, so a campaign with registrations hides
-    # this one - and it is the reason that survives a lecture's cascade.
+    # Whether a campaign of a *different* lecture names this one as a
+    # prerequisite - the only reference a lecture's deletion cannot dissolve.
+    # discard_blocker reports the first reason it finds, so a campaign with
+    # registrations would hide this one.
     def required_by_other_campaign?
-      referencing_prerequisite_policies.exists?
+      surviving_prerequisite_policies.exists?
     end
 
     def allocation_present?
@@ -402,6 +403,17 @@ module Registration
                             .where.not(registration_campaign_id: id)
       end
 
+      # Those that outlive this campaignable's deletion. The form only offers
+      # campaigns of the same campaignable as a prerequisite, so in practice a
+      # reference goes away together with the lecture that holds both sides.
+      def surviving_prerequisite_policies
+        referencing_prerequisite_policies
+          .joins(:registration_campaign)
+          .where.not("registration_campaigns.campaignable_type = :type " \
+                     "AND registration_campaigns.campaignable_id = :id",
+                     type: campaignable_type, id: campaignable_id)
+      end
+
       # Asking every type covers whatever this campaign's items point at.
       def materialized_roster_entries?
         Rosters::Rosterable::TYPES.any? do |type|
@@ -478,8 +490,12 @@ module Registration
       end
 
       def ensure_not_referenced_as_prerequisite
-        referencing_policies = referencing_prerequisite_policies
-                               .includes(:registration_campaign)
+        scope = if destroyed_by_association
+          surviving_prerequisite_policies
+        else
+          referencing_prerequisite_policies
+        end
+        referencing_policies = scope.includes(:registration_campaign)
 
         return unless referencing_policies.any?
 
