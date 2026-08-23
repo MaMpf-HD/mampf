@@ -111,6 +111,27 @@ RSpec.describe(Medium, type: :model) do
       medium = FactoryBot.build(:medium, :with_video)
       expect(medium.video).to be_kind_of(VideoUploader::UploadedFile)
     end
+
+    it "returns the Rails stream path" do
+      medium = FactoryBot.create(:lecture_medium, :with_video)
+
+      expect(medium.video_url).to eq(
+        Rails.application.routes.url_helpers.stream_video_medium_path(medium)
+      )
+    end
+
+    it "returns the Rails transcript stream path" do
+      medium = FactoryBot.create(:lecture_medium)
+      allow(medium).to receive(:transcript).and_return(instance_double(
+                                                         TranscriptUploader::UploadedFile,
+                                                         blank?: false
+                                                       ))
+
+      expect(medium.transcript_url)
+        .to eq(
+          Rails.application.routes.url_helpers.stream_transcript_medium_path(medium)
+        )
+    end
   end
 
   describe "lesson medium" do
@@ -356,4 +377,90 @@ RSpec.describe(Medium, type: :model) do
       expect(FactoryBot.build(:medium).editors_with_inheritance).to eq([])
     end
   end
+
+  describe "transcription scopes and callbacks" do
+    it "defines transcription_status enum with correct mapping" do
+      medium = FactoryBot.build(:medium)
+      expect(medium).to respond_to(:not_transcribed?)
+      expect(medium).to respond_to(:queued?)
+      expect(medium).to respond_to(:completed?)
+      expect(medium).to respond_to(:failed_temporarily?)
+      expect(medium).to respond_to(:failed_permanently?)
+    end
+
+    it "identifies media needing transcription in needs_transcription scope" do
+      m1 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :not_transcribed, transcription_attempts: 0)
+      m2 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_temporarily, transcription_attempts: 1)
+      m3 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :completed)
+      m4 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_permanently)
+      m5 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_temporarily, transcription_attempts: 3)
+      m6 = FactoryBot.create(:valid_medium, video: nil, transcription_status: :not_transcribed)
+
+      results = Medium.needs_transcription
+      expect(results).to include(m1, m2)
+      expect(results).not_to include(m3, m4, m5, m6)
+    end
+
+    it "identifies stuck media in stuck_transcriptions scope" do
+      stuck = FactoryBot.create(:valid_medium, :with_video, transcription_status: :queued, transcription_requested_at: 3.hours.ago)
+      recent = FactoryBot.create(:valid_medium, :with_video, transcription_status: :queued, transcription_requested_at: 10.minutes.ago)
+      completed = FactoryBot.create(:valid_medium, :with_video, transcription_status: :completed, transcription_requested_at: 3.hours.ago)
+
+      results = Medium.stuck_transcriptions
+      expect(results).to include(stuck)
+      expect(results).not_to include(recent, completed)
+    end
+
+    it "enqueues MampfsearchIngestJob when video is attached or updated" do
+      expect(MampfsearchIngestJob).to receive(:perform_later).at_least(:once)
+      FactoryBot.create(:valid_medium, :with_video)
+    end
+  end
+
+  describe "#transcribable?" do
+    it "returns true when video is present" do
+      medium = FactoryBot.create(:valid_medium, :with_video)
+      expect(medium.transcribable?).to be true
+    end
+
+    it "returns false when video is absent" do
+      medium = FactoryBot.create(:valid_medium, video: nil)
+      expect(medium.transcribable?).to be false
+    end
+  end
+
+  describe "#handle_video_attachment_change" do
+    it "resets transcription state and enqueues delete job when video is detached" do
+      medium = FactoryBot.create(:valid_medium, :with_video,
+                                 transcription_status: :completed,
+                                 transcription_attempts: 2,
+                                 transcription_error: "Previous error",
+                                 transcription_requested_at: 1.hour.ago)
+
+      expect(MampfsearchDeleteJob).to receive(:perform_later).with(medium.id)
+
+      medium.update!(video: nil)
+
+      expect(medium.transcription_status).to eq("not_transcribed")
+      expect(medium.transcription_attempts).to eq(0)
+      expect(medium.transcription_error).to be_nil
+      expect(medium.transcription_requested_at).to be_nil
+      expect(medium.transcript).to be_nil
+    end
+
+    it "resets transcription state when an existing video with a transcript is replaced" do
+      medium = FactoryBot.create(:valid_medium, :with_video,
+                                 transcription_status: :completed,
+                                 transcription_attempts: 1)
+      medium.update!(transcript: File.open(File.join(SPEC_FILES, "toc.vtt"), "rb"))
+
+      medium.update!(video: File.open(File.join(SPEC_FILES, "talk.mp4"), "rb"))
+
+      expect(medium.transcription_status).to eq("not_transcribed")
+      expect(medium.transcript).to be_nil
+    end
+  end
 end
+
+
+
