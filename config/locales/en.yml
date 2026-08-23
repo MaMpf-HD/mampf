@@ -2250,6 +2250,7 @@ en:
     no_video: 'There is no video.'
     play: 'THymE Player'
     download: 'download video'
+    transcribe: 'Transcribe'
     length: 'Length'
     resolution: 'Resolution'
     size: 'Size'
@@ -2620,9 +2621,13 @@ en:
       student_registration: '%B %-d, %Hh%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
     last_updated: 'Last updated %{time_ago} ago'
+  search:
+    mampfsearch_unavailable: 'MampfSearch is currently unavailable.'
   thyme:
     back: 'back'
     back_to: 'back to '
+    toggle_subtitles: 'Toggle subtitles'
+    transcript: 'Transcript'
   thyme_editor:
     add_item: 'Add Item to Table of Contents'
     add_referral: 'Add Reference'
