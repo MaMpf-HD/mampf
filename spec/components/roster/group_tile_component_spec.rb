@@ -392,6 +392,40 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
+  describe "the deletion confirmation" do
+    let(:seminar) { create(:lecture, :is_seminar) }
+    let(:talk) { create(:talk, lecture: seminar) }
+    let(:component) { described_class.new(registerable: talk) }
+
+    def rendered_confirmation
+      render_inline(component).css("a.btn-danger[data-turbo-confirm]")
+                              .first["data-turbo-confirm"]
+    end
+
+    it "asks plainly for a group that was never in a process" do
+      expect(rendered_confirmation)
+        .to eq(I18n.t("roster.actions.confirm_delete_group"))
+    end
+
+    # The entries of a finished process go with the group, and the teacher is
+    # the one who knows whether that history still matters.
+    it "names the entries a finished process left behind" do
+      campaign = create(:registration_campaign, campaignable: seminar,
+                                                allocation_mode: :first_come_first_served)
+      item = create(:registration_item, registration_campaign: campaign, registerable: talk)
+      campaign.update!(status: :open)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item)
+      create(:registration_user_registration, :rejected,
+             registration_campaign: campaign, registration_item: item)
+      campaign.update!(status: :completed)
+
+      expect(rendered_confirmation)
+        .to eq(I18n.t("roster.actions.confirm_delete_group_with_registrations",
+                      total: 2, confirmed: 1))
+    end
+  end
+
   describe "#remove_disabled?" do
     let(:item) { double("item", removal_blocker_message: nil) }
 

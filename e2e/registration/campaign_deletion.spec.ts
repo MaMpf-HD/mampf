@@ -212,6 +212,45 @@ test.describe("getting out of a registration process", () => {
       expect(await lecture.__call("tutorials")).toHaveLength(0);
     });
 
+  // The complaint from production: after finalizing, the talks nobody took are
+  // still there and nothing can remove them.
+  test("deletes a talk nobody took once the process is finalized",
+    async ({ factory, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", ["is_seminar"], {
+        teacher_id: user.id,
+        locale: "en",
+      });
+      const campaign = await factory.create(
+        "registration_campaign", ["first_come_first_served"],
+        {
+          campaignable_type: "Lecture",
+          campaignable_id: lecture.id,
+          description: "Talk assignment",
+        },
+      );
+      const talk = await factory.create("talk", [], {
+        lecture_id: lecture.id,
+        title: "Nobody's Talk",
+      });
+      await factory.create("registration_item", [], {
+        registration_campaign_id: campaign.id,
+        registerable_type: "Talk",
+        registerable_id: talk.id,
+      });
+      await campaign.__call("open!");
+      await campaign.__call("completed!");
+
+      page.on("dialog", dialog => dialog.accept());
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await tile(page, "Nobody's Talk")
+        .getByRole("link", { name: "Delete", exact: true }).click();
+
+      // the seminar's content list further up the page only refreshes on reload
+      await expect(tile(page, "Nobody's Talk")).toHaveCount(0);
+      expect(await lecture.__call("talks")).toHaveLength(0);
+    });
+
   test("refuses to delete a group that still has participants",
     async ({ factory, student, teacher: { page, user } }) => {
       const { lecture, tutorials } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);

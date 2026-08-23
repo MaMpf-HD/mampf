@@ -138,16 +138,30 @@ class GroupTileComponent < ViewComponent::Base
   end
 
   def delete_data
-    confirm_key = if item
-      "registration.item.confirm_delete_group"
-    else
-      "roster.actions.confirm_delete_group"
-    end
     {
       turbo_method: :delete,
-      turbo_confirm: t(confirm_key),
+      turbo_confirm: delete_confirmation,
       bs_toggle: "tooltip"
     }
+  end
+
+  def delete_confirmation
+    return t("registration.item.confirm_delete_group") if item
+
+    total = campaign_registrations.values.sum
+    return t("roster.actions.confirm_delete_group") if total.zero?
+
+    t("roster.actions.confirm_delete_group_with_registrations",
+      total: total, confirmed: campaign_registrations["confirmed"].to_i)
+  end
+
+  # A group whose process is over keeps its entries, and deleting the group
+  # takes them along - so the confirmation says how many.
+  def campaign_registrations
+    @campaign_registrations ||=
+      Registration::UserRegistration
+      .where(registration_item_id: registerable.registration_items.select(:id))
+      .group(:status).count
   end
 
   def remove_data
