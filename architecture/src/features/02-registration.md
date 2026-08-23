@@ -1392,15 +1392,19 @@ else. Those three data questions live in `#data_blocker` and are asked by two
 rules, so they cannot drift apart:
 
 - no `Registration::UserRegistration` exists, in any status,
-- no allocation has been computed (`last_allocation_calculated_at`,
-  `allocation_decided_at`) and none has been materialized into a roster
-  (`source_campaign_id` on any roster join),
+- nothing was written into a roster from it (`source_campaign_id` on any roster
+  join). The allocation timestamps are deliberately not asked here: past the
+  first question there are no registrations, so a computed allocation allocated
+  nobody. `Registration::Item#removal_blocker` does ask `#allocation_present?`,
+  where the timestamp means "an allocation this item was part of",
 - no other campaign names it as a prerequisite.
 
-`#discardable?` adds that the status is `draft`, `open` or `closed` (never
-`processing` or `completed`). `#revertible_to_draft?` adds that the status
-*was* `open` or `closed`, reading `status_was` so it can also answer for the
-very update that attempts the step.
+`#discardable?` adds that the status is not `processing` — an allocation is
+running against those rows. A `completed` campaign is discardable as long as
+the three questions above come back empty: one that was finalized without a
+single registration records nothing. `#revertible_to_draft?` is stricter: the
+status must *have been* `open` or `closed`, read from `status_was` so it can
+also answer for the very update that attempts the step.
 
 The two are offered side by side, because whatever makes throwing the process
 away harmless makes editing it again harmless too. Reverting is the milder
@@ -1419,13 +1423,19 @@ the foreign key from `registration_user_registrations` alone does not close the
 window, because it only constrains the insert, not the gap between an
 application-level check and that insert.
 
-A campaign that cannot be discarded also keeps its whole `Lecture` alive:
-`Lecture has_many :registration_campaigns, dependent: :destroy`, and the guard
-aborts the cascade. `LecturesController#destroy` checks the return value of
-`destroy` and names the campaigns as the reason. It deliberately suggests no
-remedy: once registrations or an allocation exist there is none — discarding is
-barred by exactly that data, and finalizing puts the campaign into `completed`,
-which bars deletion for good.
+A `Lecture` takes its campaigns with it. `ensure_campaign_is_discardable` steps
+aside when `destroyed_by_association` is set, the same way an item and a policy
+step aside for their campaign: what only exists because of the lecture goes with
+it, and what the lecture is worth protecting from it guards itself —
+`lecture_deletable?` asks for no lessons and no media. The flag has to be read
+*before* the lock, because `lock!` reloads and the reload clears it.
+
+`ensure_not_referenced_as_prerequisite` does not step aside, and is therefore
+the only reason a lecture deletion still fails: a campaign that another
+lecture's campaign requires is not only this lecture's business.
+`LecturesController#destroy` asks `#required_by_other_campaign?` for the
+message rather than `#discard_blocker`, which reports the first reason it finds
+and would hide this one behind registrations.
 
 ### Removing from the campaign vs. deleting the group
 
@@ -1473,9 +1483,12 @@ type-specific models add to them:
 | `Talk` | attached media |
 | `Cohort` | — (members are the roster) |
 
-`in_campaign?` is a blocker too, which is why the full deletion removes the item
-first: inside the transaction the group is no longer campaign-managed, so its
-own guard can decide on the remaining grounds.
+Being in a *running* campaign is a blocker too, which is why the full deletion
+removes the item first: inside the transaction the group is no longer
+campaign-managed, so its own guard can decide on the remaining grounds. Once the
+campaign is finalized the tile is not the way in any more — the group is listed
+as manually managed by then and its own delete button applies, with a
+confirmation that counts the registrations the finished process left on it.
 
 ---
 
@@ -1494,6 +1507,7 @@ stateDiagram-v2
     draft --> [*]: delete
     open --> [*]: discard
     closed --> [*]: discard
+    completed --> [*]: discard (only if it reached nobody)
     open --> draft: revert_to_draft
     closed --> draft: revert_to_draft
 
@@ -1503,15 +1517,16 @@ stateDiagram-v2
     end note
 
     note right of processing
-        From here on there is no way back to nothing:
-        processing and completed campaigns cannot be discarded.
+        The only status that bars discarding:
+        an allocation is running against these rows.
     end note
 ```
 
 A campaign returns to `draft` only while nothing of student consequence exists
 — the same condition under which it could be discarded outright
 (`cannot_revert_to_draft`). Once a registration or an allocation is there,
-`open`/`closed` are one-way, and `processing`/`completed` always are.
+`open`/`closed` are one-way and `completed` always is; what still leaves is the
+lecture, which takes its campaigns along.
 
 ## ERD
 
