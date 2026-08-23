@@ -82,6 +82,14 @@ RSpec.describe("Talks", type: :request) do
         expect(response.media_type).to eq(Mime[:turbo_stream])
       end
 
+      # A seminar lists its talks twice: as group tiles and in the content card
+      # above them. Only the tiles used to be refreshed.
+      it "refreshes the seminar's content list as well" do
+        delete(talk_path(talk), as: :turbo_stream)
+
+        expect(response.body).to include("lecture-content-card")
+      end
+
       context "when the talk was part of a registration process" do
         let(:campaign) do
           create(:registration_campaign, campaignable: lecture,
@@ -118,6 +126,16 @@ RSpec.describe("Talks", type: :request) do
             delete(talk_path(talk), as: :turbo_stream)
           end.not_to change(Talk, :count)
         end
+      end
+    end
+
+    describe "POST /talks" do
+      it "refreshes the seminar's content list as well" do
+        post(talks_path,
+             params: { talk: { title: "New Talk", lecture_id: lecture.id } },
+             as: :turbo_stream)
+
+        expect(response.body).to include("lecture-content-card")
       end
     end
 

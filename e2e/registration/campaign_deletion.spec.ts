@@ -246,8 +246,8 @@ test.describe("getting out of a registration process", () => {
       await tile(page, "Nobody's Talk")
         .getByRole("link", { name: "Delete", exact: true }).click();
 
-      // the seminar's content list further up the page only refreshes on reload
-      await expect(tile(page, "Nobody's Talk")).toHaveCount(0);
+      // gone from the group tiles and from the seminar's content list above them
+      await expect(page.getByText("Nobody's Talk")).toHaveCount(0);
       expect(await lecture.__call("talks")).toHaveLength(0);
     });
 
