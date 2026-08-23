@@ -244,6 +244,67 @@ RSpec.describe("Vignettes::Questionnaires", type: :request) do
     end
   end
 
+  describe "answers that were crafted rather than clicked" do
+    let(:questionnaire) do
+      create(:vignettes_questionnaire, :collecting, lecture: lecture)
+    end
+    let(:slide) { create(:vignettes_slide, questionnaire: questionnaire, position: 1) }
+    let!(:question) { create(:vignettes_multiple_choice_question, slide: slide) }
+    let!(:option) { create(:vignettes_option, question: question) }
+
+    before do
+      sign_in student
+      post decide_consent_questionnaire_path(questionnaire), params: { consent: "new" }
+    end
+
+    it "refuses an option that belongs to another question" do
+      foreign = create(:vignettes_option)
+
+      expect do
+        post(submit_answer_questionnaire_path(questionnaire),
+             params: { vignettes_answer: { slide_id: slide.id, option_ids: [foreign.id] } })
+      end.not_to change(Vignettes::Answer, :count)
+    end
+
+    it "refuses a multiple choice answer without any option" do
+      expect do
+        post(submit_answer_questionnaire_path(questionnaire),
+             params: { vignettes_answer: { slide_id: slide.id, option_ids: [] } })
+      end.not_to change(Vignettes::Answer, :count)
+    end
+
+    it "refuses a likert value outside the scale" do
+      likert_slide = create(:vignettes_slide, questionnaire: questionnaire, position: 2)
+      create(:vignettes_likert_scale_question, slide: likert_slide)
+
+      expect do
+        post(submit_answer_questionnaire_path(questionnaire),
+             params: { vignettes_answer: { slide_id: likert_slide.id,
+                                           likert_scale_value: "enthusiastic" } })
+      end.not_to change(Vignettes::Answer, :count)
+    end
+  end
+
+  describe "a slide that asks nothing" do
+    let(:questionnaire) do
+      create(:vignettes_questionnaire, :collecting, lecture: lecture)
+    end
+    let(:slide) { create(:vignettes_slide, questionnaire: questionnaire, position: 1) }
+
+    it "records the time spent on it instead of raising" do
+      slide.create_question!(type: "", question_text: "")
+      sign_in student
+      post decide_consent_questionnaire_path(questionnaire), params: { consent: "new" }
+
+      expect do
+        post(submit_answer_questionnaire_path(questionnaire),
+             params: answer_params(slide, nil))
+      end.to change(Vignettes::Answer, :count).by(1)
+
+      expect(Vignettes::Answer.last.slide_statistic.time_on_slide).to eq(4)
+    end
+  end
+
   describe "PATCH /questionnaires/:id" do
     before { sign_in lecture.teacher }
 

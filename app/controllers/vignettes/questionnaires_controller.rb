@@ -242,7 +242,9 @@ module Vignettes
         new_questionnaire.title = new_title
         new_questionnaire.published = false
         new_questionnaire.editable = true
+        # Action Text hangs off the record, so dup leaves both of these behind.
         new_questionnaire.consent_text = @questionnaire.consent_text
+        new_questionnaire.closing_text = @questionnaire.closing_text
         new_questionnaire.save!
 
         # Update lecture cache to show the new questionnaire
@@ -471,10 +473,15 @@ module Vignettes
         return true if @answer.save
 
         Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }
+
         render :take, template: "vignettes/questionnaires/take/take",
                       layout: lecture_layout,
                       status: :unprocessable_content
         false
+      rescue ActiveRecord::RecordNotUnique
+        # Two submissions for the same slide raced past #answered_already?; the
+        # one that lost is not an error, its answer is simply already there.
+        true
       end
   end
 end
