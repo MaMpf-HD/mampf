@@ -4,6 +4,7 @@ FactoryBot.define do
     password { Faker::Internet.password }
     name { Faker::Name.name }
     locale { "en" }
+    consents { true }
 
     transient do
       lecture_count { 2 }
@@ -27,12 +28,6 @@ FactoryBot.define do
       end
     end
 
-    trait :consented do
-      after(:create) do |user|
-        user.update(consents: true, consented_at: Time.zone.now)
-      end
-    end
-
     # call it with build(:user, :with_lectures, lecture_count: n) if you want
     # n subscribed lectures associated to the user
     trait :with_lectures do
@@ -43,12 +38,10 @@ FactoryBot.define do
     end
 
     factory :confirmed_user, traits: [:skip_confirmation_notification,
-                                      :auto_confirmed,
-                                      :consented]
+                                      :auto_confirmed]
 
     factory :confirmed_user_en, traits: [:skip_confirmation_notification,
-                                         :auto_confirmed,
-                                         :consented] do
+                                         :auto_confirmed] do
       locale { "en" }
     end
   end
