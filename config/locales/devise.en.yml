@@ -7,7 +7,7 @@ en:
       fair: "Weak"
       good: "Good"
       strong: "Strong"
-      too_short: "Must be at least 15 characters"
+      too_short: "Must be at least %{count} characters"
     confirmations:
       confirmed: "Your email address has been confirmed."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."

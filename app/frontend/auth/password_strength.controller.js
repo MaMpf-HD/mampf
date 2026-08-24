@@ -34,8 +34,8 @@ export default class extends Controller {
     goodText: { type: String, default: "Good" },
     strongText: { type: String, default: "Strong" },
     localIdentifiers: Array,
-    minLength: { type: Number, default: 15 },
-    tooShortText: { type: String, default: "Must be at least 15 characters" },
+    minLength: Number,
+    tooShortText: String,
   };
 
   connect() {
@@ -78,7 +78,7 @@ export default class extends Controller {
     let score = result.score;
     let warning = result.feedback ? result.feedback.warning : "";
 
-    if (password.length < this.minLengthValue) {
+    if (this.minLengthValue && password.length < this.minLengthValue) {
       score = Math.min(score, 2);
       warning = this.tooShortTextValue;
     }
