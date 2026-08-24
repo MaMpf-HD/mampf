@@ -25,6 +25,9 @@ module AssessmentHelper
     movement = user_movement_map[user.id]
     return nil unless movement
 
+    # only display a message if the user has moved tutorials since their participation was recorded
+    return unless movement[:participated_tutorial_id] != movement[:new_tutorial_id]
+
     movement_msg_assignment(movement)
   end
 
