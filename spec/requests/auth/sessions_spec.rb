@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe("Auth sessions", type: :request) do
-  let(:password) { "super-secure-password" }
+  let(:password) { "correct-horse-battery-staple" }
   let(:user) { create(:confirmed_user, password: password) }
   let(:unlock_in_words) do
     ActionController::Base.helpers.distance_of_time_in_words(
