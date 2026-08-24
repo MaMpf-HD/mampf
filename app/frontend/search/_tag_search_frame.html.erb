@@ -1,0 +1,12 @@
+<%= turbo_frame_tag "tag-search-results", target: "_top" do %>
+  <% if @search_too_short %>
+    <div class="text-danger small">
+      <%= t('search.term_too_short') %>
+    </div>
+  <% elsif @tags %>
+    <%= render partial: 'search/tag_search_results',
+               locals: { tags: @tags,
+                         filtered_tags: @filtered_tags,
+                         search_string: @search_string } %>
+  <% end %>
+<% end %>

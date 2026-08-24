@@ -21,7 +21,8 @@ import { DisplayManager } from "./display_manager";
 import { addGeneralShortcuts, addPlayerShortcuts } from "./key_shortcuts";
 import { MetadataManager } from "./metadata_manager";
 import { resizeThymeContainer } from "./resizer";
-import { onVideoMetadataLoaded, playOnClick, setUpMaxTime } from "./utility";
+import { playOnClick, setUpMaxTime } from "./utility";
+import { onVideoMetadataLoaded } from "./video_events";
 
 $(document).on("turbo:load", function () {
   /*

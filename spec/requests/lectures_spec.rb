@@ -91,71 +91,92 @@ RSpec.describe("Lectures", type: :request) do
             as: :turbo_stream)
       end
 
-      context "when the feature flag is enabled" do
-        before do
-          Flipper.enable(:registration_campaigns)
-        end
+      it "shows a badge for lectures with an open registration campaign" do
+        create(:registration_campaign, :open, :first_come_first_served,
+               campaignable: lecture_algebra)
 
-        after do
-          Flipper.disable(:registration_campaigns)
-        end
+        search_algebra
 
-        it "shows a badge for lectures with an open registration campaign" do
-          create(:registration_campaign, :open, :first_come_first_served,
-                 campaignable: lecture_algebra)
-
-          search_algebra
-
-          expect(response.body).to include("lecture-search-registration-badge")
-        end
-
-        it "does not show a badge for draft campaigns" do
-          create(:registration_campaign, :first_come_first_served,
-                 campaignable: lecture_algebra)
-
-          search_algebra
-
-          expect(response.body)
-            .not_to include("lecture-search-registration-badge")
-        end
-
-        it "shows a registered badge instead when the user has registered" do
-          campaign = create(:registration_campaign, :open,
-                            :first_come_first_served,
-                            campaignable: lecture_algebra)
-          create(:registration_user_registration,
-                 registration_campaign: campaign, user: user)
-
-          search_algebra
-
-          expect(response.body).to include("lecture-search-registered-badge")
-          expect(response.body)
-            .not_to include("lecture-search-registration-badge")
-        end
-
-        it "still shows the open badge when the registration was rejected" do
-          campaign = create(:registration_campaign, :open,
-                            :first_come_first_served,
-                            campaignable: lecture_algebra)
-          create(:registration_user_registration, :rejected,
-                 registration_campaign: campaign, user: user)
-
-          search_algebra
-
-          expect(response.body).to include("lecture-search-registration-badge")
-          expect(response.body)
-            .not_to include("lecture-search-registered-badge")
-        end
+        expect(response.body).to include("lecture-search-registration-badge")
       end
 
-      it "does not show a badge when the feature flag is disabled" do
-        create(:registration_campaign, :open, :first_come_first_served,
+      it "does not show a badge for draft campaigns" do
+        create(:registration_campaign, :first_come_first_served,
                campaignable: lecture_algebra)
 
         search_algebra
 
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
+      end
+
+      it "shows a registered badge instead when the user has registered" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body)
+          .not_to include("lecture-search-registration-badge")
+      end
+
+      it "still shows the open badge when the registration was rejected" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :rejected,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registration-badge")
+        expect(response.body)
+          .not_to include("lecture-search-registered-badge")
+      end
+    end
+
+    context "with self-enrollment groups" do
+      def search_algebra
+        get(search_lectures_path,
+            params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
+            as: :turbo_stream)
+      end
+
+      it "shows the open badge for a lecture with a self-enrollment group" do
+        create(:tutorial, lecture: lecture_algebra,
+                          self_materialization_mode: :add_only)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registration-badge")
+      end
+
+      it "shows the registered badge when the user is already in a group" do
+        tutorial = create(:tutorial, lecture: lecture_algebra,
+                                     self_materialization_mode: :add_only)
+        create(:tutorial_membership, tutorial: tutorial, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body)
+          .not_to include("lecture-search-registration-badge")
+      end
+
+      it "shows no badge for groups with self-enrollment disabled" do
+        create(:tutorial, lecture: lecture_algebra,
+                          self_materialization_mode: :disabled)
+
+        search_algebra
+
+        expect(response.body)
+          .not_to include("lecture-search-registration-badge")
+        expect(response.body)
+          .not_to include("lecture-search-registered-badge")
       end
     end
 
@@ -231,7 +252,6 @@ RSpec.describe("Lectures", type: :request) do
     let(:lecture) { create(:lecture, :released_for_all, locale: "en") }
 
     before do
-      Flipper.enable(:registration_campaigns)
       create(:lecture_user_join, user: user, lecture: lecture)
       create(:lecture_medium,
              teachable: lecture,
@@ -282,6 +302,93 @@ RSpec.describe("Lectures", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(edit_lecture_path(lecture))
       expect(response.body).to include(I18n.t("buttons.edit"))
+    end
+  end
+
+  describe "POST /lectures" do
+    let(:course) { create(:course) }
+    let(:term) { create(:term) }
+    let(:attributes) do
+      { course_id: course.id, term_id: term.id, teacher_id: user.id,
+        sort: "lecture", from: "course", content_mode: "video" }
+    end
+
+    it "creates the lecture and updates the course's lecture list" do
+      expect do
+        post(lectures_path, params: { lecture: attributes }, as: :turbo_stream)
+      end.to change(Lecture, :count).by(1)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("course_lectures")
+    end
+
+    context "when the teacher already gives that lecture in that term" do
+      before { create(:lecture, **attributes.except(:from, :content_mode)) }
+
+      it "renders the form again with the course field marked" do
+        expect do
+          post(lectures_path, params: { lecture: attributes }, as: :turbo_stream)
+        end.not_to change(Lecture, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
+      end
+    end
+  end
+
+  describe "PATCH /lectures/:id" do
+    let(:teacher) { create(:confirmed_user) }
+    let(:course) { create(:course) }
+    let(:term) { create(:term, :winter, year: 2026) }
+    let(:other_term) { create(:term, :summer, year: 2027) }
+    let(:lecture) do
+      create(:lecture, course: course, teacher: teacher, term: term, sort: "lecture")
+    end
+
+    context "when the new term is already taken by the same teacher and course" do
+      before do
+        create(:lecture, course: course, teacher: teacher, term: other_term,
+                         sort: "lecture")
+      end
+
+      it "marks the term field instead of claiming a server error" do
+        patch lecture_path(lecture),
+              params: { lecture: { term_id: other_term.id, sort: "lecture",
+                                   content_mode: "video" },
+                        subpage: "settings" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*lecture_term_id/)
+        expect(response.body).to include(I18n.t("activerecord.errors.models.lecture" \
+                                                ".attributes.term_id.taken").strip)
+        expect(response.body).not_to include(I18n.t("errors.unknown"))
+      end
+
+      it "marks the teacher field when the clash is created from the people pane" do
+        other_teacher = create(:confirmed_user)
+        create(:lecture, course: course, teacher: other_teacher, term: term,
+                         sort: "lecture")
+
+        patch lecture_path(lecture),
+              params: { lecture: { teacher_id: other_teacher.id }, subpage: "people" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*lecture_teacher_id/)
+        expect(response.body).not_to include(I18n.t("errors.unknown"))
+      end
+
+      it "leaves the people pane alone" do
+        patch lecture_path(lecture),
+              params: { lecture: { term_id: other_term.id, sort: "lecture",
+                                   content_mode: "video" },
+                        subpage: "settings" },
+              as: :turbo_stream
+
+        expect(response.body).to include("edit_preferences")
+        expect(response.body).not_to include("edit_people")
+      end
     end
   end
 
@@ -429,6 +536,19 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id/edit (seminar content)" do
+    # Talks can only be created and deleted in the groups tab, so the content
+    # page says where to go rather than growing its own controls.
+    it "points at the tab that manages the talks" do
+      seminar = create(:seminar, teacher: user)
+
+      I18n.with_locale(:en) { get(edit_lecture_path(seminar)) }
+
+      expect(response.body).to include("Talks are created and deleted in the")
+      expect(response.body).to include(edit_lecture_path(seminar, tab: "groups"))
+    end
+  end
+
   describe "PATCH /lectures/:id (home page content)" do
     let(:lecture) { create(:lecture, teacher: user) }
 
@@ -479,33 +599,6 @@ RSpec.describe("Lectures", type: :request) do
             params: { lecture: { remove_home_attachment: "1" }, subpage: "home" }
 
       expect(lecture.reload.home_attachment).to be_nil
-    end
-  end
-
-  describe "the Müsli transition banner on the roster tabs" do
-    let(:term) { create(:term, :winter, year: 2026) }
-    let(:lecture) { create(:lecture, term: term) }
-
-    before { Flipper.enable(:roster_maintenance) }
-
-    after do
-      Flipper.disable(:roster_maintenance)
-      Flipper.disable(:term_uses_mampf_registration)
-    end
-
-    it "shows the banner, naming the lecture's term, while it is not on MaMpf" do
-      get edit_lecture_path(lecture, tab: "groups")
-
-      expect(response.body).to include('data-testid="roster-transition-banner"')
-      expect(response.body).to include(term.to_label)
-    end
-
-    it "hides the banner once the term is opted into MaMpf registration" do
-      Flipper.enable_actor(:term_uses_mampf_registration, term)
-
-      get edit_lecture_path(lecture, tab: "groups")
-
-      expect(response.body).not_to include('data-testid="roster-transition-banner"')
     end
   end
 end

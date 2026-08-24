@@ -76,11 +76,30 @@ class ApplicationController < ActionController::Base
     end
 
     stored = stored_location_for(resource_or_scope)
-    if stored.present? && stored != super
-      stored
-    else
-      start_path
-    end
+    return stored if stored.present? && stored != super
+    return edit_profile_path if first_sign_in?(resource_or_scope)
+
+    start_path
+  end
+
+  # Whether the user is arriving from their very first sign-in, which is the
+  # moment we ask them to fill in their profile. Trackable has already counted
+  # the sign-in in progress by the time this runs.
+  def first_sign_in?(resource)
+    resource.is_a?(User) && resource.sign_in_count == 1
+  end
+
+  # The submitted address as Devise will look it up, so that padded or
+  # differently cased spellings of one address share a rate-limit bucket
+  # (`strip_whitespace_keys` and `case_insensitive_keys`).
+  def throttle_email
+    params.dig(:user, :email).to_s.strip.downcase
+  end
+
+  # Tells a visitor whose request the rate limiter refused how long to wait.
+  def throttled_message(window)
+    I18n.t("devise.failure.too_many_requests",
+           wait: helpers.distance_of_time_in_words(window))
   end
 
   def prevent_caching
@@ -102,6 +121,16 @@ class ApplicationController < ActionController::Base
                           lecture: lecture,
                           registration_section: params[:registration_section]
                         })
+  end
+
+  # A seminar lists its talks twice on the edit page: as group tiles and in the
+  # content card above them. Adding or deleting one has to reach both.
+  def refresh_seminar_content_stream(lecture)
+    return nil unless lecture&.seminar?
+
+    turbo_stream.update("lecture-content-card",
+                        partial: "lectures/edit/seminar_content",
+                        locals: { lecture: lecture })
   end
 
   protected
@@ -215,10 +244,12 @@ class ApplicationController < ActionController::Base
       when ["passwords", "new"], ["passwords", "create"]
         new_user_password_path(locale: locale)
       when ["passwords", "edit"], ["passwords", "update"]
-        edit_user_password_path(locale: locale,
-                                reset_password_token:
-                                  params[:reset_password_token] ||
-                                  params.dig(:user, :reset_password_token))
+        user_params = params[:user]
+        token = params[:reset_password_token]
+        if user_params.is_a?(ActionController::Parameters)
+          token ||= user_params[:reset_password_token]
+        end
+        edit_user_password_path(locale: locale, reset_password_token: token)
       when ["confirmations", "new"], ["confirmations", "create"]
         new_user_confirmation_path(locale: locale)
       else

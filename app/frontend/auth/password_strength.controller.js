@@ -43,7 +43,9 @@ export default class extends Controller {
   }
 
   check() {
-    this.clearFieldError(this.passwordTarget);
+    if (this.hasPasswordTarget) {
+      this.clearFieldError(this.passwordTarget);
+    }
     if (this.hasPasswordConfirmationTarget) {
       this.clearFieldError(this.passwordConfirmationTarget);
     }

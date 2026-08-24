@@ -75,7 +75,8 @@ RSpec.describe("Auth passwords", type: :request) do
         }
       }
 
-      expect(response).to redirect_to(start_path)
+      # the reset signs the user in, and this is their first sign-in
+      expect(response).to redirect_to(edit_profile_path)
       expect(user.reload.password_policy_version)
         .to eq(User::CURRENT_PASSWORD_POLICY_VERSION)
       expect(user.password_changed_at).to be_present
