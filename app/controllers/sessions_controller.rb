@@ -48,9 +48,14 @@ class SessionsController < Devise::SessionsController
     # wrong passwords, and the answer tells you whether it is registered.
     def locked_out_with_correct_password?
       user = attempted_user
-      return false unless user&.access_locked?
+      password = sign_in_params[:password].to_s
+      return user.valid_password?(password) if user&.access_locked?
 
-      user.valid_password?(sign_in_params[:password].to_s)
+      # Hash it anyway. Devise does the same for addresses it cannot find
+      # (see its database_authenticatable strategy): hashing only for locked
+      # accounts would make them the slower answer, and slow means "exists".
+      resource_class.new.password = password
+      false
     end
 
     def failure_message
