@@ -43,7 +43,20 @@ class MampfsearchSyncJob < ApplicationJob
             .order(created_at: :desc)
             .limit(batch_size)
             .each do |medium|
-              MampfsearchIngestJob.perform_later(medium.id)
+              claimed = false
+              medium.with_lock do
+                eligible = (medium.not_transcribed? || medium.failed_temporarily?) &&
+                           medium.transcription_attempts < SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
+                if eligible
+                  medium.update!(
+                    transcription_status: :queued,
+                    transcription_requested_at: Time.current,
+                    transcription_error: nil
+                  )
+                  claimed = true
+                end
+              end
+              MampfsearchIngestJob.perform_later(medium.id) if claimed
             end
     end
 

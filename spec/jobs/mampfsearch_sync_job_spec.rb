@@ -53,6 +53,18 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       expect(MampfsearchIngestJob).to receive(:perform_later).exactly(3).times
 
       described_class.perform_now
+
+      expect(Medium.where(transcription_status: :queued).count).to eq(3)
+    end
+
+    it "does not enqueue the same media again when sync runs twice" do
+      FactoryBot.create_list(:valid_medium, 3, :with_video,
+                             transcription_status: :not_transcribed)
+
+      expect(MampfsearchIngestJob).to receive(:perform_later).exactly(3).times
+
+      described_class.perform_now
+      described_class.perform_now
     end
 
     it "caps enqueuing when in-flight queued jobs approach threshold" do
