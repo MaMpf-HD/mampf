@@ -81,6 +81,12 @@ class ApplicationController < ActionController::Base
     resource.is_a?(User) && resource.sign_in_count == 1
   end
 
+  # Tells a visitor whose request the rate limiter refused how long to wait.
+  def throttled_message(window)
+    I18n.t("devise.failure.too_many_requests",
+           wait: helpers.distance_of_time_in_words(window))
+  end
+
   def prevent_caching
     response.headers["Cache-Control"] = "no-cache, no-store"
     response.headers["Pragma"] = "no-cache"

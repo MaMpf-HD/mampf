@@ -124,8 +124,11 @@ RSpec.describe("Auth sessions", type: :request) do
 
       11.times { post(user_session_path, params: params, as: :turbo_stream) }
 
+      wait = ActionController::Base.helpers.distance_of_time_in_words(
+        SessionsController::THROTTLE_WINDOW
+      )
       expect(response.body).to include(
-        I18n.t("devise.failure.too_many_requests")
+        I18n.t("devise.failure.too_many_requests", wait: wait)
       )
     end
 
