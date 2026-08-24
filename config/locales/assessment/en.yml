@@ -259,6 +259,7 @@ en:
       proposed_tooltip: 'Proposal from the current grade scheme (not yet applied).'
       proposed_tooltip_with_current: 'Proposal from the current grade scheme (not yet applied). Currently: %{current}.'
     grading_tutorial:
+      save_all: 'Save all changes'
       team: 'Team'
       task: 'Task'
       total_points: 'Total Points'

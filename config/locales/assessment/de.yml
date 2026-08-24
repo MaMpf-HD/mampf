@@ -259,6 +259,7 @@ de:
       proposed_tooltip: 'Vorschlag aus dem aktuellen Notenschema (noch nicht angewendet).'
       proposed_tooltip_with_current: 'Vorschlag aus dem aktuellen Notenschema (noch nicht angewendet). Aktuell: %{current}.'
     grading_tutorial:
+      save_all: 'Alle Änderungen speichern'
       team: 'Team'
       task: 'Aufgabe'
       total_points: 'Gesamtpunkte'
