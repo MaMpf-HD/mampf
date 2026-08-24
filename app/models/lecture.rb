@@ -87,10 +87,11 @@ class Lecture < ApplicationRecord
 
   # a lecture has many tutorials
   has_many :tutorials, -> { order(:title) },
+           dependent: :destroy,
            inverse_of: :lecture
 
   # a lecture has many assignments (e.g. exercises with deadlines)
-  has_many :assignments
+  has_many :assignments, dependent: :destroy
 
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
@@ -100,7 +101,15 @@ class Lecture < ApplicationRecord
 
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
-  validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
+  validates :course_id, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
+
+  # The same clash again, because editing splits the combination across panes:
+  # the term lives under Preferences, the teacher under People, and neither
+  # pane can show a message that belongs to a field it does not offer.
+  validates :term_id, uniqueness: { scope: [:course_id, :teacher_id, :sort] },
+                      on: :update
+  validates :teacher_id, uniqueness: { scope: [:course_id, :term_id, :sort] },
+                         on: :update
 
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
@@ -145,6 +154,10 @@ class Lecture < ApplicationRecord
   scope :restricted, -> { where.not(passphrase: ["", nil]) }
 
   scope :seminar, -> { where(sort: ["seminar", "oberseminar", "proseminar"]) }
+
+  # A lecture is the record the other rosterables point their lecture_id at,
+  # so it matches on its own id.
+  scope :for_lectures, ->(lectures) { where(id: lectures) }
 
   include PgSearch::Model
 
@@ -916,6 +929,12 @@ class Lecture < ApplicationRecord
     lecture_memberships
   end
 
+  # Whether the roster decides which tutorial a student belongs to, rather than
+  # the student picking one.
+  def roster_managed?
+    tutorials.merge(Tutorial.roster_eligible).exists?
+  end
+
   private
 
     # used for after save callback
@@ -1021,7 +1040,7 @@ class Lecture < ApplicationRecord
     def only_one_lecture
       return unless Lecture.where(course: course).any?
 
-      errors.add(:course, :already_present)
+      errors.add(:course_id, :already_present)
     end
 
     def older_than?(timespan)

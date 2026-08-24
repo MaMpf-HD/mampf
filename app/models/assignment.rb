@@ -97,7 +97,7 @@ class Assignment < ApplicationRecord
   end
 
   def destructible?
-    submissions.proper.none?
+    submissions.with_uploads.none?
   end
 
   def check_destructibility

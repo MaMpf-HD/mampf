@@ -7,11 +7,6 @@
     padding: 1rem 1.15rem;
     background: linear-gradient(160deg, mampf-blue(0.14), mampf-blue(0.05));
 
-    &:hover .registration-campaign-header-actions,
-    &:focus-within .registration-campaign-header-actions {
-      opacity: 1;
-    }
-
     .policy-badge {
       vertical-align: middle;
       cursor: default;
@@ -60,12 +55,12 @@
     }
   }
 
+  // Always visible: the way out of a registration process is what one looks
+  // for when stuck, so it must not depend on finding it by hovering.
   .registration-campaign-header-actions {
     position: absolute;
     top: 0.65rem;
     right: 0.65rem;
-    opacity: 0;
-    transition: opacity 0.15s ease-in-out;
   }
 
   .card-body {
@@ -102,13 +97,6 @@
     .btn {
       width: 100%;
     }
-  }
-}
-
-@media (hover: none) {
-  .registration-campaign-card .registration-campaign-card-header
-  .registration-campaign-header-actions {
-    opacity: 1;
   }
 }
 

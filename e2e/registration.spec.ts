@@ -1,5 +1,6 @@
 import { expect, test } from "./_support/fixtures";
 import { confirmationLinkFor } from "./_support/mail";
+import { LoginPage } from "./page-objects/login_page";
 import { SignUpPage } from "./page-objects/sign_up_page";
 
 test("can sign up and confirm the account", async ({ page, request }) => {
@@ -15,8 +16,17 @@ test("can sign up and confirm the account", async ({ page, request }) => {
   const confirmationLink = await confirmationLinkFor(request, email);
   await page.goto(confirmationLink);
 
+  await expect(page).toHaveURL(/\/users\/sign_in/);
+  await expect(page.getByRole("alert")).toContainText(
+    "Your email address has been confirmed.",
+  );
+
+  await new LoginPage(page).login(email, "password");
+
   await expect(page).toHaveURL(/\/profile\/edit/);
-  await expect(page.getByRole("textbox", { name: "display name" })).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText(
+    "Please take some time to edit your profile settings.",
+  );
 });
 
 test("shows an altcha error and blocks signup when auto verification fails", async ({ page }) => {

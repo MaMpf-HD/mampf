@@ -35,7 +35,6 @@ import "~/js/administration.coffee";
 import "~/js/announcements.coffee";
 import "~/js/answers.coffee";
 import "~/js/chapters.coffee";
-import "~/js/courses.coffee";
 import "~/js/file_upload.coffee";
 import "~/js/items.coffee";
 import "~/js/katex.js";
@@ -54,7 +53,6 @@ import "~/js/tutorials.coffee";
 import "~/js/upload.coffee";
 import "~/js/users.coffee";
 import "~/js/vertices.coffee";
-import "~/js/watchlists.coffee";
 
 // Rails UJS
 // https://github.com/rails/rails/issues/49499#issuecomment-1749086834

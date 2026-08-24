@@ -272,4 +272,43 @@ RSpec.describe(Talk, type: :model) do
       expect(lecture.lecture_memberships.where(user: user)).to exist
     end
   end
+  describe "#destruction_blockers" do
+    let(:seminar) { create(:lecture, :is_seminar) }
+    let(:talk) { create(:talk, lecture: seminar) }
+
+    it "is empty for a bare talk" do
+      expect(talk.destruction_blockers).to be_empty
+      expect(talk).to be_destructible
+    end
+
+    it "reports attached media, which destroy would take with it" do
+      create(:medium, :with_description, :with_editors, teachable: talk, sort: "Lecture")
+
+      expect(talk.destruction_blockers).to include(:media)
+      expect { talk.destroy }.not_to change(described_class, :count)
+      expect(talk.errors[:base])
+        .to include(I18n.t("roster.errors.cannot_delete_with_media"))
+    end
+
+    it "reports speakers" do
+      talk.add_user_to_roster!(create(:confirmed_user))
+
+      expect(talk.destruction_blockers).to include(:roster_not_empty)
+    end
+
+    # The campaign states are covered for every registerable in the shared
+    # example; what is talk-specific is that its own blockers still apply once
+    # the campaign no longer holds it.
+    it "still refuses a finalized process's talk that somebody holds" do
+      campaign = create(:registration_campaign, campaignable: seminar,
+                                                allocation_mode: :first_come_first_served)
+      create(:registration_item, registration_campaign: campaign, registerable: talk)
+      campaign.update!(status: :open)
+      campaign.update!(status: :completed)
+      talk.add_user_to_roster!(create(:confirmed_user))
+
+      expect(talk.reload.destruction_blockers).to include(:roster_not_empty)
+      expect { talk.destroy }.not_to change(described_class, :count)
+    end
+  end
 end

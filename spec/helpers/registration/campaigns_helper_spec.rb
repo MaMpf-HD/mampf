@@ -151,18 +151,49 @@ RSpec.describe(Registration::CampaignsHelper, type: :helper) do
   end
 
   describe "#campaign_open_confirmation" do
-    it "returns base confirmation string" do
+    it "starts with the base confirmation string" do
       expect(helper.campaign_open_confirmation(campaign))
-        .to eq(I18n.t("registration.campaign.confirmations.open"))
+        .to start_with(I18n.t("registration.campaign.confirmations.open"))
+    end
+
+    it "spells out what opening freezes" do
+      message = helper.campaign_open_confirmation(campaign)
+
+      expect(message)
+        .to include(I18n.t("registration.campaign.confirmations.open_consequences_intro"))
+      I18n.t("registration.campaign.confirmations.open_consequences").each do |line|
+        expect(message).to include(line)
+      end
     end
 
     it "appends unlimited items warning if there are items missing capacity" do
       create(:registration_item, registration_campaign: campaign, capacity: nil)
       create(:registration_item, registration_campaign: campaign, capacity: 10)
 
-      expected = [I18n.t("registration.campaign.confirmations.open"),
-                  I18n.t("registration.campaign.warnings.unlimited_items")].join("\n\n")
-      expect(helper.campaign_open_confirmation(campaign)).to eq(expected)
+      expect(helper.campaign_open_confirmation(campaign))
+        .to end_with(I18n.t("registration.campaign.warnings.unlimited_items"))
+    end
+  end
+
+  describe "discard wording" do
+    it "calls it deletion for a draft campaign" do
+      expect(helper.campaign_discard_title(campaign)).to eq(I18n.t("buttons.delete"))
+      expect(helper.campaign_discard_confirmation(campaign))
+        .to eq(I18n.t("registration.campaign.confirm_delete"))
+    end
+
+    it "calls it discarding once the campaign is open" do
+      open_campaign = create(:registration_campaign, :open)
+
+      expect(helper.campaign_discard_title(open_campaign))
+        .to eq(I18n.t("registration.campaign.actions.discard"))
+      expect(helper.campaign_discard_confirmation(open_campaign))
+        .to eq(I18n.t("registration.campaign.confirm_discard"))
+    end
+
+    it "promises that reverting to draft loses nothing" do
+      expect(helper.campaign_revert_confirmation)
+        .to eq(I18n.t("registration.campaign.confirm_revert_to_draft"))
     end
   end
 

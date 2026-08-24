@@ -18,7 +18,7 @@ RSpec.describe(Dev::BaseController, type: :controller) do
   describe "#verify_development_environment" do
     context "in development" do
       before do
-        allow(Rails.env).to receive(:development?).and_return(true)
+        allow(Rails.env).to receive(:local?).and_return(true)
       end
 
       it "allows loopback hosts" do
@@ -41,7 +41,7 @@ RSpec.describe(Dev::BaseController, type: :controller) do
 
     context "outside development" do
       before do
-        allow(Rails.env).to receive(:development?).and_return(false)
+        allow(Rails.env).to receive(:local?).and_return(false)
       end
 
       it "rejects loopback hosts" do

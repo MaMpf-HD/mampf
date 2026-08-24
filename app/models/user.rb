@@ -121,8 +121,11 @@ class User < ApplicationRecord
   # set some default values before saving if they are not set
   before_save :set_defaults
 
+  # a user must consent to the privacy policy to exist
+  validates :consents, acceptance: true, on: :create
+
   # add timestamp for DSGVO consent
-  after_create :set_consented_at
+  before_save :set_consented_at, if: -> { consents? && consented_at.nil? }
   before_destroy :destroy_single_submissions, prepend: true
 
   attr_accessor :skip_destroy_talk_media
@@ -667,6 +670,12 @@ class User < ApplicationRecord
     User.where(id: partner_ids - [id])
   end
 
+  def rostered_tutorial_in(lecture)
+    tutorial_membership = tutorial_memberships.joins(:tutorial)
+                                              .find_by(tutorials: { lecture_id: lecture.id })
+    tutorial_membership&.tutorial
+  end
+
   def tutor?
     given_tutorials.any?
   end
@@ -824,7 +833,7 @@ class User < ApplicationRecord
 
     # sets time for DSGVO consent to current time
     def set_consented_at
-      update(consented_at: Time.zone.now)
+      self.consented_at = Time.zone.now
     end
 
     # returns array of ids of all courses that preced the subscribed courses

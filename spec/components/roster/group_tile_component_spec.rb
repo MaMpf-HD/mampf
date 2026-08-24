@@ -95,6 +95,76 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
+  describe "#date_text" do
+    it "is nil for rosterables without dates (e.g. tutorials)" do
+      expect(component.date_text).to be_nil
+    end
+
+    context "with a talk that has dates" do
+      let(:talk) do
+        build_stubbed(:talk, dates: [Time.zone.local(2026, 4, 10),
+                                     Time.zone.local(2026, 4, 11)])
+      end
+      let(:component) { described_class.new(registerable: talk) }
+
+      it "joins the formatted dates" do
+        expect(component.date_text).to eq("Apr 10 2026, Apr 11 2026")
+      end
+    end
+
+    context "with a talk that has no dates" do
+      let(:talk) { build_stubbed(:talk, dates: []) }
+      let(:component) { described_class.new(registerable: talk) }
+
+      it "is nil" do
+        expect(component.date_text).to be_nil
+      end
+    end
+  end
+
+  describe "teacher tile date line" do
+    let(:lecture) { create(:seminar) }
+    let(:talk) do
+      create(:talk, lecture: lecture, dates: [Time.zone.local(2026, 4, 10)])
+    end
+    let(:item) { create(:registration_item, registerable: talk) }
+
+    it "shows the talk date on the non-student tile" do
+      rendered = render_inline(described_class.new(registerable: talk, item: item))
+      date_line = rendered.css(".bi-calendar-event").first
+
+      expect(date_line).to be_present
+      expect(rendered.to_html).to include("Apr 10 2026")
+    end
+
+    it "labels the date for screen readers and hides the icon from them" do
+      rendered = render_inline(described_class.new(registerable: talk, item: item))
+
+      expect(rendered.css(".bi-calendar-event").first["aria-hidden"]).to eq("true")
+      expect(rendered.css(".visually-hidden").map(&:text))
+        .to include("#{I18n.t("basics.date")}:")
+    end
+  end
+
+  describe "student tile metadata rows" do
+    let(:tutorial) { build_stubbed(:tutorial, location: "INF 205") }
+    let(:rows) do
+      [{ label: "Date", value: "Jul 11 2026", icon: "bi-calendar-event" }]
+    end
+
+    it "labels the value for screen readers and hides the icon from them" do
+      rendered = render_inline(
+        described_class.new(registerable: tutorial, student_tile: true,
+                            tile_metadata_rows: rows)
+      )
+      row = rendered.css(".student-registration-tile-meta > div").first
+
+      expect(row.css("i").first["aria-hidden"]).to eq("true")
+      expect(row.css(".visually-hidden").text).to eq("Date:")
+      expect(row["title"]).to eq("Date")
+    end
+  end
+
   describe "#sm_mode" do
     it "returns the mode from registerable" do
       tutorial.self_materialization_mode = "add_only"
@@ -288,29 +358,88 @@ RSpec.describe(GroupTileComponent, type: :component) do
   describe "#delete_disabled?" do
     context "without an item (no-campaign group)" do
       it "is false when registerable is destructible" do
-        allow(tutorial).to receive(:destructible?).and_return(true)
+        allow(tutorial).to receive(:destruction_blockers).and_return([])
         expect(component.delete_disabled?).to be(false)
       end
 
       it "is true when registerable is not destructible" do
-        allow(tutorial).to receive(:destructible?).and_return(false)
+        allow(tutorial).to receive(:destruction_blockers).and_return([:roster_not_empty])
         expect(component.delete_disabled?).to be(true)
       end
     end
 
     context "with a campaign item" do
-      let(:campaign) { double("campaign") }
-      let(:item) { double("item", registration_campaign: campaign) }
+      let(:item) { double("item", removal_blocker_message: nil) }
 
-      it "is false when campaign is draft" do
-        allow(campaign).to receive(:draft?).and_return(true)
+      before do
+        allow(tutorial).to receive(:destruction_blockers).and_return([:in_campaign])
+      end
+
+      it "is false when neither the item nor the group is blocked" do
         expect(component.delete_disabled?).to be(false)
       end
 
-      it "is true when campaign is not draft" do
-        allow(campaign).to receive(:draft?).and_return(false)
+      it "is true when the item cannot leave the campaign" do
+        allow(item).to receive(:removal_blocker_message).and_return("nope")
         expect(component.delete_disabled?).to be(true)
       end
+
+      it "is true when the group itself carries data worth keeping" do
+        allow(tutorial).to receive(:destruction_blockers)
+          .and_return([:in_campaign, :submissions])
+        expect(component.delete_disabled?).to be(true)
+      end
+    end
+  end
+
+  describe "the deletion confirmation" do
+    let(:seminar) { create(:lecture, :is_seminar) }
+    let(:talk) { create(:talk, lecture: seminar) }
+    let(:component) { described_class.new(registerable: talk) }
+
+    def rendered_confirmation
+      render_inline(component).css("a.btn-danger[data-turbo-confirm]")
+                              .first["data-turbo-confirm"]
+    end
+
+    it "asks plainly for a group that was never in a process" do
+      expect(rendered_confirmation)
+        .to eq(I18n.t("roster.actions.confirm_delete_group"))
+    end
+
+    # A completed campaign's registrations are deleted with the group, and the
+    # teacher is the one who knows whether that history still matters.
+    it "names the entries a finished process left behind" do
+      campaign = create(:registration_campaign, campaignable: seminar,
+                                                allocation_mode: :first_come_first_served)
+      item = create(:registration_item, registration_campaign: campaign, registerable: talk)
+      campaign.update!(status: :open)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item)
+      create(:registration_user_registration, :rejected,
+             registration_campaign: campaign, registration_item: item)
+      campaign.update!(status: :completed)
+
+      expect(rendered_confirmation)
+        .to eq(I18n.t("roster.actions.confirm_delete_group_with_registrations",
+                      total: I18n.t("roster.actions.confirm_delete_group_total_count",
+                                    count: 2),
+                      confirmed: I18n.t("roster.actions.confirm_delete_group_confirmed_count",
+                                        count: 1)))
+    end
+  end
+
+  describe "#remove_disabled?" do
+    let(:item) { double("item", removal_blocker_message: nil) }
+
+    it "is false while the item may leave the campaign" do
+      expect(component.remove_disabled?).to be(false)
+    end
+
+    it "is true once the item is pinned to the campaign" do
+      allow(item).to receive(:removal_blocker_message).and_return("nope")
+      expect(component.remove_disabled?).to be(true)
+      expect(component.remove_disabled_title).to eq("nope")
     end
   end
 end

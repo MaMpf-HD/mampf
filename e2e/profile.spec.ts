@@ -98,10 +98,12 @@ test.describe("Account settings", () => {
       const confirmationLink = await confirmationLinkFor(request, newEmail);
       await page.goto(confirmationLink);
 
-      await expect(page).toHaveURL(/\/profile\/edit/);
+      await expect(page.getByRole("alert")).toContainText(
+        "Your email address has been confirmed.",
+      );
 
       await page.getByTitle("Logout").click();
-      await expect(page).not.toHaveURL(/\/profile\/edit/);
+      await expect(page.getByRole("alert")).toContainText("Signed out successfully.");
 
       const loginPage = new LoginPage(page);
       await loginPage.goto();

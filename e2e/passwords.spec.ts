@@ -22,10 +22,11 @@ test("can reset the password via the mailed reset link", async ({ page, request 
   await page.getByLabel("Confirm new password", { exact: true }).fill(newPassword);
   await page.getByRole("button", { name: "Change password" }).click();
 
-  await expect(page).toHaveURL(/\/main\/start/);
+  // the reset signs the user in, and this is their first sign-in
+  await expect(page).toHaveURL(/\/profile\/edit/);
 
   await page.getByTitle("Logout").click();
-  await expect(page).not.toHaveURL(/\/main\/start/);
+  await expect(page.getByRole("alert")).toContainText("Signed out successfully.");
 
   const loginPage = new LoginPage(page);
   await loginPage.goto();

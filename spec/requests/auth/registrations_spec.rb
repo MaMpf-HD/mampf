@@ -39,6 +39,16 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(ActionMailer::Base.deliveries.last.to).to include(email)
     end
 
+    it "does not create a user without consent to the privacy policy" do
+      allow(Altcha).to receive(:verify).and_return(true)
+      params = base_params.merge(altcha: "valid")
+      params[:user] = params[:user].except(:consents)
+
+      expect do
+        post(user_registration_path, params: params)
+      end.not_to change(User, :count)
+    end
+
     it "does not create a user when captcha validation fails" do
       allow(Altcha).to receive(:verify).and_return(false)
 

@@ -2,17 +2,29 @@
 module LecturesHelper
   def registration_sidebar_visible?(lecture)
     return false unless lecture && user_signed_in?
-    return false unless Flipper.enabled?(:registration_campaigns)
 
     RegistrationUserRegistrationAbility.new(current_user).can?(:index, lecture)
   end
 
   # Whether the lecture currently has an open registration campaign
-  # (used e.g. for the badge on lecture search result cards).
+  # (one building block of the search-card badges, see _lecture.html.erb).
   def registration_open?(lecture)
-    return false unless Flipper.enabled?(:registration_campaigns)
-
     lecture.registration_campaigns.any?(&:open_for_registrations?)
+  end
+
+  # Deleting a lecture deletes its campaigns and every registration in them,
+  # so the confirmation counts both.
+  def lecture_destruction_confirmation(lecture)
+    campaigns = lecture.registration_campaigns.count
+    return t("confirmation.generic") if campaigns.zero?
+
+    registrations = Registration::UserRegistration
+                    .where(registration_campaign: lecture.registration_campaigns).count
+
+    t("admin.lecture.confirm_delete_with_campaigns",
+      campaigns: t("admin.lecture.confirm_delete_campaigns_count", count: campaigns),
+      registrations: t("admin.lecture.confirm_delete_registrations_count",
+                       count: registrations))
   end
 
   # is the current user allowed to delete the given lecture and is it
@@ -158,12 +170,14 @@ module LecturesHelper
 
       preselection = if is_new_lecture
         options_for_select([[current_user.info, current_user.id]], current_user.id)
-      else
+      elsif lecture.teacher
         options_for_select([[lecture.teacher.info, lecture.teacher.id]], lecture.teacher.id)
+      else
+        []
       end
 
       # TODO: Rubocop bug when trying to break the last object on a new line
-      select = form.select(:teacher_id, preselection, {}, { class: "selectize",
+      select = form.select(:teacher_id, preselection, {}, { class: "selectize form-select",
                                                             data: {
                                                               ajax: true,
                                                               filled: false,
@@ -171,12 +185,10 @@ module LecturesHelper
                                                               placeholder: t("basics.enter_two_letters"), # rubocop:disable Layout/LineLength
                                                               no_results: t("basics.no_results"),
                                                               modal: true,
-                                                              cy: "teacher-admin-select"
+                                                              testid: "teacher-admin-select"
                                                             } })
 
-      error_div = content_tag(:div, "", class: "invalid-feedback", id: "lecture-teacher-error")
-
-      return label + help_desk + select + error_div
+      return label + help_desk + select
     end
 
     # Non-admin cases
@@ -192,7 +204,8 @@ module LecturesHelper
         concat(t("basics.teacher"))
         concat(helpdesk(t("admin.lecture.info.teacher_fixed"), false))
       end
-      p2 = content_tag(:p, lecture.teacher.info, "data-cy": "teacher-info")
+      p2 = content_tag(:p, lecture.teacher&.info || "",
+                       "data-cy": "teacher-info", "data-testid": "teacher-info")
     end
 
     p1 + p2
@@ -219,8 +232,17 @@ module LecturesHelper
                   multiple: true,
                   data: {
                     cy: "lecture-editors-select",
+                    testid: "lecture-editors-select",
                     no_results: t("basics.no_results_editor")
                   })
+    end
+  end
+
+  def import_media_badge(lecture)
+    content_tag(:span, id: "importMedia",
+                       data: { lecture: lecture.id, selected: "[]" }) do
+      content_tag(:span, "(#{lecture.imported_media.size})",
+                  id: "importedMediaCount")
     end
   end
 end

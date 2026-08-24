@@ -363,42 +363,47 @@ RSpec.describe("Media", type: :request) do
     let(:restricted_medium) { create(:lecture_medium, :with_manuscript) }
     let(:free_medium) { create(:lecture_medium, :with_manuscript, :released) }
 
-    it "renders a compatibility page that points to the inline manuscript" do
-      get display_medium_path(restricted_medium), params: { page: "17" }
+    it "serves the manuscript itself as the top-level response" do
+      get display_medium_path(restricted_medium)
 
       expect(response).to have_http_status(:ok)
-      expect(response.media_type).to eq("text/html")
-      expect(response.body)
-        .to include(
-          "src=\"#{inline_manuscript_medium_path(restricted_medium)}#page=17\""
-        )
-      expect(response.body)
-        .to include("title=\"#{restricted_medium.manuscript_filename}\"")
+      expect(response.media_type).to eq("application/pdf")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Content-Disposition"])
+        .to include(restricted_medium.manuscript_filename)
       expect(response.headers["Cache-Control"]).to include("no-store")
       expect(response.headers["Pragma"]).to eq("no-cache")
       expect(response.headers["Expires"])
         .to eq("Mon, 01 Jan 1990 00:00:00 GMT")
     end
 
-    it "preserves named destinations in the inline manuscript fragment" do
-      get display_medium_path(restricted_medium), params: { destination: "Theorem 1" }
+    it "moves a requested page into the url fragment" do
+      get display_medium_path(restricted_medium), params: { page: "17" }
 
-      expect(response.body)
-        .to include(
-          "src=\"#{inline_manuscript_medium_path(restricted_medium)}#Theorem%201\""
-        )
+      expect(response)
+        .to redirect_to("#{display_medium_path(restricted_medium)}#page=17")
     end
 
-    it "allows guest access to the compatibility page for free media" do
+    it "moves a named destination into the url fragment" do
+      get display_medium_path(restricted_medium), params: { destination: "Theorem 1" }
+
+      expect(response)
+        .to redirect_to("#{display_medium_path(restricted_medium)}#Theorem%201")
+    end
+
+    it "does not count a view for the fragment redirect" do
+      expect(ConsumptionSaver).not_to receive(:perform_async)
+
+      get display_medium_path(restricted_medium), params: { page: "17" }
+    end
+
+    it "allows guest access to free media" do
       sign_out user
 
-      get display_medium_path(free_medium), params: { page: "3" }
+      get display_medium_path(free_medium)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body)
-        .to include(
-          "src=\"#{inline_manuscript_medium_path(free_medium)}#page=3\""
-        )
+      expect(response.media_type).to eq("application/pdf")
       expect(response.headers["Cache-Control"]).not_to eq("no-cache, no-store")
     end
   end

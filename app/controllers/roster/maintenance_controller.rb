@@ -136,10 +136,13 @@ module Roster
         return
       end
 
-      Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
-
-      flash.now[:notice] = t("roster.messages.user_moved", user: user.info, target: target.title)
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
+      if Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
+        flash.now[:notice] = move_notice(user, target)
+        flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
+      else
+        flash.now[:alert] = t("roster.messages.user_not_moved",
+                              user: user.info, target: target.title)
+      end
 
       if @mparams.panel?
         render_with_streams(
@@ -279,6 +282,15 @@ module Roster
         setup_participants
       end
 
+      def move_notice(user, target)
+        if @rosterable.is_a?(Tutorial) && target.is_a?(Tutorial)
+          return t("roster.messages.user_moved_between_tutorials",
+                   user: user.info, target: target.title, source: @rosterable.title)
+        end
+
+        t("roster.messages.user_moved", user: user.info, target: target.title)
+      end
+
       def find_user
         user = if @mparams.user_id
           User.find_by(id: @mparams.user_id)
@@ -334,10 +346,8 @@ module Roster
 
         lecture_id = if @rosterable.is_a?(Lecture)
           @rosterable.id
-        elsif @rosterable.respond_to?(:lecture_id) && @rosterable.lecture_id
+        else
           @rosterable.lecture_id
-        elsif @rosterable.is_a?(Cohort)
-          @rosterable.context_id
         end
 
         @lecture = Rosters::RosterableResolver.eager_load_lecture(lecture_id)

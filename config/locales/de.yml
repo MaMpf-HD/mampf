@@ -1,5 +1,7 @@
 de:
   mampf: 'MaMpf'
+  modals:
+    load_error: 'Der Inhalt konnte nicht geladen werden.'
   views:
     pagination:
       first: "&laquo; Erste"
@@ -69,7 +71,7 @@ de:
     text_html: >
       &copy; MaMpf Team. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
-      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
+      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}, %{mupdf}.
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
   sponsors:
@@ -739,6 +741,15 @@ de:
           LaTeX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       no_talks: Es sind noch keine Vorträge vorhanden.
+      confirm_delete_with_campaigns: >
+        Mitgelöscht werden dabei: %{campaigns} mit %{registrations}. Bist Du sicher?
+      confirm_delete_campaigns_count:
+        one: 1 Anmeldeverfahren
+        other: "%{count} Anmeldeverfahren"
+      confirm_delete_registrations_count:
+        one: 1 Anmeldung
+        other: "%{count} Anmeldungen"
+      talks_managed_in_groups_html: Vorträge werden im Reiter %{link} angelegt und gelöscht.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
       additional_tags: >
@@ -2515,12 +2526,10 @@ de:
       Fragen existieren:
     question_tags: >
       Verfügbare Begriffe
-    questions_for_tags: >
-      Zu den gewählten Begriffen wurden %{count} Fragen gefunden.
-    question_for_tags: >
-      Zu den gewählten Begriffen wurde eine Frage gefunden.
-    no_question_for_tags: >
-      Zu den gewählten Begriffen wurde keine Frage gefunden.
+    questions_for_tags:
+      zero: 'Zu den gewählten Begriffen wurde keine Frage gefunden.'
+      one: 'Zu den gewählten Begriffen wurde eine Frage gefunden.'
+      other: 'Zu den gewählten Begriffen wurden %{count} Fragen gefunden.'
     quiz_shortened: >
       Der Test wird dementsprechend verkürzt.
     number_of_questions: 'Anzahl der Fragen: %{count}'
@@ -2942,6 +2951,12 @@ de:
       bei.
     nothing_here_past: >
       Zu dieser Hausaufgabe hast Du nichts abgegeben.
+    tutorial_needed: >
+      Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb nichts
+      abgeben.
+    tutorial_not_assigned: >
+      Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb keine
+      Abgabe anlegen oder einer beitreten.
     invitations_to: Einladungen an
     joined_successfully: >
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
@@ -3490,6 +3505,7 @@ de:
     home: "Home"
     clear: "Löschen"
     close: "Schließen"
+    loading: "Lädt..."
     capacity: 'Kapazität'
     division: 'Teilbereich'
     location: 'Ort'
@@ -3848,7 +3864,6 @@ de:
       Achtung, es gibt ungespeicherte Änderungen!
   confirmation:
     generic: 'Bist Du sicher?'
-    delete_talk: 'Bist Du sicher, dass Du diesen Vortrag löschen möchtest?'
     delete_graph: >
       Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
       nicht das Medium.
@@ -3932,12 +3947,8 @@ de:
     quiz_has_error: >
       Dieses Quiz hat einen Fehler.
     no_remark: 'Eine Bemerkung mit der angeforderten id existiert nicht.'
-    no_search_term: >
-      Du hast eine Suche ohne Suchbegriff gestartet. Das funktioniert nicht.
     search_only_js: >
       Der direkte Aufruf von Suchergebnissen ist nicht möglich. Bitte benutze das Suchfeld.
-    search_term_short: >
-      Dein Suchbegriff sollte aus mindestens zwei Buchstaben bestehen.
     no_section: 'Ein Abschnitt mit der angeforderten id existiert nicht.'
     no_tag: 'Ein Begriff mit der angeforderten id existiert nicht.'
     no_removal_rights: >
@@ -3973,6 +3984,13 @@ de:
     become_editor_success: 'Dein Editorenstatus wurde geupdatet.'
     become_teacher_success: 'Dein DozentInnenstatus wurde geupdatet.'
     become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
+    lectures:
+      destruction_failed: >
+        Die Veranstaltung konnte nicht gelöscht werden, weil sich Inhalte nicht
+        entfernen ließen – etwa Gruppen mit Teilnehmern, Abgaben oder Medien.
+      destruction_failed_prerequisite: >
+        Die Veranstaltung konnte nicht gelöscht werden, da eines ihrer Anmeldeverfahren
+        von einem Anmeldeverfahren einer anderen Veranstaltung vorausgesetzt wird.
     tutorials:
       created: 'Tutorium erfolgreich erstellt.'
       updated: 'Tutorium erfolgreich aktualisiert.'
@@ -4088,13 +4106,22 @@ de:
         lecture:
           attributes:
             course:
+              required: 'Es muss ein Modul angegeben werden.'
+            course_id:
               taken: >
                 Eine Veranstaltung mit derselben Kombination aus Modul, Semester
                 DozentIn und Typ existiert bereits.
-              required: 'Es muss ein Modul angegeben werden.'
               already_present: >
                 Für Module mit der Eigenschaft 'semesterunabhängig' kann es
                 höchstens eine Veranstaltung geben.
+            teacher_id:
+              taken: >
+                Eine Veranstaltung mit derselben Kombination aus Modul, Semester
+                DozentIn und Typ existiert bereits.
+            term_id:
+              taken: >
+                Eine Veranstaltung mit derselben Kombination aus Modul, Semester
+                DozentIn und Typ existiert bereits.
             content_mode:
               inclusion: 'Ungültiger Modus.'
             term:
@@ -4225,6 +4252,8 @@ de:
               does_not_match_tutorial: stimmt nicht mit der Veranstaltung des Tutoriums überein.
         user:
           attributes:
+            consents:
+              accepted: 'Du musst der Datenschutzerklärung zustimmen, um ein Konto anzulegen.'
             courses:
               blank: 'Es muss mindestens ein Modul abonniert werden.'
             name:
@@ -4256,6 +4285,9 @@ de:
             medium_id:
               taken:
                 ist schon in dieser Watchlist.
+            watchlist:
+              required: >
+                muss zuerst angelegt werden.
         watchlist:
           attributes:
             name:

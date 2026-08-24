@@ -16,6 +16,21 @@ RSpec.describe(User, type: :model) do
     expect(FactoryBot.build(:user)).to be_valid
   end
 
+  it "cannot be created without consent to the privacy policy" do
+    user = build(:user, consents: false)
+
+    expect(user).not_to be_valid
+    expect(user.errors[:consents]).to include(
+      I18n.t("activerecord.errors.models.user.attributes.consents.accepted")
+    )
+  end
+
+  it "stamps the consent date when consent is given" do
+    user = create(:user)
+
+    expect(user.consented_at).to be_present
+  end
+
   it "uses the profile image uploader for user images" do
     user = build(:user)
     file = fixture_file("image.png")
@@ -114,6 +129,26 @@ RSpec.describe(User, type: :model) do
     it "has correct number of lectures when called with lecture_count param" do
       user = FactoryBot.build(:user, :with_lectures, lecture_count: 3)
       expect(user.lectures.size).to eq(3)
+    end
+  end
+
+  describe "#rostered_tutorial_in" do
+    let(:lecture)   { create(:lecture) }
+    let(:tutorial)  { create(:tutorial, lecture: lecture) }
+    let(:user)      { create(:user) }
+
+    context "when user is rostered to a tutorial in the lecture" do
+      before { create(:tutorial_membership, user: user, tutorial: tutorial) }
+
+      it "returns the tutorial" do
+        expect(user.rostered_tutorial_in(lecture)).to eq(tutorial)
+      end
+    end
+
+    context "when user is not rostered to a tutorial in the lecture" do
+      it "returns nil" do
+        expect(user.rostered_tutorial_in(lecture)).to be_nil
+      end
     end
   end
 
