@@ -71,4 +71,30 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
     expect(medium.transcription_status).to eq("failed_permanently")
     expect(medium.transcription_error).to include("400 Bad Request")
   end
+
+  it "marks failed_temporarily and skips transcribe when ingestion service is offline" do
+    allow(MampfsearchHealth).to receive(:ingest_available?).and_return(false)
+    expect(Mampfsearch::IngestionService).not_to receive(:transcribe)
+
+    described_class.perform_now(medium.id)
+
+    medium.reload
+    expect(medium.transcription_attempts).to eq(1)
+    expect(medium.transcription_status).to eq("failed_temporarily")
+    expect(medium.transcription_error).to include("offline")
+  end
+
+  it "rescues StandardError, marks failed_temporarily, and logs error" do
+    allow(Mampfsearch::IngestionService).to receive(:transcribe).and_raise(
+      StandardError, "Unexpected DB connection drop"
+    )
+    expect(Rails.logger).to receive(:error).with(/Unexpected error/)
+
+    described_class.perform_now(medium.id)
+
+    medium.reload
+    expect(medium.transcription_attempts).to eq(1)
+    expect(medium.transcription_status).to eq("failed_temporarily")
+    expect(medium.transcription_error).to include("Unexpected DB connection drop")
+  end
 end

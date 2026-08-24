@@ -27,6 +27,17 @@ class MampfsearchIngestJob < ApplicationJob
       return
     end
 
+    unless MampfsearchHealth.ingest_available?
+      medium.update!(
+        transcription_attempts: medium.transcription_attempts + 1,
+        transcription_status: :failed_temporarily,
+        transcription_error: "MampfSearch ingestion service is currently offline."
+      )
+      Rails.logger.warn("Skipping MampfsearchIngestJob for Medium #{medium.id}: " \
+                        "MampfSearch ingestion service is currently offline.")
+      return
+    end
+
     begin
       medium.update!(
         transcription_status: :queued,
@@ -49,6 +60,14 @@ class MampfsearchIngestJob < ApplicationJob
         transcription_error: "Fatal API error: #{e.message}"
       )
       Rails.logger.error("Mampfsearch transcription permanently failed for " \
+                         "Medium #{medium.id}: #{e.message}")
+    rescue StandardError => e
+      medium.update!(
+        transcription_attempts: medium.transcription_attempts + 1,
+        transcription_status: :failed_temporarily,
+        transcription_error: "Unexpected error: #{e.message}"
+      )
+      Rails.logger.error("Unexpected error during MampfsearchIngestJob for " \
                          "Medium #{medium.id}: #{e.message}")
     end
   end
