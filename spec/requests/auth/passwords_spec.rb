@@ -41,7 +41,8 @@ RSpec.describe("Auth passwords", type: :request) do
         }
       }
 
-      expect(response).to redirect_to(start_path)
+      # the reset signs the user in, and this is their first sign-in
+      expect(response).to redirect_to(edit_profile_path)
 
       delete destroy_user_session_path
       post user_session_path,

@@ -121,6 +121,7 @@ class TalksController < ApplicationController
           streams = []
           streams << stream_flash if flash.present?
           streams << refresh_campaigns_index_stream(@talk.lecture)
+          streams << refresh_seminar_content_stream(@talk.lecture)
           streams << turbo_stream.update("modal-container", "")
           render turbo_stream: streams
         end
@@ -160,6 +161,7 @@ class TalksController < ApplicationController
         streams = []
         streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(lecture)
+        streams << refresh_seminar_content_stream(lecture)
         render turbo_stream: streams
       end
     end
@@ -226,6 +228,7 @@ class TalksController < ApplicationController
         flash.now[:notice] = t("controllers.talks.created")
         streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@talk.lecture)
+        streams << refresh_seminar_content_stream(@talk.lecture)
         streams << turbo_stream.update("modal-container", "")
       else
         streams << turbo_stream.replace(view_context.dom_id(Talk.new, "form"),
