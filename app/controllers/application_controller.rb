@@ -68,11 +68,17 @@ class ApplicationController < ActionController::Base
     # see https://github.com/heartcombo/devise/wiki/How-To:-Redirect-back-to-current-page-after-sign-in,-sign-out,-sign-up,-update
     # see https://www.rubydoc.info/github/plataformatec/devise/Devise%2FControllers%2FHelpers:after_sign_in_path_for
     stored = stored_location_for(resource_or_scope)
-    if stored.present? && stored != super
-      stored
-    else
-      start_path
-    end
+    return stored if stored.present? && stored != super
+    return edit_profile_path if first_sign_in?(resource_or_scope)
+
+    start_path
+  end
+
+  # Whether the user is arriving from their very first sign-in, which is the
+  # moment we ask them to fill in their profile. Trackable has already counted
+  # the sign-in in progress by the time this runs.
+  def first_sign_in?(resource)
+    resource.is_a?(User) && resource.sign_in_count == 1
   end
 
   def prevent_caching

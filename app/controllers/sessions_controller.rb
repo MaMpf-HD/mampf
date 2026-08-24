@@ -11,6 +11,7 @@ class SessionsController < Devise::SessionsController
     super
     session[:show_login_transition] = true
     flash.clear
+    flash[:notice] = t("profile.please_update") if first_sign_in?(current_user)
   end
 
   # Renders login failure messages as flash messages via Turbo Streams
@@ -25,7 +26,10 @@ class SessionsController < Devise::SessionsController
       return
     end
 
-    if request.post? && request.format.turbo_stream? && !signed_in?(resource_name)
+    # `signed_in?` re-runs the strategies, and with them the password check
+    # that just failed; the session already knows the answer.
+    if request.post? && request.format.turbo_stream? &&
+       !warden.authenticated?(resource_name)
       flash.now[:alert] = failure_message
       render turbo_stream: stream_flash, status: :unprocessable_content
     else
@@ -35,22 +39,22 @@ class SessionsController < Devise::SessionsController
 
   private
 
-    def failure_message_key
+    # Whether the submitted credentials are the right ones and only the lock
+    # stands in the way.
+    #
+    # Everyone else keeps seeing the generic failure. `config.paranoid` makes
+    # failed logins indistinguishable, and reporting the lock to whoever asks
+    # would hand out an account-existence oracle: lock any address with five
+    # wrong passwords, and the answer tells you whether it is registered.
+    def locked_out_with_correct_password?
       user = attempted_user
-      message = request.env["warden"]&.message ||
-                request.env["warden.options"]&.[](:message)
-      return :locked if user&.access_locked? &&
-                        (message.blank? || message.to_sym == :invalid)
-      return :last_attempt if last_attempt_warning?
-      return message if message.present?
-      return :locked if user&.access_locked?
+      return false unless user&.access_locked?
 
-      :invalid
+      user.valid_password?(sign_in_params[:password].to_s)
     end
 
     def failure_message
-      key = failure_message_key
-      return I18n.t("devise.failure.#{key}") unless key == :locked
+      return I18n.t("devise.failure.invalid") unless locked_out_with_correct_password?
 
       lock_key = case Devise.unlock_strategy
                  when :email
@@ -78,11 +82,5 @@ class SessionsController < Devise::SessionsController
       else
         resource_class.find_for_database_authentication(authentication_hash)
       end
-    end
-
-    def last_attempt_warning?
-      return false unless Devise.last_attempt_warning
-
-      attempted_user&.failed_attempts == resource_class.maximum_attempts - 1
     end
 end

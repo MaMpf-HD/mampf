@@ -3,9 +3,6 @@ require "rails_helper"
 RSpec.describe("Auth sessions", type: :request) do
   let(:password) { "Password123!" }
   let(:user) { create(:confirmed_user, password: password) }
-  let(:failed_attempts_before_last_warning) do
-    user.class.maximum_attempts - 2
-  end
   let(:unlock_in_words) do
     ActionController::Base.helpers.distance_of_time_in_words(
       Time.current,
@@ -14,12 +11,27 @@ RSpec.describe("Auth sessions", type: :request) do
   end
 
   describe "POST /users/sign_in" do
-    it "redirects confirmed users to the start page" do
+    it "sends a first-time visitor to their profile" do
+      post user_session_path, params: {
+        user: { email: user.email, password: password }
+      }
+
+      expect(response).to redirect_to(edit_profile_path)
+      expect(flash[:notice]).to eq(I18n.t("profile.please_update"))
+    end
+
+    it "redirects returning users to the start page" do
+      post user_session_path, params: {
+        user: { email: user.email, password: password }
+      }
+      delete destroy_user_session_path
+
       post user_session_path, params: {
         user: { email: user.email, password: password }
       }
 
       expect(response).to redirect_to(start_path)
+      expect(flash[:notice]).to be_nil
     end
 
     it "redirects users back to the stored location" do
@@ -52,18 +64,6 @@ RSpec.describe("Auth sessions", type: :request) do
       expect(response.body).to include(I18n.t("devise.failure.invalid"))
     end
 
-    it "renders a Turbo Stream flash for the last attempt before lockout" do
-      user.update!(failed_attempts: failed_attempts_before_last_warning)
-
-      post user_session_path,
-           params: { user: { email: user.email, password: "wrong-password" } },
-           as: :turbo_stream
-
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
-      expect(response.body).to include(I18n.t("devise.failure.last_attempt"))
-    end
-
     it "renders a Turbo Stream flash for locked accounts" do
       user.lock_access!
 
@@ -79,20 +79,73 @@ RSpec.describe("Auth sessions", type: :request) do
       )
     end
 
-    it "renders a locked message even at the last-attempt threshold" do
-      user.update!(failed_attempts: user.class.maximum_attempts - 1)
+    it "keeps the failure generic when a locked account is guessed at" do
       user.lock_access!
+
+      post user_session_path,
+           params: { user: { email: user.email, password: "wrong-password" } },
+           as: :turbo_stream
+
+      expect(response.body).to include(I18n.t("devise.failure.invalid"))
+      expect(response.body).not_to include("locked")
+    end
+
+    it "answers alike for a locked account and an unknown address" do
+      user.lock_access!
+
+      post user_session_path,
+           params: { user: { email: user.email, password: "wrong-password" } },
+           as: :turbo_stream
+      locked_account = response.body
+
+      post user_session_path,
+           params: { user: { email: "no-such-user@example.com",
+                             password: "wrong-password" } },
+           as: :turbo_stream
+
+      expect(response.body).to eq(locked_account)
+    end
+
+    it "answers in the language the visitor picked" do
+      get new_user_session_path, params: { locale: "en" }
+
+      post user_session_path,
+           params: { user: { email: user.email, password: "wrong-password" } },
+           as: :turbo_stream
+
+      expect(response.body).to include(
+        I18n.t("devise.failure.invalid", locale: :en)
+      )
+    end
+
+    it "keeps the failure generic for an unconfirmed account" do
+      user.update!(confirmed_at: nil)
 
       post user_session_path,
            params: { user: { email: user.email, password: password } },
            as: :turbo_stream
 
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
-      expect(response.body).to include(
-        I18n.t("devise.failure.locked_with_email_and_time",
-               unlock_in: unlock_in_words)
-      )
+      expect(flash[:alert]).to eq(I18n.t("devise.failure.invalid"))
+    end
+
+    it "keeps it generic on the html path too" do
+      user.update!(confirmed_at: nil)
+
+      post user_session_path, params: {
+        user: { email: user.email, password: password }
+      }
+
+      expect(flash[:alert]).to eq(I18n.t("devise.failure.invalid"))
+    end
+
+    it "does not warn about the last attempt before lockout" do
+      user.update!(failed_attempts: user.class.maximum_attempts - 2)
+
+      post user_session_path,
+           params: { user: { email: user.email, password: "wrong-password" } },
+           as: :turbo_stream
+
+      expect(response.body).to include(I18n.t("devise.failure.invalid"))
       expect(response.body).not_to include(I18n.t("devise.failure.last_attempt"))
     end
   end

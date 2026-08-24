@@ -5,11 +5,4 @@ class ConfirmationsController < Devise::ConfirmationsController
   rate_limit to: 5, within: 1.hour, only: :create,
              by: -> { "#{request.remote_ip}:#{params.dig(:user, :email).to_s.downcase}" },
              with: -> { respond_with_flash(:alert, I18n.t("devise.failure.too_many_requests")) }
-
-  private
-
-    def after_confirmation_path_for(_resource_name, resource)
-      sign_in(resource) # In case you want to sign in the user
-      edit_profile_path
-    end
 end

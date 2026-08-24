@@ -3,8 +3,7 @@
 en:
   devise:
     confirmations:
-      confirmed: "Your email address has been successfully confirmed. Please take aminute to complete your profile."
-      confirmed_and_signed_in: "Thank you for registering. You are now signed in."
+      confirmed: "Your email address has been confirmed."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes."
       new:
@@ -13,14 +12,14 @@ en:
     failure:
       already_authenticated: "You are already signed in."
       inactive: "Your account is not activated yet."
-      invalid: "Invalid email or password."
+      invalid: "Invalid email or password. If you have just registered, please confirm your email address first."
       invalid_token: "The sign-in token is invalid."
       locked: "Your account is locked."
       locked_with_email: "Your account is locked. We sent you an unlock email."
       locked_with_time: "Your account is locked. It will be unlocked automatically %{unlock_in} after it was locked."
       locked_with_email_and_time: "Your account is locked. We sent you an unlock email. Alternatively, it will be unlocked automatically %{unlock_in} after it was locked."
       last_attempt: "You have one more attempt before your account is locked."
-      not_found_in_database: "Invalid email or password."
+      not_found_in_database: "Invalid email or password. If you have just registered, please confirm your email address first."
       timeout: "Your session expired. Please sign in again to continue."
       unauthenticated: "You need to sign in or sign up before continuing."
       unconfirmed: "You have to confirm your email address before continuing."
