@@ -4,7 +4,7 @@ class SessionsController < Devise::SessionsController
   # from the SAME source are throttled. Cache-backed (mem_cache_store in prod).
   rate_limit to: 10, within: 1.minute, only: :create,
              by: -> { "#{request.remote_ip}:#{params.dig(:user, :email).to_s.downcase}" },
-             with: -> { respond_with_flash(:alert, I18n.t("devise.failure.invalid")) }
+             with: -> { respond_with_flash(:alert, I18n.t("devise.failure.too_many_requests")) }
 
   # Removes the flash message that Devise sets on successful sign in
   def create

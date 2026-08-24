@@ -118,6 +118,17 @@ RSpec.describe("Auth sessions", type: :request) do
       )
     end
 
+    it "stops answering after the per-source limit (AUTH-01)" do
+      Rails.cache.clear
+      params = { user: { email: user.email, password: "wrong-password" } }
+
+      11.times { post(user_session_path, params: params, as: :turbo_stream) }
+
+      expect(response.body).to include(
+        I18n.t("devise.failure.too_many_requests")
+      )
+    end
+
     it "keeps the failure generic for an unconfirmed account" do
       user.update!(confirmed_at: nil)
 
