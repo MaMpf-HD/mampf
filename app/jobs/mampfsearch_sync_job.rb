@@ -2,14 +2,16 @@ class MampfsearchSyncJob < ApplicationJob
   queue_as :default
 
   def perform
-    recover_stuck_jobs
-    feed_next_batch
+    recovered_ids = recover_stuck_jobs
+    feed_next_batch(exclude_ids: recovered_ids)
     reconcile_search_index
   end
 
   private
 
     def recover_stuck_jobs
+      recovered_ids = []
+
       Medium.stuck_transcriptions.find_each do |medium|
         if medium.transcription_attempts >= SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
           medium.update!(
@@ -26,38 +28,43 @@ class MampfsearchSyncJob < ApplicationJob
             transcription_status: :failed_temporarily,
             transcription_error: "Job timed out in worker, will retry"
           )
-          Rails.logger.warn("Mampfsearch transcription timed out for medium #{medium.id} " \
-                            "(attempt #{medium.transcription_attempts}), " \
-                            "marked failed_temporarily")
+          Rails.logger.warn(
+            "Mampfsearch transcription timed out for medium #{medium.id} " \
+            "(attempt #{medium.transcription_attempts}), marked failed_temporarily"
+          )
+          recovered_ids << medium.id
         end
       end
+
+      recovered_ids
     end
 
-    def feed_next_batch
+    def feed_next_batch(exclude_ids: [])
       in_flight = Medium.where(transcription_status: :queued).count
       return if in_flight >= SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS
 
       batch_size = [SearchClient::SYNC_BATCH_SIZE,
                     SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS - in_flight].min
-      Medium.needs_transcription
-            .order(created_at: :desc)
-            .limit(batch_size)
-            .each do |medium|
-              claimed = false
-              medium.with_lock do
-                eligible = (medium.not_transcribed? || medium.failed_temporarily?) &&
-                           medium.transcription_attempts < SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
-                if eligible
-                  medium.update!(
-                    transcription_status: :queued,
-                    transcription_requested_at: Time.current,
-                    transcription_error: nil
-                  )
-                  claimed = true
-                end
-              end
-              MampfsearchIngestJob.perform_later(medium.id) if claimed
-            end
+      candidates = Medium.needs_transcription
+                         .where.not(id: exclude_ids)
+                         .order(created_at: :desc)
+                         .limit(batch_size)
+      candidates.each do |medium|
+        claimed = false
+        medium.with_lock do
+          eligible = (medium.not_transcribed? || medium.failed_temporarily?) &&
+                     medium.transcription_attempts < SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
+          if eligible
+            medium.update!(
+              transcription_status: :queued,
+              transcription_requested_at: Time.current,
+              transcription_error: nil
+            )
+            claimed = true
+          end
+        end
+        MampfsearchIngestJob.perform_later(medium.id) if claimed
+      end
     end
 
     def reconcile_search_index
