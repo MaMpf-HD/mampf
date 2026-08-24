@@ -8,6 +8,9 @@ module Seeds
     extend self
 
     PASSWORD = "zitrone-diskette-vorhang-42".freeze
+    # Two accounts keep an outdated password policy so that the forced password
+    # change can be tried out; everyone else gets in without the detour.
+    STALE_PASSWORD_ACCOUNTS = ["student5@mampf.edu", "moded@mampf.edu"].freeze
     ENROLMENT_DESCRIPTION = "Anmeldung zur Veranstaltung".freeze
     TUTORIAL_DESCRIPTION = "Anmeldung zu den Übungsgruppen".freeze
     TALK_DESCRIPTION = "Vergabe der Vortragsthemen".freeze
@@ -24,6 +27,7 @@ module Seeds
       Seeds::EnrichSupport.enrich!
       # last, so that the accounts the demo scenarios create are usable too
       reset_passwords!
+      stage_password_policy!
       report!
     end
 
@@ -68,6 +72,19 @@ module Seeds
                                                                 capacity: 12)
         open_campaign!(seminar_for(term), TALK_DESCRIPTION, items_count: 8)
       end
+    end
+
+    # Setting a password marks the account as following the current policy, so
+    # the two demo accounts are put back afterwards. No-op until the columns
+    # exist (PR #1141).
+    def stage_password_policy!
+      ensure_non_production!
+      return unless User.column_names.include?("password_policy_version")
+
+      # rubocop:disable Rails/SkipsModelValidations
+      User.where(email: STALE_PASSWORD_ACCOUNTS)
+          .update_all(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     # The demo scenarios set their deadlines a week out, which is useless in a
