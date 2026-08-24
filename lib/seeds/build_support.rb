@@ -17,11 +17,11 @@ module Seeds
       require "factory_bot_rails"
 
       advance_one_year!
-      remove_announcements!
       Demo::SetupSupport.setup!
       Demo::CampaignSetupSupport.setup!
       add_running_campaigns!
       extend_open_deadlines!
+      Seeds::EnrichSupport.enrich!
       # last, so that the accounts the demo scenarios create are usable too
       reset_passwords!
       report!
@@ -56,13 +56,6 @@ module Seeds
         user.unlock_token = nil
         user.save!
       end
-    end
-
-    # The seeded announcements are stale development notices that greet
-    # everyone on the home page.
-    def remove_announcements!
-      ensure_non_production!
-      Announcement.destroy_all
     end
 
     # Registration campaigns that are open right now, in the current term and
