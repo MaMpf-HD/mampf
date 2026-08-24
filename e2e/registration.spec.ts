@@ -21,7 +21,7 @@ test("can sign up and confirm the account", async ({ page, request }) => {
     "Your email address has been confirmed.",
   );
 
-  await new LoginPage(page).login(email, "password");
+  await new LoginPage(page).login(email, "correct-horse-battery-staple");
 
   await expect(page).toHaveURL(/\/profile\/edit/);
   await expect(page.getByRole("alert")).toContainText(
