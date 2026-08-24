@@ -468,6 +468,57 @@ RSpec.describe("Media", type: :request) do
     end
   end
 
+  describe "POST /api/webhooks/media/:id/transcription_failed", :mampfsearch do
+    let(:medium) { create(:lecture_medium, :with_video) }
+    let(:secret) { "test-secret-key-at-least-32-characters-long" }
+    let(:auth_headers) do
+      token = SearchApiToken.generate(scope: transcription_failed_path(medium))
+      { "Authorization" => "Bearer #{token}" }
+    end
+
+    around do |example|
+      original = ENV.fetch("MAMPFSEARCH_API_SECRET", nil)
+      ENV["MAMPFSEARCH_API_SECRET"] = secret
+      example.run
+    ensure
+      ENV["MAMPFSEARCH_API_SECRET"] = original
+    end
+
+    it "marks the medium as temporarily failed with valid tokens" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcription_failed,
+        ttl: 5.minutes
+      )
+
+      post transcription_failed_path(medium),
+           params: { token: token, error: "Whisper unavailable" },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:ok)
+      medium.reload
+      expect(medium.transcription_status).to eq("failed_temporarily")
+      expect(medium.transcription_attempts).to eq(1)
+      expect(medium.transcription_error).to eq("Whisper unavailable")
+    end
+
+    it "marks the medium as permanently failed at the attempt limit" do
+      medium.update!(transcription_attempts: SearchClient::MAX_TRANSCRIPTION_ATTEMPTS - 1)
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcription_failed,
+        ttl: 5.minutes
+      )
+
+      post transcription_failed_path(medium),
+           params: { token: token },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(medium.reload.transcription_status).to eq("failed_permanently")
+    end
+  end
+
   describe "GET /media/:id/download/:sort" do
     let(:restricted_medium) { create(:lecture_medium, :with_manuscript) }
     let(:free_medium) { create(:lecture_medium, :with_manuscript, :released) }

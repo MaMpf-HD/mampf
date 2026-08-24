@@ -33,6 +33,9 @@ RSpec.describe(Mampfsearch::IngestionService, :mampfsearch) do
           ),
           transcript_upload_url: a_string_matching(
             %r{/api/webhooks/media/#{medium.id}/transcripts\?token=}
+          ),
+          transcription_failed_url: a_string_matching(
+            %r{/api/webhooks/media/#{medium.id}/transcription_failed\?token=}
           )
         )
       )

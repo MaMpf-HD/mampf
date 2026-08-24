@@ -83,6 +83,25 @@ RSpec.describe(SearchClient, :mampfsearch) do
       end.to raise_error(SearchClient::TimeoutError)
     end
 
+    it "includes the transcription failure callback URL when provided" do
+      fake_client = double("client")
+      allow(fake_client).to receive(:headers).and_return(fake_client)
+      expect(fake_client).to receive(:post).with("/lesson/ingest", params: hash_including(
+        transcription_failed_url: "http://failure.url"
+      )).and_return(fake_response(200,
+                                  '{"status":"queued"}'))
+
+      allow(pool).to receive(:with) { |&block| block.call(fake_client) }
+
+      client.transcribe_lesson(
+        media_rails_id: 1,
+        course_rails_id: 3,
+        video_url: "http://video.url",
+        transcript_upload_url: "http://upload.url",
+        transcription_failed_url: "http://failure.url"
+      )
+    end
+
     it "raises ServiceUnavailableError on connection failure" do
       fake_client = double("client")
       allow(fake_client).to receive(:headers).and_return(fake_client)

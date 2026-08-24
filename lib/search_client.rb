@@ -33,13 +33,18 @@ class SearchClient
 
   # rubocop:disable Metrics/ParameterLists
   def transcribe_lesson(media_rails_id:, course_rails_id:, video_url:,
-                        transcript_upload_url:, lecture_rails_id: nil, lesson_rails_id: nil)
+                        transcript_upload_url:, transcription_failed_url: nil,
+                        lecture_rails_id: nil, lesson_rails_id: nil)
     payload = {
       media_rails_id: media_rails_id,
       course_rails_id: course_rails_id,
       video_url: video_url,
       transcript_upload_url: transcript_upload_url
     }
+    if transcription_failed_url.present?
+      payload[:transcription_failed_url] =
+        transcription_failed_url
+    end
 
     payload[:lecture_rails_id] = lecture_rails_id if lecture_rails_id.present?
     payload[:lesson_rails_id] = lesson_rails_id if lesson_rails_id.present?

@@ -21,14 +21,22 @@ module Mampfsearch
         purpose: :transcript,
         ttl: TranscriptionToken::TRANSCRIPT_TTL
       )
+      failed_token = TranscriptionToken.generate(
+        medium_id: @medium.id,
+        purpose: :transcription_failed,
+        ttl: TranscriptionToken::FAILED_TTL
+      )
 
       routes = Rails.application.routes.url_helpers
       video_stream_path = routes.transcription_stream_video_medium_path(@medium)
       transcript_upload_path = routes.add_transcript_path(@medium)
+      transcription_failed_path = routes.transcription_failed_path(@medium)
 
       video_url = "#{base_url}#{video_stream_path}?token=#{ERB::Util.url_encode(video_token)}"
       transcript_upload_url = "#{base_url}#{transcript_upload_path}?" \
                               "token=#{ERB::Util.url_encode(transcript_token)}"
+      transcription_failed_url = "#{base_url}#{transcription_failed_path}?" \
+                                 "token=#{ERB::Util.url_encode(failed_token)}"
 
       hierarchy = resolve_teachable_hierarchy
 
@@ -38,7 +46,8 @@ module Mampfsearch
         lecture_rails_id: hierarchy[:lecture_rails_id],
         course_rails_id: hierarchy[:course_rails_id],
         video_url: video_url,
-        transcript_upload_url: transcript_upload_url
+        transcript_upload_url: transcript_upload_url,
+        transcription_failed_url: transcription_failed_url
       )
     end
 

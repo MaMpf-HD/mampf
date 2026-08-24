@@ -2,6 +2,19 @@ require "rails_helper"
 
 RSpec.describe(TranscriptionToken, :mampfsearch) do
   describe ".verify!" do
+    it "supports a transcription failure callback token" do
+      token = described_class.generate(
+        medium_id: 42,
+        purpose: :transcription_failed,
+        ttl: described_class::FAILED_TTL
+      )
+
+      expect(described_class.verify!(token, purpose: :transcription_failed)).to include(
+        "medium_id" => 42,
+        "purpose" => "transcription_failed"
+      )
+    end
+
     it "verifies a token for its intended medium and purpose" do
       token = described_class.generate(
         medium_id: 42,

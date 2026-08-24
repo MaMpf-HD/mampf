@@ -70,18 +70,6 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
       described_class.perform_now
     end
-
-    it "skips enqueuing when MampfsearchHealth.ingest_available? is false" do
-      FactoryBot.create_list(:valid_medium, 3, :with_video,
-                             transcription_status: :not_transcribed)
-
-      RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
-      allow(MampfsearchHealth).to receive(:ingest_available?).and_return(false)
-
-      expect(MampfsearchIngestJob).not_to receive(:perform_later)
-
-      described_class.perform_now
-    end
   end
 
   describe "#reconcile_search_index" do

@@ -1,6 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:add_transcript]
+  skip_before_action :verify_authenticity_token, only: [:add_transcript,
+                                                        :transcription_failed]
   skip_before_action :authenticate_user!, only: [:play, :screenshot,
                                                  :chapters_vtt,
                                                  :references_vtt, :display,
@@ -10,7 +11,8 @@ class MediaController < ApplicationController
                                                  :geogebra, :inline_geogebra,
                                                  :download,
                                                  :transcription_stream_video,
-                                                 :add_transcript]
+                                                 :add_transcript,
+                                                 :transcription_failed]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
                                       :fill_media_select,
@@ -31,7 +33,8 @@ class MediaController < ApplicationController
                                              :geogebra, :inline_geogebra,
                                              :download,
                                              :transcription_stream_video,
-                                             :add_transcript]
+                                             :add_transcript,
+                                             :transcription_failed]
   after_action :store_access, only: [:play, :display]
   authorize_resource except: [:index, :new, :create, :search,
                               :fill_teachable_select, :fill_media_select,
@@ -39,7 +42,8 @@ class MediaController < ApplicationController
                               :render_import_media, :render_import_vertex,
                               :cancel_import_media, :cancel_import_vertex,
                               :transcription_stream_video,
-                              :add_transcript]
+                              :add_transcript,
+                              :transcription_failed]
   layout "administration"
 
   def current_ability
@@ -305,6 +309,24 @@ class MediaController < ApplicationController
     else
       head :bad_request
     end
+  end
+
+  def transcription_failed
+    return unless verify_search_api_token!
+    return unless verify_transcription_token!(purpose: :transcription_failed)
+
+    attempts = @medium.transcription_attempts + 1
+    status = if attempts >= SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
+      :failed_permanently
+    else
+      :failed_temporarily
+    end
+    @medium.update!(
+      transcription_status: status,
+      transcription_attempts: attempts,
+      transcription_error: params[:error].presence || "MampfSearch transcription failed."
+    )
+    head :ok
   end
 
   # play the video using thyme player

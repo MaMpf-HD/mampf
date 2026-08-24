@@ -34,12 +34,6 @@ class MampfsearchSyncJob < ApplicationJob
     end
 
     def feed_next_batch
-      unless MampfsearchHealth.ingest_available?
-        Rails.logger.info("Skipping batch feed: " \
-                          "MampfSearch ingestion pipeline is currently offline.")
-        return
-      end
-
       in_flight = Medium.where(transcription_status: :queued).count
       return if in_flight >= SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS
 

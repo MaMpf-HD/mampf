@@ -396,6 +396,10 @@ Rails.application.routes.draw do
        to: "media#add_transcript",
        as: "add_transcript"
 
+  post "api/webhooks/media/:id/transcription_failed",
+       to: "media#transcription_failed",
+       as: "transcription_failed"
+
   get "media/search",
       to: "media#search",
       as: "search_media"
