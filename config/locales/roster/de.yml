@@ -137,6 +137,13 @@ de:
       add_student_placeholder: 'student@example.com'
       confirm_remove: 'Bist Du sicher, dass Du diesen Studierenden entfernen möchtest?'
       confirm_delete_group: 'Bist Du sicher, dass Du diese Gruppe löschen möchtest?'
+      confirm_delete_group_with_registrations: 'Diese Gruppe löschen? Mitgelöscht wird dabei, was ihr abgeschlossenes Anmeldeverfahren hinterlassen hat: %{total}, davon %{confirmed}.'
+      confirm_delete_group_total_count:
+        one: '1 Anmeldung'
+        other: '%{count} Anmeldungen'
+      confirm_delete_group_confirmed_count:
+        one: '1 bestätigte'
+        other: '%{count} bestätigte'
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
       search: 'Suchen'

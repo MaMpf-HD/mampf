@@ -12,6 +12,21 @@ module LecturesHelper
     lecture.registration_campaigns.any?(&:open_for_registrations?)
   end
 
+  # Deleting a lecture deletes its campaigns and every registration in them,
+  # so the confirmation counts both.
+  def lecture_destruction_confirmation(lecture)
+    campaigns = lecture.registration_campaigns.count
+    return t("confirmation.generic") if campaigns.zero?
+
+    registrations = Registration::UserRegistration
+                    .where(registration_campaign: lecture.registration_campaigns).count
+
+    t("admin.lecture.confirm_delete_with_campaigns",
+      campaigns: t("admin.lecture.confirm_delete_campaigns_count", count: campaigns),
+      registrations: t("admin.lecture.confirm_delete_registrations_count",
+                       count: registrations))
+  end
+
   # is the current user allowed to delete the given lecture and is it
   # irrelevant enough to be able to do so?
   def lecture_deletable?(lecture)

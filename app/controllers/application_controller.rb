@@ -96,6 +96,16 @@ class ApplicationController < ActionController::Base
                         })
   end
 
+  # A seminar lists its talks twice on the edit page: as group tiles and in the
+  # content card above them. Adding or deleting one has to reach both.
+  def refresh_seminar_content_stream(lecture)
+    return nil unless lecture&.seminar?
+
+    turbo_stream.update("lecture-content-card",
+                        partial: "lectures/edit/seminar_content",
+                        locals: { lecture: lecture })
+  end
+
   protected
 
     def configure_permitted_parameters
