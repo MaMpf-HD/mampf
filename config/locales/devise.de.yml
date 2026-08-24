@@ -121,9 +121,9 @@ de:
         didn_t_receive_confirmation_instructions: 'Bestätigungsmail nicht erhalten?'
         didn_t_receive_unlock_instructions: 'Anleitung zum Entsperren nicht erhalten?'
     unlocks:
-      send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren können."
+      send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
-      unlocked: "Dein Account wurde entsperrt. Du bist jetzt angemeldet."
+      unlocked: "Dein Account wurde entsperrt. Bitte melde Dich an."
       new:
         resend_unlock_instructions: "Anleitung zum Entsperren erneut senden"
     edit:
