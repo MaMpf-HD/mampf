@@ -9,6 +9,21 @@ RSpec.describe(User, type: :model) do
     expect(FactoryBot.build(:user)).to be_valid
   end
 
+  it "cannot be created without consent to the privacy policy" do
+    user = build(:user, consents: false)
+
+    expect(user).not_to be_valid
+    expect(user.errors[:consents]).to include(
+      I18n.t("activerecord.errors.models.user.attributes.consents.accepted")
+    )
+  end
+
+  it "stamps the consent date when consent is given" do
+    user = create(:user)
+
+    expect(user.consented_at).to be_present
+  end
+
   it "uses the profile image uploader for user images" do
     user = build(:user)
     file = fixture_file("image.png")

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_24_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_24_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1072,7 +1072,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_24_000000) do
     t.datetime "updated_at", precision: nil, null: false
     t.boolean "admin"
     t.integer "subscription_type"
-    t.boolean "consents"
+    t.boolean "consents", default: false, null: false
     t.datetime "consented_at", precision: nil
     t.text "name"
     t.text "homepage"

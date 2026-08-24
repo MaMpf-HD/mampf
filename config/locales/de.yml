@@ -4252,6 +4252,8 @@ de:
               does_not_match_tutorial: stimmt nicht mit der Veranstaltung des Tutoriums überein.
         user:
           attributes:
+            consents:
+              accepted: 'Du musst der Datenschutzerklärung zustimmen, um ein Konto anzulegen.'
             courses:
               blank: 'Es muss mindestens ein Modul abonniert werden.'
             name:
