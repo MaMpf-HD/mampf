@@ -34,6 +34,19 @@ RSpec.describe("Auth passwords", type: :request) do
     end
   end
 
+  describe "POST /users/password (reset request)" do
+    it "stops sending reset emails after the per-source limit (AUTH-H02)" do
+      Rails.cache.clear
+      user = create(:confirmed_user_en)
+      ActionMailer::Base.deliveries.clear
+
+      params = { user: { email: user.email } }
+      6.times { post(user_password_path, params: params) }
+
+      expect(ActionMailer::Base.deliveries.count).to eq(5)
+    end
+  end
+
   describe "PUT /users/password" do
     it "updates the password from a valid reset token" do
       user = create(:confirmed_user_en)
