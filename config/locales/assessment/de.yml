@@ -270,6 +270,7 @@ de:
       no_submissions: 'Keine Abgaben für diese Hausaufgabe.'
       no_submission_zone: 'Keine Abgaben'
       no_submission_badge: 'Keine Abgabe'
+      marked_as_participated_badge: 'Als teilgenommen markiert'
       has_been_moved_badge: ' Wurde in ein anderes Tutorium verschoben'
       no_tutorial_badge: 'Keinem Übungsgruppe zugeordnet'
       participated: 'teilgenommen'

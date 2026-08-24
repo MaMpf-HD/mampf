@@ -270,6 +270,7 @@ en:
       no_submissions: 'No submissions for this assignment.'
       no_submission_zone: 'No submissions'
       no_submission_badge: 'No submission'
+      marked_as_participated_badge: 'Marked as participated'
       has_been_moved_badge: ' Has been moved to another tutorial'
       no_tutorial_badge: 'Not belonging to any tutorial'
       participated: 'participated'
