@@ -25,16 +25,6 @@ RSpec.describe("Auth passwords", type: :request) do
       expect(response).to redirect_to(new_user_session_path)
     end
 
-    it "does not send mail for an unknown email in paranoid mode" do
-      expect do
-        post(user_password_path, params: { user: { email: "unknown@example.com" } })
-      end.not_to change(ActionMailer::Base.deliveries, :count)
-
-      expect(response).to redirect_to(new_user_session_path)
-    end
-  end
-
-  describe "POST /users/password (reset request)" do
     it "stops sending reset emails after the per-source limit (AUTH-H02)" do
       Rails.cache.clear
       user = create(:confirmed_user_en)
@@ -44,6 +34,14 @@ RSpec.describe("Auth passwords", type: :request) do
       6.times { post(user_password_path, params: params) }
 
       expect(ActionMailer::Base.deliveries.count).to eq(5)
+    end
+
+    it "does not send mail for an unknown email in paranoid mode" do
+      expect do
+        post(user_password_path, params: { user: { email: "unknown@example.com" } })
+      end.not_to change(ActionMailer::Base.deliveries, :count)
+
+      expect(response).to redirect_to(new_user_session_path)
     end
   end
 
