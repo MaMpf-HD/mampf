@@ -6,7 +6,7 @@ RSpec.describe("Auth confirmations", type: :request) do
   end
 
   describe "GET /users/confirmation" do
-    it "confirms a user and signs them in" do
+    it "confirms a user and sends them to the sign-in page" do
       user = create(:user, locale: "en", consents: true,
                            consented_at: Time.zone.now)
       token = devise_mail_token(ActionMailer::Base.deliveries.last,
@@ -15,11 +15,30 @@ RSpec.describe("Auth confirmations", type: :request) do
       get user_confirmation_path,
           params: { confirmation_token: token, locale: "en" }
 
-      expect(response).to redirect_to(edit_profile_path)
+      expect(response).to redirect_to(new_user_session_path)
       expect(user.reload).to be_confirmed
 
       get edit_profile_path
-      expect(response).to have_http_status(:ok)
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "rejects a link that has outlived the confirmation window" do
+      user = create(:user, locale: "en", consents: true,
+                           consented_at: Time.zone.now)
+      token = devise_mail_token(ActionMailer::Base.deliveries.last,
+                                :confirmation_token)
+      user.update!(confirmation_sent_at: 1.year.ago)
+
+      get user_confirmation_path,
+          params: { confirmation_token: token, locale: "en" }
+
+      expect(response.body).to include(
+        I18n.t("devise.confirmations.new.resend_confirmation_instructions")
+      )
+      expect(user.reload).not_to be_confirmed
+
+      get edit_profile_path
+      expect(response).to redirect_to(new_user_session_path)
     end
 
     it "rejects an invalid token" do
@@ -56,7 +75,7 @@ RSpec.describe("Auth confirmations", type: :request) do
       get user_confirmation_path,
           params: { confirmation_token: token, locale: "en" }
 
-      expect(response).to redirect_to(edit_profile_path)
+      expect(response).to redirect_to(root_path)
       expect(user.reload.email).to eq(new_email)
       expect(user.unconfirmed_email).to be_nil
     end
