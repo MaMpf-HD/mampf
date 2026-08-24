@@ -993,7 +993,8 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: { confirmations: "confirmations",
                                     registrations: "registrations",
-                                    sessions: "sessions" }
+                                    sessions: "sessions",
+                                    unlocks: "unlocks" }
   # users routes
 
   get "users/elevate",
