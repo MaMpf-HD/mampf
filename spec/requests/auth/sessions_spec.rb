@@ -132,6 +132,36 @@ RSpec.describe("Auth sessions", type: :request) do
       )
     end
 
+    it "counts padded spellings of an address into the same limit" do
+      Rails.cache.clear
+      params = { user: { email: user.email, password: "wrong-password" } }
+      padded = { user: { email: " #{user.email.upcase} ",
+                         password: "wrong-password" } }
+
+      10.times { post(user_session_path, params: params, as: :turbo_stream) }
+      post(user_session_path, params: padded, as: :turbo_stream)
+
+      wait = ActionController::Base.helpers.distance_of_time_in_words(
+        SessionsController::THROTTLE_WINDOW
+      )
+      expect(response.body).to include(
+        I18n.t("devise.failure.too_many_requests", wait: wait)
+      )
+    end
+
+    it "explains the lock on the html path as well" do
+      user.lock_access!
+
+      post user_session_path, params: {
+        user: { email: user.email, password: password }
+      }
+
+      expect(flash[:alert]).to eq(
+        I18n.t("devise.failure.locked_with_email_and_time",
+               unlock_in: unlock_in_words)
+      )
+    end
+
     it "keeps the failure generic for an unconfirmed account" do
       user.update!(confirmed_at: nil)
 

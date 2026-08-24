@@ -5,7 +5,7 @@ class SessionsController < Devise::SessionsController
   # not collectively limited; only repeated attempts against the SAME account
   # from the SAME source are throttled. Cache-backed (mem_cache_store in prod).
   rate_limit to: 10, within: THROTTLE_WINDOW, only: :create,
-             by: -> { "#{request.remote_ip}:#{params.dig(:user, :email).to_s.downcase}" },
+             by: -> { "#{request.remote_ip}:#{throttle_email}" },
              with: -> { respond_with_flash(:alert, throttled_message(THROTTLE_WINDOW)) }
 
   # Removes the flash message that Devise sets on successful sign in
@@ -30,9 +30,10 @@ class SessionsController < Devise::SessionsController
 
     # `signed_in?` re-runs the strategies, and with them the password check
     # that just failed; the session already knows the answer.
-    if request.post? && request.format.turbo_stream? &&
-       !warden.authenticated?(resource_name)
-      flash.now[:alert] = failure_message
+    failed = request.post? && !warden.authenticated?(resource_name)
+    flash.now[:alert] = failure_message if failed
+
+    if failed && request.format.turbo_stream?
       render turbo_stream: stream_flash, status: :unprocessable_content
     else
       super

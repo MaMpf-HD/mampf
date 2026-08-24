@@ -81,6 +81,13 @@ class ApplicationController < ActionController::Base
     resource.is_a?(User) && resource.sign_in_count == 1
   end
 
+  # The submitted address as Devise will look it up, so that padded or
+  # differently cased spellings of one address share a rate-limit bucket
+  # (`strip_whitespace_keys` and `case_insensitive_keys`).
+  def throttle_email
+    params.dig(:user, :email).to_s.strip.downcase
+  end
+
   # Tells a visitor whose request the rate limiter refused how long to wait.
   def throttled_message(window)
     I18n.t("devise.failure.too_many_requests",
