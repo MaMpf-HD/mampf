@@ -16,7 +16,7 @@
       <div
         class="d-flex flex-column justify-content-between"
         style="width: fit-content;"
-      > <%# herb:disable html-no-duplicate-attributes %>
+      >
         <% @submission.users.each do |user| %>
           <div style="width: fit-content;">
             <%= user.tutorial_name %>
@@ -43,7 +43,7 @@
         data-bs-toggle="tooltip"
         data-id="<%= @submission.id %>"
         title="<%= t('buttons.copy_email_to_clipboard') %>"
-      > <%# herb:disable html-no-duplicate-attributes %>
+      >
         <span
           class="clipboardpopuptext token-clipboard-popup"
           data-id="<%= @submission.id %>"
@@ -85,7 +85,7 @@
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% for assignment_task in tasks %>
-      <td class="sticky-col task-col"><%# herb:disable html-no-duplicate-attributes %>
+      <td class="sticky-col task-col"> <%# herb:disable html-no-duplicate-attributes %>
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
     <% end %>
