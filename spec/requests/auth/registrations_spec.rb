@@ -134,6 +134,21 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response.body).to include(edit_user_registration_path(locale: :de))
     end
 
+    it "keeps the switched locale across a submit" do
+      user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
+      sign_in user
+
+      get edit_user_registration_path(locale: :de)
+      form_action = response.body[/action="([^"]*users[^"]*)"/, 1].sub("&amp;", "&")
+
+      put form_action, params: {
+        user: { email: user.email, current_password: "not-the-password",
+                password: "", password_confirmation: "" }
+      }
+
+      expect(response.body).to include(I18n.with_locale(:de) { I18n.t("devise.edit.title") })
+    end
+
     it "switches locale for signed-in users when a locale param is provided" do
       user = create(:confirmed_user_en)
       sign_in user
