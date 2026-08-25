@@ -139,10 +139,17 @@ en:
     edit:
       title: "Change login data"
       email: "Email address"
+      email_section: "Email address"
+      email_hint: >
+        We send a confirmation link to the new address. Until you follow it,
+        the old one stays in use.
+      password_section: "Change password (optional)"
+      password_hint: >
+        Leave both fields empty if you only want to change your email address.
       current_password: "Current password"
       need_password: "We need your current password to confirm these changes."
       no_change: "Leave empty if you do not want to change your password."
-      update: "Update"
+      update: "Save"
       new_password: "New password"
       confirm_new_password: "Confirm new password"
   errors:

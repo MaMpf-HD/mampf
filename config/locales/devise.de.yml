@@ -135,11 +135,18 @@ de:
         resend_unlock_instructions: "Anleitung zum Entsperren erneut senden"
     edit:
       title: "Zugangsdaten ändern"
-      email: "Emailaddresse"
+      email: "E-Mail-Adresse"
+      email_section: "E-Mail-Adresse"
+      email_hint: >
+        Wir schicken einen Bestätigungslink an die neue Adresse. Bis Du ihn
+        anklickst, gilt die alte weiter.
       current_password: "Aktuelles Passwort"
       need_password: "Wir benötigen Dein aktuelles Passwort, um die Änderung zu bestätigen."
       no_change: "Freilassen, wenn Du das Passwort nicht ändern willst."
-      update: "Update"
+      password_section: "Passwort ändern (optional)"
+      password_hint: >
+        Beide Felder leer lassen, wenn Du nur Deine E-Mail-Adresse änderst.
+      update: "Speichern"
       new_password: "Neues Passwort"
       confirm_new_password: "Bestätigung des neuen Passworts"
   errors:
