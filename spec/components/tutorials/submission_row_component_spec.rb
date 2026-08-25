@@ -76,10 +76,8 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
     context "when flipper is enabled and assignment is assessable" do
       before do
-        Flipper.enable(:assessment_grading)
         allow(assignment).to receive(:assessable?).and_return(true)
       end
-      after { Flipper.disable(:assessment_grading) }
 
       it "returns true" do
         expect(component_tutor.grading_enabled?).to eq(true)

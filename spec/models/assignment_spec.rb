@@ -43,16 +43,6 @@ RSpec.describe(Assignment, type: :model) do
   end
 
   describe "non_submitters_tutorial" do
-    before do
-      Flipper.enable(:assessment_grading)
-      Flipper.enable(:registration_campaigns)
-      Flipper.enable(:roster_maintenance)
-    end
-    after do
-      Flipper.disable(:assessment_grading)
-      Flipper.disable(:registration_campaigns)
-      Flipper.disable(:roster_maintenance)
-    end
     it "returns users who have not submitted for the assignment" do
       assignment = FactoryBot.create(:valid_assignment, title: "usual BS")
       lecture = assignment.lecture

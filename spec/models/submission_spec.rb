@@ -192,21 +192,13 @@ RSpec.describe(Submission, type: :model) do
 
     context "for old assignment created before assessment flag was enabled" do
       let(:lecture) { FactoryBot.create(:lecture) }
-      let(:assignment) { FactoryBot.create(:assignment, title: "usual BS", lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :without_assessment,
+                          title: "usual BS", lecture: lecture)
+      end
       let(:user1) { FactoryBot.create(:confirmed_user) }
       let(:user2) { FactoryBot.create(:confirmed_user) }
       let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
-
-      around do |example|
-        Flipper.enable(:assessment_grading)
-        Flipper.enable(:registration_campaigns)
-        Flipper.enable(:roster_maintenance)
-        example.run
-      ensure
-        Flipper.disable(:assessment_grading)
-        Flipper.disable(:registration_campaigns)
-        Flipper.disable(:roster_maintenance)
-      end
 
       it "returns nil" do
         submission = FactoryBot.create(:submission, assignment: assignment,
@@ -218,17 +210,6 @@ RSpec.describe(Submission, type: :model) do
     end
 
     context "when assessment flag is enabled and new assignment" do
-      before do
-        Flipper.enable(:assessment_grading)
-        Flipper.enable(:registration_campaigns)
-        Flipper.enable(:roster_maintenance)
-      end
-      after do
-        Flipper.disable(:assessment_grading)
-        Flipper.disable(:registration_campaigns)
-        Flipper.disable(:roster_maintenance)
-      end
-
       let!(:assignment) { FactoryBot.create(:valid_assignment, title: "usual BS") }
       let!(:assessment) do
         assignment.assessment.tap do |record|
@@ -267,7 +248,10 @@ RSpec.describe(Submission, type: :model) do
 
     context "for old assignment created before assessment flag was enabled" do
       let(:lecture) { FactoryBot.create(:lecture) }
-      let(:assignment) { FactoryBot.create(:assignment, title: "usual BS", lecture: lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :without_assessment,
+                          title: "usual BS", lecture: lecture)
+      end
       let(:user1) { FactoryBot.create(:confirmed_user) }
       let(:user2) { FactoryBot.create(:confirmed_user) }
       let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
@@ -276,30 +260,11 @@ RSpec.describe(Submission, type: :model) do
         submission = FactoryBot.create(:submission, assignment: assignment,
                                                     tutorial: tutorial,
                                                     users: [user1, user2])
-        Flipper.enable(:assessment_grading)
-        Flipper.enable(:registration_campaigns)
-        Flipper.enable(:roster_maintenance)
-
         expect(submission.graded_tasks_points).to be_nil
-
-        Flipper.disable(:assessment_grading)
-        Flipper.disable(:registration_campaigns)
-        Flipper.disable(:roster_maintenance)
       end
     end
 
     context "when assessment flag is enabled and new assignment" do
-      before do
-        Flipper.enable(:assessment_grading)
-        Flipper.enable(:registration_campaigns)
-        Flipper.enable(:roster_maintenance)
-      end
-      after do
-        Flipper.disable(:assessment_grading)
-        Flipper.disable(:registration_campaigns)
-        Flipper.disable(:roster_maintenance)
-      end
-
       let!(:assignment) do
         FactoryBot.create(:valid_assignment, title: "usual BS",
                                              deadline: 1.hour.from_now)

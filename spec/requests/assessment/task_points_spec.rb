@@ -32,17 +32,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
   end
 
   before do
-    Flipper.enable(:assessment_grading)
-    Flipper.enable(:registration_campaigns)
-    Flipper.enable(:roster_maintenance)
     assignment.reload
     assessment.reload
-  end
-
-  after do
-    Flipper.disable(:assessment_grading)
-    Flipper.disable(:registration_campaigns)
-    Flipper.disable(:roster_maintenance)
   end
 
   # PATCH update_team_multi (tutorial)

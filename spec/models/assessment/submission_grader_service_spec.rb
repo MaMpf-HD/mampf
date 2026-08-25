@@ -16,16 +16,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
   let(:points_by_task_id) { { task.id => "7" } }
 
   before do
-    Flipper.enable(:assessment_grading)
-    Flipper.enable(:registration_campaigns)
-    Flipper.enable(:roster_maintenance)
     assignment.reload
-  end
-
-  after do
-    Flipper.disable(:assessment_grading)
-    Flipper.disable(:registration_campaigns)
-    Flipper.disable(:roster_maintenance)
   end
 
   describe ".init_participation" do
