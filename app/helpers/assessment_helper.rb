@@ -62,7 +62,7 @@ module AssessmentHelper
     end
   end
 
-  def non_submitter_status(movement, host_tutorial: nil)
+  def non_submitter_status(movement, host_tutorial)
     return unless movement
 
     if never_participated?(movement)
@@ -152,10 +152,6 @@ module AssessmentHelper
     end
 
     def movement_msg_assignment(movement)
-      movement_info_for_user_assignment_msg(
-        movement[:participated_tutorial_title],
-        movement[:new_tutorial_title]
-      )
       t("assessment.grading_tutorial.user_moved_tutorial",
         old_tutorial: movement[:participated_tutorial_title] ||
                                   t("assessment.grading_tutorial.no_tutorial"),
