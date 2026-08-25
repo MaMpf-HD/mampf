@@ -1,29 +1,39 @@
 import { Controller } from "@hotwired/stimulus";
-import { zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
-import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
-import * as zxcvbnEnPackage from "@zxcvbn-ts/language-en";
-import * as zxcvbnDePackage from "@zxcvbn-ts/language-de";
 
-let configuredLanguage;
+// The dictionaries weigh more than the whole application bundle, and only the
+// three Devise password forms need them, so they are fetched when one appears.
+let loading;
 
-function setupZxcvbnOptions() {
+function currentLanguage() {
   const locale = document.body?.dataset.locale || document.documentElement.lang || "en";
-  const language = locale.toLowerCase().startsWith("de") ? "de" : "en";
+  return locale.toLowerCase().startsWith("de") ? "de" : "en";
+}
 
-  if (configuredLanguage === language) return;
+async function loadZxcvbn() {
+  const language = currentLanguage();
+  const [core, common, languagePackage] = await Promise.all([
+    import("@zxcvbn-ts/core"),
+    import("@zxcvbn-ts/language-common"),
+    language === "de"
+      ? import("@zxcvbn-ts/language-de")
+      : import("@zxcvbn-ts/language-en"),
+  ]);
 
-  const languagePackage = language === "de" ? zxcvbnDePackage : zxcvbnEnPackage;
-
-  zxcvbnOptions.setOptions({
+  core.zxcvbnOptions.setOptions({
     translations: languagePackage.translations,
-    graphs: zxcvbnCommonPackage.adjacencyGraphs,
+    graphs: common.adjacencyGraphs,
     dictionary: {
-      ...zxcvbnCommonPackage.dictionary,
+      ...common.dictionary,
       ...languagePackage.dictionary,
     },
   });
 
-  configuredLanguage = language;
+  return core.zxcvbn;
+}
+
+function zxcvbnReady() {
+  loading ||= loadZxcvbn();
+  return loading;
 }
 
 export default class extends Controller {
@@ -39,10 +49,10 @@ export default class extends Controller {
   };
 
   connect() {
-    setupZxcvbnOptions();
+    zxcvbnReady();
   }
 
-  check() {
+  async check() {
     if (this.hasPasswordTarget) {
       this.clearFieldError(this.passwordTarget);
     }
@@ -73,6 +83,9 @@ export default class extends Controller {
     if (this.hasLocalIdentifiersValue) {
       userInputs.push(...this.localIdentifiersValue);
     }
+
+    const zxcvbn = await zxcvbnReady();
+    if (this.passwordTarget.value !== password) return;
 
     const result = zxcvbn(password, userInputs);
     let score = result.score;
