@@ -118,9 +118,8 @@ class SubmissionRowComponent < ViewComponent::Base
   def users_movement_map
     return {} unless @assignment.past_deadline?
 
-    helpers.users_movement_map_cache.fetch(@assignment.id) do
+    helpers.users_movement_map_cache[@assignment.id] ||=
       helpers.calculate_user_movement_map_assignment(@assignment, @lecture)
-    end
   end
 
   def movement_info_for_user(user)

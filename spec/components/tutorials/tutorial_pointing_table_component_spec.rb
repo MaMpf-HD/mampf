@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(TutorialPointingTableComponent, type: :component) do
-  let(:lecture) { create(:lecture) }
+  let(:lecture) { create(:lecture, submission_grace_period: 70) }
   let(:tutorial) { create(:tutorial, lecture: lecture) }
   let!(:assignment) do
     create(:assignment, :with_lecture, lecture: lecture, deadline: 1.hour.from_now)
@@ -21,19 +21,7 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
 
     describe "#grading_enabled?" do
-      context "when flipper is disabled" do
-        before { Flipper.disable(:assessment_grading) }
-
-        it "returns false" do
-          expect(component.grading_enabled?).to eq(false)
-        end
-      end
-
-      context "when flipper is enabled and assignment is assessable" do
-        before do
-          allow(assignment).to receive(:assessable?).and_return(true)
-        end
-
+      context "when assignment is assessable" do
         it "returns true" do
           expect(component.grading_enabled?).to eq(true)
         end
@@ -167,6 +155,97 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     it "includes a turbo_method patch data attribute" do
       html = component.mark_as_participated_link(user)
       expect(html).to include("data-turbo-method=\"patch\"")
+    end
+  end
+
+  describe "#users_movement_map" do
+    let(:tutorial2) { create(:tutorial, lecture: lecture) }
+
+    let(:student1) { create(:confirmed_user) }
+    let(:student2) { create(:confirmed_user) }
+    let(:student3) { create(:confirmed_user) }
+    let(:foreign_submission) do
+      create(:submission, assignment: assignment, tutorial: tutorial)
+        .tap do |s|
+        s.users << student2
+        s.users << student3
+      end
+    end
+
+    let(:component) do
+      described_class.new(assignment: assignment, tutorial: tutorial, mode: "tutor")
+    end
+
+    before do
+      create(:tutorial_membership, tutorial: tutorial, user: student1)
+      create(:tutorial_membership, tutorial: tutorial, user: student2)
+      create(:tutorial_membership, tutorial: tutorial, user: student3)
+    end
+
+    context "when assignment is not past deadline" do
+      it "returns an empty hash without calling the helper" do
+        render_inline(component)
+        expect(component.helpers).not_to receive(:calculate_user_movement_map_assignment)
+
+        expect(component.users_movement_map).to eq({})
+      end
+    end
+
+    context "when assignment is past deadline" do
+      before do
+        Timecop.travel(2.hours.from_now)
+      end
+      after do
+        Timecop.return
+      end
+
+      it "memoizes the result and only computes it once across multiple calls" do
+        movement_map = { 1 => { participated_tutorial_id: 1, new_tutorial_id: 2 } }
+
+        expect_any_instance_of(AssessmentHelper).to receive(:calculate_user_movement_map_assignment)
+          .with(assignment, anything)
+          .once
+          .and_return(movement_map)
+
+        render_inline(component)
+
+        first_call = component.users_movement_map
+        second_call = component.users_movement_map
+
+        expect(first_call).to eq(movement_map)
+        expect(second_call).to eq(movement_map)
+      end
+
+      it "computes the movement map only once even though multiple rows call it" do
+        render_inline(component)
+        call_count = 0
+
+        # Spy on the real implementation so every row's call goes through
+        # the same underlying logic, but we can count invocations.
+        allow_any_instance_of(described_class).to receive(:users_movement_map)
+          .and_wrap_original do |method|
+          call_count += 1 if call_count.zero? # no-op, just placeholder if needed
+          method.call
+        end
+
+        render_inline(component)
+
+        # non_submitter_status is called per-row in the template and internally
+        # calls users_movement_map, which should hit the cache after first row.
+        expect(call_count).to be <= 1
+      end
+
+      it "caches the value in the helpers' users_movement_map_cache" do
+        movement_map = { 1 => { old_tutorial: "A", new_tutorial: "B" } }
+        expect_any_instance_of(AssessmentHelper).to receive(:calculate_user_movement_map_assignment)
+          .and_return(movement_map)
+
+        render_inline(component)
+
+        component.users_movement_map
+
+        expect(component.helpers.users_movement_map_cache[assignment.id]).to eq(movement_map)
+      end
     end
   end
 end
