@@ -15,26 +15,30 @@ module Seeds
     TUTORIAL_DESCRIPTION = "Anmeldung zu den Übungsgruppen".freeze
     TALK_DESCRIPTION = "Vergabe der Vortragsthemen".freeze
 
+    # One transaction, so a build that fails halfway can be retried on the same
+    # dump instead of one that is already a year ahead.
     def build!
-      ensure_non_production!
+      ensure_development!
       require "factory_bot_rails"
 
-      advance_one_year!
-      Demo::SetupSupport.setup!
-      Demo::CampaignSetupSupport.setup!
-      add_running_campaigns!
-      extend_open_deadlines!
-      Seeds::EnrichSupport.enrich!
-      # last, so that the accounts the demo scenarios create are usable too
-      reset_passwords!
-      stage_password_policy!
+      ActiveRecord::Base.transaction do
+        advance_one_year!
+        Demo::SetupSupport.setup!
+        Demo::CampaignSetupSupport.setup!
+        add_running_campaigns!
+        extend_open_deadlines!
+        Seeds::EnrichSupport.enrich!
+        # last, so that the accounts the demo scenarios create are usable too
+        reset_passwords!
+        stage_password_policy!
+      end
       report!
     end
 
     # Moves the whole data set one year forward, terms and the dates that hang
     # off them alike, so that the current term stays current.
     def advance_one_year!
-      ensure_non_production!
+      ensure_development!
       # rubocop:disable Rails/SkipsModelValidations
       Term.update_all("year = year + 1")
       Term.update_all(shift(:submission_deletion_mail, :submission_deletion_reminder,
@@ -50,7 +54,7 @@ module Seeds
     # Every account gets the same documented password, long and strong enough
     # for the password policy, and starts out unlocked.
     def reset_passwords!
-      ensure_non_production!
+      ensure_development!
 
       User.find_each do |user|
         user.password = PASSWORD
@@ -65,7 +69,7 @@ module Seeds
     # Registration campaigns that are open right now, in the current term and
     # in the one after it, for a lecture and for a seminar each.
     def add_running_campaigns!
-      ensure_non_production!
+      ensure_development!
 
       [current_term, next_term].each do |term|
         open_campaign!(lecture_for(term), TUTORIAL_DESCRIPTION, items_count: 4,
@@ -78,7 +82,7 @@ module Seeds
     # the two demo accounts are put back afterwards. No-op until the columns
     # exist (PR #1141).
     def stage_password_policy!
-      ensure_non_production!
+      ensure_development!
       return unless User.column_names.include?("password_policy_version")
 
       # rubocop:disable Rails/SkipsModelValidations
@@ -90,7 +94,7 @@ module Seeds
     # The demo scenarios set their deadlines a week out, which is useless in a
     # dump someone restores months later.
     def extend_open_deadlines!
-      ensure_non_production!
+      ensure_development!
       # rubocop:disable Rails/SkipsModelValidations
       Registration::Campaign.open.update_all(registration_deadline: 1.year.from_now)
       # rubocop:enable Rails/SkipsModelValidations
@@ -99,8 +103,10 @@ module Seeds
     private
 
       # rubocop:disable Rails/Exit
-      def ensure_non_production!
-        abort("Cannot run in production!") if Rails.env.production?
+      def ensure_development!
+        return if Rails.env.development?
+
+        abort("This rebuilds the development dump: refusing to run in #{Rails.env}.")
       end
       # rubocop:enable Rails/Exit
 
