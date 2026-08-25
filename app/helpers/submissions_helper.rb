@@ -107,6 +107,8 @@ module SubmissionsHelper
   end
 
   def enabled_roster_for_lecture?(lecture)
+    return false unless lecture
+
     roster_cache[:enabled].fetch(lecture.id) do
       roster_cache[:enabled][lecture.id] = lecture.roster_managed?
     end

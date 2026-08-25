@@ -222,7 +222,7 @@ en:
       invalid_task_id: 'Invalid task %{task_id}.'
       invalid_points_value: 'Invalid points value for task %{task_id}.'
       assessment_not_found: 'Assessment for this assignment not found.'
-      cannot_score_not_grading_open_assignment: 'Points cannot be entered for this assignments.'
+      cannot_score_not_grading_open_assignment: 'Points cannot be entered for this assignment.'
       not_required_points: 'Points cannot be entered for assignments that do not require points.'
       participation_id_tutorial_id_mismatch: 'Participation %{participation_id} does not belong to tutorial %{tutorial_id}'
       submission_id_assignment_id_mismatch: 'Submission %{submission_id} does not belong to assignment %{assignment_id}.'
