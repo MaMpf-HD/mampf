@@ -51,7 +51,6 @@
                       submission: submission, mode: @mode,
                       assignment: @assignment, tutorial: @tutorial)) %>
                 <% end %>
-
                 <!-- Non-submitters + have grading records -->
                 <% @non_submitters.each do |user| %>
                   <% if user.assessment_participation_in_assignment(@assignment) %>
