@@ -70,6 +70,15 @@ RSpec.describe(User, type: :model) do
     expect(user).not_to be_valid
   end
 
+  it "lets a contributor delete their account", :password_strength do
+    teacher = create(:confirmed_user)
+    create(:lecture, teacher: teacher)
+
+    expect(teacher.archive_and_destroy("Archived Person")).to be_truthy
+    expect(User.exists?(teacher.id)).to be(false)
+    expect(User.where(archived: true).count).to eq(1)
+  end
+
   it "is invalid with a password shorter than 15 characters", :password_strength do
     user = FactoryBot.build(:user, password: "short-pass1")
     expect(user).not_to be_valid
