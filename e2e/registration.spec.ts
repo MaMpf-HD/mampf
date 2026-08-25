@@ -71,7 +71,6 @@ test("enforces password strength on sign up", async ({ page }) => {
   await page.getByLabel("Password", { exact: true }).fill("password123456789");
   await page.getByLabel("Password confirmation").fill("password123456789");
   await page.getByLabel(/I consent/).check();
-  await signUpPage.solveCaptcha();
   await signUpPage.submit();
 
   // Backend should reject it
