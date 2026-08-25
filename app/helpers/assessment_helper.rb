@@ -1,5 +1,7 @@
 # Helpers for the assessment area of the lecture edit page.
 module AssessmentHelper
+  include Rosters::UsersMovementCaching
+
   # The assessment tab shows the overview of all assessables, or the dashboard
   # of the one the URL names. The latter is what makes a dashboard link work
   # when it is opened in a new tab instead of clicked.
