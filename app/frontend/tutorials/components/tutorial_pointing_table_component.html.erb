@@ -69,6 +69,7 @@
                         submission: submission, mode: @mode,
                         assignment: @assignment, tutorial: tutorial)) %>
                   <% end %>
+
                   <!-- Non-submitters + have grading records -->
                   <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
                     <% if user.assessment_participation_in_assignment(@assignment) %>
@@ -120,6 +121,7 @@
             <!-- Non-submitters have or not have grading records -->
             <% @non_submitters.to_a.each do |user| %>
               <% status = non_submitter_status(user) %>
+
               <%= render(layout: "tutorials/components/excluded_user_row",
                        locals: { user: user,
                                  reason: status ? status[:message] : nil }) do %>
@@ -137,9 +139,8 @@
               <%= render(layout: "tutorials/components/excluded_user_row",
                        locals: { user: user,
                                  reason: t('assessment.grading_tutorial.no_tutorial_badge') }) do %>
-                                 yayyyy
-                <% end %>
-
+                yayyyy
+              <% end %>
             <% end %>
           </tbody>
         </table>
