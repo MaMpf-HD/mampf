@@ -6,6 +6,7 @@ de:
       weak: "Sehr schwach"
       fair: "Schwach"
       almost: "Fast — noch nicht stark genug"
+      mismatch: "Die Passwörter stimmen nicht überein."
       strong: "Stark"
       too_short: "Muss mindestens %{count} Zeichen lang sein"
     confirmations:
