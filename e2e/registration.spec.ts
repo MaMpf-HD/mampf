@@ -67,8 +67,12 @@ test("enforces password strength on sign up", async ({ page }) => {
   const email = `testuser_weak_${Date.now()}@example.com`;
   await page.getByLabel("Email").fill(email);
 
+  const meter = page.locator(".password-strength-meter");
+  await expect(meter).toBeHidden();
+
   // Test short password
   await page.getByLabel("Password", { exact: true }).fill("short");
+  await expect(meter).toBeVisible();
   await expect(page.getByText("Must be at least 15 characters")).toBeVisible();
 
   // Test weak password (denylist)

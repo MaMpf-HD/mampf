@@ -42,7 +42,9 @@ function zxcvbnReady() {
 }
 
 export default class extends Controller {
-  static targets = ["password", "passwordConfirmation", "email", "name", "meter", "feedback"];
+  static targets = ["password", "passwordConfirmation", "email", "name", "meter",
+    "meterContainer", "feedback"];
+
   static values = {
     weakText: String,
     fairText: String,
@@ -76,6 +78,7 @@ export default class extends Controller {
       if (this.hasFeedbackTarget) {
         this.feedbackTarget.textContent = "";
       }
+      this.showMeter(false);
       return;
     }
 
@@ -102,6 +105,7 @@ export default class extends Controller {
       warning = this.tooShortTextValue;
     }
 
+    this.showMeter(true);
     this.updateMeter(score);
     this.updateFeedback(score, warning);
   }
@@ -140,6 +144,13 @@ export default class extends Controller {
     error.setAttribute("aria-live", "polite");
     error.textContent = message;
     field.parentElement.append(error);
+  }
+
+  // An empty bar under an empty field only asks what it is for.
+  showMeter(visible) {
+    if (!this.hasMeterContainerTarget) return;
+
+    this.meterContainerTarget.classList.toggle("d-none", !visible);
   }
 
   updateMeter(score) {
