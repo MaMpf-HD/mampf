@@ -134,6 +134,7 @@ module AssessmentHelper
     def overview_frame_src(lecture)
       assessment_assessments_path(lecture_id: lecture.id,
                                   tab: params[:assessment_tab])
+    end
 
     def never_participated?(movement)
       movement[:participated_tutorial_id].nil?
