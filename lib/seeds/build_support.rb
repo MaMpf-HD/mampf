@@ -35,8 +35,6 @@ module Seeds
       report!
     end
 
-    # Moves the whole data set one year forward, terms and the dates that hang
-    # off them alike, so that the current term stays current.
     def advance_one_year!
       ensure_development!
       # rubocop:disable Rails/SkipsModelValidations
@@ -51,8 +49,8 @@ module Seeds
       # rubocop:enable Rails/SkipsModelValidations
     end
 
-    # Every account gets the same documented password, long and strong enough
-    # for the password policy, and starts out unlocked.
+    # The password ships with the dump, so it has to pass the policy. A lock
+    # carried over from the source would keep a demo account out.
     def reset_passwords!
       ensure_development!
 
@@ -66,8 +64,6 @@ module Seeds
       end
     end
 
-    # Registration campaigns that are open right now, in the current term and
-    # in the one after it, for a lecture and for a seminar each.
     def add_running_campaigns!
       ensure_development!
 
@@ -79,8 +75,7 @@ module Seeds
     end
 
     # Setting a password marks the account as following the current policy, so
-    # the two demo accounts are put back afterwards. No-op until the columns
-    # exist (PR #1141).
+    # the two demo accounts are put back afterwards.
     def stage_password_policy!
       ensure_development!
       return unless User.column_names.include?("password_policy_version")

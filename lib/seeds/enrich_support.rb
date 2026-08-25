@@ -68,8 +68,8 @@ module Seeds
         end
       end
 
-      # Announcements stay, they just no longer greet everyone on the landing
-      # page, which is what made them a nuisance.
+      # Announcements stay, but off the landing page, where they greet every
+      # visitor before anything else.
       def add_announcements!
         # rubocop:disable Rails/SkipsModelValidations
         Announcement.update_all(on_main_page: false)
