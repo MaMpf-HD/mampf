@@ -196,7 +196,13 @@ class ApplicationController < ActionController::Base
       return if password_change_request_allowed?
 
       session[:enforce_password_change] = true
-      redirect_to edit_user_registration_path
+      return redirect_to(edit_user_registration_path) unless turbo_frame_request?
+
+      # Redirecting a frame would leave "Content missing" behind: the password
+      # page carries no frame for Turbo to swap in. This asks it to drop out of
+      # the frame and load the page, which then redirects as usual.
+      render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
+             layout: false
     end
 
     def password_change_request_allowed?
