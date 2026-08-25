@@ -1,5 +1,10 @@
 import { Controller } from "@hotwired/stimulus";
 
+// The server scores with the Ruby port of zxcvbn, which is a generation older
+// than the one in the browser and rates concatenated words far lower. Only a 4
+// here reliably means the server will take it, so anything below stays amber.
+const ACCEPTED_SCORE = 4;
+
 // The dictionaries weigh more than the whole application bundle, and only the
 // three Devise password forms need them, so they are fetched when one appears.
 let loading;
@@ -39,10 +44,10 @@ function zxcvbnReady() {
 export default class extends Controller {
   static targets = ["password", "passwordConfirmation", "email", "name", "meter", "feedback"];
   static values = {
-    weakText: { type: String, default: "Weak" },
-    fairText: { type: String, default: "Fair" },
-    goodText: { type: String, default: "Good" },
-    strongText: { type: String, default: "Strong" },
+    weakText: String,
+    fairText: String,
+    almostText: String,
+    strongText: String,
     localIdentifiers: Array,
     minLength: Number,
     tooShortText: String,
@@ -119,7 +124,7 @@ export default class extends Controller {
       "progress-bar bg-danger",
       "progress-bar bg-danger",
       "progress-bar bg-warning",
-      "progress-bar bg-success",
+      "progress-bar bg-warning",
       "progress-bar bg-success",
     ];
 
@@ -140,20 +145,20 @@ export default class extends Controller {
         text = this.fairTextValue;
         break;
       case 3:
-        text = this.goodTextValue;
+        text = this.almostTextValue;
         break;
       case 4:
         text = this.strongTextValue;
         break;
     }
 
-    if (score < 3 && warning) {
+    if (score < ACCEPTED_SCORE && warning) {
       text += ` - ${warning}`;
     }
 
     this.feedbackTarget.textContent = text;
 
-    if (score < 3) {
+    if (score < ACCEPTED_SCORE) {
       this.feedbackTarget.className = "form-text text-danger mt-1";
     }
     else {

@@ -5,7 +5,7 @@ de:
     passwords_strength:
       weak: "Sehr schwach"
       fair: "Schwach"
-      good: "Gut"
+      almost: "Fast — noch nicht stark genug"
       strong: "Stark"
       too_short: "Muss mindestens %{count} Zeichen lang sein"
     confirmations:
