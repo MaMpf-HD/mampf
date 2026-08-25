@@ -34,13 +34,10 @@ class Exam < ApplicationRecord
   validate :registration_deadline_before_exam_date
   validate :registration_deadline_in_future
 
-  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
-  after_create :create_registration_campaign,
-               if: -> { !skip_campaigns && Flipper.enabled?(:registration_campaigns) }
+  after_create :setup_assessment
+  after_create :create_registration_campaign, if: -> { !skip_campaigns }
   after_update :update_campaign_deadline,
-               if: lambda {
-                 registration_deadline.present? && Flipper.enabled?(:registration_campaigns)
-               }
+               if: -> { registration_deadline.present? }
   before_destroy :destroy_draft_campaign
 
   def non_destructible_reason
@@ -213,17 +210,8 @@ class Exam < ApplicationRecord
       @participants_with_grading_data ||= assessment.assessment_participations
                                                     .includes(:task_points)
                                                     .filter_map do |participation|
-        participation.user_id if grading_data_for?(participation)
+        participation.user_id if assessment.grading_data_for?(participation)
       end
-    end
-
-    def grading_data_for?(participation)
-      return true if participation.task_points.any?
-      return true if participation.points_total.present?
-      return true if participation.grade_numeric.present?
-      return true if participation.grade_text.present?
-
-      !participation.pending?
     end
 
     def destroy_draft_campaign

@@ -116,9 +116,6 @@ RSpec.describe(Assignment, type: :model) do
     end
 
     context "when assessment_grading flag is enabled" do
-      before { Flipper.enable(:assessment_grading) }
-      after { Flipper.disable(:assessment_grading) }
-
       it "creates an assessment on assignment creation" do
         assignment = FactoryBot.create(:assignment, lecture: lecture, title: "Homework 1")
 
@@ -139,30 +136,6 @@ RSpec.describe(Assignment, type: :model) do
         assignment = FactoryBot.create(:assignment, lecture: lecture)
 
         expect(assignment.assessable?).to be(true)
-      end
-    end
-
-    context "when assessment_grading flag is disabled" do
-      before { Flipper.disable(:assessment_grading) }
-
-      it "does not create an assessment" do
-        assignment = FactoryBot.create(:assignment, lecture: lecture)
-
-        expect(assignment.assessment).to be_nil
-      end
-
-      it "works normally without assessment integration" do
-        assignment = FactoryBot.create(:assignment, lecture: lecture, title: "Homework 1")
-
-        expect(assignment).to be_valid
-        expect(assignment.title).to eq("Homework 1")
-        expect(assignment.lecture).to eq(lecture)
-      end
-
-      it "assessable? returns false" do
-        assignment = FactoryBot.create(:assignment, lecture: lecture)
-
-        expect(assignment.assessable?).to be(false)
       end
     end
   end
@@ -205,11 +178,8 @@ RSpec.describe(Assignment, type: :model) do
       let(:assignment) { FactoryBot.create(:assignment, :expired, lecture: lecture) }
 
       before do
-        Flipper.enable(:assessment_grading)
         assignment.reload
       end
-
-      after { Flipper.disable(:assessment_grading) }
 
       context "with reviewed participation" do
         before do

@@ -3,15 +3,6 @@ require "rails_helper"
 RSpec.describe(AssessmentListItemComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
-
-  before do
-    Flipper.enable(:assessment_grading)
-  end
-
-  after do
-    Flipper.disable(:assessment_grading)
-  end
-
   context "with an assignment" do
     let(:assignment) { create(:valid_assignment, lecture: lecture) }
     let(:assessment) { assignment.reload.assessment }
@@ -96,10 +87,10 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
 
   context "with a legacy assignment" do
     let(:assignment) do
-      Flipper.disable(:assessment_grading)
-      a = create(:valid_assignment, lecture: lecture)
-      Flipper.enable(:assessment_grading)
-      a
+      create(:valid_assignment, lecture: lecture).tap do |record|
+        record.assessment&.destroy
+        record.reload
+      end
     end
     let(:component) { described_class.new(assessable: assignment, lecture: lecture, legacy: true) }
 
@@ -128,10 +119,10 @@ RSpec.describe(AssessmentListItemComponent, type: :component) do
 
   context "without assessment" do
     let(:assignment) do
-      Flipper.disable(:assessment_grading)
-      a = create(:valid_assignment, lecture: lecture)
-      Flipper.enable(:assessment_grading)
-      a
+      create(:valid_assignment, lecture: lecture).tap do |record|
+        record.assessment&.destroy
+        record.reload
+      end
     end
     let(:component) { described_class.new(assessable: assignment, lecture: lecture) }
 

@@ -15,14 +15,12 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
   let(:user3) { create(:confirmed_user) }
 
   before do
-    Flipper.enable(:assessment_grading)
     create(:tutorial_membership, tutorial: tutorial1, user: user1)
     create(:tutorial_membership, tutorial: tutorial1, user: user2)
     create(:tutorial_membership, tutorial: tutorial2, user: user3)
   end
-
-  after do
-    Flipper.disable(:assessment_grading)
+  def stats_for(title)
+    component.tutorial_stats.find { |stat| stat.name == title }
   end
 
   describe "#requires_submission?" do
@@ -201,6 +199,48 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
 
       stats = component.tutorial_stats
       expect(stats.map(&:name)).not_to include("Empty Tutorial")
+    end
+
+    context "when someone changes tutorial after the assessment has started" do
+      let(:service) { Rosters::MaintenanceService.new }
+
+      before do
+        create(:assessment_participation, assessment: assessment,
+                                          user: user1, tutorial: tutorial1,
+                                          submitted_at: 1.day.ago)
+      end
+
+      it "leaves the submission with the tutorial it was handed in to" do
+        service.move_user!(user1, tutorial1, tutorial2)
+        stat = stats_for("Tutorial A")
+
+        expect(stat.total).to eq(2)
+        expect(stat.submitted).to eq(1)
+      end
+
+      it "does not expect the submission from the new tutorial" do
+        service.move_user!(user1, tutorial1, tutorial2)
+        stat = stats_for("Tutorial B")
+
+        expect(stat.total).to eq(1)
+        expect(stat.submitted).to eq(0)
+      end
+
+      it "counts each participant exactly once" do
+        service.move_user!(user1, tutorial1, tutorial2)
+
+        expect(component.tutorial_stats.sum(&:total)).to eq(3)
+      end
+
+      it "keeps a tutorial whose members have left but whose work has not" do
+        create(:assessment_participation, assessment: assessment,
+                                          user: user2, tutorial: tutorial1)
+        service.move_user!(user1, tutorial1, tutorial2)
+        service.move_user!(user2, tutorial1, tutorial2)
+
+        expect(stats_for("Tutorial A").total).to eq(2)
+        expect(stats_for("Tutorial A").submitted).to eq(1)
+      end
     end
   end
 

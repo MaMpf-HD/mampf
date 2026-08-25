@@ -8,7 +8,7 @@ class Assignment < ApplicationRecord
   has_many :submissions, dependent: :destroy
 
   before_save :inherit_deletion_date_from_lecture
-  after_create :setup_assessment, if: -> { Flipper.enabled?(:assessment_grading) }
+  after_create :setup_assessment
   before_destroy :check_destructibility, prepend: true
 
   def requires_submission

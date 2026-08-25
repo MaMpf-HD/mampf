@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { createAssessedAssignment } from "./helpers";
@@ -9,10 +8,6 @@ import { createAssessedAssignment } from "./helpers";
  * the overview — by opening it in a new tab, or by copying it.
  */
 test.describe("reaching a dashboard by its address", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-  });
-
   test("lands on the lecture's assessment tab with the dashboard open", async ({
     factory,
     teacher,

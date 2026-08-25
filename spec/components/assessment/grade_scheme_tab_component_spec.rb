@@ -6,9 +6,6 @@ RSpec.describe(GradeSchemeTabComponent, type: :component) do
   let(:exam) { create(:exam, lecture: lecture) }
   let(:assessment) { exam.reload.assessment }
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   let(:component) { described_class.new(assessment: assessment) }
 
   describe "#show_form?" do

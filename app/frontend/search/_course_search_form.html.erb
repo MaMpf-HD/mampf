@@ -1,4 +1,5 @@
-<%= render(SearchForm::SearchForm.new(url: search_courses_path, context: "courses")) do |c| %>
+<%= render(SearchForm::SearchForm.new(url: search_courses_path, context: "courses",
+                                      turbo_frame: "courses-search-results")) do |c| %>
   <% c.add_editor_field %>
 
   <% c.add_program_field %>

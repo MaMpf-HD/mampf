@@ -6,16 +6,10 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
   let(:student) { FactoryBot.create(:confirmed_user) }
 
   before do
-    Flipper.enable(:student_performance)
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
     lecture.reload
   end
-
-  after do
-    Flipper.disable(:student_performance)
-  end
-
   describe "GET /lectures/:id/performance/evaluator/single_proposal" do
     let(:path) do
       single_proposal_lecture_student_performance_evaluator_path(lecture)
@@ -221,18 +215,6 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
       it "redirects to sign in" do
         get path
         expect(response).to redirect_to(new_user_session_path)
-      end
-    end
-
-    context "when feature flag is disabled" do
-      before do
-        Flipper.disable(:student_performance)
-        sign_in editor
-      end
-
-      it "falls through to catch-all and redirects" do
-        get path
-        expect(response).to redirect_to(root_path)
       end
     end
   end

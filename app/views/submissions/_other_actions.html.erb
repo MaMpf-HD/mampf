@@ -5,6 +5,12 @@
               remote: true %>
 <% end %>
 <% if submission.too_late? && submission.accepted.nil? %>
+  <%= link_to t('buttons.accept'),
+              accept_submission_path(submission),
+              class: 'btn btn-sm btn-outline-secondary mb-2',
+              remote: true %>
+<% end %>
+<% if submission.too_late? && submission.accepted.nil? %>
   <%= link_to accept_submission_path(submission, mode: mode || "tutor"),
               class: "btn btn-sm btn-outline-success d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
               data: {

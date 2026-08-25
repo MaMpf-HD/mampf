@@ -11,7 +11,6 @@ module Demo
 
     def setup!
       ensure_non_production!
-      Demo::SetupSupport.setup_flags!
       Demo::QuietLoggingSupport.with_quiet_logging do
         setup_preference_campaign!
         seed_preference_campaign_registrations!

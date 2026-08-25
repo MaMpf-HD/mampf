@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { createLecture } from "./helpers";
 
@@ -9,12 +8,6 @@ import { createLecture } from "./helpers";
  * the assessment side into the registration side.
  */
 test.describe("eligibility decides the exam place", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-    await enableFeature(request, "student_performance");
-    await enableFeature(request, "registration_campaigns");
-  });
-
   test("tells a student their admission is what stands in the way", async ({
     factory,
     teacher,

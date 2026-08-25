@@ -43,17 +43,14 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
   end
 
   describe "#grading_enabled?" do
-    context "without assessment_grading flag" do
-      it "returns false" do
-        expect(component.grading_enabled?).to be(false)
-      end
-    end
-
-    context "with assessment_grading flag" do
-      before { Flipper.enable(:assessment_grading) }
-      after { Flipper.disable(:assessment_grading) }
-
+    context "depending on the assessment" do
       context "when achievement has no assessment" do
+        # Achievements build one on create, so only older data lacks it.
+        before do
+          achievement.assessment&.destroy
+          achievement.reload
+        end
+
         it "returns false" do
           expect(component.grading_enabled?).to be(false)
         end

@@ -77,7 +77,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
     def build_tabs
       [].tap do |t|
         t << settings_tab if exam? || assignment?
-        t << registration_tab if exam? && Flipper.enabled?(:registration_campaigns)
+        t << registration_tab if exam?
         t << tasks_tab if pointable?
         t << points_tab if pointable?
         t << grading_tab if gradable? && pointable?

@@ -2,6 +2,8 @@
   <%= full_title(yield(:title)) %>
 </title>
 
+<meta name="turbo-modal-error-message" content="<%= t('modals.load_error') %>">
+
 <link rel="manifest" href="/manifest.json">
 
 <%= csrf_meta_tags %>

@@ -88,7 +88,7 @@ RSpec.describe(User, type: :model) do
     end
   end
 
-  describe "#tutorial_rosterized" do
+  describe "#rostered_tutorial_in" do
     let(:lecture)   { create(:lecture) }
     let(:tutorial)  { create(:tutorial, lecture: lecture) }
     let(:user)      { create(:user) }
@@ -97,13 +97,13 @@ RSpec.describe(User, type: :model) do
       before { create(:tutorial_membership, user: user, tutorial: tutorial) }
 
       it "returns the tutorial" do
-        expect(user.tutorial_rosterized(lecture)).to eq(tutorial)
+        expect(user.rostered_tutorial_in(lecture)).to eq(tutorial)
       end
     end
 
     context "when user is not rostered to a tutorial in the lecture" do
       it "returns nil" do
-        expect(user.tutorial_rosterized(lecture)).to be_nil
+        expect(user.rostered_tutorial_in(lecture)).to be_nil
       end
     end
   end

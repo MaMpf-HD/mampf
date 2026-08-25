@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { createLecture } from "./helpers";
@@ -9,11 +8,6 @@ import { createLecture } from "./helpers";
  * losing unsaved edits, happen entirely in the browser.
  */
 test.describe("the achievement form", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-    await enableFeature(request, "student_performance");
-  });
-
   async function openNewForm(page: AssessmentDashboardPage) {
     await page.gotoOverview();
     await page.overviewTab("Achievements").click();

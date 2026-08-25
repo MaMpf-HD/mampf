@@ -8,9 +8,6 @@ RSpec.describe(PointGridComponent, type: :component) do
   let(:assessment) { assignment.reload.assessment }
   let(:component) { described_class.new(assessment: assessment) }
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   context "when no tasks exist" do
     it "renders the no-tasks empty state" do
       render_inline(component)

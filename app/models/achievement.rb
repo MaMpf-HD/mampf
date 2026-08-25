@@ -27,8 +27,7 @@ class Achievement < ApplicationRecord
             if: :percentage?
   validates :threshold, absence: true, if: :boolean?
 
-  after_create :setup_assessment,
-               if: -> { Flipper.enabled?(:assessment_grading) }
+  after_create :setup_assessment
 
   after_commit :invalidate_performance_records,
                on: [:update, :destroy],
@@ -78,8 +77,6 @@ class Achievement < ApplicationRecord
     end
 
     def invalidate_performance_records
-      return unless Flipper.enabled?(:assessment_grading)
-
       StudentPerformance::ComputationService
         .new(lecture: lecture)
         .compute_and_upsert_all_records!

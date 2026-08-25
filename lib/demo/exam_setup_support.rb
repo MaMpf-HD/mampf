@@ -21,7 +21,6 @@ module Demo
     DEMO_RETAKE_TITLE = "Demo Retake Exam".freeze
 
     def setup_exams!
-      setup_flags!
 
       lecture = nil
       Demo::QuietLoggingSupport.with_quiet_logging do

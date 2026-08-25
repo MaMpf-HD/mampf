@@ -42,11 +42,9 @@ class Voucher < ApplicationRecord
   self.implicit_order_column = :created_at
 
   def self.roles_for_lecture(lecture)
-    if lecture.seminar?
-      return ROLE_HASH.keys - [:tutor] if Flipper.enabled?(:roster_maintenance)
-
-      return ROLE_HASH.keys
-    end
+    # Seminars only have talk, not tutorials, so there is no point in creating
+    # a tutor voucher for a seminar. That's why we exclude the tutor role here.
+    return ROLE_HASH.keys - [:tutor] if lecture.seminar?
 
     ROLE_HASH.keys - [:speaker]
   end

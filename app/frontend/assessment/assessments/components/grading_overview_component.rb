@@ -124,7 +124,7 @@ class GradingOverviewComponent < ViewComponent::Base
     def build_tutorial_stats
       stats = []
 
-      membership_counts = roster_memberships.group(:tutorial_id).count
+      expected_counts = expected_counts_by_tutorial
       submission_counts = participations
                           .where.not(tutorial_id: nil)
                           .where.not(submitted_at: nil)
@@ -132,7 +132,7 @@ class GradingOverviewComponent < ViewComponent::Base
                           .count
 
       lecture.tutorials.includes(:tutors).order(:title).each do |tutorial|
-        total = membership_counts[tutorial.id] || 0
+        total = expected_counts[tutorial.id] || 0
         next if total.zero?
 
         submitted = submission_counts[tutorial.id] || 0
@@ -145,5 +145,19 @@ class GradingOverviewComponent < ViewComponent::Base
       end
 
       stats
+    end
+
+    # Once a participation exists it decides where the work belongs: moving to
+    # another tutorial leaves earlier submissions with the tutor they were
+    # handed in to. Roster membership fills in for those who have none yet.
+    def expected_counts_by_tutorial
+      pinned = participations.where.not(tutorial_id: nil)
+                             .group(:tutorial_id)
+                             .count
+      unpinned = roster_memberships.where.not(user_id: participations.select(:user_id))
+                                   .group(:tutorial_id)
+                                   .count
+
+      pinned.merge(unpinned) { |_tutorial_id, here, on_roster| here + on_roster }
     end
 end

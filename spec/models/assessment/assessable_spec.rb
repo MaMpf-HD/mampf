@@ -51,14 +51,26 @@ RSpec.describe(Assessment::Assessable) do
   end
 
   describe "when included in Assignment" do
-    let(:assessable) { FactoryBot.create(:assignment, lecture: lecture) }
+    # ensure_assessment! is a safeguard, so these examples need the state it
+    # guards against: an assessable whose gradebook is missing.
+    let(:assessable) do
+      FactoryBot.create(:assignment, lecture: lecture).tap do |record|
+        record.assessment&.destroy
+        record.reload
+      end
+    end
 
     it_behaves_like "an assessable model"
   end
 
   describe "when included in Talk" do
     let(:seminar_lecture) { FactoryBot.create(:lecture, sort: "seminar") }
-    let(:assessable) { FactoryBot.create(:talk, lecture: seminar_lecture) }
+    let(:assessable) do
+      FactoryBot.create(:talk, lecture: seminar_lecture).tap do |record|
+        record.assessment&.destroy
+        record.reload
+      end
+    end
 
     it_behaves_like "an assessable model"
   end

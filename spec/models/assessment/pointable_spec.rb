@@ -2,7 +2,14 @@ require "rails_helper"
 
 RSpec.describe(Assessment::Pointable) do
   let(:lecture) { FactoryBot.create(:lecture) }
-  let(:assignment) { FactoryBot.create(:assignment, lecture: lecture, title: "Homework 1") }
+  # ensure_pointbook! is a safeguard, so these examples need the state it
+  # guards against: an assignment whose gradebook is missing.
+  let(:assignment) do
+    FactoryBot.create(:assignment, lecture: lecture, title: "Homework 1").tap do |record|
+      record.assessment&.destroy
+      record.reload
+    end
+  end
 
   describe "#ensure_pointbook!" do
     it "creates an assessment with requires_points: true" do
@@ -35,9 +42,6 @@ RSpec.describe(Assessment::Pointable) do
 
   describe "integration with Assignment" do
     context "when assessment_grading flag is enabled" do
-      before { Flipper.enable(:assessment_grading) }
-      after { Flipper.disable(:assessment_grading) }
-
       it "automatically creates pointbook on assignment creation" do
         new_assignment = FactoryBot.create(:assignment, lecture: lecture)
 

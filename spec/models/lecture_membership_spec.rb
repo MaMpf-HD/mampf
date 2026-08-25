@@ -6,10 +6,6 @@ RSpec.describe(LectureMembership, type: :model) do
   end
 
   describe "performance record callbacks" do
-    before { Flipper.enable(:assessment_grading) }
-
-    after { Flipper.disable(:assessment_grading) }
-
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:user) { FactoryBot.create(:confirmed_user) }
 

@@ -7,6 +7,12 @@ FactoryBot.define do
     deadline { Faker::Time.forward(days: 30) }
     accepted_file_type { ".pdf" }
 
+    # Assignments from before the assessment system exist in the data and
+    # still render through the legacy path.
+    trait :without_assessment do
+      after(:create) { |assignment| assignment.assessment&.destroy }
+    end
+
     trait :with_lecture do
       association :lecture, :released_for_all
     end

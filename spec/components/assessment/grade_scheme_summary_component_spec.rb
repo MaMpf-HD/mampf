@@ -12,9 +12,6 @@ RSpec.describe(GradeSchemeSummaryComponent, type: :component) do
     described_class.new(assessment: assessment, grade_scheme: grade_scheme)
   end
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   describe "#bands" do
     it "returns bands sorted ascending by grade string value" do
       grades = component.bands.pluck("grade")

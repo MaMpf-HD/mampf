@@ -229,8 +229,8 @@ RSpec.describe(Registration::Item, type: :model) do
       end
 
       context "with exam/non-exam compatibility" do
-        let(:exam1) { create(:exam, lecture: lecture) }
-        let(:exam2) { create(:exam, lecture: lecture) }
+        let(:exam1) { create(:exam, :without_campaign, lecture: lecture) }
+        let(:exam2) { create(:exam, :without_campaign, lecture: lecture) }
 
         it "rejects adding an exam to a campaign that already has a tutorial" do
           create(:registration_item, registration_campaign: campaign,

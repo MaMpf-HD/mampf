@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { addTask, createAssessedAssignment } from "./helpers";
@@ -11,10 +10,6 @@ const PRECISION_WARNING = "Only 2 decimal places are stored.";
  * afterwards, if at all, so a request spec sees neither.
  */
 test.describe("assessment tasks", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-  });
-
   test("warns while more than two decimal places are typed", async ({
     factory,
     teacher,

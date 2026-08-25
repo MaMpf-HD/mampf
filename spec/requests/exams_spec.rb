@@ -8,14 +8,8 @@ RSpec.describe("Exams", type: :request) do
   let(:exam) { create(:exam, lecture: lecture) }
 
   before do
-    Flipper.enable(:assessment_grading)
     create(:editable_user_join, user: editor, editable: lecture)
   end
-
-  after do
-    Flipper.disable(:assessment_grading)
-  end
-
   describe "GET /exams" do
     context "as a teacher" do
       before { sign_in teacher }

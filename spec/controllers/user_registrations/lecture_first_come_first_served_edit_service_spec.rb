@@ -167,13 +167,9 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
                                    skip_campaigns: true,
                                    self_materialization_mode: :add_only)
         add_only_tutorial.add_user_to_roster!(user)
-        exam = nil
-        Flipper.enable(:registration_campaigns)
-        begin
-          exam = create(:exam, :with_date, lecture: lecture)
-        ensure
-          Flipper.disable(:registration_campaigns)
-        end
+
+        exam = create(:exam, :with_date, lecture: lecture)
+
         exam_campaign = exam.registration_campaign
         exam_campaign.update!(status: :open,
                               registration_deadline: 1.week.from_now)

@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { createAssessedAssignment } from "./helpers";
@@ -10,10 +9,6 @@ import { createAssessedAssignment } from "./helpers";
  * whether cancelling really puts every field back.
  */
 test.describe("assessment settings form", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-  });
-
   test("offers saving only while a field differs from what was loaded", async ({
     factory,
     teacher,

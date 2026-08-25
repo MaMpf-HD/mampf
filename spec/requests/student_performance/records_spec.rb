@@ -6,16 +6,10 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
   let(:student) { FactoryBot.create(:confirmed_user) }
 
   before do
-    Flipper.enable(:student_performance)
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
     lecture.reload
   end
-
-  after do
-    Flipper.disable(:student_performance)
-  end
-
   describe "GET /lectures/:lecture_id/performance/records" do
     context "as an editor" do
       before { sign_in editor }
@@ -58,10 +52,6 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       end
 
       context "with achievements" do
-        before { Flipper.enable(:assessment_grading) }
-
-        after { Flipper.disable(:assessment_grading) }
-
         it "renders achievement columns when achievements exist" do
           user = FactoryBot.create(:confirmed_user)
           FactoryBot.create(:lecture_membership,
@@ -283,18 +273,6 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       before { sign_in student }
 
       it "redirects to root (unauthorized)" do
-        get lecture_student_performance_records_path(lecture)
-        expect(response).to redirect_to(root_path)
-      end
-    end
-
-    context "when feature flag is disabled" do
-      before do
-        Flipper.disable(:student_performance)
-        sign_in editor
-      end
-
-      it "falls through to catch-all and redirects" do
         get lecture_student_performance_records_path(lecture)
         expect(response).to redirect_to(root_path)
       end

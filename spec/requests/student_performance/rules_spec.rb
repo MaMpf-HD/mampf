@@ -6,16 +6,10 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
   let(:student) { FactoryBot.create(:confirmed_user) }
 
   before do
-    Flipper.enable(:student_performance)
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
     lecture.reload
   end
-
-  after do
-    Flipper.disable(:student_performance)
-  end
-
   describe "GET /lectures/:lecture_id/performance/rules/edit" do
     context "as an editor" do
       before { sign_in editor }
