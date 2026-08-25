@@ -38,6 +38,24 @@ RSpec.describe("Auth passwords", type: :request) do
     end
   end
 
+  describe "PUT /users/password with a weak password" do
+    it "refuses it on the reset path too", :password_strength do
+      user = create(:confirmed_user_en)
+      post user_password_path, params: { user: { email: user.email } }
+      token = devise_mail_token(ActionMailer::Base.deliveries.last,
+                                :reset_password_token)
+      weak = "Sommersemester2026"
+
+      put user_password_path, params: {
+        user: { reset_password_token: token, password: weak,
+                password_confirmation: weak }
+      }
+
+      expect(response.body).to include(I18n.t("errors.messages.password_too_weak"))
+      expect(user.reload.valid_password?(weak)).to be(false)
+    end
+  end
+
   describe "the language switch" do
     def switch_target
       response.body[%r{<div id="language-switch".*?</div>}m]
