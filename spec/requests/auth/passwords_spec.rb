@@ -38,6 +38,29 @@ RSpec.describe("Auth passwords", type: :request) do
     end
   end
 
+  describe "the language switch" do
+    def switch_target
+      response.body[/<div id="language-switch".*?<\/div>/m].to_s[/href="([^"]*)"/, 1]
+    end
+
+    it "points at the form, not at the path the form posts to" do
+      put user_password_path, params: {
+        user: { reset_password_token: "not-a-real-token",
+                password: "too-short", password_confirmation: "too-short" }
+      }
+
+      expect(switch_target)
+        .to include(edit_user_password_path, "reset_password_token=not-a-real-token")
+    end
+
+    it "does not choke on a crafted user parameter" do
+      get edit_user_password_path(reset_password_token: "abc", user: "not-a-hash")
+
+      expect(response).to have_http_status(:ok)
+      expect(switch_target).to include("reset_password_token=abc")
+    end
+  end
+
   describe "PUT /users/password" do
     it "updates the password from a valid reset token" do
       user = create(:confirmed_user_en)
