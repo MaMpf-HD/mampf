@@ -1,12 +1,13 @@
 import { Controller } from "@hotwired/stimulus";
 
-// Browser and server score with different zxcvbn generations. Below 4 the
-// browser regularly praises a password the server then refuses.
+// Why 4 and not 3: the server checks with a different zxcvbn implementation
+// that is stricter, so a 3 here would often be rejected on submit.
 const ACCEPTED_SCORE = 4;
 
-// Fetched on demand: the dictionaries dwarf the rest of the page and only the
-// password forms need them. Kept per language, because switching language is a
-// Turbo visit and leaves this module in place.
+// Loaded only when a password form is on the page, because the dictionaries
+// are much bigger than everything else the page loads. Kept per language
+// because switching language does not reload this module, so without the map
+// the language loaded first would stay in use.
 const packs = new Map();
 let configuredLanguage;
 

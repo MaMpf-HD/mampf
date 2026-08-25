@@ -42,17 +42,16 @@ class SessionsController < Devise::SessionsController
 
   private
 
-    # Whether the credentials are right and only the lock stands in the way.
-    #
-    # Telling anyone else would give away that the address is registered: lock
-    # it with five wrong passwords, then read the answer.
+    # Why the password is checked here: without it, the "account is locked"
+    # message would tell anyone that an address is registered. Locking a
+    # stranger's account only takes five wrong passwords.
     def locked_out_with_correct_password?
       user = attempted_user
       password = sign_in_params[:password].to_s
       return user.valid_password?(password) if user&.access_locked?
 
-      # Hash anyway, as Devise does for addresses it cannot find: hashing only
-      # for locked accounts would make them the slower answer.
+      # Hash even though there is nothing to compare it with, so that a locked
+      # account does not answer measurably slower than an unknown address.
       resource_class.new.password = password
       false
     end

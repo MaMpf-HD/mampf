@@ -2,8 +2,8 @@
 require "zxcvbn"
 
 class PasswordStrengthValidator < ActiveModel::EachValidator
-  # Words zxcvbn must not count as entropy. It carries English dictionaries
-  # only, so the German ones have to be named here.
+  # zxcvbn only knows English dictionaries, so German words that are obvious
+  # around here would count as strong unless they are listed.
   LOCAL_IDENTIFIERS = ["mampf", "muesli", "heidelberg", "uni-heidelberg",
                        "mathi", "mathinf", "mathematische",
                        "medienplattform",

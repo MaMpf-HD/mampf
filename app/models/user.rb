@@ -887,8 +887,9 @@ class User < ApplicationRecord
                       .update(user_id: user.id)
     end
 
-    # Nobody ever signs into the archive account, but its password still has to
-    # pass the policy, or the archive is silently never created.
+    # The archive account is never signed into, but its password still has to
+    # pass the policy -- otherwise the record is invalid and no archive is
+    # created.
     def archive_user(archive_name)
       User.create(name: archive_name,
                   email: archive_email,
