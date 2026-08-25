@@ -887,10 +887,12 @@ class User < ApplicationRecord
                       .update(user_id: user.id)
     end
 
+    # Nobody ever signs into the archive account, but its password still has to
+    # pass the policy, or the archive is silently never created.
     def archive_user(archive_name)
       User.create(name: archive_name,
                   email: archive_email,
-                  password: SecureRandom.base58(12),
+                  password: SecureRandom.base58(Devise.password_length.min),
                   consents: true,
                   consented_at: Time.zone.now,
                   confirmed_at: Time.zone.now,
