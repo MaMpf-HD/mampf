@@ -53,6 +53,9 @@ window.Stimulus.register("question-counter", QuestionCounterController);
 import CoursesEditController from "~/courses/edit/courses_edit.controller.js";
 window.Stimulus.register("courses-edit", CoursesEditController);
 
+import PasswordStrengthController from "~/auth/password_strength.controller.js";
+window.Stimulus.register("password-strength", PasswordStrengthController);
+
 import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
 window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
 

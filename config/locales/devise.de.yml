@@ -2,6 +2,13 @@
 
 de:
   devise:
+    passwords_strength:
+      weak: "Sehr schwach"
+      fair: "Schwach"
+      almost: "Fast — noch nicht stark genug"
+      mismatch: "Die Passwörter stimmen nicht überein."
+      strong: "Stark"
+      too_short: "Muss mindestens %{count} Zeichen lang sein"
     confirmations:
       confirmed: "Deine E-Mail-Adresse wurde bestätigt."
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail, mit der Du Deine Registrierung bestätigen kannst."
@@ -128,11 +135,18 @@ de:
         resend_unlock_instructions: "Anleitung zum Entsperren erneut senden"
     edit:
       title: "Zugangsdaten ändern"
-      email: "Emailaddresse"
+      email: "E-Mail-Adresse"
+      email_section: "E-Mail-Adresse ändern"
+      email_hint: >
+        Wir schicken einen Bestätigungslink an die neue Adresse. Bis Du ihn
+        anklickst, gilt die alte weiter.
       current_password: "Aktuelles Passwort"
       need_password: "Wir benötigen Dein aktuelles Passwort, um die Änderung zu bestätigen."
       no_change: "Freilassen, wenn Du das Passwort nicht ändern willst."
-      update: "Update"
+      password_section: "Passwort ändern"
+      password_hint: >
+        Beide Felder leer lassen, wenn Du nur Deine E-Mail-Adresse änderst.
+      update: "Speichern"
       new_password: "Neues Passwort"
       confirm_new_password: "Bestätigung des neuen Passworts"
   errors:
@@ -142,6 +156,7 @@ de:
       expired: "ist abgelaufen, bitte neu anfordern"
       not_found: "nicht gefunden"
       not_locked: "ist nicht gesperrt"
+      password_too_weak: "ist zu schwach"
       not_saved:
         one: "Konnte %{resource} nicht speichern: Es ist ein Fehler aufgetreten."
         other: "Konnte %{resource} nicht speichern: Es sind %{count} Fehler aufgetreten."

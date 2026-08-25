@@ -1,9 +1,8 @@
 # Keeps every failed sign-in on the same message.
 #
-# A wrong password is rendered by SessionsController, but an account that is
-# merely inactive never reaches it: Devise redirects and writes its own flash,
-# which would name the reason ("confirm your email address") and thereby tell
-# whoever asked that the password was right.
+# An inactive account never reaches SessionsController: Devise redirects and
+# writes its own message, which would state the reason and thereby confirm that
+# the password was correct.
 class SessionFailureApp < Devise::FailureApp
   private
 

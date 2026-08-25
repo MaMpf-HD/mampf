@@ -112,6 +112,9 @@ class User < ApplicationRecord
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) },
                      if: :locale?
 
+  validates :password, password_strength: true, allow_blank: true,
+                       if: -> { Rails.configuration.x.password_strength_checks }
+
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
 
@@ -862,10 +865,13 @@ class User < ApplicationRecord
                       .update(user_id: user.id)
     end
 
+    # The archive account is never signed into, but its password still has to
+    # pass the policy -- otherwise the record is invalid and no archive is
+    # created.
     def archive_user(archive_name)
       User.create(name: archive_name,
                   email: archive_email,
-                  password: SecureRandom.base58(12),
+                  password: SecureRandom.base58(Devise.password_length.min),
                   consents: true,
                   consented_at: Time.zone.now,
                   confirmed_at: Time.zone.now,
