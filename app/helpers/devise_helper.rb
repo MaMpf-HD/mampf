@@ -1,10 +1,7 @@
 module DeviseHelper
-  # Where the language switch on a Devise page has to point.
-  #
-  # Devise re-renders the form on a failed submit, so the current request is a
-  # POST or PUT and `url_for` would build the submit path -- following that as
-  # a link lands somewhere else entirely. The reset form needs its token
-  # carried over on top of that.
+  # After a failed submit the current request is the POST, so `url_for` would
+  # build the path the form posts to instead of the form's own. The reset form
+  # additionally needs its token in the link.
   def devise_locale_switch_path(locale)
     case [controller_name, action_name]
     when ["registrations", "create"]

@@ -1,14 +1,13 @@
 import { Controller } from "@hotwired/stimulus";
 
-// The server scores with the Ruby port of zxcvbn, which is a generation older
-// than the one in the browser and rates concatenated words far lower. Only a 4
-// here reliably means the server will take it, so anything below stays amber.
+// Why 4 and not 3: the server checks with a different zxcvbn implementation
+// that is stricter, so a 3 here would often be rejected on submit.
 const ACCEPTED_SCORE = 4;
 
-// The dictionaries weigh more than the whole application bundle, and only the
-// three Devise password forms need them, so they are fetched when one appears.
-// A language switch is a Turbo visit, which keeps this module alive, so the
-// packs are kept per language and the options reapplied when it changes.
+// Loaded only when a password form is on the page, because the dictionaries
+// are much bigger than everything else the page loads. Kept per language
+// because switching language does not reload this module, so without the map
+// the language loaded first would stay in use.
 const packs = new Map();
 let configuredLanguage;
 
@@ -152,7 +151,6 @@ export default class extends Controller {
     field.parentElement.append(error);
   }
 
-  // An empty bar under an empty field only asks what it is for.
   showMeter(visible) {
     if (!this.hasMeterContainerTarget) return;
 

@@ -2,10 +2,8 @@
 require "zxcvbn"
 
 class PasswordStrengthValidator < ActiveModel::EachValidator
-  # Words zxcvbn must not count as entropy. Its Ruby port only carries English
-  # dictionaries, so the German ones a Heidelberg student reaches for first are
-  # listed here -- otherwise the server accepts what the meter in the browser,
-  # which does load German, already warns about.
+  # zxcvbn only knows English dictionaries, so German words that are obvious
+  # around here would count as strong unless they are listed.
   LOCAL_IDENTIFIERS = ["mampf", "muesli", "heidelberg", "uni-heidelberg",
                        "mathi", "mathinf", "mathematische",
                        "medienplattform",
