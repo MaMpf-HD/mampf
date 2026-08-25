@@ -12,7 +12,7 @@ class SubmissionRowComponent < ViewComponent::Base
   # Feature guard: grading is only possible if the feature flag is enabled
   # and the assignment supports assessment
   def grading_enabled?
-    Flipper.enabled?(:assessment_grading) && @assignment.assessable?
+    @assignment.assessable?
   end
 
   # Business rule: grading is only allowed once the assignment is no longer active

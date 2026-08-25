@@ -25,7 +25,7 @@ class ParticipationRowComponent < ViewComponent::Base
 
   # Determines if grading is enabled for the current assignment
   def grading_enabled?
-    Flipper.enabled?(:assessment_grading) && @assignment.assessable?
+    @assignment.assessable?
   end
 
   # Determines if grading is allowed for the current assignment

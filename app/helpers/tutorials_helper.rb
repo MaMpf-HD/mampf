@@ -17,7 +17,7 @@ module TutorialsHelper
   end
 
   def grading_enabled?(assignment)
-    Flipper.enabled?(:assessment_grading) && assignment.assessable?
+    assignment.assessable?
   end
 
   def badge_status_participation_color(status)
