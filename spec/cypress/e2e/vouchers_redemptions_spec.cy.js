@@ -241,7 +241,8 @@ describe("User & Redemption deletion", () => {
     cy.getBySelector("delete-account-btn").click();
     cy.getBySelector("delete-account-pwd-field").type(this.user.password);
 
-    cy.intercept("DELETE", "/users").as("deleteUserRequest");
+    // The form tunnels DELETE through POST via Rails' _method field.
+    cy.intercept("POST", "/users").as("deleteUserRequest");
     cy.getBySelector("delete-account-confirm-btn").click();
     cy.wait("@deleteUserRequest").then(({ response }) => {
       expect(response.statusCode).to.be.oneOf([302, 303]);
