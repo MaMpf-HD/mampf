@@ -56,8 +56,8 @@
         color: white;
     }
 
-    // Bootstrap gives hints a dark grey, which is unreadable on this card.
-    // The state colours keep theirs, they carry !important.
+    // Bootstrap's hint grey is unreadable on this card. The state colours keep
+    // theirs, they carry !important.
     .form-text {
         color: rgba(255, 255, 255, 0.75);
     }
