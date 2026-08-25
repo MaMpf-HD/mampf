@@ -17,7 +17,6 @@ module Demo
     DEMO_EXEMPT_COUNT = 1
 
     def setup_grading!
-
       exam = nil
       Demo::QuietLoggingSupport.with_quiet_logging do
         exam = grading_exam!
