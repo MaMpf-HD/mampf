@@ -198,9 +198,9 @@ class ApplicationController < ActionController::Base
       session[:enforce_password_change] = true
       return redirect_to(edit_user_registration_path) unless turbo_frame_request?
 
-      # Redirecting a frame would leave "Content missing" behind: the password
-      # page carries no frame for Turbo to swap in. This asks it to drop out of
-      # the frame and load the page, which then redirects as usual.
+      # Turbo looks for its frame in the answer and the password page has none,
+      # so a redirect would only leave "Content missing" behind. This sends
+      # Turbo out of the frame; the reload then meets the redirect above.
       render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
              layout: false
     end
@@ -225,15 +225,15 @@ class ApplicationController < ActionController::Base
       public_send("current_#{resource_or_scope}")
     end
 
-    # https://stackoverflow.com/a/69313330/
-    # Where a user goes once the forced change is done. after_sign_in_path_for
-    # skips these rules while the change is still due, so they are applied here.
+    # after_sign_in_path_for skips these rules while the change is still due,
+    # so they are applied once it is done.
     def after_password_change_path_for(resource)
       session.delete(:enforce_password_change)
       stored_location_for(resource).presence ||
         (first_sign_in?(resource) ? edit_profile_path : start_path)
     end
 
+    # https://stackoverflow.com/a/69313330/
     def set_current_user
       Current.user = current_user
     end

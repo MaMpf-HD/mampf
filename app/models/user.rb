@@ -117,8 +117,8 @@ class User < ApplicationRecord
   validates :password, password_strength: true, allow_blank: true,
                        if: -> { Rails.configuration.x.password_strength_checks }
 
-  # A change we insist on has to be a real one. Devise re-hashes the same
-  # password with a fresh salt, so nothing downstream would notice.
+  # Devise hashes the same password with a fresh salt, so re-entering the old
+  # one would pass as a change and mark the account compliant.
   validate :password_differs_from_current,
            if: -> { password.present? && password_change_required? }
 
@@ -839,8 +839,7 @@ class User < ApplicationRecord
       errors.add(:password, I18n.t("errors.messages.password_unchanged"))
     end
 
-    # The password decides which policy a user follows, so both columns are
-    # written wherever it is -- on creation as well as on every later change.
+    # Covers creation too: a new account writes its password like any change.
     def track_password_change
       return unless will_save_change_to_encrypted_password?
 
