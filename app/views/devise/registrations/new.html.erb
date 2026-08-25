@@ -26,10 +26,10 @@
                              "action": "input->password-strength#check"
                            } %>
       <%= f.label :password, t('devise.registrations.new.password') %>
-      
+
       <div class="progress mt-2 password-strength-meter d-none"
              data-password-strength-target="meterContainer">
-        <div class="progress-bar" role="progressbar" style="width: 0%;" data-password-strength-target="meter"></div>
+        <div class="progress-bar" aria-hidden="true" style="width: 0%;" data-password-strength-target="meter"></div>
       </div>
       <div class="form-text" role="status" aria-live="polite"
            data-password-strength-target="feedback"></div>
