@@ -48,6 +48,17 @@ class RegistrationsController < Devise::RegistrationsController
       edit_profile_path
     end
 
+    # Devise drops blank password fields before saving, so an empty submit would
+    # report success and put the user back on the same form.
+    def update_resource(resource, params)
+      if resource.password_change_required? && params[:password].blank?
+        resource.errors.add(:password, :blank)
+        return false
+      end
+
+      super
+    end
+
     def after_update_path_for(resource)
       return super unless session[:enforce_password_change]
       return edit_user_registration_path if resource.password_change_required?

@@ -133,6 +133,23 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response).to redirect_to(edit_user_registration_path)
     end
 
+    it "says so when the required password is left blank" do
+      password = "zitrone-diskette-vorhang-42"
+      user = create(:confirmed_user_en, password: password)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      put user_registration_path,
+          params: { user: { current_password: password, password: "",
+                            password_confirmation: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(CGI.escapeHTML(I18n.t("errors.messages.blank")))
+      expect(flash[:notice]).to be_nil
+    end
+
     it "refuses the old password as the new one while a change is due" do
       password = "zitrone-diskette-vorhang-42"
       user = create(:confirmed_user_en, password: password)
