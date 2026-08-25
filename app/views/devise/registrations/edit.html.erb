@@ -10,7 +10,9 @@
                        url: registration_path(resource_name, locale: I18n.locale),
                        html: { method: :put }) do |f| %>
   <%= render layout: "devise/shared/password_strength_wrapper" do %>
-    <% if resource.email.present? %>
+    <%# Only where the visible email field is absent: two email targets and the
+        strength check reads the first one, ignoring what is typed. %>
+    <% if password_change_required && resource.email.present? %>
       <input type="hidden" data-password-strength-target="email" value="<%= resource.email %>">
     <% end %>
     <% if resource.name.present? %>
