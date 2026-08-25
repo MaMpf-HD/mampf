@@ -1,4 +1,24 @@
 module DeviseHelper
+  # Where the language switch on a Devise page has to point.
+  #
+  # Devise re-renders the form on a failed submit, so the current request is a
+  # POST or PUT and `url_for` would build the submit path -- following that as
+  # a link lands somewhere else entirely. The reset form needs its token
+  # carried over on top of that.
+  def devise_locale_switch_path(locale)
+    case [controller_name, action_name]
+    when ["registrations", "create"]
+      new_user_registration_path(locale: locale)
+    when ["passwords", "create"]
+      new_user_password_path(locale: locale)
+    when ["passwords", "edit"], ["passwords", "update"]
+      edit_user_password_path(locale: locale,
+                              reset_password_token: reset_password_token)
+    else
+      url_for(locale: locale)
+    end
+  end
+
   def devise_links(resource_name, devise_mapping, resource_class, controller_name)
     links = []
 
@@ -28,4 +48,11 @@ module DeviseHelper
 
     links
   end
+
+  private
+
+    def reset_password_token
+      params[:reset_password_token] ||
+        params[:user].try(:dig, :reset_password_token)
+    end
 end
