@@ -161,6 +161,7 @@ de:
       not_found: "nicht gefunden"
       not_locked: "ist nicht gesperrt"
       password_too_weak: "ist zu schwach"
+      password_unchanged: "muss sich von Deinem aktuellen Passwort unterscheiden"
       not_saved:
         one: "Konnte %{resource} nicht speichern: Es ist ein Fehler aufgetreten."
         other: "Konnte %{resource} nicht speichern: Es sind %{count} Fehler aufgetreten."

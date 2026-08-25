@@ -78,6 +78,27 @@ RSpec.describe("Auth passwords", type: :request) do
     end
   end
 
+  describe "PUT /users/password with the password the account already has" do
+    it "refuses it while a change is due" do
+      password = "zitrone-diskette-vorhang-42"
+      user = create(:confirmed_user_en, password: password)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      post user_password_path, params: { user: { email: user.email } }
+      token = devise_mail_token(ActionMailer::Base.deliveries.last,
+                                :reset_password_token)
+
+      put user_password_path, params: {
+        user: { reset_password_token: token, password: password,
+                password_confirmation: password }
+      }
+
+      expect(response.body).to include(I18n.t("errors.messages.password_unchanged"))
+      expect(user.reload).to be_password_change_required
+    end
+  end
+
   describe "the language switch" do
     def switch_target
       response.body[%r{<div id="language-switch".*?</div>}m]
