@@ -226,6 +226,14 @@ class ApplicationController < ActionController::Base
     end
 
     # https://stackoverflow.com/a/69313330/
+    # Where a user goes once the forced change is done. after_sign_in_path_for
+    # skips these rules while the change is still due, so they are applied here.
+    def after_password_change_path_for(resource)
+      session.delete(:enforce_password_change)
+      stored_location_for(resource).presence ||
+        (first_sign_in?(resource) ? edit_profile_path : start_path)
+    end
+
     def set_current_user
       Current.user = current_user
     end

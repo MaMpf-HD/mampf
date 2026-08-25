@@ -133,6 +133,23 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response).to redirect_to(edit_user_registration_path)
     end
 
+    it "sends a first-time user to their profile once the new password is set" do
+      user = create(:confirmed_user_en, password: "zitrone-diskette-vorhang-42")
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil,
+                          sign_in_count: 0)
+      # rubocop:enable Rails/SkipsModelValidations
+
+      post user_session_path, params: { user: { email: user.email,
+                                                password: "zitrone-diskette-vorhang-42" } }
+      put user_registration_path,
+          params: { user: { current_password: "zitrone-diskette-vorhang-42",
+                            password: "andere-melone-tafel-77",
+                            password_confirmation: "andere-melone-tafel-77" } }
+
+      expect(response).to redirect_to(edit_profile_path)
+    end
+
     it "lets a frame request leave its frame instead of swapping in the prompt" do
       user = create(:confirmed_user_en)
       # rubocop:disable Rails/SkipsModelValidations

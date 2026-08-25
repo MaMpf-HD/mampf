@@ -42,17 +42,18 @@ class RegistrationsController < Devise::RegistrationsController
     end
   end
 
-  def after_sign_up_path_for(_resource)
-    edit_profile_path
-  end
+  protected
 
-  def after_update_path_for(resource)
-    return super unless session[:enforce_password_change]
-    return edit_user_registration_path if resource.password_change_required?
+    def after_sign_up_path_for(_resource)
+      edit_profile_path
+    end
 
-    session.delete(:enforce_password_change)
-    stored_location_for(resource_name).presence || start_path
-  end
+    def after_update_path_for(resource)
+      return super unless session[:enforce_password_change]
+      return edit_user_registration_path if resource.password_change_required?
+
+      after_password_change_path_for(resource)
+    end
 
   private
 
