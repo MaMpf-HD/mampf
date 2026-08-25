@@ -134,6 +134,20 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response.body).to include(edit_user_registration_path(locale: :de))
     end
 
+    it "points the language switch at the form after a failed update" do
+      user = create(:confirmed_user_en)
+      sign_in user
+
+      put user_registration_path(locale: :en), params: {
+        user: { email: user.email, current_password: "not-the-password",
+                password: "", password_confirmation: "" }
+      }
+
+      switch_target = response.body[%r{<div id="language-switch".*?</div>}m]
+                              .to_s[/href="([^"]*)"/, 1]
+      expect(switch_target).to include(edit_user_registration_path)
+    end
+
     it "keeps the switched locale across a submit" do
       user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
       sign_in user
