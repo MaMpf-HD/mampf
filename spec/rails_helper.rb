@@ -43,8 +43,12 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include Turbo::TestAssertions, type: :request
 
-  # Rating password strength costs a quarter of a second, so examples that
-  # need the rule ask for it: `it "...", :password_strength do`.
+  # Rating password strength costs a quarter of a second, which the suite
+  # cannot pay on every user it builds -- examples that need the rule ask for
+  # it: `it "...", :password_strength do`. The browser tests keep it, they run
+  # against a server that never loads this file.
+  Rails.configuration.x.password_strength_checks = false
+
   config.around(:each, :password_strength) do |example|
     Rails.configuration.x.password_strength_checks = true
     example.run
