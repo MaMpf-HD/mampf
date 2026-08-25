@@ -93,6 +93,15 @@ RSpec.describe(User, type: :model) do
     expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
   end
 
+  it "is invalid with a password made of university words", :password_strength do
+    user = build(:user,
+                 password: "Sommersemester2026",
+                 password_confirmation: "Sommersemester2026")
+
+    expect(user).not_to be_valid
+    expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
+  end
+
   it "is invalid with a password using local identifiers", :password_strength do
     user = FactoryBot.build(:user,
                             password: "mampf-uni-heidelberg",
