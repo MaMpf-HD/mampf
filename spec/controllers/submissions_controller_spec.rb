@@ -254,7 +254,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
   describe "test tutorial id for submissions" do
     before do
       sign_in user
-      allow_any_instance_of(User).to receive(:tutorial_rosterized).and_return(tutorial)
+      allow_any_instance_of(User).to receive(:rostered_tutorial_in).and_return(tutorial)
     end
 
     after do
@@ -337,8 +337,8 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       end
       describe "#submission_create_params" do
         before do
-          allow_any_instance_of(Lecture).to receive(:roster_eligible_tutorials?).and_return(true)
-          allow(user).to receive(:tutorial_rosterized).and_return(tutorial)
+          allow_any_instance_of(Lecture).to receive(:roster_managed?).and_return(true)
+          allow(user).to receive(:rostered_tutorial_in).and_return(tutorial)
         end
 
         describe "#submission_create_params" do
@@ -371,8 +371,8 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
 
       context "when lecture has no roster-eligible tutorials" do
         before do
-          allow_any_instance_of(Lecture).to receive(:roster_eligible_tutorials?).and_return(false)
-          allow(user).to receive(:tutorial_rosterized).and_return(nil)
+          allow_any_instance_of(Lecture).to receive(:roster_managed?).and_return(false)
+          allow(user).to receive(:rostered_tutorial_in).and_return(nil)
         end
 
         describe "#submission_create_params" do

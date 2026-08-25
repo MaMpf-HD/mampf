@@ -116,7 +116,7 @@ module Assessment
       user = User.find_by(id: params[:user_id])
       return respond_with_flash(:alert, t("assessment.errors.user_not_found")) unless user
 
-      roster_tutorial = user.tutorial_rosterized(@lecture)
+      roster_tutorial = user.rostered_tutorial_in(@lecture)
       unless roster_tutorial
         return respond_with_flash(:alert,
                                   t("assessment.task_points.user_not_rostered"))
