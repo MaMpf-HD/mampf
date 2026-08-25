@@ -1,13 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(User, type: :model) do
-  around do |example|
-    Current.password_strength_validation_enabled = true
-    example.run
-  ensure
-    Current.reset
-  end
-
   def fixture_file(name)
     Rails.root.join(SPEC_FILES, name).open("rb")
   end
@@ -77,13 +70,13 @@ RSpec.describe(User, type: :model) do
     expect(user).not_to be_valid
   end
 
-  it "is invalid with a password shorter than 15 characters" do
+  it "is invalid with a password shorter than 15 characters", :password_strength do
     user = FactoryBot.build(:user, password: "short-pass1")
     expect(user).not_to be_valid
     expect(user.errors[:password]).to be_present
   end
 
-  it "is invalid with a weak password" do
+  it "is invalid with a weak password", :password_strength do
     user = FactoryBot.build(:user,
                             password: "password123456789",
                             password_confirmation: "password123456789")
@@ -91,7 +84,7 @@ RSpec.describe(User, type: :model) do
     expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
   end
 
-  it "is invalid with a password using local identifiers" do
+  it "is invalid with a password using local identifiers", :password_strength do
     user = FactoryBot.build(:user,
                             password: "mampf-uni-heidelberg",
                             password_confirmation: "mampf-uni-heidelberg")

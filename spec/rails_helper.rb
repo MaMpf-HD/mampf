@@ -43,6 +43,15 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include Turbo::TestAssertions, type: :request
 
+  # Rating password strength costs a quarter of a second, so examples that
+  # need the rule ask for it: `it "...", :password_strength do`.
+  config.around(:each, :password_strength) do |example|
+    Rails.configuration.x.password_strength_checks = true
+    example.run
+  ensure
+    Rails.configuration.x.password_strength_checks = false
+  end
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.

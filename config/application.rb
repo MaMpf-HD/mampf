@@ -27,6 +27,10 @@ module Mampf
     # Autoload lib extensions path
     config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "tasks", "rubocop"])
 
+    # Rating password strength costs a quarter of a second per check, which the
+    # test suite cannot afford on every user it builds.
+    config.x.password_strength_checks = true
+
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]

@@ -115,7 +115,7 @@ class User < ApplicationRecord
                      if: :locale?
 
   validates :password, password_strength: true, allow_blank: true,
-                       if: :password_strength_validation_enabled?
+                       if: -> { Rails.configuration.x.password_strength_checks }
 
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
@@ -154,12 +154,6 @@ class User < ApplicationRecord
         -> { where(email_for_submission_decision: true) }
   scope :no_tutorial_name,
         -> { where(name_in_tutorials: nil) }
-
-  def password_strength_validation_enabled?
-    return true unless Rails.env.test?
-
-    Current.password_strength_validation_enabled
-  end
 
   def password_change_required?
     password_policy_version < CURRENT_PASSWORD_POLICY_VERSION
