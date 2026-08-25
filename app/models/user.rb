@@ -120,9 +120,9 @@ class User < ApplicationRecord
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
 
-  # set some default values before saving if they are not set
-  before_validation :set_current_password_policy, on: :create
   before_save :track_password_change
+
+  # set some default values before saving if they are not set
   before_save :set_defaults
 
   # a user must consent to the privacy policy to exist
@@ -826,13 +826,8 @@ class User < ApplicationRecord
 
   private
 
-    def set_current_password_policy
-      self.password_policy_version ||= CURRENT_PASSWORD_POLICY_VERSION
-      return if password_changed_at.present? || encrypted_password.blank?
-
-      self.password_changed_at = Time.zone.now
-    end
-
+    # The password decides which policy a user follows, so both columns are
+    # written wherever it is -- on creation as well as on every later change.
     def track_password_change
       return unless will_save_change_to_encrypted_password?
 
