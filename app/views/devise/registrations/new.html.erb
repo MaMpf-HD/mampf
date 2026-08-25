@@ -36,7 +36,12 @@
 
     <div class="form-floating mb-3">
       <%= f.password_field :password_confirmation, required: true,
-                           class: "form-control", placeholder: "" %>
+                           class: "form-control", placeholder: "",
+                           data: {
+                             "password-strength-target": "passwordConfirmation",
+                             "action": "blur->password-strength#checkMatch " \
+                                       "input->password-strength#clearFieldError"
+                           } %>
       <%= f.label :password_confirmation,
                   t('devise.registrations.new.password_confirm') %>
     </div>

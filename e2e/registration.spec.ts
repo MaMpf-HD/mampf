@@ -44,6 +44,22 @@ test("shows an altcha error and blocks signup when auto verification fails", asy
   );
 });
 
+test("says so before submitting when the confirmation differs", async ({ page }) => {
+  const signUpPage = new SignUpPage(page);
+  await signUpPage.goto();
+  const mismatch = page.getByText("The passwords do not match.");
+
+  await page.getByLabel("Password", { exact: true }).fill("correct-horse-battery-staple");
+  await page.getByLabel("Password confirmation").fill("something-else-entirely");
+  await page.getByLabel("Email").click();
+
+  await expect(mismatch).toBeVisible();
+
+  await page.getByLabel("Password confirmation").fill("correct-horse-battery-staple");
+
+  await expect(mismatch).toBeHidden();
+});
+
 test("enforces password strength on sign up", async ({ page }) => {
   const signUpPage = new SignUpPage(page);
   await signUpPage.goto();

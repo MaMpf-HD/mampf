@@ -48,6 +48,7 @@ export default class extends Controller {
     fairText: String,
     almostText: String,
     strongText: String,
+    mismatchText: String,
     localIdentifiers: Array,
     minLength: Number,
     tooShortText: String,
@@ -105,15 +106,40 @@ export default class extends Controller {
     this.updateFeedback(score, warning);
   }
 
+  // Devise checks this too; catching it here saves a submit.
+  checkMatch() {
+    if (!this.hasPasswordTarget || !this.hasPasswordConfirmationTarget) return;
+
+    const confirmation = this.passwordConfirmationTarget.value;
+    if (!confirmation || confirmation === this.passwordTarget.value) {
+      this.clearFieldError(this.passwordConfirmationTarget);
+      return;
+    }
+
+    this.markFieldInvalid(this.passwordConfirmationTarget, this.mismatchTextValue);
+  }
+
   clearFieldError(fieldOrEvent) {
     const field = fieldOrEvent?.target || fieldOrEvent;
     if (!field) return;
 
     field.classList.remove("is-invalid");
-    const nextElement = field.nextElementSibling;
-    if (nextElement?.classList.contains("invalid-feedback")) {
-      nextElement.remove();
+    for (const message of field.parentElement?.querySelectorAll(".invalid-feedback") || []) {
+      message.remove();
     }
+  }
+
+  markFieldInvalid(field, message) {
+    if (!message) return;
+
+    this.clearFieldError(field);
+    field.classList.add("is-invalid");
+
+    const error = document.createElement("span");
+    error.className = "invalid-feedback d-block";
+    error.setAttribute("aria-live", "polite");
+    error.textContent = message;
+    field.parentElement.append(error);
   }
 
   updateMeter(score) {

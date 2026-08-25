@@ -62,7 +62,8 @@
                            class: 'form-control',
                            data: {
                              "password-strength-target": "passwordConfirmation",
-                             "action": "input->password-strength#check"
+                             "action": "blur->password-strength#checkMatch " \
+                                       "input->password-strength#clearFieldError"
                            } %>
     </div>
   <% end %>
