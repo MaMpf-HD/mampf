@@ -143,7 +143,7 @@ en:
       email_hint: >
         We send a confirmation link to the new address. Until you follow it,
         the old one stays in use.
-      password_section: "Change password (optional)"
+      password_section: "Change password"
       password_hint: >
         Leave both fields empty if you only want to change your email address.
       current_password: "Current password"

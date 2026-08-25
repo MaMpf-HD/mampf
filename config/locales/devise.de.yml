@@ -143,7 +143,7 @@ de:
       current_password: "Aktuelles Passwort"
       need_password: "Wir benötigen Dein aktuelles Passwort, um die Änderung zu bestätigen."
       no_change: "Freilassen, wenn Du das Passwort nicht ändern willst."
-      password_section: "Passwort ändern (optional)"
+      password_section: "Passwort ändern"
       password_hint: >
         Beide Felder leer lassen, wenn Du nur Deine E-Mail-Adresse änderst.
       update: "Speichern"
