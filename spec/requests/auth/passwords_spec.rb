@@ -40,7 +40,8 @@ RSpec.describe("Auth passwords", type: :request) do
 
   describe "the language switch" do
     def switch_target
-      response.body[/<div id="language-switch".*?<\/div>/m].to_s[/href="([^"]*)"/, 1]
+      response.body[%r{<div id="language-switch".*?</div>}m]
+              .to_s[/href="([^"]*)"/, 1]
     end
 
     it "points at the form, not at the path the form posts to" do
