@@ -143,7 +143,7 @@ en:
       password_change_required_help: "Enter your current password to confirm the required password change."
       password_change_required_password_help: "Choose a new password to continue."
       email: "Email address"
-      email_section: "Email address"
+      email_section: "Change email address"
       email_hint: >
         We send a confirmation link to the new address. Until you follow it,
         the old one stays in use.

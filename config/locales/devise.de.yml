@@ -140,7 +140,7 @@ de:
       password_change_required_help: "Gib Dein aktuelles Passwort ein, um die erforderliche Passwortänderung zu bestätigen."
       password_change_required_password_help: "Wähle ein neues Passwort, um fortzufahren."
       email: "E-Mail-Adresse"
-      email_section: "E-Mail-Adresse"
+      email_section: "E-Mail-Adresse ändern"
       email_hint: >
         Wir schicken einen Bestätigungslink an die neue Adresse. Bis Du ihn
         anklickst, gilt die alte weiter.
