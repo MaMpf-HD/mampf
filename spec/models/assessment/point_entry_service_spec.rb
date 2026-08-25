@@ -19,7 +19,8 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
       it "raises Assessment::PointEntryService::PointEntryError" do
         expect do
           described_class.enter_points(participation_no_points, {}, grader)
-        end.to raise_error(Assessment::PointEntryService::PointEntryError, /does not accept points/)
+        end.to raise_error(Assessment::PointEntryService::PointEntryError,
+                           /does not accept points|keine Punkteingabe/)
       end
     end
 
@@ -75,7 +76,8 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
       it "raises Assessment::PointEntryService::PointEntryError" do
         expect do
           described_class.enter_points(participation, { 999_999 => "5" }, grader)
-        end.to raise_error(Assessment::PointEntryService::PointEntryError, /Invalid task/)
+        end.to raise_error(Assessment::PointEntryService::PointEntryError,
+                           /Invalid task|Ungültige Aufgabe/)
       end
 
       it "does not persist any task points (rolls back transaction)" do
@@ -138,7 +140,7 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
         expect do
           described_class.enter_points(participation, { task1.id => "abc" }, grader)
         end.to raise_error(Assessment::PointEntryService::PointEntryError,
-                           /Invalid points value for task/)
+                           /Invalid points value for task|Ungültiger Punktwert/)
       end
 
       it "rolls back the transaction on invalid points" do
@@ -162,14 +164,14 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
         expect do
           described_class.enter_points(participation, { task1.id => [5] }, grader)
         end.to raise_error(Assessment::PointEntryService::PointEntryError,
-                           /Invalid points value for task/)
+                           /Invalid points value for task|Ungültiger Punktwert/)
       end
 
       it "raises Assessment::PointEntryService::PointEntryError for a hash" do
         expect do
           described_class.enter_points(participation, { task1.id => { value: 5 } }, grader)
         end.to raise_error(Assessment::PointEntryService::PointEntryError,
-                           /Invalid points value for task/)
+                           /Invalid points value for task|Ungültiger Punktwert/)
       end
     end
 

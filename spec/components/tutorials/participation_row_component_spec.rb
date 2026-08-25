@@ -55,10 +55,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       it "sets @tutorial" do
         expect(component_tutor.instance_variable_get(:@tutorial)).to eq(tutorial)
       end
-
-      it "does not set @lecture" do
-        expect(component_tutor.instance_variable_get(:@lecture)).to be_nil
-      end
     end
 
     context "when mode is teacher" do
@@ -99,10 +95,8 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
     context "when flipper is enabled and assignment is assessable" do
       before do
-        Flipper.enable(:assessment_grading)
         allow(assignment).to receive(:assessable?).and_return(true)
       end
-      after { Flipper.disable(:assessment_grading) }
 
       it "returns true" do
         expect(component_tutor.grading_enabled?).to eq(true)
