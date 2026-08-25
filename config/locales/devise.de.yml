@@ -136,7 +136,7 @@ de:
     edit:
       title: "Zugangsdaten ändern"
       email: "E-Mail-Adresse"
-      email_section: "E-Mail-Adresse"
+      email_section: "E-Mail-Adresse ändern"
       email_hint: >
         Wir schicken einen Bestätigungslink an die neue Adresse. Bis Du ihn
         anklickst, gilt die alte weiter.
