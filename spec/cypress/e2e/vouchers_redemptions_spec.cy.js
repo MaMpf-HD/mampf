@@ -241,12 +241,12 @@ describe("User & Redemption deletion", () => {
     cy.getBySelector("delete-account-btn").click();
     cy.getBySelector("delete-account-pwd-field").type(this.user.password);
 
-    // The form tunnels DELETE through POST via Rails' _method field.
+    // The form tunnels DELETE through POST via Rails' _method field, and Turbo
+    // answers it with 200 rather than a redirect -- so wait for the request and
+    // check what it did, not what it returned.
     cy.intercept("POST", "/users").as("deleteUserRequest");
     cy.getBySelector("delete-account-confirm-btn").click();
-    cy.wait("@deleteUserRequest").then(({ response }) => {
-      expect(response.statusCode).to.be.oneOf([302, 303]);
-    });
+    cy.wait("@deleteUserRequest");
     cy.visit("/profile/edit");
     cy.getBySelector("login-form").should("be.visible");
   });
