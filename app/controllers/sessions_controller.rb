@@ -42,21 +42,17 @@ class SessionsController < Devise::SessionsController
 
   private
 
-    # Whether the submitted credentials are the right ones and only the lock
-    # stands in the way.
+    # Whether the credentials are right and only the lock stands in the way.
     #
-    # Everyone else keeps seeing the generic failure. `config.paranoid` makes
-    # failed logins indistinguishable, and reporting the lock to whoever asks
-    # would hand out an account-existence oracle: lock any address with five
-    # wrong passwords, and the answer tells you whether it is registered.
+    # Telling anyone else would give away that the address is registered: lock
+    # it with five wrong passwords, then read the answer.
     def locked_out_with_correct_password?
       user = attempted_user
       password = sign_in_params[:password].to_s
       return user.valid_password?(password) if user&.access_locked?
 
-      # Hash it anyway. Devise does the same for addresses it cannot find
-      # (see its database_authenticatable strategy): hashing only for locked
-      # accounts would make them the slower answer, and slow means "exists".
+      # Hash anyway, as Devise does for addresses it cannot find: hashing only
+      # for locked accounts would make them the slower answer.
       resource_class.new.password = password
       false
     end
