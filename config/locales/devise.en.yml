@@ -2,6 +2,13 @@
 
 en:
   devise:
+    passwords_strength:
+      weak: "Very weak"
+      fair: "Weak"
+      almost: "Almost — not strong enough yet"
+      mismatch: "The passwords do not match."
+      strong: "Strong"
+      too_short: "Must be at least %{count} characters"
     confirmations:
       confirmed: "Your email address has been confirmed."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."
@@ -132,10 +139,17 @@ en:
     edit:
       title: "Change login data"
       email: "Email address"
+      email_section: "Change email address"
+      email_hint: >
+        We send a confirmation link to the new address. Until you follow it,
+        the old one stays in use.
+      password_section: "Change password"
+      password_hint: >
+        Leave both fields empty if you only want to change your email address.
       current_password: "Current password"
       need_password: "We need your current password to confirm these changes."
       no_change: "Leave empty if you do not want to change your password."
-      update: "Update"
+      update: "Save"
       new_password: "New password"
       confirm_new_password: "Confirm new password"
   errors:
@@ -145,6 +159,7 @@ en:
       expired: "has expired, please request a new one"
       not_found: "not found"
       not_locked: "was not locked"
+      password_too_weak: "is too weak"
       not_saved:
         one: "1 error prohibited this %{resource} from being saved:"
         other: "%{count} errors prohibited this %{resource} from being saved:"

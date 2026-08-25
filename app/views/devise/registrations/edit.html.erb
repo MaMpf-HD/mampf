@@ -1,32 +1,75 @@
 <h2><%= t('devise.edit.title') %></h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <div class="mb-3">
-    <%= f.label :email, t('devise.edit.email'),
-                class: "form-label" %>
-    <%= f.email_field :email, autofocus: true, class: 'form-control' %>
-  </div>
-  <div class="mb-3">
-    <%= f.label :current_password, t('devise.edit.current_password'),
-                class: "form-label" %>
-    <%= helpdesk(t('devise.edit.need_password'), true) %>
-    <%= f.password_field :current_password, class: 'form-control' %>
-  </div>
-  <div class="mb-3">
-    <%= f.label :password, t('devise.edit.new_password'),
-                class: "form-label" %>
-    <%= helpdesk(t('devise.edit.no_change'), true) %>
-    <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
-  </div>
-  <div class="mb-3">
-    <%= f.label :password_confirmation, t('devise.edit.confirm_new_password'),
-                class: "form-label" %>
-    <%= helpdesk(t('devise.edit.no_change'), true) %>
-    <%= f.password_field :password_confirmation, class: 'form-control'  %>
-  </div>
+<%= form_for(resource, as: resource_name,
+                       url: registration_path(resource_name, locale: I18n.locale),
+                       html: { method: :put }) do |f| %>
+  <%= render layout: "devise/shared/password_strength_wrapper" do %>
+    <% if resource.name.present? %>
+      <input type="hidden" data-password-strength-target="name" value="<%= resource.name %>">
+    <% end %>
+
+    <fieldset class="mb-4">
+      <legend class="h5"><%= t('devise.edit.email_section') %></legend>
+      <div class="mb-3">
+        <%= f.label :email, t('devise.edit.email'), class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, class: 'form-control',
+                          "aria-describedby": "email-hint",
+                          data: {
+                            "password-strength-target": "email",
+                            "action": "input->password-strength#check"
+                          } %>
+        <div class="form-text" id="email-hint"><%= t('devise.edit.email_hint') %></div>
+      </div>
+    </fieldset>
+
+    <fieldset class="mb-4">
+      <legend class="h5"><%= t('devise.edit.password_section') %></legend>
+      <p class="form-text mt-0" id="password-hint">
+        <%= t('devise.edit.password_hint') %>
+      </p>
+      <div class="mb-3">
+        <%= f.label :password, t('devise.edit.new_password'), class: "form-label" %>
+        <%= f.password_field :password, autocomplete: "off", class: 'form-control',
+                             "aria-describedby": "password-hint",
+                             data: {
+                               "password-strength-target": "password",
+                               "action": "input->password-strength#check"
+                             } %>
+        <div class="progress mt-2 password-strength-meter d-none"
+             data-password-strength-target="meterContainer">
+          <div class="progress-bar" aria-hidden="true" style="width: 0%;" data-password-strength-target="meter"></div>
+        </div>
+        <div class="form-text" role="status" aria-live="polite"
+             data-password-strength-target="feedback"></div>
+      </div>
+      <div class="mb-3">
+        <%= f.label :password_confirmation, t('devise.edit.confirm_new_password'),
+                    class: "form-label" %>
+        <%= f.password_field :password_confirmation,
+                             class: 'form-control',
+                             "aria-describedby": "password-hint",
+                             data: {
+                               "password-strength-target": "passwordConfirmation",
+                               "action": "blur->password-strength#checkMatch " \
+                                         "input->password-strength#clearFieldError"
+                             } %>
+      </div>
+    </fieldset>
+
+    <div class="mb-3">
+      <%= f.label :current_password, t('devise.edit.current_password'),
+                  class: "form-label" %>
+      <%= helpdesk(t('devise.edit.need_password'), true) %>
+      <%= f.password_field :current_password,
+                           class: 'form-control',
+                           data: {
+                             "action": "input->password-strength#clearFieldError"
+                           } %>
+    </div>
+  <% end %>
 
   <div class="mb-3">
     <%= f.submit t('devise.edit.update'), class: 'btn btn-primary' %>
-    <%= link_to t('back'), :back, class: 'btn btn-secondary' %>
+    <%= link_to t('back'), edit_profile_path, class: 'btn btn-secondary' %>
   </div>
 <% end %>

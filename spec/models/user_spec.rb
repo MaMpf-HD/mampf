@@ -70,6 +70,46 @@ RSpec.describe(User, type: :model) do
     expect(user).not_to be_valid
   end
 
+  it "lets a contributor delete their account", :password_strength do
+    teacher = create(:confirmed_user)
+    create(:lecture, teacher: teacher)
+
+    expect(teacher.archive_and_destroy("Archived Person")).to be_truthy
+    expect(User.exists?(teacher.id)).to be(false)
+    expect(User.where(archived: true).count).to eq(1)
+  end
+
+  it "is invalid with a password shorter than 15 characters", :password_strength do
+    user = FactoryBot.build(:user, password: "short-pass1")
+    expect(user).not_to be_valid
+    expect(user.errors[:password]).to be_present
+  end
+
+  it "is invalid with a weak password", :password_strength do
+    user = FactoryBot.build(:user,
+                            password: "password123456789",
+                            password_confirmation: "password123456789")
+    expect(user).not_to be_valid
+    expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
+  end
+
+  it "is invalid with a password made of university words", :password_strength do
+    user = build(:user,
+                 password: "Sommersemester2026",
+                 password_confirmation: "Sommersemester2026")
+
+    expect(user).not_to be_valid
+    expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
+  end
+
+  it "is invalid with a password using local identifiers", :password_strength do
+    user = FactoryBot.build(:user,
+                            password: "mampf-uni-heidelberg",
+                            password_confirmation: "mampf-uni-heidelberg")
+    expect(user).not_to be_valid
+    expect(user.errors[:password]).to include(I18n.t("errors.messages.password_too_weak"))
+  end
+
   # test traits and subfactories
 
   describe "confirmed user" do

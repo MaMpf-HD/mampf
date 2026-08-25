@@ -91,7 +91,7 @@ test.describe("Account settings", () => {
 
       await page.locator("#user_email").fill(newEmail);
       await page.getByLabel("Current password", { exact: true }).fill(user.password);
-      await page.getByRole("button", { name: "Update" }).click();
+      await page.getByRole("button", { name: "Save" }).click();
 
       await expect(page.getByRole("alert")).toBeVisible();
 
