@@ -7,38 +7,44 @@ const ACCEPTED_SCORE = 4;
 
 // The dictionaries weigh more than the whole application bundle, and only the
 // three Devise password forms need them, so they are fetched when one appears.
-let loading;
+// A language switch is a Turbo visit, which keeps this module alive, so the
+// packs are kept per language and the options reapplied when it changes.
+const packs = new Map();
+let configuredLanguage;
 
 function currentLanguage() {
   const locale = document.body?.dataset.locale || document.documentElement.lang || "en";
   return locale.toLowerCase().startsWith("de") ? "de" : "en";
 }
 
-async function loadZxcvbn() {
-  const language = currentLanguage();
-  const [core, common, languagePackage] = await Promise.all([
+function loadPack(language) {
+  return Promise.all([
     import("@zxcvbn-ts/core"),
     import("@zxcvbn-ts/language-common"),
     language === "de"
       ? import("@zxcvbn-ts/language-de")
       : import("@zxcvbn-ts/language-en"),
   ]);
-
-  core.zxcvbnOptions.setOptions({
-    translations: languagePackage.translations,
-    graphs: common.adjacencyGraphs,
-    dictionary: {
-      ...common.dictionary,
-      ...languagePackage.dictionary,
-    },
-  });
-
-  return core.zxcvbn;
 }
 
-function zxcvbnReady() {
-  loading ||= loadZxcvbn();
-  return loading;
+async function zxcvbnReady() {
+  const language = currentLanguage();
+  if (!packs.has(language)) packs.set(language, loadPack(language));
+
+  const [core, common, languagePackage] = await packs.get(language);
+  if (configuredLanguage !== language) {
+    core.zxcvbnOptions.setOptions({
+      translations: languagePackage.translations,
+      graphs: common.adjacencyGraphs,
+      dictionary: {
+        ...common.dictionary,
+        ...languagePackage.dictionary,
+      },
+    });
+    configuredLanguage = language;
+  }
+
+  return core.zxcvbn;
 }
 
 export default class extends Controller {
