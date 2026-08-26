@@ -1,7 +1,7 @@
 module Seeds
   # Fills the seed data with the everyday material a new developer needs to see
-  # the app working: announcements, forum discussions, comments, annotations
-  # and watchlists.
+  # the app working: welcome texts on the lecture pages, announcements, forum
+  # discussions, comments, annotations and watchlists.
   module EnrichSupport
     extend self
 
@@ -31,6 +31,23 @@ module Seeds
       ]]
     ].freeze
 
+    HOME_INTROS = [
+      "<div>Willkommen bei <strong>%<title>s</strong>!</div>" \
+      "<div>Auf dieser Seite findest Du alles zur Veranstaltung: das Skript, " \
+      "die Videos zu den einzelnen Sitzungen und die Übungsblätter. Die " \
+      "Aufzeichnung steht in der Regel am Abend nach der Vorlesung bereit.</div>",
+
+      "<div>Diese Seite ist die Anlaufstelle für <strong>%<title>s</strong>.</div>" \
+      "<div>Fragen zwischendurch stellst Du am besten im Forum — dort " \
+      "antworten auch die Tutorinnen und Tutoren. Wichtige Hinweise " \
+      "erscheinen als Ankündigung ganz oben.</div>",
+
+      "<div><strong>%<title>s</strong></div>" \
+      "<div>Die Anmeldung zu den Übungsgruppen läuft über MaMpf. Trag Dich " \
+      "bitte in der ersten Vorlesungswoche ein; wer die Gruppe wechseln " \
+      "möchte, meldet sich bei der Übungsleitung.</div>"
+    ].freeze
+
     COMMENTS = [
       "Ab Minute 12 ist der Ton etwas leise.",
       "Sehr schön erklärt, danke!",
@@ -39,6 +56,7 @@ module Seeds
 
     def enrich!
       refresh_forum_names!
+      add_home_intros!
       add_announcements!
       add_discussions!
       add_media_comments!
@@ -65,6 +83,20 @@ module Seeds
       def refresh_forum_names!
         Lecture.where.not(forum_id: nil).find_each do |lecture|
           lecture.forum&.update!(name: lecture.forum_title)
+        end
+      end
+
+      # The home page is where a lecture starts for a student, and an empty one
+      # says nothing about what the page is for.
+      def add_home_intros!
+        current_lectures.each_with_index do |lecture, index|
+          next if lecture.home_intro_present?
+
+          text = format(HOME_INTROS[index % HOME_INTROS.size],
+                        title: lecture.course.title)
+          # rubocop:disable Rails/SkipsModelValidations
+          lecture.update_columns(home_intro: text)
+          # rubocop:enable Rails/SkipsModelValidations
         end
       end
 
