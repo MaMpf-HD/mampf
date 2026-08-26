@@ -93,8 +93,14 @@
 <% end %>
 
 <% if password_change_required %>
-  <%= button_to t('devise.shared.links.forgot_password'),
-                restart_user_password_path(locale: I18n.locale),
-                method: :post,
-                class: 'btn btn-link p-0' %>
+  <div class="d-flex gap-3">
+    <%= button_to t('devise.shared.links.forgot_password'),
+                  restart_user_password_path(locale: I18n.locale),
+                  method: :post,
+                  class: 'btn btn-link p-0' %>
+    <%= button_to t('navbar.logout'),
+                  destroy_user_session_path(locale: I18n.locale),
+                  method: :delete,
+                  class: 'btn btn-link p-0' %>
+  </div>
 <% end %>
