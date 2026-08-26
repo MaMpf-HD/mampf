@@ -133,6 +133,22 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response).to redirect_to(edit_user_registration_path)
     end
 
+    it "offers a way out while the change is due" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get edit_user_registration_path
+
+      expect(response.body).to include(destroy_user_session_path(locale: :en))
+
+      delete destroy_user_session_path
+
+      expect(controller.current_user).to be_nil
+    end
+
     it "says so when the required password is left blank" do
       password = "zitrone-diskette-vorhang-42"
       user = create(:confirmed_user_en, password: password)
