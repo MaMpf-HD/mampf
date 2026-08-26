@@ -135,6 +135,10 @@ de:
         resend_unlock_instructions: "Anleitung zum Entsperren erneut senden"
     edit:
       title: "Zugangsdaten ändern"
+      password_change_required_title: "Passwort ändern"
+      password_change_required: "Da MaMpf die Integration von Müsli-Funktionalität vorbereitet, erhöhen wir unsere Standards für die Kontosicherheit. Bitte ändere Dein Passwort, bevor Du fortfährst."
+      password_change_required_help: "Gib Dein aktuelles Passwort ein, um die erforderliche Passwortänderung zu bestätigen."
+      password_change_required_password_help: "Wähle ein neues Passwort, um fortzufahren."
       email: "E-Mail-Adresse"
       email_section: "E-Mail-Adresse ändern"
       email_hint: >
@@ -157,6 +161,7 @@ de:
       not_found: "nicht gefunden"
       not_locked: "ist nicht gesperrt"
       password_too_weak: "ist zu schwach"
+      password_unchanged: "muss sich von Deinem aktuellen Passwort unterscheiden"
       not_saved:
         one: "Konnte %{resource} nicht speichern: Es ist ein Fehler aufgetreten."
         other: "Konnte %{resource} nicht speichern: Es sind %{count} Fehler aufgetreten."

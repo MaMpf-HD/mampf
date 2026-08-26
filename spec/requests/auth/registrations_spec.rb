@@ -120,6 +120,117 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(user.unconfirmed_email).to eq(new_email)
       expect(ActionMailer::Base.deliveries.last.to).to include(new_email)
     end
+
+    it "redirects stale users away from authenticated pages until their password changes" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get news_path
+
+      expect(response).to redirect_to(edit_user_registration_path)
+    end
+
+    it "says so when the required password is left blank" do
+      password = "zitrone-diskette-vorhang-42"
+      user = create(:confirmed_user_en, password: password)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      put user_registration_path,
+          params: { user: { current_password: password, password: "",
+                            password_confirmation: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(CGI.escapeHTML(I18n.t("errors.messages.blank")))
+      expect(flash[:notice]).to be_nil
+    end
+
+    it "refuses the old password as the new one while a change is due" do
+      password = "zitrone-diskette-vorhang-42"
+      user = create(:confirmed_user_en, password: password)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      put user_registration_path,
+          params: { user: { current_password: password,
+                            password: password,
+                            password_confirmation: password } }
+
+      expect(response.body).to include(I18n.t("errors.messages.password_unchanged"))
+      expect(user.reload).to be_password_change_required
+    end
+
+    it "sends a first-time user to their profile once the new password is set" do
+      user = create(:confirmed_user_en, password: "zitrone-diskette-vorhang-42")
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil,
+                          sign_in_count: 0)
+      # rubocop:enable Rails/SkipsModelValidations
+
+      post user_session_path, params: { user: { email: user.email,
+                                                password: "zitrone-diskette-vorhang-42" } }
+      put user_registration_path,
+          params: { user: { current_password: "zitrone-diskette-vorhang-42",
+                            password: "andere-melone-tafel-77",
+                            password_confirmation: "andere-melone-tafel-77" } }
+
+      expect(response).to redirect_to(edit_profile_path)
+    end
+
+    it "lets a frame request leave its frame instead of swapping in the prompt" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get news_path, headers: { "Turbo-Frame" => "some-frame" }
+
+      expect(response.body)
+        .to include('<meta name="turbo-visit-control" content="reload">')
+    end
+
+    it "shows the forced password change prompt for stale users" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get edit_user_registration_path
+
+      expect(response.body)
+        .to include(I18n.t("devise.edit.password_change_required"))
+      expect(response.body).not_to include(I18n.t("devise.edit.email"))
+    end
+
+    it "does not allow password_policy_version to be changed through update params" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      put user_registration_path, params: {
+        user: {
+          email: user.email,
+          current_password: user.password,
+          password: "",
+          password_confirmation: "",
+          password_policy_version: User::CURRENT_PASSWORD_POLICY_VERSION
+        }
+      }
+
+      expect(user.reload.password_policy_version).to eq(0)
+      expect(user).to be_password_change_required
+    end
   end
 
   describe "GET /users/edit" do

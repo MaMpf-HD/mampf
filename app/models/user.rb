@@ -2,6 +2,8 @@
 class User < ApplicationRecord
   include ApplicationHelper
 
+  CURRENT_PASSWORD_POLICY_VERSION = 1
+
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
@@ -115,8 +117,15 @@ class User < ApplicationRecord
   validates :password, password_strength: true, allow_blank: true,
                        if: -> { Rails.configuration.x.password_strength_checks }
 
+  # Devise hashes the same password with a fresh salt, so re-entering the old
+  # one would pass as a change and mark the account compliant.
+  validate :password_differs_from_current,
+           if: -> { password.present? && password_change_required? }
+
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
+
+  before_save :track_password_change
 
   # set some default values before saving if they are not set
   before_save :set_defaults
@@ -150,6 +159,10 @@ class User < ApplicationRecord
         -> { where(email_for_submission_decision: true) }
   scope :no_tutorial_name,
         -> { where(name_in_tutorials: nil) }
+
+  def password_change_required?
+    password_policy_version < CURRENT_PASSWORD_POLICY_VERSION
+  end
 
   # Scopes for usage in the UserCleaner
   scope :confirmed, -> { where.not(confirmed_at: nil) }
@@ -817,6 +830,22 @@ class User < ApplicationRecord
   end
 
   private
+
+    def password_differs_from_current
+      stored = encrypted_password_in_database
+      return if stored.blank?
+      return unless Devise::Encryptor.compare(self.class, stored, password)
+
+      errors.add(:password, I18n.t("errors.messages.password_unchanged"))
+    end
+
+    # Covers creation too: a new account writes its password like any change.
+    def track_password_change
+      return unless will_save_change_to_encrypted_password?
+
+      self.password_policy_version = CURRENT_PASSWORD_POLICY_VERSION
+      self.password_changed_at = Time.zone.now
+    end
 
     def set_defaults
       self.subscription_type ||= 1
