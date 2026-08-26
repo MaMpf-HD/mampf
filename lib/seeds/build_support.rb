@@ -26,6 +26,7 @@ module Seeds
         advance!(semesters)
         Demo::SetupSupport.setup!
         Demo::CampaignSetupSupport.setup!
+        Demo::NextTermBannerSupport.setup!
         add_running_campaigns!
         extend_open_deadlines!
         Seeds::EnrichSupport.enrich!
