@@ -7,7 +7,7 @@ module Seeds
   module BuildSupport
     extend self
 
-    PASSWORD = "zitrone-diskette-vorhang-42".freeze
+    PASSWORD = "lemon-floppy-curtain-42".freeze
     # Two accounts keep an outdated password policy so that the forced password
     # change can be tried out; everyone else gets in without the detour.
     STALE_PASSWORD_ACCOUNTS = ["student5@mampf.edu", "moded@mampf.edu"].freeze
