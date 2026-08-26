@@ -1,9 +1,9 @@
 module Seeds
   # Rebuilds the development seed data that ships in mampf-init-data.
   #
-  # The set is meant to look the same every year: everything moves one year
-  # forward, so the term that was current stays current, and the demo material
-  # is baked in rather than left to a task nobody remembers to run.
+  # The set is meant to stay usable: it moves forward to the term it should
+  # play in, one semester on by default, and the demo material is baked in
+  # rather than left to a task nobody remembers to run.
   module BuildSupport
     extend self
 
@@ -16,13 +16,14 @@ module Seeds
     TALK_DESCRIPTION = "Vergabe der Vortragsthemen".freeze
 
     # One transaction, so a build that fails halfway can be retried on the same
-    # dump instead of one that is already a year ahead.
-    def build!
+    # dump instead of one that has already moved.
+    def build!(target_term: nil)
       ensure_development!
       require "factory_bot_rails"
+      semesters = semesters_until(target_term)
 
       ActiveRecord::Base.transaction do
-        advance_one_year!
+        advance!(semesters)
         Demo::SetupSupport.setup!
         Demo::CampaignSetupSupport.setup!
         add_running_campaigns!
@@ -35,17 +36,20 @@ module Seeds
       report!
     end
 
-    def advance_one_year!
+    # A semester is half a year, so terms and the dates that hang off them move
+    # by the same number of six-month steps and stay in step with each other.
+    def advance!(semesters)
       ensure_development!
+      months = 6 * Integer(semesters)
       # rubocop:disable Rails/SkipsModelValidations
-      Term.update_all("year = year + 1")
-      Term.update_all(shift(:submission_deletion_mail, :submission_deletion_reminder,
-                            :submissions_deleted_at))
-      Assignment.update_all(shift(:deadline, :deletion_date))
-      Lesson.update_all(shift(:date))
-      Medium.update_all(shift(:released_at, :file_last_edited))
-      Submission.update_all(shift(:last_modification_by_users_at))
-      Voucher.update_all(shift(:expires_at, :invalidated_at))
+      Term.update_all(rename_terms(semesters))
+      Term.update_all(shift(months, :submission_deletion_mail,
+                            :submission_deletion_reminder, :submissions_deleted_at))
+      Assignment.update_all(shift(months, :deadline, :deletion_date))
+      Lesson.update_all(shift(months, :date))
+      Medium.update_all(shift(months, :released_at, :file_last_edited))
+      Submission.update_all(shift(months, :last_modification_by_users_at))
+      Voucher.update_all(shift(months, :expires_at, :invalidated_at))
       # rubocop:enable Rails/SkipsModelValidations
     end
 
@@ -105,9 +109,46 @@ module Seeds
       end
       # rubocop:enable Rails/Exit
 
-      def shift(*columns)
-        columns.map { |c| "#{c} = #{c} + interval '1 year'" }.join(", ")
+      def shift(months, *columns)
+        columns.map { |c| "#{c} = #{c} + interval '#{months} months'" }.join(", ")
       end
+
+      # Terms are counted in half years, so that WS follows SS within a year.
+      def rename_terms(semesters)
+        moved = "(#{term_index_sql} + #{Integer(semesters)})"
+        "year = #{moved} / 2, " \
+          "season = CASE #{moved} % 2 WHEN 0 THEN 'SS' ELSE 'WS' END"
+      end
+
+      def term_index_sql
+        "year * 2 + CASE season WHEN 'SS' THEN 0 ELSE 1 END"
+      end
+
+      def term_index(term)
+        (term.year * 2) + (term.season == "SS" ? 0 : 1)
+      end
+
+      # rubocop:disable Rails/Exit
+      # Without a target the set moves on by a single semester, which is what
+      # the next edition of the seed data usually is.
+      def semesters_until(target_term)
+        return 1 if target_term.blank?
+
+        season, year = parse_term(target_term)
+        steps = ((year * 2) + (season == "SS" ? 0 : 1)) - term_index(current_term)
+        return steps if steps.positive?
+
+        abort("The seed data is in #{label(current_term)}; " \
+              "#{season} #{year} is not ahead of it.")
+      end
+
+      def parse_term(target_term)
+        match = target_term.to_s.strip.match(/\A(SS|WS)\s*(\d{4})/i)
+        abort("Give the target term as \"SS 2027\" or \"WS 2027\".") unless match
+
+        [match[1].upcase, Integer(match[2])]
+      end
+      # rubocop:enable Rails/Exit
 
       def current_term
         Term.active || Term.order(:year, :season).last

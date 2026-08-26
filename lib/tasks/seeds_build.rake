@@ -1,6 +1,6 @@
 namespace :seeds do
-  desc "Rebuild the shipped development seed data (one year on, demo material baked in)"
+  desc "Rebuild the shipped development seed data (term=\"WS 2026\", default one semester on)"
   task build: :environment do
-    Seeds::BuildSupport.build!
+    Seeds::BuildSupport.build!(target_term: ENV.fetch("term", nil))
   end
 end
