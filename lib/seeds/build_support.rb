@@ -60,6 +60,9 @@ module Seeds
       ensure_development!
 
       User.find_each do |user|
+        # An account that is due a change may not be handed its own password
+        # back; stage_password_policy! puts the demo accounts back afterwards.
+        user.password_policy_version = User::CURRENT_PASSWORD_POLICY_VERSION
         user.password = PASSWORD
         user.password_confirmation = PASSWORD
         user.failed_attempts = 0
