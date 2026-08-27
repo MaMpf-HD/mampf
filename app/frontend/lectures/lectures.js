@@ -5,56 +5,72 @@ function disableExceptOrganizational() {
   $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
 };
 
+// Bound to the document rather than to the fields: this file is a module in the
+// page body, so on the visit that first loads it Turbo has announced turbo:load
+// long before it is evaluated, and anything bound in there would never see the
+// form. See the cancel buttons below for the other half of the same feature.
+$(document).on("change", "#lecture-form :input", function () {
+  $("#lecture-basics-warning").show();
+  $(".fa-edit:not(#update-teacher-button,#update-editors-button)").hide();
+  $(".new-in-lecture").hide();
+  $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
+});
+
+$(document).on("change", "#lecture-preferences-form :input", function () {
+  $("#lecture-preferences-warning").show();
+  $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
+  $(".fa-edit").hide();
+  $(".new-in-lecture").hide();
+});
+
+$(document).on("change", "#lecture-comments-form :input", function () {
+  $("#lecture-comments-warning").show();
+  $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
+  $(".fa-edit").hide();
+  $(".new-in-lecture").hide();
+});
+
+$(document).on("change", "#lecture-assignments-form :input", function () {
+  $("#lecture-assignments-warning").show();
+  $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
+  $(".new-in-lecture").hide();
+});
+
+$(document).on("change", "#lecture-organizational-form :input", function () {
+  disableExceptOrganizational();
+});
+
+$(document).on("trix-change", "#lecture-concept-trix", function () {
+  disableExceptOrganizational();
+});
+
+const RELOADING_CANCEL_BUTTONS = [
+  "#lecture-basics-cancel",
+  "#cancel-lecture-preferences",
+  "#cancel-lecture-comments",
+  "#cancel-lecture-organizational",
+].join(", ");
+
+$(document).on("click", RELOADING_CANCEL_BUTTONS, function () {
+  location.reload(true);
+});
+
+$(document).on("click", "#cancel-lecture-assignments", function () {
+  $("#lecture-assignments-warning").hide();
+  $('[data-bs-toggle="collapse"]').prop("disabled", false).addClass("clickable");
+  $(".new-in-lecture").show();
+  const maxSize = $("#lecture_submission_max_team_size").data("value");
+  $("#lecture_submission_max_team_size").val(maxSize);
+  const gracePeriod = $("#lecture_submission_grace_period").data("value");
+  $("#lecture_submission_grace_period").val(gracePeriod);
+});
+
 $(document).on("turbo:load", function () {
   $("#delete-forum").on("click", () => {
     const sureToDeleteMsg = $("#delete-forum").data("sureToDelete");
     const reallyDelete = confirm(sureToDeleteMsg);
     return reallyDelete;
   });
-
-  // if any input is given to the lecture form (for people in lecture),
-  // disable other input
-  $("#lecture-form :input").on("change", function () {
-    $("#lecture-basics-warning").show();
-    $(".fa-edit:not(#update-teacher-button,#update-editors-button)").hide();
-    $(".new-in-lecture").hide();
-    $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
-  });
-
-  // if any input is given to the preferences form, disable other input
-  $("#lecture-preferences-form :input").on("change", function () {
-    $("#lecture-preferences-warning").show();
-    $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
-    $(".fa-edit").hide();
-    $(".new-in-lecture").hide();
-  });
-
-  // if any input is given to the comments form, disable other input
-  $("#lecture-comments-form :input").on("change", function () {
-    $("#lecture-comments-warning").show();
-    $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
-    $(".fa-edit").hide();
-    $(".new-in-lecture").hide();
-  });
-
-  // if any input is given to the assignments form, disable other input
-  $("#lecture-assignments-form :input").on("change", function () {
-    $("#lecture-assignments-warning").show();
-    $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
-    $(".new-in-lecture").hide();
-  });
-
-  // if any input is given to the organizational form, disable other input
-  $("#lecture-organizational-form :input").on("change", function () {
-    disableExceptOrganizational();
-  });
-
-  const trixElement = document.querySelector("#lecture-concept-trix");
-  if (trixElement) {
-    trixElement.addEventListener("trix-change", function () {
-      disableExceptOrganizational();
-    });
-  }
 
   // if absolute numbering box is checked/unchecked, enable/disable selection of
   // start section
@@ -65,37 +81,6 @@ $(document).on("turbo:load", function () {
     else {
       $("#lecture_start_section").prop("disabled", true);
     }
-  });
-
-  // reload current page if lecture basics editing is cancelled
-  $("#lecture-basics-cancel").on("click", function () {
-    location.reload(true);
-  });
-
-  // reload current page if lecture preferences editing is cancelled
-  $("#cancel-lecture-preferences").on("click", function () {
-    location.reload(true);
-  });
-
-  // reload current page if lecture comments editing is cancelled
-  $("#cancel-lecture-comments").on("click", function () {
-    location.reload(true);
-  });
-
-  // reload current page if lecture preferences editing is cancelled
-  $("#cancel-lecture-organizational").on("click", function () {
-    location.reload(true);
-  });
-
-  // restore assignments form if lecture assignments editing is cancelled
-  $("#cancel-lecture-assignments").on("click", function () {
-    $("#lecture-assignments-warning").hide();
-    $('[data-bs-toggle="collapse"]').prop("disabled", false).addClass("clickable");
-    $(".new-in-lecture").show();
-    const maxSize = $("#lecture_submission_max_team_size").data("value");
-    $("#lecture_submission_max_team_size").val(maxSize);
-    const gracePeriod = $("#lecture_submission_grace_period").data("value");
-    $("#lecture_submission_grace_period").val(gracePeriod);
   });
 
   // hide the media tab if hide media button is clicked
