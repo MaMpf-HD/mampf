@@ -65,38 +65,60 @@ $(document).on("click", "#cancel-lecture-assignments", function () {
   $("#lecture_submission_grace_period").val(gracePeriod);
 });
 
+$(document).on("click", "#delete-forum", function () {
+  return confirm($(this).data("sureToDelete"));
+});
+
+// The absolute numbering box decides whether a start section may be picked.
+$(document).on("change", "#lecture_absolute_numbering", function () {
+  $("#lecture_start_section").prop("disabled", !$(this).prop("checked"));
+});
+
+$(document).on("click", "#hide-media-button", function () {
+  $("#lecture-media-card").hide();
+  $("#lecture-content-card").removeClass("col-xxl-9");
+  $("#show-media-button").show();
+});
+
+$(document).on("click", "#show-media-button", function () {
+  $("#lecture-content-card").addClass("col-xxl-9");
+  $("#lecture-media-card").show();
+  $("#show-media-button").hide();
+});
+
+// Tags can only be imported along with the sections they hang off.
+$(document).on("change", "#import_sections", function () {
+  if ($(this).prop("checked")) {
+    $("#import_tags").prop("disabled", false);
+    return;
+  }
+  $("#import_tags").prop("disabled", true).prop("checked", false);
+});
+
+$(document).on("change", "#lecture_course_id", function () {
+  $("#lecture_term_id").removeClass("is-invalid");
+  $("#new-lecture-term-error").empty();
+  const courseId = parseInt($(this).val());
+  const termInfo = $(this).data("terminfo").filter(x => x[0] === courseId);
+  if (!termInfo[0]) return;
+
+  const termIndependent = termInfo[0][1];
+  $("#newLectureTerm").toggle(!termIndependent);
+  $("#lecture_term_id").prop("disabled", termIndependent);
+  $("#newLectureSort").toggle(!termIndependent);
+});
+
+$(document).on("change", "#medium_publish_media_0", function () {
+  $('[id^="medium_released_"]').attr("disabled", true);
+  $("#access-text").css("color", "grey");
+});
+
+$(document).on("change", "#medium_publish_media_1", function () {
+  $('[id^="medium_released_"]').attr("disabled", false);
+  $("#access-text").css("color", "");
+});
+
 $(document).on("turbo:load", function () {
-  $("#delete-forum").on("click", () => {
-    const sureToDeleteMsg = $("#delete-forum").data("sureToDelete");
-    const reallyDelete = confirm(sureToDeleteMsg);
-    return reallyDelete;
-  });
-
-  // if absolute numbering box is checked/unchecked, enable/disable selection of
-  // start section
-  $("#lecture_absolute_numbering").on("change", function () {
-    if ($(this).prop("checked")) {
-      $("#lecture_start_section").prop("disabled", false);
-    }
-    else {
-      $("#lecture_start_section").prop("disabled", true);
-    }
-  });
-
-  // hide the media tab if hide media button is clicked
-  $("#hide-media-button").on("click", function () {
-    $("#lecture-media-card").hide();
-    $("#lecture-content-card").removeClass("col-xxl-9");
-    $("#show-media-button").show();
-  });
-
-  // display the media tab if show media button is clicked
-  $("#show-media-button").on("click", function () {
-    $("#lecture-content-card").addClass("col-xxl-9");
-    $("#lecture-media-card").show();
-    $("#show-media-button").hide();
-  });
-
   const userModalContent = document.getElementById("lectureUserModalContent");
   if (userModalContent && (userModalContent.dataset.filled === "false")) {
     const lectureId = userModalContent.dataset.lecture;
@@ -214,50 +236,9 @@ $(document).on("turbo:load", function () {
       largeDisplay();
     }
   });
-
-  $(document).on("change", "#lecture_course_id", function () {
-    $("#lecture_term_id").removeClass("is-invalid");
-    $("#new-lecture-term-error").empty();
-    const courseId = parseInt($(this).val());
-    const termInfo = $(this).data("terminfo").filter(x => x[0] === courseId);
-    console.log(termInfo[0]);
-    if (termInfo[0]) {
-      if (termInfo[0][1]) {
-        $("#newLectureTerm").hide();
-        $("#lecture_term_id").prop("disabled", true);
-        $("#newLectureSort").hide();
-      }
-      else {
-        $("#newLectureTerm").show();
-        $("#lecture_term_id").prop("disabled", false);
-        $("#newLectureSort").show();
-      }
-      return;
-    }
-  });
-
-  $(document).on("change", "#medium_publish_media_0", function () {
-    $('[id^="medium_released_"]').attr("disabled", true);
-    $("#access-text").css("color", "grey");
-  });
-
-  $(document).on("change", "#medium_publish_media_1", function () {
-    $('[id^="medium_released_"]').attr("disabled", false);
-    $("#access-text").css("color", "");
-  });
-
-  $("#import_sections").on("change", function () {
-    if ($(this).prop("checked")) {
-      $("#import_tags").prop("disabled", false);
-    }
-    else {
-      $("#import_tags").prop("disabled", true).prop("checked", false);
-    }
-  });
 });
 
 $(document).on("turbo:before-cache", function () {
   $(".lecture-tag").removeClass("bg-warning");
   $(".lecture-lesson").removeClass("bg-info").addClass("bg-secondary");
-  $(document).off("change", "#lecture_course_id");
 });
