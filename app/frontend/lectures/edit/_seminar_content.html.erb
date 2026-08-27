@@ -4,6 +4,8 @@
       <%= t("admin.lecture.#{lecture.sort}_content") %>
       <i id="show-media-button"
          class="far fa-list-alt clickable"
+         data-action="click->lecture-edit#showMedia"
+         data-lecture-edit-target="showMediaButton"
          data-bs-toggle="tooltip"
          title="<%= t('admin.lecture.show_media') %>">
       </i>

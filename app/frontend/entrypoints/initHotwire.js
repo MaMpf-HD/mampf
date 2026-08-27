@@ -95,6 +95,12 @@ window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 import ClipboardController from "~/controllers/clipboard.controller.js";
 window.Stimulus.register("clipboard", ClipboardController);
 
+import LectureEditController from "~/lectures/edit/lecture_edit.controller.js";
+window.Stimulus.register("lecture-edit", LectureEditController);
+
+import LectureSubscribersController from "~/lectures/edit/lecture_subscribers.controller.js";
+window.Stimulus.register("lecture-subscribers", LectureSubscribersController);
+
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);
 
