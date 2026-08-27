@@ -35,6 +35,7 @@ module CoursesHelper
             style: "text-decoration: none;",
             data: { toggle: "tooltip",
                     placement: "bottom" },
+            "aria-label": t("buttons.edit"),
             title: t("buttons.edit")) do
       tag.i(class: "far fa-edit")
     end

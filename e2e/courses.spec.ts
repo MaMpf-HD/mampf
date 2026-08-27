@@ -114,4 +114,9 @@ test("finds a course by title and keeps the results in their frame", async ({
   const results = page.locator("#courses-search-results");
   await expect(results.getByText("Zahlentheorie")).toBeVisible();
   await expect(results.getByText("Funktionalanalysis")).toBeHidden();
+
+  await results.getByRole("link", { name: "Edit" }).click();
+
+  await expect(page).toHaveURL(/\/courses\/\d+\/edit/);
+  await expect(page.getByRole("heading", { name: "Zahlentheorie" })).toBeVisible();
 });
