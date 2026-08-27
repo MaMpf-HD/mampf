@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe(Rosters::SelfRosterOptionsQuery) do
   describe "#call" do
     let(:user) { create(:confirmed_user) }
-    let(:lecture) { create(:lecture) }
+    let(:lecture) { create(:lecture, :released_for_all) }
 
     let!(:add_only_tutorial) do
       create(:tutorial,
@@ -57,6 +57,18 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
         add_and_remove_tutorial,
         allocated_remove_only_tutorial
       )
+    end
+
+    it "offers nothing to the teacher, who runs the registration" do
+      result = described_class.new(lecture, lecture.teacher).call
+
+      expect(result).to be_empty
+    end
+
+    it "offers nothing while the lecture is unpublished" do
+      lecture.update!(released: nil)
+
+      expect(described_class.new(lecture, user).call).to be_empty
     end
 
     it "sorts registerable options before withdraw-only and full options" do
