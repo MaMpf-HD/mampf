@@ -50,7 +50,8 @@ export function buildUppy({
     showProgressDetails: true,
     hideUploadButton,
     width: "100%",
-    height: 300,
+    height: 90,
+    singleFileFullScreen: false,
     note,
   };
 

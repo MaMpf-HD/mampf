@@ -54,6 +54,7 @@ import "~/js/vertices.coffee";
 
 import "@uppy/core/css/style.min.css";
 import "@uppy/dashboard/css/style.min.css";
+import "~/uploads/uppy.scss";
 
 // Rails UJS
 // https://github.com/rails/rails/issues/49499#issuecomment-1749086834

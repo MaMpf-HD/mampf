@@ -1,0 +1,24 @@
+// Uppy brings its own panel: a grey card with a rounded border, which inside a
+// Bootstrap card reads as a card in a card. Only the drop zone should show.
+.uppy-Dashboard-inner,
+.uppy-Dashboard-innerWrap {
+  background: transparent;
+  border: 0;
+  min-height: 0;
+}
+
+.uppy-Dashboard-AddFiles {
+  margin: 0;
+  background: transparent;
+  border: 1px dashed var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+}
+
+.uppy-Dashboard-AddFiles-info {
+  padding: 0;
+}
+
+.uppy-Dashboard-AddFiles-title {
+  font-size: 1rem !important;
+  line-height: 1.4;
+}
