@@ -454,6 +454,41 @@ end
 - **`Lecture`**: Hosts campaigns for its tutorials or talks.
 - **`Exam`**: Hosts a campaign for exam seat registration.
 
+#### Who takes part
+
+Whether someone registers or runs the registration is a property of the **host**,
+not of the group. A lecture's teacher, its tutors and its editors organise the
+registration and do not take part in it; everyone else does, without needing a
+subscription or the passphrase.
+
+The rule lives in one place, `Registration::Participation.allowed?(user, lecture)`,
+and both sides ask it: the abilities that authorize `:self_materialize` and
+`:enroll`, and the lecture home page that offers the options. That is not
+tidiness for its own sake. When the page decided on its own — it asked whether a
+group was *configured* for self-registration, never who was looking — a teacher
+was shown the student view with a "Register now" button, and the endpoint refused
+the click the page had just offered.
+
+```admonish warning "A second host will need a second answer"
+The rule as written is about a lecture. A host that is not a lecture may well
+answer differently: whoever organises a faculty barbecue still wants a place at
+the grill, so its creator takes part rather than being excluded.
+
+When that host arrives, the question moves into this concern — a default that
+lets anyone who may see the thing take part, and an override in `Lecture` for
+staff. Everything already asks one function, so that is a change at one place.
+```
+
+Two obstacles are worth knowing before then, both from the assumption that a
+registration belongs to a lecture:
+
+- `Roster::SelfMaterializationController` derives a lecture from the rosterable
+  and redirects to the start page when there is none, so a non-lecture host
+  cannot reach self-registration at all today.
+- `Cohort#context` is polymorphic, but `Cohort#lecture` returns `nil` as soon as
+  the context is something else — a caller that assumes a lecture gets one
+  quietly.
+
 ---
 
 ## Registration::Item (ActiveRecord Model)
