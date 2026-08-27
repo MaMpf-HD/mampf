@@ -1,7 +1,6 @@
 module Registration
-  # Who takes part in a lecture's registration as a student: everyone but the
-  # people who run it. Asked by the abilities that authorize the actions and by
-  # the views that offer them, so that the two cannot say different things.
+  # The abilities that authorize registration and the pages that offer it ask
+  # this same question, so that the two cannot give different answers.
   #
   # Note that deliberately neither a subscription nor a passphrase is
   # required: registration is decoupled from content access (subscription),

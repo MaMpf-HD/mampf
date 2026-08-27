@@ -3,8 +3,6 @@ require "rails_helper"
 RSpec.describe(Rosters::SelfRosterOptionsQuery) do
   describe "#call" do
     let(:user) { create(:confirmed_user) }
-    # Published, and the user is none of its staff: the options only exist for
-    # someone who takes part in the registration.
     let(:lecture) { create(:lecture, :released_for_all) }
 
     let!(:add_only_tutorial) do
