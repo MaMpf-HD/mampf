@@ -23,6 +23,8 @@
 
 
 <%= form_with model: lecture,
+            data: { action: "change->lecture-edit#markUnsaved",
+                    lecture_edit_warning_param: "lecture-comments-warning" },
             html: { id: 'lecture-comments-form' } do |f| %>
 
   <div class="form-check pt-3">
@@ -71,6 +73,7 @@
         <%= f.submit t('buttons.save'),
                       class: "btn btn-sm btn-primary" %>
         <button type="button" id="cancel-lecture-comments"
+                data-action="click->lecture-edit#reload"
                 class="btn btn-sm btn-secondary">
           <%= t('buttons.cancel') %>
         </button>
