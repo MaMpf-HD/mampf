@@ -101,6 +101,12 @@ window.Stimulus.register("lecture-edit", LectureEditController);
 import LectureSubscribersController from "~/lectures/edit/lecture_subscribers.controller.js";
 window.Stimulus.register("lecture-subscribers", LectureSubscribersController);
 
+import UppyUploadController from "~/controllers/uppy_upload.controller.js";
+window.Stimulus.register("uppy-upload", UppyUploadController);
+
+import SubmissionUploadController from "~/controllers/submission_upload.controller.js";
+window.Stimulus.register("submission-upload", SubmissionUploadController);
+
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);
 
