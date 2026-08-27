@@ -6,7 +6,7 @@ module Rosters
     end
 
     def call
-      # The page that shows these options is the same one for staff and students.
+      # The lecture home page offers these options to staff and students alike.
       return [] unless Registration::Participation.allowed?(@user, @lecture)
 
       # get all rosterables for the lecture
