@@ -58,18 +58,23 @@ test.describe("uploading through Uppy", () => {
         });
       });
 
-      const complaint = new Promise<string>((resolve) => {
-        page.once("dialog", (dialog) => {
-          resolve(dialog.message());
-          void dialog.accept();
-        });
+      const complaints: string[] = [];
+      page.on("dialog", (dialog) => {
+        complaints.push(dialog.message());
+        void dialog.accept();
       });
 
       await page.goto(`/media/${medium.id}/edit`);
       await page.locator("#video-uploadArea input.uppy-Dashboard-input").first()
         .setInputFiles("spec/files/talk.mp4");
 
-      expect(await complaint).toContain("The file is infected and was not stored.");
+      // Said once, in the words the server used -- not twice, and not as Uppy's
+      // guess that the network is broken.
+      await expect(() => {
+        expect(complaints).toEqual(
+          [expect.stringContaining("The file is infected and was not stored.")],
+        );
+      }).toPass();
       // A verdict is not a hiccup: the file must not go through the scanner again.
       expect(attempts).toBe(1);
     });
@@ -110,7 +115,9 @@ test.describe("uploading through Uppy", () => {
 
       await expect(stored).toContainText("manuscript.pdf");
 
+      const created = page.waitForResponse(response => response.request().method() !== "GET");
       await page.getByRole("button", { name: "Save" }).click();
+      await created;
       await page.goto(`/lectures/${lecture.id}/submissions`);
 
       await expect(page.getByRole("link", { name: "Submission ↓" })).toBeVisible();

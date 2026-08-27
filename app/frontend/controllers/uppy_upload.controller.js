@@ -205,8 +205,9 @@ export default class extends Controller {
     this.uppy.on("complete", (result) => {
       this.uploadPending = false;
 
+      // A failure has already been reported by upload-error, in the words the
+      // server used; here it only has to be cleaned up.
       if (result.failed.length) {
-        this.showError(result.failed[0].error);
         clearUppyFiles(this.uppy);
         return;
       }
