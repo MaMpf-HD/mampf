@@ -1,12 +1,12 @@
 <div class="row">
-  <div class="col-6">
+  <div class="col-12 col-md-4">
     <%= t('video.video') %>
     <span class="badge bg-secondary">
       mp4
     </span>
     <%= helpdesk(t('admin.medium.info.video'), false) %>
   </div>
-  <div class="col-6 text-end">
+  <div class="col-12 col-md-8 d-flex flex-wrap justify-content-end gap-1">
     <% if medium.screenshot.present? %>
       <button type="button"
               class="btn btn-sm btn-outline-secondary"
