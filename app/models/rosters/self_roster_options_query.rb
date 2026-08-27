@@ -6,6 +6,10 @@ module Rosters
     end
 
     def call
+      # Staff run the registration, they do not take part in it -- and the page
+      # that shows these options is the same one for everybody.
+      return [] unless Registration::Participation.allowed?(@user, @lecture)
+
       # get all rosterables for the lecture
       rosterables = []
       rosterables.concat(@lecture.talks)
