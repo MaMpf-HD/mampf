@@ -4,6 +4,7 @@
                       data: { id: submission.id,
                               controller: 'uppy-upload',
                               uppy_upload_kind_value: 'correction',
+                              uppy_upload_max_file_size_value: CorrectionUploader::MAX_SIZE,
                               uppy_upload_endpoint_value: '/corrections/upload',
                               uppy_upload_failure_message_value: t('submission.upload_failure'),
                               uppy_upload_empty_file_message_value: t('submission.upload_failure_empty_file') } } do |f| %>

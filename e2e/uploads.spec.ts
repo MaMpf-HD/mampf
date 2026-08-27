@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { expect, test } from "./_support/fixtures";
 import { attachToUploadArea } from "./_support/uploads";
 
@@ -23,6 +25,54 @@ test.describe("uploading through Uppy", () => {
 
     await expect(page.locator("#video-file")).toHaveText("talk.mp4");
   });
+
+  test("a second video, without reloading the page in between",
+    async ({ factory, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+      const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
+        { lecture_id: lecture.id, sort: "Kaviar" });
+
+      await page.goto(`/media/${medium.id}/edit`);
+      await attachToUploadArea(page, "#video-uploadArea", "spec/files/talk.mp4");
+      await expect(page.locator("#video-file")).toHaveText("talk.mp4");
+
+      await attachToUploadArea(page, "#video-uploadArea",
+        { name: "second-talk.mp4", mimeType: "video/mp4",
+          buffer: readFileSync("spec/files/talk.mp4") });
+
+      await expect(page.locator("#video-file")).toHaveText("second-talk.mp4");
+    });
+
+  test("a rejected file, with the reason the server gave",
+    async ({ factory, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+      const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
+        { lecture_id: lecture.id, sort: "Kaviar" });
+
+      let attempts = 0;
+      await page.route("**/videos/upload*", (route) => {
+        attempts += 1;
+        return route.fulfill({
+          status: 422, contentType: "text/plain; charset=utf-8",
+          body: "The file is infected and was not stored.",
+        });
+      });
+
+      const complaint = new Promise<string>((resolve) => {
+        page.once("dialog", (dialog) => {
+          resolve(dialog.message());
+          void dialog.accept();
+        });
+      });
+
+      await page.goto(`/media/${medium.id}/edit`);
+      await page.locator("#video-uploadArea input.uppy-Dashboard-input").first()
+        .setInputFiles("spec/files/talk.mp4");
+
+      expect(await complaint).toContain("The file is infected and was not stored.");
+      // A verdict is not a hiccup: the file must not go through the scanner again.
+      expect(attempts).toBe(1);
+    });
 
   test("a geogebra applet on a medium", async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
@@ -59,6 +109,11 @@ test.describe("uploading through Uppy", () => {
       await page.getByRole("button", { name: "Upload file" }).click();
 
       await expect(stored).toContainText("manuscript.pdf");
+
+      await page.getByRole("button", { name: "Save" }).click();
+      await page.goto(`/lectures/${lecture.id}/submissions`);
+
+      await expect(page.getByRole("link", { name: "Submission ↓" })).toBeVisible();
     });
 
   test("a submission, up to the moment the file is taken back out",
@@ -107,9 +162,18 @@ test.describe("uploading through Uppy", () => {
 
       await expect(page.locator(`${form} [data-uppy-upload-target='metadata']`))
         .toContainText("manuscript.pdf");
+
+      const stored = page.waitForResponse(response => response.url().includes("add_correction"));
+      await page.getByRole("button", { name: "Save" }).click();
+      await stored;
+      await page.goto(`/lectures/${lecture.id}/tutorials`);
+      await page.getByRole("link", { name: "Upload" }).first().click();
+
+      await expect(page.locator(`${form} [data-uppy-upload-target='metadata']`))
+        .toContainText("manuscript.pdf");
     });
 
-  test("a stack of corrections as one archive",
+  test("a stack of corrections, each named after its submission",
     async ({ factory, student, tutor: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
       const assignment = await factory.create("assignment", [], {
@@ -127,11 +191,47 @@ test.describe("uploading through Uppy", () => {
 
       await page.goto(`/lectures/${lecture.id}/tutorials`);
       await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
-      await attachToUploadArea(page, "#bulk-upload-form", "e2e/files/corrections.zip");
+      // Bulk upload assigns by filename: everything behind -ID- is the submission.
+      await attachToUploadArea(page, "#bulk-upload-form", {
+        name: `correction-ID-${submission.id}.pdf`,
+        mimeType: "application/pdf",
+        buffer: readFileSync("e2e/files/manuscript.pdf"),
+      });
 
       const save = page.locator("#upload-bulk-correction-save");
       await expect(page.locator("#upload-bulk-correction-metadata"))
         .toContainText("1 file(s) successfully uploaded");
+      await expect(save).toBeEnabled();
+
+      await save.click();
+
+      const saved = page.getByRole("row")
+        .filter({ hasText: "Number of successfully saved corrections" })
+        .getByRole("cell");
+      await expect(saved).toHaveText("1");
+    });
+
+  test("a stack of corrections the tutor changes their mind about",
+    async ({ factory, student, tutor: { page, user } }) => {
+      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const assignment = await factory.create("assignment", [], {
+        lecture_id: lecture.id, deadline: "2020-01-01 12:00:00",
+      });
+      const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+        lecture_id: lecture.id, tutor_id: user.id, title: "Mo 10",
+      });
+      const submission = await factory.create("submission", ["with_manuscript"], {
+        assignment_id: assignment.id, tutorial_id: tutorial.id, accepted: true,
+      });
+      await factory.create("user_submission_join", [], {
+        submission_id: submission.id, user_id: student.user.id,
+      });
+
+      await page.goto(`/lectures/${lecture.id}/tutorials`);
+      await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+      await attachToUploadArea(page, "#bulk-upload-form", "e2e/files/manuscript.pdf");
+
+      const save = page.locator("#upload-bulk-correction-save");
       await expect(save).toBeEnabled();
 
       // Reopening the area must not offer to save what the tutor discarded.
@@ -148,5 +248,15 @@ test.describe("uploading through Uppy", () => {
     await attachToUploadArea(page, "#image-uploadArea", "e2e/files/image.png");
 
     await expect(page.locator("#image-file")).toHaveText("image.png");
+
+    // Saving answers with JavaScript that reloads the page by itself.
+    const reloaded = page.waitForResponse(response => response.request().method() === "GET"
+      && response.url().endsWith("/administration/profile"));
+    await page.getByRole("button", { name: "Save" }).first().click();
+    await reloaded;
+
+    await expect(page.locator("#image-file")).toHaveText("image.png");
+    await expect(page.locator("#image-preview"))
+      .toHaveAttribute("src", /\/users\/\d+\/image\/original/);
   });
 });

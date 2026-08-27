@@ -14,7 +14,6 @@ const CONFIG = {
   "video": {
     autoProceed: true,
     allowedFileTypes: ["video/mp4"],
-    maxFileSize: 4 * 1024 * 1024 * 1024,
     onSuccess(controller, response) {
       controller.setText("#video-file", response.metadata.filename);
       controller.setText("#video-size", formatBytes(response.metadata.size));
@@ -28,7 +27,6 @@ const CONFIG = {
   "manuscript": {
     autoProceed: true,
     allowedFileTypes: ["application/pdf"],
-    maxFileSize: 50 * 1024 * 1024,
     onSuccess(controller, response) {
       if (response.metadata.pages == null) {
         controller.showError(controller.invalidMessageValue);
@@ -65,7 +63,6 @@ const CONFIG = {
   "geogebra": {
     autoProceed: true,
     allowedFileTypes: [".ggb", "application/zip"],
-    maxFileSize: 1 * 1024 * 1024,
     onSuccess(controller, response) {
       controller.setText("#geogebra-file", response.metadata.filename);
       controller.setText("#geogebra-size", formatBytes(response.metadata.size));
@@ -78,7 +75,6 @@ const CONFIG = {
   "image": {
     autoProceed: true,
     allowedFileTypes: IMAGE_TYPES,
-    maxFileSize: 10 * 1024 * 1024,
     onSuccess(controller, response, files) {
       const preview = controller.resolve(controller.previewSelectorValue);
 
@@ -103,7 +99,6 @@ const CONFIG = {
   "correction": {
     autoProceed: true,
     allowedFileTypes: CORRECTION_TYPES,
-    maxFileSize: 15 * 1024 * 1024,
     onFileAdded(controller) {
       controller.disableSubmitButton();
     },
@@ -124,7 +119,6 @@ const CONFIG = {
     autoProceed: true,
     allowMultipleFiles: true,
     allowedFileTypes: CORRECTION_TYPES,
-    maxFileSize: 15 * 1024 * 1024,
     onFileAdded(controller) {
       controller.disableSubmitButton();
       controller.metadataTarget.textContent = "";
@@ -163,6 +157,7 @@ export default class extends Controller {
     detachSelector: String,
     note: String,
     pagesLabel: String,
+    maxFileSize: Number,
   };
 
   connect() {
@@ -184,7 +179,7 @@ export default class extends Controller {
       hideUploadButton: this.autoUpload,
       allowMultipleFiles: this.config.allowMultipleFiles,
       allowedFileTypes: this.config.allowedFileTypes,
-      maxFileSize: this.config.maxFileSize,
+      maxFileSize: this.maxFileSizeValue,
       note: this.noteValue || null,
     });
 

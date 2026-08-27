@@ -62,10 +62,13 @@ export function buildUppy({
   uppy.use(Dashboard, dashboardOptions);
 
   uppy.use(XHRUpload, {
-    endpoint,
+    endpoint: localizedEndpoint(endpoint),
     formData: true,
     fieldName: "file",
     headers: uploadHeaders(),
+    // A rejected file stays rejected; only a broken connection is worth
+    // another round through the malware scanner.
+    shouldRetry: xhr => xhr.status === 0 || xhr.status >= 500,
     getResponseData(xhr) {
       return JSON.parse(xhr.responseText);
     },
@@ -87,7 +90,20 @@ export function extractErrorMessage(error) {
     return error;
   }
 
-  return error.message || "";
+  return serverExplanation(error.request) || error.message || "";
+}
+
+/**
+ * Uppy reports every rejected upload as a network error, so the reason the
+ * server gave -- infected file, scanner down, not allowed -- has to be read off
+ * the response itself.
+ */
+function serverExplanation(xhr) {
+  if (!xhr?.getResponseHeader("content-type")?.startsWith("text/plain")) {
+    return "";
+  }
+
+  return xhr.responseText?.trim() || "";
 }
 
 export function joinErrorMessage(prefix, error) {
@@ -110,6 +126,20 @@ export function formatBytes(bytes, digits = 2) {
   const index = Math.floor(Math.log(bytes) / Math.log(unit));
 
   return `${parseFloat((bytes / unit ** index).toFixed(digits))} ${labels[index]}`;
+}
+
+/** The scan gate answers in the locale it is asked in, not the user's. */
+function localizedEndpoint(endpoint) {
+  const locale = document.body?.dataset?.locale;
+  const url = new URL(endpoint, window.location.origin);
+
+  if (!locale || url.searchParams.has("locale")) {
+    return endpoint;
+  }
+
+  url.searchParams.set("locale", locale);
+
+  return url.pathname + url.search;
 }
 
 function uploadHeaders() {
