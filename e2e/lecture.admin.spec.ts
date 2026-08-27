@@ -1,4 +1,5 @@
 import { expect, test } from "./_support/fixtures";
+import { attachToUploadArea } from "./_support/uploads";
 
 test("can upload a manuscript and extract structure from it",
   async ({ factory, teacher: { page, user } }) => {
@@ -9,25 +10,27 @@ test("can upload a manuscript and extract structure from it",
 
     // Upload manuscript PDF
     await page.goto(`/media/${medium.id}/edit`);
-    const fileChooserPromise = page.waitForEvent("filechooser");
-    await page.getByTestId("manuscript-upload-file").click();
-    const fileChooser = await fileChooserPromise;
-    await fileChooser.setFiles("e2e/files/manuscript-mampfsty.pdf");
-    await page.getByTestId("manuscript-upload").click();
+    await attachToUploadArea(page, "#manuscript-uploadArea",
+      "e2e/files/manuscript-mampfsty.pdf");
 
-    await expect(page.getByText("upload successful")).toBeVisible();
     await expect(page.getByText("manuscript-mampfsty.pdf")).toBeVisible();
     const saveRequestPromise = page.waitForResponse(`/media/${medium.id}`);
     await page.getByRole("button", { name: "Save" }).click();
     await saveRequestPromise;
+    await page.waitForURL(`**/media/${medium.id}/edit`);
     await page.waitForLoadState("networkidle");
 
     // Verify PDF structure extraction
-    await expect(page.getByText(/structure of the manuscript/)).toBeVisible();
-    await page.getByRole("button", { name: "Details" }).click();
-    await expect(page.getByText("current version 2.12")).toBeVisible();
     const CHAPTER1 = "Chapter 1. Bla";
     const SECTION1 = "1.1. Blub";
+    // The analysis re-renders this area, and a dialog opened just before that
+    // is thrown away with it, so the click is repeated until one sticks.
+    const structure = page.getByLabel("Structure of the manuscript");
+    await expect(async () => {
+      await page.getByRole("button", { name: "Details" }).click();
+      await expect(structure).toBeVisible({ timeout: 1000 });
+    }).toPass();
+    await expect(structure.getByText("current version 2.12")).toBeVisible();
     await expect(page.getByText(CHAPTER1)).toBeVisible();
     await expect(page.getByText(SECTION1)).toBeVisible();
 
