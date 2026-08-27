@@ -4,7 +4,7 @@ import { attachToUploadArea } from "./_support/uploads";
 test("can upload a manuscript and extract structure from it",
   async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", [],
-      { teacher_id: user.id, content_mode: "manuscript" });
+      { teacher_id: user.id, content_mode: "manuscript", locale: "en" });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
       { lecture_id: lecture.id, sort: "Script" });
 
@@ -14,6 +14,7 @@ test("can upload a manuscript and extract structure from it",
       "e2e/files/manuscript-mampfsty.pdf");
 
     await expect(page.getByText("manuscript-mampfsty.pdf")).toBeVisible();
+    await expect(page.locator("#manuscript-pages")).toHaveText(/^\d+ p$/);
     const saveRequestPromise = page.waitForResponse(`/media/${medium.id}`);
     await page.getByRole("button", { name: "Save" }).click();
     await saveRequestPromise;

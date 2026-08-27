@@ -61,6 +61,28 @@ test.describe("uploading through Uppy", () => {
       await expect(stored).toContainText("manuscript.pdf");
     });
 
+  test("a submission, up to the moment the file is taken back out",
+    async ({ factory, student: { page, user } }) => {
+      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      await factory.create("assignment", [], { lecture_id: lecture.id });
+      await factory.create("tutorial", [], { lecture_id: lecture.id, title: "Mo 10" });
+      await factory.create("lecture_user_join", [], {
+        lecture_id: lecture.id, user_id: user.id,
+      });
+
+      await page.goto(`/lectures/${lecture.id}/submissions`);
+      await page.getByRole("button", { name: "create" }).click();
+      const save = page.getByRole("button", { name: "Save" });
+      await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
+
+      await expect(save).toBeDisabled();
+
+      await page.getByRole("button", { name: "Remove file" }).click();
+
+      await expect(save).toBeEnabled();
+      await expect(page.locator("#userManuscript-not-upload-notice")).toBeHidden();
+    });
+
   test("a correction, once the deadline has passed",
     async ({ factory, student, tutor: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
@@ -104,12 +126,21 @@ test.describe("uploading through Uppy", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/tutorials`);
-      const form = "#bulk-upload-form";
-      await attachToUploadArea(page, form, "e2e/files/corrections.zip");
+      await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+      await attachToUploadArea(page, "#bulk-upload-form", "e2e/files/corrections.zip");
 
+      const save = page.locator("#upload-bulk-correction-save");
       await expect(page.locator("#upload-bulk-correction-metadata"))
         .toContainText("1 file(s) successfully uploaded");
-      await expect(page.locator("#upload-bulk-correction-save")).toBeEnabled();
+      await expect(save).toBeEnabled();
+
+      // Reopening the area must not offer to save what the tutor discarded.
+      await page.getByRole("button", { name: "Cancel" }).click();
+      await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+
+      await expect(page.locator("#upload-bulk-correction-metadata")).toBeEmpty();
+      await expect(page.locator("#upload-bulk-correction-hidden")).toHaveValue("");
+      await expect(save).toBeDisabled();
     });
 
   test("a profile picture", async ({ admin: { page } }) => {

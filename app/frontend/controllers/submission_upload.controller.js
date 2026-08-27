@@ -68,6 +68,15 @@ export default class extends Controller {
       this.disableSave();
     });
 
+    this.uppy.on("file-removed", (_file) => {
+      if (this.clearingFiles || this.uppy.getFiles().length) {
+        return;
+      }
+
+      this.showChooserState();
+      this.enableSave();
+    });
+
     this.uppy.on("restriction-failed", (_file, error) => {
       this.showError(error.message || error);
     });
@@ -79,15 +88,15 @@ export default class extends Controller {
     this.uppy.on("complete", (result) => {
       if (result.failed.length) {
         this.showError(result.failed[0].error);
-        clearUppyFiles(this.uppy);
+        this.clearFiles();
         return;
       }
 
       const response = result.successful.at(-1)?.response?.body;
 
-      if (!response) {
+      if (!response?.metadata) {
         this.showError(this.failureMessageValue);
-        clearUppyFiles(this.uppy);
+        this.clearFiles();
         return;
       }
 
@@ -98,7 +107,7 @@ export default class extends Controller {
       this.showUploadedState({ pendingSave: true });
       this.enableSave();
       this.setDetachValue("false");
-      clearUppyFiles(this.uppy);
+      this.clearFiles();
     });
   }
 
@@ -114,7 +123,14 @@ export default class extends Controller {
     this.metadataTarget.textContent = "";
     this.showChooserState();
     this.enableSave();
+    this.clearFiles();
+  }
+
+  /** Drops the queued files without letting file-removed reset the form. */
+  clearFiles() {
+    this.clearingFiles = true;
     clearUppyFiles(this.uppy);
+    this.clearingFiles = false;
   }
 
   acceptedFileTypes() {

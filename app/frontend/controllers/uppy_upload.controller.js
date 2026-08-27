@@ -37,7 +37,10 @@ const CONFIG = {
 
       controller.setText("#manuscript-file", response.metadata.filename);
       controller.setText("#manuscript-size", formatBytes(response.metadata.size));
-      controller.setText("#manuscript-pages", `${response.metadata.pages} S`);
+      controller.setText(
+        "#manuscript-pages",
+        `${response.metadata.pages} ${controller.pagesLabelValue}`,
+      );
 
       const destinations = document.getElementById("manuscript-destinations");
       const mediumDestinations = document.getElementById("medium-manuscript-destinations");
@@ -80,7 +83,7 @@ const CONFIG = {
       const preview = controller.resolve(controller.previewSelectorValue);
 
       if (preview && files[0]) {
-        preview.src = URL.createObjectURL(files[0]);
+        controller.setPreviewSource(preview, URL.createObjectURL(files[0]));
         controller.show(preview);
       }
 
@@ -159,6 +162,7 @@ export default class extends Controller {
     warningSelector: String,
     detachSelector: String,
     note: String,
+    pagesLabel: String,
   };
 
   connect() {
@@ -222,6 +226,12 @@ export default class extends Controller {
         return;
       }
 
+      if (responses.some(response => !response.metadata)) {
+        this.showError(this.failureMessageValue);
+        clearUppyFiles(this.uppy);
+        return;
+      }
+
       const payload = this.config.allowMultipleFiles ? responses : responses.at(-1);
       const files = result.successful.map(file => file.data);
       const success = this.config.onSuccess?.(this, payload, files);
@@ -238,7 +248,31 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.releasePreviewUrl();
     this.uppy?.destroy();
+  }
+
+  /**
+   * Gives up the queued files and an upload that is still running, so that a
+   * form the user cancelled cannot come back with files a moment later.
+   */
+  reset() {
+    this.uppy?.cancelAll();
+    this.uploadPending = false;
+  }
+
+  setPreviewSource(preview, url) {
+    this.releasePreviewUrl();
+    this.previewUrl = url;
+    preview.src = url;
+  }
+
+  /** Replaced images would otherwise keep their file data for the whole page. */
+  releasePreviewUrl() {
+    if (this.previewUrl) {
+      URL.revokeObjectURL(this.previewUrl);
+      this.previewUrl = null;
+    }
   }
 
   startUpload(_reason) {
