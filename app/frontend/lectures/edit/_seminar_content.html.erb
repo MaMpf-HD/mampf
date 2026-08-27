@@ -1,29 +1,23 @@
 <div class="card bg-mdb-color-lighten-5">
   <div class="card-header">
-    <div class="row">
-      <div class="col-6">
-        <h5>
-          <%= t("admin.lecture.#{lecture.sort}_content") %>
-          <i id="show-media-button"
-             class="far fa-list-alt clickable"
-             data-bs-toggle="tooltip"
-             title="<%= t('admin.lecture.show_media') %>">
-          </i>
-        </h5>
-      </div>
-      <div class="col-6">
-        <% unless Flipper.enabled?(:roster_maintenance) %>
-          <%= link_to t("buttons.create_talk"),
-                      new_talk_path(lecture_id: lecture.id),
-                      remote: true,
-                      class: 'btn btn-sm btn-secondary new-in-lecture',
-                      data: { cy: 'new-talk-btn' },
-                      id: 'new_talk_button' %>
-        <% end %>
-      </div>
-    </div>
+    <h5>
+      <%= t("admin.lecture.#{lecture.sort}_content") %>
+      <i id="show-media-button"
+         class="far fa-list-alt clickable"
+         data-action="click->lecture-edit#showMedia"
+         data-lecture-edit-target="showMediaButton"
+         data-bs-toggle="tooltip"
+         title="<%= t('admin.lecture.show_media') %>">
+      </i>
+    </h5>
   </div>
   <div class="card-body">
+    <p class="text-muted small">
+      <%= t("admin.lecture.talks_managed_in_groups_html",
+            link: link_to(t("roster.tabs.groups"),
+                          edit_lecture_path(lecture, tab: "groups"))) %>
+    </p>
+
     <% if lecture.talks.any? %>
       <div class="row masonry-grid">
         <% lecture.talks.each do |t| %>

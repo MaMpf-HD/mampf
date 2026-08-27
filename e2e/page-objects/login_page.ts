@@ -16,6 +16,12 @@ export class LoginPage {
     if (password) {
       await this.page.getByLabel("Password", { exact: true }).fill(password);
     }
-    await this.page.getByRole("button", { name: "Login" }).click();
+    // Without this wait, the next attempt fills the form while the answer to
+    // this one is still on its way, and the click submits the wrong values.
+    const submitted = this.page.waitForResponse(response =>
+      response.request().method() === "POST"
+      && response.url().includes("/users/sign_in"));
+    await this.page.getByRole("button", { name: "Login", exact: true }).click();
+    await submitted;
   }
 }

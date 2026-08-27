@@ -55,6 +55,20 @@
     & a {
         color: white;
     }
+
+    // A link that posts has to be a button, and Bootstrap paints those blue --
+    // unreadable on this dark card.
+    .btn-link {
+        --bs-btn-color: #fff;
+        --bs-btn-hover-color: rgba(255, 255, 255, 0.85);
+    }
+
+    // Bootstrap's grey for hints is unreadable on this dark card. The red and
+    // green of the strength feedback are not affected, Bootstrap marks those
+    // !important.
+    .form-text {
+        color: rgba(255, 255, 255, 0.75);
+    }
 }
 
 .devise-button {
@@ -62,6 +76,27 @@
     border: 1.5px solid white !important;
     font-weight: bold !important;
     width: 100% !important;
+}
+
+.login-button-row {
+    display: grid;
+    grid-template-columns: minmax(5rem, 1fr) minmax(0, 4fr);
+
+    .devise-button {
+        width: auto !important;
+    }
+
+    &__primary,
+    &__playwright {
+        min-width: 0;
+    }
+
+    &__playwright {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        white-space: normal;
+    }
 }
 
 

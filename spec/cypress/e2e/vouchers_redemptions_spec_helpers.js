@@ -92,14 +92,13 @@ export function selectClaimsAndSubmit(entityIds) {
   cy.getBySelector("flash-notice").should("be.visible");
 }
 
-// Verifies that the tutorials or talks that were claimed are
-// displayed in the lecture edit page and contain the user's name
+// Verifies that the talks that were claimed are displayed in the
+// lecture edit page and contain the user's name
 // (and all the other ones do not)
 // If totalCount is specified, it is used to check the total number of
-// tutorials or talks in the lecture.
-export function verifyClaimsContainUserName(context, claimType, claimIds, totalCount = 3) {
-  let claimSelector = claimType === "tutorial" ? "tutorial-row" : "talk-header";
-  cy.getBySelector(claimSelector).should("have.length", totalCount).each(($el) => {
+// talks in the lecture.
+export function verifyClaimsContainUserName(context, claimIds, totalCount = 3) {
+  cy.getBySelector("talk-header").should("have.length", totalCount).each(($el) => {
     const dataId = parseInt($el.attr("data-id"), 10);
     if (claimIds.includes(dataId)) {
       cy.wrap($el).should("contain", context.user.name_in_tutorials);
@@ -113,20 +112,6 @@ export function verifyClaimsContainUserName(context, claimType, claimIds, totalC
 export function logoutAndLoginAsTeacher(context) {
   cy.logout().then(() => {
     cy.login(context.teacher);
-  });
-}
-
-export function verifyNoTutorialsButUserEligibleAsTutor(context, shouldBeEligible = true) {
-  cy.getBySelector("tutorial-row").should("not.exist");
-  cy.getBySelector("new-tutorial-btn").should("be.visible").click();
-  cy.then(() => {
-    cy.getBySelector("tutorial-form").should("be.visible");
-    cy.getBySelector("tutor-select").within(() => {
-      const containStr = shouldBeEligible ? "contain" : "not.contain";
-      cy.get("option").should(containStr, context.user.name_in_tutorials)
-        .and(containStr, context.user.email)
-        .and("not.contain", context.user.name);
-    });
   });
 }
 
@@ -232,26 +217,12 @@ export function visitEditPage(context, type) {
   return cy.getBySelector("lecture-area").should("be.visible");
 }
 
-export function verifyNoTalksYetButUserEligibleAsSpeaker(context) {
+export function verifyNoTalksYet(context) {
   cy.i18n("admin.lecture.no_talks").as("noTalksYet");
 
   cy.then(() => {
     cy.getBySelector("no-talks-yet").should("contain", context.noTalksYet);
-    cy.getBySelector("new-talk-btn").click();
   });
-
-  cy.then(() => {
-    cy.getBySelector("talk-form").should("be.visible");
-    cy.getBySelector("speaker-select").within(() => {
-      cy.get("option").should("contain", context.user.name_in_tutorials)
-        .and("contain", context.user.email)
-        .and("not.contain", context.user.name);
-    });
-  });
-}
-
-export function verifyNoClaimsYetButUserEligibleForRole(context, role) {
-  role === "tutor" ? verifyNoTutorialsButUserEligibleAsTutor(context) : verifyNoTalksYetButUserEligibleAsSpeaker(context);
 }
 
 export function verifyUserIsEditor(context) {

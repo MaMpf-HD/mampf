@@ -1,3 +1,6 @@
+<% roster_eligible = enabled_roster_for_lecture?(lecture) %>
+<% enrolled_tutorial = rostered_tutorial_for(lecture) %>
+
 <%= form_with model: submission,
               html: { data: { controller: 'submission-upload',
                               submission_upload_endpoint_value: '/submissions/upload',
@@ -12,7 +15,12 @@
       <div class="col-12">
         <%= f.label :tutorial_id,
                     t('basics.tutorial') %>
-        <%= f.select :tutorial_id,
+        <% if roster_eligible %>
+          <p>
+            <%= enrolled_tutorial.title_with_tutors %>
+          </p>
+        <% else %>
+          <%= f.select :tutorial_id,
                      options_for_select(tutorials_selection(lecture),
                                         submission.tutorial&.id ||
                                           submission
@@ -20,6 +28,7 @@
                                            &.id),
                      {},
                      {} %>
+        <% end %>
         <div class="invalid-feedback"
              id="submission-tutorial-error">
         </div>
@@ -97,21 +106,21 @@
         <div class="col-12">
           <div class="col-12">
             <small>
-              <%= t('submission.removal_notice_html')%>
+              <%= t('submission.removal_notice_html') %>
             </small>
           </div>
           <div class="col-12">
             <small class="text-danger submission-initially-hidden"
                    id="userManuscript-not-upload-notice"
                    data-submission-upload-target="pendingNotice">
-              <%= t('submission.submission_not_upload_notice_html')%>
+              <%= t('submission.submission_not_upload_notice_html') %>
             </small>
           </div>
           <div class="col-12">
             <small class="text-danger submission-initially-hidden"
                    id="userManuscript-upload-notice"
                    data-submission-upload-target="uploadedNotice">
-              <%= t('submission.submission_upload_notice_html')%>
+              <%= t('submission.submission_upload_notice_html') %>
             </small>
           </div>
         </div>

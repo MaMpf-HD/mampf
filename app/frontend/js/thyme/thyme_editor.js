@@ -6,7 +6,8 @@ import { PlayButton } from "./components/play_button";
 import { SeekBar } from "./components/seek_bar";
 import { TimeButton } from "./components/time_button";
 import { VolumeBar } from "./components/volume_bar";
-import { setUpMaxTime, onVideoMetadataLoaded } from "./utility";
+import { setUpMaxTime } from "./utility";
+import { onVideoMetadataLoaded } from "./video_events";
 
 $(document).ready(function () {
   /*

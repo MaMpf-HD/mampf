@@ -1,9 +1,4 @@
 namespace :demo do
-  desc "Set the feature flags relevant for the current slice"
-  task flags: :environment do
-    Demo::SetupSupport.setup_flags!
-  end
-
   desc "Create reusable campaign playground scenarios"
   task campaigns: :environment do
     Demo::SetupSupport.setup_campaigns!

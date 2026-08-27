@@ -163,10 +163,12 @@ The main fields and methods of `StudentPerformance::Record` are:
 |---------------------------|-------------------|--------------------------------------------------------------------------|
 | `lecture_id`              | DB column (FK)    | The lecture this performance record applies to                           |
 | `user_id`                 | DB column (FK)    | The student whose performance is materialized                            |
-| `points_total_materialized` | DB column       | Sum of relevant assessment points at computation time                    |
-| `points_max_materialized` | DB column         | Maximum possible points from graded assessments at computation time      |
+| `points_total_materialized` | DB column       | Points awarded so far — only participations that are fully marked count  |
+| `points_max_materialized` | DB column         | Maximum of every assignment in the lecture, minus the ones this student is exempt from |
+| `points_max_pending_materialized` | DB column | Of that maximum, how much belongs to work handed in but not yet fully marked |
 | `percentage_materialized` | DB column         | Computed percentage (points_total / points_max)                          |
 | `achievements_met_ids`    | DB column (JSONB) | Optional list of achievement IDs currently met (factual audit)           |
+| `achievements_ungraded_ids` | DB column (JSONB) | Achievement IDs with no grade recorded yet — not met, but not missed either |
 | `computed_at`             | DB column         | Timestamp of last computation                                            |
 
 ### Behavior Highlights
@@ -241,19 +243,19 @@ An assessable type that tracks qualitative student accomplishments during a lect
 | Type         | Threshold Meaning                        | Participation Grade Encoding           | Example                          |
 |--------------|------------------------------------------|----------------------------------------|----------------------------------|
 | `boolean`    | Not used (always pass/fail)              | `"Pass"` or `"Fail"`                   | Blackboard presentation (yes/no) |
-| `numeric`    | Required count                           | Integer count as `grade_value`         | Attendance: 12 of 15             |
-| `percentage` | Required percentage (0-100)              | Percentage as `grade_value`            | Lab participation: 75%           |
+| `numeric`    | Required count                           | Integer count as `grade_text`         | Attendance: 12 of 15             |
+| `percentage` | Required percentage (0-100)              | Percentage as `grade_text`            | Lab participation: 75%           |
 
 ### Behavior Highlights
 
 - **Assessable Integration:** Each Achievement has one `Assessment::Assessment` record where `assessable_type = "Achievement"` and `assessable_id = achievement.id`
 - **Participation Seeding:** When created, participations are seeded for all students in the lecture roster
 - **Tutor Grading:** Tutors mark achievement completion via existing `Assessment::Participation` editing UI:
-  - Boolean: Check/uncheck "Completed" → sets `grade_value: "Pass"/"Fail"`
-  - Numeric: Enter count → sets `grade_value: <count>`
-  - Percentage: Enter percentage → sets `grade_value: <percentage>`
+  - Boolean: Check/uncheck "Completed" → sets `grade_text: "pass"/"fail"`
+  - Numeric: Enter count → sets `grade_text: <count>`
+  - Percentage: Enter percentage → sets `grade_text: <percentage>`
 - **No Tasks/Submissions:** Achievements do not use `Assessment::Task` (no per-task breakdown) and do not require file uploads (`requires_submission: false`)
-- **Eligibility Checking:** StudentPerformance::Service reads participation `grade_value` to determine if student meets threshold
+- **Eligibility Checking:** StudentPerformance::Service reads participation `grade_text` to determine if student meets threshold
 - **Deletion Protection:** Cannot delete achievement if referenced by any rule (`dependent: :restrict_with_error`). Database FK constraint provides additional layer (`on_delete: :restrict`)
 
 ### Example Implementation
@@ -292,15 +294,15 @@ class Achievement < ApplicationRecord
 
   def student_met_threshold?(user)
     participation = assessment.participations.find_by(user: user)
-    return false unless participation&.grade_value.present?
+    return false unless participation&.grade_text.present?
 
     case value_type
     when "boolean"
-      participation.grade_value == "Pass"
+      participation.grade_text == "pass"
     when "numeric"
-      participation.grade_value.to_i >= threshold
+      participation.grade_text.to_i >= threshold
     when "percentage"
-      participation.grade_value.to_f >= threshold
+      participation.grade_text.to_f >= threshold
     end
   end
 end
@@ -310,9 +312,9 @@ end
 
 - **Teacher creates achievement:** Navigate to Lecture → Assessments → New Assessment → select "Achievement". Enter title ("Blackboard Presentation"), choose value_type ("boolean"). System creates Achievement + Assessment + Participations for all students.
 
-- **Tutor marks completion:** In tutorial roster view, tutor sees participation list for "Blackboard Presentation" achievement. Checks box next to Emma's name → `participation.grade_value = "Pass"`.
+- **Tutor marks completion:** In tutorial roster view, tutor sees participation list for "Blackboard Presentation" achievement. Checks box next to Emma's name → `participation.grade_text = "pass"`.
 
-- **Eligibility computation:** StudentPerformance::Service calls `achievement.student_met_threshold?(emma)` which checks if Emma's participation has `grade_value: "Pass"`.
+- **Eligibility computation:** StudentPerformance::Service calls `achievement.student_met_threshold?(emma)` which checks if Emma's participation has `grade_text: "pass"`.
 
 ---
 
@@ -341,7 +343,8 @@ A configuration record that defines the criteria a student must meet to be eligi
 ### Behavior Highlights
 
 - Stored as a database record (not just JSONB config) for better querying and validation
-- One lecture can have one active rule at a time
+- One lecture can have one active rule at a time, enforced by a partial unique index on `lecture_id WHERE active` — the controllers fetch it with an unordered `.first`, which is only safe because the database rules a second one out
+- A rule must constrain something: a threshold or at least one required achievement. An empty rule would certify every student in the lecture, and it was reachable from the form in two clicks
 - References multiple achievements via join table (`student_performance_rule_achievements`)
 - Database-level integrity prevents deletion of achievements still referenced by rules
 - Enforces mutual exclusivity of percentage vs absolute point thresholds
@@ -534,62 +537,54 @@ The "proposal calculator" for teachers: shows which students would pass/fail bas
 - Finalization guards (Policy requires Certification=passed)
 - Any automated student-facing flows
 
-### Example Implementation
+### How the decision is reached
+
+Two criteria, each in one of several states, and one rule that weighs them: a
+criterion nobody can satisfy any more settles the case, one that is merely open
+defers it.
 
 ```ruby
-module StudentPerformance
-  class Evaluator
-    Result = Struct.new(:proposed_status, :details, keyword_init: true)
+      # Criteria that are open rather than missed.
+      UNDECIDED = [:pending, :ungraded, :not_measurable].freeze
 
-    def initialize(rule)
-      @rule = rule
-    end
+      def evaluate(record)
+        return Result.new(proposed_status: :failed, details: {}) unless record
 
-    def evaluate(record)
-      return Result.new(proposed_status: :failed, details: {}) unless record
+        propose(points_status(record), achievements_status(record))
+      end
 
-      req_pts = required_points(@rule)
-      meets_points = req_pts.nil? || record.points_total_materialized.to_i >= req_pts
-      meets_achievements = includes_all?(
-        record.achievements_met_ids,
-        @rule.required_achievements.pluck(:id)
-      )
-      proposed = (meets_points && meets_achievements) ? :passed : :failed
+      def propose(*statuses)
+        return :failed if statuses.include?(:not_met)
+        return :inconclusive if statuses.intersect?(UNDECIDED)
 
-      Result.new(
-        proposed_status: proposed,
-        details: {
-          current_points: record.points_total_materialized,
-          required_points: req_pts,
-          current_achievement_ids: record.achievements_met_ids,
-          required_achievement_ids: @rule.required_achievements.pluck(:id)
-        }
-      )
-    end
-
-    def bulk_evaluate(records)
-      records.map { |record| [record, evaluate(record)] }.to_h
-    end
-
-    private
-
-    def required_points(rule)
-      return rule.min_points_absolute if rule.min_points_absolute.present?
-      return nil unless rule.min_percentage.present?
-
-      total = rule.lecture.assignments.sum(:max_points)
-      (total * rule.min_percentage / 100.0).ceil
-    end
-
-    def includes_all?(have_ids, need_ids)
-      return true if need_ids.blank?
-      have = Array(have_ids).map(&:to_i).to_set
-      need = Array(need_ids).map(&:to_i).to_set
-      have >= need
-    end
-  end
-end
+        :passed
+      end
 ```
+
+| Criterion | States |
+|---|---|
+| points | `:met` · `:pending` (marking outstanding) · `:not_measurable` (nothing to measure) · `:not_met` |
+| achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
+
+**`:pending`** means the student is below the threshold but the points still
+awaiting marking — `points_max_pending_materialized` — would carry them over it.
+Marking only ever adds points, and the sheets awaiting it are already inside
+`points_max_materialized`, so the best case is everything outstanding awarded in
+full. That distinction matters in both directions: without it a tutor's backlog
+reads as a failed threshold and the student is refused for somebody else's
+unfinished work, while a blunt "anything outstanding defers the decision" would
+defer the entire cohort over a single unmarked sheet.
+
+**`:not_measurable`** means `points_max_materialized` is zero — the student is
+exempt from every assignment, or the lecture has none yet. A share of nothing is
+not a shortfall, and neither a percentage nor an absolute threshold can be applied
+to it, so the case goes to a person. It also surfaces a rule that asks for a
+proportion of points a lecture does not have, which would otherwise fail every
+student in silence.
+
+A rule with no criterion at all is refused by the model, so "no points threshold"
+always means the rule asks for an achievement instead — and then a zero maximum is
+no obstacle, because points were never part of the question.
 
 ---
 
@@ -611,11 +606,25 @@ and audit fields. Can be created early as `pending`, then resolved to
 | `status` | Enum | `pending`, `passed`, `failed` |
 | `source` | Enum | `computed` (from evaluator) or `manual` (teacher override) |
 | `certified_by_id` | FK User | Who set a non-pending certification |
-| `certified_at` | DateTime | When it was set (non-null unless pending) |
+| `certified_at` | DateTime | When it was set — and on a `pending` row, when it was last evaluated (see below) |
 | `rule_id` | FK (optional) | Rule in effect when set (may be null if rule deleted) |
 | `note` | Text | Optional human note |
 
 Uniqueness: one certification per (lecture_id, user_id).
+
+```admonish warning "`certified_at` carries a second meaning"
+The column began as an audit field — *when the teacher decided* — and the
+staleness scopes later reused it as *when this row was last brought up to date*.
+On a decided row the two coincide; on a `pending` one only the second applies, and
+after "confirm manual decisions" the timestamp moves without any new decision
+being made. Every write path sets it, so all three readings hold at once.
+
+The model permits nil, and the scopes must therefore spell that case out: `x >
+NULL` is NULL, not false, so a row that was never evaluated would drop out of
+every scope and never be re-examined. It counts as stale, which is the honest
+reading — nothing has been computed for it at all — and the next evaluation fills
+the timestamp in.
+```
 
 ### Behavior highlights
 
@@ -631,6 +640,29 @@ Uniqueness: one certification per (lecture_id, user_id).
   - Manual certifications that conflict with new proposal
   - Teacher reviews and applies changes manually via modal
   - No automatic updates to Certification table; teacher must confirm
+
+```admonish note "A manual decision is never overwritten by a sweep"
+Re-evaluating against the current rule skips every row with `source: :manual`. A
+teacher who admitted a student on a medical certificate keeps that decision when
+the threshold moves, which is the point of setting it by hand.
+
+The cost is the mirror image: a manual *mistake* is never corrected by the
+automatic path either. Such a row surfaces only in the stale counter, and the one
+action that clears the warning — "confirm manual decisions" — refreshes the
+timestamp without requiring anyone to look at the case again.
+```
+
+```admonish note "Switching exam eligibility off keeps the record"
+A lecture can stop using exam eligibility while certifications and rules exist:
+they are a record of what happened, and with the feature off they are hidden from
+the interface but decide nothing. Neither can be deleted through the interface
+anyway.
+
+What does block the switch is a **registration policy** still referring to the
+lecture, because that would go on admitting or refusing students on certifications
+nobody maintains. The error names the campaign, and removing the policy there is
+something the interface supports.
+```
 
 ### Example (conceptual)
 
@@ -758,19 +790,29 @@ Once certifications are complete and the phase is open, evaluation is simple:
 ```ruby
 # Pseudo-code for Registration::Policy#evaluate(user) when kind == :student_performance
 def eval_student_performance(user)
-  lecture = Lecture.find(config["lecture_id"])
+  certifications = StudentPerformance::Certification.where(lecture: lectures, user: user)
+  outstanding = lectures_without_pass(certifications)
 
-  cert = StudentPerformance::Certification.find_by(lecture: lecture, user: user)
+  return pass_result(:certification_passed) if outstanding.empty?
 
-  if cert&.passed?
-    pass_result(:certification_passed)
-  else
-    fail_result(:certification_not_passed, "Lecture performance certification not passed")
-  end
+  fail_result(:certification_not_passed, …, outstanding_lectures: outstanding.map(&:title))
 end
 ```
 
-No Evaluator calls, no Service calls at registration time. Just a simple table lookup.
+No Evaluator calls, no Service calls at registration time. Just a table lookup.
+
+```admonish important "A policy naming several lectures requires all of them"
+`config["lecture_ids"]` may list more than one lecture, and every one of them has
+to be passed. A pass in one says nothing about another — for a two-semester
+prerequisite, admitting on half of it is not what the configuration expresses.
+
+Two things follow. The failure looks only at the lectures still outstanding, since
+a pass elsewhere must not soften the verdict; and among those a definitive
+`failed` outranks a `pending` one, because it settles the case and is therefore
+the difference between blocking a registration and rejecting it outright. The
+outstanding lecture titles travel in the result details, so the student is told
+which certification is missing rather than just that one is.
+```
 
 ### Flowchart: Student Performance Policy Flow
 

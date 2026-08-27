@@ -35,7 +35,6 @@ import "~/js/administration.coffee";
 import "~/js/announcements.coffee";
 import "~/js/answers.coffee";
 import "~/js/chapters.coffee";
-import "~/js/courses.coffee";
 import "~/js/file_upload.coffee";
 import "~/js/items.coffee";
 import "~/js/katex.js";
@@ -52,7 +51,6 @@ import "~/js/tex_preview.coffee";
 import "~/js/tutorials.coffee";
 import "~/js/users.coffee";
 import "~/js/vertices.coffee";
-import "~/js/watchlists.coffee";
 
 import "@uppy/core/css/style.min.css";
 import "@uppy/dashboard/css/style.min.css";

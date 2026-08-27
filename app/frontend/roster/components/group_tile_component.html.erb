@@ -41,8 +41,19 @@
         <div class="student-registration-tile-meta small flex-grow-1">
           <% tile_metadata_rows.each do |row| %>
             <% if row[:icon].present? %>
-              <div class="text-muted <%= row[:class_name] %>">
-                <i class="bi <%= row[:icon] %> me-1"></i>
+              <div
+                class="text-muted <%= row[:class_name] %>"
+                <% if row[:label].present? %>
+                  title="<%= row[:label] %>"
+                  data-bs-toggle="tooltip"
+                <% end %>
+              >
+                <i class="bi <%= row[:icon] %> me-1" aria-hidden="true"></i>
+
+                <% if row[:label].present? %>
+                  <span class="visually-hidden"><%= row[:label] %>:</span>
+                <% end %>
+
                 <%= row[:value] %>
               </div>
             <% elsif row[:label].present? %>
@@ -79,6 +90,7 @@
   <% else %>
     <div
       class="<%= card_classes %>"
+      data-testid="group-tile"
       data-tutorial-roster-panel-target="tile"
       data-action="click->tutorial-roster-panel#openFromTile"
       data-roster-key="<%= roster_key %>"
@@ -178,6 +190,18 @@
           </div>
         <% end %>
 
+        <% if date_text.present? %>
+          <div
+            class="text-muted small"
+            title="<%= t("basics.date") %>"
+            data-bs-toggle="tooltip"
+          >
+            <i class="bi bi-calendar-event me-1" aria-hidden="true"></i>
+            <span class="visually-hidden"><%= t("basics.date") %>:</span>
+            <%= date_text %>
+          </div>
+        <% end %>
+
         <div class="small text-muted">
           <% if item %>
             <%= registration_count %>
@@ -205,13 +229,36 @@
             <% end %>
           <% end %>
 
+          <% if remove_path && remove_disabled? %>
+            <span title="<%= remove_disabled_title %>" data-bs-toggle="tooltip">
+              <button
+                class="btn btn-sm btn-outline-secondary opacity-50"
+                type="button"
+                style="cursor: not-allowed;"
+                aria-label="<%= remove_disabled_label %>"
+                aria-disabled="true"
+              >
+                <i class="bi bi-box-arrow-left"></i>
+              </button>
+            </span>
+          <% elsif remove_path %>
+            <%= link_to remove_path,
+                    class: "btn btn-sm btn-outline-secondary",
+                    title: remove_title,
+                    aria: { label: remove_title },
+                    data: remove_data do %>
+              <i class="bi bi-box-arrow-left"></i>
+            <% end %>
+          <% end %>
+
           <% if delete_path && delete_disabled? %>
             <span title="<%= delete_disabled_title %>" data-bs-toggle="tooltip">
               <button
                 class="btn btn-sm btn-outline-danger opacity-50"
                 type="button"
                 style="cursor: not-allowed;"
-                disabled
+                aria-label="<%= delete_disabled_label %>"
+                aria-disabled="true"
               >
                 <i class="bi bi-trash"></i>
               </button>
@@ -220,6 +267,7 @@
             <%= link_to delete_path,
                     class: "btn btn-sm btn-danger",
                     title: delete_title,
+                    aria: { label: delete_title },
                     data: delete_data do %>
               <i class="bi bi-trash"></i>
             <% end %>

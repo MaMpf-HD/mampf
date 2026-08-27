@@ -130,6 +130,31 @@ RSpec.describe(Tutorial, type: :model) do
     end
   end
 
+  describe ".roster_eligible" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+    it "returns true if tutorial has any memberships" do
+      create(:tutorial_membership, tutorial: tutorial)
+      expect(Tutorial.roster_eligible).to include(tutorial)
+    end
+
+    it "returns true if tutorial is in a campaign" do
+      campaign = create(:registration_campaign, campaignable: lecture)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      expect(Tutorial.roster_eligible).to include(tutorial)
+    end
+
+    it "returns true if self_materialization_mode is set and not 'disabled'" do
+      tutorial.update!(self_materialization_mode: "add_and_remove")
+      expect(Tutorial.roster_eligible).to include(tutorial)
+    end
+
+    it "returns false if none of the above applies" do
+      expect(Tutorial.roster_eligible).not_to include(tutorial)
+    end
+  end
+
   describe "#add_user_to_roster!" do
     let(:lecture) { create(:lecture) }
     let(:tutorial) { create(:tutorial, lecture: lecture) }
@@ -199,6 +224,38 @@ RSpec.describe(Tutorial, type: :model) do
 
       expect(tutorial).to be_invalid
       expect(tutorial.errors.added?(:lecture_id, :immutable)).to be(true)
+    end
+  end
+  describe "#destruction_blockers" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+    it "is empty for a bare tutorial" do
+      expect(tutorial.destruction_blockers).to be_empty
+    end
+
+    it "reports submissions with uploads" do
+      create(:valid_submission, :with_manuscript,
+             tutorial: tutorial, assignment: create(:assignment, lecture: lecture))
+
+      expect(tutorial.destruction_blockers).to include(:submissions)
+    end
+
+    it "reports a correction whose manuscript was detached again" do
+      submission = create(:valid_submission, :with_manuscript, :with_correction,
+                          tutorial: tutorial,
+                          assignment: create(:assignment, lecture: lecture))
+      submission.update!(manuscript: nil)
+
+      expect(tutorial.destruction_blockers).to include(:submissions)
+    end
+
+    it "reports campaign membership separately from the rest" do
+      campaign = create(:registration_campaign, campaignable: lecture)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+
+      expect(tutorial.destruction_blockers).to eq([:in_campaign])
+      expect(tutorial.destruction_blockers_outside_campaign).to be_empty
     end
   end
 end

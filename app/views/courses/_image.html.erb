@@ -34,7 +34,8 @@
                             image_course_path(course, variant: "original") :
                             "/no_course_information.png",
                           class: 'img-fluid',
-                          id: 'image-preview') %>
+                          id: 'image-preview',
+                          data: { 'courses-edit-target': 'imagePreview' }) %>
           </div>
           <div class="col-12 mt-2" id="image-none">
             <% unless course.image %>
@@ -45,8 +46,11 @@
             <div class="col-12">
               <%= f.hidden_field :image,
                                  value: course.cached_image_data,
-                                 id: 'upload-image-hidden' %>
-              <%= f.hidden_field :detach_image, value: false %>
+                                 id: 'upload-image-hidden',
+                                 data: { 'courses-edit-target': 'uploadImageHidden' } %>
+              <%= f.hidden_field :detach_image,
+                                 value: false,
+                                 data: { 'courses-edit-target': 'detachImageInput' } %>
             </div>
           </div>
         </div>
