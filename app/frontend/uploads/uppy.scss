@@ -6,14 +6,12 @@
   border: 0;
 }
 
-// Uppy puts the height on the panel; with the panel gone, the status bar it
-// adds while uploading would hang out of it and over whatever follows.
+// The height Uppy takes as an option lands on the panel removed above, so the
+// zone has to size itself: otherwise the status bar it shows while uploading
+// hangs out of it and over whatever follows.
 .uppy-Dashboard-inner {
   height: auto !important;
-
-  // Room for the overlay Uppy shows while a file is over the zone; it is
-  // positioned against this element and would otherwise reach past it.
-  min-height: 100px !important;
+  min-height: 0 !important;
 }
 
 .uppy-Dashboard-AddFiles {
@@ -34,4 +32,12 @@
 
 .uppy-Dashboard-dropFilesHereHint {
   inset: 0;
+  padding: 0;
+
+  // Uppy draws a large arrow above its label. At the height of a form field the
+  // two land on top of each other, and the label alone says it.
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: none;
 }
