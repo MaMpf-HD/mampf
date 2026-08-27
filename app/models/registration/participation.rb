@@ -1,7 +1,6 @@
 module Registration
-  # Who registers, as opposed to who runs the registration. It sits here rather
-  # than in the abilities because the pages that offer registration have to give
-  # the same answer as the endpoint that accepts it.
+  # Asked by the abilities that authorize registration and by the pages that
+  # offer it, so that the two cannot give different answers.
   #
   # Note that deliberately neither a subscription nor a passphrase is
   # required: registration is decoupled from content access (subscription),
