@@ -92,6 +92,9 @@ window.Stimulus.register("roster-drag", RosterDragController);
 import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 
+import ClipboardController from "~/controllers/clipboard.controller.js";
+window.Stimulus.register("clipboard", ClipboardController);
+
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);
 
