@@ -123,11 +123,31 @@ function uploadHeaders() {
   return headers;
 }
 
+// Uppy's German says "Sie"; MaMpf says "Du" everywhere. Only the strings a
+// MaMpf upload can actually produce are rewritten -- camera, companion and
+// url-import belong to plugins we do not use.
+const DE_INFORMAL = {
+  youCanOnlyUploadFileTypes: "Du kannst nur folgende Dateitypen hochladen: %{types}",
+  youCanOnlyUploadX: {
+    0: "Du kannst nur eine Datei hochladen",
+    1: "Du kannst nur %{smart_count} Dateien hochladen",
+  },
+  youHaveToAtLeastSelectX: {
+    0: "Du musst mindestens eine Datei auswählen",
+    1: "Du musst mindestens %{smart_count} Dateien auswählen",
+  },
+  selectX: {
+    0: "Wähle %{smart_count}",
+    1: "Wähle %{smart_count}",
+  },
+  noFilesFound: "Du hast hier keine Dateien oder Ordner",
+};
+
 function uppyLocale() {
   const locale = document.body?.dataset?.locale || "en";
 
   if (locale.startsWith("de")) {
-    return de_DE;
+    return { strings: { ...de_DE.strings, ...DE_INFORMAL }, pluralize: de_DE.pluralize };
   }
 
   return en_US;
