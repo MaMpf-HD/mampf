@@ -172,10 +172,14 @@
                   >
                     <i class="bi bi-envelope" data-clipboard-target="icon"></i>
                   </button>
+
                   <%= student.email %>
-                  <span class="visually-hidden"
-                        role="status"
-                        data-clipboard-target="status"></span>
+
+                  <span
+                    class="visually-hidden"
+                    role="status"
+                    data-clipboard-target="status"
+                  ></span>
                 </div>
 
                 <% if show_rejection_reasons?(student) %>
