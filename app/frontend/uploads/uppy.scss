@@ -10,7 +10,10 @@
 // adds while uploading would hang out of it and over whatever follows.
 .uppy-Dashboard-inner {
   height: auto !important;
-  min-height: 90px;
+
+  // Room for the overlay Uppy shows while a file is over the zone; it is
+  // positioned against this element and would otherwise reach past it.
+  min-height: 100px !important;
 }
 
 .uppy-Dashboard-AddFiles {
@@ -27,4 +30,8 @@
 .uppy-Dashboard-AddFiles-title {
   font-size: 1rem !important;
   line-height: 1.4;
+}
+
+.uppy-Dashboard-dropFilesHereHint {
+  inset: 0;
 }
