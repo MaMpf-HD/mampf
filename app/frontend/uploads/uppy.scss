@@ -4,7 +4,13 @@
 .uppy-Dashboard-innerWrap {
   background: transparent;
   border: 0;
-  min-height: 0;
+}
+
+// Uppy puts the height on the panel; with the panel gone, the status bar it
+// adds while uploading would hang out of it and over whatever follows.
+.uppy-Dashboard-inner {
+  height: auto !important;
+  min-height: 90px;
 }
 
 .uppy-Dashboard-AddFiles {
