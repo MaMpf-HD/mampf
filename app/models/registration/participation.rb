@@ -2,11 +2,8 @@ module Registration
   # Asked by the abilities that authorize registration and by the pages that
   # offer it, so that the two cannot give different answers.
   #
-  # Note that deliberately neither a subscription nor a passphrase is
-  # required: registration is decoupled from content access (subscription),
-  # so that students can register for lectures whose content is gated by a
-  # passphrase. Content access for confirmed roster members is granted
-  # separately (see Lecture#ensure_roster_membership!).
+  # Neither a subscription nor the passphrase is asked for: registering is not
+  # access, and roster members get theirs from Lecture#ensure_roster_membership!.
   module Participation
     module_function
 
