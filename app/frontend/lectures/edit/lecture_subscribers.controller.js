@@ -7,14 +7,19 @@ export default class extends Controller {
   static values = { lecture: Number, loaded: Boolean };
 
   connect() {
-    if (this.loadedValue) return;
+    if (this.loadedValue || this.fetching || !this.hasListTarget) return;
 
-    this.loadedValue = true;
+    this.fetching = true;
     fetch(Routes.show_subscribers_path(this.lectureValue, { lecture: this.lectureValue }),
       { headers: { Accept: "application/json" } })
       .then(response => response.json())
-      .then(subscribers => this.render(subscribers))
-      .catch(() => { this.loadedValue = false; });
+      .then((subscribers) => {
+        this.render(subscribers);
+        // Only now: a page cached while this was in flight would otherwise come
+        // back with an empty list that believes it is filled.
+        this.loadedValue = true;
+      })
+      .finally(() => { this.fetching = false; });
   }
 
   render(subscribers) {

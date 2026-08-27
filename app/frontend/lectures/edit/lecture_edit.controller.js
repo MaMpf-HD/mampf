@@ -69,7 +69,7 @@ export default class extends Controller {
   hideMedia() {
     this.hide(this.mediaCardTarget);
     this.contentCardTarget.classList.remove("col-xxl-9");
-    this.reveal(this.showMediaButtonTarget);
+    this.reveal(this.showMediaButtonTarget, "inline");
   }
 
   showMedia() {
@@ -80,8 +80,8 @@ export default class extends Controller {
 
   // What a stylesheet hides needs an inline display to come back; what this
   // controller hid only needs its inline display taken away again.
-  reveal(element) {
-    if (element) element.style.display = "block";
+  reveal(element, display = "block") {
+    if (element) element.style.display = display;
   }
 
   show(element) {

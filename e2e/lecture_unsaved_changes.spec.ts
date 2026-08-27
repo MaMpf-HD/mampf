@@ -18,10 +18,8 @@ test("shows the save bar after arriving through an in-app visit",
     await page.waitForLoadState("networkidle");
 
     // What TomSelect does once an editor is picked.
-    await page.evaluate(() => {
-      document.querySelector("#lecture_editors_select select")
-        ?.dispatchEvent(new Event("change", { bubbles: true }));
-    });
+    await page.locator("#lecture_editors_select select")
+      .dispatchEvent("change", { bubbles: true });
 
     await expect(warning).toBeVisible();
   });

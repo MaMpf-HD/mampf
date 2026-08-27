@@ -1,8 +1,8 @@
-import { expect, test } from "./_support/fixtures";
+import { Page, expect, test } from "./_support/fixtures";
 
 // Everything here is reached the way a person reaches it — through Turbo, not
 // through a reload — because that is where the page used to fall silent.
-async function visitEdit(page, lectureId: number, tab: string) {
+async function visitEdit(page: Page, lectureId: number, tab: string) {
   await page.goto(`/lectures/${lectureId}/home`);
   await page.evaluate((url) => {
     window.Turbo.visit(url);
@@ -34,7 +34,7 @@ test.describe("the lecture edit page", () => {
     async ({ factory, admin: { page } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
       await visitEdit(page, lecture.id, "assignments");
-      const teamSize = page.locator("#lecture_submission_max_team_size");
+      const teamSize = page.getByLabel("maximal team size for submissions");
       const saved = await teamSize.inputValue();
 
       await teamSize.fill("7");
@@ -51,13 +51,14 @@ test.describe("the lecture edit page", () => {
     async ({ factory, admin: { page } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
       await visitEdit(page, lecture.id, "settings");
-      const startSection = page.locator("#lecture_start_section");
+      const startSection = page.getByLabel("Nummer of the first section");
 
       await expect(startSection).toBeDisabled();
-      await page.locator("#lecture_absolute_numbering").check();
+      const absoluteNumbering = page.getByLabel("absolute numbering");
+      await absoluteNumbering.check();
       await expect(startSection).toBeEnabled();
 
-      await page.locator("#lecture_absolute_numbering").uncheck();
+      await absoluteNumbering.uncheck();
       await expect(startSection).toBeDisabled();
     });
 
@@ -78,10 +79,10 @@ test.describe("the lecture edit page", () => {
     const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
     await visitEdit(page, lecture.id, "content");
     const mediaCard = page.locator("#lecture-media-card");
-    const showButton = page.locator("#show-media-button");
+    const showButton = page.getByTitle("Show media");
 
     await expect(mediaCard).toBeVisible();
-    await page.locator("#hide-media-button").click();
+    await page.getByTitle("Hide Media").click();
 
     await expect(mediaCard).toBeHidden();
     await expect(showButton).toBeVisible();
