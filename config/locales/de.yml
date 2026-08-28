@@ -4287,6 +4287,9 @@ de:
                 Diese Rolle ist für diese Vorlesung nicht verfügbar.
         watchlist_entry:
           attributes:
+            medium:
+              improper: >
+                Ein Zufallsquiz kann nicht auf eine Merkliste gesetzt werden.
             medium_id:
               taken:
                 ist schon in dieser Watchlist.

@@ -4060,6 +4060,9 @@ en:
                 This role is not available for this lecture.
         watchlist_entry:
           attributes:
+            medium:
+              improper: >
+                A random quiz cannot be put on a watchlist.
             medium_id:
               taken:
                 is already in this watchlist.
