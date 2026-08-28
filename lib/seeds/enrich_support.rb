@@ -35,18 +35,63 @@ module Seeds
       "<div>Willkommen bei <strong>%<title>s</strong>!</div>" \
       "<div>Auf dieser Seite findest Du alles zur Veranstaltung: das Skript, " \
       "die Videos zu den einzelnen Sitzungen und die Übungsblätter. Die " \
-      "Aufzeichnung steht in der Regel am Abend nach der Vorlesung bereit.</div>",
+      "Aufzeichnung steht in der Regel am Abend nach der Vorlesung bereit, " \
+      "die Kapitelmarken kommen am Tag darauf dazu.</div>" \
+      "<div>Die Übungsblätter erscheinen mittwochs und werden bis zum " \
+      "Freitag der Folgewoche abgegeben — in Zweiergruppen, direkt hier über " \
+      "MaMpf. Deine Tutorin oder Dein Tutor lädt die Korrektur an derselben " \
+      "Stelle wieder hoch.</div>",
 
       "<div>Diese Seite ist die Anlaufstelle für <strong>%<title>s</strong>.</div>" \
       "<div>Fragen zwischendurch stellst Du am besten im Forum — dort " \
       "antworten auch die Tutorinnen und Tutoren. Wichtige Hinweise " \
-      "erscheinen als Ankündigung ganz oben.</div>",
+      "erscheinen als Ankündigung ganz oben; wenn Du die Veranstaltung " \
+      "abonniert hast, bekommst Du sie außerdem als Benachrichtigung.</div>" \
+      "<div>Das Skript wächst mit der Vorlesung mit. Wo etwas unklar bleibt, " \
+      "hilft oft die verlinkte Wiederholung aus dem vorigen Semester.</div>",
 
       "<div><strong>%<title>s</strong></div>" \
-      "<div>Die Anmeldung zu den Übungsgruppen läuft über MaMpf. Trag Dich " \
-      "bitte in der ersten Vorlesungswoche ein; wer die Gruppe wechseln " \
-      "möchte, meldet sich bei der Übungsleitung.</div>"
+      "<div>Der Ablauf ist der übliche: zwei Vorlesungen und eine Übung pro " \
+      "Woche, dazu ein Übungsblatt, von dem die Hälfte der Punkte zur " \
+      "Klausurzulassung reicht.</div>" \
+      "<div>Alles, was Du dafür brauchst, steht hier: das Skript unter " \
+      "„Manuskript“, die Aufzeichnungen unter „Lektionen“ und die Blätter " \
+      "unter „Übungen“. Die Sprechstunde findet dienstags um 14 Uhr statt.</div>"
     ].freeze
+
+    # The page a student sees before deciding to register, so it says what the
+    # registration is for rather than describing a term already under way.
+    REGISTRATION_INTRO =
+      "<div><strong>%<title>s</strong> im kommenden Semester</div>" \
+      "<div>Die Veranstaltung beginnt in der ersten Vorlesungswoche. Für die " \
+      "Übungsgruppen läuft die Anmeldung bereits: Du gibst Deine Wunschzeiten " \
+      "in der Reihenfolge an, in der sie Dir passen, und bekommst nach dem " \
+      "Ende der Anmeldefrist eine Gruppe zugeteilt.</div>" \
+      "<div>Ein Platz in der Veranstaltung hängt nicht daran — das Abonnement " \
+      "hier ist keine verbindliche Anmeldung.</div>".freeze
+
+    # What people jot down while watching: students ask, the teacher notes what
+    # to change next time round.
+    STUDENT_NOTES = [
+      ["Hier nochmal ansehen, der Schritt ging schnell.", :note, nil],
+      ["Warum darf man die Summe an dieser Stelle vertauschen?", :content, :argument],
+      ["Das ist genau die Aufgabe von Blatt 3.", :content, :strategy],
+      ["Definition sitzt jetzt.", :note, :definition],
+      ["Ab hier ist die Tafel schlecht zu lesen.", :presentation, nil],
+      ["Ich glaube, im Index ist ein Dreher.", :mistake, nil]
+    ].freeze
+
+    TEACHER_NOTES = [
+      ["Voraussetzung fehlt, beim nächsten Mal ergänzen.", :mistake, nil],
+      ["Hier langsamer machen, das geht zu schnell.", :presentation, nil],
+      ["Beispiel für die Übung übernehmen.", :content, :strategy]
+    ].freeze
+
+    # Spread over the sample video, which runs about 42 seconds.
+    ANNOTATION_SECONDS = [4.5, 11.0, 18.5, 25.0, 31.5, 37.0].freeze
+
+    WATCHLIST_NAMES = ["Wiederholung", "Vor der Klausur", "Nochmal ansehen"].freeze
+    TEACHER_WATCHLIST_NAME = "Für die Sprechstunde".freeze
 
     COMMENTS = [
       "Ab Minute 12 ist der Ton etwas leise.",
@@ -76,7 +121,14 @@ module Seeds
       end
 
       def current_lectures
-        @current_lectures ||= Lecture.where(term: Term.active).to_a
+        @current_lectures ||= Lecture.where(term: Demo::TermSupport.active_term).to_a
+      end
+
+      # The pages a visitor actually opens: the term that is running and the one
+      # that can already be registered for.
+      def showcase_lectures
+        @showcase_lectures ||=
+          current_lectures + Lecture.where(term: Demo::TermSupport.next_term).to_a
       end
 
       # The forum name carries the term, which the year shift has moved on.
@@ -88,16 +140,35 @@ module Seeds
 
       # The home page is where a lecture starts for a student, and an empty one
       # says nothing about what the page is for.
+      # The build owns these texts: a dump is rebuilt from the one before it, so
+      # an intro written by an earlier build has to be replaced, not kept.
       def add_home_intros!
-        current_lectures.each_with_index do |lecture, index|
-          next if lecture.home_intro_present?
-
-          text = format(HOME_INTROS[index % HOME_INTROS.size],
-                        title: lecture.course.title)
+        showcase_lectures.each_with_index do |lecture, index|
+          text = format(intro_template(lecture, index), title: lecture.course.title)
           # rubocop:disable Rails/SkipsModelValidations
           lecture.update_columns(home_intro: text)
           # rubocop:enable Rails/SkipsModelValidations
         end
+        attach_program!
+      end
+
+      def intro_template(lecture, index)
+        return REGISTRATION_INTRO if lecture.registration_campaigns.open.any?
+
+        HOME_INTROS[index % HOME_INTROS.size]
+      end
+
+      # The home page offers a welcome text and a program; without one of them
+      # the page keeps telling its teacher that it is empty.
+      def attach_program!
+        lecture = Lecture.find_by(id: 1)
+        return if lecture.nil? || lecture.home_attachment.present?
+
+        source = Medium.where.not(manuscript_data: nil).first
+        return if source.nil?
+
+        lecture.home_attachment = source.manuscript.download
+        lecture.save!
       end
 
       # Announcements stay, but off the landing page, where they greet every
@@ -169,29 +240,71 @@ module Seeds
         end
       end
 
-      # Annotations sit on a video timeline, so only media that carry one.
+      # Annotations sit on a video timeline, so only media that carry one. Every
+      # video gets a few, and the teacher keeps notes on their own lecture.
       def add_annotations!
-        Medium.where.not(video_data: nil).limit(8).each do |medium|
-          students.first(3).each do |student|
-            next if Annotation.exists?(medium_id: medium.id, user_id: student.id)
-
-            FactoryBot.create(:annotation, :with_text,
-                              medium_id: medium.id, user_id: student.id)
+        annotatable_media.each_with_index do |medium, medium_index|
+          students.each_with_index do |student, student_index|
+            annotate!(medium, student, STUDENT_NOTES, medium_index + student_index,
+                      shared: student_index.even?)
           end
+
+          teacher = medium_teacher(medium)
+          annotate!(medium, teacher, TEACHER_NOTES, medium_index) if teacher
         end
       end
 
-      def add_watchlists!
-        media = Medium.limit(6).to_a
-        students.each_with_index do |student, index|
-          next if Watchlist.exists?(user: student)
+      def annotatable_media
+        @annotatable_media ||= Medium.where.not(video_data: nil).to_a
+      end
 
-          watchlist = Watchlist.create!(user: student,
-                                        name: "Wiederholung #{index + 1}")
-          media.sample(3).each_with_index do |medium, position|
-            WatchlistEntry.create!(watchlist: watchlist, medium: medium,
-                                   medium_position: position + 1)
+      def medium_teacher(medium)
+        lecture = medium.teachable.try(:lecture) || medium.teachable
+        lecture.try(:teacher)
+      end
+
+      # Two per person and video, at spots that do not sit on top of each other.
+      def annotate!(medium, user, notes, offset, shared: false)
+        existing = Annotation.where(medium_id: medium.id, user_id: user.id).count
+        return if existing >= 2
+
+        (2 - existing).times do |run|
+          comment, category, subcategory = notes[(offset + run) % notes.size]
+          seconds = ANNOTATION_SECONDS[(offset + (run * 3)) % ANNOTATION_SECONDS.size]
+          Annotation.create!(medium_id: medium.id, user_id: user.id,
+                             comment: comment, category: category,
+                             subcategory: subcategory, visible_for_teacher: shared,
+                             color: Annotation.colors[(offset % 8) + 1],
+                             timestamp: TimeStamp.new(total_seconds: seconds))
+        end
+      end
+
+      # Students collect what they want to see again; the teacher collects what
+      # they keep pointing people at.
+      def add_watchlists!
+        students.each_with_index do |student, index|
+          WATCHLIST_NAMES.first(2).each_with_index do |name, run|
+            fill_watchlist!(student, "#{name} #{index + 1}", offset: index + run)
           end
+        end
+
+        fill_watchlist!(teacher, TEACHER_WATCHLIST_NAME, offset: 2, size: 5) if teacher
+      end
+
+      def teacher
+        return @teacher if defined?(@teacher)
+
+        @teacher = User.find_by(email: "teacher@mampf.edu")
+      end
+
+      def fill_watchlist!(user, name, offset:, size: 3)
+        return if Watchlist.exists?(user: user, name: name)
+
+        watchlist = Watchlist.create!(user: user, name: name)
+        media = annotatable_media.rotate(offset).first(size)
+        media.each_with_index do |medium, position|
+          WatchlistEntry.create!(watchlist: watchlist, medium: medium,
+                                 medium_position: position + 1)
         end
       end
   end

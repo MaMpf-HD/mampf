@@ -8,6 +8,7 @@ module Demo
     ALLOCATION_CAMPAIGN_DESCRIPTION = "Stage 2: Allocation".freeze
     NACHRUECKER_CAMPAIGN_DESCRIPTION = "Stage 3: Nachrücker (FCFS)".freeze
     TWO_STAGE_COURSE_TITLE = "Campaign Test Seminar".freeze
+    PLAYGROUND_COURSE_TITLE = "Registration Playground".freeze
 
     def setup!
       ensure_non_production!
@@ -401,18 +402,26 @@ module Demo
       end
 
       seminar = Lecture.find_by(course: course, teacher: teacher)
-      unless seminar
+      if seminar
+        # An earlier build left it in the term that has since started; its
+        # campaigns are staged below and are rebuilt from scratch.
+        unless seminar.term == Demo::TermSupport.next_term
+          Demo::CampaignCleanup.discard_all!(seminar)
+          Cohort.where(context: seminar).destroy_all
+          seminar.update!(term: Demo::TermSupport.next_term)
+        end
+      else
         seminar = FactoryBot.create(
           :seminar,
           course: course,
           teacher: teacher,
           released: true,
-          term: Term.active || FactoryBot.create(:term)
+          term: Demo::TermSupport.next_term
         )
         output("Created Seminar Lecture")
       end
 
-      unless teacher.favorite_lectures.exists?(seminar.id)
+      unless LectureUserJoin.exists?(lecture: seminar, user: teacher)
         teacher.lectures << seminar
         output("Subscribed teacher to seminar")
       end
@@ -663,13 +672,14 @@ module Demo
         fail_setup!("Cannot run in production!") if Rails.env.production?
       end
 
+      # Everything here is a registration in progress, and one of those belongs
+      # in the term that is still being planned -- not in the lecture the demo
+      # opens on, which is meant to look like a term well under way.
       def lecture!
-        lecture = Lecture.find_by(id: 1)
-        fail_setup!("Lecture 1 not found. Run just seed first.") unless lecture
-
-        teacher = teacher!
-        lecture.update!(teacher: teacher) if lecture.teacher != teacher
-        lecture
+        Demo::TermSupport.find_or_create_lecture!(
+          term: Demo::TermSupport.next_term, teacher: teacher!,
+          course_title: PLAYGROUND_COURSE_TITLE, short_title: "RP"
+        )
       end
 
       def teacher!
