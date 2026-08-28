@@ -62,9 +62,12 @@ class UploadEndpointAuthorization
 
       ability.can?(intent.action, target)
     rescue StandardError => e
-      # An ability that cannot judge the record is not a yes. It means a form
-      # minted an intent nobody can answer, which is worth reading about.
-      Rails.logger.warn("[upload intent] #{intent.target_type}##{intent.action}: #{e.message}")
+      # Fail closed, but keep the defect: an ability that cannot judge the record
+      # means a form minted an intent nobody can answer, and that is a bug, not a
+      # denial. The reporter keeps the backtrace the user never sees.
+      Rails.error.report(e, handled: true, source: "upload_intent",
+                            context: { target_type: intent.target_type,
+                                       action: intent.action })
       false
     end
 

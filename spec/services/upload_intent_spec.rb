@@ -96,6 +96,21 @@ RSpec.describe(UploadIntent) do
     end
   end
 
+  describe ".expired?" do
+    it "tells a token that outlived its page from one that was never valid" do
+      outlived = travel_to(2.days.ago) do
+        described_class.mint(user: user, uploader_class: VideoUploader)
+      end
+
+      expect(described_class.expired?(outlived)).to be(true)
+      expect(described_class.expired?("#{outlived}x")).to be(false)
+      expect(described_class.expired?(
+               described_class.mint(user: user, uploader_class: VideoUploader)
+             )).to be(false)
+      expect(described_class.expired?(nil)).to be(false)
+    end
+  end
+
   describe ".from_request" do
     it "reads the intent off the request header" do
       token = described_class.mint(user: user, uploader_class: VideoUploader)

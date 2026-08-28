@@ -429,14 +429,18 @@ RSpec.describe("UploadRoutes", type: :request) do
       expect(response).to have_http_status(:forbidden)
     end
 
-    it "refuses an expired token" do
+    it "says so when the page has been open past the lifetime" do
       token = travel_to(2.days.ago) do
-        UploadIntent.mint(user: user, uploader_class: VideoUploader)
+        UploadIntent.mint(user: user, uploader_class: VideoUploader,
+                          target: create(:valid_medium))
       end
 
       post_video(token)
 
       expect(response).to have_http_status(:forbidden)
+      expect(response.body).to include(
+        I18n.t("submission.upload_failure_expired", locale: user.locale).strip
+      )
     end
 
     context "when the intent names a submission that does not exist yet" do
@@ -501,6 +505,46 @@ RSpec.describe("UploadRoutes", type: :request) do
 
         expect(response).to have_http_status(:forbidden)
       end
+    end
+  end
+
+  describe "a file sent straight to a record instead of an upload endpoint" do
+    let(:scanner) { instance_double(ClamavScanner) }
+    let(:manuscript) do
+      Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
+                                   "application/pdf")
+    end
+
+    before do
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
+    end
+
+    it "does not become a manuscript for a speaker who may edit the medium" do
+      medium = create(:talk_medium)
+      speaker = create(:confirmed_user, locale: "en")
+      medium.teachable.speakers << speaker
+      sign_in speaker.reload
+
+      patch "/media/#{medium.id}", params: { medium: { manuscript: manuscript } }
+
+      expect(medium.reload.manuscript).to be_nil
+      expect(response).to redirect_to(root_url)
+      expect(flash[:alert]).to eq(I18n.t("submission.upload_failure_unauthorized"))
+    end
+
+    it "does not become a student's submission either" do
+      submission = create(:submission, :with_assignment, :with_tutorial)
+      student = create(:confirmed_user, locale: "en")
+      submission.users << student
+      sign_in student.reload
+
+      patch "/submissions/#{submission.id}",
+            params: { submission: { tutorial_id: submission.tutorial_id,
+                                    manuscript: manuscript } }
+
+      expect(submission.reload.manuscript).to be_nil
+      expect(response).to redirect_to(root_url)
     end
   end
 

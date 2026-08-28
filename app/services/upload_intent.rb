@@ -45,6 +45,12 @@ class UploadIntent
     parse(request.get_header(HEADER))
   end
 
+  # A token whose signature is intact but which no longer verifies: the page has
+  # been open past the lifetime. Worth telling the user apart from a refusal.
+  def self.expired?(token)
+    token.present? && verifier.valid_message?(token) && parse(token).nil?
+  end
+
   def self.verifier
     Rails.application.message_verifier(PURPOSE)
   end
