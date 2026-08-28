@@ -5,4 +5,9 @@ namespace :seeds do
   task build: :environment do
     Seeds::BuildSupport.build!(target_term: ENV.fetch("term", nil))
   end
+
+  desc "Pack the uploads the seed data points at, for publishing beside the dump"
+  task package: :environment do
+    Seeds::PackageSupport.package!
+  end
 end
