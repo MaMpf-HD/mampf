@@ -1,4 +1,5 @@
 import { expect, test } from "./_support/fixtures";
+import { attachToUploadArea } from "./_support/uploads";
 
 test("can add tag to course", async ({ factory, admin: { page } }) => {
   const course = await factory.create("course");
@@ -67,16 +68,18 @@ test("can set course image", async ({ factory, admin: { page } }) => {
 
   await page.goto(`/courses/${course.id}/edit`);
   await page.locator("#image_heading").getByText("Toggle").click();
-  await page.locator("#upload-image").setInputFiles("e2e/files/image.png");
-  await page.getByRole("button", { name: "Upload" }).click();
-  await page.getByRole("button", { name: "Save" }).click();
+  await attachToUploadArea(page, "#image-uploadArea", "e2e/files/image.png");
   await expect(page.getByText("image.png")).toBeVisible();
 
-  // the saved form comes back through a frame swap, which does not fire
-  // turbo:load — without a rewired upload the next file silently goes nowhere
+  await page.getByRole("button", { name: "Save" }).click();
+
+  // the saved form comes back through a frame swap, and the upload has to work
+  // again afterwards -- Stimulus connects it, whenever it arrives
+  await expect(page.getByText("image.png")).toBeVisible();
   await expect(page.locator("#image-preview"))
     .toHaveAttribute("src", /\/courses\/\d+\/image\/original/);
-  await expect(page.locator("#upload-image")).toHaveCSS("display", "none");
+  await attachToUploadArea(page, "#image-uploadArea", "e2e/files/image.png");
+  await expect(page.locator("#image-uploadArea .uppy-Dashboard")).toBeVisible();
 });
 
 test("can detach course image", async ({ factory, admin: { page } }) => {

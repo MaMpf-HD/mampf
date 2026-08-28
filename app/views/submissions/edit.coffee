@@ -18,9 +18,6 @@ new TomSelect('#submission_tutorial_id',
 $('.submissionFooter[data-id!="<%= @assignment.id %>"] .btn')
   .prop('disabled', true).removeClass('btn-outline-primary')
   .removeClass('btn-outline-danger').addClass('btn-outline-secondary')
-
-userManuscript = document.getElementById('upload-userManuscript')
-userManuscriptUpload userManuscript
 <% else %>
 alert('<%= t("submission.too_late_no_editing") %>')
 <% end %>
