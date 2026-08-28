@@ -43,6 +43,8 @@ module Seeds
     # by the same number of six-month steps and stay in step with each other.
     def advance!(semesters)
       ensure_development!
+      return if Integer(semesters).zero?
+
       months = 6 * Integer(semesters)
       # rubocop:disable Rails/SkipsModelValidations
       Term.update_all(rename_terms(semesters))
@@ -151,16 +153,17 @@ module Seeds
 
       # rubocop:disable Rails/Exit
       # Without a target the set moves on by a single semester, which is what
-      # the next edition of the seed data usually is.
+      # the next edition of the seed data usually is. Naming the term it is
+      # already in rebuilds it where it stands.
       def semesters_until(target_term)
         return 1 if target_term.blank?
 
         season, year = parse_term(target_term)
         steps = ((year * 2) + (season == "SS" ? 0 : 1)) - term_index(current_term)
-        return steps if steps.positive?
+        return steps unless steps.negative?
 
         abort("The seed data is in #{label(current_term)}; " \
-              "#{season} #{year} is not ahead of it.")
+              "#{season} #{year} is behind it.")
       end
 
       def parse_term(target_term)
