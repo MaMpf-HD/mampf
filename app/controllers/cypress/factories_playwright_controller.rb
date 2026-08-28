@@ -4,13 +4,16 @@ module Cypress
   # It is inspired by this blog post by Tom Conroy:
   # https://tbconroy.com/2018/04/07/creating-data-with-factorybot-for-rails-cypress-tests/
   class FactoriesPlaywrightController < CypressController
-    ATTEMPTS = 3
-
     # Creates an instance of the factory (via FactoryBot) and returns it as JSON.
     def create
       attributes, should_validate = to_attribute_list(params)
       data = retrying_deadlocks do
-        create_class_instance_via_factorybot(attributes, should_validate)
+        # One transaction per attempt: a factory persists a record's
+        # associations before the record itself, and the aborted attempt would
+        # otherwise leave them behind for the next one to duplicate.
+        ActiveRecord::Base.transaction do
+          create_class_instance_via_factorybot(attributes, should_validate)
+        end
       end
       render json: data.as_json, status: :created
     end
@@ -58,24 +61,6 @@ module Cypress
     end
 
     private
-
-      # A test's own page can still be finishing a request while the next test
-      # asks for its records, and Postgres picks one of the two to abort. The
-      # attempt runs as one transaction, because a factory persists a record's
-      # associations before the record itself: without it, the aborted attempt
-      # would leave its course and term behind for the next one to duplicate.
-      def retrying_deadlocks(&)
-        attempt = 0
-        begin
-          ActiveRecord::Base.transaction(&)
-        rescue ActiveRecord::Deadlocked
-          attempt += 1
-          raise if attempt >= ATTEMPTS
-
-          sleep(0.1 * attempt)
-          retry
-        end
-      end
 
       def validate_factory_name(factory_name)
         return factory_name if factory_name.is_a?(String)
