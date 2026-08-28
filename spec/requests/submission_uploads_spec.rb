@@ -66,8 +66,9 @@ RSpec.describe("SubmissionUploads", type: :request) do
 
     post "/corrections/upload",
          params: { file: upload },
-         headers: upload_intent_headers(CorrectionUploader, user: tutor,
-                                        target: corrected, action: :add_correction)
+         headers: upload_intent_headers(CorrectionUploader,
+                                        user: tutor, target: corrected,
+                                        action: :add_correction)
 
     expect(response).to have_http_status(:ok)
     data = JSON.parse(response.body)

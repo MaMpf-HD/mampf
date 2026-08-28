@@ -2997,6 +2997,8 @@ de:
       Bitte lade die Datei erneut hoch.
     upload_failure_unauthorized: >
       Du darfst diese Datei hier nicht hochladen.
+    upload_failure_wrong_target: >
+      Die Datei wurde für etwas anderes hochgeladen. Bitte wähle sie erneut aus.
     upload_failure_empty_file_bulk: >
       ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.

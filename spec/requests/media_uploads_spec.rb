@@ -139,4 +139,44 @@ RSpec.describe("MediaUploads", type: :request) do
              locale: user.locale)
     )
   end
+
+  describe "a cached upload that is signed for one medium" do
+    let(:other) { create(:valid_medium) }
+    let(:manuscript) do
+      Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
+                                   "application/pdf")
+    end
+
+    before do
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
+
+      post "/pdfs/upload", params: { file: manuscript },
+                           headers: upload_intent_headers(PdfUploader, user: user,
+                                                                       target: medium)
+    end
+
+    it "goes onto that medium" do
+      medium.manuscript = response.body
+
+      expect(medium).to be_valid
+    end
+
+    it "does not go onto another one" do
+      other.manuscript = response.body
+
+      expect(other).not_to be_valid
+      expect(other.errors[:manuscript])
+        .to include(I18n.t("submission.upload_failure_wrong_target"))
+    end
+
+    it "cannot be re-pointed by editing the cached data" do
+      cached = JSON.parse(response.body)
+      cached["metadata"]["upload_intent"]["target_id"] = other.id.to_s
+      other.manuscript = cached.to_json
+
+      expect(other).not_to be_valid
+      expect(other.errors[:manuscript])
+        .to include(I18n.t("submission.upload_failure_scan_required"))
+    end
+  end
 end

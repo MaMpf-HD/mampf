@@ -2820,6 +2820,8 @@ en:
       Please upload the file again.
     upload_failure_unauthorized: >
       You are not allowed to upload this file here.
+    upload_failure_wrong_target: >
+      The file was uploaded for something else. Please pick it again.
     upload_failure_empty_file_bulk: >
       is empty.
       Please make sure that the file is not corrupted.
