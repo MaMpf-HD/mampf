@@ -12,6 +12,9 @@ module Seeds
     # playground still ran on it.
     PLAYGROUND_TUTORIAL_TITLES = /\A(FCFS )?Tutorial \d+\z/
     PLAYGROUND_COHORT_TITLES = ["Repeaters", "Waitlist"].freeze
+    # What a group hands in per sheet. Also the ceiling, so that a rebuild does
+    # not pile more on top of what the last one left.
+    TEAMS_PER_TUTORIAL = 2
 
     def setup!
       lecture = demo_lecture
@@ -108,11 +111,14 @@ module Seeds
       members = tutorial.tutorial_memberships.includes(:user).map(&:user).sort_by(&:id)
       return [] if members.empty?
 
-      [members.first(2), members.drop(2).first(1)].reject(&:empty?)
+      teams = [members.first(2), members.drop(2).first(1)]
+      teams.reject(&:empty?).first(TEAMS_PER_TUTORIAL)
     end
 
     def hand_in!(assignment, tutorial, team, correction:)
       return if team.any? { |user| handed_in?(assignment, user) }
+      return if Submission.where(assignment: assignment,
+                                 tutorial: tutorial).count >= TEAMS_PER_TUTORIAL
 
       submission = Submission.new(assignment: assignment, tutorial: tutorial,
                                   users: [team.first])
