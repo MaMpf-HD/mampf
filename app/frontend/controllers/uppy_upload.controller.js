@@ -158,6 +158,7 @@ export default class extends Controller {
     note: String,
     pagesLabel: String,
     maxFileSize: Number,
+    intent: String,
   };
 
   connect() {
@@ -180,6 +181,7 @@ export default class extends Controller {
       allowMultipleFiles: this.config.allowMultipleFiles,
       allowedFileTypes: this.config.allowedFileTypes,
       maxFileSize: this.maxFileSizeValue,
+      intent: this.intentValue,
       note: this.noteValue || null,
     });
 

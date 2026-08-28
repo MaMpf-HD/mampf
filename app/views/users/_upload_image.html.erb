@@ -3,6 +3,7 @@
      data-controller="uppy-upload"
      data-uppy-upload-kind-value="image"
      data-uppy-upload-max-file-size-value="<%= ProfileimageUploader::MAX_SIZE %>"
+     data-uppy-upload-intent-value="<%= upload_intent_token(ProfileimageUploader, target: user) %>"
      data-uppy-upload-endpoint-value="/profile_image/upload"
      data-uppy-upload-failure-message-value="<%= t('submission.upload_failure') %>"
      data-uppy-upload-hidden-input-selector-value="#upload-image-hidden"

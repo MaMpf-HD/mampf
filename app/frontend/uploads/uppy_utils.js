@@ -7,6 +7,7 @@ import en_US from "@uppy/locales/lib/en_US";
 export function buildUppy({
   target,
   endpoint,
+  intent,
   autoProceed = true,
   hideUploadButton = autoProceed,
   allowMultipleFiles = false,
@@ -65,7 +66,7 @@ export function buildUppy({
     endpoint: localizedEndpoint(endpoint),
     formData: true,
     fieldName: "file",
-    headers: uploadHeaders(),
+    headers: uploadHeaders(intent),
     // A rejected file stays rejected; only a broken connection is worth
     // another round through the malware scanner.
     shouldRetry: xhr => xhr.status === 0 || xhr.status >= 500,
@@ -142,12 +143,16 @@ function localizedEndpoint(endpoint) {
   return url.pathname + url.search;
 }
 
-function uploadHeaders() {
+function uploadHeaders(intent) {
   const token = document.querySelector("meta[name='csrf-token']")?.content;
   const headers = { "X-Requested-With": "XMLHttpRequest" };
 
   if (token) {
     headers["X-CSRF-Token"] = token;
+  }
+
+  if (intent) {
+    headers["X-Upload-Intent"] = intent;
   }
 
   return headers;

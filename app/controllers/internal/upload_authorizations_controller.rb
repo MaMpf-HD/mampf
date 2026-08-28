@@ -12,13 +12,26 @@ module Internal
         return denied!(:unauthorized, I18n.t("devise.failure.unauthenticated")) unless upload_user
 
         return denied!(:forbidden, I18n.t("submission.upload_failure_unauthorized")) unless
-          authorize.call(upload_user)
+          authorize.call(upload_user) && intent_allows?
 
         head :no_content
       end
     end
 
     private
+
+      # Turns away an upload the app would refuse anyway, before the body is
+      # streamed. An intent that never arrives here is not a verdict: only the
+      # endpoint itself insists on one.
+      def intent_allows?
+        intent = UploadIntent.from_request(request)
+        uploader_class = UploadEndpointAuthorization.uploader_class_for(params[:uploader])
+        return true if intent.nil? || uploader_class.nil?
+
+        UploadEndpointAuthorization.intent_authorized?(
+          intent: intent, uploader_class: uploader_class, user: upload_user
+        )
+      end
 
       # Resolves the requested key to an authorization predicate, or nil if the
       # key is unknown (so the caller can answer 404). ActiveStorage's stock

@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe("MediaUploads", type: :request) do
   let(:user) { create(:confirmed_user, admin: true, locale: "en") }
   let(:scanner) { instance_double(ClamavScanner) }
+  let(:medium) { create(:valid_medium) }
 
   before do
     sign_in user
@@ -16,7 +17,8 @@ RSpec.describe("MediaUploads", type: :request) do
     upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
                                           "application/pdf")
 
-    post "/pdfs/upload", params: { file: upload }
+    post "/pdfs/upload", params: { file: upload },
+                         headers: upload_intent_headers(PdfUploader, user: user, target: medium)
 
     expect(response.status).to eq(422)
     expect(response.body).to include(
@@ -30,7 +32,9 @@ RSpec.describe("MediaUploads", type: :request) do
     upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "image.png"),
                                           "image/png")
 
-    post "/profile_image/upload", params: { file: upload }
+    post "/profile_image/upload", params: { file: upload },
+                                  headers: upload_intent_headers(ProfileimageUploader, user: user,
+                                                                                       target: user)
 
     expect(response).to have_http_status(:ok)
     data = JSON.parse(response.body)
@@ -44,7 +48,8 @@ RSpec.describe("MediaUploads", type: :request) do
     upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
                                           "application/pdf")
 
-    post "/pdfs/upload", params: { file: upload }
+    post "/pdfs/upload", params: { file: upload },
+                         headers: upload_intent_headers(PdfUploader, user: user, target: medium)
 
     expect(response).to have_http_status(:service_unavailable)
     expect(response.body).to include(
@@ -59,7 +64,8 @@ RSpec.describe("MediaUploads", type: :request) do
     upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
                                           "application/pdf")
 
-    post "/pdfs/upload", params: { file: upload }
+    post "/pdfs/upload", params: { file: upload },
+                         headers: upload_intent_headers(PdfUploader, user: user, target: medium)
 
     expect(response).to have_http_status(:service_unavailable)
     expect(response.body).to include(
@@ -75,7 +81,9 @@ RSpec.describe("MediaUploads", type: :request) do
     upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
                                           "application/zip")
 
-    post "/ggbs/upload", params: { file: upload }
+    post "/ggbs/upload", params: { file: upload },
+                         headers: upload_intent_headers(GeogebraUploader, user: user,
+                                                                          target: medium)
 
     expect(response.status).to eq(422)
     expect(response.body).to include(
@@ -89,7 +97,8 @@ RSpec.describe("MediaUploads", type: :request) do
     upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "talk.mp4"),
                                           "video/mp4")
 
-    post "/videos/upload", params: { file: upload }
+    post "/videos/upload", params: { file: upload },
+                           headers: upload_intent_headers(VideoUploader, user: user, target: medium)
 
     expect(response).to have_http_status(:ok)
     expect(scanner).to have_received(:scan)
@@ -105,7 +114,8 @@ RSpec.describe("MediaUploads", type: :request) do
     upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "talk.mp4"),
                                           "video/mp4")
 
-    post "/videos/upload", params: { file: upload }
+    post "/videos/upload", params: { file: upload },
+                           headers: upload_intent_headers(VideoUploader, user: user, target: medium)
 
     expect(response.status).to eq(422)
     expect(response.body).to include(
@@ -120,7 +130,8 @@ RSpec.describe("MediaUploads", type: :request) do
     upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "talk.mp4"),
                                           "video/mp4")
 
-    post "/videos/upload", params: { file: upload }
+    post "/videos/upload", params: { file: upload },
+                           headers: upload_intent_headers(VideoUploader, user: user, target: medium)
 
     expect(response).to have_http_status(:service_unavailable)
     expect(response.body).to include(

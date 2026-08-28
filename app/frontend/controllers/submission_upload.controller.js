@@ -25,6 +25,7 @@ export default class extends Controller {
     endpoint: String,
     acceptedFileTypes: String,
     maxFileSize: Number,
+    intent: String,
     failureMessage: String,
     missingConsentMessage: String,
     note: String,
@@ -42,6 +43,7 @@ export default class extends Controller {
       autoProceed: false,
       allowedFileTypes: this.acceptedFileTypes(),
       maxFileSize: this.maxFileSizeValue,
+      intent: this.intentValue,
       note: this.noteValue || null,
       dashboardLocale: this.dashboardLocale(),
       onBeforeUpload: () => {

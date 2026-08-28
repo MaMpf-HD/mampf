@@ -15,6 +15,16 @@ class UploadEndpointAuthorization
   # role rule (see .active_storage_authorized?).
   ACTIVE_STORAGE_KEY = "active_storage".freeze
 
+  # The abilities that own the records an upload can be aimed at. Anything not
+  # listed here cannot be an upload target, so a signed intent for it fails.
+  TARGET_ABILITIES = {
+    "Course" => CourseAbility,
+    "Medium" => MediumAbility,
+    "Submission" => SubmissionAbility,
+    "Tutorial" => TutorialAbility,
+    "User" => UserAbility
+  }.freeze
+
   class << self
     def authorized?(uploader_class:, user:)
       case uploader_class.name
@@ -36,6 +46,26 @@ class UploadEndpointAuthorization
       else
         raise(ArgumentError, "Unhandled uploader: #{uploader_class.name}")
       end
+    end
+
+    # Asks the record the upload was meant for whether this user may still do
+    # what the form offered -- the stored record, or the one that form is about
+    # to create. An intent that names no record at all is refused.
+    def intent_authorized?(intent:, uploader_class:, user:)
+      return false unless intent&.for_user?(user)
+      return false unless intent.for_uploader?(uploader_class)
+      return false unless intent.targeted?
+
+      target = intent.target
+      ability = TARGET_ABILITIES[intent.target_type]&.new(user)
+      return false if target.nil? || ability.nil?
+
+      ability.can?(intent.action, target)
+    rescue StandardError => e
+      # An ability that cannot judge the record is not a yes. It means a form
+      # minted an intent nobody can answer, which is worth reading about.
+      Rails.logger.warn("[upload intent] #{intent.target_type}##{intent.action}: #{e.message}")
+      false
     end
 
     # Coarse authorization for the stock ActiveStorage direct-upload endpoint.
