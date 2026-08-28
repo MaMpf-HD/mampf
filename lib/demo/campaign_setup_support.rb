@@ -406,11 +406,13 @@ module Demo
       seminar = Lecture.find_by(course: course, teacher: teacher)
       if seminar
         # The scenario is staged from scratch on every build: its campaigns
-        # cannot be rewound once students have registered, and its cohorts would
-        # collide by title. The term follows, in case an earlier build left the
-        # seminar in one that has since started.
+        # cannot be rewound once students have registered, its cohorts would
+        # collide by title, and its talks would pile up twelve at a time. The
+        # term follows, in case an earlier build left the seminar in one that
+        # has since started.
         Demo::CampaignCleanup.discard_all!(seminar)
         Cohort.where(context: seminar).destroy_all
+        Talk.where(lecture: seminar).destroy_all
         seminar.update!(term: Demo::TermSupport.next_term)
       else
         seminar = FactoryBot.create(
