@@ -226,7 +226,9 @@ class AnnotationsController < ApplicationController
         .sort_by { |_title, annos| annos.filter_map { |a| a[:lecture].updated_at }.max }
         .reverse.to_h
         .transform_values { |annos| annos.map { |a| a.except(:lecture) } }
-        .transform_values { |annos| annos.sort_by { |a| a[:created_at] }.reverse }
+        # Newest first, by the timestamp the entry actually carries -- and the
+        # one it shows.
+        .transform_values { |annos| annos.sort_by { |a| a[:updated_at] }.reverse }
     end
 
     def extract_annotation_overview_information(annotation, is_shared)
