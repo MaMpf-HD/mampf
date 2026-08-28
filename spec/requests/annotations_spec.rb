@@ -18,6 +18,20 @@ RSpec.describe("Annotations", type: :request) do
                     total_seconds: "10", post_as_comment: "0" } }
   end
 
+  describe "GET /annotations" do
+    it "lists an annotation on a medium that hangs off a course" do
+      course_medium = create(:course_medium)
+      create(:annotation, medium_id: course_medium.id, user_id: owner.id,
+                          comment: "on a course medium", category: :note)
+      sign_in owner
+
+      get annotations_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(course_medium.teachable.title)
+    end
+  end
+
   describe "an annotation owned by another user" do
     let!(:annotation) do
       create(:annotation, medium_id: medium.id, user_id: owner.id,

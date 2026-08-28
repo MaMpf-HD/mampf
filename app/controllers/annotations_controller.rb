@@ -217,6 +217,7 @@ class AnnotationsController < ApplicationController
     def annotations_by_lecture(annotations, is_shared: false)
       annotations
         .map { |a| extract_annotation_overview_information(a, is_shared) }
+        .reject { |annotation| annotation[:lecture].nil? }
         .group_by { |annotation| annotation[:lecture] }
         .sort_by { |lecture, _annotations| lecture.updated_at }.reverse.to_h
         # Instead of the full lecture object, we only need its title,
@@ -232,7 +233,9 @@ class AnnotationsController < ApplicationController
         text: annotation.comment_optional,
         color: annotation.color,
         updated_at: annotation.updated_at,
-        lecture: annotation.medium.teachable.lecture,
+        # A medium can hang off a course rather than a lecture, and then the
+        # course is what its annotations are grouped under.
+        lecture: annotation.medium.teachable&.then { |t| t.lecture || t },
         link: helpers.annotation_open_link(annotation, is_shared),
         medium_title: annotation.medium.caption,
         medium_date: annotation.medium.lesson&.date_localized
