@@ -18,6 +18,7 @@ import * as ActiveStorage from "@rails/activestorage";
 
 import "@popperjs/core";
 import "trix";
+import "~/uploads/trix_attachments";
 
 // Custom JS needed on every page
 import "~/js/main.coffee";
