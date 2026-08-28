@@ -28,7 +28,9 @@ RSpec.describe("Annotations", type: :request) do
       get annotations_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(course_medium.teachable.title)
+      # The heading is escaped on its way into the page, and a course title can
+      # carry an apostrophe.
+      expect(response.body).to include(ERB::Util.html_escape(course_medium.teachable.title))
     end
 
     it "keeps both when a course and a lecture share their heading" do
