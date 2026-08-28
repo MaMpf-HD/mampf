@@ -7,11 +7,21 @@ RSpec.describe(Seeds::PackageSupport) do
   let(:directory) { Rails.public_path.join(prefix) }
   let(:archive) { Rails.root.join("tmp/seed-package-spec.zip") }
 
+  # Registered rather than stubbed: a Shrine subclass copies the storages when
+  # it is defined, and this spec loads the app, so a stubbed hash would stay
+  # with every uploader defined along the way.
+  around do |example|
+    storages = Shrine.storages
+    Shrine.storages = storages.merge(
+      seed_package_spec: Shrine::Storage::FileSystem.new("public", prefix: prefix),
+      seed_package_spec_memory: Shrine::Storage::Memory.new
+    )
+    example.run
+    Shrine.storages = storages
+  end
+
   before do
     allow(described_class).to receive(:ensure_development!)
-    allow(Shrine).to receive(:storages).and_return(
-      store: Shrine::Storage::FileSystem.new("public", prefix: prefix)
-    )
     FileUtils.mkdir_p(directory)
   end
 
@@ -21,8 +31,11 @@ RSpec.describe(Seeds::PackageSupport) do
   end
 
   def attach!(record, column, id, derivative: nil)
-    data = { "id" => id, "storage" => "store" }
-    data["derivatives"] = { "thumb" => { "id" => derivative, "storage" => "store" } } if derivative
+    data = { "id" => id, "storage" => "seed_package_spec" }
+    if derivative
+      data["derivatives"] = { "thumb" => { "id" => derivative,
+                                           "storage" => "seed_package_spec" } }
+    end
     # rubocop:disable Rails/SkipsModelValidations
     record.update_columns(column => data.to_json)
     # rubocop:enable Rails/SkipsModelValidations
@@ -34,7 +47,7 @@ RSpec.describe(Seeds::PackageSupport) do
 
   describe ".paths_in" do
     it "reads the file an attachment points at" do
-      data = { "id" => "medium/1/video/clip.mp4", "storage" => "store" }
+      data = { "id" => "medium/1/video/clip.mp4", "storage" => "seed_package_spec" }
 
       expect(described_class.paths_in(data))
         .to eq([Rails.public_path.join(prefix, "medium/1/video/clip.mp4").to_s])
@@ -42,8 +55,9 @@ RSpec.describe(Seeds::PackageSupport) do
 
     it "takes the derivatives along, which are files of their own" do
       data = {
-        "id" => "sheet.pdf", "storage" => "store",
-        "derivatives" => { "thumb" => { "id" => "thumbnail.png", "storage" => "store" } }
+        "id" => "sheet.pdf", "storage" => "seed_package_spec",
+        "derivatives" => { "thumb" => { "id" => "thumbnail.png",
+                                        "storage" => "seed_package_spec" } }
       }
 
       expect(described_class.paths_in(data).map { |path| File.basename(path) })
@@ -51,7 +65,7 @@ RSpec.describe(Seeds::PackageSupport) do
     end
 
     it "passes over an attachment in a storage that keeps no files" do
-      data = { "id" => "clip.mp4", "storage" => "cache" }
+      data = { "id" => "clip.mp4", "storage" => "seed_package_spec_memory" }
 
       expect(described_class.paths_in(data)).to be_empty
     end
