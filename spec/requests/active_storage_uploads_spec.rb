@@ -90,6 +90,20 @@ RSpec.describe("ActiveStorageUploads", type: :request) do
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it "does not hand it out through the proxy route either" do
+      blob.reload.update!(metadata: {})
+
+      get rails_storage_proxy_path(blob)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "hands a scanned file through the proxy route" do
+      get rails_storage_proxy_path(blob)
+
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   it "assumes the disk service, and says so when that stops being true" do

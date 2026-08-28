@@ -38,7 +38,11 @@ class ActiveStorageScanGate
     # Whether the file behind this key may be handed out: it carries a clean
     # verdict, or it is a variant our own processing derived from one.
     def cleared?(key)
-      blob = ActiveStorage::Blob.find_by(key: key)
+      cleared_blob?(ActiveStorage::Blob.find_by(key: key))
+    end
+
+    # The same question where the blob has already been looked up.
+    def cleared_blob?(blob)
       return false if blob.nil?
       return true if clean?(blob)
 

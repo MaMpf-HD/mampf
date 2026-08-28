@@ -7,6 +7,21 @@
 # loaded when initializers run, and a dev reload would otherwise register the
 # callbacks twice.
 Rails.application.config.to_prepare do
+  # Every controller that hands out a blob resolves it through this concern --
+  # the redirect and the proxy routes, and their representation variants -- so
+  # one check covers all of them, whichever way a file is asked for.
+  ActiveStorage::SetBlob.prepend(Module.new do
+    private
+
+      def set_blob
+        super
+        return if @blob.nil? || performed?
+        return if ActiveStorageScanGate.cleared_blob?(@blob)
+
+        head :not_found
+      end
+  end)
+
   ActiveStorage::DiskController.class_eval do
     scan = :scan_direct_upload!
     gate = :require_scanned_file!
