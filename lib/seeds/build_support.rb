@@ -28,7 +28,9 @@ module Seeds
         Demo::CampaignSetupSupport.setup!
         Demo::NextTermBannerSupport.setup!
         add_running_campaigns!
+        settle_current_term_campaigns!
         extend_open_deadlines!
+        Seeds::CourseworkSupport.setup!
         Seeds::EnrichSupport.enrich!
         # last, so that the accounts the demo scenarios create are usable too
         reset_passwords!
@@ -41,6 +43,8 @@ module Seeds
     # by the same number of six-month steps and stay in step with each other.
     def advance!(semesters)
       ensure_development!
+      return if Integer(semesters).zero?
+
       months = 6 * Integer(semesters)
       # rubocop:disable Rails/SkipsModelValidations
       Term.update_all(rename_terms(semesters))
@@ -72,13 +76,28 @@ module Seeds
       end
     end
 
+    # A registration that is still running belongs in the term that is still
+    # being planned. The term the seed plays in is done registering: its lecture
+    # has a finalized roster and students sitting in tutorials.
     def add_running_campaigns!
       ensure_development!
+      term = next_term
 
-      [current_term, next_term].each do |term|
-        open_campaign!(lecture_for(term), TUTORIAL_DESCRIPTION, items_count: 4,
-                                                                capacity: 12)
-        open_campaign!(seminar_for(term), TALK_DESCRIPTION, items_count: 8)
+      open_campaign!(lecture_for(term), TUTORIAL_DESCRIPTION, items_count: 4,
+                                                              capacity: 12)
+      open_campaign!(seminar_for(term), TALK_DESCRIPTION, items_count: 8)
+    end
+
+    # Registration in the term the seed plays in is over: what an earlier build
+    # left open there would be a registration nobody can finish. Only a campaign
+    # that ran its course stays, because that is what its lecture shows.
+    def settle_current_term_campaigns!
+      ensure_development!
+
+      Lecture.where(term: current_term).find_each do |lecture|
+        Registration::Campaign.where(campaignable: lecture).find_each do |campaign|
+          Demo::CampaignCleanup.discard!(campaign) unless campaign.completed?
+        end
       end
     end
 
@@ -134,16 +153,17 @@ module Seeds
 
       # rubocop:disable Rails/Exit
       # Without a target the set moves on by a single semester, which is what
-      # the next edition of the seed data usually is.
+      # the next edition of the seed data usually is. Naming the term it is
+      # already in rebuilds it where it stands.
       def semesters_until(target_term)
         return 1 if target_term.blank?
 
         season, year = parse_term(target_term)
         steps = ((year * 2) + (season == "SS" ? 0 : 1)) - term_index(current_term)
-        return steps if steps.positive?
+        return steps unless steps.negative?
 
         abort("The seed data is in #{label(current_term)}; " \
-              "#{season} #{year} is not ahead of it.")
+              "#{season} #{year} is behind it.")
       end
 
       def parse_term(target_term)
@@ -155,17 +175,11 @@ module Seeds
       # rubocop:enable Rails/Exit
 
       def current_term
-        Term.active || Term.order(:year, :season).last
+        Demo::TermSupport.active_term
       end
 
       def next_term
-        term = current_term
-        year, season = if term.season == "SS"
-          [term.year, "WS"]
-        else
-          [term.year + 1, "SS"]
-        end
-        Term.find_or_create_by!(year: year, season: season)
+        Demo::TermSupport.next_term
       end
 
       def teacher
@@ -183,17 +197,14 @@ module Seeds
       end
 
       def label(term)
-        "#{term.season} #{term.year}"
+        Demo::TermSupport.label(term)
       end
 
       def find_or_create_lecture!(term, sort, course_title, short_title)
-        course = Course.find_or_create_by!(title: course_title) do |c|
-          c.short_title = short_title
-        end
-        Lecture.find_by(course: course, term: term) ||
-          FactoryBot.create(:lecture, :released_for_all,
-                            course: course, term: term, teacher: teacher,
-                            sort: sort, locale: "en")
+        Demo::TermSupport.find_or_create_lecture!(
+          term: term, teacher: teacher, sort: sort,
+          course_title: course_title, short_title: short_title
+        )
       end
 
       def open_campaign!(lecture, description, items_count:, capacity: nil)
