@@ -86,6 +86,27 @@ RSpec.describe("UploadRoutes", type: :request) do
       )
     end
 
+    it "answers for submissions, which any signed-in user may make" do
+      sign_in user
+
+      get "/internal/upload-authorizations/submission", params: { locale: user.locale }
+
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it "turns away a submission intent for a lecture the user does not attend" do
+      assignment = create(:assignment, :with_lecture)
+      sign_in user
+      token = UploadIntent.mint(user: user, uploader_class: SubmissionUploader,
+                                target: Submission.new(assignment: assignment))
+
+      get "/internal/upload-authorizations/submission",
+          params: { locale: user.locale },
+          headers: { "X-Upload-Intent" => token }
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
     context "when the request carries an intent" do
       let(:user) do
         create(:confirmed_user, locale: "en").tap do |editor|

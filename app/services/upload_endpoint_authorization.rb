@@ -5,6 +5,7 @@ class UploadEndpointAuthorization
     "pdf" => PdfUploader,
     "profile_image" => ProfileimageUploader,
     "screenshot" => ScreenshotUploader,
+    "submission" => SubmissionUploader,
     "video" => VideoUploader
   }.freeze
 
