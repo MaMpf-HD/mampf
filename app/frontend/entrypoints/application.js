@@ -17,8 +17,10 @@ import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
 
 import "@popperjs/core";
-import "trix";
+// Before Trix: a server-rendered editor upgrades while Trix is evaluated, and
+// the listeners have to be there when it does.
 import "~/uploads/trix_attachments";
+import "trix";
 
 // Custom JS needed on every page
 import "~/js/main.coffee";
