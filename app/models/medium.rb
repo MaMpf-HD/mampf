@@ -508,10 +508,12 @@ class Medium < ApplicationRecord
 
   # methods that create card header and subheader for a medium card
 
-  delegate :card_header, to: :teachable
+  # A medium does not have to belong to a teachable, and one that does not still
+  # shows up as a card -- on a watchlist, for instance.
+  delegate :card_header, to: :teachable, allow_nil: true
 
   def card_header_teachable_path(user)
-    teachable.card_header_path(user)
+    teachable&.card_header_path(user)
   end
 
   def card_subheader
