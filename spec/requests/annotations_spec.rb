@@ -30,6 +30,35 @@ RSpec.describe("Annotations", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(course_medium.teachable.title)
     end
+
+    it "keeps both when a course and a lecture share their heading" do
+      course_medium = create(:course_medium)
+      course = course_medium.teachable
+      course.update!(term_independent: true)
+      lecture = create(:lecture, course: course, term: nil)
+      lecture_medium = create(:valid_medium, teachable: lecture)
+      create(:annotation, medium_id: course_medium.id, user_id: owner.id,
+                          comment: "on the course", category: :note)
+      create(:annotation, medium_id: lecture_medium.id, user_id: owner.id,
+                          comment: "on the lecture", category: :note)
+      sign_in owner
+
+      get annotations_path
+
+      expect(response.body).to include("on the course", "on the lecture")
+    end
+
+    it "leaves out an annotation on a medium that belongs to nothing" do
+      orphan = create(:medium, :with_description, teachable: nil, sort: "RandomQuiz")
+      create(:annotation, medium_id: orphan.id, user_id: owner.id,
+                          comment: "on nothing at all", category: :note)
+      sign_in owner
+
+      get annotations_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include("on nothing at all")
+    end
   end
 
   describe "an annotation owned by another user" do

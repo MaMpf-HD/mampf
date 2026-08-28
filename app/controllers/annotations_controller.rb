@@ -218,11 +218,13 @@ class AnnotationsController < ApplicationController
       annotations
         .map { |a| extract_annotation_overview_information(a, is_shared) }
         .reject { |annotation| annotation[:lecture].nil? }
-        .group_by { |annotation| annotation[:lecture] }
-        .sort_by { |lecture, _annotations| lecture.updated_at }.reverse.to_h
-        # Instead of the full lecture object, we only need its title,
-        # and also not as value anymore for individual annotations.
-        .transform_keys(&:title)
+        # Grouped by the heading rather than by the record behind it: a
+        # term-independent lecture is titled after its course, so the two would
+        # end up as separate groups of which only one survives being keyed by
+        # title.
+        .group_by { |annotation| annotation[:lecture].title }
+        .sort_by { |_title, annos| annos.filter_map { |a| a[:lecture].updated_at }.max }
+        .reverse.to_h
         .transform_values { |annos| annos.map { |a| a.except(:lecture) } }
         .transform_values { |annos| annos.sort_by { |a| a[:created_at] }.reverse }
     end
