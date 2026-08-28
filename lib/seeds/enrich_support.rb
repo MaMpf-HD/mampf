@@ -222,6 +222,11 @@ module Seeds
         Announcement.update_all(on_main_page: false)
         # rubocop:enable Rails/SkipsModelValidations
 
+        # An edition is built from the one before it, so what this step wrote
+        # last time goes before it is written again -- with its notifications.
+        Announcement.where(details: ADMIN_ANNOUNCEMENTS + LECTURE_ANNOUNCEMENTS)
+                    .destroy_all
+
         ADMIN_ANNOUNCEMENTS.each do |text|
           announce!(Announcement.create!(announcer: admin, details: text,
                                          on_main_page: false))
