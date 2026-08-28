@@ -8,6 +8,7 @@ module Demo
     ALLOCATION_CAMPAIGN_DESCRIPTION = "Stage 2: Allocation".freeze
     NACHRUECKER_CAMPAIGN_DESCRIPTION = "Stage 3: Nachrücker (FCFS)".freeze
     TWO_STAGE_COURSE_TITLE = "Campaign Test Seminar".freeze
+    PLAYGROUND_COURSE_TITLE = "Registration Playground".freeze
 
     def setup!
       ensure_non_production!
@@ -87,9 +88,11 @@ module Demo
     def seed_preference_campaign_registrations!
       ensure_non_production!
 
-      campaign = Registration::Campaign.where(
-        description: PREFERENCE_CAMPAIGN_DESCRIPTION
-      ).last
+      # Scoped to the playground: an earlier build may have left a campaign of
+      # the same name on the lecture this used to run on.
+      campaign = Registration::Campaign.find_by(
+        campaignable: lecture!, description: PREFERENCE_CAMPAIGN_DESCRIPTION
+      )
       unless campaign
         output("Campaign not found. Run demo:campaigns first.")
         return
@@ -282,9 +285,9 @@ module Demo
     def seed_mixed_fcfs_campaign_registrations!
       ensure_non_production!
 
-      campaign = Registration::Campaign.where(
-        description: MIXED_FCFS_CAMPAIGN_DESCRIPTION
-      ).last
+      campaign = Registration::Campaign.find_by(
+        campaignable: lecture!, description: MIXED_FCFS_CAMPAIGN_DESCRIPTION
+      )
       unless campaign
         output("Campaign not found. Run demo:campaigns first.")
         return
@@ -296,8 +299,8 @@ module Demo
       tutorials = campaign.registration_items.includes(:registerable)
                           .where(registerable_type: "Tutorial")
                           .to_a
-      repeaters = Cohort.find_by(title: "Repeaters")
-      waitlist = Cohort.find_by(title: "Waitlist")
+      repeaters = Cohort.find_by(context: lecture!, title: "Repeaters")
+      waitlist = Cohort.find_by(context: lecture!, title: "Waitlist")
       repeaters_item = campaign.registration_items.find_by(
         registerable_type: "Cohort",
         registerable: repeaters
@@ -401,18 +404,26 @@ module Demo
       end
 
       seminar = Lecture.find_by(course: course, teacher: teacher)
-      unless seminar
+      if seminar
+        # The scenario is staged from scratch on every build: its campaigns
+        # cannot be rewound once students have registered, and its cohorts would
+        # collide by title. The term follows, in case an earlier build left the
+        # seminar in one that has since started.
+        Demo::CampaignCleanup.discard_all!(seminar)
+        Cohort.where(context: seminar).destroy_all
+        seminar.update!(term: Demo::TermSupport.next_term)
+      else
         seminar = FactoryBot.create(
           :seminar,
           course: course,
           teacher: teacher,
           released: true,
-          term: Term.active || FactoryBot.create(:term)
+          term: Demo::TermSupport.next_term
         )
         output("Created Seminar Lecture")
       end
 
-      unless teacher.favorite_lectures.exists?(seminar.id)
+      unless LectureUserJoin.exists?(lecture: seminar, user: teacher)
         teacher.lectures << seminar
         output("Subscribed teacher to seminar")
       end
@@ -663,13 +674,14 @@ module Demo
         fail_setup!("Cannot run in production!") if Rails.env.production?
       end
 
+      # Everything here is a registration in progress, and one of those belongs
+      # in the term that is still being planned -- not in the lecture the demo
+      # opens on, which is meant to look like a term well under way.
       def lecture!
-        lecture = Lecture.find_by(id: 1)
-        fail_setup!("Lecture 1 not found. Run just seed first.") unless lecture
-
-        teacher = teacher!
-        lecture.update!(teacher: teacher) if lecture.teacher != teacher
-        lecture
+        Demo::TermSupport.find_or_create_lecture!(
+          term: Demo::TermSupport.next_term, teacher: teacher!,
+          course_title: PLAYGROUND_COURSE_TITLE, short_title: "RP"
+        )
       end
 
       def teacher!
