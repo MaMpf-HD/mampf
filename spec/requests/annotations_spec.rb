@@ -33,7 +33,7 @@ RSpec.describe("Annotations", type: :request) do
       expect(response.body).to include(ERB::Util.html_escape(course_medium.teachable.title))
     end
 
-    it "keeps both when a course and a lecture share their heading" do
+    it "keeps both under one heading when a course and a lecture share it" do
       course_medium = create(:course_medium)
       course = course_medium.teachable
       course.update!(term_independent: true)
@@ -47,6 +47,9 @@ RSpec.describe("Annotations", type: :request) do
 
       get annotations_path
 
+      buttons = Nokogiri::HTML(response.body).css(".accordion-button")
+      headings = buttons.map { |button| button.text.squish }
+      expect(headings).to contain_exactly("#{course.title} (2)")
       expect(response.body).to include("on the course", "on the lecture")
     end
 
