@@ -20,6 +20,21 @@ RSpec.describe("Cypress::FactoriesPlaywright", type: :request) do
     expect(attempts).to eq(2)
   end
 
+  it "leaves nothing behind from the attempt that was aborted" do
+    attempts = 0
+    allow(FactoryBot).to receive(:create) do
+      attempts += 1
+      # What a factory does before it saves the record itself.
+      term = Term.create!(year: 2090 + attempts, season: "SS")
+      raise(ActiveRecord::Deadlocked, "deadlock detected") if attempts == 1
+
+      term
+    end
+
+    expect { post("/cypress/factories_playwright", params: params) }
+      .to change(Term, :count).by(1)
+  end
+
   it "gives up in the end, so a deadlock that stays is not hidden" do
     allow(FactoryBot).to receive(:create)
       .and_raise(ActiveRecord::Deadlocked, "deadlock detected")

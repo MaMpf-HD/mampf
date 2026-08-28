@@ -60,12 +60,14 @@ module Cypress
     private
 
       # A test's own page can still be finishing a request while the next test
-      # asks for its records, and Postgres picks one of the two to abort. Nothing
-      # is half-written when it does, so the way out is to ask again.
-      def retrying_deadlocks
+      # asks for its records, and Postgres picks one of the two to abort. The
+      # attempt runs as one transaction, because a factory persists a record's
+      # associations before the record itself: without it, the aborted attempt
+      # would leave its course and term behind for the next one to duplicate.
+      def retrying_deadlocks(&)
         attempt = 0
         begin
-          yield
+          ActiveRecord::Base.transaction(&)
         rescue ActiveRecord::Deadlocked
           attempt += 1
           raise if attempt >= ATTEMPTS
