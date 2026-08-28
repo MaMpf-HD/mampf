@@ -4062,7 +4062,7 @@ en:
           attributes:
             medium:
               improper: >
-                A random quiz cannot be put on a watchlist.
+                A random quiz cannot be added to a watchlist.
             medium_id:
               taken:
                 is already in this watchlist.

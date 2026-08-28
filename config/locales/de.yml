@@ -4289,7 +4289,8 @@ de:
           attributes:
             medium:
               improper: >
-                Ein Zufallsquiz kann nicht auf eine Merkliste gesetzt werden.
+                Ein Zufallsquiz kann nicht zu einer Watchlist hinzugefügt
+                werden.
             medium_id:
               taken:
                 ist schon in dieser Watchlist.
