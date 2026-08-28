@@ -31,44 +31,82 @@ module Seeds
       ]]
     ].freeze
 
-    HOME_INTROS = [
-      "<div>Willkommen bei <strong>%<title>s</strong>!</div>" \
-      "<div>Auf dieser Seite findest Du alles zur Veranstaltung: das Skript, " \
-      "die Videos zu den einzelnen Sitzungen und die Übungsblätter. Die " \
-      "Aufzeichnung steht in der Regel am Abend nach der Vorlesung bereit, " \
-      "die Kapitelmarken kommen am Tag darauf dazu.</div>" \
-      "<div>Die Übungsblätter erscheinen mittwochs und werden bis zum " \
-      "Freitag der Folgewoche abgegeben — in Zweiergruppen, direkt hier über " \
-      "MaMpf. Deine Tutorin oder Dein Tutor lädt die Korrektur an derselben " \
-      "Stelle wieder hoch.</div>",
+    # MaMpf is taught in both languages, and a lecture that says it is English
+    # should not greet its students in German.
+    HOME_INTROS = {
+      "de" => [
+        "<div>Willkommen bei <strong>%<title>s</strong>!</div>" \
+        "<div>Auf dieser Seite findest Du alles zur Veranstaltung: das Skript, " \
+        "die Videos zu den einzelnen Sitzungen und die Übungsblätter. Die " \
+        "Aufzeichnung steht in der Regel am Abend nach der Vorlesung bereit, " \
+        "die Kapitelmarken kommen am Tag darauf dazu.</div>" \
+        "<div>Die Übungsblätter erscheinen mittwochs und werden bis zum " \
+        "Freitag der Folgewoche abgegeben — in Zweiergruppen, direkt hier über " \
+        "MaMpf. Deine Tutorin oder Dein Tutor lädt die Korrektur an derselben " \
+        "Stelle wieder hoch.</div>",
 
-      "<div>Diese Seite ist die Anlaufstelle für <strong>%<title>s</strong>.</div>" \
-      "<div>Fragen zwischendurch stellst Du am besten im Forum — dort " \
-      "antworten auch die Tutorinnen und Tutoren. Wichtige Hinweise " \
-      "erscheinen als Ankündigung ganz oben; wenn Du die Veranstaltung " \
-      "abonniert hast, bekommst Du sie außerdem als Benachrichtigung.</div>" \
-      "<div>Das Skript wächst mit der Vorlesung mit. Wo etwas unklar bleibt, " \
-      "hilft oft die verlinkte Wiederholung aus dem vorigen Semester.</div>",
+        "<div>Diese Seite ist die Anlaufstelle für <strong>%<title>s</strong>.</div>" \
+        "<div>Fragen zwischendurch stellst Du am besten im Forum — dort " \
+        "antworten auch die Tutorinnen und Tutoren. Wichtige Hinweise " \
+        "erscheinen als Ankündigung ganz oben; wenn Du die Veranstaltung " \
+        "abonniert hast, bekommst Du sie außerdem als Benachrichtigung.</div>" \
+        "<div>Das Skript wächst mit der Vorlesung mit. Wo etwas unklar bleibt, " \
+        "hilft oft die verlinkte Wiederholung aus dem vorigen Semester.</div>",
 
-      "<div><strong>%<title>s</strong></div>" \
-      "<div>Der Ablauf ist der übliche: zwei Vorlesungen und eine Übung pro " \
-      "Woche, dazu ein Übungsblatt, von dem die Hälfte der Punkte zur " \
-      "Klausurzulassung reicht.</div>" \
-      "<div>Alles, was Du dafür brauchst, steht hier: das Skript unter " \
-      "„Manuskript“, die Aufzeichnungen unter „Lektionen“ und die Blätter " \
-      "unter „Übungen“. Die Sprechstunde findet dienstags um 14 Uhr statt.</div>"
-    ].freeze
+        "<div><strong>%<title>s</strong></div>" \
+        "<div>Der Ablauf ist der übliche: zwei Vorlesungen und eine Übung pro " \
+        "Woche, dazu ein Übungsblatt, von dem die Hälfte der Punkte zur " \
+        "Klausurzulassung reicht.</div>" \
+        "<div>Alles, was Du dafür brauchst, steht hier: das Skript unter " \
+        "„Manuskript“, die Aufzeichnungen unter „Lektionen“ und die Blätter " \
+        "unter „Übungen“. Die Sprechstunde findet dienstags um 14 Uhr statt.</div>"
+      ],
+      "en" => [
+        "<div>Welcome to <strong>%<title>s</strong>!</div>" \
+        "<div>This page holds everything the course comes with: the notes, the " \
+        "recording of every session and the exercise sheets. A recording is " \
+        "usually up the evening after the lecture, its chapter marks the day " \
+        "after that.</div>" \
+        "<div>Sheets appear on Wednesdays and are handed in by the Friday of " \
+        "the week after — in pairs, here on MaMpf. Your tutor uploads the " \
+        "correction in the same place.</div>",
+
+        "<div>This is where <strong>%<title>s</strong> starts.</div>" \
+        "<div>Ask what comes up in the forum; the tutors read it too. Anything " \
+        "that matters is announced at the top of this page, and reaches you as " \
+        "a notification once you have subscribed to the course.</div>" \
+        "<div>The notes grow with the lecture. Where something stays unclear, " \
+        "the linked revision from last term often helps.</div>",
+
+        "<div><strong>%<title>s</strong></div>" \
+        "<div>The week runs as usual: two lectures, one exercise class, and a " \
+        "sheet of which half the points admit you to the exam.</div>" \
+        "<div>Everything you need for that is here: the notes under " \
+        "\u201CManuscript\u201D, the recordings under \u201CLessons\u201D and the sheets " \
+        "under \u201CExercises\u201D. Office hours are on Tuesdays at 2 pm.</div>"
+      ]
+    }.freeze
 
     # The page a student sees before deciding to register, so it says what the
     # registration is for rather than describing a term already under way.
-    REGISTRATION_INTRO =
-      "<div><strong>%<title>s</strong> im kommenden Semester</div>" \
-      "<div>Die Veranstaltung beginnt in der ersten Vorlesungswoche. Für die " \
-      "Übungsgruppen läuft die Anmeldung bereits: Du gibst Deine Wunschzeiten " \
-      "in der Reihenfolge an, in der sie Dir passen, und bekommst nach dem " \
-      "Ende der Anmeldefrist eine Gruppe zugeteilt.</div>" \
-      "<div>Ein Platz in der Veranstaltung hängt nicht daran — das Abonnement " \
-      "hier ist keine verbindliche Anmeldung.</div>".freeze
+    REGISTRATION_INTROS = {
+      "de" =>
+        "<div><strong>%<title>s</strong> im kommenden Semester</div>" \
+        "<div>Die Veranstaltung beginnt in der ersten Vorlesungswoche. Für die " \
+        "Übungsgruppen läuft die Anmeldung bereits: Du gibst Deine Wunschzeiten " \
+        "in der Reihenfolge an, in der sie Dir passen, und bekommst nach dem " \
+        "Ende der Anmeldefrist eine Gruppe zugeteilt.</div>" \
+        "<div>Ein Platz in der Veranstaltung hängt nicht daran — das Abonnement " \
+        "hier ist keine verbindliche Anmeldung.</div>",
+      "en" =>
+        "<div><strong>%<title>s</strong> next term</div>" \
+        "<div>The course starts in the first week of term. Registration for the " \
+        "exercise groups is already running: you name the slots that suit you, " \
+        "in the order they suit you, and are given a group once the deadline " \
+        "has passed.</div>" \
+        "<div>Your place in the course does not hang on it — subscribing here " \
+        "is not a binding registration.</div>"
+    }.freeze
 
     # What people jot down while watching: students ask, the teacher notes what
     # to change next time round.
@@ -153,9 +191,15 @@ module Seeds
       end
 
       def intro_template(lecture, index)
-        return REGISTRATION_INTRO if lecture.registration_campaigns.open.any?
+        locale = intro_locale(lecture)
+        return REGISTRATION_INTROS[locale] if lecture.registration_campaigns.open.any?
 
-        HOME_INTROS[index % HOME_INTROS.size]
+        HOME_INTROS[locale][index % HOME_INTROS[locale].size]
+      end
+
+      def intro_locale(lecture)
+        locale = lecture.locale_with_inheritance.to_s
+        HOME_INTROS.key?(locale) ? locale : "de"
       end
 
       # The home page offers a welcome text and a program; without one of them
