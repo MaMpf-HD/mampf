@@ -1,9 +1,8 @@
 require "rails_helper"
 
 RSpec.describe("UploadRoutes", type: :request) do
-  # sign_in is Warden's login_as, which waits for a request to spend it on --
-  # one an example never makes lands on the next example instead, and these
-  # examples are about being nobody.
+  # sign_in is Warden's login_as, and a login no request spends lands on the
+  # next example -- these examples are about being nobody.
   before { Warden.test_reset! }
 
   let(:user) { create(:confirmed_user, locale: "en") }
@@ -302,8 +301,8 @@ RSpec.describe("UploadRoutes", type: :request) do
           editor.reload
         end
       end
-      # The course image is uploaded from the course itself, the rest from the
-      # form of a medium that will hang under it.
+      # The course image is uploaded from the course page, the rest from the
+      # form of a medium.
       let(:targets) do
         {
           "/screenshots/upload" => course,

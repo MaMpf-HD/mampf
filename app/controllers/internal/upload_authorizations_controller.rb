@@ -20,9 +20,8 @@ module Internal
 
     private
 
-      # Turns away an upload the app would refuse anyway, before the body is
-      # streamed. An intent that never arrives here is not a verdict: only the
-      # endpoint itself insists on one.
+      # A missing intent is not a verdict here: only the endpoint itself
+      # insists on one.
       def intent_allows?
         intent = UploadIntent.from_request(request)
         uploader_class = UploadEndpointAuthorization.uploader_class_for(params[:uploader])

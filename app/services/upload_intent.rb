@@ -1,15 +1,7 @@
-# Says what an upload was meant for before it happens: who asked for it, with
-# which uploader, and which record it is destined for. The endpoint refuses
-# anything else, so an upload cannot be aimed at a record whose form the user
-# was never shown.
-#
-# A record that does not exist yet is named all the same: the form knows the
-# assignment a submission will belong to, or the teachable a medium will hang
-# under, and that is what decides who may create it.
-#
-# The token is signed and expires; it grants no more than reloading the page
-# would, because the target's authorization is asked again when the file
-# arrives (see UploadEndpointAuthorization).
+# What an upload was meant for: who asked, with which uploader, for which
+# record -- one that does not exist yet is named by the ids that decide who may
+# create it. Signed and short-lived, and no substitute for authorization: the
+# endpoint asks the target's ability again when the file arrives.
 class UploadIntent
   LIFETIME = 24.hours
   PURPOSE = "upload_intent".freeze
@@ -28,8 +20,6 @@ class UploadIntent
         action: action || default_action(target)).token
   end
 
-  # Returns the intent the token stands for, or nil if it is missing, forged,
-  # expired or malformed.
   def self.parse(token)
     return if token.blank?
 
@@ -45,8 +35,7 @@ class UploadIntent
     parse(request.get_header(HEADER))
   end
 
-  # A token whose signature is intact but which no longer verifies: the page has
-  # been open past the lifetime. Worth telling the user apart from a refusal.
+  # Signature intact, lifetime over: worth a different message than a refusal.
   def self.expired?(token)
     token.present? && verifier.valid_message?(token) && parse(token).nil?
   end
@@ -55,18 +44,16 @@ class UploadIntent
     Rails.application.message_verifier(PURPOSE)
   end
 
-  # The ids a record that does not exist yet is rebuilt from. They are what the
-  # abilities ask about; the rest of a half-filled form is none of our business.
+  # Only the ids: they are what the abilities ask about, and the rest of a
+  # half-filled form is none of our business.
   def self.authorizing_attributes(target)
     return {} if target.nil? || target.id.present?
 
     target.attributes.compact.select { |name, _| name.end_with?("_id", "_type") }
   end
 
-  # The records an upload can be aimed at, under the name the token carries. A
-  # name is looked up here, never turned into a class, and the classes are read
-  # per call so that a reload hands back the current ones.
-  # UploadEndpointAuthorization holds the ability that answers for each.
+  # The records an upload can be aimed at. A method rather than a frozen
+  # constant, because a class kept across a reload goes stale.
   def self.target_classes
     { "Course" => Course, "Medium" => Medium, "Submission" => Submission,
       "Tutorial" => Tutorial, "User" => User }
@@ -101,8 +88,6 @@ class UploadIntent
     uploader == uploader_class.name
   end
 
-  # The record the upload belongs to: the stored one, or the one the form is
-  # about to create. Nil once the record is gone or the schema has moved on.
   def target
     return @target if defined?(@target)
 

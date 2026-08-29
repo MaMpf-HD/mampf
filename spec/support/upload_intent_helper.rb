@@ -1,5 +1,5 @@
-# Uploads carry a signed intent (see UploadIntent); request specs that post to
-# an upload endpoint have to mint one the way the form does.
+# Mints the intent a form would put on the page, for request specs that post
+# to an upload endpoint.
 module UploadIntentHelper
   def upload_intent_headers(uploader_class, user:, target: nil, action: nil)
     {

@@ -59,8 +59,6 @@ class ApplicationController < ActionController::Base
     redirect_to main_app.root_url, alert: exception.message
   end
 
-  # A file sent straight to a record's attachment attribute never passed the
-  # upload endpoint, so nothing vouches for it (see MalwareScannableAttacher).
   rescue_from MalwareScanGate::UntrustedUploadError do
     redirect_back_or_to main_app.root_url,
                         alert: I18n.t("submission.upload_failure_unauthorized")

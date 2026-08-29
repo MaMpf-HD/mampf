@@ -4,7 +4,6 @@ RSpec.describe("SubmissionUploads", type: :request) do
   let(:user) { create(:confirmed_user, locale: "en") }
   let(:scanner) { instance_double(ClamavScanner) }
   let(:assignment) { create(:assignment, :with_lecture) }
-  # What the form of a not yet created submission stands for.
   let(:submission) { Submission.new(assignment: assignment) }
   let(:upload) do
     Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),

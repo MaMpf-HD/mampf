@@ -16,8 +16,6 @@ class UploadEndpointAuthorization
   # role rule (see .active_storage_authorized?).
   ACTIVE_STORAGE_KEY = "active_storage".freeze
 
-  # The abilities that own the records an upload can be aimed at. Anything not
-  # listed here cannot be an upload target, so a signed intent for it fails.
   TARGET_ABILITIES = {
     "Course" => CourseAbility,
     "Medium" => MediumAbility,
@@ -49,9 +47,6 @@ class UploadEndpointAuthorization
       end
     end
 
-    # Asks the record the upload was meant for whether this user may still do
-    # what the form offered -- the stored record, or the one that form is about
-    # to create. An intent that names no record at all is refused.
     def intent_authorized?(intent:, uploader_class:, user:)
       return false unless intent&.for_user?(user)
       return false unless intent.for_uploader?(uploader_class)
@@ -63,9 +58,8 @@ class UploadEndpointAuthorization
 
       ability.can?(intent.action, target)
     rescue StandardError => e
-      # Fail closed, but keep the defect: an ability that cannot judge the record
-      # means a form minted an intent nobody can answer, and that is a bug, not a
-      # denial. The reporter keeps the backtrace the user never sees.
+      # Fail closed, but do not swallow it: an ability that cannot judge the
+      # record means some form mints an intent nobody can answer.
       Rails.error.report(e, handled: true, source: "upload_intent",
                             context: { target_type: intent.target_type,
                                        action: intent.action })
