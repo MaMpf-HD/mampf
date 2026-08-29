@@ -4291,6 +4291,10 @@ de:
                 Diese Rolle ist für diese Vorlesung nicht verfügbar.
         watchlist_entry:
           attributes:
+            medium:
+              improper: >
+                Ein Zufallsquiz kann nicht zu einer Watchlist hinzugefügt
+                werden.
             medium_id:
               taken:
                 ist schon in dieser Watchlist.

@@ -7,7 +7,14 @@ module Cypress
     # Creates an instance of the factory (via FactoryBot) and returns it as JSON.
     def create
       attributes, should_validate = to_attribute_list(params)
-      data = create_class_instance_via_factorybot(attributes, should_validate)
+      data = retrying_deadlocks do
+        # One transaction per attempt: a factory persists a record's
+        # associations before the record itself, and the aborted attempt would
+        # otherwise leave them behind for the next one to duplicate.
+        ActiveRecord::Base.transaction do
+          create_class_instance_via_factorybot(attributes, should_validate)
+        end
+      end
       render json: data.as_json, status: :created
     end
 
