@@ -70,6 +70,7 @@ gem "view_component", "~> 4.0"
 gem "vite_rails", "~> 3.0", ">= 3.0.17"
 # for now, pin vite_ruby, see https://github.com/ElMassimo/vite_ruby/issues/592
 gem "vite_ruby", "3.9.2"
+gem "zxcvbn-ruby", "~> 1.4"
 
 group :development do
   gem "listen", "~> 3.9"

@@ -987,8 +987,10 @@ Rails.application.routes.draw do
   # devise routes for users
 
   devise_for :users, controllers: { confirmations: "confirmations",
+                                    passwords: "passwords",
                                     registrations: "registrations",
-                                    sessions: "sessions" }
+                                    sessions: "sessions",
+                                    unlocks: "unlocks" }
   # users routes
 
   get "users/elevate",
@@ -1090,6 +1092,9 @@ Rails.application.routes.draw do
   # Allow /login besides /users/sign_in
   devise_scope :user do
     get "/login" => "devise/sessions#new"
+    post "/users/password/restart",
+         to: "passwords#restart",
+         as: :restart_user_password
   end
 
   get "error",

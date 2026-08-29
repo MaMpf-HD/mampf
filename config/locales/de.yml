@@ -1701,6 +1701,7 @@ de:
       edited_media: 'Editierte Medien'
       administration: 'Nutzerverwaltung'
       sorts: 'Admins, EditorInnen und DozentInnen'
+      password_policy_progress: '%{current} von %{total} Accounts erfüllen derzeit den aktualisierten Passwortstandard.'
       edit_generics: 'Sonstige NutzerInnen bearbeiten'
       elevate: 'zum Administrator befördern'
       info:
@@ -3004,6 +3005,7 @@ de:
     correct_file_size: Die Datei hat die richtige Größe.
     optimize: Optimieren
     missing_consent: Du musst den Bedingungen zustimmen.
+    upload_file: Hochladen
     working: Arbeite
     optimization_log: Log (anzeigen)
     optimization_failed: >
@@ -3023,6 +3025,10 @@ de:
       Bitte lade die Datei erneut hoch.
     upload_failure_unauthorized: >
       Du darfst diese Datei hier nicht hochladen.
+    upload_failure_wrong_target: >
+      Die Datei wurde für etwas anderes hochgeladen. Bitte wähle sie erneut aus.
+    upload_failure_expired: >
+      Diese Seite ist zu lange offen. Bitte lade sie neu und lade die Datei erneut hoch.
     upload_failure_empty_file_bulk: >
       ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
@@ -3710,6 +3716,8 @@ de:
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
     emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    email_copied_to_clipboard: Die E-Mail-Adresse wurde in die Zwischenablage kopiert.
+    email_copy_failed: Die E-Mail-Adresse konnte nicht kopiert werden.
     lecture_search: Veranstaltungssuche
     course_search: Modulsuche
     immediately: sofort
@@ -3861,6 +3869,7 @@ de:
     join: 'Beitreten'
     copy_to_clipboard: 'in die Zwischenablage kopieren'
     copy_email_to_clipboard: 'E-Mail-Adressen in die Zwischenablage kopieren'
+    copy_email_address: 'E-Mail-Adresse kopieren'
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
@@ -4280,6 +4289,8 @@ de:
               does_not_match_tutorial: stimmt nicht mit der Veranstaltung des Tutoriums überein.
         user:
           attributes:
+            consents:
+              accepted: 'Du musst der Datenschutzerklärung zustimmen, um ein Konto anzulegen.'
             courses:
               blank: 'Es muss mindestens ein Modul abonniert werden.'
             name:
@@ -4308,6 +4319,10 @@ de:
                 Diese Rolle ist für diese Vorlesung nicht verfügbar.
         watchlist_entry:
           attributes:
+            medium:
+              improper: >
+                Ein Zufallsquiz kann nicht zu einer Watchlist hinzugefügt
+                werden.
             medium_id:
               taken:
                 ist schon in dieser Watchlist.

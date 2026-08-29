@@ -2,9 +2,15 @@
 
 de:
   devise:
+    passwords_strength:
+      weak: "Sehr schwach"
+      fair: "Schwach"
+      almost: "Fast — noch nicht stark genug"
+      mismatch: "Die Passwörter stimmen nicht überein."
+      strong: "Stark"
+      too_short: "Muss mindestens %{count} Zeichen lang sein"
     confirmations:
-      confirmed: "Vielen Dank für Deine Registrierung. Bitte nimm Dir eine Minute, um Dein Profil zu vervollständigen."
-      confirmed_and_signed_in: "Vielen Dank für Deine Registrierung. Du bist jetzt angemeldet."
+      confirmed: "Deine E-Mail-Adresse wurde bestätigt."
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail, mit der Du Deine Registrierung bestätigen kannst."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Du Deine Registrierung bestätigen kannst."
       new:
@@ -13,15 +19,18 @@ de:
     failure:
       already_authenticated: "Du bist bereits angemeldet."
       inactive: "Dein Account ist nicht aktiv."
-      invalid: "E-Mail-Adresse oder Passwort ungültig."
+      invalid: "E-Mail-Adresse oder Passwort ungültig. Falls Du Dich gerade registriert hast, bestätige zuerst Deine E-Mail-Adresse."
       invalid_token: "Der Anmelde-Token ist ungültig."
       locked: "Dein Account ist gesperrt."
+      locked_with_email: "Dein Account ist gesperrt. Wir haben Dir eine Entsperr-E-Mail geschickt."
+      locked_with_time: "Dein Account ist gesperrt. Er wird %{unlock_in} nach der Sperrung automatisch entsperrt."
+      locked_with_email_and_time: "Dein Account ist gesperrt. Wir haben Dir eine Entsperr-E-Mail geschickt. Alternativ wird er %{unlock_in} nach der Sperrung automatisch entsperrt."
       last_attempt: "Du hast noch einen Versuch, bevor Dein Account gesperrt wird."
-      not_found_in_database: "E-Mail-Adresse oder Passwort ungültig."
+      not_found_in_database: "E-Mail-Adresse oder Passwort ungültig. Falls Du Dich gerade registriert hast, bestätige zuerst Deine E-Mail-Adresse."
       timeout: "Deine Sitzung ist abgelaufen, bitte melde Dich erneut an."
       unauthenticated: "Du musst Dich anmelden oder registrieren, bevor Du fortfahren kannst."
       unconfirmed: "Du musst Deinen Account bestätigen, bevor Du fortfahren kannst."
-      too_many_requests: "Zu viele Anfragen. Bitte versuche es später erneut."
+      too_many_requests: "Zu viele Anfragen. Bitte warte %{wait} und versuche es dann erneut."
     mailer:
       confirmation_instructions:
         greeting: "Willkommen bei MaMpf!"
@@ -119,18 +128,29 @@ de:
         didn_t_receive_confirmation_instructions: 'Bestätigungsmail nicht erhalten?'
         didn_t_receive_unlock_instructions: 'Anleitung zum Entsperren nicht erhalten?'
     unlocks:
-      send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren können."
+      send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
-      unlocked: "Dein Account wurde entsperrt. Du bist jetzt angemeldet."
+      unlocked: "Dein Account wurde entsperrt. Bitte melde Dich an."
       new:
         resend_unlock_instructions: "Anleitung zum Entsperren erneut senden"
     edit:
       title: "Zugangsdaten ändern"
-      email: "Emailaddresse"
+      password_change_required_title: "Passwort ändern"
+      password_change_required: "Da MaMpf die Integration von Müsli-Funktionalität vorbereitet, erhöhen wir unsere Standards für die Kontosicherheit. Bitte ändere Dein Passwort, bevor Du fortfährst."
+      password_change_required_help: "Gib Dein aktuelles Passwort ein, um die erforderliche Passwortänderung zu bestätigen."
+      password_change_required_password_help: "Wähle ein neues Passwort, um fortzufahren."
+      email: "E-Mail-Adresse"
+      email_section: "E-Mail-Adresse ändern"
+      email_hint: >
+        Wir schicken einen Bestätigungslink an die neue Adresse. Bis Du ihn
+        anklickst, gilt die alte weiter.
       current_password: "Aktuelles Passwort"
       need_password: "Wir benötigen Dein aktuelles Passwort, um die Änderung zu bestätigen."
       no_change: "Freilassen, wenn Du das Passwort nicht ändern willst."
-      update: "Update"
+      password_section: "Passwort ändern"
+      password_hint: >
+        Beide Felder leer lassen, wenn Du nur Deine E-Mail-Adresse änderst.
+      update: "Speichern"
       new_password: "Neues Passwort"
       confirm_new_password: "Bestätigung des neuen Passworts"
   errors:
@@ -140,6 +160,8 @@ de:
       expired: "ist abgelaufen, bitte neu anfordern"
       not_found: "nicht gefunden"
       not_locked: "ist nicht gesperrt"
+      password_too_weak: "ist zu schwach"
+      password_unchanged: "muss sich von Deinem aktuellen Passwort unterscheiden"
       not_saved:
         one: "Konnte %{resource} nicht speichern: Es ist ein Fehler aufgetreten."
         other: "Konnte %{resource} nicht speichern: Es sind %{count} Fehler aufgetreten."

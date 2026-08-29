@@ -68,6 +68,9 @@ window.Stimulus.register("question-counter", QuestionCounterController);
 import CoursesEditController from "~/courses/edit/courses_edit.controller.js";
 window.Stimulus.register("courses-edit", CoursesEditController);
 
+import PasswordStrengthController from "~/auth/password_strength.controller.js";
+window.Stimulus.register("password-strength", PasswordStrengthController);
+
 import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
 window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
 
@@ -103,6 +106,21 @@ window.Stimulus.register("roster-drag", RosterDragController);
 
 import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
+
+import ClipboardController from "~/controllers/clipboard.controller.js";
+window.Stimulus.register("clipboard", ClipboardController);
+
+import LectureEditController from "~/lectures/edit/lecture_edit.controller.js";
+window.Stimulus.register("lecture-edit", LectureEditController);
+
+import LectureSubscribersController from "~/lectures/edit/lecture_subscribers.controller.js";
+window.Stimulus.register("lecture-subscribers", LectureSubscribersController);
+
+import UppyUploadController from "~/controllers/uppy_upload.controller.js";
+window.Stimulus.register("uppy-upload", UppyUploadController);
+
+import SubmissionUploadController from "~/controllers/submission_upload.controller.js";
+window.Stimulus.register("submission-upload", SubmissionUploadController);
 
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);

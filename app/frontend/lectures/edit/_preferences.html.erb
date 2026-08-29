@@ -1,6 +1,8 @@
 <%= form_with model: lecture,
               local: true,
-              data: { turbo: true },
+              data: { turbo: true,
+                      action: "change->lecture-edit#markUnsaved",
+                      lecture_edit_warning_param: "lecture-preferences-warning" },
               html: { id: 'lecture-preferences-form' } do |f| %>
   <div class="row">
     <h3 class="lecture-pane-header"><%= t('basics.preferences') %></h3>
@@ -47,13 +49,15 @@
           <%= f.number_field :start_section,
                               value: lecture.start_section || 1,
                               class: 'form-control',
+                              data: { lecture_edit_target: "startSection" },
                               disabled: !lecture.absolute_numbering %>
         </div>
       </div>
       <div class="col-6 mt-6 mb-3">
         <div class="form-check">
           <%= f.check_box :absolute_numbering,
-                          class: 'form-check-input' %>
+                          class: 'form-check-input',
+                          data: { action: "change->lecture-edit#toggleStartSection" } %>
           <%= f.label :absolute_numbering,
                       t('admin.lecture.absolute_numbering'),
                       { class: 'form-check-label' } %>
@@ -151,6 +155,7 @@
         <%= f.submit t('buttons.save'),
                       class: "btn btn-primary" %>
         <button type="button" id="cancel-lecture-preferences"
+                data-action="click->lecture-edit#reload"
                 class="btn btn-secondary">
           <%= t('buttons.cancel') %>
         </button>

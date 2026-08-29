@@ -119,6 +119,18 @@ RSpec.describe("Lectures::Home", type: :request) do
         .not_to include('data-testid="lecture-home-staff-registration-note"')
     end
 
+    it "stays once a group takes self-registration" do
+      create(:tutorial, lecture: lecture, skip_campaigns: true,
+                        self_materialization_mode: :add_and_remove)
+      sign_in editor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body)
+        .to include('data-testid="lecture-home-staff-registration-note"')
+      expect(response.body).not_to include('data-testid="registration-group-tile"')
+    end
+
     it "is not shown to staff when the lecture has no campaigns" do
       without_campaign = create(:lecture, :released_for_all, teacher: editor)
       sign_in editor
@@ -160,6 +172,27 @@ RSpec.describe("Lectures::Home", type: :request) do
       get lecture_home_attachment_path(lecture)
 
       expect(response).to redirect_to(root_path)
+    end
+  end
+
+  describe "the offer on the page and the answer of the endpoint" do
+    it "say the same thing for staff and students alike" do
+      tutorial = create(:tutorial, lecture: lecture, skip_campaigns: true,
+                                   self_materialization_mode: :add_and_remove)
+      tutor = create(:confirmed_user)
+      tutorial.update!(tutors: [tutor])
+
+      { "teacher" => editor, "tutor" => tutor, "student" => student }.each do |role, user|
+        sign_in user
+        get lecture_home_path(lecture)
+        offered = response.body.include?('data-testid="registration-group-tile"')
+        accepted = LectureAbility.new(user).can?(:self_materialize, lecture)
+        sign_out user
+
+        expect(offered).to eq(accepted),
+                           "the page #{offered ? "offers" : "hides"} the tiles for the " \
+                           "#{role}, the endpoint #{accepted ? "accepts" : "refuses"} them"
+      end
     end
   end
 end
