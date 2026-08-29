@@ -46,6 +46,21 @@ RSpec.describe(UploadIntent) do
     end
   end
 
+  describe "the target types it allows" do
+    it "carries an ability for every one of them" do
+      expect(described_class.target_classes.keys)
+        .to match_array(UploadEndpointAuthorization::TARGET_ABILITIES.keys)
+    end
+
+    it "leaves a type outside the list unresolved" do
+      token = described_class.mint(user: user, uploader_class: VideoUploader,
+                                   target: create(:lecture))
+
+      expect(described_class.parse(token)).to have_attributes(target_type: "Lecture",
+                                                              target: nil)
+    end
+  end
+
   describe "a target that does not exist yet" do
     it "is rebuilt from the ids that decide who may create it" do
       assignment = create(:assignment, :with_lecture)

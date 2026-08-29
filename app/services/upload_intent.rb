@@ -63,6 +63,15 @@ class UploadIntent
     target.attributes.compact.select { |name, _| name.end_with?("_id", "_type") }
   end
 
+  # The records an upload can be aimed at, under the name the token carries. A
+  # name is looked up here, never turned into a class, and the classes are read
+  # per call so that a reload hands back the current ones.
+  # UploadEndpointAuthorization holds the ability that answers for each.
+  def self.target_classes
+    { "Course" => Course, "Medium" => Medium, "Submission" => Submission,
+      "Tutorial" => Tutorial, "User" => User }
+  end
+
   def self.default_action(target)
     target&.id ? :update : :create
   end
@@ -97,7 +106,7 @@ class UploadIntent
   def target
     return @target if defined?(@target)
 
-    klass = target_type&.safe_constantize
+    klass = target_class
     @target = target_id ? klass&.find_by(id: target_id) : klass&.new(attributes)
   rescue ActiveModel::UnknownAttributeError
     @target = nil
@@ -106,4 +115,10 @@ class UploadIntent
   def targeted?
     target_type.present?
   end
+
+  private
+
+    def target_class
+      self.class.target_classes[target_type]
+    end
 end
