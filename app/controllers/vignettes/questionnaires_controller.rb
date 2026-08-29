@@ -170,8 +170,8 @@ module Vignettes
     end
 
     def export_statistics
-      csv_data = @questionnaire.answer_data_csv
-      send_data(csv_data, filename: "questionnaire-#{@questionnaire.id}-answers.csv")
+      send_data(@questionnaire.answer_data_csv,
+                filename: @questionnaire.answers_filename)
     end
 
     def edit

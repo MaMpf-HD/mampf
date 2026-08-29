@@ -455,6 +455,26 @@ RSpec.describe("Vignettes::Questionnaires", type: :request) do
       expect(response).to have_http_status(:ok)
     end
 
+    it "names the file after the vignette" do
+      questionnaire.update!(title: "Klassenklima im Übergang")
+      sign_in lecture.teacher
+
+      get export_statistics_questionnaire_path(questionnaire)
+
+      expect(response.headers["Content-Disposition"])
+        .to include("Klassenklima-im-Ubergang-#{questionnaire.id}-answers.csv")
+    end
+
+    it "falls back to a generic name where the vignette has none" do
+      questionnaire.update!(title: nil)
+      sign_in lecture.teacher
+
+      get export_statistics_questionnaire_path(questionnaire)
+
+      expect(response.headers["Content-Disposition"])
+        .to include("vignette-#{questionnaire.id}-answers.csv")
+    end
+
     it "does not let a student export the answer statistics" do
       sign_in student
       get export_statistics_questionnaire_path(questionnaire)

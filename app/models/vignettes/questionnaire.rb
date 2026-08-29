@@ -31,6 +31,15 @@ module Vignettes
       Vignettes::CsvHandler.generate_questionnaire_csv(self)
     end
 
+    # The exports of several vignettes end up in one download folder, so the
+    # file carries the name the vignette is known by. Transliterated to what a
+    # file system takes everywhere, and the id keeps two of a name apart.
+    def answers_filename
+      name = title.to_s.parameterize(preserve_case: true).presence || "vignette"
+
+      "#{name}-#{id}-answers.csv"
+    end
+
     def last_slide
       return nil if slides.empty?
 
