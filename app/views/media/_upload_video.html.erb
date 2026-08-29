@@ -3,6 +3,7 @@
      data-controller="uppy-upload"
      data-uppy-upload-kind-value="video"
      data-uppy-upload-max-file-size-value="<%= VideoUploader::MAX_SIZE %>"
+     data-uppy-upload-intent-value="<%= upload_intent_token(VideoUploader, target: medium) %>"
      data-uppy-upload-endpoint-value="/videos/upload"
      data-uppy-upload-failure-message-value="<%= t('submission.upload_failure') %>"
      data-uppy-upload-hidden-input-selector-value="#upload-video-hidden"

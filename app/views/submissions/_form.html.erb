@@ -6,6 +6,8 @@
                               submission_upload_endpoint_value: '/submissions/upload',
                               submission_upload_accepted_file_types_value: assignment.accepted_for_file_input,
                               submission_upload_max_file_size_value: SubmissionUploader::MAX_SIZE,
+                              submission_upload_intent_value:
+                                upload_intent_token(SubmissionUploader, target: submission),
                               submission_upload_failure_message_value: t('submission.upload_failure'),
                               submission_upload_missing_consent_message_value: t('submission.missing_consent'),
                               submission_upload_upload_button_label_value: t('submission.upload_file') } } do |f| %>

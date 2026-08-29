@@ -3,6 +3,7 @@
      data-controller="uppy-upload"
      data-uppy-upload-kind-value="geogebra"
      data-uppy-upload-max-file-size-value="<%= GeogebraUploader::MAX_SIZE %>"
+     data-uppy-upload-intent-value="<%= upload_intent_token(GeogebraUploader, target: medium) %>"
      data-uppy-upload-endpoint-value="/ggbs/upload"
      data-uppy-upload-failure-message-value="<%= t('submission.upload_failure') %>"
      data-uppy-upload-hidden-input-selector-value="#upload-geogebra-hidden"

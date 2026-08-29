@@ -59,6 +59,11 @@ class ApplicationController < ActionController::Base
     redirect_to main_app.root_url, alert: exception.message
   end
 
+  rescue_from MalwareScanGate::UntrustedUploadError do
+    redirect_back_or_to main_app.root_url,
+                        alert: I18n.t("submission.upload_failure_unauthorized")
+  end
+
   rescue_from ActionController::InvalidAuthenticityToken do
     redirect_to main_app.root_url,
                 alert: I18n.t("controllers.session_expired")
