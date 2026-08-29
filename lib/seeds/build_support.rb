@@ -27,6 +27,7 @@ module Seeds
         Demo::SetupSupport.setup!
         Demo::CampaignSetupSupport.setup!
         Demo::NextTermBannerSupport.setup!
+        Demo::VignettesSupport.setup!
         add_running_campaigns!
         settle_current_term_campaigns!
         extend_open_deadlines!
@@ -224,7 +225,8 @@ module Seeds
           "Seed build done: term #{current_term.season} #{current_term.year}, " \
             "#{Lecture.count} lectures, #{User.count} users, " \
             "#{Registration::Campaign.open.count} open campaigns, " \
-            "#{Announcement.count} announcements"
+            "#{Announcement.count} announcements, " \
+            "#{Vignettes::Questionnaire.count} vignettes"
         end
       end
   end
