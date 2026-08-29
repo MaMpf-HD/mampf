@@ -36,11 +36,18 @@ class DeleteVignettesData < ActiveRecord::Migration[8.0]
     # A lecture of the "vignettes" sort was never anything but a container for
     # one questionnaire, and the sort no longer exists. Destroyed through the
     # model, so that the eleven tables pointing at a lecture -- and the media,
-    # chapters and forum hanging off it -- go with it.
+    # chapters and forum hanging off it -- go with it. A course that was there
+    # to carry such a lecture and now carries none goes too; one that also
+    # holds a real lecture stays, with that lecture.
     def delete_vignette_lectures!
       lectures = Lecture.where(sort: "vignettes")
+      course_ids = lectures.distinct.pluck(:course_id)
       say("destroying #{lectures.count} lecture(s) of sort vignettes")
       lectures.find_each(&:destroy!)
+
+      orphaned = Course.where(id: course_ids).where.missing(:lectures)
+      say("destroying #{orphaned.count} course(s) left without a lecture")
+      orphaned.find_each(&:destroy!)
     end
 
     # Deleting the rich texts alone would leave the uploaded files behind, and
