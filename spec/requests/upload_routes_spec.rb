@@ -1,6 +1,11 @@
 require "rails_helper"
 
 RSpec.describe("UploadRoutes", type: :request) do
+  # sign_in is Warden's login_as, which waits for a request to spend it on --
+  # one an example never makes lands on the next example instead, and these
+  # examples are about being nobody.
+  before { Warden.test_reset! }
+
   let(:user) { create(:confirmed_user, locale: "en") }
   let(:scanner) { instance_double(ClamavScanner) }
   let(:restricted_uploads) do
