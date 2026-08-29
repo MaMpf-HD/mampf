@@ -15,6 +15,9 @@ module Seeds
     # What a group hands in per sheet. Also the ceiling, so that a rebuild does
     # not pile more on top of what the last one left.
     TEAMS_PER_TUTORIAL = 2
+    # Below this a manuscript in the seed is a placeholder rather than a
+    # document; above it, the smallest one is an exercise sheet.
+    MIN_SHEET_BYTES = 10 * 1024
 
     def setup!
       lecture = demo_lecture
@@ -164,13 +167,20 @@ module Seeds
     end
 
     # A file the seed already ships, so the dump grows by nothing that is not
-    # already in it. It is opened again for every hand-in, because Shrine closes
-    # what it has uploaded.
+    # already in it. The smallest document does, because the archive beside the
+    # dump carries a copy per hand-in. It is opened again for every one of them,
+    # because Shrine closes what it has uploaded.
     def manuscript_path
       return @manuscript_path if defined?(@manuscript_path)
 
-      source = Medium.where.not(manuscript_data: nil).first
+      source = smallest_document
       @manuscript_path = source && write_copy(source.manuscript.download)
+    end
+
+    def smallest_document
+      documents = Medium.where.not(manuscript_data: nil)
+                        .select { |medium| medium.manuscript.size.to_i >= MIN_SHEET_BYTES }
+      documents.min_by { |medium| medium.manuscript.size.to_i }
     end
 
     def write_copy(download)

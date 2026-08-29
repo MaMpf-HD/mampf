@@ -222,6 +222,11 @@ module Seeds
         Announcement.update_all(on_main_page: false)
         # rubocop:enable Rails/SkipsModelValidations
 
+        # An edition is built from the one before it, so what this step wrote
+        # last time goes before it is written again -- with its notifications.
+        Announcement.where(details: ADMIN_ANNOUNCEMENTS + LECTURE_ANNOUNCEMENTS)
+                    .destroy_all
+
         ADMIN_ANNOUNCEMENTS.each do |text|
           announce!(Announcement.create!(announcer: admin, details: text,
                                          on_main_page: false))
@@ -326,6 +331,7 @@ module Seeds
       # Students collect what they want to see again; the teacher collects what
       # they keep pointing people at.
       def add_watchlists!
+        drop_improper_entries!
         students.each_with_index do |student, index|
           WATCHLIST_NAMES.first(2).each_with_index do |name, run|
             fill_watchlist!(student, "#{name} #{index + 1}", offset: index + run)
@@ -339,6 +345,12 @@ module Seeds
         return @teacher if defined?(@teacher)
 
         @teacher = User.find_by(email: "teacher@mampf.edu")
+      end
+
+      # An earlier edition collected a random quiz, which belongs to no lecture
+      # and takes the watchlist page down with it.
+      def drop_improper_entries!
+        WatchlistEntry.joins(:medium).where(media: { sort: "RandomQuiz" }).destroy_all
       end
 
       def fill_watchlist!(user, name, offset:, size: 3)
