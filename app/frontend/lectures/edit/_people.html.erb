@@ -1,7 +1,11 @@
 <% if current_user.can_update_personell?(lecture) %>
   <%= form_with model: lecture,
                 local: true,
-                data: { turbo: true },
+                data: { turbo: true,
+                        action: "change->lecture-edit#markUnsaved",
+                        lecture_edit_warning_param: "lecture-basics-warning",
+                        lecture_edit_keep_editing_param:
+                          "#update-teacher-button, #update-editors-button" },
                 html: { id: 'lecture-form' } do |f| %>
     <div class="row">
       <h3 class="lecture-pane-header"><%= t('basics.people') %></h3>
@@ -32,6 +36,7 @@
           <button type="button"
                   id="lectureUserModalButton"
                   class="ms-3 btn btn-outline-primary btn-sm"
+                  data-lecture-subscribers-target="button"
                   data-bs-toggle="modal"
                   data-bs-target="#lectureUserModal">
             <%= t('basics.details') %>
@@ -49,6 +54,7 @@
       <button type="button"
               class="btn btn-sm btn-secondary ms-2"
               id="lecture-basics-cancel"
+              data-action="click->lecture-edit#reload"
               data-id="<%= lecture.id %>">
         <%= t('buttons.discard') %>
       </button>

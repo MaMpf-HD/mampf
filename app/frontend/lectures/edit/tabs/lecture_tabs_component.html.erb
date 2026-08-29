@@ -1,8 +1,7 @@
 <nav>
   <div class="nav nav-pills container small-width flex-column flex-sm-row"
        id="lecture-nav-pills" role="tablist"
-       data-controller="lecture-tabs"
-       data-is-vignette-lecture="<%= @is_vignette_lecture %>">
+       data-controller="lecture-tabs">
 
     <% tabs.each do |tab| %>
       <button class="nav-link lecture-nav-pill-button <%= 'active' if active_tab == tab.name %>"

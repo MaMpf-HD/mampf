@@ -47,6 +47,10 @@ FactoryBot.define do
       sort { "seminar" }
     end
 
+    trait :with_vignettes do
+      vignettes { true }
+    end
+
     trait :with_forum do
       after(:build) do |lecture|
         forum = Thredded::Messageboard.new(name: lecture.forum_title)

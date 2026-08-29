@@ -1,6 +1,9 @@
 <%= vite_javascript_tag "lectures/lectures.js" %>
 <%= vite_javascript_tag "lectures/edit/edit.js" %>
 
+<div data-controller="lecture-edit lecture-subscribers"
+     data-lecture-subscribers-lecture-value="<%= @lecture.id %>">
+
   <%= turbo_frame_tag "lecture-area", target: "_top",
                       data: { cy: "lecture-area",
                               controller: "lecture-highlights" } do %>
@@ -10,24 +13,29 @@
           locals: { lecture: @lecture } %>
     </div>
 
-    <% active_tab = params[:tab] || (@lecture.sort == "vignettes" ? "vignettes" : "content") %>
-    <% is_vignette_lecture = @lecture.sort == "vignettes" %>
-    <%= render LectureTabsComponent.new(active_tab, is_vignette_lecture) do |component| %>
+    <% active_tab = params[:tab] || "content" %>
+    <%= render LectureTabsComponent.new(active_tab) do |component| %>
 
       <% component.with_tab(name: "content", label: t("content")) do %>
         <div class="row px-4 py-2">
           <% if !@lecture.seminar? || @lecture.legacy_seminar %>
-            <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
+            <div id="lecture-content-card"
+                 data-lecture-edit-target="contentCard"
+                 class="col-12 col-xxl-9 mb-1">
               <%= render partial: 'lectures/edit/content',
                          locals: { lecture: @lecture } %>
             </div>
           <% else %>
-            <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
+            <div id="lecture-content-card"
+                 data-lecture-edit-target="contentCard"
+                 class="col-12 col-xxl-9 mb-1">
               <%= render partial: 'lectures/edit/seminar_content',
                          locals: { lecture: @lecture } %>
             </div>
           <% end %>
-          <div id="lecture-media-card" class="col-12 col-xxl-3 mb-1">
+          <div id="lecture-media-card"
+               data-lecture-edit-target="mediaCard"
+               class="col-12 col-xxl-3 mb-1">
             <%= render partial: 'lectures/edit/media',
                        locals: { media: @media, lecture: @lecture } %>
           </div>
@@ -102,29 +110,11 @@
         </div>
       <% end %>
 
-      <% if @lecture.sort == "vignettes" %>
-        <% component.with_tab(name: "vignettes", label: t("vignettes.vignettes")) do %>
-          <div class="container small-width lecture-pane mb-3">
-            <%= render partial: 'vignettes/questionnaires/manage/manage',
-                       locals: { lecture: @lecture } %>
-          </div>
-          <div class="container small-width lecture-pane mb-3">
-            <%= render partial: 'lectures/edit/link_to_lecture',
-                       locals: { lecture: @lecture } %>
-          </div>
-          <div class="container small-width lecture-pane">
-            <%= render partial: 'vignettes/completion_message/form',
-                       locals: { lecture: @lecture } %>
-          </div>
-        <% end %>
-      <% end %>
-
     <% end %>
   <% end %>
 
   <!-- Modals -->
   <%= render partial: 'media/modal' %>
-  <%= render 'vignettes/questionnaires/new/vignette_modal', lecture: @lecture %>
   <%= render partial: 'sections/content_modal' %>
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/edit/publish',
@@ -151,4 +141,4 @@
     <%= render partial: 'lectures/edit/import_toc_modal',
               locals: { lecture: @lecture } %>
   <% end %>
-
+</div>

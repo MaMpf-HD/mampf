@@ -19,8 +19,6 @@ class LecturesController < ApplicationController
   end
 
   def show
-    return if redirect_to_vignettes_landing
-
     if lecture_home_landing_page?
       redirect_to lecture_home_path(@lecture)
     else
@@ -30,8 +28,6 @@ class LecturesController < ApplicationController
 
   def outline
     authorize! :show, @lecture
-    return if redirect_to_vignettes_landing
-
     render_outline
   end
 
@@ -220,16 +216,10 @@ class LecturesController < ApplicationController
   end
 
   def organizational
-    if @lecture.sort == "vignettes"
-      render template: "lectures/organizational/_organizational",
-             layout: "vignettes/layouts/vignettes_navbar",
-             locals: { lecture: @lecture }
-    else
-      I18n.locale = @lecture.locale_with_inheritance
-      render template: "lectures/organizational/_organizational",
-             locals: { lecture: @lecture },
-             layout: turbo_frame_request? ? "turbo_frame" : "application"
-    end
+    I18n.locale = @lecture.locale_with_inheritance
+    render template: "lectures/organizational/_organizational",
+           locals: { lecture: @lecture },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def import_media
@@ -438,17 +428,6 @@ class LecturesController < ApplicationController
       end
     end
 
-    def redirect_to_vignettes_landing
-      return false unless @lecture.sort == "vignettes"
-
-      if @lecture.organizational
-        redirect_to lecture_organizational_path(@lecture)
-      else
-        redirect_to lecture_questionnaires_path(@lecture)
-      end
-      true
-    end
-
     def lecture_home_landing_page?
       @lecture.term.present? &&
         Flipper.enabled?(:lecture_home_landing, @lecture.term)
@@ -457,7 +436,7 @@ class LecturesController < ApplicationController
     def lecture_params
       allowed_params = [:term_id, :start_chapter, :absolute_numbering,
                         :start_section, :organizational, :locale,
-                        :organizational_concept, :muesli,
+                        :organizational_concept, :muesli, :vignettes,
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,

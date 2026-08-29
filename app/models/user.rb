@@ -2,6 +2,8 @@
 class User < ApplicationRecord
   include ApplicationHelper
 
+  CURRENT_PASSWORD_POLICY_VERSION = 1
+
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
@@ -87,15 +89,6 @@ class User < ApplicationRecord
   has_many :registration_campaigns, through: :user_registrations
   has_many :registration_items, through: :user_registrations
 
-  # a user may have many user answers for questionnaires that they filled out.
-  has_many :vignettes_user_answers, dependent: :destroy, class_name: "Vignettes::UserAnswer"
-
-  # a user has a codename per vignettes lecture that is used as a pseudonym
-  has_many :vignettes_codenames,
-           dependent: :destroy,
-           class_name: "Vignettes::Codename",
-           inverse_of: :user
-
   # a user has a watchlist with watchlist_entries
   has_many :watchlists, dependent: :destroy
 
@@ -112,14 +105,27 @@ class User < ApplicationRecord
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) },
                      if: :locale?
 
+  validates :password, password_strength: true, allow_blank: true,
+                       if: -> { Rails.configuration.x.password_strength_checks }
+
+  # Devise hashes the same password with a fresh salt, so re-entering the old
+  # one would pass as a change and mark the account compliant.
+  validate :password_differs_from_current,
+           if: -> { password.present? && password_change_required? }
+
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
+
+  before_save :track_password_change
 
   # set some default values before saving if they are not set
   before_save :set_defaults
 
+  # a user must consent to the privacy policy to exist
+  validates :consents, acceptance: true, on: :create
+
   # add timestamp for DSGVO consent
-  after_create :set_consented_at
+  before_save :set_consented_at, if: -> { consents? && consented_at.nil? }
   before_destroy :destroy_single_submissions, prepend: true
 
   attr_accessor :skip_destroy_talk_media
@@ -144,6 +150,10 @@ class User < ApplicationRecord
         -> { where(email_for_submission_decision: true) }
   scope :no_tutorial_name,
         -> { where(name_in_tutorials: nil) }
+
+  def password_change_required?
+    password_policy_version < CURRENT_PASSWORD_POLICY_VERSION
+  end
 
   # Scopes for usage in the UserCleaner
   scope :confirmed, -> { where.not(confirmed_at: nil) }
@@ -625,8 +635,8 @@ class User < ApplicationRecord
   end
 
   def current_subscribable_lectures
-    current_lectures = Lecture.in_current_term.where.not(sort: "vignettes").includes(:course, :term)
-    no_term_lectures = Lecture.no_term.where.not(sort: "vignettes").includes(:course, :term)
+    current_lectures = Lecture.in_current_term.includes(:course, :term)
+    no_term_lectures = Lecture.no_term.includes(:course, :term)
     return current_lectures.sort + no_term_lectures.sort if admin
     unless editor? || teacher?
       return current_lectures.published.sort + no_term_lectures.published.sort
@@ -812,6 +822,22 @@ class User < ApplicationRecord
 
   private
 
+    def password_differs_from_current
+      stored = encrypted_password_in_database
+      return if stored.blank?
+      return unless Devise::Encryptor.compare(self.class, stored, password)
+
+      errors.add(:password, I18n.t("errors.messages.password_unchanged"))
+    end
+
+    # Covers creation too: a new account writes its password like any change.
+    def track_password_change
+      return unless will_save_change_to_encrypted_password?
+
+      self.password_policy_version = CURRENT_PASSWORD_POLICY_VERSION
+      self.password_changed_at = Time.zone.now
+    end
+
     def set_defaults
       self.subscription_type ||= 1
       self.admin ||= false
@@ -821,7 +847,7 @@ class User < ApplicationRecord
 
     # sets time for DSGVO consent to current time
     def set_consented_at
-      update(consented_at: Time.zone.now)
+      self.consented_at = Time.zone.now
     end
 
     # returns array of ids of all courses that preced the subscribed courses
@@ -859,10 +885,13 @@ class User < ApplicationRecord
                       .update(user_id: user.id)
     end
 
+    # The archive account is never signed into, but its password still has to
+    # pass the policy -- otherwise the record is invalid and no archive is
+    # created.
     def archive_user(archive_name)
       User.create(name: archive_name,
                   email: archive_email,
-                  password: SecureRandom.base58(12),
+                  password: SecureRandom.base58(Devise.password_length.min),
                   consents: true,
                   consented_at: Time.zone.now,
                   confirmed_at: Time.zone.now,

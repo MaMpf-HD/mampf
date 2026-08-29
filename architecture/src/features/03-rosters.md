@@ -123,7 +123,7 @@ The “contract” required by the maintenance service, defining how to read and
 - **Explicit Contract:** The concern requires `#roster_entries`. Optional overrides exist for nonstandard user-key or association names.
 - **Registration Integration:** Provides `allocated_user_ids` and `materialize_allocation!` to satisfy the `Registration::Registerable` interface, allowing rosters to be managed by the registration system.
 - **Campaign Tracking:** The `materialize_allocation!` method adds missing users with `source_campaign_id`, removes excess users for the same campaign only, and preserves manually-added entries or entries from other campaigns.
-- **Self-Materialization:** The current implementation provides the `self_materialization_mode` enum and validation rules. Student-facing join/leave operations are not implemented in this concern yet.
+- **Self-Materialization:** The concern provides the `self_materialization_mode` enum, its validation rules, and the guards `allow_self_add?` / `allow_self_remove?`. Those answer about the **group**: configured for it, not locked, not full, and whether the user is already in the roster. Whether that user takes part in the registration at all is a question about the host, not the group, and is answered there — see *Who takes part* in `02-registration.md`. The separation is deliberate: a `Cohort`'s context need not be a lecture, so a group cannot always name the roles it would have to check.
 
 ### Management Mode & Campaign Integration
 The `Rosterable` concern introduces a `skip_campaigns` boolean flag to explicitly control the lifecycle of the roster.
