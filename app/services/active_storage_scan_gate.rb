@@ -9,6 +9,12 @@ class ActiveStorageScanGate
   # can carry video.
   SCAN_MAX_BYTES = 32 * 1024 * 1024
 
+  # How often a file may be derived from the one that was scanned: a page of a
+  # PDF is drawn as a preview and that preview is then resized, which is as far
+  # as ActiveStorage goes. The walk looks at the file and at every origin
+  # behind it, so it inspects one more blob than there are steps.
+  DERIVATION_STEPS = 2
+
   class << self
     def scan(io)
       scope = io.size.to_i > SCAN_MAX_BYTES ? "prefix" : "full"
@@ -36,18 +42,36 @@ class ActiveStorageScanGate
       cleared_blob?(ActiveStorage::Blob.find_by(key: key))
     end
 
-    # A thumbnail is derived from an original that was scanned and gets no
-    # verdict of its own, so hanging on a variant record clears it too.
     def cleared_blob?(blob)
-      return false if blob.nil?
-      return true if clean?(blob)
+      (DERIVATION_STEPS + 1).times do
+        return false if blob.nil?
+        return true if clean?(blob)
 
-      blob.attachments.exists?(record_type: "ActiveStorage::VariantRecord")
+        blob = origin_of(blob)
+      end
+
+      false
     end
 
     def clean?(blob)
-      blob.metadata.dig(MalwareScanGate::METADATA_KEY,
-                        MalwareScanGate::STATUS_KEY) == MalwareScanGate::CLEAN_STATUS
+      blob&.metadata&.dig(MalwareScanGate::METADATA_KEY,
+                          MalwareScanGate::STATUS_KEY) == MalwareScanGate::CLEAN_STATUS
+    end
+
+    # A thumbnail and a PDF preview are made here, from a file that was scanned
+    # on its way in, and carry no verdict of their own. ActiveStorage hangs a
+    # thumbnail on a variant record and a preview on the blob it came from, so
+    # the file it was made from is one attachment away either way.
+    def origin_of(blob)
+      attachment = blob.attachments.first
+      return if attachment.nil?
+
+      case attachment.record_type
+      when "ActiveStorage::VariantRecord"
+        ActiveStorage::VariantRecord.find_by(id: attachment.record_id)&.blob
+      when "ActiveStorage::Blob"
+        ActiveStorage::Blob.find_by(id: attachment.record_id) if attachment.name == "preview_image"
+      end
     end
   end
 end

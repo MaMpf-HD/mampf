@@ -34,6 +34,63 @@ RSpec.describe(ActiveStorageScanGate) do
 
       expect(described_class.cleared?(variant.key)).to be(true)
     end
+
+    it "clears the preview of a scanned file, which hangs on the file itself" do
+      original = blob_for(metadata: { "malware_scan" => { "status" => "clean" } })
+      preview = blob_for
+      ActiveStorage::Attachment.create!(name: "preview_image", blob: preview,
+                                        record: original)
+
+      expect(described_class.cleared?(preview.key)).to be(true)
+    end
+
+    it "clears a thumbnail of a preview, two steps from the scanned file" do
+      original = blob_for(metadata: { "malware_scan" => { "status" => "clean" } })
+      preview = blob_for
+      thumbnail = blob_for
+      ActiveStorage::Attachment.create!(name: "preview_image", blob: preview,
+                                        record: original)
+      ActiveStorage::Attachment.create!(
+        name: "image", blob: thumbnail,
+        record: ActiveStorage::VariantRecord.create!(blob: preview,
+                                                     variation_digest: "digest")
+      )
+
+      expect(described_class.cleared?(thumbnail.key)).to be(true)
+    end
+
+    it "gives up rather than following a chain of any length" do
+      original = blob_for(metadata: { "malware_scan" => { "status" => "clean" } })
+      derived = 3.times.reduce(original) do |origin, _|
+        blob_for.tap do |blob|
+          ActiveStorage::Attachment.create!(name: "preview_image", blob: blob,
+                                            record: origin)
+        end
+      end
+
+      expect(described_class.cleared?(derived.key)).to be(false)
+    end
+
+    it "holds back a variant of a file that was never scanned" do
+      unscanned = blob_for
+      variant = blob_for
+      ActiveStorage::Attachment.create!(
+        name: "image", blob: variant,
+        record: ActiveStorage::VariantRecord.create!(blob: unscanned,
+                                                     variation_digest: "digest")
+      )
+
+      expect(described_class.cleared?(variant.key)).to be(false)
+    end
+
+    it "holds back what was derived from a file that was never scanned" do
+      unscanned = blob_for
+      preview = blob_for
+      ActiveStorage::Attachment.create!(name: "preview_image", blob: preview,
+                                        record: unscanned)
+
+      expect(described_class.cleared?(preview.key)).to be(false)
+    end
   end
 
   describe ".record_verdict!" do
