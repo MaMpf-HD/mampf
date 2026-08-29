@@ -59,6 +59,18 @@ RSpec.describe(ActiveStorageScanGate) do
       expect(described_class.cleared?(thumbnail.key)).to be(true)
     end
 
+    it "holds back a variant of a file that was never scanned" do
+      unscanned = blob_for
+      variant = blob_for
+      ActiveStorage::Attachment.create!(
+        name: "image", blob: variant,
+        record: ActiveStorage::VariantRecord.create!(blob: unscanned,
+                                                     variation_digest: "digest")
+      )
+
+      expect(described_class.cleared?(variant.key)).to be(false)
+    end
+
     it "holds back what was derived from a file that was never scanned" do
       unscanned = blob_for
       preview = blob_for
