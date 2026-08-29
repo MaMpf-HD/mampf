@@ -43,7 +43,10 @@ class DeleteVignettesData < ActiveRecord::Migration[8.0]
       lectures = Lecture.where(sort: "vignettes")
       course_ids = lectures.distinct.pluck(:course_id)
       say("destroying #{lectures.count} lecture(s) of sort vignettes")
-      lectures.find_each(&:destroy!)
+      lectures.find_each do |lecture|
+        destroy_media_of!(lecture)
+        lecture.destroy!
+      end
 
       # Media are not destroyed with their course (see Course#media), so a
       # course that carries some of its own is kept rather than turned into
@@ -53,6 +56,14 @@ class DeleteVignettesData < ActiveRecord::Migration[8.0]
       say("keeping #{kept.count} course(s) that carry media of their own") if kept.any?
       say("destroying #{empty.count} course(s) left without a lecture")
       empty.find_each(&:destroy!)
+    end
+
+    # A medium names what it hangs on by type and id, without a foreign key,
+    # and neither Lecture#media nor Lesson#media is destroyed with its owner.
+    # Talks are, so they are not listed here.
+    def destroy_media_of!(lecture)
+      Medium.where(teachable: lecture).find_each(&:destroy!)
+      Medium.where(teachable: lecture.lessons).find_each(&:destroy!)
     end
 
     # Deleting the rich texts alone would leave the uploaded files behind, and
