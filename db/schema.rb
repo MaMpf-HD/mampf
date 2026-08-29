@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -394,6 +394,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
     t.integer "self_materialization_mode", default: 0, null: false
     t.text "home_intro"
     t.text "home_attachment_data"
+    t.boolean "vignettes", default: false, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -1104,10 +1105,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
     t.date "deletion_date"
-    t.integer "password_policy_version", default: 0, null: false
-    t.datetime "password_changed_at"
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
+    t.integer "password_policy_version", default: 0, null: false
+    t.datetime "password_changed_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -1125,6 +1126,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
     t.datetime "updated_at", null: false
     t.index ["vignettes_question_id"], name: "index_vignettes_answers_on_vignettes_question_id"
     t.index ["vignettes_slide_id"], name: "index_vignettes_answers_on_vignettes_slide_id"
+    t.index ["vignettes_user_answer_id", "vignettes_slide_id"], name: "index_vignettes_answers_on_run_and_slide", unique: true
     t.index ["vignettes_user_answer_id"], name: "index_vignettes_answers_on_vignettes_user_answer_id"
   end
 
@@ -1136,20 +1138,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
   end
 
   create_table "vignettes_codenames", force: :cascade do |t|
-    t.string "pseudonym"
-    t.bigint "user_id"
-    t.bigint "lecture_id"
+    t.string "pseudonym", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["lecture_id"], name: "index_vignettes_codenames_on_lecture_id"
-    t.index ["user_id"], name: "index_vignettes_codenames_on_user_id"
-  end
-
-  create_table "vignettes_completion_messages", force: :cascade do |t|
-    t.bigint "lecture_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["lecture_id"], name: "index_vignettes_completion_messages_on_lecture_id"
+    t.index ["pseudonym"], name: "index_vignettes_codenames_on_pseudonym", unique: true
   end
 
   create_table "vignettes_info_slides", force: :cascade do |t|
@@ -1183,6 +1175,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
     t.boolean "editable", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "data_collection", default: false, null: false
     t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
   end
 
@@ -1200,8 +1193,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
   end
 
   create_table "vignettes_slide_statistics", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "vignettes_answer_id"
+    t.bigint "vignettes_answer_id", null: false
     t.integer "time_on_slide"
     t.integer "total_time_on_slide"
     t.text "time_on_info_slides"
@@ -1209,7 +1201,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
     t.text "info_slides_first_access_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_vignettes_slide_statistics_on_user_id"
     t.index ["vignettes_answer_id"], name: "index_vignettes_slide_statistics_on_vignettes_answer_id"
   end
 
@@ -1224,11 +1215,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
   end
 
   create_table "vignettes_user_answers", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.bigint "vignettes_questionnaire_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_vignettes_user_answers_on_user_id"
+    t.bigint "vignettes_codename_id", null: false
+    t.index ["vignettes_codename_id"], name: "index_vignettes_user_answers_on_vignettes_codename_id"
     t.index ["vignettes_questionnaire_id"], name: "index_vignettes_user_answers_on_vignettes_questionnaire_id"
   end
 
@@ -1351,16 +1342,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_000000) do
   add_foreign_key "vignettes_answers", "vignettes_questions"
   add_foreign_key "vignettes_answers", "vignettes_slides"
   add_foreign_key "vignettes_answers", "vignettes_user_answers"
-  add_foreign_key "vignettes_codenames", "lectures"
-  add_foreign_key "vignettes_codenames", "users"
-  add_foreign_key "vignettes_completion_messages", "lectures"
   add_foreign_key "vignettes_options", "vignettes_questions"
   add_foreign_key "vignettes_questionnaires", "lectures"
   add_foreign_key "vignettes_questions", "vignettes_slides"
-  add_foreign_key "vignettes_slide_statistics", "users"
   add_foreign_key "vignettes_slide_statistics", "vignettes_answers"
   add_foreign_key "vignettes_slides", "vignettes_questionnaires"
-  add_foreign_key "vignettes_user_answers", "users"
+  add_foreign_key "vignettes_user_answers", "vignettes_codenames"
   add_foreign_key "vignettes_user_answers", "vignettes_questionnaires"
   add_foreign_key "vouchers", "lectures"
   add_foreign_key "watchlist_entries", "media"

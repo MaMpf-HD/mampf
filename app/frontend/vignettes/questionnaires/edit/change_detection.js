@@ -12,17 +12,17 @@ let formSubmit = false;
 
 const registry = new HandlerRegistry();
 
-$(document).ready(function () {
-  registerChangeHandlers();
-  preventLeavingSiteOnUnsavedChanges();
+// Delegated from the document and bound once: this module is evaluated a single
+// time per document, while the editor's markup is replaced on every visit.
+registerChangeHandlers();
+preventLeavingSiteOnUnsavedChanges();
 
-  $("#discard-changes-btn").on("click", function () {
-    discardCurrentChanges();
-  });
+$(document).on("click", "#discard-changes-btn", function () {
+  discardCurrentChanges();
+});
 
-  $("#save-changes-btn").on("click", function () {
-    saveCurrentChanges();
-  });
+$(document).on("click", "#save-changes-btn", function () {
+  saveCurrentChanges();
 });
 
 function registerChangeHandlers() {
@@ -205,16 +205,18 @@ function preventLeavingSiteOnUnsavedChanges() {
 
   window.addEventListener("beforeunload", event => checkForChangesAndPreventFromLeaving(event));
 
-  const backButton = $("#vignettes-back-btn");
-  const confirmMessage = backButton.attr("data-navigate-away-message");
+  $(document).on("click", "#vignettes-back-btn", event =>
+    checkForChangesAndPreventFromLeaving(event, () => {
+      const wantsToNavigateAway = confirm(navigateAwayMessage());
+      if (wantsToNavigateAway) {
+        formSubmit = false;
+        return false;
+      }
+    }));
 
-  backButton.click(event => checkForChangesAndPreventFromLeaving(event, () => {
-    const wantsToNavigateAway = confirm(confirmMessage);
-    if (wantsToNavigateAway) {
-      formSubmit = false;
-      return false;
-    }
-  }));
+  function navigateAwayMessage() {
+    return $("#vignettes-back-btn").attr("data-navigate-away-message");
+  }
 
   function checkForChangesAndPreventFromLeaving(event, confirmHandler) {
     if (shouldAllowNavigatingAway()) {
@@ -230,8 +232,8 @@ function preventLeavingSiteOnUnsavedChanges() {
     }
 
     event.preventDefault();
-    event.returnValue = confirmMessage;
-    return confirmMessage;
+    event.returnValue = navigateAwayMessage();
+    return navigateAwayMessage();
   }
 
   function shouldAllowNavigatingAway() {

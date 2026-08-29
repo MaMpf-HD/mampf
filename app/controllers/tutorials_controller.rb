@@ -205,7 +205,7 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_upload
-    files = JSON.parse(params[:files])
+    files = JSON.parse(params[:cached_files].to_s)
     @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
     @stack = @assignment.submissions.where(tutorial: @tutorial).proper
                         .order(:last_modification_by_users_at)

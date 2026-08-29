@@ -43,16 +43,6 @@ class Lecture < ApplicationRecord
            dependent: :destroy,
            inverse_of: :lecture
 
-  has_many :vignettes_codenames,
-           class_name: "Vignettes::Codename",
-           dependent: :destroy,
-           inverse_of: :lecture
-
-  has_one :vignettes_completion_message,
-          class_name: "Vignettes::CompletionMessage",
-          dependent: :destroy,
-          inverse_of: :lecture
-
   # in a lecture, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
@@ -114,7 +104,7 @@ class Lecture < ApplicationRecord
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
   validates :sort, inclusion: { in: ["lecture", "seminar", "oberseminar",
-                                     "proseminar", "special", "vignettes"] }
+                                     "proseminar", "special"] }
 
   validates :term, presence: { unless: :term_independent? }
 
@@ -633,7 +623,7 @@ class Lecture < ApplicationRecord
   end
 
   def self.sorts
-    ["lecture", "seminar", "proseminar", "oberseminar", "vignettes"]
+    ["lecture", "seminar", "proseminar", "oberseminar"]
   end
 
   def self.sort_localized
@@ -919,10 +909,6 @@ class Lecture < ApplicationRecord
 
   def talks_without_speaker(speaker)
     talks.where.not(id: talk_ids_for_speaker(speaker))
-  end
-
-  def vignettes?
-    vignettes_questionnaires.any?
   end
 
   def roster_entries

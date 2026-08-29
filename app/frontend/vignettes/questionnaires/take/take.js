@@ -1,24 +1,34 @@
+const VIGNETTE_CARD_ID = "#vignette-take-card";
 const VIGNETTE_FORM_ID = "#vignettes-answer-form";
 const CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
 const TEXT_ANSWER_ID = "vignettes_answer_text";
+const READY_ATTRIBUTE = "data-vignette-take-ready";
 
 function initializeVignetteTake() {
-  const form = $(VIGNETTE_FORM_ID);
-  if (form.length === 0 || form.data("vignetteTakeInitialized")) {
+  // The card, not the form: an untracked run renders its fields outside one,
+  // so that nothing it types can be submitted at all.
+  const card = $(VIGNETTE_CARD_ID);
+  // The attribute rather than jQuery's data store, so that "the slide is ready
+  // to be answered" is readable from the outside -- the timings only start
+  // here, and a test driving a mock clock has to wait for it.
+  if (card.length === 0 || card.attr(READY_ATTRIBUTE)) {
     return;
   }
-  form.data("vignetteTakeInitialized", true);
+  card.attr(READY_ATTRIBUTE, "true");
 
-  form.submit((event) => {
+  $(VIGNETTE_FORM_ID).submit((event) => {
     return validateForm(event);
   });
 
   registerTextAnswerValidator();
   registerMultipleChoiceAnswerValidator();
-  testFormValidityOnPreview();
+  registerAdvanceLinkValidation();
 
-  const stats = new VignetteSlideStatistics();
-  registerStatisticsHandler(stats);
+  // Only a tracked run renders the statistic fields. Without them there is
+  // nothing to measure and nothing to send.
+  if (document.getElementById("time-on-slide-field")) {
+    registerStatisticsHandler(new VignetteSlideStatistics());
+  }
 }
 
 // turbo-rails bug: https://github.com/hotwired/turbo-rails/issues/781
@@ -31,15 +41,18 @@ $(document).ready(initializeVignetteTake);
 ////////////////////////////////////////////////////////////////////////////////
 
 function validateForm(event) {
-  const form = document.querySelector(VIGNETTE_FORM_ID);
+  const card = document.querySelector(VIGNETTE_CARD_ID);
   const isValidFirstCheck = validateTextAnswer();
 
   if (isValidFirstCheck) {
-    const checkboxes = $(form).find(CHECK_BOXES_ID);
-    validateMultipleChoiceAnswer(checkboxes);
+    validateMultipleChoiceAnswer($(card).find(CHECK_BOXES_ID));
   }
 
-  if (!form.reportValidity()) {
+  // No form to ask, so the fields are asked one by one; reportValidity also
+  // shows the browser's own message on the first one that objects.
+  const fields = card.querySelectorAll("input, select, textarea");
+  const invalid = [...fields].find(field => !field.reportValidity());
+  if (invalid) {
     event.preventDefault();
     return false;
   }
@@ -47,11 +60,13 @@ function validateForm(event) {
   return true;
 }
 
-function testFormValidityOnPreview() {
-  const previewNext = $("#vignettes-next-slide-preview");
-  if (previewNext.length === 0) return;
+// The preview and the untracked run advance by link, not by submitting the
+// form, so they need the same validation bound to the link itself.
+function registerAdvanceLinkValidation() {
+  const advanceLinks = $(".vignettes-advance-link");
+  if (advanceLinks.length === 0) return;
 
-  previewNext.click((event) => {
+  advanceLinks.click((event) => {
     return validateForm(event);
   });
 }
@@ -214,21 +229,17 @@ function registerStatisticsHandler(stats) {
     return;
   }
   infoSlideModals.each(function () {
-    // BUG (Vignettes): this should rather be hide.bs.modal to get the correct time
-    // will leave it here for backwards compatibility and to not skew existing data
-    $(this).on("hidden.bs.modal", function () {
+    // The timer stops when the dialog starts closing, not when it has faded
+    // out, which used to add the animation to every visit.
+    $(this).on("hide.bs.modal", function () {
       const id = $(this).attr("data-info-slide-id");
       stats.stopInfoSlideTimer(id);
       stats.unfreezeSlideTime();
     });
   });
 
-  // Form Submission
-  $(VIGNETTE_FORM_ID).submit((e) => {
-    if ($(VIGNETTE_FORM_ID).data("preview")) {
-      e.preventDefault();
-      return;
-    }
+  // Form Submission -- only a tracked run has a form to begin with.
+  $(VIGNETTE_FORM_ID).submit(() => {
     // Take rest of time into account
     if (stats.slideStartTime) {
       stats.freezeSlideTime();

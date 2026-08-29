@@ -197,15 +197,7 @@ module Demo
       end
 
       def destroy_campaign!(campaign)
-        return unless campaign
-
-        # rubocop:disable Rails/SkipsModelValidations
-        campaign.update_columns(
-          status: Registration::Campaign.statuses[:draft],
-          updated_at: Time.current
-        )
-        # rubocop:enable Rails/SkipsModelValidations
-        campaign.destroy!
+        Demo::CampaignCleanup.discard!(campaign)
       end
 
       def ensure_item!(campaign, registerable)

@@ -44,6 +44,21 @@ window.Stimulus.register("submit-on-change", SubmitOnChangeController);
 import VignettesNumberController from "~/vignettes/slides/form/question/types/_number.controller.js";
 window.Stimulus.register("vignettes-number", VignettesNumberController);
 
+import VignettesPositionController from "~/vignettes/questionnaires/take/position.controller.js";
+window.Stimulus.register("vignettes-position", VignettesPositionController);
+
+import VignettesResumeController from "~/vignettes/questionnaires/index/resume.controller.js";
+window.Stimulus.register("vignettes-resume", VignettesResumeController);
+
+import VignettesSlidesSortableController from "~/vignettes/questionnaires/edit/slides_sortable.controller.js";
+window.Stimulus.register("vignettes-slides-sortable", VignettesSlidesSortableController);
+
+import VignettesModalAutofocusController from "~/vignettes/questionnaires/new/modal_autofocus.controller.js";
+window.Stimulus.register("vignettes-modal-autofocus", VignettesModalAutofocusController);
+
+import VignettesDataCollectionController from "~/vignettes/questionnaires/edit/data_collection.controller.js";
+window.Stimulus.register("vignettes-data-collection", VignettesDataCollectionController);
+
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
 
@@ -100,6 +115,12 @@ window.Stimulus.register("lecture-edit", LectureEditController);
 
 import LectureSubscribersController from "~/lectures/edit/lecture_subscribers.controller.js";
 window.Stimulus.register("lecture-subscribers", LectureSubscribersController);
+
+import UppyUploadController from "~/controllers/uppy_upload.controller.js";
+window.Stimulus.register("uppy-upload", UppyUploadController);
+
+import SubmissionUploadController from "~/controllers/submission_upload.controller.js";
+window.Stimulus.register("submission-upload", SubmissionUploadController);
 
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);
