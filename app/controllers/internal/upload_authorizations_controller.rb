@@ -20,8 +20,9 @@ module Internal
 
     private
 
-      # A missing intent is not a verdict here: only the endpoint itself
-      # insists on one.
+      # nginx asks this before it lets an upload body through, and it may ask
+      # without the header. Answering yes then only lets the request reach the
+      # upload endpoint, which demands the intent for itself.
       def intent_allows?
         intent = UploadIntent.from_request(request)
         uploader_class = UploadEndpointAuthorization.uploader_class_for(params[:uploader])

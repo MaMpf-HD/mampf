@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe("UploadRoutes", type: :request) do
-  # sign_in is Warden's login_as, and a login no request spends lands on the
-  # next example -- these examples are about being nobody.
+  # sign_in registers a login for the next request to pick up, so one that an
+  # earlier example never made would sign these requests in.
   before { Warden.test_reset! }
 
   let(:user) { create(:confirmed_user, locale: "en") }

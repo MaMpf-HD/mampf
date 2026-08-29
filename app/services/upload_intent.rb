@@ -35,7 +35,8 @@ class UploadIntent
     parse(request.get_header(HEADER))
   end
 
-  # Signature intact, lifetime over: worth a different message than a refusal.
+  # Tells a page left open for a day apart from an upload this user was never
+  # allowed to make. The two deserve different messages.
   def self.expired?(token)
     token.present? && verifier.valid_message?(token) && parse(token).nil?
   end
@@ -44,16 +45,18 @@ class UploadIntent
     Rails.application.message_verifier(PURPOSE)
   end
 
-  # Only the ids: they are what the abilities ask about, and the rest of a
-  # half-filled form is none of our business.
+  # A record that does not exist yet is described by its ids alone: who may
+  # create it depends on which lecture or assignment it will hang under, never
+  # on the rest of a half-filled form.
   def self.authorizing_attributes(target)
     return {} if target.nil? || target.id.present?
 
     target.attributes.compact.select { |name, _| name.end_with?("_id", "_type") }
   end
 
-  # The records an upload can be aimed at. A method rather than a frozen
-  # constant, because a class kept across a reload goes stale.
+  # The records an upload can be aimed at. A method rather than a constant
+  # because Rails reloads these classes in development, and one held in a
+  # frozen hash would still be the old copy afterwards.
   def self.target_classes
     { "Course" => Course, "Medium" => Medium, "Submission" => Submission,
       "Tutorial" => Tutorial, "User" => User }
