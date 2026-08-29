@@ -45,9 +45,14 @@ class DeleteVignettesData < ActiveRecord::Migration[8.0]
       say("destroying #{lectures.count} lecture(s) of sort vignettes")
       lectures.find_each(&:destroy!)
 
-      orphaned = Course.where(id: course_ids).where.missing(:lectures)
-      say("destroying #{orphaned.count} course(s) left without a lecture")
-      orphaned.find_each(&:destroy!)
+      # Media are not destroyed with their course (see Course#media), so a
+      # course that carries some of its own is kept rather than turned into
+      # media pointing at nothing.
+      empty = Course.where(id: course_ids).where.missing(:lectures).where.missing(:media)
+      kept = Course.where(id: course_ids).where.missing(:lectures).where.associated(:media)
+      say("keeping #{kept.count} course(s) that carry media of their own") if kept.any?
+      say("destroying #{empty.count} course(s) left without a lecture")
+      empty.find_each(&:destroy!)
     end
 
     # Deleting the rich texts alone would leave the uploaded files behind, and
