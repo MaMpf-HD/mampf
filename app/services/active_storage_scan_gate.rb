@@ -1,15 +1,12 @@
-# ActiveStorage stores with the Disk service in every environment, so a direct
-# upload arrives as a PUT whose body passes through Rails. That is where it is
-# scanned -- before a byte reaches the store, the way MalwareScanGate does it for
-# the Shrine endpoints.
-#
-# The verdict is kept on the blob. Unlike a Shrine cached file, a blob record
-# never travels through the browser, so nothing has to be signed against
-# tampering: what we wrote is what we read back.
+# Scans an ActiveStorage upload while its bytes are still in the request, and
+# holds back a file that carries no clean verdict. Every environment stores with
+# the Disk service, so the bytes do pass through Rails on their way in. The
+# verdict is kept in the blob's metadata, which the browser never gets its hands
+# on and which therefore needs no signature.
 class ActiveStorageScanGate
-  # Beyond this, only the prefix is streamed to clamd -- a bounded check against
-  # known malware near the start of a file, not a clean verdict for the whole of
-  # it. Vignette slides carry video, which is why the bound exists at all.
+  # Above this only the start of a file is streamed to clamd, which answers for
+  # what it read and not for the rest. A bound is needed at all because a slide
+  # can carry video.
   SCAN_MAX_BYTES = 32 * 1024 * 1024
 
   class << self
@@ -35,13 +32,12 @@ class ActiveStorageScanGate
       ))
     end
 
-    # Whether the file behind this key may be handed out: it carries a clean
-    # verdict, or it is a variant our own processing derived from one.
     def cleared?(key)
       cleared_blob?(ActiveStorage::Blob.find_by(key: key))
     end
 
-    # The same question where the blob has already been looked up.
+    # A thumbnail is derived from an original that was scanned and gets no
+    # verdict of its own, so hanging on a variant record clears it too.
     def cleared_blob?(blob)
       return false if blob.nil?
       return true if clean?(blob)

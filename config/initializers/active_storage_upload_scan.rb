@@ -1,15 +1,11 @@
-# Virus-scans ActiveStorage direct uploads and refuses to hand out what was
-# never scanned. See ActiveStorageScanGate for why the disk controller is the
-# place for it.
+# Scans ActiveStorage uploads and holds back files that were never scanned.
 #
-# Wrapped in to_prepare and guarded against stacking, the way
-# active_storage_direct_upload_authorization.rb is: the engine controller is not
-# loaded when initializers run, and a dev reload would otherwise register the
-# callbacks twice.
+# The controllers this hangs on belong to the ActiveStorage engine and are not
+# loaded while initializers run, hence to_prepare -- which runs again on a code
+# reload, hence the guard against registering the callbacks twice.
 Rails.application.config.to_prepare do
-  # Every controller that hands out a blob resolves it through this concern --
-  # the redirect and the proxy routes, and their representation variants -- so
-  # one check covers all of them, whichever way a file is asked for.
+  # Redirect, proxy and representation controllers all look their blob up
+  # through this concern, so asking here covers every way to reach a file.
   ActiveStorage::SetBlob.prepend(Module.new do
     private
 
@@ -40,8 +36,8 @@ Rails.application.config.to_prepare do
         request.env["rack.input"] = buffered_request_body
         result, scope = ActiveStorageScanGate.scan(request.body)
 
-        # The browser only ever shows the status of a failed direct upload, so
-        # the body is for the log and for whoever asks with curl.
+        # A browser shows nothing of a failed direct upload but its status, so
+        # these lines are for the log and for whoever asks with curl.
         return render(plain: "infected", status: :unprocessable_content) if result.infected?
         return render(plain: "scanner unavailable", status: :service_unavailable) unless
           result.clean?
@@ -57,8 +53,9 @@ Rails.application.config.to_prepare do
         head :not_found
       end
 
-      # clamd has to read the whole body, and the action reads it again for the
-      # store. Rack hands the tempfile back once the request is done.
+      # clamd reads the body to the end and the action then reads it again for
+      # the store, so it is buffered into a file that Rack deletes when the
+      # request is done.
       def buffered_request_body
         tempfile = Tempfile.new("active-storage-upload", binmode: true)
         IO.copy_stream(request.body, tempfile)
