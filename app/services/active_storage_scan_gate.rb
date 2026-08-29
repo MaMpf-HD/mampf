@@ -36,18 +36,31 @@ class ActiveStorageScanGate
       cleared_blob?(ActiveStorage::Blob.find_by(key: key))
     end
 
-    # A thumbnail is derived from an original that was scanned and gets no
-    # verdict of its own, so hanging on a variant record clears it too.
     def cleared_blob?(blob)
       return false if blob.nil?
-      return true if clean?(blob)
 
-      blob.attachments.exists?(record_type: "ActiveStorage::VariantRecord")
+      clean?(blob) || clean?(origin_of(blob))
     end
 
     def clean?(blob)
-      blob.metadata.dig(MalwareScanGate::METADATA_KEY,
-                        MalwareScanGate::STATUS_KEY) == MalwareScanGate::CLEAN_STATUS
+      blob&.metadata&.dig(MalwareScanGate::METADATA_KEY,
+                          MalwareScanGate::STATUS_KEY) == MalwareScanGate::CLEAN_STATUS
+    end
+
+    # A thumbnail and a PDF preview are made here, from a file that was scanned
+    # on its way in, and carry no verdict of their own. ActiveStorage hangs a
+    # thumbnail on a variant record and a preview on the blob it came from, so
+    # the file it was made from is one attachment away either way.
+    def origin_of(blob)
+      attachment = blob.attachments.first
+      return if attachment.nil?
+
+      case attachment.record_type
+      when "ActiveStorage::VariantRecord"
+        ActiveStorage::VariantRecord.find_by(id: attachment.record_id)&.blob
+      when "ActiveStorage::Blob"
+        ActiveStorage::Blob.find_by(id: attachment.record_id) if attachment.name == "preview_image"
+      end
     end
   end
 end
