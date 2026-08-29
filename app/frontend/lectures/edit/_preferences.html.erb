@@ -120,6 +120,18 @@
       </div>
     </div>
   <% end %>
+  <div class="row">
+    <div class="col-12 mb-3">
+      <div class="form-check">
+        <%= f.check_box :vignettes,
+                        class: 'form-check-input' %>
+        <%= f.label :vignettes,
+                    t('admin.lecture.uses_vignettes'),
+                    { class: 'form-check-label' } %>
+        <%= helpdesk(t('admin.lecture.info.vignettes'), false) %>
+      </div>
+    </div>
+  </div>
   <% if !lecture.term %>
     <div class="row">
       <div class="col-12">

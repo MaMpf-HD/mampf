@@ -12,6 +12,9 @@ module Vignettes
     belongs_to :user_answer, class_name: "Vignettes::UserAnswer",
                              foreign_key: "vignettes_user_answer_id"
 
+    # One answer per slide within a run; the database says the same.
+    validates :vignettes_slide_id, uniqueness: { scope: :vignettes_user_answer_id }
+
     has_and_belongs_to_many :options,
                             class_name: "Vignettes::Option",
                             join_table: :vignettes_answers_options,
