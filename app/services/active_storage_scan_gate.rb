@@ -9,6 +9,11 @@ class ActiveStorageScanGate
   # can carry video.
   SCAN_MAX_BYTES = 32 * 1024 * 1024
 
+  # How far a file can stand from the one that was scanned: a page of a PDF is
+  # first drawn as a preview and that preview is then resized, so what a page
+  # asks for is two steps from the file somebody uploaded.
+  DERIVATION_DEPTH = 3
+
   class << self
     def scan(io)
       scope = io.size.to_i > SCAN_MAX_BYTES ? "prefix" : "full"
@@ -37,9 +42,14 @@ class ActiveStorageScanGate
     end
 
     def cleared_blob?(blob)
-      return false if blob.nil?
+      DERIVATION_DEPTH.times do
+        return false if blob.nil?
+        return true if clean?(blob)
 
-      clean?(blob) || clean?(origin_of(blob))
+        blob = origin_of(blob)
+      end
+
+      false
     end
 
     def clean?(blob)
