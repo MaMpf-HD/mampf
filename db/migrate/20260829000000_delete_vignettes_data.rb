@@ -43,19 +43,32 @@ class DeleteVignettesData < ActiveRecord::Migration[8.0]
       lectures.find_each(&:destroy!)
     end
 
-    # Deleting the rich texts alone would leave the uploaded files behind. The
-    # variants go first and by hand: destroying an original hands its variants
-    # to a background job, and a migration cannot count on one ever running.
+    # Deleting the rich texts alone would leave the uploaded files behind, and
+    # the variants of those files behind that: an original handed to #purge
+    # passes its variants to a background job a migration cannot count on.
+    #
+    # The rows go by delete_all rather than by purge, because purging an
+    # attachment touches the record it hangs on -- here a rich text naming a
+    # vignette class this branch deletes, which no longer resolves. Only the
+    # blobs are destroyed through the model, for the files behind them.
     def purge_trix_attachments
       rich_text_ids = select_values(<<~SQL.squish)
         SELECT id FROM action_text_rich_texts WHERE record_type LIKE 'Vignettes::%'
       SQL
       return if rich_text_ids.empty?
 
-      ActiveStorage::Attachment.where(record_type: "ActionText::RichText",
-                                      record_id: rich_text_ids).find_each do |attachment|
-        attachment.blob.variant_records.each { |variant| variant.image.purge }
-        attachment.purge
-      end
+      embeds = ActiveStorage::Attachment.where(record_type: "ActionText::RichText",
+                                               record_id: rich_text_ids)
+      blob_ids = embeds.pluck(:blob_id)
+      variants = ActiveStorage::VariantRecord.where(blob_id: blob_ids)
+      variant_images = ActiveStorage::Attachment
+                       .where(record_type: "ActiveStorage::VariantRecord",
+                              record_id: variants.select(:id))
+      blob_ids += variant_images.pluck(:blob_id)
+
+      variant_images.delete_all
+      variants.delete_all
+      embeds.delete_all
+      ActiveStorage::Blob.where(id: blob_ids).find_each(&:purge)
     end
 end
