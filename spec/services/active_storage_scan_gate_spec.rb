@@ -59,6 +59,18 @@ RSpec.describe(ActiveStorageScanGate) do
       expect(described_class.cleared?(thumbnail.key)).to be(true)
     end
 
+    it "gives up rather than following a chain of any length" do
+      original = blob_for(metadata: { "malware_scan" => { "status" => "clean" } })
+      derived = 3.times.reduce(original) do |origin, _|
+        blob_for.tap do |blob|
+          ActiveStorage::Attachment.create!(name: "preview_image", blob: blob,
+                                            record: origin)
+        end
+      end
+
+      expect(described_class.cleared?(derived.key)).to be(false)
+    end
+
     it "holds back a variant of a file that was never scanned" do
       unscanned = blob_for
       variant = blob_for

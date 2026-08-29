@@ -1,10 +1,12 @@
-<figure class="attachment attachment--<%= blob.representable? ? "preview" : "file" %> attachment--<%= blob.filename.extension %>">
+<% kind = blob.representable? ? "preview" : "file" %>
+<figure class="attachment attachment--<%= kind %> attachment--<%= blob.filename.extension %>">
   <% if blob.video? %>
     <video controls="true" controlsList="nodownload" width="75%">
       <source src=<%= rails_blob_url(blob) %>, type=<%= blob.content_type %> >
     </video>
   <% elsif blob.representable? %>
-    <%= image_tag blob.representation(resize_to_limit: local_assigns[:in_gallery] ? [ 800, 600 ] : [ 1024, 768 ]) %>
+    <% resize_to_limit = local_assigns[:in_gallery] ? [ 800, 600 ] : [ 1024, 768 ] %>
+    <%= image_tag blob.representation(resize_to_limit: resize_to_limit) %>
   <% else %>
     <%= link_to blob.filename.to_s, rails_blob_url(blob) %>
   <% end %>
