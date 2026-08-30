@@ -60,6 +60,10 @@ module Demo
             assignment.assessment.tasks.delete_all
           end
 
+          # A sheet with a hand-in under it refuses to go, and rightly so; the
+          # demo ones are ours to clear.
+          Submission.where(assignment: assignment).find_each(&:destroy)
+
           assignment.destroy!
           destroyed += 1
         end
