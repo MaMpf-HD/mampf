@@ -13,6 +13,10 @@ class UsersController < ApplicationController
     authorize! :index, User.new
     @generic_users_count = User.select(:id)
                                .where.not(id: @elevated_users.pluck(:id)).count
+    @password_policy_total_count = User.confirmed.count
+    @password_policy_current_count = User.confirmed
+                                         .where(password_policy_version: User::CURRENT_PASSWORD_POLICY_VERSION..)
+                                         .count
   end
 
   def edit

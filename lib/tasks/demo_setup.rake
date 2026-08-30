@@ -39,6 +39,13 @@ namespace :demo do
     Demo::SetupSupport.setup!
   end
 
+  desc "Create vignettes for a lecture in every state they can be in"
+  task vignettes: :environment do
+    Demo::VignettesSupport.setup!(
+      lecture_id: (ENV["LECTURE_ID"] || Demo::VignettesSupport::DEFAULT_LECTURE_ID).to_i
+    )
+  end
+
   desc "Stage the next-term banner scenario (flag, next term, demo lectures)"
   task next_term_banner: :environment do
     Demo::NextTermBannerSupport.setup!

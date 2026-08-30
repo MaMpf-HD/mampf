@@ -29,6 +29,10 @@ module Mampf
     # Autoload lib extensions path
     config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "tasks", "rubocop"])
 
+    # Turned off in RSpec (see spec/rails_helper.rb) because rating a password
+    # takes about a quarter of a second.
+    config.x.password_strength_checks = true
+
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]

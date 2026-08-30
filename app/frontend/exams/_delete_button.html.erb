@@ -10,7 +10,9 @@
       <span
         class="d-inline-block"
         tabindex="0"
-        title="<%= t("assessment.exam_not_destructible.#{exam.non_destructible_reason}") %>"
+        title="<%= exam.destruction_blockers
+                       .map { |blocker| t("assessment.exam_not_destructible.#{blocker}") }
+                       .to_sentence %>"
         data-bs-toggle="tooltip"
       >
         <button class="btn btn-outline-secondary btn-sm" disabled>

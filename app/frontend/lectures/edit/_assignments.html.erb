@@ -52,6 +52,9 @@
 </div>
 
 <%= form_with model: lecture,
+              data: { action: "change->lecture-edit#markUnsaved",
+                      lecture_edit_warning_param: "lecture-assignments-warning",
+                      lecture_edit_keep_editing_param: ".fa-edit" },
               html: { id: 'lecture-assignments-form',
                       class: 'mt-4 px-2' } do |f| %>
   <div class="row">
@@ -65,8 +68,8 @@
                           min: 1,
                           max: 10000,
                           class: 'form-control',
-                          data:
-                          { value: lecture.submission_max_team_size } %>
+                          data: { value: lecture.submission_max_team_size,
+                                  lecture_edit_target: "teamSize" } %>
     </div>
     <div class="col-md-6">
       <%= f.label :submission_grace_period,
@@ -78,7 +81,8 @@
                           min: 0,
                           max: 262800,
                           class: 'form-control',
-                          data: { value: lecture.submission_grace_period } %>
+                          data: { value: lecture.submission_grace_period,
+                                  lecture_edit_target: "gracePeriod" } %>
     </div>
   </div>
   <div id="lecture-assignments-warning" class="mt-3">
@@ -87,6 +91,8 @@
     <%= f.submit t('buttons.save'),
                   class: "btn btn-sm btn-primary" %>
     <button type="button" id="cancel-lecture-assignments"
+            data-action="click->lecture-edit#restoreAssignments"
+            data-lecture-edit-warning-param="lecture-assignments-warning"
             class="btn btn-sm btn-secondary">
       <%= t('buttons.cancel') %>
     </button>

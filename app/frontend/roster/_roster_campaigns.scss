@@ -54,6 +54,44 @@
     &:hover .registration-campaign-header-actions,
     &:focus-within .registration-campaign-header-actions {
       opacity: 1;
+    .policy-badge {
+      vertical-align: middle;
+      cursor: default;
+      position: relative;
+
+      &--draft {
+        cursor: grab;
+        padding-right: 0.5em;
+
+        &:active { cursor: grabbing; }
+      }
+
+      .policy-badge-actions {
+        margin-left: 0.35em;
+        display: none;
+        gap: 0.2em;
+        align-items: center;
+      }
+
+      &--draft:hover .policy-badge-actions,
+      &--draft:focus-within .policy-badge-actions {
+        display: inline-flex;
+      }
+
+      .policy-badge-action {
+        border: none;
+        background: none;
+        padding: 0;
+        line-height: 1;
+        vertical-align: baseline;
+        cursor: pointer;
+
+        &:hover { opacity: 0.7; }
+      }
+    }
+
+    .policy-badge.sortable-ghost {
+      opacity: 0.4;
     }
 
     .policy-form-panel {
@@ -64,12 +102,12 @@
     }
   }
 
+  // Always visible: the way out of a registration process is what one looks
+  // for when stuck, so it must not depend on finding it by hovering.
   .registration-campaign-header-actions {
     position: absolute;
     top: 0.65rem;
     right: 0.65rem;
-    opacity: 0;
-    transition: opacity 0.15s ease-in-out;
   }
 
   .card-body {

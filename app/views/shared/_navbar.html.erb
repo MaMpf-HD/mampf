@@ -7,9 +7,12 @@
 
 <div class="navbars-container">
   <nav class="navbar navbar-expand" id="firstnav">
+    <%# Sized in the markup: the svg declares 97mm, and navbar.scss is loaded
+        from the body, so without this the logo is briefly rendered huge. %>
     <%= link_to image_tag("/images/mampf-logo.svg",
                           class: 'me-2',
-                          id: 'mampf-logo'),
+                          id: 'mampf-logo',
+                          width: 35, height: 35),
                 home_path %>
     <%= link_to t('mampf'),
                 home_path,

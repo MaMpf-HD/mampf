@@ -117,8 +117,8 @@ RSpec.describe(Assignment, type: :model) do
         expect(assignment.destructible?).to be(true)
       end
 
-      it "returns nil for non_destructible_reason" do
-        expect(assignment.non_destructible_reason).to be_nil
+      it "names no blocker" do
+        expect(assignment.destruction_blockers).to be_empty
       end
     end
 
@@ -137,8 +137,8 @@ RSpec.describe(Assignment, type: :model) do
         expect(assignment.destructible?).to be(false)
       end
 
-      it "returns :has_submissions as non_destructible_reason" do
-        expect(assignment.non_destructible_reason).to eq(:has_submissions)
+      it "names the submissions as the blocker" do
+        expect(assignment.destruction_blockers).to eq([:has_submissions])
       end
     end
 
@@ -160,8 +160,8 @@ RSpec.describe(Assignment, type: :model) do
           expect(assignment.destructible?).to be(false)
         end
 
-        it "returns :has_grading_data as non_destructible_reason" do
-          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        it "names the grading data as the blocker" do
+          expect(assignment.destruction_blockers).to eq([:has_grading_data])
         end
       end
 
@@ -176,8 +176,8 @@ RSpec.describe(Assignment, type: :model) do
           expect(assignment.destructible?).to be(false)
         end
 
-        it "returns :has_grading_data as non_destructible_reason" do
-          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        it "names the grading data as the blocker" do
+          expect(assignment.destruction_blockers).to eq([:has_grading_data])
         end
       end
 
@@ -196,8 +196,8 @@ RSpec.describe(Assignment, type: :model) do
           expect(assignment.destructible?).to be(false)
         end
 
-        it "returns :has_grading_data as non_destructible_reason" do
-          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        it "names the grading data as the blocker" do
+          expect(assignment.destruction_blockers).to eq([:has_grading_data])
         end
       end
 
@@ -212,8 +212,8 @@ RSpec.describe(Assignment, type: :model) do
           expect(assignment.destructible?).to be(false)
         end
 
-        it "returns :has_grading_data as non_destructible_reason" do
-          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        it "names the grading data as the blocker" do
+          expect(assignment.destruction_blockers).to eq([:has_grading_data])
         end
       end
     end

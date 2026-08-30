@@ -1,11 +1,5 @@
 @import "~/styles/branding";
 
-$breakpoint-back-btn: calc(#{$small-width} + 15em);
-
-.admin-background {
-    background: none;
-}
-
 #vignettes-wrapper {
     margin-bottom: 10em;
 }
@@ -14,11 +8,6 @@ $breakpoint-back-btn: calc(#{$small-width} + 15em);
     border: $mampf-blue 1.5px solid;
     border-radius: 0.5em;
     margin-top: 0.5em;
-
-    @media(min-width: $breakpoint-back-btn) {
-        margin-top: 2em;
-    }
-
     padding: 1em;
     box-shadow: 0px 2px 7px 0rem mampf-blue(0.1);
 }
@@ -56,12 +45,9 @@ h2 {
     }
 }
 
+// Stays in the flow: next to the lecture sidebar there is no margin left of
+// the container to hang it in.
 #vignettes-back-btn {
     border: none;
     margin-top: 1em;
-
-    @media(min-width: $breakpoint-back-btn) {
-        position: absolute;
-        margin-left: -6em;
-    }
 }

@@ -185,10 +185,45 @@ RSpec.describe(Registration::Campaign, type: :model) do
   end
 
   describe "deletion protection" do
-    it "prevents deletion if not draft" do
-      campaign = create(:registration_campaign, :open)
+    it "prevents deletion while the allocation is being processed" do
+      campaign = create(:registration_campaign, :processing)
       expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
       expect(campaign.errors.added?(:base, :cannot_delete_active_campaign)).to be(true)
+    end
+
+    it "allows deletion of a finalized campaign that reached nobody" do
+      campaign = create(:registration_campaign, :completed)
+
+      expect { campaign.destroy }.to change(Registration::Campaign, :count).by(-1)
+    end
+
+    it "prevents deletion if students have registered" do
+      campaign = create(:registration_campaign, :open)
+      create(:registration_user_registration,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_discard_with_registrations)).to be(true)
+    end
+
+    # A computed allocation over nobody allocated nobody; only what reached a
+    # roster is worth protecting, and that is the example below.
+    it "allows deletion when only the allocation timestamp is set" do
+      campaign = create(:registration_campaign, :closed)
+      campaign.update_columns(last_allocation_calculated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+      expect { campaign.destroy }.to change(Registration::Campaign, :count).by(-1)
+    end
+
+    it "prevents deletion once an allocation has been materialized" do
+      campaign = create(:registration_campaign, :closed)
+      create(:tutorial_membership,
+             tutorial: campaign.registration_items.first.registerable,
+             source_campaign_id: campaign.id)
+
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_discard_after_allocation)).to be(true)
     end
 
     it "prevents deletion if referenced as prerequisite" do
@@ -213,10 +248,15 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.errors.added?(:allocation_mode, :frozen)).to be(true)
     end
 
-    it "prevents reverting to draft from open" do
+    it "prevents reverting to draft once a student has registered" do
+      create(:registration_user_registration,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
       campaign.status = :draft
       expect(campaign).not_to be_valid
-      expect(campaign.errors.added?(:status, :cannot_revert_to_draft)).to be(true)
+      expect(campaign.errors.added?(:base, :cannot_revert_with_registrations))
+        .to be(true)
     end
 
     it "allows changing allocation_mode if draft" do
@@ -1092,6 +1132,195 @@ RSpec.describe(Registration::Campaign, type: :model) do
     it "returns false when no items exist" do
       campaign = create(:registration_campaign)
       expect(campaign.exam_campaign?).to be(false)
+    end
+  end
+
+  describe "#discardable?" do
+    it "is true for a draft campaign" do
+      expect(create(:registration_campaign)).to be_discardable
+    end
+
+    it "is true for an open campaign nobody has registered for" do
+      expect(create(:registration_campaign, :open)).to be_discardable
+    end
+
+    it "is true for a closed campaign nobody has registered for" do
+      expect(create(:registration_campaign, :closed)).to be_discardable
+    end
+
+    it "is false while the allocation is being processed" do
+      expect(create(:registration_campaign, :processing)).not_to be_discardable
+    end
+
+    # completed no longer bars discarding by itself; the checks below do.
+    it "is true for a finalized campaign nobody registered for" do
+      expect(create(:registration_campaign, :completed)).to be_discardable
+    end
+
+    it "is false for a finalized campaign somebody registered for" do
+      campaign = create(:registration_campaign, :completed)
+      create(:registration_user_registration,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(campaign).not_to be_discardable
+      expect(campaign.discard_blocker).to eq(:registrations)
+    end
+
+    it "is false for a finalized campaign whose allocation reached a roster" do
+      campaign = create(:registration_campaign, :completed)
+      create(:tutorial_membership,
+             tutorial: campaign.registration_items.first.registerable,
+             source_campaign: campaign)
+
+      expect(campaign).not_to be_discardable
+      expect(campaign.discard_blocker).to eq(:allocation)
+    end
+
+    it "is false with a rejected registration" do
+      campaign = create(:registration_campaign, :open)
+      create(:registration_user_registration, :rejected,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(campaign).not_to be_discardable
+      expect(campaign.discard_blocker).to eq(:registrations)
+    end
+
+    it "is false when another campaign depends on it" do
+      prereq = create(:registration_campaign)
+      dependent = create(:registration_campaign)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: dependent,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      expect(prereq).not_to be_discardable
+      expect(prereq.discard_blocker).to eq(:prerequisite)
+    end
+  end
+
+  describe "discarding" do
+    let(:campaign) { create(:registration_campaign, :with_items) }
+
+    it "deletes items and policies but keeps the groups" do
+      create(:registration_policy, :institutional_email, registration_campaign: campaign)
+      campaign.update!(status: :open)
+      tutorials = campaign.registerables
+
+      expect { campaign.destroy }.to change(Registration::Item, :count).by(-3)
+      expect(Registration::Policy.where(registration_campaign_id: campaign.id)).to be_empty
+
+      expect(Tutorial.where(id: tutorials.map(&:id)).count).to eq(3)
+      expect(tutorials.map { |t| t.reload.skip_campaigns }).to all(be(true))
+    end
+  end
+
+  describe "blocker messages" do
+    # Both guards look their blocker up with fetch, so a fifth reason added to
+    # data_blocker fails here rather than letting a campaign through.
+    it "cover every reason the two rules can report" do
+      reported = [:status, :registrations, :allocation, :prerequisite]
+
+      expect(described_class::DISCARD_BLOCKER_ERRORS.keys).to match_array(reported)
+      expect(described_class::REVERT_BLOCKER_ERRORS.keys).to match_array(reported)
+    end
+  end
+
+  describe "#revertible_to_draft?" do
+    it "is true for an open campaign nobody has registered for" do
+      expect(create(:registration_campaign, :open)).to be_revertible_to_draft
+    end
+
+    it "is true for a closed campaign nobody has registered for" do
+      expect(create(:registration_campaign, :closed)).to be_revertible_to_draft
+    end
+
+    it "is false for a draft campaign, which is already there" do
+      campaign = create(:registration_campaign)
+
+      expect(campaign).not_to be_revertible_to_draft
+      expect(campaign.revert_blocker).to eq(:status)
+    end
+
+    it "is false while the allocation is being processed" do
+      expect(create(:registration_campaign, :processing)).not_to be_revertible_to_draft
+    end
+
+    it "is false once finalized" do
+      expect(create(:registration_campaign, :completed)).not_to be_revertible_to_draft
+    end
+
+    it "is false with a registration of any status" do
+      campaign = create(:registration_campaign, :open)
+      create(:registration_user_registration, :rejected,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(campaign).not_to be_revertible_to_draft
+      expect(campaign.revert_blocker).to eq(:registrations)
+    end
+
+    it "is false once an allocation reached a roster" do
+      campaign = create(:registration_campaign, :open)
+      create(:tutorial_membership,
+             tutorial: campaign.registration_items.first.registerable,
+             source_campaign: campaign)
+
+      expect(campaign.reload).not_to be_revertible_to_draft
+      expect(campaign.revert_blocker).to eq(:allocation)
+    end
+
+    it "is false when another campaign depends on it" do
+      prereq = create(:registration_campaign, :open)
+      dependent = create(:registration_campaign)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: dependent,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      expect(prereq).not_to be_revertible_to_draft
+      expect(prereq.revert_blocker).to eq(:prerequisite)
+    end
+  end
+
+  describe "reverting to draft" do
+    it "unfreezes the configuration again" do
+      campaign = create(:registration_campaign, :open, :first_come_first_served)
+
+      expect(campaign.update(status: :draft)).to be(true)
+
+      expect(campaign.reload).to be_draft
+      expect(campaign.update(allocation_mode: :preference_based)).to be(true)
+    end
+
+    it "lets the last remaining item be removed afterwards" do
+      campaign = create(:registration_campaign, :with_items, items_count: 1)
+      campaign.update!(status: :open)
+      item = campaign.registration_items.first
+
+      expect(item.removal_blocker).to eq(:last_item)
+
+      campaign.update!(status: :draft)
+
+      expect(item.reload.removal_blocker).to be_nil
+    end
+
+    it "is refused once a student has registered" do
+      campaign = create(:registration_campaign, :open)
+      create(:registration_user_registration,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(campaign.update(status: :draft)).to be(false)
+      expect(campaign.errors.added?(:base, :cannot_revert_with_registrations))
+        .to be(true)
+      expect(campaign.reload).to be_open
+    end
+
+    it "is refused from processing" do
+      campaign = create(:registration_campaign, :processing)
+
+      expect(campaign.update(status: :draft)).to be(false)
+      expect(campaign.reload).to be_processing
     end
   end
 end

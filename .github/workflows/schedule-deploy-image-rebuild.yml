@@ -2,17 +2,6 @@ name: Schedule Deploy Image Rebuild
 
 on:
   workflow_dispatch:
-    inputs:
-      build_ref:
-        description: Branch to rebuild
-        required: false
-        # Weekly OS-patch rebuild of the current baseline. Stays on thruster until
-        # cutover, then becomes a matrix over the live baselines (next -> staging,
-        # main -> production). Not pre-switched to next/main: the cron fires on a
-        # schedule, not on code arrival, so it must not target a branch that does
-        # not have the baseline yet.
-        default: deploy/app-baseline-thruster
-        type: string
   schedule:
     - cron: "17 3 * * 1"
 
@@ -23,9 +12,14 @@ jobs:
     permissions:
       actions: write
       contents: read
+    strategy:
+      # Weekly OS-patch rebuild of both live baselines: next -> staging,
+      # main -> production. For a one-off single-branch rebuild use
+      # `just build ref=<branch>` instead.
+      matrix:
+        build_ref: [next, main]
     env:
-      # TODO(cutover): rebuild both baselines via a matrix (next, main); see build_ref above.
-      BUILD_REF: ${{ inputs.build_ref || 'deploy/app-baseline-thruster' }}
+      BUILD_REF: ${{ matrix.build_ref }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       # Force an OS security refresh so the weekly rebuild actually re-pulls the

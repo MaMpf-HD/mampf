@@ -1,0 +1,54 @@
+<div class="container-md small-width mt-4 mb-5">
+  <h1 class="fs-3 fw-bold mb-3"><%= @questionnaire.title %></h1>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 class="fs-5 mb-0"><%= t('vignettes.consent.heading') %></h2>
+    </div>
+    <div class="card-body trix-content">
+      <%= @questionnaire.consent_text %>
+    </div>
+  </div>
+
+  <%= form_with url: decide_consent_questionnaire_path(@questionnaire),
+                method: :post, local: true do |form| %>
+    <fieldset class="mb-4">
+      <legend class="fs-5"><%= t('vignettes.consent.question') %></legend>
+
+      <div class="form-check mb-3">
+        <%= form.radio_button :consent, "decline",
+                              class: "form-check-input", required: true %>
+        <%= form.label :consent_decline, t('vignettes.consent.decline'),
+                       class: "form-check-label fw-semibold" %>
+        <p class="text-muted mb-0"><%= t('vignettes.consent.decline_hint') %></p>
+      </div>
+
+      <div class="form-check mb-3">
+        <%= form.radio_button :consent, "new", class: "form-check-input" %>
+        <%= form.label :consent_new, t('vignettes.consent.new'),
+                       class: "form-check-label fw-semibold" %>
+        <p class="text-muted mb-0"><%= t('vignettes.consent.new_hint') %></p>
+      </div>
+
+      <div class="form-check mb-3">
+        <%= form.radio_button :consent, "existing", class: "form-check-input" %>
+        <%= form.label :consent_existing, t('vignettes.consent.existing'),
+                       class: "form-check-label fw-semibold" %>
+        <p class="text-muted"><%= t('vignettes.consent.existing_hint') %></p>
+        <div class="ms-1" style="max-width: 22rem;">
+          <%= form.label :pseudonym, t('vignettes.consent.codename'),
+                         class: "form-label" %>
+          <%= form.text_field :pseudonym, class: "form-control font-monospace",
+                              autocomplete: "off", spellcheck: false %>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="d-flex">
+      <%= form.submit t('vignettes.consent.submit'), class: "btn btn-primary me-2" %>
+      <%= link_to t('buttons.cancel'),
+                  lecture_questionnaires_path(@questionnaire.lecture),
+                  class: "btn btn-outline-secondary" %>
+    </div>
+  <% end %>
+</div>

@@ -536,6 +536,19 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id/edit (seminar content)" do
+    # Talks can only be created and deleted in the groups tab, so the content
+    # page says where to go rather than growing its own controls.
+    it "points at the tab that manages the talks" do
+      seminar = create(:seminar, teacher: user)
+
+      I18n.with_locale(:en) { get(edit_lecture_path(seminar)) }
+
+      expect(response.body).to include("Talks are created and deleted in the")
+      expect(response.body).to include(edit_lecture_path(seminar, tab: "groups"))
+    end
+  end
+
   describe "PATCH /lectures/:id (home page content)" do
     let(:lecture) { create(:lecture, teacher: user) }
 

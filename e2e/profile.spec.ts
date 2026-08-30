@@ -91,17 +91,19 @@ test.describe("Account settings", () => {
 
       await page.locator("#user_email").fill(newEmail);
       await page.getByLabel("Current password", { exact: true }).fill(user.password);
-      await page.getByRole("button", { name: "Update" }).click();
+      await page.getByRole("button", { name: "Save" }).click();
 
       await expect(page.getByRole("alert")).toBeVisible();
 
       const confirmationLink = await confirmationLinkFor(request, newEmail);
       await page.goto(confirmationLink);
 
-      await expect(page).toHaveURL(/\/profile\/edit/);
+      await expect(page.getByRole("alert")).toContainText(
+        "Your email address has been confirmed.",
+      );
 
       await page.getByTitle("Logout").click();
-      await expect(page).not.toHaveURL(/\/profile\/edit/);
+      await expect(page.getByRole("alert")).toContainText("Signed out successfully.");
 
       const loginPage = new LoginPage(page);
       await loginPage.goto();

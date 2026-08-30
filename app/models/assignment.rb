@@ -106,15 +106,17 @@ class Assignment < ApplicationRecord
   end
 
   def destructible?
-    non_destructible_reason.nil?
+    destruction_blockers.empty?
   end
 
-  def non_destructible_reason
-    return :has_submissions if submissions.proper.any?
-
-    return :has_grading_data if grading_data?
-
-    nil
+  # Named the way Rosterable names them, so a view can ask any deletable thing
+  # the same question. A sheet whose points are already in the pointbook goes
+  # nowhere either, even if nobody uploaded anything.
+  def destruction_blockers
+    blockers = []
+    blockers << :has_submissions if submissions.with_uploads.any?
+    blockers << :has_grading_data if grading_data?
+    blockers
   end
 
   def check_destructibility
