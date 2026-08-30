@@ -9,6 +9,8 @@ module Demo
     TEAMS_WITH_A_PARTNER = 1
     # The last sheets are the ones the tutor has not got to yet.
     UNCORRECTED_SHEETS = 2
+    # Handing in after the deadline happens, but rarely.
+    LATE_EVERY = 20
 
     def setup_homework_submissions!
       lecture = assessment_lecture!
@@ -32,11 +34,15 @@ module Demo
         return if demo_manuscript_path.nil?
 
         assignments = demo_assignments(lecture).to_a
+        handed_in = 0
+
         assignments.each_with_index do |assignment, index|
           sheets_left = assignments.size - index
           demo_teams(lecture).each_with_index do |(tutorial, team), position|
             hand_in_demo!(assignment, tutorial, team,
-                          correction: correction_for(sheets_left, position))
+                          correction: correction_for(sheets_left, position),
+                          late: (handed_in % LATE_EVERY).zero?)
+            handed_in += 1
           end
         end
       end
@@ -62,11 +68,12 @@ module Demo
           end
       end
 
-      def hand_in_demo!(assignment, tutorial, team, correction:)
+      def hand_in_demo!(assignment, tutorial, team, correction:, late:)
         submission = Submission.new(assignment: assignment, tutorial: tutorial,
                                     users: [team.first])
         submission.manuscript = demo_manuscript_copy
         submission.save!
+        stamp_hand_in!(submission, assignment, late: late)
         # A partner joins the existing submission; handing both to a new one
         # trips the team-size check, which counts what is already in the team.
         team.drop(1).each do |partner|
@@ -77,6 +84,22 @@ module Demo
         submission.correction = demo_manuscript_copy
         submission.accepted = correction == :accepted
         submission.save!
+      end
+
+      # A submission counts as late by the hour it was written, and these are
+      # written today while the deadlines are weeks past -- so every one of them
+      # would be late. The hand-in is dated back behind the deadline instead,
+      # except for every twentieth.
+      def stamp_hand_in!(submission, assignment, late:)
+        handed_in_at = if late
+          assignment.deadline + rand(1..48).hours
+        else
+          assignment.deadline - rand(2..96).hours
+        end
+        # rubocop:disable Rails/SkipsModelValidations
+        submission.update_columns(created_at: handed_in_at,
+                                  last_modification_by_users_at: handed_in_at)
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       # One copy on disk, opened again per hand-in, because Shrine closes what
