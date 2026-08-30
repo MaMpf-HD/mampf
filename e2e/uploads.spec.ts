@@ -148,8 +148,10 @@ test.describe("uploading through Uppy", () => {
   test("a correction, once the deadline has passed",
     async ({ factory, student, tutor: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
-      const assignment = await factory.create("assignment", [], {
-        lecture_id: lecture.id, deadline: "2020-01-01 12:00:00",
+      // The trait rather than a date in the past: an assignment refuses a
+      // deadline that has already gone by, and writes it afterwards instead.
+      const assignment = await factory.create("assignment", ["expired"], {
+        lecture_id: lecture.id,
       });
       const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
         lecture_id: lecture.id, tutor_id: user.id, title: "Mo 10",
@@ -183,8 +185,10 @@ test.describe("uploading through Uppy", () => {
   test("a stack of corrections, each named after its submission",
     async ({ factory, student, tutor: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
-      const assignment = await factory.create("assignment", [], {
-        lecture_id: lecture.id, deadline: "2020-01-01 12:00:00",
+      // The trait rather than a date in the past: an assignment refuses a
+      // deadline that has already gone by, and writes it afterwards instead.
+      const assignment = await factory.create("assignment", ["expired"], {
+        lecture_id: lecture.id,
       });
       const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
         lecture_id: lecture.id, tutor_id: user.id, title: "Mo 10",
@@ -221,8 +225,10 @@ test.describe("uploading through Uppy", () => {
   test("a stack of corrections the tutor changes their mind about",
     async ({ factory, student, tutor: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
-      const assignment = await factory.create("assignment", [], {
-        lecture_id: lecture.id, deadline: "2020-01-01 12:00:00",
+      // The trait rather than a date in the past: an assignment refuses a
+      // deadline that has already gone by, and writes it afterwards instead.
+      const assignment = await factory.create("assignment", ["expired"], {
+        lecture_id: lecture.id,
       });
       const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
         lecture_id: lecture.id, tutor_id: user.id, title: "Mo 10",
