@@ -379,6 +379,15 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).not_to include(I18n.t("errors.unknown"))
       end
 
+      it "sends a saved settings pane back to its tab" do
+        patch lecture_path(lecture),
+              params: { lecture: { locale: "de" }, subpage: "settings" },
+              as: :turbo_stream
+
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "settings"))
+        expect(lecture.reload.locale).to eq("de")
+      end
+
       it "leaves the people pane alone" do
         patch lecture_path(lecture),
               params: { lecture: { term_id: other_term.id, sort: "lecture",

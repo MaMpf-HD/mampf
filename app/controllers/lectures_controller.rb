@@ -541,8 +541,12 @@ class LecturesController < ApplicationController
       end
     end
 
+    # Only the assessments pane has something to put in place of itself. Every
+    # other tab is answered the way a form submit is answered without Turbo --
+    # by loading the tab again; rendering nothing leaves the page as it was and
+    # the save looks like it did not happen.
     def render_turbo_stream_update
-      return unless params[:subpage] == "assessments"
+      return redirect_to_edit_lecture unless params[:subpage] == "assessments"
 
       flash.now[:notice] = t("admin.lecture.updated")
       streams = [
