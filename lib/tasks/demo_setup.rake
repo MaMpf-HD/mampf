@@ -39,6 +39,12 @@ namespace :demo do
     Demo::SetupSupport.setup!
   end
 
+  desc "Add the assessment demo data to a database restored from the shipped " \
+       "seed, leaving its tutorials, talks and seating alone"
+  task setup_on_seed: :environment do
+    Demo::SetupSupport.setup_on_seed!
+  end
+
   desc "Create vignettes for a lecture in every state they can be in"
   task vignettes: :environment do
     Demo::VignettesSupport.setup!(

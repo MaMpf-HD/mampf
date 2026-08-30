@@ -46,6 +46,20 @@ module Demo
       setup_grading!
     end
 
+    # The same, minus the rosters. A database restored from the shipped seed
+    # already has the demo tutorials and talks, and people seated in them so
+    # that submissions line up with the group they were handed in to; the
+    # roster step would empty those groups and allocate them anew.
+    def setup_on_seed!
+      ensure_non_production!
+      reset_eligibility!
+      setup_assessment!
+      setup_performance!
+      setup_eligibility!
+      setup_exams!
+      setup_grading!
+    end
+
     private
 
       # rubocop:disable Rails/Exit
