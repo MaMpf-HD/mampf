@@ -1,7 +1,6 @@
 module Demo
   module AssessmentSetupSupport
     def setup_assessment!
-
       lecture = nil
       Demo::QuietLoggingSupport.with_quiet_logging do
         lecture = assessment_lecture!

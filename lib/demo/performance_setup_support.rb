@@ -7,7 +7,6 @@ module Demo
     ].freeze
 
     def setup_performance!
-
       lecture = nil
       Demo::QuietLoggingSupport.with_quiet_logging do
         lecture = performance_lecture!
