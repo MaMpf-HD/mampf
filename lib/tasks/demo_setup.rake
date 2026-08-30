@@ -39,6 +39,12 @@ namespace :demo do
     Demo::SetupSupport.setup!
   end
 
+  desc "Hand in the demo homework: a submission per team for every sheet that " \
+       "carries an assessment"
+  task homework_submissions: :environment do
+    Demo::SetupSupport.setup_homework_submissions!
+  end
+
   desc "Add the assessment demo data to a database restored from the shipped " \
        "seed, leaving its tutorials, talks and seating alone"
   task setup_on_seed: :environment do
