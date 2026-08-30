@@ -105,7 +105,7 @@ module Demo
       end
 
       def seed_demo_participations!(lecture)
-        memberships = TutorialMembership.where(tutorial_id: demo_tutorial_ids(lecture))
+        memberships = TutorialMembership.where(tutorial_id: staffed_tutorial_ids(lecture))
 
         demo_assignments(lecture).each do |assignment|
           assessment = assignment.assessment
@@ -129,7 +129,7 @@ module Demo
         assessment_ids = assignments.filter_map { |assignment| assignment.assessment&.id }
         dropout_cutoffs = {}
 
-        demo_tutorials(lecture).each do |tutorial|
+        staffed_tutorials(lecture).each do |tutorial|
           participations = Assessment::Participation
                            .where(tutorial_id: tutorial.id, assessment_id: assessment_ids)
                            .includes(assessment: :assessable)

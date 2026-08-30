@@ -51,7 +51,7 @@ module Demo
       end
 
       def create_demo_achievements!(lecture)
-        memberships = TutorialMembership.where(tutorial_id: demo_tutorial_ids(lecture))
+        memberships = TutorialMembership.where(tutorial_id: staffed_tutorial_ids(lecture))
                                         .pluck(:user_id, :tutorial_id)
 
         DEMO_ACHIEVEMENT_ATTRIBUTES.each do |attrs|
@@ -105,7 +105,7 @@ module Demo
       end
 
       def compute_demo_performance_records!(lecture)
-        user_ids = TutorialMembership.where(tutorial_id: demo_tutorial_ids(lecture))
+        user_ids = TutorialMembership.where(tutorial_id: staffed_tutorial_ids(lecture))
                                      .distinct
                                      .pluck(:user_id)
         service = StudentPerformance::ComputationService.new(lecture: lecture)

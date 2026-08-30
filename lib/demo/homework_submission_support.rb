@@ -53,7 +53,7 @@ module Demo
       def demo_teams(lecture)
         @demo_teams ||= {}
         @demo_teams[lecture.id] ||=
-          demo_tutorials(lecture).flat_map do |tutorial|
+          staffed_tutorials(lecture).flat_map do |tutorial|
             members = tutorial.tutorial_memberships.includes(:user)
                               .map(&:user).sort_by(&:id)
             pair = members.first(TEAMS_WITH_A_PARTNER * 2)

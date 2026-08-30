@@ -301,5 +301,16 @@ module Demo
       def demo_tutorial_ids(lecture)
         demo_tutorials(lecture).pluck(:id)
       end
+
+      # Every group that has anybody in it, the seed's own included: the named
+      # accounts one signs in with sit in those, and homework that is graded
+      # should reach them too.
+      def staffed_tutorials(lecture)
+        lecture.tutorials.order(:title).select { |tutorial| tutorial.tutorial_memberships.any? }
+      end
+
+      def staffed_tutorial_ids(lecture)
+        staffed_tutorials(lecture).map(&:id)
+      end
   end
 end
