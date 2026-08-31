@@ -305,6 +305,64 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  describe "#results_visible?" do
+    let(:participation) { FactoryBot.create(:assessment_participation, :marked) }
+    let(:task_points) { participation.task_points }
+
+    it "is true once a task carries a value" do
+      expect(participation.results_visible?).to be(true)
+    end
+
+    it "is false while no task carries one" do
+      task_points.each { |point| point.update!(points: nil) }
+
+      expect(participation.reload.results_visible?).to be(false)
+    end
+
+    # A row saved with every field left blank: the task points exist, the sum
+    # written back to points_total is 0, and only the task points can still tell
+    # "nothing entered" from "zero points".
+    it "is false although points_total reads 0" do
+      task_points.each { |point| point.update!(points: nil) }
+
+      expect(participation.reload.points_total).to eq(0)
+      expect(participation.results_visible?).to be(false)
+    end
+
+    it "is true for a single zero somebody entered" do
+      task_points.first.update!(points: 0)
+      task_points.drop(1).each { |point| point.update!(points: nil) }
+
+      expect(participation.reload.results_visible?).to be(true)
+    end
+
+    it "is false without any task points" do
+      participation.task_points.destroy_all
+
+      expect(participation.reload.results_visible?).to be(false)
+    end
+
+    # The hub asks this once per sheet on a preloaded participation, so a query
+    # here would be one per row.
+    it "answers from the loaded association without asking again" do
+      participation.task_points.load
+
+      expect(count_queries { participation.results_visible? }).to eq(0)
+    end
+
+    def count_queries
+      count = 0
+      subscription = ActiveSupport::Notifications
+                     .subscribe("sql.active_record") do |*, payload|
+        count += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION|CACHE/)
+      end
+      yield
+      count
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscription)
+    end
+  end
+
   describe ".tutorial_for" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }

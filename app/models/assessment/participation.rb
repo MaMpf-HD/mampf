@@ -51,6 +51,21 @@ module Assessment
       end
     end
 
+    # The one place the student side asks whether marks may be shown. Sheets
+    # have no release step - what a tutor saves, the student sees - so the
+    # answer today is "somebody wrote a value on some task". Everything student
+    # facing reads it here, so should sheets ever get a release step, this is
+    # the single line that changes.
+    #
+    # Deliberately not `points_total`: a row saved with every field left blank
+    # creates task points of nil, and the sum `Assessment::TaskPoint` writes
+    # back arrives as 0, not nil - "nothing entered" would read as "zero".
+    def results_visible?
+      return task_points.any? { |point| !point.points.nil? } if task_points.loaded?
+
+      task_points.where.not(points: nil).exists?
+    end
+
     private
 
       # Nothing may be marked before the assessable says grading is open. Leaving
