@@ -138,16 +138,16 @@
       <% if grading_enabled?(@assignment) %>
         <button class="btn btn-success btn-sm"
                 <%= @assignment.active? ? 'disabled' : '' %>
-                data-submission-table-target="bulkSave"
-                data-action="click->submission-table#submitAll">
+                data-pointing-table-target="bulkSave"
+                data-action="click->pointing-table#submitAll">
           <i class="bi bi-save me-1"></i>
           <%= t('assessment.grading_tutorial.save_all') %>
         </button>
 
         <%= form_with url: point_multi_submissions_tutorial_path,
                       method: :patch,
-                      data: { turbo: true, submission_table_target: "form" } do %>
-          <input type="hidden" name="submissions" data-submission-table-target="payload">
+                      data: { turbo: true, pointing_table_target: "form" } do %>
+          <input type="hidden" name="submissions" data-pointing-table-target="payload">
           <input type="hidden" name="assignment_id" value="<%= @assignment.id %>">
           <input type="hidden" name="tutorial_id" value="<%= @tutorial.id %>">
           <input type="hidden" name="mode" value="tutor">
