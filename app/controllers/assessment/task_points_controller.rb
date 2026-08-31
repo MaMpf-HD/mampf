@@ -23,8 +23,8 @@ module Assessment
     end
 
     def authorize_assessment!
-      authorize! :grade, @tutorial if @tutorial.present?
-      authorize! :grade, @lecture if @lecture.present?
+      authorize! :grade, @tutorial if @grading_scope_type == "tutorial"
+      authorize! :grade, @lecture if @grading_scope_type == "lecture"
     end
 
     def update_team_multi
@@ -62,12 +62,14 @@ module Assessment
         render_task_points_update(
           turbo_stream.replace(
             "submission-row-#{@submission.id}",
-            html: render_to_string(SubmissionRowComponent.new(
-                                     submission: @submission,
-                                     assignment: @assignment,
-                                     grading_scope:
-                                        params[:scope] == "tutorial" ? @tutorial : @lecture
-                                   ))
+            html: render_to_string(
+              SubmissionRowComponent.new(
+                submission: @submission,
+                assignment: @assignment,
+                grading_scope:
+                   @grading_scope_type == "tutorial" ? @tutorial : @lecture
+              )
+            )
           )
         )
       end
@@ -92,20 +94,27 @@ module Assessment
         render_task_points_update(
           turbo_stream.replace(
             "participation-row-#{@participation.id}",
-            html: render_to_string(ParticipationRowComponent.new(
-                                     participation: @participation,
-                                     assessment: @assignment.assessment,
-                                     grading_scope:
-                                        params[:scope] == "tutorial" ? @tutorial : @lecture,
-                                     save_url:
-                                        point_user_tutorial_path(@participation,
-                                                                 type: "Tutorial",
-                                                                 scope: params[:scope]),
-                                     refresh_url:
-                                        refresh_point_user_tutorial_path(@participation,
-                                                                         type: "Tutorial",
-                                                                         scope: params[:scope])
-                                   ))
+            html:
+              render_to_string(
+                ParticipationRowComponent.new(
+                  participation: @participation,
+                  assessment: @assignment.assessment,
+                  grading_scope:
+                     @grading_scope_type == "tutorial" ? @tutorial : @lecture,
+                  save_url:
+                     point_user_tutorial_path(
+                       @participation,
+                       type: "Tutorial",
+                       grading_scope_type: @grading_scope_type
+                     ),
+                  refresh_url:
+                     refresh_point_user_tutorial_path(
+                       @participation,
+                       type: "Tutorial",
+                       grading_scope_type: @grading_scope_type
+                     )
+                )
+              )
           )
         )
       end
@@ -152,12 +161,14 @@ module Assessment
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
               "submission-row-#{@submission.id}",
-              html: render_to_string(SubmissionRowComponent.new(
-                                       submission: @submission,
-                                       assignment: @assignment,
-                                       grading_scope:
-                                          params[:scope] == "tutorial" ? @tutorial : @lecture
-                                     ))
+              html: render_to_string(
+                SubmissionRowComponent.new(
+                  submission: @submission,
+                  assignment: @assignment,
+                  grading_scope:
+                     @grading_scope_type == "tutorial" ? @tutorial : @lecture
+                )
+              )
             )
           end
         end
@@ -168,20 +179,26 @@ module Assessment
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
               "participation-row-#{@participation.id}",
-              html: render_to_string(ParticipationRowComponent.new(
-                                       participation: @participation,
-                                       assessment: @assignment.assessment,
-                                       grading_scope:
-                                          params[:scope] == "tutorial" ? @tutorial : @lecture,
-                                       save_url:
-                                          point_user_tutorial_path(@participation,
-                                                                   type: "Tutorial",
-                                                                   scope: params[:scope]),
-                                       refresh_url:
-                                          refresh_point_user_tutorial_path(@participation,
-                                                                           type: "Tutorial",
-                                                                           scope: params[:scope])
-                                     ))
+              html: render_to_string(
+                ParticipationRowComponent.new(
+                  participation: @participation,
+                  assessment: @assignment.assessment,
+                  grading_scope:
+                     @grading_scope_type == "tutorial" ? @tutorial : @lecture,
+                  save_url:
+                     point_user_tutorial_path(
+                       @participation,
+                       type: "Tutorial",
+                       grading_scope_type: @grading_scope_type
+                     ),
+                  refresh_url:
+                     refresh_point_user_tutorial_path(
+                       @participation,
+                       type: "Tutorial",
+                       grading_scope_type: @grading_scope_type
+                     )
+                )
+              )
             )
           end
         end
@@ -197,17 +214,19 @@ module Assessment
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
               "grading-table",
-              html: render_to_string(TutorialPointingTableComponent.new(
-                                       assignment: @assignment,
-                                       tutorial: @tutorial,
-                                       mode: params[:mode]
-                                     ))
+              html: render_to_string(
+                TutorialPointingTableComponent.new(
+                  assignment: @assignment,
+                  grading_scope: @grading_scope_type == "tutorial" ? @tutorial : @lecture
+                )
+              )
             )
           end
         end
       end
 
       def set_assignment_resource
+        @grading_scope_type = params[:grading_scope_type]
         if params[:submissions]
           set_resources_from_bulk_params
         elsif params[:submission_id]

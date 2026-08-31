@@ -136,7 +136,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
       TabConfig.new(
         "points",
         I18n.t("assessment.points"),
-        TutorialPointingTableComponent.new(mode: "teacher", assignment: assessable)
+        TutorialPointingTableComponent.new(assignment: assessable, grading_scope: lecture)
       )
     end
 

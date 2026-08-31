@@ -8,16 +8,13 @@ class ParticipationRowComponent < ViewComponent::Base
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
+    @lecture = @assessable.lecture
     @save_url = save_url
     @refresh_url = refresh_url
     @grading_scope = grading_scope
     check_grading_scope
     @user ||= @participation&.user
-    @lecture = if @grading_scope.is_a?(Tutorial)
-      @grading_scope.lecture
-    elsif @grading_scope.is_a?(Lecture)
-      @grading_scope
-    end
+    @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
 
     # return unless @user.nil?
 

@@ -124,9 +124,10 @@
       <!-- Save and refresh -->
       <% if can_grade? && grading_enabled? %>
         <!-- Hidden form for this row to submit -->
-        <%= form_with url: point_submission_tutorial_path(@submission, 
-                                                          type: "Tutorial", 
-                                                          scope: @mode == "tutor" ? "tutorial" : "lecture"),
+        <%= form_with url: point_submission_tutorial_path(
+          @submission, 
+          type: "Tutorial", 
+          grading_scope_type: @grading_scope.class.name.downcase),
                     method: :patch,
                     data: { turbo: true, participation_row_target: "form" },
                     html: { style: "display:none;" } do %>
@@ -139,9 +140,10 @@
         <!-- Save row -->
         <%= save_row_button(allow_grading?) %>
         <!-- Refresh row -->
-        <%= form_with url: refresh_point_submission_tutorial_path(@submission, 
-                                                                  type: "Tutorial", 
-                                                                  scope: @mode == "tutor" ? "tutorial" : "lecture"),
+        <%= form_with url: refresh_point_submission_tutorial_path(
+          @submission, 
+          type: "Tutorial", 
+          grading_scope_type: @grading_scope.class.name.downcase),
                     method: :patch,
                     data: { turbo: true, participation_row_target: "refreshForm" },
                     html: { style: "display:none;" } do %>

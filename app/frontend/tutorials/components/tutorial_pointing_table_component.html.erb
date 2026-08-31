@@ -61,10 +61,10 @@
                         assessment: @assignment.assessment,
                         save_url: point_user_tutorial_path(participation, 
                                                     type: "Tutorial",
-                                                    scope: "tutorial"),
+                                                    grading_scope_type: "tutorial"),
                         refresh_url: refresh_point_user_tutorial_path(participation, 
                                                             type: "Tutorial", 
-                                                            scope: "tutorial"),
+                                                            grading_scope_type: "tutorial"),
                         grading_scope: @tutorial)) %>
                   <% end %>
                 <% end %>
@@ -88,10 +88,10 @@
                         assessment: @assignment.assessment,
                         save_url: point_user_tutorial_path(participation, 
                                                     type: "Tutorial",
-                                                    scope: "lecture"),
+                                                    grading_scope_type: "lecture"),
                         refresh_url: refresh_point_user_tutorial_path(participation, 
                                                             type: "Tutorial", 
-                                                            scope: "lecture"),
+                                                            grading_scope_type: "lecture"),
                         grading_scope: @lecture)) %>
                     <% end %>
                   <% end %>
