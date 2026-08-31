@@ -2,9 +2,21 @@ module Assessment
   module SubmissionsHub
     # What one call to the loader hands back: every sheet of the lecture newest
     # first, the exam-admission standing, the sheets that can still be handed in
-    # (soonest first), the subset of those sharing the next deadline, and the
-    # sheet that came back most recently.
+    # (soonest first), the subset of those sharing the next deadline, the sheet
+    # that came back most recently, and what the cards need to offer a team -
+    # the invitations the reader has, and everybody they could invite.
     Result = Struct.new(:sheets, :standing, :open_sheets, :due, :latest_marked,
-                        keyword_init: true)
+                        :invites, :possible_partners, :next_scheduled,
+                        keyword_init: true) do
+      # The team-ups offered for one sheet, and everybody the reader could invite
+      # to it - both read by the card, both fetched once for the whole page.
+      def invites_for(assignment)
+        invites.fetch(assignment.id, [])
+      end
+
+      def invitable_to(submission)
+        possible_partners - submission.users.to_a
+      end
+    end
   end
 end

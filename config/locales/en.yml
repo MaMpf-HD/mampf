@@ -2685,6 +2685,7 @@ en:
     invalid_date: 'Invalid date time format.'
   time:
     formats:
+      submission_deadline: "%A, %B %-d, %Y, %H:%M"
       concise: '%Y-%m-%d'
       student_registration: '%B %-d, %Hh%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
@@ -2817,6 +2818,34 @@ en:
   submission:
     hub:
       heading: Earlier sheets
+      due_now: Due now
+      card:
+        due: "Due %{time}"
+        in_time: "in %{time}"
+        worth:
+          one: "%{count} problem, %{points} points"
+          other: "%{count} problems, %{points} points"
+        hand_in: Hand in
+        replace: Replace file
+        invite: Invite someone
+        join: Join with a code
+        leave: Leave the team
+        delete: Delete
+        code: Join code
+        team_html: >
+          Handed in together with %{names} - points are recorded for each of you
+          separately.
+        team_hint: >
+          You can hand in alone or together with others. Whoever hands in first
+          gets a code to pass on.
+        invited: "Invited: %{names}"
+        unknown_inviter: somebody
+        reload: Reload the page
+        nothing_due: Nothing to hand in
+        nothing_scheduled: The next sheet has not been posted yet.
+        appears: "%{sheet} appears on %{date}."
+        appears_until: "%{sheet} appears on %{date} - you will have until %{deadline}."
+        marked_recently: Marked most recently
       sheet_count:
         one: "%{count} sheet"
         other: "%{count} sheets"

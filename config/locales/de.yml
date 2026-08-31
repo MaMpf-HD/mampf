@@ -2900,6 +2900,7 @@ de:
     invalid_date: 'Ungültiges Datums-Zeit-Format.'
   time:
     formats:
+      submission_deadline: "%A, %-d. %B %Y, %H:%M Uhr"
       concise: '%d.%m.%Y'
       student_registration: '%-d. %B, %Hh%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
@@ -3041,6 +3042,34 @@ de:
   submission:
     hub:
       heading: Frühere Blätter
+      due_now: Jetzt fällig
+      card:
+        due: "Fällig %{time}"
+        in_time: "in %{time}"
+        worth:
+          one: "%{count} Aufgabe, %{points} Punkte"
+          other: "%{count} Aufgaben, %{points} Punkte"
+        hand_in: Abgeben
+        replace: Datei ersetzen
+        invite: Jemanden einladen
+        join: Mit einem Code beitreten
+        leave: Gruppe verlassen
+        delete: Löschen
+        code: Beitrittscode
+        team_html: >
+          Zusammen abgegeben mit %{names} - die Punkte werden für Euch beide
+          einzeln vermerkt.
+        team_hint: >
+          Du kannst allein oder zusammen mit anderen abgeben. Wer zuerst abgibt,
+          bekommt einen Code zum Weitergeben.
+        invited: "Eingeladen: %{names}"
+        unknown_inviter: jemand
+        reload: Seite neu laden
+        nothing_due: Nichts abzugeben
+        nothing_scheduled: Das nächste Blatt ist noch nicht eingestellt.
+        appears: "%{sheet} erscheint am %{date}."
+        appears_until: "%{sheet} erscheint am %{date} - Zeit hast Du dann bis %{deadline}."
+        marked_recently: Zuletzt korrigiert
       sheet_count:
         one: "%{count} Blatt"
         other: "%{count} Blätter"

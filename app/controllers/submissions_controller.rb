@@ -9,7 +9,6 @@ class SubmissionsController < ApplicationController
                                           :redeem_code, :join, :cancel_new]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
-  before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
   before_action :prevent_caching, only: :show_manuscript
   before_action :check_if_tutorials, only: :index
   before_action :check_student_status, only: :index
@@ -29,24 +28,26 @@ class SubmissionsController < ApplicationController
   # NOTE: authorization for #index is done manually via before_actions
   # SubmissionAbility lets anyone pass
   def index
-    @hub = Assessment::SubmissionsHub::Loader.new(lecture: @lecture,
-                                                  user: current_user).call
     # Everything still open has a card above the list, so the list is what is
     # behind you - a sheet in both places would be told twice, and a row cannot
     # be handed in.
-    @history = @hub.sheets - @hub.open_sheets
+    @history = hub.sheets - hub.open_sheets
 
     render template: "submissions/index/index",
            layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
+  # `new` and `edit` are the same frame with the same form in it; only the
+  # record differs.
   def new
     @submission = Submission.new
     @submission.assignment = @assignment
     set_submission_locale
+    render_form
   end
 
   def edit
+    render_form
   end
 
   def create
@@ -57,33 +58,31 @@ class SubmissionsController < ApplicationController
     authorize! :create, @submission
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
-    @too_late = @submission.not_updatable?
-    return if @too_late
+    @assignment = @submission.assignment
+    return render_card(status: :unprocessable_content) if @submission.not_updatable?
 
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
       @errors = @submission.check_file_properties(@submission.manuscript
                                                              .metadata,
                                                   :manuscript)
-      return if @errors.present?
+      return render_form(status: :unprocessable_content) if @errors.present?
     end
     @submission.user_submission_joins.build(user: current_user)
     @submission.save
-    @assignment = @submission.assignment
     @errors = @submission.errors
-    return unless @submission.valid?
+    return render_form(status: :unprocessable_content) unless @submission.valid?
 
     send_invitation_emails
     @submission.update(last_modification_by_users_at: Time.zone.now)
-    return unless @submission.manuscript
-
-    sync_assessment_participations(users: [current_user])
-    send_upload_email(User.where(id: current_user.id))
+    if @submission.manuscript
+      sync_assessment_participations(users: [current_user])
+      send_upload_email(User.where(id: current_user.id))
+    end
+    render_card
   end
 
   def update
-    return if @too_late
-
     update_params = submission_update_params
 
     old_manuscript_data = @submission.manuscript_data
@@ -93,11 +92,11 @@ class SubmissionsController < ApplicationController
       @errors = @submission.check_file_properties(@submission.manuscript
                                                              .metadata,
                                                   :manuscript)
-      return if @errors.present?
+      return render_form(status: :unprocessable_content) if @errors.present?
 
       @submission.save
       @errors = @submission.errors
-      return unless @submission.valid?
+      return render_form(status: :unprocessable_content) unless @submission.valid?
     end
     @submission.update(update_params)
     if @submission.valid?
@@ -114,16 +113,20 @@ class SubmissionsController < ApplicationController
       end
     end
     @errors = @submission.errors
+    return render_form(status: :unprocessable_content) if @errors.any?
+
+    render_card
   end
 
   def destroy
-    return if @too_late
-
     clear_submitted_at(@submission.users)
     @submission.destroy
+    @submission = nil
+    render_card
   end
 
   def enter_code
+    @invites = hub.invites_for(@assignment)
   end
 
   def redeem_code
@@ -148,24 +151,34 @@ class SubmissionsController < ApplicationController
     code = join_params[:code]
     @submission = Submission.find_by(token: code, assignment: @assignment)
     check_code_and_join
+    if @error
+      @invites = hub.invites_for(@assignment)
+      return render :enter_code, status: :unprocessable_content
+    end
+
+    render_card
   end
 
+  # Leaving is refused for the last person on a team - that is a delete, and it
+  # is a different button. The card says so rather than quietly doing nothing.
   def leave
-    return if @too_late
-
     if @submission.users.one?
-      @error = I18n.t("submission.no_partners_no_leave")
-      return
+      @card_error = I18n.t("submission.no_partners_no_leave")
+      return render_card(status: :unprocessable_content)
     end
     clear_submitted_at([current_user])
     @submission.users.delete(current_user)
     send_leave_email
+    @submission = nil
+    render_card
   end
 
   def cancel_edit
+    render_card
   end
 
   def cancel_new
+    render_card
   end
 
   def show_manuscript
@@ -194,19 +207,16 @@ class SubmissionsController < ApplicationController
 
   def refresh_token
     @submission.update(token: Submission.generate_token)
+    render_card
   end
 
   def enter_invitees
-    @too_late = @submission.assignment.totally_expired?
+    @partners = hub.invitable_to(@submission)
   end
 
   def invite
-    if @too_late
-      render :create
-      return
-    end
     send_invitation_emails
-    render :create
+    render_card
   end
 
   def edit_correction
@@ -265,6 +275,30 @@ class SubmissionsController < ApplicationController
 
   private
 
+    # Everything a student does changes one sheet and nothing else - the history
+    # list holds only sheets that are closed - so every action answers by
+    # re-rendering that sheet's card frame. Reading the whole hub back for it is
+    # what keeps the card from ever disagreeing with the row below it.
+    def render_card(status: :ok)
+      loaded = hub
+      @sheet = loaded.sheets.find { |sheet| sheet.assignment == @assignment }
+      @invites = loaded.invites_for(@assignment)
+      @partners = loaded.possible_partners
+      render :card, status: status
+    end
+
+    # The form back in the frame with its messages beside the fields, rather
+    # than an alert box next to a card that still shows the old state.
+    def render_form(status: :ok)
+      @partners = hub.possible_partners
+      render :form, status: status
+    end
+
+    def hub
+      @hub ||= Assessment::SubmissionsHub::Loader.new(lecture: @lecture,
+                                                      user: current_user).call
+    end
+
     def set_submission
       @submission = Submission.find_by(id: params[:id])
       @assignment = @submission&.assignment
@@ -272,8 +306,9 @@ class SubmissionsController < ApplicationController
       set_submission_locale
       return if @submission
 
-      flash.now[:alert] = I18n.t("controllers.no_submission")
-      render js: "window.location='#{root_path}'"
+      # No card to put a message in, so the frame says what happened and offers
+      # the way back rather than navigating itself somewhere unexpected.
+      render :gone, status: :gone
     end
 
     def submission_create_params
@@ -318,10 +353,6 @@ class SubmissionsController < ApplicationController
       set_submission_locale and return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
-    end
-
-    def set_too_late
-      @too_late = @submission.not_updatable?
     end
 
     def set_submission_locale

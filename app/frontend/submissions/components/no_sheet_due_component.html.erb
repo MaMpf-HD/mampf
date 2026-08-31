@@ -1,0 +1,32 @@
+<div class="next-action">
+  <h2 class="h4 mb-1"><%= t("submission.hub.card.nothing_due") %></h2>
+  <p class="mb-3"><%= next_sheet_line %></p>
+
+  <% if latest_marked %>
+    <div class="eyebrow mb-2"><%= t("submission.hub.card.marked_recently") %></div>
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <span class="num">
+        <%= latest_marked.assignment.title %>&nbsp;&nbsp;
+        <span class="visually-hidden"><%= points_reader_label %></span>
+        <span aria-hidden="true">
+          <%= points %> <span class="text-muted">/ <%= max_points %></span>
+        </span>
+      </span>
+      <% if bar_percentage %>
+        <span class="spark" style="margin: 0" aria-hidden="true">
+          <span style="width: <%= bar_percentage %>%"></span>
+        </span>
+      <% end %>
+      <% if correction_name %>
+        <%= link_to show_correction_path(latest_marked.submission),
+                    class: "small", data: { turbo: false } do %>
+          <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
+          <span class="visually-hidden">
+            <%= t("submission.hub.fold.correction_label") %>:
+          </span>
+          <%= correction_name %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

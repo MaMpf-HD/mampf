@@ -11,8 +11,8 @@
       <div>
         <% if legacy? %>
           <span class="small"><%= t("submission.hub.old_style") %></span>
-        <% elsif chip_label %>
-          <%= tag.span(chip_label, class: chip_class) %>
+        <% elsif chip? %>
+          <%= render(SheetChipComponent.new(sheet: sheet)) %>
         <% end %>
       </div>
 

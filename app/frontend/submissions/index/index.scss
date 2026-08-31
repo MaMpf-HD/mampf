@@ -1,3 +1,30 @@
+/* The one bordered element on the page, and the only one carrying colour: what
+   can still be handed in is where reading starts. */
+.next-action {
+  border: 2px solid #4977a8;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  height: 100%;
+}
+
+.file-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  background: #f5f7f9;
+  border: 1px solid #d8dee4;
+  border-radius: 0.35rem;
+  padding: 0.6rem 0.75rem;
+}
+
+/* A long filename shortens rather than pushing its size and date off the pill. */
+.file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Sheet | status (only where there is no number) | points. No deadline column:
    three weeks on, the due date is noise - the sheet that is still open carries
    it on its card instead. */

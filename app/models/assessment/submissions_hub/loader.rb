@@ -17,7 +17,9 @@ module Assessment
 
       def call
         Result.new(sheets: sheets, standing: standing, open_sheets: open_sheets,
-                   due: due, latest_marked: latest_marked)
+                   due: due, latest_marked: latest_marked, invites: invites,
+                   possible_partners: possible_partners,
+                   next_scheduled: next_scheduled)
       end
 
       private
@@ -154,6 +156,41 @@ module Assessment
         def latest_marked
           sheets.select { |sheet| sheet.state == :marked }
                 .max_by { |sheet| sheet.marked_at || sheet.assignment.deadline }
+        end
+
+        # Team-ups somebody has offered the reader, by assignment. Only sheets
+        # that can still be handed in carry one, which is the same set as
+        # `open_sheets` - `Assignment#semiactive?` and "still open" are the same
+        # question. `SubmissionInvite` asks once per sheet and then once more per
+        # invitation for the inviter's name; this is one query for the lecture,
+        # and the inviter comes along with it.
+        def invites
+          open_ids = open_sheets.map { |sheet| sheet.assignment.id }
+          return {} if open_ids.empty?
+
+          Submission.where(assignment_id: open_ids)
+                    .where("? = ANY(invited_user_ids)", user.id)
+                    .includes(:users)
+                    .group_by(&:assignment_id)
+        end
+
+        # What the card says when nothing is due: the sheet the lecturer has
+        # scheduled but not released yet. Only asked when there is no open sheet,
+        # because that is the only time anybody reads it.
+        def next_scheduled
+          return if open_sheets.any?
+
+          lecture.next_scheduled_sheet
+        end
+
+        # Everybody the reader has ever handed in with in this lecture. The card
+        # asks it twice per open sheet - once to decide whether inviting is still
+        # possible, once for the list to invite from - and it does not depend on
+        # the sheet, so it is fetched once. With no open sheet there is no card
+        # to ask, and then it is not fetched at all.
+        def possible_partners
+          @possible_partners ||=
+            open_sheets.any? ? user.submission_partners(lecture).to_a : []
         end
     end
   end

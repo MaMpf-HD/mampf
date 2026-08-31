@@ -1,0 +1,11 @@
+<%= turbo_frame_tag SubmissionCardComponent.frame_id(@assignment) do %>
+  <div class="next-action">
+    <% @invites.to_a.each do |invite| %>
+      <%= render(SubmissionInviteComponent.new(invite: invite,
+                                               assignment: @assignment)) %>
+    <% end %>
+    <%= render partial: "submissions/join",
+               locals: { assignment: @assignment, submission: @submission,
+                         error: @error } %>
+  </div>
+<% end %>

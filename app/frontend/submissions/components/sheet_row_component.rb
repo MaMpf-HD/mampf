@@ -5,18 +5,6 @@
 class SheetRowComponent < ViewComponent::Base
   include ActiveSupport::NumberHelper
 
-  # Grey says "nothing to do yet", amber "this is on you", red "this cost you
-  # points". Never green: a sheet coming back is not an achievement.
-  CHIP_TONES = {
-    nothing_handed_in: "act",
-    grace_period: "act",
-    tutor_decides: "act",
-    handed_in: "wait",
-    awaiting_marks: "wait",
-    correction_uploaded: "wait",
-    exempt: "wait"
-  }.freeze
-
   # The quiet line under the sheet name, and only where a row would otherwise
   # be unexplained. `:bad` is the red one, kept for the two states where the
   # zero was nobody's doing and the reader has something to take up with
@@ -58,15 +46,8 @@ class SheetRowComponent < ViewComponent::Base
     ["sheet-entry", ("sheet-muted" if legacy?)].compact.join(" ")
   end
 
-  def chip_class
-    tone = CHIP_TONES[state]
-    "chip chip-#{tone}" if tone
-  end
-
-  def chip_label
-    return unless CHIP_TONES.key?(state)
-
-    t("submission.hub.chips.#{state}", **interpolations)
+  def chip?
+    SheetChipComponent.for?(state)
   end
 
   def points_class

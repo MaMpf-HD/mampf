@@ -21,23 +21,31 @@ export class SubmissionsPage {
    * the assurance about third-party rights, so the box is ticked first.
    */
   async uploadSubmission(filePath = "e2e/files/manuscript.pdf") {
-    await expect(this.page.getByText("invitations to")).toBeVisible();
+    // The form, whichever of the two it is - only the new one offers invitees.
+    await expect(this.page.getByRole("button", { name: "Save" })).toBeVisible();
 
     await attachToUploadArea(this.page, SUBMISSION_FORM, filePath);
     await this.page.getByRole("checkbox", { name: "I assure that" }).check();
     await this.page.getByRole("button", { name: "Upload file" }).click();
 
+    // Scoped to the form: a card elsewhere on the page may well already show a
+    // file of the same name.
     const fileName = filePath.split("/").at(-1) ?? filePath;
-    await expect(this.page.getByText(fileName)).toBeVisible();
+    await expect(this.page.locator(SUBMISSION_FORM).getByText(fileName))
+      .toBeVisible();
   }
 
+  /** Opens the card's form, uploads and saves; the card comes back in place. */
   async createSubmission() {
-    await this.page.getByRole("button", { name: "create" }).click();
+    await this.page.getByRole("link", { name: "Hand in" }).click();
     await this.uploadSubmission();
 
-    const saveRequestPromise = this.page.waitForResponse("/submissions");
-    await this.page.getByRole("button", { name: "save" }).click();
-    await saveRequestPromise;
-    await expect(this.page.getByRole("button", { name: "edit" })).toBeVisible();
+    const saved = this.page.waitForResponse(
+      response => response.request().method() === "POST",
+    );
+    await this.page.getByRole("button", { name: "Save" }).click();
+    await saved;
+    await expect(this.page.getByRole("link", { name: "Replace file" }))
+      .toBeVisible();
   }
 }

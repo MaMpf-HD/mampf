@@ -330,7 +330,10 @@ RSpec.describe("Submissions", type: :request) do
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include(I18n.t("submission.hub.no_sheets_yet"))
-        expect(response.body).to include(I18n.t("assignment.no_current"))
+        expect(response.body)
+          .to include(I18n.t("submission.hub.card.nothing_due"))
+        expect(response.body)
+          .to include(I18n.t("submission.hub.card.nothing_scheduled"))
       end
     end
 
@@ -480,16 +483,258 @@ RSpec.describe("Submissions", type: :request) do
 
       # Handing in early is a thing people do, and the old page allowed it.
       it "gives a sheet due later a card of its own" do
-        create(:assignment, lecture: lecture, title: "Homework 9",
-                            deadline: 1.week.from_now)
-        create(:assignment, lecture: lecture, title: "Homework 10",
-                            deadline: 3.weeks.from_now)
+        soon = create(:assignment, lecture: lecture, title: "Homework 9",
+                                   deadline: 1.week.from_now)
+        later = create(:assignment, lecture: lecture, title: "Homework 10",
+                                    deadline: 3.weeks.from_now)
 
         get lecture_submissions_path(lecture)
 
-        expect(response.body.scan("submissionArea").size).to eq(2)
-        expect(response.body).to include("Homework 10")
+        expect(response.body)
+          .to include(SubmissionCardComponent.frame_id(soon))
+        expect(response.body)
+          .to include(SubmissionCardComponent.frame_id(later))
       end
+    end
+  end
+
+  # Every student action answers with the card's own Turbo frame. What matters
+  # per action is that the answer has a body at all - a frame response that
+  # renders nothing is a 204, and the page then sits there looking successful.
+  describe "the card's actions" do
+    let(:assignment) do
+      create(:assignment, lecture: lecture, title: "Homework 1",
+                          accepted_file_type: ".pdf")
+    end
+
+    before do
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+      user.lectures << lecture
+    end
+
+    def frame_id(for_assignment = assignment)
+      SubmissionCardComponent.frame_id(for_assignment)
+    end
+
+    def hand_in(for_assignment = assignment, users: [user])
+      submission = create(:submission, :with_manuscript,
+                          assignment: for_assignment, tutorial: tutorial)
+      users.each { |member| submission.users << member }
+      submission
+    end
+
+    describe "opening and closing the form" do
+      it "answers new with the form inside the card's frame" do
+        get new_submission_path(assignment_id: assignment.id)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(frame_id)
+        expect(response.body).to include(I18n.t("basics.submission"))
+      end
+
+      it "answers edit with the form for the sheet in hand" do
+        submission = hand_in
+
+        get edit_submission_path(submission)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(frame_id)
+      end
+
+      it "hands the card back when the reader cancels" do
+        submission = hand_in
+
+        get cancel_edit_submission_path(submission)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(frame_id)
+        expect(response.body).to include("Homework 1")
+      end
+    end
+
+    # The file itself goes through the upload endpoint, which signs a scan and an
+    # intent before the form ever sees it; what is checked here is the frame
+    # round-trip around it.
+    describe "handing in" do
+      it "answers with the card, which now carries a team and a code" do
+        post submissions_path, params: {
+          submission: { assignment_id: assignment.id, invitee_ids: [""],
+                        tutorial_id: tutorial.id, manuscript: "" }
+        }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(frame_id)
+        expect(response.body).to include(I18n.t("submission.hub.card.code"))
+      end
+
+      # The message belongs beside the field, not in an alert next to a card
+      # that still shows the old state. A group of another lecture only reaches
+      # the model where the lecture does not assign groups itself - where it
+      # does, the controller picks the group and the field is not even shown.
+      it "answers a refused group with the form and the reason" do
+        free = create(:lecture, :released_for_all)
+        create(:tutorial, lecture: free)
+        user.lectures << free
+        free_assignment = create(:assignment, lecture: free, title: "Sheet")
+        elsewhere = create(:tutorial, lecture: create(:lecture))
+
+        post submissions_path, params: {
+          submission: { assignment_id: free_assignment.id, invitee_ids: [""],
+                        tutorial_id: elsewhere.id, manuscript: "" }
+        }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body)
+          .to include(SubmissionCardComponent.frame_id(free_assignment))
+        expect(response.body).to include("submission-tutorial-error")
+        expect(response.body)
+          .not_to include(I18n.t("submission.hub.card.replace"))
+      end
+    end
+
+    describe "leaving and deleting" do
+      it "answers a delete with the card back to nothing handed in" do
+        submission = hand_in
+
+        delete submission_path(submission)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to include(I18n.t("submission.hub.chips.nothing_handed_in"))
+      end
+
+      it "answers a leave with the card back to nothing handed in" do
+        partner = create(:confirmed_user)
+        submission = hand_in(users: [user, partner])
+
+        delete leave_submission_path(submission)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to include(I18n.t("submission.hub.chips.nothing_handed_in"))
+      end
+
+      # Leaving a team of one is a delete, and that is a different button.
+      it "refuses to let the last person leave, and says so on the card" do
+        submission = hand_in
+
+        delete leave_submission_path(submission)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body)
+          .to include(I18n.t("submission.no_partners_no_leave"))
+      end
+    end
+
+    # The gate is the ability, not the controller: `SubmissionAbility` allows
+    # these actions only while `Submission#not_updatable?` is false, and once the
+    # grace period is over that is what a closed sheet is.
+    describe "once the sheet is out of the reader's hands" do
+      let(:closed_assignment) do
+        create(:assignment, :expired, lecture: lecture, title: "Homework 0",
+                                      accepted_file_type: ".pdf")
+      end
+
+      it "refuses an edit" do
+        submission = hand_in(closed_assignment)
+
+        patch submission_path(submission), params: {
+          submission: { detach_user_manuscript: "true" }
+        }
+
+        expect(response).to redirect_to(root_url)
+        expect(submission.reload.manuscript).to be_present
+      end
+
+      it "refuses a delete" do
+        submission = hand_in(closed_assignment)
+
+        delete submission_path(submission)
+
+        expect(response).to redirect_to(root_url)
+        expect(Submission.exists?(submission.id)).to be(true)
+      end
+    end
+
+    describe "the team" do
+      it "answers a new code with the card carrying it" do
+        submission = hand_in
+        old_code = submission.token
+
+        patch refresh_submission_token_path(submission)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(submission.reload.token)
+        expect(response.body).not_to include(old_code)
+      end
+
+      it "answers a wrong code with the form and the reason" do
+        post join_submission_path, params: {
+          join: { code: "NOPE42", assignment_id: assignment.id }
+        }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include(
+          I18n.t("submission.invalid_code_for_assignment",
+                 assignment: assignment.title)
+        )
+      end
+
+      it "answers a good code with the card naming the team" do
+        partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        create(:tutorial_membership, tutorial: tutorial, user: partner)
+        partner.lectures << lecture
+        submission = hand_in(users: [partner])
+
+        post join_submission_path, params: {
+          join: { code: submission.token, assignment_id: assignment.id }
+        }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("Ada")
+      end
+
+      # Inviting by name is offered for people the reader has handed in with
+      # before - the first team-up goes through the code.
+      it "offers a past partner when inviting" do
+        partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        earlier = create(:assignment, :expired, lecture: lecture,
+                                                title: "Homework 0")
+        hand_in(earlier, users: [user, partner])
+        submission = hand_in
+
+        get enter_submission_invitees_path(submission)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(frame_id)
+        expect(response.body).to include("Ada")
+      end
+
+      it "answers an invitation with the card naming who was invited" do
+        partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        earlier = create(:assignment, :expired, lecture: lecture,
+                                                title: "Homework 0")
+        hand_in(earlier, users: [user, partner])
+        submission = hand_in
+
+        post invite_to_submission_path(submission),
+             params: { submission: { invitee_ids: [partner.id] } }
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("Ada")
+      end
+    end
+
+    # Deleted in another tab: there is no card left to put a message in, so the
+    # frame says so rather than navigating itself somewhere unexpected.
+    it "answers for a submission that is gone with a frame that says so" do
+      submission = hand_in
+      submission.destroy
+
+      get edit_submission_path(submission)
+
+      expect(response).to have_http_status(:gone)
+      expect(response.body).to include(I18n.t("controllers.no_submission"))
     end
   end
 end

@@ -131,10 +131,11 @@ test.describe("the student's sheet list", () => {
     });
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    const list = student.page.getByRole("region", { name: "Earlier sheets" });
 
-    await expect(
-      student.page.getByText("3.5 of 8 points"),
-    ).toHaveCount(1);
+    // Scoped to the list: with nothing due, the card names the same sheet as
+    // the one it marked most recently.
+    await expect(list.getByText("3.5 of 8 points")).toHaveCount(1);
   });
 
   test("says in words that an old sheet carries no points", async ({
@@ -234,15 +235,16 @@ test.describe("the student's sheet list", () => {
     );
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
-    await student.page.getByText("Homework 1").click();
+    const list = student.page.getByRole("region", { name: "Earlier sheets" });
+    await list.getByText("Homework 1").click();
 
     // Both fixtures carry the same filename, which is exactly why each link
     // says in words which of the two it is.
     await expect(
-      student.page.getByRole("link", { name: "What you handed in" }),
+      list.getByRole("link", { name: "What you handed in" }),
     ).toHaveAttribute("href", `/submissions/${submission.id}/show_manuscript`);
     await expect(
-      student.page.getByRole("link", { name: "The correction" }),
+      list.getByRole("link", { name: "The correction" }),
     ).toHaveAttribute("href", `/submissions/${submission.id}/show_correction`);
   });
 
