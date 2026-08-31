@@ -78,13 +78,21 @@ module AssessmentHelper
     elsif participation_matches_membership?(movement)
       # Has both a participation record AND current membership in this same tutorial.
       # a grade entry already exists
-      # -- because backfill (submitted_at == nil) or marked as participated (submitted_at != nil)
-      # -> allowed, and the participation can be removed (for marked as participated case)
-      {
-        allowed: true,
-        remove_participation_allow: movement[:submitted_at].present?,
-        message: t("assessment.grading_tutorial.marked_as_participated_badge")
-      }
+      if movement[:submitted_at].nil? # backfill (submitted_at == nil)
+        # -> allowed, and the participation can be removed (for backfill case)
+        {
+          allowed: true,
+          remove_participation_allow: false,
+          message: t("assessment.grading_tutorial.no_submission_badge")
+        }
+      else # marked as participated (submitted_at != nil)
+        # -> allowed, and the participation can be removed (for marked as participated case)
+        {
+          allowed: true,
+          remove_participation_allow: true,
+          message: t("assessment.grading_tutorial.marked_as_participated_badge")
+        }
+      end
     elsif participation_differs_from_membership_lecture_mode?(host_tutorial)
       # participated_tutorial_id and new_tutorial_id are both present but differ
       # -> membership has moved since participation was recorded.
