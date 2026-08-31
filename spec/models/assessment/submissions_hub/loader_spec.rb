@@ -370,6 +370,30 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
+  describe "#open_sheets" do
+    it "is empty when every deadline has passed" do
+      create_assignment(deadline: 1.week.ago)
+
+      expect(result.open_sheets).to be_empty
+    end
+
+    # A sheet weeks away is still a sheet you may hand in early, so it needs its
+    # card; the soonest one leads.
+    it "carries every sheet that can still be handed in, soonest first" do
+      create_assignment(title: "Homework 1", deadline: 1.week.ago)
+      later = create_assignment(title: "Homework 3", deadline: 9.days.from_now)
+      next_up = create_assignment(title: "Homework 2", deadline: 2.days.from_now)
+
+      expect(result.open_sheets.map(&:assignment)).to eq([next_up, later])
+    end
+
+    it "carries a sheet still inside its grace period" do
+      assignment = create_assignment(deadline: 10.minutes.ago)
+
+      expect(result.open_sheets.map(&:assignment)).to eq([assignment])
+    end
+  end
+
   describe "#due" do
     it "is empty when every deadline has passed" do
       create_assignment(deadline: 1.week.ago)
@@ -386,6 +410,7 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(result.due.map(&:assignment)).to eq([assignment])
     end
 
+    # `open` holds the later ones as well; `due` is only what the head leads with.
     it "is the sheet with the earliest deadline still ahead" do
       create_assignment(title: "Homework 1", deadline: 1.week.ago)
       next_up = create_assignment(title: "Homework 2", deadline: 2.days.from_now)

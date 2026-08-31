@@ -1,0 +1,44 @@
+<details class="<%= entry_class %>">
+  <summary>
+    <div class="sheet-row">
+      <div>
+        <div class="<%= "fw-semibold" unless legacy? %>"><%= sheet.assignment.title %></div>
+        <% if note %>
+          <div class="<%= note_class %>"><%= note %></div>
+        <% end %>
+      </div>
+
+      <div>
+        <% if legacy? %>
+          <span class="small"><%= t("submission.hub.old_style") %></span>
+        <% elsif chip_label %>
+          <%= tag.span(chip_label, class: chip_class) %>
+        <% end %>
+      </div>
+
+      <div class="<%= points_class %>">
+        <% if legacy? %>
+          <span class="small"><%= t("submission.hub.no_points") %></span>
+        <% elsif number? %>
+          <span class="visually-hidden"><%= points_reader_label %></span>
+          <span aria-hidden="true">
+            <%= tag.span(points, class: ("num-zero" if zero?)) %>
+            <span class="text-muted">/ <%= max_points %></span>
+          </span>
+          <% if bar_percentage %>
+            <div class="spark"><span style="width: <%= bar_percentage %>%"></span></div>
+          <% end %>
+        <% else %>
+          <span aria-hidden="true">
+            &mdash;
+            <%= tag.span("/ #{max_points}", class: "text-muted") if maximum? %>
+          </span>
+        <% end %>
+      </div>
+
+      <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+    </div>
+  </summary>
+
+  <%= render(SheetFoldComponent.new(sheet: sheet)) %>
+</details>

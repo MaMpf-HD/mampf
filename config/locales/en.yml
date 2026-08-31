@@ -2815,6 +2815,72 @@ en:
     en: 'English'
     de: 'German'
   submission:
+    hub:
+      heading: Earlier sheets
+      sheet_count:
+        one: "%{count} sheet"
+        other: "%{count} sheets"
+      column_sheet: Sheet
+      column_status: Status
+      column_points: Your points
+      old_style: old-style sheet
+      fold:
+        tasks_heading: Points per problem
+        files_heading: File and team
+        problem: "Problem %{number}"
+        what_you_handed_in: what you handed in
+        correction_label: The correction
+        no_file: No file was uploaded.
+        correction_carries_points: >
+          The points listed here are the ones your tutor wrote on this PDF,
+          together with the remarks.
+        handed_in: "Handed in %{time}"
+        marked: "Marked %{time}"
+        marked_by: "Marked %{time} by %{who}"
+        team: "Team: you and %{names}"
+        team_with_points: >
+          Team: you and %{names} - these %{points} points are yours
+        no_points:
+          nothing_yet: Nothing has been entered yet.
+          on_the_correction: >
+            Your points are written on the correction, but they are not in MaMpf
+            yet, so they do not count towards your total for now.
+          zero: >
+            None - all %{max} points are missing from your total.
+          exempt: This sheet does not count towards your total.
+          legacy: >
+            This sheet was set up before points existed in MaMpf. Nothing is
+            recorded against it.
+      no_points: no points
+      points_reader: "%{points} of %{max} points"
+      no_sheets_yet: >
+        None yet. Once a sheet has been marked, it appears here with your
+        points.
+      no_sheets_yet_named: >
+        None yet. Once %{sheet} has been marked, it appears here with your
+        points.
+      deletion_notice: >
+        Submitted files and corrections are deleted on %{date}.
+      chips:
+        nothing_handed_in: Nothing handed in yet
+        handed_in: Handed in
+        grace_period: "%{time} left"
+        tutor_decides: Your tutor decides
+        awaiting_marks: Waiting to be marked
+        correction_uploaded: Correction uploaded
+        exempt: Excused
+      notes:
+        grace_period: the deadline has passed, you have %{time}
+        tutor_decides: handed in after the deadline
+        accepted_late: handed in late, your tutor let it count
+        rejected: handed in late, your tutor did not let it count
+        partially_marked: not every problem has been marked yet
+        missed: nothing arrived by the deadline
+        absent: recorded as absent
+        exempt: this sheet does not count against you
+        not_recorded: >
+          your file is here, but the sheet counts as not handed in - ask your
+          tutor
     invited: You have been invited by '%{inviter}' for this submission.
     accept_invitation: Accept invitation
     invalid_code_for_assignment: >
@@ -3842,8 +3908,6 @@ en:
     no_tutorials_in_lecture: >
       In this event series there are no tutorials, hence no submissions can be
       made.
-    no_assignments_in_lecture: >
-      In this event series there are no assigments yet.
     no_voucher: 'There is no voucher with this id.'
     voucher_invalid: 'This voucher is invalid.'
     become_tutor_success: >

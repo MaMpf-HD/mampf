@@ -1,0 +1,170 @@
+require "rails_helper"
+
+RSpec.describe(SheetRowComponent, type: :component) do
+  # The design is written in English and so are the numbers in it: the default
+  # locale would write 6,5 and compare it against the mockup's 6.5.
+  around do |example|
+    I18n.with_locale(:en) { example.run }
+  end
+
+  # The state machine itself is pinned in the loader's spec; what is checked
+  # here is the other half - which words, which colour, and whether the row
+  # speaks in the points column or in the status column, never in both.
+  def sheet(state, points: nil, max_points: 16, accepted_late: false,
+            friendly_deadline: 15.minutes.from_now)
+    assignment = instance_double(Assignment, title: "Homework 8",
+                                             friendly_deadline: friendly_deadline)
+    instance_double(Assessment::SubmissionsHub::Sheet,
+                    state: state, points: points, max_points: max_points,
+                    accepted_late?: accepted_late, assignment: assignment,
+                    # The row renders its fold with it; the fold has a spec of
+                    # its own, so here it only has to stay out of the way.
+                    submission: nil, tasks: [], partners: [],
+                    points_for: nil, marked_at: nil, marked_by: nil)
+  end
+
+  def render_state(state, **)
+    render_inline(described_class.new(sheet: sheet(state, **)))
+    rendered_content
+  end
+
+  describe "the number and the badge never both speak" do
+    it "shows the points and no badge for a marked sheet" do
+      content = render_state(:marked, points: 6.5)
+
+      expect(content).to include("6.5")
+      expect(content).not_to include("chip")
+    end
+
+    it "shows a badge and no number where nothing can be shown" do
+      content = render_state(:awaiting_marks)
+
+      expect(content).to include(I18n.t("submission.hub.chips.awaiting_marks"))
+      expect(content).to include("num-none")
+      expect(content).not_to include("num-zero")
+    end
+  end
+
+  describe "the badges" do
+    {
+      nothing_handed_in: "chip-act",
+      handed_in: "chip-wait",
+      tutor_decides: "chip-act",
+      awaiting_marks: "chip-wait",
+      correction_uploaded: "chip-wait",
+      exempt: "chip-wait"
+    }.each do |state, tone|
+      it "gives #{state} the #{tone} badge" do
+        content = render_state(state)
+
+        expect(content).to include(tone)
+        expect(content).to include(I18n.t("submission.hub.chips.#{state}"))
+      end
+    end
+
+    it "counts down the grace period in the badge and the note" do
+      content = render_state(:grace_period,
+                             friendly_deadline: 15.minutes.from_now)
+
+      expect(content).to include("chip-act")
+      expect(content).to include("15 minutes")
+      expect(content).to include(
+        I18n.t("submission.hub.notes.grace_period", time: "15 minutes")
+      )
+    end
+
+    it "never uses the lost colour, which the list has nothing to say with" do
+      content = render_state(:rejected, points: 0)
+
+      expect(content).not_to include("chip-lost")
+    end
+  end
+
+  describe "the quiet line under the name" do
+    it "explains a zero that was nobody's doing in red" do
+      content = render_state(:not_recorded, points: 0)
+
+      expect(content).to include("sheet-note-bad")
+      expect(content).to include(I18n.t("submission.hub.notes.not_recorded"))
+    end
+
+    it "explains a rejected late hand-in in red" do
+      content = render_state(:rejected, points: 0)
+
+      expect(content).to include("sheet-note-bad")
+      expect(content).to include(I18n.t("submission.hub.notes.rejected"))
+    end
+
+    # The number is the whole story for a marked sheet - unless it only counts
+    # because a tutor let it count.
+    it "says nothing under a plainly marked sheet" do
+      content = render_state(:marked, points: 6.5)
+
+      expect(content).not_to include("sheet-note")
+    end
+
+    it "says so under a late sheet that was let through" do
+      content = render_state(:marked, points: 6.5, accepted_late: true)
+
+      expect(content).to include(I18n.t("submission.hub.notes.accepted_late"))
+      expect(content).not_to include("sheet-note-bad")
+    end
+
+    it "says that a partly marked sheet is not finished" do
+      content = render_state(:partially_marked, points: 5.5)
+
+      expect(content).to include("5.5")
+      expect(content).not_to include("chip")
+      expect(content)
+        .to include(I18n.t("submission.hub.notes.partially_marked"))
+    end
+  end
+
+  describe "the points column" do
+    it "writes a zero in red where the sheet counts as nothing" do
+      content = render_state(:missed, points: 0)
+
+      expect(content).to include("num-zero")
+      expect(content).to include(I18n.t("submission.hub.notes.missed"))
+    end
+
+    it "drops the denominator for an excused sheet, which no longer counts" do
+      content = render_state(:exempt)
+
+      expect(content).not_to include("/ 16")
+      expect(content).to include(I18n.t("submission.hub.chips.exempt"))
+    end
+
+    it "draws the bar as a share of the maximum" do
+      content = render_state(:marked, points: 6.5, max_points: 16)
+
+      expect(content).to include("width: 40.63%")
+    end
+
+    it "draws no bar where there is no maximum to divide by" do
+      content = render_state(:marked, points: 0, max_points: 0)
+
+      expect(content).not_to include("spark")
+    end
+  end
+
+  describe "accessibility" do
+    # Screen readers get "6.5 of 16 points", not "6.5 slash 16".
+    it "spells the number out for a reader and hides the figure" do
+      content = render_state(:marked, points: 6.5, max_points: 16)
+
+      expect(content).to include(
+        I18n.t("submission.hub.points_reader", points: "6.5", max: "16")
+      )
+      expect(content).to include("aria-hidden=\"true\"")
+    end
+
+    it "says in words what the dimming of an old sheet means" do
+      content = render_state(:no_points)
+
+      expect(content).to include(I18n.t("submission.hub.old_style"))
+      expect(content).to include(I18n.t("submission.hub.no_points"))
+      expect(content).to include("sheet-muted")
+    end
+  end
+end

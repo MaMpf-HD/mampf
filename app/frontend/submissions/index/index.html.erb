@@ -1,0 +1,40 @@
+<%= vite_stylesheet_tag "submissions/index/index.scss" %>
+
+<%# A row whose name and number sit a screen apart is two lists, not one. %>
+<div class="small-width">
+  <section class="mb-4" aria-labelledby="due-heading">
+    <h3 class="lecture-pane-header" id="due-heading"><%= t("submission.current") %></h3>
+
+    <%# The card is still the old one, and the wrapper is what its jQuery
+        responses replace. Both go in the slice that rebuilds the card. %>
+    <% if @hub.open_sheets.any? %>
+      <div class="row">
+        <% @hub.due.each do |sheet| %>
+          <div class="col-12 col-lg-7 mb-3 submissionArea"
+               data-id="<%= sheet.assignment.id %>">
+            <%= render partial: "submissions/card",
+                       locals: { assignment: sheet.assignment,
+                                 submission: sheet.submission } %>
+          </div>
+        <% end %>
+        <%# Sheets due later keep their card too - handing in early is a thing
+            people do - but below, at full width, so the next deadline leads. %>
+        <% (@hub.open_sheets - @hub.due).each do |sheet| %>
+          <div class="col-12 mb-3 submissionArea"
+               data-id="<%= sheet.assignment.id %>">
+            <%= render partial: "submissions/card",
+                       locals: { assignment: sheet.assignment,
+                                 submission: sheet.submission } %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-muted mb-0"><%= t("assignment.no_current") %></p>
+    <% end %>
+  </section>
+
+  <hr class="lecture-pane-separator">
+
+  <%= render(SheetListComponent.new(sheets: @history, lecture: @lecture,
+                                    due: @hub.due)) %>
+</div>

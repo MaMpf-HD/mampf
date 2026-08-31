@@ -12,7 +12,6 @@ class SubmissionsController < ApplicationController
   before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
   before_action :prevent_caching, only: :show_manuscript
   before_action :check_if_tutorials, only: :index
-  before_action :check_if_assignments, only: :index
   before_action :check_student_status, only: :index
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
@@ -30,15 +29,15 @@ class SubmissionsController < ApplicationController
   # NOTE: authorization for #index is done manually via before_actions
   # SubmissionAbility lets anyone pass
   def index
-    @assignments = @lecture.assignments
-    @current_assignments = @lecture.current_assignments
-    @previous_assignments = @lecture.previous_assignments
-    @old_assignments = @assignments.expired.order(deadline: :desc) -
-                       @previous_assignments
-    @future_assignments = @assignments.active.order(:deadline) -
-                          @current_assignments
+    @hub = Assessment::SubmissionsHub::Loader.new(lecture: @lecture,
+                                                  user: current_user).call
+    # Everything still open has a card above the list, so the list is what is
+    # behind you - a sheet in both places would be told twice, and a row cannot
+    # be handed in.
+    @history = @hub.sheets - @hub.open_sheets
 
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "submissions/index/index",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def new
@@ -486,12 +485,6 @@ class SubmissionsController < ApplicationController
       return if @lecture.tutorials.any?
 
       redirect_to :root, alert: I18n.t("controllers.no_tutorials_in_lecture")
-    end
-
-    def check_if_assignments
-      return if @lecture.assignments.any?
-
-      redirect_to :root, alert: I18n.t("controllers.no_assignments_in_lecture")
     end
 
     def clear_submitted_at(users)

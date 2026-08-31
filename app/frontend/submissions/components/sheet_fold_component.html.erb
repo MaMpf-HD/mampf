@@ -1,0 +1,73 @@
+<div class="fold">
+  <div class="fold-grid">
+    <div>
+      <div class="eyebrow mb-3"><%= t("submission.hub.fold.tasks_heading") %></div>
+      <% if points_entered? %>
+        <% tasks.each_with_index do |task, index| %>
+          <div class="task-line">
+            <span class="task-name"><%= task_label(task, index) %></span>
+            <% if task_bar_percentage(task) %>
+              <span class="spark spark-wide" aria-hidden="true">
+                <span style="width: <%= task_bar_percentage(task) %>%"></span>
+              </span>
+            <% end %>
+            <span class="task-num num">
+              <span class="visually-hidden"><%= task_reader_label(task) %></span>
+              <span aria-hidden="true">
+                <%= task_points(task) %>
+                <span class="text-muted">/ <%= task_max_points(task) %></span>
+              </span>
+            </span>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="small text-muted mb-0"><%= missing_reason %></p>
+      <% end %>
+    </div>
+
+    <div>
+      <div class="eyebrow mb-3"><%= t("submission.hub.fold.files_heading") %></div>
+      <%# Both files can be called the same thing, and often are. The visible
+          line tells them apart by where it stands; a reader needs the word. %>
+      <% if correction_filename %>
+        <div class="mb-2">
+          <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+          <%= link_to show_correction_path(submission) do %>
+            <span class="visually-hidden">
+              <%= t("submission.hub.fold.correction_label") %>:
+            </span>
+            <%= correction_filename %>
+          <% end %>
+          <% if points_entered? %>
+            <div class="small text-muted ms-4">
+              <%= t("submission.hub.fold.correction_carries_points") %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      <% if manuscript_filename %>
+        <div class="mb-3">
+          <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+          <%= link_to show_submission_manuscript_path(submission) do %>
+            <span class="visually-hidden">
+              <%= t("submission.hub.fold.what_you_handed_in") %>:
+            </span>
+            <%= manuscript_filename %>
+          <% end %>
+          <span class="small text-muted" aria-hidden="true">
+            &middot; <%= t("submission.hub.fold.what_you_handed_in") %>
+          </span>
+        </div>
+      <% end %>
+      <% unless files? %>
+        <p class="small text-muted mb-2"><%= t("submission.hub.fold.no_file") %></p>
+      <% end %>
+
+      <div class="small text-muted">
+        <% if handed_in_line %><div><%= handed_in_line %></div><% end %>
+        <% if marked_line %><div><%= marked_line %></div><% end %>
+        <% if team_line %><div><%= team_line %></div><% end %>
+      </div>
+    </div>
+  </div>
+</div>

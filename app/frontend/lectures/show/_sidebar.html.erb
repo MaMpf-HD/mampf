@@ -97,7 +97,7 @@
         exists = lecture.tutorials.any?
       else
         link_text, path = [t('categories.submissions'), lecture_submissions_path(lecture)]
-        exists = lecture.assignments.any? && lecture.tutorials.any?
+        exists = lecture.tutorials.any?
       end %>
     <% active_class = get_class_for_any_path(
         [lecture_tutorials_path(lecture),

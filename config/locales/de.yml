@@ -3039,6 +3039,72 @@ de:
       Anzahl der Medien in von den von Dir abonnierten
       Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt: %{count}
   submission:
+    hub:
+      heading: Frühere Blätter
+      sheet_count:
+        one: "%{count} Blatt"
+        other: "%{count} Blätter"
+      column_sheet: Blatt
+      column_status: Status
+      column_points: Deine Punkte
+      old_style: Blatt alter Art
+      fold:
+        tasks_heading: Punkte je Aufgabe
+        files_heading: Datei und Team
+        problem: "Aufgabe %{number}"
+        what_you_handed_in: was Du abgegeben hast
+        correction_label: Die Korrektur
+        no_file: Es wurde keine Datei hochgeladen.
+        correction_carries_points: >
+          Die Punkte hier sind die, die Dein Tutor auf dieses PDF geschrieben
+          hat, samt Anmerkungen.
+        handed_in: "Abgegeben am %{time}"
+        marked: "Korrigiert am %{time}"
+        marked_by: "Korrigiert am %{time} von %{who}"
+        team: "Team: Du und %{names}"
+        team_with_points: >
+          Team: Du und %{names} - diese %{points} Punkte sind Deine
+        no_points:
+          nothing_yet: Es ist noch nichts eingetragen.
+          on_the_correction: >
+            Deine Punkte stehen auf der Korrektur, aber noch nicht in MaMpf -
+            sie zählen also vorerst nicht mit.
+          zero: >
+            Keine - alle %{max} Punkte fehlen Dir in der Summe.
+          exempt: Dieses Blatt zählt nicht in Deine Summe.
+          legacy: >
+            Dieses Blatt wurde angelegt, bevor es in MaMpf Punkte gab. Es ist
+            nichts dazu vermerkt.
+      no_points: keine Punkte
+      points_reader: "%{points} von %{max} Punkten"
+      no_sheets_yet: >
+        Noch keine. Sobald ein Blatt korrigiert ist, steht es hier mit Deinen
+        Punkten.
+      no_sheets_yet_named: >
+        Noch keine. Sobald %{sheet} korrigiert ist, steht es hier mit Deinen
+        Punkten.
+      deletion_notice: >
+        Abgaben und Korrekturen werden am %{date} gelöscht.
+      chips:
+        nothing_handed_in: Noch nichts abgegeben
+        handed_in: Abgegeben
+        grace_period: "noch %{time}"
+        tutor_decides: Dein Tutor entscheidet
+        awaiting_marks: Wartet auf Korrektur
+        correction_uploaded: Korrektur da
+        exempt: Entschuldigt
+      notes:
+        grace_period: die Frist ist um, Du hast noch %{time}
+        tutor_decides: nach der Frist abgegeben
+        accepted_late: verspätet abgegeben, Dein Tutor hat es gelten lassen
+        rejected: verspätet abgegeben, Dein Tutor hat es nicht gelten lassen
+        partially_marked: noch nicht alle Aufgaben korrigiert
+        missed: bis zur Frist kam nichts an
+        absent: als abwesend vermerkt
+        exempt: dieses Blatt zählt nicht gegen Dich
+        not_recorded: >
+          Deine Datei ist da, aber das Blatt gilt als nicht abgegeben - frag
+          Deinen Tutor
     invited: Du wurdest von '%{inviter}' für diese Abgabe eingeladen.
     accept_invitation: Einladung annehmen
     invalid_code: Der eingegebene Code ist ungültig.
@@ -4102,8 +4168,6 @@ de:
     no_tutorials_in_lecture: >
       In dieser Veranstaltung gibt es keine Tutorien, deswegen kann auch nichts
       abgegeben werden.
-    no_assignments_in_lecture: >
-      In dieser Veranstaltung gibt es bisher keine Hausaufgaben.
     no_voucher: 'Ein Gutschein mit der angeforderten id existiert nicht.'
     voucher_invalid: 'Der Gutschein ist ungültig.'
     become_tutor_success: 'Dein Tutorenstatus wurde geupdatet.'

@@ -16,8 +16,8 @@ module Assessment
       end
 
       def call
-        Result.new(sheets: sheets, standing: standing, due: due,
-                   latest_marked: latest_marked)
+        Result.new(sheets: sheets, standing: standing, open_sheets: open_sheets,
+                   due: due, latest_marked: latest_marked)
       end
 
       private
@@ -127,19 +127,27 @@ module Assessment
             .to_h
         end
 
-        # The sheet the page asks for at the top: the one that can still be handed
-        # in, and every sheet sharing its deadline - a lecture may set two for the
-        # same date. Deliberately not `Lecture#current_assignments`, which counts
-        # only deadlines still ahead: during the grace period the card has the
-        # most to say ("15 minutes left") and that method has already dropped the
-        # sheet.
+        # Everything that can still be handed in, soonest deadline first. Each of
+        # them needs a card of its own: a sheet weeks away is still a sheet you
+        # may hand in early, and a row in the history would take that away.
+        def open_sheets
+          @open_sheets ||= sheets.select { |sheet| still_open?(sheet) }
+                                 .sort_by { |sheet| sheet.assignment.deadline }
+        end
+
+        def still_open?(sheet)
+          sheet.assignment.active? || sheet.assignment.in_grace_period?
+        end
+
+        # The sheet the page leads with, and every sheet sharing its deadline - a
+        # lecture may set two for the same date. Deliberately not
+        # `Lecture#current_assignments`, which counts only deadlines still ahead:
+        # during the grace period the card has the most to say ("15 minutes left")
+        # and that method has already dropped the sheet.
         def due
           @due ||= begin
-            open = sheets.select do |sheet|
-              sheet.assignment.active? || sheet.assignment.in_grace_period?
-            end
-            earliest = open.map { |sheet| sheet.assignment.deadline }.min
-            open.select { |sheet| sheet.assignment.deadline == earliest }
+            earliest = open_sheets.first&.assignment&.deadline
+            open_sheets.select { |sheet| sheet.assignment.deadline == earliest }
           end
         end
 
