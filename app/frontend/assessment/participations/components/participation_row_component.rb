@@ -2,40 +2,52 @@
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  def initialize(participation:, assignment:, tutorial: nil, mode: nil)
+  def initialize(participation:, assessment:, grading_scope:,
+                 save_url:, refresh_url:)
     super()
     @participation = participation
-    @assignment = assignment
-    @mode = mode || "tutor"
+    @assessment = assessment
+    @assessable = assessment.assessable
+    @save_url = save_url
+    @refresh_url = refresh_url
+    @grading_scope = grading_scope
+    check_grading_scope
     @user ||= @participation&.user
-    if @mode == "tutor"
-      @tutorial = tutorial
-      @lecture = @tutorial.lecture
-    elsif @mode == "teacher"
-      @tutorial = tutorial
-      @lecture = assignment.lecture
+    @lecture = if @grading_scope.is_a?(Tutorial)
+      @grading_scope.lecture
+    elsif @grading_scope.is_a?(Lecture)
+      @grading_scope
     end
 
-    return unless @user.nil?
+    # return unless @user.nil?
 
-    raise(MissingUserError,
-          I18n.t("assessment.grading_tutorial.no_user_for_config",
-                 participation_id: @participation.id, assignment_id: @assignment.id))
+    # raise(MissingUserError,
+    #       I18n.t("assessment.grading_tutorial.no_user_for_config",
+    #              participation_id: @participation.id, assignment_id: @assignment.id))
+  end
+
+  def check_grading_scope
+    case @grading_scope
+    when Tutorial
+      @mode = "tutor"
+    when Lecture
+      @mode = "teacher"
+    end
   end
 
   # Determines if grading is enabled for the current assignment
   def grading_enabled?
-    @assignment.assessable?
+    @assessable.assessable?
   end
 
   # Determines if grading is allowed for the current assignment
   def allow_grading?
-    @assignment.grading_open?
+    @assessable.grading_open?
   end
 
-  def extract_task_points_participation(assessment_task)
+  def extract_task_points_participation(task)
     graded_task_points.find do |sp|
-      sp.task_id == assessment_task.id
+      sp.task_id == task.id
     end&.points
   end
 
@@ -44,7 +56,7 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def tasks
-    @assignment.assessment.persisted_tasks || []
+    @assessable.assessment.persisted_tasks || []
   end
 
   def badge_status_participation_color(status)
@@ -64,28 +76,28 @@ class ParticipationRowComponent < ViewComponent::Base
     "participation-row-#{@participation.id}"
   end
 
-  def task_points_participation_input(assignment_task, allow_grading)
+  def task_points_participation_input(task, allow_grading)
     tag.input(
       type: "number",
       autocomplete: "off",
-      name: "task_points[#{assignment_task.id}]",
-      value: extract_task_points_participation(assignment_task),
+      name: "task_points[#{task.id}]",
+      value: extract_task_points_participation(task),
       step: 0.5,
       min: 0,
-      max: assignment_task.max_points,
+      max: task.max_points,
       data: {
-        submission_row_target: "input",
-        task_id: assignment_task.id,
-        action: "change->submission-row#onPointParticipationChanged input->submission-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
+        participation_row_target: "input",
+        task_id: task.id,
+        action: "change->participation-row#onPointParticipationChanged input->participation-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
       disabled: !allow_grading || !grading_enabled? || !can_grade?
     )
   end
 
-  def task_points_participation_cell(assignment_task, allow_grading)
+  def task_points_participation_cell(task, allow_grading)
     tag.td(class: "sticky-col task-col") do
-      task_points_participation_input(assignment_task, allow_grading)
+      task_points_participation_input(task, allow_grading)
     end
   end
 
@@ -96,8 +108,8 @@ class ParticipationRowComponent < ViewComponent::Base
     tag.button(type: "button",
                class: class_name,
                data: { bs_toggle: "tooltip",
-                       submission_row_target: "save",
-                       action: "click->submission-row#saveRow" },
+                       participation_row_target: "save",
+                       action: "click->participation-row#saveRow" },
                title: helpers.t("buttons.save"),
                disabled: !allow_grading || !grading_enabled? || !can_grade?) do
       tag.i(class: "bi bi-save")
@@ -110,7 +122,7 @@ class ParticipationRowComponent < ViewComponent::Base
 
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip", action: "click->submission-row#refreshRow" },
+               data: { bs_toggle: "tooltip", action: "click->participation-row#refreshRow" },
                title: helpers.t("buttons.refresh"),
                disabled: !allow_grading || !grading_enabled? || !can_grade?) do
       tag.i(class: "bi bi-arrow-clockwise")
@@ -119,14 +131,14 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def can_grade?
     user = helpers.current_user
-    user.admin? || user.can_grade_in_scope?(@tutorial)
+    user.admin? || user.can_grade_in_scope?(@grading_scope)
   end
 
   def users_movement_map
-    return {} unless @assignment.past_deadline?
+    return {} unless @assessable.past_deadline?
 
-    helpers.users_movement_map_cache[@assignment.id] ||=
-      helpers.calculate_user_movement_map_assignment(@assignment, @lecture)
+    helpers.users_movement_map_cache[@assessable.id] ||=
+      helpers.calculate_user_movement_map_assignment(@assessable, @lecture)
   end
 
   def movement_info_for_user(user)

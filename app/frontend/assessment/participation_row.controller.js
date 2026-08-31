@@ -52,24 +52,24 @@ export default class extends Controller {
   onPointSubmissionChanged(event) {
     const valid = this.validateNewPoint(event);
     if (valid) {
-      this.markDirty();
+      this.markDirty("submission");
       this.calculateTotalPoints();
     }
     else {
       this.alertTotalPointsInvalid();
-      this.handleClean();
+      this.handleClean("submission");
     }
   }
 
   onPointParticipationChanged(event) {
     const valid = this.validateNewPoint(event);
     if (valid) {
-      this.markDirtyParticipation();
+      this.markDirty("participation");
       this.calculateTotalPoints();
     }
     else {
       this.alertTotalPointsInvalid();
-      this.handleCleanParticipation();
+      this.handleClean("participation");
     }
   }
 
@@ -90,88 +90,50 @@ export default class extends Controller {
     }
   }
 
-  markDirty() {
+  markDirty(targetType) {
     const dirty = this.inputTargets.some((input, idx) => input.value != this.originalValues[idx]);
     if (dirty) {
-      this.handleDirty();
+      this.handleDirty(targetType);
     }
     else {
-      this.handleClean();
+      this.handleClean(targetType);
     }
   }
 
-  handleDirty() {
+  handleDirty(targetType) {
     this.element.classList.add("row-dirty");
     this.dispatch("dirty", {
       prefix: false,
       bubbles: true,
       detail: {
-        id: this.element.dataset.submissionRowId,
-        target: "submission",
+        id: this.element.dataset.rowId,
+        target: targetType,
         task_points: this.extractTasksPoints(this.inputTargets),
       },
     });
     if (this.hasSaveTarget) this.saveTarget.disabled = false;
   }
 
-  handleClean() {
+  handleClean(targetType) {
     this.element.classList.remove("row-dirty");
     this.dispatch("clean", {
       prefix: false,
       bubbles: true,
-      detail: { id: this.element.dataset.submissionRowId,
-        target: "submission" },
-    });
-
-    if (this.hasSaveTarget) this.saveTarget.disabled = true;
-  }
-
-  markDirtyParticipation() {
-    const dirty = this.inputTargets.some((input, idx) => input.value != this.originalValues[idx]);
-    if (dirty) {
-      this.handleDirtyParticipation();
-    }
-    else {
-      this.handleCleanParticipation();
-    }
-  }
-
-  handleDirtyParticipation() {
-    this.element.classList.add("row-dirty");
-    this.dispatch("dirty", {
-      prefix: false,
-      bubbles: true,
-      detail: {
-        id: this.element.dataset.participationRowId,
-        target: "participation",
-        task_points: this.extractTasksPoints(this.inputTargets),
-      },
-    });
-    if (this.hasSaveTarget) this.saveTarget.disabled = false;
-  }
-
-  handleCleanParticipation() {
-    this.element.classList.remove("row-dirty");
-    this.dispatch("clean", {
-      prefix: false,
-      bubbles: true,
-      detail: {
-        id: this.element.dataset.participationRowId,
-        target: "participation",
-      },
+      detail: { id: this.element.dataset.rowId,
+        target: targetType },
     });
 
     if (this.hasSaveTarget) this.saveTarget.disabled = true;
   }
 
   extractTasksPoints(inputTargets) {
-    const submissionNewTasksPoints = {};
+    const participationNewTasksPoints = {};
     for (const input of inputTargets) {
       const id = this.extractId(input.name);
       const points = input.value;
-      submissionNewTasksPoints[id] = points;
+      participationNewTasksPoints[id] = points;
     }
-    return submissionNewTasksPoints;
+    return participationNewTasksPoints;
   }
 
   extractId(name) {

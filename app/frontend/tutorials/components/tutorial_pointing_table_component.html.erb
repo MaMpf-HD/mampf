@@ -48,15 +48,24 @@
                 <!-- Submissions -->
                 <% @stack.each do |submission| %>
                   <%= render(SubmissionRowComponent.new(
-                      submission: submission, mode: @mode,
-                      assignment: @assignment, tutorial: @tutorial)) %>
+                      submission: submission,
+                      assignment: @assignment,
+                      grading_scope: @tutorial)) %>
                 <% end %>
                 <!-- Non-submitters + have grading records -->
                 <% @non_submitters.each do |user| %>
                   <% if user.assessment_participation_in_assignment(@assignment) %>
+                    <% participation = user.assessment_participation_in_assignment(@assignment) %>
                     <%= render(ParticipationRowComponent.new(
-                        participation: user.assessment_participation_in_assignment(@assignment),
-                        mode: @mode, assignment: @assignment, tutorial: @tutorial)) %>
+                        participation: participation,
+                        assessment: @assignment.assessment,
+                        save_url: point_user_tutorial_path(participation, 
+                                                    type: "Tutorial",
+                                                    scope: "tutorial"),
+                        refresh_url: refresh_point_user_tutorial_path(participation, 
+                                                            type: "Tutorial", 
+                                                            scope: "tutorial"),
+                        grading_scope: @tutorial)) %>
                   <% end %>
                 <% end %>
               <% else %>
@@ -65,16 +74,25 @@
                   <!-- Submissions -->
                   <% (@submissions_by_tutorial[tutorial] || []).each do |submission| %>
                     <%= render(SubmissionRowComponent.new(
-                        submission: submission, mode: @mode,
-                        assignment: @assignment, tutorial: tutorial)) %>
+                        submission: submission,
+                        assignment: @assignment,
+                        grading_scope: @lecture)) %>
                   <% end %>
 
                   <!-- Non-submitters + have grading records -->
                   <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
                     <% if user.assessment_participation_in_assignment(@assignment) %>
+                      <% participation = user.assessment_participation_in_assignment(@assignment) %>
                       <%= render(ParticipationRowComponent.new(
-                        participation: user.assessment_participation_in_assignment(@assignment),
-                        mode: @mode, assignment: @assignment, tutorial: tutorial)) %>
+                        participation: participation,
+                        assessment: @assignment.assessment,
+                        save_url: point_user_tutorial_path(participation, 
+                                                    type: "Tutorial",
+                                                    scope: "lecture"),
+                        refresh_url: refresh_point_user_tutorial_path(participation, 
+                                                            type: "Tutorial", 
+                                                            scope: "lecture"),
+                        grading_scope: @lecture)) %>
                     <% end %>
                   <% end %>
                 <% end %>
@@ -135,11 +153,9 @@
             <% end %>
 
             <% @non_tutorial_participants.to_a.each do |user| %>
-              <%= render(layout: "tutorials/components/excluded_user_row",
+              <%= render partial: "tutorials/components/excluded_user_row",
                        locals: { user: user,
-                                 reason: t('assessment.grading_tutorial.no_tutorial_badge') }) do %>
-                yayyyy
-              <% end %>
+                                 reason: t('assessment.grading_tutorial.no_tutorial_badge') } %>
             <% end %>
           </tbody>
         </table>

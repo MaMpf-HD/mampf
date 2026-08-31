@@ -2,9 +2,10 @@
   id="<%= row_id %>"
   is="turbo-frame"
   data-id="<%= @participation.id %>"
-  data-controller="submission-row"
-  data-participation-row-id="<%= @participation.id %>"
-  data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
+  data-controller="participation-row"
+  data-row-id="<%= @participation.id %>"
+  data-row-target-type="participation"
+  data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
   data-status-filter-status="<%= @participation.status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
   data-status-filter-name="<%= @user.tutorial_name %>"
@@ -60,46 +61,42 @@
     </td>
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
-    <% tasks.each do |assignment_task| %>
-      <%= task_points_participation_cell(assignment_task, allow_grading?) %>
+    <% tasks.each do |task| %>
+      <%= task_points_participation_cell(task, allow_grading?) %>
     <% end %>
     <!-- Column 4: Total Points -->
     <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
-      <span data-submission-row-target="totalPoints">0</span>
+      <span data-participation-row-target="totalPoints">0</span>
     </td>
   <% end %>
 
   <!-- Column 5: Actions buttons -->
   <td class="text-end sticky-col action-col" data-mode="<%= @mode %>">
-    <div class="d-inline-flex align-items-center flex-nowrap gap-1">
+    <div class="d-inline-flex align-items-center flex-wrap justify-content-end gap-1">
       <!-- Save and refresh -->
       <% if can_grade? && grading_enabled? && @participation %>
         <!-- Hidden form for this row to submit -->
-        <%= form_with url: point_user_tutorial_path(@participation, 
-                                                    type: "Tutorial",
-                                                    mode: @mode),
+        <%= form_with url: @save_url,
                     method: :patch,
-                    data: { turbo: true, submission_row_target: "form" },
+                    data: { turbo: true, participation_row_target: "form" },
                     html: { style: "display:none;" } do %>
           <input
             type="hidden"
             name="task_points"
-            data-submission-row-target="payload"
+            data-participation-row-target="payload"
           >
         <% end %>
         <!-- Save row -->
         <%= save_row_button(allow_grading?) %>
         <!-- Refresh row -->
-        <%= form_with url: refresh_point_user_tutorial_path(@participation, 
-                                                            type: "Tutorial", 
-                                                            mode: @mode),
+        <%= form_with url: @refresh_url,
                     method: :patch,
-                    data: { turbo: true, submission_row_target: "refreshForm" },
+                    data: { turbo: true, participation_row_target: "refreshForm" },
                     html: { style: "display:none;" } do %>
           <input
             type="hidden"
             name="task_points"
-            data-submission-row-target="payload"
+            data-participation-row-target="payload"
           >
         <% end %>
         <!-- refresh row -->

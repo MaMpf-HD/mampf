@@ -3,9 +3,10 @@
   is="turbo-frame"
   class="submission-row <%= helpers.submission_late_color(@submission) %>"
   data-id="<%= @submission.id %>"
-  data-controller="submission-row"
-  data-submission-row-id="<%= @submission.id %>"
-  data-action="dirty->submission-table#rowDirty clean->submission-table#rowClean"
+  data-controller="participation-row"
+  data-row-id="<%= @submission.id %>"
+  data-row-target-type="submission"
+  data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
   data-status-filter-status="<%= @submission&.participations&.first&.status %>"
   data-status-filter-tutorial="<%= @submission.tutorial_id %>"
   data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
@@ -91,7 +92,7 @@
     <% end %>
     <!-- Column 4: Total Points -->
     <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
-      <span data-submission-row-target="totalPoints">0</span>
+      <span data-participation-row-target="totalPoints">0</span>
     </td>
   <% end %>
 
@@ -101,7 +102,7 @@
     data-mode="<%= @mode %>"
     data-id="<%= @submission.id %>"
   >
-    <div class="d-inline-flex align-items-center flex-nowrap gap-1">
+    <div class="d-inline-flex align-items-center flex-wrap justify-content-end gap-1">
       <!-- Download -->
       <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
                 class: "btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
@@ -125,14 +126,14 @@
         <!-- Hidden form for this row to submit -->
         <%= form_with url: point_submission_tutorial_path(@submission, 
                                                           type: "Tutorial", 
-                                                          mode: @mode),
+                                                          scope: @mode == "tutor" ? "tutorial" : "lecture"),
                     method: :patch,
-                    data: { turbo: true, submission_row_target: "form" },
+                    data: { turbo: true, participation_row_target: "form" },
                     html: { style: "display:none;" } do %>
           <input
             type="hidden"
             name="task_points"
-            data-submission-row-target="payload"
+            data-participation-row-target="payload"
           >
         <% end %>
         <!-- Save row -->
@@ -140,14 +141,14 @@
         <!-- Refresh row -->
         <%= form_with url: refresh_point_submission_tutorial_path(@submission, 
                                                                   type: "Tutorial", 
-                                                                  mode: @mode),
+                                                                  scope: @mode == "tutor" ? "tutorial" : "lecture"),
                     method: :patch,
-                    data: { turbo: true, submission_row_target: "refreshForm" },
+                    data: { turbo: true, participation_row_target: "refreshForm" },
                     html: { style: "display:none;" } do %>
           <input
             type="hidden"
             name="task_points"
-            data-submission-row-target="payload"
+            data-participation-row-target="payload"
           >
         <% end %>
         <!-- refresh row -->

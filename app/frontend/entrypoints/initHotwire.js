@@ -128,11 +128,11 @@ window.Stimulus.register("threshold-mode", ThresholdModeController);
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
 
-import SubmissionRowController from "~/tutorials/submission_row.controller.js";
-window.Stimulus.register("submission-row", SubmissionRowController);
+import ParticipationRowController from "~/assessment/participation_row.controller.js";
+window.Stimulus.register("participation-row", ParticipationRowController);
 
-import SubmissionTableController from "~/tutorials/submission_table.controller.js";
-window.Stimulus.register("submission-table", SubmissionTableController);
+import PointingTableController from "~/assessment/pointing_table.controller.js";
+window.Stimulus.register("pointing-table", PointingTableController);
 
 import TableFadeController from "~/tutorials/table_fade.controller.js";
 window.Stimulus.register("table-fade", TableFadeController);

@@ -65,8 +65,7 @@ module Assessment
             html: render_to_string(SubmissionRowComponent.new(
                                      submission: @submission,
                                      assignment: @assignment,
-                                     tutorial: @tutorial,
-                                     mode: params[:mode]
+                                     grading_scope: @tutorial
                                    ))
           )
         )
@@ -94,9 +93,16 @@ module Assessment
             "participation-row-#{@participation.id}",
             html: render_to_string(ParticipationRowComponent.new(
                                      participation: @participation,
-                                     assignment: @assignment,
-                                     tutorial: @tutorial,
-                                     mode: params[:mode]
+                                     assessment: @assignment.assessment,
+                                     grading_scope: @tutorial,
+                                     save_url:
+                                        refresh_point_user_tutorial_path(@participation,
+                                                                         type: "Tutorial",
+                                                                         scope: "tutorial"),
+                                     refresh_url:
+                                        refresh_point_user_tutorial_path(@participation,
+                                                                         type: "Tutorial",
+                                                                         scope: "tutorial")
                                    ))
           )
         )
@@ -147,8 +153,7 @@ module Assessment
               html: render_to_string(SubmissionRowComponent.new(
                                        submission: @submission,
                                        assignment: @assignment,
-                                       tutorial: @tutorial,
-                                       mode: params[:mode]
+                                       grading_scope: @tutorial
                                      ))
             )
           end
@@ -162,9 +167,16 @@ module Assessment
               "participation-row-#{@participation.id}",
               html: render_to_string(ParticipationRowComponent.new(
                                        participation: @participation,
-                                       assignment: @assignment,
-                                       tutorial: @tutorial,
-                                       mode: params[:mode]
+                                       assessment: @assignment.assessment,
+                                       grading_scope: @tutorial,
+                                       save_url:
+                                          point_user_tutorial_path(@participation,
+                                                                   type: "Tutorial",
+                                                                   scope: "tutorial"),
+                                       refresh_url:
+                                          refresh_point_user_tutorial_path(@participation,
+                                                                           type: "Tutorial",
+                                                                           scope: "tutorial")
                                      ))
             )
           end

@@ -297,8 +297,7 @@ class SubmissionsController < ApplicationController
               SubmissionRowComponent.new(
                 submission: @submission,
                 assignment: @assignment,
-                tutorial: @tutorial,
-                mode: params[:mode] || "tutor"
+                grading_scope: @tutorial
               )
             )
           )
