@@ -135,8 +135,6 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def users_movement_map
-    return {} unless @assessable.past_deadline?
-
     helpers.users_movement_map_cache[@assessable.id] ||=
       helpers.calculate_user_movement_map_assignment(@assessable, @lecture)
   end
