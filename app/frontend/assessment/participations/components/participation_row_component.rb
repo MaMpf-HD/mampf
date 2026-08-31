@@ -81,7 +81,6 @@ class ParticipationRowComponent < ViewComponent::Base
       value: extract_task_points_participation(task),
       step: 0.5,
       min: 0,
-      max: task.max_points,
       data: {
         participation_row_target: "input",
         task_id: task.id,
