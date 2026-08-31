@@ -28,6 +28,7 @@
         "/workspace",
         "/workspace-parent"
     ],
+    "initializeCommand": "docker network inspect mampf_dev >/dev/null 2>&1 || docker network create mampf_dev",
     "service": "app",
     // https://github.com/orgs/community/discussions/15506
     "workspaceFolder": "/workspaces/mampf/",

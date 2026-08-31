@@ -2414,6 +2414,7 @@ de:
     no_video: 'Es gibt kein Video.'
     play: 'THymE-Player'
     download: 'Video herunterladen'
+    transcribe: 'Transkribieren'
     length: 'Länge'
     resolution: 'Auflösung'
     size: 'Größe'
@@ -2829,9 +2830,13 @@ de:
       student_registration: '%-d. %B, %Hh%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
     last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
+  search:
+    mampfsearch_unavailable: 'MampfSearch ist derzeit nicht verfügbar.'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
+    toggle_subtitles: 'Untertitel ein-/ausblenden'
+    transcript: 'Transkript'
   thyme_editor:
     add_item: 'Eintrag zum Inhaltsverzeichnis hinzufügen'
     add_referral: 'Referenz hinzufügen'
@@ -3077,6 +3082,9 @@ de:
       Datei vom MIME Type %{accepted_mime_types}.
     correction_size_too_big: >
       Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
+    invalid_transcript: Die hochgeladene Datei ist kein gültiges WebVTT-Transkript.
+    transcript_too_many_cues: >
+      Das Transkript enthält zu viele Cues (maximal %{max_cues}).
     too_late_no_saving: >
       Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
       abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.

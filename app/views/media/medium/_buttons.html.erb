@@ -6,6 +6,23 @@
       <i class="bi bi-play-fill fs-6"></i>
     </a>
   </div>
+
+  <% if Rails.env.development? && can?(:transcribe, medium) && medium.transcribable? %>
+    <div class="m-1">
+      <% if MampfsearchHealth.ingest_available? %>
+        <%= link_to t("video.transcribe"), transcribe_medium_path(medium),
+                    class: "btn btn-outline-secondary", role: "button",
+                    data: { turbo_method: :post } %>
+      <% else %>
+        <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip"
+              title="<%= t('search.mampfsearch_unavailable') %>">
+          <button type="button" class="btn btn-outline-secondary" disabled>
+            <%= t("video.transcribe") %>
+          </button>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
 
 <% if medium.manuscript.present? %>
