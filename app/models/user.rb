@@ -669,10 +669,6 @@ class User < ApplicationRecord
     tutorial_membership&.tutorial
   end
 
-  def assessment_participation_in_assignment(assignment)
-    assessment_participations.where(assessment: assignment.assessment)&.first
-  end
-
   def tutor?
     given_tutorials.any?
   end

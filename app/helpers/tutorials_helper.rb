@@ -59,13 +59,15 @@ module TutorialsHelper
     end
     num_submissions_without_points = num_submissions - num_submissions_with_points
 
+    participations_by_user_id =
+      Assessment::Participation.where(user: non_submitters, assessment: assignment.assessment)
+                     .index_by(&:user_id)
+
     num_non_submitters = non_submitters.size
-    num_participated = non_submitters.count do |u|
-      u.assessment_participation_in_assignment(assignment)
-    end
+    num_participated = non_submitters.count { |u| participations_by_user_id[u.id] }
     num_not_participated = num_non_submitters - num_participated
     num_participated_with_points = non_submitters.count do |u|
-      u.assessment_participation_in_assignment(assignment)&.status == "reviewed"
+      participations_by_user_id[u.id]&.status == "reviewed"
     end
     num_participated_without_points = num_participated - num_participated_with_points
 

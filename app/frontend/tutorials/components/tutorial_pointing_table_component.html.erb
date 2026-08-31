@@ -54,8 +54,9 @@
                 <% end %>
                 <!-- Non-submitters + have grading records -->
                 <% @non_submitters.each do |user| %>
-                  <% if user.assessment_participation_in_assignment(@assignment) %>
-                    <% participation = user.assessment_participation_in_assignment(@assignment) %>
+                  <% participation = @non_submitter_participations[user.id] %>
+
+                  <% if participation %>
                     <%= render(ParticipationRowComponent.new(
                         participation: participation,
                         assessment: @assignment.assessment,
@@ -81,8 +82,9 @@
 
                   <!-- Non-submitters + have grading records -->
                   <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
-                    <% if user.assessment_participation_in_assignment(@assignment) %>
-                      <% participation = user.assessment_participation_in_assignment(@assignment) %>
+                    <% participation = @non_submitter_participations[user.id] %>
+
+                    <% if participation %>
                       <%= render(ParticipationRowComponent.new(
                         participation: participation,
                         assessment: @assignment.assessment,

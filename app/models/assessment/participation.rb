@@ -78,7 +78,7 @@ module Assessment
     end
 
     def graded_tasks_points
-      TaskPoint.where(assessment_participation: self)
+      task_points
     end
 
     private

@@ -121,8 +121,9 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         user = create(:confirmed_user)
         allow(assignment).to receive(:non_submitters_in_tutorials).and_return([user])
         participation = double("participation", tutorial: tutorial)
-        allow(user).to receive(:assessment_participation_in_assignment)
-          .with(assignment).and_return(participation)
+
+        allow(assignment).to receive(:non_submitter_participations)
+          .and_return({ user.id => participation })
 
         grouped = described_class.new(assignment: assignment, mode: "teacher")
                                  .instance_variable_get(:@non_submitters_by_tutorial)

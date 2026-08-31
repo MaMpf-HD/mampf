@@ -20,6 +20,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
     @non_submitters = @assignment&.non_submitters_in_tutorial(@tutorial)
+    @non_submitter_participations = preload_non_submitter_participations(@non_submitters)
   end
 
   def init_teacher_case
@@ -28,11 +29,22 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @stack = @assignment&.submissions&.proper
                         &.order(:last_modification_by_users_at)
     @submissions_by_tutorial = @stack.group_by(&:tutorial)
+
     @non_submitters = @assignment&.non_submitters_in_tutorials
-    @non_submitters_by_tutorial = @non_submitters.group_by do |user|
-      user.assessment_participation_in_assignment(@assignment)&.tutorial
-    end
+    @non_submitter_participations = preload_non_submitter_participations(@non_submitters)
+
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
+
+    @non_submitters_by_tutorial = @non_submitters.group_by do |user|
+      @non_submitter_participations[user.id]&.tutorial
+    end
+  end
+
+  def preload_non_submitter_participations(users)
+    Assessment::Participation
+      .where(user: users, assessment: @assignment.assessment)
+      .includes(:task_points)
+      .index_by(&:user_id)
   end
 
   def grading_enabled?
@@ -49,9 +61,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   # have any grading records for this assignment? (either by submission or by participation)
   def grading_records?
-    @stack&.any? || @non_submitters&.any? do |user|
-      user.assessment_participation_in_assignment(@assignment)
-    end
+    @stack&.any? || @non_submitters&.any? { |user| @non_submitter_participations[user.id] }
   end
 
   def column_count
@@ -86,12 +96,12 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def remove_participated_link(user)
-    @participation = user.assessment_participation_in_assignment(@assignment)
-    return unless @participation
+    participation = @non_submitter_participations[user.id]
+    return unless participation
 
     path = remove_participation_path(
-      participation_id: @participation.id,
-      grading_scope_type: @grading_scope.class.name.downcase
+      participation_id: participation.id,
+      grading_scope_type: grading_scope.class.name.downcase
     )
 
     link_to(path,
