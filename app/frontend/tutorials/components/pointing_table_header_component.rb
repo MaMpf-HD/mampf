@@ -2,13 +2,13 @@ class PointingTableHeaderComponent < ViewComponent::Base
   Column = Struct.new(:css_class, :label, :sublabel,
                       :data_mode, :action_tag, keyword_init: true)
 
-  def initialize(mode:, # rubocop:disable Metrics/ParameterLists
+  def initialize(grading_scope:, # rubocop:disable Metrics/ParameterLists
                  grading_enabled:,
                  tasks: [],
                  total_max_points: 0,
                  accepted_file_type: nil,
                  tutorials: [])
-    @mode = mode.to_sym
+    @grading_scope = grading_scope
     @grading_enabled = grading_enabled
     @tasks = tasks
     @total_max_points = total_max_points
@@ -30,8 +30,20 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
   private
 
-    def teacher?
-      @mode == :teacher
+    def mode
+      if lecture_scope?
+        "teacher"
+      else
+        "tutor"
+      end
+    end
+
+    def lecture_scope?
+      @grading_scope.is_a?(Lecture)
+    end
+
+    def tutorial_scope?
+      @grading_scope.is_a?(Tutorial)
     end
 
     def team_column
@@ -39,7 +51,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def tutorial_column
-      return [] unless teacher?
+      return [] unless lecture_scope?
 
       if @tutorials&.count&.zero? || @tutorials.nil?
         [Column.new(css_class: "sticky-col tutorial-col grade-th text-center",
@@ -55,7 +67,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
     def status_col
       Column.new(css_class: "text-center sticky-col status-col grade-th z-10",
-                 data_mode: @mode,
+                 data_mode: mode,
                  action_tag: "filter-status",
                  label: t("assessment.grading_tutorial.status"))
     end
@@ -63,14 +75,14 @@ class PointingTableHeaderComponent < ViewComponent::Base
     def grading_columns
       return [] unless @grading_enabled
 
-      status_col if teacher?
+      status_col if lecture_scope?
 
       [
         status_col,
         *@tasks.map { |task| task_column(task) },
         Column.new(
           css_class: "text-center sticky-col total-col grade-th",
-          data_mode: @mode,
+          data_mode: mode,
           label: t("assessment.grading_tutorial.total_points"),
           sublabel: "(#{@total_max_points} #{t("assessment.grading_tutorial.max_points")})"
         )
@@ -87,12 +99,12 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
     def action_column
       [Column.new(css_class: "text-center sticky-col action-col grade-th",
-                  data_mode: @mode,
+                  data_mode: mode,
                   label: t("assessment.grading_tutorial.actions"))]
     end
 
     def correction_column
-      return [] if teacher?
+      return [] if lecture_scope?
 
       [Column.new(
         css_class: "text-center sticky-col correction-col grade-th",
