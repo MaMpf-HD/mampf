@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<!--
+  The student submissions hub (/lectures/:id/submissions) - the design we build.
+  Earlier rounds: submissions_hub_zones.html (A), submissions_hub_ledger.html (B),
+  submissions_hub_stack.html (C). A second model's independent draft is
+  submissions_hub_independent.html; three of its decisions are taken over here.
+
+  Kept from every round: the points are the status (no badge where a number
+  stands), the threshold mark in the bar, a row grows with what happened, one
+  bordered element, one button style, one number language.
+
+  Taken from the independent draft: the head is split - the action sits left
+  where reading starts and is the only thing carrying colour, the standing sits
+  right, grey and unframed; the deadline column is gone from the history, because
+  three weeks on nobody wants the due date, only the result; the fold uses the
+  full width in two headed areas instead of a cramped half.
+
+  A sheet carries two independent facts, never one: the correction scan belongs to
+  the submission and so to the team, the points belong to one person, and either can
+  arrive first. "New" therefore means "changed since you last looked", not
+  "corrected"; it is told twice, both times in the list it concerns - a news row at
+  its head, and a marker in the row's left margin that goes when the row is opened.
+  The standing block keeps only what is a standing fact: the points still being
+  marked. Events go to the list, states stay in the panel.
+
+  Figures are from the development database (demo:setup_on_seed), lecture 1,
+  student1@mampf.edu, 30 Aug 2026. The sheet that is due is drawn as "Homework 11";
+  in the demo database it is "Blatt 6", an old-style sheet with no assessment behind
+  it - from the merge on, every new sheet carries one. "Blatt 4" and "Blatt 5" keep
+  their names, because being old-style is exactly what they are. The last panes say
+  for themselves how much of them is seed data.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignments — (V) Lineare Algebra 2</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .small-width { max-width: 1200px; }
+    .lecture-pane {
+      background-color: white;
+      padding: 1.5em;
+      margin-bottom: 2em;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+      border: gray 1px solid;
+      border-radius: 0.4em;
+    }
+    .lecture-pane-separator { border-top: 3px dotted #555555; margin: 2em 0; }
+    h3.lecture-pane-header { color: #838383; font-size: 1.3em; }
+    .eyebrow { color: #838383; font-size: .75rem; font-weight: 700;
+               letter-spacing: .06em; text-transform: uppercase; }
+
+    .viewport-label { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase;
+                      color: #6c757d; border-bottom: 1px solid #dee2e6; }
+    .phone { width: 390px; border: 10px solid #2b2b2b; border-radius: 30px;
+             overflow: hidden; background: #f8f9fa; }
+    .phone-body { height: 780px; overflow-y: auto; }
+
+    /* One number language: tabular figures, "points / max", one decimal at most. */
+    .num { font-variant-numeric: tabular-nums; }
+    .num-total { font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
+    .num-zero { color: #b02a37; }
+    .num-none { color: #adb5bd; }
+
+    /* One bar in three sizes, and the sizes are the hierarchy: the standing is
+       8px and saturated, a sheet or a problem is 3px and pale, drawn under its
+       own number as an underline rather than beside it as an object. */
+    .standing-bar { position: relative; height: 8px; background: #dce1e6;
+                    border-radius: 4px; }
+    .standing-bar > span { display: block; height: 100%; background: #4977a8;
+                           border-radius: 4px; }
+    .standing-mark { position: absolute; top: -4px; bottom: -4px; width: 2px;
+                     background: #212529; }
+    .standing-bar-wrap { position: relative; padding-bottom: 1.3rem; }
+    .standing-mark-label { position: absolute; top: 14px; transform: translateX(-50%);
+                           font-size: .75rem; color: #66717c; white-space: nowrap; }
+    .spark { width: 64px; height: 3px; background: #edf0f3; border-radius: 2px;
+             margin: 4px 0 0 auto; }
+    .spark > span { display: block; height: 100%; background: #9db3cd; border-radius: 2px; }
+    /* Capped: four problems compare better against a short bar than a long one. */
+    .spark-wide { width: auto; flex: 0 1 150px; margin: 0 .75rem 0 0; }
+
+    /* The one bordered element, and the only one carrying colour. */
+    .next-action { border: 2px solid #4977a8; border-radius: .5rem; padding: 1.25rem;
+                   height: 100%; }
+    .next-action h2 { font-size: 1.35rem; }
+    .file-pill { display: flex; align-items: center; gap: .65rem; min-width: 0;
+                 background: #f5f7f9; border: 1px solid #d8dee4; border-radius: .35rem;
+                 padding: .6rem .75rem; }
+    .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* The standing: grey, unframed, so it reads as ground rather than a second card. */
+    .standing-panel { background: #f5f7f9; border-radius: .5rem; padding: 1.25rem;
+                      height: 100%; }
+    .requirements { border-top: 1px solid #d8dee4; margin-top: 1rem; padding-top: .6rem; }
+    .requirement { display: flex; justify-content: space-between; gap: .75rem;
+                   align-items: baseline; padding: .18rem 0; }
+    /* The words say whether a condition is settled or still open; the colour says
+       only one thing, once per block: this is what ends the matter. Grey is
+       therefore not "open" - it is simply unmarked. */
+    .req-open, .req-settled { color: #66717c; }
+    .req-lost { color: #b02a37; }
+
+    /* Badges only where no number can stand. Three colours, never green. */
+    .chip { font-size: .75rem; font-weight: 600; padding: .18rem .5rem;
+            border-radius: 1rem; white-space: nowrap; }
+    .chip-wait { background: #e9ecef; color: #495057; }
+    .chip-act  { background: #fff3cd; color: #7a5b00; }
+    .chip-lost { background: #f8d7da; color: #842029; }
+
+    /* Sheet | status (only when there is no number) | points. No deadline column:
+       three weeks on, the due date is noise; the open sheet carries it instead. */
+    .sheet-list { border-top: 1px solid #e9ecef; }
+    .sheet-list details { border-bottom: 1px solid #e9ecef; }
+    .sheet-list summary { cursor: pointer; list-style: none; padding: 0; }
+    .sheet-list summary::-webkit-details-marker { display: none; }
+    .sheet-list summary:focus-visible { outline: 3px solid rgba(73,119,168,.35);
+                                        outline-offset: -3px; }
+    .sheet-row { display: grid; align-items: center; gap: 1rem;
+                 padding: .6rem .5rem .6rem 1.25rem;
+                 grid-template-columns: minmax(10rem, 1.6fr) minmax(7rem, 1fr) 6rem 1.25rem; }
+    summary:hover .sheet-row { background: #fbfcfd; }
+    .sheet-note { color: #66717c; font-size: .82rem; }
+    .sheet-note-bad { color: #b02a37; font-size: .82rem; }
+    .sheet-muted, .sheet-muted a { color: #98a2ab; }
+    .chev { color: #98a2ab; transition: transform .12s ease; }
+    details[open] .chev { transform: rotate(180deg); }
+
+    /* The fold is the row continued and uses the whole width: two headed areas. */
+    .fold { padding: 1.25rem .5rem 1.5rem 1.5rem; border-top: 1px dotted #dee2e6; }
+    .fold-grid { display: grid; gap: 2.5rem;
+                 grid-template-columns: minmax(15rem, 1fr) minmax(15rem, 1fr); }
+    .task-line { display: flex; align-items: center; padding: .3rem 0;
+                 border-bottom: 1px solid #f1f3f5; }
+    .task-line:last-child { border-bottom: 0; }
+    .task-name { width: 5.5rem; color: #66717c; font-size: .875rem; }
+    .task-num { width: 4.5rem; text-align: right; }
+
+    /* Something changed since you last looked, and you are allowed to see it.
+       Not a status: it says nothing about the sheet, only about you and it. It
+       sits in the row's left margin so it never stands next to a badge, and it
+       goes when the row is opened. The accent colour is the page's own blue, so
+       it cannot be read as one of the three status colours. */
+    .new-dot { display: inline-block; width: .5rem; height: .5rem; border-radius: 50%;
+               background: #4977a8; margin-left: -1rem; margin-right: .5rem;
+               vertical-align: .1em; }
+    details[open] > summary .new-dot { visibility: hidden; }
+    /* The news belongs to the list, not to the standing: it is an event, the
+       standing is a state, and a pointer belongs beside what it points at. Its
+       dot sits in the same left gutter as the row markers, so the eye joins them. */
+    .news-row { display: flex; flex-wrap: wrap; gap: .5rem 1rem;
+                align-items: baseline; justify-content: space-between;
+                font-size: .875rem; padding: .5rem .75rem .5rem 1.25rem;
+                background: #f5f7f9; border-radius: .4rem; margin-bottom: .75rem; }
+    .news-row .new-dot { margin-left: -1rem; }
+    .seen-all { background: none; border: 0; padding: 0; font-size: .8rem;
+                color: #4977a8; text-decoration: underline; }
+
+    .sticky-strip { position: sticky; top: 0; z-index: 3; background: #fff;
+                    border-bottom: 1px solid #dee2e6; padding: .5rem 1.5rem; }
+  </style>
+</head>
+<body>
+
+<div class="container small-width mt-4">
+
+  <div class="p-3 mb-4 bg-white" style="border-left: 4px solid #6c757d; box-shadow: 0 0 5px rgba(0,0,0,.15);">
+    <div class="fw-bold mb-1">Submissions hub — the design we build</div>
+    <div class="small text-muted">
+      Action left, standing right; history without a deadline column; the fold across
+      the full width. Real data: lecture 1, <code>student1@mampf.edu</code>, 30 Aug 2026.
+    </div>
+  </div>
+
+  <!-- ============================ WIDE ============================ -->
+  <div class="viewport-label mb-3 pb-1">Wide — desktop, ≥ 992 px</div>
+
+  <div class="mb-2">
+    <h1 class="h3 mb-1">(V) Lineare Algebra 2</h1>
+    <p class="text-muted mb-0">SS 2026 · Tutorial Mo 14–16 (Dr. Tutor)</p>
+  </div>
+
+  <div class="lecture-pane">
+
+    <section class="row g-4 mb-2" aria-label="The sheet that is due, and your standing">
+
+      <!-- ---------- action: left, where reading starts ---------- -->
+      <div class="col-lg-7">
+        <div class="next-action">
+          <div class="eyebrow mb-2">Due now</div>
+          <div class="d-flex justify-content-between gap-3 align-items-start">
+            <div>
+              <h2 class="mb-1">Homework 11</h2>
+              <p class="mb-0">Due Thursday, September 3, 2026, 19:00</p>
+              <p class="small text-muted mb-3">PDF · in 4 days</p>
+            </div>
+            <span class="chip chip-wait">Handed in</span>
+          </div>
+
+          <div class="file-pill mb-3">
+            <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
+            <a class="file-name flex-grow-1" href="#">homework11.pdf</a>
+            <span class="small text-muted text-nowrap">1.2 MB · Aug 30, 14:12</span>
+          </div>
+
+          <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+            <a href="#" class="btn btn-sm btn-primary">
+              <i class="fas fa-upload me-1" aria-hidden="true"></i>Replace file
+            </a>
+            <span class="small">
+              <a href="#">Invite someone</a> · <a href="#">Leave the team</a>
+            </span>
+          </div>
+
+          <p class="small mb-0">
+            Handed in together with <strong>student2</strong> — points are recorded for
+            each of you separately. Join code <code>7F3K2</code>
+            <a href="#" class="ms-1 text-secondary" title="Copy the code">
+              <i class="far fa-copy" aria-hidden="true"></i><span class="visually-hidden">Copy the code</span>
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <!-- ---------- standing: right, grey, unframed ---------- -->
+      <div class="col-lg-5">
+        <aside class="standing-panel" aria-labelledby="standing-heading">
+          <h2 class="h6 mb-3" id="standing-heading">Exam admission</h2>
+
+          <div class="num num-total mb-2">32.5
+            <span class="fs-6 fw-normal text-muted">of 176 points</span>
+          </div>
+
+          <div class="standing-bar-wrap">
+            <div class="standing-bar" role="progressbar" aria-valuenow="18"
+                 aria-valuemin="0" aria-valuemax="100"
+                 aria-label="18 percent earned, 50 percent required">
+              <span style="width:18.5%"></span>
+              <div class="standing-mark" style="left:50%" aria-hidden="true"></div>
+            </div>
+            <div class="standing-mark-label" style="left:50%">88 needed</div>
+          </div>
+
+          <div class="small text-muted">16 points are still being marked.</div>
+
+          <div class="requirements">
+            <div class="requirement">
+              <span>50 % of the points</span>
+              <span class="small req-lost">you have 18 %</span>
+            </div>
+            <div class="requirement">
+              <span>Blackboard Talk</span>
+              <span class="small req-settled">not passed</span>
+            </div>
+          </div>
+
+          <details class="mt-2">
+            <summary class="small">What this means</summary>
+            <p class="small text-muted mt-2 mb-0">
+              Homework 10 is still being marked, but even full marks there would leave you
+              at 48.5 of the 88 points needed, and the blackboard talk was recorded as not
+              passed. Your tutor can tell you what is still possible.
+            </p>
+          </details>
+        </aside>
+      </div>
+    </section>
+
+    <hr class="lecture-pane-separator">
+
+    <!-- ---------- history ---------- -->
+    <section aria-labelledby="sheets-heading">
+      <div class="d-flex justify-content-between align-items-end mb-2">
+        <div>
+          <h3 class="lecture-pane-header mb-0" id="sheets-heading">Earlier sheets</h3>
+          <p class="small text-muted mb-0">Open a row for its problems, files and team.</p>
+        </div>
+        <span class="small text-muted text-nowrap">12 sheets</span>
+      </div>
+
+        <p class="news-row">
+          <span>
+            <span class="new-dot" aria-hidden="true"></span>
+            <span class="visually-hidden">New since you last looked: </span>
+            New — <a href="#sheet-hw10">Homework 10</a> (correction)
+          </span>
+          <button type="button" class="seen-all">mark all as seen</button>
+        </p>
+        <div class="sheet-list">
+        <div class="sheet-row small text-muted" style="padding-bottom:.2rem">
+          <div>Sheet</div><div></div><div class="text-end">Your points</div><div></div>
+        </div>
+
+        <details id="sheet-hw10">
+          <summary>
+            <div class="sheet-row">
+              <div class="fw-semibold">
+                <span class="new-dot" aria-hidden="true"></span>
+                <span class="visually-hidden">New since you last looked. </span>Homework 10
+              </div>
+              <div><span class="chip chip-wait">Correction uploaded</span></div>
+              <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold">
+            <div class="fold-grid">
+              <div>
+                <div class="eyebrow mb-2">Points per problem</div>
+                <p class="small text-muted mb-0">
+                  Your points are written on the correction, but they are not in MaMpf
+                  yet — so they do not count towards the 88 for now.
+                </p>
+              </div>
+              <div>
+                <div class="eyebrow mb-2">File and team</div>
+                <div class="small mb-2">
+                  <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+                  <a href="#">correction.pdf</a>
+                  <span class="text-muted">· uploaded August 28, 2026</span>
+                </div>
+                <div class="small mb-2">
+                  <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+                  <a href="#">homework10.pdf</a> <span class="text-muted">· what you handed in</span>
+                </div>
+                <div class="small text-muted">
+                  Handed in August 26, 2026, 22:27 · you and student2
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="sheet-row">
+              <div>
+                <div class="fw-semibold">Homework 9</div>
+                <div class="sheet-note">nothing arrived by the deadline</div>
+              </div>
+              <div></div>
+              <div class="text-end num">
+                <span class="visually-hidden">Missed, </span>
+                <span class="num-zero">0</span> <span class="text-muted">/ 16</span>
+                <div class="spark"><span style="width:0%"></span></div>
+              </div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold">
+            <div class="fold-grid">
+              <div>
+                <div class="eyebrow mb-2">Points per problem</div>
+                <p class="small text-muted mb-0">
+                  None — the sheet counts as not handed in, so all 16 points are missing
+                  from your total.
+                </p>
+              </div>
+              <div>
+                <div class="eyebrow mb-2">File and team</div>
+                <p class="small text-muted mb-0">No file was uploaded.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details open>
+          <summary>
+            <div class="sheet-row">
+              <div class="fw-semibold">Homework 8</div>
+              <div></div>
+              <div class="text-end num">
+                <span class="visually-hidden">Your points: </span>6.5
+                <span class="text-muted">/ 16</span>
+                <div class="spark"><span style="width:40.62%"></span></div>
+              </div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold">
+            <div class="fold-grid">
+              <div>
+                <div class="eyebrow mb-3">Points per problem</div>
+                <div class="task-line">
+                  <span class="task-name">Problem 1</span>
+                  <span class="spark spark-wide"><span style="width:37.5%"></span></span>
+                  <span class="task-num num">1.5 <span class="text-muted">/ 4</span></span>
+                </div>
+                <div class="task-line">
+                  <span class="task-name">Problem 2</span>
+                  <span class="spark spark-wide"><span style="width:50%"></span></span>
+                  <span class="task-num num">2 <span class="text-muted">/ 4</span></span>
+                </div>
+                <div class="task-line">
+                  <span class="task-name">Problem 3</span>
+                  <span class="spark spark-wide"><span style="width:25%"></span></span>
+                  <span class="task-num num">1 <span class="text-muted">/ 4</span></span>
+                </div>
+                <div class="task-line">
+                  <span class="task-name">Problem 4</span>
+                  <span class="spark spark-wide"><span style="width:50%"></span></span>
+                  <span class="task-num num">2 <span class="text-muted">/ 4</span></span>
+                </div>
+              </div>
+              <div>
+                <div class="eyebrow mb-3">File and team</div>
+                <div class="mb-2">
+                  <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+                  <a href="#">correction.pdf</a>
+                  <div class="small text-muted ms-4">
+                    The points on the left are the ones your tutor wrote on this PDF,
+                    together with the remarks.
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+                  <a href="#">homework8.pdf</a>
+                  <span class="small text-muted">· what you handed in</span>
+                </div>
+                <div class="small text-muted">
+                  Handed in August 15, 2026, 16:27 · marked August 16 by Dr. Tutor<br>
+                  Team: you and student2 — these 6.5 points are yours
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="sheet-row">
+              <div>
+                <div class="fw-semibold">Homework 7</div>
+                <div class="sheet-note">handed in late, your tutor let it count</div>
+              </div>
+              <div></div>
+              <div class="text-end num">
+                <span class="visually-hidden">Your points: </span>4.5
+                <span class="text-muted">/ 20</span>
+                <div class="spark"><span style="width:22.5%"></span></div>
+              </div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold"><div class="fold-grid">
+            <div><div class="eyebrow mb-2">Points per problem</div>
+              <div class="small text-muted">1 · 1.5 · 0.5 · 1 · 0.5, each out of 4</div></div>
+            <div><div class="eyebrow mb-2">File and team</div>
+              <div class="small text-muted">Handed in after the deadline, accepted by Dr. Tutor.</div></div>
+          </div></div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="sheet-row">
+              <div class="fw-semibold">Homework 6</div>
+              <div></div>
+              <div class="text-end num">
+                <span class="visually-hidden">Your points: </span>3.5
+                <span class="text-muted">/ 16</span>
+                <div class="spark"><span style="width:21.88%"></span></div>
+              </div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold"><div class="fold-grid">
+            <div><div class="eyebrow mb-2">Points per problem</div>
+              <div class="small text-muted">0 · 1.5 · 1 · 1, each out of 4</div></div>
+            <div><div class="eyebrow mb-2">File and team</div>
+              <div class="small text-muted">Marked August 1 by Dr. Tutor · you and student2</div></div>
+          </div></div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="sheet-row">
+              <div class="fw-semibold">Homework 5</div>
+              <div></div>
+              <div class="text-end num">
+                <span class="visually-hidden">Your points: </span>6.5
+                <span class="text-muted">/ 20</span>
+                <div class="spark"><span style="width:32.5%"></span></div>
+              </div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold"><div class="fold-grid">
+            <div><div class="eyebrow mb-2">Points per problem</div>
+              <div class="small text-muted">1 · 0.5 · 1.5 · 2 · 1.5, each out of 4</div></div>
+            <div><div class="eyebrow mb-2">File and team</div>
+              <div class="small text-muted">Marked July 25 by Dr. Tutor · you and student2</div></div>
+          </div></div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="sheet-row">
+              <div class="fw-semibold">Homework 4</div>
+              <div></div>
+              <div class="text-end num">
+                <span class="visually-hidden">Your points: </span>3
+                <span class="text-muted">/ 16</span>
+                <div class="spark"><span style="width:18.75%"></span></div>
+              </div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold"><div class="fold-grid">
+            <div><div class="eyebrow mb-2">Points per problem</div>
+              <div class="small text-muted">2 · 0 · 0.5 · 0.5, each out of 4</div></div>
+            <div><div class="eyebrow mb-2">File and team</div>
+              <div class="small text-muted">Marked July 18 by Dr. Tutor · you and student2</div></div>
+          </div></div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="sheet-row">
+              <div class="fw-semibold">Homework 3</div>
+              <div></div>
+              <div class="text-end num">
+                <span class="visually-hidden">Your points: </span>4
+                <span class="text-muted">/ 16</span>
+                <div class="spark"><span style="width:25%"></span></div>
+              </div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold"><div class="fold-grid">
+            <div><div class="eyebrow mb-2">Points per problem</div>
+              <div class="small text-muted">1 · 0.5 · 1.5 · 1, each out of 4</div></div>
+            <div><div class="eyebrow mb-2">File and team</div>
+              <div class="small text-muted">Marked July 10 by Dr. Tutor · you and student2</div></div>
+          </div></div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="sheet-row">
+              <div>
+                <div class="fw-semibold">Homework 2</div>
+                <div class="sheet-note">handed in late, your tutor let it count</div>
+              </div>
+              <div></div>
+              <div class="text-end num">
+                <span class="visually-hidden">Your points: </span>4.5
+                <span class="text-muted">/ 20</span>
+                <div class="spark"><span style="width:22.5%"></span></div>
+              </div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold"><div class="fold-grid">
+            <div><div class="eyebrow mb-2">Points per problem</div>
+              <div class="small text-muted">0.5 · 2 · 0 · 0.5 · 1.5, each out of 4</div></div>
+            <div><div class="eyebrow mb-2">File and team</div>
+              <div class="small text-muted">Handed in after the deadline, accepted by Dr. Tutor.</div></div>
+          </div></div>
+        </details>
+
+        <details>
+          <summary>
+            <div class="sheet-row">
+              <div>
+                <div class="fw-semibold">Homework 1</div>
+                <div class="sheet-note-bad">
+                  <i class="fas fa-exclamation-triangle me-1" aria-hidden="true"></i>your
+                  file is here, but the sheet counts as not handed in — ask your tutor
+                </div>
+              </div>
+              <div></div>
+              <div class="text-end num">
+                <span class="visually-hidden">Missed, </span>
+                <span class="num-zero">0</span> <span class="text-muted">/ 20</span>
+                <div class="spark"><span style="width:0%"></span></div>
+              </div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold"><div class="fold-grid">
+            <div><div class="eyebrow mb-2">Points per problem</div>
+              <div class="small text-muted">
+                None. All 20 points are missing from your total.
+              </div></div>
+            <div><div class="eyebrow mb-2">File and team</div>
+              <div class="small mb-2">
+                <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+                <a href="#">homework1.pdf</a>
+              </div>
+              <div class="small text-muted">
+                The file is here and so is a correction, but the gradebook has no record
+                of a hand-in. Only your tutor can put that right.
+              </div></div>
+          </div></div>
+        </details>
+
+        <details class="sheet-muted">
+          <summary>
+            <div class="sheet-row">
+              <div>Blatt 5</div>
+              <div class="small">old-style sheet</div>
+              <div class="text-end small">no points</div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold"><div class="small text-muted">
+            This sheet was set up before points existed in MaMpf. You handed in on
+            May 9, 2026; nothing is recorded against it.
+          </div></div>
+        </details>
+
+        <details class="sheet-muted">
+          <summary>
+            <div class="sheet-row">
+              <div>Blatt 4</div>
+              <div class="small">old-style sheet</div>
+              <div class="text-end small">no points</div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div>
+          </summary>
+          <div class="fold"><div class="small text-muted">
+            Handed in May 1, 2026, corrected and accepted. No points are recorded.
+          </div></div>
+        </details>
+      </div>
+
+      <p class="small text-muted mt-3 mb-0">
+        Submitted files and corrections are deleted on October 15, 2026.
+      </p>
+    </section>
+  </div>
+
+  <!-- ============================ NARROW ============================ -->
+  <div class="viewport-label mb-3 pb-1">Narrow — phone, 390 px · both blocks stack in the same order</div>
+
+  <div class="phone shadow mb-5">
+    <div class="phone-body">
+      <div class="p-3 pb-2">
+        <h1 class="h5 mb-0">(V) Lineare Algebra 2</h1>
+        <div class="text-muted small">SS 2026 · Mo 14–16</div>
+      </div>
+
+      <div class="lecture-pane mx-2" style="padding: 1em;">
+
+        <div class="next-action mb-3" style="padding: 1em;">
+          <div class="eyebrow mb-2">Due now</div>
+          <div class="d-flex justify-content-between align-items-start">
+            <h2 class="h5 mb-1">Homework 11</h2>
+            <span class="chip chip-wait">Handed in</span>
+          </div>
+          <p class="mb-0 small">Due Thursday, September 3, 19:00</p>
+          <p class="small text-muted mb-3">PDF · in 4 days</p>
+
+          <div class="file-pill mb-3">
+            <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
+            <a class="file-name flex-grow-1 small" href="#">homework11.pdf</a>
+          </div>
+
+          <a href="#" class="btn btn-sm btn-primary w-100 mb-2">
+            <i class="fas fa-upload me-1" aria-hidden="true"></i>Replace file
+          </a>
+          <div class="small text-center mb-2">
+            <a href="#">Invite someone</a> · <a href="#">Leave the team</a>
+          </div>
+          <p class="small mb-0">
+            With <strong>student2</strong> · code <code>7F3K2</code>
+          </p>
+        </div>
+
+        <aside class="standing-panel mb-3" style="padding: 1em;"
+               aria-labelledby="standing-heading-m">
+          <h2 class="h6 mb-3" id="standing-heading-m">Exam admission</h2>
+          <div class="num num-total mb-2">32.5
+            <span class="fs-6 fw-normal text-muted">of 176</span>
+          </div>
+          <div class="standing-bar-wrap">
+            <div class="standing-bar" role="progressbar" aria-valuenow="18"
+                 aria-valuemin="0" aria-valuemax="100"
+                 aria-label="18 percent earned, 50 percent required">
+              <span style="width:18.5%"></span>
+              <div class="standing-mark" style="left:50%" aria-hidden="true"></div>
+            </div>
+            <div class="standing-mark-label" style="left:50%">88 needed</div>
+          </div>
+          <div class="small text-muted">16 points are still being marked.</div>
+          <div class="requirements">
+            <div class="requirement">
+              <span class="small">50 % of the points</span>
+              <span class="small req-lost">you have 18 %</span>
+            </div>
+            <div class="requirement">
+              <span class="small">Blackboard Talk</span>
+              <span class="small req-settled">not passed</span>
+            </div>
+          </div>
+          <details class="mt-2">
+            <summary class="small">What this means</summary>
+            <p class="small text-muted mt-2 mb-0">
+              Even full marks on Homework 10 would leave you at 48.5 of the 88 points
+              needed, and the blackboard talk was recorded as not passed.
+            </p>
+          </details>
+        </aside>
+
+        <h3 class="lecture-pane-header">Earlier sheets</h3>
+        <p class="news-row">
+            <span>
+              <span class="new-dot" aria-hidden="true"></span>
+              <span class="visually-hidden">New since you last looked: </span>
+              New — <a href="#">Homework 10</a> (correction)
+            </span>
+            <button type="button" class="seen-all">mark all as seen</button>
+          </p>
+          <div class="sheet-list">
+          <details>
+            <summary>
+              <div class="sheet-row" style="grid-template-columns: 1fr auto 1rem;">
+                <div class="fw-semibold">
+                  <span class="new-dot" aria-hidden="true"></span>
+                  <span class="visually-hidden">New since you last looked. </span>Homework 10
+                </div>
+                <div><span class="chip chip-wait">Correction uploaded</span></div>
+                <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+              </div>
+            </summary>
+            <div class="fold" style="padding: .75rem .5rem .75rem 1rem;">
+              <div class="eyebrow mb-2">File and team</div>
+              <div class="small mb-1">
+                <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+                <a href="#">correction.pdf</a>
+                <span class="text-muted">· uploaded August 28</span>
+              </div>
+              <div class="small text-muted">
+                Points not entered yet · handed in August 26, 22:27 · you and student2
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <div class="sheet-row" style="grid-template-columns: 1fr auto 1rem;">
+                <div>
+                  <div class="fw-semibold">Homework 9</div>
+                  <div class="sheet-note">nothing arrived</div>
+                </div>
+                <div class="text-end num">
+                  <span class="visually-hidden">Missed, </span>
+                  <span class="num-zero">0</span> <span class="text-muted">/ 16</span>
+                  <div class="spark"><span style="width:0%"></span></div>
+                </div>
+                <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+              </div>
+            </summary>
+            <div class="fold" style="padding: .75rem .5rem .75rem 1rem;">
+              <div class="small text-muted">All 16 points are missing from your total.</div>
+            </div>
+          </details>
+
+          <details open>
+            <summary>
+              <div class="sheet-row" style="grid-template-columns: 1fr auto 1rem;">
+                <div class="fw-semibold">Homework 8</div>
+                <div class="text-end num">
+                  <span class="visually-hidden">Your points: </span>6.5
+                  <span class="text-muted">/ 16</span>
+                  <div class="spark"><span style="width:40.62%"></span></div>
+                </div>
+                <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+              </div>
+            </summary>
+            <div class="fold" style="padding: .75rem .5rem .75rem 1rem;">
+              <div class="eyebrow mb-2">Points per problem</div>
+              <div class="task-line">
+                <span class="task-name">Problem 1</span>
+                <span class="spark spark-wide"><span style="width:37.5%"></span></span>
+                <span class="task-num num small">1.5 <span class="text-muted">/ 4</span></span>
+              </div>
+              <div class="task-line">
+                <span class="task-name">Problem 2</span>
+                <span class="spark spark-wide"><span style="width:50%"></span></span>
+                <span class="task-num num small">2 <span class="text-muted">/ 4</span></span>
+              </div>
+              <div class="task-line">
+                <span class="task-name">Problem 3</span>
+                <span class="spark spark-wide"><span style="width:25%"></span></span>
+                <span class="task-num num small">1 <span class="text-muted">/ 4</span></span>
+              </div>
+              <div class="task-line mb-3">
+                <span class="task-name">Problem 4</span>
+                <span class="spark spark-wide"><span style="width:50%"></span></span>
+                <span class="task-num num small">2 <span class="text-muted">/ 4</span></span>
+              </div>
+
+              <div class="eyebrow mb-2">File and team</div>
+              <div class="small mb-1">
+                <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+                <a href="#">correction.pdf</a>
+              </div>
+              <div class="small mb-2">
+                <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
+                <a href="#">homework8.pdf</a>
+              </div>
+              <div class="small text-muted">
+                Marked August 16 by Dr. Tutor · you and student2
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <div class="sheet-row" style="grid-template-columns: 1fr auto 1rem;">
+                <div>
+                  <div class="fw-semibold">Homework 7</div>
+                  <div class="sheet-note">late, let through</div>
+                </div>
+                <div class="text-end num">
+                  <span class="visually-hidden">Your points: </span>4.5
+                  <span class="text-muted">/ 20</span>
+                  <div class="spark"><span style="width:22.5%"></span></div>
+                </div>
+                <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+              </div>
+            </summary>
+            <div class="fold" style="padding: .75rem .5rem .75rem 1rem;">
+              <div class="small text-muted">1 · 1.5 · 0.5 · 1 · 0.5, each out of 4</div>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              <div class="sheet-row" style="grid-template-columns: 1fr auto 1rem;">
+                <div class="fw-semibold">Homework 6</div>
+                <div class="text-end num">
+                  <span class="visually-hidden">Your points: </span>3.5
+                  <span class="text-muted">/ 16</span>
+                  <div class="spark"><span style="width:21.88%"></span></div>
+                </div>
+                <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+              </div>
+            </summary>
+            <div class="fold" style="padding: .75rem .5rem .75rem 1rem;">
+              <div class="small text-muted">0 · 1.5 · 1 · 1, each out of 4</div>
+            </div>
+          </details>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="#" class="small">Show 7 earlier sheets</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ FIRST WEEK ============================ -->
+  <div class="viewport-label mb-3 pb-1">
+    The first week — lecture 1 rewound to the week of June 22, 2026, when Homework 1 was the only sheet
+  </div>
+
+  <div class="lecture-pane">
+    <section class="row g-4" aria-label="The sheet that is due, and your standing">
+      <div class="col-lg-7">
+        <div class="next-action">
+          <div class="eyebrow mb-2">Due now</div>
+          <div class="d-flex justify-content-between gap-3 align-items-start">
+            <div>
+              <h2 class="mb-1">Homework 1</h2>
+              <p class="mb-0">Due Sunday, June 28, 2026, 14:27</p>
+              <p class="small text-muted mb-3">PDF · in 6 days · 5 problems, 20 points</p>
+            </div>
+            <span class="chip chip-act">Nothing handed in yet</span>
+          </div>
+          <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+            <a href="#" class="btn btn-sm btn-primary">
+              <i class="fas fa-upload me-1" aria-hidden="true"></i>Hand in
+            </a>
+            <span class="small"><a href="#">Join with a code</a></span>
+          </div>
+          <p class="small mb-0">
+            You can hand in alone or with one other person. Whoever hands in first gets a
+            code to pass on.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <aside class="standing-panel" aria-labelledby="standing-heading-fw">
+          <h2 class="h6 mb-3" id="standing-heading-fw">Exam admission</h2>
+          <div class="num num-total mb-2 num-none">—
+            <span class="fs-6 fw-normal text-muted">of 20 points</span>
+          </div>
+          <div class="standing-bar"><span style="width:0%"></span></div>
+          <div class="small text-muted mt-2">Nothing has been marked yet.</div>
+          <div class="requirements">
+            <p class="small req-open mb-0">
+              Your lecturer has not set the conditions yet. They will appear here, each
+              with your standing.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <hr class="lecture-pane-separator">
+
+    <h3 class="lecture-pane-header">Earlier sheets</h3>
+    <p class="text-muted mb-0">
+      None yet. Once Homework 1 has been marked, it appears here with your points.
+    </p>
+  </div>
+
+  <!-- ============================ NO SHEET OPEN ============================ -->
+  <div class="viewport-label mb-3 pb-1">
+    No sheet open — the action block is repurposed, not removed
+  </div>
+
+  <div class="lecture-pane">
+    <section class="row g-4" aria-label="No sheet due, and your standing">
+      <div class="col-lg-7">
+        <div class="next-action">
+          <div class="eyebrow mb-2">Due now</div>
+          <h2 class="mb-1">Nothing to hand in</h2>
+          <p class="mb-3">
+            Homework 11 appears on Thursday, September 10, 2026 — you will have until
+            September 17, 14:27.
+          </p>
+          <div class="eyebrow mb-2">Marked most recently</div>
+          <div class="d-flex align-items-center gap-3">
+            <span class="num">Homework 8 &nbsp; 6.5 <span class="text-muted">/ 16</span></span>
+            <span class="spark" style="margin:0"><span style="width:40.62%"></span></span>
+            <a href="#" class="small">
+              <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>correction.pdf
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <aside class="standing-panel" aria-labelledby="standing-heading-ns">
+          <h2 class="h6 mb-3" id="standing-heading-ns">Exam admission</h2>
+          <div class="num num-total mb-2">32.5
+            <span class="fs-6 fw-normal text-muted">of 176 points</span>
+          </div>
+          <div class="standing-bar-wrap">
+            <div class="standing-bar"><span style="width:18.5%"></span>
+              <div class="standing-mark" style="left:50%" aria-hidden="true"></div>
+            </div>
+            <div class="standing-mark-label" style="left:50%">88 needed</div>
+          </div>
+          <div class="small text-muted">16 points are still being marked.</div>
+        </aside>
+      </div>
+    </section>
+
+    <p class="small text-muted mt-4 mb-0">
+      The date is not invented. A lecturer who schedules an exercise medium for release
+      sets the sheet's title and deadline along with it — <code>MediumPublisher</code>,
+      reachable as <code>Lecture#scheduled_assignments</code>. When nothing is scheduled,
+      the block says <em>“The next sheet has not been posted yet.”</em> instead of guessing.
+    </p>
+  </div>
+
+  <!-- ============================ LONG LECTURE ============================ -->
+  <div class="viewport-label mb-3 pb-1">
+    A long lecture — sketch, not seed data: no lecture in the demo has more than 13 sheets
+  </div>
+
+  <div class="lecture-pane p-0" style="overflow: hidden;">
+    <!-- what replaces the sticky standing strip we gave up by splitting the head -->
+    <div class="sticky-strip">
+      <div class="d-flex align-items-center gap-3 small">
+        <span class="num fw-semibold">32.5 <span class="text-muted fw-normal">of 384</span></span>
+        <div class="standing-bar flex-grow-1" style="max-width:260px">
+          <span style="width:8.5%"></span>
+          <div class="standing-mark" style="left:50%" aria-hidden="true"></div>
+        </div>
+        <span class="text-muted">192 needed · 16 being marked</span>
+      </div>
+    </div>
+
+    <div class="px-4 py-3">
+      <h3 class="lecture-pane-header">Earlier sheets — 24 in this lecture</h3>
+      <div class="sheet-list">
+        <details><summary><div class="sheet-row">
+          <div class="fw-semibold">Homework 23</div><div></div>
+          <div class="text-end num">6.5 <span class="text-muted">/ 16</span>
+            <div class="spark"><span style="width:40.62%"></span></div></div>
+          <i class="fas fa-chevron-down chev" aria-hidden="true"></i></div></summary>
+          <div class="fold"><div class="small text-muted">Marked August 21 by Dr. Tutor</div></div></details>
+        <details><summary><div class="sheet-row">
+          <div class="fw-semibold">Homework 22</div><div></div>
+          <div class="text-end num">4.5 <span class="text-muted">/ 20</span>
+            <div class="spark"><span style="width:22.5%"></span></div></div>
+          <i class="fas fa-chevron-down chev" aria-hidden="true"></i></div></summary>
+          <div class="fold"><div class="small text-muted">Marked August 14 by Dr. Tutor</div></div></details>
+        <details><summary><div class="sheet-row">
+          <div class="fw-semibold">Homework 21</div><div></div>
+          <div class="text-end num">3.5 <span class="text-muted">/ 16</span>
+            <div class="spark"><span style="width:21.88%"></span></div></div>
+          <i class="fas fa-chevron-down chev" aria-hidden="true"></i></div></summary>
+          <div class="fold"><div class="small text-muted">Marked August 7 by Dr. Tutor</div></div></details>
+        <details><summary><div class="sheet-row">
+          <div class="fw-semibold">Homework 20</div><div></div>
+          <div class="text-end num">6.5 <span class="text-muted">/ 20</span>
+            <div class="spark"><span style="width:32.5%"></span></div></div>
+          <i class="fas fa-chevron-down chev" aria-hidden="true"></i></div></summary>
+          <div class="fold"><div class="small text-muted">Marked July 31 by Dr. Tutor</div></div></details>
+        <details><summary><div class="sheet-row">
+          <div class="fw-semibold">Homework 19</div><div></div>
+          <div class="text-end num">3 <span class="text-muted">/ 16</span>
+            <div class="spark"><span style="width:18.75%"></span></div></div>
+          <i class="fas fa-chevron-down chev" aria-hidden="true"></i></div></summary>
+          <div class="fold"><div class="small text-muted">Marked July 24 by Dr. Tutor</div></div></details>
+        <details><summary><div class="sheet-row">
+          <div class="fw-semibold">Homework 18</div><div></div>
+          <div class="text-end num">4 <span class="text-muted">/ 16</span>
+            <div class="spark"><span style="width:25%"></span></div></div>
+          <i class="fas fa-chevron-down chev" aria-hidden="true"></i></div></summary>
+          <div class="fold"><div class="small text-muted">Marked July 17 by Dr. Tutor</div></div></details>
+        <details><summary><div class="sheet-row">
+          <div class="fw-semibold">Homework 17</div><div></div>
+          <div class="text-end num">4.5 <span class="text-muted">/ 20</span>
+            <div class="spark"><span style="width:22.5%"></span></div></div>
+          <i class="fas fa-chevron-down chev" aria-hidden="true"></i></div></summary>
+          <div class="fold"><div class="small text-muted">Marked July 10 by Dr. Tutor</div></div></details>
+        <details><summary><div class="sheet-row">
+          <div class="fw-semibold">Homework 16</div><div></div>
+          <div class="text-end num">5 <span class="text-muted">/ 16</span>
+            <div class="spark"><span style="width:31.25%"></span></div></div>
+          <i class="fas fa-chevron-down chev" aria-hidden="true"></i></div></summary>
+          <div class="fold"><div class="small text-muted">Marked July 3 by Dr. Tutor</div></div></details>
+        <div class="py-3 text-center"><a href="#">Show the 16 sheets before that</a></div>
+      </div>
+      <p class="small text-muted mt-3 mb-0">
+        Splitting the head cost the standing its permanent place at the top. The strip
+        above is what buys it back: one line — points, bar, threshold, pending — that
+        latches to the top once the standing block has scrolled out of view.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================ WHAT "NEW" MEANS ============================ -->
+  <div class="viewport-label mb-3 pb-1">
+    “Something has come in” — two facts per sheet, never one
+  </div>
+
+  <div class="lecture-pane">
+    <p class="small text-muted">
+      A sheet has no single state “corrected”. The <strong>scan</strong> — the tutor's
+      handwriting, with points and remarks on it — belongs to the submission, so to the
+      whole team. The <strong>points</strong> are typed into MaMpf separately and belong
+      to one person. They rarely arrive together, and both orders are normal: the scans go
+      up and the points follow days later, or the points are read off the sheets in the
+      tutorial and the scans follow. So the page never infers one from the other, and
+      “new” does not mean “corrected” — it means <em>something has changed since you last
+      looked that you are allowed to see</em>. That one rule covers all five cases below,
+      corrections to earlier results included. It is told twice, and both places belong to
+      the list: a news row above it, and a marker in the row's left margin. The standing
+      block is deliberately not one of them — it is grey and unframed so that it does not
+      pull the eye, which makes it the worst possible home for a message.
+    </p>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="eyebrow mb-2">Scan first, points to follow</div>
+        <p class="news-row">
+            <span><span class="new-dot" aria-hidden="true"></span>New — <a href="#">Homework 10</a> (correction)</span>
+            <button type="button" class="seen-all">mark all as seen</button>
+          </p>
+          <div class="sheet-list">
+          <details>
+            <summary><div class="sheet-row">
+              <div class="fw-semibold">
+                <span class="new-dot" aria-hidden="true"></span>Homework 10</div>
+              <div><span class="chip chip-wait">Correction uploaded</span></div>
+              <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div></summary>
+            <div class="fold"><div class="small text-muted">
+              <code>correction.pdf</code> uploaded August 28. Your points are on it, but
+              they are not in MaMpf yet, so they do not count towards the 88.
+            </div></div>
+          </details>
+        </div>
+        <p class="small text-muted mt-2 mb-0">
+          The badge says what is there, not what is missing: the sheet <em>has</em> been
+          marked, by hand, and there is something to read. What is still outstanding is
+          the typing, and that belongs in the fold.
+        </p>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="eyebrow mb-2">Points first, scan to follow — the same sheet, other order</div>
+        <p class="news-row">
+            <span><span class="new-dot" aria-hidden="true"></span>New — <a href="#">Homework 10</a> (points)</span>
+            <button type="button" class="seen-all">mark all as seen</button>
+          </p>
+          <div class="sheet-list">
+          <details>
+            <summary><div class="sheet-row">
+              <div class="fw-semibold">
+                <span class="new-dot" aria-hidden="true"></span>Homework 10</div>
+              <div></div>
+              <div class="text-end num">5 <span class="text-muted">/ 16</span>
+                <div class="spark"><span style="width:31.25%"></span></div></div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div></summary>
+            <div class="fold"><div class="small text-muted">
+              Points entered August 29 by Dr. Tutor. The corrected scan has not been
+              uploaded yet.
+            </div></div>
+          </details>
+        </div>
+        <p class="small text-muted mt-2 mb-0">
+          The number appears, so the status column stays empty — the points are the
+          status, as everywhere else.
+        </p>
+      </div>
+    </div>
+
+    <hr class="lecture-pane-separator">
+
+    <div class="eyebrow mb-2">Three at once, one of them far down the list</div>
+    <div class="row g-4">
+      <div class="col-lg-12">
+        <p class="news-row">
+            <span>
+              <span class="new-dot" aria-hidden="true"></span>
+              New — <a href="#">Homework 10</a> (correction),
+              <a href="#">Homework 8</a> (points) and <a href="#">Homework 3</a> (correction)
+            </span>
+            <button type="button" class="seen-all">mark all as seen</button>
+          </p>
+          <div class="sheet-list">
+          <div class="sheet-row"><div class="fw-semibold">
+            <span class="new-dot" aria-hidden="true"></span>Homework 10</div>
+            <div><span class="chip chip-wait">Correction uploaded</span></div>
+            <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div><div></div></div>
+          <div class="sheet-row"><div>Homework 9</div><div></div>
+            <div class="text-end num"><span class="num-zero">0</span> <span class="text-muted">/ 16</span>
+              <div class="spark"><span style="width:0%"></span></div></div><div></div></div>
+          <div class="sheet-row"><div class="fw-semibold">
+            <span class="new-dot" aria-hidden="true"></span>Homework 8</div><div></div>
+            <div class="text-end num">6.5 <span class="text-muted">/ 16</span>
+              <div class="spark"><span style="width:40.62%"></span></div></div><div></div></div>
+          <div class="text-center small text-muted py-2">Homework 7 to 4 …</div>
+          <div class="sheet-row"><div class="fw-semibold">
+            <span class="new-dot" aria-hidden="true"></span>Homework 3</div><div></div>
+            <div class="text-end num">4 <span class="text-muted">/ 16</span>
+              <div class="spark"><span style="width:25%"></span></div></div><div></div></div>
+        </div>
+        <p class="small text-muted mt-2 mb-0">
+          This is why the marker exists at all: the news row names three sheets, but
+          Homework 3 is eight rows down. Each link jumps to its row and opens it; the
+          markers make the same sheets findable by scrolling. Beyond three sheets the row
+          reads “… and 4 more”, so it stays one line however much has come in.
+        </p>
+      </div>
+    </div>
+
+    <hr class="lecture-pane-separator">
+
+    <div class="eyebrow mb-2">A correction to something already marked</div>
+    <div class="row g-4">
+      <div class="col-lg-12">
+        <p class="news-row">
+            <span>
+              <span class="new-dot" aria-hidden="true"></span>
+              New — <a href="#">Homework 5</a> (points corrected)
+            </span>
+            <button type="button" class="seen-all">mark all as seen</button>
+          </p>
+          <div class="sheet-list">
+          <details>
+            <summary><div class="sheet-row">
+              <div>
+                <div class="fw-semibold">
+                  <span class="new-dot" aria-hidden="true"></span>Homework 5</div>
+                <div class="sheet-note">points corrected on August 29</div>
+              </div>
+              <div></div>
+              <div class="text-end num">8 <span class="text-muted">/ 20</span>
+                <div class="spark"><span style="width:40%"></span></div></div>
+              <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+            </div></summary>
+            <div class="fold"><div class="small text-muted">
+              Dr. Tutor corrected Problem 3 on August 29: 3 instead of 1.5. Your total for
+              this sheet went from 6.5 to 8.
+            </div></div>
+          </details>
+        </div>
+        <p class="small text-muted mt-2 mb-0">
+          A correction reads as a correction, not as a first result: the quiet line under
+          the name says what changed, and the fold says what it was before. The word in
+          the news row carries it too — <em>(points corrected)</em>, not
+          <em>(points)</em>.
+        </p>
+      </div>
+    </div>
+
+    <hr class="lecture-pane-separator">
+
+    <div class="eyebrow mb-2">Nothing new — the counter-test</div>
+    <div class="row g-4">
+      <div class="col-lg-12">
+        <div class="sheet-list">
+          <div class="sheet-row"><div>Homework 10</div>
+            <div><span class="chip chip-wait">Waiting to be marked</span></div>
+            <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div><div></div></div>
+          <div class="sheet-row"><div>Homework 9</div><div></div>
+            <div class="text-end num"><span class="num-zero">0</span> <span class="text-muted">/ 16</span>
+              <div class="spark"><span style="width:0%"></span></div></div><div></div></div>
+          <div class="sheet-row"><div>Homework 8</div><div></div>
+            <div class="text-end num">6.5 <span class="text-muted">/ 16</span>
+              <div class="spark"><span style="width:40.62%"></span></div></div><div></div></div>
+        </div>
+        <p class="small text-muted mt-2 mb-0">
+          No news row, no dots, and the badge is back to <em>waiting to be marked</em>,
+          because nothing has come back at all. On the days when nothing has happened —
+          most of them — the page is exactly what it was before this round. The standing
+          block never changes either way: it keeps the pending points and nothing else.
+        </p>
+      </div>
+    </div>
+
+    <p class="small text-muted mt-4 mb-0">
+      <strong>How the marker goes.</strong> Opening the row clears it, or “mark all as
+      seen” clears the lot — and only for you —
+      it is kept per person and per submission, so a partner reading the correction does
+      not take your marker away. In this mockup that behaviour is real, not drawn: open
+      Homework 10 in the list above and its dot disappears. It is hidden rather than
+      removed, so the sheet name does not jump sideways.
+    </p>
+  </div>
+
+  <!-- ============================ ADMISSION VARIANTS ============================ -->
+  <div class="viewport-label mb-3 pb-1">
+    The requirements list for other rules — the rule as it is set, each condition with its own standing
+  </div>
+
+  <div class="lecture-pane">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="eyebrow mb-2"><code>percentage</code> — the demo rule, student1</div>
+        <aside class="standing-panel">
+          <div class="requirement">
+            <span>50 % of the points</span><span class="small req-lost">you have 18 %</span>
+          </div>
+          <div class="requirement">
+            <span>Blackboard Talk</span><span class="small req-settled">not passed</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="eyebrow mb-2"><code>absolute</code> and three achievements — student2's values</div>
+        <aside class="standing-panel">
+          <div class="requirement">
+            <span>90 of 176 points</span><span class="small req-open">you have 104.5</span>
+          </div>
+          <div class="requirement">
+            <span>Blackboard Talk</span><span class="small req-open">passed</span>
+          </div>
+          <div class="requirement">
+            <span>Homework Points, at least 15</span>
+            <span class="small req-open">not recorded yet</span>
+          </div>
+          <div class="requirement">
+            <span>Attendance Rate, at least 80 %</span>
+            <span class="small req-lost">you have 67.3 %</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="eyebrow mb-2"><code>none</code> — no rule set</div>
+        <aside class="standing-panel">
+          <p class="small req-open mb-0">
+            Your lecturer has not set the conditions yet. They will appear here, each with
+            your standing.
+          </p>
+        </aside>
+      </div>
+    </div>
+
+    <p class="small text-muted mt-4 mb-0">
+      One line per condition, in the words the rule was written in — never one computed
+      verdict. A condition that is met and one that is still open read the same, because
+      neither has cost anything. Red appears at most once per block and only where nothing
+      can change any more; a second settled condition stays grey, because one loss is a
+      fact and three is a scolding. In the demo the rule requires only the blackboard talk;
+      the middle block shows what lecture 1's other two achievements would look like if the
+      rule asked for them too.
+    </p>
+  </div>
+
+  <!-- ============================ STATE GALLERY ============================ -->
+  <div class="viewport-label mb-3 pb-1">Every state a row can be in</div>
+  <div class="lecture-pane">
+    <p class="small text-muted">
+      Two columns carry the state and never both speak at once. The <strong>points
+      column</strong> holds a number whenever there is one; the <strong>status
+      column</strong> holds a badge only when there cannot be — grey (nothing to do yet),
+      amber (you have to act), red (this cost you points), never green. A quiet line under
+      the sheet name explains, and only when something needs explaining. Every number also
+      carries an invisible label, so the colour is never the only thing saying what
+      happened.
+    </p>
+        <div class="sheet-list">
+      <div class="sheet-row small text-muted" style="padding-bottom:.2rem">
+        <div>Sheet</div><div>Status</div><div class="text-end">Your points</div><div></div>
+      </div>
+      <div class="sheet-row"><div>Homework 11</div>
+        <div><span class="chip chip-act">Nothing handed in yet</span></div>
+        <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11</div>
+        <div><span class="chip chip-wait">Handed in</span></div>
+        <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11<div class="sheet-note">the deadline has passed, you have 15 minutes</div></div>
+        <div><span class="chip chip-act">15 minutes left</span></div>
+        <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11<div class="sheet-note">handed in after the deadline</div></div>
+        <div><span class="chip chip-act">Your tutor decides</span></div>
+        <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11<div class="sheet-note">handed in late, your tutor let it count</div></div>
+        <div></div>
+        <div class="text-end num">6.5 <span class="text-muted">/ 16</span>
+          <div class="spark"><span style="width:40.62%"></span></div></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11<div class="sheet-note-bad">handed in late, your tutor did not let it count</div></div>
+        <div></div>
+        <div class="text-end num"><span class="num-zero">0</span> <span class="text-muted">/ 16</span>
+          <div class="spark"><span style="width:0%"></span></div></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11</div>
+        <div><span class="chip chip-wait">Waiting to be marked</span></div>
+        <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11<div class="sheet-note">marked — no badge, the number says it</div></div>
+        <div></div>
+        <div class="text-end num">6.5 <span class="text-muted">/ 16</span>
+          <div class="spark"><span style="width:40.62%"></span></div></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11<div class="sheet-note">a correction is there, no points were entered</div></div>
+        <div><span class="chip chip-wait">Waiting to be marked</span></div>
+        <div class="text-end num num-none">— <span class="text-muted">/ 16</span></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11<div class="sheet-note">nothing arrived by the deadline</div></div>
+        <div></div>
+        <div class="text-end num"><span class="num-zero">0</span> <span class="text-muted">/ 16</span>
+          <div class="spark"><span style="width:0%"></span></div></div><div></div></div>
+      <div class="sheet-row"><div>Homework 11<div class="sheet-note">excused — this sheet does not count against you</div></div>
+        <div><span class="chip chip-wait">Excused</span></div>
+        <div class="text-end num num-none">—</div><div></div></div>
+      <div class="sheet-row"><div>Homework 11<div class="sheet-note">recorded as absent</div></div>
+        <div></div>
+        <div class="text-end num"><span class="num-zero">0</span> <span class="text-muted">/ 16</span>
+          <div class="spark"><span style="width:0%"></span></div></div><div></div></div>
+      <div class="sheet-row sheet-muted"><div>Blatt 4</div>
+        <div class="small">old-style sheet</div>
+        <div class="text-end small">no points</div><div></div></div>
+    </div>
+    <p class="small text-muted mb-0 mt-3">
+      Not in this list: <em>graded</em>. An <code>Assignment</code> is
+      <code>Assessment::Pointable</code> and never <code>Gradable</code>, so a sheet cannot
+      carry a grade — only exams and talks can.
+    </p>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // A news link jumps to its sheet and opens it — otherwise the reader lands on a
+  // closed row and has to click again.
+  document.querySelectorAll('.news-row a[href^="#sheet-"]').forEach(function (link) {
+    link.addEventListener('click', function () {
+      var target = document.querySelector(link.getAttribute('href'));
+      if (target) { target.open = true; }
+    });
+  });
+</script>
+</body>
+</html>
