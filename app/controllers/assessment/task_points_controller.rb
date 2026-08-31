@@ -65,7 +65,8 @@ module Assessment
             html: render_to_string(SubmissionRowComponent.new(
                                      submission: @submission,
                                      assignment: @assignment,
-                                     grading_scope: @tutorial
+                                     grading_scope:
+                                        params[:scope] == "tutorial" ? @tutorial : @lecture
                                    ))
           )
         )
@@ -94,15 +95,16 @@ module Assessment
             html: render_to_string(ParticipationRowComponent.new(
                                      participation: @participation,
                                      assessment: @assignment.assessment,
-                                     grading_scope: @tutorial,
+                                     grading_scope:
+                                        params[:scope] == "tutorial" ? @tutorial : @lecture,
                                      save_url:
-                                        refresh_point_user_tutorial_path(@participation,
-                                                                         type: "Tutorial",
-                                                                         scope: "tutorial"),
+                                        point_user_tutorial_path(@participation,
+                                                                 type: "Tutorial",
+                                                                 scope: params[:scope]),
                                      refresh_url:
                                         refresh_point_user_tutorial_path(@participation,
                                                                          type: "Tutorial",
-                                                                         scope: "tutorial")
+                                                                         scope: params[:scope])
                                    ))
           )
         )
@@ -153,7 +155,8 @@ module Assessment
               html: render_to_string(SubmissionRowComponent.new(
                                        submission: @submission,
                                        assignment: @assignment,
-                                       grading_scope: @tutorial
+                                       grading_scope:
+                                          params[:scope] == "tutorial" ? @tutorial : @lecture
                                      ))
             )
           end
@@ -168,15 +171,16 @@ module Assessment
               html: render_to_string(ParticipationRowComponent.new(
                                        participation: @participation,
                                        assessment: @assignment.assessment,
-                                       grading_scope: @tutorial,
+                                       grading_scope:
+                                          params[:scope] == "tutorial" ? @tutorial : @lecture,
                                        save_url:
                                           point_user_tutorial_path(@participation,
                                                                    type: "Tutorial",
-                                                                   scope: "tutorial"),
+                                                                   scope: params[:scope]),
                                        refresh_url:
                                           refresh_point_user_tutorial_path(@participation,
                                                                            type: "Tutorial",
-                                                                           scope: "tutorial")
+                                                                           scope: params[:scope])
                                      ))
             )
           end
@@ -224,6 +228,8 @@ module Assessment
                                     t("assessment.errors.no_tutorial"))
         end
 
+        @lecture = @tutorial.lecture
+
         unless @assignment
           return respond_with_flash(:alert,
                                     t("assessment.errors.no_assignment"))
@@ -254,6 +260,8 @@ module Assessment
                                     t("assessment.task_points.submission_missing_tutorial"))
         end
 
+        @lecture = @tutorial.lecture
+
         @assessment = @assignment.assessment
         return if @assessment
 
@@ -278,6 +286,8 @@ module Assessment
           return respond_with_flash(:alert,
                                     t("assessment.task_points.participation_missing_tutorial"))
         end
+
+        @lecture = @tutorial.lecture
 
         @assignment = @assessment.assessable
         return if @assignment
