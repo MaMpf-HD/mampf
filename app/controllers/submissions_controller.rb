@@ -79,7 +79,7 @@ class SubmissionsController < ApplicationController
       sync_assessment_participations(users: [current_user])
       send_upload_email(User.where(id: current_user.id))
     end
-    render_card
+    render_card_and_standing
   end
 
   def update
@@ -115,14 +115,14 @@ class SubmissionsController < ApplicationController
     @errors = @submission.errors
     return render_form(status: :unprocessable_content) if @errors.any?
 
-    render_card
+    render_card_and_standing
   end
 
   def destroy
     clear_submitted_at(@submission.users)
     @submission.destroy
     @submission = nil
-    render_card
+    render_card_and_standing
   end
 
   def enter_code
@@ -156,7 +156,7 @@ class SubmissionsController < ApplicationController
       return render :enter_code, status: :unprocessable_content
     end
 
-    render_card
+    render_card_and_standing
   end
 
   # Leaving is refused for the last person on a team - that is a delete, and it
@@ -170,7 +170,7 @@ class SubmissionsController < ApplicationController
     @submission.users.delete(current_user)
     send_leave_email
     @submission = nil
-    render_card
+    render_card_and_standing
   end
 
   def cancel_edit
@@ -285,6 +285,29 @@ class SubmissionsController < ApplicationController
       @invites = loaded.invites_for(@assignment)
       @partners = loaded.possible_partners
       render :card, status: status
+    end
+
+    # Handing in, taking it back, joining and leaving all move `submitted_at`,
+    # and the standing block counts a sheet that is handed in and not yet marked
+    # among the points still being marked. So these answers carry two places at
+    # once, and a frame can only carry one. The data for both is already in
+    # hand: the card is read from the loader either way.
+    def render_card_and_standing(status: :ok)
+      loaded = hub
+      render turbo_stream: [
+        turbo_stream.replace(SubmissionCardComponent.frame_id(@assignment),
+                             card_component(loaded)),
+        turbo_stream.replace(StandingComponent::TARGET,
+                             StandingComponent.new(standing: loaded.standing))
+      ], status: status
+    end
+
+    def card_component(loaded)
+      sheet = loaded.sheets.find { |candidate| candidate.assignment == @assignment }
+      SubmissionCardComponent.new(sheet: sheet,
+                                  invites: loaded.invites_for(@assignment),
+                                  partners: loaded.possible_partners,
+                                  error: @card_error)
     end
 
     # The form back in the frame with its messages beside the fields, rather

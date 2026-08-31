@@ -3043,6 +3043,33 @@ de:
     hub:
       heading: Frühere Blätter
       due_now: Jetzt fällig
+      standing:
+        heading: Klausurzulassung
+        of_points: "von %{max} Punkten"
+        no_max: "von noch keinen Punkten"
+        nothing_marked: Es ist noch nichts korrigiert.
+        pending: "%{points} Punkte werden noch korrigiert."
+        needed: "%{points} nötig"
+        bar_plain: "%{percentage} Prozent der Punkte erreicht"
+        bar_with_mark: "%{percentage} Prozent erreicht, %{required} Prozent nötig"
+        condition_percentage: "%{percentage} % der Punkte"
+        condition_absolute: "%{points} von %{max} Punkten"
+        you_have_percent: "Du hast %{percentage} %"
+        you_have_points: "Du hast %{points}"
+        you_have_value: "Du hast %{value} %{unit}"
+        achievement_threshold: "%{title}, mindestens %{threshold} %{unit}"
+        passed: bestanden
+        not_passed: nicht bestanden
+        not_recorded: noch nicht vermerkt
+        no_conditions: >
+          Deine Dozentin oder Dein Dozent hat die Bedingungen noch nicht
+          festgelegt. Sie stehen dann hier, jede mit Deinem Stand.
+        what_this_means: Was das heißt
+        out_of_reach: >
+          Selbst die volle Punktzahl auf allem, was noch offen ist, ließe Dich
+          bei %{best} von den nötigen %{needed}.
+        recorded_as_failed: "%{names} wurde als nicht bestanden vermerkt."
+        ask_your_tutor: Dein Tutor kann Dir sagen, was noch möglich ist.
       card:
         due: "Fällig %{time}"
         in_time: "in %{time}"

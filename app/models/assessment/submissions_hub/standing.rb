@@ -3,9 +3,11 @@ module Assessment
     # The exam-admission block: the reader's materialized record, the rule it is
     # measured against and the value recorded for every achievement the lecture
     # keeps. The record carries achievements only as two id lists - met and not
-    # graded yet - so the value behind one ("you have 67.3 %") comes separately.
+    # graded yet - so the value behind one ("you have 67.3 %") comes separately,
+    # and so do the points nobody has decided on yet.
     Standing = Struct.new(:record, :rule, :achievement_values,
-                          :uses_exam_eligibility, keyword_init: true) do
+                          :points_still_open, :uses_exam_eligibility,
+                          keyword_init: true) do
       def required_achievements
         rule ? rule.required_achievements.to_a : []
       end
@@ -37,6 +39,27 @@ module Assessment
 
       def percentage
         record&.percentage_materialized
+      end
+
+      def required_points
+        rule&.required_points(record)
+      end
+
+      # The best this student could still reach: what is marked plus everything
+      # that is not decided yet - which includes sheets nobody has handed in.
+      # Below the threshold, nothing they do now changes the outcome, and that
+      # is the only place the block says so in red.
+      def reachable_points
+        return unless points_total
+
+        points_total + (points_still_open || 0)
+      end
+
+      def points_out_of_reach?
+        needed = required_points
+        return false unless needed && reachable_points
+
+        reachable_points < needed
       end
     end
   end

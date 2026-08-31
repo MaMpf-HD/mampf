@@ -1,0 +1,63 @@
+<aside class="standing-panel" id="<%= target %>" aria-labelledby="standing-heading">
+  <h2 class="h6 mb-3" id="standing-heading">
+    <%= t("submission.hub.standing.heading") %>
+  </h2>
+
+  <div class="num num-total mb-2<%= " num-none" unless marked? %>">
+    <%= total %>
+    <span class="fs-6 fw-normal text-muted"><%= points_line %></span>
+  </div>
+
+  <% if bar? %>
+    <div class="standing-bar-wrap<%= " pb-0" unless mark_percentage %>">
+      <div class="standing-bar" role="progressbar"
+           aria-valuenow="<%= earned_percentage %>" aria-valuemin="0"
+           aria-valuemax="100" aria-label="<%= bar_reader_label %>">
+        <span style="width: <%= earned_percentage %>%"></span>
+        <% if mark_percentage %>
+          <div class="standing-mark" style="left: <%= mark_percentage %>%"
+               aria-hidden="true"></div>
+        <% end %>
+      </div>
+      <% if mark_percentage %>
+        <div class="standing-mark-label" style="left: <%= mark_percentage %>%">
+          <%= mark_label %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if pending_line %>
+    <div class="small text-muted mt-2"><%= pending_line %></div>
+  <% end %>
+
+  <div class="requirements">
+    <% if conditions? %>
+      <% if points_condition %>
+        <div class="requirement">
+          <span><%= points_condition %></span>
+          <span class="small <%= points_class %>"><%= points_standing %></span>
+        </div>
+      <% end %>
+      <% required_achievements.each do |achievement| %>
+        <div class="requirement">
+          <span><%= achievement_label(achievement) %></span>
+          <span class="small <%= achievement_class(achievement) %>">
+            <%= achievement_standing(achievement) %>
+          </span>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="small req-open mb-0">
+        <%= t("submission.hub.standing.no_conditions") %>
+      </p>
+    <% end %>
+  </div>
+
+  <% if explanation %>
+    <details class="mt-2">
+      <summary class="small"><%= t("submission.hub.standing.what_this_means") %></summary>
+      <p class="small text-muted mt-2 mb-0"><%= explanation %></p>
+    </details>
+  <% end %>
+</aside>

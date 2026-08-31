@@ -725,6 +725,65 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
 
+    # Handing in makes a sheet count among the points still being marked, so it
+    # changes the standing as well as the card. Two places, and a frame carries
+    # one - hence a stream with two targets.
+    describe "the two places a hand-in changes" do
+      it "answers a hand-in with both the card and the standing" do
+        post submissions_path, as: :turbo_stream, params: {
+          submission: { assignment_id: assignment.id, invitee_ids: [""],
+                        tutorial_id: tutorial.id, manuscript: "" }
+        }
+
+        expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+        assert_turbo_stream(action: :replace, target: frame_id)
+        assert_turbo_stream(action: :replace, target: StandingComponent::TARGET)
+      end
+
+      it "answers a delete with both, so the pending points go back" do
+        submission = hand_in
+
+        delete submission_path(submission), as: :turbo_stream
+
+        assert_turbo_stream(action: :replace, target: frame_id)
+        assert_turbo_stream(action: :replace, target: StandingComponent::TARGET)
+      end
+
+      it "answers a join with both" do
+        partner = create(:confirmed_user)
+        submission = hand_in(users: [partner])
+
+        post join_submission_path, as: :turbo_stream, params: {
+          join: { code: submission.token, assignment_id: assignment.id }
+        }
+
+        assert_turbo_stream(action: :replace, target: frame_id)
+        assert_turbo_stream(action: :replace, target: StandingComponent::TARGET)
+      end
+
+      it "answers a leave with both" do
+        partner = create(:confirmed_user)
+        submission = hand_in(users: [user, partner])
+
+        delete leave_submission_path(submission), as: :turbo_stream
+
+        assert_turbo_stream(action: :replace, target: frame_id)
+        assert_turbo_stream(action: :replace, target: StandingComponent::TARGET)
+      end
+
+      # Opening and closing a form changes one place only, and a stream that
+      # rewrites the standing for nothing is a second thing to keep in step.
+      it "answers a cancelled form with the card alone" do
+        submission = hand_in
+
+        get cancel_edit_submission_path(submission)
+
+        expect(response.media_type).to eq("text/html")
+        expect(response.body).to include(frame_id)
+        expect(response.body).not_to include(StandingComponent::TARGET)
+      end
+    end
+
     # Deleted in another tab: there is no card left to put a message in, so the
     # frame says so rather than navigating itself somewhere unexpected.
     it "answers for a submission that is gone with a frame that says so" do

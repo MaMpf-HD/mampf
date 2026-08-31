@@ -202,4 +202,61 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
       expect(rule2).to be_persisted
     end
   end
+
+  # The mark on the student's bar: what this rule asks of them in points.
+  describe "#required_points" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    def record_with(max)
+      FactoryBot.build(:student_performance_record,
+                       points_max_materialized: max)
+    end
+
+    it "takes the percentage of what the lecture is worth" do
+      rule = FactoryBot.build(:student_performance_rule, :with_percentage,
+                              lecture: lecture, min_percentage: 50)
+
+      expect(rule.required_points(record_with(176))).to eq(88)
+    end
+
+    it "hands an absolute threshold back as it stands" do
+      rule = FactoryBot.build(:student_performance_rule, :with_absolute_points,
+                              lecture: lecture, min_points_absolute: 90)
+
+      expect(rule.required_points(record_with(176))).to eq(90)
+    end
+
+    it "asks for nothing where the rule sets no threshold" do
+      achievement = FactoryBot.create(:achievement, lecture: lecture)
+      rule = FactoryBot.build(:student_performance_rule, :without_criteria,
+                              lecture: lecture,
+                              required_achievements: [achievement])
+
+      expect(rule.required_points(record_with(176))).to be_nil
+    end
+
+    # A percentage of nothing is not a threshold, and a bar drawn against it
+    # would claim a ratio that does not exist.
+    it "is nil for a percentage of a lecture that is worth no points" do
+      rule = FactoryBot.build(:student_performance_rule, :with_percentage,
+                              lecture: lecture, min_percentage: 50)
+
+      expect(rule.required_points(record_with(0))).to be_nil
+    end
+
+    it "is nil for a percentage without a record to weigh" do
+      rule = FactoryBot.build(:student_performance_rule, :with_percentage,
+                              lecture: lecture, min_percentage: 50)
+
+      expect(rule.required_points(nil)).to be_nil
+    end
+
+    # An absolute threshold stands on its own; it needs no scale.
+    it "keeps an absolute threshold even without a record" do
+      rule = FactoryBot.build(:student_performance_rule, :with_absolute_points,
+                              lecture: lecture, min_points_absolute: 90)
+
+      expect(rule.required_points(nil)).to eq(90)
+    end
+  end
 end

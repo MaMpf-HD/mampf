@@ -101,7 +101,25 @@ module Assessment
         def standing
           Standing.new(record: record, rule: rule,
                        achievement_values: achievement_values,
+                       points_still_open: points_still_open,
                        uses_exam_eligibility: lecture.uses_exam_eligibility?)
+        end
+
+        # What is still there to be won. The record cannot say this: its
+        # `points_max_pending` counts only sheets that are handed in and waiting,
+        # so a sheet nobody has handed in yet looks, from the record alone, like
+        # a sheet that is already lost. Read off the sheets instead - they are
+        # the only place that knows which are decided.
+        def points_still_open
+          sheets.reject { |sheet| decided?(sheet) }
+                .sum { |sheet| sheet.max_points || 0 }
+        end
+
+        # Marked, or counted as nothing, or taken out of the reckoning: whatever
+        # happens next, these do not move any more.
+        def decided?(sheet)
+          sheet.state.in?([:marked, :absent, :missed, :not_recorded, :rejected,
+                           :exempt, :no_points])
         end
 
         def record

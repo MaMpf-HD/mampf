@@ -5,30 +5,33 @@
   <section class="mb-4" aria-labelledby="due-heading">
     <h3 class="lecture-pane-header" id="due-heading"><%= t("submission.hub.due_now") %></h3>
 
+    <%# Action left, standing right. Only the first open sheet shares the head;
+        anything else that can still be handed in follows at full width, so the
+        next deadline keeps the eye. %>
+    <% head, *later = @hub.open_sheets %>
     <div class="row">
-      <% if @hub.open_sheets.any? %>
-        <% @hub.due.each do |sheet| %>
-          <div class="col-12 col-lg-7 mb-3">
-            <%= render(SubmissionCardComponent.new(
-                         sheet: sheet,
-                         invites: @hub.invites_for(sheet.assignment),
-                         partners: @hub.possible_partners)) %>
-          </div>
-        <% end %>
-        <%# Sheets due later keep their card too - handing in early is a thing
-            people do - but below, at full width, so the next deadline leads. %>
-        <% (@hub.open_sheets - @hub.due).each do |sheet| %>
-          <div class="col-12 mb-3">
-            <%= render(SubmissionCardComponent.new(
-                         sheet: sheet,
-                         invites: @hub.invites_for(sheet.assignment),
-                         partners: @hub.possible_partners)) %>
-          </div>
-        <% end %>
-      <% else %>
-        <div class="col-12 col-lg-7">
+      <div class="col-12 col-lg-7 mb-3">
+        <% if head %>
+          <%= render(SubmissionCardComponent.new(
+                       sheet: head,
+                       invites: @hub.invites_for(head.assignment),
+                       partners: @hub.possible_partners)) %>
+        <% else %>
           <%= render(NoSheetDueComponent.new(next_scheduled: @hub.next_scheduled,
                                              latest_marked: @hub.latest_marked)) %>
+        <% end %>
+      </div>
+
+      <div class="col-12 col-lg-5 mb-3">
+        <%= render(StandingComponent.new(standing: @hub.standing)) %>
+      </div>
+
+      <% later.each do |sheet| %>
+        <div class="col-12 mb-3">
+          <%= render(SubmissionCardComponent.new(
+                       sheet: sheet,
+                       invites: @hub.invites_for(sheet.assignment),
+                       partners: @hub.possible_partners)) %>
         </div>
       <% end %>
     </div>

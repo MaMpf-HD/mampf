@@ -2819,6 +2819,33 @@ en:
     hub:
       heading: Earlier sheets
       due_now: Due now
+      standing:
+        heading: Exam admission
+        of_points: "of %{max} points"
+        no_max: "of no points yet"
+        nothing_marked: Nothing has been marked yet.
+        pending: "%{points} points are still being marked."
+        needed: "%{points} needed"
+        bar_plain: "%{percentage} percent of the points earned"
+        bar_with_mark: "%{percentage} percent earned, %{required} percent required"
+        condition_percentage: "%{percentage} % of the points"
+        condition_absolute: "%{points} of %{max} points"
+        you_have_percent: "you have %{percentage} %"
+        you_have_points: "you have %{points}"
+        you_have_value: "you have %{value} %{unit}"
+        achievement_threshold: "%{title}, at least %{threshold} %{unit}"
+        passed: passed
+        not_passed: not passed
+        not_recorded: not recorded yet
+        no_conditions: >
+          Your lecturer has not set the conditions yet. They will appear here,
+          each with your standing.
+        what_this_means: What this means
+        out_of_reach: >
+          Even full marks on everything still open would leave you at %{best}
+          of the %{needed} points needed.
+        recorded_as_failed: "%{names} was recorded as not passed."
+        ask_your_tutor: Your tutor can tell you what is still possible.
       card:
         due: "Due %{time}"
         in_time: "in %{time}"

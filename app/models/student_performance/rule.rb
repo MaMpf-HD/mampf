@@ -27,6 +27,22 @@ module StudentPerformance
     validate :threshold_matches_mode
     validate :at_least_one_criterion
 
+    # What this rule asks of one student, in points. A percentage only becomes a
+    # number once there are points to take it of, so it is answered against the
+    # student's record rather than in the abstract - and it stays nil where the
+    # lecture has no points to weigh, because a threshold without a scale is not
+    # a threshold.
+    def required_points(record)
+      max = record&.points_max_materialized
+
+      case threshold_mode
+      when "percentage"
+        (min_percentage * max / 100).round(2) if max&.positive?
+      when "absolute"
+        min_points_absolute
+      end
+    end
+
     def rule_achievement_ids_set
       Set.new(rule_achievements.pluck(:achievement_id))
     end

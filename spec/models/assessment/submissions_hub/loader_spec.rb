@@ -429,6 +429,62 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
+  # What is still there to be won. The record cannot say this: it counts only
+  # sheets that are handed in and waiting, so a sheet nobody has handed in yet
+  # would look, from the record alone, like a sheet already lost.
+  describe "the points still open" do
+    it "counts a sheet that is open and untouched" do
+      create_assignment(title: "Homework 1", max_points: [4, 6])
+
+      expect(result.standing.points_still_open).to eq(10)
+    end
+
+    it "counts a sheet that is handed in and waiting" do
+      assignment = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                     max_points: [4, 6])
+      participate(assignment, submitted_at: 8.days.ago)
+
+      expect(result.standing.points_still_open).to eq(10)
+    end
+
+    it "does not count a sheet that has been marked" do
+      assignment = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                     max_points: [4, 6])
+      mark(assignment, [1.5, 2])
+
+      expect(result.standing.points_still_open).to eq(0)
+    end
+
+    it "does not count a sheet that counts as nothing" do
+      create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                        max_points: [4, 6])
+
+      expect(result.standing.points_still_open).to eq(0)
+    end
+
+    it "does not count a sheet the reader was let off" do
+      assignment = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                     max_points: [4, 6])
+      participate(assignment, status: :exempt)
+
+      expect(result.standing.points_still_open).to eq(0)
+    end
+
+    # A half-marked sheet keeps its whole worth: its points are not in the total
+    # either, because the record sums only what is finished.
+    it "counts a sheet that is only half marked" do
+      assignment = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                     max_points: [4, 6])
+      participation = participate(assignment, submitted_at: 8.days.ago)
+      create(:assessment_task_point, task: tasks_of(assignment).first,
+                                     assessment_participation: participation,
+                                     points: 1.5)
+
+      expect(sheet_for(assignment).state).to eq(:partially_marked)
+      expect(result.standing.points_still_open).to eq(10)
+    end
+  end
+
   describe "#latest_marked" do
     it "is nil while nothing has come back" do
       create_assignment(deadline: 1.week.ago)
