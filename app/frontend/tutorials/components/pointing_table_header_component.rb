@@ -75,8 +75,6 @@ class PointingTableHeaderComponent < ViewComponent::Base
     def grading_columns
       return [] unless @grading_enabled
 
-      status_col if lecture_scope?
-
       [
         status_col,
         *@tasks.map { |task| task_column(task) },
