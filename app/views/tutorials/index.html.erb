@@ -4,6 +4,9 @@
     <div class="col-12">
       <%= render partial: 'tutorials/header_index',
                locals: { assignment: @assignment,
+                          assignments: @assignments,
+                          tutorials: @tutorials,
+                          grading_scope: @tutorial,
                          tutorial: @tutorial,
                          stack: @stack } %>
     </div>
