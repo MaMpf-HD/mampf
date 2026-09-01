@@ -122,7 +122,7 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def can_grade?
     user = helpers.current_user
-    user.admin? || user.can_grade_in_scope?(@tutorial)
+    user.admin? || user.can_grade_in_scope?(@grading_scope)
   end
 
   def users_movement_map
