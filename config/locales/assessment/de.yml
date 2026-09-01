@@ -244,6 +244,7 @@ de:
       no_participation: 'Teilnahme nicht gefunden.'
       user_cannot_grade: 'Der Benutzer ist nicht berechtigt, in diesem Bereich zu bewerten.'
       invalid_request_params: 'Ungültige Anfrageparameter.'
+      invalid_assessable_type: 'Ungültiger Bewertungstyp.'
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
     grade_table:

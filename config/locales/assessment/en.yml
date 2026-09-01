@@ -244,6 +244,7 @@ en:
       no_participation: 'Participation not found.'
       user_cannot_grade: 'The user is not authorized to grade in this scope.'
       invalid_request_params: 'Invalid request parameters.'
+      invalid_assessable_type: 'Invalid assessable type.'
     info:
       talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
     grade_table:

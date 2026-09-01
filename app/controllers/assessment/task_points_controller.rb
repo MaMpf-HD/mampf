@@ -100,9 +100,9 @@ module Assessment
         )
 
       when Exam
-        # exams
+        return respond_with_flash(:alert, "exam_not_yet_supported")
       else
-        head :bad_request
+        return respond_with_flash(:alert, t("assessment.errors.invalid_assessable_type"))
       end
 
       @participation = @participation.reload
@@ -318,12 +318,9 @@ module Assessment
                                t("assessment.task_points.participation_missing_tutorial"))
           end
         when Exam
-          # exams
-        when Talk
-          # talks
+          respond_with_flash(:alert, "exam_not_yet_supported")
         else
-          respond_with_flash(:alert,
-                             t("assessment.task_points.unsupported_assessment_type"))
+          respond_with_flash(:alert, t("assessment.errors.invalid_assessable_type"))
         end
       end
 
