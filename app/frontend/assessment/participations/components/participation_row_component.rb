@@ -16,11 +16,11 @@ class ParticipationRowComponent < ViewComponent::Base
     @user ||= @participation&.user
     @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
 
-    # return unless @user.nil?
+    return unless @user.nil?
 
-    # raise(MissingUserError,
-    #       I18n.t("assessment.grading_tutorial.no_user_for_config",
-    #              participation_id: @participation.id, assignment_id: @assignment.id))
+    raise(MissingUserError,
+          I18n.t("assessment.grading_tutorial.no_user_for_config",
+                 participation_id: @participation.id, assignment_id: @assignment.id))
   end
 
   def check_grading_scope

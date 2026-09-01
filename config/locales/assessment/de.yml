@@ -212,6 +212,7 @@ de:
       submission_missing_assignment: 'Diese Abgabe ist keiner Hausaufgabe zugeordnet.'
       submission_missing_assessment: 'Für diese Hausaufgabe ist keine Bewertung konfiguriert.'
       participation_missing_tutorial: 'Diese Teilnahme ist keinem Tutorium zugeordnet.'
+      unsupported_assessment_type: 'Dieser Bewertungstyp wird für die Punktevergabe nicht unterstützt.'
       participation_missing_assessment: 'Dieser Teilnahme ist keine Bewertung zugeordnet.'
       participation_missing_assignment: 'Für diese Bewertung ist keine Hausaufgabe konfiguriert.'
       assignment_missing_assessment: 'Für diese Hausaufgabe ist keine Bewertung konfiguriert.'

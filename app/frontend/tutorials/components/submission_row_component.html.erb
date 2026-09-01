@@ -126,7 +126,6 @@
         <!-- Hidden form for this row to submit -->
         <%= form_with url: point_submission_tutorial_path(
           @submission, 
-          type: "Tutorial", 
           grading_scope_type: @grading_scope.class.name.downcase),
                     method: :patch,
                     data: { turbo: true, participation_row_target: "form" },
@@ -142,7 +141,6 @@
         <!-- Refresh row -->
         <%= form_with url: refresh_point_submission_tutorial_path(
           @submission, 
-          type: "Tutorial", 
           grading_scope_type: @grading_scope.class.name.downcase),
                     method: :patch,
                     data: { turbo: true, participation_row_target: "refreshForm" },

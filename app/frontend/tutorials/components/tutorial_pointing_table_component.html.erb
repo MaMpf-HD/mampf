@@ -61,10 +61,8 @@
                         participation: participation,
                         assessment: @assignment.assessment,
                         save_url: point_user_tutorial_path(participation, 
-                                                    type: "Tutorial",
                                                     grading_scope_type: "tutorial"),
                         refresh_url: refresh_point_user_tutorial_path(participation, 
-                                                            type: "Tutorial", 
                                                             grading_scope_type: "tutorial"),
                         grading_scope: @tutorial)) %>
                   <% end %>
@@ -89,10 +87,8 @@
                         participation: participation,
                         assessment: @assignment.assessment,
                         save_url: point_user_tutorial_path(participation, 
-                                                    type: "Tutorial",
                                                     grading_scope_type: "lecture"),
                         refresh_url: refresh_point_user_tutorial_path(participation, 
-                                                            type: "Tutorial", 
                                                             grading_scope_type: "lecture"),
                         grading_scope: @lecture)) %>
                     <% end %>
