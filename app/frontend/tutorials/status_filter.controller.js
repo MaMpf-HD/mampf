@@ -82,13 +82,26 @@ export default class extends Controller {
   }
 
   applySearchFilter() {
+    const matchId = new Set();
+
     this.element.querySelectorAll("tr[data-status-filter-status]").forEach((row) => {
       const matchStatus = (this.selectedStatus === "all"
         || row.dataset.statusFilterStatus === this.selectedStatus);
       const matchName = row.dataset.statusFilterName.toLowerCase().includes(this.searchQuery);
       const matchTutorial = (this.selectedTutorial === "all"
         || row.dataset.statusFilterTutorial === this.selectedTutorial);
+
+      if (matchStatus && matchName && matchTutorial) {
+        matchId.add(row.dataset.statusFilterGroupId);
+      }
+
       row.style.display = matchStatus && matchName && matchTutorial ? "" : "none";
+    });
+
+    this.element.querySelectorAll("tr.group-header").forEach((header) => {
+      const talkId = header.dataset.statusFilterGroupId;
+      const hasVisibleRow = matchId.has(talkId);
+      header.style.display = hasVisibleRow ? "" : "none";
     });
   }
 

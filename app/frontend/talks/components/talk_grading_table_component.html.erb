@@ -69,8 +69,10 @@
 
             <tbody>
               <% gradable_talks.each do |talk| %>
-                <tr class="table-group-header">
-                  <td colspan="7"><strong><%= talk.title %></strong></td>
+                <tr class="group-header" data-status-filter-group-id="<%= talk.id %>">
+                  <td colspan="7" style="background: #C7DDF0; color: #254A68; padding-top: 1px; padding-bottom: 1px;">
+                    <span class="fw-semibold"><%= talk.title %></span>
+                  </td>
                 </tr>
 
                 <% talk.speakers.each do |speaker| %>
