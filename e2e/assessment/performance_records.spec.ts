@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { addTask, createLecture, recordFor, scoreTask } from "./helpers";
@@ -10,11 +9,6 @@ import { addTask, createLecture, recordFor, scoreTask } from "./helpers";
  * teacher look at one student sheet by sheet.
  */
 test.describe("performance records", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-    await enableFeature(request, "student_performance");
-  });
-
   async function openPerformance(page: AssessmentDashboardPage) {
     await page.gotoOverview();
     await page.overviewTab("Performance").click();

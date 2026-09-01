@@ -9,9 +9,6 @@ RSpec.describe(GradingTabComponent, type: :component) do
     exam.assessment
   end
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   describe "rendering" do
     context "outside preview mode" do
       let(:component) { described_class.new(assessment: assessment) }

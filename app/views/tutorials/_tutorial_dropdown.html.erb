@@ -1,7 +1,7 @@
 <select class="form-select form-select-sm" onchange="window.location=this.value">
 
   <!-- Current tutorial -->
-  <option selected><%= @tutorial&.title || "Select tutorial" %></option>
+  <option selected><%= @tutorial&.title || t("profile.select_tutorials") %></option>
 
   <% tutorials_for_dropdown(current_user, @lecture, @tutorial).each do |_, list| %>
     <% list.each do |t| %>

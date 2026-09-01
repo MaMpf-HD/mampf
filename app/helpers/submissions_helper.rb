@@ -106,8 +106,12 @@ module SubmissionsHelper
     true
   end
 
-  def required_roster_for_submission?
-    Flipper.enabled?(:assessment_grading)
+  def enabled_roster_for_lecture?(lecture)
+    return false unless lecture
+
+    roster_cache[:enabled].fetch(lecture.id) do
+      roster_cache[:enabled][lecture.id] = lecture.roster_managed?
+    end
   end
 
   def extract_task_points(submission, assessment_task)
@@ -124,17 +128,10 @@ module SubmissionsHelper
     end&.points
   end
 
-  def enabled_roster_for_lecture?(lecture)
-    roster_cache[:enabled].fetch(lecture.id) do
-      roster_cache[:enabled][lecture.id] =
-        Flipper.enabled?(:roster_maintenance) && lecture.roster_eligible_tutorials?
-    end
-  end
-
   def rostered_tutorial_for(lecture)
     roster_cache[:tutorial].fetch(lecture.id) do
       roster_cache[:tutorial][lecture.id] =
-        enabled_roster_for_lecture?(lecture) ? current_user.tutorial_rosterized(lecture) : nil
+        enabled_roster_for_lecture?(lecture) ? current_user.rostered_tutorial_in(lecture) : nil
     end
   end
 

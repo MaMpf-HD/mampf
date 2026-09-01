@@ -1,4 +1,3 @@
-import { disableFeature, enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
 import { createLecture } from "./helpers";
@@ -9,10 +8,6 @@ import { createLecture } from "./helpers";
  * lecture, and each one opens into the same dashboard the sheets use.
  */
 test.describe("exams", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-  });
-
   test("creates one and shows it in the list", async ({ factory, teacher }) => {
     const lecture = await createLecture(factory, teacher.user.id);
 
@@ -119,9 +114,7 @@ test.describe("exams", () => {
   test("adds somebody to the participants by email", async ({
     factory,
     teacher,
-    request,
   }) => {
-    await enableFeature(request, "registration_campaigns");
     const lecture = await createLecture(factory, teacher.user.id);
     await factory.create("exam", ["with_date"], {
       lecture_id: lecture.id,
@@ -149,9 +142,7 @@ test.describe("exams", () => {
   test("removes somebody from the participants again", async ({
     factory,
     teacher,
-    request,
   }) => {
-    await enableFeature(request, "registration_campaigns");
     const lecture = await createLecture(factory, teacher.user.id);
     const exam = await factory.create("exam", ["with_date"], {
       lecture_id: lecture.id,
@@ -214,25 +205,6 @@ test.describe("exams", () => {
     await student.page.goto(`/exams/${exam.id}`);
 
     await expect(student.page.getByRole("link", { name: "Main Exam" }))
-      .toHaveCount(0);
-  });
-
-  test("hides the exam tab while the feature is off", async ({
-    factory,
-    teacher,
-    request,
-  }) => {
-    const lecture = await createLecture(factory, teacher.user.id);
-    await factory.create("exam", [], {
-      lecture_id: lecture.id,
-      title: "Main Exam",
-    });
-    await disableFeature(request, "assessment_grading");
-
-    const page = new ExamDashboardPage(teacher.page, lecture.id);
-    await page.gotoList();
-
-    await expect(teacher.page.getByRole("link", { name: "Main Exam" }))
       .toHaveCount(0);
   });
 });

@@ -7,14 +7,8 @@ RSpec.describe("Assessment::Tasks", type: :request) do
   let(:assessment) { assignment.assessment }
 
   before do
-    Flipper.enable(:assessment_grading)
     sign_in teacher
   end
-
-  after do
-    Flipper.disable(:assessment_grading)
-  end
-
   # Every action of this controller writes to someone else's lecture if the
   # filter is missing, so the check is pinned per verb rather than once.
   describe "as a user who cannot edit the lecture" do

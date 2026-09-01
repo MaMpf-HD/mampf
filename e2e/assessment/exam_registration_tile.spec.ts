@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
 import { createLecture } from "./helpers";
@@ -9,11 +8,6 @@ import { createLecture } from "./helpers";
  * has to know what an exam looks like.
  */
 test.describe("registering for an exam", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-    await enableFeature(request, "registration_campaigns");
-  });
-
   test("shows the exam on the student's lecture page", async ({
     factory,
     teacher,

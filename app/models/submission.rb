@@ -112,7 +112,7 @@ class Submission < ApplicationRecord
   end
 
   def valid_for_pointing?
-    in_time? || accepted
+    in_time? || accepted == true
   end
 
   # def file_path(downloadable)

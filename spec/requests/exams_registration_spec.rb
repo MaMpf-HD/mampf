@@ -5,16 +5,6 @@ RSpec.describe("Exams registration", type: :request) do
   let(:student) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
   let(:exam) { create(:exam, lecture: lecture) }
-
-  before do
-    Flipper.enable(:assessment_grading)
-  end
-
-  after do
-    Flipper.disable(:assessment_grading)
-    Flipper.disable(:registration_campaigns)
-  end
-
   describe "POST /exams" do
     let(:valid_attributes) do
       {
@@ -29,7 +19,6 @@ RSpec.describe("Exams registration", type: :request) do
 
     before do
       sign_in teacher
-      Flipper.enable(:registration_campaigns)
     end
 
     it "auto-creates a registration campaign" do
@@ -76,7 +65,6 @@ RSpec.describe("Exams registration", type: :request) do
   describe "GET /exams/:id" do
     before do
       sign_in teacher
-      Flipper.enable(:registration_campaigns)
     end
 
     it "renders the registration tab and inline policies in settings" do
@@ -109,7 +97,6 @@ RSpec.describe("Exams registration", type: :request) do
   describe "PATCH /exams/:id" do
     before do
       sign_in teacher
-      Flipper.enable(:registration_campaigns)
     end
 
     it "reopens the campaign when saving a deadline fix for reopen" do
@@ -186,7 +173,6 @@ RSpec.describe("Exams registration", type: :request) do
 
     before do
       sign_in teacher
-      Flipper.enable(:registration_campaigns)
       campaign.update!(status: :completed)
     end
 
@@ -267,7 +253,6 @@ RSpec.describe("Exams registration", type: :request) do
 
     before do
       sign_in teacher
-      Flipper.enable(:registration_campaigns)
       create(:exam_roster_entry, exam: exam, user: student)
       campaign.update!(status: :completed)
     end

@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { createEligibilityLecture } from "./helpers";
@@ -9,11 +8,6 @@ import { createEligibilityLecture } from "./helpers";
  * is the one place where achievements and points come together.
  */
 test.describe("the eligibility rule", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-    await enableFeature(request, "student_performance");
-  });
-
   async function openEligibility(page: AssessmentDashboardPage) {
     await page.gotoOverview();
     await page.overviewTab("Exam Eligibility").click();

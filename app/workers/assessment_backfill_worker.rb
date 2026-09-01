@@ -21,8 +21,6 @@ class AssessmentBackfillWorker
   SQL
 
   def perform
-    return unless ::Flipper.enabled?(:assessment_grading)
-
     missing_participations.each do |assessment_id, rows|
       backfill_assessment(assessment_id, rows)
     end

@@ -216,6 +216,7 @@ en:
       submission_missing_assignment: 'This submission has no assignment assigned.'
       submission_missing_assessment: 'This assignment has no assessment configured.'
       participation_missing_tutorial: 'This participation has no tutorial assigned.'
+      unsupported_assessment_type: 'This assessment type is not supported for task points.'
       participation_missing_assessment: 'This participation has no assessment assigned.'
       participation_missing_assignment: 'This assessment has no assignment configured.'
       assignment_missing_assessment: 'This assignment has no assessment configured.'
@@ -226,13 +227,15 @@ en:
       invalid_task_id: 'Invalid task %{task_id}.'
       invalid_points_value: 'Invalid points value for task %{task_id}.'
       assessment_not_found: 'Assessment for this assignment not found.'
-      cannot_score_active_assignment: 'Points cannot be entered for active assignments.'
+      cannot_score_not_grading_open_assignment: 'Points cannot be entered for this assignment.'
       not_required_points: 'Points cannot be entered for assignments that do not require points.'
       participation_id_tutorial_id_mismatch: 'Participation %{participation_id} does not belong to tutorial %{tutorial_id}'
       submission_id_assignment_id_mismatch: 'Submission %{submission_id} does not belong to assignment %{assignment_id}.'
       submission_id_has_no_assignment: 'Submission %{submission_id} has no associated assignment.'
       assignment_id_has_no_assessment: 'Assignment %{assignment_id} has no associated assessment.'
       participation_id_has_no_assignment: 'Participation %{participation_id} has no associated assignment.'
+      participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
+      participation_removed: 'Participation of student has been revoked.'
     errors:
       feature_not_available: 'Assessment feature is not available.'
       no_assessable: 'Assignment or talk not found.'
@@ -247,6 +250,7 @@ en:
       not_gradable: 'This assessment is not gradable.'
       invalid_grade: 'Invalid grade value'
       invalid_request_params: 'Invalid request parameters.'
+      invalid_assessable_type: 'Invalid assessable type.'
     info:
       talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
       talks_without_assessment: "These talks don't have an assessment attached yet."
@@ -264,6 +268,7 @@ en:
       proposed_tooltip: 'Proposal from the current grade scheme (not yet applied).'
       proposed_tooltip_with_current: 'Proposal from the current grade scheme (not yet applied). Currently: %{current}.'
     grading_tutorial:
+      save_all: 'Save all changes'
       team: 'Team'
       task: 'Task'
       total_points: 'Total Points'
@@ -275,9 +280,12 @@ en:
       no_submissions: 'No submissions for this assignment.'
       no_submission_zone: 'No submissions'
       no_submission_badge: 'No submission'
+      marked_as_participated_badge: 'Marked as participated'
+      has_been_moved_badge: ' Has been moved to another tutorial'
       no_tutorial_badge: 'Not belonging to any tutorial'
       participated: 'participated'
       mark_as_participated: 'Mark as participated'
+      remove_participated: 'Remove participation record'
       confirm_unsaved_changes: 'Unsaved changes in the grading table will be lost. Continue?'
       filter_name: 'Filter by name'
       filter_options:
@@ -292,12 +300,14 @@ en:
           graded: 'graded'
           pending: 'pending'
         non_submitters:
-          total: "people have not submitted"
-          participated: "participated"
-          not_participated: "not yet marked"
-          graded: "graded"
-          pending: "pending"
-      no_user_for_config: "No user for participation %{participation_id} on assignment %{assignment_id}"
+          total: 'people have not submitted'
+          participated: 'participated'
+          not_participated: 'not yet marked'
+          graded: 'graded'
+          pending: 'pending'
+      no_user_for_config: 'No user for participation %{participation_id}'
+      user_moved_tutorial: 'submitted in tutorial %{old_tutorial}, moved to tutorial %{new_tutorial}'
+      no_tutorial: 'N/A'
     grading_talk:
       note_placeholder: "Add note..."
     grading_overview:

@@ -148,10 +148,6 @@ RSpec.describe(Assessment::Task, type: :model) do
   end
 
   describe "performance record recomputation" do
-    before { Flipper.enable(:assessment_grading) }
-
-    after { Flipper.disable(:assessment_grading) }
-
     let(:task) { FactoryBot.create(:assessment_task) }
     let(:create_existing_record) { true }
     let!(:record) do
@@ -171,15 +167,6 @@ RSpec.describe(Assessment::Task, type: :model) do
         .with(lecture: task.assessment.lecture)
         .and_return(service)
     end
-
-    it "is gated by the assessment_grading flag" do
-      Flipper.disable(:assessment_grading)
-
-      task.send(:recompute_all_performance_records)
-
-      expect(service).not_to have_received(:compute_and_upsert_all_records!)
-    end
-
     context "when no performance records exist yet" do
       let(:create_existing_record) { false }
 

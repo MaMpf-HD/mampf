@@ -3,7 +3,10 @@
     <%= user.tutorial_name %>
 
     <i
-      class="clipboardpopup bi bi-clipboard clickable text-secondary clipboard-btn ms-3 clipboard-button"
+      class="
+        clipboardpopup bi bi-clipboard clickable text-secondary
+        clipboard-btn ms-3 clipboard-button
+      "
       data-clipboard-text="<%= user.email %>"
       data-bs-toggle="tooltip"
       title="<%= t('buttons.copy_email_to_clipboard') %>"

@@ -5,9 +5,6 @@ RSpec.describe(GradeTableComponent, type: :component) do
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
   let(:tutorial) { create(:tutorial, lecture: lecture) }
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   context "with an assignment" do
     let(:assignment) { create(:valid_assignment, lecture: lecture) }
     let(:assessment) { assignment.reload.assessment }

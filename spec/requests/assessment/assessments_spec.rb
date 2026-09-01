@@ -1,14 +1,6 @@
 require "rails_helper"
 
 RSpec.describe("Assessment::Assessments", type: :request) do
-  before do
-    Flipper.enable(:assessment_grading)
-  end
-
-  after do
-    Flipper.disable(:assessment_grading)
-  end
-
   let(:teacher) { create(:confirmed_user) }
   let(:editor) { create(:confirmed_user) }
   let(:student) { create(:confirmed_user) }
@@ -79,18 +71,6 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         end
       end
     end
-
-    context "when feature flag is disabled" do
-      before do
-        Flipper.disable(:assessment_grading)
-        sign_in teacher
-      end
-
-      it "redirects to root (route not found)" do
-        get assessment_assessments_path(lecture_id: lecture.id)
-        expect(response).to redirect_to(root_path)
-      end
-    end
   end
 
   describe "GET /assessment/assessments/:id" do
@@ -117,6 +97,22 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response).to have_http_status(:success)
         expect(response.body).to include("assessment-assessments-frame")
         expect(response.body).to include("Test Assignment")
+      end
+
+      it "renders the points tab when a non-submitter has been marked as participated" do
+        tutorial = create(:tutorial, lecture: lecture)
+        student = create(:confirmed_user)
+        create(:tutorial_membership, tutorial: tutorial, user: student)
+        assignment.assessment.tasks.create!(max_points: 10, position: 1)
+        Assessment::Participation.create!(assessment: assignment.assessment,
+                                          user: student, tutorial: tutorial)
+
+        get assessment_assessment_path(assessment.id),
+            params: { assessable_type: "Assignment", assessable_id: assignment.id,
+                      tab: "points" },
+            headers: { "Turbo-Frame" => "assessment-assessments-frame" }
+
+        expect(response).to have_http_status(:success)
       end
 
       it "sends someone who opens the bare link to the lecture's assessment tab" do

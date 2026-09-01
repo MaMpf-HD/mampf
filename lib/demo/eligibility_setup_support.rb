@@ -4,8 +4,6 @@ module Demo
     DEMO_RULE_REQUIRED_ACHIEVEMENT = "Blackboard Talk".freeze
 
     def setup_eligibility!
-      setup_flags!
-
       lecture = nil
       Demo::QuietLoggingSupport.with_quiet_logging do
         lecture = eligibility_lecture!

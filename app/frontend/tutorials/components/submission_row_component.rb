@@ -1,27 +1,39 @@
 # Renders a single submission row in the pointing table
 class SubmissionRowComponent < ViewComponent::Base
-  def initialize(submission:, assignment:, tutorial: nil, mode: nil)
+  def initialize(submission:, assignment:, grading_scope:)
     super()
     @submission = submission
+    @tutorial = @submission.tutorial
+    @assessment = assignment&.assessment
     @assignment = assignment
-    @tutorial = tutorial
-    @mode = mode || "tutor"
+    @grading_scope = grading_scope
+    @lecture = @tutorial.lecture
+    check_grading_scope
+  end
+
+  def check_grading_scope
+    case @grading_scope
+    when Tutorial
+      @mode = "tutor"
+    when Lecture
+      @mode = "teacher"
+    end
   end
 
   # Feature guard: grading is only possible if the feature flag is enabled
   # and the assignment supports assessment
   def grading_enabled?
-    Flipper.enabled?(:assessment_grading) && @assignment.assessable?
+    @assessment.present?
   end
 
   # Business rule: grading is only allowed once the assignment is no longer active
   # and the submission is valid for pointing (i.e. not late or rejected)
   def allow_grading?
-    !@assignment.active? && @submission&.valid_for_pointing?
+    @submission.valid_for_pointing? && @assignment&.grading_open?
   end
 
   def tasks
-    @assignment.assessment.persisted_tasks || []
+    @assessment.persisted_tasks || []
   end
 
   def late?
@@ -32,9 +44,9 @@ class SubmissionRowComponent < ViewComponent::Base
     "submission-row-#{@submission.id}"
   end
 
-  def extract_task_points(assessment_task)
+  def extract_task_points(task)
     graded_task_points.find do |sp|
-      sp.task_id == assessment_task.id
+      sp.task_id == task.id
     end&.points
   end
 
@@ -55,19 +67,18 @@ class SubmissionRowComponent < ViewComponent::Base
     "badge rounded-pill bg-#{badge_status_participation_color(status)}"
   end
 
-  def task_points_input(assignment_task, allow_grading)
+  def task_points_input(task, allow_grading)
     tag.input(
       type: "number",
       autocomplete: "off",
-      name: "task_points[#{assignment_task.id}]",
-      value: extract_task_points(assignment_task),
+      name: "task_points[#{task.id}]",
+      value: extract_task_points(task),
       step: 0.5,
       min: 0,
-      max: assignment_task.max_points,
       data: {
-        submission_row_target: "input",
-        task_id: assignment_task.id,
-        action: "change->submission-row#onPointSubmissionChanged input->submission-row#onPointSubmissionChanged" # rubocop:disable Layout/LineLength
+        participation_row_target: "input",
+        task_id: task.id,
+        action: "change->participation-row#onPointSubmissionChanged input->participation-row#onPointSubmissionChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
       disabled: !allow_grading
@@ -81,8 +92,8 @@ class SubmissionRowComponent < ViewComponent::Base
     tag.button(type: "button",
                class: class_name,
                data: { bs_toggle: "tooltip",
-                       submission_row_target: "save",
-                       action: "click->submission-row#saveRow" },
+                       participation_row_target: "save",
+                       action: "click->participation-row#saveRow" },
                title: helpers.t("buttons.save"),
                disabled: !allow_grading) do
       tag.i(class: "bi bi-save")
@@ -95,7 +106,7 @@ class SubmissionRowComponent < ViewComponent::Base
 
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip", action: "click->submission-row#refreshRow" },
+               data: { bs_toggle: "tooltip", action: "click->participation-row#refreshRow" },
                title: helpers.t("buttons.refresh"),
                disabled: !allow_grading) do
       tag.i(class: "bi bi-arrow-clockwise")
@@ -111,6 +122,17 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def can_grade?
     user = helpers.current_user
-    user.admin? || user.can_grade_in_scope?(@tutorial)
+    user.admin? || user.can_grade_in_scope?(@grading_scope)
+  end
+
+  def users_movement_map
+    return {} unless @assignment.past_deadline?
+
+    helpers.users_movement_map_cache[@assignment.id] ||=
+      helpers.calculate_user_movement_map_assignment(@assignment, @lecture)
+  end
+
+  def movement_info_for_user(user)
+    helpers.movement_info_for_user_assignment(user, users_movement_map)
   end
 end

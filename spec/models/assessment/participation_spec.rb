@@ -267,6 +267,19 @@ RSpec.describe(Assessment::Participation, type: :model) do
           participation.update_status_if_all_scored!
           expect(participation.status).to eq("exempt")
         end
+        it "if there are no tasks, keeps the status as pending" do
+          assignment_empty =
+            FactoryBot.create(:valid_assignment, deadline: 1.hour.from_now)
+          assessment_empty =
+            FactoryBot.create(:assessment, assessable: assignment_empty, requires_points: true)
+          participation_empty =
+            FactoryBot.create(:assessment_participation,
+                              assessment: assessment_empty, user: user,
+                              status: :pending,
+                              points_total: nil)
+          participation_empty.update_status_if_all_scored!
+          expect(participation_empty.status).to eq("pending")
+        end
       end
     end
 
@@ -319,11 +332,8 @@ RSpec.describe(Assessment::Participation, type: :model) do
     let(:user) { FactoryBot.create(:confirmed_user) }
 
     before do
-      Flipper.enable(:assessment_grading)
       FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
     end
-
-    after { Flipper.disable(:assessment_grading) }
 
     context "when grade_text changes on an achievement participation" do
       let(:achievement) do
@@ -445,14 +455,6 @@ RSpec.describe(Assessment::Participation, type: :model) do
         .to receive(:new)
         .with(lecture: participation.assessment.lecture)
         .and_return(service)
-    end
-
-    it "is gated by the assessment_grading flag" do
-      Flipper.disable(:assessment_grading)
-
-      participation.send(:recompute_performance_record)
-
-      expect(service).not_to have_received(:compute_and_upsert_record_for)
     end
   end
 end

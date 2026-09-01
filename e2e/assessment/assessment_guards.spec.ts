@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { addTask, createAssessedAssignment, markSomebody, scoreTask } from "./helpers";
@@ -9,10 +8,6 @@ import { addTask, createAssessedAssignment, markSomebody, scoreTask } from "./he
  * either — a locked control still answers a POST.
  */
 test.describe("guards and empty states", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-  });
-
   test("locks the submission fields once the deadline has passed", async ({
     factory,
     teacher,

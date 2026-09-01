@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
 import { addTask, createLecture, scoreTask } from "./helpers";
@@ -10,10 +9,6 @@ import { addTask, createLecture, scoreTask } from "./helpers";
  * the difference between them is what a teacher is deciding about.
  */
 test.describe("grade schemes", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-  });
-
   /** An exam whose points are in: one task worth 100, one student with 70. */
   async function markedExam(factory: any, teacherId: number) {
     const lecture = await createLecture(factory, teacherId);

@@ -9,10 +9,7 @@ RSpec.describe(AssessmentBackfillWorker) do
   before do
     create(:tutorial_membership, user: user1, tutorial: tutorial)
     create(:tutorial_membership, user: user2, tutorial: tutorial)
-    Flipper.enable(:assessment_grading)
   end
-
-  after { Flipper.disable(:assessment_grading) }
 
   describe "#perform" do
     context "with an expired assignment" do
@@ -157,18 +154,6 @@ RSpec.describe(AssessmentBackfillWorker) do
       end
 
       it "does not create any participations" do
-        expect do
-          described_class.new.perform
-        end.not_to change(Assessment::Participation, :count)
-      end
-    end
-
-    context "when feature flag is disabled" do
-      before { Flipper.disable(:assessment_grading) }
-
-      it "does not create any participations" do
-        create(:assignment, :expired, lecture: lecture)
-
         expect do
           described_class.new.perform
         end.not_to change(Assessment::Participation, :count)

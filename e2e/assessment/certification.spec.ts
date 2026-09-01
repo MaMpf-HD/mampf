@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { FactoryBot, FactoryBotObject } from "../_support/factorybot";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
@@ -10,11 +9,6 @@ import { createEligibilityLecture } from "./helpers";
  * a proposal only becomes a decision once somebody says so.
  */
 test.describe("exam eligibility decisions", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-    await enableFeature(request, "student_performance");
-  });
-
   async function lectureWithRule(
     factory: FactoryBot,
     teacherId: number,

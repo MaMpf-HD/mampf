@@ -297,8 +297,7 @@ class SubmissionsController < ApplicationController
               SubmissionRowComponent.new(
                 submission: @submission,
                 assignment: @assignment,
-                tutorial: @tutorial,
-                mode: params[:mode] || "tutor"
+                grading_scope: @tutorial
               )
             )
           )
@@ -319,30 +318,23 @@ class SubmissionsController < ApplicationController
 
     def submission_create_params
       permitted = params.expect(submission: [:tutorial_id, :assignment_id])
-      assignment_id = permitted[:assignment_id]
-      assignment = Assignment.find_by(id: assignment_id)
-      lecture = assignment&.lecture
+      lecture = Assignment.find_by(id: permitted[:assignment_id])&.lecture
+      return permitted unless lecture&.roster_managed?
 
-      if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
-        tutorial = current_user.tutorial_rosterized(lecture)
-        raise(TutorialNotRosteredError) if tutorial.nil?
-
-        permitted[:tutorial_id] = tutorial.id
-      end
-      permitted
+      permitted.merge(tutorial_id: rostered_tutorial!(lecture).id)
     end
 
     # disallow modification of assignment
     def submission_update_params
-      permitted = params.expect(submission: [:tutorial_id])
       lecture = @submission.assignment.lecture
-      if Flipper.enabled?(:roster_maintenance) && lecture&.roster_eligible_tutorials?
-        tutorial = current_user.tutorial_rosterized(lecture)
-        raise(TutorialNotRosteredError) if tutorial.nil?
+      # The form has no tutorial field in roster mode, so there is nothing to expect.
+      return { tutorial_id: rostered_tutorial!(lecture).id } if lecture&.roster_managed?
 
-        permitted[:tutorial_id] = tutorial.id
-      end
-      permitted
+      params.expect(submission: [:tutorial_id])
+    end
+
+    def rostered_tutorial!(lecture)
+      current_user.rostered_tutorial_in(lecture) || raise(TutorialNotRosteredError)
     end
 
     # disallow modification of assignment
@@ -480,6 +472,10 @@ class SubmissionsController < ApplicationController
       check_code_validity
       return if @error
 
+      # Joining by code (which is also how an invitation is accepted) would place
+      # the submission in a tutorial the user is not a member of.
+      rostered_tutorial!(@assignment.lecture) if @assignment.lecture.roster_managed?
+
       @join = UserSubmissionJoin.new(user: current_user,
                                      submission: @submission)
       @join.save
@@ -538,8 +534,6 @@ class SubmissionsController < ApplicationController
     end
 
     def clear_submitted_at(users)
-      return unless Flipper.enabled?(:assessment_grading)
-
       assessment = @submission&.assignment&.assessment
       return unless assessment
 
@@ -549,8 +543,6 @@ class SubmissionsController < ApplicationController
     end
 
     def sync_assessment_participations(users: nil)
-      return unless Flipper.enabled?(:assessment_grading)
-
       assignment = @submission&.assignment
       assessment = assignment&.assessment
       return unless assessment

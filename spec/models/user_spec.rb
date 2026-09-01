@@ -88,7 +88,7 @@ RSpec.describe(User, type: :model) do
     end
   end
 
-  describe "#tutorial_rosterized" do
+  describe "#rostered_tutorial_in" do
     let(:lecture)   { create(:lecture) }
     let(:tutorial)  { create(:tutorial, lecture: lecture) }
     let(:user)      { create(:user) }
@@ -97,13 +97,13 @@ RSpec.describe(User, type: :model) do
       before { create(:tutorial_membership, user: user, tutorial: tutorial) }
 
       it "returns the tutorial" do
-        expect(user.tutorial_rosterized(lecture)).to eq(tutorial)
+        expect(user.rostered_tutorial_in(lecture)).to eq(tutorial)
       end
     end
 
     context "when user is not rostered to a tutorial in the lecture" do
       it "returns nil" do
-        expect(user.tutorial_rosterized(lecture)).to be_nil
+        expect(user.rostered_tutorial_in(lecture)).to be_nil
       end
     end
   end
@@ -124,33 +124,6 @@ RSpec.describe(User, type: :model) do
     context "when user is not a tutor in the tutorial" do
       it "returns false" do
         expect(user.tutor_in?(tutorial)).to be(false)
-      end
-    end
-  end
-
-  describe "#assessment_participation_in_assignment" do
-    let(:lecture) { FactoryBot.create(:lecture) }
-    let(:assignment) { FactoryBot.create(:assignment, title: "usual BS", lecture: lecture) }
-    let(:user) { FactoryBot.create(:confirmed_user) }
-    let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
-
-    context "when user has participated in the assignment" do
-      let!(:submission) do
-        FactoryBot.create(:submission, assignment: assignment,
-                                       tutorial: tutorial,
-                                       users: [user])
-      end
-
-      it "returns the participation of the user in the assignment" do
-        participation = Assessment::Participation.find_by(assessment: assignment.assessment,
-                                                          user: user)
-        expect(user.assessment_participation_in_assignment(assignment)).to eq(participation)
-      end
-    end
-
-    context "when user not participated in the assignment" do
-      it "returns nil" do
-        expect(user.assessment_participation_in_assignment(assignment)).to be_nil
       end
     end
   end

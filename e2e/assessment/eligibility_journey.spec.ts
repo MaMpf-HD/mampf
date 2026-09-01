@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { addTask, createEligibilityLecture, scoreTask } from "./helpers";
@@ -13,11 +12,6 @@ import { addTask, createEligibilityLecture, scoreTask } from "./helpers";
  * the factory; everything the teacher does afterwards goes through the screen.
  */
 test.describe("from a mark to a decision", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-    await enableFeature(request, "student_performance");
-  });
-
   test("carries a fresh mark through to the eligibility proposal", async ({
     factory,
     teacher,
@@ -82,7 +76,7 @@ test.describe("from a mark to a decision", () => {
       min_percentage: 50,
     });
     for (const [name, percentage] of [["Ada Lovelace", 60],
-                                      ["Grace Hopper", 40]] as const) {
+      ["Grace Hopper", 40]] as const) {
       const user = await factory.create("confirmed_user", [], {
         name_in_tutorials: name,
       });

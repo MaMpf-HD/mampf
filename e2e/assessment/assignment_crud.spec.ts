@@ -1,4 +1,3 @@
-import { enableFeature } from "../_support/backend";
 import { expect, test } from "../_support/fixtures";
 import { dateLabel, selectDate } from "../page-objects/datepicker";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
@@ -10,10 +9,6 @@ import { createAssessedAssignment, markSomebody } from "./helpers";
  * only a browser proves there is a way to reach them.
  */
 test.describe("homework sheets", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "assessment_grading");
-  });
-
   test("creates one and lands on its dashboard", async ({ factory, teacher }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,

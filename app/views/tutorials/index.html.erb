@@ -1,18 +1,20 @@
 <% if @assignments.present? %>
-<div data-controller="submission-table">
+<div data-controller="pointing-table">
   <div class="row">
     <div class="col-12">
       <%= render partial: 'tutorials/header_index',
                locals: { assignment: @assignment,
+                          assignments: @assignments,
+                          tutorials: @tutorials,
+                          grading_scope: @tutorial,
                          tutorial: @tutorial,
                          stack: @stack } %>
     </div>
   </div>
   <div id="tutorial-table" class="m-3">
     <%= render TutorialPointingTableComponent.new(
-      mode: "tutor",
       assignment: @assignment,
-      tutorial: @tutorial
+      grading_scope: @tutorial
     ) %>
   </div>
 </div>

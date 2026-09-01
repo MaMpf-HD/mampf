@@ -6,9 +6,7 @@ class ExamSettingsComponent < ViewComponent::Base
 
   attr_reader :exam
 
-  def campaign
-    campaign_ui_state.campaign if registration_campaigns_enabled?
-  end
+  delegate :campaign, to: :campaign_ui_state
 
   def show_info_bar?
     !exam.new_record?
@@ -64,10 +62,6 @@ class ExamSettingsComponent < ViewComponent::Base
 
     def campaign_ui_state
       @campaign_ui_state ||= ExamCampaignUiState.new(exam: exam)
-    end
-
-    def registration_campaigns_enabled?
-      Flipper.enabled?(:registration_campaigns)
     end
 
     def registration_active?

@@ -8,14 +8,8 @@ RSpec.describe("Assignments", type: :request) do
   let!(:assignment) { create(:valid_assignment, lecture: lecture) }
 
   before do
-    Flipper.enable(:assessment_grading)
     create(:editable_user_join, user: editor, editable: lecture)
   end
-
-  after do
-    Flipper.disable(:assessment_grading)
-  end
-
   describe "GET /assignments/new" do
     context "as a teacher" do
       before { sign_in teacher }

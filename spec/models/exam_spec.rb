@@ -53,33 +53,13 @@ RSpec.describe(Exam, type: :model) do
   end
 
   describe "assessment setup" do
-    context "when assessment_grading feature flag is enabled" do
-      before do
-        allow(Flipper).to receive(:enabled?).and_call_original
-        allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(true)
-      end
+    it "creates an assessment after creation" do
+      exam = nil
+      expect do
+        exam = create(:exam)
+      end.to change(Assessment::Assessment, :count).by(1)
 
-      it "creates an assessment after creation" do
-        exam = nil
-        expect do
-          exam = create(:exam)
-        end.to change(Assessment::Assessment, :count).by(1)
-
-        expect(exam.assessment).to be_present
-      end
-    end
-
-    context "when assessment_grading feature flag is disabled" do
-      before do
-        allow(Flipper).to receive(:enabled?).and_call_original
-        allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(false)
-      end
-
-      it "does not create an assessment after creation" do
-        expect do
-          create(:exam)
-        end.not_to change(Assessment::Assessment, :count)
-      end
+      expect(exam.assessment).to be_present
     end
   end
 end

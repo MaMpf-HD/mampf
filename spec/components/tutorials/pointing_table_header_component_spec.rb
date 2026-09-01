@@ -1,15 +1,18 @@
 require "rails_helper"
 
 RSpec.describe(PointingTableHeaderComponent, type: :component) do
+  let(:tutorial_scope) { build_stubbed(:tutorial) }
+  let(:lecture_scope) { build_stubbed(:lecture) }
+
   def columns_for(component)
     render_inline(component)
     component.columns
   end
 
   describe "#columns" do
-    context "when mode is tutor" do
+    context "when grading_scope is a Tutorial" do
       let(:component) do
-        described_class.new(mode: "tutor", grading_enabled: false)
+        described_class.new(grading_scope: tutorial_scope, grading_enabled: false)
       end
 
       it "always includes the team column" do
@@ -32,9 +35,9 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
       end
     end
 
-    context "when mode is teacher" do
+    context "when grading_scope is a Lecture" do
       let(:component) do
-        described_class.new(mode: "teacher", grading_enabled: false)
+        described_class.new(grading_scope: lecture_scope, grading_enabled: false)
       end
 
       it "includes a tutorial column" do
@@ -62,7 +65,8 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
       context "when tutorials are given" do
         let(:tutorial) { build_stubbed(:tutorial) }
         let(:component) do
-          described_class.new(mode: "teacher", grading_enabled: false, tutorials: [tutorial])
+          described_class.new(grading_scope: lecture_scope, grading_enabled: false,
+                              tutorials: [tutorial])
         end
 
         it "adds the filter-tutorials action_tag" do
@@ -79,7 +83,7 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
 
     context "when grading_enabled is false" do
       let(:component) do
-        described_class.new(mode: "tutor", grading_enabled: false)
+        described_class.new(grading_scope: tutorial_scope, grading_enabled: false)
       end
 
       it "does not include a status column" do
@@ -100,7 +104,7 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
     context "when grading_enabled is true" do
       let(:task) { build_stubbed(:assessment_task, position: 1, max_points: 10) }
       let(:component) do
-        described_class.new(mode: "tutor", grading_enabled: true, tasks: [task],
+        described_class.new(grading_scope: tutorial_scope, grading_enabled: true, tasks: [task],
                             total_max_points: 10)
       end
 
@@ -134,8 +138,8 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
         expect(total_column.sublabel).to include("10")
       end
 
-      it "includes the status column even in teacher mode (current behavior)" do
-        teacher_component = described_class.new(mode: "teacher", grading_enabled: true)
+      it "includes the status column" do
+        teacher_component = described_class.new(grading_scope: lecture_scope, grading_enabled: true)
         expect(columns_for(teacher_component).map(&:css_class))
           .to include(a_string_matching(/status-col/))
       end
@@ -143,7 +147,8 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
 
     context "when accepted_file_type is given" do
       let(:component) do
-        described_class.new(mode: "tutor", grading_enabled: false, accepted_file_type: ".pdf")
+        described_class.new(grading_scope: tutorial_scope, grading_enabled: false,
+                            accepted_file_type: ".pdf")
       end
 
       it "shows the accepted file type in the correction column sublabel" do
@@ -156,7 +161,7 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
 
     context "when tasks is empty and total_max_points is 0" do
       let(:component) do
-        described_class.new(mode: "tutor", grading_enabled: true)
+        described_class.new(grading_scope: tutorial_scope, grading_enabled: true)
       end
 
       it "still includes a total column" do
@@ -168,11 +173,31 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
         expect(total_column.sublabel).to include("0")
       end
     end
+
+    context "when grading_scope is neither Tutorial nor Lecture" do
+      let(:component) do
+        described_class.new(grading_scope: nil, grading_enabled: false)
+      end
+
+      it "does not raise" do
+        expect { columns_for(component) }.not_to raise_error
+      end
+
+      it "does not include a tutorial column (treated as tutor-like)" do
+        expect(columns_for(component).map(&:css_class))
+          .not_to include(a_string_matching(/tutorial-col/))
+      end
+
+      it "includes the correction column (treated as tutor-like)" do
+        expect(columns_for(component).map(&:css_class))
+          .to include(a_string_matching(/correction-col/))
+      end
+    end
   end
 
   describe "rendering" do
     it "renders without error" do
-      component = described_class.new(mode: "tutor", grading_enabled: true)
+      component = described_class.new(grading_scope: tutorial_scope, grading_enabled: true)
       expect { render_inline(component) }.not_to raise_error
     end
   end

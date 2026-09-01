@@ -315,15 +315,23 @@ class MediaController < ApplicationController
   end
 
   # show the pdf, optionally at specified page or named destination
+  #
+  # Mobile browsers don't render a pdf in an iframe, so it is served here
+  # directly. Page and destination only work as a fragment, hence the redirect.
   def display
     if @medium.manuscript.nil?
       redirect_to :root, alert: I18n.t("controllers.no_manuscript")
       return
     end
 
-    @manuscript_inline_url = inline_manuscript_medium_path(@medium) +
-                             manuscript_fragment
-    render layout: false
+    fragment = manuscript_fragment
+    if fragment.present?
+      redirect_to display_medium_path(@medium) + fragment
+      return
+    end
+
+    send_stored_file(@medium.manuscript, disposition: "inline",
+                                         fallback: "manuscript")
     prevent_caching unless @medium.free?
   end
 
@@ -748,6 +756,8 @@ class MediaController < ApplicationController
     end
 
     def store_access
+      return if response.redirect?
+
       mode = action_name == "play" ? "thyme" : "pdf_view"
       sort = action_name == "play" ? "video" : "manuscript"
       enqueue_consumption(@medium.id, mode, sort)

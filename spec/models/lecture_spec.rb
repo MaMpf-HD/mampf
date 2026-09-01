@@ -195,7 +195,7 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
-  describe "#roster_eligible_tutorials?" do
+  describe "#roster_managed?" do
     let(:lecture) { create(:lecture) }
 
     it "returns true if any tutorial has memberships" do
@@ -203,7 +203,7 @@ RSpec.describe(Lecture, type: :model) do
                                    self_materialization_mode: "add_and_remove")
       create(:tutorial, lecture: lecture, skip_campaigns: false)
       create(:tutorial_membership, tutorial: tutorial)
-      expect(lecture.roster_eligible_tutorials?).to eq(true)
+      expect(lecture.roster_managed?).to eq(true)
     end
 
     it "returns true if any tutorial has registration items" do
@@ -214,17 +214,17 @@ RSpec.describe(Lecture, type: :model) do
              registration_campaign: campaign,
              registerable: tutorial)
 
-      expect(lecture.roster_eligible_tutorials?).to eq(true)
+      expect(lecture.roster_managed?).to eq(true)
     end
 
     it "returns true if any tutorial has self_materialization_mode enabled" do
       create(:tutorial, lecture: lecture, self_materialization_mode: "add_and_remove")
-      expect(lecture.roster_eligible_tutorials?).to eq(true)
+      expect(lecture.roster_managed?).to eq(true)
     end
 
     it "returns false if no tutorials meet any condition" do
       create(:tutorial, lecture: lecture, self_materialization_mode: "disabled")
-      expect(lecture.roster_eligible_tutorials?).to eq(false)
+      expect(lecture.roster_managed?).to eq(false)
     end
   end
 
@@ -385,25 +385,19 @@ RSpec.describe(Lecture, type: :model) do
     end
 
     it "fires LectureMembership callbacks (creates performance records)" do
-      Flipper.enable(:assessment_grading)
       lecture.ensure_roster_membership!(users.map(&:id))
 
       expect(StudentPerformance::Record.where(lecture: lecture).count)
         .to eq(3)
-    ensure
-      Flipper.disable(:assessment_grading)
     end
 
     it "seeds existing achievement participations for new roster members" do
-      Flipper.enable(:assessment_grading)
       achievement = create(:achievement, lecture: lecture)
 
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
       end.to change(achievement.assessment.assessment_participations, :count)
         .by(3)
-    ensure
-      Flipper.disable(:assessment_grading)
     end
   end
 

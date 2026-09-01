@@ -71,9 +71,6 @@ RSpec.describe(Talk, type: :model) do
     let(:speaker2) { FactoryBot.create(:confirmed_user) }
 
     context "when assessment_grading flag is enabled" do
-      before { Flipper.enable(:assessment_grading) }
-      after { Flipper.disable(:assessment_grading) }
-
       it "creates an assessment on talk creation" do
         talk.save!
 
@@ -82,24 +79,6 @@ RSpec.describe(Talk, type: :model) do
         expect(talk.assessment.requires_points).to be(false)
         expect(talk.assessment.requires_submission).to be(false)
         expect(talk.assessment.lecture).to eq(seminar_lecture)
-      end
-    end
-
-    context "when assessment_grading flag is disabled" do
-      before { Flipper.disable(:assessment_grading) }
-
-      it "does not create an assessment" do
-        talk.save!
-
-        expect(talk.assessment).to be_nil
-      end
-
-      it "works normally without assessment integration" do
-        talk.save!
-
-        expect(talk).to be_valid
-        expect(talk.title).to eq("Group Theory Talk")
-        expect(talk.lecture).to eq(seminar_lecture)
       end
     end
   end

@@ -140,9 +140,9 @@ This automatically creates `add_my_custom_field(**options)` method.
 SearchForm.new(
   url: search_path,
   scope: :search,      # parameter namespace
-  method: :get,        # HTTP method  
-  remote: true,        # AJAX submission
-  context: "media"     # unique context for IDs
+  method: :get,        # HTTP method
+  context: "media",    # unique context for IDs
+  turbo_frame: nil     # id of the frame the results go into, if there is one
 )
 ```
 

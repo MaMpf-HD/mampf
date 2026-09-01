@@ -20,9 +20,8 @@ class ExamCampaignUiState
     graded: "bg-primary"
   }.freeze
 
-  def initialize(exam:, registration_campaigns_enabled: Flipper.enabled?(:registration_campaigns))
+  def initialize(exam:)
     @exam = exam
-    @registration_campaigns_enabled = registration_campaigns_enabled
   end
 
   attr_reader :exam
@@ -44,8 +43,7 @@ class ExamCampaignUiState
   end
 
   def settings_needs_opening?
-    !exam.skip_campaigns && registration_campaigns_enabled? &&
-      (campaign.nil? || campaign.draft?)
+    !exam.skip_campaigns && (campaign.nil? || campaign.draft?)
   end
 
   def info_bar_background_class
@@ -80,9 +78,5 @@ class ExamCampaignUiState
 
     def active_campaign_status?
       campaign&.status&.to_sym.in?(ACTIVE_CAMPAIGN_STATUSES)
-    end
-
-    def registration_campaigns_enabled?
-      @registration_campaigns_enabled
     end
 end

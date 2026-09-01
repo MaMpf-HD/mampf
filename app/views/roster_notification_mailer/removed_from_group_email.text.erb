@@ -1,0 +1,5 @@
+<%= t('roster.mailer.roster_removed_from_group_email_body',
+      name: @username,
+      lecture_title: @lecture&.title || '',
+      rosterable_title: @rosterable.title) %>
+<%= t('roster.mailer.end_mail') %>

@@ -62,6 +62,8 @@ module Assessment
       return if absent? || exempt?
 
       task_ids = assessment.tasks.pluck(:id)
+      return if task_ids.empty?
+
       points_by_task_id = task_points.pluck(:task_id, :points).to_h
       missing_scored_tasks = task_ids.any? { |task_id| points_by_task_id[task_id].nil? }
 
@@ -76,7 +78,7 @@ module Assessment
     end
 
     def graded_tasks_points
-      TaskPoint.where(assessment_participation: self)
+      task_points
     end
 
     private
@@ -121,7 +123,7 @@ module Assessment
 
       def recompute_performance_record
         lecture = assessment&.lecture
-        return unless lecture && Flipper.enabled?(:assessment_grading)
+        return unless lecture
 
         StudentPerformance::ComputationService
           .new(lecture: lecture)

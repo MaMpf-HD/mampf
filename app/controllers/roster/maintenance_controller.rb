@@ -25,6 +25,11 @@ module Roster
                          fallback_location: fallback_path)
     end
 
+    rescue_from "Rosters::MaintenanceService::GradingDataPresentError" do
+      respond_with_flash(:alert, t("roster.errors.grading_data_present"),
+                         fallback_location: fallback_path)
+    end
+
     rescue_from RosterLockedError do
       respond_with_flash(:alert, t("roster.errors.item_locked"), fallback_location: fallback_path)
     end
@@ -136,10 +141,13 @@ module Roster
         return
       end
 
-      Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
-
-      flash.now[:notice] = t("roster.messages.user_moved", user: user.info, target: target.title)
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
+      if Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
+        flash.now[:notice] = t("roster.messages.user_moved", user: user.info, target: target.title)
+        flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
+      else
+        flash.now[:alert] = t("roster.messages.user_not_moved",
+                              user: user.info, target: target.title)
+      end
 
       if @mparams.panel?
         render_with_streams(
@@ -334,10 +342,8 @@ module Roster
 
         lecture_id = if @rosterable.is_a?(Lecture)
           @rosterable.id
-        elsif @rosterable.respond_to?(:lecture_id) && @rosterable.lecture_id
+        else
           @rosterable.lecture_id
-        elsif @rosterable.is_a?(Cohort)
-          @rosterable.context_id
         end
 
         @lecture = Rosters::RosterableResolver.eager_load_lecture(lecture_id)

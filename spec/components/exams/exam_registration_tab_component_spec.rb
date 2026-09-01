@@ -3,15 +3,6 @@ require "rails_helper"
 RSpec.describe(ExamRegistrationTabComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
-
-  before do
-    Flipper.enable(:registration_campaigns)
-  end
-
-  after do
-    Flipper.disable(:registration_campaigns)
-  end
-
   it "renders a disabled deadline field for a closed campaign" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :closed)

@@ -3,9 +3,6 @@ require "rails_helper"
 RSpec.describe(AssessmentDashboardComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
 
-  before { Flipper.enable(:assessment_grading) }
-  after { Flipper.disable(:assessment_grading) }
-
   shared_examples "visible tab" do |tab_key|
     it "renders the #{tab_key} tab" do
       render_inline(component)
@@ -148,14 +145,11 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       it "returns the correct tab keys" do
         keys = component.tabs.map(&:key)
         expect(keys).to eq(
-          ["settings", "tasks", "points", "grades", "statistics"]
+          ["settings", "registration", "tasks", "points", "grades", "statistics"]
         )
       end
 
       context "when registration_campaigns is enabled" do
-        before { Flipper.enable(:registration_campaigns) }
-        after { Flipper.disable(:registration_campaigns) }
-
         it "includes the registration tab only" do
           keys = component.tabs.map(&:key)
           expect(keys).to eq(
