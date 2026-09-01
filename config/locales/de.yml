@@ -3172,11 +3172,6 @@ de:
     no_partners_no_leave: >
       Du kannst nicht austreten, da Du die einzige Person in der Abgabegruppe
       bist. Dafür kannst Du die Abgabe löschen.
-    nothing_here: >
-      Hier ist noch nichts hinterlegt - lege eine Abgabe an oder tritt einer
-      bei.
-    nothing_here_past: >
-      Zu dieser Hausaufgabe hast Du nichts abgegeben.
     tutorial_needed: >
       Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb nichts
       abgeben.
@@ -3190,13 +3185,6 @@ de:
       Die Einlösung des Codes ist fehlgeschlagen: %{message}
     too_many_attempts: >
       Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.
-    current: Aktuelle Abgabe
-    previous: Vorige Abgabe
-    old_ones: Ältere Abgaben
-    future_ones: Zukünftige Abgaben
-    no_old_ones: Es wurde noch nichts abgegeben.
-    no_future_ones: >
-      Es sind keine Hausaufgaben jenseits der aktuellen vorhanden.
     no_manuscript_yet: Es ist keine Datei hinterlegt.
     exists_no_longer: Diese Abgabe existiert nicht.
     correct_file_size: Die Datei hat die richtige Größe.
@@ -3250,7 +3238,6 @@ de:
     submission_upload_notice_html: >
       <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden Deine
        Änderungen verworfen, wenn Du die Seite verlässt.
-    deletion_date: Löschdatum
     multiple_files_selected: Es wurden mehrere Dateien ausgewählt.
     merging_help_html: >
       <b>Zusammenführen:</b> Verwende diesen Knopf um die Dateien in der obigen
@@ -3274,79 +3261,6 @@ de:
       Datei vom MIME Type %{accepted_mime_types}.
     correction_size_too_big: >
       Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
-    too_late_no_saving: >
-      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
-      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
-      Damit kann diese Änderung nicht mehr gespeichert werden.
-    too_late_no_editing: >
-      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
-      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
-      Damit kann diese Abgabe nicht mehr bearbeitet werden.
-    too_late_no_inviting: >
-      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
-      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
-      Damit können zu dieser Abgabe keine Einladungen mehr versandt werden.
-    too_late_no_destroying: >
-      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
-      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
-      Damit kann diese Abgabe nicht mehr gelöscht werden.
-    late_submission_warning_html: >
-      Du kannst innerhalb der Kulanzfrist noch bis %{friendly_deadline}
-      Änderungen vornehmen, jedoch nur solange Dein TutorIn noch keine
-      Korrektur zur Abgabe hochgeladen hat. Allerdings
-      wird die Abgabe dann als <b>verspätet</b> eingestuft. Es liegt im Ermessen
-      der DozentIn und der TutorInnen, ob und wie diese gewertet wird.
-      <br>
-      <i>Hinweis.</i>
-      Als Änderung zählen hierbei die folgenden Aktionen:
-      <ul>
-      <li>
-      Anlegen der Abgabe
-      </li>
-      <li>
-      Erfolgreiches Hochladen oder Ersetzen der Datei
-      </li>
-      <li>
-      Beitritt eines Teammitglieds
-      </li>
-      </ul>
-    last_modification: >
-      letzte Änderung
-    last_modification_info_html: >
-      Hier ist protokolliert, wann die letzte Änderung an der Abgabe durch
-      Teammitglieder war.
-      Hierbei wird Folgendes berücksichtigt:
-      <ul>
-      <li>
-      Anlegen der Abgabe
-      </li>
-      <li>
-      Erfolgreiches Hochladen oder Ersetzen der Datei
-      </li>
-      <li>
-      Beitritt eines Teammitglieds
-      </li>
-      </ul>
-      Liegt die letzte Änderung vor dem Abgabetermin, ist die Abgabe gültig.
-      Andernfalls wird sie als verspätet gekennzeichnet.
-    okay: Alles bestens!
-    no_file: Es ist keine Datei hinterlegt.
-    nothing: Es ist keine Abgabe angelegt.
-    with_correction: >
-      Alles bestens! Deine TutorIn hat die Korrektur zu Deiner Abgabe
-      hochgeladen.
-    too_late: >
-      Die Abgabe ist als "zu spät" markiert, da die letzte Änderung
-      nach dem Abgabeschluss erfolgte. Es liegt im Ermessen
-      der DozentIn und der der TutorInnen, ob und wie sie gewertet wird.
-    too_late_accepted: >
-      Deine TutorIn hat die als "zu spät" gekennzeichnete Abgabe akzeptiert
-      und ist jetzt mit der Korrektur beschäftigt.
-    too_late_rejected: >
-      Deine als "zu spät" gekennzeichnete Abgabe wurde abgelehnt.
-    under_review: >
-      Die Abgabe wurde erfolgreich übermittelt, Deine TutorIn ist mit der
-      Korrektur beschäftigt.
     already_corrected: >
       Für diese Hausaufgabe wurde bereits eine Korrektur hochgeladen. Deshalb
       kannst Du nicht mehr beitreten.
@@ -3356,43 +3270,9 @@ de:
     bulk_download_submissions: Paketdownload der Abgaben
     bulk_download_corrections: Paketdownload der Korrekturen
     bulk_upload: Paketupload der Korrekturen
-    code_explanation: >
-      Durch Kenntnis und Eingabe dieses Code können andere Personen dieser
-      Abgabe beitreten. Das Beitreten über einen Code bietet sich insbesondere
-      dann an, wenn die entsprechende Person in dieser Veranstaltung noch keine
-      Abgabe zusammen mit Dir hatte. Personen, mit denen Du schon
-      zusammengearbeitet hast, kannst Du über den "Einladen"-Button eine
-      Einladung zu dieser Abgabe zukommen lassen (diesen Button gibt es nur in
-      dem Fall, dass entsprechende Personen existieren, nicht schon Teammitglied
-      sind und die Teamgröße unterhalb der Schranke für die Teamgröße liegt).
-    profile_info_html: >
-      In Deinen %{profile} kannst Du diverse Einstellungen vornehmen, über
-      welche Ereignisse im Hinblick auf Abgaben Du per Email informiert werden
-      möchtest. Das beinhaltet erfolgreichen Upload oder Entfernen von Dateien,
-      Beitritt oder Austritt von Teammitgliedern, Entscheidung über verspätete
-      Abgaben und den Upload von Korrekturen durch Deine TutorIn.
-    deletion_date_info: >
-      Bei Abgaben handelt es sich um persönliche Daten, die wir aus
-      Datenschutzgründen im nachfolgenden Semester löschen. Das genaue Löschdatum
-      kannst Du der Tabelle entnehmen. Du wirst außerdem rechtzeitig per E-Mail
-      an die Löschung erinnert, damit Du Deine Daten sichern kannst.
-    team_info: >
-      Hier sieht Du Dein Abgabeteam. Du kannst Dein Team vergrößern, indem Du
-      anderen Personen den Abgabecode weitergibst, so dass diese beitreten
-      können, oder indem Du Personen, mit denen Du in dieser Veranstaltung schon
-      gemeinsame Abgaben hattest, einlädst, so dass diese beitreten können.
-      Das Team kann aber nur so groß werden wie die maximale Teamgröße, die
-      in der Veranstaltung gilt.
     file_format: Abgabeformat
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
-    not_in_this_lecture: >
-      In dieser Vorlesung wurden noch keine Hausaufgaben
-      angelegt. Deswegen gibt es auch keine Abgaben.
-    no_current: >
-      Aktuell steht nichts zur Abgabe an.
-    no_previous: >
-      Es wurde noch nichts abgegeben.
     nothing_yet_in_lecture: >
       In dieser Vorlesung war bisher noch nichts abzugeben.
     deletion_date: Löschdatum

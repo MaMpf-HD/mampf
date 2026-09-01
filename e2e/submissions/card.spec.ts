@@ -95,6 +95,8 @@ test.describe("the card for a sheet that is due", () => {
     student,
     student2,
   }) => {
+    // Two people, two sheets and two uploads: the longest walk in this file.
+    test.slow();
     const { lecture } = await lectureWithSheet(
       factory, teacher.user.id, [student.user.id, student2.user.id],
     );
@@ -130,8 +132,10 @@ test.describe("the card for a sheet that is due", () => {
     // Typed short: the fixture name carries brackets, which the picker's own
     // filter does not score kindly.
     await picker.fill(student2.user.name_in_tutorials.split(" ")[0]);
-    await student.page.locator(".ts-dropdown")
-      .getByText(student2.user.name_in_tutorials).first().click();
+    const option = student.page.locator(".ts-dropdown")
+      .getByText(student2.user.name_in_tutorials).first();
+    await expect(option).toBeVisible();
+    await option.click();
     await page.uploadSubmission();
     const handedIn = student.page.waitForResponse(
       response => response.request().method() === "POST",

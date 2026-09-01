@@ -179,9 +179,8 @@ module Assessment
         # Team-ups somebody has offered the reader, by assignment. Only sheets
         # that can still be handed in carry one, which is the same set as
         # `open_sheets` - `Assignment#semiactive?` and "still open" are the same
-        # question. `SubmissionInvite` asks once per sheet and then once more per
-        # invitation for the inviter's name; this is one query for the lecture,
-        # and the inviter comes along with it.
+        # question. One query for the whole lecture, and the inviter comes along
+        # with it rather than being fetched per invitation.
         def invites
           open_ids = open_sheets.map { |sheet| sheet.assignment.id }
           return {} if open_ids.empty?
