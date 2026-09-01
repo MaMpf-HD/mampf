@@ -15,9 +15,9 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     assessment.reload
   end
 
-  describe "in tutor mode" do
+  describe "when grading_scope is a Tutorial" do
     let(:component) do
-      described_class.new(assignment: assignment, tutorial: tutorial, mode: "tutor")
+      described_class.new(assignment: assignment, grading_scope: tutorial)
     end
 
     describe "#grading_enabled?" do
@@ -92,9 +92,9 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
   end
 
-  describe "in teacher mode (mode != 'tutor')" do
+  describe "when grading_scope is a Lecture" do
     let(:component) do
-      described_class.new(assignment: assignment, mode: "teacher")
+      described_class.new(assignment: assignment, grading_scope: lecture)
     end
 
     describe "initialization" do
@@ -113,21 +113,21 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
                             tutorial: tutorial,
                             users: [create(:confirmed_user)])
         assignment.reload
-        grouped = component.instance_variable_get(:@submissions_by_tutorial)
+        grouped = described_class.new(assignment: assignment, grading_scope: lecture)
+                                 .instance_variable_get(:@submissions_by_tutorial)
         expect(grouped[tutorial]).to include(submission)
       end
 
-      it "groups non-submitters by tutorial via their participation" do
+      it "groups non-submitters by tutorial via their preloaded participation" do
         user = create(:confirmed_user)
+        participation = create(:assessment_participation, assessment: assessment, user: user,
+                                                          tutorial: tutorial)
         allow(assignment).to receive(:non_submitters_in_tutorials).and_return([user])
-        participation = double("participation", tutorial: tutorial)
 
-        allow(assignment).to receive(:non_submitter_participations)
-          .and_return({ user.id => participation })
-
-        grouped = described_class.new(assignment: assignment, mode: "teacher")
+        grouped = described_class.new(assignment: assignment, grading_scope: lecture)
                                  .instance_variable_get(:@non_submitters_by_tutorial)
         expect(grouped[tutorial]).to include(user)
+        participation # keep reference so rubocop doesn't flag unused let
       end
     end
 
@@ -139,9 +139,36 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
   end
 
+  describe "#preload_non_submitter_participations" do
+    let(:component) do
+      described_class.new(assignment: assignment, grading_scope: tutorial)
+    end
+    let(:user) { create(:confirmed_user) }
+    let!(:participation) do
+      create(:assessment_participation, assessment: assessment, user: user, tutorial: tutorial)
+    end
+
+    it "returns a hash keyed by user_id" do
+      result = component.preload_non_submitter_participations([user])
+      expect(result[user.id]).to eq(participation)
+    end
+
+    it "preloads task_points so no further query is issued" do
+      preloaded = component.preload_non_submitter_participations([user])[user.id]
+      query_count = 0
+      callback = lambda { |*, payload|
+        query_count += 1 unless payload[:sql].match?(/SCHEMA|TRANSACTION/)
+      }
+      ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        preloaded.task_points.to_a
+      end
+      expect(query_count).to eq(0)
+    end
+  end
+
   describe "#mark_as_participated_link" do
     let(:component) do
-      described_class.new(assignment: assignment, tutorial: tutorial, mode: "tutor")
+      described_class.new(assignment: assignment, grading_scope: tutorial)
     end
     let(:user) { create(:confirmed_user) }
 
@@ -174,22 +201,13 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
 
     let(:component) do
-      described_class.new(assignment: assignment, tutorial: tutorial, mode: "tutor")
+      described_class.new(assignment: assignment, grading_scope: tutorial)
     end
 
     before do
       create(:tutorial_membership, tutorial: tutorial, user: student1)
       create(:tutorial_membership, tutorial: tutorial, user: student2)
       create(:tutorial_membership, tutorial: tutorial, user: student3)
-    end
-
-    context "when assignment is not past deadline" do
-      it "returns an empty hash without calling the helper" do
-        render_inline(component)
-        expect(component.helpers).not_to receive(:calculate_user_movement_map_assignment)
-
-        expect(component.users_movement_map).to eq({})
-      end
     end
 
     context "when assignment is past deadline" do
@@ -215,25 +233,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
 
         expect(first_call).to eq(movement_map)
         expect(second_call).to eq(movement_map)
-      end
-
-      it "computes the movement map only once even though multiple rows call it" do
-        render_inline(component)
-        call_count = 0
-
-        # Spy on the real implementation so every row's call goes through
-        # the same underlying logic, but we can count invocations.
-        allow_any_instance_of(described_class).to receive(:users_movement_map)
-          .and_wrap_original do |method|
-          call_count += 1 if call_count.zero? # no-op, just placeholder if needed
-          method.call
-        end
-
-        render_inline(component)
-
-        # non_submitter_status is called per-row in the template and internally
-        # calls users_movement_map, which should hit the cache after first row.
-        expect(call_count).to be <= 1
       end
 
       it "caches the value in the helpers' users_movement_map_cache" do

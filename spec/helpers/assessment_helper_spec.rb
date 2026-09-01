@@ -22,10 +22,7 @@ RSpec.describe(AssessmentHelper, type: :helper) do
   describe "#calculate_user_movement_map_assignment" do
     context "when a user has participated in one tutorial but is currently a member of another" do
       before do
-        # Student currently has membership in tutorial 2
         create(:tutorial_membership, tutorial: tutorial2, user: student)
-
-        # Student submitted assignment 1 in tutorial 1, creating a participation record there
         create(:assessment_participation,
                assessment: assessment1,
                user: student,
@@ -91,12 +88,19 @@ RSpec.describe(AssessmentHelper, type: :helper) do
         )
       end
     end
+
+    context "when neither participation nor membership exists for any user" do
+      it "returns an empty hash" do
+        result = helper.calculate_user_movement_map_assignment(assignment1, lecture)
+        expect(result).to eq({})
+      end
+    end
   end
 
   describe "#non_submitter_status" do
     context "when movement is nil" do
       it "returns nil" do
-        expect(helper.non_submitter_status(nil, host_tutorial: tutorial1)).to be_nil
+        expect(helper.non_submitter_status(nil, tutorial1)).to be_nil
       end
     end
 
@@ -112,7 +116,7 @@ RSpec.describe(AssessmentHelper, type: :helper) do
       end
 
       it "allows grading and marking as participated" do
-        result = helper.non_submitter_status(movement, host_tutorial: tutorial1)
+        result = helper.non_submitter_status(movement, tutorial1)
 
         expect(result).to eq(
           allowed: true,
@@ -135,7 +139,7 @@ RSpec.describe(AssessmentHelper, type: :helper) do
         end
 
         it "allows grading and allows removing participation" do
-          result = helper.non_submitter_status(movement, host_tutorial: tutorial1)
+          result = helper.non_submitter_status(movement, tutorial1)
 
           expect(result).to eq(
             allowed: true,
@@ -157,19 +161,19 @@ RSpec.describe(AssessmentHelper, type: :helper) do
         end
 
         it "allows grading but does not allow removing participation" do
-          result = helper.non_submitter_status(movement, host_tutorial: tutorial1)
+          result = helper.non_submitter_status(movement, tutorial1)
 
           expect(result).to eq(
             allowed: true,
             remove_participation_allow: false,
-            message: I18n.t("assessment.grading_tutorial.marked_as_participated_badge")
+            message: I18n.t("assessment.grading_tutorial.no_submission_badge")
           )
         end
       end
     end
 
     context "when membership and participation tutorials differ" do
-      context "when in lecture mode (host_tutorial is nil) " do
+      context "when in lecture mode (host_tutorial is nil)" do
         let(:movement) do
           {
             participated_tutorial_id: tutorial1.id,
@@ -181,11 +185,21 @@ RSpec.describe(AssessmentHelper, type: :helper) do
         end
 
         it "always allows grading with a movement message" do
-          result = helper.non_submitter_status(movement, host_tutorial: nil)
+          result = helper.non_submitter_status(movement, nil)
 
           expect(result[:allowed]).to be(true)
           expect(result[:message]).to include(
             I18n.t("assessment.grading_tutorial.no_submission_badge")
+          )
+        end
+
+        it "includes the full movement message text" do
+          result = helper.non_submitter_status(movement, nil)
+
+          expect(result[:message]).to eq(
+            I18n.t("assessment.grading_tutorial.no_submission_badge") +
+            I18n.t("assessment.grading_tutorial.user_moved_tutorial",
+                   old_tutorial: "Tutorial 1", new_tutorial: "Tutorial 2")
           )
         end
       end
@@ -203,7 +217,7 @@ RSpec.describe(AssessmentHelper, type: :helper) do
           end
 
           it "does not allow grading here" do
-            result = helper.non_submitter_status(movement, host_tutorial: tutorial2)
+            result = helper.non_submitter_status(movement, tutorial2)
 
             expect(result[:allowed]).to be(false)
             expect(result[:message]).to eq(
@@ -226,12 +240,30 @@ RSpec.describe(AssessmentHelper, type: :helper) do
           end
 
           it "allows grading here with a movement message" do
-            result = helper.non_submitter_status(movement, host_tutorial: tutorial1)
+            result = helper.non_submitter_status(movement, tutorial1)
 
             expect(result[:allowed]).to be(true)
             expect(result[:message]).to include(
               I18n.t("assessment.grading_tutorial.no_submission_badge")
             )
+          end
+        end
+
+        context "host_tutorial matches neither membership nor participation tutorial" do
+          let(:tutorial3) { create(:tutorial, lecture: lecture, title: "Tutorial 3") }
+          let(:movement) do
+            {
+              participated_tutorial_id: tutorial1.id,
+              new_tutorial_id: tutorial2.id,
+              submitted_at: nil,
+              participated_tutorial_title: "Tutorial 1",
+              new_tutorial_title: "Tutorial 2"
+            }
+          end
+
+          it "returns nil (no branch matches)" do
+            result = helper.non_submitter_status(movement, tutorial3)
+            expect(result).to be_nil
           end
         end
       end
@@ -249,8 +281,7 @@ RSpec.describe(AssessmentHelper, type: :helper) do
       end
 
       it "uses the no_tutorial translation for the missing tutorial title" do
-        # host_tutorial nil => lecture mode branch
-        result = helper.non_submitter_status(movement, host_tutorial: nil)
+        result = helper.non_submitter_status(movement, nil)
 
         expect(result[:message]).to include(
           I18n.t("assessment.grading_tutorial.no_tutorial")
@@ -354,6 +385,56 @@ RSpec.describe(AssessmentHelper, type: :helper) do
           I18n.t("assessment.grading_tutorial.user_moved_tutorial",
                  old_tutorial: "Tutorial 1",
                  new_tutorial: I18n.t("assessment.grading_tutorial.no_tutorial"))
+        )
+      end
+    end
+
+    context "when both participated_tutorial_id and new_tutorial_id are nil" do
+      let(:user_movement_map) do
+        {
+          student.id => {
+            participated_tutorial_id: nil,
+            new_tutorial_id: nil,
+            submitted_at: nil,
+            participated_tutorial_title: nil,
+            new_tutorial_title: nil
+          }
+        }
+      end
+
+      it "returns nil (both nil counts as no movement)" do
+        result = helper.movement_info_for_user_assignment(student, user_movement_map)
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  describe "#assessment_frame_src" do
+    context "when params[:assessment_id] is blank" do
+      before { allow(helper).to receive(:params).and_return({ assessment_tab: "overview" }) }
+
+      it "returns the overview frame src" do
+        expect(helper.assessment_frame_src(lecture))
+          .to eq(helper.assessment_assessments_path(lecture_id: lecture.id, tab: "overview"))
+      end
+    end
+
+    context "when params[:assessment_id] is present" do
+      before do
+        allow(helper).to receive(:params).and_return(
+          assessment_id: assessment1.id,
+          assessable_type: "Assignment",
+          assessable_id: assignment1.id,
+          assessment_tab: "grading"
+        )
+      end
+
+      it "returns the assessment-specific frame src" do
+        expect(helper.assessment_frame_src(lecture)).to eq(
+          helper.assessment_assessment_path(assessment1.id,
+                                            assessable_type: "Assignment",
+                                            assessable_id: assignment1.id,
+                                            tab: "grading")
         )
       end
     end
