@@ -20,7 +20,7 @@ class ParticipationRowComponent < ViewComponent::Base
 
     raise(MissingUserError,
           I18n.t("assessment.grading_tutorial.no_user_for_config",
-                 participation_id: @participation.id, assignment_id: @assignment.id))
+                 participation_id: @participation.id))
   end
 
   def check_grading_scope
@@ -128,6 +128,8 @@ class ParticipationRowComponent < ViewComponent::Base
   def can_grade?
     user = helpers.current_user
     user.admin? || user.can_grade_in_scope?(@grading_scope)
+  rescue User::IncompatibleTypeError
+    false
   end
 
   def users_movement_map

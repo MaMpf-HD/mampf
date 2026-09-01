@@ -2,6 +2,8 @@
 class User < ApplicationRecord
   include ApplicationHelper
 
+  class IncompatibleTypeError < StandardError; end
+
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
@@ -764,7 +766,7 @@ class User < ApplicationRecord
 
   def can_grade_in_scope?(something)
     unless something.is_a?(Lecture) || something.is_a?(Tutorial)
-      raise("can_grade_in_scope? was called with incompatible class")
+      raise(IncompatibleTypeError, "can_grade_in_scope? was called with incompatible class")
     end
     return true if admin
 

@@ -18,14 +18,18 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
   let(:participation) do
     create(:assessment_participation, assessment: assessment, user: student, tutorial: tutorial)
   end
+
+  let(:save_url) { "/participations/1/point_user" }
+  let(:refresh_url) { "/participations/1/refresh_point_user" }
+
   let(:component_tutor) do
-    described_class.new(participation: participation, assignment: assignment,
-                        tutorial: tutorial, mode: "tutor")
+    described_class.new(participation: participation, assessment: assessment,
+                        grading_scope: tutorial, save_url: save_url, refresh_url: refresh_url)
   end
 
   let(:component_teacher) do
-    described_class.new(participation: participation, assignment: assignment,
-                        tutorial: tutorial, mode: "teacher")
+    described_class.new(participation: participation, assessment: assessment,
+                        grading_scope: lecture, save_url: save_url, refresh_url: refresh_url)
   end
 
   before do
@@ -37,6 +41,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     before do
       allow(vc_test_controller).to receive(:current_user).and_return(tutor)
     end
+
     context "when participation has no user" do
       let(:orphan_participation) do
         create(:assessment_participation, assessment: assessment, user: student, tutorial: tutorial)
@@ -45,32 +50,33 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
       it "raises MissingUserError" do
         expect do
-          described_class.new(participation: orphan_participation, assignment: assignment,
-                              tutorial: tutorial, mode: "tutor")
+          described_class.new(participation: orphan_participation, assessment: assessment,
+                              grading_scope: tutorial, save_url: save_url, refresh_url: refresh_url)
         end.to raise_error(ParticipationRowComponent::MissingUserError)
       end
     end
 
-    context "when mode is tutor" do
+    context "when grading_scope is a Tutorial" do
       it "sets @tutorial" do
         expect(component_tutor.instance_variable_get(:@tutorial)).to eq(tutorial)
       end
+
+      it "sets @mode to tutor" do
+        expect(component_tutor.instance_variable_get(:@mode)).to eq("tutor")
+      end
     end
 
-    context "when mode is teacher" do
-      it "sets @lecture from the assignment's lecture" do
+    context "when grading_scope is a Lecture" do
+      it "sets @lecture from the assessable's lecture" do
         expect(component_teacher.instance_variable_get(:@lecture)).to eq(assignment.lecture)
       end
-    end
 
-    context "when mode is not passed" do
-      let(:default_mode_component) do
-        described_class.new(participation: participation, assignment: assignment,
-                            tutorial: tutorial)
+      it "sets @mode to teacher" do
+        expect(component_teacher.instance_variable_get(:@mode)).to eq("teacher")
       end
 
-      it "defaults to tutor mode" do
-        expect(default_mode_component.instance_variable_get(:@mode)).to eq("tutor")
+      it "leaves @tutorial nil" do
+        expect(component_teacher.instance_variable_get(:@tutorial)).to be_nil
       end
     end
   end
@@ -84,13 +90,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
   describe "#grading_enabled?" do
     before do
       allow(vc_test_controller).to receive(:current_user).and_return(tutor)
-    end
-    context "when flipper is disabled" do
-      before { Flipper.disable(:assessment_grading) }
-
-      it "returns false" do
-        expect(component_tutor.grading_enabled?).to eq(false)
-      end
     end
 
     context "when flipper is enabled and assignment is assessable" do
@@ -108,6 +107,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     before do
       allow(vc_test_controller).to receive(:current_user).and_return(tutor)
     end
+
     context "before deadline" do
       it "returns false" do
         expect(component_tutor.allow_grading?).to eq(false)
@@ -165,7 +165,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
   describe "#tasks" do
     let!(:task) { create(:assessment_task, assessment: assessment) }
 
-    it "returns persisted tasks from assignment assessment" do
+    it "returns persisted tasks from the assessable's assessment" do
       expect(component_tutor.tasks).to eq(assignment.reload.assessment.persisted_tasks)
     end
   end
@@ -202,9 +202,19 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
   describe "#task_points_participation_input" do
     let!(:task) { create(:assessment_task, assessment: assessment, max_points: 10) }
 
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      render_inline(component_tutor)
+    end
+
     it "includes the task's id in the input name" do
       html = component_tutor.task_points_participation_input(task, true)
       expect(html).to include("task_points[#{task.id}]")
+    end
+
+    it "does not cap the input at the task's max_points, allowing bonus points" do
+      html = component_tutor.task_points_participation_input(task, true)
+      expect(html).not_to include("max=")
     end
 
     context "when grading is not allowed" do
@@ -217,6 +227,11 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
   describe "#task_points_participation_cell" do
     let!(:task) { create(:assessment_task, assessment: assessment, max_points: 10) }
+
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      render_inline(component_tutor)
+    end
 
     it "wraps the input in a td with the expected classes" do
       html = component_tutor.task_points_participation_cell(task, true)
@@ -264,30 +279,30 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
   end
 
   describe "#can_grade?" do
-    context "when mode is tutor" do
+    context "when grading_scope is a Tutorial" do
       context "when current_user is an admin" do
         before do
           allow(vc_test_controller).to receive(:current_user).and_return(admin)
           render_inline(component_tutor)
         end
-        after { allow(vc_test_controller).to receive(:current_user).and_return(tutor) }
 
         it "returns true" do
           expect(component_tutor.can_grade?).to eq(true)
         end
       end
 
-      context "when current_user is not an admin but a tutor" do
+      context "when current_user is not an admin but is the tutor for that tutorial" do
         before do
           allow(vc_test_controller).to receive(:current_user).and_return(tutor)
           render_inline(component_tutor)
         end
+
         it "returns true" do
           expect(component_tutor.can_grade?).to eq(true)
         end
       end
 
-      context "when current_user is not an admin and not a tutor" do
+      context "when current_user is not an admin and not the tutor" do
         before do
           allow(vc_test_controller).to receive(:current_user).and_return(student)
           render_inline(component_tutor)
@@ -299,8 +314,8 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       end
     end
 
-    context "when mode is teacher" do
-      context "when current_user is not an admin but a teacher" do
+    context "when grading_scope is a Lecture" do
+      context "when current_user is not an admin but is the teacher" do
         before do
           allow(vc_test_controller).to receive(:current_user).and_return(teacher)
           render_inline(component_teacher)
@@ -322,18 +337,18 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
       end
 
-      context "when current_user is not an admin, not a teacher but a tutor" do
+      context "when current_user is not an admin, not the teacher, but is a tutor in the lecture" do
         before do
           allow(vc_test_controller).to receive(:current_user).and_return(tutor)
           render_inline(component_teacher)
         end
 
-        it "returns true" do
-          expect(component_teacher.can_grade?).to eq(true)
+        it "returns false" do
+          expect(component_teacher.can_grade?).to eq(false)
         end
       end
 
-      context "when current_user is not an admin, not a teacher but a student" do
+      context "when current_user is not an admin, not the teacher, and is a student" do
         before do
           allow(vc_test_controller).to receive(:current_user).and_return(student)
           render_inline(component_teacher)
@@ -342,6 +357,22 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         it "returns false" do
           expect(component_teacher.can_grade?).to eq(false)
         end
+      end
+    end
+
+    context "when grading_scope is not a recognized type" do
+      let(:component_unknown) do
+        described_class.new(participation: participation, assessment: assessment,
+                            grading_scope: "not_a_scope", save_url: save_url, refresh_url: refresh_url)
+      end
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(student)
+        render_inline(component_unknown)
+      end
+
+      it "does not raise and returns false for a non-admin" do
+        expect(component_unknown.can_grade?).to eq(false)
       end
     end
   end
@@ -355,6 +386,21 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
     it "renders the participation row" do
       expect(rendered_content).to include(component_tutor.row_id)
+    end
+  end
+
+  describe "rendering save/refresh urls" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      render_inline(component_tutor)
+    end
+
+    it "includes the save_url in the rendered markup" do
+      expect(rendered_content).to include(save_url)
+    end
+
+    it "includes the refresh_url in the rendered markup" do
+      expect(rendered_content).to include(refresh_url)
     end
   end
 end
