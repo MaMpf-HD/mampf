@@ -77,37 +77,42 @@
       <% end %>
     </div>
 
-    <p class="small mb-0">
-      <% if partner_names.any? %>
-        <%= t("submission.hub.card.team_html",
-              names: tag.strong(partner_names.to_sentence)) %>
-      <% elsif submission.nil? && may_start? %>
-        <%= t("submission.hub.card.team_hint") %>
-      <% end %>
-      <% if token %>
-        <%= t("submission.hub.card.code") %>
-        <code><%= token %></code>
-        <%= link_to refresh_submission_token_path(submission),
-                    class: "ms-1 text-secondary",
-                    title: t("buttons.refresh_token"),
-                    data: { turbo_method: :patch } do %>
-          <i class="fas fa-sync-alt" aria-hidden="true"></i>
-          <span class="visually-hidden"><%= t("buttons.refresh_token") %></span>
-        <% end %>
-      <% end %>
-    </p>
-
-    <% unless may_start? %>
-      <p class="small text-muted mb-0"><%= t("submission.tutorial_needed") %></p>
+    <%# One line per thing, each with its own word in front: a sentence with the
+        code hung on the end reads as prose and is looked up as a table. %>
+    <% if submission.nil? && may_start? %>
+      <p class="small mb-0"><%= t("submission.hub.card.team_hint") %></p>
     <% end %>
 
-    <% if tutorial_name || invited_names.any? %>
-      <p class="small text-muted mb-0 mt-2">
-        <% if tutorial_name %><%= tutorial_name %><% end %>
-        <% if invited_names.any? %>
-          <%= t("submission.hub.card.invited", names: invited_names.to_sentence) %>
-        <% end %>
-      </p>
+    <dl class="card-facts small mb-0">
+      <% if partner_names.any? %>
+        <dt><%= t("submission.hub.card.team_label") %></dt>
+        <dd><%= partner_names.to_sentence %></dd>
+      <% end %>
+      <% if token %>
+        <dt><%= t("submission.hub.card.code") %></dt>
+        <dd>
+          <code><%= token %></code>
+          <%= link_to refresh_submission_token_path(submission),
+                      class: "ms-1 text-secondary",
+                      title: t("buttons.refresh_token"),
+                      data: { turbo_method: :patch } do %>
+            <i class="fas fa-sync-alt" aria-hidden="true"></i>
+            <span class="visually-hidden"><%= t("buttons.refresh_token") %></span>
+          <% end %>
+        </dd>
+      <% end %>
+      <% if tutorial_name %>
+        <dt><%= t("basics.tutorial") %></dt>
+        <dd><%= tutorial_name %></dd>
+      <% end %>
+      <% if invited_names.any? %>
+        <dt><%= t("submission.hub.card.invited_label") %></dt>
+        <dd><%= invited_names.to_sentence %></dd>
+      <% end %>
+    </dl>
+
+    <% unless may_start? %>
+      <p class="small text-muted mb-0 mt-2"><%= t("submission.tutorial_needed") %></p>
     <% end %>
   </section>
 <% end %>

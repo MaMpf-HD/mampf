@@ -122,8 +122,9 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       expect(content).to include("/submissions/a-submission/show_correction")
     end
 
-    # Both files are often called the same thing; the visible line tells them
-    # apart by where it stands, and a reader needs the word.
+    # Both files are often called the same thing. The word in front tells them
+    # apart, and it has to be in the link's own name too - somebody walking the
+    # links hears nothing else.
     it "names each file link for a reader who cannot see where it stands" do
       content = render_fold(
         :marked,
@@ -132,36 +133,23 @@ RSpec.describe(SheetFoldComponent, type: :component) do
                                    correction: "homework8.pdf")
       )
 
-      expect(content)
-        .to include(I18n.t("submission.hub.fold.correction_label"))
-      expect(content)
-        .to include(I18n.t("submission.hub.fold.what_you_handed_in"))
-    end
-
-    it "says that the numbers on the left are the ones on the correction" do
-      content = render_fold(
-        :marked,
-        points_by_task: { task => 2 },
-        submission: handed_in_file(correction: "correction.pdf")
-      )
-
       expect(content).to include(
-        I18n.t("submission.hub.fold.correction_carries_points")
+        "aria-label=\"#{I18n.t("submission.hub.fold.handed_in_label")}: homework8.pdf\""
+      )
+      expect(content).to include(
+        "aria-label=\"#{I18n.t("submission.hub.fold.correction_label")}: homework8.pdf\""
       )
     end
 
-    # Without points on this side the sentence would claim a link that is not
-    # there yet.
-    it "leaves that sentence out while no points are entered" do
-      content = render_fold(
-        :correction_uploaded,
-        submission: handed_in_file(correction: "correction.pdf")
-      )
+    # A line that is there and empty says more than a line that is missing.
+    it "keeps both lines even where a file is missing" do
+      content = render_fold(:missed)
 
-      expect(content).to include("correction.pdf")
-      expect(content).not_to include(
-        I18n.t("submission.hub.fold.correction_carries_points")
-      )
+      expect(content).to include(I18n.t("submission.hub.fold.handed_in_label"))
+      expect(content).to include(I18n.t("submission.hub.fold.correction_label"))
+      expect(content).to include(I18n.t("submission.hub.fold.no_file"))
+      expect(content)
+        .to include(I18n.t("submission.hub.fold.not_uploaded_yet"))
     end
 
     it "says so when no file was uploaded at all" do
@@ -171,25 +159,25 @@ RSpec.describe(SheetFoldComponent, type: :component) do
     end
   end
 
+  # Behind the line they belong to, rather than as two sentences underneath.
   describe "the times, which stand here and nowhere else" do
-    it "says when the sheet was handed in" do
+    it "puts the hand-in time behind the file" do
       at = Time.zone.local(2026, 8, 15, 16, 27)
 
       content = render_fold(:awaiting_marks,
                             submission: handed_in_file(manuscript: "hw.pdf",
                                                        at: at))
 
-      expect(content).to include(
-        I18n.t("submission.hub.fold.handed_in", time: I18n.l(at, format: :long))
-      )
+      expect(content).to include(I18n.l(at, format: :long))
     end
 
-    it "names who marked it and when" do
+    it "names who marked it and when, behind the correction" do
       at = Time.zone.local(2026, 8, 16, 9, 0)
       tutor = instance_double(User, tutorial_name: "Dr. Tutor")
 
       content = render_fold(:marked, points_by_task: { task => 2 },
-                                     marked_at: at, marked_by: tutor)
+                                     marked_at: at, marked_by: tutor,
+                                     submission: handed_in_file(correction: "c.pdf"))
 
       expect(content).to include(
         I18n.t("submission.hub.fold.marked_by",
@@ -197,17 +185,19 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       )
     end
 
-    # Nothing in the app stamps the participation yet, so the line has to stand
+    # Nothing in the app stamps the participation yet, so the time has to stand
     # without a name.
     it "says when it was marked even with nobody to name" do
       at = Time.zone.local(2026, 8, 16, 9, 0)
 
       content = render_fold(:marked, points_by_task: { task => 2 },
-                                     marked_at: at, marked_by: nil)
+                                     marked_at: at, marked_by: nil,
+                                     submission: handed_in_file(correction: "c.pdf"))
 
       expect(content).to include(
         I18n.t("submission.hub.fold.marked", time: I18n.l(at, format: :long))
       )
+      expect(content).not_to include("by ")
     end
   end
 

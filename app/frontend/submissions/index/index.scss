@@ -85,6 +85,35 @@
   color: #b02a37;
 }
 
+/* Label and value in two columns, so the eye can run down the labels rather
+   than read a sentence to find the code. */
+.card-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.1rem 0.75rem;
+  margin-top: 0.75rem;
+
+  dt {
+    color: #66717c;
+    font-weight: 400;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+@media (max-width: 567px) {
+  .card-facts {
+    grid-template-columns: 1fr;
+    gap: 0 0;
+
+    dd {
+      margin-bottom: 0.35rem;
+    }
+  }
+}
+
 .file-pill {
   display: flex;
   align-items: center;

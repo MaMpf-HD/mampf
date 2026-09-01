@@ -2,12 +2,16 @@
 
 <%# A row whose name and number sit a screen apart is two lists, not one. %>
 <div class="small-width">
-  <section class="mb-4" aria-labelledby="due-heading">
-    <h3 class="lecture-pane-header" id="due-heading"><%= t("submission.hub.due_now") %></h3>
+  <%# No heading over the head: the card carries the sheet's title, its deadline
+      and the only coloured border on the page. Three signals for one thing. The
+      wrapping section goes with it - each card is a named section already, and
+      so is the standing beside it, so there is nothing left for a heading to
+      name.
 
-    <%# Action left, standing right. Only the first open sheet shares the head;
-        anything else that can still be handed in follows at full width, so the
-        next deadline keeps the eye. %>
+      Action left, standing right. Only the first open sheet shares the head;
+      anything else that can still be handed in follows at full width, so the
+      next deadline keeps the eye. %>
+  <div class="mb-4">
     <% head, *later = @hub.open_sheets %>
     <div class="row">
       <div class="col-12 col-lg-7 mb-3">
@@ -35,7 +39,7 @@
         </div>
       <% end %>
     </div>
-  </section>
+  </div>
 
   <hr class="lecture-pane-separator">
 

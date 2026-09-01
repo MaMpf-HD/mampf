@@ -2818,8 +2818,8 @@ en:
   submission:
     hub:
       heading: Earlier sheets
-      due_now: Due now
       standing:
+        mark_percentage: "%{percentage} %"
         heading: Exam admission
         of_points: "of %{max} points"
         no_max: "of no points yet"
@@ -2847,6 +2847,8 @@ en:
         recorded_as_failed: "%{names} was recorded as not passed."
         ask_your_tutor: Your tutor can tell you what is still possible.
       card:
+        team_label: Team
+        invited_label: Invited
         due: "Due %{time}"
         in_time: "in %{time}"
         worth:
@@ -2859,13 +2861,9 @@ en:
         leave: Leave the team
         delete: Delete
         code: Join code
-        team_html: >
-          Handed in together with %{names} - points are recorded for each of you
-          separately.
         team_hint: >
           You can hand in alone or together with others. Whoever hands in first
           gets a code to pass on.
-        invited: "Invited: %{names}"
         unknown_inviter: somebody
         reload: Reload the page
         nothing_due: Nothing to hand in
@@ -2881,18 +2879,15 @@ en:
       column_points: Your points
       old_style: old-style sheet
       fold:
+        handed_in_label: Hand-in
+        not_uploaded_yet: not uploaded yet
         tasks_heading: Points per problem
-        files_heading: File and team
+        files_heading: Files
         problem: "Problem %{number}"
-        what_you_handed_in: what you handed in
-        correction_label: The correction
-        no_file: No file was uploaded.
-        correction_carries_points: >
-          The points listed here are the ones your tutor wrote on this PDF,
-          together with the remarks.
-        handed_in: "Handed in %{time}"
-        marked: "Marked %{time}"
-        marked_by: "Marked %{time} by %{who}"
+        correction_label: Correction
+        no_file: nothing handed in
+        marked: "marked %{time}"
+        marked_by: "marked %{time} by %{who}"
         team: "Team: you and %{names}"
         team_with_points: >
           Team: you and %{names} - these %{points} points are yours
@@ -2928,14 +2923,13 @@ en:
       notes:
         grace_period: the deadline has passed, you have %{time}
         tutor_decides: handed in after the deadline
-        accepted_late: handed in late, your tutor let it count
         rejected: handed in late, your tutor did not let it count
         partially_marked: not every problem has been marked yet
         missed: nothing arrived by the deadline
         absent: recorded as absent
         exempt: this sheet does not count against you
         not_recorded: >
-          your file is here, but the sheet counts as not handed in - ask your
+          your file is here, but it is not recorded as a hand-in - talk to your
           tutor
     invited: You have been invited by '%{inviter}' for this submission.
     accept_invitation: Accept invitation

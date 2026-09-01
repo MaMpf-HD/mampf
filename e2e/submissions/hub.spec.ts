@@ -207,7 +207,7 @@ test.describe("the student's sheet list", () => {
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
     const list = student.page.getByRole("region", { name: "Earlier sheets" });
-    const handedIn = list.getByRole("link", { name: "What you handed in" });
+    const handedIn = list.getByRole("link", { name: "Hand-in: manuscript.pdf" });
 
     await expect(list.getByText("Points per problem")).toBeHidden();
     await expect(handedIn).toBeHidden();
@@ -215,7 +215,7 @@ test.describe("the student's sheet list", () => {
     await list.getByText("Homework 1").click();
 
     await expect(list.getByText("Points per problem")).toBeVisible();
-    await expect(list.getByText("File and team")).toBeVisible();
+    await expect(list.getByText("Files", { exact: true })).toBeVisible();
     // How a task is named has its own examples in the component spec; what only
     // a browser can show is that the numbers arrive when the row opens.
     await expect(list.getByText("1.5 of 4 points")).toHaveCount(1);
@@ -241,10 +241,10 @@ test.describe("the student's sheet list", () => {
     // Both fixtures carry the same filename, which is exactly why each link
     // says in words which of the two it is.
     await expect(
-      list.getByRole("link", { name: "What you handed in" }),
+      list.getByRole("link", { name: "Hand-in: manuscript.pdf" }),
     ).toHaveAttribute("href", `/submissions/${submission.id}/show_manuscript`);
     await expect(
-      list.getByRole("link", { name: "The correction" }),
+      list.getByRole("link", { name: "Correction: manuscript.pdf" }),
     ).toHaveAttribute("href", `/submissions/${submission.id}/show_correction`);
   });
 

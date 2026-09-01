@@ -59,7 +59,25 @@ class StandingComponent < ViewComponent::Base
     [(required_points.to_f / points_max * 100).round(2), 100].min
   end
 
+  # The mark says what the rule says. A percentage rule is "50 %", not "88
+  # needed": `points_max_materialized` grows with every sheet the lecture adds,
+  # so the point value behind the same fixed mark is a different number every
+  # week. An absolute rule keeps its number, because there the number is the
+  # rule.
   def mark_label
+    unless rule&.threshold_mode_percentage?
+      return t("submission.hub.standing.needed", points: number(required_points))
+    end
+
+    t("submission.hub.standing.mark_percentage",
+      percentage: number(rule.min_percentage))
+  end
+
+  # The points behind a percentage mark, for anybody who can hover. Nothing
+  # hangs on it: there is no hovering on a phone.
+  def mark_title
+    return unless rule&.threshold_mode_percentage?
+
     t("submission.hub.standing.needed", points: number(required_points))
   end
 

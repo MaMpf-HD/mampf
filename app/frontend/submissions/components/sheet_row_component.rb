@@ -55,15 +55,12 @@ class SheetRowComponent < ViewComponent::Base
   end
 
   def note
-    return t("submission.hub.notes.accepted_late") if accepted_late_note?
     return unless NOTE_TONES.key?(state)
 
     t("submission.hub.notes.#{state}", **interpolations)
   end
 
   def note_class
-    return "sheet-note" if accepted_late_note?
-
     NOTE_TONES[state] == :bad ? "sheet-note-bad" : "sheet-note"
   end
 
@@ -105,10 +102,6 @@ class SheetRowComponent < ViewComponent::Base
   end
 
   private
-
-    def accepted_late_note?
-      state == :marked && sheet.accepted_late?
-    end
 
     # Only the grace period needs one, and both its badge and its note want it.
     def interpolations

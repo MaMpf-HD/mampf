@@ -32,8 +32,13 @@ test.describe("the card for a sheet that is due", () => {
         tutorial_id: tutorial.id, user_id: id,
       });
     }
+    // Pinned rather than left to the factory, whose default deadline is a random
+    // day within a month: which sheet counts as the current one decides what the
+    // form offers as a past partner.
     const assignment = await factory.create("assignment", [], {
-      lecture_id: lecture.id, title,
+      lecture_id: lecture.id,
+      title,
+      deadline: new Date(Date.now() + 7 * 86400000).toISOString(),
     });
     return { lecture, assignment };
   }
@@ -127,15 +132,12 @@ test.describe("the card for a sheet that is due", () => {
     await student.page.reload();
     const second = student.page.getByRole("region", { name: "Homework 2" });
     await second.getByRole("link", { name: "Hand in" }).click();
-    const picker = student.page.locator("#submission_invitee_ids-ts-control");
-    await picker.click();
-    // Typed short: the fixture name carries brackets, which the picker's own
-    // filter does not score kindly.
-    await picker.fill(student2.user.name_in_tutorials.split(" ")[0]);
-    const option = student.page.locator(".ts-dropdown")
-      .getByText(student2.user.name_in_tutorials).first();
-    await expect(option).toBeVisible();
-    await option.click();
+    // The form offers everybody one has handed in with before and preselects the
+    // most recent of them, so the invitation rides along with the hand-in. That
+    // preselection is the thing to check; driving the picker by hand would test
+    // the widget, not the page.
+    await expect(student.page.locator("#submission_invitee_ids"))
+      .toHaveValues([`${student2.user.id}`]);
     await page.uploadSubmission();
     const handedIn = student.page.waitForResponse(
       response => response.request().method() === "POST",

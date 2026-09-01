@@ -1,5 +1,7 @@
-<div class="next-action">
-  <h2 class="h4 mb-1"><%= t("submission.hub.card.nothing_due") %></h2>
+<section class="next-action" aria-labelledby="nothing_due_heading">
+  <h2 class="h4 mb-1" id="nothing_due_heading">
+    <%= t("submission.hub.card.nothing_due") %>
+  </h2>
   <p class="mb-3"><%= next_sheet_line %></p>
 
   <% if latest_marked %>
@@ -29,4 +31,4 @@
       <% end %>
     </div>
   <% end %>
-</div>
+</section>

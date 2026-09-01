@@ -10,13 +10,13 @@ RSpec.describe(SheetRowComponent, type: :component) do
   # The state machine itself is pinned in the loader's spec; what is checked
   # here is the other half - which words, which colour, and whether the row
   # speaks in the points column or in the status column, never in both.
-  def sheet(state, points: nil, max_points: 16, accepted_late: false,
+  def sheet(state, points: nil, max_points: 16,
             friendly_deadline: 15.minutes.from_now)
     assignment = instance_double(Assignment, title: "Homework 8",
                                              friendly_deadline: friendly_deadline)
     instance_double(Assessment::SubmissionsHub::Sheet,
                     state: state, points: points, max_points: max_points,
-                    accepted_late?: accepted_late, assignment: assignment,
+                    assignment: assignment,
                     # The row renders its fold with it; the fold has a spec of
                     # its own, so here it only has to stay out of the way.
                     submission: nil, tasks: [], partners: [],
@@ -95,19 +95,12 @@ RSpec.describe(SheetRowComponent, type: :component) do
       expect(content).to include(I18n.t("submission.hub.notes.rejected"))
     end
 
-    # The number is the whole story for a marked sheet - unless it only counts
-    # because a tutor let it count.
-    it "says nothing under a plainly marked sheet" do
+    # The number is the whole story for a marked sheet; that it was handed in
+    # late and let through changes nothing about it.
+    it "says nothing under a marked sheet" do
       content = render_state(:marked, points: 6.5)
 
       expect(content).not_to include("sheet-note")
-    end
-
-    it "says so under a late sheet that was let through" do
-      content = render_state(:marked, points: 6.5, accepted_late: true)
-
-      expect(content).to include(I18n.t("submission.hub.notes.accepted_late"))
-      expect(content).not_to include("sheet-note-bad")
     end
 
     it "says that a partly marked sheet is not finished" do

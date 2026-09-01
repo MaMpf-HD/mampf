@@ -70,14 +70,6 @@ module Assessment
         participation.grader || latest_task_point&.grader
       end
 
-      # Late and let through: the row shows its number like any other, but the
-      # story behind the number is worth a quiet line. `:rejected` is the other
-      # half of the same decision and has a state of its own, because there the
-      # points column has nothing of its own to say.
-      def accepted_late?
-        submission&.too_late? && submission.accepted == true
-      end
-
       def team
         submission ? submission.users.to_a : []
       end

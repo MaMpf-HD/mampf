@@ -71,10 +71,6 @@ class SheetFoldComponent < ViewComponent::Base
     [(sheet.points_for(task).to_f / max * 100).round(2), 100].min
   end
 
-  def files?
-    correction_filename.present? || manuscript_filename.present?
-  end
-
   def correction_filename
     submission&.correction_filename
   end
@@ -83,17 +79,18 @@ class SheetFoldComponent < ViewComponent::Base
     submission&.manuscript_filename
   end
 
-  def handed_in_line
+  def handed_in_at
     at = submission && (submission.last_modification_by_users_at ||
                         submission.created_at)
     return unless at
 
-    t("submission.hub.fold.handed_in", time: l(at, format: :long))
+    l(at, format: :long)
   end
 
-  # `marked_by` is empty until somebody stamps the participation, so the line
-  # has to stand without a name.
-  def marked_line
+  # A bare date behind "Correction" reads as the day it was uploaded; it is the
+  # day it was marked, so the word stays. `marked_by` is empty until somebody
+  # stamps the participation, so the line has to stand without a name too.
+  def marked_at
     return unless sheet.marked_at
 
     time = l(sheet.marked_at, format: :long)
@@ -101,6 +98,16 @@ class SheetFoldComponent < ViewComponent::Base
     return t("submission.hub.fold.marked", time: time) if who.blank?
 
     t("submission.hub.fold.marked_by", time: time, who: who)
+  end
+
+  # Two links, often the same filename: what tells them apart is the word in
+  # front, and that word has to be in the link's own name as well.
+  def manuscript_reader_label
+    "#{t("submission.hub.fold.handed_in_label")}: #{manuscript_filename}"
+  end
+
+  def correction_reader_label
+    "#{t("submission.hub.fold.correction_label")}: #{correction_filename}"
   end
 
   # One submission, two people, two numbers - the team hands in together and is

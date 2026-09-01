@@ -25,49 +25,48 @@
       <% end %>
     </div>
 
+    <%# One line per file, each with its own word in front and its time behind
+        it. Both files are often called the same thing, so the word is what tells
+        them apart - and it goes into the link's own name, because somebody
+        walking the links hears nothing else. %>
     <div>
       <div class="eyebrow mb-3"><%= t("submission.hub.fold.files_heading") %></div>
-      <%# Both files can be called the same thing, and often are. The visible
-          line tells them apart by where it stands; a reader needs the word. %>
-      <% if correction_filename %>
-        <div class="mb-2">
-          <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
-          <%= link_to show_correction_path(submission) do %>
-            <span class="visually-hidden">
-              <%= t("submission.hub.fold.correction_label") %>:
-            </span>
-            <%= correction_filename %>
+      <dl class="card-facts mt-0">
+        <dt><%= t("submission.hub.fold.handed_in_label") %></dt>
+        <dd>
+          <% if manuscript_filename %>
+            <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
+            <%= link_to manuscript_filename,
+                        show_submission_manuscript_path(submission),
+                        "aria-label": manuscript_reader_label %>
+            <% if handed_in_at %>
+              <span class="text-muted">&middot; <%= handed_in_at %></span>
+            <% end %>
+          <% else %>
+            <span class="text-muted"><%= t("submission.hub.fold.no_file") %></span>
           <% end %>
-          <% if points_entered? %>
-            <div class="small text-muted ms-4">
-              <%= t("submission.hub.fold.correction_carries_points") %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-      <% if manuscript_filename %>
-        <div class="mb-3">
-          <i class="fas fa-file-pdf text-danger me-2" aria-hidden="true"></i>
-          <%= link_to show_submission_manuscript_path(submission) do %>
-            <span class="visually-hidden">
-              <%= t("submission.hub.fold.what_you_handed_in") %>:
-            </span>
-            <%= manuscript_filename %>
-          <% end %>
-          <span class="small text-muted" aria-hidden="true">
-            &middot; <%= t("submission.hub.fold.what_you_handed_in") %>
-          </span>
-        </div>
-      <% end %>
-      <% unless files? %>
-        <p class="small text-muted mb-2"><%= t("submission.hub.fold.no_file") %></p>
-      <% end %>
+        </dd>
 
-      <div class="small text-muted">
-        <% if handed_in_line %><div><%= handed_in_line %></div><% end %>
-        <% if marked_line %><div><%= marked_line %></div><% end %>
-        <% if team_line %><div><%= team_line %></div><% end %>
-      </div>
+        <dt><%= t("submission.hub.fold.correction_label") %></dt>
+        <dd>
+          <% if correction_filename %>
+            <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
+            <%= link_to correction_filename, show_correction_path(submission),
+                        "aria-label": correction_reader_label %>
+            <% if marked_at %>
+              <span class="text-muted">&middot; <%= marked_at %></span>
+            <% end %>
+          <% else %>
+            <span class="text-muted">
+              <%= t("submission.hub.fold.not_uploaded_yet") %>
+            </span>
+          <% end %>
+        </dd>
+      </dl>
     </div>
   </div>
+
+  <% if team_line %>
+    <p class="small text-muted mb-0 mt-3"><%= team_line %></p>
+  <% end %>
 </div>

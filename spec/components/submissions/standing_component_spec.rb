@@ -127,12 +127,19 @@ RSpec.describe(StandingComponent, type: :component) do
       )
     end
 
-    it "puts the threshold on the bar as a mark" do
+    # The mark says what the rule says. `points_max_materialized` grows with
+    # every sheet the lecture adds, so "88 needed" against a fixed mark is a
+    # different number every week; the points go into the title instead.
+    it "labels the mark with the rule, not with a number that moves" do
       content = render_standing(standing(rule: percentage_rule))
 
       expect(content).to include("left: 50.0%")
-      expect(content)
-        .to include(I18n.t("submission.hub.standing.needed", points: "88"))
+      expect(content).to include(
+        I18n.t("submission.hub.standing.mark_percentage", percentage: "50")
+      )
+      expect(content).to include(
+        "title=\"#{I18n.t("submission.hub.standing.needed", points: "88")}\""
+      )
     end
   end
 
@@ -143,8 +150,12 @@ RSpec.describe(StandingComponent, type: :component) do
       built
     end
 
-    it "names the threshold in points" do
+    # An absolute rule keeps its number on the mark: there the number is the rule.
+    it "labels the mark with the points, and names the threshold in points" do
       content = render_standing(standing(rule: absolute_rule, total: 104.5))
+
+      expect(content)
+        .to include(I18n.t("submission.hub.standing.needed", points: "90"))
 
       expect(content).to include(
         I18n.t("submission.hub.standing.condition_absolute", points: "90",

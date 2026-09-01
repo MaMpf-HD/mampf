@@ -72,7 +72,8 @@ test.describe("the standing beside the card", () => {
       .getByRole("complementary", { name: "Exam admission" });
 
     await expect(standing.getByText("of 24 points")).toBeVisible();
-    await expect(standing.getByText("12 needed")).toBeVisible();
+    // The mark carries the rule, not a number that moves with every new sheet.
+    await expect(standing.getByText("50 %", { exact: true })).toBeVisible();
     await expect(standing.getByText("50 % of the points")).toBeVisible();
     await expect(standing.getByText("Blackboard Talk")).toBeVisible();
     await expect(standing.getByText("not recorded yet")).toBeVisible();
