@@ -43,11 +43,12 @@ class SheetFoldComponent < ViewComponent::Base
       max: format_number(sheet.max_points))
   end
 
-  # "All 16 points are missing from your total" needs the 16. A sheet whose
-  # problems are not set up yet has none, and nothing was lost on it either.
+  # "All 16 points are missing from your total" is an explanation, and it is
+  # the wrong one for a sheet whose problems have not been set up: nothing was
+  # lost there because there was nothing to lose yet.
   def missing_reason_key
     key = MISSING_REASONS.fetch(state, "nothing_yet")
-    return "no_tasks" if key == "zero" && !sheet.worth_points?
+    return "no_tasks" if key == "zero" && !sheet.tasks_set_up?
 
     key
   end
@@ -75,24 +76,24 @@ class SheetFoldComponent < ViewComponent::Base
     format_number(task.max_points)
   end
 
-  def task_reader_label(task)
-    unless marked?(task)
-      return t("submission.hub.fold.problem_unmarked",
-               max: task_max_points(task))
-    end
+  # A problem may be set at 0, and nothing stops a tutor awarding points on it
+  # anyway - so the value and the scale are asked separately here too.
+  def task_scale?(task)
+    task.max_points.to_f.positive?
+  end
 
-    t("submission.hub.points_reader", points: task_points(task),
-                                      max: task_max_points(task))
+  def task_reader_label(task)
+    return unmarked_reader_label(task) unless marked?(task)
+
+    marked_reader_label(task)
   end
 
   # Capped rather than proportional: four problems compare better against a
   # short bar than a long one, and a wide bar reads as a figure of its own.
   def task_bar_percentage(task)
-    max = task.max_points
-    return unless marked?(task)
-    return if max.nil? || max.zero?
+    return unless marked?(task) && task_scale?(task)
 
-    [(sheet.points_for(task).to_f / max * 100).round(2), 100].min
+    [(sheet.points_for(task).to_f / task.max_points * 100).round(2), 100].min
   end
 
   def correction_filename
@@ -131,7 +132,7 @@ class SheetFoldComponent < ViewComponent::Base
     names = sheet.partners.map(&:tutorial_name)
     return if names.empty?
 
-    if points_entered? && sheet.worth_points?
+    if points_entered? && !sheet.points.nil?
       t("submission.hub.fold.team_with_points", names: names.to_sentence,
                                                 points: format_number(sheet.points))
     else
@@ -140,6 +141,23 @@ class SheetFoldComponent < ViewComponent::Base
   end
 
   private
+
+    def marked_reader_label(task)
+      if task_scale?(task)
+        t("submission.hub.points_reader", points: task_points(task),
+                                          max: task_max_points(task))
+      else
+        t("submission.hub.points_reader_no_max", points: task_points(task))
+      end
+    end
+
+    def unmarked_reader_label(task)
+      if task_scale?(task)
+        t("submission.hub.fold.problem_unmarked", max: task_max_points(task))
+      else
+        t("submission.hub.fold.problem_unmarked_no_max")
+      end
+    end
 
     def format_number(value)
       number_to_rounded(value || 0, precision: 2,

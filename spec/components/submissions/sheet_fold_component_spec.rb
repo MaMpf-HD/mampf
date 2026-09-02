@@ -23,6 +23,9 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       partners: [], marked_at: nil, marked_by: nil }
   end
 
+  # A sheet has its problems set up as soon as there are any, and where the
+  # example lists none it follows the maximum: points come from problems. The
+  # two are told apart where it matters - a problem may be set at 0.
   def sheet(state, **overrides)
     attrs = sheet_defaults.merge(overrides)
     points_by_task = attrs[:points_by_task]
@@ -30,7 +33,9 @@ RSpec.describe(SheetFoldComponent, type: :component) do
                              state: state, submission: attrs[:submission],
                              tasks: points_by_task.keys, points: attrs[:points],
                              max_points: attrs[:max_points],
-                             worth_points?: attrs[:max_points].to_f.positive?,
+                             scale?: attrs[:max_points].to_f.positive?,
+                             tasks_set_up?: points_by_task.any? ||
+                                            attrs[:max_points].to_f.positive?,
                              partners: attrs[:partners],
                              marked_at: attrs[:marked_at],
                              marked_by: attrs[:marked_by])
@@ -143,9 +148,9 @@ RSpec.describe(SheetFoldComponent, type: :component) do
     end
 
     # A sheet gets its assessment when it is created and its problems whenever
-    # the lecturer gets round to them, so this is every sheet for a while.
-    # "All 0 points are missing from your total" needs a 0 there is none of.
-    it "says the problems are not set up yet for a sheet worth nothing" do
+    # the lecturer gets round to them, so this is every sheet for a while. What
+    # the sentence explains is the missing problems, not the missing scale.
+    it "says the problems are not set up yet when there are none" do
       content = render_fold(:missed, max_points: 0)
 
       expect(content)
@@ -155,18 +160,66 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       )
     end
 
-    # A team is named either way; what it is not told is a share of nothing.
-    it "names the team without a number for a sheet worth nothing" do
+    # Problems that are there but worth nothing are not missing problems, and
+    # the sentence must not say they are.
+    it "does not blame missing problems for a sheet that has them" do
+      content = render_fold(:missed, max_points: 0,
+                                     points_by_task: { task(max_points: 0) => nil })
+
+      expect(content)
+        .not_to include(I18n.t("submission.hub.fold.no_points.no_tasks"))
+    end
+
+    # `Assessment::TaskPoint` puts no ceiling on what a tutor may award, so a
+    # problem set at 0 can still carry points. The value is the reader's; only
+    # the scale to read it on is missing.
+    it "shows points on a problem worth nothing, without a denominator" do
+      content = render_fold(:marked,
+                            points_by_task: { task(max_points: 0) => 2 })
+
+      expect(content).to include(
+        I18n.t("submission.hub.points_reader_no_max", points: "2")
+      )
+      expect(content).not_to include(
+        I18n.t("submission.hub.points_reader", points: "2", max: "0")
+      )
+      expect(content).not_to include("/ 0")
+    end
+
+    it "says only that a problem worth nothing is unmarked" do
+      content = render_fold(:partially_marked, max_points: 0,
+                                               points_by_task: { task(max_points: 0) => nil })
+
+      expect(content).to include(
+        I18n.t("submission.hub.fold.problem_unmarked_no_max")
+      )
+      expect(content).not_to include(
+        I18n.t("submission.hub.fold.problem_unmarked", max: "0")
+      )
+    end
+
+    # A team is told its share whenever the sheet carries one - and a sheet
+    # with no scale can carry points all the same.
+    it "names the team with the points a sheet carries without a scale" do
       partner = instance_double(User, tutorial_name: "Ada")
 
-      content = render_fold(:partially_marked, max_points: 0,
-                                               points: 0, partners: [partner])
+      content = render_fold(:partially_marked, max_points: 0, points: 2,
+                                               partners: [partner],
+                                               points_by_task: { task(max_points: 0) => 2 })
+
+      expect(content).to include(
+        I18n.t("submission.hub.fold.team_with_points", names: "Ada", points: "2")
+      )
+    end
+
+    it "names the team without a number where the sheet carries none" do
+      partner = instance_double(User, tutorial_name: "Ada")
+
+      content = render_fold(:partially_marked, max_points: 0, points: nil,
+                                               partners: [partner])
 
       expect(content).to include(I18n.t("submission.hub.fold.team",
                                         names: "Ada"))
-      expect(content).not_to include(
-        I18n.t("submission.hub.fold.team_with_points", names: "Ada", points: "0")
-      )
     end
   end
 

@@ -29,15 +29,14 @@ module Assessment
         open_state
       end
 
-      # A dash unless there is a number to show. The states that read 0 are the
-      # ones where the sheet counts and counts as nothing - which takes
-      # something having been at stake.
+      # Whatever the participation carries is shown. The 0 the other states read
+      # is not carried by anything - it is the statement "this sheet counts and
+      # counts as nothing", and that takes something having been at stake.
       def points
-        return unless worth_points?
-
         case state
         when :marked, :partially_marked then participation&.points_total
-        when :absent, :missed, :not_recorded, :rejected then BigDecimal("0")
+        when :absent, :missed, :not_recorded, :rejected
+          BigDecimal("0") if scale?
         end
       end
 
@@ -46,11 +45,18 @@ module Assessment
       end
 
       # Every assignment gets its assessment the moment it is created and its
-      # problems whenever the lecturer gets round to them, so a sheet worth
-      # nothing is not a rare sheet - it is every sheet, for a while. Nothing is
-      # at stake on it yet, and a 0 either side of the slash would say something
-      # about the sheet where the truth is about the moment.
-      def worth_points?
+      # problems whenever the lecturer gets round to them, so a sheet with no
+      # problems on it is not a rare sheet - it is every sheet, for a while.
+      # This is what the fold explains when it has no numbers to show.
+      def tasks_set_up?
+        tasks.any?
+      end
+
+      # Whether there is anything to measure against - what a denominator and a
+      # bar need, and a different question from the one above: a task may be
+      # worth 0 and `Assessment::TaskPoint` puts no ceiling on what a tutor may
+      # award, so a sheet can carry points with no scale to read them on.
+      def scale?
         max_points.to_f.positive?
       end
 

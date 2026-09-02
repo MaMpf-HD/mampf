@@ -51,12 +51,24 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
 
     # The problems are set up after the sheet is, so between the two there is
     # nothing to name - and "0 problems, 0 points" would name it anyway.
-    it "says nothing about points for a sheet whose problems are not set up" do
+    it "says nothing about points before the problems are set up" do
       content = render_card
 
       expect(content).to include("PDF")
       expect(content).not_to include(
         I18n.t("submission.hub.card.worth", count: 0, points: "0")
+      )
+    end
+
+    # What the card announces is the problems, not the scale: a problem that is
+    # up before anybody has said what it is worth is still one to work on.
+    it "counts problems that are up before they are worth anything" do
+      create(:assessment_task, assessment: assignment.assessment, max_points: 0)
+
+      content = render_card
+
+      expect(content).to include(
+        I18n.t("submission.hub.card.worth", count: 1, points: "0")
       )
     end
 

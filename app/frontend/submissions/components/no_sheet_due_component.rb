@@ -35,15 +35,20 @@ class NoSheetDueComponent < ViewComponent::Base
     format_number(latest_marked.max_points)
   end
 
+  # The same rule the list follows: what came back is shown, and the maximum
+  # only where there is one to name.
+  delegate :scale?, to: :latest_marked
+
   def points_reader_label
+    return t("submission.hub.points_reader_no_max", points: points) unless scale?
+
     t("submission.hub.points_reader", points: points, max: max_points)
   end
 
   def bar_percentage
-    max = latest_marked.max_points
-    return if max.nil? || max.zero?
+    return unless scale?
 
-    [(latest_marked.points.to_f / max * 100).round(2), 100].min
+    [(latest_marked.points.to_f / latest_marked.max_points * 100).round(2), 100].min
   end
 
   def correction_name

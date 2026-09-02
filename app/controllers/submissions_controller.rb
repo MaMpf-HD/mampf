@@ -7,7 +7,9 @@ class SubmissionsController < ApplicationController
 
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
                                           :redeem_code, :join, :cancel_new]
-  before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
+  before_action :set_assignment, only: [:new, :enter_code, :cancel_new, :join]
+  before_action :authorize_sheet, only: [:new, :enter_code, :cancel_new,
+                                         :cancel_edit, :join]
   before_action :set_lecture, only: :index
   before_action :prevent_caching, only: :show_manuscript
   before_action :check_if_tutorials, only: :index
@@ -42,10 +44,6 @@ class SubmissionsController < ApplicationController
   def new
     @submission = Submission.new
     @submission.assignment = @assignment
-    # The ability lets anybody logged in reach `new`; what decides whether this
-    # person may hand in to this sheet is the `:create` rule, and the form is
-    # not worth showing to somebody the save would turn away.
-    authorize! :create, @submission
     set_submission_locale
     render_form
   end
@@ -149,11 +147,8 @@ class SubmissionsController < ApplicationController
   end
 
   def join
-    @assignment = Assignment.find_by(id: join_params[:assignment_id])
-    @lecture = @assignment.lecture
-    set_submission_locale
-    code = join_params[:code]
-    @submission = Submission.find_by(token: code, assignment: @assignment)
+    @submission = Submission.find_by(token: join_params[:code],
+                                     assignment: @assignment)
     check_code_and_join
     if @error
       @invites = hub.invites_for(@assignment)
@@ -319,6 +314,11 @@ class SubmissionsController < ApplicationController
     # The form back in the frame with its messages beside the fields, rather
     # than an alert box next to a card that still shows the old state.
     def render_form(status: :ok)
+      # In roster mode the form names the group instead of offering a choice,
+      # and there is no name to print for somebody who has not been placed in
+      # one. The refusal the save would give, before the page is built rather
+      # than halfway through it.
+      rostered_tutorial!(@assignment.lecture) if @assignment.lecture.roster_managed?
       @partners = hub.possible_partners
       render :form, status: status
     end
@@ -367,8 +367,15 @@ class SubmissionsController < ApplicationController
       params.expect(submission: [:manuscript])
     end
 
+    # `join` posts the sheet inside its own form object, the others carry it in
+    # the query - and either way an id nobody can look up gets the same answer
+    # as a submission that is gone.
+    def assignment_id
+      action_name == "join" ? join_params[:assignment_id] : params[:assignment_id]
+    end
+
     def set_assignment
-      @assignment = Assignment.find_by(id: params[:assignment_id])
+      @assignment = Assignment.find_by(id: assignment_id)
       @lecture = @assignment&.lecture
       set_submission_locale
       return if @assignment
@@ -377,6 +384,19 @@ class SubmissionsController < ApplicationController
       # says what happened instead of steering the whole page elsewhere.
       @gone_message = I18n.t("controllers.no_assignment")
       render :gone, status: :gone
+    end
+
+    # `SubmissionAbility` grants the whole class to anybody logged in for these:
+    # they carry no submission of their own to hang a rule on, only a sheet. So
+    # the rule is the one handing in uses - `:create` for this sheet - and it
+    # sits in one place, because four gates is how the fifth gets forgotten.
+    #
+    # `index` is not among them: it takes a lecture rather than a sheet and is
+    # gated by `check_student_status`. Neither is `redeem_code`, which takes a
+    # code and nothing else - there is no sheet to check until the code resolves
+    # to one, and `check_code_validity` ends on the same enrolment test.
+    def authorize_sheet
+      authorize!(:create, Submission.new(assignment: @assignment))
     end
 
     def set_lecture

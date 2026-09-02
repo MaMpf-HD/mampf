@@ -64,8 +64,10 @@ class SheetRowComponent < ViewComponent::Base
     NOTE_TONES[state] == :bad ? "sheet-note-bad" : "sheet-note"
   end
 
+  # Whatever the sheet carries is shown; whether it can be put over a maximum
+  # is a separate question, and the answer to it is `maximum?`.
   def number?
-    state.in?(NUMBER_STATES) && sheet.worth_points?
+    state.in?(NUMBER_STATES) && !sheet.points.nil?
   end
 
   def zero?
@@ -73,10 +75,10 @@ class SheetRowComponent < ViewComponent::Base
   end
 
   # Two sheets have no denominator: the exempt one, taken out of the reckoning,
-  # where "of 16" would claim it still counts - and the one whose problems are
-  # not set up yet, where there is no 16 to name.
+  # where "of 16" would claim it still counts - and the one with no scale to
+  # name, where there is no 16 to put anything over.
   def maximum?
-    state != :exempt && sheet.worth_points?
+    state != :exempt && sheet.scale?
   end
 
   def points
@@ -88,8 +90,11 @@ class SheetRowComponent < ViewComponent::Base
   end
 
   # What a screen reader gets instead of "6.5 slash 16", which is why the
-  # visible figure is hidden from it.
+  # visible figure is hidden from it. With no scale there is nothing to say
+  # "of" about, and the number stands on its own.
   def points_reader_label
+    return t("submission.hub.points_reader_no_max", points: points) unless maximum?
+
     t("submission.hub.points_reader", points: points, max: max_points)
   end
 

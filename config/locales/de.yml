@@ -3127,6 +3127,7 @@ de:
         files_heading: Dateien
         problem: "Aufgabe %{number}"
         problem_unmarked: "noch nicht bewertet, von %{max} Punkten"
+        problem_unmarked_no_max: noch nicht bewertet
         correction_label: Korrektur
         no_file: nichts abgegeben
         team: "Team: Du und %{names}"
@@ -3150,6 +3151,7 @@ de:
             nichts dazu vermerkt.
       no_points: keine Punkte
       points_reader: "%{points} von %{max} Punkten"
+      points_reader_no_max: "%{points} Punkte"
       no_sheets_yet: >
         Noch keine. Sobald ein Blatt korrigiert ist, steht es hier mit Deinen
         Punkten.

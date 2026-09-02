@@ -50,7 +50,7 @@ class SubmissionCardComponent < ViewComponent::Base
   def meta_parts
     parts = [assignment.accepted_file_type.delete_prefix(".").upcase]
     parts << time_left if assignment.semiactive?
-    parts << worth if sheet.worth_points?
+    parts << worth if sheet.tasks_set_up?
     parts.compact
   end
 

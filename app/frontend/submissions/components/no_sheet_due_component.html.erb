@@ -13,7 +13,7 @@
       <span class="num">
         <%= latest_marked.assignment.title %>&nbsp;&nbsp;
         <span class="visually-hidden"><%= points_reader_label %></span>
-        <span aria-hidden="true"><%= points %> <span class="text-muted">/ <%= max_points %></span></span>
+        <span aria-hidden="true"><%= points %> <% if scale? %><span class="text-muted">/ <%= max_points %></span><% end %></span>
       </span>
 
       <% if bar_percentage %>

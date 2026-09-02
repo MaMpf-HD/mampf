@@ -23,7 +23,10 @@
 
               <span aria-hidden="true">
                 <%= task_points(task) %>
-                <span class="text-muted">/ <%= task_max_points(task) %></span>
+
+                <% if task_scale?(task) %>
+                  <span class="text-muted">/ <%= task_max_points(task) %></span>
+                <% end %>
               </span>
             </span>
           </div>

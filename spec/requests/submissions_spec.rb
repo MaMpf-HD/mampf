@@ -117,14 +117,6 @@ RSpec.describe("Submissions", type: :request) do
         .not_to change(Submission, :count)
     end
 
-    # The form is the same decision as the save: somebody the save turns away
-    # has no business being shown it.
-    it "does not show the form to a user not enrolled in the lecture" do
-      get new_submission_path(assignment_id: assignment.id)
-
-      expect(response).to redirect_to(root_url)
-    end
-
     let(:other_tutorial) { create(:tutorial, lecture: lecture) }
 
     context "roster-eligible lecture, student not enrolled" do
@@ -166,6 +158,68 @@ RSpec.describe("Submissions", type: :request) do
     end
   end
 
+  # `SubmissionAbility` grants these to anybody logged in: they carry no
+  # submission of their own to hang a rule on, only a sheet. So one
+  # before_action gates them all with the rule handing in uses, and the group is
+  # walked here on purpose - four gates is how the fifth gets forgotten.
+  describe "the actions that take a sheet, asked by somebody not in the lecture" do
+    let(:submission) do
+      create(:submission, assignment: assignment, tutorial: tutorial)
+        .tap { |record| record.users << create(:confirmed_user) }
+    end
+
+    it "turns a stranger away from the hand-in form" do
+      get new_submission_path(assignment_id: assignment.id)
+
+      expect(response).to redirect_to(root_url)
+    end
+
+    # This one named the sheet of a lecture the reader has nothing to do with.
+    it "turns a stranger away from the code form" do
+      get enter_submission_code_path(assignment_id: assignment.id)
+
+      expect(response).to redirect_to(root_url)
+      expect(response.body).not_to include(assignment.title)
+    end
+
+    it "turns a stranger away from the cancelled hand-in" do
+      get cancel_new_submission_path(assignment_id: assignment.id)
+
+      expect(response).to redirect_to(root_url)
+    end
+
+    # Reached with a submission rather than a sheet, and it answers with the
+    # card - which is the sheet named again.
+    it "turns a stranger away from the cancelled edit" do
+      get cancel_edit_submission_path(submission)
+
+      expect(response).to redirect_to(root_url)
+      expect(response.body).not_to include(assignment.title)
+    end
+
+    it "turns a stranger away from joining" do
+      post join_submission_path, params: {
+        join: { code: submission.token, assignment_id: assignment.id }
+      }
+
+      expect(response).to redirect_to(root_url)
+    end
+
+    # The way in that was a 500: the sheet was dereferenced before anybody
+    # asked whether it exists.
+    it "answers a join for a sheet that is gone with the frame that says so" do
+      gone = create(:assignment, lecture: lecture)
+      id = gone.id
+      gone.destroy
+
+      post join_submission_path, params: { join: { code: "whatever",
+                                                   assignment_id: id } }
+
+      expect(response).to have_http_status(:gone)
+      expect(response.body).to include(I18n.t("controllers.no_assignment"))
+    end
+  end
+
   describe "a student without a rostered tutorial" do
     let!(:assignment) { create(:assignment, lecture: lecture, accepted_file_type: ".pdf") }
     let(:rostered) { create(:confirmed_user) }
@@ -185,6 +239,17 @@ RSpec.describe("Submissions", type: :request) do
       expect(response.body).not_to include("create-submission")
       expect(response.body).not_to include("submission-join")
       expect(response.body).to include(I18n.t("submission.tutorial_needed"))
+    end
+
+    # The form names the group instead of offering a choice, and there is none
+    # to name. It used to reach the view and blow up there; now it gives the
+    # refusal the save gives, and the reader is told what is missing.
+    it "is told what is missing rather than crashing on the form" do
+      get new_submission_path(assignment_id: assignment.id)
+
+      expect(response).to redirect_to(start_path)
+      follow_redirect!
+      expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
     end
 
     it "cannot join by code, which is also how an invitation is accepted" do
@@ -402,6 +467,22 @@ RSpec.describe("Submissions", type: :request) do
           .to include(I18n.t("submission.hub.fold.no_points.no_tasks"))
         expect(response.body).not_to include(
           I18n.t("submission.hub.points_reader", points: "0", max: "0")
+        )
+      end
+
+      # A problem may be set at 0 and `Assessment::TaskPoint` puts no ceiling on
+      # what a tutor may award against it, so a sheet can carry points with no
+      # scale to read them on. Both halves of the page have to say so.
+      it "shows points on a sheet with no scale, and no denominator anywhere" do
+        mark(sheet(title: "Homework 6", max_points: [0]), [2])
+
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).to include(
+          I18n.t("submission.hub.points_reader_no_max", points: "2")
+        )
+        expect(response.body).not_to include(
+          I18n.t("submission.hub.points_reader", points: "2", max: "0")
         )
       end
 

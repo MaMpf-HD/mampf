@@ -24,7 +24,10 @@
           <span class="visually-hidden"><%= points_reader_label %></span>
           <span aria-hidden="true">
             <%= tag.span(points, class: ("num-zero" if zero?)) %>
-            <span class="text-muted">/ <%= max_points %></span>
+
+            <% if maximum? %>
+              <span class="text-muted">/ <%= max_points %></span>
+            <% end %>
           </span>
           <% if bar_percentage %>
             <div class="spark">

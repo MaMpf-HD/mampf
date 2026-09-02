@@ -2902,6 +2902,7 @@ en:
         files_heading: Files
         problem: "Problem %{number}"
         problem_unmarked: "not marked yet, out of %{max} points"
+        problem_unmarked_no_max: not marked yet
         correction_label: Correction
         no_file: nothing handed in
         team: "Team: you and %{names}"
@@ -2925,6 +2926,7 @@ en:
             recorded against it.
       no_points: no points
       points_reader: "%{points} of %{max} points"
+      points_reader_no_max: "%{points} points"
       no_sheets_yet: >
         None yet. Once a sheet has been marked, it appears here with your
         points.
