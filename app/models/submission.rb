@@ -21,6 +21,7 @@ class Submission < ApplicationRecord
 
   validate :matching_lecture, if: :tutorial
 
+  # before_save :set_corrected_at, if: :correction_data_changed?
   before_create :set_token
 
   delegate :assessment, to: :assignment
@@ -346,5 +347,9 @@ class Submission < ApplicationRecord
 
     def set_token
       self.token = Submission.generate_token
+    end
+
+    def set_corrected_at
+      self.corrected_at = correction.present? ? Time.current : nil
     end
 end
