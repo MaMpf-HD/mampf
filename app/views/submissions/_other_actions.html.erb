@@ -5,7 +5,7 @@
               remote: true %>
 <% end %>
 <% if submission.too_late? && submission.accepted.nil? %>
-  <%= link_to accept_submission_path(submission, grading_scope_type: grading_scope.class.name.downcase),
+  <%= link_to accept_submission_path(submission),
               class: "btn btn-sm btn-outline-success d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
               data: {
                 turbo_method: :patch,
@@ -16,7 +16,7 @@
     <span class="material-icons" style="font-size: 16px;">check</span>
   <% end %>
 
-  <%= link_to reject_submission_path(submission, grading_scope_type: grading_scope.class.name.downcase),
+  <%= link_to reject_submission_path(submission),
               class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
               data: {
                 turbo_method: :patch,
