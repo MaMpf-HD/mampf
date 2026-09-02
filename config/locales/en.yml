@@ -2906,7 +2906,9 @@ en:
             yet, so they do not count towards your total for now.
           zero: >
             None - all %{max} points are missing from your total.
-          exempt: This sheet does not count towards your total.
+          exempt: >
+            This sheet is not counted for you - its points are not missing
+            from your total either.
           legacy: >
             This sheet was set up before points existed in MaMpf. Nothing is
             recorded against it.
@@ -2935,7 +2937,7 @@ en:
         partially_marked: not every problem has been marked yet
         missed: nothing arrived by the deadline
         absent: recorded as absent
-        exempt: this sheet does not count against you
+        exempt: not counted for you
         not_recorded: >
           your file is here, but it is not recorded as a hand-in - talk to your
           tutor

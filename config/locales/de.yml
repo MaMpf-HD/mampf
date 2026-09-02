@@ -3130,7 +3130,9 @@ de:
             sie zählen also vorerst nicht mit.
           zero: >
             Keine - alle %{max} Punkte fehlen Dir in der Summe.
-          exempt: Dieses Blatt zählt nicht in Deine Summe.
+          exempt: >
+            Für Dich wird dieses Blatt nicht gewertet; die Punkte fehlen Dir
+            dadurch auch nicht.
           legacy: >
             Dieses Blatt wurde angelegt, bevor es in MaMpf Punkte gab. Es ist
             nichts dazu vermerkt.
@@ -3159,7 +3161,7 @@ de:
         partially_marked: noch nicht alle Aufgaben korrigiert
         missed: bis zur Frist kam nichts an
         absent: als abwesend vermerkt
-        exempt: dieses Blatt zählt nicht gegen Dich
+        exempt: wird bei Dir nicht gewertet
         not_recorded: >
           Deine Datei liegt vor, ist aber nicht als Abgabe vermerkt - sprich
           Deinen Tutor an
