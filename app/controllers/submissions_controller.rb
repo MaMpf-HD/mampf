@@ -289,6 +289,7 @@ class SubmissionsController < ApplicationController
   private
 
     def rerender_submission_row
+      grading_scope = params[:grading_scope_type] == "tutorial" ? @tutorial : @tutorial.lecture
       respond_to do |format|
         format.turbo_stream do
           render turbo_stream: turbo_stream.replace(
@@ -297,7 +298,7 @@ class SubmissionsController < ApplicationController
               SubmissionRowComponent.new(
                 submission: @submission,
                 assignment: @assignment,
-                grading_scope: @tutorial
+                grading_scope: grading_scope
               )
             )
           )

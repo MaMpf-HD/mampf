@@ -362,8 +362,11 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
     context "when grading_scope is not a recognized type" do
       let(:component_unknown) do
-        described_class.new(participation: participation, assessment: assessment,
-                            grading_scope: "not_a_scope", save_url: save_url, refresh_url: refresh_url)
+        described_class.new(participation: participation,
+                            assessment: assessment,
+                            grading_scope: "not_a_scope",
+                            save_url: save_url,
+                            refresh_url: refresh_url)
       end
 
       before do

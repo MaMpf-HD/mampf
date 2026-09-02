@@ -3917,7 +3917,6 @@ de:
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
-    refresh: 'Erneuern'
     refresh_token: 'Code erneuern'
     invite: 'Einladen'
     send: 'Versenden'

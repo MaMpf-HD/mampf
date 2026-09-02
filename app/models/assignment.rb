@@ -273,6 +273,8 @@ class Assignment < ApplicationRecord
     end
 
     def user_ids_in_tutorials_from_participations
+      return [] if assessment.blank?
+
       tutorial_ids = lecture.tutorials.pluck(:id)
       Assessment::Participation
         .where(assessment_id: assessment.id, tutorial_id: tutorial_ids)
@@ -285,6 +287,8 @@ class Assignment < ApplicationRecord
     end
 
     def user_ids_in_tutorial_from_participations(tutorial)
+      return [] if assessment.blank?
+
       Assessment::Participation
         .where(assessment_id: assessment.id, tutorial_id: tutorial.id)
         .distinct

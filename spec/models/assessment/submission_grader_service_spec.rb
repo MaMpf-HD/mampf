@@ -154,10 +154,12 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     after { Timecop.return }
 
     context "with invalid arguments" do
-      it "raises SubmissionGraderError when participation is nil" do
+      it "raises SubmissionGraderError with the no_participation " \
+         "message when participation is nil" do
         expect do
           described_class.remove_participation(nil)
-        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                           I18n.t("assessment.errors.no_participation"))
       end
     end
 
@@ -336,15 +338,16 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         end
       end
 
-      context "when participation and assignment are valid" do
+      context "when participation and assignment are valid but grading is not open" do
         subject do
           described_class.score_tasks_by_participation!(@participation, points_by_task_id,
                                                         scorer)
         end
-        it "not calls PointEntryService.enter_points and throw SubmissionGraderError" do
-          expect(Assessment::PointEntryService).not_to receive(:enter_points)
 
-          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        it "does not call PointEntryService.enter_points and raises SubmissionGraderError" do
+          expect(Assessment::PointEntryService).not_to receive(:enter_points)
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                                            I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")) # rubocop:disable Layout/LineLength
         end
       end
     end
@@ -369,8 +372,16 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
 
       it "calls PointEntryService.enter_points with the existing participation" do
         expect(participation.assessment.assessable).to eq(assignment)
-        expect(Assessment::PointEntryService).to receive(:enter_points).once
+        expect(Assessment::PointEntryService)
+          .to receive(:enter_points).once
+                                    .with(participation, points_by_task_id, scorer, nil)
         subject
+      end
+
+      it "does not require the assessment to require_points (unlike score_tasks_by_submission!)" do
+        allow(assessment).to receive(:requires_points?).and_return(false)
+        allow(Assessment::PointEntryService).to receive(:enter_points)
+        expect { subject }.not_to raise_error
       end
     end
   end
@@ -609,7 +620,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         expect(validated_tutorials_ids).to include(tutorial.id)
       end
 
-      context "when participation has no tutorial_id (falls back to lecture)" do
+      context "when participation has no tutorial_id" do
         let!(:participation_no_tutorial) do
           FactoryBot.create(:assessment_participation, assessment: assessment, user:
             FactoryBot.create(:confirmed_user), tutorial: nil)
@@ -624,9 +635,21 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           )
         end
 
-        it "raises SubmissionGraderError when the scorer cannot grade the lecture" do
-          allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
-          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+        it "raises SubmissionGraderError with the missing-tutorial message" do
+          expect { subject }.to raise_error(
+            Assessment::SubmissionGraderService::SubmissionGraderError,
+            I18n.t("assessment.task_points.participation_id_missing_tutorial",
+                   participation_id: participation_no_tutorial.id)
+          )
+        end
+
+        it "does not attempt to authorize against a scope" do
+          expect(scorer).not_to receive(:can_grade_in_scope?)
+          begin
+            subject
+          rescue StandardError
+            nil
+          end
         end
       end
     end
@@ -640,8 +663,9 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         )
       end
 
-      it "raises SubmissionGraderError" do
-        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
+      it "raises SubmissionGraderError with an unknown-target message" do
+        expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
+                                          /Unknown target type/)
       end
 
       it "does not call score_tasks_by_submission!" do

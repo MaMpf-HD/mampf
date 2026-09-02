@@ -14,16 +14,17 @@ class Submission < ApplicationRecord
 
   validate :matching_lecture, if: :tutorial
 
+  before_save :set_corrected_at, if: :correction_data_changed?
   before_create :set_token
 
   delegate :assessment, to: :assignment
 
   def participations
-    return unless assignment.assessable?
+    return nil unless assignment.assessable?
 
-    users.map do |user|
-      Assessment::Participation.find_by(assessment: assignment.assessment, user: user)
-    end
+    found = Assessment::Participation.where(assessment: assignment.assessment, user: users)
+                                     .index_by(&:user_id)
+    users.map { |user| found[user.id] }
   end
 
   def graded_tasks_points
@@ -339,5 +340,9 @@ class Submission < ApplicationRecord
 
     def set_token
       self.token = Submission.generate_token
+    end
+
+    def set_corrected_at
+      self.corrected_at = correction.present? ? Time.current : nil
     end
 end
