@@ -1,7 +1,9 @@
 <%= vite_stylesheet_tag "submissions/index/index.scss" %>
 
-<%# A row whose name and number sit a screen apart is two lists, not one. %>
-<div class="small-width">
+<%# The pane the other lecture pages sit in: the grey standing panel and the
+    white card are drawn against it, and the page background is patterned. The
+    width cap is what keeps a row's name and its number on the same screen. %>
+<div class="container small-width lecture-pane submissions-pane">
   <%# No heading over the head: the card carries the sheet's title, its deadline
       and the only coloured border on the page. Three signals for one thing. The
       wrapping section goes with it - each card is a named section already, and

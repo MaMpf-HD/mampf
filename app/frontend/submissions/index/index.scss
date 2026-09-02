@@ -1,3 +1,12 @@
+/* The pane gives the page its white ground - the standing panel is grey and
+   the page background is a pattern - but not its frame: the sheet that is due
+   is a card, and a card inside a card reads as two. */
+.submissions-pane {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 /* The one bordered element on the page, and the only one carrying colour: what
    can still be handed in is where reading starts. */
 .next-action {
