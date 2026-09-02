@@ -157,9 +157,30 @@
                   <% end %>
                 </div>
 
-                <div class="text-muted small">
-                  <i class="bi bi-envelope me-1"></i>
+                <div
+                  class="text-muted small"
+                  data-controller="clipboard"
+                  data-clipboard-text-value="<%= student.email %>"
+                  data-clipboard-confirmation-value="<%= t("basics.email_copied_to_clipboard") %>"
+                  data-clipboard-failure-value="<%= t("basics.email_copy_failed") %>"
+                >
+                  <button
+                    type="button"
+                    class="btn btn-link btn-sm p-0 border-0 align-baseline text-muted"
+                    data-action="clipboard#copy"
+                    title="<%= t("buttons.copy_email_address") %>"
+                    aria-label="<%= t("buttons.copy_email_address") %>"
+                  >
+                    <i class="bi bi-envelope" data-clipboard-target="icon"></i>
+                  </button>
+
                   <%= student.email %>
+
+                  <span
+                    class="visually-hidden"
+                    role="status"
+                    data-clipboard-target="status"
+                  ></span>
                 </div>
 
                 <% if show_rejection_reasons?(student) %>

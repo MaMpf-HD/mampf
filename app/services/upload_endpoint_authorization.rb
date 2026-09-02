@@ -5,6 +5,7 @@ class UploadEndpointAuthorization
     "pdf" => PdfUploader,
     "profile_image" => ProfileimageUploader,
     "screenshot" => ScreenshotUploader,
+    "submission" => SubmissionUploader,
     "video" => VideoUploader
   }.freeze
 
@@ -14,6 +15,14 @@ class UploadEndpointAuthorization
   # content editors. This key is not a Shrine uploader; it maps directly to a
   # role rule (see .active_storage_authorized?).
   ACTIVE_STORAGE_KEY = "active_storage".freeze
+
+  TARGET_ABILITIES = {
+    "Course" => CourseAbility,
+    "Medium" => MediumAbility,
+    "Submission" => SubmissionAbility,
+    "Tutorial" => TutorialAbility,
+    "User" => UserAbility
+  }.freeze
 
   class << self
     def authorized?(uploader_class:, user:)
@@ -36,6 +45,26 @@ class UploadEndpointAuthorization
       else
         raise(ArgumentError, "Unhandled uploader: #{uploader_class.name}")
       end
+    end
+
+    def intent_authorized?(intent:, uploader_class:, user:)
+      return false unless intent&.for_user?(user)
+      return false unless intent.for_uploader?(uploader_class)
+      return false unless intent.targeted?
+
+      target = intent.target
+      ability = TARGET_ABILITIES[intent.target_type]&.new(user)
+      return false if target.nil? || ability.nil?
+
+      ability.can?(intent.action, target)
+    rescue StandardError => e
+      # Refuse the upload, but report it: an ability that raises on a record
+      # of its own kind is a defect elsewhere, and a silent refusal would be
+      # its only trace.
+      Rails.error.report(e, handled: true, source: "upload_intent",
+                            context: { target_type: intent.target_type,
+                                       action: intent.action })
+      false
     end
 
     # Coarse authorization for the stock ActiveStorage direct-upload endpoint.

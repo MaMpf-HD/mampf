@@ -34,11 +34,11 @@
       </button>
     <% end %>
     <% if lecture_deletable?(lecture) %>
-      <%= link_to t('buttons.delete'),
+      <%= link_to t("buttons.delete"),
                   lecture_path,
-                  method: :delete,
-                  data: { confirm: t('confirmation.generic') },
-                  class: 'btn btn-sm btn-outline-danger' %>
+                  data: { turbo_method: :delete,
+                          turbo_confirm: lecture_destruction_confirmation(lecture) },
+                  class: "btn btn-sm btn-outline-danger" %>
     <% end %>
   </div>
 </div>

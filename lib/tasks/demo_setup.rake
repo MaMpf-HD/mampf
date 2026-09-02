@@ -39,6 +39,25 @@ namespace :demo do
     Demo::SetupSupport.setup!
   end
 
+  desc "Hand in the demo homework: a submission per team for every sheet that " \
+       "carries an assessment"
+  task homework_submissions: :environment do
+    Demo::SetupSupport.setup_homework_submissions!
+  end
+
+  desc "Add the assessment demo data to a database restored from the shipped " \
+       "seed, leaving its tutorials, talks and seating alone"
+  task setup_on_seed: :environment do
+    Demo::SetupSupport.setup_on_seed!
+  end
+
+  desc "Create vignettes for a lecture in every state they can be in"
+  task vignettes: :environment do
+    Demo::VignettesSupport.setup!(
+      lecture_id: (ENV["LECTURE_ID"] || Demo::VignettesSupport::DEFAULT_LECTURE_ID).to_i
+    )
+  end
+
   desc "Stage the next-term banner scenario (flag, next term, demo lectures)"
   task next_term_banner: :environment do
     Demo::NextTermBannerSupport.setup!

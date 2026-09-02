@@ -401,6 +401,7 @@ Rails.application.routes.draw do
       patch :open
       patch :close
       patch :reopen
+      patch :revert_to_draft
       patch :self_service
       get :rejected
       get :unassigned
@@ -427,6 +428,7 @@ Rails.application.routes.draw do
               only: [:create, :destroy, :update] do
       member do
         get :roster
+        delete :with_registerable, action: :destroy_with_registerable
       end
     end
 
@@ -742,29 +744,24 @@ Rails.application.routes.draw do
   get "questionnaires/:id/preview",
       to: "vignettes/questionnaires#preview",
       as: "preview_questionnaire"
-  post "lectures/:id/questionnaires/set_codename",
-       to: "vignettes/codenames#set_codename",
-       as: "set_lecture_codename"
-  post "lectures/:id/questionnaires/set_completion_message",
-       to: "vignettes/completion_message#set_completion_message",
-       as: "set_lecture_completion_message"
-  delete "lectures/:id/questionnaires/destroy_completion_message",
-         to: "vignettes/completion_message#destroy",
-         as: "destroy_lecture_completion_message"
 
   scope module: "vignettes", path: "" do
     resources :questionnaires, only: [:create, :edit, :update, :destroy] do
       member do
         get :export_statistics
+        get :consent
+        post :decide_consent
+        get :codename
+        get :finish
+        post :revoke_consent
         post :submit_answer
         post :duplicate
         patch :publish
+        patch :update_closing_text
         patch :update_slide_position
       end
       resources :info_slides, only: [:new, :create, :edit, :update, :destroy]
-      resources :slides, only: [:new, :create, :edit, :update, :destroy] do
-        resources :answers, only: [:new, :create]
-      end
+      resources :slides, only: [:new, :create, :edit, :update, :destroy]
     end
   end
 
@@ -1074,8 +1071,10 @@ Rails.application.routes.draw do
   # devise routes for users
 
   devise_for :users, controllers: { confirmations: "confirmations",
+                                    passwords: "passwords",
                                     registrations: "registrations",
-                                    sessions: "sessions" }
+                                    sessions: "sessions",
+                                    unlocks: "unlocks" }
   # users routes
 
   get "users/elevate",
@@ -1177,6 +1176,9 @@ Rails.application.routes.draw do
   # Allow /login besides /users/sign_in
   devise_scope :user do
     get "/login" => "devise/sessions#new"
+    post "/users/password/restart",
+         to: "passwords#restart",
+         as: :restart_user_password
   end
 
   get "error",

@@ -1,0 +1,44 @@
+<%= form_with url: add_correction_path(submission),
+              scope: 'submission',
+              html: { class: 'correction-upload',
+                      data: { id: submission.id,
+                              controller: 'uppy-upload',
+                              uppy_upload_kind_value: 'correction',
+                              uppy_upload_max_file_size_value: CorrectionUploader::MAX_SIZE,
+                              uppy_upload_intent_value:
+                                upload_intent_token(CorrectionUploader,
+                                                    target: submission,
+                                                    action: :add_correction),
+                              uppy_upload_endpoint_value: '/corrections/upload',
+                              uppy_upload_failure_message_value: t('submission.upload_failure'),
+                              uppy_upload_empty_file_message_value: t('submission.upload_failure_empty_file') } } do |f| %>
+  <div class="row">
+    <div class="col-12">
+      <%= f.hidden_field :correction,
+                         value: submission.cached_correction_data,
+                         id: "upload-correction-hidden-#{submission.id}",
+                         data: { uppy_upload_target: 'hiddenInput' } %>
+      <div data-uppy-upload-target="dashboard"></div>
+    </div>
+    <div class="col-12"
+         id="upload-correction-metadata-<%= submission.id %>"
+         data-uppy-upload-target="metadata">
+      <% if submission.correction %>
+          <%= submission.correction_filename %>
+          (<%= number_to_human_size(submission.correction_size) %>)
+      <% end %>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <%= f.submit t('buttons.save'),
+                  id: 'submit-correction-btn',
+                  class: 'btn btn-sm btn-primary',
+                  data: { uppy_upload_target: 'submitButton' } %>
+      <%= link_to t('buttons.cancel'),
+                  cancel_edit_correction_path(submission),
+                  class: 'btn btn-sm btn-secondary',
+                  remote: true %>
+    </div>
+  </div>
+<% end %>

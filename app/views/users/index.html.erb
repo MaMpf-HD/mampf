@@ -7,6 +7,11 @@
 </div>
 <div class="row px-2">
   <div class="col-12">
+    <div class="alert alert-info" role="alert">
+      <%= t('admin.user.password_policy_progress',
+            current: @password_policy_current_count,
+            total: @password_policy_total_count) %>
+    </div>
     <%= render partial: 'users/elevated_users',
                locals: { elevated_users: @elevated_users,
                          generic_users_count: @generic_users_count } %>

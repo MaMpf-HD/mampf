@@ -211,7 +211,12 @@ Campaigns transition through several states to ensure data integrity and fair us
 | Action | Freeze Point | Modification Rules |
 |--------|--------------|-------------------|
 | Add item | Never | Can always add new items. Gives students more options without invalidating existing choices. |
-| Remove item | After `draft` | Current implementation only allows item removal while the campaign is still `draft`. |
+| Remove item | `processing` | An item can leave its campaign while the campaign is `draft`, `open` or `closed`, as long as nobody registered for it, no allocation has been computed, and (outside `draft`) at least one other item remains. |
+
+Removing an item and deleting the group behind it are two separate actions, see
+"Campaign, Item and Registerable" below. The "at least one other item" rule is
+not a dead end: taking the campaign back to draft lifts it, which is what the
+blocked button says.
 
 ##### Capacity Constraints
 
@@ -244,7 +249,9 @@ end
 ```
 
 **Item Removal:**
-- Current implementation blocks item removal outside `draft`
+- `Registration::Item#removal_blocker` names the first rule that stops a removal
+  (`:status`, `:registrations`, `:allocation`, `:last_item`); the UI shows that
+  reason on the disabled button.
 - Alternative future approach: Soft-delete (set `active: false`) instead of destroying
 
 **UI Feedback:**
@@ -446,6 +453,41 @@ end
 #### Implementations Here
 - **`Lecture`**: Hosts campaigns for its tutorials or talks.
 - **`Exam`**: Hosts a campaign for exam seat registration.
+
+#### Who takes part
+
+Whether someone registers or runs the registration is a property of the **host**,
+not of the group. A lecture's teacher, its tutors and its editors organise the
+registration and do not take part in it; everyone else does, without needing a
+subscription or the passphrase.
+
+The rule lives in one place, `Registration::Participation.allowed?(user, lecture)`,
+and both sides ask it: the abilities that authorize `:self_materialize` and
+`:enroll`, and the lecture home page that offers the options. That is not
+tidiness for its own sake. When the page decided on its own — it asked whether a
+group was *configured* for self-registration, never who was looking — a teacher
+was shown the student view with a "Register now" button, and the endpoint refused
+the click the page had just offered.
+
+```admonish warning "A second host will need a second answer"
+The rule as written is about a lecture. A host that is not a lecture may well
+answer differently: whoever organises a faculty barbecue still wants a place at
+the grill, so its creator takes part rather than being excluded.
+
+When that host arrives, the question moves into this concern — a default that
+lets anyone who may see the thing take part, and an override in `Lecture` for
+staff. Everything already asks one function, so that is a change at one place.
+```
+
+Two obstacles are worth knowing before then, both from the assumption that a
+registration belongs to a lecture:
+
+- `Roster::SelfMaterializationController` derives a lecture from the rosterable
+  and redirects to the start page when there is none, so a non-lecture host
+  cannot reach self-registration at all today.
+- `Cohort#context` is polymorphic, but `Cohort#lecture` returns `nil` as soon as
+  the context is something else — a caller that assumes a lecture gets one
+  quietly.
 
 ---
 
@@ -1368,6 +1410,137 @@ end
 
 ---
 
+## Campaign, Item and Registerable
+
+Three different things can be deleted, and they mean three different things:
+
+| Object | What it is | What deleting it means |
+|--------|------------|------------------------|
+| `Registration::Campaign` | The registration process: deadline, allocation mode, rules | The process disappears. Its items and policies go with it; its groups stay. |
+| `Registration::Item` | A group's entry in the catalog of one campaign | The group leaves the campaign. The group itself stays and falls back to manual management (`skip_campaigns: true`). |
+| Registerable (`Tutorial`, `Talk`, `Cohort`) | The group itself, with its roster and content | The group is gone, including its roster entries and everything that hangs off it. |
+
+### Discarding a campaign, and taking it back to draft
+
+Deleting a campaign is only refused once it holds something that exists nowhere
+else. Those three data questions live in `#data_blocker` and are asked by two
+rules, so they cannot drift apart:
+
+- no `Registration::UserRegistration` exists, in any status,
+- nothing was written into a roster from it (`source_campaign_id` on any roster
+  join). The allocation timestamps are deliberately not asked here: past the
+  first question there are no registrations, so a computed allocation allocated
+  nobody. `Registration::Item#removal_blocker` does ask `#allocation_present?`,
+  where the timestamp means "an allocation this item was part of",
+- no other campaign names it as a prerequisite.
+
+`#discardable?` adds that the status is not `processing` — an allocation is
+running against those rows. A `completed` campaign is discardable as long as
+the three questions above come back empty: one that was finalized without a
+single registration records nothing. `#revertible_to_draft?` is stricter: the
+status must *have been* `open` or `closed`, read from `status_was` so it can
+also answer for the very update that attempts the step.
+
+The two are offered side by side, because whatever makes throwing the process
+away harmless makes editing it again harmless too. Reverting is the milder
+half: it keeps deadline, mode, rules and groups and merely unfreezes them.
+A draft whose deadline has meanwhile passed simply fails to open again
+(`registration_deadline_future_if_open`), which is where that belongs.
+
+In the UI, a `draft` campaign is "deleted" and an already opened one is
+"discarded"; both run the same code path.
+
+Discarding, reverting to draft and removing an item all decide on "nobody has
+registered" and then write. All three therefore take a row lock on the campaign
+and keep it across check and write. The registration services take the same
+lock before validating, which is what makes the two sides wait for each other;
+the foreign key from `registration_user_registrations` alone does not close the
+window, because it only constrains the insert, not the gap between an
+application-level check and that insert.
+
+A `Lecture` takes its campaigns with it. `ensure_campaign_is_discardable` drops
+most of its questions when `destroyed_by_association` is set, the same way an
+item and a policy step aside for their campaign: what only exists because of the
+lecture goes with it, and what the lecture is worth protecting from it guards
+itself — `lecture_deletable?` asks for no lessons and no media. The flag has to
+be read *before* the lock, because `lock!` reloads and the reload clears it.
+
+Two campaign-level reasons survive that cascade:
+
+- **Roster entries** (`#cascade_blocker`). `tutorial_memberships`,
+  `cohort_memberships`, `speaker_talk_joins` and `lecture_memberships` reference
+  the campaign through `source_campaign_id` with a restrictive foreign key, and
+  a lecture deletes its campaigns *before* the groups that hold those rows. So
+  the cascade still asks `#materialized_roster_entries?`; without it the delete
+  raises `ActiveRecord::InvalidForeignKey` instead of refusing. The teacher's
+  way out is the same one the groups demand anyway: take the members out, and
+  the references go with them.
+- **A prerequisite from another lecture**
+  (`ensure_not_referenced_as_prerequisite`). Such a campaign is not only this
+  lecture's business. Within one lecture both sides go in the same cascade, so
+  those references are ignored — and since the form only offers campaigns of the
+  same campaignable, that is the ordinary case.
+
+`LecturesController#destroy` asks `#required_by_other_campaign?` for the message
+rather than `#discard_blocker`, which reports the first reason it finds and
+would hide this one behind registrations. For a roster entry it falls back to
+the general message, which already names groups with participants.
+
+### Removing from the campaign vs. deleting the group
+
+The group tile of a campaign item offers both, with separate confirmations:
+
+- **Remove from registration process** (`DELETE .../items/:id`) destroys only the
+  `Registration::Item`. The `Talk`/`Tutorial`/`Cohort` survives and gets
+  `skip_campaigns: true`, mirroring what discarding a campaign does to its
+  groups. The flag is what unlocks manual roster maintenance: `locked?` asks
+  `campaign_managed?`, which only looks at `skip_campaigns`, not at whether the
+  group is still in a campaign at all.
+
+```admonish warning "A group that left a campaign cannot go back into one"
+Two separate barriers, and the second is the one that matters:
+
+1. `skip_campaigns` is never set back to `false`. It is assigned once at
+   creation time from the section a group was created in, appears in no
+   permitted parameter list, and `can_unskip_campaigns?` has no caller. So
+   `validate_registerable_allows_campaigns` rejects the group. This exists
+   because the flag does double duty: it also decides `campaign_managed?` and
+   hence `locked?`, so releasing a group has to set it or the group would stay
+   locked with no campaign left to manage it.
+2. There is no way to put an *existing* group into a campaign at all. A
+   `Registration::Item` is only ever built while a group is being created, in
+   `apply_registration_context` (see `TutorialsController#create` and its
+   siblings). `Registration::ItemsController#create` accepts a
+   `registerable_id`, but no view links to it.
+
+Reusing a group in a new campaign therefore needs both: separating the flag's
+two meanings (`campaign_managed?` asking whether the group is in a campaign at
+all) *and* a way to attach an existing group. Fixing only the flag changes
+nothing a user can see.
+```
+- **Delete group completely** (`DELETE .../items/:id/with_registerable`) does the
+  same and then destroys the registerable, in one transaction: either both go or
+  neither.
+
+The second action has to clear the item rules *and* the registerable's own
+rules. `Rosters::Rosterable#destruction_blockers` collects those, and the
+type-specific models add to them:
+
+| Type | Blockers on top of "roster not empty" |
+|------|----------------------------------------|
+| `Tutorial` | submissions carrying an upload (`Submission.with_uploads` — manuscript *or* correction) |
+| `Talk` | attached media |
+| `Cohort` | — (members are the roster) |
+
+Being in a *running* campaign is a blocker too, which is why the full deletion
+removes the item first: inside the transaction the group is no longer
+campaign-managed, so its own guard can decide on the remaining grounds. Once the
+campaign is finalized the tile is not the way in any more — the group is listed
+as manually managed by then and its own delete button applies, with a
+confirmation that counts the registrations the finished process left on it.
+
+---
+
 ## Campaign Lifecycle (State Diagram)
 
 ```mermaid
@@ -1375,13 +1548,34 @@ stateDiagram-v2
     [*] --> draft
     draft --> open: open
     open --> closed: close (manual or at deadline)
+    closed --> open: reopen
+    closed --> processing: allocate (preference-based)
+    processing --> open: reopen (resets allocation results)
     closed --> completed: finalize! (optional)
+    processing --> completed: finalize!
+    draft --> [*]: delete
+    open --> [*]: discard
+    closed --> [*]: discard
+    completed --> [*]: discard (only if it reached nobody)
+    open --> draft: revert_to_draft
+    closed --> draft: revert_to_draft
 
     note right of closed
         All campaigns can be finalized.
         Planning cohorts simply don't propagate to lecture.
     end note
+
+    note right of processing
+        The only status that bars discarding:
+        an allocation is running against these rows.
+    end note
 ```
+
+A campaign returns to `draft` only while nothing of student consequence exists
+— the same condition under which it could be discarded outright
+(`cannot_revert_to_draft`). Once a registration or an allocation is there,
+`open`/`closed` are one-way and `completed` always is; what still leaves is the
+lecture, which takes its campaigns along.
 
 ## ERD
 

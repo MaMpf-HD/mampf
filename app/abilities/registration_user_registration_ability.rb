@@ -1,6 +1,5 @@
 class RegistrationUserRegistrationAbility
   include CanCan::Ability
-  include StudentRegistrationParticipant
 
   def initialize(user)
     clear_aliased_actions
@@ -17,7 +16,7 @@ class RegistrationUserRegistrationAbility
     end
 
     can [:create, :destroy, :add], Lecture do |lecture|
-      student_registration_participant?(user, lecture)
+      Registration::Participation.allowed?(user, lecture)
     end
   end
 end

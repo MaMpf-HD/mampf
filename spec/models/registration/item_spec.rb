@@ -143,31 +143,68 @@ RSpec.describe(Registration::Item, type: :model) do
     end
 
     describe "callbacks" do
-      describe "#ensure_campaign_is_draft" do
+      describe "#ensure_item_is_removable" do
         let(:item) { create(:registration_item, registration_campaign: campaign) }
 
         context "when campaign is draft" do
           let(:campaign) { create(:registration_campaign) }
 
-          it "allows destruction" do
+          it "allows destruction, even of the last item" do
             item # ensure item exists
             expect { item.destroy }.to change(described_class, :count).by(-1)
           end
         end
 
         context "when campaign is open" do
-          let(:campaign) { create(:registration_campaign) }
+          let(:campaign) { create(:registration_campaign, :open) }
+          let(:item) { campaign.registration_items.first }
 
-          before do
-            item # ensure item exists
-            campaign.update!(status: :open)
+          before { item }
+
+          it "allows destruction while other items remain" do
+            expect { item.destroy }.to change(described_class, :count).by(-1)
           end
+
+          it "prevents destruction of the last remaining item" do
+            campaign.registration_items.where.not(id: item.id).find_each(&:destroy)
+
+            expect { item.destroy }.not_to change(described_class, :count)
+            expect(item.errors[:base])
+              .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                                 ".cannot_remove_last_item"))
+          end
+
+          it "prevents destruction once somebody registered for it" do
+            create(:registration_user_registration,
+                   registration_item: item, registration_campaign: campaign)
+
+            expect { item.destroy }.not_to change(described_class, :count)
+            expect(item.errors[:base])
+              .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                                 ".cannot_remove_with_registrations"))
+          end
+
+          it "prevents destruction once an allocation has been computed" do
+            campaign.update_columns(last_allocation_calculated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+            expect { item.destroy }.not_to change(described_class, :count)
+            expect(item.errors[:base])
+              .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                                 ".cannot_remove_after_allocation"))
+          end
+        end
+
+        context "when campaign is completed" do
+          let(:campaign) { create(:registration_campaign, :completed) }
+          let(:item) { campaign.registration_items.first }
+
+          before { item }
 
           it "prevents destruction" do
             expect { item.destroy }.not_to change(described_class, :count)
             expect(item.errors[:base])
               .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                                 ".frozen"))
+                                 ".cannot_remove_in_status"))
           end
         end
       end
@@ -289,6 +326,78 @@ RSpec.describe(Registration::Item, type: :model) do
           expect(item).to be_valid
         end
       end
+    end
+  end
+  describe "#remove" do
+    let(:lecture) { create(:lecture) }
+    let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+    let!(:item) do
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+    end
+
+    context "without deleting the registerable" do
+      it "removes the item, keeps the group and hands it back to manual management" do
+        expect(item.remove).to be(true)
+
+        expect(described_class.exists?(item.id)).to be(false)
+        expect(tutorial.reload.skip_campaigns).to be(true)
+      end
+
+      it "reports the blocker and changes nothing when removal is not allowed" do
+        campaign.update!(status: :open)
+
+        expect(item.remove).to be(false)
+        expect(described_class.exists?(item.id)).to be(true)
+        expect(tutorial.reload.skip_campaigns).to be(false)
+        expect(item.errors[:base])
+          .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                             ".cannot_remove_last_item"))
+      end
+    end
+
+    context "with delete_registerable" do
+      it "deletes item and group" do
+        expect(item.remove(delete_registerable: true)).to be(true)
+
+        expect(described_class.exists?(item.id)).to be(false)
+        expect(Tutorial.exists?(tutorial.id)).to be(false)
+      end
+
+      it "keeps both when the group refuses to be deleted" do
+        tutorial.add_user_to_roster!(create(:confirmed_user))
+
+        expect(item.remove(delete_registerable: true)).to be(false)
+
+        expect(described_class.exists?(item.id)).to be(true)
+        expect(Tutorial.exists?(tutorial.id)).to be(true)
+        expect(tutorial.errors[:base])
+          .to include(I18n.t("roster.errors.cannot_delete_not_empty"))
+      end
+
+      it "does not release the group into manual management" do
+        tutorial.add_user_to_roster!(create(:confirmed_user))
+        item.remove(delete_registerable: true)
+
+        expect(tutorial.reload.skip_campaigns).to be(false)
+      end
+    end
+  end
+
+  describe "#removal_blocker" do
+    let(:campaign) { create(:registration_campaign, :open) }
+    let(:item) { campaign.registration_items.first }
+
+    it "is nil while the item may leave a running campaign" do
+      expect(item.removal_blocker).to be_nil
+      expect(item.removal_blocker_message).to be_nil
+    end
+
+    it "reports a materialized allocation" do
+      create(:tutorial_membership, tutorial: item.registerable,
+                                   source_campaign_id: campaign.id)
+
+      expect(item.removal_blocker).to eq(:allocation)
     end
   end
 end

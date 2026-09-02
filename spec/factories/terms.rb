@@ -1,9 +1,13 @@
-require "faker"
-
 FactoryBot.define do
   factory :term do
-    season { ["WS", "SS"].sample }
-    sequence(:year) { |n| 1999 + n }
+    # Year and season are unique together, so they are counted out rather than
+    # drawn: two random draws that match make an unrelated example fail.
+    transient do
+      sequence(:index)
+    end
+
+    season { index.even? ? "SS" : "WS" }
+    year { 2000 + index }
 
     trait :summer do
       season { "SS" }

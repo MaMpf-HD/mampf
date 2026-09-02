@@ -13,8 +13,9 @@ test.describe("Vignettes Exports", () => {
     teacherVignettes = new VignettesPage(teacher.page);
 
     const lecture = await factory.create("lecture", ["released_for_all"], {
+      locale: "en",
       teacher_id: teacher.user.id,
-      sort: "vignettes",
+      vignettes: true,
     });
     lectureId = lecture.id;
 
@@ -31,6 +32,8 @@ test.describe("Vignettes Exports", () => {
       title: questionnaireTitle,
       published: true,
       editable: true,
+      data_collection: true,
+      consent_text: "Your answers are stored under the code you are given.",
     });
 
     const slide1 = await factory.create("vignettes_slide", [], {
@@ -93,10 +96,10 @@ test.describe("Vignettes Exports", () => {
       language: "en",
     });
 
-    const codename = "VignettesTaker";
     await studentVignettes.enableMockClock();
-    await studentVignettes.setPersonalCode(lectureId, codename);
+    await studentVignettes.openOverview(lectureId);
     await studentVignettes.openQuestionnaire(questionnaireTitle);
+    const codename = await studentVignettes.consentWithNewCode();
 
     await studentVignettes.answerText("text-answer");
     await studentVignettes.advanceMockTime(11);
@@ -164,12 +167,9 @@ test.describe("Vignettes Exports", () => {
 
     expect(row3.codename).toBe(codename);
     expect(row3.slideTitle).toBe("MC slide");
-    expect(row3.timeOnSlide).toBe("34"); // why not 35 ?!
-    // in reality, this should be 5, not 6. It is 6 here, because of
-    // "BUG (Vignettes)" (search the code for this string)
-    // and how the several opening/closing of the info slide accumulates this error
-    expect(row3.timeOnInfoSlide).toBe(`{"${infoSlide.id}":6}`);
-    expect(row3.totalTimeOnSlide).toBe(String(34 + 6)); // why not 35 + 6 ?!
+    expect(row3.timeOnSlide).toBe(String(2 + 4 + 29));
+    expect(row3.timeOnInfoSlide).toBe(`{"${infoSlide.id}":${2 + 3}}`);
+    expect(row3.totalTimeOnSlide).toBe(String(2 + 2 + 4 + 3 + 29));
     expect(row3.infoSlideAccessCount).toBe(`{"${infoSlide.id}":2}`);
     expect(row3.infoSlideFirstAccessTime).toBe(`{"${infoSlide.id}":2}`);
     expect(row3.answer).toBe("");
