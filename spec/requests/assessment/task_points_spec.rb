@@ -595,7 +595,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
-      it "denies point_submission with grading_scope_type=lecture (tutor has no lecture-wide grant)" do
+      it "denies point_submission with grading_scope_type=lecture " \
+         "(tutor has no lecture-wide grant)" do
         submission = create(:submission, assignment: assignment, tutorial: tutorial,
                                          users: [student])
         Timecop.travel(3.hours.from_now)
