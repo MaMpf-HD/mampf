@@ -23,8 +23,11 @@ module Assessment
     end
 
     def authorize_assessment!
-      authorize! :grade, @tutorial if @grading_scope_type == "tutorial"
-      authorize! :grade, @lecture if @grading_scope_type == "lecture"
+      if @grading_scope_type == "tutorial"
+        authorize! :grade, @tutorial
+      else
+        authorize! :grade, @lecture
+      end
     end
 
     def update_team_multi
