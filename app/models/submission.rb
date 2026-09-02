@@ -19,11 +19,11 @@ class Submission < ApplicationRecord
   delegate :assessment, to: :assignment
 
   def participations
-    return unless assignment.assessable?
+    return nil unless assignment.assessable?
 
-    users.map do |user|
-      Assessment::Participation.find_by(assessment: assignment.assessment, user: user)
-    end
+    found = Assessment::Participation.where(assessment: assignment.assessment, user: users)
+                                     .index_by(&:user_id)
+    users.map { |user| found[user.id] }
   end
 
   def graded_tasks_points
