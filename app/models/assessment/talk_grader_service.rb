@@ -22,15 +22,20 @@ module Assessment
       end
 
       def init_participation(assessment, user, talk)
-        if assessment.nil? || user.nil? || talk.nil?
-          raise(TalkGraderError,
-                I18n.t("assessment.talk_grader.init_participation_missing_args"))
-        end
+        return if assessment.nil? || user.nil? || talk.nil?
 
         Participation.find_or_initialize_by(
           assessment_id: assessment.id,
           user_id: user.id
         )
+      end
+
+      def init_participations(seminar)
+        seminar.talks.each do |talk|
+          talk.speakers.each do |speaker|
+            init_participation(talk.assessment, speaker, talk)
+          end
+        end
       end
 
       private

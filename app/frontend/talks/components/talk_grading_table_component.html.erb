@@ -76,7 +76,10 @@
                 </tr>
 
                 <% talk.speakers.each do |speaker| %>
-                  <%= render GradeTalkRowComponent.new(user: speaker, talk: talk) %>
+                  <% participation = speaker.assessment_participation_in_assessable(talk) %>
+                  <% if participation %>
+                    <%= participation.id %>
+                  <% end %>
                 <% end %>
               <% end %>
             </tbody>

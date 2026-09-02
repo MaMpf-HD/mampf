@@ -3,6 +3,7 @@ class TalkGradingTableComponent < ViewComponent::Base
     super()
     @seminar = seminar
     @talks = seminar.talks.includes(:speakers, :assessment)
+    init_participations
   end
 
   def gradable_talks
@@ -15,5 +16,9 @@ class TalkGradingTableComponent < ViewComponent::Base
 
   def possible_statuses
     ["pending", "reviewed"]
+  end
+
+  def init_participations
+    Assessment::TalkGraderService.init_participations(@seminar)
   end
 end
