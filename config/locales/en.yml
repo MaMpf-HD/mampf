@@ -2893,8 +2893,6 @@ en:
         problem: "Problem %{number}"
         correction_label: Correction
         no_file: nothing handed in
-        marked: "marked %{time}"
-        marked_by: "marked %{time} by %{who}"
         team: "Team: you and %{names}"
         team_with_points: >
           Team: you and %{names} - these %{points} points are yours

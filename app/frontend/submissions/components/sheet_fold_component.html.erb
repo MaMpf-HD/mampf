@@ -53,9 +53,6 @@
             <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
             <%= link_to correction_filename, show_correction_path(submission),
                         "aria-label": correction_reader_label %>
-            <% if marked_at %>
-              <span class="text-muted">&middot; <%= marked_at %></span>
-            <% end %>
           <% else %>
             <span class="text-muted">
               <%= t("submission.hub.fold.not_uploaded_yet") %>

@@ -171,33 +171,22 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       expect(content).to include(I18n.l(at, format: :long))
     end
 
-    it "names who marked it and when, behind the correction" do
-      at = Time.zone.local(2026, 8, 16, 9, 0)
+    # The only time we have for a marked sheet is when the points were typed,
+    # and that is a different event from the scan being uploaded - often days
+    # apart. Until the upload has a timestamp of its own, the correction line
+    # says nothing about when, rather than something wrong.
+    it "keeps the marking time away from the correction" do
+      typed = Time.zone.local(2026, 8, 16, 9, 0)
       tutor = instance_double(User, tutorial_name: "Dr. Tutor")
 
       content = render_fold(:marked, points_by_task: { task => 2 },
-                                     marked_at: at, marked_by: tutor,
-                                     submission: handed_in_file(correction: "c.pdf"))
+                                     marked_at: typed, marked_by: tutor,
+                                     submission: handed_in_file(correction: "c.pdf",
+                                                                at: nil))
 
-      expect(content).to include(
-        I18n.t("submission.hub.fold.marked_by",
-               time: I18n.l(at, format: :long), who: "Dr. Tutor")
-      )
-    end
-
-    # Nothing in the app stamps the participation yet, so the time has to stand
-    # without a name.
-    it "says when it was marked even with nobody to name" do
-      at = Time.zone.local(2026, 8, 16, 9, 0)
-
-      content = render_fold(:marked, points_by_task: { task => 2 },
-                                     marked_at: at, marked_by: nil,
-                                     submission: handed_in_file(correction: "c.pdf"))
-
-      expect(content).to include(
-        I18n.t("submission.hub.fold.marked", time: I18n.l(at, format: :long))
-      )
-      expect(content).not_to include("by ")
+      expect(content).to include("c.pdf")
+      expect(content).not_to include(I18n.l(typed, format: :long))
+      expect(content).not_to include("Dr. Tutor")
     end
   end
 

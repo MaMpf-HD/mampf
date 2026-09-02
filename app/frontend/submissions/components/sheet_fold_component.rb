@@ -79,25 +79,16 @@ class SheetFoldComponent < ViewComponent::Base
     submission&.manuscript_filename
   end
 
+  # The correction has no time of its own to show: `Sheet#marked_at` is when the
+  # points were typed, which is a different event from the scan being uploaded -
+  # often days apart - and the upload has no timestamp until `corrected_at`
+  # arrives. When it does, this is where it goes.
   def handed_in_at
     at = submission && (submission.last_modification_by_users_at ||
                         submission.created_at)
     return unless at
 
     l(at, format: :long)
-  end
-
-  # A bare date behind "Correction" reads as the day it was uploaded; it is the
-  # day it was marked, so the word stays. `marked_by` is empty until somebody
-  # stamps the participation, so the line has to stand without a name too.
-  def marked_at
-    return unless sheet.marked_at
-
-    time = l(sheet.marked_at, format: :long)
-    who = sheet.marked_by&.tutorial_name
-    return t("submission.hub.fold.marked", time: time) if who.blank?
-
-    t("submission.hub.fold.marked_by", time: time, who: who)
   end
 
   # Two links, often the same filename: what tells them apart is the word in

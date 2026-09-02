@@ -3117,8 +3117,6 @@ de:
         problem: "Aufgabe %{number}"
         correction_label: Korrektur
         no_file: nichts abgegeben
-        marked: "korrigiert am %{time}"
-        marked_by: "korrigiert am %{time} von %{who}"
         team: "Team: Du und %{names}"
         team_with_points: >
           Team: Du und %{names} - diese %{points} Punkte sind Deine
