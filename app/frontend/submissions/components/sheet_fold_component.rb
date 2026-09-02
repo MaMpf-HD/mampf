@@ -39,9 +39,17 @@ class SheetFoldComponent < ViewComponent::Base
   end
 
   def missing_reason
-    key = MISSING_REASONS.fetch(state, "nothing_yet")
-    t("submission.hub.fold.no_points.#{key}",
+    t("submission.hub.fold.no_points.#{missing_reason_key}",
       max: format_number(sheet.max_points))
+  end
+
+  # "All 16 points are missing from your total" needs the 16. A sheet whose
+  # problems are not set up yet has none, and nothing was lost on it either.
+  def missing_reason_key
+    key = MISSING_REASONS.fetch(state, "nothing_yet")
+    return "no_tasks" if key == "zero" && !sheet.worth_points?
+
+    key
   end
 
   def task_label(task, index)
@@ -123,7 +131,7 @@ class SheetFoldComponent < ViewComponent::Base
     names = sheet.partners.map(&:tutorial_name)
     return if names.empty?
 
-    if points_entered?
+    if points_entered? && sheet.worth_points?
       t("submission.hub.fold.team_with_points", names: names.to_sentence,
                                                 points: format_number(sheet.points))
     else

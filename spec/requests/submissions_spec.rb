@@ -388,6 +388,23 @@ RSpec.describe("Submissions", type: :request) do
           .not_to include(I18n.t("submission.hub.chips.awaiting_marks"))
       end
 
+      # Every sheet is worth nothing between being created and having its
+      # problems set up, and the demo has no sheet in that window - so this is
+      # the only place the page is ever seen in it.
+      it "leaves a sheet whose problems are not set up yet without a number" do
+        sheet(title: "Homework 7", max_points: [])
+
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).to include("Homework 7")
+        expect(response.body).to include(I18n.t("submission.hub.notes.missed"))
+        expect(response.body)
+          .to include(I18n.t("submission.hub.fold.no_points.no_tasks"))
+        expect(response.body).not_to include(
+          I18n.t("submission.hub.points_reader", points: "0", max: "0")
+        )
+      end
+
       it "shows a badge and no number for a sheet that has not come back" do
         create(:assessment_participation,
                assessment: sheet(title: "Homework 9").assessment,

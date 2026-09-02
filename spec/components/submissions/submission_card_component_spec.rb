@@ -49,6 +49,17 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
         .to include(I18n.t("submission.hub.chips.nothing_handed_in"))
     end
 
+    # The problems are set up after the sheet is, so between the two there is
+    # nothing to name - and "0 problems, 0 points" would name it anyway.
+    it "says nothing about points for a sheet whose problems are not set up" do
+      content = render_card
+
+      expect(content).to include("PDF")
+      expect(content).not_to include(
+        I18n.t("submission.hub.card.worth", count: 0, points: "0")
+      )
+    end
+
     it "names the sheet, its deadline and what it is worth" do
       book = assignment.assessment
       create(:assessment_task, assessment: book, max_points: 4)

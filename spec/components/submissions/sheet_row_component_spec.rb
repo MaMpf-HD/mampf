@@ -16,6 +16,7 @@ RSpec.describe(SheetRowComponent, type: :component) do
                                              friendly_deadline: friendly_deadline)
     instance_double(Assessment::SubmissionsHub::Sheet,
                     state: state, points: points, max_points: max_points,
+                    worth_points?: max_points.to_f.positive?,
                     assignment: assignment,
                     # The row renders its fold with it; the fold has a spec of
                     # its own, so here it only has to stay out of the way.
@@ -34,6 +35,26 @@ RSpec.describe(SheetRowComponent, type: :component) do
 
       expect(content).to include("6.5")
       expect(content).not_to include("chip")
+    end
+
+    # Every sheet is worth nothing between being created and having its
+    # problems set up, and in that window a 0 either side of the slash says
+    # something about the sheet where the truth is about the moment.
+    it "says nothing in the points column for a sheet worth nothing" do
+      content = render_state(:missed, max_points: 0)
+
+      expect(content).to include("&mdash;")
+      expect(content).to include("num-none")
+      expect(content).not_to include("num-zero")
+      expect(content).not_to include("/ 0")
+      expect(content).to include(I18n.t("submission.hub.notes.missed"))
+    end
+
+    it "still counts what a missed sheet was worth when it was worth something" do
+      content = render_state(:missed, points: 0, max_points: 8)
+
+      expect(content).to include("num-zero")
+      expect(content).to include("/ 8")
     end
 
     it "shows a badge and no number where nothing can be shown" do

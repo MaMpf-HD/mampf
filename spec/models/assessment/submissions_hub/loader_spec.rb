@@ -462,6 +462,16 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(result.standing.points_still_open).to eq(0)
     end
 
+    # A sheet whose problems are not set up yet has nothing to be won on it,
+    # so the block holds no place open for it - which is what keeps "still
+    # being marked" from counting a sheet that is worth nothing so far.
+    it "counts nothing for a sheet whose problems are not set up yet" do
+      create_assignment(title: "Homework 1", max_points: [])
+      create_assignment(title: "Homework 2", max_points: [4, 6])
+
+      expect(result.standing.points_still_open).to eq(10)
+    end
+
     it "does not count a sheet the reader was let off" do
       assignment = create_assignment(title: "Homework 1", deadline: 1.week.ago,
                                      max_points: [4, 6])

@@ -30,8 +30,11 @@ module Assessment
       end
 
       # A dash unless there is a number to show. The states that read 0 are the
-      # ones where the sheet counts and counts as nothing.
+      # ones where the sheet counts and counts as nothing - which takes
+      # something having been at stake.
       def points
+        return unless worth_points?
+
         case state
         when :marked, :partially_marked then participation&.points_total
         when :absent, :missed, :not_recorded, :rejected then BigDecimal("0")
@@ -40,6 +43,15 @@ module Assessment
 
       def max_points
         assessment&.effective_total_points
+      end
+
+      # Every assignment gets its assessment the moment it is created and its
+      # problems whenever the lecturer gets round to them, so a sheet worth
+      # nothing is not a rare sheet - it is every sheet, for a while. Nothing is
+      # at stake on it yet, and a 0 either side of the slash would say something
+      # about the sheet where the truth is about the moment.
+      def worth_points?
+        max_points.to_f.positive?
       end
 
       def results_visible?

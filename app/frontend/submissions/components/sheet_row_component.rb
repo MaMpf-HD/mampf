@@ -65,17 +65,18 @@ class SheetRowComponent < ViewComponent::Base
   end
 
   def number?
-    state.in?(NUMBER_STATES)
+    state.in?(NUMBER_STATES) && sheet.worth_points?
   end
 
   def zero?
     state.in?(ZERO_STATES)
   end
 
-  # `:exempt` is the one state that has no denominator either: the sheet was
-  # taken out of the reckoning, so "of 16" would claim it still counts.
+  # Two sheets have no denominator: the exempt one, taken out of the reckoning,
+  # where "of 16" would claim it still counts - and the one whose problems are
+  # not set up yet, where there is no 16 to name.
   def maximum?
-    state != :exempt
+    state != :exempt && sheet.worth_points?
   end
 
   def points

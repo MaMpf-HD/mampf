@@ -2914,6 +2914,9 @@ en:
             yet, so they do not count towards your total for now.
           zero: >
             None - all %{max} points are missing from your total.
+          no_tasks: >
+            The problems for this sheet have not been set up yet, so nothing is
+            missing from your total.
           exempt: >
             This sheet is not counted for you - its points are not missing
             from your total either.

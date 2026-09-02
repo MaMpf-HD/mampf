@@ -3139,6 +3139,9 @@ de:
             sie zählen also vorerst nicht mit.
           zero: >
             Keine - alle %{max} Punkte fehlen Dir in der Summe.
+          no_tasks: >
+            Für dieses Blatt sind noch keine Aufgaben eingerichtet, es fehlt Dir
+            dadurch also auch nichts in der Summe.
           exempt: >
             Für Dich wird dieses Blatt nicht gewertet; die Punkte fehlen Dir
             dadurch auch nicht.

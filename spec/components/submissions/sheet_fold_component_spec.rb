@@ -30,6 +30,7 @@ RSpec.describe(SheetFoldComponent, type: :component) do
                              state: state, submission: attrs[:submission],
                              tasks: points_by_task.keys, points: attrs[:points],
                              max_points: attrs[:max_points],
+                             worth_points?: attrs[:max_points].to_f.positive?,
                              partners: attrs[:partners],
                              marked_at: attrs[:marked_at],
                              marked_by: attrs[:marked_by])
@@ -139,6 +140,33 @@ RSpec.describe(SheetFoldComponent, type: :component) do
           I18n.t("submission.hub.fold.no_points.#{reason}", max: "16")
         )
       end
+    end
+
+    # A sheet gets its assessment when it is created and its problems whenever
+    # the lecturer gets round to them, so this is every sheet for a while.
+    # "All 0 points are missing from your total" needs a 0 there is none of.
+    it "says the problems are not set up yet for a sheet worth nothing" do
+      content = render_fold(:missed, max_points: 0)
+
+      expect(content)
+        .to include(I18n.t("submission.hub.fold.no_points.no_tasks"))
+      expect(content).not_to include(
+        I18n.t("submission.hub.fold.no_points.zero", max: "0")
+      )
+    end
+
+    # A team is named either way; what it is not told is a share of nothing.
+    it "names the team without a number for a sheet worth nothing" do
+      partner = instance_double(User, tutorial_name: "Ada")
+
+      content = render_fold(:partially_marked, max_points: 0,
+                                               points: 0, partners: [partner])
+
+      expect(content).to include(I18n.t("submission.hub.fold.team",
+                                        names: "Ada"))
+      expect(content).not_to include(
+        I18n.t("submission.hub.fold.team_with_points", names: "Ada", points: "0")
+      )
     end
   end
 
