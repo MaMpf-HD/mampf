@@ -31,7 +31,9 @@ module Assessment
     end
 
     def update_team_multi
-      return unless @assessable.is_a?(Assignment)
+      unless @assessable.is_a?(Assignment)
+        return respond_with_flash(:alert, t("assessment.errors.invalid_assessable_type"))
+      end
 
       begin
         records = JSON.parse(params[:submissions] || "[]")
@@ -52,7 +54,9 @@ module Assessment
         return
       end
 
-      return unless @assessable.is_a?(Assignment)
+      unless @assessable.is_a?(Assignment)
+        return respond_with_flash(:alert, t("assessment.errors.invalid_assessable_type"))
+      end
 
       ActiveRecord::Base.transaction do
         SubmissionGraderService.score_tasks_by_submission!(
