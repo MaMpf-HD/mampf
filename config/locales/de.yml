@@ -3044,6 +3044,7 @@ de:
       Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt: %{count}
   submission:
     hub:
+      page_title: "Abgaben - %{lecture}"
       heading: Frühere Blätter
       standing:
         mark_percentage: "%{percentage} %"

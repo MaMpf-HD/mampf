@@ -8,6 +8,16 @@
 
 <div class="container small-width lecture-pane submissions-pane">
   <%#
+    Sighted readers get the lecture from the navbar and the marked entry in
+    the sidebar; somebody moving through the page by heading gets neither, and
+    without this the outline starts at the sheet that happens to be due.
+  %>
+
+  <h1 class="visually-hidden">
+    <%= t("submission.hub.page_title", lecture: @lecture.title_for_viewers) %>
+  </h1>
+
+  <%#
     No heading over the head: the card carries the sheet's title, its deadline
     and the only coloured border on the page. Three signals for one thing. The
     wrapping section goes with it - each card is a named section already, and

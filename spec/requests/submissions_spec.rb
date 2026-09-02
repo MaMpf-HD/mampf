@@ -273,6 +273,25 @@ RSpec.describe("Submissions", type: :request) do
     end
   end
 
+  # Sighted readers get the lecture from the navbar; somebody moving by heading
+  # gets nothing above the sheet that happens to be due.
+  describe "the page's own heading" do
+    it "names the page and the lecture, for readers who navigate by heading" do
+      user = create(:confirmed_user)
+      lecture = create(:lecture, :released_for_all)
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+      user.lectures << lecture
+      sign_in user
+
+      get lecture_submissions_path(lecture)
+
+      expect(response.body).to include(
+        I18n.t("submission.hub.page_title", lecture: lecture.title_for_viewers)
+      )
+    end
+  end
+
   describe "the sheet list on GET /lectures/:id/submissions" do
     before do
       create(:tutorial_membership, tutorial: tutorial, user: user)

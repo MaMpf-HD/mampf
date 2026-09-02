@@ -2820,6 +2820,7 @@ en:
     de: 'German'
   submission:
     hub:
+      page_title: "Submissions - %{lecture}"
       heading: Earlier sheets
       standing:
         mark_percentage: "%{percentage} %"
