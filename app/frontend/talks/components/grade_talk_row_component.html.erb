@@ -64,11 +64,15 @@
 
   <td style="min-width: 180px;">
     <% if allow_grading? %>
-      <%= text_field_tag "note", @participation&.note,
-                          class: "form-control form-control-sm",
-                          placeholder: t("assessment.grading_talk.note_placeholder"),
-                          maxlength: 255,
-                          data: { grade_talk_row_target: "noteInput", action: "input->grade-talk-row#onFieldChanged" } %>
+      <%= text_area_tag "note", @participation&.note,
+                  class: "form-control form-control-sm",
+                  placeholder: t("assessment.grading_talk.note_placeholder"),
+                  maxlength: 255,
+                  rows: 1,
+                  data: {
+                    grade_talk_row_target: "noteInput",
+                    action: "input->grade-talk-row#onFieldChanged"
+                  } %>
     <% else %>
       <span
         class="text-muted small text-truncate d-inline-block"
