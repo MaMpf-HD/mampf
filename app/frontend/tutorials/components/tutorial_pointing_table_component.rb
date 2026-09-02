@@ -101,7 +101,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
     path = remove_participation_path(
       participation_id: participation.id,
-      grading_scope_type: grading_scope.class.name.downcase
+      grading_scope_type: @grading_scope.class.name.downcase
     )
 
     link_to(path,
