@@ -168,7 +168,7 @@ RSpec.describe(SheetFoldComponent, type: :component) do
                             submission: handed_in_file(manuscript: "hw.pdf",
                                                        at: at))
 
-      expect(content).to include(I18n.l(at, format: :long))
+      expect(content).to include(I18n.l(at, format: :file_time))
     end
 
     # The only time we have for a marked sheet is when the points were typed,
@@ -185,7 +185,7 @@ RSpec.describe(SheetFoldComponent, type: :component) do
                                                                 at: nil))
 
       expect(content).to include("c.pdf")
-      expect(content).not_to include(I18n.l(typed, format: :long))
+      expect(content).not_to include(I18n.l(typed, format: :file_time))
       expect(content).not_to include("Dr. Tutor")
     end
   end

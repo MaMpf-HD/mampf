@@ -88,7 +88,7 @@ class SheetFoldComponent < ViewComponent::Base
                         submission.created_at)
     return unless at
 
-    l(at, format: :long)
+    l(at, format: :file_time)
   end
 
   # Two links, often the same filename: what tells them apart is the word in

@@ -2901,6 +2901,9 @@ de:
   time:
     formats:
       submission_deadline: "%A, %-d. %B %Y, %H:%M Uhr"
+      # Eine Datei ist ein Detail, keine Schlagzeile: die lange Form gehört
+      # zur Frist, wo der Wochentag das ist, wonach man plant.
+      file_time: "%d.%m.%Y, %H:%M"
       concise: '%d.%m.%Y'
       student_registration: '%-d. %B, %Hh%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'

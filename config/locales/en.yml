@@ -2686,6 +2686,9 @@ en:
   time:
     formats:
       submission_deadline: "%A, %B %-d, %Y, %H:%M"
+      # A file is a detail, not a headline: the long form of a date belongs
+      # to a deadline, where the day of the week is what people plan by.
+      file_time: "%Y-%m-%d, %H:%M"
       concise: '%Y-%m-%d'
       student_registration: '%B %-d, %Hh%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
