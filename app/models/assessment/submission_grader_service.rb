@@ -7,8 +7,6 @@ module Assessment
     class SubmissionGraderError < StandardError; end
 
     class << self
-      # ── public entrypoints ──────────────────────────────────────────────
-
       # Scores a batch of mixed submission/participation entries in one transaction.
       # Tutorials/lectures are only authorization-checked once per batch (see
       # `authorize_tutorial_or_lecture!` below).
@@ -129,8 +127,6 @@ module Assessment
           raise_if_errors!(validate_current_user_can_grade(tutorial, scorer))
           validated_tutorial_ids << tutorial_id
         end
-
-        # ── point entry ─────────────────────────────────────────────────────
 
         def enter_points_for_each_team_member!(assessment, submission, points_by_task_id, scorer)
           submission.users.each do |user|
