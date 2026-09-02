@@ -3669,7 +3669,6 @@ en:
     leave: 'Leave'
     upload: 'Upload'
     upload_success: 'Upload successful'
-    refresh: 'Refresh'
     refresh_token: 'Refresh Code'
     invite: 'Invite'
     send: 'Send'
