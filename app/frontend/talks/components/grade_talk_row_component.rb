@@ -7,7 +7,7 @@ class GradeTalkRowComponent < ViewComponent::Base
   end
 
   def grading_enabled?
-    Flipper.enabled?(:assessment_grading)
+    true
   end
 
   def allow_grading?
