@@ -104,7 +104,9 @@ module Demo
       # page has to flag in red - and builds it by the dozen.
       #
       # Only the stamp, and only where it is missing: the statuses and points
-      # were dealt beforehand and are what the demo is for.
+      # were dealt beforehand and are what the demo is for. Absent and exempt
+      # are left alone - `Assessment::AbsenceHandling` clears `submitted_at` on
+      # purpose when it sets them, and writing it back would undo that.
       def record_hand_in!(assignment, team, submission)
         participations = assignment.assessment&.assessment_participations
         return unless participations
@@ -112,6 +114,7 @@ module Demo
         handed_in_at = submission.last_modification_by_users_at
         # rubocop:disable Rails/SkipsModelValidations
         participations.where(user_id: team.map(&:id), submitted_at: nil)
+                      .where.not(status: [:absent, :exempt])
                       .update_all(submitted_at: handed_in_at,
                                   updated_at: Time.current)
         # rubocop:enable Rails/SkipsModelValidations

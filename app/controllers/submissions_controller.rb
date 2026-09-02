@@ -42,6 +42,10 @@ class SubmissionsController < ApplicationController
   def new
     @submission = Submission.new
     @submission.assignment = @assignment
+    # The ability lets anybody logged in reach `new`; what decides whether this
+    # person may hand in to this sheet is the `:create` rule, and the form is
+    # not worth showing to somebody the save would turn away.
+    authorize! :create, @submission
     set_submission_locale
     render_form
   end
@@ -284,6 +288,7 @@ class SubmissionsController < ApplicationController
       @sheet = loaded.sheets.find { |sheet| sheet.assignment == @assignment }
       @invites = loaded.invites_for(@assignment)
       @partners = loaded.possible_partners
+      @invited = loaded.invited_to(@sheet&.submission)
       render :card, status: status
     end
 
@@ -307,6 +312,7 @@ class SubmissionsController < ApplicationController
       SubmissionCardComponent.new(sheet: sheet,
                                   invites: loaded.invites_for(@assignment),
                                   partners: loaded.possible_partners,
+                                  invited: loaded.invited_to(sheet&.submission),
                                   error: @card_error)
     end
 
@@ -331,6 +337,7 @@ class SubmissionsController < ApplicationController
 
       # No card to put a message in, so the frame says what happened and offers
       # the way back rather than navigating itself somewhere unexpected.
+      @gone_message = I18n.t("controllers.no_submission")
       render :gone, status: :gone
     end
 
@@ -366,9 +373,10 @@ class SubmissionsController < ApplicationController
       set_submission_locale
       return if @assignment
 
-      flash.now[:alert] = I18n.t("controllers.no_assignment")
-      render js: "window.location='#{root_path}'"
-      nil
+      # Same answer as a submission that is gone, for the same reason: the frame
+      # says what happened instead of steering the whole page elsewhere.
+      @gone_message = I18n.t("controllers.no_assignment")
+      render :gone, status: :gone
     end
 
     def set_lecture
@@ -387,8 +395,14 @@ class SubmissionsController < ApplicationController
       params.expect(join: [:code, :assignment_id])
     end
 
+    # Inviting nobody is a hand-in without a team, not a broken request: the
+    # form's select is empty until somebody is picked, and then the field is not
+    # sent at all.
     def invitation_params
-      params.expect(submission: [invitee_ids: []])
+      nested = params[:submission]
+      return ActionController::Parameters.new unless nested.is_a?(ActionController::Parameters)
+
+      nested.permit(invitee_ids: [])
     end
 
     def correction_params
@@ -400,7 +414,9 @@ class SubmissionsController < ApplicationController
     end
 
     def send_invitation_emails
-      requested_ids = invitation_params[:invitee_ids].map(&:to_i)
+      requested_ids = Array(invitation_params[:invitee_ids]).map(&:to_i)
+      return if requested_ids.empty?
+
       invitees = @submission.admissible_invitees(current_user)
                             .select { |i| requested_ids.include?(i.id) }
       invitees.each do |i|
@@ -475,6 +491,11 @@ class SubmissionsController < ApplicationController
         @error = I18n.t("submission.assignment_expired")
       elsif @submission.correction
         @error = I18n.t("submission.already_corrected")
+      # Joining a team whose sheet nobody may touch any more - a rejected one -
+      # would put the reader somewhere they cannot hand in, replace or leave.
+      # The same predicate the ability uses for those.
+      elsif @submission.not_updatable?
+        @error = I18n.t("submission.already_rejected")
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
       elsif !current_user.proper_student_in?(@submission.tutorial.lecture)

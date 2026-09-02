@@ -99,15 +99,30 @@ RSpec.describe("Submissions", type: :request) do
                       manuscript: "" } }
     end
 
+    # No `invitee_ids`: the select is empty until somebody is picked, and then
+    # the browser sends no field at all. The record used to be saved and the
+    # answer thrown away - so the response is the part worth checking.
     it "lets a student enrolled in the lecture create a submission" do
       user.lectures << lecture
-      expect { post(submissions_path(format: :js), params: create_params) }
+      expect { post(submissions_path, params: create_params) }
         .to change(Submission, :count).by(1)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body)
+        .to include(SubmissionCardComponent.frame_id(assignment))
     end
 
     it "does not let a user not enrolled in the lecture create a submission" do
       expect { post(submissions_path(format: :js), params: create_params) }
         .not_to change(Submission, :count)
+    end
+
+    # The form is the same decision as the save: somebody the save turns away
+    # has no business being shown it.
+    it "does not show the form to a user not enrolled in the lecture" do
+      get new_submission_path(assignment_id: assignment.id)
+
+      expect(response).to redirect_to(root_url)
     end
 
     let(:other_tutorial) { create(:tutorial, lecture: lecture) }
@@ -140,10 +155,13 @@ RSpec.describe("Submissions", type: :request) do
 
       it "creates the submission on the student's rostered tutorial" do
         user.lectures << lecture
-        expect { post(submissions_path(format: :js), params: create_params_no_tutorial) }
+        expect { post(submissions_path, params: create_params_no_tutorial) }
           .to change(Submission, :count).by(1)
 
         expect(Submission.last.tutorial).to eq(tutorial)
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to include(SubmissionCardComponent.frame_id(assignment))
       end
     end
   end
@@ -406,7 +424,16 @@ RSpec.describe("Submissions", type: :request) do
         expect(queries_for_sheets(12)).to eq(queries_for_sheets(2))
       end
 
-      def queries_for_sheets(count)
+      # A card asks for more than a row does - the team, the group it hands in
+      # to, who has been invited - and until this example existed the assurance
+      # covered only sheets that were already closed.
+      it "does not go back to the database for another card" do
+        queries_for_sheets(1)
+
+        expect(queries_for_sheets(6, open: 6)).to eq(queries_for_sheets(1, open: 1))
+      end
+
+      def queries_for_sheets(count, open: 0)
         other = create(:lecture, :released_for_all)
         user.lectures << other
         group = create(:tutorial, lecture: other)
@@ -424,8 +451,22 @@ RSpec.describe("Submissions", type: :request) do
           submission.users << partner
           mark(assignment, [1.5])
         end
+        open.times { |index| open_sheet_for(other, group, partner, index) }
 
         count_queries { get(lecture_submissions_path(other)) }
+      end
+
+      # Everything a card reads: a file, a team, a group with a tutor on it, and
+      # somebody invited who has not joined.
+      def open_sheet_for(lecture_record, group, partner, index)
+        assignment = create(:assignment, lecture: lecture_record,
+                                         title: "Sheet #{index + 1}",
+                                         deadline: (index + 1).weeks.from_now)
+        create(:tutor_tutorial_join, tutorial: group, tutor: create(:confirmed_user))
+        submission = create(:submission, :with_manuscript,
+                            assignment: assignment, tutorial: group,
+                            invited_user_ids: [partner.id])
+        submission.users << user
       end
 
       def count_queries
@@ -558,7 +599,7 @@ RSpec.describe("Submissions", type: :request) do
     describe "handing in" do
       it "answers with the card, which now carries a team and a code" do
         post submissions_path, params: {
-          submission: { assignment_id: assignment.id, invitee_ids: [""],
+          submission: { assignment_id: assignment.id,
                         tutorial_id: tutorial.id, manuscript: "" }
         }
 
@@ -784,6 +825,40 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
 
+    # The ability already refuses an edit, a delete and a leave on a rejected
+    # sheet. Joining was the way in that was left open, and it leads to a card
+    # that offers nothing.
+    describe "a rejected sheet in the grace period" do
+      let(:rejected_assignment) do
+        lecture.update(submission_grace_period: 60)
+        create(:assignment, :expired, lecture: lecture, title: "Homework 2",
+                                      accepted_file_type: ".pdf",
+                                      expired_since: 10.minutes)
+      end
+
+      it "refuses a join by code and says why" do
+        submission = hand_in(rejected_assignment,
+                             users: [create(:confirmed_user)])
+        submission.update(accepted: false)
+
+        post join_submission_path, params: {
+          join: { code: submission.token, assignment_id: rejected_assignment.id }
+        }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include(I18n.t("submission.already_rejected"))
+      end
+
+      it "does not put the code on the card any more" do
+        submission = hand_in(rejected_assignment)
+        submission.update(accepted: false)
+
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).not_to include(submission.token)
+      end
+    end
+
     # Deleted in another tab: there is no card left to put a message in, so the
     # frame says so rather than navigating itself somewhere unexpected.
     it "answers for a submission that is gone with a frame that says so" do
@@ -794,6 +869,19 @@ RSpec.describe("Submissions", type: :request) do
 
       expect(response).to have_http_status(:gone)
       expect(response.body).to include(I18n.t("controllers.no_submission"))
+    end
+
+    # The sheet can go the same way as the submission, and used to answer with a
+    # snippet of JavaScript that moved the whole page.
+    it "answers for a sheet that is gone with a frame that says so" do
+      gone = create(:assignment, lecture: lecture)
+      id = gone.id
+      gone.destroy
+
+      get new_submission_path(assignment_id: id)
+
+      expect(response).to have_http_status(:gone)
+      expect(response.body).to include(I18n.t("controllers.no_assignment"))
     end
   end
 end

@@ -75,6 +75,43 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       expect(content).to include("width: 25.0%")
     end
 
+    # A sheet is listed problem by problem as soon as one problem carries a
+    # value, so the unmarked ones share the list. Written as a 0 they would say
+    # "you scored nothing here".
+    it "writes a dash, not a zero, for a problem nobody has marked" do
+      marked = task(max_points: 4)
+      unmarked = task(max_points: 4)
+
+      content = render_fold(:partially_marked,
+                            points_by_task: { marked => 1.5, unmarked => nil })
+
+      expect(content).to include("—")
+      expect(content).not_to include(
+        I18n.t("submission.hub.points_reader", points: "0", max: "4")
+      )
+    end
+
+    # And in words, not only in the picture.
+    it "tells a reader that the problem is unmarked, not that it scored 0" do
+      unmarked = task(max_points: 4)
+
+      content = render_fold(:partially_marked,
+                            points_by_task: { task => 1.5, unmarked => nil })
+
+      expect(content).to include(
+        I18n.t("submission.hub.fold.problem_unmarked", max: "4")
+      )
+    end
+
+    it "draws no bar for a problem nobody has marked" do
+      unmarked = task(max_points: 4)
+
+      content = render_fold(:partially_marked,
+                            points_by_task: { unmarked => nil })
+
+      expect(content).not_to include("spark-wide")
+    end
+
     it "shows the numbers of a half-marked sheet, not a sentence" do
       content = render_fold(:partially_marked,
                             points_by_task: { task => 1.5, task => nil })

@@ -5,6 +5,7 @@
   <div class="row mb-2">
     <div class="col-12">
       <%= f.label :invitee_ids, t('submission.invitations_to') %>
+
       <%= f.select :invitee_ids,
                    options_for_select(partners.map { |u| [u.tutorial_name, u.id] },
                                       probable_invitee_ids(current_user, submission,
@@ -16,6 +17,7 @@
 
   <div class="d-flex flex-wrap gap-3 align-items-center">
     <%= f.submit t('buttons.send'), class: 'btn btn-sm btn-primary' %>
+
     <%= link_to t('buttons.cancel'), cancel_editing_submission_path(submission),
                 class: 'small' %>
   </div>

@@ -2871,6 +2871,12 @@ en:
         refresh_confirm: >
           Get a new code? The old one stops working, and anybody you have already
           given it to cannot join with it any more.
+        delete_confirm: >
+          Delete this hand-in? The file is removed and the sheet counts as not
+          handed in.
+        leave_confirm: >
+          Leave the team? The hand-in stays with the others, but this sheet no
+          longer counts as handed in for you, and the others are told.
         team_hint: >
           You can hand in alone or together with others. Whoever hands in first
           gets a code to pass on.
@@ -2894,6 +2900,7 @@ en:
         tasks_heading: Points per problem
         files_heading: Files
         problem: "Problem %{number}"
+        problem_unmarked: "not marked yet, out of %{max} points"
         correction_label: Correction
         no_file: nothing handed in
         team: "Team: you and %{names}"
@@ -3047,6 +3054,8 @@ en:
     already_corrected: >
       For this assignment a correction was already uploaded. Therefore you
       cannot join anymore.
+    already_rejected: >
+      This submission was rejected, so it can no longer be joined.
     late: late submission
     late_submissions: late submissions
     rejected: rejected

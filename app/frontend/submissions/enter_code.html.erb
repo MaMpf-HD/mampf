@@ -4,6 +4,7 @@
       <%= render(SubmissionInviteComponent.new(invite: invite,
                                                assignment: @assignment)) %>
     <% end %>
+
     <%= render partial: "submissions/join",
                locals: { assignment: @assignment, submission: @submission,
                          error: @error } %>

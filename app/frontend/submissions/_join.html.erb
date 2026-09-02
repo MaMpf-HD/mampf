@@ -7,19 +7,26 @@
                      placeholder: "",
                      autocomplete: "off",
                      class: class_names("form-control", "is-invalid" => error.present?) %>
+
     <%= f.label :code, t('basics.code') %>
+
     <div class="invalid-feedback d-block" id="submission-code-error">
       <%= error %>
     </div>
+
     <%= f.hidden_field :assignment_id, value: assignment.id %>
   </div>
 
   <div class="d-flex flex-wrap gap-3 align-items-center">
-    <%# Somebody who was invited joins with the button on the invitation, which
-        already carries the code; asking them to type it as well is busywork. %>
+    <%#
+      Somebody who was invited joins with the button on the invitation, which
+      already carries the code; asking them to type it as well is busywork.
+    %>
+
     <% unless submission&.invited_user_ids&.include?(current_user.id) %>
       <%= f.submit t('buttons.join'), class: 'btn btn-sm btn-primary' %>
     <% end %>
+
     <%= link_to t('buttons.cancel'),
                 cancel_new_submission_path(assignment_id: assignment.id),
                 class: 'small' %>

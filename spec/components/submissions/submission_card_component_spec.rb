@@ -112,13 +112,31 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
       )
     end
 
-    it "offers to delete a hand-in the reader made alone" do
+    # Both files can carry the same name, and then two links read alike. The
+    # word in front of each says which one it is.
+    it "tells the hand-in and the correction apart for a screen reader" do
+      hand_in([:with_manuscript, :with_correction])
+
+      content = render_card
+
+      expect(content).to include(
+        "aria-label=\"#{I18n.t("submission.hub.fold.handed_in_label")}: manuscript.pdf\""
+      )
+      expect(content).to include(
+        "aria-label=\"#{I18n.t("submission.hub.fold.correction_label")}: manuscript.pdf\""
+      )
+    end
+
+    it "offers to delete a hand-in the reader made alone, and says what that does" do
       hand_in
 
       content = render_card
 
       expect(content).to include(I18n.t("submission.hub.card.delete"))
       expect(content).not_to include(I18n.t("submission.hub.card.leave"))
+      expect(content).to include(
+        "data-turbo-confirm=\"#{I18n.t("submission.hub.card.delete_confirm")}\""
+      )
     end
 
     # One submission, two people: leaving it is not deleting it.
@@ -131,6 +149,9 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
       expect(content).to include(I18n.t("submission.hub.card.leave"))
       expect(content).not_to include(I18n.t("submission.hub.card.delete"))
       expect(content).to include("Ada")
+      expect(content).to include(
+        "data-turbo-confirm=\"#{I18n.t("submission.hub.card.leave_confirm")}\""
+      )
     end
 
     it "offers to invite somebody the reader has handed in with before" do

@@ -1,4 +1,8 @@
-<aside class="standing-panel" id="<%= target %>" aria-labelledby="standing-heading">
+<aside
+  class="standing-panel"
+  id="<%= target %>"
+  aria-labelledby="standing-heading"
+>
   <h2 class="eyebrow mb-2" id="standing-heading">
     <%= t("submission.hub.standing.heading") %>
   </h2>
@@ -10,18 +14,31 @@
 
   <% if bar? %>
     <div class="standing-bar-wrap<%= " pb-0" unless mark_percentage %>">
-      <div class="standing-bar" role="progressbar"
-           aria-valuenow="<%= earned_percentage %>" aria-valuemin="0"
-           aria-valuemax="100" aria-label="<%= bar_reader_label %>">
+      <div
+        class="standing-bar"
+        role="progressbar"
+        aria-valuenow="<%= earned_percentage %>"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-label="<%= bar_reader_label %>"
+      >
         <span style="width: <%= earned_percentage %>%"></span>
+
         <% if mark_percentage %>
-          <div class="standing-mark" style="left: <%= mark_percentage %>%"
-               aria-hidden="true"></div>
+          <div
+            class="standing-mark"
+            style="left: <%= mark_percentage %>%"
+            aria-hidden="true"
+          ></div>
         <% end %>
       </div>
+
       <% if mark_percentage %>
-        <div class="standing-mark-label" style="left: <%= mark_percentage %>%"
-             title="<%= mark_title %>">
+        <div
+          class="standing-mark-label"
+          style="left: <%= mark_percentage %>%"
+          title="<%= mark_title %>"
+        >
           <%= mark_label %>
         </div>
       <% end %>
@@ -37,12 +54,16 @@
       <% if points_condition %>
         <div class="requirement">
           <span><%= points_condition %></span>
-          <span class="hub-aside <%= points_class %>"><%= points_standing %></span>
+
+          <span class="hub-aside <%= points_class %>">
+            <%= points_standing %>
+          </span>
         </div>
       <% end %>
       <% required_achievements.each do |achievement| %>
         <div class="requirement">
           <span><%= achievement_label(achievement) %></span>
+
           <span class="hub-aside <%= achievement_class(achievement) %>">
             <%= achievement_standing(achievement) %>
           </span>
@@ -57,7 +78,10 @@
 
   <% if explanation %>
     <details class="mt-2">
-      <summary class="hub-aside"><%= t("submission.hub.standing.what_this_means") %></summary>
+      <summary class="hub-aside">
+        <%= t("submission.hub.standing.what_this_means") %>
+      </summary>
+
       <p class="hub-aside text-muted mt-2 mb-0"><%= explanation %></p>
     </details>
   <% end %>

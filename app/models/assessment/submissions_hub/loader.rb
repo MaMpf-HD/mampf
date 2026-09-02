@@ -18,7 +18,7 @@ module Assessment
       def call
         Result.new(sheets: sheets, standing: standing, open_sheets: open_sheets,
                    due: due, latest_marked: latest_marked, invites: invites,
-                   possible_partners: possible_partners,
+                   possible_partners: possible_partners, invited: invited,
                    next_scheduled: next_scheduled)
       end
 
@@ -198,6 +198,36 @@ module Assessment
           return if open_sheets.any?
 
           lecture.next_scheduled_sheet
+        end
+
+        # The hand-ins that get a card of their own. A card names the group it
+        # hands in to and the tutors on it; a row in the list does not, so the
+        # two queries for them are spent here rather than over every sheet of
+        # the lecture - and not at all once the last sheet is closed.
+        def open_submissions
+          @open_submissions ||= open_sheets.filter_map(&:submission)
+                                           .tap { |records| preload_tutorials(records) }
+        end
+
+        def preload_tutorials(records)
+          return if records.empty?
+
+          ActiveRecord::Associations::Preloader
+            .new(records: records, associations: { tutorial: :tutors })
+            .call
+        end
+
+        # Who has been invited to one of those and has not joined yet.
+        # `Submission#invited_users` builds its query from an id column, so no
+        # `includes` reaches it - one query for the page instead of one per card.
+        def invited
+          ids = open_submissions.flat_map(&:invited_user_ids).uniq
+          return {} if ids.empty?
+
+          by_id = User.where(id: ids).index_by(&:id)
+          open_submissions.to_h do |submission|
+            [submission.id, submission.invited_user_ids.filter_map { |id| by_id[id] }]
+          end
         end
 
         # Everybody the reader has ever handed in with in this lecture. The card

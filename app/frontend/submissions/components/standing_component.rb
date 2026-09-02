@@ -132,10 +132,13 @@ class StandingComponent < ViewComponent::Base
       .squish
   end
 
+  # `:unknown` is "there is no record for this reader at all" - a different thing
+  # from a condition that was graded and fell short, and it must not be shown as
+  # one.
   def achievement_standing(achievement)
     case standing.achievement_status(achievement)
     when :met then t("submission.hub.standing.passed")
-    when :ungraded then t("submission.hub.standing.not_recorded")
+    when :ungraded, :unknown then t("submission.hub.standing.not_recorded")
     else recorded_or_failed(achievement)
     end
   end

@@ -3095,6 +3095,13 @@ de:
         refresh_confirm: >
           Neuen Code erzeugen? Der alte gilt dann nicht mehr, und wer ihn schon
           hat, kommt damit nicht mehr in die Gruppe.
+        delete_confirm: >
+          Diese Abgabe löschen? Die Datei wird entfernt, und das Blatt gilt als
+          nicht abgegeben.
+        leave_confirm: >
+          Die Gruppe verlassen? Die Abgabe bleibt bei den anderen, für Dich gilt
+          das Blatt aber nicht mehr als abgegeben. Die anderen bekommen eine
+          Nachricht.
         team_hint: >
           Du kannst allein oder zusammen mit anderen abgeben. Wer zuerst abgibt,
           bekommt einen Code zum Weitergeben.
@@ -3118,6 +3125,7 @@ de:
         tasks_heading: Punkte je Aufgabe
         files_heading: Dateien
         problem: "Aufgabe %{number}"
+        problem_unmarked: "noch nicht bewertet, von %{max} Punkten"
         correction_label: Korrektur
         no_file: nichts abgegeben
         team: "Team: Du und %{names}"
@@ -3268,6 +3276,8 @@ de:
     already_corrected: >
       Für diese Hausaufgabe wurde bereits eine Korrektur hochgeladen. Deshalb
       kannst Du nicht mehr beitreten.
+    already_rejected: >
+      Diese Abgabe wurde abgelehnt, Du kannst ihr nicht mehr beitreten.
     late: verspätete Abgabe
     late_submissions: verspätetete Abgaben
     rejected: abgelehnt

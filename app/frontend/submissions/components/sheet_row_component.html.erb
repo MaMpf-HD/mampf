@@ -3,6 +3,7 @@
     <div class="sheet-row">
       <div>
         <div><%= sheet.assignment.title %></div>
+
         <% if note %>
           <div class="<%= note_class %>"><%= note %></div>
         <% end %>
@@ -26,7 +27,9 @@
             <span class="text-muted">/ <%= max_points %></span>
           </span>
           <% if bar_percentage %>
-            <div class="spark"><span style="width: <%= bar_percentage %>%"></span></div>
+            <div class="spark">
+              <span style="width: <%= bar_percentage %>%"></span>
+            </div>
           <% end %>
         <% else %>
           <span aria-hidden="true">

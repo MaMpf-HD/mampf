@@ -14,18 +14,19 @@ class SubmissionCardComponent < ViewComponent::Base
     ActionView::RecordIdentifier.dom_id(assignment, :submission_card)
   end
 
-  attr_reader :sheet, :invites, :partners, :error
+  attr_reader :sheet, :invites, :partners, :invited, :error
 
   delegate :assignment, :submission, to: :sheet
 
   # `error` is for the one refusal that has nowhere else to go: leaving a team of
   # one. It belongs on the card, not in a page-wide flash the reader has to look
   # away to find.
-  def initialize(sheet:, invites: [], partners: [], error: nil)
+  def initialize(sheet:, invites: [], partners: [], invited: [], error: nil)
     super()
     @sheet = sheet
     @invites = invites
     @partners = partners
+    @invited = invited
     @error = error
   end
 
@@ -71,6 +72,16 @@ class SubmissionCardComponent < ViewComponent::Base
     submission&.correction_filename
   end
 
+  # A team that names both files alike leaves two links reading the same; the
+  # name alone does not say which is the hand-in and which came back.
+  def file_reader_label
+    "#{t("submission.hub.fold.handed_in_label")}: #{file_name}"
+  end
+
+  def correction_reader_label
+    "#{t("submission.hub.fold.correction_label")}: #{correction_name}"
+  end
+
   # Without a group there is nobody to hand in to, so the card says that instead
   # of offering buttons that would fail.
   def may_start?
@@ -102,13 +113,16 @@ class SubmissionCardComponent < ViewComponent::Base
   def invited_names
     return [] unless submission && assignment.active?
 
-    submission.invited_users.map(&:tutorial_name)
+    invited.map(&:tutorial_name)
   end
 
-  # The code is what a partner joins with, so it is worth showing only while
-  # joining is still possible.
+  # The code is what a partner joins with, so it is worth showing exactly while
+  # joining would succeed - which a rejected sheet no longer does, and the
+  # controller refuses.
   def token
-    submission.token if submission && assignment.semiactive?
+    return unless submission && assignment.semiactive?
+
+    submission.token unless submission.not_updatable?
   end
 
   def tutorial_name

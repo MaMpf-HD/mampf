@@ -6,10 +6,14 @@
 
     <div class="d-flex justify-content-between gap-3 align-items-start">
       <div>
-        <h2 class="hub-title mb-1" id="<%= heading_id %>"><%= assignment.title %></h2>
+        <h2 class="hub-title mb-1" id="<%= heading_id %>">
+          <%= assignment.title %>
+        </h2>
+
         <p class="mb-0"><%= due_line %></p>
         <p class="hub-aside text-muted mb-3"><%= meta_parts.join(" · ") %></p>
       </div>
+
       <%= render(SheetChipComponent.new(sheet: sheet)) %>
     </div>
 
@@ -21,15 +25,24 @@
     <% if handed_in? %>
       <div class="file-pill mb-3">
         <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
+
         <%= link_to file_name, show_submission_manuscript_path(submission),
-                    class: "file-name flex-grow-1", data: { turbo: false } %>
-        <span class="hub-aside text-muted text-nowrap"><%= file_details %></span>
+                    class: "file-name flex-grow-1", "aria-label": file_reader_label,
+                    data: { turbo: false } %>
+
+        <span class="hub-aside text-muted text-nowrap">
+          <%= file_details %>
+        </span>
       </div>
       <% if correction_name %>
         <div class="file-pill mb-3">
           <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
+
           <%= link_to correction_name, show_correction_path(submission),
-                      class: "file-name flex-grow-1", data: { turbo: false } %>
+                      class: "file-name flex-grow-1",
+                      "aria-label": correction_reader_label,
+                      data: { turbo: false } %>
+
           <span class="hub-aside text-muted text-nowrap">
             <%= t("submission.hub.fold.correction_label") %>
           </span>
@@ -50,17 +63,20 @@
           <% if invitable? %>
             <%= link_to t("submission.hub.card.invite"),
                         enter_submission_invitees_path(submission) %>
-            <% if editable? %>&middot;<% end %>
+            <% if editable? %>
+              &middot;
+            <% end %>
           <% end %>
+
           <% if editable? %>
             <% if alone? %>
               <%= link_to t("submission.hub.card.delete"), submission_path(submission),
                           data: { turbo_method: :delete,
-                                  turbo_confirm: t("confirmation.generic") } %>
+                                  turbo_confirm: t("submission.hub.card.delete_confirm") } %>
             <% else %>
               <%= link_to t("submission.hub.card.leave"), leave_submission_path(submission),
                           data: { turbo_method: :delete,
-                                  turbo_confirm: t("confirmation.generic") } %>
+                                  turbo_confirm: t("submission.hub.card.leave_confirm") } %>
             <% end %>
           <% end %>
         </span>
@@ -77,8 +93,11 @@
       <% end %>
     </div>
 
-    <%# One line per thing, each with its own word in front: a sentence with the
-        code hung on the end reads as prose and is looked up as a table. %>
+    <%#
+      One line per thing, each with its own word in front: a sentence with the
+      code hung on the end reads as prose and is looked up as a table.
+    %>
+
     <% if submission.nil? && may_start? %>
       <p class="hub-aside mb-0"><%= t("submission.hub.card.team_hint") %></p>
     <% end %>
@@ -88,49 +107,73 @@
         <dt class="field-label"><%= t("submission.hub.card.team_label") %></dt>
         <dd><%= partner_names.to_sentence %></dd>
       <% end %>
-      <%# A code somebody passes on by voice or by hand: big enough to read off
-          the screen, and with a button so it need not be read off at all. %>
+
+      <%#
+        A code somebody passes on by voice or by hand: big enough to read off
+        the screen, and with a button so it need not be read off at all.
+      %>
+
       <% if token %>
         <dt class="field-label"><%= t("submission.hub.card.code") %></dt>
-        <dd data-controller="clipboard"
-            data-clipboard-text-value="<%= token %>"
-            data-clipboard-resting-icon-value="bi-clipboard"
-            data-clipboard-confirmation-value="<%= t("submission.hub.card.code_copied") %>"
-            data-clipboard-failure-value="<%= t("submission.hub.card.code_copy_failed") %>">
+        <dd
+          data-controller="clipboard"
+          data-clipboard-text-value="<%= token %>"
+          data-clipboard-resting-icon-value="bi-clipboard"
+          data-clipboard-confirmation-value="<%= t("submission.hub.card.code_copied") %>"
+          data-clipboard-failure-value="<%= t("submission.hub.card.code_copy_failed") %>"
+        >
           <code class="join-code"><%= token %></code>
-          <button type="button"
-                  class="btn btn-link btn-sm p-0 border-0 align-baseline text-secondary ms-2"
-                  data-action="clipboard#copy"
-                  title="<%= t("submission.hub.card.copy_code") %>"
-                  aria-label="<%= t("submission.hub.card.copy_code") %>">
+
+          <button
+            type="button"
+            class="
+              btn btn-link btn-sm p-0 border-0 align-baseline text-secondary
+              ms-2
+            "
+            data-action="clipboard#copy"
+            title="<%= t("submission.hub.card.copy_code") %>"
+            aria-label="<%= t("submission.hub.card.copy_code") %>"
+          >
             <i class="bi bi-clipboard" data-clipboard-target="icon"></i>
           </button>
+
           <%= link_to refresh_submission_token_path(submission),
                       class: "ms-2 text-secondary",
                       title: t("submission.hub.card.refresh_code"),
                       data: { turbo_method: :patch,
                               turbo_confirm: t("submission.hub.card.refresh_confirm") } do %>
             <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+
             <span class="visually-hidden">
               <%= t("submission.hub.card.refresh_code") %>
             </span>
           <% end %>
-          <span class="visually-hidden" role="status"
-                data-clipboard-target="status"></span>
+
+          <span
+            class="visually-hidden"
+            role="status"
+            data-clipboard-target="status"
+          ></span>
         </dd>
       <% end %>
+
       <% if tutorial_name %>
         <dt class="field-label"><%= t("basics.tutorial") %></dt>
         <dd><%= tutorial_name %></dd>
       <% end %>
+
       <% if invited_names.any? %>
-        <dt class="field-label"><%= t("submission.hub.card.invited_label") %></dt>
+        <dt class="field-label">
+          <%= t("submission.hub.card.invited_label") %>
+        </dt>
         <dd><%= invited_names.to_sentence %></dd>
       <% end %>
     </dl>
 
     <% unless may_start? %>
-      <p class="hub-aside text-muted mb-0 mt-2"><%= t("submission.tutorial_needed") %></p>
+      <p class="hub-aside text-muted mb-0 mt-2">
+        <%= t("submission.tutorial_needed") %>
+      </p>
     <% end %>
   </section>
 <% end %>

@@ -3,6 +3,7 @@
     <h3 class="lecture-pane-header mb-0" id="sheets-heading">
       <%= t("submission.hub.heading") %>
     </h3>
+
     <% if any? %>
       <span class="hub-aside text-muted text-nowrap"><%= count_label %></span>
     <% end %>
@@ -16,11 +17,11 @@
         <div class="text-end"><%= t("submission.hub.column_points") %></div>
         <div></div>
       </div>
+
       <% sheets.each do |sheet| %>
         <%= render(SheetRowComponent.new(sheet: sheet)) %>
       <% end %>
     </div>
-
     <% if deletion_notice %>
       <p class="hub-aside text-muted mt-3 mb-0"><%= deletion_notice %></p>
     <% end %>

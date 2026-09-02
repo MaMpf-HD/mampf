@@ -49,7 +49,17 @@ class SheetFoldComponent < ViewComponent::Base
       t("submission.hub.fold.problem", number: index + 1)
   end
 
+  # A sheet is listed problem by problem as soon as one of them carries a value,
+  # so the ones nobody has marked yet share the list. Written as a 0 they would
+  # read as "you scored nothing here", which is the opposite of what the state
+  # is for - they get a dash, and the reader gets it in words.
+  def marked?(task)
+    !sheet.points_for(task).nil?
+  end
+
   def task_points(task)
+    return "—" unless marked?(task)
+
     format_number(sheet.points_for(task))
   end
 
@@ -58,6 +68,11 @@ class SheetFoldComponent < ViewComponent::Base
   end
 
   def task_reader_label(task)
+    unless marked?(task)
+      return t("submission.hub.fold.problem_unmarked",
+               max: task_max_points(task))
+    end
+
     t("submission.hub.points_reader", points: task_points(task),
                                       max: task_max_points(task))
   end
@@ -66,6 +81,7 @@ class SheetFoldComponent < ViewComponent::Base
   # short bar than a long one, and a wide bar reads as a figure of its own.
   def task_bar_percentage(task)
     max = task.max_points
+    return unless marked?(task)
     return if max.nil? || max.zero?
 
     [(sheet.points_for(task).to_f / max * 100).round(2), 100].min

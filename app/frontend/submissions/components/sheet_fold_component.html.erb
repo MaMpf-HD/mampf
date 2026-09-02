@@ -1,18 +1,26 @@
 <div class="fold">
   <div class="fold-grid">
     <div>
-      <div class="eyebrow mb-3"><%= t("submission.hub.fold.tasks_heading") %></div>
+      <div class="eyebrow mb-3">
+        <%= t("submission.hub.fold.tasks_heading") %>
+      </div>
+
       <% if points_entered? %>
         <% tasks.each_with_index do |task, index| %>
           <div class="task-line">
             <span class="task-name"><%= task_label(task, index) %></span>
+
             <% if task_bar_percentage(task) %>
               <span class="spark spark-wide" aria-hidden="true">
                 <span style="width: <%= task_bar_percentage(task) %>%"></span>
               </span>
             <% end %>
+
             <span class="task-num num">
-              <span class="visually-hidden"><%= task_reader_label(task) %></span>
+              <span class="visually-hidden">
+                <%= task_reader_label(task) %>
+              </span>
+
               <span aria-hidden="true">
                 <%= task_points(task) %>
                 <span class="text-muted">/ <%= task_max_points(task) %></span>
@@ -25,14 +33,23 @@
       <% end %>
     </div>
 
-    <%# One line per file, each with its own word in front and its time behind
-        it. Both files are often called the same thing, so the word is what tells
-        them apart - and it goes into the link's own name, because somebody
-        walking the links hears nothing else. %>
+    <%#
+      One line per file, each with its own word in front and its time behind
+      it. Both files are often called the same thing, so the word is what tells
+      them apart - and it goes into the link's own name, because somebody
+      walking the links hears nothing else.
+    %>
+
     <div>
-      <div class="eyebrow mb-3"><%= t("submission.hub.fold.files_heading") %></div>
+      <div class="eyebrow mb-3">
+        <%= t("submission.hub.fold.files_heading") %>
+      </div>
+
       <dl class="card-facts mt-0">
-        <dt class="field-label"><%= t("submission.hub.fold.handed_in_label") %></dt>
+        <dt class="field-label">
+          <%= t("submission.hub.fold.handed_in_label") %>
+        </dt>
+
         <dd>
           <% if manuscript_filename %>
             <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
@@ -43,11 +60,16 @@
               <span class="text-muted">&middot; <%= handed_in_at %></span>
             <% end %>
           <% else %>
-            <span class="text-muted"><%= t("submission.hub.fold.no_file") %></span>
+            <span class="text-muted">
+              <%= t("submission.hub.fold.no_file") %>
+            </span>
           <% end %>
         </dd>
 
-        <dt class="field-label"><%= t("submission.hub.fold.correction_label") %></dt>
+        <dt class="field-label">
+          <%= t("submission.hub.fold.correction_label") %>
+        </dt>
+
         <dd>
           <% if correction_filename %>
             <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>

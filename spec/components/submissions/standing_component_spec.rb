@@ -216,6 +216,22 @@ RSpec.describe(StandingComponent, type: :component) do
         .to include(I18n.t("submission.hub.standing.not_recorded"))
     end
 
+    # No record at all is not the same as a condition that was graded and fell
+    # short, and the block must not show it as one.
+    it "says not recorded yet for a reader who has no record at all" do
+      built = Assessment::SubmissionsHub::Standing.new(
+        record: nil, rule: achievements_only, achievement_values: {},
+        points_still_open: 0, uses_exam_eligibility: true
+      )
+      allow(built).to receive(:required_achievements).and_return([talk])
+
+      content = render_standing(built)
+
+      expect(content).to include(I18n.t("submission.hub.standing.not_recorded"))
+      expect(content)
+        .not_to include(I18n.t("submission.hub.standing.not_passed"))
+    end
+
     it "says not passed for one that was graded and fell short" do
       built = standing(rule: achievements_only, achievements: [talk])
 
