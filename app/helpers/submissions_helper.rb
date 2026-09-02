@@ -107,9 +107,25 @@ module SubmissionsHelper
   end
 
   def enabled_roster_for_lecture?(lecture)
+    return false unless lecture
+
     roster_cache[:enabled].fetch(lecture.id) do
       roster_cache[:enabled][lecture.id] = lecture.roster_managed?
     end
+  end
+
+  def extract_task_points(submission, assessment_task)
+    submission_points = submission.graded_tasks_points
+    submission_points.find do |sp|
+      sp.task_id == assessment_task.id
+    end&.points
+  end
+
+  def extract_task_points_participation(participation, assessment_task)
+    submission_points = participation.graded_tasks_points
+    submission_points.find do |sp|
+      sp.task_id == assessment_task.id
+    end&.points
   end
 
   def rostered_tutorial_for(lecture)

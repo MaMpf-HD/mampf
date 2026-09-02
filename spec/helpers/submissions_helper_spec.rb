@@ -59,6 +59,50 @@ RSpec.describe(SubmissionsHelper, type: :helper) do
     end
   end
 
+  describe "#extract_task_points" do
+    let(:task) { instance_double("AssessmentTask", id: 1) }
+    let(:other_task) { instance_double("AssessmentTask", id: 2) }
+    let(:task_point) { instance_double("TaskPoint", task_id: 1, points: 7.5) }
+    let(:submission) { instance_double("Submission") }
+
+    before { allow(submission).to receive(:graded_tasks_points).and_return([task_point]) }
+
+    it "returns points for matching task" do
+      expect(helper.extract_task_points(submission, task)).to eq(7.5)
+    end
+
+    it "returns nil when task not found" do
+      expect(helper.extract_task_points(submission, other_task)).to be_nil
+    end
+
+    it "returns nil when graded_tasks_points is empty" do
+      allow(submission).to receive(:graded_tasks_points).and_return([])
+      expect(helper.extract_task_points(submission, task)).to be_nil
+    end
+  end
+
+  describe "#extract_task_points_participation" do
+    let(:task) { instance_double("AssessmentTask", id: 1) }
+    let(:other_task) { instance_double("AssessmentTask", id: 2) }
+    let(:task_point) { instance_double("TaskPoint", task_id: 1, points: 4.0) }
+    let(:participation) { instance_double("Participation") }
+
+    before { allow(participation).to receive(:graded_tasks_points).and_return([task_point]) }
+
+    it "returns points for matching task" do
+      expect(helper.extract_task_points_participation(participation, task)).to eq(4.0)
+    end
+
+    it "returns nil when task not found" do
+      expect(helper.extract_task_points_participation(participation, other_task)).to be_nil
+    end
+
+    it "returns nil when graded_tasks_points is empty" do
+      allow(participation).to receive(:graded_tasks_points).and_return([])
+      expect(helper.extract_task_points_participation(participation, task)).to be_nil
+    end
+  end
+
   describe "#roster_cache" do
     it "returns the same hash across multiple calls within one helper instance" do
       first  = helper.roster_cache

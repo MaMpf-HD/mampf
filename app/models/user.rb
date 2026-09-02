@@ -2,6 +2,7 @@
 class User < ApplicationRecord
   include ApplicationHelper
 
+  class IncompatibleTypeError < StandardError; end
   CURRENT_PASSWORD_POLICY_VERSION = 1
 
   # use devise for authentification, include the following modules
@@ -21,6 +22,11 @@ class User < ApplicationRecord
 
   has_many :cohort_memberships, dependent: :destroy
   has_many :cohorts, through: :cohort_memberships
+
+  has_many :assessment_participations,
+           dependent: :destroy,
+           class_name: "Assessment::Participation",
+           inverse_of: :user
 
   # a user has many favorite lectures
   has_many :user_favorite_lecture_joins, dependent: :destroy
@@ -678,6 +684,14 @@ class User < ApplicationRecord
     given_tutorials.any?
   end
 
+  def tutor_in?(tutorial)
+    given_tutorials.include?(tutorial)
+  end
+
+  def teacher_in?(lecture)
+    given_lectures.include?(lecture)
+  end
+
   def editor_or_teacher_in?(lecture)
     in?(lecture.editors) || self == lecture.teacher
   end
@@ -757,6 +771,15 @@ class User < ApplicationRecord
     return true if admin
 
     in?(something.editors_with_inheritance.to_a)
+  end
+
+  def can_grade_in_scope?(something)
+    unless something.is_a?(Lecture) || something.is_a?(Tutorial)
+      raise(IncompatibleTypeError, "can_grade_in_scope? was called with incompatible class")
+    end
+    return true if admin
+
+    in?(something.graders_with_inheritance.to_a)
   end
 
   def speaker?

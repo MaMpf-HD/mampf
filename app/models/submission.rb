@@ -21,7 +21,24 @@ class Submission < ApplicationRecord
 
   validate :matching_lecture, if: :tutorial
 
+  # before_save :set_corrected_at, if: :correction_data_changed?
   before_create :set_token
+
+  delegate :assessment, to: :assignment
+
+  def participations
+    return nil unless assignment.assessable?
+
+    found = Assessment::Participation.where(assessment: assignment.assessment, user: users)
+                                     .index_by(&:user_id)
+    users.map { |user| found[user.id] }
+  end
+
+  def graded_tasks_points
+    return unless assignment.assessable?
+
+    Assessment::TaskPoint.where(submission: self)
+  end
 
   def partners_of_user(user)
     return unless user.in?(users)
@@ -100,6 +117,10 @@ class Submission < ApplicationRecord
     return false if assignment.active?
 
     assignment.totally_expired? || correction.present? || accepted == false
+  end
+
+  def valid_for_pointing?
+    in_time? || accepted == true
   end
 
   # def file_path(downloadable)
@@ -326,5 +347,9 @@ class Submission < ApplicationRecord
 
     def set_token
       self.token = Submission.generate_token
+    end
+
+    def set_corrected_at
+      self.corrected_at = correction.present? ? Time.current : nil
     end
 end

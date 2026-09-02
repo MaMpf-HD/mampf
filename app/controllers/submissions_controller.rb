@@ -211,33 +211,49 @@ class SubmissionsController < ApplicationController
   end
 
   def edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_edit_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def cancel_edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def add_correction
-    if correction_params[:correction].present?
-      @submission.correction = correction_params[:correction]
-      @errors = @submission.check_file_properties_any(@submission.correction
-                                                             .metadata,
-                                                      :correction)
-      return if @errors.present?
+    @submission.assign_attributes(correction_params)
+    @errors = @submission.check_file_properties_any(
+      @submission.correction&.metadata,
+      :correction
+    )
 
-      @submission.save
-      @errors = @submission.errors
-      return unless @submission.valid?
+    if @errors.present?
+      return render partial: "submissions/correction_wrap",
+                    locals: { submission: @submission }
     end
-    @submission.update(correction_params)
-    @errors = @submission.errors
-    return if @errors.present?
 
-    send_correction_upload_email(@submission.users)
+    send_correction_upload_email(@submission.users) if @submission.save
+
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def delete_correction
     @submission.update(correction: nil)
-    render :add_correction
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def select_tutorial
@@ -256,15 +272,38 @@ class SubmissionsController < ApplicationController
 
   def accept
     @submission.update(accepted: true)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
     send_acceptance_email(@submission.users)
+    rerender_submission_row
   end
 
   def reject
     @submission.update(accepted: false)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
     send_rejection_email(@submission.users)
+    rerender_submission_row
   end
 
   private
+
+    def rerender_submission_row
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "submission-row-#{@submission.id}",
+            html: render_to_string(
+              SubmissionRowComponent.new(
+                submission: @submission,
+                assignment: @assignment,
+                grading_scope: @tutorial
+              )
+            )
+          )
+        end
+      end
+    end
 
     def set_submission
       @submission = Submission.find_by(id: params[:id])

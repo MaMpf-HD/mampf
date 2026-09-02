@@ -42,6 +42,22 @@ RSpec.describe(Assignment, type: :model) do
     end
   end
 
+  describe "non_submitters_tutorial" do
+    it "returns users who have not submitted for the assignment" do
+      assignment = FactoryBot.create(:valid_assignment, title: "usual BS")
+      lecture = assignment.lecture
+      # both users are in the same tutorial,
+      user1 = FactoryBot.create(:confirmed_user)
+      user2 = FactoryBot.create(:confirmed_user)
+      tutorial = FactoryBot.create(:tutorial, lecture: lecture)
+      tutorial.add_user_to_roster!(user1, nil)
+      tutorial.add_user_to_roster!(user2, nil)
+      # but only one has a submission for the assignment
+      FactoryBot.create(:submission, assignment: assignment, tutorial: tutorial, users: [user1])
+      expect(assignment.non_submitters_in_tutorial(tutorial)).to contain_exactly(user2)
+    end
+  end
+
   describe "locked fields after deadline" do
     let!(:assignment) do
       FactoryBot.create(:valid_assignment, deadline: 1.hour.from_now)
@@ -104,6 +120,12 @@ RSpec.describe(Assignment, type: :model) do
         assignment = FactoryBot.create(:assignment, lecture: lecture)
 
         expect(assignment.assessment.assessment_participations.count).to eq(0)
+      end
+
+      it "assessable? returns true" do
+        assignment = FactoryBot.create(:assignment, lecture: lecture)
+
+        expect(assignment.assessable?).to be(true)
       end
     end
   end

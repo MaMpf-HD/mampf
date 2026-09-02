@@ -3047,6 +3047,10 @@ en:
   tutorial:
     no_submissions_for_assignment: >
       There are no submissions for this assignment.
+    no_submissions: >
+      No submissions
+    no_submission: >
+      No submission
     destruction_info: >
       <i>
       Note.
@@ -3059,8 +3063,7 @@ en:
       Own Tutorials
     other_tutorials: 'Other Tutorials'
     deadline_warning: >
-      The deadline for submission is still %{deadline}. Only after the deadline
-      corrections can be uploaded.
+      The deadline for submission is still %{deadline}. Only after the deadline, the grading process can take place and the corrections can be uploaded by the tutors.
     grace_period_warning: >
       The grace period lasts until %{friendly_deadline}. Within the grace
       period, submisions and retrospective changes by the students are possible
@@ -3618,6 +3621,7 @@ en:
     create_cohort: 'Create Group'
     edit_cohort: 'Edit Group'
     save: 'Save'
+    refresh: 'Refresh'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
     save_and_edit: 'Save and Edit'

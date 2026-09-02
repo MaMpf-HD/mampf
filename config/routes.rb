@@ -873,6 +873,34 @@ Rails.application.routes.draw do
         to: "submissions#reject",
         as: "reject_submission"
 
+  patch "participations/mark_as_participated",
+        to: "assessment/task_points#mark_as_participated",
+        as: "mark_user_as_participated"
+
+  patch "participations/:participation_id/remove_participated",
+        to: "assessment/task_points#remove_participated",
+        as: "remove_participation"
+
+  patch "submissions/:submission_id/point_submission",
+        to: "assessment/task_points#update_team",
+        as: "point_submission_tutorial"
+
+  patch "participations/:participation_id/point_user",
+        to: "assessment/task_points#update_participation",
+        as: "point_user_tutorial"
+
+  patch "submissions/point_multi_submissions",
+        to: "assessment/task_points#update_team_multi",
+        as: "point_multi_submissions_tutorial"
+
+  patch "submissions/:submission_id/refresh_point_submission",
+        to: "assessment/task_points#refresh_submission",
+        as: "refresh_point_submission_tutorial"
+
+  patch "participations/:participation_id/refresh_point_user",
+        to: "assessment/task_points#refresh_user",
+        as: "refresh_point_user_tutorial"
+
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",
       as: "edit_correction"

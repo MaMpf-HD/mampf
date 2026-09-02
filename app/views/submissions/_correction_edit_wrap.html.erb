@@ -1,0 +1,4 @@
+<%= turbo_frame_tag "correction-#{submission.id}" do %>
+  <%= render partial: "submissions/correction_edit",
+              locals: { submission: submission } %>
+<% end %>

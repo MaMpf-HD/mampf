@@ -196,6 +196,26 @@ RSpec.describe(User, type: :model) do
     end
   end
 
+  describe "#tutor_in?" do
+    let(:lecture)   { create(:lecture) }
+    let(:tutorial)  { create(:tutorial, lecture: lecture) }
+    let(:user)      { create(:user) }
+
+    context "when user is a tutor in the tutorial" do
+      before { create(:tutor_tutorial_join, tutor: user, tutorial: tutorial) }
+
+      it "returns true" do
+        expect(user.tutor_in?(tutorial)).to be(true)
+      end
+    end
+
+    context "when user is not a tutor in the tutorial" do
+      it "returns false" do
+        expect(user.tutor_in?(tutorial)).to be(false)
+      end
+    end
+  end
+
   # test callbacks - NEEDS TO BE REFACTORED
 
   # it 'is given the default subscription type if subscription type is nil' do

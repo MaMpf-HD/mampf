@@ -5,16 +5,25 @@
               remote: true %>
 <% end %>
 <% if submission.too_late? && submission.accepted.nil? %>
-  <%= link_to t('buttons.accept'),
-              accept_submission_path(submission),
-              class: 'btn btn-sm btn-outline-secondary mb-2',
-              method: :patch,
-              remote: true,
-              data: { confirm: t('confirmation.generic') } %>
-  <%= link_to t('buttons.reject'),
-              reject_submission_path(submission),
-              class: 'btn btn-sm btn-outline-secondary mb-2',
-              method: :patch,
-              remote: true,
-              data: { confirm: t('confirmation.generic') } %>
+  <%= link_to accept_submission_path(submission),
+              class: "btn btn-sm btn-outline-success d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+              data: {
+                turbo_method: :patch,
+                turbo_confirm: t('confirmation.generic'),
+                bs_toggle: "tooltip"
+              },
+              title: t('buttons.accept') do %>
+    <span class="material-icons" style="font-size: 16px;">check</span>
+  <% end %>
+
+  <%= link_to reject_submission_path(submission),
+              class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+              data: {
+                turbo_method: :patch,
+                turbo_confirm: t('confirmation.generic'),
+                bs_toggle: "tooltip"
+              },
+              title: t('buttons.reject') do %>
+    <span class="material-icons" style="font-size: 16px;">close</span>
+  <% end %>
 <% end %>
