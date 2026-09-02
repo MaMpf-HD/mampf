@@ -14,19 +14,19 @@ class SubmissionCardComponent < ViewComponent::Base
     ActionView::RecordIdentifier.dom_id(assignment, :submission_card)
   end
 
-  attr_reader :sheet, :invites, :partners, :invited, :error
+  attr_reader :sheet, :invitations, :partners, :invited_users, :error
 
   delegate :assignment, :submission, to: :sheet
 
   # `error` is for the one refusal that has nowhere else to go: leaving a team of
   # one. It belongs on the card, not in a page-wide flash the reader has to look
   # away to find.
-  def initialize(sheet:, invites: [], partners: [], invited: [], error: nil)
+  def initialize(sheet:, invitations: [], partners: [], invited_users: [], error: nil)
     super()
     @sheet = sheet
-    @invites = invites
+    @invitations = invitations
     @partners = partners
-    @invited = invited
+    @invited_users = invited_users
     @error = error
   end
 
@@ -113,7 +113,7 @@ class SubmissionCardComponent < ViewComponent::Base
   def invited_names
     return [] unless submission && assignment.active?
 
-    invited.map(&:tutorial_name)
+    invited_users.map(&:tutorial_name)
   end
 
   # The code is what a partner joins with, so it is worth showing exactly while

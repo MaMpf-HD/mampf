@@ -556,7 +556,7 @@ RSpec.describe("Submissions", type: :request) do
       end
 
       # A card asks for more than a row does - the team, the group it hands in
-      # to, who has been invited - and until this example existed the assurance
+      # to, who has been invited_users - and until this example existed the assurance
       # covered only sheets that were already closed.
       it "does not go back to the database for another card" do
         queries_for_sheets(1)
@@ -588,7 +588,7 @@ RSpec.describe("Submissions", type: :request) do
       end
 
       # Everything a card reads: a file, a team, a group with a tutor on it, and
-      # somebody invited who has not joined.
+      # somebody invited_users who has not joined.
       def open_sheet_for(lecture_record, group, partner, index)
         assignment = create(:assignment, lecture: lecture_record,
                                          title: "Sheet #{index + 1}",
@@ -882,7 +882,7 @@ RSpec.describe("Submissions", type: :request) do
         expect(response.body).to include("Ada")
       end
 
-      it "answers an invitation with the card naming who was invited" do
+      it "answers an invitation with the card naming who was invited_users" do
         partner = create(:confirmed_user, name_in_tutorials: "Ada")
         earlier = create(:assignment, :expired, lecture: lecture,
                                                 title: "Homework 0")

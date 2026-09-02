@@ -17,7 +17,7 @@
       <%= render(SheetChipComponent.new(sheet: sheet)) %>
     </div>
 
-    <% invites.each do |invite| %>
+    <% invitations.each do |invite| %>
       <%= render(SubmissionInviteComponent.new(invite: invite,
                                                assignment: assignment)) %>
     <% end %>

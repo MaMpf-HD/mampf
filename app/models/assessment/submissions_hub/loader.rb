@@ -1,14 +1,9 @@
 module Assessment
   module SubmissionsHub
     # Everything /lectures/:id/submissions needs about one person, fetched in one
-    # go. The page shows a row and a fold per sheet plus the exam-admission block,
-    # and all of them want the same handful of associations - asked for per sheet
-    # that is an N+1 the moment a lecture runs a dozen of them, which is why the
-    # page it replaces needed 159 queries for what this answers in a fixed number
-    # that does not grow with the sheet count.
-    #
-    # The loader knows no views and what it returns knows no database; that seam
-    # is where the specs sit.
+    # go: a row and a fold per sheet and the exam-admission block all want the
+    # same handful of associations, and asked for per sheet that is an N+1 the
+    # moment a lecture runs a dozen of them.
     class Loader
       def initialize(lecture:, user:)
         @lecture = lecture
@@ -17,8 +12,8 @@ module Assessment
 
       def call
         Result.new(sheets: sheets, standing: standing, open_sheets: open_sheets,
-                   due: due, latest_marked: latest_marked, invites: invites,
-                   possible_partners: possible_partners, invited: invited,
+                   due: due, latest_marked: latest_marked, invitations: invitations,
+                   possible_partners: possible_partners, invited_users: invited_users,
                    next_scheduled: next_scheduled)
       end
 
@@ -176,12 +171,10 @@ module Assessment
                 .max_by { |sheet| sheet.marked_at || sheet.assignment.deadline }
         end
 
-        # Team-ups somebody has offered the reader, by assignment. Only sheets
-        # that can still be handed in carry one, which is the same set as
-        # `open_sheets` - `Assignment#semiactive?` and "still open" are the same
-        # question. One query for the whole lecture, and the inviter comes along
-        # with it rather than being fetched per invitation.
-        def invites
+        # Team-ups somebody has offered the reader, by assignment. Only a sheet
+        # that can still be handed in carries one, so the open ones are the whole
+        # search. One query for the lecture, with the inviter along for the ride.
+        def invitations
           open_ids = open_sheets.map { |sheet| sheet.assignment.id }
           return {} if open_ids.empty?
 
@@ -220,7 +213,7 @@ module Assessment
         # Who has been invited to one of those and has not joined yet.
         # `Submission#invited_users` builds its query from an id column, so no
         # `includes` reaches it - one query for the page instead of one per card.
-        def invited
+        def invited_users
           ids = open_submissions.flat_map(&:invited_user_ids).uniq
           return {} if ids.empty?
 

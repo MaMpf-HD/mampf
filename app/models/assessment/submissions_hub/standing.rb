@@ -1,10 +1,8 @@
 module Assessment
   module SubmissionsHub
-    # The exam-admission block: the reader's materialized record, the rule it is
-    # measured against and the value recorded for every achievement the lecture
-    # keeps. The record carries achievements only as two id lists - met and not
-    # graded yet - so the value behind one ("you have 67.3 %") comes separately,
-    # and so do the points nobody has decided on yet.
+    # What the exam-admission block reads. The record carries achievements as two
+    # id lists, met and not graded yet, and never the value behind one - so
+    # "you have 67.3 %" comes alongside rather than out of it.
     Standing = Struct.new(:record, :rule, :achievement_values,
                           :points_still_open, :uses_exam_eligibility,
                           keyword_init: true) do

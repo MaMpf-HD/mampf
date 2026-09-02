@@ -37,9 +37,9 @@
         <% if head %>
           <%= render(SubmissionCardComponent.new(
                        sheet: head,
-                       invites: @hub.invites_for(head.assignment),
+                       invitations: @hub.invitations_for(head.assignment),
                        partners: @hub.possible_partners,
-                       invited: @hub.invited_to(head.submission))) %>
+                       invited_users: @hub.invited_users_for(head.submission))) %>
         <% else %>
           <%= render(NoSheetDueComponent.new(next_scheduled: @hub.next_scheduled,
                                              latest_marked: @hub.latest_marked)) %>
@@ -54,9 +54,9 @@
         <div class="col-12 mb-3">
           <%= render(SubmissionCardComponent.new(
                        sheet: sheet,
-                       invites: @hub.invites_for(sheet.assignment),
+                       invitations: @hub.invitations_for(sheet.assignment),
                        partners: @hub.possible_partners,
-                       invited: @hub.invited_to(sheet.submission))) %>
+                       invited_users: @hub.invited_users_for(sheet.submission))) %>
         </div>
       <% end %>
     </div>

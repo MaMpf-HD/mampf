@@ -202,7 +202,7 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
       invite = create(:submission, assignment: assignment, tutorial: tutorial)
       invite.users << inviter
 
-      content = render_card(invites: [invite])
+      content = render_card(invitations: [invite])
 
       expect(content).to include("Ada")
       expect(content).to include(I18n.t("submission.accept_invitation"))

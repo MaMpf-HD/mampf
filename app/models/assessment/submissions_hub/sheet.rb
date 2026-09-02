@@ -1,11 +1,8 @@
 module Assessment
   module SubmissionsHub
-    # One row of the sheet list: an assignment together with what the reader
-    # handed in for it and what has come back. Everything it answers is worked out
-    # from what the loader put in it, so it never touches the database - which is
-    # also why the state table lives here and not on a model: a row's state is the
-    # assignment, the participation and the submission read together, and no one
-    # of the three knows the other two.
+    # One row of the sheet list. The state table lives here rather than on a
+    # model because a row's state is the assignment, the participation and the
+    # submission read together, and no one of the three knows the other two.
     Sheet = Struct.new(:assignment, :assessment, :participation, :submission,
                        :tasks, :points_by_task_id, :user, keyword_init: true) do
       # The first line that applies wins, and the order is the whole content of
@@ -72,10 +69,8 @@ module Assessment
         points_by_task_id[task.id]&.points
       end
 
-      # `graded_at` and `grader_id` on the participation are written by the demo
-      # data and by nothing in the app, so the task points are what actually
-      # carries the marking. The first branch takes over by itself the day
-      # somebody stamps the participation.
+      # A participation may carry no stamp of its own; the task points always
+      # carry when they were written, so they answer where it does not.
       def marked_at
         return unless participation
 
@@ -102,9 +97,8 @@ module Assessment
           task_points.select(&:updated_at).max_by(&:updated_at)
         end
 
-        # Nothing more can be handed in, so what the gradebook has on record decides.
-        # A file without a `submitted_at` is the one case that costs points without
-        # anyone doing anything wrong, which is why it has a state of its own.
+        # A file without a `submitted_at` costs points without anybody having done
+        # anything wrong, which is why it has a state of its own.
         def closed_state
           if participation&.submitted_at
             return submission&.correction.present? ? :correction_uploaded : :awaiting_marks
@@ -113,8 +107,6 @@ module Assessment
           submission&.manuscript.present? ? :not_recorded : :missed
         end
 
-        # Still open, so nothing is missing yet - the states here say what the
-        # reader can still do about it.
         def open_state
           return :tutor_decides if submission&.too_late? && submission.accepted.nil?
           return :grace_period if assignment.in_grace_period?

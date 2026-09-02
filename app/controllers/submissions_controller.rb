@@ -128,7 +128,7 @@ class SubmissionsController < ApplicationController
   end
 
   def enter_code
-    @invites = hub.invites_for(@assignment)
+    @invitations = hub.invitations_for(@assignment)
   end
 
   def redeem_code
@@ -151,7 +151,7 @@ class SubmissionsController < ApplicationController
                                      assignment: @assignment)
     check_code_and_join
     if @error
-      @invites = hub.invites_for(@assignment)
+      @invitations = hub.invitations_for(@assignment)
       return render :enter_code, status: :unprocessable_content
     end
 
@@ -210,7 +210,7 @@ class SubmissionsController < ApplicationController
   end
 
   def enter_invitees
-    @partners = hub.invitable_to(@submission)
+    @partners = hub.invitable_partners(@submission)
   end
 
   def invite
@@ -281,9 +281,9 @@ class SubmissionsController < ApplicationController
     def render_card(status: :ok)
       loaded = hub
       @sheet = loaded.sheets.find { |sheet| sheet.assignment == @assignment }
-      @invites = loaded.invites_for(@assignment)
+      @invitations = loaded.invitations_for(@assignment)
       @partners = loaded.possible_partners
-      @invited = loaded.invited_to(@sheet&.submission)
+      @invited_users = loaded.invited_users_for(@sheet&.submission)
       render :card, status: status
     end
 
@@ -305,9 +305,9 @@ class SubmissionsController < ApplicationController
     def card_component(loaded)
       sheet = loaded.sheets.find { |candidate| candidate.assignment == @assignment }
       SubmissionCardComponent.new(sheet: sheet,
-                                  invites: loaded.invites_for(@assignment),
+                                  invitations: loaded.invitations_for(@assignment),
                                   partners: loaded.possible_partners,
-                                  invited: loaded.invited_to(sheet&.submission),
+                                  invited_users: loaded.invited_users_for(sheet&.submission),
                                   error: @card_error)
     end
 
