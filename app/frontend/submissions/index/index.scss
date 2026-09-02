@@ -161,6 +161,9 @@
 .card-facts {
   display: grid;
   grid-template-columns: auto 1fr;
+  /* The label is smaller than what it labels, so the two have to be hung from
+     the same line rather than from the top of a cell they fill unequally. */
+  align-items: baseline;
   gap: 0.1rem 0.75rem;
   margin-top: 0.75rem;
 
