@@ -218,6 +218,20 @@ RSpec.describe("Submissions", type: :request) do
       expect(response).to have_http_status(:gone)
       expect(response.body).to include(I18n.t("controllers.no_assignment"))
     end
+
+    # Turbo drops a response whose frame is not the one that asked, and drops it
+    # silently: the button would look broken while the log says 410.
+    it "answers inside the frame that asked" do
+      gone = create(:assignment, lecture: lecture)
+      id = gone.id
+      gone.destroy
+
+      post join_submission_path,
+           params: { join: { code: "whatever", assignment_id: id } },
+           headers: { "Turbo-Frame" => "submission_card_assignment_#{id}" }
+
+      expect(response.body).to include("id=\"submission_card_assignment_#{id}\"")
+    end
   end
 
   describe "a student without a rostered tutorial" do

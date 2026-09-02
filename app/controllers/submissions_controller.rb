@@ -386,10 +386,13 @@ class SubmissionsController < ApplicationController
       render :gone, status: :gone
     end
 
-    # `SubmissionAbility` grants the whole class to anybody logged in for these:
-    # they carry no submission of their own to hang a rule on, only a sheet. So
-    # the rule is the one handing in uses - `:create` for this sheet - and it
-    # sits in one place, because four gates is how the fifth gets forgotten.
+    # `SubmissionAbility` grants the whole class to anybody logged in for these,
+    # so what they answer for is a sheet rather than a submission of the
+    # reader's - `cancel_edit` has one in hand, but what it renders is the sheet
+    # either way. The rule is therefore the one handing in uses, `:create` for
+    # this sheet, and it sits in one place, because four gates is how the fifth
+    # gets forgotten. Deliberately not `:update` on the submission: cancelling
+    # an edit must work on a sheet nobody may edit any more.
     #
     # `index` is not among them: it takes a lecture rather than a sheet and is
     # gated by `check_student_status`. Neither is `redeem_code`, which takes a

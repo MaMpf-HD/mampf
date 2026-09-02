@@ -178,6 +178,20 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet_for(assignment).points).to eq(1.5)
     end
 
+    # The 0 is the sentence "this sheet counts and counts as nothing", so it
+    # takes a sheet that could have been worth something. Problems set up but
+    # worth nothing is not that - and the two questions part company exactly
+    # here, which is why this example exists rather than a state assertion.
+    it "are nothing where there was nothing to lose" do
+      assignment = create_assignment(deadline: 1.week.ago, max_points: [0])
+
+      sheet = sheet_for(assignment)
+
+      expect(sheet.state).to eq(:missed)
+      expect(sheet.tasks_set_up?).to be(true)
+      expect(sheet.points).to be_nil
+    end
+
     it "are zero where the sheet counts as not handed in" do
       assignment = create_assignment(deadline: 3.weeks.ago)
 
