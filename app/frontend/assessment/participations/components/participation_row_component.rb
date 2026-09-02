@@ -84,6 +84,7 @@ class ParticipationRowComponent < ViewComponent::Base
       data: {
         participation_row_target: "input",
         task_id: task.id,
+        below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
         action: "change->participation-row#onPointParticipationChanged input->participation-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",

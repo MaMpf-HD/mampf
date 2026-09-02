@@ -280,6 +280,7 @@ de:
       mark_as_participated: 'Als teilgenommen markieren'
       remove_participated: 'Teilnahme entfernen'
       confirm_unsaved_changes: 'Ungespeicherte Änderungen in der Punktetabelle gehen verloren. Fortfahren?'
+      point_below_minimum: "Muss höher als %{min} sein"
       filter_name: 'Name filtern'
       filter_options:
         filter_all: 'Alle'

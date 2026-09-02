@@ -280,6 +280,7 @@ en:
       mark_as_participated: 'Mark as participated'
       remove_participated: 'Remove participation record'
       confirm_unsaved_changes: 'Unsaved changes in the grading table will be lost. Continue?'
+      point_below_minimum: "Must be higher than %{min}"
       filter_name: 'Filter by name'
       filter_options:
         filter_all: 'All'

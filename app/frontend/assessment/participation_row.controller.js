@@ -75,17 +75,22 @@ export default class extends Controller {
 
   validateNewPoint(event) {
     const input = event.currentTarget;
-    const max = parseFloat(input.max);
     const min = parseFloat(input.min);
     const value = parseFloat(input.value);
 
-    if (value > max || value < min) {
-      input.setCustomValidity(`Must be between ${min} and ${max}`);
+    if (Number.isNaN(value)) {
+      input.setCustomValidity("");
+      return true;
+    }
+
+    if (value < min) {
+      const message = input.dataset.belowMinMessage.replace("%{min}", min);
+      input.setCustomValidity(message);
       input.reportValidity();
       return false;
     }
     else {
-      input.setCustomValidity(""); // clears the error
+      input.setCustomValidity("");
       return true;
     }
   }
