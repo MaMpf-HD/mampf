@@ -88,6 +88,30 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
       expect(content).to include("#{submission.id}/refresh_token")
     end
 
+    # A code that is passed on by voice or by hand: it can be copied, and it is
+    # big enough to read off the screen when it cannot.
+    it "offers to copy the code rather than only to read it" do
+      submission = hand_in
+
+      content = render_card
+
+      expect(content).to include("data-clipboard-text-value=\"#{submission.token}\"")
+      expect(content).to include(I18n.t("submission.hub.card.copy_code"))
+      expect(content).to include("join-code")
+    end
+
+    # Renewing it locks out whoever already has it, so the question says that
+    # rather than asking whether the reader is sure.
+    it "asks before renewing the code, and says what renewing costs" do
+      hand_in
+
+      content = render_card
+
+      expect(content).to include(
+        "data-turbo-confirm=\"#{I18n.t("submission.hub.card.refresh_confirm")}\""
+      )
+    end
+
     it "offers to delete a hand-in the reader made alone" do
       hand_in
 

@@ -4,13 +4,13 @@
       <%= t("submission.hub.heading") %>
     </h3>
     <% if any? %>
-      <span class="small text-muted text-nowrap"><%= count_label %></span>
+      <span class="hub-aside text-muted text-nowrap"><%= count_label %></span>
     <% end %>
   </div>
 
   <% if any? %>
     <div class="sheet-list">
-      <div class="sheet-row sheet-head small text-muted">
+      <div class="sheet-row sheet-head field-label">
         <div><%= t("submission.hub.column_sheet") %></div>
         <div><%= t("submission.hub.column_status") %></div>
         <div class="text-end"><%= t("submission.hub.column_points") %></div>
@@ -22,7 +22,7 @@
     </div>
 
     <% if deletion_notice %>
-      <p class="small text-muted mt-3 mb-0"><%= deletion_notice %></p>
+      <p class="hub-aside text-muted mt-3 mb-0"><%= deletion_notice %></p>
     <% end %>
   <% else %>
     <p class="text-muted mb-0"><%= empty_message %></p>

@@ -3085,6 +3085,13 @@ de:
         leave: Gruppe verlassen
         delete: Löschen
         code: Beitrittscode
+        copy_code: Code kopieren
+        code_copied: Code kopiert
+        code_copy_failed: Der Code konnte nicht kopiert werden
+        refresh_code: Neuen Code erzeugen
+        refresh_confirm: >
+          Neuen Code erzeugen? Der alte gilt dann nicht mehr, und wer ihn schon
+          hat, kommt damit nicht mehr in die Gruppe.
         team_hint: >
           Du kannst allein oder zusammen mit anderen abgeben. Wer zuerst abgibt,
           bekommt einen Code zum Weitergeben.

@@ -21,7 +21,7 @@
           </div>
         <% end %>
       <% else %>
-        <p class="small text-muted mb-0"><%= missing_reason %></p>
+        <p class="hub-aside text-muted mb-0"><%= missing_reason %></p>
       <% end %>
     </div>
 
@@ -32,7 +32,7 @@
     <div>
       <div class="eyebrow mb-3"><%= t("submission.hub.fold.files_heading") %></div>
       <dl class="card-facts mt-0">
-        <dt><%= t("submission.hub.fold.handed_in_label") %></dt>
+        <dt class="field-label"><%= t("submission.hub.fold.handed_in_label") %></dt>
         <dd>
           <% if manuscript_filename %>
             <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
@@ -47,7 +47,7 @@
           <% end %>
         </dd>
 
-        <dt><%= t("submission.hub.fold.correction_label") %></dt>
+        <dt class="field-label"><%= t("submission.hub.fold.correction_label") %></dt>
         <dd>
           <% if correction_filename %>
             <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
@@ -67,6 +67,6 @@
   </div>
 
   <% if team_line %>
-    <p class="small text-muted mb-0 mt-3"><%= team_line %></p>
+    <p class="hub-aside text-muted mb-0 mt-3"><%= team_line %></p>
   <% end %>
 </div>

@@ -1,3 +1,57 @@
+/* One scale for the whole page, each step bound to a role rather than picked
+   per component. Two weights, and no step within 10 % of its neighbour - a
+   difference nobody reads as a decision reads as a mistake.
+
+   rubric   what a thing is called: eyebrows, field labels, column headers
+   aside    what is worth saying quietly: notes, times, counts
+   body     the thing itself: values, names, prose
+   section  a heading over a part of the page
+   figure   the one number the standing is about
+
+   Size, weight and colour are three axes and one of them is enough for a
+   difference: hierarchy is carried by size, weight marks only the two places
+   size cannot reach, and colour is left to say what something means. */
+:root {
+  --hub-rubric: 0.75rem;
+  --hub-aside: 0.875rem;
+  --hub-body: 1rem;
+  --hub-section: 1.3rem;
+  --hub-figure: 1.9rem;
+}
+
+/* What a thing is called. Upper case and the small size do the work; a weight
+   on top would be a third axis for one difference. */
+.eyebrow,
+.field-label,
+.standing-mark-label {
+  font-size: var(--hub-rubric);
+  font-weight: 400;
+  color: #66717c;
+}
+
+.eyebrow,
+.field-label {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Said quietly, beside something that carries the meaning. */
+.hub-aside,
+.sheet-note,
+.sheet-note-bad,
+.task-name {
+  font-size: var(--hub-aside);
+}
+
+.hub-body {
+  font-size: var(--hub-body);
+}
+
+.hub-title {
+  font-size: var(--hub-section);
+  font-weight: 600;
+}
+
 /* The pane gives the page its white ground - the standing panel is grey and
    the page background is a pattern - but not its frame: the sheet that is due
    is a card, and a card inside a card reads as two. */
@@ -25,9 +79,11 @@
   height: 100%;
 }
 
+/* The one number the standing is about. Size sets it apart; the weight is the
+   second of the two places size alone cannot carry a heading. */
 .num-total {
-  font-size: 1.9rem;
-  font-weight: 700;
+  font-size: var(--hub-figure);
+  font-weight: 600;
   line-height: 1.1;
 }
 
@@ -64,8 +120,6 @@
   position: absolute;
   top: 14px;
   transform: translateX(-50%);
-  font-size: 0.75rem;
-  color: #66717c;
   white-space: nowrap;
 }
 
@@ -94,6 +148,14 @@
   color: #b02a37;
 }
 
+/* A code somebody may end up typing out: body size at least, and spaced so an
+   l and a 1 are not the same shape at a glance. */
+.join-code {
+  font-size: var(--hub-body);
+  letter-spacing: 0.12em;
+  color: inherit;
+}
+
 /* Label and value in two columns, so the eye can run down the labels rather
    than read a sentence to find the code. */
 .card-facts {
@@ -103,8 +165,7 @@
   margin-top: 0.75rem;
 
   dt {
-    color: #66717c;
-    font-weight: 400;
+    padding-top: 0.15rem;
   }
 
   dd {
@@ -207,14 +268,6 @@ details[open] .chev {
   grid-template-columns: minmax(15rem, 1fr) minmax(15rem, 1fr);
 }
 
-.eyebrow {
-  color: #838383;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
 .task-line {
   display: flex;
   align-items: center;
@@ -231,7 +284,6 @@ details[open] .chev {
   min-width: 0;
   padding-right: 0.75rem;
   color: #66717c;
-  font-size: 0.875rem;
   overflow-wrap: anywhere;
 }
 
@@ -242,12 +294,10 @@ details[open] .chev {
 
 .sheet-note {
   color: #66717c;
-  font-size: 0.82rem;
 }
 
 .sheet-note-bad {
   color: #b02a37;
-  font-size: 0.82rem;
 }
 
 .sheet-muted,
@@ -256,9 +306,11 @@ details[open] .chev {
 }
 
 /* Badges only where no number can stand. Three colours, never green. */
+/* A pill with a ground of its own; a weight on top would say the same thing
+   twice. */
 .chip {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: var(--hub-rubric);
+  font-weight: 400;
   padding: 0.18rem 0.5rem;
   border-radius: 1rem;
   white-space: nowrap;
@@ -344,5 +396,11 @@ details[open] .chev {
      that carries the meaning. */
   .spark-wide {
     display: none;
+  }
+
+  /* Let the filename have the width rather than clipping it to five letters;
+     its size and date move to the next line. */
+  .file-pill {
+    flex-wrap: wrap;
   }
 }

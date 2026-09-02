@@ -1,5 +1,5 @@
 <section class="next-action" aria-labelledby="nothing_due_heading">
-  <h2 class="h4 mb-1" id="nothing_due_heading">
+  <h2 class="hub-title mb-1" id="nothing_due_heading">
     <%= t("submission.hub.card.nothing_due") %>
   </h2>
   <p class="mb-3"><%= next_sheet_line %></p>
@@ -21,7 +21,7 @@
       <% end %>
       <% if correction_name %>
         <%= link_to show_correction_path(latest_marked.submission),
-                    class: "small", data: { turbo: false } do %>
+                    class: "hub-aside", data: { turbo: false } do %>
           <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
           <span class="visually-hidden">
             <%= t("submission.hub.fold.correction_label") %>:

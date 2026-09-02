@@ -2,7 +2,7 @@
   <summary>
     <div class="sheet-row">
       <div>
-        <div class="<%= "fw-semibold" unless legacy? %>"><%= sheet.assignment.title %></div>
+        <div><%= sheet.assignment.title %></div>
         <% if note %>
           <div class="<%= note_class %>"><%= note %></div>
         <% end %>
@@ -10,7 +10,7 @@
 
       <div>
         <% if legacy? %>
-          <span class="small"><%= t("submission.hub.old_style") %></span>
+          <span class="hub-aside"><%= t("submission.hub.old_style") %></span>
         <% elsif chip? %>
           <%= render(SheetChipComponent.new(sheet: sheet)) %>
         <% end %>
@@ -18,7 +18,7 @@
 
       <div class="<%= points_class %>">
         <% if legacy? %>
-          <span class="small"><%= t("submission.hub.no_points") %></span>
+          <span class="hub-aside"><%= t("submission.hub.no_points") %></span>
         <% elsif number? %>
           <span class="visually-hidden"><%= points_reader_label %></span>
           <span aria-hidden="true">

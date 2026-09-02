@@ -2861,6 +2861,13 @@ en:
         leave: Leave the team
         delete: Delete
         code: Join code
+        copy_code: Copy the code
+        code_copied: Code copied
+        code_copy_failed: The code could not be copied
+        refresh_code: Get a new code
+        refresh_confirm: >
+          Get a new code? The old one stops working, and anybody you have already
+          given it to cannot join with it any more.
         team_hint: >
           You can hand in alone or together with others. Whoever hands in first
           gets a code to pass on.

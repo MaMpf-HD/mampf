@@ -45,6 +45,17 @@ module Demo
             handed_in += 1
           end
         end
+
+        recompute_performance_records!(lecture)
+      end
+
+      # `record_hand_in!` stamps with `update_all`, which is what keeps the run
+      # quick and what skips the callback behind it. The materialized record
+      # counts a sheet as awaiting marks by its `submitted_at`, so without this
+      # the standing block ends up disagreeing with the list beneath it.
+      def recompute_performance_records!(lecture)
+        service = StudentPerformance::ComputationService.new(lecture: lecture)
+        lecture.members.find_each { |member| service.compute_and_upsert_record_for(member) }
       end
 
       # The tutor is behind by the last couple of sheets, and one team in three
@@ -79,11 +90,31 @@ module Demo
         team.drop(1).each do |partner|
           UserSubmissionJoin.create!(user: partner, submission: submission)
         end
+        record_hand_in!(assignment, team, submission)
         return unless correction
 
         submission.correction = demo_manuscript_copy
         submission.accepted = correction == :accepted
         submission.save!
+      end
+
+      # What the controller does on every upload: the gradebook learns that the
+      # sheet was handed in. Without it the demo builds a state that is real but
+      # rare - a file on record with no hand-in against it, which the student's
+      # page has to flag in red - and builds it by the dozen.
+      #
+      # Only the stamp, and only where it is missing: the statuses and points
+      # were dealt beforehand and are what the demo is for.
+      def record_hand_in!(assignment, team, submission)
+        participations = assignment.assessment&.assessment_participations
+        return unless participations
+
+        handed_in_at = submission.last_modification_by_users_at
+        # rubocop:disable Rails/SkipsModelValidations
+        participations.where(user_id: team.map(&:id), submitted_at: nil)
+                      .update_all(submitted_at: handed_in_at,
+                                  updated_at: Time.current)
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       # A submission counts as late by the hour it was written, and these are
