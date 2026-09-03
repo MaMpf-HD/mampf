@@ -1,0 +1,181 @@
+/* Highlight dirty submission rows */
+.row-dirty,
+.row-dirty td {
+  background-color: #fffbeb !important;
+}
+table.table tbody tr.row-dirty,
+table.table tbody tr.row-dirty td {
+    background-color: #fffbeb !important;
+}
+
+.sticky-col {
+  position: -webkit-sticky;
+  position: sticky;
+  background-color: white;
+}
+
+.action-icon {
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+}
+
+input[type="file"] {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.task-col {
+  width: 90px;
+  min-width: 90px;
+}
+
+.grade-th {
+  font-size: 11px; 
+  text-transform: uppercase; 
+  letter-spacing: 0.04em; 
+  color: #888; 
+  font-weight: 400; 
+  padding: 10px 12px;
+}
+
+.z-20 {
+  z-index: 20 !important;
+}
+
+.z-10 {
+  z-index: 10 !important;
+}
+
+.team-col       { 
+  position: sticky; 
+  left: var(--team-left);        
+  width: 200px; min-width: 200px; max-width: 200px; 
+  z-index: 2; 
+}
+.tutorial-col   { 
+  position: sticky; 
+  left: var(--tutorial-left);     
+  width: 100px; min-width: 100px; max-width: 100px; 
+  z-index: 2; 
+}
+.status-col     { 
+  position: sticky; 
+  left: var(--status-left);       
+  width: 100px; min-width: 100px; max-width: 100px; 
+  background: white; z-index: 2; 
+}
+// then we will have the task columns, which are not sticky and scrollable zone
+.total-col      { 
+  position: sticky; 
+  right: var(--total-right);      
+  width: 100px; min-width: 100px; max-width: 100px; 
+  background: white; z-index: 2; 
+}
+.grade-col      { 
+  position: sticky; 
+  right: var(--grade-right);      
+  width: 110px; min-width: 110px; max-width: 110px;
+  background: white; z-index: 2; 
+}
+.note-col       { 
+  position: sticky; 
+  right: var(--note-right);       
+  width: 180px; min-width: 180px; max-width: 180px;
+  background: white; z-index: 2; 
+}
+.graded-by-col  { 
+  position: sticky; 
+  right: var(--graded-by-right);  
+  width: 120px; min-width: 120px; max-width: 120px;
+  background: white; z-index: 2; 
+}
+.graded-at-col  { 
+  position: sticky; 
+  right: var(--graded-at-right);  
+  width: 120px; min-width: 120px; max-width: 120px;
+  background: white; z-index: 2; 
+}
+.action-col     { 
+  position: sticky; 
+  right: var(--action-right);     
+  width: 200px; max-width: 200px; min-width: 200px;
+  background: white; z-index: 2; padding: 0.5rem; 
+}
+.correction-col { 
+  position: sticky; 
+  right: var(--correction-right); 
+  width: 200px; max-width: 200px; min-width: 200px;
+  background: white; z-index: 2; 
+}
+
+
+.table-overflow {
+  overflow-x: auto;
+  width: 100%;
+  min-height: 200px; // to ensure that filter dropdowns are not cut off when table is empty
+
+  > table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  &:not([data-overflowing]) {
+    overflow-x: hidden;
+  }
+
+}
+
+.table-wrapper[data-mode="tutor"],
+.table-wrapper[data-mode="teacher"] {
+  position: relative;
+}
+
+.table-wrapper[data-mode="tutor"]::before,
+.table-wrapper[data-mode="tutor"]::after,
+.table-wrapper[data-mode="teacher"]::before,
+.table-wrapper[data-mode="teacher"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 48px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.2s;
+}
+
+.table-wrapper[data-mode="tutor"]::before {
+  left: 300px;
+  background: linear-gradient(to right, #f8f9fa, transparent);
+  opacity: var(--fade-left, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+}
+
+.table-wrapper[data-mode="tutor"]::after {
+  right: 500px;
+  background: linear-gradient(to left, #f8f9fa, transparent);
+  opacity: var(--fade-right, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+}
+
+.table-wrapper[data-mode="teacher"]::before {
+  left: 400px;
+  background: linear-gradient(to right, #f8f9fa, transparent);
+  opacity: var(--fade-left, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+}
+
+.table-wrapper[data-mode="teacher"]::after {
+  right: 300px;
+  background: linear-gradient(to left, #f8f9fa, transparent);
+  opacity: var(--fade-right, 0);
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+}
+
+

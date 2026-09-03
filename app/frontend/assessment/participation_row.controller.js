@@ -1,7 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["input", "form", "refreshForm", "payload", "save", "totalPoints"];
+  static targets = ["input", "form", "refreshForm",
+    "taskPointsPayload", "gradePayload", "notePayload",
+    "save", "totalPoints"];
 
   connect() {
     this.originalValues = this.inputTargets.map(i => i.value);
@@ -20,7 +22,7 @@ export default class extends Controller {
     });
 
     // Set hidden input value as JSON
-    this.payloadTarget.value = JSON.stringify(newValues);
+    this.taskPointsPayloadTarget.value = JSON.stringify(newValues);
 
     // Submit the hidden form
     this.formTarget.requestSubmit();

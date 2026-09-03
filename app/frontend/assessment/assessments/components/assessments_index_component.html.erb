@@ -68,6 +68,9 @@
               <% assessables_with_assessment.each do |assessable| %>
                 <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: lecture) %>
               <% end %>
+              <% assessables_with_assessment.each do |assessable| %>
+                <!-- render assessable rows -->
+              <% end %>
             </tbody>
           </table>
         <% else %>

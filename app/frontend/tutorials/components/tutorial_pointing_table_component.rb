@@ -13,6 +13,9 @@ class TutorialPointingTableComponent < ViewComponent::Base
     elsif grading_scope.is_a?(Lecture)
       init_teacher_case
     end
+    @config = Assessment::DisplayConfigResolver.resolve(
+      assessable: @assignment, grading_scope: @grading_scope
+    )
   end
 
   def init_tutor_case
@@ -127,5 +130,18 @@ class TutorialPointingTableComponent < ViewComponent::Base
     return unless movement
 
     helpers.non_submitter_status(movement, @tutorial)
+  end
+
+  def sticky_layout
+    @sticky_layout ||= Assessment::StickyColumnLayout.new(
+      left_columns: @config.left_columns,
+      right_columns: @config.right_columns
+    )
+  end
+
+  def sticky_css_vars
+    left = sticky_layout.left_offsets.map { |k, v| "--#{k}-left:#{v}px" }
+    right = sticky_layout.right_offsets.map { |k, v| "--#{k}-right:#{v}px" }
+    (left + right).join(";")
   end
 end

@@ -206,6 +206,10 @@ en:
       rejected_heading: 'Rejected registrations'
     no_assessables_yet: 'No assessments created yet.'
     submission_settings: 'Submission Settings'
+    talk_grader:
+      assessment_not_talk: 'Assessment is not for a talk.'
+      init_participation_missing_args: 'Assessment, user, and talk must be present.'
+      grades_updated: 'Grades updated successfully.'
     task_points:
       update: 'Task points updated successfully.'
       submission_missing_tutorial: 'This submission has no tutorial assigned.'
@@ -243,10 +247,13 @@ en:
       user_not_found: 'User not found.'
       no_participation: 'Participation not found.'
       user_cannot_grade: 'The user is not authorized to grade in this scope.'
+      not_gradable: 'This assessment is not gradable.'
+      invalid_grade: 'Invalid grade value'
       invalid_request_params: 'Invalid request parameters.'
       invalid_assessable_type: 'Invalid assessable type.'
     info:
       talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
+      talks_without_assessment: "These talks don't have an assessment attached yet."
     grade_table:
       pending: 'pending'
       reviewed: 'reviewed'
@@ -283,9 +290,11 @@ en:
       point_below_minimum: "Must be higher than %{min}"
       filter_name: 'Filter by name'
       filter_options:
-        filter_all: 'All'
-        filter_pending: 'Pending'
-        filter_reviewed: 'Reviewed'
+        filter_all: "All"
+        filter_pending: "Pending"
+        filter_reviewed: "Reviewed"
+        filter_absent: "Absent"
+        filter_exempt: "Exempt"
       header_overview:
         submission:
           total: 'submissions'
@@ -300,6 +309,8 @@ en:
       no_user_for_config: 'No user for participation %{participation_id}'
       user_moved_tutorial: 'submitted in tutorial %{old_tutorial}, moved to tutorial %{new_tutorial}'
       no_tutorial: 'N/A'
+    grading_talk:
+      note_placeholder: "Add note..."
     grading_overview:
       submission_progress: 'Submissions'
       submitted: 'Submitted'
@@ -444,6 +455,15 @@ en:
     statistics_analysis: 'Statistics & Analysis'
     statistics_placeholder: 'Statistics are not yet available'
     statistics_description: 'Here you can view statistics and analysis for this exam.'
+    grade_talk_row:
+      speaker: "Speaker"
+      status: "Status"
+      grade: "Grade"
+      note: "Note"
+      graded_by: "Graded by"
+      graded_at: "Graded at"
+      pending: "Pending"
+    mark_absent: "Mark absent"
 
   activerecord:
     errors:

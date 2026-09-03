@@ -1,0 +1,132 @@
+<tr
+  id="<%= row_id %>"
+  is="turbo-frame"
+  data-id="<%= @user.id %>"
+  data-controller="grade-talk-row"
+  data-user-row-id="<%= @user.id %>"
+  data-action="dirty->talk-grading-table#rowDirty clean->talk-grading-table#rowClean"
+  data-status-filter-status="<%= status_value %>"
+  data-status-filter-name="<%= @user.tutorial_name %>"
+  data-status-filter-group-id="<%= @talk.id %>"
+>
+  <td>
+    <div class="d-flex justify-content-between">
+      <%= @user.tutorial_name %>
+
+      <i
+        class="
+          clipboardpopup bi bi-clipboard clickable
+          text-secondary clipboard-btn ms-3 clipboard-button
+        "
+        style="width: fit-content;"
+        data-clipboard-text="<%= @user.email %>"
+        data-bs-toggle="tooltip"
+        title="<%= t('buttons.copy_email_to_clipboard') %>"
+      >
+        <span class="clipboardpopuptext token-clipboard-popup">
+          <%= t('basics.emails_copied_to_clipboard') %>
+        </span>
+      </i>
+    </div>
+  </td>
+
+  <td class="text-center">
+    <% if status_label.present? %>
+      <span
+        class="<%= badge_status_participation_class %>"
+        style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
+      >
+        <%= status_label %>
+      </span>
+    <% end %>
+  </td>
+
+  <td class="text-center" style="min-width: 110px;">
+    <% if allow_grading? %>
+      <%= tag.select(
+            name: "grade",
+            class: "form-select form-select-sm mx-auto",
+            style: "min-width: 90px; width: 90px;",
+            data: { grade_talk_row_target: "gradeInput", action: "change->grade-talk-row#onFieldChanged" }
+          ) do %>
+        <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
+
+        <%= safe_join(
+              grade_options.map do |label, value|
+                tag.option(label, value: value, selected: value == grade_numeric)
+              end
+            ) %>
+      <% end %>
+    <% else %>
+      <span class="fw-semibold"><%= grade_display %></span>
+    <% end %>
+  </td>
+
+  <td style="min-width: 180px;">
+    <% if allow_grading? %>
+      <%= text_area_tag "note", @participation&.note,
+                  class: "form-control form-control-sm",
+                  placeholder: t("assessment.grading_talk.note_placeholder"),
+                  maxlength: 255,
+                  rows: 1,
+                  data: {
+                    grade_talk_row_target: "noteInput",
+                    action: "input->grade-talk-row#onFieldChanged"
+                  } %>
+    <% else %>
+      <span
+        class="text-muted small text-truncate d-inline-block"
+        style="max-width: 180px;"
+        title="<%= @participation&.note %>"
+      >
+        <%= @participation&.note.presence || "—" %>
+      </span>
+    <% end %>
+  </td>
+
+  <td class="text-muted small">
+    <%= grader_display %>
+  </td>
+
+  <td class="text-muted small">
+    <% if graded_at_relative %>
+      <span title="<%= graded_at_full %>"><%= graded_at_relative %></span>
+    <% end %>
+  </td>
+
+  <td class="text-end">
+    <div class="d-inline-flex align-items-center flex-nowrap gap-1">
+      <% if can_grade? %>
+        <%= form_with url: grade_form_url,
+                    method: :patch,
+                    data: { turbo: true, grade_talk_row_target: "form" },
+                    html: { style: "display:none;" } do %>
+          <input
+            type="hidden"
+            name="grade"
+            data-grade-talk-row-target="gradePayload"
+          >
+
+          <input
+            type="hidden"
+            name="comment"
+            data-grade-talk-row-target="notePayload"
+          >
+        <% end %>
+        <%= save_row_button %>
+
+        <%= form_with url: refresh_form_url,
+                    method: :patch,
+                    data: { turbo: true, grade_talk_row_target: "refreshForm" },
+                    html: { style: "display:none;" } do %>
+          <input
+            type="hidden"
+            name="grade"
+            data-grade-talk-row-target="gradePayload"
+          >
+        <% end %>
+        <%= refresh_row_button %>
+      <% end %>
+    </div>
+  </td>
+</tr>

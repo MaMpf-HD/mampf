@@ -12,7 +12,7 @@
   data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
 >
   <!-- Column 1: User names + copy emails + late icon -->
-  <td class="sticky-col team-col">
+  <td class="sticky-col team-col"> <%# herb:disable html-no-duplicate-attributes %>
     <div class="row">
       <div
         class="d-flex flex-column justify-content-between"
@@ -72,7 +72,7 @@
 
   <% if grading_enabled? %>
     <!-- Column 4: Status -->
-    <td class="text-center sticky-col status-col" data-mode="<%= @mode %>">
+    <td class="text-center sticky-col status-col">
       <% if @submission&.participations %>
         <% status = @submission&.participations.first&.status %>
         <span
@@ -86,22 +86,18 @@
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% for assignment_task in tasks %>
-      <td class="sticky-col task-col"> <%# herb:disable html-no-duplicate-attributes %>
+      <td class="sticky-col task-col">
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
     <% end %>
     <!-- Column 4: Total Points -->
-    <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
+    <td class="text-center sticky-col total-col">
       <span data-participation-row-target="totalPoints">0</span>
     </td>
   <% end %>
 
   <!-- Column 5: Actions buttons -->
-  <td
-    class="text-end sticky-col action-col"
-    data-mode="<%= @mode %>"
-    data-id="<%= @submission.id %>"
-  >
+  <td class="text-end sticky-col action-col" data-id="<%= @submission.id %>">
     <div class="d-inline-flex align-items-center flex-wrap justify-content-end gap-1">
       <!-- Download -->
       <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
@@ -123,7 +119,7 @@
 
       <!-- Save and refresh -->
       <% if can_grade? && grading_enabled? %>
-        <!-- Hidden form for this row to submit -->
+        <!-- Save row -->
         <%= form_with url: point_submission_tutorial_path(
           @submission, 
           grading_scope_type: @grading_scope.class.name.downcase),
@@ -133,11 +129,11 @@
           <input
             type="hidden"
             name="task_points"
-            data-participation-row-target="payload"
+            data-participation-row-target="taskPointsPayload"
           >
         <% end %>
-        <!-- Save row -->
         <%= save_row_button(allow_grading?) %>
+
         <!-- Refresh row -->
         <%= form_with url: refresh_point_submission_tutorial_path(
           @submission, 
@@ -148,10 +144,9 @@
           <input
             type="hidden"
             name="task_points"
-            data-participation-row-target="payload"
+            data-participation-row-target="taskPointsPayload"
           >
         <% end %>
-        <!-- refresh row -->
         <%= refresh_row_button(allow_grading?) %>
       <% end %>
 

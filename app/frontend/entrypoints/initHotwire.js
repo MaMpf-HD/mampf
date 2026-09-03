@@ -156,6 +156,9 @@ window.Stimulus.register("media-download-button", MediaDownloadButtonController)
 import LecturesNewFormController from "~/lectures/new/_form.controller.js";
 window.Stimulus.register("lectures-new-form", LecturesNewFormController);
 
+import GradeTalkRowController from "~/talks/grade_talk_row.controller.js";
+window.Stimulus.register("grade-talk-row", GradeTalkRowController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
