@@ -38,6 +38,24 @@ export class SubmissionsPage {
     const saveRequestPromise = this.page.waitForResponse("/submissions");
     await this.page.getByRole("button", { name: "save" }).click();
     await saveRequestPromise;
+
+    await this.page.pause();
+    await expect(this.page.getByTestId("submission-token").last()).toBeVisible();
+    const  token = (await this.page.getByTestId("submission-token").last().innerText()).trim();
+    
     await expect(this.page.getByRole("button", { name: "edit" })).toBeVisible();
+
+    return token;
+  }
+  
+  async joinSubmission(token: string) {
+    await this.page.getByRole("button", { name: "join" }).click(); // join submission button
+    await this.page.getByRole("textbox").fill(token); // fill token input field
+    await this.page.getByRole("button", { name: "join" }).click();
+    await expect(this.page.getByRole("button", { name: "leave" })).toBeVisible(); // confirmation visible
+  }
+
+  async acceptSubmissionInvite(idx: number = 0) {
+    await this.page.getByTestId(`accept-invite-${idx}`).click(); // click accept invite button
   }
 }

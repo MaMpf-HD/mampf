@@ -17,6 +17,7 @@ type MaMpfFixtures = {
   _forEachTest: Array<void>;
   student: UserFixture;
   student2: UserFixture;
+  student3: UserFixture;
   admin: UserFixture;
   teacher: UserFixture;
   tutor: UserFixture;
@@ -43,6 +44,13 @@ export const test = base.extend<MaMpfFixtures>({
 
   student2: async ({ browser }, use) => {
     const [user, page, browserContext] = await userPage(browser, "student2");
+    const fixture = new UserFixture(page, user);
+    await use(fixture);
+    await browserContext.close();
+  },
+
+  student3: async ({ browser }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "student3");
     const fixture = new UserFixture(page, user);
     await use(fixture);
     await browserContext.close();
