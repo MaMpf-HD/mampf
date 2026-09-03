@@ -15,7 +15,7 @@ class ParticipationRowComponent < ViewComponent::Base
     @user ||= @participation&.user
     @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
 
-    @config = Grading::DisplayConfigResolver.resolve(
+    @config = Assessment::DisplayConfigResolver.resolve(
       assessable: @assessable, grading_scope: @grading_scope
     )
     @mode = @config.mode
@@ -40,11 +40,11 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def show_tutorial_col?
-    @config.show_tutorial_col
+    @config.left_columns.include?(:tutorial)
   end
 
   def show_correction_col?
-    @config.show_correction_col
+    @config.right_columns.include?(:correction)
   end
 
   delegate :stimulus_controller, to: :@config

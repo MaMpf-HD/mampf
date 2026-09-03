@@ -14,75 +14,6 @@ table.table tbody tr.row-dirty td {
   background-color: white;
 }
 
-.team-col {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  left: 0px;
-  z-index: 2;
-}
-
-.status-col[data-mode="tutor"] {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  left: 200px;
-  background-color: white;
-  z-index: 2;
-}
-
-.task-col {
-  width: 90px;
-  min-width: 90px;
-}
-
-.correction-col {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  right: 0px;
-  background-color: white;
-  z-index: 2;
-}
-
-.action-col[data-mode="tutor"] {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  right: 200px;
-  background-color: white;
-  z-index: 2;
-  padding: 0.5rem;
-}
-
-.tutorial-col {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  left: 200px;
-  z-index: 2;
-}
-
-.status-col[data-mode="teacher"] {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  left: 300px;
-  background-color: white;
-  z-index: 2;
-}
-
-.action-col[data-mode="teacher"] {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  right: 0px;
-  background-color: white;
-  z-index: 2;
-
-  padding: 0.5rem;
-}
-
 .action-icon {
   align-items: center;
   justify-content: center;
@@ -94,29 +25,95 @@ table.table tbody tr.row-dirty td {
   border: none;
 }
 
-
 input[type="file"] {
   max-width: 100%;
   min-width: 0;
 }
 
-.total-col[data-mode="tutor"] {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  right: 400px;
-  background-color: white;
-  z-index: 2;
+.task-col {
+  width: 90px;
+  min-width: 90px;
 }
 
-.total-col[data-mode="teacher"] {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  right: 200px;
-  background-color: white;
-  z-index: 2;
+.grade-th {
+  font-size: 11px; 
+  text-transform: uppercase; 
+  letter-spacing: 0.04em; 
+  color: #888; 
+  font-weight: 400; 
+  padding: 10px 12px;
 }
+
+.z-20 {
+  z-index: 20 !important;
+}
+
+.z-10 {
+  z-index: 10 !important;
+}
+
+.team-col       { 
+  position: sticky; 
+  left: var(--team-left);        
+  width: 200px; min-width: 200px; max-width: 200px; 
+  z-index: 2; 
+}
+.tutorial-col   { 
+  position: sticky; 
+  left: var(--tutorial-left);     
+  width: 100px; min-width: 100px; max-width: 100px; 
+  z-index: 2; 
+}
+.status-col     { 
+  position: sticky; 
+  left: var(--status-left);       
+  width: 100px; min-width: 100px; max-width: 100px; 
+  background: white; z-index: 2; 
+}
+// then we will have the task columns, which are not sticky and scrollable zone
+.total-col      { 
+  position: sticky; 
+  right: var(--total-right);      
+  width: 100px; min-width: 100px; max-width: 100px; 
+  background: white; z-index: 2; 
+}
+.grade-col      { 
+  position: sticky; 
+  right: var(--grade-right);      
+  width: 110px; min-width: 110px; max-width: 110px;
+  background: white; z-index: 2; 
+}
+.note-col       { 
+  position: sticky; 
+  right: var(--note-right);       
+  width: 180px; min-width: 180px; max-width: 180px;
+  background: white; z-index: 2; 
+}
+.graded-by-col  { 
+  position: sticky; 
+  right: var(--graded-by-right);  
+  width: 120px; min-width: 120px; max-width: 120px;
+  background: white; z-index: 2; 
+}
+.graded-at-col  { 
+  position: sticky; 
+  right: var(--graded-at-right);  
+  width: 120px; min-width: 120px; max-width: 120px;
+  background: white; z-index: 2; 
+}
+.action-col     { 
+  position: sticky; 
+  right: var(--action-right);     
+  width: 200px; max-width: 200px; min-width: 200px;
+  background: white; z-index: 2; padding: 0.5rem; 
+}
+.correction-col { 
+  position: sticky; 
+  right: var(--correction-right); 
+  width: 200px; max-width: 200px; min-width: 200px;
+  background: white; z-index: 2; 
+}
+
 
 .table-overflow {
   overflow-x: auto;
@@ -181,19 +178,4 @@ input[type="file"] {
   height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
-.grade-th {
-  font-size: 11px; 
-  text-transform: uppercase; 
-  letter-spacing: 0.04em; 
-  color: #888; 
-  font-weight: 400; 
-  padding: 10px 12px;
-}
 
-.z-20 {
-  z-index: 20 !important;
-}
-
-.z-10 {
-  z-index: 10 !important;
-}

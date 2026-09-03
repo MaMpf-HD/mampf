@@ -9,7 +9,9 @@
   data-status-filter-status="<%= @participation.status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
   data-status-filter-name="<%= @user.tutorial_name %>"
-  <% if @talk %>data-status-filter-group-id="<%= @talk.id %>"<% end %>
+  <% if @talk %>
+    data-status-filter-group-id="<%= @talk.id %>"
+  <% end %>
 >
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
@@ -52,7 +54,7 @@
 
   <% if grading_enabled? %>
     <!-- Status -->
-    <td class="text-center sticky-col status-col" data-mode="<%= @mode %>">
+    <td class="text-center sticky-col status-col">
       <span
         class="<%= badge_status_participation_class(@participation.status) %>"
         style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
@@ -67,7 +69,7 @@
         <%= task_points_participation_cell(task, allow_grading?) %>
       <% end %>
 
-      <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
+      <td class="text-center sticky-col total-col">
         <span data-participation-row-target="totalPoints">0</span>
       </td>
     <% end %>
@@ -83,6 +85,7 @@
                 data: { grade_talk_row_target: "gradeInput", action: "change->participation-row#onFieldChanged" }
               ) do %>
             <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
+
             <%= safe_join(
                   grade_options.map { |label, value| tag.option(label, value: value, selected: value == grade_numeric) }
                 ) %>
@@ -101,7 +104,11 @@
                     rows: 1,
                     data: { grade_talk_row_target: "noteInput", action: "input->participation-row#onFieldChanged" } %>
         <% else %>
-          <span class="text-muted small text-truncate d-inline-block" style="max-width: 180px;" title="<%= @participation&.note %>">
+          <span
+            class="text-muted small text-truncate d-inline-block"
+            style="max-width: 180px;"
+            title="<%= @participation&.note %>"
+          >
             <%= @participation&.note.presence || "—" %>
           </span>
         <% end %>
@@ -118,25 +125,48 @@
   <% end %>
 
   <!-- Actions -->
-  <td class="text-end sticky-col action-col" data-mode="<%= @mode %>">
+  <td class="text-end sticky-col action-col">
     <div class="d-inline-flex align-items-center flex-wrap justify-content-end gap-1">
       <% if can_grade? && grading_enabled? %>
-          <%= form_with url: @save_url, method: :patch,
+        <%= form_with url: @save_url, method: :patch,
                       data: { turbo: true, participation_row_target: "form" },
                       html: { style: "display:none;" } do %>
-            <input type="hidden" name="task_points" data-participation-row-target="taskPointsPayload">
-            <input type="hidden" name="grade" data-participation-row-target="gradePayload">
-            <input type="hidden" name="comment" data-participation-row-target="notePayload">
-          <% end %>
-          <%= save_row_button(allow_grading?) %>
+          <input
+            type="hidden"
+            name="task_points"
+            data-participation-row-target="taskPointsPayload"
+          >
 
-          <%= form_with url: @refresh_url, method: :patch,
+          <input
+            type="hidden"
+            name="grade"
+            data-participation-row-target="gradePayload"
+          >
+
+          <input
+            type="hidden"
+            name="comment"
+            data-participation-row-target="notePayload"
+          >
+        <% end %>
+        <%= save_row_button(allow_grading?) %>
+
+        <%= form_with url: @refresh_url, method: :patch,
                       data: { turbo: true, participation_row_target: "refreshForm" },
                       html: { style: "display:none;" } do %>
-            <input type="hidden" name="task_points" data-participation-row-target="taskPointsPayload">
-            <input type="hidden" name="grade" data-participation-row-target="gradePayload">
-          <% end %>
-          <%= refresh_row_button(allow_grading?) %>
+          <input
+            type="hidden"
+            name="task_points"
+            data-participation-row-target="taskPointsPayload"
+          >
+
+          <input
+            type="hidden"
+            name="grade"
+            data-participation-row-target="gradePayload"
+          >
+        <% end %>
+        <%= refresh_row_button(allow_grading?) %>
       <% end %>
     </div>
   </td>

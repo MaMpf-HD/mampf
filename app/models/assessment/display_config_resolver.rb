@@ -2,8 +2,9 @@ module Assessment
   GradingDisplayConfig = Struct.new(
     :body_mode,
     :mode,
-    :show_tutorial_col,
-    :show_correction_col,
+    :left_columns,
+    :right_columns,
+    :stimulus_controller,
     keyword_init: true
   )
 
@@ -28,8 +29,9 @@ module Assessment
       GradingDisplayConfig.new(
         body_mode: :tasks,
         mode: tutor ? "tutor" : "teacher",
-        show_tutorial_col: !tutor,
-        show_correction_col: tutor
+        left_columns: tutor ? [:team, :status] : [:team, :tutorial, :status],
+        right_columns: tutor ? [:total, :action, :correction] : [:total, :action],
+        stimulus_controller: "participation-row"
       )
     end
     private_class_method :resolve_assignment
@@ -37,9 +39,10 @@ module Assessment
     def self.resolve_talk(_grading_scope)
       GradingDisplayConfig.new(
         body_mode: :single_grade,
-        mode: nil,
-        show_tutorial_col: false,
-        show_correction_col: false
+        mode: "talk",
+        left_columns: [:team, :status],
+        right_columns: [:grade, :note, :graded_at, :graded_by, :note, :action],
+        stimulus_controller: "grade-talk-row"
       )
     end
     private_class_method :resolve_talk
