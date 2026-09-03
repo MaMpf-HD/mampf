@@ -9,6 +9,7 @@
   data-status-filter-status="<%= @participation.status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
   data-status-filter-name="<%= @user.tutorial_name %>"
+  <% if @talk %>data-status-filter-group-id="<%= @talk.id %>"<% end %>
 >
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
@@ -42,15 +43,15 @@
     </div>
   </td>
 
-  <!-- Column 1.5: Tutorial -->
-  <% if @mode == "teacher" %>
+  <!-- Column 1.5: Tutorial (assignment/teacher scope only) -->
+  <% if show_tutorial_col? %>
     <td class="text-center sticky-col tutorial-col">
-      <span><%= @participation.tutorial&.title %></span>
+      <span><%= @participation&.tutorial&.title %></span>
     </td>
   <% end %>
 
   <% if grading_enabled? %>
-    <!-- Column 2: Status -->
+    <!-- Status -->
     <td class="text-center sticky-col status-col" data-mode="<%= @mode %>">
       <span
         class="<%= badge_status_participation_class(@participation.status) %>"
@@ -59,54 +60,88 @@
         <%= @participation.status %>
       </span>
     </td>
-    <!-- batch of columns 3: grade zone -->
-    <!-- support point by task -->
-    <% tasks.each do |task| %>
-      <%= task_points_participation_cell(task, allow_grading?) %>
+
+    <% if tasks? %>
+      <!-- Task points columns -->
+      <% tasks.each do |task| %>
+        <%= task_points_participation_cell(task, allow_grading?) %>
+      <% end %>
+
+      <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
+        <span data-participation-row-target="totalPoints">0</span>
+      </td>
     <% end %>
-    <!-- Column 4: Total Points -->
-    <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
-      <span data-participation-row-target="totalPoints">0</span>
-    </td>
+
+    <% if grade? %>
+      <!-- Single grade column -->
+      <td class="text-center" style="min-width: 110px;">
+        <% if allow_grading? %>
+          <%= tag.select(
+                name: "grade",
+                class: "form-select form-select-sm mx-auto",
+                style: "min-width: 90px; width: 90px;",
+                data: { grade_talk_row_target: "gradeInput", action: "change->participation-row#onFieldChanged" }
+              ) do %>
+            <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
+            <%= safe_join(
+                  grade_options.map { |label, value| tag.option(label, value: value, selected: value == grade_numeric) }
+                ) %>
+          <% end %>
+        <% else %>
+          <span class="fw-semibold"><%= grade_display %></span>
+        <% end %>
+      </td>
+
+      <td style="min-width: 180px;">
+        <% if allow_grading? %>
+          <%= text_area_tag "note", @participation&.note,
+                    class: "form-control form-control-sm",
+                    placeholder: t("assessment.grading_talk.note_placeholder"),
+                    maxlength: 255,
+                    rows: 1,
+                    data: { grade_talk_row_target: "noteInput", action: "input->participation-row#onFieldChanged" } %>
+        <% else %>
+          <span class="text-muted small text-truncate d-inline-block" style="max-width: 180px;" title="<%= @participation&.note %>">
+            <%= @participation&.note.presence || "—" %>
+          </span>
+        <% end %>
+      </td>
+
+      <td class="text-muted small"><%= grader_display %></td>
+
+      <td class="text-muted small">
+        <% if graded_at_relative %>
+          <span title="<%= graded_at_full %>"><%= graded_at_relative %></span>
+        <% end %>
+      </td>
+    <% end %>
   <% end %>
 
-  <!-- Column 5: Actions buttons -->
+  <!-- Actions -->
   <td class="text-end sticky-col action-col" data-mode="<%= @mode %>">
     <div class="d-inline-flex align-items-center flex-wrap justify-content-end gap-1">
-      <!-- Save and refresh -->
-      <% if can_grade? && grading_enabled? && @participation %>
-        <!-- Hidden form for this row to submit -->
-        <%= form_with url: @save_url,
-                    method: :patch,
-                    data: { turbo: true, participation_row_target: "form" },
-                    html: { style: "display:none;" } do %>
-          <input
-            type="hidden"
-            name="task_points"
-            data-participation-row-target="payload"
-          >
-        <% end %>
-        <!-- Save row -->
-        <%= save_row_button(allow_grading?) %>
-        <!-- Refresh row -->
-        <%= form_with url: @refresh_url,
-                    method: :patch,
-                    data: { turbo: true, participation_row_target: "refreshForm" },
-                    html: { style: "display:none;" } do %>
-          <input
-            type="hidden"
-            name="task_points"
-            data-participation-row-target="payload"
-          >
-        <% end %>
-        <!-- refresh row -->
-        <%= refresh_row_button(allow_grading?) %>
+      <% if can_grade? && grading_enabled? %>
+          <%= form_with url: @save_url, method: :patch,
+                      data: { turbo: true, participation_row_target: "form" },
+                      html: { style: "display:none;" } do %>
+            <input type="hidden" name="task_points" data-participation-row-target="taskPointsPayload">
+            <input type="hidden" name="grade" data-participation-row-target="gradePayload">
+            <input type="hidden" name="comment" data-participation-row-target="notePayload">
+          <% end %>
+          <%= save_row_button(allow_grading?) %>
+
+          <%= form_with url: @refresh_url, method: :patch,
+                      data: { turbo: true, participation_row_target: "refreshForm" },
+                      html: { style: "display:none;" } do %>
+            <input type="hidden" name="task_points" data-participation-row-target="taskPointsPayload">
+            <input type="hidden" name="grade" data-participation-row-target="gradePayload">
+          <% end %>
+          <%= refresh_row_button(allow_grading?) %>
       <% end %>
     </div>
   </td>
 
-  <!-- empty correction column -->
-  <% if @mode == "tutor" %>
+  <% if show_correction_col? %>
     <td class="sticky-col correction-col"></td>
   <% end %>
 </tr>

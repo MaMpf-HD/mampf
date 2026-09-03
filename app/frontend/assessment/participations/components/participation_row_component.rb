@@ -12,32 +12,47 @@ class ParticipationRowComponent < ViewComponent::Base
     @save_url = save_url
     @refresh_url = refresh_url
     @grading_scope = grading_scope
-    check_grading_scope
     @user ||= @participation&.user
     @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
+
+    @config = Grading::DisplayConfigResolver.resolve(
+      assessable: @assessable, grading_scope: @grading_scope
+    )
+    @mode = @config.mode
 
     return unless @user.nil?
 
     raise(MissingUserError,
           I18n.t("assessment.grading_tutorial.no_user_for_config",
-                 participation_id: @participation.id))
+                 participation_id: @participation&.id))
   end
 
-  def check_grading_scope
-    case @grading_scope
-    when Tutorial
-      @mode = "tutor"
-    when Lecture
-      @mode = "teacher"
-    end
+  def tasks?
+    @config.body_mode == :tasks
   end
 
-  # Determines if grading is enabled for the current assignment
+  def grade?
+    @config.body_mode == :single_grade
+  end
+
+  def single_grade?
+    @config.body_mode == :single_grade
+  end
+
+  def show_tutorial_col?
+    @config.show_tutorial_col
+  end
+
+  def show_correction_col?
+    @config.show_correction_col
+  end
+
+  delegate :stimulus_controller, to: :@config
+
   def grading_enabled?
     @assessable.assessable?
   end
 
-  # Determines if grading is allowed for the current assignment
   def allow_grading?
     @assessable.grading_open?
   end
@@ -98,14 +113,53 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
+  # ---- single_grade mode helpers (ported from GradeTalkRowComponent) ----
+
+  def status_value
+    @participation&.status || :pending
+  end
+
+  def grade_numeric
+    @participation&.grade_numeric
+  end
+
+  def grade_display
+    return "—" if grade_numeric.blank?
+
+    I18n.t("assessment.grades.#{grade_numeric}", default: grade_numeric)
+  end
+
+  def grade_options
+    Assessment::GradeEntryService::VALID_GRADES_NUMERIC.map do |g|
+      [I18n.t("assessment.grades.#{g}", default: g), g]
+    end
+  end
+
+  def grader_display
+    @participation&.grader&.tutorial_name
+  end
+
+  def graded_at_relative
+    return nil unless @participation&.graded_at
+
+    helpers.time_ago_in_words(@participation.graded_at)
+  end
+
+  def graded_at_full
+    return nil unless @participation&.graded_at
+
+    I18n.l(@participation.graded_at, format: :short)
+  end
+
+  # ---- shared buttons ----
+
   def save_row_button(allow_grading)
     class_name = "btn btn-sm btn-success d-inline-flex align-items-center " \
                  "justify-content-center text-nowrap px-2 py-1 lh-1"
-
     tag.button(type: "button",
                class: class_name,
                data: { bs_toggle: "tooltip",
-                       participation_row_target: "save",
+                       "participation-row_target": "save",
                        action: "click->participation-row#saveRow" },
                title: helpers.t("buttons.save"),
                disabled: !allow_grading || !grading_enabled? || !can_grade?) do
@@ -116,7 +170,6 @@ class ParticipationRowComponent < ViewComponent::Base
   def refresh_row_button(allow_grading)
     class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
                  "justify-content-center text-nowrap px-2 py-1 lh-1"
-
     tag.button(type: "button",
                class: class_name,
                data: { bs_toggle: "tooltip", action: "click->participation-row#refreshRow" },
