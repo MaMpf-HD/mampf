@@ -12,6 +12,16 @@ export class SubmissionsPage {
     this.link = `/lectures/${lectureId}/submissions`;
   }
 
+  async selectInviteeInTomSelect(page: Page, containerSelector: string, name: string) {
+    const container = page.getByTestId(containerSelector);
+    const input = container.locator("input:not([type='hidden'])").first();
+
+    await input.click();
+    await input.fill(name);
+
+    await page.locator(".ts-dropdown .option", { hasText: name }).first().click();
+  }
+
   async goto() {
     await this.page.goto(this.link);
   }
@@ -31,8 +41,13 @@ export class SubmissionsPage {
     await expect(this.page.getByText(fileName)).toBeVisible();
   }
 
-  async createSubmission() {
+  async createSubmission(inviteeName?: string) {
     await this.page.getByRole("button", { name: "create" }).click();
+
+    if (inviteeName) {
+      await this.selectInviteeInTomSelect(this.page, "submission-invites", inviteeName);
+    }
+
     await this.uploadSubmission();
 
     const saveRequestPromise = this.page.waitForResponse("/submissions");
@@ -41,14 +56,15 @@ export class SubmissionsPage {
 
     await this.page.pause();
     await expect(this.page.getByTestId("submission-token").last()).toBeVisible();
-    const  token = (await this.page.getByTestId("submission-token").last().innerText()).trim();
-    
+    const token = (await this.page.getByTestId("submission-token").last().innerText()).trim();
+
     await expect(this.page.getByRole("button", { name: "edit" })).toBeVisible();
 
     return token;
   }
-  
+
   async joinSubmission(token: string) {
+    await this.page.pause();
     await this.page.getByRole("button", { name: "join" }).click(); // join submission button
     await this.page.getByRole("textbox").fill(token); // fill token input field
     await this.page.getByRole("button", { name: "join" }).click();
@@ -56,6 +72,12 @@ export class SubmissionsPage {
   }
 
   async acceptSubmissionInvite(idx: number = 0) {
+    console.log("Third assignment, joiner clicks on accept invite.");
     await this.page.getByTestId(`accept-invite-${idx}`).click(); // click accept invite button
   }
+
+  currentSubmissionTeam() {
+    return this.page.getByTestId("current-submissions").getByTestId("submission-team");
+  }
+
 }

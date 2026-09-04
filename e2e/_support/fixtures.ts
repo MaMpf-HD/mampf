@@ -2,6 +2,7 @@ import { test as base, Page } from "@playwright/test";
 import { User, userPage } from "./auth";
 import { callBackend } from "./backend";
 import { FactoryBot } from "./factorybot";
+import { TimeCop } from "./timecop";  
 
 class UserFixture {
   page: Page;
@@ -22,6 +23,7 @@ type MaMpfFixtures = {
   teacher: UserFixture;
   tutor: UserFixture;
   factory: FactoryBot;
+  timeCop: TimeCop;
 };
 
 export * from "@playwright/test";
@@ -79,5 +81,11 @@ export const test = base.extend<MaMpfFixtures>({
 
   factory: async ({ request }, use) => {
     await use(new FactoryBot(request));
+  },
+
+  timeCop: async ({ request }, use) => {
+    const helper = new TimeCop(request);
+    await use(helper);
+    await helper.reset();
   },
 });

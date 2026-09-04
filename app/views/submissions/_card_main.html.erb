@@ -173,7 +173,8 @@
                         remote: true,
                         role: :button,
                         data: { confirm: t('confirmation.generic'),
-                                color: 'btn-outline-danger' } %>
+                                color: 'btn-outline-danger',
+                                testid: "submission-delete" } %>
           <% else %>
             <%= link_to t('buttons.leave'),
                         leave_submission_path(submission),
