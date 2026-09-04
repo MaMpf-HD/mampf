@@ -72,7 +72,7 @@ export class SubmissionsPage {
   }
 
   async acceptSubmissionInvite(idx: number = 0) {
-    await this.page.getByTestId(`accept-invite-${idx}`).click(); // click accept invite button
+    await this.page.getByTestId(`accept-invite-${idx}`).click();
   }
 
   async acceptSubmissionInviteFrom(inviterName: string) {
@@ -80,8 +80,14 @@ export class SubmissionsPage {
     await inviteBlock.getByRole("button", { name: "accept" }).click();
   }
 
+  async acceptTextFrom(inviterName: string) {
+    const inviteBlock = this.page.locator(".alert", { hasText: inviterName });
+    // if it won't work we try something with this.page.getByTestID("accept-invite")
+  }
+
   currentSubmissionTeam() {
     return this.page.getByTestId("current-submissions").getByTestId("submission-team");
   }
+
 
 }
