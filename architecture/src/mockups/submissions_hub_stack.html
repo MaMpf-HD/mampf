@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<!--
+  DESIGN C of three for the student submissions hub (/lectures/:id/submissions).
+  Sibling drafts: submissions_hub_zones.html, submissions_hub_ledger.html
+
+  ONE CARD PER SHEET, newest first, on a timeline. A slim sticky bar carries the
+  standing. The sheet is the only unit; there is no separate "now" zone and no
+  separate history - the sheet that is due is simply the top card, open.
+
+  Good for: one layout at every width, so the phone gets the real page rather
+    than a fallback; every sheet answers all three questions where it stands,
+    and a team that changes from sheet to sheet is natural rather than awkward.
+  Breaks when: you want to compare sheets - "where am I losing points" needs
+    twelve cards scrolled past, and the sticky bar has to carry the whole
+    standing on its own, so it grows until it is a zone after all.
+  Costs: the cheapest to build (one partial, rendered n times, no second layout)
+    but the most expensive to keep honest, because every state has to look right
+    in the same card.
+
+  All figures are from the development database (demo:setup_on_seed), lecture 1,
+  student1@mampf.edu, 30 Aug 2026.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignments — (V) Lineare Algebra 2 (Design C: stack)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    body { background-color: #f2f3f5; }
+    .mock-note { border-left: 4px solid #6c757d; background: #fff; }
+    .viewport-label { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase;
+                      color: #6c757d; border-bottom: 1px solid #dee2e6; }
+    .phone { width: 390px; border: 10px solid #2b2b2b; border-radius: 30px;
+             overflow: hidden; background: #f2f3f5; }
+    .phone-body { height: 760px; overflow-y: auto; }
+
+    .chip { font-size: .72rem; font-weight: 600; padding: .18rem .5rem;
+            border-radius: 1rem; white-space: nowrap; }
+    .chip-wait { background: #e9ecef; color: #495057; }
+    .chip-act  { background: #fff3cd; color: #7a5b00; }
+    .chip-lost { background: #f8d7da; color: #842029; }
+
+    .points { font-variant-numeric: tabular-nums; }
+    .bar { height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: #6c8ebf; }
+    .bar-thin { height: 3px; }
+    .threshold-track { position: relative; }
+    .threshold-mark { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #212529; }
+
+    /* the sticky standing bar - the only thing that is not a sheet */
+    .standing { background: #fff; border-bottom: 1px solid #dee2e6; }
+    .standing .bar { max-width: 260px; }
+
+    /* the timeline spine, wide only */
+    .spine { position: relative; padding-left: 5.5rem; }
+    .spine::before { content: ""; position: absolute; left: 4.25rem; top: .5rem; bottom: 0;
+                     width: 2px; background: #dee2e6; }
+    .spine-item { position: relative; }
+    .spine-date { position: absolute; left: -5.5rem; width: 4rem; text-align: right;
+                  font-size: .75rem; color: #6c757d; padding-top: .9rem; }
+    .spine-dot { position: absolute; left: -1.5rem; top: 1.15rem; width: 10px; height: 10px;
+                 border-radius: 50%; background: #adb5bd; border: 2px solid #f2f3f5; }
+    .spine-dot.now { background: #6c8ebf; width: 14px; height: 14px; left: -1.63rem; }
+    .spine-dot.lost { background: #dc3545; }
+
+    .sheet-card { border: 1px solid #dee2e6; }
+    .sheet-card.now { border: 2px solid #6c8ebf; }
+    .sheet-line { cursor: pointer; }
+    .sheet-line:hover { background: #fafbfc; }
+    .mini-cells { display: flex; gap: 6px; }
+    .mini-cell { flex: 1 1 0; text-align: center; font-size: .72rem; }
+    .muted-card { opacity: .65; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1"><i class="bi bi-mortarboard-fill me-2"></i>MaMpf</span>
+  </div>
+</nav>
+
+<div class="container my-4" style="max-width: 1160px;">
+
+  <div class="mock-note p-3 mb-4 shadow-sm">
+    <div class="fw-bold mb-1">Design C — one card per sheet</div>
+    <div class="small text-muted">
+      The same page at every width; only the timeline spine is dropped on the phone.
+      Real data: lecture 1, <code>student1@mampf.edu</code>, 30 Aug 2026.
+    </div>
+  </div>
+
+  <!-- ============================ WIDE ============================ -->
+  <div class="viewport-label mb-3 pb-1">Wide — desktop, ≥ 992 px</div>
+
+  <div class="card shadow-sm mb-4">
+    <!-- the sticky standing bar -->
+    <div class="standing px-4 py-3">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+          <div class="fw-bold">Assignments — (V) Lineare Algebra 2</div>
+          <div class="text-muted small">SS 2026 · Tutorial Mo 14–16 (Dr. Tutor)</div>
+        </div>
+        <div>
+          <div class="d-flex align-items-baseline gap-2">
+            <span class="fw-bold fs-5 points">32.5</span>
+            <span class="text-muted small points">of 176 points</span>
+          </div>
+          <div class="threshold-track mt-1">
+            <div class="bar"><span style="width:18.5%"></span></div>
+            <div class="threshold-mark" style="left:50%"></div>
+          </div>
+        </div>
+        <div class="text-end">
+          <span class="chip chip-lost"><i class="bi bi-x-circle me-1"></i>Exam admission out of reach</span>
+          <div class="small text-muted mt-1">
+            88 needed, 48.5 still possible · talk not passed
+            <a href="#" class="ms-1">why</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body bg-body-tertiary p-4">
+      <div class="spine" style="max-width: 820px;">
+
+        <!-- the sheet that is due: the top card, open -->
+        <div class="spine-item mb-3">
+          <div class="spine-date">Sep 3<br><span class="text-muted">19:00</span></div>
+          <div class="spine-dot now"></div>
+          <div class="card sheet-card now shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <span class="fw-bold">Blatt 6</span>
+                  <div class="small text-muted">due Thu, Sep 3, 2026, 19:00 — in 4 days · PDF</div>
+                </div>
+                <span class="chip chip-wait"><i class="bi bi-check2 me-1"></i>Handed in</span>
+              </div>
+
+              <div class="d-flex align-items-center py-2 border-top border-bottom mb-3">
+                <i class="bi bi-file-earmark-pdf text-danger fs-4 me-3"></i>
+                <div class="flex-grow-1">
+                  <div class="small fw-semibold">blatt6.pdf</div>
+                  <div class="text-muted small">1.2 MB · uploaded Aug 30, 14:12 by you</div>
+                </div>
+                <a href="#" class="btn btn-sm btn-outline-secondary">Open</a>
+              </div>
+
+              <div class="row small g-2 mb-3">
+                <div class="col-3 text-muted">Team</div>
+                <div class="col-9">you and <strong>student2</strong> · join code <code>7F3K2</code>
+                  <i class="bi bi-clipboard ms-1 text-secondary"></i></div>
+                <div class="col-3 text-muted">Points</div>
+                <div class="col-9 text-muted">recorded after the deadline, once your tutor has marked it</div>
+              </div>
+
+              <div class="d-flex gap-2">
+                <a href="#" class="btn btn-primary btn-sm"><i class="bi bi-upload me-1"></i>Replace file</a>
+                <a href="#" class="btn btn-outline-secondary btn-sm">Invite</a>
+                <a href="#" class="btn btn-outline-danger btn-sm">Leave team</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- waiting -->
+        <div class="spine-item mb-3">
+          <div class="spine-date">Aug 27</div>
+          <div class="spine-dot"></div>
+          <div class="card sheet-card shadow-sm">
+            <div class="card-body py-3 sheet-line">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="fw-semibold">Homework 10</span>
+                  <div class="small text-muted">handed in Aug 26, 22:27 · you and student2</div>
+                </div>
+                <div class="text-end">
+                  <span class="chip chip-wait">Waiting to be marked</span>
+                  <div class="small text-muted mt-1">16 points at stake</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- missed -->
+        <div class="spine-item mb-3">
+          <div class="spine-date">Aug 23</div>
+          <div class="spine-dot lost"></div>
+          <div class="card sheet-card shadow-sm">
+            <div class="card-body py-3 sheet-line">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="fw-semibold">Homework 9</span>
+                  <div class="small text-muted">nothing arrived by the deadline</div>
+                </div>
+                <div class="text-end">
+                  <span class="points fw-bold text-danger">0</span>
+                  <span class="text-muted points"> / 16</span>
+                  <div><span class="chip chip-lost">Not handed in</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- marked, open -->
+        <div class="spine-item mb-3">
+          <div class="spine-date">Aug 16</div>
+          <div class="spine-dot"></div>
+          <div class="card sheet-card shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3 sheet-line">
+                <div>
+                  <span class="fw-semibold">Homework 8</span>
+                  <div class="small text-muted">marked Aug 16 by Dr. Tutor · you and student2</div>
+                </div>
+                <div class="text-end">
+                  <span class="points fs-5 fw-bold">6.5</span>
+                  <span class="text-muted points"> / 16</span>
+                </div>
+              </div>
+
+              <div class="mini-cells mb-3">
+                <div class="mini-cell">
+                  <div class="text-muted">Problem 1</div>
+                  <div class="bar my-1"><span style="width:37.5%"></span></div>
+                  <div class="points">1.5 <span class="text-muted">/ 4</span></div>
+                </div>
+                <div class="mini-cell">
+                  <div class="text-muted">Problem 2</div>
+                  <div class="bar my-1"><span style="width:50%"></span></div>
+                  <div class="points">2 <span class="text-muted">/ 4</span></div>
+                </div>
+                <div class="mini-cell">
+                  <div class="text-muted">Problem 3</div>
+                  <div class="bar my-1"><span style="width:25%"></span></div>
+                  <div class="points">1 <span class="text-muted">/ 4</span></div>
+                </div>
+                <div class="mini-cell">
+                  <div class="text-muted">Problem 4</div>
+                  <div class="bar my-1"><span style="width:50%"></span></div>
+                  <div class="points">2 <span class="text-muted">/ 4</span></div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                <span class="small text-muted">
+                  Handed in together with student2 — these 6.5 points are yours.
+                </span>
+                <span>
+                  <a href="#" class="badge text-bg-secondary text-decoration-none">Submission ↓</a>
+                  <a href="#" class="badge text-bg-secondary text-decoration-none">Correction ↓</a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- collapsed one-liners -->
+        <div class="spine-item mb-3">
+          <div class="spine-date">Aug 9</div>
+          <div class="spine-dot"></div>
+          <div class="card sheet-card shadow-sm">
+            <div class="card-body py-2 sheet-line">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="fw-semibold">Homework 7</span>
+                  <span class="chip chip-act ms-2">Late — accepted</span>
+                </div>
+                <div>
+                  <span class="points fw-semibold">4.5</span><span class="text-muted points"> / 20</span>
+                  <i class="bi bi-chevron-down text-muted ms-2"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spine-item mb-3">
+          <div class="spine-date">Aug 2</div>
+          <div class="spine-dot"></div>
+          <div class="card sheet-card shadow-sm">
+            <div class="card-body py-2 sheet-line">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">Homework 6</span>
+                <div>
+                  <span class="points fw-semibold">3.5</span><span class="text-muted points"> / 16</span>
+                  <i class="bi bi-chevron-down text-muted ms-2"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spine-item mb-3">
+          <div class="spine-date">Jul 26</div>
+          <div class="spine-dot"></div>
+          <div class="card sheet-card shadow-sm">
+            <div class="card-body py-2 sheet-line">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">Homework 5</span>
+                <div>
+                  <span class="points fw-semibold">6.5</span><span class="text-muted points"> / 20</span>
+                  <i class="bi bi-chevron-down text-muted ms-2"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- the awkward one -->
+        <div class="spine-item mb-3">
+          <div class="spine-date">Jun 28</div>
+          <div class="spine-dot lost"></div>
+          <div class="card sheet-card shadow-sm">
+            <div class="card-body py-3 sheet-line">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <span class="fw-semibold">Homework 1</span>
+                  <div class="small text-danger">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Your file is here, but the sheet is recorded as not handed in. Ask your tutor.
+                  </div>
+                </div>
+                <div class="text-end">
+                  <span class="points fw-bold text-danger">0</span><span class="text-muted points"> / 20</span>
+                  <div><span class="chip chip-lost">Not handed in</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mb-3">
+          <button class="btn btn-sm btn-outline-secondary">Show 3 earlier sheets</button>
+        </div>
+
+        <!-- old-style sheets -->
+        <div class="spine-item">
+          <div class="spine-date">May 9</div>
+          <div class="spine-dot"></div>
+          <div class="card sheet-card muted-card">
+            <div class="card-body py-2 sheet-line">
+              <div class="d-flex justify-content-between align-items-center">
+                <span>Blatt 5</span>
+                <span class="small text-muted">no points on this sheet</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="small text-muted mt-4" style="padding-left: 5.5rem;">
+        Submitted files and corrections are deleted on Oct 15, 2026.
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ NARROW ============================ -->
+  <div class="viewport-label mb-3 pb-1">Narrow — phone, 390 px (same cards, spine dropped)</div>
+
+  <div class="phone shadow mb-5">
+    <div class="phone-body">
+
+      <div class="standing p-3 position-sticky top-0" style="z-index:2">
+        <div class="d-flex justify-content-between align-items-baseline">
+          <div>
+            <span class="fw-bold fs-5 points">32.5</span>
+            <span class="text-muted small points"> of 176</span>
+          </div>
+          <span class="chip chip-lost">Out of reach</span>
+        </div>
+        <div class="threshold-track mt-1">
+          <div class="bar" style="max-width:none"><span style="width:18.5%"></span></div>
+          <div class="threshold-mark" style="left:50%"></div>
+        </div>
+        <div class="text-muted mt-1" style="font-size:.72rem">88 needed · talk not passed · <a href="#">why</a></div>
+      </div>
+
+      <div class="p-3">
+
+        <div class="card sheet-card now shadow-sm mb-3">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-1">
+              <span class="fw-bold">Blatt 6</span>
+              <span class="chip chip-wait">Handed in</span>
+            </div>
+            <div class="small text-muted mb-3">due Thu, Sep 3, 19:00 — in 4 days</div>
+
+            <div class="d-flex align-items-center py-2 border-top border-bottom mb-3">
+              <i class="bi bi-file-earmark-pdf text-danger fs-4 me-2"></i>
+              <div class="flex-grow-1" style="min-width:0">
+                <div class="small fw-semibold text-truncate">blatt6.pdf</div>
+                <div class="text-muted" style="font-size:.72rem">1.2 MB · Aug 30, 14:12</div>
+              </div>
+            </div>
+
+            <div class="small text-muted mb-3">Team: you and <strong>student2</strong> · code <code>7F3K2</code></div>
+
+            <div class="d-grid gap-2">
+              <a href="#" class="btn btn-primary btn-sm"><i class="bi bi-upload me-1"></i>Replace file</a>
+              <div class="d-flex gap-2">
+                <a href="#" class="btn btn-outline-secondary btn-sm flex-fill">Invite</a>
+                <a href="#" class="btn btn-outline-danger btn-sm flex-fill">Leave</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card sheet-card shadow-sm mb-3">
+          <div class="card-body py-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <span class="fw-semibold small">Homework 10</span>
+                <div class="text-muted" style="font-size:.72rem">Aug 27 · handed in Aug 26</div>
+              </div>
+              <span class="chip chip-wait">Waiting</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card sheet-card shadow-sm mb-3">
+          <div class="card-body py-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <span class="fw-semibold small">Homework 9</span>
+                <div class="text-muted" style="font-size:.72rem">Aug 23</div>
+              </div>
+              <div class="text-end">
+                <span class="points fw-bold text-danger">0</span><span class="text-muted points small"> / 16</span>
+                <div><span class="chip chip-lost">Not handed in</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card sheet-card shadow-sm mb-3">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <span class="fw-semibold small">Homework 8</span>
+                <div class="text-muted" style="font-size:.72rem">marked Aug 16 · you and student2</div>
+              </div>
+              <div class="text-end">
+                <span class="points fw-bold">6.5</span><span class="text-muted points small"> / 16</span>
+              </div>
+            </div>
+            <div class="mini-cells mb-2">
+              <div class="mini-cell">P1<div class="bar bar-thin my-1"><span style="width:37.5%"></span></div>1.5</div>
+              <div class="mini-cell">P2<div class="bar bar-thin my-1"><span style="width:50%"></span></div>2</div>
+              <div class="mini-cell">P3<div class="bar bar-thin my-1"><span style="width:25%"></span></div>1</div>
+              <div class="mini-cell">P4<div class="bar bar-thin my-1"><span style="width:50%"></span></div>2</div>
+            </div>
+            <div class="border-top pt-2">
+              <a href="#" class="badge text-bg-secondary text-decoration-none">Submission ↓</a>
+              <a href="#" class="badge text-bg-secondary text-decoration-none">Correction ↓</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card sheet-card shadow-sm mb-3">
+          <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="fw-semibold small">Homework 7</span>
+                <span class="chip chip-act ms-1">Late</span>
+              </div>
+              <div>
+                <span class="points fw-semibold">4.5</span><span class="text-muted points small"> / 20</span>
+                <i class="bi bi-chevron-down text-muted ms-1"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card sheet-card shadow-sm mb-3">
+          <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-semibold small">Homework 6</span>
+              <div>
+                <span class="points fw-semibold">3.5</span><span class="text-muted points small"> / 16</span>
+                <i class="bi bi-chevron-down text-muted ms-1"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-sm btn-outline-secondary w-100">Show 6 earlier sheets</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================ STATE GALLERY ============================ -->
+  <div class="viewport-label mb-3 pb-1">Every state a card can be in</div>
+  <div class="card shadow-sm mb-5">
+    <div class="card-body">
+      <p class="small text-muted">
+        Rule of this design: <strong>the card grows with what happened.</strong> Nothing to
+        say means one line; points mean a line plus the problem bars; something to do means
+        a line plus a button. The badge colours are the same three as everywhere — grey
+        (nothing to do yet), amber (you have to act), red (this cost you points).
+      </p>
+      <div class="row row-cols-1 row-cols-lg-2 g-2 small">
+        <div class="col"><span class="chip chip-wait">Not handed in yet</span> deadline open, no file — the card carries the upload button.</div>
+        <div class="col"><span class="chip chip-wait">Handed in</span> deadline open — the card carries the file and “replace”.</div>
+        <div class="col"><span class="chip chip-act">Grace period — 15 min left</span> the amber is the whole point of the state.</div>
+        <div class="col"><span class="chip chip-act">Late — your tutor decides</span> <code>accepted</code> still null.</div>
+        <div class="col"><span class="chip chip-act">Late — accepted</span> counts after all.</div>
+        <div class="col"><span class="chip chip-lost">Late — rejected</span> 0 points, card stays collapsed.</div>
+        <div class="col"><span class="chip chip-wait">Waiting to be marked</span> plus “16 points at stake”.</div>
+        <div class="col"><span class="points fw-semibold">6.5</span> <span class="text-muted">/ 16</span> marked — no badge, the bars appear.</div>
+        <div class="col"><span class="chip chip-wait">Correction there, no points</span> the correction file is downloadable, the bars are not there.</div>
+        <div class="col"><span class="chip chip-lost">Not handed in</span> 0 of 16 counted towards the term.</div>
+        <div class="col"><span class="chip chip-wait">Excused</span> <code>exempt</code> — the sheet leaves your maximum.</div>
+        <div class="col"><span class="chip chip-lost">Absent</span> counted as 0.</div>
+        <div class="col"><span class="text-muted">no points on this sheet</span> old-style sheet with no assessment (Blatt 4, 5, 6).</div>
+      </div>
+      <p class="small text-muted mb-0 mt-3">
+        Not in this list: <em>graded</em>. An <code>Assignment</code> is
+        <code>Assessment::Pointable</code> and never <code>Gradable</code>, so a sheet
+        cannot carry a grade.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
