@@ -1,0 +1,8 @@
+<% if variant == :full %>
+  <span class="<%= text_class %>">
+    <i class="<%= icon_class %>"></i>
+    <%= label %>
+  </span>
+<% else %>
+  <%= render_compact %>
+<% end %>

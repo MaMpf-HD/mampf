@@ -519,6 +519,18 @@ The "proposal calculator" for teachers: shows which students would pass/fail bas
 | `evaluate(record)` | Evaluates a single `StudentPerformance::Record` and returns a structured proposal. |
 | `bulk_evaluate(records)` | Convenience method to evaluate multiple records at once for UI display. |
 
+The result carries the proposal plus five booleans describing the two criteria,
+and reads them out in two ways that must not be confused:
+
+| Method | Answers |
+|---|---|
+| `verdict_deferral_reasons` | why the **row** is deferred — empty unless the proposal is `:inconclusive` |
+| `points_criterion_deferral` | whether the **points criterion** is open, whatever the verdict |
+
+They deliberately do not nest. Points still reachable next to a missed
+achievement gives a `:failed` verdict — no verdict reason — while the points
+criterion itself stays open, which is what the single-proposal screen shows.
+
 ### Behavior Highlights
 - **Teacher-only tool:** Used in Certification UI and rule editing workflows
 - **No runtime gating:** Never called by `Registration::Policy` during registration/finalization
@@ -586,6 +598,12 @@ A rule with no criterion at all is refused by the model, so "no points threshold
 always means the rule asks for an achievement instead — and then a zero maximum is
 no obstacle, because points were never part of the question.
 
+A threshold of **zero** is a legal rule and behaves the same way: it is cleared
+before the zero-maximum check ever runs, so such a student passes on points
+rather than going to a person. It is the only way to say "everyone qualifies"
+while a live registration policy names the lecture, since that policy also blocks
+switching exam eligibility off.
+
 ---
 
 ## StudentPerformance::Certification (ActiveRecord Model)
@@ -637,7 +655,10 @@ the timestamp in.
 - **Auto-reject at finalization:** Students with `status: :failed` are automatically moved to rejected status during finalization (if finalization-phase policy exists).
 - **Rule change handling:** When teacher edits rule thresholds, show diff modal with:
   - Computed certifications that would flip (failed → passed or vice versa)
-  - Manual certifications that conflict with new proposal
+  - Manual certifications that conflict with new proposal — the recorded
+    decision is compared against the *new* proposal, not the old proposal
+    against the new one, so a rule that catches up with a hand-set decision
+    reports nothing and one that keeps contradicting it reports every time
   - Teacher reviews and applies changes manually via modal
   - No automatic updates to Certification table; teacher must confirm
 

@@ -8,7 +8,7 @@ class LecturesController < ApplicationController
   authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
   before_action :check_for_subscribe, only: [:outline]
-  before_action :set_view_locale, only: [:edit, :show, :outline, :subscribe_page,
+  before_action :set_view_locale, only: [:edit, :update, :show, :outline, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   before_action :require_turbo_frame, only: [:new]
@@ -105,48 +105,9 @@ class LecturesController < ApplicationController
   def update
     return unless @lecture.valid_annotations_status?
 
-    editor_ids = lecture_params[:editor_ids]
-    unless editor_ids.nil?
-      # removes the empty String "" in the NEW array of editor ids
-      # and converts it into an array of integers
-      all_ids = editor_ids.map(&:to_i) - [0]
-      old_ids = @lecture.editor_ids
-      new_ids = all_ids - old_ids
-
-      # returns an array of Users that match the given ids
-      recipients = User.where(id: new_ids)
-
-      recipients.each do |r|
-        LectureNotifier.notify_new_editor_by_mail(r, @lecture)
-      end
-    end
-
-    @lecture.update(lecture_params)
-    @lecture.touch
-    @lecture.forum&.update(name: @lecture.forum_title)
-
-    @errors = @lecture.errors
-
-    if @lecture.valid?
-      if params[:subpage].present?
-        redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
-      else
-        redirect_to edit_lecture_path(@lecture)
-      end
-      return
-    end
-
-    @terms = Term.select_terms
-
-    pane, partial = if params[:subpage] == "people"
-      ["edit_people", "lectures/edit/people"]
-    else
-      ["edit_preferences", "lectures/edit/preferences"]
-    end
-
-    render turbo_stream: turbo_stream.update(pane, partial: partial,
-                                                   locals: { lecture: @lecture }),
-           status: :unprocessable_content
+    notify_new_editors
+    update_lecture_and_forum
+    handle_update_response
   end
 
   def publish
@@ -440,6 +401,7 @@ class LecturesController < ApplicationController
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
+                        :submission_deletion_date, :uses_exam_eligibility,
                         :annotations_status,
                         :home_intro, :home_attachment, :remove_home_attachment]
       if action_name == "update" && current_user.can_update_personell?(@lecture)
@@ -537,5 +499,78 @@ class LecturesController < ApplicationController
       return if @lecture.course.enough_questions?
 
       redirect_to :root, alert: I18n.t("controllers.no_test")
+    end
+
+    def notify_new_editors
+      editor_ids = lecture_params[:editor_ids]
+      return if editor_ids.nil?
+
+      all_ids = editor_ids.map(&:to_i) - [0]
+      new_ids = all_ids - @lecture.editor_ids
+      recipients = User.where(id: new_ids)
+      recipients.each { |r| LectureNotifier.notify_new_editor_by_mail(r, @lecture) }
+    end
+
+    def update_lecture_and_forum
+      @lecture.update(lecture_params)
+      @lecture.touch
+      @lecture.forum&.update(name: @lecture.forum_title)
+      @errors = @lecture.errors
+    end
+
+    def handle_update_response
+      if @lecture.valid?
+        handle_successful_update
+      else
+        handle_failed_update
+      end
+    end
+
+    def handle_successful_update
+      respond_to do |format|
+        format.html { redirect_to_edit_lecture }
+        format.turbo_stream { render_turbo_stream_update }
+      end
+    end
+
+    def redirect_to_edit_lecture
+      if params[:subpage].present?
+        redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
+      else
+        redirect_to edit_lecture_path(@lecture)
+      end
+    end
+
+    # Only the assessments pane has something to put in place of itself. Every
+    # other tab is answered the way a form submit is answered without Turbo --
+    # by loading the tab again; rendering nothing leaves the page as it was and
+    # the save looks like it did not happen.
+    def render_turbo_stream_update
+      return redirect_to_edit_lecture unless params[:subpage] == "assessments"
+
+      flash.now[:notice] = t("admin.lecture.updated")
+      streams = [
+        turbo_stream.replace(
+          "lecture-submission-settings",
+          partial: "assessment/assessments/submission_settings",
+          locals: { lecture: @lecture }
+        )
+      ]
+      streams << stream_flash if flash.present?
+      render turbo_stream: streams
+    end
+
+    def handle_failed_update
+      @terms = Term.select_terms
+
+      pane, partial = if params[:subpage] == "people"
+        ["edit_people", "lectures/edit/people"]
+      else
+        ["edit_preferences", "lectures/edit/preferences"]
+      end
+
+      render turbo_stream: turbo_stream.update(pane, partial: partial,
+                                                     locals: { lecture: @lecture }),
+             status: :unprocessable_content
     end
 end

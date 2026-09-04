@@ -1,6 +1,12 @@
 module Demo
   module SetupSupport
     extend self
+    extend Demo::AssessmentSetupSupport
+    extend Demo::PerformanceSetupSupport
+    extend Demo::EligibilitySetupSupport
+    extend Demo::ExamSetupSupport
+    extend Demo::GradingSetupSupport
+    extend Demo::HomeworkSubmissionSupport
 
     LECTURE_CAMPAIGN_DESCRIPTION = "Demo Lecture Roster Campaign".freeze
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
@@ -32,7 +38,28 @@ module Demo
 
     def setup!
       ensure_non_production!
+      reset_eligibility!
       setup_rosters!
+      setup_assessment!
+      setup_performance!
+      setup_eligibility!
+      setup_exams!
+      setup_grading!
+    end
+
+    # The same, minus the rosters. A database restored from the shipped seed
+    # already has the demo tutorials and talks, and people seated in them so
+    # that submissions line up with the group they were handed in to; the
+    # roster step would empty those groups and allocate them anew.
+    def setup_on_seed!
+      ensure_non_production!
+      reset_eligibility!
+      setup_assessment!
+      setup_homework_submissions!
+      setup_performance!
+      setup_eligibility!
+      setup_exams!
+      setup_grading!
     end
 
     private
@@ -273,6 +300,17 @@ module Demo
 
       def demo_tutorial_ids(lecture)
         demo_tutorials(lecture).pluck(:id)
+      end
+
+      # Every group that has anybody in it, the seed's own included: the named
+      # accounts one signs in with sit in those, and homework that is graded
+      # should reach them too.
+      def staffed_tutorials(lecture)
+        lecture.tutorials.order(:title).select { |tutorial| tutorial.tutorial_memberships.any? }
+      end
+
+      def staffed_tutorial_ids(lecture)
+        staffed_tutorials(lecture).map(&:id)
       end
   end
 end
