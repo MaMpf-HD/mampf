@@ -2685,6 +2685,10 @@ en:
     invalid_date: 'Invalid date time format.'
   time:
     formats:
+      submission_deadline: "%A, %B %-d, %Y, %H:%M"
+      # A file is a detail, not a headline: the long form of a date belongs
+      # to a deadline, where the day of the week is what people plan by.
+      file_time: "%Y-%m-%d, %H:%M"
       concise: '%Y-%m-%d'
       student_registration: '%B %-d, %Hh%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
@@ -2815,6 +2819,141 @@ en:
     en: 'English'
     de: 'German'
   submission:
+    hub:
+      page_title: "Submissions - %{lecture}"
+      heading: Earlier sheets
+      standing:
+        mark_percentage: "%{percentage} %"
+        heading: Exam admission
+        of_points: "of %{max} points"
+        no_max: "of no points yet"
+        nothing_marked: Nothing has been marked yet.
+        pending: "%{points} points are still being marked."
+        needed: "%{points} needed"
+        bar_plain: "%{percentage} percent of the points earned"
+        bar_with_mark: "%{percentage} percent earned, %{required} percent required"
+        condition_percentage: "%{percentage} % of the points"
+        condition_absolute: "%{points} of %{max} points"
+        you_have_percent: "you have %{percentage} %"
+        you_have_points: "you have %{points}"
+        you_have_value: "you have %{value} %{unit}"
+        achievement_threshold: "%{title}, at least %{threshold} %{unit}"
+        passed: passed
+        not_passed: not passed
+        not_recorded: not recorded yet
+        no_conditions: >
+          Your lecturer has not set the conditions yet. They will appear here,
+          each with your standing.
+        what_this_means: What this means
+        out_of_reach: >
+          Even full marks on everything still open would leave you at %{best}
+          of the %{needed} points needed.
+        recorded_as_failed: "%{names} was recorded as not passed."
+        ask_your_tutor: Your tutor can tell you what is still possible.
+      card:
+        team_label: Team
+        invited_label: Invited
+        due: "Due %{time}"
+        in_time: "in %{time}"
+        worth:
+          one: "%{count} problem, %{points} points"
+          other: "%{count} problems, %{points} points"
+        hand_in: Hand in
+        replace: Replace file
+        invite: Invite someone
+        join: Join with a code
+        leave: Leave the team
+        delete: Delete
+        code: Join code
+        copy_code: Copy the code
+        code_copied: Code copied
+        code_copy_failed: The code could not be copied
+        refresh_code: Get a new code
+        refresh_confirm: >
+          Get a new code? The old one stops working, and anybody you have already
+          given it to cannot join with it any more.
+        delete_confirm: >
+          Delete this hand-in? The file is removed and the sheet counts as not
+          handed in.
+        leave_confirm: >
+          Leave the team? The hand-in stays with the others, but this sheet no
+          longer counts as handed in for you, and the others are told.
+        team_hint: >
+          You can hand in alone or together with others. Whoever hands in first
+          gets a code to pass on.
+        unknown_inviter: somebody
+        reload: Reload the page
+        nothing_due: Nothing to hand in
+        nothing_scheduled: The next sheet has not been posted yet.
+        appears: "%{sheet} appears on %{date}."
+        appears_until: "%{sheet} appears on %{date} - you will have until %{deadline}."
+        marked_recently: Marked most recently
+      sheet_count:
+        one: "%{count} sheet"
+        other: "%{count} sheets"
+      column_sheet: Sheet
+      column_status: Status
+      column_points: Your points
+      old_style: old-style sheet
+      fold:
+        handed_in_label: Hand-in
+        not_uploaded_yet: not uploaded yet
+        tasks_heading: Points per problem
+        files_heading: Files
+        problem: "Problem %{number}"
+        problem_unmarked: "not marked yet, out of %{max} points"
+        problem_unmarked_no_max: not marked yet
+        correction_label: Correction
+        no_file: nothing handed in
+        team: "Team: you and %{names}"
+        team_with_points: >
+          Team: you and %{names} - these %{points} points are yours
+        no_points:
+          nothing_yet: Nothing has been entered yet.
+          on_the_correction: >
+            Your points are written on the correction, but they are not in MaMpf
+            yet, so they do not count towards your total for now.
+          zero: >
+            None - all %{max} points are missing from your total.
+          no_tasks: >
+            The problems for this sheet have not been set up yet, so nothing is
+            missing from your total.
+          exempt: >
+            This sheet is not counted for you - its points are not missing
+            from your total either.
+          legacy: >
+            This sheet was set up before points existed in MaMpf. Nothing is
+            recorded against it.
+      no_points: no points
+      points_reader: "%{points} of %{max} points"
+      points_reader_no_max: "%{points} points"
+      no_sheets_yet: >
+        None yet. Once a sheet has been marked, it appears here with your
+        points.
+      no_sheets_yet_named: >
+        None yet. Once %{sheet} has been marked, it appears here with your
+        points.
+      deletion_notice: >
+        Submitted files and corrections are deleted on %{date}.
+      chips:
+        nothing_handed_in: Nothing handed in yet
+        handed_in: Handed in
+        grace_period: "%{time} left"
+        tutor_decides: Your tutor decides
+        awaiting_marks: Waiting to be marked
+        correction_uploaded: Correction uploaded
+        exempt: Excused
+      notes:
+        grace_period: the deadline has passed, you have %{time}
+        tutor_decides: handed in after the deadline
+        rejected: handed in late, your tutor did not let it count
+        partially_marked: not every problem has been marked yet
+        missed: nothing arrived by the deadline
+        absent: recorded as absent
+        exempt: not counted for you
+        not_recorded: >
+          your file is here, but it is not recorded as a hand-in - talk to your
+          tutor
     invited: You have been invited by '%{inviter}' for this submission.
     accept_invitation: Accept invitation
     invalid_code_for_assignment: >
@@ -2829,10 +2968,6 @@ en:
     no_partners_no_leave: >
       You cannot leave as you are the only person in this group (but you
       you can delete this submission).
-    nothing_here: >
-      There is nothing here yet. Create a new submission or join one.
-    nothing_here_past: >
-      Nothing was submitted for this assignment.
     tutorial_needed: >
       You are not in a tutorial for this event series, so you cannot submit
       anything.
@@ -2846,13 +2981,6 @@ en:
       Redemption of submission code failed: %{message}.
     too_many_attempts: >
       Too many attempts. Please wait a moment and try again.
-    current: Current Submission
-    previous: Previous Submission
-    old_ones: Old Submissions
-    future_ones: Future Submissions
-    no_old_ones: Nothing has been submitted yet.
-    no_future_ones: >
-      There are no assignments beyond the current one.
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
     correct_file_size: This file has the correct size.
@@ -2908,7 +3036,6 @@ en:
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
     working: Working
-    deletion_date: Deletion Date
     multiple_files_selected: Multiple files have been selected.
     merging_help_html: >
       <b>Merging:</b> Use this button to merge the files in the order given above.
@@ -2930,106 +3057,20 @@ en:
       %{accepted_mime_types}.
     correction_size_too_big: >
       The uploaded file is too big. Maximum file size is 15 MB.
-    too_late_no_saving:
-      The due date for this assignment has expired, therefore this change
-      cannot be saved.
-    too_late_no_editing:
-      The due date for this assignment has expired, therefore this submission
-      cannot be edited.
-    too_late_no_inviting:
-      The due date for this assignment has expired, therefore invitations to
-      this submission are no longer possible.
-    too_late_no_destroying:
-      The due date for this assignment has expired, therefore this submission
-      cannot be deleted.
-    late_submission_warning_html: >
-      You can make changes within the grace period until %{friendly_deadline}.
-      However, if you do so, the submission will be declared as
-      <b>'too late'</b>.
-      It is within the discretion of the teacher and the tutor if and how the
-      submission will be graded.
-    last_modification: >
-      last modification
-    last_modification_info_html: >
-      It is logged when the last change to the submission by a team member took
-      place. The following is taken into account:
-      <ul>
-      <li>
-      creation of the submission
-      </li>
-      <li>
-      successful first upload or replacement of the file
-      </li>
-      <li>
-      the joining of a team member
-      </li>
-      <li>
-      the leaving of a team member
-      </li>
-      </ul>
-      If the last modification ist before the due date, the submission is valid.
-      Otherwise it will be marked as <b>too late</b>.
-    okay: Everything is fine.
-    no_file: No file is stored.
-    nothing: No submission was created.
-    with_correction: >
-      Everything is fine. You tutor has uploaded the correction to this
-      submission.
-    too_late: >
-      The submission is marked as "late", because the last change was after
-      the due date. It is at the discretion of the teacher and the tutor
-      if and how it is graded.
-    too_late_accepted: >
-      You tutor accepted the submission that was marked as "late" and is now
-      working on the correction.
-    too_late_rejected: >
-      Your submission that was marked as "late" was rejected.
-    under_review: >
-      Your tutor is currently reviewing the submission.
     already_corrected: >
       For this assignment a correction was already uploaded. Therefore you
       cannot join anymore.
+    already_rejected: >
+      This submission was rejected, so it can no longer be joined.
     late: late submission
     late_submissions: late submissions
     rejected: rejected
     bulk_download_submissions: Bulk download of submissions
     bulk_download_corrections: Bulk download of corrections
     bulk_upload: Bulk upload of corrections
-    code_explanation: >
-      By knowledge and input of this code, other persons can join this
-      submission. Joining via a code is particularly recommended when the
-      other person has not yet cooperated with you in this event series.
-      Perosns that you have already cooperated with can be invited using
-      the "Invite" button (this button only exists in the case that such persons
-      exist, are not yet a member of this team and the team size is below
-      the maximal allowed size for teams).
-    profile_info_html: >
-      In your %{profile} you can set your preferences about which events in the
-      context of submissions you want to be notified about via email. This
-      includes successful upload and removal of files, joining or leaving of
-      team members, decisions about the acceptance of late submissions and
-      upload of corrections by your tutor.
-    deletion_date_info: >
-      The data you submit is personal data that we delete in the following semester
-      for data privacy reasons. You can find the exact deletion date in the table.
-      You will also be reminded of the deletion in advance by e-mail so that you
-      can back up your data.
-    team_info: >
-      Here you can see your submission team. You can enlarge
-      your team by giving other persons the submission code so that they can
-      join or by inviting persons that you have already had submissions with in
-      this event series, so that they can join. The team can become only as
-      large as the maximal team size allowed in this event series.
     file_format: Submission format
   assignment:
     expired: The due date has expired.
-    not_in_this_lecture: >
-      In this lecture, no assignments have yet been created. Therefore, there
-      are no submissions.
-    no_current: >
-      Currently, there is no assignment for which something could be submitted.
-    no_previous: >
-      Nothing has yet been submitted.
     nothing_yet_in_lecture: >
       In this lecture nothing had yet to be submitted.
     deletion_date: Deletion date
@@ -3842,8 +3883,6 @@ en:
     no_tutorials_in_lecture: >
       In this event series there are no tutorials, hence no submissions can be
       made.
-    no_assignments_in_lecture: >
-      In this event series there are no assigments yet.
     no_voucher: 'There is no voucher with this id.'
     voucher_invalid: 'This voucher is invalid.'
     become_tutor_success: >

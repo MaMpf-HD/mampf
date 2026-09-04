@@ -100,7 +100,7 @@ test.describe("uploading through Uppy", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/submissions`);
-      await page.getByRole("button", { name: "create" }).click();
+      await page.getByRole("link", { name: "Hand in" }).click();
       await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
 
       const stored = page.locator("#userManuscriptMetadata");
@@ -118,9 +118,10 @@ test.describe("uploading through Uppy", () => {
       const created = page.waitForResponse(response => response.request().method() !== "GET");
       await page.getByRole("button", { name: "Save" }).click();
       await created;
-      await page.goto(`/lectures/${lecture.id}/submissions`);
 
-      await expect(page.getByRole("link", { name: "Submission ↓" })).toBeVisible();
+      // The card comes back in its own frame, with the file on it.
+      await expect(page.getByRole("link", { name: "manuscript.pdf" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Replace file" })).toBeVisible();
     });
 
   test("a submission, up to the moment the file is taken back out",
@@ -133,7 +134,7 @@ test.describe("uploading through Uppy", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/submissions`);
-      await page.getByRole("button", { name: "create" }).click();
+      await page.getByRole("link", { name: "Hand in" }).click();
       const save = page.getByRole("button", { name: "Save" });
       await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
 

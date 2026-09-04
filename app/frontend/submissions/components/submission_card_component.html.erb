@@ -1,0 +1,179 @@
+<%= helpers.turbo_frame_tag frame_id do %>
+  <section class="next-action" aria-labelledby="<%= heading_id %>">
+    <% if error %>
+      <div class="alert alert-warning py-2"><%= error %></div>
+    <% end %>
+
+    <div class="d-flex justify-content-between gap-3 align-items-start">
+      <div>
+        <h2 class="hub-title mb-1" id="<%= heading_id %>">
+          <%= assignment.title %>
+        </h2>
+
+        <p class="mb-0"><%= due_line %></p>
+        <p class="hub-aside text-muted mb-3"><%= meta_parts.join(" · ") %></p>
+      </div>
+
+      <%= render(SheetChipComponent.new(sheet: sheet)) %>
+    </div>
+
+    <% invitations.each do |invite| %>
+      <%= render(SubmissionInviteComponent.new(invite: invite,
+                                               assignment: assignment)) %>
+    <% end %>
+
+    <% if handed_in? %>
+      <div class="file-pill mb-3">
+        <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
+
+        <%= link_to file_name, show_submission_manuscript_path(submission),
+                    class: "file-name flex-grow-1", "aria-label": file_reader_label,
+                    data: { turbo: false } %>
+
+        <span class="hub-aside text-muted text-nowrap">
+          <%= file_details %>
+        </span>
+      </div>
+      <% if correction_name %>
+        <div class="file-pill mb-3">
+          <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
+
+          <%= link_to correction_name, show_correction_path(submission),
+                      class: "file-name flex-grow-1",
+                      "aria-label": correction_reader_label,
+                      data: { turbo: false } %>
+
+          <span class="hub-aside text-muted text-nowrap">
+            <%= t("submission.hub.fold.correction_label") %>
+          </span>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+      <% if submission %>
+        <% if editable? %>
+          <%= link_to edit_submission_path(submission),
+                      class: "btn btn-sm btn-primary" do %>
+            <i class="fas fa-upload me-1" aria-hidden="true"></i>
+            <%= handed_in? ? t("submission.hub.card.replace") : t("submission.hub.card.hand_in") %>
+          <% end %>
+        <% end %>
+        <span class="hub-aside">
+          <% if invitable? %>
+            <%= link_to t("submission.hub.card.invite"),
+                        enter_submission_invitees_path(submission) %>
+            <% if editable? %>
+              &middot;
+            <% end %>
+          <% end %>
+
+          <% if editable? %>
+            <% if alone? %>
+              <%= link_to t("submission.hub.card.delete"), submission_path(submission),
+                          data: { turbo_method: :delete,
+                                  turbo_confirm: t("submission.hub.card.delete_confirm") } %>
+            <% else %>
+              <%= link_to t("submission.hub.card.leave"), leave_submission_path(submission),
+                          data: { turbo_method: :delete,
+                                  turbo_confirm: t("submission.hub.card.leave_confirm") } %>
+            <% end %>
+          <% end %>
+        </span>
+      <% elsif may_start? %>
+        <%= link_to new_submission_path(assignment_id: assignment.id),
+                    class: "btn btn-sm btn-primary" do %>
+          <i class="fas fa-upload me-1" aria-hidden="true"></i>
+          <%= t("submission.hub.card.hand_in") %>
+        <% end %>
+        <span class="hub-aside">
+          <%= link_to t("submission.hub.card.join"),
+                      enter_submission_code_path(assignment_id: assignment.id) %>
+        </span>
+      <% end %>
+    </div>
+
+    <%#
+      One line per thing, each with its own word in front: a sentence with the
+      code hung on the end reads as prose and is looked up as a table.
+    %>
+
+    <% if submission.nil? && may_start? %>
+      <p class="hub-aside mb-0"><%= t("submission.hub.card.team_hint") %></p>
+    <% end %>
+
+    <dl class="card-facts mb-0">
+      <% if partner_names.any? %>
+        <dt class="field-label"><%= t("submission.hub.card.team_label") %></dt>
+        <dd><%= partner_names.to_sentence %></dd>
+      <% end %>
+
+      <%#
+        A code somebody passes on by voice or by hand: big enough to read off
+        the screen, and with a button so it need not be read off at all.
+      %>
+
+      <% if token %>
+        <dt class="field-label"><%= t("submission.hub.card.code") %></dt>
+        <dd
+          data-controller="clipboard"
+          data-clipboard-text-value="<%= token %>"
+          data-clipboard-resting-icon-value="bi-clipboard"
+          data-clipboard-confirmation-value="<%= t("submission.hub.card.code_copied") %>"
+          data-clipboard-failure-value="<%= t("submission.hub.card.code_copy_failed") %>"
+        >
+          <code class="join-code"><%= token %></code>
+
+          <button
+            type="button"
+            class="
+              btn btn-link btn-sm p-0 border-0 align-baseline text-secondary
+              ms-2
+            "
+            data-action="clipboard#copy"
+            title="<%= t("submission.hub.card.copy_code") %>"
+            aria-label="<%= t("submission.hub.card.copy_code") %>"
+          >
+            <i class="bi bi-clipboard" data-clipboard-target="icon"></i>
+          </button>
+
+          <%= link_to refresh_submission_token_path(submission),
+                      class: "ms-2 text-secondary",
+                      title: t("submission.hub.card.refresh_code"),
+                      data: { turbo_method: :patch,
+                              turbo_confirm: t("submission.hub.card.refresh_confirm") } do %>
+            <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+
+            <span class="visually-hidden">
+              <%= t("submission.hub.card.refresh_code") %>
+            </span>
+          <% end %>
+
+          <span
+            class="visually-hidden"
+            role="status"
+            data-clipboard-target="status"
+          ></span>
+        </dd>
+      <% end %>
+
+      <% if tutorial_name %>
+        <dt class="field-label"><%= t("basics.tutorial") %></dt>
+        <dd><%= tutorial_name %></dd>
+      <% end %>
+
+      <% if invited_names.any? %>
+        <dt class="field-label">
+          <%= t("submission.hub.card.invited_label") %>
+        </dt>
+        <dd><%= invited_names.to_sentence %></dd>
+      <% end %>
+    </dl>
+
+    <% unless may_start? %>
+      <p class="hub-aside text-muted mb-0 mt-2">
+        <%= t("submission.tutorial_needed") %>
+      </p>
+    <% end %>
+  </section>
+<% end %>

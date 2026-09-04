@@ -7,12 +7,12 @@ class SubmissionsController < ApplicationController
 
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
                                           :redeem_code, :join, :cancel_new]
-  before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
+  before_action :set_assignment, only: [:new, :enter_code, :cancel_new, :join]
+  before_action :authorize_sheet, only: [:new, :enter_code, :cancel_new,
+                                         :cancel_edit, :join]
   before_action :set_lecture, only: :index
-  before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
   before_action :prevent_caching, only: :show_manuscript
   before_action :check_if_tutorials, only: :index
-  before_action :check_if_assignments, only: :index
   before_action :check_student_status, only: :index
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
@@ -30,24 +30,26 @@ class SubmissionsController < ApplicationController
   # NOTE: authorization for #index is done manually via before_actions
   # SubmissionAbility lets anyone pass
   def index
-    @assignments = @lecture.assignments
-    @current_assignments = @lecture.current_assignments
-    @previous_assignments = @lecture.previous_assignments
-    @old_assignments = @assignments.expired.order(deadline: :desc) -
-                       @previous_assignments
-    @future_assignments = @assignments.active.order(:deadline) -
-                          @current_assignments
+    # Everything still open has a card above the list, so the list is what is
+    # behind you - a sheet in both places would be told twice, and a row cannot
+    # be handed in.
+    @history = hub.sheets - hub.open_sheets
 
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "submissions/index/index",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
+  # `new` and `edit` are the same frame with the same form in it; only the
+  # record differs.
   def new
     @submission = Submission.new
     @submission.assignment = @assignment
     set_submission_locale
+    render_form
   end
 
   def edit
+    render_form
   end
 
   def create
@@ -58,33 +60,31 @@ class SubmissionsController < ApplicationController
     authorize! :create, @submission
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
-    @too_late = @submission.not_updatable?
-    return if @too_late
+    @assignment = @submission.assignment
+    return render_card(status: :unprocessable_content) if @submission.not_updatable?
 
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
       @errors = @submission.check_file_properties(@submission.manuscript
                                                              .metadata,
                                                   :manuscript)
-      return if @errors.present?
+      return render_form(status: :unprocessable_content) if @errors.present?
     end
     @submission.user_submission_joins.build(user: current_user)
     @submission.save
-    @assignment = @submission.assignment
     @errors = @submission.errors
-    return unless @submission.valid?
+    return render_form(status: :unprocessable_content) unless @submission.valid?
 
     send_invitation_emails
     @submission.update(last_modification_by_users_at: Time.zone.now)
-    return unless @submission.manuscript
-
-    sync_assessment_participations(users: [current_user])
-    send_upload_email(User.where(id: current_user.id))
+    if @submission.manuscript
+      sync_assessment_participations(users: [current_user])
+      send_upload_email(User.where(id: current_user.id))
+    end
+    render_card_and_standing
   end
 
   def update
-    return if @too_late
-
     update_params = submission_update_params
 
     old_manuscript_data = @submission.manuscript_data
@@ -94,11 +94,11 @@ class SubmissionsController < ApplicationController
       @errors = @submission.check_file_properties(@submission.manuscript
                                                              .metadata,
                                                   :manuscript)
-      return if @errors.present?
+      return render_form(status: :unprocessable_content) if @errors.present?
 
       @submission.save
       @errors = @submission.errors
-      return unless @submission.valid?
+      return render_form(status: :unprocessable_content) unless @submission.valid?
     end
     @submission.update(update_params)
     if @submission.valid?
@@ -115,16 +115,20 @@ class SubmissionsController < ApplicationController
       end
     end
     @errors = @submission.errors
+    return render_form(status: :unprocessable_content) if @errors.any?
+
+    render_card_and_standing
   end
 
   def destroy
-    return if @too_late
-
     clear_submitted_at(@submission.users)
     @submission.destroy
+    @submission = nil
+    render_card_and_standing
   end
 
   def enter_code
+    @invitations = hub.invitations_for(@assignment)
   end
 
   def redeem_code
@@ -143,30 +147,37 @@ class SubmissionsController < ApplicationController
   end
 
   def join
-    @assignment = Assignment.find_by(id: join_params[:assignment_id])
-    @lecture = @assignment.lecture
-    set_submission_locale
-    code = join_params[:code]
-    @submission = Submission.find_by(token: code, assignment: @assignment)
+    @submission = Submission.find_by(token: join_params[:code],
+                                     assignment: @assignment)
     check_code_and_join
+    if @error
+      @invitations = hub.invitations_for(@assignment)
+      return render :enter_code, status: :unprocessable_content
+    end
+
+    render_card_and_standing
   end
 
+  # Leaving is refused for the last person on a team - that is a delete, and it
+  # is a different button. The card says so rather than quietly doing nothing.
   def leave
-    return if @too_late
-
     if @submission.users.one?
-      @error = I18n.t("submission.no_partners_no_leave")
-      return
+      @card_error = I18n.t("submission.no_partners_no_leave")
+      return render_card(status: :unprocessable_content)
     end
     clear_submitted_at([current_user])
     @submission.users.delete(current_user)
     send_leave_email
+    @submission = nil
+    render_card_and_standing
   end
 
   def cancel_edit
+    render_card
   end
 
   def cancel_new
+    render_card
   end
 
   def show_manuscript
@@ -195,19 +206,16 @@ class SubmissionsController < ApplicationController
 
   def refresh_token
     @submission.update(token: Submission.generate_token)
+    render_card
   end
 
   def enter_invitees
-    @too_late = @submission.assignment.totally_expired?
+    @partners = hub.invitable_partners(@submission)
   end
 
   def invite
-    if @too_late
-      render :create
-      return
-    end
     send_invitation_emails
-    render :create
+    render_card
   end
 
   def edit_correction
@@ -266,6 +274,60 @@ class SubmissionsController < ApplicationController
 
   private
 
+    # Everything a student does changes one sheet and nothing else - the history
+    # list holds only sheets that are closed - so every action answers by
+    # re-rendering that sheet's card frame. Reading the whole hub back for it is
+    # what keeps the card from ever disagreeing with the row below it.
+    def render_card(status: :ok)
+      loaded = hub
+      @sheet = loaded.sheets.find { |sheet| sheet.assignment == @assignment }
+      @invitations = loaded.invitations_for(@assignment)
+      @partners = loaded.possible_partners
+      @invited_users = loaded.invited_users_for(@sheet&.submission)
+      render :card, status: status
+    end
+
+    # Handing in, taking it back, joining and leaving all move `submitted_at`,
+    # and the standing block counts a sheet that is handed in and not yet marked
+    # among the points still being marked. So these answers carry two places at
+    # once, and a frame can only carry one. The data for both is already in
+    # hand: the card is read from the loader either way.
+    def render_card_and_standing(status: :ok)
+      loaded = hub
+      render turbo_stream: [
+        turbo_stream.replace(SubmissionCardComponent.frame_id(@assignment),
+                             card_component(loaded)),
+        turbo_stream.replace(StandingComponent::TARGET,
+                             StandingComponent.new(standing: loaded.standing))
+      ], status: status
+    end
+
+    def card_component(loaded)
+      sheet = loaded.sheets.find { |candidate| candidate.assignment == @assignment }
+      SubmissionCardComponent.new(sheet: sheet,
+                                  invitations: loaded.invitations_for(@assignment),
+                                  partners: loaded.possible_partners,
+                                  invited_users: loaded.invited_users_for(sheet&.submission),
+                                  error: @card_error)
+    end
+
+    # The form back in the frame with its messages beside the fields, rather
+    # than an alert box next to a card that still shows the old state.
+    def render_form(status: :ok)
+      # In roster mode the form names the group instead of offering a choice,
+      # and there is no name to print for somebody who has not been placed in
+      # one. The refusal the save would give, before the page is built rather
+      # than halfway through it.
+      rostered_tutorial!(@assignment.lecture) if @assignment.lecture.roster_managed?
+      @partners = hub.possible_partners
+      render :form, status: status
+    end
+
+    def hub
+      @hub ||= Assessment::SubmissionsHub::Loader.new(lecture: @lecture,
+                                                      user: current_user).call
+    end
+
     def set_submission
       @submission = Submission.find_by(id: params[:id])
       @assignment = @submission&.assignment
@@ -273,8 +335,10 @@ class SubmissionsController < ApplicationController
       set_submission_locale
       return if @submission
 
-      flash.now[:alert] = I18n.t("controllers.no_submission")
-      render js: "window.location='#{root_path}'"
+      # No card to put a message in, so the frame says what happened and offers
+      # the way back rather than navigating itself somewhere unexpected.
+      @gone_message = I18n.t("controllers.no_submission")
+      render :gone, status: :gone
     end
 
     def submission_create_params
@@ -303,15 +367,39 @@ class SubmissionsController < ApplicationController
       params.expect(submission: [:manuscript])
     end
 
+    # `join` posts the sheet inside its own form object, the others carry it in
+    # the query - and either way an id nobody can look up gets the same answer
+    # as a submission that is gone.
+    def assignment_id
+      action_name == "join" ? join_params[:assignment_id] : params[:assignment_id]
+    end
+
     def set_assignment
-      @assignment = Assignment.find_by(id: params[:assignment_id])
+      @assignment = Assignment.find_by(id: assignment_id)
       @lecture = @assignment&.lecture
       set_submission_locale
       return if @assignment
 
-      flash.now[:alert] = I18n.t("controllers.no_assignment")
-      render js: "window.location='#{root_path}'"
-      nil
+      # Same answer as a submission that is gone, for the same reason: the frame
+      # says what happened instead of steering the whole page elsewhere.
+      @gone_message = I18n.t("controllers.no_assignment")
+      render :gone, status: :gone
+    end
+
+    # `SubmissionAbility` grants the whole class to anybody logged in for these,
+    # so what they answer for is a sheet rather than a submission of the
+    # reader's - `cancel_edit` has one in hand, but what it renders is the sheet
+    # either way. The rule is therefore the one handing in uses, `:create` for
+    # this sheet, and it sits in one place, because four gates is how the fifth
+    # gets forgotten. Deliberately not `:update` on the submission: cancelling
+    # an edit must work on a sheet nobody may edit any more.
+    #
+    # `index` is not among them: it takes a lecture rather than a sheet and is
+    # gated by `check_student_status`. Neither is `redeem_code`, which takes a
+    # code and nothing else - there is no sheet to check until the code resolves
+    # to one, and `check_code_validity` ends on the same enrolment test.
+    def authorize_sheet
+      authorize!(:create, Submission.new(assignment: @assignment))
     end
 
     def set_lecture
@@ -319,10 +407,6 @@ class SubmissionsController < ApplicationController
       set_submission_locale and return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
-    end
-
-    def set_too_late
-      @too_late = @submission.not_updatable?
     end
 
     def set_submission_locale
@@ -334,8 +418,14 @@ class SubmissionsController < ApplicationController
       params.expect(join: [:code, :assignment_id])
     end
 
+    # Inviting nobody is a hand-in without a team, not a broken request: the
+    # form's select is empty until somebody is picked, and then the field is not
+    # sent at all.
     def invitation_params
-      params.expect(submission: [invitee_ids: []])
+      nested = params[:submission]
+      return ActionController::Parameters.new unless nested.is_a?(ActionController::Parameters)
+
+      nested.permit(invitee_ids: [])
     end
 
     def correction_params
@@ -347,7 +437,9 @@ class SubmissionsController < ApplicationController
     end
 
     def send_invitation_emails
-      requested_ids = invitation_params[:invitee_ids].map(&:to_i)
+      requested_ids = Array(invitation_params[:invitee_ids]).map(&:to_i)
+      return if requested_ids.empty?
+
       invitees = @submission.admissible_invitees(current_user)
                             .select { |i| requested_ids.include?(i.id) }
       invitees.each do |i|
@@ -422,6 +514,11 @@ class SubmissionsController < ApplicationController
         @error = I18n.t("submission.assignment_expired")
       elsif @submission.correction
         @error = I18n.t("submission.already_corrected")
+      # Joining a team whose sheet nobody may touch any more - a rejected one -
+      # would put the reader somewhere they cannot hand in, replace or leave.
+      # The same predicate the ability uses for those.
+      elsif @submission.not_updatable?
+        @error = I18n.t("submission.already_rejected")
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
       elsif !current_user.proper_student_in?(@submission.tutorial.lecture)
@@ -486,12 +583,6 @@ class SubmissionsController < ApplicationController
       return if @lecture.tutorials.any?
 
       redirect_to :root, alert: I18n.t("controllers.no_tutorials_in_lecture")
-    end
-
-    def check_if_assignments
-      return if @lecture.assignments.any?
-
-      redirect_to :root, alert: I18n.t("controllers.no_assignments_in_lecture")
     end
 
     def clear_submitted_at(users)

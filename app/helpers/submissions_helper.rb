@@ -8,102 +8,13 @@ module SubmissionsHelper
     cancel_new_submission_path(params: { assignment_id: submission.assignment.id })
   end
 
-  def partner_selection(user, lecture)
-    user.submission_partners(lecture).map { |u| [u.tutorial_name, u.id] }
-  end
-
   def partner_preselection(user, lecture)
     user.recent_submission_partners(lecture).map(&:id)
-  end
-
-  def admissible_invitee_selection(user, submission, _lecture)
-    submission.admissible_invitees(user).map { |u| [u.tutorial_name, u.id] }
   end
 
   def probable_invitee_ids(user, submission, lecture)
     partner_preselection(user, lecture) -
       (submission.users + submission.invited_users).map(&:id)
-  end
-
-  def invitations_possible?(submission, user)
-    return false if submission.admissible_invitees(user).empty?
-    return true unless submission.assignment.lecture.submission_max_team_size
-
-    submission.users.size <
-      submission.assignment.lecture.submission_max_team_size
-  end
-
-  def submission_color(submission, assignment)
-    if assignment.active?
-      return "bg-submission-green" if submission&.manuscript
-      return "bg-submission-yellow" if submission
-
-    else
-      return "bg-submission-darker-green" if submission&.correction
-
-      if submission&.manuscript && submission.too_late?
-        return "bg-submission-orange" if submission.accepted.nil?
-        return "bg-submission-green" if submission.accepted
-
-        return "bg-submission-red"
-      end
-      return "bg-submission-green" if submission&.manuscript
-
-    end
-    "bg-submission-red"
-  end
-
-  def submission_status_icon(submission, assignment)
-    if assignment.active?
-      return "far fa-smile" if submission&.manuscript
-
-    else
-      return "far fa-smile" if submission&.correction
-
-      if submission&.manuscript && submission.too_late?
-        return "fas fa-hourglass-start" if submission.accepted
-
-        return "fas fa-exclamation-triangle"
-      end
-      return "fas fa-hourglass-start" if submission&.manuscript
-
-    end
-    "fas fa-exclamation-triangle"
-  end
-
-  def submission_status_text(submission, assignment)
-    if assignment.active?
-      return t("submission.okay") if submission&.manuscript
-
-    else
-      return t("submission.with_correction") if submission&.correction
-
-      if submission&.manuscript && submission.too_late?
-        return t("submission.too_late") if submission.accepted.nil?
-        return t("submission.too_late_accepted") if submission.accepted
-
-        return t("submission.too_late_rejected")
-      end
-      return t("submission.under_review") if submission&.manuscript
-
-    end
-    return t("submission.no_file") if submission
-
-    t("submission.nothing")
-  end
-
-  def submission_status(submission, assignment)
-    tag.i(class: [submission_status_icon(submission, assignment), "fa-lg"],
-          data: { toggle: "tooltip" },
-          title: submission_status_text(submission, assignment))
-  end
-
-  def show_submission_footer?(submission, assignment)
-    return true if assignment.active?
-    return false if assignment.totally_expired?
-    return false if submission&.correction
-
-    true
   end
 
   def enabled_roster_for_lecture?(lecture)

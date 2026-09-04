@@ -1,0 +1,50 @@
+<details class="<%= entry_class %>">
+  <summary>
+    <div class="sheet-row">
+      <div>
+        <div><%= sheet.assignment.title %></div>
+
+        <% if note %>
+          <div class="<%= note_class %>"><%= note %></div>
+        <% end %>
+      </div>
+
+      <div>
+        <% if legacy? %>
+          <span class="hub-aside"><%= t("submission.hub.old_style") %></span>
+        <% elsif chip? %>
+          <%= render(SheetChipComponent.new(sheet: sheet)) %>
+        <% end %>
+      </div>
+
+      <div class="<%= points_class %>">
+        <% if legacy? %>
+          <span class="hub-aside"><%= t("submission.hub.no_points") %></span>
+        <% elsif number? %>
+          <span class="visually-hidden"><%= points_reader_label %></span>
+          <span aria-hidden="true">
+            <%= tag.span(points, class: ("num-zero" if zero?)) %>
+
+            <% if maximum? %>
+              <span class="text-muted">/ <%= max_points %></span>
+            <% end %>
+          </span>
+          <% if bar_percentage %>
+            <div class="spark">
+              <span style="width: <%= bar_percentage %>%"></span>
+            </div>
+          <% end %>
+        <% else %>
+          <span aria-hidden="true">
+            &mdash;
+            <%= tag.span("/ #{max_points}", class: "text-muted") if maximum? %>
+          </span>
+        <% end %>
+      </div>
+
+      <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+    </div>
+  </summary>
+
+  <%= render(SheetFoldComponent.new(sheet: sheet)) %>
+</details>

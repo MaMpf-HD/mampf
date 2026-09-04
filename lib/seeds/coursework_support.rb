@@ -132,11 +132,35 @@ module Seeds
       team.drop(1).each do |partner|
         UserSubmissionJoin.create!(user: partner, submission: submission)
       end
+      record_hand_in!(assignment, team, submission)
       return unless correction
 
       submission.correction = manuscript_copy
       submission.accepted = correction == :accepted
       submission.save!
+    end
+
+    # What the controller does on every upload: the gradebook learns that the
+    # sheet was handed in. Without it the seeds build a state that is real but
+    # rare - a file on record with no hand-in against it, which the student's
+    # page has to flag in red.
+    #
+    # Absent and exempt are left alone: `Assessment::AbsenceHandling` clears
+    # `submitted_at` on purpose when it sets them.
+    def record_hand_in!(assignment, team, submission)
+      participations = assignment.assessment&.assessment_participations
+      return unless participations
+
+      # Nothing here goes through the controller, so nobody has written the
+      # modification time the hand-in would otherwise be dated by.
+      handed_in_at = submission.last_modification_by_users_at ||
+                     submission.created_at
+      # rubocop:disable Rails/SkipsModelValidations
+      participations.where(user_id: team.map(&:id), submitted_at: nil)
+                    .where.not(status: [:absent, :exempt])
+                    .update_all(submitted_at: handed_in_at,
+                                updated_at: Time.current)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     # One submission per assignment and person: a team whose member has handed
