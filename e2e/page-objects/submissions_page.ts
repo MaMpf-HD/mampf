@@ -72,8 +72,12 @@ export class SubmissionsPage {
   }
 
   async acceptSubmissionInvite(idx: number = 0) {
-    console.log("Third assignment, joiner clicks on accept invite.");
     await this.page.getByTestId(`accept-invite-${idx}`).click(); // click accept invite button
+  }
+
+  async acceptSubmissionInviteFrom(inviterName: string) {
+    const inviteBlock = this.page.locator(".alert", { hasText: inviterName });
+    await inviteBlock.getByRole("button", { name: "accept" }).click();
   }
 
   currentSubmissionTeam() {
