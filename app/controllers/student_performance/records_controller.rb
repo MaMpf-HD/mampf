@@ -19,6 +19,7 @@ module StudentPerformance
     end
 
     def index
+      @due_points = due_points
       scope = @lecture.student_performance_records
                       .includes(:user)
                       .joins(:user)
@@ -41,11 +42,11 @@ module StudentPerformance
       @pagy, @records = pagy(scope)
       load_assessment_statuses
       @awaiting_marking = awaiting_marking_counts(scope)
-      @standard_max = @assessments.sum(&:effective_total_points)
       @achievements = @lecture.achievements.order(:title)
     end
 
     def show
+      @due_points = due_points
       load_show_data
     end
 

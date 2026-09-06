@@ -8,6 +8,9 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
   before do
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
+    # Every example below is about a term whose sheets are all on record; the
+    # examples about the state before that say so themselves.
+    lecture.update!(assignments_complete: true)
     lecture.reload
   end
   describe "GET /lectures/:lecture_id/performance/certifications" do
@@ -24,6 +27,56 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(response.body).to include(
           I18n.t("student_performance.certifications.index.subtitle")
         )
+      end
+
+      # Mid-term the screen has to say why it proposes nothing, or it reads as
+      # broken rather than as "too early".
+      context "while the list of assignments is open" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture, min_percentage: 50)
+        end
+
+        let(:hint) do
+          I18n.t("student_performance.certifications.index.assignments_incomplete",
+                 tab: I18n.t("assessment.tabs.assignments"))
+        end
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture, user: student,
+                            percentage_materialized: 90,
+                            points_total_materialized: 90,
+                            points_max_materialized: 100)
+          lecture.update!(assignments_complete: false)
+        end
+
+        it "says why nothing is proposed and what to do" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(CGI.escapeHTML(hint))
+        end
+
+        it "leaves the sweep visible but refuses to run it" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.bulk_accept")
+          )
+          expect(response.body).to include("disabled")
+        end
+
+        it "defers a student who clears the threshold today" do
+          FactoryBot.create(:student_performance_certification,
+                            lecture: lecture, user: student)
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator.deferral.assignments_incomplete")
+          )
+        end
       end
 
       it "shows zero counts when no data exists" do
@@ -568,6 +621,38 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           end
         end
 
+        # Mid-term the sheets to come outnumber the ones handed out; refusing
+        # a student for work nobody has set yet is the worse mistake.
+        context "when the term still has sheets to come" do
+          let(:early_user) { FactoryBot.create(:confirmed_user) }
+
+          before do
+            assignment = FactoryBot.create(:assignment, lecture: lecture,
+                                                        deadline: 3.days.from_now)
+            FactoryBot.create(:assessment_task,
+                              assessment: assignment.assessment,
+                              max_points: 40)
+            # The new sheet reopened the list; here the lecturer has said that
+            # this one is the last.
+            lecture.update!(assignments_complete: true)
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: early_user,
+                              percentage_materialized: 30,
+                              points_total_materialized: 30,
+                              points_max_materialized: 100,
+                              points_max_pending_materialized: 0)
+            FactoryBot.create(:student_performance_certification,
+                              lecture: lecture, user: early_user)
+          end
+
+          it "names the sheets to come rather than refusing the student" do
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(deferral(:points_not_due))
+            expect(response.body).not_to include(deferral(:points_pending))
+          end
+        end
+
         context "when the rule would let the student through" do
           it "names what the rule says" do
             get lecture_student_performance_certifications_path(lecture)
@@ -816,6 +901,23 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
     context "as an editor" do
       before { sign_in editor }
+
+      # Reachable past a disabled button, and it would write nothing but
+      # "deferred" over every decision on record.
+      it "refuses to sweep while the list of assignments is open" do
+        lecture.update!(assignments_complete: false)
+
+        expect do
+          post(bulk_accept_lecture_student_performance_certifications_path(
+                 lecture
+               ))
+        end.not_to change(StudentPerformance::Certification, :count)
+
+        expect(flash[:alert]).to eq(
+          I18n.t("student_performance.certifications.index.assignments_incomplete",
+                 tab: I18n.t("assessment.tabs.assignments"))
+        )
+      end
 
       it "creates certifications for all students" do
         expect do

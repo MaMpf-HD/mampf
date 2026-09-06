@@ -45,29 +45,35 @@
 
             <div class="text-muted small mt-1">
               <%= t("student_performance.records.show.out_of",
-                  max: number_with_precision(@record.points_max_materialized,
-                                             precision: 1,
-                                             strip_insignificant_zeros: true)) %>
+                  max: number_with_precision(
+                         @due_points.max_for(@record.user_id),
+                         precision: 1,
+                         strip_insignificant_zeros: true)) %>
             </div>
           </div>
         </div>
 
         <div class="col-12 col-md-4">
           <div class="text-center p-3 border rounded bg-light">
+            <% percentage = @due_points.percentage_for(@record) %>
+
             <div class="display-6 fw-bold">
-              <% if @record.percentage_materialized.nil? %>
+              <% if percentage.nil? %>
                 <span class="text-muted" aria-hidden="true">&mdash;</span>
                 <span class="visually-hidden">
                   <%= t("student_performance.records.percentage_unavailable") %>
                 </span>
               <% else %>
-                <%= number_to_percentage(@record.percentage_materialized,
-                                         precision: 0) %>
+                <%= number_to_percentage(percentage, precision: 0) %>
               <% end %>
             </div>
 
             <div class="text-muted small">
               <%= t("student_performance.records.show.percentage") %>
+            </div>
+
+            <div class="text-muted small mt-1">
+              <%= t("student_performance.records.columns.of_due_points") %>
             </div>
           </div>
         </div>
@@ -119,6 +125,7 @@
             <% @assessments.each do |assessment| %>
               <% participation = @participation_by_assessment[assessment.id] %>
               <% status = participation&.display_status || :not_submitted %>
+              <% status = :not_due if status == :not_submitted && !@due_points.due?(assessment.id) %>
               <% points = @points_by_assessment[assessment.id] %>
               <% max = assessment.effective_total_points %>
 
@@ -177,7 +184,14 @@
 
           <tfoot class="table-light">
             <tr class="fw-bold">
-              <td><%= t("student_performance.records.show.total_row") %></td>
+              <td>
+                <%= t("student_performance.records.show.total_row") %>
+                <br>
+
+                <span class="fw-normal text-muted" style="font-size: 0.75em">
+                  <%= t("student_performance.records.show.total_row_hint") %>
+                </span>
+              </td>
 
               <td></td>
 

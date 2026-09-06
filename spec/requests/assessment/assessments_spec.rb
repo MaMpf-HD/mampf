@@ -223,6 +223,57 @@ RSpec.describe("Assessment::Assessments", type: :request) do
     end
   end
 
+  describe "PATCH /assessment/assessments/assignments_complete" do
+    context "as a teacher" do
+      before { sign_in teacher }
+
+      it "offers the statement next to the list it is about" do
+        create(:valid_assignment, lecture: lecture)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("assessment.assignments_complete.label"))
+        )
+      end
+
+      it "closes the list" do
+        patch assignments_complete_assessment_assessments_path(
+          lecture_id: lecture.id, complete: "1"
+        )
+
+        expect(lecture.reload.assignments_complete?).to be(true)
+        expect(response).to redirect_to(
+          assessment_assessments_path(lecture_id: lecture.id,
+                                      tab: "assessments")
+        )
+      end
+
+      it "takes the statement back" do
+        lecture.update!(assignments_complete: true)
+
+        patch assignments_complete_assessment_assessments_path(
+          lecture_id: lecture.id, complete: "0"
+        )
+
+        expect(lecture.reload.assignments_complete?).to be(false)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        patch assignments_complete_assessment_assessments_path(
+          lecture_id: lecture.id, complete: "1"
+        )
+
+        expect(response).to redirect_to(root_path)
+        expect(lecture.reload.assignments_complete?).to be(false)
+      end
+    end
+  end
+
   describe "locale handling" do
     let(:german_lecture) { create(:lecture, teacher: teacher, locale: "de") }
 

@@ -124,6 +124,9 @@ Rails.application.routes.draw do
   # assessment routes
   namespace :assessment do
     resources :assessments, only: [:index, :show, :update] do
+      collection do
+        patch :assignments_complete
+      end
       resources :tasks, except: [:index] do
         member do
           get :cancel

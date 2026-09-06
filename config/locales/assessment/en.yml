@@ -147,6 +147,9 @@ en:
       registered: 'registered'
       registration_not_open: 'Registration not yet open.'
       go_to_registration: 'Go to Registration →'
+    assignments_complete:
+      label: 'The assignment list is complete'
+      hint: 'Tick this once every assignment of the term exists. Until then, exam eligibility defers every verdict — each assignment still to come can overturn it. Creating a new assignment clears the tick again.'
     campaign_status:
       title: 'Registration'
       none: 'No registration'
@@ -157,6 +160,7 @@ en:
       title: 'Status'
       draft: 'Draft'
       registration_open: 'Registration open'
+      registration_processing: 'Registration processing'
       registration_closed: 'Registration closed'
       finalized: 'Finalized'
       conducted: 'Conducted'

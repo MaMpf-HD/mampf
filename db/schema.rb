@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_06_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -523,6 +523,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
     t.boolean "vignettes", default: false, null: false
     t.date "submission_deletion_date", null: false
     t.boolean "uses_exam_eligibility", default: true, null: false
+    t.datetime "assignments_complete_at"
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["submission_deletion_date"], name: "index_lectures_on_submission_deletion_date"

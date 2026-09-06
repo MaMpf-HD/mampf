@@ -14,6 +14,7 @@ module StudentPerformance
     end
 
     def index
+      @due_points = due_points
       load_certifications
       load_proposals if @rule
       @proposal_by_user ||= {}
@@ -85,9 +86,20 @@ module StudentPerformance
         return
       end
 
+      # Every proposal is deferred while the list is open, so a sweep would
+      # write nothing but that — and the screen says as much next to the button.
+      unless @lecture.assignments_complete?
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t(
+                      "student_performance.certifications.index.assignments_incomplete",
+                      tab: I18n.t("assessment.tabs.assignments")
+                    )
+        return
+      end
+
       records = @lecture.student_performance_records
                         .includes(:user)
-      evaluator = StudentPerformance::Evaluator.new(@rule)
+      evaluator = evaluator_for(@rule)
       proposals = evaluator.bulk_evaluate(records)
 
       existing_certs = @lecture.student_performance_certifications
@@ -133,7 +145,7 @@ module StudentPerformance
 
       stale_certs = @lecture.student_performance_certifications
                             .stale.where.not(source: :manual)
-      evaluator = StudentPerformance::Evaluator.new(@rule)
+      evaluator = evaluator_for(@rule)
       records_by_user = @lecture.student_performance_records.index_by(&:user_id)
       updated = 0
       reset_to_pending = 0
@@ -224,7 +236,7 @@ module StudentPerformance
                           .includes(:user)
                           .order(:created_at)
 
-        evaluator = StudentPerformance::Evaluator.new(@rule)
+        evaluator = evaluator_for(@rule)
         @proposals = evaluator.bulk_evaluate(records)
         @proposal_by_user = @proposals.transform_keys(&:user_id)
       end

@@ -144,6 +144,16 @@ class Lecture < ApplicationRecord
             allow_nil: true
 
   before_save :initialize_submission_deletion_date
+  # Closing the list changes every eligibility verdict in the lecture at once,
+  # so the records are recomputed: `computed_at` moves, and the decisions taken
+  # before it are picked up by the reconciliation banner that already exists.
+  # Reopening does not, on purpose: it happens when a sheet is added, and a new
+  # sheet brings its tasks, which recompute the records themselves.
+  after_update_commit :recompute_performance_records,
+                      if: lambda {
+                        saved_change_to_assignments_complete_at? &&
+                          assignments_complete_at.present?
+                      }
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
@@ -882,6 +892,28 @@ class Lecture < ApplicationRecord
     sync_student_performance_for_members!(new_user_ids)
   end
 
+  # Whether every assignment of the term is on record. Until somebody says so,
+  # no eligibility verdict holds: each sheet still to come raises the points
+  # needed and the points reachable at the same time, so neither a pass nor a
+  # fail survives the next one.
+  def assignments_complete?
+    assignments_complete_at.present?
+  end
+
+  # Written from a checkbox, kept as the moment it was said. Re-saying the same
+  # thing must not move the timestamp — that would recompute every record and
+  # mark every decision for reconciliation for nothing.
+  #
+  # Worth knowing when writing a spec: creating an assignment opens the list
+  # again, so a setup that closes it first and adds sheets afterwards leaves it
+  # open.
+  def assignments_complete=(value)
+    complete = ActiveModel::Type::Boolean.new.cast(value).present?
+    return if complete == assignments_complete?
+
+    self.assignments_complete_at = complete ? Time.current : nil
+  end
+
   def sync_student_performance_for_members!(user_ids)
     new_user_ids = user_ids.uniq
     return if new_user_ids.empty?
@@ -973,6 +1005,12 @@ class Lecture < ApplicationRecord
 
     def initialize_submission_deletion_date
       self.submission_deletion_date ||= default_submission_deletion_date
+    end
+
+    def recompute_performance_records
+      StudentPerformance::ComputationService
+        .new(lecture: self)
+        .compute_and_upsert_all_records!
     end
 
     def fan_out_submission_deletion_date

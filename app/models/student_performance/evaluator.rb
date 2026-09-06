@@ -3,13 +3,19 @@ module StudentPerformance
     # Criteria that are open rather than missed: nobody can be judged on them yet.
     UNDECIDED = [:pending, :ungraded, :not_measurable].freeze
 
-    POINTS_DEFERRALS = [:points_pending, :points_not_measurable].freeze
+    POINTS_DEFERRALS = [:points_not_due, :points_pending,
+                        :points_not_measurable].freeze
 
-    DEFERRAL_REASONS = (POINTS_DEFERRALS + [:achievements_ungraded]).freeze
+    DEFERRAL_REASONS = ([:assignments_incomplete] + POINTS_DEFERRALS +
+                        [:achievements_ungraded]).freeze
 
     Result = Struct.new(:proposed_status, :details, keyword_init: true) do
+      # An open list overrules the rest: the other reasons are true as well,
+      # but this is the one holding the verdict, and it is the same one in
+      # every row of the table.
       def verdict_deferral_reasons
         return [] unless proposed_status == :inconclusive
+        return [:assignments_incomplete] if details[:assignments_incomplete]
 
         DEFERRAL_REASONS.select { |reason| details[reason] }
       end
@@ -25,8 +31,19 @@ module StudentPerformance
     # `min_percentage`, `min_points_absolute` — at most one of them set — and
     # `required_achievements`. The threshold mode is deliberately not part of
     # that contract, since the preview has none.
-    def initialize(rule)
+    #
+    # `due_points` is what the calendar has to say: which sheets could be
+    # handed in at all. Without one the evaluator sees the marking backlog and
+    # nothing else, and refuses students a term that is not over — which is
+    # every caller judging a real lecture wanting one.
+    #
+    # `assignments_complete` has no default on purpose. It is the gate on every
+    # verdict this class hands out, and a caller that forgets it would get the
+    # unsound answer rather than an error.
+    def initialize(rule, assignments_complete:, due_points: nil)
       @rule = rule
+      @assignments_complete = assignments_complete
+      @due_points = due_points
     end
 
     def evaluate(record)
@@ -40,8 +57,10 @@ module StudentPerformance
       Result.new(
         proposed_status: propose(points, achievements),
         details: {
+          assignments_incomplete: !@assignments_complete,
           meets_points: points == :met,
-          points_pending: points == :pending,
+          points_not_due: points == :pending && not_yet_due(record).positive?,
+          points_pending: points == :pending && awaiting_marking(record).positive?,
           points_not_measurable: points == :not_measurable,
           meets_achievements: achievements == :met,
           achievements_ungraded: achievements == :ungraded
@@ -57,7 +76,13 @@ module StudentPerformance
 
       # A criterion nobody can satisfy any more settles the case; one that is
       # merely unfinished defers it.
+      #
+      # Nothing at all is settled while sheets can still be added: another one
+      # worth p points raises the points needed by p/2 and the points reachable
+      # by p, so it can overturn a pass and a fail alike. Until somebody says
+      # the list is closed, the honest answer is that it is too early.
       def propose(*statuses)
+        return :inconclusive unless @assignments_complete
         return :failed if statuses.include?(:not_met)
         return :inconclusive if statuses.intersect?(UNDECIDED)
 
@@ -89,15 +114,15 @@ module StudentPerformance
         end
       end
 
-      # Refusing eligibility because a tutor is behind would be the record's
-      # fault, not the student's. Marking can only add points, and the sheets
-      # awaiting it are already counted in the maximum, so the best case is
-      # simply everything outstanding awarded in full.
+      # Refusing eligibility because a tutor is behind, or because the term is
+      # not over, would be the calendar's fault, not the student's. Everything
+      # outstanding is already counted in the maximum, so the best case is
+      # simply all of it awarded in full.
       def points_still_reachable?(record)
-        pending = record.points_max_pending_materialized || 0
-        return false if pending.zero?
+        outstanding = awaiting_marking(record) + not_yet_due(record)
+        return false unless outstanding.positive?
 
-        best_total = (record.points_total_materialized || 0) + pending
+        best_total = (record.points_total_materialized || 0) + outstanding
 
         if rule.min_points_absolute.present?
           best_total >= rule.min_points_absolute
@@ -107,6 +132,16 @@ module StudentPerformance
         else
           false
         end
+      end
+
+      def awaiting_marking(record)
+        record.points_max_pending_materialized || 0
+      end
+
+      def not_yet_due(record)
+        return 0 unless @due_points
+
+        @due_points.not_yet_due_for(record.user_id)
       end
 
       def achievements_status(record)

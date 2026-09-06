@@ -5,25 +5,42 @@
     </p>
 
     <div class="d-flex gap-2">
-      <% if @rule && @uncertified_count > 0 &&
-            (@proposed_passed + @proposed_failed) > 0 %>
+      <% if @rule && @uncertified_count > 0 && !@lecture.assignments_complete? %>
+        <button
+          type="button"
+          class="btn btn-sm btn-success"
+          disabled
+          title="<%= t("student_performance.certifications.index.assignments_incomplete",
+                       tab: t("assessment.tabs.assignments")) %>"
+        >
+          <i class="bi bi-check-all me-1"></i>
+          <%= t("student_performance.certifications.index.bulk_accept") %>
+        </button>
+      <% elsif @rule && @uncertified_count > 0 &&
+               (@proposed_passed + @proposed_failed) > 0 %>
         <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
                     method: :post,
                     class: "btn btn-sm btn-success" do %>
           <i class="bi bi-check-all me-1"></i>
           <%= t("student_performance.certifications.index.bulk_accept") %>
 
-          <span class="ms-1">
-            (<%= @proposed_passed %>
-            <%= t("student_performance.certifications.index.proposed_passed") %>,
-            <%= @proposed_failed %>
-            <%= t("student_performance.certifications.index.proposed_failed") %>
-            <% if @proposed_inconclusive > 0 %>
-              ,
-              <%= @proposed_inconclusive %>
-              <%= t("student_performance.certifications.index.proposed_inconclusive") %>
-            <% end %>)
-          </span>
+          <%#
+            joined in Ruby: a comma of its own in the markup renders with a
+            space in front of it
+          %>
+          <% scope = "student_performance.certifications.index" %>
+
+          <% forecast = [
+               "#{@proposed_passed} #{t("#{scope}.proposed_passed")}",
+               "#{@proposed_failed} #{t("#{scope}.proposed_failed")}"
+             ] %>
+
+          <% if @proposed_inconclusive.positive? %>
+            <% forecast << "#{@proposed_inconclusive} " \
+                           "#{t("#{scope}.proposed_inconclusive")}" %>
+          <% end %>
+
+          <span class="ms-1">(<%= forecast.join(", ") %>)</span>
         <% end %>
       <% end %>
     </div>
@@ -123,6 +140,15 @@
         <% end %>
       </div>
     <% end %>
+  <% end %>
+
+  <% unless @lecture.assignments_complete? %>
+    <div class="alert alert-info d-flex align-items-center mb-4">
+      <i class="bi bi-info-circle me-2"></i>
+
+      <%= t("student_performance.certifications.index.assignments_incomplete",
+            tab: t("assessment.tabs.assignments")) %>
+    </div>
   <% end %>
 
   <% if @total_students > 0 %>
@@ -333,6 +359,10 @@
                 <%= t("student_performance.records.columns.points") %>
               <% else %>
                 <%= t("student_performance.records.columns.percentage") %>
+                <br>
+                <span class="fw-normal text-muted" style="font-size: 0.75em">
+                  <%= t("student_performance.records.columns.of_due_points") %>
+                </span>
               <% end %>
             </th>
 
@@ -380,9 +410,15 @@
                             precision: 1,
                             strip_insignificant_zeros: true) %>
                 <% else %>
-                  <%= number_to_percentage(
-                            record.percentage_materialized.to_f,
-                            precision: 1) %>
+                  <% percentage = @due_points.percentage_for(record) %>
+                  <% if percentage.nil? %>
+                    <span class="text-muted" aria-hidden="true">&mdash;</span>
+                    <span class="visually-hidden">
+                      <%= t("student_performance.records.percentage_unavailable") %>
+                    </span>
+                  <% else %>
+                    <%= number_to_percentage(percentage, precision: 1) %>
+                  <% end %>
                 <% end %>
               </td>
 

@@ -51,6 +51,72 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(response.body).not_to include(">0%</span>")
       end
 
+      # In a term where every sheet is over the deadline the difference is
+      # invisible; the state this covers is the middle of a running term.
+      context "with a sheet that is not due yet" do
+        let(:member) { FactoryBot.create(:confirmed_user) }
+
+        def sheet(deadline:, points:)
+          assignment = FactoryBot.create(:assignment, lecture: lecture,
+                                                      deadline: 1.year.from_now)
+          # rubocop:disable Rails/SkipsModelValidations
+          assignment.update_column(:deadline, deadline)
+          # rubocop:enable Rails/SkipsModelValidations
+          FactoryBot.create(:assessment_task,
+                            assessment: assignment.assessment,
+                            max_points: points)
+          assignment.assessment.reload
+        end
+
+        it "says the sheet is not due instead of marking it missing" do
+          coming = sheet(deadline: 3.days.from_now, points: 16)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, :pending,
+                            assessment: coming, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.records.columns.not_due")
+          )
+          expect(response.body).not_to include(
+            I18n.t("student_performance.records.columns.not_submitted")
+          )
+        end
+
+        it "measures the percentage against the sheets due so far" do
+          sheet(deadline: 2.days.ago, points: 20)
+          sheet(deadline: 3.days.from_now, points: 20)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          # rubocop:disable Rails/SkipsModelValidations
+          StudentPerformance::Record
+            .where(lecture: lecture, user: member)
+            .update_all(points_total_materialized: 20,
+                        points_max_materialized: 40,
+                        percentage_materialized: 50)
+          # rubocop:enable Rails/SkipsModelValidations
+
+          get lecture_student_performance_records_path(lecture)
+
+          helpers = ApplicationController.helpers
+          expect(response.body)
+            .to include(helpers.number_to_percentage(100, precision: 0))
+          expect(response.body)
+            .not_to include(helpers.number_to_percentage(50, precision: 0))
+        end
+
+        it "names what the points column is measured against" do
+          sheet(deadline: 2.days.ago, points: 20)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.records.columns.of_due_points")
+          )
+        end
+      end
+
       context "with achievements" do
         it "renders achievement columns when achievements exist" do
           user = FactoryBot.create(:confirmed_user)

@@ -12,7 +12,9 @@ module Demo
       Rails.logger.debug("=== Demo Eligibility Setup ===")
       Demo::QuietLoggingSupport.with_quiet_logging do
         reset_demo_eligibility!(lecture)
-        lecture.update!(uses_exam_eligibility: true)
+        # The demo term is over: all ten sheets exist, so the list is closed and
+        # the proposals below are the real thing rather than "too early".
+        lecture.update!(uses_exam_eligibility: true, assignments_complete: true)
         rule = create_demo_rule!(lecture)
         certify_demo_students!(lecture, rule)
         print_eligibility_summary(lecture)
@@ -63,7 +65,9 @@ module Demo
       # `pending`, without a certifier, and its `certified_at` then reads as
       # "last evaluated" rather than "decided".
       def certify_demo_students!(lecture, rule)
-        evaluator = StudentPerformance::Evaluator.new(rule)
+        due_points = StudentPerformance::DuePoints.new(lecture: lecture)
+        evaluator = StudentPerformance::Evaluator.new(rule,
+                                                      due_points: due_points)
         records = StudentPerformance::Record.where(lecture_id: lecture.id)
         teacher = lecture.teacher
 

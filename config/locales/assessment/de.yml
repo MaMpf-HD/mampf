@@ -147,6 +147,9 @@ de:
       registered: 'angemeldet'
       registration_not_open: 'Anmeldung noch nicht geöffnet.'
       go_to_registration: 'Zur Anmeldung →'
+    assignments_complete:
+      label: 'Die Blätterliste ist vollständig'
+      hint: 'Setze das Häkchen, wenn alle Übungsblätter des Semesters angelegt sind. Solange es fehlt, stellt die Prüfungszulassung jedes Urteil zurück — jedes weitere Blatt kann es umwerfen. Ein neues Blatt entfernt das Häkchen wieder.'
     campaign_status:
       title: 'Anmeldung'
       none: 'Kein Verfahren'
@@ -157,6 +160,7 @@ de:
       title: 'Status'
       draft: 'Entwurf'
       registration_open: 'Anmeldung offen'
+      registration_processing: 'Anmeldung in Bearbeitung'
       registration_closed: 'Anmeldung geschlossen'
       finalized: 'Finalisiert'
       conducted: 'Durchgeführt'

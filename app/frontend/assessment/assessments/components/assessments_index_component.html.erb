@@ -76,6 +76,28 @@
           </div>
         <% end %>
       </div>
+      <%= form_with url: assignments_complete_assessment_assessments_path(
+                          lecture_id: lecture.id
+                        ),
+                    method: :patch,
+                    data: { controller: "auto-submit-form" },
+                    class: "border-top pt-3" do %>
+        <%= hidden_field_tag :complete, "0", id: nil %>
+
+        <div class="form-check">
+          <%= check_box_tag :complete, "1", lecture.assignments_complete?,
+                            class: "form-check-input",
+                            data: { action: "change->auto-submit-form#submit" } %>
+
+          <%= label_tag :complete,
+                        t('assessment.assignments_complete.label'),
+                        class: "form-check-label" %>
+        </div>
+
+        <p class="text-muted small mb-0 mt-1">
+          <%= t('assessment.assignments_complete.hint') %>
+        </p>
+      <% end %>
     <% end %>
   <% end %>
 

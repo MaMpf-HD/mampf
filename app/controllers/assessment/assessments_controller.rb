@@ -1,6 +1,6 @@
 module Assessment
   class AssessmentsController < ApplicationController
-    before_action :set_lecture, only: [:index]
+    before_action :set_lecture, only: [:index, :assignments_complete]
     before_action :set_assessable, only: [:show]
     before_action :set_assessment, only: [:update]
     before_action :set_locale
@@ -25,6 +25,17 @@ module Assessment
           )
         end
       end
+    end
+
+    # Whether every assignment of the term is on record. It gates eligibility,
+    # so it is said here, next to the list it is about.
+    def assignments_complete
+      authorize! :update, @lecture
+
+      @lecture.update!(assignments_complete: params[:complete])
+
+      redirect_to assessment_assessments_path(lecture_id: @lecture.id,
+                                              tab: "assessments")
     end
 
     def show

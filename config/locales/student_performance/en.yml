@@ -24,11 +24,13 @@ en:
         email: "Email"
         points: "Points"
         percentage: "Percentage"
+        of_due_points: "of the points due so far"
         assessments: "Assessments"
 
         reviewed: "Reviewed"
         graded: "graded"
         pending_grading: "Pending Grading"
+        not_due: "Not due yet"
         not_submitted: "Not Submitted"
         absent: "Absent"
         exempt: "Exempt"
@@ -52,7 +54,7 @@ en:
         recompute_hint: "Fallback only: use this if the displayed data seems out of date or incorrect."
         review_proposal: "Review Proposal"
         total_points: "Total Points"
-        out_of: "out of %{max} possible"
+        out_of: "out of %{max} due so far"
         percentage: "Percentage"
         achievements_met: "Achievements Met"
         assessment_breakdown: "Assignment Breakdown"
@@ -63,6 +65,7 @@ en:
         view_manuscript: "View submission"
         view_correction: "View correction"
         total_row: "Total"
+        total_row_hint: "over every assignment of the term"
         last_computed: "Last computed %{time} ago."
 
       recompute:
@@ -104,7 +107,7 @@ en:
         newly_inconclusive: "newly deferred"
         current_status: "Current"
         new_status: "With new rule"
-        deferred_hint: "Deferred means the case is still open: the grades that are still outstanding could take the student over the threshold. Raising it can therefore turn deferred into not eligible, and eligible into deferred."
+        deferred_hint: "Deferred means the case is still open: what is still outstanding — submissions not graded yet, assignments not due yet — could take the student over the threshold. Raising it can therefore turn deferred into not eligible, and eligible into deferred."
         manual_conflicts:
           one: "%{count} individual decision contradicts the new rule and stands:"
           other: "%{count} individual decisions contradict the new rule and stand:"
@@ -121,6 +124,8 @@ en:
         failed: "Not Eligible"
         inconclusive: "Deferred"
       deferral:
+        assignments_incomplete: "The assignment list is still open"
+        points_not_due: "Assignments not due yet"
         points_pending: "Submissions not graded yet"
         points_not_measurable: "No points to measure"
         achievements_ungraded: "Achievement not graded yet"
@@ -130,6 +135,7 @@ en:
         points_check: "Points Check"
         student_points: "Student points"
         student_percentage: "Student percentage"
+        measured_against_all: "The rule measures against every assignment created so far, not only against those due."
         required: "Required"
         result: "Result"
         achievements_check: "Achievements Check"
@@ -139,6 +145,7 @@ en:
       back_to_dashboard: "Back to dashboard"
       index:
         subtitle: "Review eligibility proposals and approve students for the exam."
+        assignments_incomplete: "The assignment list is still open, so every proposal stays deferred: each assignment still to come raises both the points needed and the points reachable. Create the missing assignments and tick \"the assignment list is complete\" on the %{tab} tab."
         total: "Total Students"
         passed: "Eligible"
         failed: "Not Eligible"
@@ -148,7 +155,7 @@ en:
         bulk_accept: "Accept Open Proposals"
         proposed_passed: "eligible"
         proposed_failed: "not eligible"
-        proposed_inconclusive: "deferred"
+        proposed_inconclusive: "stay deferred"
         accept: "Accept"
         override: "Override"
         certify_pass: "Certify: Eligible"
@@ -179,7 +186,7 @@ en:
       status:
         passed: "Eligible"
         failed: "Not Eligible"
-        pending: "Undecided"
+        pending: "Deferred"
         manual: "Individual decision"
         stale: "Outdated — reconciliation needed"
       columns:
