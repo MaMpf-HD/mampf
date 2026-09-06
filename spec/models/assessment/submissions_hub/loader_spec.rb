@@ -406,6 +406,25 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
       expect(result.open_sheets.map(&:assignment)).to eq([assignment])
     end
+
+    # Open means "can still be handed in", and after a rejection this reader
+    # can do nothing at all - the clock is beside the point. The row says what
+    # happened; the card would have no action to offer.
+    it "drops a sheet whose hand-in was rejected inside the grace period" do
+      assignment = create_assignment(deadline: 10.minutes.ago)
+      hand_in(assignment, accepted: false)
+
+      expect(result.open_sheets).to be_empty
+    end
+
+    # The other way round, so the rule does not reach too far: while nobody has
+    # decided, the sheet is still the reader's to look at.
+    it "keeps a late sheet nobody has decided on" do
+      assignment = create_assignment(deadline: 10.minutes.ago)
+      hand_in(assignment)
+
+      expect(result.open_sheets.map(&:assignment)).to eq([assignment])
+    end
   end
 
   describe "#due" do

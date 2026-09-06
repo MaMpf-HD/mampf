@@ -653,6 +653,46 @@ RSpec.describe("Submissions", type: :request) do
           .to include(I18n.t("submission.hub.sheet_count", count: 1))
       end
 
+      # `Sheet#state` calls a rejected sheet rejected before it looks at the
+      # clock, and "still open" asked the clock alone: inside the grace period
+      # the sheet got a card, and the card has no badge, no note and no number
+      # for this state. The row has all three.
+      it "puts a rejected sheet in the list, where it can say what happened" do
+        lecture.update(submission_grace_period: 60)
+        rejected = create(:assignment, :expired, lecture: lecture,
+                                                 title: "Homework 4",
+                                                 expired_since: 10.minutes)
+        create(:assessment_task, assessment: rejected.assessment, max_points: 8)
+        hand_in(rejected).update(accepted: false)
+
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).to include(I18n.t("submission.hub.notes.rejected"))
+        expect(response.body).to include(
+          I18n.t("submission.hub.points_reader", points: "0", max: "8")
+        )
+        expect(response.body)
+          .not_to include(SubmissionCardComponent.frame_id(rejected))
+      end
+
+      # The other way round, so the rule does not reach too far: while nobody
+      # has decided, the sheet is still the reader's to look at, and the card
+      # is where that is said.
+      it "keeps a late sheet nobody has decided on as a card" do
+        lecture.update(submission_grace_period: 60)
+        undecided = create(:assignment, :expired, lecture: lecture,
+                                                  title: "Homework 5",
+                                                  expired_since: 10.minutes)
+        hand_in(undecided)
+
+        get lecture_submissions_path(lecture)
+
+        expect(response.body)
+          .to include(SubmissionCardComponent.frame_id(undecided))
+        expect(response.body)
+          .to include(I18n.t("submission.hub.chips.tutor_decides"))
+      end
+
       # Handing in early is a thing people do, and the old page allowed it.
       it "gives a sheet due later a card of its own" do
         soon = create(:assignment, lecture: lecture, title: "Homework 9",
