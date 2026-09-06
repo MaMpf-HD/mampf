@@ -240,6 +240,20 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       expect(content).to include("/submissions/a-submission/show_correction")
     end
 
+    # A PDF is the browser's business. Without this Turbo Drive takes the
+    # response for a page visit, and the card's own links have said so since
+    # they were written.
+    it "leaves both PDFs to the browser rather than to Turbo" do
+      content = render_fold(
+        :marked,
+        points_by_task: { task => 2 },
+        submission: handed_in_file(manuscript: "homework8.pdf",
+                                   correction: "correction.pdf")
+      )
+
+      expect(content.scan('data-turbo="false"').size).to eq(2)
+    end
+
     # Both files are often called the same thing. The word in front tells them
     # apart, and it has to be in the link's own name too - somebody walking the
     # links hears nothing else.

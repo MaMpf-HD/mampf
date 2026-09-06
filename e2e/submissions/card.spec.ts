@@ -43,6 +43,76 @@ test.describe("the card for a sheet that is due", () => {
     return { lecture, assignment };
   }
 
+  /**
+   * Several sheets can be open at once, so the hand-in form is on the page more
+   * than once - and it was written when the page had room for one. An id that
+   * appears twice is resolved to whichever card came first, which puts the
+   * answer on the wrong card.
+   */
+  test("keeps two open hand-in forms apart", async ({
+    factory,
+    teacher,
+    student,
+  }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      teacher_id: teacher.user.id,
+      locale: "en",
+    });
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Monday group",
+    });
+    await factory.create("lecture_user_join", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.user.id,
+    });
+    const first = await factory.create("assignment", [], {
+      lecture_id: lecture.id,
+      title: "Homework 1",
+      deadline: new Date(Date.now() + 7 * 86400000).toISOString(),
+    });
+    const second = await factory.create("assignment", [], {
+      lecture_id: lecture.id,
+      title: "Homework 2",
+      deadline: new Date(Date.now() + 14 * 86400000).toISOString(),
+    });
+    // The second sheet already carries a file, so its form opens with one to
+    // take back out - which is the moment the mark is written.
+    const handed = await factory.create("submission", ["with_manuscript"], {
+      assignment_id: second.id, tutorial_id: tutorial.id,
+    });
+    await factory.create("user_submission_join", [], {
+      submission_id: handed.id, user_id: student.user.id,
+    });
+
+    const page = student.page;
+    await page.goto(`/lectures/${lecture.id}/submissions`);
+
+    const firstCard = page.locator(`#submission_card_assignment_${first.id}`);
+    const secondCard = page.locator(`#submission_card_assignment_${second.id}`);
+
+    await firstCard.getByRole("link", { name: "Hand in" }).click();
+    await secondCard.getByRole("link", { name: "Replace file" }).click();
+
+    const detach = (card: typeof firstCard) =>
+      card.locator("input[name='submission[detach_user_manuscript]']");
+
+    await secondCard
+      .locator("[data-submission-upload-target='removeButton']").click();
+
+    await expect(detach(secondCard)).toHaveValue("true");
+    await expect(detach(firstCard)).toHaveValue("false");
+
+    // The label reaches its box by id, so this ticks the second card's box -
+    // and only that one.
+    await secondCard
+      .getByText("I assure that the file does not infringe").click();
+
+    await expect(secondCard.getByRole("checkbox")).toBeChecked();
+    await expect(firstCard.getByRole("checkbox")).not.toBeChecked();
+  });
+
   test("hands a sheet in and shows the file on the card", async ({
     factory,
     teacher,

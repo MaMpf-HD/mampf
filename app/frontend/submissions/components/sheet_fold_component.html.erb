@@ -41,6 +41,9 @@
       it. Both files are often called the same thing, so the word is what tells
       them apart - and it goes into the link's own name, because somebody
       walking the links hears nothing else.
+
+      `turbo: false` on both: a PDF is the browser's business, and Turbo Drive
+      would take the response for a page visit.
     %>
 
     <div>
@@ -58,7 +61,8 @@
             <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
             <%= link_to manuscript_filename,
                         show_submission_manuscript_path(submission),
-                        "aria-label": manuscript_reader_label %>
+                        "aria-label": manuscript_reader_label,
+                        data: { turbo: false } %>
             <% if handed_in_at %>
               <span class="text-muted">&middot; <%= handed_in_at %></span>
             <% end %>
@@ -77,7 +81,8 @@
           <% if correction_filename %>
             <i class="fas fa-file-pdf text-danger me-1" aria-hidden="true"></i>
             <%= link_to correction_filename, show_correction_path(submission),
-                        "aria-label": correction_reader_label %>
+                        "aria-label": correction_reader_label,
+                        data: { turbo: false } %>
           <% else %>
             <span class="text-muted">
               <%= t("submission.hub.fold.not_uploaded_yet") %>

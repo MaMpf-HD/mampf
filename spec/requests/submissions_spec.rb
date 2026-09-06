@@ -990,6 +990,109 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
 
+    # `clear_submitted_at` writes with `update_all`, which skips the callback
+    # that keeps the materialized record honest - and the same answer renders
+    # the standing block from that record. So the two are checked together.
+    describe "the standing when a hand-in stops waiting to be marked" do
+      # Something marked, so the block has a total to talk about, and the sheet
+      # in hand waiting beside it.
+      def waiting_beside_a_marked_sheet
+        # The roster membership is what the computation service counts by.
+        create(:lecture_membership, lecture: lecture, user: user)
+        closed = create(:assignment, :expired, lecture: lecture,
+                                               title: "Homework 0")
+        create(:assessment_task, assessment: closed.assessment, max_points: 4)
+        marked = create(:assessment_participation, assessment: closed.assessment,
+                                                   user: user,
+                                                   submitted_at: 5.days.ago)
+        create(:assessment_task_point,
+               task: closed.assessment.tasks.first,
+               assessment_participation: marked, points: 3)
+        marked.reload.update!(status: :reviewed, graded_at: 4.days.ago)
+
+        create(:assessment_task, assessment: assignment.assessment,
+                                 max_points: 8)
+        create(:assessment_participation, assessment: assignment.assessment,
+                                          user: user, submitted_at: 2.days.ago)
+        hand_in
+      end
+
+      it "stops counting the points of a hand-in the reader deleted" do
+        submission = waiting_beside_a_marked_sheet
+
+        delete submission_path(submission)
+
+        expect(response.body).to include(StandingComponent::TARGET)
+        expect(response.body).not_to include(
+          I18n.t("submission.hub.standing.pending", points: "8")
+        )
+      end
+
+      it "stops counting them when the reader leaves the team instead" do
+        submission = waiting_beside_a_marked_sheet
+        submission.users << create(:confirmed_user)
+
+        delete leave_submission_path(submission)
+
+        expect(response.body).to include(StandingComponent::TARGET)
+        expect(response.body).not_to include(
+          I18n.t("submission.hub.standing.pending", points: "8")
+        )
+      end
+
+      it "stops counting them when the file is taken back out" do
+        submission = waiting_beside_a_marked_sheet
+
+        patch submission_path(submission), params: {
+          submission: { manuscript: "", detach_user_manuscript: "true" }
+        }
+
+        expect(response.body).to include(StandingComponent::TARGET)
+        expect(response.body).not_to include(
+          I18n.t("submission.hub.standing.pending", points: "8")
+        )
+      end
+
+      # The tutor decides, and the student's page answers - so both sides are
+      # read in one example. A rejected hand-in waits for nothing, and until
+      # the gradebook is told, its points stay among the ones being marked for
+      # good: nothing else ever moves them.
+      it "stops counting them once the tutor has rejected the hand-in" do
+        submission = waiting_beside_a_marked_sheet
+        tutor = create(:confirmed_user)
+        create(:tutor_tutorial_join, tutorial: tutorial, tutor: tutor)
+
+        sign_in tutor
+        patch reject_submission_path(submission, format: :js)
+        sign_in user
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).to include(StandingComponent::TARGET)
+        expect(response.body).not_to include(
+          I18n.t("submission.hub.standing.pending", points: "8")
+        )
+      end
+
+      # And back again: a hand-in refused and then accepted after all is
+      # waiting to be marked, and the sheet must not read as one nobody
+      # recorded.
+      it "counts them again once the tutor accepts after all" do
+        submission = waiting_beside_a_marked_sheet
+        tutor = create(:confirmed_user)
+        create(:tutor_tutorial_join, tutorial: tutorial, tutor: tutor)
+
+        sign_in tutor
+        patch reject_submission_path(submission, format: :js)
+        patch accept_submission_path(submission, format: :js)
+        sign_in user
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).to include(
+          I18n.t("submission.hub.standing.pending", points: "8")
+        )
+      end
+    end
+
     # Deleted in another tab: there is no card left to put a message in, so the
     # frame says so rather than navigating itself somewhere unexpected.
     it "answers for a submission that is gone with a frame that says so" do

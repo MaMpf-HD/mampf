@@ -42,7 +42,10 @@
                                           "is-invalid" => messages[:tutorial].present?) } %>
       <% end %>
 
-      <div class="invalid-feedback d-block" id="submission-tutorial-error">
+      <div
+        class="invalid-feedback d-block"
+        id="submission-tutorial-error-<%= assignment.id %>"
+      >
         <%= messages[:tutorial]&.to_sentence %>
       </div>
 
@@ -72,10 +75,15 @@
     <div class="col-12 mb-3">
       <%= f.hidden_field :manuscript,
                          value: submission.cached_manuscript_data,
-                         id: 'upload-userManuscript-hidden',
                          data: { submission_upload_target: 'hiddenInput' } %>
 
-      <%= f.hidden_field :detach_user_manuscript, value: false %>
+      <%#
+        A target rather than a global lookup: with two cards open, the id is on
+        the page twice and `getElementById` finds whichever came first.
+      %>
+
+      <%= f.hidden_field :detach_user_manuscript, value: false,
+                         data: { submission_upload_target: 'detachInput' } %>
 
       <div data-submission-upload-target="dashboard"></div>
     </div>
@@ -83,14 +91,12 @@
     <div class="col-12">
       <i
         class="fas fa-lg fa-trash-alt me-2 clickable"
-        id="removeUserManuscript"
         data-action="click->submission-upload#remove"
         data-submission-upload-target="removeButton"
         style="display: <%= show_inline(submission.manuscript) %>"
       ></i>
 
       <span
-        id="userManuscriptMetadata"
         data-submission-upload-target="metadata"
         style="display: <%= show_inline(submission.manuscript) %>"
       >
@@ -99,7 +105,6 @@
       </span>
 
       <span
-        id="noUserManuscript"
         data-submission-upload-target="noMetadata"
         style="display: <%= show_inline(!submission.manuscript) %>"
       >
@@ -107,22 +112,26 @@
       </span>
     </div>
 
-    <div class="col-12 mt-2" id="userManuscript-status">
-      <div
-        class="col-12 my-1"
-        id="file-permission-field"
-        data-submission-upload-target="permissionField"
-      >
+    <div class="col-12 mt-2">
+      <div class="col-12 my-1" data-submission-upload-target="permissionField">
         <div class="form-check">
           <input
             class="form-check-input"
             type="checkbox"
             value="0"
-            id="file-permission-checkbox"
+            id="file-permission-<%= assignment.id %>"
             data-submission-upload-target="permission"
           >
 
-          <label class="form-check-label" for="file-permission-checkbox">
+          <%#
+            The label reaches its box by id, so with two cards open the id has
+            to say which sheet it belongs to.
+          %>
+
+          <label
+            class="form-check-label"
+            for="file-permission-<%= assignment.id %>"
+          >
             <%= t('submission.assure_third_party') %>
           </label>
         </div>
@@ -135,7 +144,6 @@
       <div class="col-12">
         <small
           class="text-danger submission-initially-hidden"
-          id="userManuscript-not-upload-notice"
           data-submission-upload-target="pendingNotice"
         >
           <%= t('submission.submission_not_upload_notice_html') %>
@@ -145,7 +153,6 @@
       <div class="col-12">
         <small
           class="text-danger submission-initially-hidden"
-          id="userManuscript-upload-notice"
           data-submission-upload-target="uploadedNotice"
         >
           <%= t('submission.submission_upload_notice_html') %>

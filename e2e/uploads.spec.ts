@@ -103,7 +103,9 @@ test.describe("uploading through Uppy", () => {
       await page.getByRole("link", { name: "Hand in" }).click();
       await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
 
-      const stored = page.locator("#userManuscriptMetadata");
+      const stored = page.locator(
+        `${SUBMISSION_FORM} [data-submission-upload-target='metadata']`,
+      );
 
       // Nothing is stored until the box about third-party rights is ticked.
       page.once("dialog", dialog => dialog.accept());
@@ -143,7 +145,9 @@ test.describe("uploading through Uppy", () => {
       await page.getByRole("button", { name: "Remove file" }).click();
 
       await expect(save).toBeEnabled();
-      await expect(page.locator("#userManuscript-not-upload-notice")).toBeHidden();
+      await expect(page.locator(
+        `${SUBMISSION_FORM} [data-submission-upload-target='pendingNotice']`,
+      )).toBeHidden();
     });
 
   test("a correction, once the deadline has passed",

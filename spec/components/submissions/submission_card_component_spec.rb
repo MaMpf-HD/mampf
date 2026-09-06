@@ -88,6 +88,29 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
     end
   end
 
+  # `distance_of_time_in_words` has no sign: once the deadline is past, "in 10
+  # minutes" is about a deadline ten minutes gone. What is left of the grace
+  # period is the badge's line, and it is the only one on the card.
+  describe "a sheet in the grace period" do
+    let(:assignment) do
+      create(:assignment, :expired, lecture: lecture, title: "Homework 11",
+                                    expired_since: 10.minutes)
+    end
+
+    before { lecture.update(submission_grace_period: 30) }
+
+    it "does not say the deadline is still ahead" do
+      content = render_card
+
+      expect(content).to include(
+        I18n.t("submission.hub.chips.grace_period", time: "20 minutes")
+      )
+      expect(content).not_to include(
+        I18n.t("submission.hub.card.in_time", time: "10 minutes")
+      )
+    end
+  end
+
   describe "a sheet that has been handed in" do
     it "shows the file, and offers to replace it" do
       hand_in

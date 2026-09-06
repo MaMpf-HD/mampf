@@ -49,7 +49,7 @@ class SubmissionCardComponent < ViewComponent::Base
   # that decide whether to start on it now.
   def meta_parts
     parts = [assignment.accepted_file_type.delete_prefix(".").upcase]
-    parts << time_left if assignment.semiactive?
+    parts << time_left if assignment.active?
     parts << worth if sheet.tasks_set_up?
     parts.compact
   end
@@ -141,6 +141,9 @@ class SubmissionCardComponent < ViewComponent::Base
       helpers.enabled_roster_for_lecture?(assignment.lecture)
     end
 
+    # Only while the deadline is ahead: `distance_of_time_in_words` has no sign,
+    # so in the grace period this would read "in 10 minutes" about a deadline
+    # ten minutes gone. What is left of the grace period is the badge's line.
     def time_left
       t("submission.hub.card.in_time",
         time: distance_of_time_in_words(Time.zone.now, assignment.deadline))

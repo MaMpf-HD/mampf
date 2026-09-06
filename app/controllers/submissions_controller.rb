@@ -264,11 +264,18 @@ class SubmissionsController < ApplicationController
 
   def accept
     @submission.update(accepted: true)
+    restore_submitted_at(@submission.users)
     send_acceptance_email(@submission.users)
   end
 
+  # A rejected hand-in waits for nothing any more, and the gradebook has to know
+  # it: `submitted_at` is what counts a sheet among the points still being
+  # marked, so left standing it would keep the sheet in the student's reachable
+  # total for good. Only the record is touched here - the state the page shows
+  # is read from `accepted`, and the tutor's own views belong to another branch.
   def reject
     @submission.update(accepted: false)
+    clear_submitted_at(@submission.users)
     send_rejection_email(@submission.users)
   end
 
@@ -592,6 +599,35 @@ class SubmissionsController < ApplicationController
       assessment.assessment_participations
                 .where(user_id: users.map(&:id))
                 .update_all(submitted_at: nil, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+      recompute_performance_records(assessment.lecture, users)
+    end
+
+    # The other way round: a hand-in that was refused and then accepted after
+    # all is waiting to be marked again. Only where the stamp is missing, so a
+    # sheet that already carries one keeps the time it was handed in.
+    def restore_submitted_at(users)
+      assessment = @submission&.assignment&.assessment
+      return unless assessment
+
+      handed_in_at = @submission.last_modification_by_users_at ||
+                     @submission.created_at
+      assessment.assessment_participations
+                .where(user_id: users.map(&:id), submitted_at: nil)
+                .where.not(status: [:absent, :exempt])
+                .update_all(submitted_at: handed_in_at, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+      recompute_performance_records(assessment.lecture, users)
+    end
+
+    # `update_all` is what keeps the two above to one statement each, and it is
+    # also what skips the callback behind them. The materialized record counts a
+    # sheet as awaiting marks by its `submitted_at`, and the same answer renders
+    # the standing block from that record - so without this the reader takes a
+    # file back and is still told its points are being marked.
+    def recompute_performance_records(lecture, users)
+      return unless lecture
+
+      service = StudentPerformance::ComputationService.new(lecture: lecture)
+      users.each { |user| service.compute_and_upsert_record_for(user) }
     end
 
     def sync_assessment_participations(users: nil)
