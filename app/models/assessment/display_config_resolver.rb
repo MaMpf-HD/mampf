@@ -4,7 +4,6 @@ module Assessment
     :mode,
     :left_columns,
     :right_columns,
-    :stimulus_controller,
     keyword_init: true
   )
 
@@ -27,22 +26,20 @@ module Assessment
       tutor = grading_scope.is_a?(Tutorial)
 
       GradingDisplayConfig.new(
-        body_mode: :tasks,
+        body_mode: [:tasks],
         mode: tutor ? "tutor" : "teacher",
         left_columns: tutor ? [:team, :status] : [:team, :tutorial, :status],
-        right_columns: tutor ? [:total, :action, :correction] : [:total, :action],
-        stimulus_controller: "participation-row"
+        right_columns: tutor ? [:total, :action, :correction] : [:total, :action]
       )
     end
     private_class_method :resolve_assignment
 
     def self.resolve_talk(_grading_scope)
       GradingDisplayConfig.new(
-        body_mode: :single_grade,
+        body_mode: [:single_grade],
         mode: "talk",
         left_columns: [:team, :status],
-        right_columns: [:grade, :note, :graded_at, :graded_by, :note, :action],
-        stimulus_controller: "grade-talk-row"
+        right_columns: [:grade, :note, :graded_by, :graded_at, :action]
       )
     end
     private_class_method :resolve_talk

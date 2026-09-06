@@ -9,8 +9,8 @@
   data-status-filter-status="<%= @participation.status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
   data-status-filter-name="<%= @user.tutorial_name %>"
-  <% if @talk %>
-    data-status-filter-group-id="<%= @talk.id %>"
+  <% if @group_id %>
+    data-status-filter-group-id="<%= @group_id %>"
   <% end %>
 >
   <!-- Column 1: User names + copy emails + late icon -->
@@ -74,7 +74,7 @@
       </td>
     <% end %>
 
-    <% if grade? %>
+    <% if single_grade? %>
       <!-- Single grade column -->
       <td class="text-center" style="min-width: 110px;">
         <% if allow_grading? %>
@@ -82,7 +82,7 @@
                 name: "grade",
                 class: "form-select form-select-sm mx-auto",
                 style: "min-width: 90px; width: 90px;",
-                data: { grade_talk_row_target: "gradeInput", action: "change->participation-row#onFieldChanged" }
+                data: { participation_row_target: "gradeInput", action: "change->participation-row#onParticipationChanged" }
               ) do %>
             <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
 
@@ -102,7 +102,7 @@
                     placeholder: t("assessment.grading_talk.note_placeholder"),
                     maxlength: 255,
                     rows: 1,
-                    data: { grade_talk_row_target: "noteInput", action: "input->participation-row#onFieldChanged" } %>
+                    data: { participation_row_target: "noteInput", action: "input->participation-row#onParticipationChanged" } %>
         <% else %>
           <span
             class="text-muted small text-truncate d-inline-block"

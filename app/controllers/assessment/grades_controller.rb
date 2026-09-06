@@ -40,11 +40,13 @@ module Assessment
 
       def replace_participation_row
         turbo_stream.replace(
-          "user-row-#{@user.id}",
-          html: render_to_string(GradeTalkRowComponent.new(
-                                   user: @user,
-                                   talk: @talk,
-                                   participation: @participation
+          "participation-row-#{@participation.id}",
+          html: render_to_string(ParticipationRowComponent.new(
+                                   assessment: @assessment,
+                                   grading_scope: @lecture,
+                                   participation: @participation,
+                                   save_url: grade_talk_user_path(@talk, @user),
+                                   refresh_url: refresh_grade_talk_user_path(@talk, @user)
                                  ))
         )
       end

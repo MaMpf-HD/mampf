@@ -2,24 +2,29 @@
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
+  # rubocop:disable Metrics/ParameterLists
   def initialize(participation:, assessment:, grading_scope:,
-                 save_url:, refresh_url:)
+                 save_url:, refresh_url:, group_id: nil)
+    # rubocop:enable Metrics/ParameterLists
     super()
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
     @lecture = @assessable.lecture
+
     @save_url = save_url
     @refresh_url = refresh_url
+
+    @group_id = group_id
+
     @grading_scope = grading_scope
-    @user ||= @participation&.user
-    @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
 
     @config = Assessment::DisplayConfigResolver.resolve(
       assessable: @assessable, grading_scope: @grading_scope
     )
     @mode = @config.mode
 
+    @user ||= @participation&.user
     return unless @user.nil?
 
     raise(MissingUserError,
@@ -27,48 +32,12 @@ class ParticipationRowComponent < ViewComponent::Base
                  participation_id: @participation&.id))
   end
 
-  def tasks?
-    @config.body_mode == :tasks
-  end
-
-  def grade?
-    @config.body_mode == :single_grade
-  end
-
-  def single_grade?
-    @config.body_mode == :single_grade
-  end
-
-  def show_tutorial_col?
-    @config.left_columns.include?(:tutorial)
-  end
-
-  def show_correction_col?
-    @config.right_columns.include?(:correction)
-  end
-
-  delegate :stimulus_controller, to: :@config
-
   def grading_enabled?
     @assessable.assessable?
   end
 
   def allow_grading?
     @assessable.grading_open?
-  end
-
-  def extract_task_points_participation(task)
-    graded_task_points.find do |sp|
-      sp.task_id == task.id
-    end&.points
-  end
-
-  def graded_task_points
-    @graded_task_points ||= @participation.graded_tasks_points
-  end
-
-  def tasks
-    @assessable.assessment.persisted_tasks || []
   end
 
   def badge_status_participation_color(status)
@@ -88,6 +57,59 @@ class ParticipationRowComponent < ViewComponent::Base
     "participation-row-#{@participation.id}"
   end
 
+  def can_grade?
+    user = helpers.current_user
+    user.admin? || user.can_grade_in_scope?(@grading_scope)
+  rescue User::IncompatibleTypeError
+    false
+  end
+
+  def users_movement_map
+    helpers.users_movement_map_cache[@assessable.id] ||=
+      helpers.calculate_user_movement_map_assignment(@assessable, @lecture)
+  end
+
+  def movement_info_for_user(user)
+    helpers.movement_info_for_user_assignment(user, users_movement_map)
+  end
+
+  # -- optional display helpers for the table header and body --
+
+  # if display tasks pointing and total points
+  def tasks?
+    @config.body_mode.include?(:tasks)
+  end
+
+  # if display grade, grade_at, grade_by, note
+  def single_grade?
+    @config.body_mode.include?(:single_grade)
+  end
+
+  # if display tutorial column
+  def show_tutorial_col?
+    @config.left_columns.include?(:tutorial)
+  end
+
+  # if display correction column
+  def show_correction_col?
+    @config.right_columns.include?(:correction)
+  end
+
+  # ---- task mode helpers ----
+  def extract_task_points_participation(task)
+    graded_task_points.find do |sp|
+      sp.task_id == task.id
+    end&.points
+  end
+
+  def graded_task_points
+    @graded_task_points ||= @participation.graded_tasks_points
+  end
+
+  def tasks
+    @assessable.assessment.persisted_tasks || []
+  end
+
   def task_points_participation_input(task, allow_grading)
     tag.input(
       type: "number",
@@ -97,10 +119,10 @@ class ParticipationRowComponent < ViewComponent::Base
       step: 0.5,
       min: 0,
       data: {
-        participation_row_target: "input",
+        participation_row_target: "pointInput",
         task_id: task.id,
         below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
-        action: "change->participation-row#onPointParticipationChanged input->participation-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
+        action: "change->participation-row#onParticipationChanged input->participation-row#onParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
       disabled: !allow_grading || !grading_enabled? || !can_grade?
@@ -113,7 +135,7 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
-  # ---- single_grade mode helpers (ported from GradeTalkRowComponent) ----
+  # ---- single_grade mode helpers ----
 
   def status_value
     @participation&.status || :pending
@@ -177,21 +199,5 @@ class ParticipationRowComponent < ViewComponent::Base
                disabled: !allow_grading || !grading_enabled? || !can_grade?) do
       tag.i(class: "bi bi-arrow-clockwise")
     end
-  end
-
-  def can_grade?
-    user = helpers.current_user
-    user.admin? || user.can_grade_in_scope?(@grading_scope)
-  rescue User::IncompatibleTypeError
-    false
-  end
-
-  def users_movement_map
-    helpers.users_movement_map_cache[@assessable.id] ||=
-      helpers.calculate_user_movement_map_assignment(@assessable, @lecture)
-  end
-
-  def movement_info_for_user(user)
-    helpers.movement_info_for_user_assignment(user, users_movement_map)
   end
 end

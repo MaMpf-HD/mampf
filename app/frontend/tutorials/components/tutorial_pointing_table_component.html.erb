@@ -35,6 +35,7 @@
             <thead style="background: #fafafa;">
               <%= render(PointingTableHeaderComponent.new(
                 grading_scope: @grading_scope,
+                assessable_type: Assignment.name,
                 grading_enabled: grading_enabled?,
                 tasks: tasks,
                 total_max_points: total_max_points,

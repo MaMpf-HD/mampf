@@ -4,6 +4,12 @@ class TalkGradingTableComponent < ViewComponent::Base
     @seminar = seminar
     @talks = seminar.talks.includes(:speakers, :assessment)
     init_participations
+    @seminar.reload
+    @talks.reload
+  end
+
+  def grading_enabled?
+    true
   end
 
   def gradable_talks
@@ -20,5 +26,13 @@ class TalkGradingTableComponent < ViewComponent::Base
 
   def init_participations
     Assessment::TalkGraderService.init_participations(@seminar)
+  end
+
+  def grade_form_url(talk, user)
+    helpers.grade_talk_user_path(talk, user)
+  end
+
+  def refresh_form_url(talk, user)
+    helpers.refresh_grade_talk_user_path(talk, user)
   end
 end

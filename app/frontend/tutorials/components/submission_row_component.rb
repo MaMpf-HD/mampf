@@ -76,7 +76,7 @@ class SubmissionRowComponent < ViewComponent::Base
       step: 0.5,
       min: 0,
       data: {
-        participation_row_target: "input",
+        participation_row_target: "pointInput",
         task_id: task.id,
         below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
         action: "change->participation-row#onPointSubmissionChanged input->participation-row#onPointSubmissionChanged" # rubocop:disable Layout/LineLength

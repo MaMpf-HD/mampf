@@ -23,48 +23,11 @@
         <div class="table-overflow" data-table-fade-target="inner">
           <table class="table table-hover align-middle my-3 grading-table">
             <thead style="background: #fafafa;">
-              <tr>
-                <th class="grade-th"><%= t("assessment.grade_talk_row.speaker") %></th>
-                <th class="text-center grade-th">
-                  <%= t("assessment.grade_talk_row.status") %>
-
-                  <button
-                    class="btn btn-sm btn-link p-0 ms-1"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <i class="bi bi-funnel"></i>
-                  </button>
-                  <ul class="dropdown-menu z-10">
-                    <li>
-                      <button
-                        class="dropdown-item"
-                        data-action="click->status-filter#filterStatus"
-                        data-status-filter-status-value="all"
-                      >
-                        <%= t('basics.all') %>
-                      </button>
-                    </li>
-
-                    <% possible_statuses.each do |status| %>
-                      <li>
-                        <button
-                          class="dropdown-item"
-                          data-action="click->status-filter#filterStatus"
-                          data-status-filter-status-value="<%= status %>"
-                        >
-                          <%= t("assessment.grading_tutorial.filter_options.filter_#{status}") %>
-                        </button>
-                      </li>
-                    <% end %>
-                  </ul>
-                </th>
-                <th class="text-center grade-th"><%= t("assessment.grade_talk_row.grade") %></th>
-                <th class="grade-th"><%= t("assessment.grade_talk_row.note") %></th>
-                <th class="grade-th"><%= t("assessment.grade_talk_row.graded_by") %></th>
-                <th class="grade-th"><%= t("assessment.grade_talk_row.graded_at") %></th>
-                <th class="text-end grade-th"></th>
-              </tr>
+              <%= render(PointingTableHeaderComponent.new(
+                grading_scope: @grading_scope,
+                assessable_type: Talk.name,
+                grading_enabled: grading_enabled?
+              )) %>
             </thead>
 
             <tbody>
@@ -78,7 +41,13 @@
                 <% talk.speakers.each do |speaker| %>
                   <% participation = speaker.assessment_participation_in_assessable(talk) %>
                   <% if participation %>
-                    <%= participation.id %>
+                    <%= render ParticipationRowComponent.new(
+                      participation: participation,
+                      grading_scope: @seminar,
+                      assessment: talk.assessment,
+                      save_url: grade_form_url(talk, speaker),
+                      refresh_url: refresh_form_url(talk, speaker)
+                    ) %>
                   <% end %>
                 <% end %>
               <% end %>
