@@ -9,8 +9,6 @@ class Assignment < ApplicationRecord
 
   before_save :inherit_deletion_date_from_lecture
   after_create :setup_assessment
-  # A list that has grown is not complete any more. Said without asking,
-  # because a statement that can go quietly false is worse than none.
   after_create_commit :reopen_lecture_assignment_list
   before_destroy :check_destructibility, prepend: true
 
@@ -204,9 +202,8 @@ class Assignment < ApplicationRecord
       ensure_pointbook!(requires_submission: requires_submission)
     end
 
-    # Written past the lecture's validations: whether the list is closed is this
-    # sheet's business, and an unrelated error on the lecture must not leave a
-    # statement standing that has just become false.
+    # Skip Lecture validations so an unrelated validation error cannot
+    # leave assignments_complete_at set after an Assignment is added.
     def reopen_lecture_assignment_list
       return unless lecture&.assignments_complete?
 

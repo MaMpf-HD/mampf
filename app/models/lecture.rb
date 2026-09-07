@@ -144,16 +144,12 @@ class Lecture < ApplicationRecord
             allow_nil: true
 
   before_save :initialize_submission_deletion_date
-  # Closing the list changes every eligibility verdict in the lecture at once,
-  # so the records are recomputed: `computed_at` moves, and the decisions taken
-  # before it are picked up by the reconciliation banner that already exists.
-  # Reopening does not, on purpose: it happens when a sheet is added, and a new
-  # sheet brings its tasks, which recompute the records themselves.
+  # Saying that the assignments are all there, or taking it back, turns every
+  # eligibility proposal in the lecture over. The figures do not move, but the
+  # decisions taken before rested on the answer that just changed, so the
+  # records are touched and the reconciliation banner picks them up.
   after_update_commit :recompute_performance_records,
-                      if: lambda {
-                        saved_change_to_assignments_complete_at? &&
-                          assignments_complete_at.present?
-                      }
+                      if: :saved_change_to_assignments_complete_at?
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
@@ -892,21 +888,12 @@ class Lecture < ApplicationRecord
     sync_student_performance_for_members!(new_user_ids)
   end
 
-  # Whether every assignment of the term has been created. Until somebody says
-  # so, no eligibility verdict holds: each sheet still to come raises the points
-  # needed and the points reachable at the same time, so neither a pass nor a
-  # fail survives the next one.
   def assignments_complete?
     assignments_complete_at.present?
   end
 
-  # Written from a checkbox, kept as the moment it was said. Re-saying the same
-  # thing must not move the timestamp — that would recompute every record and
-  # mark every decision for reconciliation for nothing.
-  #
-  # Worth knowing when writing a spec: creating an assignment opens the list
-  # again, so a setup that closes it first and adds sheets afterwards leaves it
-  # open.
+  # Preserve assignments_complete_at when the value is unchanged to
+  # avoid recomputing records and making certifications stale again.
   def assignments_complete=(value)
     complete = ActiveModel::Type::Boolean.new.cast(value).present?
     return if complete == assignments_complete?

@@ -86,8 +86,8 @@ module StudentPerformance
         return
       end
 
-      # Every proposal is deferred while the list is open, so a sweep would
-      # write nothing but that — and the screen says as much next to the button.
+      # When assignments_complete? is false, every proposal is inconclusive;
+      # bulk_accept would only create or update pending certifications.
       unless @lecture.assignments_complete?
         redirect_to lecture_student_performance_certifications_path(@lecture),
                     alert: I18n.t(

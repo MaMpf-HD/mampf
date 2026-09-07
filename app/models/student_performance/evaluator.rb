@@ -10,9 +10,6 @@ module StudentPerformance
                         [:achievements_ungraded]).freeze
 
     Result = Struct.new(:proposed_status, :details, keyword_init: true) do
-      # An open list overrules the rest: the other reasons are true as well,
-      # but this is the one holding the verdict, and it is the same one in
-      # every row of the table.
       def verdict_deferral_reasons
         return [] unless proposed_status == :inconclusive
         return [:assignments_incomplete] if details[:assignments_incomplete]
@@ -32,14 +29,10 @@ module StudentPerformance
     # `required_achievements`. The threshold mode is deliberately not part of
     # that contract, since the preview has none.
     #
-    # `due_points` is what the calendar has to say: which sheets could be handed
-    # in at all. Without it the evaluator sees only the marking backlog and
-    # fails students for sheets that are not due yet, so anyone judging a real
-    # lecture passes one.
-    #
-    # `assignments_complete` has no default on purpose. It is the gate on every
-    # verdict this class hands out, and a caller that forgets it would get the
-    # unsound answer rather than an error.
+    # Pass due_points so unsubmitted assignments whose deadlines have not
+    # passed can still prevent a failed proposal.
+    # Require assignments_complete explicitly because assuming it is
+    # true would allow decisions before all assignments exist.
     def initialize(rule, assignments_complete:, due_points: nil)
       @rule = rule
       @assignments_complete = assignments_complete
@@ -77,10 +70,9 @@ module StudentPerformance
       # A criterion nobody can satisfy any more settles the case; one that is
       # merely unfinished defers it.
       #
-      # Nothing at all is settled while sheets can still be added: another one
-      # worth p points raises the points needed by p/2 and the points reachable
-      # by p, so it can overturn a pass and a fail alike. Until somebody says
-      # the list is closed, the honest answer is that it is too early.
+      # Additional assignments can change both the reachable points and
+      # the points needed for min_percentage, so a passed or failed
+      # proposal may change while assignments_complete is false.
       def propose(*statuses)
         return :inconclusive unless @assignments_complete
         return :failed if statuses.include?(:not_met)
@@ -114,10 +106,8 @@ module StudentPerformance
         end
       end
 
-      # Refusing eligibility because a tutor is behind, or because the term is
-      # not over, would be the calendar's fault, not the student's. Everything
-      # outstanding is already counted in the maximum, so the best case is
-      # simply all of it awarded in full.
+      # points_max_materialized already includes points awaiting marking
+      # and points not yet due, so awarding them changes only best_total.
       def points_still_reachable?(record)
         outstanding = awaiting_marking(record) + not_yet_due(record)
         return false unless outstanding.positive?

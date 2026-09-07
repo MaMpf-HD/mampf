@@ -65,9 +65,15 @@ module Demo
       # `pending`, without a certifier, and its `certified_at` then reads as
       # "last evaluated" rather than "decided".
       def certify_demo_students!(lecture, rule)
+        # No proposal is anything but inconclusive while assignments can still
+        # be added, so the demo says the lecture's are all there.
+        lecture.update!(assignments_complete: true)
         due_points = StudentPerformance::DuePoints.new(lecture: lecture)
-        evaluator = StudentPerformance::Evaluator.new(rule,
-                                                      due_points: due_points)
+        evaluator = StudentPerformance::Evaluator.new(
+          rule,
+          assignments_complete: lecture.assignments_complete?,
+          due_points: due_points
+        )
         records = StudentPerformance::Record.where(lecture_id: lecture.id)
         teacher = lecture.teacher
 

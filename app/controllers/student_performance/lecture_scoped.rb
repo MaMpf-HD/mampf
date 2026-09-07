@@ -24,8 +24,8 @@ module StudentPerformance
         authorize!(:edit, @lecture)
       end
 
-      # One per request: the sheets it counts are the same for everybody in the
-      # table, so only the exemptions are looked up per student.
+      # Reuse DuePoints within the request because the assignment
+      # deadlines and total points are the same for every student.
       def due_points
         @due_points ||= DuePoints.new(lecture: @lecture)
       end

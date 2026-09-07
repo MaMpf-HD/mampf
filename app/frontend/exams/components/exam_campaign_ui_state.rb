@@ -1,7 +1,6 @@
 class ExamCampaignUiState
-  # The badge sits on an exam, so it speaks the exam's language: a campaign
-  # that is `open` means registration is open, not that the exam is. The
-  # campaign cards keep their own wording.
+  # Qualify campaign statuses with registration so the exam badge
+  # does not describe the exam itself as open or closed.
   CAMPAIGN_STATUS_KEYS = {
     draft: "draft",
     open: "registration_open",

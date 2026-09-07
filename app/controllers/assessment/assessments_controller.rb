@@ -27,8 +27,6 @@ module Assessment
       end
     end
 
-    # Set from the assessments screen because the statement is about the list of
-    # assignments, even though what it gates is eligibility.
     def assignments_complete
       authorize! :update, @lecture
 

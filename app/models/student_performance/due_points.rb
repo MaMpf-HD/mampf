@@ -1,17 +1,11 @@
 module StudentPerformance
-  # What a lecture has asked of its students so far, and what is still to come:
-  # its assignments split at the deadline, grace period included. Everything
-  # here is read-time on purpose — the figures move with the clock, and a
-  # materialized calendar value goes stale without anybody noticing.
-  #
-  # The sheets are the same for the whole lecture, so a screen builds one of
-  # these and asks it per student.
+  # Compute due points on each request because deadlines can pass
+  # without a record change that would trigger recomputation.
   class DuePoints
     def initialize(lecture:)
       @lecture = lecture
     end
 
-    # Before anybody's exemptions: what the lecture asked of everyone.
     def total
       @total ||= sum_points(due_assessments)
     end
@@ -20,7 +14,6 @@ module StudentPerformance
       due_assessment_ids.include?(assessment_id)
     end
 
-    # The same for one student, less the sheets they were excused from.
     def max_for(user_id)
       total - exempted_due_points.fetch(user_id, 0)
     end
@@ -32,15 +25,9 @@ module StudentPerformance
       ((record.points_total_materialized || 0) / max * 100).round(2)
     end
 
-    # The points this student can still be given that no marking backlog knows
-    # about: the sheets nobody could hand in yet, less the ones they were
-    # excused from and the ones they handed in early. An early hand-in already
-    # counts as awaiting marking, and the same sheet must not carry a student
-    # twice.
-    #
-    # Counted from the assignments rather than as the remainder of
-    # `points_max_materialized`, which is a snapshot and would turn its own
-    # staleness into points that do not exist.
+    # Sum points from the current assignments: subtracting due points
+    # from points_max_materialized could count outdated totals as
+    # points that are not yet due.
     def not_yet_due_for(user_id)
       coming_total -
         exempted_coming_points.fetch(user_id, 0) -
@@ -75,8 +62,8 @@ module StudentPerformance
         @due_assessment_ids ||= due_assessments.to_set(&:id)
       end
 
-      # The grace period is part of the deadline: while it runs, the sheet can
-      # still be handed in, so it is not due yet.
+      # Include submission_grace_period because an Assignment still
+      # accepts submissions during that time.
       def cutoff
         @cutoff ||= Time.zone.now -
                     (@lecture.submission_grace_period || 0).minutes
@@ -103,8 +90,8 @@ module StudentPerformance
           .where(assessment_id: assessments.map(&:id), status: :exempt)
       end
 
-      # The same predicate the computation service counts as awaiting marking,
-      # so that what is subtracted here is exactly what it added there.
+      # Match ComputationService#pending_points so pending submissions are
+      # not counted again as points not yet due.
       def submitted_coming_points
         @submitted_coming_points ||= points_per_user(
           Assessment::Participation
