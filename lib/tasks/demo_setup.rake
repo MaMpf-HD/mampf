@@ -24,6 +24,13 @@ namespace :demo do
     Demo::SetupSupport.setup_eligibility!
   end
 
+  desc "Drop the eligibility rule and all certifications of the demo lecture, " \
+       "keeping points, achievements and performance records — the state a " \
+       "lecture is in before anyone has configured a rule"
+  task eligibility_reset: :environment do
+    Demo::SetupSupport.reset_eligibility!
+  end
+
   desc "Create demo exams with campaigns, registrations and a finalized roster"
   task exams: :environment do
     Demo::SetupSupport.setup_exams!
