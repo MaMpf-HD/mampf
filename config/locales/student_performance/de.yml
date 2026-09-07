@@ -160,8 +160,9 @@ de:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         uncertified: "Offen"
-        flagged: "Auffällig"
-        flagged_hint: "Berechnete Zulassungen, die die Regel heute anders entscheiden würde, und Einzelentscheidungen, deren Grundlage sich seither geändert hat"
+        list_open: "Blätterliste noch offen — die Regel entscheidet derzeit nichts."
+        list_open_link: "Zum Reiter %{tab}"
+        todo_title: "Zu klären"
         bulk_accept: "Offene Vorschläge akzeptieren"
         bulk_reset:
           one: "%{count} berechnete Zulassung zurücksetzen"
@@ -191,8 +192,8 @@ de:
           one: "%{count} Zulassung widerspricht der aktuellen Regel."
           other: "%{count} Zulassungen widersprechen der aktuellen Regel."
         stale_manual_warning:
-          one: "%{count} Einzelentscheidung: Regel oder Daten haben sich seit der Entscheidung geändert."
-          other: "%{count} Einzelentscheidungen: Regel oder Daten haben sich seit der Entscheidung geändert."
+          one: "%{count} Einzelentscheidung: Grundlage seither geändert."
+          other: "%{count} Einzelentscheidungen: Grundlage seither geändert."
         reevaluate: "Mit Regel abgleichen"
         confirm_manual: "Einzelentscheidungen bestätigen"
       status:
@@ -200,7 +201,7 @@ de:
         failed: "Nicht zugelassen"
         pending: "Zurückgestellt"
         manual: "Einzelentscheidung"
-        manual_stale: "Regel oder Daten seit deiner Entscheidung geändert"
+        manual_stale: "Grundlage seither geändert"
       columns:
         proposed: "Vorschlag"
         rule_today: "Regel heute:"
@@ -238,6 +239,7 @@ de:
         confirmed:
           one: "%{count} Einzelentscheidung bestätigt."
           other: "%{count} Einzelentscheidungen bestätigt."
+        reevaluated_nothing: "Nichts zu ändern — jede berechnete Zulassung entspricht der Regel."
         reevaluated:
           one: "%{count} Zulassung neu bewertet."
           other: "%{count} Zulassungen neu bewertet."

@@ -160,8 +160,9 @@ en:
         passed: "Eligible"
         failed: "Not Eligible"
         uncertified: "Undecided"
-        flagged: "Needs attention"
-        flagged_hint: "Computed decisions the rule would make differently today, and individual decisions whose basis has changed since"
+        list_open: "Assignment list still open — the rule decides nothing for now."
+        list_open_link: "Go to the %{tab} tab"
+        todo_title: "To settle"
         bulk_accept: "Accept Open Proposals"
         bulk_reset:
           one: "Reset %{count} computed decision"
@@ -191,8 +192,8 @@ en:
           one: "%{count} decision contradicts the current rule."
           other: "%{count} decisions contradict the current rule."
         stale_manual_warning:
-          one: "%{count} individual decision: rule or data changed since it was made."
-          other: "%{count} individual decisions: rule or data changed since they were made."
+          one: "%{count} individual decision: basis changed since."
+          other: "%{count} individual decisions: basis changed since."
         reevaluate: "Reconcile with rule"
         confirm_manual: "Confirm individual decisions"
       status:
@@ -200,7 +201,7 @@ en:
         failed: "Not Eligible"
         pending: "Deferred"
         manual: "Individual decision"
-        manual_stale: "Rule or data changed since your decision"
+        manual_stale: "Basis changed since"
       columns:
         proposed: "Proposed"
         rule_today: "Rule today:"
@@ -238,6 +239,7 @@ en:
         confirmed:
           one: "%{count} individual decision confirmed."
           other: "%{count} individual decisions confirmed."
+        reevaluated_nothing: "Nothing to change — every computed decision matches the rule."
         reevaluated:
           one: "%{count} decision re-evaluated."
           other: "%{count} decisions re-evaluated."

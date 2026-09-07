@@ -331,31 +331,30 @@ module StudentPerformance
       end
 
       def bulk_accept_notice(created, inconclusive)
-        parts = [
-          I18n.t("student_performance.certifications.flash.bulk_accepted",
-                 count: created)
-        ]
-        if inconclusive.positive?
-          parts << I18n.t(
-            "student_performance.certifications.flash.bulk_inconclusive",
-            count: inconclusive
-          )
-        end
-        parts.join(" ")
+        counted_notice(
+          { bulk_accepted: created, bulk_inconclusive: inconclusive },
+          empty: :bulk_accepted
+        )
       end
 
       def reevaluated_notice(updated, reset_to_pending)
-        parts = [
-          I18n.t("student_performance.certifications.flash.reevaluated",
-                 count: updated)
-        ]
-        if reset_to_pending.positive?
-          parts << I18n.t(
-            "student_performance.certifications.flash.reevaluated_inconclusive",
-            count: reset_to_pending
-          )
+        counted_notice(
+          { reevaluated: updated, reevaluated_inconclusive: reset_to_pending },
+          empty: :reevaluated_nothing
+        )
+      end
+
+      # "0 decisions re-evaluated" is not news. Only the counts that happened
+      # are said; when nothing did, one sentence says that instead.
+      def counted_notice(counts, empty:)
+        parts = counts.filter_map do |key, count|
+          next unless count.positive?
+
+          I18n.t("student_performance.certifications.flash.#{key}", count: count)
         end
-        parts.join(" ")
+        return parts.join(" ") if parts.any?
+
+        I18n.t("student_performance.certifications.flash.#{empty}", count: 0)
       end
   end
 end

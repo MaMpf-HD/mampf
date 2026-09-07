@@ -137,6 +137,28 @@
             <% end %>
           </div>
         </div>
+
+        <%#
+          Context, not an alarm: the rule is set, it just has nothing to say
+          yet. The long version travels in the popover.
+        %>
+
+        <% unless @lecture.assignments_complete? %>
+          <div class="small text-muted border-top mt-2 pt-2">
+            <i class="bi bi-info-circle me-1"></i>
+            <%= t("student_performance.certifications.index.list_open") %>
+
+            <%= helpdesk(t("student_performance.certifications.index.assignments_incomplete",
+                           tab: t("assessment.tabs.assignments")), false) %>
+
+            <%= link_to t("student_performance.certifications.index.list_open_link",
+                          tab: t("assessment.tabs.assignments")),
+                        assessment_assessments_path(lecture_id: @lecture.id,
+                                                    tab: "assignments"),
+                        class: "ms-2",
+                        data: { turbo_frame: "_top" } %>
+          </div>
+        <% end %>
       </div>
     <% else %>
       <div class="text-center py-3 mt-3 mb-4 border rounded bg-light">
@@ -161,15 +183,6 @@
         <% end %>
       </div>
     <% end %>
-  <% end %>
-
-  <% unless @lecture.assignments_complete? %>
-    <div class="alert alert-info d-flex align-items-center mb-4">
-      <i class="bi bi-info-circle me-2"></i>
-
-      <%= t("student_performance.certifications.index.assignments_incomplete",
-            tab: t("assessment.tabs.assignments")) %>
-    </div>
   <% end %>
 
   <% if @total_students > 0 %>
@@ -237,63 +250,53 @@
         <%= t("student_performance.certifications.index.uncertified") %>
       </span>
     </div>
-
-    <% if @flagged_user_ids.any? %>
-      <div class="d-flex flex-column">
-        <span class="fs-5 fw-bold text-secondary lh-1 mb-1">
-          <%= @flagged_user_ids.size %>
-        </span>
-
-        <span class="text-muted small d-flex align-items-center gap-1">
-          <%= t("student_performance.certifications.index.flagged") %>
-          <%= helpdesk(t("student_performance.certifications.index.flagged_hint"), false) %>
-        </span>
-      </div>
-    <% end %>
   </div>
 
-  <% if @disagreeing_user_ids.any? %>
-    <div
-      class="
-        alert alert-warning d-flex align-items-center
-        justify-content-between mb-4
-      "
-    >
-      <div>
-        <i class="bi bi-arrow-left-right me-2"></i>
+  <%#
+    One box for everything that wants a hand, a line per item with its button.
+    Two alerts stacked read as two emergencies; this reads as a short list.
+  %>
 
-        <%= t("student_performance.certifications.index.disagreeing_warning",
-              count: @disagreeing_user_ids.size) %>
+  <% if @flagged_user_ids.any? %>
+    <div class="alert alert-warning py-2 mb-4">
+      <div class="small fw-semibold text-uppercase mb-1">
+        <%= t("student_performance.certifications.index.todo_title") %>
       </div>
 
-      <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
-                    method: :post,
-                    class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
-        <i class="bi bi-arrow-repeat me-1"></i>
-        <%= t("student_performance.certifications.index.reevaluate") %>
+      <% if @disagreeing_user_ids.any? %>
+        <div class="d-flex align-items-center justify-content-between py-1">
+          <div>
+            <i class="bi bi-arrow-left-right me-2"></i>
+
+            <%= t("student_performance.certifications.index.disagreeing_warning",
+                  count: @disagreeing_user_ids.size) %>
+          </div>
+
+          <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
+                        method: :post,
+                        class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
+            <i class="bi bi-arrow-repeat me-1"></i>
+            <%= t("student_performance.certifications.index.reevaluate") %>
+          <% end %>
+        </div>
       <% end %>
-    </div>
-  <% end %>
 
-  <% if @stale_manual_user_ids.any? %>
-    <div
-      class="
-        alert alert-warning d-flex align-items-center
-        justify-content-between mb-4
-      "
-    >
-      <div>
-        <i class="bi bi-pencil-square me-2"></i>
+      <% if @stale_manual_user_ids.any? %>
+        <div class="d-flex align-items-center justify-content-between py-1">
+          <div>
+            <i class="bi bi-pencil-square me-2"></i>
 
-        <%= t("student_performance.certifications.index.stale_manual_warning",
-              count: @stale_manual_user_ids.size) %>
-      </div>
+            <%= t("student_performance.certifications.index.stale_manual_warning",
+                  count: @stale_manual_user_ids.size) %>
+          </div>
 
-      <%= button_to bulk_confirm_manual_lecture_student_performance_certifications_path(@lecture),
-                    method: :post,
-                    class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
-        <i class="bi bi-check-all me-1"></i>
-        <%= t("student_performance.certifications.index.confirm_manual") %>
+          <%= button_to bulk_confirm_manual_lecture_student_performance_certifications_path(@lecture),
+                        method: :post,
+                        class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
+            <i class="bi bi-check-all me-1"></i>
+            <%= t("student_performance.certifications.index.confirm_manual") %>
+          <% end %>
+        </div>
       <% end %>
     </div>
   <% end %>
