@@ -56,6 +56,12 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       context "with a sheet that is not due yet" do
         let(:member) { FactoryBot.create(:confirmed_user) }
 
+        def cells_for(user)
+          Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+            tr.text.include?(user.tutorial_name)
+          end.css("td")
+        end
+
         def sheet(deadline:, points:)
           assignment = FactoryBot.create(:assignment, lecture: lecture,
                                                       deadline: 1.year.from_now)
@@ -68,19 +74,64 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           assignment.assessment.reload
         end
 
-        it "says the sheet is not due instead of marking it missing" do
+        # A sheet that counts towards none of the figures here has no column;
+        # a column of dashes would be the exception to the rule the table sets.
+        it "gives a sheet that is not due yet no column" do
+          due = sheet(deadline: 2.days.ago, points: 20)
           coming = sheet(deadline: 3.days.from_now, points: 16)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
-          FactoryBot.create(:assessment_participation, :pending,
-                            assessment: coming, user: member)
 
           get lecture_student_performance_records_path(lecture)
 
-          expect(response.body).to include(
-            I18n.t("student_performance.records.columns.not_due")
+          titles = Nokogiri::HTML(response.body)
+                           .css("thead tr")[1].css("th")
+                           .filter_map { |th| th["title"] }
+
+          expect(titles).to include(due.title)
+          expect(titles).not_to include(coming.title)
+        end
+
+        it "says in the heading how many sheets it left out" do
+          sheet(deadline: 2.days.ago, points: 20)
+          sheet(deadline: 3.days.from_now, points: 16)
+          sheet(deadline: 4.days.from_now, points: 16)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          heading = Nokogiri::HTML(response.body).css("thead tr").first
+                            .css("th").find do |th|
+            th.text.include?(
+              I18n.t("student_performance.records.columns.assignments")
+            )
+          end
+
+          expect(heading.text).to include(
+            I18n.t("student_performance.records.columns.not_due_count", count: 2)
           )
-          expect(response.body).not_to include(
-            I18n.t("student_performance.records.columns.not_submitted")
+        end
+
+        # Nobody may mark before the grace period is over, so an early hand-in
+        # is waiting for the deadline rather than for a tutor, and no hourglass
+        # claims a backlog on that sheet.
+        it "flags a marking backlog only where marking could have happened" do
+          due = sheet(deadline: 2.days.ago, points: 20)
+          coming = sheet(deadline: 3.days.from_now, points: 16)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          [due, coming].each do |assessment|
+            FactoryBot.create(:assessment_participation, :submitted,
+                              assessment: assessment, user: member)
+          end
+
+          get lecture_student_performance_records_path(lecture)
+
+          head = Nokogiri::HTML(response.body).css("thead")
+
+          header = head.css("th").find { |th| th["title"] == due.title }
+
+          expect(head.css(".bi-hourglass-split").size).to eq(1)
+          expect(header.at_css(".bi-hourglass-split")["aria-label"]).to eq(
+            I18n.t("student_performance.records.index.awaiting_marking", count: 1)
           )
         end
 
@@ -105,29 +156,83 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             .not_to include(helpers.number_to_percentage(50, precision: 0))
         end
 
-        # Both figures share the denominator, so both headings have to name it —
-        # searching the whole page would pass with the note on one of them.
-        it "names what both figures are measured against" do
+        # One heading over both figures, and it has to be readable without
+        # opening anything — the sentence behind the icon only elaborates.
+        it "names what both figures are measured against, once" do
           sheet(deadline: 2.days.ago, points: 20)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
 
           get lecture_student_performance_records_path(lecture)
 
-          caption = I18n.t("student_performance.records.columns.of_due_points")
-          headers = Nokogiri::HTML(response.body).css("thead th")
-          points = headers.find do |th|
-            th.text.strip.start_with?(
-              I18n.t("student_performance.records.columns.points")
-            )
-          end
-          percentage = headers.find do |th|
-            th.text.strip.start_with?(
-              I18n.t("student_performance.records.columns.percentage")
+          group, columns = Nokogiri::HTML(response.body).css("thead tr")
+          heading = group.css("th").find do |th|
+            th.text.include?(
+              I18n.t("student_performance.records.columns.due_so_far")
             )
           end
 
-          expect(points.text).to include(caption)
-          expect(percentage.text).to include(caption)
+          expect(heading["colspan"]).to eq("2")
+          expect(heading.at_css("[data-bs-content]")["data-bs-content"]).to eq(
+            I18n.t("student_performance.records.columns.due_so_far_hint")
+          )
+          expect(columns.css("th").first.text)
+            .to include(I18n.t("student_performance.records.columns.points"))
+          expect(columns.css("th")[1].text)
+            .to include(I18n.t("student_performance.records.columns.percentage"))
+        end
+
+        it "puts the lecture's maximum in the heading" do
+          sheet(deadline: 2.days.ago, points: 20)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          columns = Nokogiri::HTML(response.body).css("thead tr")[1]
+
+          expect(columns.css("th").first.text).to include(
+            I18n.t("student_performance.records.columns.points_max", max: "20")
+          )
+        end
+
+        # The lecture's maximum stands in the heading, so the column holds a
+        # plain number in every row — the excused student's too.
+        it "keeps the points column to one figure" do
+          excused = sheet(deadline: 3.days.ago, points: 20)
+          sheet(deadline: 2.days.ago, points: 16)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, :exempt,
+                            assessment: excused, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(cells_for(member)[1].text).not_to include("/")
+        end
+
+        # An exemption is a fact about the student, so it is said next to her
+        # name — and it has to name her maximum, not just mark the row.
+        it "spells out a personal maximum and why it is one" do
+          excused = sheet(deadline: 3.days.ago, points: 20)
+          sheet(deadline: 2.days.ago, points: 16)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, :exempt,
+                            assessment: excused, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          name_cell = cells_for(member).first
+
+          expect(name_cell.at_css("[data-bs-content]")["data-bs-content"]).to eq(
+            I18n.t("student_performance.records.columns.personal_max", max: "16")
+          )
+        end
+
+        it "says nothing next to the name of a student with no exemption" do
+          sheet(deadline: 2.days.ago, points: 20)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(cells_for(member).first.at_css("[data-bs-content]")).to be_nil
         end
       end
 
@@ -379,6 +484,25 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       it "returns http success" do
         get lecture_student_performance_record_path(lecture, record)
         expect(response).to have_http_status(:success)
+      end
+
+      # A list has room for a sheet that is not due yet, and the badge writes
+      # out what it is instead of coding it into a colour. That is why the
+      # overview may drop the column and this page may not.
+      it "says the sheet is not due instead of marking it missing" do
+        assignment = FactoryBot.create(:assignment, lecture: lecture,
+                                                    deadline: 3.days.from_now)
+        FactoryBot.create(:assessment_task,
+                          assessment: assignment.assessment, max_points: 16)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body).to include(
+          I18n.t("student_performance.records.columns.not_due")
+        )
+        expect(response.body).not_to include(
+          I18n.t("student_performance.records.columns.not_submitted")
+        )
       end
 
       it "scopes record to the lecture" do

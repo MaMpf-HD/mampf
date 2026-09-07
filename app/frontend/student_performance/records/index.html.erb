@@ -1,3 +1,5 @@
+<%= vite_stylesheet_tag "student_performance/records/records_table.scss" %>
+
 <%= turbo_frame_tag "performance-records-frame" do %>
   <%# a frame swap discards the layout, so a confirmation has to travel inside it %>
   <%= render partial: "flash/message" if turbo_frame_request? %>
@@ -50,29 +52,74 @@
       <%= t("student_performance.records.index.empty") %>
     </p>
   <% else %>
-    <div class="table-responsive">
-      <table class="table table-sm table-hover align-middle">
+    <div class="table-responsive performance-records-scroll">
+      <table class="table table-sm table-hover align-middle performance-records">
         <thead class="table-light">
           <tr>
-            <th scope="col" class="sticky-start bg-light">
+            <th scope="col" rowspan="2" class="text-nowrap align-bottom">
               <%= t("student_performance.records.columns.student") %>
             </th>
 
-            <th scope="col" class="text-end">
+            <th
+              scope="colgroup"
+              colspan="2"
+              class="text-center text-nowrap due-group-end"
+            >
+              <%= t("student_performance.records.columns.due_so_far") %>
+
+              <%= helpdesk(
+                    t("student_performance.records.columns.due_so_far_hint"),
+                    false) %>
+            </th>
+
+            <% if @assessments.any? %>
+              <th
+                scope="colgroup"
+                colspan="<%= @assessments.size %>"
+                class="text-center text-nowrap"
+              >
+                <%= t("student_performance.records.columns.assignments") %>
+
+                <% if @not_due_count.positive? %>
+                  <span class="fw-normal text-muted">
+                    (<%= t("student_performance.records.columns.not_due_count",
+                           count: @not_due_count) %>)
+                  </span>
+                <% end %>
+              </th>
+            <% end %>
+
+            <% if @achievements.any? %>
+              <th
+                scope="colgroup"
+                colspan="<%= @achievements.size %>"
+                class="text-center text-nowrap"
+              >
+                <%= t("student_performance.records.columns.achievements") %>
+              </th>
+            <% end %>
+
+            <th scope="col" rowspan="2" class="small"></th>
+          </tr>
+
+          <tr>
+            <th scope="col" class="text-end text-nowrap due-points">
               <%= t("student_performance.records.columns.points") %>
-              <br>
 
               <span class="fw-normal text-muted" style="font-size: 0.75em">
-                <%= t("student_performance.records.columns.of_due_points") %>
+                (<%= t("student_performance.records.columns.points_max",
+                       max: number_with_precision(
+                              @due_points.total,
+                              precision: 1,
+                              strip_insignificant_zeros: true)) %>)
               </span>
             </th>
 
-            <th scope="col" class="text-end">
-              <%= t("student_performance.records.columns.percentage") %>
-              <br>
+            <th scope="col" class="text-end due-share">
+              <span aria-hidden="true">%</span>
 
-              <span class="fw-normal text-muted" style="font-size: 0.75em">
-                <%= t("student_performance.records.columns.of_due_points") %>
+              <span class="visually-hidden">
+                <%= t("student_performance.records.columns.percentage") %>
               </span>
             </th>
 
@@ -82,24 +129,29 @@
                 class="text-center small"
                 title="<%= assessment.title %>"
               >
-                <%= assessment.short_title %>
+                <span class="text-nowrap">
+                  <%= truncate(assessment.short_title, length: 6) %>
 
-                <% awaiting = @awaiting_marking[assessment.id].to_i %>
+                  <% awaiting = @awaiting_marking[assessment.id].to_i %>
 
-                <% if awaiting.positive? %>
-                  <% label = t("student_performance.records.index.awaiting_marking",
-                               count: awaiting) %>
-                  <i
-                    class="bi bi-hourglass-split text-warning"
-                    title="<%= label %>"
-                    role="img"
-                    aria-label="<%= label %>"
-                  ></i>
-                <% end %>
+                  <% if awaiting.positive? %>
+                    <% label = t("student_performance.records.index.awaiting_marking",
+                                 count: awaiting) %>
+                    <i
+                      class="bi bi-hourglass-split text-warning"
+                      title="<%= label %>"
+                      role="img"
+                      aria-label="<%= label %>"
+                    ></i>
+                  <% end %>
+                </span>
 
                 <br>
 
-                <span class="fw-normal text-muted" style="font-size: 0.75em">
+                <span
+                  class="fw-normal text-muted numeric"
+                  style="font-size: 0.75em"
+                >
                   (<%= number_with_precision(
                         assessment.effective_total_points,
                         precision: 1,
@@ -117,25 +169,41 @@
                 <%= truncate(achievement.title, length: 24) %>
               </th>
             <% end %>
-
-            <th scope="col" class="small"></th>
           </tr>
         </thead>
 
         <tbody>
           <% @records.each do |record| %>
             <tr id="<%= dom_id(record) %>">
-              <td class="sticky-start"><%= record.user.tutorial_name %></td>
+              <% personal_max = @due_points.max_for(record.user_id) %>
 
-              <td class="text-end font-monospace">
+              <td class="text-nowrap">
+                <%= record.user.tutorial_name %>
+
+                <%#
+                  An excused sheet is a fact about this student, so it is said
+                  next to her name and leaves the figures a column of plain
+                  numbers.
+                %>
+
+                <% if personal_max != @due_points.total %>
+                  <%= helpdesk(
+                        t("student_performance.records.columns.personal_max",
+                          max: number_with_precision(
+                                 personal_max,
+                                 precision: 1,
+                                 strip_insignificant_zeros: true)),
+                        false) %>
+                <% end %>
+              </td>
+
+              <td class="text-end text-nowrap numeric due-points">
                 <%= number_with_precision(record.points_total_materialized, precision: 1, strip_insignificant_zeros: true) %>
-                /
-                <%= number_with_precision(@due_points.max_for(record.user_id), precision: 1, strip_insignificant_zeros: true) %>
               </td>
 
               <% percentage = @due_points.percentage_for(record) %>
 
-              <td class="text-end">
+              <td class="text-end text-nowrap numeric due-share">
                 <span class="fw-semibold">
                   <% if percentage.nil? %>
                     <span class="text-muted" aria-hidden="true">&mdash;</span>
@@ -158,7 +226,7 @@
                      status: status, variant: :compact, points: points) %>
 
                 <td
-                  class="text-center font-monospace small"
+                  class="text-center numeric small"
                   title="<%= badge.tooltip(assessment.title) { max } %>"
                 >
                   <%= render badge %>

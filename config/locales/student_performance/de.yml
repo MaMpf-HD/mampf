@@ -25,6 +25,13 @@ de:
         points: "Punkte"
         percentage: "Prozent"
         of_due_points: "von den bisher fälligen Punkten"
+        due_so_far: "Bisher fällig"
+        due_so_far_hint: "Punkte und Prozent zählen nur die Blätter, deren Frist samt Nachfrist vorbei ist."
+        points_max: "max. %{max}"
+        personal_max: "Persönliches Maximum: %{max} Punkte, wegen Entschuldigungen"
+        assignments: "Übungsblätter"
+        not_due_count: "%{count} noch nicht fällig"
+        achievements: "Zusatzkriterien"
         assessments: "Bewertungen"
 
         reviewed: "Bewertet"

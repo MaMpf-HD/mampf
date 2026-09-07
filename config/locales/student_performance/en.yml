@@ -25,6 +25,13 @@ en:
         points: "Points"
         percentage: "Percentage"
         of_due_points: "of the points due so far"
+        due_so_far: "Due so far"
+        due_so_far_hint: "Points and percentage count only the assignments whose deadline, grace period included, has passed."
+        points_max: "max. %{max}"
+        personal_max: "Personal maximum: %{max} points, because of exemptions"
+        assignments: "Assignments"
+        not_due_count: "%{count} not due yet"
+        achievements: "Achievements"
         assessments: "Assessments"
 
         reviewed: "Reviewed"
