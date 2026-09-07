@@ -27,13 +27,22 @@ module Assessment
       end
     end
 
+    # Reopening the list can take the computed decisions with it, if the
+    # lecturer said so in the dialog; a decision made by hand stays either way.
     def assignments_complete
       authorize! :update, @lecture
 
       @lecture.update!(assignments_complete: params[:complete])
+      reset = params[:reset_certifications] == "1" &&
+              !@lecture.assignments_complete?
+      count = reset ? @lecture.student_performance_certifications.reset_computed! : 0
 
       redirect_to assessment_assessments_path(lecture_id: @lecture.id,
-                                              tab: "assessments")
+                                              tab: "assessments"),
+                  notice: (if reset
+                             I18n.t("student_performance.certifications.flash.reset",
+                                    count: count)
+                           end)
     end
 
     def show

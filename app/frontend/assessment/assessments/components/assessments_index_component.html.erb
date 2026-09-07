@@ -76,18 +76,27 @@
           </div>
         <% end %>
       </div>
+      <% reopen_count = lecture.assignments_complete? ? computed_decisions_count : 0 %>
       <%= form_with url: assignments_complete_assessment_assessments_path(
                           lecture_id: lecture.id
                         ),
                     method: :patch,
-                    data: { controller: "auto-submit-form" },
+                    data: { controller: "assessments--assignments-complete" },
                     class: "border-top pt-3" do %>
         <%= hidden_field_tag :complete, "0", id: nil %>
+
+        <%= hidden_field_tag :reset_certifications, "0", id: nil,
+                             data: {
+                               assessments__assignments_complete_target: "reset"
+                             } %>
 
         <div class="form-check">
           <%= check_box_tag :complete, "1", lecture.assignments_complete?,
                             class: "form-check-input",
-                            data: { action: "change->auto-submit-form#submit" } %>
+                            data: {
+                              assessments__assignments_complete_target: "checkbox",
+                              action: "change->assessments--assignments-complete#change"
+                            } %>
 
           <%= label_tag :complete,
                         t('assessment.assignments_complete.label'),
@@ -97,6 +106,62 @@
         <p class="text-muted small mb-0 mt-1">
           <%= t('assessment.assignments_complete.hint') %>
         </p>
+
+        <% if reopen_count.positive? %>
+          <div
+            class="modal fade"
+            tabindex="-1"
+            aria-labelledby="assignments-complete-reopen-title"
+            aria-hidden="true"
+            data-assessments--assignments-complete-target="dialog"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5
+                    class="modal-title"
+                    id="assignments-complete-reopen-title"
+                  >
+                    <%= t('assessment.assignments_complete.reopen_dialog.title') %>
+                  </h5>
+                </div>
+
+                <div class="modal-body">
+                  <p class="mb-0">
+                    <%= t('assessment.assignments_complete.reopen_dialog.body',
+                          count: reopen_count) %>
+                  </p>
+                </div>
+
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-action="assessments--assignments-complete#cancel"
+                  >
+                    <%= t('assessment.assignments_complete.reopen_dialog.cancel') %>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    data-action="assessments--assignments-complete#keep"
+                  >
+                    <%= t('assessment.assignments_complete.reopen_dialog.keep') %>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-action="assessments--assignments-complete#reset"
+                  >
+                    <%= t('assessment.assignments_complete.reopen_dialog.reset') %>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
       <% end %>
     <% end %>
   <% end %>

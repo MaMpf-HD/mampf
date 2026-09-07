@@ -136,6 +136,9 @@ en:
         points_pending: "Submissions not graded yet"
         points_not_measurable: "No points to measure"
         achievements_ungraded: "Achievement not graded yet"
+      missed:
+        points: "Threshold not reached"
+        achievements: "Achievement not met"
       single_proposal:
         title: "Eligibility Proposal"
         back_to_record: "Back to student record"
@@ -157,9 +160,18 @@ en:
         passed: "Eligible"
         failed: "Not Eligible"
         uncertified: "Undecided"
-        stale: "Stale"
-        stale_hint: "Decided before rule or data changed"
+        flagged: "Needs attention"
+        flagged_hint: "Computed decisions the rule would make differently today, and individual decisions whose basis has changed since"
         bulk_accept: "Accept Open Proposals"
+        bulk_reset:
+          one: "Reset %{count} computed decision"
+          other: "Reset %{count} computed decisions"
+        bulk_reset_confirm:
+          one: "%{count} computed decision will be deleted; that eligibility is undecided again afterwards. Individual decisions stay."
+          other: "%{count} computed decisions will be deleted; those eligibilities are undecided again afterwards. Individual decisions stay."
+        reset: "Reset to proposal"
+        reset_confirm: "The decision will be deleted; eligibility is undecided again afterwards."
+        reset_confirm_passed: "Without a decision the exam registration cannot be confirmed automatically at allocation."
         proposed_passed: "eligible"
         proposed_failed: "not eligible"
         proposed_inconclusive: "stay deferred"
@@ -175,37 +187,35 @@ en:
         setup_rule: "Set up rule"
         no_rule_hint: "You can record decisions manually per student at any time — even without a rule."
         required_achievements_label: "Achievements"
-        stale_rule_warning:
-          one: "Eligibility rule changed — %{count} decision is outdated."
-          other: "Eligibility rule changed — %{count} decisions are outdated."
-        stale_rule_manual_warning:
-          one: "%{count} individual decision may need review after rule changes."
-          other: "%{count} individual decisions may need review after rule changes."
-        stale_data_warning:
-          one: "Student data was recomputed — %{count} decision is outdated."
-          other: "Student data was recomputed — %{count} decisions are outdated."
-        stale_data_manual_warning:
-          one: "%{count} individual decision may need review after data changes."
-          other: "%{count} individual decisions may need review after data changes."
-        reevaluate_rules: "Reconcile with current rule"
-        reevaluate_data: "Reconcile with current data"
+        disagreeing_warning:
+          one: "%{count} decision contradicts the current rule."
+          other: "%{count} decisions contradict the current rule."
+        stale_manual_warning:
+          one: "%{count} individual decision: rule or data changed since it was made."
+          other: "%{count} individual decisions: rule or data changed since they were made."
+        reevaluate: "Reconcile with rule"
         confirm_manual: "Confirm individual decisions"
       status:
         passed: "Eligible"
         failed: "Not Eligible"
         pending: "Deferred"
         manual: "Individual decision"
-        stale: "Outdated — reconciliation needed"
+        manual_stale: "Rule or data changed since your decision"
       columns:
         proposed: "Proposed"
-        rule_suggests: "Per rule:"
+        rule_today: "Rule today:"
         certification: "Decision"
+        hint: "Hint"
         note: "Note"
+      rule_today:
+        passed: "eligible"
+        failed: "not eligible"
+        inconclusive: "cannot decide"
       filters:
         all: "All"
         passed: "Eligible"
         failed: "Not Eligible"
-        stale: "Stale"
+        flagged: "Needs attention"
         uncertified: "Undecided"
       override:
         title: "Manual Override"
@@ -217,6 +227,10 @@ en:
       flash:
         created: "Decision saved."
         updated: "Decision updated."
+        reset_one: "Decision reset."
+        reset:
+          one: "%{count} decision reset."
+          other: "%{count} decisions reset."
         manual_exists: "A manual override exists for this student. Use the edit button to change it."
         bulk_accepted:
           one: "%{count} decision accepted."

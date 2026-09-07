@@ -258,6 +258,74 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
         expect(lecture.reload.assignments_complete?).to be(false)
       end
+
+      context "with decisions on record" do
+        let!(:computed) do
+          create(:student_performance_certification, :passed, lecture: lecture)
+        end
+
+        let!(:manual) do
+          create(:student_performance_certification, :failed, :manual,
+                 lecture: lecture)
+        end
+
+        before { lecture.update!(assignments_complete: true) }
+
+        it "asks before reopening the list" do
+          # A new assignment reopens the list by itself; the lecturer closes it.
+          create(:valid_assignment, lecture: lecture)
+          lecture.update!(assignments_complete: true)
+
+          get assessment_assessments_path(lecture_id: lecture.id)
+
+          expect(response.body).to include(
+            CGI.escapeHTML(
+              I18n.t("assessment.assignments_complete.reopen_dialog.body",
+                     count: 1)
+            )
+          )
+        end
+
+        it "does not ask while the list is still open" do
+          lecture.update!(assignments_complete: false)
+          create(:valid_assignment, lecture: lecture)
+
+          get assessment_assessments_path(lecture_id: lecture.id)
+
+          expect(response.body).not_to include(
+            I18n.t("assessment.assignments_complete.reopen_dialog.title")
+          )
+        end
+
+        it "keeps the decisions unless told otherwise" do
+          patch assignments_complete_assessment_assessments_path(
+            lecture_id: lecture.id, complete: "0"
+          )
+
+          expect(lecture.reload.assignments_complete?).to be(false)
+          expect(StudentPerformance::Certification.exists?(computed.id)).to be(true)
+        end
+
+        it "drops the computed decisions when told to, and keeps the manual ones" do
+          patch assignments_complete_assessment_assessments_path(
+            lecture_id: lecture.id, complete: "0", reset_certifications: "1"
+          )
+
+          expect(lecture.reload.assignments_complete?).to be(false)
+          expect(StudentPerformance::Certification.exists?(computed.id)).to be(false)
+          expect(StudentPerformance::Certification.exists?(manual.id)).to be(true)
+        end
+
+        it "does not drop anything when closing the list" do
+          lecture.update!(assignments_complete: false)
+
+          patch assignments_complete_assessment_assessments_path(
+            lecture_id: lecture.id, complete: "1", reset_certifications: "1"
+          )
+
+          expect(StudentPerformance::Certification.exists?(computed.id)).to be(true)
+        end
+      end
     end
 
     context "as a student" do

@@ -15,6 +15,13 @@ module StudentPerformance
     validates :certified_by, presence: true, unless: :pending?
     validates :certified_at, presence: true, unless: :pending?
 
+    # Resetting a computed decision means dropping it: the student is open
+    # again, the proposal shows, and the screening holds them for a person to
+    # look at. Manual decisions are deliberate and never go in bulk.
+    def self.reset_computed!
+      computed.delete_all
+    end
+
     def self.status_for_proposal(proposed_status)
       proposed_status == :inconclusive ? :pending : proposed_status
     end
@@ -23,6 +30,10 @@ module StudentPerformance
       status.to_sym != self.class.status_for_proposal(proposed_status)
     end
 
+    # Staleness is only asked of manual decisions: a computed one is compared
+    # with today's proposal instead, which is the sharper question and does not
+    # depend on which code path touched the data.
+    #
     # A row that was never evaluated is the most out-of-date one there is, but
     # `x > NULL` yields NULL rather than false and would drop it from every scope
     # below. The nil case is therefore spelled out.
@@ -62,6 +73,14 @@ module StudentPerformance
         rule_table[:updated_at].gt(cert_table[:certified_at])
           .or(cert_table[:certified_at].eq(nil))
       )
+    }
+
+    # The manual decisions whose basis moved since they were made. The two
+    # reasons join different tables, so this is a union of ids rather than an
+    # `or` — and a decision for someone without a record still counts.
+    scope :stale_manual, lambda {
+      where(id: manual.stale_from_rule.pluck(:id) |
+                manual.stale_from_data.pluck(:id))
     }
 
     scope :stale_from_data, lambda {

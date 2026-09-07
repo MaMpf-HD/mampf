@@ -1,3 +1,5 @@
+<%= vite_stylesheet_tag "student_performance/certifications/certifications_table.scss" %>
+
 <%= turbo_frame_tag "performance-certifications-frame" do %>
   <div class="d-flex justify-content-between align-items-end pb-2 mb-2 mt-2">
     <p class="text-muted small mb-0">
@@ -41,6 +43,25 @@
           <% end %>
 
           <span class="ms-1">(<%= forecast.join(", ") %>)</span>
+        <% end %>
+      <% end %>
+
+      <% if @computed_count > 0 %>
+        <%= button_to bulk_reset_lecture_student_performance_certifications_path(@lecture),
+                    method: :post,
+                    class: "btn btn-sm btn-outline-secondary",
+                    form: {
+                      data: {
+                        turbo_confirm: t(
+                          "student_performance.certifications.index.bulk_reset_confirm",
+                          count: @computed_count
+                        )
+                      }
+                    } do %>
+          <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+          <%= t("student_performance.certifications.index.bulk_reset",
+                count: @computed_count) %>
         <% end %>
       <% end %>
     </div>
@@ -217,21 +238,21 @@
       </span>
     </div>
 
-    <% if @stale_count > 0 %>
+    <% if @flagged_user_ids.any? %>
       <div class="d-flex flex-column">
         <span class="fs-5 fw-bold text-secondary lh-1 mb-1">
-          <%= @stale_count %>
+          <%= @flagged_user_ids.size %>
         </span>
 
         <span class="text-muted small d-flex align-items-center gap-1">
-          <%= t("student_performance.certifications.index.stale") %>
-          <%= helpdesk(t("student_performance.certifications.index.stale_hint"), false) %>
+          <%= t("student_performance.certifications.index.flagged") %>
+          <%= helpdesk(t("student_performance.certifications.index.flagged_hint"), false) %>
         </span>
       </div>
     <% end %>
   </div>
 
-  <% if @stale_from_rule_auto_count > 0 %>
+  <% if @disagreeing_user_ids.any? %>
     <div
       class="
         alert alert-warning d-flex align-items-center
@@ -239,24 +260,22 @@
       "
     >
       <div>
-        <i class="bi bi-exclamation-triangle me-2"></i>
+        <i class="bi bi-arrow-left-right me-2"></i>
 
-        <%= t("student_performance.certifications.index.stale_rule_warning",
-                  count: @stale_from_rule_auto_count) %>
+        <%= t("student_performance.certifications.index.disagreeing_warning",
+              count: @disagreeing_user_ids.size) %>
       </div>
 
-      <% if @rule %>
-        <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
-                          method: :post,
-                          class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
-          <i class="bi bi-arrow-repeat me-1"></i>
-          <%= t("student_performance.certifications.index.reevaluate_rules") %>
-        <% end %>
+      <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
+                    method: :post,
+                    class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <%= t("student_performance.certifications.index.reevaluate") %>
       <% end %>
     </div>
   <% end %>
 
-  <% if @stale_from_rule_manual_count > 0 %>
+  <% if @stale_manual_user_ids.any? %>
     <div
       class="
         alert alert-warning d-flex align-items-center
@@ -264,63 +283,15 @@
       "
     >
       <div>
-        <i class="bi bi-exclamation-triangle me-2"></i>
+        <i class="bi bi-pencil-square me-2"></i>
 
-        <%= t("student_performance.certifications.index.stale_rule_manual_warning",
-                  count: @stale_from_rule_manual_count) %>
+        <%= t("student_performance.certifications.index.stale_manual_warning",
+              count: @stale_manual_user_ids.size) %>
       </div>
 
       <%= button_to bulk_confirm_manual_lecture_student_performance_certifications_path(@lecture),
-                        method: :post,
-                        class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
-        <i class="bi bi-check-all me-1"></i>
-        <%= t("student_performance.certifications.index.confirm_manual") %>
-      <% end %>
-    </div>
-  <% end %>
-
-  <% if @stale_from_data_auto_count > 0 %>
-    <div
-      class="
-        alert alert-warning d-flex align-items-center
-        justify-content-between mb-4
-      "
-    >
-      <div>
-        <i class="bi bi-exclamation-triangle me-2"></i>
-
-        <%= t("student_performance.certifications.index.stale_data_warning",
-                  count: @stale_from_data_auto_count) %>
-      </div>
-
-      <% if @rule %>
-        <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
-                          method: :post,
-                          class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
-          <i class="bi bi-arrow-repeat me-1"></i>
-          <%= t("student_performance.certifications.index.reevaluate_data") %>
-        <% end %>
-      <% end %>
-    </div>
-  <% end %>
-
-  <% if @stale_from_data_manual_count > 0 %>
-    <div
-      class="
-        alert alert-warning d-flex align-items-center
-        justify-content-between mb-4
-      "
-    >
-      <div>
-        <i class="bi bi-exclamation-triangle me-2"></i>
-
-        <%= t("student_performance.certifications.index.stale_data_manual_warning",
-                  count: @stale_from_data_manual_count) %>
-      </div>
-
-      <%= button_to bulk_confirm_manual_lecture_student_performance_certifications_path(@lecture),
-                        method: :post,
-                        class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
+                    method: :post,
+                    class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
         <i class="bi bi-check-all me-1"></i>
         <%= t("student_performance.certifications.index.confirm_manual") %>
       <% end %>
@@ -328,7 +299,7 @@
   <% end %>
 
   <nav class="nav nav-pills small mb-3">
-    <% %i[all passed failed uncertified stale].each do |filter| %>
+    <% %i[all passed failed uncertified flagged].each do |filter| %>
       <% active = (params[:status].presence || "all") == filter.to_s %>
 
       <%= link_to lecture_student_performance_certifications_path(
@@ -347,7 +318,7 @@
     </p>
   <% else %>
     <div class="table-responsive">
-      <table class="table table-sm table-hover align-middle">
+      <table class="table table-sm table-hover align-middle certifications-table">
         <thead class="table-light">
           <tr>
             <th scope="col">
@@ -383,6 +354,10 @@
               <%= t("student_performance.certifications.columns.certification") %>
             </th>
 
+            <th scope="col" class="hint-column">
+              <%= t("student_performance.certifications.columns.hint") %>
+            </th>
+
             <th scope="col">
               <%= t("student_performance.certifications.columns.note") %>
             </th>
@@ -403,7 +378,7 @@
             >
               <td><%= record.user.tutorial_name %></td>
 
-              <td class="text-end font-monospace">
+              <td class="text-end numeric">
                 <% if @rule&.min_points_absolute.present? %>
                   <%= number_with_precision(
                             record.points_total_materialized,
@@ -471,13 +446,6 @@
                           title="<%= t('student_performance.certifications.status.manual') %>"
                         ></i>
                       <% end %>
-
-                      <% if @stale_user_ids.include?(record.user_id) %>
-                        <i
-                          class="bi bi-exclamation-triangle-fill text-warning ms-2 small"
-                          title="<%= t('student_performance.certifications.status.stale') %>"
-                        ></i>
-                      <% end %>
                     </div>
                   </div>
                   <div data-certification-inline-target="edit" class="d-none">
@@ -533,34 +501,49 @@
                 <% end %>
               </td>
 
+              <%#
+                The one reason to look at this row again — or, for a row
+                nobody has decided yet, what the proposal rests on. The
+                decision itself stays in its own column, as it is.
+              %>
+
+              <td class="hint-column small">
+                <% if @disagreeing_user_ids.include?(record.user_id) %>
+                  <span class="text-amber">
+                    <i class="bi bi-arrow-left-right me-1"></i>
+                    <%= t("student_performance.certifications.columns.rule_today") %>
+                    <%= t("student_performance.certifications.rule_today.#{proposal.proposed_status}") %>
+
+                    <% reasons = proposal_reasons(proposal, @lecture) %>
+
+                    <% if reasons.any? %>
+                      &mdash;
+                      <%= reasons.join(", ") %>
+                    <% end %>
+                  </span>
+                <% elsif @stale_manual_user_ids.include?(record.user_id) %>
+                  <span class="text-muted">
+                    <%= t("student_performance.certifications.status.manual_stale") %>
+                  </span>
+                <% elsif proposal && (cert.nil? || cert.pending?) %>
+                  <% Array(proposal.verdict_deferral_reasons).each do |reason| %>
+                    <span class="text-amber d-block">
+                      <i class="bi bi-question-circle me-1"></i>
+                      <%= t("student_performance.evaluator.deferral.#{reason}") %>
+                    </span>
+                  <% end %>
+                  <% proposal.missed_criteria.each do |criterion| %>
+                    <span class="text-danger d-block">
+                      <i class="bi bi-x-circle me-1"></i>
+                      <%= t("student_performance.evaluator.missed.#{criterion}") %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </td>
+
               <td class="small" style="max-width: 180px">
                 <% if cert %>
                   <div data-certification-inline-target="display">
-                    <% if proposal && cert.disagrees_with?(proposal.proposed_status) %>
-                      <span class="badge text-amber bg-amber-subtle fw-normal mb-1">
-                        <i class="bi bi-arrow-left-right me-1"></i>
-                        <%= t("student_performance.certifications.columns.rule_suggests") %>
-
-                        <% if proposal.proposed_status == :passed %>
-                          <%= t("student_performance.certifications.status.passed").downcase %>
-                        <% elsif proposal.proposed_status == :inconclusive %>
-                          <%= t("student_performance.evaluator.status.inconclusive").downcase %>
-                        <% else %>
-                          <%= t("student_performance.certifications.status.failed").downcase %>
-                        <% end %>
-                      </span>
-                      <br>
-                    <% end %>
-
-                    <% if cert.pending? %>
-                      <% Array(proposal&.verdict_deferral_reasons).each do |reason| %>
-                        <span class="text-amber d-block">
-                          <i class="bi bi-question-circle me-1"></i>
-                          <%= t("student_performance.evaluator.deferral.#{reason}") %>
-                        </span>
-                      <% end %>
-                    <% end %>
-
                     <span
                       class="text-muted text-truncate d-inline-block"
                       style="max-width: 160px"
@@ -614,6 +597,25 @@
                       >
                         <i class="bi bi-x-lg"></i>
                       </button>
+
+                      <%= button_to(
+                            lecture_student_performance_certification_path(
+                              @lecture, cert
+                            ),
+                            method: :delete,
+                            class: "btn btn-sm btn-outline-secondary py-0 px-1",
+                            title: t(
+                              "student_performance.certifications.index.reset"
+                            ),
+                            form: {
+                              data: {
+                                turbo_frame: "performance-certifications-frame",
+                                turbo_confirm: reset_confirmation(cert)
+                              }
+                            }
+                          ) do %>
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                      <% end %>
                     </div>
 
                     <%= form_with(

@@ -378,11 +378,13 @@ Rails.application.routes.draw do
       resources :achievements,
                 only: [:index, :new, :show, :create, :update, :destroy]
 
-      resources :certifications, only: [:index, :create, :update] do
+      resources :certifications,
+                only: [:index, :create, :update, :destroy] do
         collection do
           post :bulk_accept
           post :bulk_reevaluate
           post :bulk_confirm_manual
+          post :bulk_reset
         end
       end
     end

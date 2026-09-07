@@ -129,6 +129,27 @@ RSpec.describe(StudentPerformance::Certification, type: :model) do
     end
   end
 
+  describe ".reset_computed!" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    it "drops the computed decisions of the scope and keeps the manual ones" do
+      computed = FactoryBot.create(:student_performance_certification, :passed,
+                                   lecture: lecture)
+      pending = FactoryBot.create(:student_performance_certification, :pending,
+                                  lecture: lecture)
+      manual = FactoryBot.create(:student_performance_certification,
+                                 :failed, :manual, lecture: lecture)
+      elsewhere = FactoryBot.create(:student_performance_certification, :passed)
+
+      count = lecture.student_performance_certifications.reset_computed!
+
+      expect(count).to eq(2)
+      expect(described_class.where(id: [computed.id, pending.id])).to be_empty
+      expect(described_class.exists?(manual.id)).to be(true)
+      expect(described_class.exists?(elsewhere.id)).to be(true)
+    end
+  end
+
   describe "#disagrees_with?" do
     it "sees no disagreement between pending and inconclusive" do
       cert = FactoryBot.build(:student_performance_certification)

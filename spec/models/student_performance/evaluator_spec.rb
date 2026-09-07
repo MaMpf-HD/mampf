@@ -570,6 +570,68 @@ RSpec.describe(StudentPerformance::Evaluator) do
     end
   end
 
+  describe "Result#missed_criteria" do
+    let(:achievement) { FactoryBot.create(:achievement, lecture: lecture) }
+
+    let(:rule) do
+      FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                        lecture: lecture, min_percentage: 50)
+    end
+
+    let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+
+    before do
+      FactoryBot.create(:student_performance_rule_achievement,
+                        rule: rule, achievement: achievement)
+    end
+
+    it "names the criterion that settled the case" do
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 30,
+                                 points_max_materialized: 100,
+                                 percentage_materialized: 30,
+                                 achievements_met_ids: [achievement.id])
+
+      expect(evaluator.evaluate(record).missed_criteria).to eq([:points])
+    end
+
+    # The achievement is not marked yet: it did not fail the student, the
+    # points did.
+    it "does not blame a criterion that is merely open" do
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 30,
+                                 points_max_materialized: 100,
+                                 percentage_materialized: 30,
+                                 achievements_ungraded_ids: [achievement.id])
+
+      expect(evaluator.evaluate(record).missed_criteria).to eq([:points])
+    end
+
+    it "names both when both are missed" do
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 30,
+                                 points_max_materialized: 100,
+                                 percentage_materialized: 30)
+
+      expect(evaluator.evaluate(record).missed_criteria)
+        .to eq([:points, :achievements])
+    end
+
+    it "stays silent unless the proposal is a fail" do
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 60,
+                                 points_max_materialized: 100,
+                                 percentage_materialized: 60,
+                                 achievements_ungraded_ids: [achievement.id])
+
+      expect(evaluator.evaluate(record).missed_criteria).to eq([])
+    end
+  end
+
   describe "Result#verdict_deferral_reasons" do
     let(:rule) do
       FactoryBot.create(:student_performance_rule, :active, :with_percentage,

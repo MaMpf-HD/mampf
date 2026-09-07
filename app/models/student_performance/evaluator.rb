@@ -20,6 +20,17 @@ module StudentPerformance
       def points_criterion_deferral
         POINTS_DEFERRALS.find { |reason| details[reason] }
       end
+
+      # The criteria a failed proposal failed on. A criterion that is merely
+      # open is not among them: it did not settle the case, the other one did.
+      def missed_criteria
+        return [] unless proposed_status == :failed
+
+        missed = []
+        missed << :points if !details[:meets_points] && points_criterion_deferral.nil?
+        missed << :achievements if !details[:meets_achievements] && !details[:achievements_ungraded]
+        missed
+      end
     end
 
     attr_reader :rule

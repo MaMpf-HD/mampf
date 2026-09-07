@@ -136,6 +136,9 @@ de:
         points_pending: "Abgaben noch nicht bewertet"
         points_not_measurable: "Keine Punkte zu messen"
         achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
+      missed:
+        points: "Schwelle nicht erreicht"
+        achievements: "Zusatzkriterium nicht erfüllt"
       single_proposal:
         title: "Zulassungsvorschlag"
         back_to_record: "Zurück zum Datensatz"
@@ -157,9 +160,18 @@ de:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         uncertified: "Offen"
-        stale: "Veraltet"
-        stale_hint: "Zugelassen bevor Regel oder Daten geändert wurden"
+        flagged: "Auffällig"
+        flagged_hint: "Berechnete Zulassungen, die die Regel heute anders entscheiden würde, und Einzelentscheidungen, deren Grundlage sich seither geändert hat"
         bulk_accept: "Offene Vorschläge akzeptieren"
+        bulk_reset:
+          one: "%{count} berechnete Zulassung zurücksetzen"
+          other: "%{count} berechnete Zulassungen zurücksetzen"
+        bulk_reset_confirm:
+          one: "%{count} berechnete Entscheidung wird gelöscht; diese Zulassung ist danach wieder offen. Einzelentscheidungen bleiben."
+          other: "%{count} berechnete Entscheidungen werden gelöscht; diese Zulassungen sind danach wieder offen. Einzelentscheidungen bleiben."
+        reset: "Zurücksetzen auf Vorschlag"
+        reset_confirm: "Die Entscheidung wird gelöscht; die Zulassung ist danach wieder offen."
+        reset_confirm_passed: "Ohne Zulassung kann die Prüfungsanmeldung bei der Zuteilung nicht automatisch bestätigt werden."
         proposed_passed: "zugelassen"
         proposed_failed: "nicht zugelassen"
         proposed_inconclusive: "bleiben zurückgestellt"
@@ -175,37 +187,35 @@ de:
         setup_rule: "Regel einrichten"
         no_rule_hint: "Du kannst Zulassungen jederzeit manuell pro Studierende:r erfassen — auch ohne Regel."
         required_achievements_label: "Zusatzkriterien"
-        stale_rule_warning:
-          one: "Zulassungsregel wurde geändert — %{count} Zulassung ist nicht mehr aktuell."
-          other: "Zulassungsregel wurde geändert — %{count} Zulassungen sind nicht mehr aktuell."
-        stale_rule_manual_warning:
-          one: "%{count} manuelle Einzelentscheidung sollte nach Regeländerung überprüft werden."
-          other: "%{count} manuelle Einzelentscheidungen sollten nach Regeländerung überprüft werden."
-        stale_data_warning:
-          one: "Leistungsdaten wurden aktualisiert — %{count} Zulassung ist nicht mehr aktuell."
-          other: "Leistungsdaten wurden aktualisiert — %{count} Zulassungen sind nicht mehr aktuell."
-        stale_data_manual_warning:
-          one: "%{count} manuelle Einzelentscheidung sollte nach Datenänderung überprüft werden."
-          other: "%{count} manuelle Einzelentscheidungen sollten nach Datenänderung überprüft werden."
-        reevaluate_rules: "Mit aktueller Regel abgleichen"
-        reevaluate_data: "Mit aktuellen Daten abgleichen"
+        disagreeing_warning:
+          one: "%{count} Zulassung widerspricht der aktuellen Regel."
+          other: "%{count} Zulassungen widersprechen der aktuellen Regel."
+        stale_manual_warning:
+          one: "%{count} Einzelentscheidung: Regel oder Daten haben sich seit der Entscheidung geändert."
+          other: "%{count} Einzelentscheidungen: Regel oder Daten haben sich seit der Entscheidung geändert."
+        reevaluate: "Mit Regel abgleichen"
         confirm_manual: "Einzelentscheidungen bestätigen"
       status:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         pending: "Zurückgestellt"
         manual: "Einzelentscheidung"
-        stale: "Nicht mehr aktuell — Abgleich erforderlich"
+        manual_stale: "Regel oder Daten seit deiner Entscheidung geändert"
       columns:
         proposed: "Vorschlag"
-        rule_suggests: "Laut Regel:"
+        rule_today: "Regel heute:"
         certification: "Zulassung"
+        hint: "Hinweis"
         note: "Anmerkung"
+      rule_today:
+        passed: "zugelassen"
+        failed: "nicht zugelassen"
+        inconclusive: "kann nicht entscheiden"
       filters:
         all: "Alle"
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
-        stale: "Veraltet"
+        flagged: "Auffällig"
         uncertified: "Offen"
       override:
         title: "Manuell überschreiben"
@@ -217,6 +227,10 @@ de:
       flash:
         created: "Zulassung gespeichert."
         updated: "Zulassung aktualisiert."
+        reset_one: "Zulassung zurückgesetzt."
+        reset:
+          one: "%{count} Zulassung zurückgesetzt."
+          other: "%{count} Zulassungen zurückgesetzt."
         manual_exists: "Für diese/n Studierende/n existiert bereits eine manuelle Entscheidung. Nutzen Sie die Bearbeitungsfunktion, um sie zu ändern."
         bulk_accepted:
           one: "%{count} Zulassung akzeptiert."

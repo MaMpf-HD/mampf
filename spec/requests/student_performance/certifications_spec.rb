@@ -83,6 +83,26 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             I18n.t("student_performance.evaluator.deferral.assignments_incomplete")
           )
         end
+
+        # Every decided row would carry the same reason as the banner; the row
+        # says only that the rule cannot decide, the banner says why.
+        it "does not repeat the banner on a decided row" do
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: student)
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+            tr.text.include?(student.tutorial_name)
+          end
+
+          expect(row.text).to include(
+            I18n.t("student_performance.certifications.rule_today.inconclusive")
+          )
+          expect(row.text).not_to include(
+            I18n.t("student_performance.evaluator.deferral.assignments_incomplete")
+          )
+        end
       end
 
       it "shows zero counts when no data exists" do
@@ -176,29 +196,28 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body).to include(CGI.escapeHTML(user_c.tutorial_name))
           end
 
-          it "filters by stale status" do
-            record_a = StudentPerformance::Record.find_by(
-              lecture: lecture, user: user_a
-            )
+          # user_a is certified as passed but would fail today; user_b is
+          # certified as failed and would fail today as well.
+          it "filters by flagged status" do
+            FactoryBot.create(:student_performance_rule, :active,
+                              :with_percentage,
+                              lecture: lecture, min_percentage: 50)
             # rubocop:disable Rails/SkipsModelValidations
-            record_a.update_columns(computed_at: 1.hour.ago)
-            cert_passed.update_columns(certified_at: 2.hours.ago)
-
-            record_b = StudentPerformance::Record.find_by(
-              lecture: lecture, user: user_b
-            )
-            record_b.update_columns(computed_at: 3.hours.ago)
+            StudentPerformance::Record.where(lecture: lecture)
+                                      .update_all(percentage_materialized: 40,
+                                                  points_total_materialized: 40,
+                                                  points_max_materialized: 100)
             # rubocop:enable Rails/SkipsModelValidations
 
             get lecture_student_performance_certifications_path(
-              lecture, status: "stale"
+              lecture, status: "flagged"
             )
             expect(response.body).to include(CGI.escapeHTML(user_a.tutorial_name))
             expect(response.body).not_to include(CGI.escapeHTML(user_b.tutorial_name))
           end
         end
 
-        context "with stale banners" do
+        context "with the attention banners" do
           let!(:rule) do
             FactoryBot.create(:student_performance_rule, :active,
                               :with_percentage,
@@ -206,7 +225,31 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                               min_percentage: 50)
           end
 
-          it "shows the rule-change banner when rule was updated" do
+          def record_for(user, percentage)
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user,
+                              percentage_materialized: percentage,
+                              points_total_materialized: percentage,
+                              points_max_materialized: 100)
+          end
+
+          it "offers to reconcile when the rule contradicts a computed decision" do
+            record_for(user_a, 40)
+
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.index.disagreeing_warning",
+                     count: 1)
+            )
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.index.reevaluate")
+            )
+          end
+
+          # Data and rule have both been touched since the decision, and the
+          # rule still says the same. There is nothing to look at.
+          it "leaves a computed decision the rule still agrees with alone" do
+            record_for(user_a, 60)
             cert_passed.update!(rule: rule)
             # rubocop:disable Rails/SkipsModelValidations
             cert_passed.update_columns(certified_at: 2.hours.ago)
@@ -214,22 +257,11 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             # rubocop:enable Rails/SkipsModelValidations
 
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(
-              I18n.t("student_performance.certifications.index.reevaluate_rules")
+            expect(response.body).not_to include(
+              I18n.t("student_performance.certifications.index.reevaluate")
             )
-          end
-
-          it "shows the data-change banner when record was recomputed" do
-            FactoryBot.create(:student_performance_record,
-                              lecture: lecture, user: user_a,
-                              computed_at: 1.hour.ago)
-            # rubocop:disable Rails/SkipsModelValidations
-            cert_passed.update_columns(certified_at: 2.hours.ago)
-            # rubocop:enable Rails/SkipsModelValidations
-
-            get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(
-              I18n.t("student_performance.certifications.index.reevaluate_data")
+            expect(response.body).not_to include(
+              I18n.t("student_performance.certifications.columns.rule_today")
             )
           end
 
@@ -250,7 +282,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body).to include(
               I18n.t(
                 "student_performance.certifications.index" \
-                ".stale_rule_manual_warning",
+                ".stale_manual_warning",
                 count: 1
               )
             )
@@ -271,9 +303,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body).not_to include(
-              I18n.t(
-                "student_performance.certifications.index.reevaluate_rules"
-              )
+              I18n.t("student_performance.certifications.index.reevaluate")
             )
           end
         end
@@ -543,7 +573,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         let(:achievement) { FactoryBot.create(:achievement, lecture: lecture) }
         let(:undecided_user) { FactoryBot.create(:confirmed_user) }
         let(:rule_suggests) do
-          I18n.t("student_performance.certifications.columns.rule_suggests")
+          I18n.t("student_performance.certifications.columns.rule_today")
         end
         def deferral(reason)
           I18n.t("student_performance.evaluator.deferral.#{reason}")
@@ -664,8 +694,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body).to include(rule_suggests)
             expect(response.body).to include(
-              I18n.t("student_performance.certifications.status.passed")
-                 .downcase
+              I18n.t("student_performance.certifications.rule_today.passed")
             )
           end
 
@@ -706,17 +735,82 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         it "says the rule disagrees" do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).to include(
-            I18n.t("student_performance.certifications.columns.rule_suggests")
+            I18n.t("student_performance.certifications.columns.rule_today")
+          )
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.rule_today.inconclusive")
           )
         end
 
-        it "does not reopen a settled row with the rule's reasons" do
+        # The decision stands; the row says why the rule would not make it
+        # today, so nobody has to open the student to find out.
+        it "names why the rule would defer now" do
           get lecture_student_performance_certifications_path(lecture)
-          StudentPerformance::Evaluator::DEFERRAL_REASONS.each do |reason|
-            expect(response.body).not_to include(
-              I18n.t("student_performance.evaluator.deferral.#{reason}")
-            )
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator.deferral.achievements_ungraded")
+          )
+        end
+
+        it "keeps the note column for the note" do
+          get lecture_student_performance_certifications_path(lecture)
+          row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+            tr.text.include?(decided_user.tutorial_name)
           end
+          note_cell = row.css("td")[-2]
+
+          expect(note_cell.text).not_to include(
+            I18n.t("student_performance.certifications.columns.rule_today")
+          )
+        end
+      end
+
+      context "with a decided certification the rule would now fail" do
+        let(:decided_user) { FactoryBot.create(:confirmed_user) }
+
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: decided_user,
+                            percentage_materialized: 40,
+                            points_total_materialized: 40,
+                            points_max_materialized: 100)
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: decided_user)
+        end
+
+        it "names the criterion the student misses" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.rule_today.failed")
+          )
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator.missed.points")
+          )
+        end
+
+        it "keeps the decision as it is" do
+          get lecture_student_performance_certifications_path(lecture)
+          row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+            tr.text.include?(decided_user.tutorial_name)
+          end
+
+          expect(row.text).to include(
+            I18n.t("student_performance.certifications.status.passed")
+          )
+        end
+
+        it "offers the reset on the row" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.reset")
+          )
         end
       end
     end
@@ -1220,7 +1314,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "re-evaluates stale certifications" do
+      it "rewrites the decisions the rule contradicts and leaves the rest" do
         cert_a = FactoryBot.create(
           :student_performance_certification, :passed,
           lecture: lecture, user: user_a, rule: rule,
@@ -1243,8 +1337,9 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         cert_a.reload
         cert_b.reload
         expect(cert_a.status).to eq("passed")
+        expect(cert_a.certified_at).to be_within(5.seconds).of(4.hours.ago)
         expect(cert_b.status).to eq("failed")
-        expect(cert_a.certified_at).to be_within(5.seconds).of(Time.current)
+        expect(cert_b.certified_at).to be_within(5.seconds).of(Time.current)
       end
 
       it "skips manual overrides" do
@@ -1267,7 +1362,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       it "shows a flash message with count" do
         FactoryBot.create(
           :student_performance_certification, :passed,
-          lecture: lecture, user: user_a, rule: rule,
+          lecture: lecture, user: user_b, rule: rule,
           certified_at: 4.hours.ago
         )
         rule.update!(min_percentage: 50)
@@ -1489,6 +1584,157 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         post bulk_confirm_manual_lecture_student_performance_certifications_path(
           lecture
         )
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
+  describe "DELETE /lectures/:lecture_id/performance/certifications/:id" do
+    let(:target_user) { FactoryBot.create(:confirmed_user) }
+
+    let!(:cert) do
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture, user: target_user)
+    end
+
+    before do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: target_user)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "drops the decision so the proposal shows again" do
+        delete lecture_student_performance_certification_path(lecture, cert)
+
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        expect(StudentPerformance::Certification.exists?(cert.id)).to be(false)
+      end
+
+      it "drops a manual decision too, one at a time" do
+        manual = FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: FactoryBot.create(:confirmed_user)
+        )
+
+        delete lecture_student_performance_certification_path(lecture, manual)
+
+        expect(StudentPerformance::Certification.exists?(manual.id)).to be(false)
+      end
+
+      it "says so" do
+        delete lecture_student_performance_certification_path(lecture, cert)
+        follow_redirect!
+
+        expect(response.body).to include(
+          I18n.t("student_performance.certifications.flash.reset_one")
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        delete lecture_student_performance_certification_path(lecture, cert)
+
+        expect(response).to redirect_to(root_url)
+        expect(StudentPerformance::Certification.exists?(cert.id)).to be(true)
+      end
+    end
+
+    context "as an unauthenticated user" do
+      it "redirects to sign in" do
+        delete lecture_student_performance_certification_path(lecture, cert)
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
+
+  describe "POST /lectures/:lecture_id/performance/certifications/bulk_reset" do
+    let!(:computed_passed) do
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture)
+    end
+
+    let!(:computed_failed) do
+      FactoryBot.create(:student_performance_certification, :failed,
+                        lecture: lecture)
+    end
+
+    let!(:computed_pending) do
+      FactoryBot.create(:student_performance_certification, :pending,
+                        lecture: lecture)
+    end
+
+    let!(:manual) do
+      FactoryBot.create(:student_performance_certification, :failed, :manual,
+                        lecture: lecture)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "drops every computed decision and keeps the manual ones" do
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        remaining = StudentPerformance::Certification.where(lecture: lecture)
+        expect(remaining).to contain_exactly(manual)
+      end
+
+      it "leaves other lectures alone" do
+        elsewhere = FactoryBot.create(:student_performance_certification,
+                                      :passed)
+
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
+        expect(StudentPerformance::Certification.exists?(elsewhere.id)).to be(true)
+      end
+
+      it "counts what it dropped" do
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+        follow_redirect!
+
+        expect(response.body).to include(
+          I18n.t("student_performance.certifications.flash.reset", count: 3)
+        )
+      end
+
+      it "offers the sweep only while there is something to reset" do
+        get lecture_student_performance_certifications_path(lecture)
+        expect(response.body).to include(
+          I18n.t("student_performance.certifications.index.bulk_reset",
+                 count: 3)
+        )
+
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+        get lecture_student_performance_certifications_path(lecture)
+        expect(response.body).not_to include(
+          bulk_reset_lecture_student_performance_certifications_path(lecture)
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
+        expect(response).to redirect_to(root_url)
+        expect(StudentPerformance::Certification.where(lecture: lecture).count)
+          .to eq(4)
+      end
+    end
+
+    context "as an unauthenticated user" do
+      it "redirects to sign in" do
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
         expect(response).to redirect_to(new_user_session_path)
       end
     end

@@ -149,6 +149,9 @@ window.Stimulus.register("assessments--points-precision", PointsPrecisionControl
 import SchemeFormController from "~/assessment/assessments/scheme_form.controller.js";
 window.Stimulus.register("assessments--scheme-form", SchemeFormController);
 
+import AssignmentsCompleteController from "~/assessment/assessments/assignments_complete.controller.js";
+window.Stimulus.register("assessments--assignments-complete", AssignmentsCompleteController);
+
 import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
 window.Stimulus.register("achievement-form", AchievementFormController);
 

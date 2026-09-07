@@ -4,6 +4,7 @@ module StudentPerformance
 
     before_action :set_rule, only: [:index, :create, :bulk_accept,
                                     :bulk_reevaluate]
+    before_action :set_certification, only: [:update, :destroy]
 
     rescue_from CanCan::AccessDenied do |exception|
       redirect_to main_app.root_url, alert: exception.message
@@ -20,20 +21,7 @@ module StudentPerformance
       @proposal_by_user ||= {}
       compute_summary_counts
       compute_proposal_counts if @rule
-      @stale_user_ids = @lecture.student_performance_certifications
-                                .stale.pluck(:user_id).to_set
-      stale_from_rule = @lecture.student_performance_certifications
-                                .stale_from_rule
-      @stale_from_rule_auto_count = stale_from_rule
-                                    .where.not(source: :manual).count
-      @stale_from_rule_manual_count = stale_from_rule
-                                      .where(source: :manual).count
-      stale_from_data = @lecture.student_performance_certifications
-                                .stale_from_data
-      @stale_from_data_auto_count = stale_from_data
-                                    .where.not(source: :manual).count
-      @stale_from_data_manual_count = stale_from_data
-                                      .where(source: :manual).count
+      flag_certifications
       @achievements = if @rule
         @rule.required_achievements.order(:title)
       else
@@ -143,19 +131,22 @@ module StudentPerformance
         return
       end
 
-      stale_certs = @lecture.student_performance_certifications
-                            .stale.where.not(source: :manual)
+      # Every computed decision is held against today's proposal; only the
+      # ones the rule would no longer make are rewritten.
+      computed_certs = @lecture.student_performance_certifications.computed
       evaluator = evaluator_for(@rule)
       records_by_user = @lecture.student_performance_records.index_by(&:user_id)
       updated = 0
       reset_to_pending = 0
 
       ActiveRecord::Base.transaction do
-        stale_certs.find_each do |cert|
+        computed_certs.find_each do |cert|
           record = records_by_user[cert.user_id]
           next unless record
 
           result = evaluator.evaluate(record)
+          next unless cert.disagrees_with?(result.proposed_status)
+
           cert.update!(attributes_for_proposal(result.proposed_status))
           if result.proposed_status == :inconclusive
             reset_to_pending += 1
@@ -172,7 +163,7 @@ module StudentPerformance
     def bulk_confirm_manual
       # rubocop:disable Rails/SkipsModelValidations
       confirmed = @lecture.student_performance_certifications
-                          .stale.where(source: :manual)
+                          .stale_manual
                           .update_all(certified_at: Time.current)
       # rubocop:enable Rails/SkipsModelValidations
 
@@ -183,9 +174,16 @@ module StudentPerformance
                   )
     end
 
+    def bulk_reset
+      count = @lecture.student_performance_certifications.reset_computed!
+
+      redirect_to lecture_student_performance_certifications_path(@lecture),
+                  notice: I18n.t("student_performance.certifications.flash.reset",
+                                 count: count)
+    end
+
     def update
-      cert = @lecture.student_performance_certifications
-                     .find(params[:id])
+      cert = @certification
       cert.assign_attributes(
         status: update_certification_params[:status],
         note: update_certification_params[:note],
@@ -203,6 +201,15 @@ module StudentPerformance
       end
     end
 
+    # Back to "no decision": the proposal shows again and the screening holds
+    # the student for a person to look at.
+    def destroy
+      @certification.destroy!
+
+      redirect_to return_to_path,
+                  notice: I18n.t("student_performance.certifications.flash.reset_one")
+    end
+
     private
 
       def return_to_path
@@ -215,6 +222,11 @@ module StudentPerformance
           end
         end
         lecture_student_performance_certifications_path(@lecture)
+      end
+
+      def set_certification
+        @certification = @lecture.student_performance_certifications
+                                 .find(params[:id])
       end
 
       def set_rule
@@ -245,10 +257,23 @@ module StudentPerformance
         @total_students = @lecture.student_performance_records.count
         @passed_count = @certifications.count(&:passed?)
         @failed_count = @certifications.count(&:failed?)
+        @computed_count = @certifications.count(&:computed?)
         decided_count = @passed_count + @failed_count
         @uncertified_count = @total_students - decided_count
-        @stale_count = @lecture.student_performance_certifications
-                               .stale.count
+      end
+
+      # One reason per kind of decision to look at a row again: a computed one
+      # the rule would decide differently today, a manual one whose rule or data
+      # changed since it was made. Nothing else is flagged.
+      def flag_certifications
+        @disagreeing_user_ids = @certifications.select do |cert|
+          proposal = @proposal_by_user[cert.user_id]
+          cert.computed? && proposal &&
+            cert.disagrees_with?(proposal.proposed_status)
+        end.to_set(&:user_id)
+        @stale_manual_user_ids = @lecture.student_performance_certifications
+                                         .stale_manual.pluck(:user_id).to_set
+        @flagged_user_ids = @disagreeing_user_ids | @stale_manual_user_ids
       end
 
       def compute_proposal_counts
@@ -277,7 +302,7 @@ module StudentPerformance
           return records.where.not(user_id: decided_user_ids)
         end
 
-        return records.where(user_id: @stale_user_ids.to_a) if params[:status] == "stale"
+        return records.where(user_id: @flagged_user_ids.to_a) if params[:status] == "flagged"
 
         certified_user_ids = @certifications
                              .select { |c| c.status.to_sym == params[:status].to_sym }
