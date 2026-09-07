@@ -20,21 +20,31 @@ class PointingTableHeaderComponent < ViewComponent::Base
     super()
   end
 
+  # team is mandatory for all
+  # tutorial is only for lecture scope only
+  # status is only when having assessment
+  # pointing_columns are only when having assessment
+  # action_column is mandatory for all
+  # correction_column for tutorial scope
   def assignment_columns
     [
       team_column,
       *tutorial_column,
-      status_col,
+      *status_col,
       *pointing_columns,
       *action_column,
       *correction_column
     ].compact
   end
 
+  # team is mandatory for all
+  # status is only when having assessment
+  # grading_columns are only when having assessment
+  # action_column is mandatory for all
   def talk_columns
     [
       team_column,
-      status_col,
+      *status_col,
       *grading_columns,
       *action_column
     ].compact
@@ -69,8 +79,10 @@ class PointingTableHeaderComponent < ViewComponent::Base
       return [] unless lecture_scope?
 
       if @tutorials&.count&.zero? || @tutorials.nil?
-        [Column.new(css_class: "sticky-col tutorial-col grade-th text-center",
-                    label: t("basics.tutorial"))]
+        [Column.new(
+          css_class: "stickreturn [] unless lecture_scope?y-col tutorial-col grade-th text-center",
+          label: t("basics.tutorial")
+        )]
       else
         # need to use action_tag to identify the column for the filter dropdown
         # need to increase z-index of the header cell
@@ -81,9 +93,11 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def status_col
-      Column.new(css_class: "text-center sticky-col status-col grade-th z-10",
-                 action_tag: "filter-status",
-                 label: t("assessment.grading_tutorial.status"))
+      return [] unless @grading_enabled
+
+      [Column.new(css_class: "text-center sticky-col status-col grade-th z-10",
+                  action_tag: "filter-status",
+                  label: t("assessment.grading_tutorial.status"))]
     end
 
     def pointing_columns
