@@ -105,15 +105,29 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             .not_to include(helpers.number_to_percentage(50, precision: 0))
         end
 
-        it "names what the points column is measured against" do
+        # Both figures share the denominator, so both headings have to name it —
+        # searching the whole page would pass with the note on one of them.
+        it "names what both figures are measured against" do
           sheet(deadline: 2.days.ago, points: 20)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
 
           get lecture_student_performance_records_path(lecture)
 
-          expect(response.body).to include(
-            I18n.t("student_performance.records.columns.of_due_points")
-          )
+          caption = I18n.t("student_performance.records.columns.of_due_points")
+          headers = Nokogiri::HTML(response.body).css("thead th")
+          points = headers.find do |th|
+            th.text.strip.start_with?(
+              I18n.t("student_performance.records.columns.points")
+            )
+          end
+          percentage = headers.find do |th|
+            th.text.strip.start_with?(
+              I18n.t("student_performance.records.columns.percentage")
+            )
+          end
+
+          expect(points.text).to include(caption)
+          expect(percentage.text).to include(caption)
         end
       end
 

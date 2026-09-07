@@ -892,8 +892,8 @@ class Lecture < ApplicationRecord
     sync_student_performance_for_members!(new_user_ids)
   end
 
-  # Whether every assignment of the term is on record. Until somebody says so,
-  # no eligibility verdict holds: each sheet still to come raises the points
+  # Whether every assignment of the term has been created. Until somebody says
+  # so, no eligibility verdict holds: each sheet still to come raises the points
   # needed and the points reachable at the same time, so neither a pass nor a
   # fail survives the next one.
   def assignments_complete?

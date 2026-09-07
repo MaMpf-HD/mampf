@@ -8,8 +8,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
   before do
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
-    # Every example below is about a term whose sheets are all on record; the
-    # examples about the state before that say so themselves.
+    # Every example below is about a term whose assignments have all been
+    # created; the examples about the state before that say so themselves.
     lecture.update!(assignments_complete: true)
     lecture.reload
   end
@@ -67,13 +67,19 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           expect(response.body).to include("disabled")
         end
 
+        # The banner carries the same words, so the whole page is no evidence:
+        # the reason has to stand on the student's own row.
         it "defers a student who clears the threshold today" do
           FactoryBot.create(:student_performance_certification,
                             lecture: lecture, user: student)
 
           get lecture_student_performance_certifications_path(lecture)
 
-          expect(response.body).to include(
+          row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+            tr.text.include?(student.tutorial_name)
+          end
+
+          expect(row.text).to include(
             I18n.t("student_performance.evaluator.deferral.assignments_incomplete")
           )
         end
@@ -903,7 +909,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       before { sign_in editor }
 
       # Reachable past a disabled button, and it would write nothing but
-      # "deferred" over every decision on record.
+      # "deferred" over every decision already taken.
       it "refuses to sweep while the list of assignments is open" do
         lecture.update!(assignments_complete: false)
 

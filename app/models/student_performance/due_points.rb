@@ -20,8 +20,7 @@ module StudentPerformance
       due_assessment_ids.include?(assessment_id)
     end
 
-    # What this student was asked for: the due sheets, less the ones they were
-    # excused from.
+    # The same for one student, less the sheets they were excused from.
     def max_for(user_id)
       total - exempted_due_points.fetch(user_id, 0)
     end

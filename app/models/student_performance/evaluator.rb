@@ -32,10 +32,10 @@ module StudentPerformance
     # `required_achievements`. The threshold mode is deliberately not part of
     # that contract, since the preview has none.
     #
-    # `due_points` is what the calendar has to say: which sheets could be
-    # handed in at all. Without one the evaluator sees the marking backlog and
-    # nothing else, and refuses students a term that is not over — which is
-    # every caller judging a real lecture wanting one.
+    # `due_points` is what the calendar has to say: which sheets could be handed
+    # in at all. Without it the evaluator sees only the marking backlog and
+    # fails students for sheets that are not due yet, so anyone judging a real
+    # lecture passes one.
     #
     # `assignments_complete` has no default on purpose. It is the gate on every
     # verdict this class hands out, and a caller that forgets it would get the

@@ -8,8 +8,8 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
   before do
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
-    # Every example below is about a term whose sheets are all on record; the
-    # examples about the state before that say so themselves.
+    # Every example below is about a term whose assignments have all been
+    # created; the examples about the state before that say so themselves.
     lecture.update!(assignments_complete: true)
     lecture.reload
   end
@@ -363,7 +363,7 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
                               max_points: points)
           end
           # Creating the sheets reopened the list; the preview is about a term
-          # whose sheets are all on record.
+          # whose assignments have all been created.
           lecture.update!(assignments_complete: true)
         end
 

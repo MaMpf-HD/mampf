@@ -69,6 +69,11 @@
 
             <th scope="col" class="text-end">
               <%= t("student_performance.records.columns.percentage") %>
+              <br>
+
+              <span class="fw-normal text-muted" style="font-size: 0.75em">
+                <%= t("student_performance.records.columns.of_due_points") %>
+              </span>
             </th>
 
             <% @assessments.each do |assessment| %>

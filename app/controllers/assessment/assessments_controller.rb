@@ -27,8 +27,8 @@ module Assessment
       end
     end
 
-    # Whether every assignment of the term is on record. It gates eligibility,
-    # so it is said here, next to the list it is about.
+    # Set from the assessments screen because the statement is about the list of
+    # assignments, even though what it gates is eligibility.
     def assignments_complete
       authorize! :update, @lecture
 

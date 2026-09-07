@@ -24,16 +24,12 @@ module StudentPerformance
         authorize!(:edit, @lecture)
       end
 
-      # The clock-dependent half of every performance figure on these screens.
       # One per request: the sheets it counts are the same for everybody in the
       # table, so only the exemptions are looked up per student.
       def due_points
         @due_points ||= DuePoints.new(lecture: @lecture)
       end
 
-      # Both facts the evaluator needs about this lecture in one place: what
-      # the calendar says, and whether anybody has said the list of sheets is
-      # done.
       def evaluator_for(rule)
         Evaluator.new(rule,
                       assignments_complete: @lecture.assignments_complete?,

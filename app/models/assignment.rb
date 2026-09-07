@@ -204,10 +204,9 @@ class Assignment < ApplicationRecord
       ensure_pointbook!(requires_submission: requires_submission)
     end
 
-    # Written past the lecture's own validations and callbacks: whether the
-    # list is closed is this sheet's business, and an unrelated validation
-    # error on the lecture must not leave a statement standing that is now
-    # false.
+    # Written past the lecture's validations: whether the list is closed is this
+    # sheet's business, and an unrelated error on the lecture must not leave a
+    # statement standing that has just become false.
     def reopen_lecture_assignment_list
       return unless lecture&.assignments_complete?
 

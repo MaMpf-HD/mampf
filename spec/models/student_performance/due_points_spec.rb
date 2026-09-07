@@ -79,7 +79,7 @@ RSpec.describe(StudentPerformance::DuePoints) do
   end
 
   describe "#percentage_for" do
-    it "measures against what was due, not against every sheet on record" do
+    it "measures against what was due, not against every sheet that exists" do
       sheet(deadline: 2.days.ago, points: 20)
       sheet(deadline: 3.days.from_now, points: 20)
       record = record_for(student, total: 20, max: 40)
