@@ -424,30 +424,30 @@
               <td class="text-start <%= 'ps-4' if @achievements.empty? %>">
                 <% if cert %>
                   <div data-certification-inline-target="display">
+                    <%#
+                      A decision made by hand says so in words: it is the one
+                      that survives every sweep, and a reader should not have
+                      to hover to learn that.
+                    %>
+                    <% label = cert.manual? ? "manual_#{cert.status}" : cert.status %>
+
                     <div class="d-flex align-items-center">
                       <% case cert.status.to_sym %>
                       <% when :passed %>
                         <span class="text-dark">
                           <i class="bi bi-check-circle-fill text-success me-1"></i>
-                          <%= t("student_performance.certifications.status.passed") %>
+                          <%= t("student_performance.certifications.status.#{label}") %>
                         </span>
                       <% when :failed %>
                         <span class="text-dark">
                           <i class="bi bi-x-circle-fill text-danger me-1"></i>
-                          <%= t("student_performance.certifications.status.failed") %>
+                          <%= t("student_performance.certifications.status.#{label}") %>
                         </span>
                       <% when :pending %>
                         <span class="text-dark">
                           <i class="bi bi-clock-fill text-amber me-1"></i>
                           <%= t("student_performance.certifications.status.pending") %>
                         </span>
-                      <% end %>
-
-                      <% if cert.manual? %>
-                        <i
-                          class="bi bi-pencil-square text-muted ms-2 small"
-                          title="<%= t('student_performance.certifications.status.manual') %>"
-                        ></i>
                       <% end %>
                     </div>
                   </div>

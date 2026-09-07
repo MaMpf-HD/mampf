@@ -200,7 +200,8 @@ de:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         pending: "Zurückgestellt"
-        manual: "Einzelentscheidung"
+        manual_passed: "Manuell zugelassen"
+        manual_failed: "Manuell nicht zugelassen"
         manual_stale: "Grundlage seither geändert"
       columns:
         proposed: "Vorschlag"

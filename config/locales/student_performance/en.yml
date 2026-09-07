@@ -200,7 +200,8 @@ en:
         passed: "Eligible"
         failed: "Not Eligible"
         pending: "Deferred"
-        manual: "Individual decision"
+        manual_passed: "Eligible (manual)"
+        manual_failed: "Not Eligible (manual)"
         manual_stale: "Basis changed since"
       columns:
         proposed: "Proposed"
