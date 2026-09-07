@@ -265,6 +265,19 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             )
           end
 
+          it "does not call a deferred row a contradiction" do
+            record_for(user_c, 40)
+
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).not_to include(
+              I18n.t("student_performance.certifications.index.disagreeing_warning",
+                     count: 1)
+            )
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.columns.proposed")
+            )
+          end
+
           it "shows the manual-review banner for stale manual overrides" do
             manual_cert = FactoryBot.create(
               :student_performance_certification, :passed, :manual,
@@ -690,11 +703,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         end
 
         context "when the rule would let the student through" do
-          it "names what the rule says" do
+          # A pending row is no decision the rule could contradict; it shows
+          # the proposal like a row nobody has looked at.
+          it "shows the proposal rather than a contradiction" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(rule_suggests)
+            expect(response.body).not_to include(rule_suggests)
             expect(response.body).to include(
-              I18n.t("student_performance.certifications.rule_today.passed")
+              I18n.t("student_performance.certifications.columns.proposed")
+            )
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.status.passed")
             )
           end
 
@@ -1340,6 +1358,19 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(cert_a.certified_at).to be_within(5.seconds).of(4.hours.ago)
         expect(cert_b.status).to eq("failed")
         expect(cert_b.certified_at).to be_within(5.seconds).of(Time.current)
+      end
+
+      it "leaves a deferred row to the accept sweep" do
+        cert = FactoryBot.create(
+          :student_performance_certification, :pending,
+          lecture: lecture, user: user_b, rule: rule
+        )
+
+        post bulk_reevaluate_lecture_student_performance_certifications_path(
+          lecture
+        )
+
+        expect(cert.reload.status).to eq("pending")
       end
 
       it "skips manual overrides" do

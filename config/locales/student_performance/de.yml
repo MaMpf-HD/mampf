@@ -164,6 +164,7 @@ de:
         list_open_link: "Zum Reiter %{tab}"
         todo_title: "Zu klären"
         bulk_accept: "Offene Vorschläge akzeptieren"
+        bulk_accept_hint: "Übernimmt den Vorschlag für alle Studierenden ohne Entscheidung. Zurückgestellte Vorschläge bleiben offen."
         bulk_reset:
           one: "%{count} berechnete Zulassung zurücksetzen"
           other: "%{count} berechnete Zulassungen zurücksetzen"
@@ -200,8 +201,8 @@ de:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         pending: "Zurückgestellt"
-        manual_passed: "Manuell zugelassen"
-        manual_failed: "Manuell nicht zugelassen"
+        manual_passed: "Zugelassen (manuell)"
+        manual_failed: "Nicht zugelassen (manuell)"
         manual_stale: "Grundlage seither geändert"
       columns:
         proposed: "Vorschlag"

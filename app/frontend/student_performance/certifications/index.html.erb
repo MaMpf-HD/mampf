@@ -22,7 +22,8 @@
                (@proposed_passed + @proposed_failed) > 0 %>
         <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
                     method: :post,
-                    class: "btn btn-sm btn-success" do %>
+                    class: "btn btn-sm btn-success",
+                    title: t("student_performance.certifications.index.bulk_accept_hint") do %>
           <i class="bi bi-check-all me-1"></i>
           <%= t("student_performance.certifications.index.bulk_accept") %>
 
@@ -372,10 +373,18 @@
         <tbody>
           <% @filtered_records.each do |record| %>
             <% cert = @cert_by_user[record.user_id] %>
+
+            <%#
+              A pending row is not a decision — it is the last evaluation,
+              kept so the sweep can tell it from a student nobody looked at.
+              It is shown like any undecided row: proposal, reasons, the two
+              buttons.
+            %>
+            <% decided = cert.present? && !cert.pending? %>
             <% proposal = @proposal_by_user&.dig(record.user_id) %>
 
             <tr
-              <% if cert %>
+              <% if decided %>
                 data-controller="certification-inline"
               <% end %>
             >
@@ -422,7 +431,7 @@
               <% end %>
 
               <td class="text-start <%= 'ps-4' if @achievements.empty? %>">
-                <% if cert %>
+                <% if decided %>
                   <div data-certification-inline-target="display">
                     <%#
                       A decision made by hand says so in words: it is the one
@@ -442,11 +451,6 @@
                         <span class="text-dark">
                           <i class="bi bi-x-circle-fill text-danger me-1"></i>
                           <%= t("student_performance.certifications.status.#{label}") %>
-                        </span>
-                      <% when :pending %>
-                        <span class="text-dark">
-                          <i class="bi bi-clock-fill text-amber me-1"></i>
-                          <%= t("student_performance.certifications.status.pending") %>
                         </span>
                       <% end %>
                     </div>
@@ -528,7 +532,7 @@
                   <span class="text-muted">
                     <%= t("student_performance.certifications.status.manual_stale") %>
                   </span>
-                <% elsif proposal && (cert.nil? || cert.pending?) %>
+                <% elsif proposal && !decided %>
                   <% Array(proposal.verdict_deferral_reasons).each do |reason| %>
                     <span class="text-amber d-block">
                       <i class="bi bi-question-circle me-1"></i>
@@ -545,7 +549,7 @@
               </td>
 
               <td class="small" style="max-width: 180px">
-                <% if cert %>
+                <% if decided %>
                   <div data-certification-inline-target="display">
                     <span
                       class="text-muted text-truncate d-inline-block"
@@ -570,7 +574,7 @@
               </td>
 
               <td class="text-end">
-                <% if cert %>
+                <% if decided %>
                   <div data-certification-inline-target="display">
                     <button
                       type="button"

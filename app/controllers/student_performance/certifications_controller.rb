@@ -132,8 +132,10 @@ module StudentPerformance
       end
 
       # Every computed decision is held against today's proposal; only the
-      # ones the rule would no longer make are rewritten.
-      computed_certs = @lecture.student_performance_certifications.computed
+      # ones the rule would no longer make are rewritten. A pending row is no
+      # decision and is left to the accept sweep.
+      computed_certs = @lecture.student_performance_certifications
+                               .computed.where.not(status: :pending)
       evaluator = evaluator_for(@rule)
       records_by_user = @lecture.student_performance_records.index_by(&:user_id)
       updated = 0
@@ -264,11 +266,12 @@ module StudentPerformance
 
       # One reason per kind of decision to look at a row again: a computed one
       # the rule would decide differently today, a manual one whose rule or data
-      # changed since it was made. Nothing else is flagged.
+      # changed since it was made. Nothing else is flagged — a pending row is
+      # not a decision the rule could contradict, only a proposal not yet taken.
       def flag_certifications
         @disagreeing_user_ids = @certifications.select do |cert|
           proposal = @proposal_by_user[cert.user_id]
-          cert.computed? && proposal &&
+          cert.computed? && !cert.pending? && proposal &&
             cert.disagrees_with?(proposal.proposed_status)
         end.to_set(&:user_id)
         @stale_manual_user_ids = @lecture.student_performance_certifications

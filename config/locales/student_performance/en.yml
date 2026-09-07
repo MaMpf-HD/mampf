@@ -164,6 +164,7 @@ en:
         list_open_link: "Go to the %{tab} tab"
         todo_title: "To settle"
         bulk_accept: "Accept Open Proposals"
+        bulk_accept_hint: "Adopts the proposal for every student without a decision. Deferred proposals stay open."
         bulk_reset:
           one: "Reset %{count} computed decision"
           other: "Reset %{count} computed decisions"
