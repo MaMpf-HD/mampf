@@ -10,14 +10,35 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     create(:assessment, requires_points: true, assessable: assignment, lecture: lecture)
   end
 
+  let(:config_double) do
+    double("config", left_columns: [:tutorial], right_columns: [:correction])
+  end
+
   before do
     assignment.reload
     assessment.reload
+    allow(Assessment::DisplayConfigResolver).to receive(:resolve).and_return(config_double)
   end
 
   describe "when grading_scope is a Tutorial" do
     let(:component) do
       described_class.new(assignment: assignment, grading_scope: tutorial)
+    end
+
+    describe "#initialize" do
+      it "sets @mode to tutor" do
+        expect(component.instance_variable_get(:@mode)).to eq("tutor")
+      end
+
+      it "sets @tutorial to the grading_scope" do
+        expect(component.instance_variable_get(:@tutorial)).to eq(tutorial)
+      end
+
+      it "resolves the display config via Assessment::DisplayConfigResolver" do
+        expect(Assessment::DisplayConfigResolver).to receive(:resolve)
+          .with(assessable: assignment, grading_scope: tutorial).and_return(config_double)
+        component
+      end
     end
 
     describe "#grading_enabled?" do
@@ -84,6 +105,31 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       end
     end
 
+    describe "#sticky_layout" do
+      it "builds a StickyColumnLayout using the resolved config's columns" do
+        expect(Assessment::StickyColumnLayout).to receive(:new)
+          .with(left_columns: [:tutorial], right_columns: [:correction])
+          .and_call_original
+        component.sticky_layout
+      end
+
+      it "memoizes the layout across multiple calls" do
+        layout = component.sticky_layout
+        expect(component.sticky_layout).to equal(layout)
+      end
+    end
+
+    describe "#sticky_css_vars" do
+      it "joins left and right offsets into CSS custom properties" do
+        layout = double("layout",
+                        left_offsets: { tutorial: 0 },
+                        right_offsets: { correction: 40 })
+        allow(component).to receive(:sticky_layout).and_return(layout)
+
+        expect(component.sticky_css_vars).to eq("--tutorial-left:0px;--correction-right:40px")
+      end
+    end
+
     describe "rendering" do
       it "renders the grading table" do
         render_inline(component)
@@ -98,6 +144,10 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
 
     describe "initialization" do
+      it "sets @mode to teacher" do
+        expect(component.instance_variable_get(:@mode)).to eq("teacher")
+      end
+
       it "sets @lecture from the assignment's lecture" do
         expect(component.instance_variable_get(:@lecture)).to eq(assignment.lecture)
       end
@@ -210,41 +260,63 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       create(:tutorial_membership, tutorial: tutorial, user: student3)
     end
 
-    context "when assignment is past deadline" do
+    it "memoizes the result and only computes it once across multiple calls" do
+      movement_map = { 1 => { participated_tutorial_id: 1, new_tutorial_id: 2 } }
+
+      expect_any_instance_of(AssessmentHelper).to receive(:calculate_user_movement_map_assignment)
+        .with(assignment, anything)
+        .once
+        .and_return(movement_map)
+
+      render_inline(component)
+
+      first_call = component.users_movement_map
+      second_call = component.users_movement_map
+
+      expect(first_call).to eq(movement_map)
+      expect(second_call).to eq(movement_map)
+    end
+
+    it "caches the value in the helpers' users_movement_map_cache" do
+      movement_map = { 1 => { old_tutorial: "A", new_tutorial: "B" } }
+      expect_any_instance_of(AssessmentHelper).to receive(:calculate_user_movement_map_assignment)
+        .and_return(movement_map)
+
+      render_inline(component)
+
+      component.users_movement_map
+
+      expect(component.helpers.users_movement_map_cache[assignment.id]).to eq(movement_map)
+    end
+  end
+
+  describe "#non_submitter_status" do
+    let(:component) do
+      described_class.new(assignment: assignment, grading_scope: tutorial)
+    end
+    let(:user) { create(:confirmed_user) }
+
+    before { render_inline(component) }
+
+    context "when there is no movement recorded for the user" do
+      before { allow(component).to receive(:users_movement_map).and_return({}) }
+
+      it "returns nil" do
+        expect(component.non_submitter_status(user)).to be_nil
+      end
+    end
+
+    context "when there is a movement recorded for the user" do
+      let(:movement) { { participated_tutorial_id: 1, new_tutorial_id: 2 } }
+
       before do
-        Timecop.travel(2.hours.from_now)
-      end
-      after do
-        Timecop.return
-      end
-
-      it "memoizes the result and only computes it once across multiple calls" do
-        movement_map = { 1 => { participated_tutorial_id: 1, new_tutorial_id: 2 } }
-
-        expect_any_instance_of(AssessmentHelper).to receive(:calculate_user_movement_map_assignment)
-          .with(assignment, anything)
-          .once
-          .and_return(movement_map)
-
-        render_inline(component)
-
-        first_call = component.users_movement_map
-        second_call = component.users_movement_map
-
-        expect(first_call).to eq(movement_map)
-        expect(second_call).to eq(movement_map)
+        allow(component).to receive(:users_movement_map).and_return(user.id => movement)
+        allow(component.helpers).to receive(:non_submitter_status).with(movement, tutorial)
+                                                                  .and_return("moved")
       end
 
-      it "caches the value in the helpers' users_movement_map_cache" do
-        movement_map = { 1 => { old_tutorial: "A", new_tutorial: "B" } }
-        expect_any_instance_of(AssessmentHelper).to receive(:calculate_user_movement_map_assignment)
-          .and_return(movement_map)
-
-        render_inline(component)
-
-        component.users_movement_map
-
-        expect(component.helpers.users_movement_map_cache[assignment.id]).to eq(movement_map)
+      it "delegates to the helper with the movement and current tutorial" do
+        expect(component.non_submitter_status(user)).to eq("moved")
       end
     end
   end

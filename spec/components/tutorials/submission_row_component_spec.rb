@@ -78,7 +78,6 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   end
 
   describe "#grading_enabled?" do
-
     context "when flipper is enabled and assignment is assessable" do
       before do
         allow(assignment).to receive(:assessable?).and_return(true)
@@ -189,6 +188,11 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
   describe "#task_points_input" do
     let!(:task) { create(:assessment_task, assessment: assignment.assessment, max_points: 10) }
+
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      render_inline(component_tutorial)
+    end
 
     it "renders an input with the task's id in the name" do
       html = component_tutorial.task_points_input(task, true)

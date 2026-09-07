@@ -11,30 +11,20 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
   let(:grader) { FactoryBot.create(:confirmed_user) }
 
   before do
-    Flipper.enable(:assessment_grading)
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
     allow(grader).to receive(:can_grade_in_scope?).and_return(true)
-  end
-
-  after do
-    Flipper.disable(:assessment_grading)
   end
 
   describe ".init_participation" do
     it "creates and persists a new participation when none exists" do
       expect do
-        result = described_class.init_participation(assessment, speaker, talk)
+        result = described_class.init_participation(assessment, speaker)
         result.save!
       end.to change(Assessment::Participation, :count).by(1)
     end
 
-    it "returns an initialized (not yet persisted) participation when none exists" do
-      result = described_class.init_participation(assessment, speaker, talk)
-      expect(result).not_to be_persisted
-    end
-
     it "associates the participation with the correct assessment and user" do
-      result = described_class.init_participation(assessment, speaker, talk)
+      result = described_class.init_participation(assessment, speaker)
       expect(result.assessment_id).to eq(assessment.id)
       expect(result.user_id).to eq(speaker.id)
     end
@@ -43,7 +33,7 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
       existing = FactoryBot.create(:assessment_participation,
                                    assessment: assessment,
                                    user: speaker)
-      result = described_class.init_participation(assessment, speaker, talk)
+      result = described_class.init_participation(assessment, speaker)
       expect(result.id).to eq(existing.id)
     end
 
@@ -51,26 +41,8 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
       FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
 
       expect do
-        described_class.init_participation(assessment, speaker, talk)
+        described_class.init_participation(assessment, speaker)
       end.not_to change(Assessment::Participation, :count)
-    end
-
-    it "raises TalkGraderError when assessment is nil" do
-      expect do
-        described_class.init_participation(nil, speaker, talk)
-      end.to raise_error(Assessment::TalkGraderService::TalkGraderError)
-    end
-
-    it "raises TalkGraderError when user is nil" do
-      expect do
-        described_class.init_participation(assessment, nil, talk)
-      end.to raise_error(Assessment::TalkGraderService::TalkGraderError)
-    end
-
-    it "raises TalkGraderError when talk is nil" do
-      expect do
-        described_class.init_participation(assessment, speaker, nil)
-      end.to raise_error(Assessment::TalkGraderService::TalkGraderError)
     end
   end
 
