@@ -15,8 +15,7 @@
         <div
           class="d-flex gap-2 align-items-center"
           data-status-filter-target="activeFilters"
-        >
-        </div>
+        ></div>
       </div>
 
       <div class="table-wrapper" data-controller="table-fade">
@@ -32,14 +31,21 @@
 
             <tbody>
               <% gradable_talks.each do |talk| %>
-                <tr class="group-header" data-status-filter-group-id="<%= talk.id %>">
-                  <td colspan="7" style="background: #C7DDF0; color: #254A68; padding-top: 1px; padding-bottom: 1px;">
+                <tr
+                  class="group-header"
+                  data-status-filter-group-id="<%= talk.id %>"
+                >
+                  <td
+                    colspan="7"
+                    style="background: #C7DDF0; color: #254A68; padding-top: 1px; padding-bottom: 1px;"
+                  >
                     <span class="fw-semibold"><%= talk.title %></span>
                   </td>
                 </tr>
 
                 <% talk.speakers.each do |speaker| %>
-                  <% participation = speaker.assessment_participation_in_assessable(talk) %>
+                  <% participation = init_participation(talk.assessment, speaker) %>
+
                   <% if participation %>
                     <%= render ParticipationRowComponent.new(
                       participation: participation,

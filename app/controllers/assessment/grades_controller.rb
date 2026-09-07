@@ -1,6 +1,6 @@
 module Assessment
   class GradesController < ApplicationController
-    before_action :set_talk_and_user_resource,
+    before_action :set_assessable_resource,
                   only: [:update, :refresh]
     before_action :set_locale
     before_action :authorize_assessment!,
@@ -20,11 +20,13 @@ module Assessment
     end
 
     def update
-      participation = find_or_create_participation
-      TalkGraderService.set_grade(
-        participation, params[:grade], current_user, params[:comment]
-      )
-      @participation = participation.reload
+      case @assessable
+      when Talk
+        TalkGraderService.set_grade(
+          @participation, params[:grade], current_user, params[:comment]
+        )
+      end
+      @participation = @participation.reload
       render_grade_update(replace_participation_row)
     end
 
@@ -34,10 +36,6 @@ module Assessment
 
     private
 
-      def find_or_create_participation
-        TalkGraderService.init_participation(@assessment, @user, @talk)
-      end
-
       def replace_participation_row
         turbo_stream.replace(
           "participation-row-#{@participation.id}",
@@ -45,8 +43,8 @@ module Assessment
                                    assessment: @assessment,
                                    grading_scope: @lecture,
                                    participation: @participation,
-                                   save_url: grade_talk_user_path(@talk, @user),
-                                   refresh_url: refresh_grade_talk_user_path(@talk, @user)
+                                   save_url: grade_talk_user_path(@assessable, @user),
+                                   refresh_url: refresh_grade_talk_user_path(@assessable, @user)
                                  ))
         )
       end
@@ -60,26 +58,61 @@ module Assessment
       end
 
       def render_grade_update(*streams)
-        flash.now[:notice] = t("assessment.talk_grader.grades_updated")
+        flash.now[:notice] = t("assessment.grades_updated")
         render turbo_stream: streams.flatten.compact + [stream_flash].compact
       end
 
-      def set_talk_and_user_resource
-        @talk = Talk.find_by(id: params[:talk_id])
-        return respond_with_flash(:alert, t("assessment.grades.talk_not_found")) unless @talk
-
-        @lecture = @talk.lecture
-        @assessment = @talk.assessment
-        unless @assessment
-          return respond_with_flash(:alert, t("assessment.grades.talk_missing_assessment"))
+      def set_assessable_resource
+        if params[:talk_id]
+          set_resources_from_talk
+        elsif params[:participation_id]
+          set_resources_from_participation
         end
+      end
 
+      def set_resources_from_talk
+        @assessable = Talk.find_by(id: params[:talk_id])
+        @lecture = @assessable.lecture
+        @assessment = @assessable.assessment
         @user = User.find_by(id: params[:user_id])
-        return respond_with_flash(:alert, t("assessment.grades.user_not_found")) unless @user
+        @participation = Participation.find_by(
+          assessment_id: @assessment.id,
+          user_id: @user.id
+        )
+        empty_resource_check
+        return if @assessable.speakers.exists?(id: @user.id)
 
-        return if @talk.speakers.exists?(id: @user.id)
+        respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
+      end
 
-        respond_with_flash(:alert, t("assessment.grades.user_not_speaker"))
+      def set_resources_from_participation
+        @participation = Participation.find_by(id: params[:participation_id])
+
+        @assessment = @participation&.assessment
+        @user = @participation&.user
+        @assessable = @assessment&.assessable
+        @lecture = @assessment&.lecture
+        empty_resource_check
+        return if @assessable.speakers.exists?(id: @user.id)
+
+        respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
+      end
+
+      def empty_resource_check
+        unless @assessment
+          return respond_with_flash(:alert,
+                                    t("assessment.errors.no_assessment"))
+        end
+        unless @assessable
+          return respond_with_flash(:alert,
+                                    t("assessment.errors.not_gradable"))
+        end
+        return respond_with_flash(:alert, t("assessment.errors.user_not_found")) unless @user
+
+        return if @participation
+
+        respond_with_flash(:alert,
+                           t("assessment.errors.no_participation"))
       end
 
       def current_ability
@@ -88,7 +121,7 @@ module Assessment
 
       def set_locale
         I18n.locale = @lecture&.locale_with_inheritance ||
-                      @talk&.lecture&.locale_with_inheritance ||
+                      @assessable&.lecture&.locale_with_inheritance ||
                       current_user.locale ||
                       I18n.default_locale
       end

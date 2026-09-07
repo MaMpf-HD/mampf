@@ -209,7 +209,8 @@ en:
     talk_grader:
       assessment_not_talk: 'Assessment is not for a talk.'
       init_participation_missing_args: 'Assessment, user, and talk must be present.'
-      grades_updated: 'Grades updated successfully.'
+      user_not_speaker: 'User is not a speaker for this talk.'
+    grades_updated: 'Grades updated successfully.'
     task_points:
       update: 'Task points updated successfully.'
       submission_missing_tutorial: 'This submission has no tutorial assigned.'

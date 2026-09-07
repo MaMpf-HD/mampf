@@ -209,7 +209,8 @@ de:
     talk_grader:
       assessment_not_talk: 'Bewertung ist nicht für einen Vortrag.'
       init_participation_missing_args: 'Bewertung, Benutzer und Vortrag müssen angegeben sein.'
-      grades_updated: 'Noten erfolgreich aktualisiert.'
+      user_not_speaker: 'Benutzer ist nicht als Sprecher:in für diesen Vortrag eingetragen.'
+    grades_updated: 'Noten erfolgreich aktualisiert.'
     task_points:
       update: 'Punkte erfolgreich aktualisiert.'
       submission_missing_tutorial: 'Diese Abgabe ist keinem Tutorium zugeordnet.'

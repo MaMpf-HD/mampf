@@ -21,21 +21,24 @@ module Assessment
         GradeEntryService.set_grade(participation, grade_info, grader, comment)
       end
 
-      def init_participation(assessment, user, talk)
-        return if assessment.nil? || user.nil? || talk.nil?
+      def find_participation(assessment, user)
+        return if assessment.nil? || user.nil?
 
-        Participation.find_or_initialize_by(
+        Participation.find_by(
           assessment_id: assessment.id,
           user_id: user.id
         )
       end
 
-      def init_participations(seminar)
-        seminar.talks.each do |talk|
-          talk.speakers.each do |speaker|
-            init_participation(talk.assessment, speaker, talk)
-          end
-        end
+      def init_participation(assessment, user)
+        return if assessment.nil? || user.nil?
+
+        p = Participation.find_or_initialize_by(
+          assessment_id: assessment.id,
+          user_id: user.id
+        )
+        p.save! if p.new_record?
+        p
       end
 
       private
