@@ -193,8 +193,8 @@ en:
           one: "%{count} decision contradicts the current rule."
           other: "%{count} decisions contradict the current rule."
         stale_manual_warning:
-          one: "%{count} individual decision: basis changed since."
-          other: "%{count} individual decisions: basis changed since."
+          one: "%{count} manual decision: rule or performance data changed since."
+          other: "%{count} manual decisions: rule or performance data changed since."
         reevaluate: "Reconcile with rule"
         confirm_manual: "Confirm individual decisions"
       status:
@@ -203,7 +203,7 @@ en:
         pending: "Deferred"
         manual_passed: "Eligible (manual)"
         manual_failed: "Not Eligible (manual)"
-        manual_stale: "Basis changed since"
+        manual_stale: "Rule or performance data changed after this decision"
       columns:
         proposed: "Proposed"
         rule_today: "Rule today:"

@@ -1,9 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { Modal } from "bootstrap";
 
-// Ticking the box submits at once. Unticking it while computed decisions
-// exist asks first, because the rule takes every one of them back the moment
-// the list reopens.
 export default class extends Controller {
   static targets = ["checkbox", "reset", "dialog"];
 
@@ -32,8 +29,8 @@ export default class extends Controller {
   disconnect() {
     if (!this.hasDialogTarget) return;
 
-    // Whatever state the modal is in when the page goes, the body must not
-    // keep the scroll lock it put there.
+    // Turbo can remove this element while the modal is open. Bootstrap then
+    // never runs its own cleanup and `document.body` keeps the scroll lock.
     Modal.getInstance(this.dialogTarget)?.dispose();
     document.querySelector(".modal-backdrop")?.remove();
     document.body.classList.remove("modal-open");
@@ -41,9 +38,8 @@ export default class extends Controller {
     document.body.style.removeProperty("padding-right");
   }
 
-  // The modal fades out on its own time and only then hands the body back.
-  // Navigating away in the middle of that leaves the fade's callback with a
-  // disposed modal and the body without its scrollbar, so the form waits.
+  // Submitting during the fade disconnects the controller mid-animation, and
+  // Bootstrap never restores `document.body`. So: submit on `hidden.bs.modal`.
   submitOnceHidden(resetCertifications) {
     this.dialogTarget.addEventListener(
       "hidden.bs.modal",

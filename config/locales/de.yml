@@ -4338,6 +4338,10 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
+        student_performance/certification:
+          attributes:
+            status:
+              manual_cannot_be_pending: "kann bei einer manuellen Entscheidung nicht offen sein"
         submission:
           lecture_not_matching: >
             Die zum Tutorium assoziierte Vorlesung sollte mit der zur

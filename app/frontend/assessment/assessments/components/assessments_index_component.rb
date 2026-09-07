@@ -22,13 +22,10 @@ class AssessmentsIndexComponent < ViewComponent::Base
     @legacy_by_type ||= legacy.group_by { |a| a.class.name }
   end
 
-  # The decisions the rule takes back the moment the list reopens. Only the
-  # computed ones count: the dialog offers to drop them, and a decision a
-  # person made by hand is not dropped in passing.
   def computed_decisions_count
     @computed_decisions_count ||= lecture.student_performance_certifications
                                          .computed
-                                         .where(status: [:passed, :failed])
+                                         .decided
                                          .count
   end
 

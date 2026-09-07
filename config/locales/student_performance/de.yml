@@ -193,8 +193,8 @@ de:
           one: "%{count} Zulassung widerspricht der aktuellen Regel."
           other: "%{count} Zulassungen widersprechen der aktuellen Regel."
         stale_manual_warning:
-          one: "%{count} Einzelentscheidung: Grundlage seither geändert."
-          other: "%{count} Einzelentscheidungen: Grundlage seither geändert."
+          one: "%{count} manuelle Entscheidung: Regel oder Leistungsdaten haben sich seither geändert."
+          other: "%{count} manuelle Entscheidungen: Regel oder Leistungsdaten haben sich seither geändert."
         reevaluate: "Mit Regel abgleichen"
         confirm_manual: "Einzelentscheidungen bestätigen"
       status:
@@ -203,7 +203,7 @@ de:
         pending: "Zurückgestellt"
         manual_passed: "Zugelassen (manuell)"
         manual_failed: "Nicht zugelassen (manuell)"
-        manual_stale: "Grundlage seither geändert"
+        manual_stale: "Regel oder Leistungsdaten haben sich nach dieser Entscheidung geändert"
       columns:
         proposed: "Vorschlag"
         rule_today: "Regel heute:"

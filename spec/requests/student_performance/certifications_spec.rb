@@ -84,8 +84,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
-        # Every decided row would carry the same reason as the banner; the row
-        # says only that the rule cannot decide, the banner says why.
+        # Searching the whole page would find the box's wording, so the
+        # assertion is scoped to the row.
         it "does not repeat the banner on a decided row" do
           FactoryBot.create(:student_performance_certification, :passed,
                             lecture: lecture, user: student)
@@ -215,6 +215,18 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body).to include(CGI.escapeHTML(user_a.tutorial_name))
             expect(response.body).not_to include(CGI.escapeHTML(user_b.tutorial_name))
           end
+
+          it "sends the filter's old name to its new one" do
+            get lecture_student_performance_certifications_path(
+              lecture, status: "stale"
+            )
+
+            expect(response).to redirect_to(
+              lecture_student_performance_certifications_path(
+                lecture, status: "flagged"
+              )
+            )
+          end
         end
 
         context "with the attention banners" do
@@ -246,8 +258,6 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             )
           end
 
-          # Data and rule have both been touched since the decision, and the
-          # rule still says the same. There is nothing to look at.
           it "leaves a computed decision the rule still agrees with alone" do
             record_for(user_a, 60)
             cert_passed.update!(rule: rule)
@@ -260,9 +270,11 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body).not_to include(
               I18n.t("student_performance.certifications.index.reevaluate")
             )
-            expect(response.body).not_to include(
-              I18n.t("student_performance.certifications.columns.rule_today")
-            )
+            row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+              tr.text.include?(user_a.tutorial_name)
+            end
+
+            expect(row.css("td")[-3].text.strip).to be_empty
           end
 
           it "does not call a deferred row a contradiction" do
@@ -585,7 +597,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       context "with a pending certification" do
         let(:achievement) { FactoryBot.create(:achievement, lecture: lecture) }
         let(:undecided_user) { FactoryBot.create(:confirmed_user) }
-        let(:rule_suggests) do
+        let(:rule_today) do
           I18n.t("student_performance.certifications.columns.rule_today")
         end
         def deferral(reason)
@@ -619,7 +631,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
           it "does not claim the rule says something else" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).not_to include(rule_suggests)
+            expect(response.body).not_to include(rule_today)
           end
 
           it "names the unmarked achievement as the reason" do
@@ -703,11 +715,9 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         end
 
         context "when the rule would let the student through" do
-          # A pending row is no decision the rule could contradict; it shows
-          # the proposal like a row nobody has looked at.
           it "shows the proposal rather than a contradiction" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).not_to include(rule_suggests)
+            expect(response.body).not_to include(rule_today)
             expect(response.body).to include(
               I18n.t("student_performance.certifications.columns.proposed")
             )
@@ -760,8 +770,6 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
-        # The decision stands; the row says why the rule would not make it
-        # today, so nobody has to open the student to find out.
         it "names why the rule would defer now" do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).to include(
@@ -770,15 +778,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         end
 
         it "keeps the note column for the note" do
+          StudentPerformance::Certification
+            .find_by(lecture: lecture, user: decided_user)
+            .update!(note: "Sick note on file")
+
           get lecture_student_performance_certifications_path(lecture)
           row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
             tr.text.include?(decided_user.tutorial_name)
           end
-          note_cell = row.css("td")[-2]
 
-          expect(note_cell.text).not_to include(
-            I18n.t("student_performance.certifications.columns.rule_today")
-          )
+          expect(row.css("td")[-2].text.strip).to eq("Sick note on file")
         end
       end
 
@@ -954,7 +963,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       end
 
       it "rejects overwriting a manual certification" do
-        FactoryBot.create(:student_performance_certification, :manual,
+        FactoryBot.create(:student_performance_certification, :passed, :manual,
                           lecture: lecture,
                           user: target_user,
                           certified_by: editor)
@@ -1708,7 +1717,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "drops every computed decision and keeps the manual ones" do
+      it "drops everything computed and keeps the manual ones" do
         post bulk_reset_lecture_student_performance_certifications_path(lecture)
 
         expect(response).to redirect_to(
@@ -1727,12 +1736,12 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(StudentPerformance::Certification.exists?(elsewhere.id)).to be(true)
       end
 
-      it "counts what it dropped" do
+      it "counts the decisions it dropped" do
         post bulk_reset_lecture_student_performance_certifications_path(lecture)
         follow_redirect!
 
         expect(response.body).to include(
-          I18n.t("student_performance.certifications.flash.reset", count: 3)
+          I18n.t("student_performance.certifications.flash.reset", count: 2)
         )
       end
 
@@ -1740,7 +1749,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         get lecture_student_performance_certifications_path(lecture)
         expect(response.body).to include(
           I18n.t("student_performance.certifications.index.bulk_reset",
-                 count: 3)
+                 count: 2)
         )
 
         post bulk_reset_lecture_student_performance_certifications_path(lecture)

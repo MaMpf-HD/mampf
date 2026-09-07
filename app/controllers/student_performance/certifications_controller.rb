@@ -15,6 +15,14 @@ module StudentPerformance
     end
 
     def index
+      # A link saved under the filter's old name would land on an empty table.
+      if params[:status] == "stale"
+        redirect_to lecture_student_performance_certifications_path(
+          @lecture, status: "flagged"
+        )
+        return
+      end
+
       @due_points = due_points
       load_certifications
       load_proposals if @rule
@@ -131,11 +139,11 @@ module StudentPerformance
         return
       end
 
-      # Every computed decision is held against today's proposal; only the
-      # ones the rule would no longer make are rewritten. A pending row is no
-      # decision and is left to the accept sweep.
+      # A computed decision is compared with today's proposal rather than with
+      # a timestamp, and rewritten only where the two differ. `pending` rows
+      # carry no decision; `bulk_accept` writes those.
       computed_certs = @lecture.student_performance_certifications
-                               .computed.where.not(status: :pending)
+                               .computed.decided
       evaluator = evaluator_for(@rule)
       records_by_user = @lecture.student_performance_records.index_by(&:user_id)
       updated = 0
@@ -203,8 +211,9 @@ module StudentPerformance
       end
     end
 
-    # Back to "no decision": the proposal shows again and the screening holds
-    # the student for a person to look at.
+    # Deleting the row puts the student back to "no decision":
+    # Registration::Policy::StudentPerformanceHandler counts a missing row as
+    # outstanding, so no reset can admit anybody.
     def destroy
       @certification.destroy!
 
@@ -259,15 +268,14 @@ module StudentPerformance
         @total_students = @lecture.student_performance_records.count
         @passed_count = @certifications.count(&:passed?)
         @failed_count = @certifications.count(&:failed?)
-        @computed_count = @certifications.count(&:computed?)
+        @computed_count = @certifications.count { |c| c.computed? && !c.pending? }
         decided_count = @passed_count + @failed_count
         @uncertified_count = @total_students - decided_count
       end
 
-      # One reason per kind of decision to look at a row again: a computed one
-      # the rule would decide differently today, a manual one whose rule or data
-      # changed since it was made. Nothing else is flagged — a pending row is
-      # not a decision the rule could contradict, only a proposal not yet taken.
+      # One reason per source: a `computed` row the rule would decide
+      # differently today, a `manual` row whose rule or record changed after it
+      # was made. A `pending` row is no decision, so nothing can contradict it.
       def flag_certifications
         @disagreeing_user_ids = @certifications.select do |cert|
           proposal = @proposal_by_user[cert.user_id]
@@ -347,8 +355,6 @@ module StudentPerformance
         )
       end
 
-      # "0 decisions re-evaluated" is not news. Only the counts that happened
-      # are said; when nothing did, one sentence says that instead.
       def counted_notice(counts, empty:)
         parts = counts.filter_map do |key, count|
           next unless count.positive?

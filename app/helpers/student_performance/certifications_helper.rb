@@ -1,8 +1,8 @@
 module StudentPerformance
   module CertificationsHelper
-    # Why the rule says what it says today, as the row spells it out. While
-    # the assignment list is open every proposal defers for the same reason
-    # and the banner above the table gives it once; the rows keep quiet then.
+    # The reasons a row spells out. While `assignments_complete?` is false
+    # every proposal defers for the same reason, and the box above the table
+    # gives it once, so the rows stay empty.
     def proposal_reasons(proposal, lecture)
       case proposal.proposed_status
       when :failed

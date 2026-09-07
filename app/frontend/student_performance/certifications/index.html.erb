@@ -139,11 +139,6 @@
           </div>
         </div>
 
-        <%#
-          Context, not an alarm: the rule is set, it just has nothing to say
-          yet. The long version travels in the popover.
-        %>
-
         <% unless @lecture.assignments_complete? %>
           <div class="small text-muted border-top mt-2 pt-2">
             <i class="bi bi-info-circle me-1"></i>
@@ -252,11 +247,6 @@
       </span>
     </div>
   </div>
-
-  <%#
-    One box for everything that wants a hand, a line per item with its button.
-    Two alerts stacked read as two emergencies; this reads as a short list.
-  %>
 
   <% if @flagged_user_ids.any? %>
     <div class="alert alert-warning py-2 mb-4">
@@ -375,10 +365,8 @@
             <% cert = @cert_by_user[record.user_id] %>
 
             <%#
-              A pending row is not a decision — it is the last evaluation,
-              kept so the sweep can tell it from a student nobody looked at.
-              It is shown like any undecided row: proposal, reasons, the two
-              buttons.
+              A `pending` row carries no decision, so it is rendered like
+              a row that has none: proposal, reasons, the two buttons.
             %>
             <% decided = cert.present? && !cert.pending? %>
             <% proposal = @proposal_by_user&.dig(record.user_id) %>
@@ -433,11 +421,6 @@
               <td class="text-start <%= 'ps-4' if @achievements.empty? %>">
                 <% if decided %>
                   <div data-certification-inline-target="display">
-                    <%#
-                      A decision made by hand says so in words: it is the one
-                      that survives every sweep, and a reader should not have
-                      to hover to learn that.
-                    %>
                     <% label = cert.manual? ? "manual_#{cert.status}" : cert.status %>
 
                     <div class="d-flex align-items-center">
@@ -507,12 +490,6 @@
                   <span class="text-muted">&mdash;</span>
                 <% end %>
               </td>
-
-              <%#
-                The one reason to look at this row again — or, for a row
-                nobody has decided yet, what the proposal rests on. The
-                decision itself stays in its own column, as it is.
-              %>
 
               <td class="hint-column small">
                 <% if @disagreeing_user_ids.include?(record.user_id) %>
@@ -614,6 +591,11 @@
                             title: t(
                               "student_performance.certifications.index.reset"
                             ),
+                            aria: {
+                              label: t(
+                                "student_performance.certifications.index.reset"
+                              )
+                            },
                             form: {
                               data: {
                                 turbo_frame: "performance-certifications-frame",

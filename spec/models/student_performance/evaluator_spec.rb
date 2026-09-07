@@ -596,8 +596,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
       expect(evaluator.evaluate(record).missed_criteria).to eq([:points])
     end
 
-    # The achievement is not marked yet: it did not fail the student, the
-    # points did.
     it "does not blame a criterion that is merely open" do
       record = FactoryBot.create(:student_performance_record,
                                  lecture: lecture,

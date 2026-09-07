@@ -1,8 +1,6 @@
-// Every column but one holds something short and fixed — a name, a figure, a
-// status, an icon. The hint column is the one that says something in words,
-// so it takes whatever width is left and the others stay as wide as what they
-// hold. Without this the browser spreads the slack over every column, and the
-// name ends up a hand's width from its figure.
+// Only the hint column holds a sentence; the others hold a name, a figure, a
+// status, an icon. Without `width: 100%` on that one the browser spreads the
+// free space over all of them.
 .certifications-table {
   th,
   td {

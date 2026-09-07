@@ -272,7 +272,8 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         before { lecture.update!(assignments_complete: true) }
 
         it "asks before reopening the list" do
-          # A new assignment reopens the list by itself; the lecturer closes it.
+          # Creating an assignment clears `assignments_complete`, so it is
+          # set again here.
           create(:valid_assignment, lecture: lecture)
           lecture.update!(assignments_complete: true)
 
@@ -314,6 +315,18 @@ RSpec.describe("Assessment::Assessments", type: :request) do
           expect(lecture.reload.assignments_complete?).to be(false)
           expect(StudentPerformance::Certification.exists?(computed.id)).to be(false)
           expect(StudentPerformance::Certification.exists?(manual.id)).to be(true)
+        end
+
+        # The dialog is shown while the list is closed. Sending its answer a
+        # second time must not undo a "keep" from the first one.
+        it "does not drop anything when the list is open already" do
+          lecture.update!(assignments_complete: false)
+
+          patch assignments_complete_assessment_assessments_path(
+            lecture_id: lecture.id, complete: "0", reset_certifications: "1"
+          )
+
+          expect(StudentPerformance::Certification.exists?(computed.id)).to be(true)
         end
 
         it "does not drop anything when closing the list" do

@@ -27,13 +27,14 @@ module Assessment
       end
     end
 
-    # Reopening the list can take the computed decisions with it, if the
-    # lecturer said so in the dialog; a decision made by hand stays either way.
     def assignments_complete
       authorize! :update, @lecture
 
       @lecture.update!(assignments_complete: params[:complete])
+      # Without the change check, a resubmitted form would delete a second
+      # time — after the dialog had already been answered with "keep".
       reset = params[:reset_certifications] == "1" &&
+              @lecture.saved_change_to_assignments_complete_at? &&
               !@lecture.assignments_complete?
       count = reset ? @lecture.student_performance_certifications.reset_computed! : 0
 

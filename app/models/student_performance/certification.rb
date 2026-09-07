@@ -15,11 +15,22 @@ module StudentPerformance
     validates :certified_by, presence: true, unless: :pending?
     validates :certified_at, presence: true, unless: :pending?
 
-    # Resetting a computed decision means dropping it: the student is open
-    # again, the proposal shows, and the screening holds them for a person to
-    # look at. Manual decisions are deliberate and never go in bulk.
+    # `pending` is what the rule writes when it cannot decide. A person
+    # choosing by hand has decided; the select offers passed and failed only.
+    validates :status, exclusion: { in: ["pending"],
+                                    message: :manual_cannot_be_pending },
+                       if: :manual?
+
+    scope :decided, -> { where.not(status: :pending) }
+
+    # Drops every `computed` row, `pending` included: the lecture is back to
+    # what it was before the rule was first applied. `manual` rows stay. The
+    # count returned is the decisions among them, because a `pending` row was
+    # never one and its removal changes no screen.
     def self.reset_computed!
+      dropped = computed.decided.count
       computed.delete_all
+      dropped
     end
 
     def self.status_for_proposal(proposed_status)
@@ -30,10 +41,6 @@ module StudentPerformance
       status.to_sym != self.class.status_for_proposal(proposed_status)
     end
 
-    # Staleness is only asked of manual decisions: a computed one is compared
-    # with today's proposal instead, which is the sharper question and does not
-    # depend on which code path touched the data.
-    #
     # A row that was never evaluated is the most out-of-date one there is, but
     # `x > NULL` yields NULL rather than false and would drop it from every scope
     # below. The nil case is therefore spelled out.
@@ -75,9 +82,9 @@ module StudentPerformance
       )
     }
 
-    # The manual decisions whose basis moved since they were made. The two
-    # reasons join different tables, so this is a union of ids rather than an
-    # `or` — and a decision for someone without a record still counts.
+    # `stale_from_rule` and `stale_from_data` join different tables, so the
+    # two are unioned by id rather than `or`ed: a manual decision for someone
+    # without a `Record` keeps its rule reason that way.
     scope :stale_manual, lambda {
       where(id: manual.stale_from_rule.pluck(:id) |
                 manual.stale_from_data.pluck(:id))
