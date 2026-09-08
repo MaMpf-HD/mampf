@@ -17,7 +17,7 @@
       <div
         class="d-flex flex-column justify-content-between"
         style="width: fit-content;"
-      > <%# herb:disable html-no-duplicate-attributes %>
+      >
         <% @submission.users.each do |user| %>
           <div style="width: fit-content;">
             <%= user.tutorial_name %>
@@ -85,7 +85,7 @@
     </td>
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
-    <% for assignment_task in tasks %>
+    <% tasks.each do |assignment_task| %>
       <td class="sticky-col task-col">
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
