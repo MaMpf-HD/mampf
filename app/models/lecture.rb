@@ -144,6 +144,12 @@ class Lecture < ApplicationRecord
             allow_nil: true
 
   before_save :initialize_submission_deletion_date
+  # Saying that the assignments are all there, or taking it back, turns every
+  # eligibility proposal in the lecture over. The figures do not move, but the
+  # decisions taken before rested on the answer that just changed, so the
+  # records are touched and the reconciliation banner picks them up.
+  after_update_commit :recompute_performance_records,
+                      if: :saved_change_to_assignments_complete_at?
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
@@ -899,6 +905,19 @@ class Lecture < ApplicationRecord
     sync_student_performance_for_members!(new_user_ids)
   end
 
+  def assignments_complete?
+    assignments_complete_at.present?
+  end
+
+  # Preserve assignments_complete_at when the value is unchanged to
+  # avoid recomputing records and making certifications stale again.
+  def assignments_complete=(value)
+    complete = ActiveModel::Type::Boolean.new.cast(value).present?
+    return if complete == assignments_complete?
+
+    self.assignments_complete_at = complete ? Time.current : nil
+  end
+
   def sync_student_performance_for_members!(user_ids)
     new_user_ids = user_ids.uniq
     return if new_user_ids.empty?
@@ -1001,6 +1020,12 @@ class Lecture < ApplicationRecord
 
     def initialize_submission_deletion_date
       self.submission_deletion_date ||= default_submission_deletion_date
+    end
+
+    def recompute_performance_records
+      StudentPerformance::ComputationService
+        .new(lecture: self)
+        .compute_and_upsert_all_records!
     end
 
     def fan_out_submission_deletion_date

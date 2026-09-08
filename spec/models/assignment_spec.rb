@@ -108,6 +108,28 @@ RSpec.describe(Assignment, type: :model) do
     end
   end
 
+  describe "the lecture's assignment list" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    before { lecture.update!(assignments_complete: true) }
+
+    # A statement that can go quietly false is worse than none.
+    it "is reopened by a new sheet, without asking" do
+      FactoryBot.create(:assignment, lecture: lecture)
+
+      expect(lecture.reload.assignments_complete?).to be(false)
+    end
+
+    it "stays closed while an existing sheet is edited" do
+      assignment = FactoryBot.create(:assignment, lecture: lecture)
+      lecture.update!(assignments_complete: true)
+
+      assignment.update!(title: "Renamed")
+
+      expect(lecture.reload.assignments_complete?).to be(true)
+    end
+  end
+
   describe "destructibility" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:assignment) { FactoryBot.create(:assignment, lecture: lecture) }

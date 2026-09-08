@@ -22,6 +22,13 @@ class AssessmentsIndexComponent < ViewComponent::Base
     @legacy_by_type ||= legacy.group_by { |a| a.class.name }
   end
 
+  def computed_decisions_count
+    @computed_decisions_count ||= lecture.student_performance_certifications
+                                         .computed
+                                         .decided
+                                         .count
+  end
+
   private
 
     def build_assessables_by_type

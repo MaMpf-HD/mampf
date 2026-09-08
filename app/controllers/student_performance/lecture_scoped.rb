@@ -24,6 +24,18 @@ module StudentPerformance
         authorize!(:edit, @lecture)
       end
 
+      # Reuse DuePoints within the request because the assignment
+      # deadlines and total points are the same for every student.
+      def due_points
+        @due_points ||= DuePoints.new(lecture: @lecture)
+      end
+
+      def evaluator_for(rule)
+        Evaluator.new(rule,
+                      assignments_complete: @lecture.assignments_complete?,
+                      due_points: due_points)
+      end
+
       def use_lecture_locale
         I18n.locale = @lecture&.locale_with_inheritance || I18n.default_locale
       end

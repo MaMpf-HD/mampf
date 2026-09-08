@@ -48,6 +48,7 @@ module StudentPerformance
     end
 
     def preview
+      @due_points = due_points
       @rule = StudentPerformance::Rule
               .where(lecture: @lecture, active: true)
               .includes(rule_achievements: :achievement)
@@ -62,7 +63,8 @@ module StudentPerformance
         current_rule: @rule,
         preview_rule: rule_from_form_params,
         records: @lecture.student_performance_records.includes(:user).order(:created_at),
-        certifications: @lecture.student_performance_certifications
+        certifications: @lecture.student_performance_certifications,
+        build_evaluator: method(:evaluator_for)
       )
 
       @changes = preview.changes

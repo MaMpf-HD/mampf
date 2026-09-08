@@ -6,6 +6,11 @@ class AssessmentBackfillWorker
   # the search is one anti-join rather than a scan plus four queries per
   # assignment. Raw SQL because "every roster member without a participation"
   # has no ActiveRecord form.
+  #
+  # The cut-off is the deadline plus the grace period, the same one
+  # `StudentPerformance::DuePoints` divides at. While the grace period runs a
+  # student can still hand in, and a participation written now would say they
+  # did not.
   MISSING_PARTICIPATIONS_SQL = <<~SQL.squish.freeze
     SELECT DISTINCT a.id AS assessment_id, tm.user_id, tm.tutorial_id
       FROM assessment_assessments a
@@ -15,7 +20,9 @@ class AssessmentBackfillWorker
       JOIN tutorial_memberships tm ON tm.lecture_id = a.lecture_id
       LEFT JOIN assessment_participations p ON p.assessment_id = a.id
                                            AND p.user_id = tm.user_id
-     WHERE asg.deadline < :now
+     WHERE asg.deadline
+           + COALESCE(l.submission_grace_period, 0) * interval '1 minute'
+           < :now
        AND l.submission_deletion_date >= :today
        AND p.id IS NULL
   SQL

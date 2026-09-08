@@ -4109,6 +4109,10 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        student_performance/certification:
+          attributes:
+            status:
+              manual_cannot_be_pending: "cannot be pending for a decision made by hand"
         submission:
           lecture_not_matching: >
             The tutorial should belong to the same lecture as the assignment.

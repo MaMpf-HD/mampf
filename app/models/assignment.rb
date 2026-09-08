@@ -9,6 +9,7 @@ class Assignment < ApplicationRecord
 
   before_save :inherit_deletion_date_from_lecture
   after_create :setup_assessment
+  after_create_commit :reopen_lecture_assignment_list
   before_destroy :check_destructibility, prepend: true
 
   def requires_submission
@@ -193,5 +194,15 @@ class Assignment < ApplicationRecord
 
     def setup_assessment
       ensure_pointbook!(requires_submission: requires_submission)
+    end
+
+    # Skip Lecture validations so an unrelated validation error cannot
+    # leave assignments_complete_at set after an Assignment is added.
+    def reopen_lecture_assignment_list
+      return unless lecture&.assignments_complete?
+
+      # rubocop:disable Rails/SkipsModelValidations
+      lecture.update_column(:assignments_complete_at, nil)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 end

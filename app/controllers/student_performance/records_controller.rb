@@ -19,6 +19,7 @@ module StudentPerformance
     end
 
     def index
+      @due_points = due_points
       scope = @lecture.student_performance_records
                       .includes(:user)
                       .joins(:user)
@@ -39,13 +40,19 @@ module StudentPerformance
       end
 
       @pagy, @records = pagy(scope)
+      assessments = assignment_assessments
+      # A sheet nobody could hand in yet counts towards none of the figures in
+      # this table, so it gets no column of its own — the detail page lists it.
+      # The heading says how many were left out.
+      @assessments = assessments.select { |a| due_points.due?(a.id) }
+      @not_due_count = assessments.size - @assessments.size
       load_assessment_statuses
-      @awaiting_marking = awaiting_marking_counts(scope)
-      @standard_max = @assessments.sum(&:effective_total_points)
+      @awaiting_marking = awaiting_marking_counts(scope, assessments)
       @achievements = @lecture.achievements.order(:title)
     end
 
     def show
+      @due_points = due_points
       load_show_data
     end
 
@@ -70,9 +77,16 @@ module StudentPerformance
       # Per assignment, how many of the listed students handed in without being
       # marked yet. Counted over the whole filtered set rather than the current
       # page, because the number describes the sheet, not the page.
-      def awaiting_marking_counts(scope)
+      #
+      # Only over sheets that are due: nobody may mark before the grace period
+      # is over, so an early hand-in is waiting for the deadline, not for a
+      # tutor, and counting it claims a backlog nobody could work off.
+      def awaiting_marking_counts(scope, assessments)
+        ids = assessments.select { |a| due_points.due?(a.id) }.map(&:id)
+        return {} if ids.empty?
+
         Assessment::Participation
-          .where(assessment_id: @assessments.select(:id),
+          .where(assessment_id: ids,
                  user_id: scope.reorder(nil).select(:user_id),
                  status: :pending)
           .where.not(submitted_at: nil)
@@ -109,16 +123,24 @@ module StudentPerformance
                     )
       end
 
+      # Every sheet of the lecture, oldest deadline first.
+      def assignment_assessments
+        Assessment::Assessment
+          .where(lecture_id: @lecture.id, assessable_type: "Assignment")
+          .includes(:tasks)
+          .joins("JOIN assignments ON assignments.id = " \
+                 "assessment_assessments.assessable_id")
+          .order("assignments.deadline ASC")
+          .to_a
+      end
+
+      # The detail page is a list, not a grid: a sheet that is not due yet costs
+      # a row rather than a column, and the badge writes out what it is.
       def load_show_data
-        @assessments = Assessment::Assessment
-                       .where(lecture_id: @lecture.id, assessable_type: "Assignment")
-                       .includes(:tasks)
-                       .joins("JOIN assignments ON assignments.id = " \
-                              "assessment_assessments.assessable_id")
-                       .order("assignments.deadline ASC")
+        @assessments = assignment_assessments
 
         participations = Assessment::Participation
-                         .where(assessment_id: @assessments.select(:id),
+                         .where(assessment_id: @assessments.map(&:id),
                                 user_id: @record.user_id)
                          .select(:id, :assessment_id, :status, :submitted_at)
 
@@ -149,19 +171,11 @@ module StudentPerformance
       end
 
       def load_assessment_statuses
-        @assessments = Assessment::Assessment
-                       .where(lecture_id: @lecture.id,
-                              assessable_type: "Assignment")
-                       .includes(:tasks)
-                       .joins("JOIN assignments ON assignments.id = " \
-                              "assessment_assessments.assessable_id")
-                       .order("assignments.deadline ASC")
-
         user_ids = @records.map(&:user_id)
         return if user_ids.empty?
 
         participations = Assessment::Participation
-                         .where(assessment_id: @assessments.select(:id),
+                         .where(assessment_id: @assessments.map(&:id),
                                 user_id: user_ids)
                          .select(:id, :assessment_id, :user_id,
                                  :status, :submitted_at)

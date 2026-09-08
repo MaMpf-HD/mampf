@@ -147,6 +147,17 @@ en:
       registered: 'registered'
       registration_not_open: 'Registration not yet open.'
       go_to_registration: 'Go to Registration →'
+    assignments_complete:
+      label: 'The assignment list is complete'
+      hint: 'Tick this once every assignment of the term exists. Until then, exam eligibility defers every verdict — each assignment still to come can overturn it. Creating a new assignment clears the tick again.'
+      reopen_dialog:
+        title: 'Reopen the assignment list'
+        body:
+          one: 'While the list is open the eligibility rule decides nothing — %{count} computed decision will contradict it afterwards. Reset it now? That eligibility is then undecided again. Individual decisions stay either way.'
+          other: 'While the list is open the eligibility rule decides nothing — %{count} computed decisions will contradict it afterwards. Reset them now? Those eligibilities are then undecided again. Individual decisions stay either way.'
+        reset: 'Reset'
+        keep: 'Keep'
+        cancel: 'Cancel'
     campaign_status:
       title: 'Registration'
       none: 'No registration'
@@ -157,6 +168,7 @@ en:
       title: 'Status'
       draft: 'Draft'
       registration_open: 'Registration open'
+      registration_processing: 'Registration processing'
       registration_closed: 'Registration closed'
       finalized: 'Finalized'
       conducted: 'Conducted'

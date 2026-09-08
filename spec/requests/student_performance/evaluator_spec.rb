@@ -8,6 +8,9 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
   before do
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
+    # Every example below is about a term whose assignments have all been
+    # created; the examples about the state before that say so themselves.
+    lecture.update!(assignments_complete: true)
     lecture.reload
   end
   describe "GET /lectures/:id/performance/evaluator/single_proposal" do

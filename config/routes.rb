@@ -124,6 +124,9 @@ Rails.application.routes.draw do
   # assessment routes
   namespace :assessment do
     resources :assessments, only: [:index, :show, :update] do
+      collection do
+        patch :assignments_complete
+      end
       resources :tasks, except: [:index] do
         member do
           get :cancel
@@ -375,11 +378,13 @@ Rails.application.routes.draw do
       resources :achievements,
                 only: [:index, :new, :show, :create, :update, :destroy]
 
-      resources :certifications, only: [:index, :create, :update] do
+      resources :certifications,
+                only: [:index, :create, :update, :destroy] do
         collection do
           post :bulk_accept
           post :bulk_reevaluate
           post :bulk_confirm_manual
+          post :bulk_reset
         end
       end
     end

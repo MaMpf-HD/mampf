@@ -3,19 +3,33 @@ module StudentPerformance
     # Criteria that are open rather than missed: nobody can be judged on them yet.
     UNDECIDED = [:pending, :ungraded, :not_measurable].freeze
 
-    POINTS_DEFERRALS = [:points_pending, :points_not_measurable].freeze
+    POINTS_DEFERRALS = [:points_not_due, :points_pending,
+                        :points_not_measurable].freeze
 
-    DEFERRAL_REASONS = (POINTS_DEFERRALS + [:achievements_ungraded]).freeze
+    DEFERRAL_REASONS = ([:assignments_incomplete] + POINTS_DEFERRALS +
+                        [:achievements_ungraded]).freeze
 
     Result = Struct.new(:proposed_status, :details, keyword_init: true) do
       def verdict_deferral_reasons
         return [] unless proposed_status == :inconclusive
+        return [:assignments_incomplete] if details[:assignments_incomplete]
 
         DEFERRAL_REASONS.select { |reason| details[reason] }
       end
 
       def points_criterion_deferral
         POINTS_DEFERRALS.find { |reason| details[reason] }
+      end
+
+      # The criteria a failed proposal failed on. A criterion that is merely
+      # open is not among them: it did not settle the case, the other one did.
+      def missed_criteria
+        return [] unless proposed_status == :failed
+
+        missed = []
+        missed << :points if !details[:meets_points] && points_criterion_deferral.nil?
+        missed << :achievements if !details[:meets_achievements] && !details[:achievements_ungraded]
+        missed
       end
     end
 
@@ -25,8 +39,15 @@ module StudentPerformance
     # `min_percentage`, `min_points_absolute` — at most one of them set — and
     # `required_achievements`. The threshold mode is deliberately not part of
     # that contract, since the preview has none.
-    def initialize(rule)
+    #
+    # Pass due_points so unsubmitted assignments whose deadlines have not
+    # passed can still prevent a failed proposal.
+    # Require assignments_complete explicitly because assuming it is
+    # true would allow decisions before all assignments exist.
+    def initialize(rule, assignments_complete:, due_points: nil)
       @rule = rule
+      @assignments_complete = assignments_complete
+      @due_points = due_points
     end
 
     def evaluate(record)
@@ -40,8 +61,10 @@ module StudentPerformance
       Result.new(
         proposed_status: propose(points, achievements),
         details: {
+          assignments_incomplete: !@assignments_complete,
           meets_points: points == :met,
-          points_pending: points == :pending,
+          points_not_due: points == :pending && not_yet_due(record).positive?,
+          points_pending: points == :pending && awaiting_marking(record).positive?,
           points_not_measurable: points == :not_measurable,
           meets_achievements: achievements == :met,
           achievements_ungraded: achievements == :ungraded
@@ -57,7 +80,12 @@ module StudentPerformance
 
       # A criterion nobody can satisfy any more settles the case; one that is
       # merely unfinished defers it.
+      #
+      # Additional assignments can change both the reachable points and
+      # the points needed for min_percentage, so a passed or failed
+      # proposal may change while assignments_complete is false.
       def propose(*statuses)
+        return :inconclusive unless @assignments_complete
         return :failed if statuses.include?(:not_met)
         return :inconclusive if statuses.intersect?(UNDECIDED)
 
@@ -89,15 +117,13 @@ module StudentPerformance
         end
       end
 
-      # Refusing eligibility because a tutor is behind would be the record's
-      # fault, not the student's. Marking can only add points, and the sheets
-      # awaiting it are already counted in the maximum, so the best case is
-      # simply everything outstanding awarded in full.
+      # points_max_materialized already includes points awaiting marking
+      # and points not yet due, so awarding them changes only best_total.
       def points_still_reachable?(record)
-        pending = record.points_max_pending_materialized || 0
-        return false if pending.zero?
+        outstanding = awaiting_marking(record) + not_yet_due(record)
+        return false unless outstanding.positive?
 
-        best_total = (record.points_total_materialized || 0) + pending
+        best_total = (record.points_total_materialized || 0) + outstanding
 
         if rule.min_points_absolute.present?
           best_total >= rule.min_points_absolute
@@ -107,6 +133,16 @@ module StudentPerformance
         else
           false
         end
+      end
+
+      def awaiting_marking(record)
+        record.points_max_pending_materialized || 0
+      end
+
+      def not_yet_due(record)
+        return 0 unless @due_points
+
+        @due_points.not_yet_due_for(record.user_id)
       end
 
       def achievements_status(record)

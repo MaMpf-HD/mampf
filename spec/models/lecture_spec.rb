@@ -509,6 +509,53 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  # Nothing about eligibility holds while sheets can still be added, so the
+  # lecture carries the statement that they cannot.
+  describe "#assignments_complete" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    it "is not said for a lecture nobody has said it for" do
+      expect(lecture.assignments_complete?).to be(false)
+    end
+
+    it "keeps the moment it was said" do
+      lecture.update!(assignments_complete: true)
+
+      expect(lecture.assignments_complete?).to be(true)
+      expect(lecture.assignments_complete_at).to be_present
+    end
+
+    it "takes it back" do
+      lecture.update!(assignments_complete: true)
+      lecture.update!(assignments_complete: false)
+
+      expect(lecture.assignments_complete?).to be(false)
+      expect(lecture.assignments_complete_at).to be_nil
+    end
+
+    # Otherwise every unrelated save would mark every decision in the lecture
+    # for reconciliation.
+    it "does not move the moment when the same thing is said again" do
+      lecture.update!(assignments_complete: true)
+      said_at = lecture.assignments_complete_at
+
+      lecture.update!(assignments_complete: "1")
+
+      expect(lecture.reload.assignments_complete_at).to eq(said_at)
+    end
+
+    it "recomputes the records, so the decisions before it read as outdated" do
+      user = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      record = lecture.student_performance_records.find_by(user: user)
+      before = record.computed_at
+
+      lecture.update!(assignments_complete: true)
+
+      expect(record.reload.computed_at).to be > before
+    end
+  end
+
   describe "disabling uses_exam_eligibility" do
     let(:lecture) do
       create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)

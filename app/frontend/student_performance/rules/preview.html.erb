@@ -60,6 +60,10 @@
                   <%= t("student_performance.records.columns.points") %>
                 <% else %>
                   <%= t("student_performance.records.columns.percentage") %>
+                  <br>
+                  <span class="fw-normal text-muted" style="font-size: 0.75em">
+                    <%= t("student_performance.records.columns.of_due_points") %>
+                  </span>
                 <% end %>
               </th>
 
@@ -85,9 +89,15 @@
                         precision: 1,
                         strip_insignificant_zeros: true) %>
                   <% else %>
-                    <%= number_to_percentage(
-                        change.record.percentage_materialized.to_f,
-                        precision: 1) %>
+                    <% percentage = @due_points.percentage_for(change.record) %>
+                    <% if percentage.nil? %>
+                      <span class="text-muted" aria-hidden="true">&mdash;</span>
+                      <span class="visually-hidden">
+                        <%= t("student_performance.records.percentage_unavailable") %>
+                      </span>
+                    <% else %>
+                      <%= number_to_percentage(percentage, precision: 1) %>
+                    <% end %>
                   <% end %>
                 </td>
 
