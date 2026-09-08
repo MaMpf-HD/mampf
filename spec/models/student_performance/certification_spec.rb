@@ -212,6 +212,26 @@ RSpec.describe(StudentPerformance::Certification, type: :model) do
         .to contain_exactly(cert)
     end
 
+    # Decided before the lecture had a rule, so the row names none: the rule it
+    # would be measured against today is the lecture's active one.
+    it "names a decision taken before the lecture had a rule" do
+      user = FactoryBot.create(:confirmed_user)
+      cert = manual_cert(user: user)
+      rule.update!(active: true)
+
+      expect(lecture.student_performance_certifications.stale_manual)
+        .to contain_exactly(cert)
+    end
+
+    it "lets confirming such a decision settle it" do
+      user = FactoryBot.create(:confirmed_user)
+      manual_cert(user: user, certified_at: Time.current)
+      rule.update!(active: true)
+      touch_rule(1.hour.ago)
+
+      expect(lecture.student_performance_certifications.stale_manual).to be_empty
+    end
+
     it "leaves the computed decisions to their proposal" do
       user = FactoryBot.create(:confirmed_user)
       FactoryBot.create(:student_performance_certification, :passed,

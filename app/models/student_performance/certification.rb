@@ -82,11 +82,31 @@ module StudentPerformance
       )
     }
 
-    # `stale_from_rule` and `stale_from_data` join different tables, so the
-    # two are unioned by id rather than `or`ed: a manual decision for someone
-    # without a `Record` keeps its rule reason that way.
+    # A decision taken while the lecture had no rule names none, so
+    # `stale_from_rule` cannot reach it through `rule_id`. The rule it would be
+    # measured against today is the lecture's active one, of which there is at
+    # most one (`index_sp_rules_one_active_per_lecture`).
+    scope :stale_from_first_rule, lambda {
+      rule_table = Rule.arel_table
+      cert_table = arel_table
+
+      where(rule_id: nil).joins(
+        cert_table.join(rule_table).on(
+          rule_table[:lecture_id].eq(cert_table[:lecture_id])
+            .and(rule_table[:active].eq(true))
+        ).join_sources
+      ).where(
+        rule_table[:updated_at].gt(cert_table[:certified_at])
+          .or(cert_table[:certified_at].eq(nil))
+      )
+    }
+
+    # The three scopes join different tables, so they are unioned by id rather
+    # than `or`ed: a manual decision for someone without a `Record` keeps its
+    # rule reason that way.
     scope :stale_manual, lambda {
       where(id: manual.stale_from_rule.pluck(:id) |
+                manual.stale_from_first_rule.pluck(:id) |
                 manual.stale_from_data.pluck(:id))
     }
 
