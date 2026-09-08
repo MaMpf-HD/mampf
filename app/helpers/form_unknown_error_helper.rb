@@ -35,7 +35,20 @@ module FormUnknownErrorHelper
                     "aria-live": "polite")
       )
       last_submit.add_next_sibling(error_span)
+      log_whole_form_error(form_object)
       doc.to_html
+    end
+
+    # Which attributes had no field to show them. Nothing else records this:
+    # the request completes normally, so only the attribute names say why the
+    # page fell back to a whole-form message. Codes only -- errors.details also
+    # carries the submitted value, and email is filtered out of the logs.
+    def log_whole_form_error(form_object)
+      codes = form_object.errors.details
+                         .transform_values { |list| list.map { |detail| detail[:error] } }
+      Rails.logger.info do
+        "Form error with no field: #{form_object.class.name} #{codes.inspect}"
+      end
     end
 
     # The errors no field could show. Naming them beats the generic fallback,

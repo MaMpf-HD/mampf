@@ -8,6 +8,15 @@ RSpec.describe(FormUnknownErrorHelper, type: :helper) do
     end
   end
 
+  def info_logs_while
+    logged = []
+    allow(Rails.logger).to receive(:info) do |*args, &block|
+      logged << (block ? block.call : args.first).to_s
+    end
+    yield
+    logged.join("\n")
+  end
+
   describe "an error that belongs to no field" do
     let(:user) do
       User.new.tap { |u| u.errors.add(:base, "Du bist bereits angemeldet") }
@@ -53,6 +62,34 @@ RSpec.describe(FormUnknownErrorHelper, type: :helper) do
   describe "a form object without errors" do
     it "adds nothing" do
       expect(form_html(User.new)).not_to include("invalid-feedback")
+    end
+  end
+
+  describe "the log trail" do
+    it "names the attributes that had no field" do
+      user = User.new.tap { |u| u.errors.add(:locale, :inclusion) }
+
+      logs = info_logs_while { form_html(user) }
+
+      expect(logs).to include("Form error with no field: User {locale: [:inclusion]}")
+    end
+
+    it "keeps the submitted value out of the log" do
+      user = User.new(email: "geheim@example.com")
+      user.errors.add(:email, :taken, value: user.email)
+
+      logs = info_logs_while { form_html(user) }
+
+      expect(logs).to include(":taken")
+      expect(logs).not_to include("geheim@example.com")
+    end
+
+    it "stays quiet when a field shows the error" do
+      user = User.new.tap { |u| u.errors.add(:name, "muss ausgefüllt werden") }
+
+      logs = info_logs_while { form_html(user, with_field: true) }
+
+      expect(logs).not_to include("Form error with no field")
     end
   end
 
