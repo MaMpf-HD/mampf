@@ -62,18 +62,15 @@
         <%= @participation.status %>
       </span>
     </td>
-
     <% if tasks? %>
       <!-- Task points columns -->
       <% tasks.each do |task| %>
         <%= task_points_participation_cell(task, allow_grading?) %>
       <% end %>
-
       <td class="text-center sticky-col total-col">
         <span data-participation-row-target="totalPoints">0</span>
       </td>
     <% end %>
-
     <% if single_grade? %>
       <!-- Single grade column -->
       <td class="text-center" style="min-width: 110px;">
@@ -94,7 +91,6 @@
           <span class="fw-semibold"><%= grade_display %></span>
         <% end %>
       </td>
-
       <td style="min-width: 180px;">
         <% if allow_grading? %>
           <%= text_area_tag "note", @participation&.note,
@@ -113,9 +109,7 @@
           </span>
         <% end %>
       </td>
-
       <td class="text-muted small"><%= grader_display %></td>
-
       <td class="text-muted small">
         <% if graded_at_relative %>
           <span title="<%= graded_at_full %>"><%= graded_at_relative %></span>
@@ -150,7 +144,6 @@
           >
         <% end %>
         <%= save_row_button(allow_grading?) %>
-
         <%= form_with url: @refresh_url, method: :patch,
                       data: { turbo: true, participation_row_target: "refreshForm" },
                       html: { style: "display:none;" } do %>

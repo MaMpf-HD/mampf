@@ -86,7 +86,7 @@
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
     <% for assignment_task in tasks %>
-      <td class="sticky-col task-col"> <%# herb:disable html-no-duplicate-attributes %>
+      <td class="sticky-col task-col"><%# herb:disable html-no-duplicate-attributes %>
         <%= task_points_input(assignment_task, allow_grading?) %>
       </td>
     <% end %>
@@ -133,7 +133,6 @@
           >
         <% end %>
         <%= save_row_button(allow_grading?) %>
-
         <!-- Refresh row -->
         <%= form_with url: refresh_point_submission_tutorial_path(
           @submission, 
