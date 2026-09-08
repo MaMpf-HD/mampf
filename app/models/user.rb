@@ -604,8 +604,40 @@ class User < ApplicationRecord
     lectures.where(term: Term.active).includes(:course, :term)
   end
 
+  # What this user has subscribed for the term after the running one, while
+  # that term is being prepared. Lectures without a term are not among them:
+  # they run always and belong to the current fold.
+  def next_term_lectures
+    coming = Term.active&.next
+    return [] if coming.blank?
+
+    lectures.where(term: coming).includes(:course, :term)
+            .natural_sort_by(&:title)
+  end
+
+  # The lectures of the coming term this user has applied to and has not been
+  # rejected from, while the campaign is still deciding. A registration is not
+  # a subscription: the seat, and with it access, is granted when the campaign
+  # is finalized, which is why these are named apart from the subscribed ones.
+  def next_term_registered_lectures
+    coming = Term.active&.next
+    return [] if coming.blank?
+
+    campaigns = Registration::UserRegistration
+                .where(user: self).where.not(status: :rejected)
+                .joins(:registration_campaign)
+                .merge(Registration::Campaign.where.not(status: :completed))
+                .where(registration_campaigns: { campaignable_type: "Lecture" })
+
+    Lecture.where(id: campaigns.select("registration_campaigns.campaignable_id"),
+                  term: coming)
+           .includes(:course, :term).natural_sort_by(&:title)
+  end
+
+  # The running term and the one after it have folds of their own on the start
+  # page, so neither belongs here.
   def inactive_lectures
-    lectures.where.not(term: Term.active)
+    lectures.where.not(term: [Term.active, Term.active&.next])
   end
 
   def nonsubscribed_lectures

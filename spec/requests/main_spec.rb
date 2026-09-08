@@ -8,6 +8,108 @@ RSpec.describe("Main", type: :request) do
   end
 
   describe "GET / (start page)" do
+    # Transitional, until the dashboard replaces the accordion: what the user
+    # has subscribed for the term being prepared gets its own fold instead of
+    # sitting among the terms gone by.
+    describe "the fold for the coming term" do
+      let!(:current_term) { create(:term, :summer, :active, year: 2025) }
+      let(:next_term) { create(:term, :winter, year: 2025) }
+
+      def cards_in(testid)
+        Nokogiri::HTML(response.body)
+                .css("[data-testid='#{testid}'] .lectureCard")
+                .pluck("data-id")
+      end
+
+      def heading_for(term)
+        CGI.escapeHTML(
+          I18n.t("profile.my_next_term_html", term: term.to_label)
+        ).gsub("&amp;ndash;", "&ndash;")
+      end
+
+      it "lists a lecture the user subscribed for the coming term" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        user.subscribe_lecture!(lecture)
+
+        get root_path
+
+        expect(response.body).to include(heading_for(next_term))
+        expect(cards_in("next-term-subscribed")).to include(lecture.id.to_s)
+      end
+
+      it "stands there empty when nothing is subscribed for that term" do
+        create(:lecture, :released_for_all, term: next_term)
+
+        get root_path
+
+        expect(response.body).to include(heading_for(next_term))
+        expect(cards_in("next-term-subscribed")).to be_empty
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("profile.no_next_term_stuff").strip)
+        )
+      end
+
+      # A registration is not a subscription: the seat comes when the campaign
+      # is finalized, so the lecture is named rather than shown as a card.
+      it "names a lecture the user has applied to" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        create(:registration_user_registration, :pending,
+               user: user, registration_campaign: campaign)
+
+        get root_path
+
+        registrations = Nokogiri::HTML(response.body)
+                                .at_css("[data-testid='next-term-registrations']")
+
+        expect(registrations.text).to include(lecture.title_no_term)
+        expect(cards_in("next-term-subscribed")).to be_empty
+      end
+
+      it "says nothing about an application that was turned down" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        create(:registration_user_registration, :rejected,
+               user: user, registration_campaign: campaign)
+
+        get root_path
+
+        expect(response.body).not_to include("next-term-registrations")
+      end
+
+      # Applying and subscribing are different things, but one card is enough:
+      # the subscription is the stronger statement and already stands there.
+      it "shows a subscribed lecture once, even when applied for as well" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        create(:registration_user_registration, :pending,
+               user: user, registration_campaign: campaign)
+        user.subscribe_lecture!(lecture)
+
+        get root_path
+
+        expect(cards_in("next-term-subscribed")).to include(lecture.id.to_s)
+        expect(response.body).not_to include("next-term-registrations")
+      end
+
+      it "has no fold where there is no term to prepare for" do
+        get root_path
+
+        expect(response.body).not_to include("collapseNextTermStuff")
+      end
+
+      # Both folds would otherwise show the same lecture, one of them under
+      # "further subscribed".
+      it "takes the lecture out of the subscriptions of terms gone by" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        user.subscribe_lecture!(lecture)
+
+        get root_path
+
+        expect(cards_in("further-subscribed")).not_to include(lecture.id.to_s)
+      end
+    end
+
     describe "next term banner" do
       let!(:current_term) { create(:term, :summer, :active, year: 2025) }
 

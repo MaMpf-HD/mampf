@@ -2079,6 +2079,7 @@ de:
       Du möchtest die Veranstaltung %{lecture_title} abonnieren. Diese ist
       durch einen Zugangsschlüssel geschützt. Gib diesen bitte hier ein.
     my_term_html: Mein Semester &ndash; %{term}
+    my_next_term_html: Mein nächstes Semester &ndash; %{term}
     inactive_lectures: Weitere abonnierte Veranstaltungen
     active_nonsubscribed_lectures_html: >
       Aktuelle Veranstaltungen &ndash; %{term}
@@ -2086,6 +2087,10 @@ de:
       Du hast keine Veranstaltungen aus dem aktuellen Semester abonniert.
     no_inactive_stuff: >
       Du hast keine Veranstaltungen außerhalb des aktuellen Semesters abonniert.
+    no_next_term_stuff: >
+      Du hast noch keine Veranstaltungen aus dem kommenden Semester abonniert.
+    next_term_registrations: >
+      Angemeldet — über die Plätze wird nach dem Anmeldeschluss entschieden.
     no_current_at_all: >
       Im aktuellen Semester sind noch keine Veranstaltungen veröffentlicht
       worden.

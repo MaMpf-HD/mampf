@@ -46,6 +46,70 @@
       </div>
     </div>
   <% end %>
+  <%# Transitional: until the dashboard arrives, the lectures of the term
+    being prepared get a fold of their own rather than sitting among the
+    subscriptions of terms gone by. The list is short and rendered here, so
+    this fold needs no round trip when it opens. %>
+
+  <% if Term.active&.next %>
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <button class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseNextTermStuff"
+                aria-expanded="false"
+                aria-controls="collapseNextTermStuff">
+          <h4 class="text-dark" id="nextTermStuffLink">
+            <%= t('profile.my_next_term_html',
+                  term: Term.active.next.to_label) %>
+          </h4>
+        </button>
+      </div>
+      <div class="collapse" id="collapseNextTermStuff"
+           data-bs-parent="#subscriptionsAccordion">
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
+               id="collapseNextTermStuffContent"
+               data-testid="next-term-subscribed">
+            <%= render partial: 'main/start/lecture',
+                       collection: @next_term_stuff,
+                       locals: { current: false,
+                                 subscribed: true,
+                                 parent: 'next_term_subscribed' },
+                       as: :lecture %>
+          </div>
+
+          <%# A registration is not a seat: it is decided when the campaign is
+            finalized. These lectures therefore stand in their own group,
+            under the sentence that says what is still open about them. %>
+
+          <% if @next_term_pending.any? %>
+            <p class="text-muted small mb-2">
+              <%= t('profile.next_term_registrations') %>
+            </p>
+
+            <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
+                 data-testid="next-term-registrations">
+              <%= render partial: 'main/start/lecture',
+                         collection: @next_term_pending,
+                         locals: { current: false,
+                                   subscribed: false,
+                                   parent: 'next_term_registered' },
+                         as: :lecture %>
+            </div>
+          <% end %>
+
+          <% if @next_term_stuff.empty? && @next_term_pending.empty? %>
+            <div id="emptyNextTermStuff">
+              <%= t('profile.no_next_term_stuff') %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <div class="accordion-item">
     <div class="accordion-header">
       <button class="accordion-button collapsed"
