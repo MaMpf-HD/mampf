@@ -73,7 +73,7 @@
     <% end %>
     <% if single_grade? %>
       <!-- Single grade column -->
-      <td class="text-center" style="min-width: 110px;">
+      <td class="text-center grade-col" style="min-width: 110px;">
         <% if allow_grading? %>
           <%= tag.select(
                 name: "grade",
@@ -91,7 +91,7 @@
           <span class="fw-semibold"><%= grade_display %></span>
         <% end %>
       </td>
-      <td style="min-width: 180px;">
+      <td class="note-col" style="min-width: 180px;">
         <% if allow_grading? %>
           <%= text_area_tag "note", @participation&.note,
                     class: "form-control form-control-sm",
@@ -109,8 +109,8 @@
           </span>
         <% end %>
       </td>
-      <td class="text-muted small"><%= grader_display %></td>
-      <td class="text-muted small">
+      <td class="text-muted small graded-by-col"><%= grader_display %></td>
+      <td class="text-muted small graded-at-col">
         <% if graded_at_relative %>
           <span title="<%= graded_at_full %>"><%= graded_at_relative %></span>
         <% end %>

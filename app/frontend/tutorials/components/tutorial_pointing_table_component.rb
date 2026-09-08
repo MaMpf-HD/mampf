@@ -144,8 +144,6 @@ class TutorialPointingTableComponent < ViewComponent::Base
   def sticky_css_vars
     left = sticky_layout.left_offsets.map { |k, v| "--#{k}-left:#{v}px" }
     right = sticky_layout.right_offsets.map { |k, v| "--#{k}-right:#{v}px" }
-    (left + right).join(";")
-
     edges = [
       "--sticky-left-width:#{sticky_layout.total_left_width}px",
       "--sticky-right-width:#{sticky_layout.total_right_width}px"

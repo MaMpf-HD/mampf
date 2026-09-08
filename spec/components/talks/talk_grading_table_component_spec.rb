@@ -20,7 +20,6 @@ RSpec.describe(TalkGradingTableComponent, type: :component) do
 
       before do
         create(:speaker_talk_join, talk: talk, speaker: speaker)
-        create(:assessment, assessable: talk, lecture: seminar)
         talk.reload
       end
 

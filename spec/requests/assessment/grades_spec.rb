@@ -22,25 +22,25 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
       end
 
       it "returns the existing participation" do
-        result = described_class.find_participation(assessment, speaker, talk)
+        result = described_class.find_participation(assessment, speaker)
         expect(result.id).to eq(existing.id)
       end
 
       it "does not create a duplicate" do
         expect do
-          described_class.find_participation(assessment, speaker, talk)
+          described_class.find_participation(assessment, speaker)
         end.not_to change(Assessment::Participation, :count)
       end
     end
 
     context "when no participation exists" do
       it "returns nil" do
-        expect(described_class.find_participation(assessment, speaker, talk)).to be_nil
+        expect(described_class.find_participation(assessment, speaker)).to be_nil
       end
 
       it "does not create a participation" do
         expect do
-          described_class.find_participation(assessment, speaker, talk)
+          described_class.find_participation(assessment, speaker)
         end.not_to change(Assessment::Participation, :count)
       end
     end
@@ -166,18 +166,14 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
   describe "#init_participation (private)" do
     it "creates and persists a new participation when none exists" do
       expect do
-        result = described_class.send(:init_participation, assessment, speaker, talk)
+        result = described_class.send(:init_participation, assessment, speaker)
         result.save!
+        expect(result).to be_persisted
       end.to change(Assessment::Participation, :count).by(1)
     end
 
-    it "returns an initialized (not yet persisted) participation when none exists" do
-      result = described_class.send(:init_participation, assessment, speaker, talk)
-      expect(result).not_to be_persisted
-    end
-
     it "associates the participation with the correct assessment and user" do
-      result = described_class.send(:init_participation, assessment, speaker, talk)
+      result = described_class.send(:init_participation, assessment, speaker)
       expect(result.assessment_id).to eq(assessment.id)
       expect(result.user_id).to eq(speaker.id)
     end
@@ -186,7 +182,7 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
       existing = FactoryBot.create(:assessment_participation,
                                    assessment: assessment,
                                    user: speaker)
-      result = described_class.send(:init_participation, assessment, speaker, talk)
+      result = described_class.send(:init_participation, assessment, speaker)
       expect(result.id).to eq(existing.id)
     end
 
@@ -194,20 +190,16 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
       FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
 
       expect do
-        described_class.send(:init_participation, assessment, speaker, talk)
+        described_class.send(:init_participation, assessment, speaker)
       end.not_to change(Assessment::Participation, :count)
     end
 
     it "returns nil when assessment is nil" do
-      expect(described_class.send(:init_participation, nil, speaker, talk)).to be_nil
+      expect(described_class.send(:init_participation, nil, speaker)).to be_nil
     end
 
     it "returns nil when user is nil" do
-      expect(described_class.send(:init_participation, assessment, nil, talk)).to be_nil
-    end
-
-    it "returns nil when talk is nil" do
-      expect(described_class.send(:init_participation, assessment, speaker, nil)).to be_nil
+      expect(described_class.send(:init_participation, assessment, nil)).to be_nil
     end
   end
 end

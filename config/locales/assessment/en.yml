@@ -278,7 +278,7 @@ en:
       excluded_reason: 'Reason for Exclusion'
       correction: 'Correction'
       max_points: 'pts'
-      no_submissions: 'No submissions for this assignment.'
+      no_submissions_gradable: 'No submissions for this assignment that can be pointed.'
       no_submission_zone: 'No submissions'
       no_submission_badge: 'No submission'
       marked_as_participated_badge: 'Marked as participated'
@@ -312,6 +312,7 @@ en:
       no_tutorial: 'N/A'
     grading_talk:
       note_placeholder: "Add note..."
+      no_talks_gradable: 'No talks that can be graded.'
     grading_overview:
       submission_progress: 'Submissions'
       submitted: 'Submitted'

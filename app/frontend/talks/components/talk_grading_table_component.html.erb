@@ -19,9 +19,14 @@
         ></div>
       </div>
 
-      <div class="table-wrapper" data-controller="table-fade">
+      <div
+        class="table-wrapper"
+        style="<%= sticky_css_vars %>"
+        data-controller="table-fade"
+      >
         <div class="table-overflow" data-table-fade-target="inner">
-          <table class="table table-hover align-middle my-3 grading-table">
+          <table class="table table-hover align-middle my-3 grading-table"
+          style="<%= sticky_css_vars %>">
             <thead style="background: #fafafa;">
               <%= render(PointingTableHeaderComponent.new(
                 grading_scope: @grading_scope,
@@ -66,7 +71,7 @@
     </div>
   <% else %>
     <div class="jumbotron mt-3">
-      <%= t('assessment.grading_tutorial.no_submissions') %>
+      <%= t('assessment.grading_talk.no_talks_gradable') %>
     </div>
   <% end %>
 

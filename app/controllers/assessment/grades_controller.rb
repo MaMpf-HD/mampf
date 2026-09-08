@@ -72,12 +72,12 @@ module Assessment
       end
 
       def set_resources_from_talk
-        @assessable = Talk.find_by(id: params[:talk_id])
+        @assessable = Talk.find(params[:talk_id])
         @lecture = @assessable.lecture
         @assessment = @assessable.assessment
-        @user = User.find_by(id: params[:user_id])
+        @user = User.find(params[:user_id])
         @participation = Participation.find_by(
-          assessment_id: @assessment.id,
+          assessment_id: @assessment&.id,
           user_id: @user.id
         )
         empty_resource_check
@@ -87,33 +87,26 @@ module Assessment
       end
 
       def set_resources_from_participation
-        @participation = Participation.find_by(id: params[:participation_id])
+        @participation = Participation.find(params[:participation_id])
 
-        @assessment = @participation&.assessment
-        @user = @participation&.user
+        @assessment = @participation.assessment
+        @user = @participation.user
         @assessable = @assessment&.assessable
-        @lecture = @assessment&.lecture
+        @lecture = @assessable&.lecture
         empty_resource_check
-        return if @assessable.speakers.exists?(id: @user.id)
+        return if @assessable&.speakers&.exists?(id: @user.id)
 
         respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
       end
 
       def empty_resource_check
-        unless @assessment
-          return respond_with_flash(:alert,
-                                    t("assessment.errors.no_assessment"))
-        end
-        unless @assessable
-          return respond_with_flash(:alert,
-                                    t("assessment.errors.not_gradable"))
-        end
+        return respond_with_flash(:alert, t("assessment.errors.no_assessment")) unless @assessment
+        return respond_with_flash(:alert, t("assessment.errors.not_gradable")) unless @assessable
         return respond_with_flash(:alert, t("assessment.errors.user_not_found")) unless @user
 
         return if @participation
 
-        respond_with_flash(:alert,
-                           t("assessment.errors.no_participation"))
+        respond_with_flash(:alert, t("assessment.errors.no_participation"))
       end
 
       def current_ability

@@ -33,12 +33,14 @@ module Assessment
       def init_participation(assessment, user)
         return if assessment.nil? || user.nil?
 
-        p = Participation.find_or_initialize_by(
-          assessment_id: assessment.id,
-          user_id: user.id
-        )
-        p.save! if p.new_record?
-        p
+        Participation.find_by(assessment_id: assessment.id, user_id: user.id) ||
+          create_participation(assessment, user)
+      end
+
+      def create_participation(assessment, user)
+        Participation.create!(assessment_id: assessment.id, user_id: user.id, status: :pending)
+      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
+        Participation.find_by!(assessment_id: assessment.id, user_id: user.id)
       end
 
       private
