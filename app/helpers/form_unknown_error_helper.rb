@@ -41,14 +41,23 @@ module FormUnknownErrorHelper
 
     # Which attributes had no field to show them. Nothing else records this:
     # the request completes normally, so only the attribute names say why the
-    # page fell back to a whole-form message. Codes only -- errors.details also
-    # carries the submitted value, and email is filtered out of the logs.
+    # page fell back to a whole-form message.
     def log_whole_form_error(form_object)
-      codes = form_object.errors.details
-                         .transform_values { |list| list.map { |detail| detail[:error] } }
+      codes = form_object.errors.details.transform_values do |list|
+        list.map { |detail| error_code(detail[:error]) }
+      end
       Rails.logger.info do
         "Form error with no field: #{form_object.class.name} #{codes.inspect}"
       end
+    end
+
+    # `errors.add` stores a message string here whenever it was given one, and
+    # this helper logs for every form in the app, so a free-text message could
+    # carry a submitted value into a log that filters email on purpose -- or a
+    # newline that forges a line. Symbols are ours, anything else is named but
+    # not repeated.
+    def error_code(error)
+      error.is_a?(Symbol) ? error : :custom_message
     end
 
     # The errors no field could show. Naming them beats the generic fallback,

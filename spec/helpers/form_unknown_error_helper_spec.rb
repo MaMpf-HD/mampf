@@ -84,6 +84,18 @@ RSpec.describe(FormUnknownErrorHelper, type: :helper) do
       expect(logs).not_to include("geheim@example.com")
     end
 
+    # errors.add stores a whole message string here when it was given one, so a
+    # free-text message must not reach the log verbatim.
+    it "names a free-text message without repeating it" do
+      user = User.new.tap { |u| u.errors.add(:base, "Kontakt geheim@example.com\nfake line") }
+
+      logs = info_logs_while { form_html(user) }
+
+      expect(logs).to include(":custom_message")
+      expect(logs).not_to include("geheim@example.com")
+      expect(logs).not_to include("fake line")
+    end
+
     it "stays quiet when a field shows the error" do
       user = User.new.tap { |u| u.errors.add(:name, "muss ausgefüllt werden") }
 
