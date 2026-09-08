@@ -64,7 +64,7 @@
   </td>
 
   <!-- Column 1.5: Tutorial -->
-  <% if @mode == "teacher" %>
+  <% if lecture_scope? %>
     <td class="text-center sticky-col tutorial-col">
       <span><%= @submission.tutorial&.title %></span>
     </td>
@@ -161,7 +161,7 @@
   <!-- Column 6: Correction or download correction -->
   <!-- tutor can upload correction, student + teacher can download correction -->
   <!-- there is case when teacher is also tutor, in that case use tutor view for correction -->
-  <% if  @mode == "tutor" %>
+  <% if tutorial_scope? %>
     <td class="sticky-col correction-col" data-id="<%= @submission.id %>">
       <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
         <%= render partial: 'submissions/correction_column',

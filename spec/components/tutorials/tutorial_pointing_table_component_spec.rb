@@ -26,10 +26,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
 
     describe "#initialize" do
-      it "sets @mode to tutor" do
-        expect(component.instance_variable_get(:@mode)).to eq("tutor")
-      end
-
       it "sets @tutorial to the grading_scope" do
         expect(component.instance_variable_get(:@tutorial)).to eq(tutorial)
       end
@@ -144,9 +140,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
 
     describe "initialization" do
-      it "sets @mode to teacher" do
-        expect(component.instance_variable_get(:@mode)).to eq("teacher")
-      end
 
       it "sets @lecture from the assignment's lecture" do
         expect(component.instance_variable_get(:@lecture)).to eq(assignment.lecture)

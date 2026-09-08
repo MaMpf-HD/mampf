@@ -18,8 +18,11 @@ class TutorialPointingTableComponent < ViewComponent::Base
     )
   end
 
+  def tutorial_scope?
+    @grading_scope.is_a?(Tutorial)
+  end
+
   def init_tutor_case
-    @mode = "tutor"
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
     @non_submitters = @assignment&.non_submitters_in_tutorial(@tutorial)
@@ -27,7 +30,6 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def init_teacher_case
-    @mode = "teacher"
     @tutorials = @lecture.tutorials
     @stack = @assignment&.submissions&.proper
                         &.order(:last_modification_by_users_at)
@@ -68,7 +70,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def column_count
-    if @mode == "tutor"
+    if @grading_scope.is_a?(Tutorial)
       6 + tasks.count
     else
       5 + tasks.count
@@ -143,5 +145,11 @@ class TutorialPointingTableComponent < ViewComponent::Base
     left = sticky_layout.left_offsets.map { |k, v| "--#{k}-left:#{v}px" }
     right = sticky_layout.right_offsets.map { |k, v| "--#{k}-right:#{v}px" }
     (left + right).join(";")
+
+    edges = [
+      "--sticky-left-width:#{sticky_layout.total_left_width}px",
+      "--sticky-right-width:#{sticky_layout.total_right_width}px"
+    ]
+    (left + right + edges).join(";")
   end
 end

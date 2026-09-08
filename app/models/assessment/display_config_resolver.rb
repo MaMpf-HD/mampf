@@ -27,7 +27,6 @@ module Assessment
 
       GradingDisplayConfig.new(
         body_mode: [:tasks],
-        mode: tutor ? "tutor" : "teacher",
         left_columns: tutor ? [:team, :status] : [:team, :tutorial, :status],
         right_columns: tutor ? [:total, :action, :correction] : [:total, :action]
       )
@@ -37,7 +36,6 @@ module Assessment
     def self.resolve_talk(_grading_scope)
       GradingDisplayConfig.new(
         body_mode: [:single_grade],
-        mode: "talk",
         left_columns: [:team, :status],
         right_columns: [:grade, :note, :graded_by, :graded_at, :action]
       )

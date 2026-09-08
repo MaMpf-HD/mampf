@@ -76,8 +76,14 @@ export default class extends Controller {
 
   markDirty(targetType) {
     const pointDirty = this.pointInputTargets.some((input, idx) => input.value != this.originalPoints[idx]);
-    const gradeDirty = this.gradeInputTarget.value !== this.originalGrade;
-    const noteDirty = this.noteInputTarget.value !== this.originalNote;
+    let gradeDirty = false;
+    let noteDirty = false;
+    if (this.hasGradeInputTarget) {
+      gradeDirty = this.gradeInputTarget.value !== this.originalGrade;
+    }
+    if (this.hasNoteInputTarget) {
+      noteDirty = this.noteInputTarget.value !== this.originalNote;
+    }
 
     if (pointDirty || gradeDirty || noteDirty) {
       this.handleDirty(targetType);

@@ -36,5 +36,13 @@ module Assessment
         offset += WIDTHS.fetch(key)
       end
     end
+
+    def total_left_width
+      @left_columns.sum { |key| WIDTHS.fetch(key) }
+    end
+
+    def total_right_width
+      @right_columns.sum { |key| WIDTHS.fetch(key) }
+    end
   end
 end

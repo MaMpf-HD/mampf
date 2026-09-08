@@ -22,7 +22,6 @@ class ParticipationRowComponent < ViewComponent::Base
     @config = Assessment::DisplayConfigResolver.resolve(
       assessable: @assessable, grading_scope: @grading_scope
     )
-    @mode = @config.mode
 
     @user ||= @participation&.user
     return unless @user.nil?

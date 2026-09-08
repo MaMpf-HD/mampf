@@ -23,7 +23,7 @@
 
       <div
         class="table-wrapper"
-        data-mode="<%= @mode %>"
+        style="<%= sticky_css_vars %>"
         data-controller="table-fade"
       >
         <div class="table-overflow" data-table-fade-target="inner">
@@ -45,7 +45,7 @@
             </thead>
 
             <tbody>
-              <% if @mode == "tutor" %>
+              <% if tutorial_scope? %>
                 <!-- TUTOR -->
                 <!-- Submissions -->
                 <% @stack.each do |submission| %>

@@ -8,16 +8,14 @@ class SubmissionRowComponent < ViewComponent::Base
     @assignment = assignment
     @grading_scope = grading_scope
     @lecture = @tutorial.lecture
-    check_grading_scope
   end
 
-  def check_grading_scope
-    case @grading_scope
-    when Tutorial
-      @mode = "tutor"
-    when Lecture
-      @mode = "teacher"
-    end
+  def tutorial_scope?
+    @grading_scope.is_a?(Tutorial)
+  end
+
+  def lecture_scope?
+    @grading_scope.is_a?(Lecture)
   end
 
   # Feature guard: grading is only possible if the feature flag is enabled
