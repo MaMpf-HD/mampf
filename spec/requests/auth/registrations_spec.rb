@@ -70,6 +70,56 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(I18n.t("devise.registrations.user.too_many_registrations"))
     end
+
+    describe "records why a sign-up was rejected" do
+      # Nothing raises on a rejected sign-up and emails are filtered out of the
+      # logs, so an operator can only see the reason if we log it on purpose.
+      def info_logs_while
+        logged = []
+        allow(Rails.logger).to receive(:info) do |*args, &block|
+          logged << (block ? block.call : args.first).to_s
+        end
+        yield
+        logged.join("\n")
+      end
+
+      it "names the validation errors" do
+        allow(Altcha).to receive(:verify).and_return(true)
+        params = base_params.merge(altcha: "valid")
+        params[:user] = params[:user].except(:consents)
+
+        logs = info_logs_while { post(user_registration_path, params: params) }
+
+        expect(logs).to match(/Sign-up rejected: \S+/)
+      end
+
+      it "names a failed captcha" do
+        allow(Altcha).to receive(:verify).and_return(false)
+
+        logs = info_logs_while do
+          post(user_registration_path,
+               params: base_params.merge(altcha: "invalid"),
+               as: :turbo_stream)
+        end
+
+        expect(logs).to include("Sign-up rejected: captcha verification failed")
+      end
+
+      it "names the exceeded registration limit" do
+        allow(Altcha).to receive(:verify).and_return(true)
+        allow(ENV).to receive(:fetch).and_call_original
+        allow(ENV).to receive(:fetch).with("MAMPF_REGISTRATION_TIMEFRAME", 15).and_return("15")
+        allow(ENV).to receive(:fetch).with("MAMPF_MAX_REGISTRATION_PER_TIMEFRAME", 40)
+                                     .and_return("0")
+        create(:user, created_at: 1.minute.ago)
+
+        logs = info_logs_while do
+          post(user_registration_path, params: base_params.merge(altcha: "valid"))
+        end
+
+        expect(logs).to include("registration limit reached")
+      end
+    end
   end
 
   describe "DELETE /users" do
