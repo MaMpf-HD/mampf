@@ -61,7 +61,7 @@ module TutorialsHelper
 
     participations_by_user_id =
       Assessment::Participation.where(user: non_submitters, assessment: assignment.assessment)
-                     .index_by(&:user_id)
+                               .index_by(&:user_id)
 
     num_non_submitters = non_submitters.size
     num_participated = non_submitters.count { |u| participations_by_user_id[u.id] }

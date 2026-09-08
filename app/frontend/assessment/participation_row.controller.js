@@ -133,11 +133,13 @@ export default class extends Controller {
 
   // --- Validation Methods ---
 
-  validateNewGrade(event) {
+  validateNewGrade(_event) {
+    // GradeEntryService will validate the grade
     return true;
   }
 
-  validateNewNote(event) {
+  validateNewNote(_event) {
+    // No validation for notes, any text is allowed
     return true;
   }
 

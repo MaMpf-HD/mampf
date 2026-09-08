@@ -134,7 +134,8 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
     context "when body_mode does not include :tasks" do
       before do
-        allow(Assessment::DisplayConfigResolver).to receive(:resolve).and_return(single_grade_config)
+        allow(Assessment::DisplayConfigResolver).to receive(:resolve)
+          .and_return(single_grade_config)
       end
 
       it "returns false" do

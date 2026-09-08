@@ -140,7 +140,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
 
     describe "initialization" do
-
       it "sets @lecture from the assignment's lecture" do
         expect(component.instance_variable_get(:@lecture)).to eq(assignment.lecture)
       end
