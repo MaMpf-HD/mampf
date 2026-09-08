@@ -30,11 +30,20 @@ module FormUnknownErrorHelper
 
       last_submit = submit_buttons.last
       error_span = Nokogiri::HTML::DocumentFragment.parse(
-        content_tag(:span, t("errors.unknown"),
+        content_tag(:span, whole_form_error_text(form_object),
                     class: "invalid-feedback d-block",
                     "aria-live": "polite")
       )
       last_submit.add_next_sibling(error_span)
       doc.to_html
+    end
+
+    # The errors no field could show. Naming them beats the generic fallback,
+    # which blames the server for what is really a validation failure.
+    def whole_form_error_text(form_object)
+      messages = form_object.errors.full_messages.uniq.compact_blank
+      return t("errors.unknown") if messages.empty?
+
+      safe_join(messages, tag.br)
     end
 end
