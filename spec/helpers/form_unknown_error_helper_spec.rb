@@ -55,4 +55,14 @@ RSpec.describe(FormUnknownErrorHelper, type: :helper) do
       expect(form_html(User.new)).not_to include("invalid-feedback")
     end
   end
+
+  describe "an error whose message is blank" do
+    # errors is not empty, yet nothing printable comes out of full_messages.
+    # This is the only way the generic notice is still reached.
+    it "falls back to the generic notice" do
+      user = User.new.tap { |u| u.errors.add(:base, "") }
+
+      expect(form_html(user)).to include(I18n.t("errors.unknown").strip)
+    end
+  end
 end

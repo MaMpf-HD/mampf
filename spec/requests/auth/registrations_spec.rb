@@ -90,7 +90,9 @@ RSpec.describe("Auth registrations", type: :request) do
 
         logs = info_logs_while { post(user_registration_path, params: params) }
 
-        expect(logs).to match(/Sign-up rejected: \S+/)
+        # The attribute name carries the reason and is not translated, so this
+        # holds in either locale while still naming which validation failed.
+        expect(logs).to include("Sign-up rejected: Consents")
       end
 
       it "names a failed captcha" do
