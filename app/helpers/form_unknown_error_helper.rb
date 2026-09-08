@@ -44,6 +44,8 @@ module FormUnknownErrorHelper
       messages = form_object.errors.full_messages.uniq.compact_blank
       return t("errors.unknown") if messages.empty?
 
-      safe_join(messages, tag.br)
+      # full_messages hands a :base message straight through, so a caller that
+      # marked one html_safe would reach the page unescaped. Drop that flag.
+      safe_join(messages.map { |message| String.new(message) }, tag.br)
     end
 end

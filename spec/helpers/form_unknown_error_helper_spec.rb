@@ -22,6 +22,24 @@ RSpec.describe(FormUnknownErrorHelper, type: :helper) do
     end
   end
 
+  describe "a message carrying markup" do
+    it "escapes it" do
+      user = User.new.tap { |u| u.errors.add(:base, "<script>alert(1)</script>") }
+
+      expect(form_html(user)).to include("&lt;script&gt;")
+    end
+
+    # full_messages returns a :base message untouched, so its html_safe flag
+    # would otherwise survive all the way into the page.
+    it "escapes it even when a caller marked it html_safe" do
+      user = User.new.tap do |u|
+        u.errors.add(:base, "<img src=x onerror=alert(1)>".html_safe)
+      end
+
+      expect(form_html(user)).to include("&lt;img")
+    end
+  end
+
   describe "an error a field already shows" do
     let(:user) do
       User.new.tap { |u| u.errors.add(:name, "muss ausgefüllt werden") }
