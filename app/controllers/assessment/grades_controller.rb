@@ -44,7 +44,8 @@ module Assessment
                                    grading_scope: @lecture,
                                    participation: @participation,
                                    save_url: grade_talk_user_path(@assessable, @user),
-                                   refresh_url: refresh_grade_talk_user_path(@assessable, @user)
+                                   refresh_url: refresh_grade_talk_user_path(@assessable, @user),
+                                   group_id: @assessable.id
                                  ))
         )
       end

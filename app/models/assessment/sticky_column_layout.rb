@@ -27,8 +27,8 @@ module Assessment
       end
     end
 
-    # right-anchored columns accumulate right-to-left
-    # array order = visual order from the right edge inward
+    # Right columns are supplied in table order; reverse traversal accumulates
+    # offsets from the right edge inward.
     def right_offsets
       offset = 0
       @right_columns.reverse.each_with_object({}) do |key, acc|
