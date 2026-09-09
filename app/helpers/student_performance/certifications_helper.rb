@@ -20,18 +20,15 @@ module StudentPerformance
       end
     end
 
-    # Two of the reasons can say how much they are about, and a reader deciding
-    # on somebody needs that: "not due yet" covers anything between one sheet
-    # and the rest of the term. The count says how many, the points say what
-    # they are worth, and the two come out of the same set.
+    # Two of the reasons can say how many sheets they are about, and a reader
+    # deciding on somebody needs that: "not due yet" covers anything between
+    # one sheet and the rest of the term.
     def deferral_text(proposal, reason)
       case reason
       when :points_not_due
-        deferral_amount(reason, proposal.details[:not_due_sheets],
-                        proposal.details[:not_due_points])
+        deferral_count(reason, proposal.details[:not_due_sheets])
       when :points_pending
-        deferral_amount(reason, proposal.details[:pending_sheets],
-                        proposal.details[:pending_points])
+        deferral_count(reason, proposal.details[:pending_sheets])
       else
         t("student_performance.evaluator.deferral.#{reason}")
       end
@@ -47,11 +44,8 @@ module StudentPerformance
 
     private
 
-      def deferral_amount(reason, sheets, points)
-        t("student_performance.evaluator.deferral.#{reason}",
-          count: sheets.to_i,
-          points: number_with_precision(points || 0, precision: 1,
-                                                     strip_insignificant_zeros: true))
+      def deferral_count(reason, sheets)
+        t("student_performance.evaluator.deferral.#{reason}", count: sheets.to_i)
       end
   end
 end

@@ -451,7 +451,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
       # "Not due yet" covers anything between one sheet and the rest of the
       # term, and somebody deciding on this student needs to know which.
-      it "says how many sheets are to come and what they are worth" do
+      it "says how many sheets are still to come" do
         sheet(deadline: 2.days.ago, points: 20)
         sheet(deadline: 3.days.from_now, points: 60)
         sheet(deadline: 5.days.from_now, points: 40)
@@ -459,7 +459,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
         result = evaluator.evaluate(record_with(total: 5, max: 120))
 
         expect(result.details[:not_due_sheets]).to eq(2)
-        expect(result.details[:not_due_points]).to eq(100)
       end
 
       it "says as much about the hand-ins that are waiting" do
@@ -473,7 +472,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                                 pending: 20))
 
         expect(result.details[:pending_sheets]).to eq(1)
-        expect(result.details[:pending_points]).to eq(20)
       end
 
       it "still fails a student the remaining sheets cannot carry" do
@@ -574,9 +572,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
       result = described_class.new(rule, assignments_complete: true).evaluate(record)
       expected_keys = [:assignments_incomplete, :meets_points, :points_not_due,
                        :points_pending, :points_not_measurable,
-                       :meets_achievements, :achievements_ungraded,
-                       :not_due_sheets, :not_due_points,
-                       :pending_sheets, :pending_points]
+                       :points_outstanding, :meets_achievements,
+                       :achievements_ungraded, :not_due_sheets,
+                       :pending_sheets]
       expect(result.details.keys).to match_array(expected_keys)
     end
   end
@@ -614,6 +612,8 @@ RSpec.describe(StudentPerformance::Evaluator) do
                         rule: rule, achievement: achievement)
     end
 
+    # Nothing outstanding: the term is over for this student, and "not reached"
+    # is the whole of it.
     it "names the criterion that settled the case" do
       record = FactoryBot.create(:student_performance_record,
                                  lecture: lecture,
@@ -623,6 +623,22 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                  achievements_met_ids: [achievement.id])
 
       expect(evaluator.evaluate(record).missed_criteria).to eq([:points])
+    end
+
+    # With something still open the case is only ever failed once even that
+    # would not be enough - and then "not reached yet" understates it. The
+    # student cannot make it up, which is a different sentence.
+    it "calls the threshold out of reach where something is still open" do
+      record = FactoryBot.create(:student_performance_record,
+                                 lecture: lecture,
+                                 points_total_materialized: 30,
+                                 points_max_materialized: 100,
+                                 points_max_pending_materialized: 10,
+                                 percentage_materialized: 30,
+                                 achievements_met_ids: [achievement.id])
+
+      expect(evaluator.evaluate(record).missed_criteria)
+        .to eq([:points_out_of_reach])
     end
 
     it "does not blame a criterion that is merely open" do

@@ -121,9 +121,9 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
                             submitted_at: 1.day.ago)
         end
 
-        def pending_reason(count:, points:)
+        def pending_reason(count:)
           I18n.t("student_performance.evaluator.deferral.points_pending",
-                 count: count, points: points)
+                 count: count)
         end
 
         context "when the marking still outstanding could carry the student" do
@@ -149,7 +149,7 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
           it "names the outstanding marking as the reason" do
             get path, params: { record_id: record.id }
             expect(response.body)
-              .to include(pending_reason(count: 1, points: "40"))
+              .to include(pending_reason(count: 1))
           end
         end
 
@@ -196,7 +196,7 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
           it "keeps the points check open even though the verdict is failed" do
             get path, params: { record_id: record.id }
             expect(response.body)
-              .to include(pending_reason(count: 1, points: "40"))
+              .to include(pending_reason(count: 1))
             expect(response.body).to include(
               I18n.t("student_performance.evaluator.status.failed")
             )

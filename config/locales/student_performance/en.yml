@@ -132,15 +132,16 @@ en:
       deferral:
         assignments_incomplete: "The assignment list is still open"
         points_not_due:
-          one: "1 assignment not due yet (%{points} points)"
-          other: "%{count} assignments not due yet (%{points} points)"
+          one: "1 assignment not due yet"
+          other: "%{count} assignments not due yet"
         points_pending:
-          one: "1 submission not graded yet (%{points} points)"
-          other: "%{count} submissions not graded yet (%{points} points)"
+          one: "1 submission not graded yet"
+          other: "%{count} submissions not graded yet"
         points_not_measurable: "No points to measure"
         achievements_ungraded: "Achievement not graded yet"
       missed:
         points: "Threshold not reached"
+        points_out_of_reach: "Threshold out of reach even with everything still open"
         achievements: "Achievement not met"
       single_proposal:
         title: "Eligibility Proposal"

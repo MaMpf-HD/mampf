@@ -600,13 +600,12 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         let(:rule_today) do
           I18n.t("student_performance.certifications.columns.rule_today")
         end
-        # The two open points reasons say how much they are about, so a test
-        # that names one has to say how much too.
-        def deferral(reason, count: nil, points: nil)
+        # The two open points reasons say how many sheets they are about, so a
+        # test that names one has to say how many too.
+        def deferral(reason, count: nil)
           return I18n.t("student_performance.evaluator.deferral.#{reason}") unless count
 
-          I18n.t("student_performance.evaluator.deferral.#{reason}",
-                 count: count, points: points)
+          I18n.t("student_performance.evaluator.deferral.#{reason}", count: count)
         end
 
         let!(:rule) do
@@ -663,7 +662,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body).to include(deferral(:points_not_measurable))
             expect(response.body)
-              .not_to include(deferral(:points_pending, count: 0, points: "0"))
+              .not_to include(deferral(:points_pending, count: 0))
           end
         end
 
@@ -696,7 +695,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           it "points at the marking rather than at the student" do
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body)
-              .to include(deferral(:points_pending, count: 1, points: "40"))
+              .to include(deferral(:points_pending, count: 1))
           end
         end
 
@@ -728,9 +727,9 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           it "names the sheets to come rather than refusing the student" do
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body)
-              .to include(deferral(:points_not_due, count: 1, points: "40"))
+              .to include(deferral(:points_not_due, count: 1))
             expect(response.body)
-              .not_to include(deferral(:points_pending, count: 0, points: "0"))
+              .not_to include(deferral(:points_pending, count: 0))
           end
         end
 
@@ -750,7 +749,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             get lecture_student_performance_certifications_path(lecture)
             StudentPerformance::Evaluator::DEFERRAL_REASONS.each do |reason|
               expect(response.body)
-                .not_to include(deferral(reason, count: 0, points: "0"))
+                .not_to include(deferral(reason, count: 0))
             end
           end
         end
@@ -840,6 +839,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
           expect(response.body).to include(
             I18n.t("student_performance.evaluator.missed.points")
+          )
+        end
+
+        # Nothing is open for this student, so the plain sentence is the right
+        # one; the stronger one belongs to a student who still has marking
+        # outstanding that would not be enough either.
+        it "does not claim more than that the threshold was not reached" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).not_to include(
+            I18n.t("student_performance.evaluator.missed.points_out_of_reach")
           )
         end
 
