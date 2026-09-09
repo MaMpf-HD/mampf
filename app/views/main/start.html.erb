@@ -79,7 +79,29 @@
                                  subscribed: true,
                                  parent: "next_term_subscribed" },
                        as: :lecture %>
+
           </div>
+
+          <%# A seat in a group that does not enrol into the lecture is still a
+            place in the coming term, and the card offers what is missing: the
+            subscription. %>
+
+          <% if @next_term_seats.any? %>
+            <p class="text-muted small mb-2">
+              <%= t("profile.next_term_seats") %>
+            </p>
+
+            <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
+                        row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
+                 data-testid="next-term-seats">
+              <%= render partial: "main/start/lecture",
+                         collection: @next_term_seats,
+                         locals: { current: false,
+                                   subscribed: false,
+                                   parent: "next_term_subscribed" },
+                         as: :lecture %>
+            </div>
+          <% end %>
 
           <%# A registration is not a seat: it is decided when the campaign is
             finalized. These lectures therefore stand in their own group,
@@ -102,9 +124,11 @@
             </div>
           <% end %>
 
+          <% fold_filled = @next_term_stuff.any? || @next_term_seats.any? ||
+                           @next_term_pending.any? %>
+
           <%= tag.div id: "emptyNextTermStuff",
-                      style: (@next_term_stuff.any? || @next_term_pending.any?) ?
-                               "display: none;" : "" do %>
+                      style: fold_filled ? "display: none;" : "" do %>
             <%= t("profile.no_next_term_stuff") %>
           <% end %>
         </div>

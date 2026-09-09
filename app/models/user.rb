@@ -615,6 +615,21 @@ class User < ApplicationRecord
             .natural_sort_by(&:title)
   end
 
+  # Lectures of the coming term the user has a seat in without a subscription.
+  # A cohort only enrols its members into the lecture when it is set to, and a
+  # seat on the lecture roster itself does not subscribe either; both leave the
+  # lecture with nothing to say for itself on the start page.
+  def next_term_seated_lectures
+    coming = Term.active&.next
+    return [] if coming.blank?
+
+    seat_ids = cohorts.where(context_type: "Lecture").pluck(:context_id) |
+               lecture_memberships.pluck(:lecture_id)
+
+    Lecture.where(id: seat_ids, term: coming)
+           .includes(:course, :term).natural_sort_by(&:title)
+  end
+
   # The lectures of the coming term this user has applied to and has not been
   # rejected from, while the campaign is still deciding. A registration is not
   # a subscription: the seat, and with it access, is granted when the campaign

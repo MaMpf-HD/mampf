@@ -49,9 +49,9 @@ RSpec.describe("Main", type: :request) do
         )
       end
 
-      # A registration is not a subscription: the seat comes when the campaign
-      # is finalized, so the lecture is named rather than shown as a card.
-      it "names a lecture the user has applied to" do
+      # A registration is not a seat, so the lecture stands in its own group
+      # rather than among the subscriptions.
+      it "shows a lecture the user has applied to, apart from the rest" do
         lecture = create(:lecture, :released_for_all, term: next_term)
         campaign = create(:registration_campaign, :open, campaignable: lecture)
         create(:registration_user_registration, :pending,
@@ -59,11 +59,21 @@ RSpec.describe("Main", type: :request) do
 
         get root_path
 
-        registrations = Nokogiri::HTML(response.body)
-                                .at_css("[data-testid='next-term-registrations']")
-
-        expect(registrations.text).to include(lecture.title_no_term)
+        expect(cards_in("next-term-registrations")).to include(lecture.id.to_s)
         expect(cards_in("next-term-subscribed")).to be_empty
+      end
+
+      # A cohort that does not enrol its members leaves them without a
+      # subscription, and the lecture would say nothing for itself.
+      it "shows a lecture the user has a seat in without a subscription" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
+        create(:cohort_membership, cohort: cohort, user: user)
+
+        get root_path
+
+        expect(cards_in("next-term-seats")).to include(lecture.id.to_s)
+        expect(user.lectures).not_to include(lecture)
       end
 
       it "says nothing about an application that was turned down" do

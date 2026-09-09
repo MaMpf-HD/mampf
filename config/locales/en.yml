@@ -1945,6 +1945,8 @@ en:
       You have not yet subscribed any event series of the coming term.
     next_term_registrations: >
       Applied for — places are allocated after the registration deadline.
+    next_term_seats: >
+      Enrolled for you — subscribe to the lecture to see its content.
     no_current_at_all: >
       In the current term, no event series have yet been published.
     other_preferences: >
