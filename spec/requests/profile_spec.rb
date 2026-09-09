@@ -59,6 +59,33 @@ RSpec.describe("Profile", type: :request) do
         expect(response.body).to include("$card.remove()")
       end
 
+      # The fold would otherwise stand empty and unexplained until a reload.
+      it "shows the empty state once the fold has run out of cards" do
+        user.subscribe_lecture!(lecture)
+
+        patch(unsubscribe_lecture_path,
+              params: { lecture: { id: lecture.id,
+                                   parent: "next_term_subscribed" } },
+              xhr: true)
+
+        expect(response.body).to include("$('#emptyNextTermStuff').show()")
+      end
+
+      it "keeps the empty state hidden while an application is left" do
+        user.subscribe_lecture!(lecture)
+        other = create(:lecture, :released_for_all, term: next_term)
+        campaign = create(:registration_campaign, :open, campaignable: other)
+        create(:registration_user_registration, :pending,
+               user: user, registration_campaign: campaign)
+
+        patch(unsubscribe_lecture_path,
+              params: { lecture: { id: lecture.id,
+                                   parent: "next_term_subscribed" } },
+              xhr: true)
+
+        expect(response.body).not_to include("emptyNextTermStuff")
+      end
+
       # A card outside the running term names its term, and the card the
       # response renders back has to keep it.
       it "keeps the term on the card it renders back" do

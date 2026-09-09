@@ -102,6 +102,9 @@ class ProfileController < ApplicationController
                  when "current_subscribed" then current_user.current_subscribed_lectures
                                                             .empty?
                  when "inactive" then current_user.inactive_lectures.empty?
+                 when "next_term_subscribed"
+                   current_user.next_term_lectures.empty? &&
+                   current_user.next_term_registered_lectures.empty?
     end
   end
 

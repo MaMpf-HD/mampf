@@ -102,10 +102,10 @@
             </div>
           <% end %>
 
-          <% if @next_term_stuff.empty? && @next_term_pending.empty? %>
-            <div id="emptyNextTermStuff">
-              <%= t("profile.no_next_term_stuff") %>
-            </div>
+          <%= tag.div id: "emptyNextTermStuff",
+                      style: (@next_term_stuff.any? || @next_term_pending.any?) ?
+                               "display: none;" : "" do %>
+            <%= t("profile.no_next_term_stuff") %>
           <% end %>
         </div>
       </div>

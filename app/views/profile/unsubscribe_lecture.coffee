@@ -5,6 +5,8 @@ $card.remove()
 <% if @none_left %>
 <% if @parent == 'current_subscribed' %>
 $('#emptyCurrentStuff').show()
+<% elsif @parent == 'next_term_subscribed' %>
+$('#emptyNextTermStuff').show()
 <% else %>
 $('#emptyInactiveLectures').show()
 <% end %>
