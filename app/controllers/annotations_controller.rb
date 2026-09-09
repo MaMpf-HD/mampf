@@ -217,13 +217,18 @@ class AnnotationsController < ApplicationController
     def annotations_by_lecture(annotations, is_shared: false)
       annotations
         .map { |a| extract_annotation_overview_information(a, is_shared) }
-        .group_by { |annotation| annotation[:lecture] }
-        .sort_by { |lecture, _annotations| lecture.updated_at }.reverse.to_h
-        # Instead of the full lecture object, we only need its title,
-        # and also not as value anymore for individual annotations.
-        .transform_keys(&:title)
+        .reject { |annotation| annotation[:lecture].nil? }
+        # Grouped by the heading rather than by the record behind it: a
+        # term-independent lecture is titled after its course, so the two would
+        # end up as separate groups of which only one survives being keyed by
+        # title.
+        .group_by { |annotation| annotation[:lecture].title }
+        .sort_by { |_title, annos| annos.filter_map { |a| a[:lecture].updated_at }.max }
+        .reverse.to_h
         .transform_values { |annos| annos.map { |a| a.except(:lecture) } }
-        .transform_values { |annos| annos.sort_by { |a| a[:created_at] }.reverse }
+        # Newest first, by the timestamp the entry actually carries -- and the
+        # one it shows.
+        .transform_values { |annos| annos.sort_by { |a| a[:updated_at] }.reverse }
     end
 
     def extract_annotation_overview_information(annotation, is_shared)
@@ -232,7 +237,9 @@ class AnnotationsController < ApplicationController
         text: annotation.comment_optional,
         color: annotation.color,
         updated_at: annotation.updated_at,
-        lecture: annotation.medium.teachable.lecture,
+        # A medium can hang off a course rather than a lecture, and then the
+        # course is what its annotations are grouped under.
+        lecture: annotation.medium.teachable&.then { |t| t.lecture || t },
         link: helpers.annotation_open_link(annotation, is_shared),
         medium_title: annotation.medium.caption,
         medium_date: annotation.medium.lesson&.date_localized

@@ -13,120 +13,7 @@ describe SubmissionsController do
     sign_in user
   end
 
-  context "when feature flag roster_maintenance is enabled" do
-    before do
-      Flipper.enable(:roster_maintenance)
-      Flipper.enable(:registration_campaigns)
-    end
-
-    after do
-      Flipper.disable(:roster_maintenance)
-      Flipper.disable(:registration_campaigns)
-    end
-
-    context "when lecture has no roster-eligible tutorials" do
-      describe "#submission_create_params" do
-        before do
-          controller.params = ActionController::Parameters.new(
-            submission: { tutorial_id: other_tutorial.id,
-                          assignment_id: assignment.id }
-          )
-        end
-        it "uses tutorial_id with from the params" do
-          permitted = controller.send(:submission_create_params)
-          expect(permitted[:tutorial_id]).to eq(other_tutorial.id)
-        end
-      end
-
-      describe "#submission_update_params" do
-        before do
-          controller.params = ActionController::Parameters.new(
-            submission: { tutorial_id: other_tutorial.id,
-                          assignment_id: assignment.id }
-          )
-        end
-        it "uses tutorial_id with from the params" do
-          controller.instance_variable_set(:@submission, submission)
-          permitted = controller.send(:submission_update_params)
-          expect(permitted[:tutorial_id]).to eq(other_tutorial.id)
-        end
-      end
-    end
-
-    context "when lecture has roster-eligible tutorials but user is not rostered" do
-      before do
-        # create a tutorial membership for another user in the same lecture
-        # so that the lecture has roster-eligible tutorials,
-        # but the user is not rostered in any of them
-        other_user = create(:confirmed_user)
-        create(:lecture_membership, lecture: lecture, user: user)
-        create(:tutorial_membership, tutorial: other_tutorial, user: other_user)
-      end
-      describe "#submission_create_params" do
-        before do
-          controller.params = ActionController::Parameters.new(
-            submission: { tutorial_id: other_tutorial.id,
-                          assignment_id: assignment.id }
-          )
-        end
-
-        it "raises an error instead of silently nilling out tutorial_id" do
-          expect { controller.send(:submission_create_params) }
-            .to raise_error(SubmissionsController::TutorialNotRosteredError)
-        end
-      end
-
-      describe "#submission_update_params" do
-        before do
-          controller.params = ActionController::Parameters.new(
-            submission: { tutorial_id: other_tutorial.id,
-                          assignment_id: assignment.id }
-          )
-          controller.instance_variable_set(:@submission, submission)
-        end
-
-        it "raises an error instead of silently nilling out tutorial_id" do
-          expect { controller.send(:submission_update_params) }
-            .to raise_error(SubmissionsController::TutorialNotRosteredError)
-        end
-      end
-    end
-
-    context "when lecture has roster-eligible tutorials and student is enrolled" do
-      before do
-        create(:lecture_membership, lecture: lecture, user: user)
-        create(:tutorial_membership, tutorial: tutorial, user: user)
-      end
-      describe "#submission_create_params" do
-        before do
-          controller.params = ActionController::Parameters.new(
-            submission: { tutorial_id: tutorial.id,
-                          assignment_id: assignment.id }
-          )
-        end
-        it "overrides tutorial_id with rosterized tutorial id" do
-          permitted = controller.send(:submission_create_params)
-          expect(permitted[:tutorial_id]).to eq(tutorial.id)
-        end
-      end
-
-      describe "#submission_update_params" do
-        before do
-          controller.params = ActionController::Parameters.new(
-            submission: { tutorial_id: other_tutorial.id,
-                          assignment_id: assignment.id }
-          )
-        end
-        it "overrides tutorial_id with rosterized tutorial id" do
-          controller.instance_variable_set(:@submission, submission)
-          permitted = controller.send(:submission_update_params)
-          expect(permitted[:tutorial_id]).to eq(tutorial.id)
-        end
-      end
-    end
-  end
-
-  context "when feature flag not enabled" do
+  context "when lecture has no roster-eligible tutorials" do
     describe "#submission_create_params" do
       before do
         controller.params = ActionController::Parameters.new(
@@ -134,7 +21,7 @@ describe SubmissionsController do
                         assignment_id: assignment.id }
         )
       end
-      it "uses tutorial_id with from the params" do
+      it "uses the tutorial_id from the params" do
         permitted = controller.send(:submission_create_params)
         expect(permitted[:tutorial_id]).to eq(other_tutorial.id)
       end
@@ -147,10 +34,82 @@ describe SubmissionsController do
                         assignment_id: assignment.id }
         )
       end
-      it "uses tutorial_id with from the params" do
+      it "uses the tutorial_id from the params" do
         controller.instance_variable_set(:@submission, submission)
         permitted = controller.send(:submission_update_params)
         expect(permitted[:tutorial_id]).to eq(other_tutorial.id)
+      end
+    end
+  end
+
+  context "when lecture has roster-eligible tutorials but user is not rostered" do
+    before do
+      # create a tutorial membership for another user in the same lecture
+      # so that the lecture has roster-eligible tutorials,
+      # but the user is not rostered in any of them
+      other_user = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: user)
+      create(:tutorial_membership, tutorial: other_tutorial, user: other_user)
+    end
+    describe "#submission_create_params" do
+      before do
+        controller.params = ActionController::Parameters.new(
+          submission: { tutorial_id: other_tutorial.id,
+                        assignment_id: assignment.id }
+        )
+      end
+
+      it "raises an error instead of silently nilling out tutorial_id" do
+        expect { controller.send(:submission_create_params) }
+          .to raise_error(SubmissionsController::TutorialNotRosteredError)
+      end
+    end
+
+    describe "#submission_update_params" do
+      before do
+        controller.params = ActionController::Parameters.new(
+          submission: { tutorial_id: other_tutorial.id,
+                        assignment_id: assignment.id }
+        )
+        controller.instance_variable_set(:@submission, submission)
+      end
+
+      it "raises an error instead of silently nilling out tutorial_id" do
+        expect { controller.send(:submission_update_params) }
+          .to raise_error(SubmissionsController::TutorialNotRosteredError)
+      end
+    end
+  end
+
+  context "when lecture has roster-eligible tutorials and student is enrolled" do
+    before do
+      create(:lecture_membership, lecture: lecture, user: user)
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+    end
+    describe "#submission_create_params" do
+      before do
+        controller.params = ActionController::Parameters.new(
+          submission: { tutorial_id: tutorial.id,
+                        assignment_id: assignment.id }
+        )
+      end
+      it "overrides tutorial_id with rosterized tutorial id" do
+        permitted = controller.send(:submission_create_params)
+        expect(permitted[:tutorial_id]).to eq(tutorial.id)
+      end
+    end
+
+    describe "#submission_update_params" do
+      before do
+        controller.params = ActionController::Parameters.new(
+          submission: { tutorial_id: other_tutorial.id,
+                        assignment_id: assignment.id }
+        )
+      end
+      it "overrides tutorial_id with rosterized tutorial id" do
+        controller.instance_variable_set(:@submission, submission)
+        permitted = controller.send(:submission_update_params)
+        expect(permitted[:tutorial_id]).to eq(tutorial.id)
       end
     end
   end

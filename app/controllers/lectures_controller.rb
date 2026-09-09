@@ -19,8 +19,6 @@ class LecturesController < ApplicationController
   end
 
   def show
-    return if redirect_to_vignettes_landing
-
     if lecture_home_landing_page?
       redirect_to lecture_home_path(@lecture)
     else
@@ -30,8 +28,6 @@ class LecturesController < ApplicationController
 
   def outline
     authorize! :show, @lecture
-    return if redirect_to_vignettes_landing
-
     render_outline
   end
 
@@ -166,10 +162,16 @@ class LecturesController < ApplicationController
   end
 
   def destroy
-    @lecture.destroy
+    unless @lecture.destroy
+      redirect_to edit_lecture_path(@lecture, tab: "groups"),
+                  alert: lecture_destruction_error,
+                  status: :see_other
+      return
+    end
+
     # destroy all notifications related to this lecture
     destroy_notifications
-    redirect_to administration_path
+    redirect_to administration_path, status: :see_other
   end
 
   # add forum for this lecture
@@ -214,16 +216,10 @@ class LecturesController < ApplicationController
   end
 
   def organizational
-    if @lecture.sort == "vignettes"
-      render template: "lectures/organizational/_organizational",
-             layout: "vignettes/layouts/vignettes_navbar",
-             locals: { lecture: @lecture }
-    else
-      I18n.locale = @lecture.locale_with_inheritance
-      render template: "lectures/organizational/_organizational",
-             locals: { lecture: @lecture },
-             layout: turbo_frame_request? ? "turbo_frame" : "application"
-    end
+    I18n.locale = @lecture.locale_with_inheritance
+    render template: "lectures/organizational/_organizational",
+           locals: { lecture: @lecture },
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def import_media
@@ -306,21 +302,17 @@ class LecturesController < ApplicationController
       current_user.lecture_user_joins
                   .where(lecture_id: page_lecture_ids)
                   .pluck(:lecture_id).to_set
-    if Flipper.enabled?(:registration_campaigns)
-      @registered_lecture_ids =
-        Registration::UserRegistration
-        .where(user: current_user, status: [:pending, :confirmed])
-        .joins(:registration_campaign)
-        .where(registration_campaigns: { campaignable_type: "Lecture",
-                                         campaignable_id: page_lecture_ids })
-        .pluck("registration_campaigns.campaignable_id")
-        .to_set
-    end
-    if Flipper.enabled?(:roster_maintenance)
-      status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
-      @rosterized_lecture_ids = status.rosterized_lecture_ids
-      @self_enrollable_lecture_ids = status.enrollable_lecture_ids
-    end
+    @registered_lecture_ids =
+      Registration::UserRegistration
+      .where(user: current_user, status: [:pending, :confirmed])
+      .joins(:registration_campaign)
+      .where(registration_campaigns: { campaignable_type: "Lecture",
+                                       campaignable_id: page_lecture_ids })
+      .pluck("registration_campaigns.campaignable_id")
+      .to_set
+    status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
+    @rosterized_lecture_ids = status.rosterized_lecture_ids
+    @self_enrollable_lecture_ids = status.enrollable_lecture_ids
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
@@ -436,17 +428,6 @@ class LecturesController < ApplicationController
       end
     end
 
-    def redirect_to_vignettes_landing
-      return false unless @lecture.sort == "vignettes"
-
-      if @lecture.organizational
-        redirect_to lecture_organizational_path(@lecture)
-      else
-        redirect_to lecture_questionnaires_path(@lecture)
-      end
-      true
-    end
-
     def lecture_home_landing_page?
       @lecture.term.present? &&
         Flipper.enabled?(:lecture_home_landing, @lecture.term)
@@ -455,7 +436,7 @@ class LecturesController < ApplicationController
     def lecture_params
       allowed_params = [:term_id, :start_chapter, :absolute_numbering,
                         :start_section, :organizational, :locale,
-                        :organizational_concept, :muesli,
+                        :organizational_concept, :muesli, :vignettes,
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
@@ -496,6 +477,13 @@ class LecturesController < ApplicationController
                                 lecture: @lecture)
                           .new_lecture_email.deliver_later
       end
+    end
+
+    def lecture_destruction_error
+      required_elsewhere = @lecture.registration_campaigns.any?(&:required_by_other_campaign?)
+      return t("controllers.lectures.destruction_failed_prerequisite") if required_elsewhere
+
+      t("controllers.lectures.destruction_failed")
     end
 
     # destroy all notifications related to this lecture

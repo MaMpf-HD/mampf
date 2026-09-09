@@ -1,5 +1,4 @@
 import { test, expect } from "../_support/fixtures";
-import { enableFeature } from "../_support/backend";
 import {
   createReleasedLecture,
   subscribeToLecture,
@@ -7,11 +6,6 @@ import {
 import { CampaignRegistrationPage } from "../page-objects/campaign_registrations_page";
 
 test.describe("student self-enrollment", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "registration_campaigns");
-    await enableFeature(request, "roster_maintenance");
-  });
-
   test("adds and removes the student from a self-managed tutorial", async ({
     factory,
     student,

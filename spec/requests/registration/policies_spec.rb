@@ -9,7 +9,6 @@ RSpec.describe("Registration::Policies", type: :request) do
   end
 
   before do
-    Flipper.enable(:registration_campaigns)
     create(:editable_user_join, user: editor, editable: lecture)
   end
 

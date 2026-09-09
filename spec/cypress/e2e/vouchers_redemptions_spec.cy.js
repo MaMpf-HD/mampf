@@ -10,7 +10,9 @@ function testVoucherRedemptionWithNothingToClaim(context, role, itemType) {
 
   cy.then(() => {
     helpers.visitEditPage(context, itemType);
-    helpers.verifyNoClaimsYetButUserEligibleForRole(context, role);
+    if (itemType === "talk") {
+      helpers.verifyNoTalksYet(context);
+    }
     helpers.verifyRoleNotification(context, role);
     helpers.verifyNothingClaimedInNotification(context, itemType);
   });
@@ -35,10 +37,12 @@ function testVoucherRedemptionWithSomethingClaimed(context, itemType, role) {
   helpers.verifyLectureIsSubscribed(context);
   helpers.logoutAndLoginAsTeacher(context);
 
-  cy.then(() => {
-    helpers.visitEditPage(context, itemType);
-    helpers.verifyClaimsContainUserName(context, itemType, itemIds);
-  });
+  if (itemType === "talk") {
+    cy.then(() => {
+      helpers.visitEditPage(context, itemType);
+      helpers.verifyClaimsContainUserName(context, itemIds);
+    });
+  }
 
   cy.then(() => {
     helpers.verifyRoleNotification(context, role);
@@ -220,31 +224,6 @@ describe("Speaker voucher redemption", () => {
       it("displays a message that the user is already a speaker for all talks ", function () {
         testAlreadyRoleForAllItems(this, "talk");
       });
-    });
-  });
-});
-
-describe("User & Redemption deletion", () => {
-  beforeEach(function () {
-    helpers.createRedemptionScenario(this, "tutor");
-  });
-
-  it("after deletion of tutor user, it is no longer selectable", function () {
-    helpers.submitVoucher(this.voucher);
-    helpers.redeemVoucherToBecomeRole(this, "tutor");
-
-    cy.visit("/profile/edit");
-    cy.getBySelector("delete-account-btn").click();
-    cy.getBySelector("delete-account-pwd-field").type(this.user.password);
-
-    cy.intercept("POST", "/users*").as("deleteUserRequest");
-    cy.getBySelector("delete-account-confirm-btn").click();
-    cy.wait("@deleteUserRequest");
-    cy.getBySelector("login-form").should("be.visible");
-
-    cy.login(this.teacher).then(() => {
-      helpers.visitEditPage(this, "tutorial");
-      helpers.verifyNoTutorialsButUserEligibleAsTutor(this, false);
     });
   });
 });

@@ -50,11 +50,7 @@ class MediaController < ApplicationController
       }
     )
 
-    if @lecture.sort == "vignettes"
-      render layout: "vignettes/layouts/vignettes_navbar"
-    else
-      render layout: turbo_frame_request? ? "turbo_frame" : "application"
-    end
+    render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def show

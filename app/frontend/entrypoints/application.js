@@ -17,6 +17,9 @@ import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
 
 import "@popperjs/core";
+// Before Trix: a server-rendered editor upgrades while Trix is evaluated, and
+// the listeners have to be there when it does.
+import "~/uploads/trix_attachments";
 import "trix";
 
 // Custom JS needed on every page
@@ -46,13 +49,15 @@ import "~/js/quizzes.coffee";
 import "~/js/referrals.coffee";
 import "~/js/remarks.coffee";
 import "~/js/sections.coffee";
-import "~/js/submissions.coffee";
 import "~/js/tags.coffee";
 import "~/js/tex_preview.coffee";
 import "~/js/tutorials.coffee";
-import "~/js/upload.coffee";
 import "~/js/users.coffee";
 import "~/js/vertices.coffee";
+
+import "@uppy/core/css/style.min.css";
+import "@uppy/dashboard/css/style.min.css";
+import "~/uploads/uppy.scss";
 
 // Rails UJS
 // https://github.com/rails/rails/issues/49499#issuecomment-1749086834

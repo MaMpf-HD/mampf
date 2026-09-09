@@ -79,10 +79,7 @@ RSpec.describe(Voucher, type: :model) do
 
     describe "#ensure_role_valid_for_lecture" do
       context "when the role is not offered for the lecture" do
-        before { Flipper.enable(:roster_maintenance) }
-        after { Flipper.disable(:roster_maintenance) }
-
-        # roster_maintenance excludes :tutor from a seminar's offered roles
+        # a seminar's groups are talks, so it offers no tutor role
         let(:voucher) { build(:voucher, :tutor, lecture: seminar) }
 
         it "rolls back and adds an error" do
@@ -132,22 +129,8 @@ RSpec.describe(Voucher, type: :model) do
   describe "class methods" do
     describe ".roles_for_lecture" do
       context "when lecture is a seminar" do
-        after { Flipper.disable(:roster_maintenance) }
-
-        context "when roster_maintenance is enabled" do
-          before { Flipper.enable(:roster_maintenance) }
-
-          it "returns all roles except :tutor" do
-            expect(Voucher.roles_for_lecture(seminar)).to eq(Voucher::ROLE_HASH.keys - [:tutor])
-          end
-        end
-
-        context "when roster_maintenance is disabled" do
-          before { Flipper.disable(:roster_maintenance) }
-
-          it "returns all roles" do
-            expect(Voucher.roles_for_lecture(seminar)).to eq(Voucher::ROLE_HASH.keys)
-          end
+        it "returns all roles except :tutor" do
+          expect(Voucher.roles_for_lecture(seminar)).to eq(Voucher::ROLE_HASH.keys - [:tutor])
         end
       end
 

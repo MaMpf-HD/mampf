@@ -24,8 +24,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
   before do
     create(:lecture_user_join, user: user, lecture: lecture)
     sign_in user
-    Flipper.enable(:registration_campaigns)
-    Flipper.enable(:roster_maintenance)
   end
 
   describe "POST /tutorials/:id/roster/self_add" do

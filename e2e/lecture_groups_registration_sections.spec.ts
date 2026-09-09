@@ -1,12 +1,6 @@
-import { enableFeature } from "./_support/backend";
 import { expect, test } from "./_support/fixtures";
 
 test.describe("lecture group registration sections", () => {
-  test.beforeEach(async ({ request }) => {
-    await enableFeature(request, "roster_maintenance");
-    await enableFeature(request, "registration_campaigns");
-  });
-
   test("asks for a section choice when no groups exist yet",
     async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", [], { teacher_id: user.id });

@@ -117,13 +117,9 @@ module ApplicationHelper
   end
 
   # media_sorts
-  def media_sorts(lecture = nil)
-    if lecture && lecture.sort == "vignettes"
-      ["miscellaneous"]
-    else
-      ["lesson_material", "worked_example", "quiz", "repetition",
-       "exercise", "script", "questions", "remarks", "miscellaneous"]
-    end
+  def media_sorts
+    ["lesson_material", "worked_example", "quiz", "repetition",
+     "exercise", "script", "questions", "remarks", "miscellaneous"]
   end
 
   # media_sort -> acronym
@@ -304,15 +300,6 @@ module ApplicationHelper
     current_user.administrated_courses
                 .natural_sort_by(&:title)
                 &.first&.term_independent
-  end
-
-  def main_page_announcements
-    megaphone_icon_str = '<i class="bi bi-megaphone p-2"></i>'
-    separator_str = "<hr class=\"my-3 w-100\">#{megaphone_icon_str}"
-    Announcement.active_on_main
-                .pluck(:details)
-                .join(separator_str)
-                .prepend(megaphone_icon_str)
   end
 
   # Navbar items styling based on which page we are on

@@ -44,17 +44,9 @@ class ProfileController < ApplicationController
     end
   end
 
-  # this is triggered after every sign in
-  # if profile has never been edited user is redirected
+  # Asks users who have not consented yet to do so; everyone else is sent on.
   def check_for_consent
-    if @user.consents
-      redirect_to :root
-      return
-    end
-    return unless @user.consents
-
-    redirect_to edit_profile_path,
-                notice: t("profile.please_update")
+    redirect_to :root if @user.consents
   end
 
   # DSGVO consent action

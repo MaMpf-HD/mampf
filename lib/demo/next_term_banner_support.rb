@@ -24,9 +24,6 @@ module Demo
     def setup!
       ensure_non_production!
 
-      # roster_maintenance + registration_campaigns, reused from the
-      # existing demo bundle
-      Demo::SetupSupport.setup_flags!
       enable_banner_flag!
 
       term = next_term!

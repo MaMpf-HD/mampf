@@ -12,14 +12,6 @@ RSpec.describe("Registration::StudentMessages", type: :request) do
            registration_campaign: campaign, user: create(:confirmed_user))
   end
 
-  before do
-    Flipper.enable(:registration_campaigns)
-  end
-
-  after do
-    Flipper.disable(:registration_campaigns)
-  end
-
   describe "POST /lectures/:lecture_id/student_messages" do
     def send_message(params = {})
       post(lecture_student_messages_path(lecture),

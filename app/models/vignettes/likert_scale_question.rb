@@ -7,6 +7,10 @@ module Vignettes
       strongly_agree: 4
     }.freeze
 
+    def answer_class
+      Vignettes::LikertScaleAnswer
+    end
+
     def labels
       case language&.to_s&.downcase
       when "de"

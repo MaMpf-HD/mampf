@@ -47,6 +47,24 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    DISCARDABLE_STATUSES = ["draft", "open", "closed", "completed"].freeze
+
+    REVERTIBLE_STATUSES = ["open", "closed"].freeze
+
+    DISCARD_BLOCKER_ERRORS = {
+      status: :cannot_delete_active_campaign,
+      registrations: :cannot_discard_with_registrations,
+      allocation: :cannot_discard_after_allocation,
+      prerequisite: :cannot_discard_as_prerequisite
+    }.freeze
+
+    REVERT_BLOCKER_ERRORS = {
+      status: :cannot_revert_to_draft,
+      registrations: :cannot_revert_with_registrations,
+      allocation: :cannot_revert_after_allocation,
+      prerequisite: :cannot_revert_as_prerequisite
+    }.freeze
+
     validates :registration_deadline, :allocation_mode, :status, presence: true
     validates :description, length: { maximum: 100 }
 
@@ -57,7 +75,7 @@ module Registration
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
 
-    before_destroy :ensure_campaign_is_draft, prepend: true
+    before_destroy :ensure_campaign_is_discardable, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
     before_destroy :collect_registerables_for_release, prepend: true
     after_destroy :release_registerables_from_campaign
@@ -97,8 +115,38 @@ module Registration
                         .exists?(registration_items: { registerable_type: group_type })
     end
 
-    def can_be_deleted?
-      draft?
+    def discardable?
+      discard_blocker.nil?
+    end
+
+    def discard_blocker
+      return :status unless status.in?(DISCARDABLE_STATUSES)
+
+      data_blocker
+    end
+
+    def revertible_to_draft?
+      revert_blocker.nil?
+    end
+
+    # from_status is for cannot_revert_to_draft: while that validation runs,
+    # the record already carries :draft, so it has to ask about the status it
+    # is leaving rather than the one it holds.
+    def revert_blocker(from_status = status)
+      return :status unless from_status.in?(REVERTIBLE_STATUSES)
+
+      data_blocker
+    end
+
+    # Whether a campaign of another lecture requires this one as a prerequisite.
+    def required_by_other_campaign?
+      surviving_prerequisite_policies.exists?
+    end
+
+    def allocation_present?
+      last_allocation_calculated_at.present? ||
+        allocation_decided_at.present? ||
+        materialized_roster_entries?
     end
 
     def total_registrations_count
@@ -333,6 +381,40 @@ module Registration
 
     private
 
+      def data_blocker
+        return :registrations if user_registrations.exists?
+        # Not the allocation timestamps: with no registrations, an allocation
+        # cannot have allocated anybody.
+        return :allocation if materialized_roster_entries?
+        return :prerequisite if referencing_prerequisite_policies.exists?
+
+        nil
+      end
+
+      def referencing_prerequisite_policies
+        Registration::Policy.referencing_campaign(id)
+                            .where.not(registration_campaign_id: id)
+      end
+
+      # Policies that still exist after this campaign's campaignable is deleted,
+      # i.e. those belonging to a campaign of a different lecture.
+      def surviving_prerequisite_policies
+        referencing_prerequisite_policies
+          .joins(:registration_campaign)
+          .where.not("registration_campaigns.campaignable_type = :type " \
+                     "AND registration_campaigns.campaignable_id = :id",
+                     type: campaignable_type, id: campaignable_id)
+      end
+
+      # Asking every type covers whatever this campaign's items point at.
+      def materialized_roster_entries?
+        Rosters::Rosterable::TYPES.any? do |type|
+          Rosters::Rosterable.class_for(type)
+                             .roster_join_class
+                             .exists?(source_campaign_id: id)
+        end
+      end
+
       def remove_forced_assignments_with_preferences!
         subquery = Registration::UserRegistration
                    .select(:user_id)
@@ -400,10 +482,12 @@ module Registration
       end
 
       def ensure_not_referenced_as_prerequisite
-        referencing_policies = Registration::Policy
-                               .referencing_campaign(id)
-                               .where.not(registration_campaign_id: id)
-                               .includes(:registration_campaign)
+        scope = if destroyed_by_association
+          surviving_prerequisite_policies
+        else
+          referencing_prerequisite_policies
+        end
+        referencing_policies = scope.includes(:registration_campaign)
 
         return unless referencing_policies.any?
 
@@ -430,11 +514,26 @@ module Registration
         end
       end
 
-      def ensure_campaign_is_draft
-        return if draft?
+      def ensure_campaign_is_discardable
+        # lock! reloads the record, and reloading clears
+        # destroyed_by_association - so read it before locking.
+        by_association = destroyed_by_association
 
-        errors.add(:base, :cannot_delete_active_campaign)
+        lock!
+
+        blocker = by_association ? cascade_blocker : discard_blocker
+        return if blocker.nil?
+
+        errors.add(:base, DISCARD_BLOCKER_ERRORS.fetch(blocker))
         throw(:abort)
+      end
+
+      # The lecture is being deleted and takes this campaign along; its own
+      # rules decided that. What still has to hold is the foreign key: roster
+      # rows point here through source_campaign_id, and the lecture deletes
+      # campaigns before the groups that hold those rows.
+      def cascade_blocker
+        :allocation if materialized_roster_entries?
       end
 
       def allocation_mode_frozen
@@ -446,7 +545,10 @@ module Registration
       def cannot_revert_to_draft
         return unless status_changed? && draft?
 
-        errors.add(:status, :cannot_revert_to_draft)
+        blocker = revert_blocker(status_was)
+        return if blocker.nil?
+
+        errors.add(:base, REVERT_BLOCKER_ERRORS.fetch(blocker))
       end
 
       def registration_deadline_future_if_open

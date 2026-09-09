@@ -8,7 +8,9 @@ class Announcement < ApplicationRecord
 
   validates :details, presence: true
 
-  scope :active_on_main, -> { where(on_main_page: true, lecture: nil) }
+  scope :active_on_main, lambda {
+    where(on_main_page: true, lecture: nil).order(created_at: :desc)
+  }
 
   # does there (still) exist a notification for the announcement for
   # the given user

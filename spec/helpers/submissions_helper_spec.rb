@@ -9,21 +9,13 @@ RSpec.describe(SubmissionsHelper, type: :helper) do
 
   before do
     allow(helper).to receive(:current_user).and_return(user)
-
-    Flipper.enable(:roster_maintenance)
-    Flipper.enable(:registration_campaigns)
-  end
-
-  after do
-    Flipper.disable(:roster_maintenance)
-    Flipper.disable(:registration_campaigns)
   end
 
   describe "#enabled_roster_for_lecture?" do
     before { create(:tutorial_membership, tutorial: tutorial) } # makes lecture roster-eligible
 
-    it "only queries roster_eligible_tutorials? once per lecture (memoized)" do
-      expect(lecture).to receive(:roster_eligible_tutorials?).once.and_call_original
+    it "only queries roster_managed? once per lecture (memoized)" do
+      expect(lecture).to receive(:roster_managed?).once.and_call_original
 
       first  = helper.enabled_roster_for_lecture?(lecture)
       second = helper.enabled_roster_for_lecture?(lecture)

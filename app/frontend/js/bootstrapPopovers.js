@@ -1,6 +1,6 @@
 import { Popover } from "bootstrap";
 
-$(document).on("turbo:load", () => {
+$(document).on("turbo:load turbo:render turbo:frame-load", () => {
   // Initialize Bootstrap popovers on page load
   initBootstrapPopovers();
 });
@@ -20,6 +20,6 @@ $(document).on("turbo:load", () => {
 window.initBootstrapPopovers = function () {
   const popoverHtmlElements = document.querySelectorAll('[data-bs-toggle="popover"]');
   for (const element of popoverHtmlElements) {
-    new Popover(element);
+    Popover.getOrCreateInstance(element);
   }
 };

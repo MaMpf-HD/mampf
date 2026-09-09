@@ -562,29 +562,78 @@ Grade scheme functionality is implemented in `Assessment::GradeSchemesController
 
 ### Assessments (Lectures - Student)
 
-```admonish tip "Student Results Views"
-Students can view their published assignment results, including overall progress and detailed feedback on individual assignments. Results are only visible after tutors publish grades.
+```admonish tip "One page per lecture: the submissions hub"
+Students get one view for assignments, `/lectures/:id/submissions`. It answers the three
+questions they arrive with — hand in, see what I got, know whether it will be enough for
+the exam. The four-bucket card grid it replaces only ever answered the first.
 ```
 
 #### Screens
 
 | View | Key elements | Mockup |
 |------|--------------|--------|
-| Results Overview | Two-column layout: left sidebar with progress summary (large 80% display, points 192/240, graded 6/8, average 24/30), certification status card (passed/failed/pending with link to Performance Overview), filter buttons (All/Graded/Pending); right column with compact assignment list (condensed cards showing title, dates, score, view button), collapsible section for older assignments | [Mockup](../mockups/assessments_student_results_overview.html) |
-| Results Detail (Assignment) | Compact single-page layout with assignment header (title, dates, grader, score 28/30), condensed team info (single row), simple task breakdown table (just task numbers and points, no descriptions or percentages), optional short tutor comment, submitted files (student's submission + tutor's correction PDF), progress sidebar (overall points 192/240, certification status), action buttons | [Mockup](../mockups/assessments_student_results_detail.html) |
+| Submissions Hub | Head in two parts: the sheet that is due as the page's only bordered card (left), the standing as an unframed panel — own points, a bar carrying the admission threshold, one line per condition of the rule (right). Below it a news band, then one row per sheet: sheet, status, own points. A row opens into points per problem, the correction PDF, both files, team and dates. | [Mockup](../mockups/submissions_hub_calm.html) |
 | Results Detail (Exam) | Single-page layout with exam header (title, date/location, grader info). Large grade display (1.3) with pass/fail badge. Score display (55.0/60, 92%). Task breakdown table showing points per task. Full grading scheme table with your grade highlighted. Optional grader comment. Registration info. Class statistics (average, highest/lowest, pass rate). Lecture performance status sidebar. Download certificate button. | [Mockup](../mockups/exams_student_results_detail.html) |
+
+```admonish warning "Superseded"
+"Results Overview" and "Results Detail (Assignment)" are gone from this section. They
+described a second student view of the same data — own points, per-task breakdown,
+correction PDF, standing against the rule — and were mapped to an
+`Assessment::ParticipationsController` that has never existed: no controller, no route.
+The hub covers that field for assignments. Their mockups stay in the index as history.
+`11-controllers.md` still documents that controller and needs the same correction.
+"Results Detail (Exam)" is untouched; exams are not assignments.
+```
+
+#### Rules the implementation keeps
+
+These are decisions, not pixels. None of them can be read off the mockup.
+
+- **Own points, on a team submission too.** One file, one correction, but the points hang
+  on `Assessment::Participation` per person. Two partners routinely have very different
+  scores on the same sheet, so the page never presents a submission's points.
+- **Two facts per sheet, never one.** The correction scan belongs to the `Submission`, so
+  to the whole team; the points belong to the person's participation. They rarely arrive
+  together and both orders are normal — scans uploaded first and typed up days later, or
+  points read off the paper in the tutorial and scanned afterwards. The view never infers
+  one from the other, in either direction.
+- **"New" means: something changed since this reader last looked that they may see.** Not
+  "corrected". The one rule covers a scan arriving, points being entered, and a later
+  correction of either. It is told twice — a news band above the list, a marker in the
+  row's left margin — and the seen state is per person **and** per submission, because a
+  partner reading the correction must not clear anybody else's marker.
+- **The number is the status.** A marked sheet carries its points and no badge. A badge
+  appears only where no number can stand, in three colours: grey (nothing to do yet),
+  amber (you have to act), red (this cost points). Never green.
+- **The deadline is shown where it acts** — on the open sheet and during the grace period.
+  It is not a column in the list; three weeks on, only the sheet and the result matter,
+  and the reader's own hand-in time is in the fold.
+- **Admission is visible but quiet.** The rule is shown as it was set, one line per
+  condition with its own standing, never as a computed verdict. The words say whether a
+  condition is settled or still open; colour appears at most once per block and only where
+  nothing can change the outcome any more.
+- **No legacy path.** A sheet without an assessment is a row without points, in the same
+  list. There is no second view for the old world.
+
+```admonish danger "Do not pull these apart"
+`submissions/_correction_column`, `_download` and `_other_actions` are rendered by the
+tutor view as well (`tutorials/_submission_row`). Rebuilding the student page must leave
+them working.
+```
 
 #### Flow
 
 ```mermaid
 flowchart LR
   subgraph STUDENT [Student]
-    A[Results Overview<br/>Index Page] -->|Click View Details| B[Results Detail<br/>Show Page]
-    B -->|Back Button| A
-    A -->|Filter: All/Graded/Pending| A
-    A -->|Expand Older Assignments| A
-    B -->|Download Feedback PDF| B
-    B -->|View Assignment Page| C[Assignment Details]
+    A[Submissions Hub] -->|Hand in / replace file| A
+    A -->|Invite, join by code, leave| A
+    A -->|News band: jump to sheet| B[Row opened]
+    A -->|Open a row| B
+    B -->|Points per problem| B
+    B -->|Correction PDF, own submission| B
+    B -->|Marker cleared for this reader| A
+    A -->|Why these conditions| C[Admission detail]
   end
 ```
 
@@ -592,7 +641,31 @@ flowchart LR
 
 | Role | Controller | Actions | Scope/Notes |
 |------|------------|---------|-------------|
-| Student | [Assessment::ParticipationsController](11-controllers.md#assessmentparticipationscontroller) | index, show | Own results (when published). Students can view their assignment results and detailed feedback only after tutors publish them. Results include overall progress tracking, certification status, per-task breakdown, and tutor feedback. |
+| Student | SubmissionsController | index | `GET lectures/:id/submissions`. The hub. Reads `Assignment`, `Submission`, `Assessment::Participation`, `Assessment::TaskPoint` for the sheets, and `StudentPerformance::Record` plus `StudentPerformance::Rule` for the standing. Ten sheets × participation × task points: the query has to be preloaded, not walked. |
+| Student | SubmissionsController | new, create, edit, update, destroy, leave, enter_code, redeem_code, join, invite | The hand-in path, unchanged. It lives in the action card of the sheet that is due. |
+| Student | SubmissionsController | show_manuscript, show_correction | File delivery. `show_correction` has no publication check today — see the open question below. |
+
+```admonish warning "Open before implementation"
+Three preconditions are missing, and the view cannot be finished without them:
+
+1. **There is no `submissions.corrected_at`.** Without a timestamp for the scan, "new"
+   has nothing to compare against; `updated_at` moves on every unrelated change.
+2. **`results_published_at` is written by nobody.** The column exists on both
+   `assessment_assessments` and `assessment_participations`; only the first is ever read
+   (`Assessment::Assessment#results_published?`). Publishing belongs to the point-entry
+   branch, and until it lands the hub cannot gate anything on it.
+3. **The seen-state table is not designed.** That it must be kept per person and per
+   submission is settled; its shape is not.
+```
+
+```admonish question "Undecided: the scan carries the points in handwriting"
+The tutor writes points and remarks on the sheet and scans it; the same points are typed
+into MaMpf separately. While the scan is delivered as soon as it exists and the typed
+points wait for a release, the release holds back the table but not the information — the
+reader takes their points off the PDF first. Whether the scan should fall under the same
+release is open. The view is built so that it works either way: the two facts are shown
+separately and neither is inferred from the other.
+```
 
 ### Assessments (Seminars - Teacher/Editor)
 

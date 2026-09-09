@@ -137,7 +137,7 @@ module Roster
       end
 
       if Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
-        flash.now[:notice] = t("roster.messages.user_moved", user: user.info, target: target.title)
+        flash.now[:notice] = move_notice(user, target)
         flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
       else
         flash.now[:alert] = t("roster.messages.user_not_moved",
@@ -280,6 +280,15 @@ module Roster
 
         @group_type ||= @mparams.group_type
         setup_participants
+      end
+
+      def move_notice(user, target)
+        if @rosterable.is_a?(Tutorial) && target.is_a?(Tutorial)
+          return t("roster.messages.user_moved_between_tutorials",
+                   user: user.info, target: target.title, source: @rosterable.title)
+        end
+
+        t("roster.messages.user_moved", user: user.info, target: target.title)
       end
 
       def find_user

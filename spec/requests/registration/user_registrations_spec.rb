@@ -10,7 +10,6 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   end
 
   before do
-    Flipper.enable(:registration_campaigns)
     sign_in user
   end
 
@@ -103,7 +102,6 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   let(:stub_success) { UserRegistrations::Handler::Result.new(true, []) }
 
   before do
-    Flipper.enable(:registration_campaigns)
     create(:lecture_user_join, user: user, lecture: lecture)
     create(:lecture_user_join, user: user, lecture: seminar)
     sign_in user

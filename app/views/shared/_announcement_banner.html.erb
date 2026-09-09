@@ -1,0 +1,6 @@
+<% if site_announcements_html.present? %>
+  <div class="alert alert-warning mb-0 rounded-0 border-0 text-center fw-medium py-2 px-3"
+       role="alert">
+    <%= sanitize(site_announcements_html) %>
+  </div>
+<% end %>

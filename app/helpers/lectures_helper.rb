@@ -2,7 +2,6 @@
 module LecturesHelper
   def registration_sidebar_visible?(lecture)
     return false unless lecture && user_signed_in?
-    return false unless Flipper.enabled?(:registration_campaigns)
 
     RegistrationUserRegistrationAbility.new(current_user).can?(:index, lecture)
   end
@@ -10,9 +9,22 @@ module LecturesHelper
   # Whether the lecture currently has an open registration campaign
   # (one building block of the search-card badges, see _lecture.html.erb).
   def registration_open?(lecture)
-    return false unless Flipper.enabled?(:registration_campaigns)
-
     lecture.registration_campaigns.any?(&:open_for_registrations?)
+  end
+
+  # Deleting a lecture deletes its campaigns and every registration in them,
+  # so the confirmation counts both.
+  def lecture_destruction_confirmation(lecture)
+    campaigns = lecture.registration_campaigns.count
+    return t("confirmation.generic") if campaigns.zero?
+
+    registrations = Registration::UserRegistration
+                    .where(registration_campaign: lecture.registration_campaigns).count
+
+    t("admin.lecture.confirm_delete_with_campaigns",
+      campaigns: t("admin.lecture.confirm_delete_campaigns_count", count: campaigns),
+      registrations: t("admin.lecture.confirm_delete_registrations_count",
+                       count: registrations))
   end
 
   # is the current user allowed to delete the given lecture and is it

@@ -11,8 +11,8 @@ RSpec.describe("Auth registrations", type: :request) do
       {
         user: {
           email: email,
-          password: "password",
-          password_confirmation: "password",
+          password: "super-secure-horse-battery-staple",
+          password_confirmation: "super-secure-horse-battery-staple",
           consents: "1",
           locale: "en"
         }
@@ -30,6 +30,16 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(created_user.email).to eq(email)
       expect(created_user).not_to be_confirmed
       expect(ActionMailer::Base.deliveries.last.to).to include(email)
+    end
+
+    it "does not create a user without consent to the privacy policy" do
+      allow(Altcha).to receive(:verify).and_return(true)
+      params = base_params.merge(altcha: "valid")
+      params[:user] = params[:user].except(:consents)
+
+      expect do
+        post(user_registration_path, params: params)
+      end.not_to change(User, :count)
     end
 
     it "does not create a user when captcha validation fails" do
@@ -109,6 +119,186 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(user.reload.email).not_to eq(new_email)
       expect(user.unconfirmed_email).to eq(new_email)
       expect(ActionMailer::Base.deliveries.last.to).to include(new_email)
+    end
+
+    it "redirects stale users away from authenticated pages until their password changes" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get news_path
+
+      expect(response).to redirect_to(edit_user_registration_path)
+    end
+
+    it "offers a way out while the change is due" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get edit_user_registration_path
+
+      expect(response.body).to include(destroy_user_session_path(locale: :en))
+
+      delete destroy_user_session_path
+
+      expect(controller.current_user).to be_nil
+    end
+
+    it "says so when the required password is left blank" do
+      password = "zitrone-diskette-vorhang-42"
+      user = create(:confirmed_user_en, password: password)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      put user_registration_path,
+          params: { user: { current_password: password, password: "",
+                            password_confirmation: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(CGI.escapeHTML(I18n.t("errors.messages.blank")))
+      expect(flash[:notice]).to be_nil
+    end
+
+    it "refuses the old password as the new one while a change is due" do
+      password = "zitrone-diskette-vorhang-42"
+      user = create(:confirmed_user_en, password: password)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      put user_registration_path,
+          params: { user: { current_password: password,
+                            password: password,
+                            password_confirmation: password } }
+
+      expect(response.body).to include(I18n.t("errors.messages.password_unchanged"))
+      expect(user.reload).to be_password_change_required
+    end
+
+    it "sends a first-time user to their profile once the new password is set" do
+      user = create(:confirmed_user_en, password: "zitrone-diskette-vorhang-42")
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil,
+                          sign_in_count: 0)
+      # rubocop:enable Rails/SkipsModelValidations
+
+      post user_session_path, params: { user: { email: user.email,
+                                                password: "zitrone-diskette-vorhang-42" } }
+      put user_registration_path,
+          params: { user: { current_password: "zitrone-diskette-vorhang-42",
+                            password: "andere-melone-tafel-77",
+                            password_confirmation: "andere-melone-tafel-77" } }
+
+      expect(response).to redirect_to(edit_profile_path)
+    end
+
+    it "lets a frame request leave its frame instead of swapping in the prompt" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get news_path, headers: { "Turbo-Frame" => "some-frame" }
+
+      expect(response.body)
+        .to include('<meta name="turbo-visit-control" content="reload">')
+    end
+
+    it "shows the forced password change prompt for stale users" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      get edit_user_registration_path
+
+      expect(response.body)
+        .to include(I18n.t("devise.edit.password_change_required"))
+      expect(response.body).not_to include(I18n.t("devise.edit.email"))
+    end
+
+    it "does not allow password_policy_version to be changed through update params" do
+      user = create(:confirmed_user_en)
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      put user_registration_path, params: {
+        user: {
+          email: user.email,
+          current_password: user.password,
+          password: "",
+          password_confirmation: "",
+          password_policy_version: User::CURRENT_PASSWORD_POLICY_VERSION
+        }
+      }
+
+      expect(user.reload.password_policy_version).to eq(0)
+      expect(user).to be_password_change_required
+    end
+  end
+
+  describe "GET /users/edit" do
+    it "renders stable back and language switch links" do
+      user = create(:confirmed_user_en)
+      sign_in user
+
+      get edit_user_registration_path(locale: :en)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(edit_profile_path)
+      expect(response.body).to include(edit_user_registration_path(locale: :de))
+    end
+
+    it "points the language switch at the form after a failed update" do
+      user = create(:confirmed_user_en)
+      sign_in user
+
+      put user_registration_path(locale: :en), params: {
+        user: { email: user.email, current_password: "not-the-password",
+                password: "", password_confirmation: "" }
+      }
+
+      switch_target = response.body[%r{<div id="language-switch".*?</div>}m]
+                              .to_s[/href="([^"]*)"/, 1]
+      expect(switch_target).to include(edit_user_registration_path)
+    end
+
+    it "keeps the switched locale across a submit" do
+      user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
+      sign_in user
+
+      get edit_user_registration_path(locale: :de)
+      form_action = response.body[/action="([^"]*users[^"]*)"/, 1].sub("&amp;", "&")
+
+      put form_action, params: {
+        user: { email: user.email, current_password: "not-the-password",
+                password: "", password_confirmation: "" }
+      }
+
+      expect(response.body).to include(I18n.with_locale(:de) { I18n.t("devise.edit.title") })
+    end
+
+    it "switches locale for signed-in users when a locale param is provided" do
+      user = create(:confirmed_user_en)
+      sign_in user
+
+      get edit_user_registration_path(locale: :de)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.with_locale(:de) { I18n.t("devise.edit.title") })
+      expect(user.reload.locale).to eq("en")
     end
   end
 end
