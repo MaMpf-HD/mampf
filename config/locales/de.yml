@@ -3049,15 +3049,23 @@ de:
       standing:
         mark_percentage: "%{percentage} %"
         heading: Klausurzulassung
-        of_points: "von %{max} Punkten"
+        of_due: "von %{max} bisher fälligen Punkten"
+        of_needed: "von %{max} nötigen Punkten"
         no_max: "von noch keinen Punkten"
         nothing_marked: Es ist noch nichts korrigiert.
-        pending: "%{points} Punkte werden noch korrigiert."
+        awaiting_marks:
+          one: >-
+            1 Blatt mit %{points} der %{max} fälligen Punkte ist noch nicht
+            korrigiert.
+          other: >-
+            %{count} Blätter mit insgesamt %{points} der %{max} fälligen Punkte
+            sind noch nicht korrigiert.
         needed: "%{points} nötig"
         bar_plain: "%{percentage} Prozent der Punkte erreicht"
+        bar_absolute: "%{points} von den nötigen %{needed} Punkten"
         bar_with_mark: "%{percentage} Prozent erreicht, %{required} Prozent nötig"
         condition_percentage: "%{percentage} % der Punkte"
-        condition_absolute: "%{points} von %{max} Punkten"
+        condition_absolute: "%{points} Punkte"
         you_have_percent: "Du hast %{percentage} %"
         you_have_points: "Du hast %{points}"
         you_have_value: "Du hast %{value} %{unit}"

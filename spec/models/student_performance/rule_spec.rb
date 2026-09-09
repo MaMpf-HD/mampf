@@ -203,27 +203,34 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
     end
   end
 
-  # The mark on the student's bar: what this rule asks of them in points.
+  # What this rule asks of one student, out of the maximum handed in. Which
+  # maximum that is belongs to the caller: the mark on the standing bar is
+  # drawn against the points due so far, the reachability test against the
+  # whole term.
   describe "#required_points" do
     let(:lecture) { FactoryBot.create(:lecture) }
 
-    def record_with(max)
-      FactoryBot.build(:student_performance_record,
-                       points_max_materialized: max)
-    end
-
-    it "takes the percentage of what the lecture is worth" do
+    it "takes the percentage of the maximum it is given" do
       rule = FactoryBot.build(:student_performance_rule, :with_percentage,
                               lecture: lecture, min_percentage: 50)
 
-      expect(rule.required_points(record_with(176))).to eq(88)
+      expect(rule.required_points(176)).to eq(88)
+    end
+
+    # The same rule, two questions, two answers - which is the point of asking
+    # with a maximum rather than with a record.
+    it "answers the same rule differently for a smaller maximum" do
+      rule = FactoryBot.build(:student_performance_rule, :with_percentage,
+                              lecture: lecture, min_percentage: 50)
+
+      expect(rule.required_points(36)).to eq(18)
     end
 
     it "hands an absolute threshold back as it stands" do
       rule = FactoryBot.build(:student_performance_rule, :with_absolute_points,
                               lecture: lecture, min_points_absolute: 90)
 
-      expect(rule.required_points(record_with(176))).to eq(90)
+      expect(rule.required_points(176)).to eq(90)
     end
 
     it "asks for nothing where the rule sets no threshold" do
@@ -232,19 +239,19 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
                               lecture: lecture,
                               required_achievements: [achievement])
 
-      expect(rule.required_points(record_with(176))).to be_nil
+      expect(rule.required_points(176)).to be_nil
     end
 
     # A percentage of nothing is not a threshold, and a bar drawn against it
     # would claim a ratio that does not exist.
-    it "is nil for a percentage of a lecture that is worth no points" do
+    it "is nil for a percentage of a maximum that is no points" do
       rule = FactoryBot.build(:student_performance_rule, :with_percentage,
                               lecture: lecture, min_percentage: 50)
 
-      expect(rule.required_points(record_with(0))).to be_nil
+      expect(rule.required_points(0)).to be_nil
     end
 
-    it "is nil for a percentage without a record to weigh" do
+    it "is nil for a percentage without a maximum to weigh" do
       rule = FactoryBot.build(:student_performance_rule, :with_percentage,
                               lecture: lecture, min_percentage: 50)
 
@@ -252,7 +259,7 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
     end
 
     # An absolute threshold stands on its own; it needs no scale.
-    it "keeps an absolute threshold even without a record" do
+    it "keeps an absolute threshold even without a maximum" do
       rule = FactoryBot.build(:student_performance_rule, :with_absolute_points,
                               lecture: lecture, min_points_absolute: 90)
 

@@ -71,17 +71,23 @@ test.describe("the standing beside the card", () => {
     const standing = student.page
       .getByRole("complementary", { name: "Exam admission" });
 
-    await expect(standing.getByText("of 24 points")).toBeVisible();
-    // The mark carries the rule, not a number that moves with every new sheet.
+    // The sheet still running is not something the reader has been measured
+    // against: 8 points have come due, not the 24 the lecture has set up.
+    await expect(standing.getByText("of 8 points due so far")).toBeVisible();
+    // Bar and mark are shares of the same thing, so the mark is the rule's own
+    // number.
     await expect(standing.getByText("50 %", { exact: true })).toBeVisible();
     await expect(standing.getByText("50 % of the points")).toBeVisible();
     await expect(standing.getByText("Blackboard Talk")).toBeVisible();
     await expect(standing.getByText("not recorded yet")).toBeVisible();
   });
 
-  // Handing in makes a sheet count among the points still being marked, and
-  // that number lives in the standing, not on the card.
-  test("moves with the card when a sheet is handed in", async ({
+  // Handing in early changes nothing here, and that is the point: the sheet is
+  // not in the reckoning until its deadline has passed, so the block must not
+  // start counting it - neither in what is due nor among what is waiting to be
+  // marked. The answer carries the block all the same, so that it can never
+  // lag the card.
+  test("stays put when a sheet is handed in before its deadline", async ({
     factory,
     teacher,
     student,
@@ -94,11 +100,11 @@ test.describe("the standing beside the card", () => {
     await page.goto();
     const standing = student.page
       .getByRole("complementary", { name: "Exam admission" });
-    await expect(standing.getByText("still being marked")).toHaveCount(0);
+    await expect(standing.getByText("of 8 points due so far")).toBeVisible();
 
     await page.createSubmission();
 
-    await expect(standing.getByText("16 points are still being marked."))
-      .toBeVisible();
+    await expect(standing.getByText("of 8 points due so far")).toBeVisible();
+    await expect(standing.getByText("not marked yet")).toHaveCount(0);
   });
 });

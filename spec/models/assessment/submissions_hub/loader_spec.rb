@@ -462,6 +462,87 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
+  # What the reader has been measured against so far. The record cannot say this
+  # either: its maximum counts every sheet the lecture has set up, the one still
+  # running included, so after two sheets full marks read as a fraction of the
+  # term. `StudentPerformance::DuePoints` draws the same line for the
+  # performance table, and the two must not part company.
+  describe "the points due so far" do
+    it "counts a sheet whose deadline is past" do
+      create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                        max_points: [4, 6])
+
+      expect(result.standing.points_due).to eq(10)
+    end
+
+    it "does not count a sheet that can still be handed in" do
+      create_assignment(title: "Homework 1", deadline: 1.week.from_now,
+                        max_points: [4, 6])
+
+      expect(result.standing.points_due).to be_zero
+    end
+
+    # The grace period counts as part of the deadline here as it does
+    # everywhere else: while it runs the sheet can still be handed in, so it is
+    # not yet something the reader has been measured against.
+    it "does not count a sheet still inside its grace period" do
+      create_assignment(title: "Homework 1", deadline: 10.minutes.ago,
+                        max_points: [4, 6])
+
+      expect(result.standing.points_due).to be_zero
+    end
+
+    it "does not count a sheet the reader was let off" do
+      assignment = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                     max_points: [4, 6])
+      participate(assignment, status: :exempt)
+
+      expect(result.standing.points_due).to be_zero
+    end
+  end
+
+  # Handed in, deadline behind it, nothing marked on it yet: already in the
+  # denominator and counting as nothing, which is what the block says out loud.
+  # Deliberately not the record's own pending points, which count a sheet handed
+  # in early too - and that one is in neither half of the fraction.
+  describe "the points awaiting marks" do
+    it "counts a sheet handed in whose deadline is past" do
+      assignment = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                     max_points: [4, 6])
+      participate(assignment, submitted_at: 8.days.ago)
+      hand_in(assignment)
+
+      expect(result.standing.points_awaiting_marks).to eq(10)
+      expect(result.standing.sheets_awaiting_marks).to eq(1)
+    end
+
+    it "does not count one handed in early, which is not due yet" do
+      assignment = create_assignment(title: "Homework 1",
+                                     deadline: 1.week.from_now,
+                                     max_points: [4, 6])
+      participate(assignment, submitted_at: 1.day.ago)
+      hand_in(assignment)
+
+      expect(result.standing.points_awaiting_marks).to be_zero
+      expect(result.standing.sheets_awaiting_marks).to be_zero
+    end
+
+    it "does not count one that has been marked" do
+      assignment = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                     max_points: [4, 6])
+      mark(assignment, [1.5, 2])
+
+      expect(result.standing.points_awaiting_marks).to be_zero
+    end
+
+    it "does not count one nobody handed in" do
+      create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                        max_points: [4, 6])
+
+      expect(result.standing.points_awaiting_marks).to be_zero
+    end
+  end
+
   # What is still there to be won. The record cannot say this: it counts only
   # sheets that are handed in and waiting, so a sheet nobody has handed in yet
   # would look, from the record alone, like a sheet already lost.
@@ -556,9 +637,23 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       standing = result.standing
       expect(standing.record).to eq(record)
       expect(standing.points_total).to eq(32.5)
-      expect(standing.points_max).to eq(176)
-      expect(standing.points_pending).to eq(16)
-      expect(standing.percentage).to eq(18.47)
+      # The term's total, which the block asks only whether a threshold can
+      # still be reached by the end.
+      expect(standing.points_max_at_end).to eq(176)
+    end
+
+    # The record's percentage is taken of every sheet the lecture has set up,
+    # so a reader with full marks on the sheets that came back reads as a
+    # fraction of the term.
+    it "works the percentage out of what is due, not out of the record" do
+      create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                        max_points: [8, 10])
+      create(:student_performance_record, lecture: lecture, user: user,
+                                          points_total_materialized: 18,
+                                          points_max_materialized: 38,
+                                          percentage_materialized: 47.37)
+
+      expect(result.standing.percentage).to eq(100)
     end
 
     it "leaves the record nil for somebody who has none" do

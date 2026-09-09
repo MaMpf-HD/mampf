@@ -3,8 +3,8 @@
 # is the ground the action card stands on, not a second card.
 #
 # It is a second place on the page, which is why the actions that move a
-# submission answer with a Turbo Stream rather than a frame: handing in makes a
-# sheet count as "still being marked", and that number lives here.
+# submission answer with a Turbo Stream rather than a frame: what it says is
+# read from the same sheets the card is, and the two must not drift apart.
 class StandingComponent < ViewComponent::Base
   include ActiveSupport::NumberHelper
 
@@ -14,9 +14,10 @@ class StandingComponent < ViewComponent::Base
 
   attr_reader :standing
 
-  delegate :rule, :record, :points_total, :points_max, :points_pending,
-           :percentage, :required_points, :reachable_points,
-           :points_out_of_reach?, :required_achievements, to: :standing
+  delegate :rule, :record, :points_total, :points_due, :points_awaiting_marks,
+           :sheets_awaiting_marks, :percentage, :required_points_due,
+           :required_points_at_end, :reachable_points, :points_out_of_reach?,
+           :required_achievements, to: :standing
 
   def initialize(standing:)
     super()
@@ -31,86 +32,112 @@ class StandingComponent < ViewComponent::Base
     points_total.present?
   end
 
-  def points_line
-    return t("submission.hub.standing.no_max") unless points_max&.positive?
+  # An absolute rule names a number rather than a share, and the whole block
+  # reads differently for it: its own target is the base, and the bar's end is
+  # the threshold.
+  def absolute?
+    rule&.threshold_mode_absolute? && rule.min_points_absolute.to_f.positive?
+  end
 
-    t("submission.hub.standing.of_points", max: number(points_max))
+  # The base has to be said aloud. "34 of 36" on its own reads as a term worth
+  # 36 points, when what it means is the two sheets that have come back.
+  def points_line
+    if absolute?
+      return t("submission.hub.standing.of_needed",
+               max: number(rule.min_points_absolute))
+    end
+    return t("submission.hub.standing.no_max") unless points_due.to_f.positive?
+
+    t("submission.hub.standing.of_due", max: number(points_due))
   end
 
   def total
     marked? ? number(points_total) : "—"
   end
 
-  # A bar needs a scale. With no maximum there is no ratio to draw, and a bar
-  # drawn anyway would claim one.
+  # A bar needs a scale, and which scale is the rule's question. A percentage
+  # rule weighs the reader against what is due, so bar and mark end up the same
+  # quantity; an absolute rule weighs them against the number it names. Either
+  # way a full bar means the condition is met.
+  def bar_max
+    absolute? ? rule.min_points_absolute : points_due
+  end
+
   def bar?
-    points_max&.positive?
+    bar_max.to_f.positive?
   end
 
   def earned_percentage
     return 0 unless bar?
 
-    [(points_total.to_f / points_max * 100).round(2), 100].min
+    [(points_total.to_f / bar_max * 100).round(2), 100].min
   end
 
+  # The rule's own number, unconverted: both sides of the bar are now shares of
+  # the same thing. An absolute rule gets no mark - its threshold is where the
+  # bar ends.
   def mark_percentage
-    return unless bar? && required_points
+    return unless bar? && rule&.threshold_mode_percentage?
 
-    [(required_points.to_f / points_max * 100).round(2), 100].min
+    rule.min_percentage.to_f.round(2)
   end
 
-  # The mark says what the rule says. A percentage rule is "50 %", not "88
-  # needed": `points_max_materialized` grows with every sheet the lecture adds,
-  # so the point value behind the same fixed mark is a different number every
-  # week. An absolute rule keeps its number, because there the number is the
-  # rule.
   def mark_label
-    unless rule&.threshold_mode_percentage?
-      return t("submission.hub.standing.needed", points: number(required_points))
-    end
-
     t("submission.hub.standing.mark_percentage",
       percentage: number(rule.min_percentage))
   end
 
-  # The points behind a percentage mark, for anybody who can hover. Nothing
-  # hangs on it: there is no hovering on a phone.
+  # The points behind the mark, for anybody who can hover. Nothing hangs on it:
+  # there is no hovering on a phone.
   def mark_title
-    return unless rule&.threshold_mode_percentage?
+    return unless mark_percentage
 
-    t("submission.hub.standing.needed", points: number(required_points))
+    t("submission.hub.standing.needed", points: number(required_points_due))
   end
 
   def bar_reader_label
+    if absolute?
+      return t("submission.hub.standing.bar_absolute",
+               points: number(points_total),
+               needed: number(rule.min_points_absolute))
+    end
     unless mark_percentage
       return t("submission.hub.standing.bar_plain",
                percentage: earned_percentage)
     end
 
     t("submission.hub.standing.bar_with_mark", percentage: earned_percentage,
-                                               required: mark_percentage)
+                                               required: number(mark_percentage))
   end
 
+  # Both numbers, because one alone leaves the reader guessing where it sits:
+  # "8 points are still being marked" says nothing about whether the 8 are in
+  # the total already. Named against the points due, they are.
   def pending_line
     return t("submission.hub.standing.nothing_marked") unless marked?
-    return if points_pending.nil? || !points_pending.positive?
+    return unless points_awaiting_marks.to_f.positive?
 
-    t("submission.hub.standing.pending", points: number(points_pending))
+    t("submission.hub.standing.awaiting_marks",
+      count: sheets_awaiting_marks, points: number(points_awaiting_marks),
+      max: number(points_due))
   end
 
   def conditions?
     standing.uses_exam_eligibility && rule.present?
   end
 
+  # What the lecture asks, in its own words. The absolute one names its number
+  # alone: putting it over the term's total would bring back the very figure
+  # this block stopped measuring by.
   def points_condition
-    return unless rule && required_points
+    return unless rule && required_points_at_end
 
     if rule.threshold_mode_percentage?
       t("submission.hub.standing.condition_percentage",
         percentage: number(rule.min_percentage))
     else
       t("submission.hub.standing.condition_absolute",
-        points: number(required_points), max: number(points_max))
+        points: number(required_points_at_end))
     end
   end
 
@@ -180,7 +207,7 @@ class StandingComponent < ViewComponent::Base
 
     def out_of_reach_sentence
       t("submission.hub.standing.out_of_reach",
-        best: number(reachable_points), needed: number(required_points))
+        best: number(reachable_points), needed: number(required_points_at_end))
     end
 
     def failed_sentence

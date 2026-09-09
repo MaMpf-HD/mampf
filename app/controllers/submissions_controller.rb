@@ -294,11 +294,16 @@ class SubmissionsController < ApplicationController
       render :card, status: status
     end
 
-    # Handing in, taking it back, joining and leaving all move `submitted_at`,
-    # and the standing block counts a sheet that is handed in and not yet marked
-    # among the points still being marked. So these answers carry two places at
-    # once, and a frame can only carry one. The data for both is already in
-    # hand: the card is read from the loader either way.
+    # These answers carry two places at once, and a frame can only carry one.
+    # The block reads the same record and the same sheets as the card, and
+    # `submitted_at` is what the two share: rendering it alongside is what keeps
+    # them from disagreeing after an action moved it. The data is in hand either
+    # way - the card is read from the loader.
+    #
+    # Since the block counts only sheets whose deadline is past, a hand-in on a
+    # sheet that is still open leaves it unchanged; the second target is then a
+    # re-render of the same words rather than an update. It stays because the
+    # standing must never lag the card, not because it always moves.
     def render_card_and_standing(status: :ok)
       loaded = hub
       render turbo_stream: [
