@@ -40,6 +40,23 @@ module StudentPerformance
         submitted_coming_points.fetch(user_id, 0)
     end
 
+    # The same two sets counted rather than added. A reason on the certification
+    # page says how many sheets it is about; the points beside it say what they
+    # are worth, and one without the other leaves the reader guessing.
+    def not_yet_due_count_for(user_id)
+      coming_assessments.size -
+        exempted_coming_counts.fetch(user_id, 0) -
+        submitted_coming_counts.fetch(user_id, 0)
+    end
+
+    # Deliberately every sheet, not only the due ones: the reason it belongs to
+    # says that something is sitting with a tutor, and for that the deadline is
+    # beside the point. It counts what `points_max_pending_materialized` sums,
+    # so the two are the same set.
+    def pending_count_for(user_id)
+      pending_counts.fetch(user_id, 0)
+    end
+
     private
 
       def max_for(user_id)
@@ -115,13 +132,36 @@ module StudentPerformance
       # Match ComputationService#pending_points so pending submissions are
       # not counted again as points not yet due.
       def submitted_coming_points
-        @submitted_coming_points ||= points_per_user(
-          Assessment::Participation
-            .where(assessment_id: coming_assessments.map(&:id),
-                   status: :pending)
-            .where.not(submitted_at: nil),
-          coming_assessments
+        @submitted_coming_points ||= points_per_user(submitted_coming, coming_assessments)
+      end
+
+      def submitted_coming
+        Assessment::Participation
+          .where(assessment_id: coming_assessments.map(&:id), status: :pending)
+          .where.not(submitted_at: nil)
+      end
+
+      def exempted_coming_counts
+        @exempted_coming_counts ||= count_per_user(
+          exempt_participations(coming_assessments)
         )
+      end
+
+      def submitted_coming_counts
+        @submitted_coming_counts ||= count_per_user(submitted_coming)
+      end
+
+      def pending_counts
+        @pending_counts ||= count_per_user(
+          Assessment::Participation
+            .where(assessment_id: assignment_assessments.select(:id),
+                   status: :pending)
+            .where.not(submitted_at: nil)
+        )
+      end
+
+      def count_per_user(scope)
+        scope.group(:user_id).count
       end
 
       def points_per_user(scope, assessments)

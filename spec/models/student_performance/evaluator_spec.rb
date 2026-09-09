@@ -449,6 +449,33 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.verdict_deferral_reasons).to eq([:points_not_due])
       end
 
+      # "Not due yet" covers anything between one sheet and the rest of the
+      # term, and somebody deciding on this student needs to know which.
+      it "says how many sheets are to come and what they are worth" do
+        sheet(deadline: 2.days.ago, points: 20)
+        sheet(deadline: 3.days.from_now, points: 60)
+        sheet(deadline: 5.days.from_now, points: 40)
+
+        result = evaluator.evaluate(record_with(total: 5, max: 120))
+
+        expect(result.details[:not_due_sheets]).to eq(2)
+        expect(result.details[:not_due_points]).to eq(100)
+      end
+
+      it "says as much about the hand-ins that are waiting" do
+        due = sheet(deadline: 2.days.ago, points: 20)
+        FactoryBot.create(:assessment_participation, assessment: due,
+                                                     user: student,
+                                                     submitted_at: 1.day.ago)
+        sheet(deadline: 3.days.from_now, points: 100)
+
+        result = evaluator.evaluate(record_with(total: 5, max: 120,
+                                                pending: 20))
+
+        expect(result.details[:pending_sheets]).to eq(1)
+        expect(result.details[:pending_points]).to eq(20)
+      end
+
       it "still fails a student the remaining sheets cannot carry" do
         sheet(deadline: 2.days.ago, points: 100)
         sheet(deadline: 3.days.from_now, points: 20)
@@ -547,7 +574,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
       result = described_class.new(rule, assignments_complete: true).evaluate(record)
       expected_keys = [:assignments_incomplete, :meets_points, :points_not_due,
                        :points_pending, :points_not_measurable,
-                       :meets_achievements, :achievements_ungraded]
+                       :meets_achievements, :achievements_ungraded,
+                       :not_due_sheets, :not_due_points,
+                       :pending_sheets, :pending_points]
       expect(result.details.keys).to match_array(expected_keys)
     end
   end

@@ -68,7 +68,7 @@ module StudentPerformance
           points_not_measurable: points == :not_measurable,
           meets_achievements: achievements == :met,
           achievements_ungraded: achievements == :ungraded
-        }
+        }.merge(deferral_amounts(record))
       )
     end
 
@@ -77,6 +77,20 @@ module StudentPerformance
     end
 
     private
+
+      # How much each of the two open points reasons is about, so that the page
+      # can say it rather than leaving "not due yet" to stand for anything
+      # between one sheet and the rest of the term. Kept beside the reasons
+      # rather than in them: `0` is true in Ruby, and a reason picked by its
+      # own count would then always be picked.
+      def deferral_amounts(record)
+        {
+          not_due_sheets: not_yet_due_count(record),
+          not_due_points: not_yet_due(record),
+          pending_sheets: pending_count(record),
+          pending_points: awaiting_marking(record)
+        }
+      end
 
       # A criterion nobody can satisfy any more settles the case; one that is
       # merely unfinished defers it.
@@ -143,6 +157,18 @@ module StudentPerformance
         return 0 unless @due_points
 
         @due_points.not_yet_due_for(record.user_id)
+      end
+
+      def not_yet_due_count(record)
+        return 0 unless @due_points
+
+        @due_points.not_yet_due_count_for(record.user_id)
+      end
+
+      def pending_count(record)
+        return 0 unless @due_points
+
+        @due_points.pending_count_for(record.user_id)
       end
 
       def achievements_status(record)

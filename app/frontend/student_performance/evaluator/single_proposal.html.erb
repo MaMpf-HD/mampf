@@ -135,7 +135,7 @@
 
             <% if @result.points_criterion_deferral %>
               <p class="text-amber small mb-0 mt-2">
-                <%= t("student_performance.evaluator.deferral.#{@result.points_criterion_deferral}") %>
+                <%= deferral_text(@result, @result.points_criterion_deferral) %>
               </p>
             <% end %>
           </div>

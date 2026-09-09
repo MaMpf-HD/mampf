@@ -131,8 +131,12 @@ en:
         inconclusive: "Deferred"
       deferral:
         assignments_incomplete: "The assignment list is still open"
-        points_not_due: "Assignments not due yet"
-        points_pending: "Submissions not graded yet"
+        points_not_due:
+          one: "1 assignment not due yet (%{points} points)"
+          other: "%{count} assignments not due yet (%{points} points)"
+        points_pending:
+          one: "1 submission not graded yet (%{points} points)"
+          other: "%{count} submissions not graded yet (%{points} points)"
         points_not_measurable: "No points to measure"
         achievements_ungraded: "Achievement not graded yet"
       missed:

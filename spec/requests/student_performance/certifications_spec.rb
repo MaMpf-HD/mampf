@@ -600,8 +600,13 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         let(:rule_today) do
           I18n.t("student_performance.certifications.columns.rule_today")
         end
-        def deferral(reason)
-          I18n.t("student_performance.evaluator.deferral.#{reason}")
+        # The two open points reasons say how much they are about, so a test
+        # that names one has to say how much too.
+        def deferral(reason, count: nil, points: nil)
+          return I18n.t("student_performance.evaluator.deferral.#{reason}") unless count
+
+          I18n.t("student_performance.evaluator.deferral.#{reason}",
+                 count: count, points: points)
         end
 
         let!(:rule) do
@@ -657,14 +662,26 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           it "says so instead of blaming missing input" do
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body).to include(deferral(:points_not_measurable))
-            expect(response.body).not_to include(deferral(:points_pending))
+            expect(response.body)
+              .not_to include(deferral(:points_pending, count: 0, points: "0"))
           end
         end
 
         context "when the marking still outstanding could carry the student" do
           let(:awaited_user) { FactoryBot.create(:confirmed_user) }
 
+          # The hand-in behind the materialized figure is created too: the page
+          # counts the sheets that are waiting, and the record sums what they
+          # are worth. In real data both come from the same participations.
           before do
+            waiting = FactoryBot.create(:assignment, :expired, lecture: lecture)
+            FactoryBot.create(:assessment_task,
+                              assessment: waiting.assessment, max_points: 40)
+            FactoryBot.create(:assessment_participation,
+                              assessment: waiting.assessment, user: awaited_user,
+                              submitted_at: 1.day.ago)
+            # The new sheet reopened the list; the lecturer has closed it again.
+            lecture.update!(assignments_complete: true)
             FactoryBot.create(:student_performance_record,
                               lecture: lecture,
                               user: awaited_user,
@@ -678,7 +695,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
           it "points at the marking rather than at the student" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(deferral(:points_pending))
+            expect(response.body)
+              .to include(deferral(:points_pending, count: 1, points: "40"))
           end
         end
 
@@ -709,8 +727,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
           it "names the sheets to come rather than refusing the student" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(deferral(:points_not_due))
-            expect(response.body).not_to include(deferral(:points_pending))
+            expect(response.body)
+              .to include(deferral(:points_not_due, count: 1, points: "40"))
+            expect(response.body)
+              .not_to include(deferral(:points_pending, count: 0, points: "0"))
           end
         end
 
@@ -729,7 +749,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           it "offers no reason where there is nothing to explain" do
             get lecture_student_performance_certifications_path(lecture)
             StudentPerformance::Evaluator::DEFERRAL_REASONS.each do |reason|
-              expect(response.body).not_to include(deferral(reason))
+              expect(response.body)
+                .not_to include(deferral(reason, count: 0, points: "0"))
             end
           end
         end

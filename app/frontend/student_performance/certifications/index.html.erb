@@ -513,7 +513,7 @@
                   <% Array(proposal.verdict_deferral_reasons).each do |reason| %>
                     <span class="text-amber d-block">
                       <i class="bi bi-question-circle me-1"></i>
-                      <%= t("student_performance.evaluator.deferral.#{reason}") %>
+                      <%= deferral_text(proposal, reason) %>
                     </span>
                   <% end %>
                   <% proposal.missed_criteria.each do |criterion| %>

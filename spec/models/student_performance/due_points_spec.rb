@@ -144,6 +144,67 @@ RSpec.describe(StudentPerformance::DuePoints) do
     end
   end
 
+  # The reasons on the certification page say how many sheets they are about,
+  # and the points beside them what those are worth. Both out of the same set.
+  describe "#not_yet_due_count_for" do
+    it "counts the sheets still to come" do
+      sheet(deadline: 2.days.ago, points: 20)
+      sheet(deadline: 3.days.from_now, points: 16)
+      sheet(deadline: 5.days.from_now, points: 10)
+
+      expect(due_points.not_yet_due_count_for(student.id)).to eq(2)
+    end
+
+    it "leaves out one she was let off and one she has handed in early" do
+      excused = sheet(deadline: 3.days.from_now, points: 16)
+      early = sheet(deadline: 5.days.from_now, points: 10)
+      sheet(deadline: 7.days.from_now, points: 8)
+      FactoryBot.create(:assessment_participation, :exempt,
+                        assessment: excused, user: student)
+      FactoryBot.create(:assessment_participation, assessment: early,
+                                                   user: student,
+                                                   submitted_at: 1.day.ago)
+
+      expect(due_points.not_yet_due_count_for(student.id)).to eq(1)
+    end
+  end
+
+  describe "#pending_count_for" do
+    # Every hand-in that is waiting, whether its deadline has passed or not:
+    # the reason it belongs to says something sits with a tutor, and for that
+    # the deadline is beside the point.
+    it "counts what is waiting to be marked, due or not" do
+      due = sheet(deadline: 2.days.ago, points: 20)
+      coming = sheet(deadline: 3.days.from_now, points: 16)
+      [due, coming].each do |assessment|
+        FactoryBot.create(:assessment_participation, assessment: assessment,
+                                                     user: student,
+                                                     submitted_at: 1.day.ago)
+      end
+
+      expect(due_points.pending_count_for(student.id)).to eq(2)
+    end
+
+    it "does not count one that has come back" do
+      marked = sheet(deadline: 2.days.ago, points: 20)
+      FactoryBot.create(:assessment_participation, assessment: marked,
+                                                   user: student,
+                                                   submitted_at: 3.days.ago,
+                                                   status: :reviewed)
+
+      expect(due_points.pending_count_for(student.id)).to be_zero
+    end
+
+    it "does not count a sheet nobody handed in" do
+      missed = sheet(deadline: 2.days.ago, points: 20)
+      FactoryBot.create(:assessment_participation, assessment: missed,
+                                                   user: student,
+                                                   submitted_at: nil)
+
+      expect(due_points.pending_count_for(student.id)).to be_zero
+    end
+  end
+
   describe "#not_yet_due_for" do
     it "names the sheets still to come" do
       sheet(deadline: 2.days.ago, points: 20)

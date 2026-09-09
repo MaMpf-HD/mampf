@@ -131,8 +131,12 @@ de:
         inconclusive: "Zurückgestellt"
       deferral:
         assignments_incomplete: "Die Blätterliste ist noch offen"
-        points_not_due: "Blätter noch nicht fällig"
-        points_pending: "Abgaben noch nicht bewertet"
+        points_not_due:
+          one: "1 Blatt noch nicht fällig (%{points} Punkte)"
+          other: "%{count} Blätter noch nicht fällig (%{points} Punkte)"
+        points_pending:
+          one: "1 Abgabe noch nicht bewertet (%{points} Punkte)"
+          other: "%{count} Abgaben noch nicht bewertet (%{points} Punkte)"
         points_not_measurable: "Keine Punkte zu messen"
         achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
       missed:
