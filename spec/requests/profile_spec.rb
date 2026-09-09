@@ -59,7 +59,6 @@ RSpec.describe("Profile", type: :request) do
         expect(response.body).to include("$card.remove()")
       end
 
-      # The fold would otherwise stand empty and unexplained until a reload.
       it "shows the empty state once the fold has run out of cards" do
         user.subscribe_lecture!(lecture)
 
@@ -71,8 +70,6 @@ RSpec.describe("Profile", type: :request) do
         expect(response.body).to include("$('#emptyNextTermStuff').show()")
       end
 
-      # The application outlives the subscription: on the next load the
-      # lecture stands among the applications, so its card has to survive.
       it "keeps the card of a lecture that is still applied for" do
         campaign = create(:registration_campaign, :open, campaignable: lecture)
         create(:registration_user_registration, :pending,
@@ -103,8 +100,6 @@ RSpec.describe("Profile", type: :request) do
         expect(response.body).not_to include("emptyNextTermStuff")
       end
 
-      # A card outside the running term names its term, and the card the
-      # response renders back has to keep it.
       it "keeps the term on the card it renders back" do
         patch(subscribe_lecture_path,
               params: { lecture: { id: lecture.id,

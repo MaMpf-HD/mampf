@@ -46,10 +46,9 @@
       </div>
     </div>
   <% end %>
-  <%# Transitional: until the dashboard arrives, the lectures of the term
-    being prepared get a fold of their own rather than sitting among the
-    subscriptions of terms gone by. The list is short and rendered here, so
-    this fold needs no round trip when it opens. %>
+  <%# Rendered with the page rather than fetched when it opens: this fold
+    carries no `subscriptionsCollapse` class, so nothing asks the server for
+    its contents. %>
 
   <% if Term.active&.next %>
     <div class="accordion-item">
@@ -82,10 +81,6 @@
 
           </div>
 
-          <%# A seat in a group that does not enrol into the lecture is still a
-            place in the coming term, and the card offers what is missing: the
-            subscription. %>
-
           <% if @next_term_seats.any? %>
             <p class="text-muted small mb-2">
               <%= t("profile.next_term_seats") %>
@@ -102,10 +97,6 @@
                          as: :lecture %>
             </div>
           <% end %>
-
-          <%# A registration is not a seat: it is decided when the campaign is
-            finalized. These lectures therefore stand in their own group,
-            under the sentence that says what is still open about them. %>
 
           <% if @next_term_pending.any? %>
             <p class="text-muted small mb-2">

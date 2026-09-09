@@ -8,9 +8,6 @@ RSpec.describe("Main", type: :request) do
   end
 
   describe "GET / (start page)" do
-    # Transitional, until the dashboard replaces the accordion: what the user
-    # has subscribed for the term being prepared gets its own fold instead of
-    # sitting among the terms gone by.
     describe "the fold for the coming term" do
       let!(:current_term) { create(:term, :summer, :active, year: 2025) }
       let(:next_term) { create(:term, :winter, year: 2025) }
@@ -49,8 +46,6 @@ RSpec.describe("Main", type: :request) do
         )
       end
 
-      # A registration is not a seat, so the lecture stands in its own group
-      # rather than among the subscriptions.
       it "shows a lecture the user has applied to, apart from the rest" do
         lecture = create(:lecture, :released_for_all, term: next_term)
         campaign = create(:registration_campaign, :open, campaignable: lecture)
@@ -63,8 +58,6 @@ RSpec.describe("Main", type: :request) do
         expect(cards_in("next-term-subscribed")).to be_empty
       end
 
-      # A cohort that does not enrol its members leaves them without a
-      # subscription, and the lecture would say nothing for itself.
       it "shows a lecture the user has a seat in without a subscription" do
         lecture = create(:lecture, :released_for_all, term: next_term)
         cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
@@ -87,8 +80,6 @@ RSpec.describe("Main", type: :request) do
         expect(response.body).not_to include("next-term-registrations")
       end
 
-      # Applying and subscribing are different things, but one card is enough:
-      # the subscription is the stronger statement and already stands there.
       it "shows a subscribed lecture once, even when applied for as well" do
         lecture = create(:lecture, :released_for_all, term: next_term)
         campaign = create(:registration_campaign, :open, campaignable: lecture)
@@ -108,8 +99,6 @@ RSpec.describe("Main", type: :request) do
         expect(response.body).not_to include("collapseNextTermStuff")
       end
 
-      # Both folds would otherwise show the same lecture, one of them under
-      # "further subscribed".
       it "takes the lecture out of the subscriptions of terms gone by" do
         lecture = create(:lecture, :released_for_all, term: next_term)
         user.subscribe_lecture!(lecture)

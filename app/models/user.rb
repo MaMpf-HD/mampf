@@ -604,9 +604,15 @@ class User < ApplicationRecord
     lectures.where(term: Term.active).includes(:course, :term)
   end
 
-  # What this user has subscribed for the term after the running one, while
-  # that term is being prepared. Lectures without a term are not among them:
-  # they run always and belong to the current fold.
+  # A subscription (LectureUserJoin), a seat (LectureMembership,
+  # CohortMembership) and an application (Registration::UserRegistration) exist
+  # independently of each other, which is why the start page asks
+  # `next_term_lectures`, `next_term_seated_lectures` and
+  # `next_term_registered_lectures` rather than one of them.
+  #
+  # What this user has subscribed for the term after the running one. Lectures
+  # without a term are not among them: they run always, and the fold of the
+  # running term carries them.
   def next_term_lectures
     coming = Term.active&.next
     return [] if coming.blank?
@@ -615,10 +621,8 @@ class User < ApplicationRecord
             .natural_sort_by(&:title)
   end
 
-  # Lectures of the coming term the user has a seat in without a subscription.
-  # A cohort only enrols its members into the lecture when it is set to, and a
-  # seat on the lecture roster itself does not subscribe either; both leave the
-  # lecture with nothing to say for itself on the start page.
+  # Cohorts with propagate_to_lecture: false do not create lecture memberships.
+  # Include them directly so their lectures remain visible on the start page.
   def next_term_seated_lectures
     coming = Term.active&.next
     return [] if coming.blank?
@@ -630,10 +634,8 @@ class User < ApplicationRecord
            .includes(:course, :term).natural_sort_by(&:title)
   end
 
-  # The lectures of the coming term this user has applied to and has not been
-  # rejected from, while the campaign is still deciding. A registration is not
-  # a subscription: the seat, and with it access, is granted when the campaign
-  # is finalized, which is why these are named apart from the subscribed ones.
+  # After Registration::Campaign#finalize! a confirmed registration has a seat,
+  # and the two methods above carry the lecture from then on.
   def next_term_registered_lectures
     coming = Term.active&.next
     return [] if coming.blank?
@@ -649,8 +651,8 @@ class User < ApplicationRecord
            .includes(:course, :term).natural_sort_by(&:title)
   end
 
-  # The running term and the one after it have folds of their own on the start
-  # page, so neither belongs here.
+  # The start page shows Term.active and Term.active.next separately, so
+  # exclude both here to avoid duplicate lecture cards.
   def inactive_lectures
     lectures.where.not(term: [Term.active, Term.active&.next])
   end
