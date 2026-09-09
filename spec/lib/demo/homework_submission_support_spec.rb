@@ -23,6 +23,41 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
     Demo::SetupSupport.send(:record_hand_in!, assignment, team, submission)
   end
 
+  # The demo dates its hand-ins around the deadline they belong to, and the
+  # last sheet has none behind it: its deadline is still ahead, so anything
+  # measured from it would be a hand-in from the future.
+  describe "when the sheet is still open" do
+    # A past deadline goes through the :expired trait, which is what gets it
+    # past the validation that refuses one.
+    def hand_in_time(deadline, late:)
+      sheet =
+        if deadline.future?
+          create(:assignment, lecture: lecture, deadline: deadline)
+        else
+          create(:assignment, :expired, lecture: lecture,
+                                        expired_since: (Time.zone.now - deadline).seconds)
+        end
+      Demo::SetupSupport.send(:hand_in_time, sheet, late: late)
+    end
+
+    it "hands in before now rather than around a deadline still to come" do
+      expect(hand_in_time(5.days.from_now, late: false)).to be < Time.zone.now
+    end
+
+    # Nothing can be late before its own deadline, and the demo hands in late
+    # every twentieth time.
+    it "is not late either, whatever the rotation says" do
+      expect(hand_in_time(5.days.from_now, late: true)).to be < Time.zone.now
+    end
+
+    it "still dates a closed sheet around its own deadline" do
+      deadline = 1.week.ago
+
+      expect(hand_in_time(deadline, late: true)).to be > deadline
+      expect(hand_in_time(deadline, late: false)).to be < deadline
+    end
+  end
+
   it "stamps the hand-in the demo just built" do
     user = create(:confirmed_user)
     participation = participation_for(user, :pending)

@@ -39,6 +39,8 @@ module Demo
         assignments.each_with_index do |assignment, index|
           sheets_left = assignments.size - index
           demo_teams(lecture).each_with_index do |(tutorial, team), position|
+            next unless hands_in?(assignment, team)
+
             hand_in_demo!(assignment, tutorial, team,
                           correction: correction_for(sheets_left, position),
                           late: (handed_in % LATE_EVERY).zero?)
@@ -56,6 +58,20 @@ module Demo
       def recompute_performance_records!(lecture)
         service = StudentPerformance::ComputationService.new(lecture: lecture)
         lecture.members.find_each { |member| service.compute_and_upsert_record_for(member) }
+      end
+
+      # On a sheet that is still open the gradebook has already decided who has
+      # handed in: `randomize_demo_statuses!` keeps a participation for them and
+      # drops it for the rest. Following that decision rather than handing in for
+      # everybody is what keeps a file off a card the gradebook knows nothing
+      # about - and it leaves both card states on the page to look at.
+      def hands_in?(assignment, team)
+        return true unless assignment.deadline.future?
+
+        assessment = assignment.assessment
+        return false unless assessment
+
+        assessment.assessment_participations.exists?(user_id: team.first.id)
       end
 
       # The tutor is behind by the last couple of sheets, and one team in three
@@ -125,15 +141,21 @@ module Demo
       # would be late. The hand-in is dated back behind the deadline instead,
       # except for every twentieth.
       def stamp_hand_in!(submission, assignment, late:)
-        handed_in_at = if late
-          assignment.deadline + rand(1..48).hours
-        else
-          assignment.deadline - rand(2..96).hours
-        end
+        handed_in_at = hand_in_time(assignment, late: late)
         # rubocop:disable Rails/SkipsModelValidations
         submission.update_columns(created_at: handed_in_at,
                                   last_modification_by_users_at: handed_in_at)
         # rubocop:enable Rails/SkipsModelValidations
+      end
+
+      # Nothing can be late before its own deadline, and a sheet that is still
+      # open was handed in at some point before now rather than around a date
+      # that has not arrived.
+      def hand_in_time(assignment, late:)
+        return rand(2..72).hours.ago if assignment.deadline.future?
+        return assignment.deadline + rand(1..48).hours if late
+
+        assignment.deadline - rand(2..96).hours
       end
 
       # One copy on disk, opened again per hand-in, because Shrine closes what
