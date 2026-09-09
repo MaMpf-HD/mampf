@@ -98,10 +98,20 @@ class ProfileController < ApplicationController
 
   def unsubscribe_lecture
     @success = current_user.unsubscribe_lecture!(@lecture)
+    # A seat or an application outlives the subscription, so the card stays:
+    # the next load shows the lecture in the group that carries it.
+    @place_left =
+      @parent == "next_term_subscribed" &&
+      (current_user.next_term_seated_lectures +
+       current_user.next_term_registered_lectures).include?(@lecture)
     @none_left = case @parent
                  when "current_subscribed" then current_user.current_subscribed_lectures
                                                             .empty?
                  when "inactive" then current_user.inactive_lectures.empty?
+                 when "next_term_subscribed"
+                   current_user.next_term_lectures.empty? &&
+                   current_user.next_term_seated_lectures.empty? &&
+                   current_user.next_term_registered_lectures.empty?
     end
   end
 
@@ -185,7 +195,8 @@ class ProfileController < ApplicationController
       @lecture = Lecture.find_by(id: lecture_params[:id])
       @passphrase = lecture_params[:passphrase]
       @parent = lecture_params[:parent]
-      @current = !@parent.in?(["lectureSearch", "inactive"])
+      @current = !@parent.in?(["lectureSearch", "inactive",
+                               "next_term_subscribed", "next_term_registered"])
       redirect_to start_path unless @lecture
     end
 
