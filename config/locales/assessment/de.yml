@@ -152,18 +152,18 @@ de:
       hint: 'Setze das Häkchen, wenn alle Übungsblätter des Semesters angelegt sind. Solange es fehlt, stellt die Prüfungszulassung jedes Urteil zurück — jedes weitere Blatt kann es umwerfen. Ein neues Blatt entfernt das Häkchen wieder.'
       cancel: 'Abbrechen'
       close_dialog:
-        title: 'Blätterliste schließen'
-        body: 'Die Zulassungsregel urteilt dann: Für jede und jeden entsteht ein Vorschlag, den Du einzeln oder gesammelt annehmen kannst. Ein neues Blatt öffnet die Liste wieder.'
-        confirm: 'Schließen'
+        title: 'Häkchen setzen'
+        body: 'Die Zulassungsregel urteilt dann: Für jede und jeden entsteht ein Vorschlag, den Du einzeln oder gesammelt annehmen kannst. Ein neues Blatt entfernt das Häkchen wieder.'
+        confirm: 'Häkchen setzen'
       open_dialog:
-        title: 'Blätterliste wieder öffnen'
-        body: 'Solange die Liste offen ist, entscheidet die Zulassungsregel nichts: Jedes Urteil wird zurückgestellt, bis Du die Liste wieder schließt.'
-        confirm: 'Öffnen'
+        title: 'Häkchen entfernen'
+        body: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts: Jedes Urteil wird zurückgestellt, bis Du es wieder setzt.'
+        confirm: 'Häkchen entfernen'
       reopen_dialog:
-        title: 'Blätterliste wieder öffnen'
+        title: 'Häkchen entfernen'
         body:
-          one: 'Solange die Liste offen ist, entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassung widerspricht ihr danach. Jetzt zurücksetzen? Diese Zulassung ist dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
-          other: 'Solange die Liste offen ist, entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassungen widersprechen ihr danach. Jetzt zurücksetzen? Diese Zulassungen sind dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
+          one: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassung widerspricht ihr danach. Jetzt zurücksetzen? Diese Zulassung ist dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
+          other: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassungen widersprechen ihr danach. Jetzt zurücksetzen? Diese Zulassungen sind dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
         reset: 'Zurücksetzen'
         confirm: 'Behalten'
     campaign_status:

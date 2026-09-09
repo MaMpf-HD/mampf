@@ -22,10 +22,10 @@ class AssessmentsIndexComponent < ViewComponent::Base
     @legacy_by_type ||= legacy.group_by { |a| a.class.name }
   end
 
-  # Both directions have consequences, so both are asked about: closing the
-  # list sets the rule judging, opening it puts every verdict back to deferred.
-  # Reopening on top of computed decisions has one more thing to say, and it is
-  # the only dialog with a third button.
+  # Both directions have consequences, so both are asked about: the tick sets
+  # the rule judging, taking it back puts every verdict to deferred again.
+  # Taking it back on top of computed decisions has one more thing to say, and
+  # it is the only dialog with a third button.
   def confirmation
     return :close unless lecture.assignments_complete?
     return :reopen if computed_decisions_count.positive?

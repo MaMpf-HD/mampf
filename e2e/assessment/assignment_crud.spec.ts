@@ -39,7 +39,7 @@ test.describe("homework sheets", () => {
    * does not go through unasked - and a dialog that is dismissed has to leave
    * the box where it was.
    */
-  test("asks before closing the assignment list", async ({
+  test("asks before the assignment list is called complete", async ({
     factory,
     teacher,
   }) => {
@@ -51,7 +51,7 @@ test.describe("homework sheets", () => {
     await box.check();
 
     const dialog = teacher.page
-      .getByRole("dialog", { name: "Close the assignment list" });
+      .getByRole("dialog", { name: "Tick the box" });
     await expect(dialog).toBeVisible();
     await dialog.getByRole("button", { name: "Cancel" }).click();
 
@@ -61,7 +61,7 @@ test.describe("homework sheets", () => {
       .not.toBeChecked();
   });
 
-  test("closes the assignment list once the question is answered", async ({
+  test("calls the list complete once the question is answered", async ({
     factory,
     teacher,
   }) => {
@@ -72,14 +72,14 @@ test.describe("homework sheets", () => {
     await teacher.page.getByLabel("The assignment list is complete").check();
 
     const dialog = teacher.page
-      .getByRole("dialog", { name: "Close the assignment list" });
+      .getByRole("dialog", { name: "Tick the box" });
     // The overview lives in a Turbo frame, so the answer replaces the frame
     // and leaves the address alone - the round trip is what there is to wait
     // for, and the page is loaded again to see that it stuck.
     const saved = teacher.page.waitForResponse(
       r => r.request().method() === "POST",
     );
-    await dialog.getByRole("button", { name: "Close", exact: true }).click();
+    await dialog.getByRole("button", { name: "Tick the box" }).click();
     await saved;
 
     await dashboard.gotoOverview();

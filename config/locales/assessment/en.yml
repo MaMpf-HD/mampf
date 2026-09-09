@@ -152,18 +152,18 @@ en:
       hint: 'Tick this once every assignment of the term exists. Until then, exam eligibility defers every verdict — each assignment still to come can overturn it. Creating a new assignment clears the tick again.'
       cancel: 'Cancel'
       close_dialog:
-        title: 'Close the assignment list'
-        body: 'The eligibility rule then judges: everybody gets a proposal, which you can accept one by one or all at once. Creating a new assignment opens the list again.'
-        confirm: 'Close'
+        title: 'Tick the box'
+        body: 'The eligibility rule then judges: everybody gets a proposal, which you can accept one by one or all at once. Creating a new assignment clears the tick again.'
+        confirm: 'Tick the box'
       open_dialog:
-        title: 'Reopen the assignment list'
-        body: 'While the list is open the eligibility rule decides nothing: every verdict is deferred until you close the list again.'
-        confirm: 'Reopen'
+        title: 'Clear the tick'
+        body: 'Without the tick the eligibility rule decides nothing: every verdict is deferred until you set it again.'
+        confirm: 'Clear the tick'
       reopen_dialog:
-        title: 'Reopen the assignment list'
+        title: 'Clear the tick'
         body:
-          one: 'While the list is open the eligibility rule decides nothing — %{count} computed decision will contradict it afterwards. Reset it now? That eligibility is then undecided again. Individual decisions stay either way.'
-          other: 'While the list is open the eligibility rule decides nothing — %{count} computed decisions will contradict it afterwards. Reset them now? Those eligibilities are then undecided again. Individual decisions stay either way.'
+          one: 'Without the tick the eligibility rule decides nothing — %{count} computed decision will contradict it afterwards. Reset it now? That eligibility is then undecided again. Individual decisions stay either way.'
+          other: 'Without the tick the eligibility rule decides nothing — %{count} computed decisions will contradict it afterwards. Reset them now? Those eligibilities are then undecided again. Individual decisions stay either way.'
         reset: 'Reset'
         confirm: 'Keep'
     campaign_status:
