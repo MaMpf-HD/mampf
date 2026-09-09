@@ -42,6 +42,35 @@ RSpec.describe("Profile", type: :request) do
       end
     end
 
+    context "with a card from the fold of the coming term" do
+      let(:next_term) { create(:term, :winter, year: 2025) }
+      let(:lecture) { create(:lecture, :released_for_all, term: next_term) }
+
+      before { create(:term, :summer, :active, year: 2025) }
+
+      it "takes the card away when the lecture is unsubscribed there" do
+        user.subscribe_lecture!(lecture)
+
+        patch(unsubscribe_lecture_path,
+              params: { lecture: { id: lecture.id,
+                                   parent: "next_term_subscribed" } },
+              xhr: true)
+
+        expect(response.body).to include("$card.remove()")
+      end
+
+      # A card outside the running term names its term, and the card the
+      # response renders back has to keep it.
+      it "keeps the term on the card it renders back" do
+        patch(subscribe_lecture_path,
+              params: { lecture: { id: lecture.id,
+                                   parent: "next_term_registered" } },
+              xhr: true)
+
+        expect(response.body).to include(next_term.to_label_short)
+      end
+    end
+
     context "with the plain HTML flow of the lecture home page" do
       let(:lecture) do
         create(:lecture, :released_for_all, passphrase: "secret")

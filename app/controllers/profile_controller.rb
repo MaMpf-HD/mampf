@@ -185,7 +185,8 @@ class ProfileController < ApplicationController
       @lecture = Lecture.find_by(id: lecture_params[:id])
       @passphrase = lecture_params[:passphrase]
       @parent = lecture_params[:parent]
-      @current = !@parent.in?(["lectureSearch", "inactive"])
+      @current = !@parent.in?(["lectureSearch", "inactive",
+                               "next_term_subscribed", "next_term_registered"])
       redirect_to start_path unless @lecture
     end
 

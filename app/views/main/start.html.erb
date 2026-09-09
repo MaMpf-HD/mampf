@@ -61,7 +61,7 @@
                 aria-expanded="false"
                 aria-controls="collapseNextTermStuff">
           <h4 class="text-dark" id="nextTermStuffLink">
-            <%= t('profile.my_next_term_html',
+            <%= t("profile.my_next_term_html",
                   term: Term.active.next.to_label) %>
           </h4>
         </button>
@@ -69,14 +69,15 @@
       <div class="collapse" id="collapseNextTermStuff"
            data-bs-parent="#subscriptionsAccordion">
         <div class="accordion-body">
-          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
+          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
+                      row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
                id="collapseNextTermStuffContent"
                data-testid="next-term-subscribed">
-            <%= render partial: 'main/start/lecture',
+            <%= render partial: "main/start/lecture",
                        collection: @next_term_stuff,
                        locals: { current: false,
                                  subscribed: true,
-                                 parent: 'next_term_subscribed' },
+                                 parent: "next_term_subscribed" },
                        as: :lecture %>
           </div>
 
@@ -86,23 +87,24 @@
 
           <% if @next_term_pending.any? %>
             <p class="text-muted small mb-2">
-              <%= t('profile.next_term_registrations') %>
+              <%= t("profile.next_term_registrations") %>
             </p>
 
-            <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
+            <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
+                        row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
                  data-testid="next-term-registrations">
-              <%= render partial: 'main/start/lecture',
+              <%= render partial: "main/start/lecture",
                          collection: @next_term_pending,
                          locals: { current: false,
                                    subscribed: false,
-                                   parent: 'next_term_registered' },
+                                   parent: "next_term_registered" },
                          as: :lecture %>
             </div>
           <% end %>
 
           <% if @next_term_stuff.empty? && @next_term_pending.empty? %>
             <div id="emptyNextTermStuff">
-              <%= t('profile.no_next_term_stuff') %>
+              <%= t("profile.no_next_term_stuff") %>
             </div>
           <% end %>
         </div>
