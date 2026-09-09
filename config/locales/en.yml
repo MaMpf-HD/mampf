@@ -1933,6 +1933,7 @@ en:
       You want to subscribe the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
     my_term_html: My term &ndash; %{term}
+    my_next_term_html: My next term &ndash; %{term}
     inactive_lectures: Further subscribed event series
     active_nonsubscribed_lectures_html: >
       Current event series &ndash; %{term}
@@ -1940,6 +1941,12 @@ en:
       You have not yet subscribed any event series of the current term.
     no_inactive_stuff: >
       You have not yet subscribed any event series outside of the current term.
+    no_next_term_stuff: >
+      You have not yet subscribed any event series of the coming term.
+    next_term_registrations: >
+      Applied for — places are allocated after the registration deadline.
+    next_term_seats: >
+      You are on a list for this lecture, but have not subscribed to it.
     no_current_at_all: >
       In the current term, no event series have yet been published.
     other_preferences: >
