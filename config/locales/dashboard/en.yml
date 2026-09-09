@@ -1,0 +1,12 @@
+en:
+  dashboard:
+    washi_tape:
+      open: "Choose the tape for %{subject}"
+      color: "Colour"
+      colors:
+        butter: "Butter"
+        rose: "Rose"
+        mint: "Mint"
+        sky: "Sky"
+        lavender: "Lavender"
+        clay: "Clay"

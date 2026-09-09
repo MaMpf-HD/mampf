@@ -1,0 +1,12 @@
+de:
+  dashboard:
+    washi_tape:
+      open: "Klebeband für %{subject} auswählen"
+      color: "Farbe"
+      colors:
+        butter: "Butter"
+        rose: "Rosé"
+        mint: "Minze"
+        sky: "Himmel"
+        lavender: "Lavendel"
+        clay: "Ton"

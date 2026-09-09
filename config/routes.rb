@@ -654,6 +654,11 @@ Rails.application.routes.draw do
   patch "profile/unstar_lecture",
         as: "unstar_lecture"
 
+  # how this user wants their dashboard card for a lecture taped to the board
+  patch "dashboard/washi_tape/:lecture_id",
+        to: "dashboard/washi_tapes#update",
+        as: "dashboard_washi_tape"
+
   get "profile/request_data",
       as: "request_data"
 

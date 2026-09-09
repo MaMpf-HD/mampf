@@ -2,8 +2,12 @@ en:
   main:
     start:
       no_lectures: >-
-        You have not subscribed to any event series or talks of the current
-        term yet.
+        You are not enrolled in any event series of the current term yet, and
+        have not bookmarked any.
+      sections:
+        enrolled: "Your event series"
+        bookmarked: "Bookmarked event series"
+        talks: "Your talks"
       registration_open: "Registration open — register now"
       homework_due: "Homework due %{date}"
     next_term_banner:

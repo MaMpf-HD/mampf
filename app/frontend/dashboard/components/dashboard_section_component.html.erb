@@ -1,0 +1,6 @@
+<%= tag.section class: "dashboard-section",
+                aria: { labelledby: heading_id },
+                data: { testid: testid } do %>
+  <h2 class="visually-hidden" id="<%= heading_id %>"><%= title %></h2>
+  <div class="dashboard-cards"><%= content %></div>
+<% end %>

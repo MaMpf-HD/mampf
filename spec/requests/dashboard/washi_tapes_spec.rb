@@ -1,0 +1,68 @@
+require "rails_helper"
+
+RSpec.describe("Dashboard::WashiTapes", type: :request) do
+  let(:user) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture) }
+
+  before do
+    sign_in user
+  end
+
+  def style
+    Dashboard::CardStyle.find_by(user: user, lecture: lecture)
+  end
+
+  describe "PATCH /dashboard/washi_tape/:lecture_id" do
+    context "when the user has bookmarked the lecture" do
+      before do
+        user.subscribe_lecture!(lecture)
+      end
+
+      it "saves the chosen colour" do
+        patch dashboard_washi_tape_path(lecture),
+              params: { washi_tape: { tape_color: "mint" } }
+
+        expect(response).to have_http_status(:no_content)
+        expect(style.tape_color).to eq("mint")
+      end
+
+      it "replaces a colour that was picked before" do
+        Dashboard::CardStyle.create!(user: user, lecture: lecture,
+                                     tape_color: "sky")
+
+        patch dashboard_washi_tape_path(lecture),
+              params: { washi_tape: { tape_color: "rose" } }
+
+        expect(style.tape_color).to eq("rose")
+        expect(Dashboard::CardStyle.where(user: user, lecture: lecture).count)
+          .to eq(1)
+      end
+
+      it "rejects a colour that does not exist" do
+        patch dashboard_washi_tape_path(lecture),
+              params: { washi_tape: { tape_color: "holographic" } }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(style).to be_nil
+      end
+    end
+
+    it "styles a lecture the user holds a place in but has not bookmarked" do
+      lecture.lecture_memberships.create!(user: user)
+
+      patch dashboard_washi_tape_path(lecture),
+            params: { washi_tape: { tape_color: "clay" } }
+
+      expect(response).to have_http_status(:no_content)
+      expect(style.tape_color).to eq("clay")
+    end
+
+    it "refuses a lecture that is not on this user's dashboard" do
+      patch dashboard_washi_tape_path(lecture),
+            params: { washi_tape: { tape_color: "mint" } }
+
+      expect(response).to have_http_status(:not_found)
+      expect(style).to be_nil
+    end
+  end
+end

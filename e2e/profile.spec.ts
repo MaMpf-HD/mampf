@@ -118,7 +118,7 @@ test.describe("Account settings", () => {
 });
 
 test.describe("Module settings", () => {
-  test("can subscribe to a lecture (via profile page)",
+  test("can bookmark a lecture (via profile page)",
     async ({ factory, student: { page } }) => {
       const divisionName = "Fourier Division";
       const courseName = "Happy Calculus 101";
@@ -137,8 +137,9 @@ test.describe("Module settings", () => {
       await page.getByText(teacher.name).click();
       await profilePage.save();
 
+      // bookmarked, not enrolled: it belongs in the second band of the board
       await page.goto("/");
-      const dashboard = page.getByTestId("dashboard-lectures");
+      const dashboard = page.getByTestId("dashboard-bookmarked-lectures");
       await expect(dashboard).toContainText(courseName);
       await expect(dashboard).toContainText(teacher.name);
     });

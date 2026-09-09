@@ -30,7 +30,8 @@ class MainController < ApplicationController
   end
 
   def start
-    @lectures = current_user.current_subscribed_lectures
+    @enrolled_lectures = current_user.current_enrolled_lectures
+    @bookmarked_lectures = current_user.current_bookmarked_lectures
     next_term_banner
     @talks = current_user.talks.includes(lecture: :term)
                          .select { |t| t.visible_for_user?(current_user) }

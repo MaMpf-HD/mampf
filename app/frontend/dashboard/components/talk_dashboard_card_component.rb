@@ -16,6 +16,12 @@ class TalkDashboardCardComponent < ViewComponent::Base
     image_course_path(talk.lecture.course, variant: "normalized")
   end
 
+  # Talks have no per-user subscription to remember a choice on, so their
+  # strip is the seeded default and cannot be changed.
+  def tape
+    @tape ||= Dashboard::WashiTape.for(seed: talk.id)
+  end
+
   def dates_text
     talk.dates.map { |d| I18n.l(d, format: :concise) }.join(", ")
   end

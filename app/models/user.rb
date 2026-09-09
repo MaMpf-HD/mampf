@@ -630,9 +630,20 @@ class User < ApplicationRecord
   end
 
   def current_subscribed_lectures
-    active_lectures.includes(:course, :term, :teacher).natural_sort_by(&:title) +
-      lectures.where(term: nil).includes(:course, :teacher)
-              .natural_sort_by(&:title)
+    lectures_of_current_term(lectures)
+  end
+
+  # The lectures this user holds a place on the roster for. These come first on
+  # the dashboard: they are the ones the user is actually taking, as opposed to
+  # the ones they only bookmarked to look in on now and then.
+  def current_enrolled_lectures
+    lectures_of_current_term(enrolled_lectures)
+  end
+
+  # Bookmarked but not enrolled. A lecture the user holds a place in is already
+  # shown in the section above, so it is not listed a second time.
+  def current_bookmarked_lectures
+    current_subscribed_lectures - current_enrolled_lectures
   end
 
   def current_subscribable_lectures
@@ -822,6 +833,15 @@ class User < ApplicationRecord
   end
 
   private
+
+    # Term-independent lectures belong to every term, so they follow the ones
+    # of the active term rather than being left out.
+    def lectures_of_current_term(scope)
+      scope.where(term: Term.active).includes(:course, :term, :teacher)
+           .natural_sort_by(&:title) +
+        scope.where(term: nil).includes(:course, :teacher)
+             .natural_sort_by(&:title)
+    end
 
     def password_differs_from_current
       stored = encrypted_password_in_database

@@ -2147,18 +2147,19 @@ de:
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
     locale: 'Sprache'
-    subscribe_lecture: 'Vorlesung abonnieren'
+    subscribe_lecture: 'Veranstaltung merken'
     passphrase_required: >
-      Du möchtest die Veranstaltung %{lecture_title} abonnieren. Diese ist
+      Du möchtest Dir die Veranstaltung %{lecture_title} merken. Diese ist
       durch einen Zugangsschlüssel geschützt. Gib diesen bitte hier ein.
     my_term_html: Mein Semester &ndash; %{term}
-    inactive_lectures: Weitere abonnierte Veranstaltungen
+    inactive_lectures: Weitere gemerkte Veranstaltungen
     active_nonsubscribed_lectures_html: >
       Aktuelle Veranstaltungen &ndash; %{term}
     no_current_stuff: >
-      Du hast keine Veranstaltungen aus dem aktuellen Semester abonniert.
+      Du hast Dir keine Veranstaltungen aus dem aktuellen Semester gemerkt.
     no_inactive_stuff: >
-      Du hast keine Veranstaltungen außerhalb des aktuellen Semesters abonniert.
+      Du hast Dir keine Veranstaltungen außerhalb des aktuellen Semesters
+      gemerkt.
     no_current_at_all: >
       Im aktuellen Semester sind noch keine Veranstaltungen veröffentlicht
       worden.

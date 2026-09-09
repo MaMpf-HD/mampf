@@ -1,4 +1,4 @@
-# This component renders one lecture as a big card on the student dashboard
+# This component renders one lecture as a card on the student dashboard
 # (main/start), showing the lecture image, title, lecturer, registration
 # status and upcoming homework deadlines.
 class LectureDashboardCardComponent < ViewComponent::Base
@@ -29,8 +29,15 @@ class LectureDashboardCardComponent < ViewComponent::Base
     lecture.term || !lecture.disable_teacher_display
   end
 
-  def favorite?
-    lecture.in?(user.favorite_lectures)
+  def card_style
+    return @card_style if defined?(@card_style)
+
+    @card_style = Dashboard::CardStyle.find_by(user: user, lecture: lecture)
+  end
+
+  def tape
+    @tape ||= Dashboard::WashiTape.for(seed: lecture.id,
+                                       color: card_style&.tape_color)
   end
 
   def registration_status

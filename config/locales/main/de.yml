@@ -2,8 +2,12 @@ de:
   main:
     start:
       no_lectures: >-
-        Du hast noch keine Veranstaltungen oder Vorträge des aktuellen
-        Semesters abonniert.
+        Du bist noch zu keiner Veranstaltung des aktuellen Semesters angemeldet
+        und hast Dir auch keine gemerkt.
+      sections:
+        enrolled: "Deine Veranstaltungen"
+        bookmarked: "Gemerkte Veranstaltungen"
+        talks: "Deine Vorträge"
       registration_open: "Anmeldung offen — jetzt anmelden"
       homework_due: "Hausaufgabe fällig am %{date}"
     next_term_banner:

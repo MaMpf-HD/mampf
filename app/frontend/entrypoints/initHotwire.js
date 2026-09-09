@@ -181,6 +181,9 @@ window.Stimulus.register("media-download-button", MediaDownloadButtonController)
 import LecturesNewFormController from "~/lectures/new/_form.controller.js";
 window.Stimulus.register("lectures-new-form", LecturesNewFormController);
 
+import WashiTapeController from "~/dashboard/washi_tape.controller.js";
+window.Stimulus.register("washi-tape", WashiTapeController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

@@ -1960,18 +1960,18 @@ en:
     consent: >
       You consented to our privacy policy.
     locale: 'Language'
-    subscribe_lecture: 'Subscribe lecture'
+    subscribe_lecture: 'Bookmark event series'
     passphrase_required: >
-      You want to subscribe the event series %{lecture_title}. It is protected
+      You want to bookmark the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
     my_term_html: My term &ndash; %{term}
-    inactive_lectures: Further subscribed event series
+    inactive_lectures: Further bookmarked event series
     active_nonsubscribed_lectures_html: >
       Current event series &ndash; %{term}
     no_current_stuff: >
-      You have not yet subscribed any event series of the current term.
+      You have not yet bookmarked any event series of the current term.
     no_inactive_stuff: >
-      You have not yet subscribed any event series outside of the current term.
+      You have not yet bookmarked any event series outside of the current term.
     no_current_at_all: >
       In the current term, no event series have yet been published.
     other_preferences: >

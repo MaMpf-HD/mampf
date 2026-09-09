@@ -1,0 +1,207 @@
+@import "~/styles/branding";
+
+// The dashboard's top half is a pinboard: cards of card stock, each pinned at
+// a slightly different angle with a strip of washi tape (see _washi_tape).
+//
+// The tilt and the tape colour arrive per card as custom properties, so no two
+// neighbours look alike and the card's border matches its own tape. Hovering
+// or focusing straightens a card, lifts it, and lays a wider, paler ring of
+// the same colour around it — the whole hover affordance, so no separate
+// highlight colour is needed to say what is being pointed at.
+
+// How far the card's own border is toned down from the tape it matches: the
+// strip is meant to stay the strongest note of the colour on the card.
+$card-border-tint: 78%;
+// The ring that grows on hover, paler still so it reads as a halo rather than
+// a second border.
+$card-ring-tint: 38%;
+$card-ring-width: 5px;
+
+// Two columns at most: a card is a glance, not a page, and a third column
+// would shrink the photos past the point where they are recognisable.
+//
+// The board is narrower than the page it sits on. A card that fills half of a
+// wide container ends up with a photo tall enough to push everything else off
+// the screen, so the columns are capped and the board is centred instead.
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    // wide enough that a tilted card never touches the one beside it, and that
+    // the tape sticking out above a card clears the row above
+    gap: 2.5rem;
+    max-width: 42rem;
+    margin-inline: auto;
+    padding-top: 1.5rem;
+}
+
+@media (min-width: 576px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+// A hairline is the only separation between the bands of the board, so that
+// they read as one continuous surface that changes subject as you scroll.
+.dashboard-section {
+    border-top: 1px solid rgb(0 0 0 / 8%);
+    padding-bottom: 1.5rem;
+}
+
+.dashboard-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0.5rem 1rem;
+    border: 2px solid color-mix(in srgb, var(--washi-tape-color, #dee2e6) #{$card-border-tint}, #fff);
+    border-radius: 0.75rem;
+    background: #fff;
+    rotate: var(--dashboard-card-tilt, 0deg);
+    box-shadow:
+        0 0 0 0 transparent,
+        0 1px 2px rgb(0 0 0 / 8%),
+        0 6px 14px rgb(0 0 0 / 8%);
+    transition:
+        rotate 0.25s ease,
+        translate 0.25s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+
+    &:hover,
+    &:focus-within {
+        rotate: 0deg;
+        translate: 0 -4px;
+        // the first shadow is the ring: it grows from nothing, so the
+        // transition above animates it in rather than snapping it on
+        box-shadow:
+            0 0 0 #{$card-ring-width}
+                color-mix(in srgb, var(--washi-tape-color, #dee2e6) #{$card-ring-tint}, #fff),
+            0 2px 4px rgb(0 0 0 / 10%),
+            0 12px 26px rgb(0 0 0 / 12%);
+    }
+
+    // The title link is stretched over the whole card, so the ring belongs on
+    // the card rather than on the (text-sized) link itself.
+    &:has(.dashboard-card__link:focus-visible) {
+        outline: 2px solid $mampf-blue-focus;
+        outline-offset: 3px;
+    }
+
+    &__photo {
+        // clips the photo's square corners without clipping the tape, which
+        // deliberately hangs over the card's top edge
+        overflow: hidden;
+        border-radius: 0.45rem;
+        background: #f1f3f5;
+    }
+
+    // Course images are nearer to square than to a banner, so a wide crop
+    // would cut the sides off most of them.
+    &__image {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        transition: scale 0.4s ease;
+    }
+
+    &:hover &__image {
+        scale: 1.04;
+    }
+
+    &__body {
+        padding: 0.75rem 0.5rem 0;
+    }
+
+    &__title {
+        margin-bottom: 0.1rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    &__link {
+        color: #212529;
+        text-decoration: none;
+        transition: color 0.2s ease;
+
+        // the card draws the focus ring for it, see :has() above
+        &:focus-visible {
+            outline: none;
+        }
+    }
+
+    // The whole card is the click target, so the title answers to a pointer
+    // anywhere on it, not only to one over the words themselves.
+    &:hover &__link,
+    &:focus-within &__link {
+        color: $mampf-blue;
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+    }
+
+    &__subtitle {
+        margin-bottom: 0;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    &__notes {
+        margin: 0.6rem 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__note {
+        display: flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        color: #495057;
+
+        + .dashboard-card__note {
+            margin-top: 0.2rem;
+        }
+    }
+
+    // sits above the stretched title link so it stays clickable
+    &__corner {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        z-index: 2;
+    }
+
+    &__action {
+        display: inline-flex;
+        padding: 0.25rem;
+        border-radius: 50%;
+        background: rgb(255 255 255 / 85%);
+        text-decoration: none;
+        backdrop-filter: blur(2px);
+
+        &:focus-visible {
+            outline: 2px solid $mampf-blue-focus;
+            outline-offset: 2px;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-card {
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover,
+        &:focus-within {
+            translate: none;
+        }
+
+        &__image {
+            transition: none;
+        }
+
+        &:hover &__image {
+            scale: 1;
+        }
+    }
+}
