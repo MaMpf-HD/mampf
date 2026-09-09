@@ -31,7 +31,6 @@ class MainController < ApplicationController
 
   def start
     @lectures = current_user.current_subscribed_lectures
-    announcements
     next_term_banner
     @talks = current_user.talks.includes(lecture: :term)
                          .select { |t| t.visible_for_user?(current_user) }
