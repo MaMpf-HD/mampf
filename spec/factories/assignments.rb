@@ -5,8 +5,13 @@ FactoryBot.define do
         Faker::Number.between(from: 1, to: 9999).to_s
     end
     deadline { Faker::Time.forward(days: 30) }
-    deletion_date { Faker::Date.forward(days: 60) }
     accepted_file_type { ".pdf" }
+
+    # Assignments from before the assessment system exist in the data and
+    # still render through the legacy path.
+    trait :without_assessment do
+      after(:create) { |assignment| assignment.assessment&.destroy }
+    end
 
     trait :with_lecture do
       association :lecture, :released_for_all
@@ -14,6 +19,23 @@ FactoryBot.define do
 
     trait :inactive do
       deadline { Faker::Time.backward(days: 30) }
+
+      to_create do |instance|
+        instance.save!(validate: false)
+      end
+    end
+
+    trait :expired do
+      transient do
+        expired_since { 1.day }
+      end
+
+      after(:create) do |assignment, evaluator|
+        past_deadline = evaluator.expired_since.ago
+        # rubocop:disable Rails/SkipsModelValidations
+        assignment.update_column(:deadline, past_deadline)
+        # rubocop:enable Rails/SkipsModelValidations
+      end
     end
 
     factory :valid_assignment, traits: [:with_lecture]

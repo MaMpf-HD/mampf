@@ -17,7 +17,7 @@ class SubmissionCleaner
   def check_for_first_mail
     @deletion_date = @date + 14.days
     fetch_props
-    return if @assignments.empty?
+    return if @lectures.empty?
 
     @reminder = false
     send_info_mail_to_submitters
@@ -27,7 +27,7 @@ class SubmissionCleaner
   def check_for_reminder_mail
     @deletion_date = @date + 7.days
     fetch_props
-    return if @assignments.empty?
+    return if @lectures.empty?
 
     @reminder = true
     send_info_mail_to_submitters
@@ -36,8 +36,13 @@ class SubmissionCleaner
 
   def check_for_deletion
     @deletion_date = @date
-    fetch_props
-    return if @assignments.empty?
+    @lectures = Lecture.where(
+      Lecture.arel_table[:submission_deletion_date].lteq(@deletion_date)
+    )
+    return if @lectures.empty?
+
+    @assignments = Assignment.where(lecture: @lectures)
+    @submitters = User.where(id: submitter_ids_for(@assignments))
 
     @submissions = Submission.where(assignment: @assignments)
     @submissions.each(&:destroy!)
@@ -48,6 +53,14 @@ class SubmissionCleaner
 
   private
 
+    # One query rather than one per assignment: the cleaner runs over a whole
+    # term's worth of them.
+    def submitter_ids_for(assignments)
+      UserSubmissionJoin.where(submission: Submission.where(assignment: assignments))
+                        .distinct
+                        .pluck(:user_id)
+    end
+
     def clear_props
       @assignments = nil
       @submitters = nil
@@ -56,11 +69,11 @@ class SubmissionCleaner
 
     def fetch_props
       clear_props
-      @assignments = Assignment.where(deletion_date: @deletion_date)
-      return if @assignments.empty?
+      @lectures = Lecture.where(submission_deletion_date: @deletion_date)
+      return if @lectures.empty?
 
-      @submitters = User.where(id: @assignments.flat_map(&:submitter_ids))
-      @lectures = Lecture.where(id: @assignments.pluck(:lecture_id))
+      @assignments = Assignment.where(lecture: @lectures)
+      @submitters = User.where(id: submitter_ids_for(@assignments))
     end
 
     def send_destruction_mail_to_submitters

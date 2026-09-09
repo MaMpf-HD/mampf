@@ -250,7 +250,7 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
   end
 
   describe "#conflicting_registrations" do
-    context "when there are conflicts" do
+    context "when campaign has tutorial items and there are conflicts" do
       let(:tutorial) { create(:tutorial, lecture: lecture) }
       let(:student) { create(:confirmed_user) }
 
@@ -263,7 +263,53 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
         conflicts = dashboard.conflicting_registrations
         expect(conflicts).to be_present
         expect(conflicts.first[:user]).to eq(student)
-        expect(conflicts.first[:tutorial]).to eq(tutorial)
+        expect(conflicts.first[:registerable]).to eq(tutorial)
+      end
+    end
+
+    context "when campaign has exam items" do
+      let(:exam) { create(:exam, :without_campaign, lecture: lecture) }
+      let(:student) { create(:confirmed_user) }
+      let(:exam_campaign) do
+        create(:registration_campaign, campaignable: lecture).tap do |c|
+          create(:registration_item, registration_campaign: c, registerable: exam)
+        end
+      end
+      let(:exam_dashboard) { described_class.new(exam_campaign) }
+
+      before do
+        create(:tutorial, lecture: lecture).tap do |t|
+          create(:tutorial_membership, tutorial: t, user: student)
+        end
+      end
+
+      it "returns empty array even if student is in a tutorial" do
+        expect(exam_dashboard.conflicting_registrations).to be_empty
+      end
+    end
+
+    context "when the student sits on a sibling exam's roster" do
+      let(:main_exam) { create(:exam, :with_date, :without_campaign, lecture: lecture) }
+      let(:resit) { create(:exam, :with_date, :without_campaign, lecture: lecture) }
+      let(:student) { create(:confirmed_user) }
+      let(:resit_campaign) { create(:registration_campaign, campaignable: lecture) }
+      let(:resit_item) do
+        create(:registration_item, registration_campaign: resit_campaign, registerable: resit)
+      end
+      let(:resit_dashboard) { described_class.new(resit_campaign) }
+
+      before do
+        main_exam.add_user_to_roster!(student)
+        create(:registration_user_registration,
+               registration_campaign: resit_campaign,
+               registration_item: resit_item,
+               user: student)
+      end
+
+      # Sitting the main exam and the resit are independent; neither allocation
+      # displaces the other, so this must not surface as a conflict.
+      it "returns empty array" do
+        expect(resit_dashboard.conflicting_registrations).to be_empty
       end
     end
 
@@ -298,9 +344,69 @@ RSpec.describe(Registration::AllocationDashboard, type: :model) do
                                             active: true, phase: :finalization)
       create(:registration_policy, :student_performance, registration_campaign: campaign,
                                                          active: false, phase: :finalization)
-      create(:registration_policy, :student_performance, registration_campaign: campaign,
-                                                         active: true, phase: :registration)
+      create(:registration_policy, :prerequisite_campaign, registration_campaign: campaign,
+                                                           active: true, phase: :registration)
       expect(dashboard.finalization_policies).to eq([policy])
+    end
+  end
+
+  describe "#performance_lectures" do
+    it "returns every configured lecture, not just the first" do
+      first_lecture = create(:lecture, :with_organizational_stuff)
+      second_lecture = create(:lecture, :with_organizational_stuff)
+
+      create(:registration_policy, :student_performance,
+             registration_campaign: campaign, active: true, phase: :finalization,
+             config: { "lecture_ids" =>
+                         [second_lecture.id.to_s, first_lecture.id.to_s] })
+
+      expect(dashboard.performance_lectures)
+        .to contain_exactly(first_lecture, second_lecture)
+    end
+
+    it "is empty without a student_performance finalization policy" do
+      expect(dashboard.performance_lectures).to be_empty
+    end
+  end
+
+  describe "#violation_report" do
+    let(:campaign) do
+      create(:registration_campaign, :with_items, campaignable: lecture,
+                                                  status: :draft)
+    end
+    let(:student) { create(:confirmed_user) }
+    let(:passed_lecture) { create(:lecture, :with_organizational_stuff) }
+    let(:outstanding_lecture) { create(:lecture, :with_organizational_stuff) }
+
+    before do
+      create(:registration_policy, :student_performance, :for_finalization,
+             registration_campaign: campaign, active: true,
+             config: { "lecture_ids" => [passed_lecture.id.to_s,
+                                         outstanding_lecture.id.to_s] })
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             user: student)
+      create(:student_performance_certification, :passed,
+             lecture: passed_lecture, user: student,
+             certified_by: create(:confirmed_user))
+      create(:student_performance_certification, :pending,
+             lecture: outstanding_lecture, user: student)
+      campaign.update!(status: :closed)
+    end
+
+    # The pass covers one of the two lectures the policy names, and the guard
+    # blocks on the other, where the decision is still pending. Reading only the
+    # first configured lecture would find the pass and report no evidence at all.
+    it "reports the lecture that is still outstanding, not the one passed" do
+      entry = dashboard.violation_report.performance_entries.first
+
+      expect(entry[:user_id]).to eq(student.id)
+      expect(entry[:status_key]).to eq(:pending)
+    end
+
+    it "counts the student once" do
+      expect(dashboard.violation_report.user_count).to eq(1)
     end
   end
 

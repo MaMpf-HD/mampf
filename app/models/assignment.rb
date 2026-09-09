@@ -1,22 +1,26 @@
 class Assignment < ApplicationRecord
+  include Assessment::Pointable
+
+  attr_writer :requires_submission
+
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
 
+  before_save :inherit_deletion_date_from_lecture
+  after_create :setup_assessment
+  after_create_commit :reopen_lecture_assignment_list
   before_destroy :check_destructibility, prepend: true
+
+  def requires_submission
+    return assessment.requires_submission if assessment
+
+    @requires_submission.nil? || @requires_submission
+  end
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
-  validates :deletion_date, presence: true
-  validate :deletion_date_cannot_be_in_the_past
-
-  def deletion_date_cannot_be_in_the_past
-    return unless deletion_date.present? && deletion_date < Time.zone.now.to_date
-
-    errors.add(:deletion_date, I18n.t("activerecord.errors.models." \
-                                      "assignment.attributes.deletion_date." \
-                                      "in_past"))
-  end
+  validate :deadline_not_in_past, if: -> { deadline_changed? }
 
   scope :active, -> { where(deadline: Time.zone.now..) }
 
@@ -28,6 +32,7 @@ class Assignment < ApplicationRecord
 
   validates :accepted_file_type,
             inclusion: { in: Assignment.accepted_file_types }
+  validate :locked_fields_unchanged, if: -> { persisted? && past_deadline? }
 
   def submission(user)
     UserSubmissionJoin.where(submission: Submission.where(assignment: self),
@@ -41,6 +46,10 @@ class Assignment < ApplicationRecord
 
   def submitters
     User.where(id: submitter_ids)
+  end
+
+  def past_deadline?
+    deadline.present? && deadline < Time.zone.now
   end
 
   def active?
@@ -58,6 +67,7 @@ class Assignment < ApplicationRecord
   def totally_expired?
     !semiactive?
   end
+  alias grading_open? totally_expired?
 
   def in_grace_period?
     semiactive? && !active?
@@ -97,7 +107,17 @@ class Assignment < ApplicationRecord
   end
 
   def destructible?
-    submissions.with_uploads.none?
+    destruction_blockers.empty?
+  end
+
+  # Named the way Rosterable names them, so a view can ask any deletable thing
+  # the same question. A sheet whose points are already in the pointbook goes
+  # nowhere either, even if nobody uploaded anything.
+  def destruction_blockers
+    blockers = []
+    blockers << :has_submissions if submissions.with_uploads.any?
+    blockers << :has_grading_data if grading_data?
+    blockers
   end
 
   def check_destructibility
@@ -150,7 +170,45 @@ class Assignment < ApplicationRecord
     ".gz"
   end
 
-  def localized_deletion_date
-    deletion_date.strftime(I18n.t("date.formats.concise"))
-  end
+  private
+
+    def locked_fields_unchanged
+      return unless accepted_file_type_changed?
+
+      errors.add(:accepted_file_type, :locked_after_deadline)
+    end
+
+    def deadline_not_in_past
+      return if deadline.blank?
+
+      errors.add(:deadline, :in_past) if deadline < Time.zone.now
+    end
+
+    def inherit_deletion_date_from_lecture
+      self.deletion_date = lecture.submission_deletion_date
+    end
+
+    def grading_data?
+      return false unless assessment
+
+      participations = assessment.assessment_participations
+
+      participations.exists?(status: [:reviewed, :exempt]) ||
+        participations.where.not(points_total: nil).exists? ||
+        participations.joins(:task_points).exists?
+    end
+
+    def setup_assessment
+      ensure_pointbook!(requires_submission: requires_submission)
+    end
+
+    # Skip Lecture validations so an unrelated validation error cannot
+    # leave assignments_complete_at set after an Assignment is added.
+    def reopen_lecture_assignment_list
+      return unless lecture&.assignments_complete?
+
+      # rubocop:disable Rails/SkipsModelValidations
+      lecture.update_column(:assignments_complete_at, nil)
+      # rubocop:enable Rails/SkipsModelValidations
+    end
 end

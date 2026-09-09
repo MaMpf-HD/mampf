@@ -78,6 +78,7 @@ class SubmissionsController < ApplicationController
     @submission.update(last_modification_by_users_at: Time.zone.now)
     return unless @submission.manuscript
 
+    sync_assessment_participations(users: [current_user])
     send_upload_email(User.where(id: current_user.id))
   end
 
@@ -106,9 +107,11 @@ class SubmissionsController < ApplicationController
         @submission.update(manuscript: nil,
                            last_modification_by_users_at: Time.zone.now)
         send_upload_removal_email(@submission.users)
+        clear_submitted_at(@submission.users)
       elsif @submission.manuscript_data != old_manuscript_data
         @submission.update(last_modification_by_users_at: Time.zone.now)
         send_upload_email(@submission.users)
+        sync_assessment_participations
       end
     end
     @errors = @submission.errors
@@ -117,6 +120,7 @@ class SubmissionsController < ApplicationController
   def destroy
     return if @too_late
 
+    clear_submitted_at(@submission.users)
     @submission.destroy
   end
 
@@ -154,6 +158,7 @@ class SubmissionsController < ApplicationController
       @error = I18n.t("submission.no_partners_no_leave")
       return
     end
+    clear_submitted_at([current_user])
     @submission.users.delete(current_user)
     send_leave_email
   end
@@ -439,6 +444,7 @@ class SubmissionsController < ApplicationController
         @submission.update(last_modification_by_users_at: Time.zone.now)
         send_join_email
         remove_invitee_status
+        sync_assessment_participations(users: [current_user]) if @submission.manuscript
       else
         @error = @join.errors[:base].join(", ")
       end
@@ -486,6 +492,46 @@ class SubmissionsController < ApplicationController
       return if @lecture.assignments.any?
 
       redirect_to :root, alert: I18n.t("controllers.no_assignments_in_lecture")
+    end
+
+    def clear_submitted_at(users)
+      assessment = @submission&.assignment&.assessment
+      return unless assessment
+
+      assessment.assessment_participations
+                .where(user_id: users.map(&:id))
+                .update_all(submitted_at: nil, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    def sync_assessment_participations(users: nil)
+      assignment = @submission&.assignment
+      assessment = assignment&.assessment
+      return unless assessment
+
+      lecture = assignment.lecture
+      target_users = Array(users || @submission.users)
+      member_ids = lecture.members.where(id: target_users.map(&:id)).pluck(:id)
+      target_users.select! { |user| user.id.in?(member_ids) }
+      return if target_users.empty?
+
+      target_users.each do |user|
+        participation = assessment.assessment_participations
+                                  .find_or_initialize_by(user: user)
+        participation.status = :pending
+        participation.grade_numeric = nil
+        participation.grade_text = nil
+        participation.points_total = nil
+        participation.graded_at = nil
+        participation.grader_id = nil
+        participation.task_points.destroy_all if participation.persisted?
+
+        participation.submitted_at = Time.current
+        participation.tutorial_id ||=
+          Assessment::Participation.tutorial_for(user, lecture)
+        participation.save!
+      rescue ActiveRecord::RecordNotUnique
+        retry
+      end
     end
 
     def set_disposition

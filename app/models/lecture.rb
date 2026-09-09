@@ -83,6 +83,23 @@ class Lecture < ApplicationRecord
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments, dependent: :destroy
 
+  # a lecture has many exams (scheduled assessment events)
+  has_many :exams, dependent: :destroy
+
+  has_many :student_performance_records,
+           class_name: "StudentPerformance::Record",
+           dependent: :destroy
+  has_many :student_performance_certifications,
+           class_name: "StudentPerformance::Certification",
+           dependent: :destroy
+  has_many :student_performance_rules,
+           class_name: "StudentPerformance::Rule",
+           dependent: :destroy
+  has_one :active_performance_rule,
+          -> { where(active: true) },
+          class_name: "StudentPerformance::Rule"
+  has_many :achievements, dependent: :destroy
+
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
@@ -112,6 +129,10 @@ class Lecture < ApplicationRecord
 
   validate :only_one_lecture, if: :term_independent?, on: :create
 
+  validate :exam_eligibility_can_be_disabled, if: lambda {
+    uses_exam_eligibility_changed? && !uses_exam_eligibility?
+  }
+
   validates :submission_max_team_size,
             numericality: { only_integer: true,
                             greater_than: 0 },
@@ -122,6 +143,13 @@ class Lecture < ApplicationRecord
                             greater_than: -1 },
             allow_nil: true
 
+  before_save :initialize_submission_deletion_date
+  # Saying that the assignments are all there, or taking it back, turns every
+  # eligibility proposal in the lecture over. The figures do not move, but the
+  # decisions taken before rested on the answer that just changed, so the
+  # records are touched and the reconciliation banner picks them up.
+  after_update_commit :recompute_performance_records,
+                      if: :saved_change_to_assignments_complete_at?
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
@@ -135,6 +163,8 @@ class Lecture < ApplicationRecord
   after_save :touch_lessons
   after_save :touch_chapters
   after_save :touch_sections
+
+  after_save :fan_out_submission_deletion_date
 
   # scopes
   scope :published, -> { where.not(released: nil) }
@@ -640,6 +670,10 @@ class Lecture < ApplicationRecord
     false
   end
 
+  def supported_assessable_types
+    seminar? ? ["Talk"] : ["Assignment"]
+  end
+
   def chapter_name
     return "chapter" unless seminar?
 
@@ -727,11 +761,9 @@ class Lecture < ApplicationRecord
                                     .pluck(:tutor_id).uniq)
   end
 
-  def submission_deletion_date
-    Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
-      (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
-        15.days
-    end
+  def default_submission_deletion_date
+    (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
+      15.days
   end
 
   def assignments_by_deadline
@@ -851,17 +883,20 @@ class Lecture < ApplicationRecord
   end
 
   def ensure_roster_membership!(user_ids)
-    # Efficiently insert missing memberships (ignoring duplicates)
-    # Note: Requires a unique index on [:user_id, :lecture_id]
-    attributes = user_ids.map do |uid|
+    # Efficiently insert missing memberships without touching existing rows.
+    # Note: Requires a unique index on [:user_id, :lecture_id].
+    existing_user_ids = lecture_memberships.where(user_id: user_ids).pluck(:user_id)
+    new_user_ids = user_ids.uniq - existing_user_ids
+
+    attributes = new_user_ids.map do |uid|
       { user_id: uid, lecture_id: id }
     end
 
     return if attributes.empty?
 
     # Rails handles timestamps automatically.
-    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset of
-    # created_at/updated_at for existing members.
+    # We use insert_all to ignore duplicates (DO NOTHING), preventing the reset
+    # of created_at/updated_at for existing members.
     # rubocop:disable Rails/SkipsModelValidations
     transaction do
       LectureMembership.insert_all(
@@ -878,6 +913,38 @@ class Lecture < ApplicationRecord
       )
     end
     # rubocop:enable Rails/SkipsModelValidations
+
+    sync_student_performance_for_members!(new_user_ids)
+  end
+
+  def assignments_complete?
+    assignments_complete_at.present?
+  end
+
+  # Preserve assignments_complete_at when the value is unchanged to
+  # avoid recomputing records and making certifications stale again.
+  def assignments_complete=(value)
+    complete = ActiveModel::Type::Boolean.new.cast(value).present?
+    return if complete == assignments_complete?
+
+    self.assignments_complete_at = complete ? Time.current : nil
+  end
+
+  def sync_student_performance_for_members!(user_ids)
+    new_user_ids = user_ids.uniq
+    return if new_user_ids.empty?
+
+    achievements.includes(:assessment).find_each do |achievement|
+      achievement.assessment&.seed_participations_from!(
+        user_ids: new_user_ids,
+        recompute: false
+      )
+    end
+
+    service = StudentPerformance::ComputationService.new(lecture: self)
+    User.where(id: new_user_ids).find_each do |user|
+      service.compute_and_upsert_record_for(user)
+    end
   end
 
   # All students that lecture staff can reach by registration mail:
@@ -951,6 +1018,22 @@ class Lecture < ApplicationRecord
   end
 
   private
+
+    def initialize_submission_deletion_date
+      self.submission_deletion_date ||= default_submission_deletion_date
+    end
+
+    def recompute_performance_records
+      StudentPerformance::ComputationService
+        .new(lecture: self)
+        .compute_and_upsert_all_records!
+    end
+
+    def fan_out_submission_deletion_date
+      return unless saved_change_to_submission_deletion_date?
+
+      assignments.update_all(deletion_date: submission_deletion_date) # rubocop:disable Rails/SkipsModelValidations
+    end
 
     # used for after save callback
     def remove_teacher_as_editor
@@ -1044,6 +1127,30 @@ class Lecture < ApplicationRecord
       return false unless course
 
       course.term_independent
+    end
+
+    # Certifications and rules are records of what happened; switching the
+    # feature off hides them but harms nobody. A registration policy is an active
+    # dependency — it would keep admitting or refusing students on certifications
+    # nobody maintains any more — so only that blocks.
+    # A completed campaign is the exception: it has allocated its seats and is
+    # never screened again, so it would block for good with nothing left to undo.
+    def exam_eligibility_can_be_disabled
+      blocking = Registration::Policy.student_performance_for_lecture(id)
+                                     .joins(:registration_campaign)
+                                     .merge(Registration::Campaign
+                                              .where.not(status: :completed))
+                                     .includes(registration_campaign: :campaignable)
+      return if blocking.empty?
+
+      errors.add(:uses_exam_eligibility, :referenced_by_policies,
+                 campaigns: blocking_campaign_titles(blocking))
+    end
+
+    def blocking_campaign_titles(policies)
+      policies.filter_map do |policy|
+        policy.registration_campaign&.campaignable&.try(:title)
+      end.uniq.join(", ")
     end
 
     def absence_of_term

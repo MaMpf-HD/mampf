@@ -106,6 +106,36 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
         expect(row[:field].call(cohort)).to eq("Group A")
       end
     end
+
+    describe "Exam config" do
+      let(:exam) do
+        create(:exam, lecture: lecture, location: "Lecture Hall 1",
+                      date: Time.zone.local(2026, 4, 10, 9, 30))
+      end
+
+      it "defines two rows" do
+        expect(config["Exam"].size).to eq(2)
+      end
+
+      it "evaluates date and location fields" do
+        expect(config["Exam"][0][:header]).to eq("basics.date")
+        expect(config["Exam"][0][:field].call(exam)).to include("9h30")
+        expect(config["Exam"][1][:header]).to eq("basics.location")
+        expect(config["Exam"][1][:field].call(exam)).to eq("Lecture Hall 1")
+      end
+
+      it "leaves out a date an oral exam does not have" do
+        oral = create(:exam, :oral, lecture: lecture)
+
+        expect(config["Exam"][0][:field].call(oral)).to be_nil
+      end
+    end
+
+    it "covers every type that can be registered for" do
+      registerable = [Tutorial, Talk, Cohort, Exam].map(&:name)
+
+      expect(config.keys).to match_array(registerable)
+    end
   end
 
   describe "#nullable_capacity_display" do

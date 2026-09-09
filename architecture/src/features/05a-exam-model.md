@@ -260,17 +260,31 @@ campaign.registration_policies.create!(
   config: { lecture_id: lecture.id }
 )
 
-# Teacher creates certifications for eligible students
+# No proposal holds while assignments can still be added, so the lecturer says
+# the list is done first.
+lecture.update!(assignments_complete: true)
+
+evaluator = StudentPerformance::Evaluator.new(
+  lecture.active_performance_rule,
+  assignments_complete: lecture.assignments_complete?,
+  due_points: StudentPerformance::DuePoints.new(lecture: lecture)
+)
+
 lecture.active_users.find_each do |user|
-  evaluator = StudentPerformance::Evaluator.new(lecture: lecture, user: user)
-  proposal = evaluator.proposal
+  record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+  next unless record
+
+  result = evaluator.evaluate(record)
 
   StudentPerformance::Certification.create!(
     lecture: lecture,
     user: user,
-    status: proposal[:status],  # :passed or :failed
-    rule_snapshot: proposal[:rule_snapshot],
-    notes: proposal[:notes]
+    # :passed, :failed or :inconclusive - the last one becomes `pending`
+    status: StudentPerformance::Certification
+              .status_for_proposal(result.proposed_status),
+    rule: lecture.active_performance_rule,
+    certified_by: current_user,
+    certified_at: Time.current
   )
 end
 

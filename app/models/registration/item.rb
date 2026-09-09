@@ -39,6 +39,8 @@ module Registration
 
     validate :validate_registerable_is_registerable, on: :create
     validate :validate_registerable_allows_campaigns, on: :create
+    validate :ensure_compatible_with_existing_items, on: :create
+    validate :ensure_exam_campaign_holds_one_exam, on: :create
     validate :validate_capacity_reduction, on: :update
     # Prepended so it runs before the dependent user_registrations are gone -
     # they are exactly what the guard has to see.
@@ -205,6 +207,37 @@ module Registration
         return unless registerable.skip_campaigns?
 
         errors.add(:base, :registerable_not_managed_by_campaign)
+      end
+
+      def ensure_compatible_with_existing_items
+        existing_types = registration_campaign.registration_items
+                                              .where.not(id: id)
+                                              .pluck(:registerable_type)
+                                              .uniq
+
+        return if existing_types.empty?
+
+        if registerable_type == "Exam" && existing_types.any? { |t| t != "Exam" }
+          errors.add(:base, :cannot_add_exam_to_non_exam_campaign)
+        elsif registerable_type != "Exam" && existing_types.include?("Exam")
+          errors.add(:base, :cannot_add_non_exam_to_exam_campaign)
+        end
+      end
+
+      # The campaign side refuses a mode change once it holds an exam; this is
+      # the same rule seen from the item, which no campaign validation runs for.
+      def ensure_exam_campaign_holds_one_exam
+        return unless registerable_type == "Exam" && registration_campaign
+
+        unless registration_campaign.first_come_first_served?
+          errors.add(:base, :exam_requires_first_come_first_served_campaign)
+        end
+
+        return unless registration_campaign.registration_items
+                                           .where.not(id: id)
+                                           .exists?(registerable_type: "Exam")
+
+        errors.add(:base, :campaign_already_has_exam)
       end
   end
 end

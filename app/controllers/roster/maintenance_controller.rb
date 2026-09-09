@@ -25,6 +25,11 @@ module Roster
                          fallback_location: fallback_path)
     end
 
+    rescue_from "Rosters::MaintenanceService::GradingDataPresentError" do
+      respond_with_flash(:alert, t("roster.errors.grading_data_present"),
+                         fallback_location: fallback_path)
+    end
+
     rescue_from RosterLockedError do
       respond_with_flash(:alert, t("roster.errors.item_locked"), fallback_location: fallback_path)
     end
