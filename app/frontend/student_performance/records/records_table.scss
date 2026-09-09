@@ -41,9 +41,10 @@
     font-variant-numeric: tabular-nums;
   }
 
-  // Two right-aligned figures next to each other read as one number with a gap
-  // in it. The group heading spans both, so the only thing that can tell them
-  // apart is the space between them and a rule.
+  // Three right-aligned figures under one heading read as one number with gaps
+  // in it. The maximum is the base of the points beside it, so a rule between
+  // the two would separate what belongs together - it is set apart by being
+  // quiet instead. The share is a different quantity and gets the rule.
   .due-points {
     padding-right: 0.75rem;
   }

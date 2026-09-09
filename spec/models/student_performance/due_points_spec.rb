@@ -57,14 +57,14 @@ RSpec.describe(StudentPerformance::DuePoints) do
     end
   end
 
-  describe "#max_for" do
+  describe "#marked_max_for" do
     it "drops a sheet the student was excused from" do
       excused = sheet(deadline: 3.days.ago, points: 20)
       sheet(deadline: 2.days.ago, points: 16)
       FactoryBot.create(:assessment_participation, :exempt,
                         assessment: excused, user: student)
 
-      expect(due_points.max_for(student.id)).to eq(16)
+      expect(due_points.marked_max_for(student.id)).to eq(16)
     end
 
     it "asks everybody else for the full amount" do
@@ -74,24 +74,73 @@ RSpec.describe(StudentPerformance::DuePoints) do
                         assessment: excused, user: student)
       other = FactoryBot.create(:confirmed_user)
 
-      expect(due_points.max_for(other.id)).to eq(36)
+      expect(due_points.marked_max_for(other.id)).to eq(36)
+    end
+
+    # A sheet in the tutor's queue is neither earned nor lost. Counted in, it
+    # would put his backlog on her account; her figure would fall the day a
+    # deadline passed and climb back when he got round to it.
+    it "drops a sheet that was handed in and is waiting to be marked" do
+      waiting = sheet(deadline: 3.days.ago, points: 20)
+      sheet(deadline: 2.days.ago, points: 16)
+      FactoryBot.create(:assessment_participation, assessment: waiting,
+                                                   user: student,
+                                                   submitted_at: 4.days.ago)
+
+      expect(due_points.marked_max_for(student.id)).to eq(16)
+    end
+
+    # Missed is not waiting: nothing will come of it, and a zero out of a base
+    # that does not hold it would read as full marks.
+    it "keeps a sheet nobody handed in" do
+      missed = sheet(deadline: 3.days.ago, points: 20)
+      sheet(deadline: 2.days.ago, points: 16)
+      FactoryBot.create(:assessment_participation, assessment: missed,
+                                                   user: student,
+                                                   submitted_at: nil)
+
+      expect(due_points.marked_max_for(student.id)).to eq(36)
+    end
+
+    it "keeps a sheet that has come back" do
+      marked = sheet(deadline: 3.days.ago, points: 20)
+      sheet(deadline: 2.days.ago, points: 16)
+      FactoryBot.create(:assessment_participation, assessment: marked,
+                                                   user: student,
+                                                   submitted_at: 4.days.ago,
+                                                   status: :reviewed)
+
+      expect(due_points.marked_max_for(student.id)).to eq(36)
     end
   end
 
-  describe "#percentage_for" do
+  describe "#marked_percentage_for" do
     it "measures against what was due, not against every sheet that exists" do
       sheet(deadline: 2.days.ago, points: 20)
       sheet(deadline: 3.days.from_now, points: 20)
       record = record_for(student, total: 20, max: 40)
 
-      expect(due_points.percentage_for(record)).to eq(100)
+      expect(due_points.marked_percentage_for(record)).to eq(100)
+    end
+
+    # The whole point of the basis: a flawless student does not drop below her
+    # threshold because a tutor is behind.
+    it "does not fall while a sheet sits in the tutor's queue" do
+      sheet(deadline: 2.days.ago, points: 20)
+      waiting = sheet(deadline: 2.days.ago, points: 20)
+      FactoryBot.create(:assessment_participation, assessment: waiting,
+                                                   user: student,
+                                                   submitted_at: 3.days.ago)
+      record = record_for(student, total: 20, max: 40)
+
+      expect(due_points.marked_percentage_for(record)).to eq(100)
     end
 
     it "refuses to divide by a term that has not asked for anything yet" do
       sheet(deadline: 3.days.from_now, points: 20)
       record = record_for(student, total: 0, max: 20)
 
-      expect(due_points.percentage_for(record)).to be_nil
+      expect(due_points.marked_percentage_for(record)).to be_nil
     end
   end
 

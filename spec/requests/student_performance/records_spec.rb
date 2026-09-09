@@ -135,6 +135,32 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           )
         end
 
+        # The complaint this basis answers: a deadline passes, the tutor has not
+        # got to it, and a flawless student drops to half her figure overnight
+        # for something she did not do.
+        it "does not let a tutor's backlog read as a student's shortfall" do
+          sheet(deadline: 3.days.ago, points: 20)
+          waiting = sheet(deadline: 2.days.ago, points: 20)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, assessment: waiting,
+                                                       user: member,
+                                                       submitted_at: 1.day.ago)
+          # rubocop:disable Rails/SkipsModelValidations
+          StudentPerformance::Record
+            .where(lecture: lecture, user: member)
+            .update_all(points_total_materialized: 20,
+                        points_max_materialized: 40)
+          # rubocop:enable Rails/SkipsModelValidations
+
+          get lecture_student_performance_records_path(lecture)
+
+          helpers = ApplicationController.helpers
+          expect(response.body)
+            .to include(helpers.number_to_percentage(100, precision: 0))
+          expect(response.body)
+            .not_to include(helpers.number_to_percentage(50, precision: 0))
+        end
+
         it "measures the percentage against the sheets due so far" do
           sheet(deadline: 2.days.ago, points: 20)
           sheet(deadline: 3.days.from_now, points: 20)
@@ -156,9 +182,9 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             .not_to include(helpers.number_to_percentage(50, precision: 0))
         end
 
-        # One heading over both figures, and it has to be readable without
+        # One heading over all three figures, and it has to be readable without
         # opening anything — the sentence behind the icon only elaborates.
-        it "names what both figures are measured against, once" do
+        it "names what the figures are measured against, once" do
           sheet(deadline: 2.days.ago, points: 20)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
 
@@ -171,31 +197,37 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             )
           end
 
-          expect(heading["colspan"]).to eq("2")
+          expect(heading["colspan"]).to eq("3")
           expect(heading.at_css("[data-bs-content]")["data-bs-content"]).to eq(
             I18n.t("student_performance.records.columns.due_so_far_hint")
           )
           expect(columns.css("th").first.text)
             .to include(I18n.t("student_performance.records.columns.points"))
           expect(columns.css("th")[1].text)
+            .to include(I18n.t("student_performance.records.columns.maximum"))
+          expect(columns.css("th")[2].text)
             .to include(I18n.t("student_performance.records.columns.percentage"))
         end
 
-        it "puts the lecture's maximum in the heading" do
-          sheet(deadline: 2.days.ago, points: 20)
+        # The maximum differs from student to student - by what she was let off
+        # and by what her tutor has not marked yet - so it cannot stand once in
+        # the heading. It is a column, and every row fills it.
+        it "gives each student her own maximum, in its own column" do
+          excused = sheet(deadline: 3.days.ago, points: 20)
+          sheet(deadline: 2.days.ago, points: 16)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, :exempt,
+                            assessment: excused, user: member)
+          other = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: other)
 
           get lecture_student_performance_records_path(lecture)
 
-          columns = Nokogiri::HTML(response.body).css("thead tr")[1]
-
-          expect(columns.css("th").first.text).to include(
-            I18n.t("student_performance.records.columns.points_max", max: "20")
-          )
+          expect(cells_for(member)[2].text.strip).to eq("16")
+          expect(cells_for(other)[2].text.strip).to eq("36")
         end
 
-        # The lecture's maximum stands in the heading, so the column holds a
-        # plain number in every row — the excused student's too.
+        # Each figure keeps its own column, so none of them carries a fraction.
         it "keeps the points column to one figure" do
           excused = sheet(deadline: 3.days.ago, points: 20)
           sheet(deadline: 2.days.ago, points: 16)
@@ -208,27 +240,14 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(cells_for(member)[1].text).not_to include("/")
         end
 
-        # An exemption is a fact about the student, so it is said next to her
-        # name — and it has to name her maximum, not just mark the row.
-        it "spells out a personal maximum and why it is one" do
+        # With the maximum in the row, a footnote by the name would say the
+        # same thing twice - and it could only name one of the two reasons.
+        it "says nothing next to the name of an excused student" do
           excused = sheet(deadline: 3.days.ago, points: 20)
           sheet(deadline: 2.days.ago, points: 16)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
           FactoryBot.create(:assessment_participation, :exempt,
                             assessment: excused, user: member)
-
-          get lecture_student_performance_records_path(lecture)
-
-          name_cell = cells_for(member).first
-
-          expect(name_cell.at_css("[data-bs-content]")["data-bs-content"]).to eq(
-            I18n.t("student_performance.records.columns.personal_max", max: "16")
-          )
-        end
-
-        it "says nothing next to the name of a student with no exemption" do
-          sheet(deadline: 2.days.ago, points: 20)
-          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
 
           get lecture_student_performance_records_path(lecture)
 

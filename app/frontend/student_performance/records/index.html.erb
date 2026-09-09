@@ -62,7 +62,7 @@
 
             <th
               scope="colgroup"
-              colspan="2"
+              colspan="3"
               class="text-center text-nowrap due-group-end"
             >
               <%= t("student_performance.records.columns.due_so_far") %>
@@ -105,14 +105,16 @@
           <tr>
             <th scope="col" class="text-end text-nowrap due-points">
               <%= t("student_performance.records.columns.points") %>
+            </th>
 
-              <span class="fw-normal text-muted" style="font-size: 0.75em">
-                (<%= t("student_performance.records.columns.points_max",
-                       max: number_with_precision(
-                              @due_points.total,
-                              precision: 1,
-                              strip_insignificant_zeros: true)) %>)
-              </span>
+            <%#
+              The maximum is a column rather than a note on the header: it
+              differs from student to student, by what she was let off and by
+              what her tutor has not marked yet.
+            %>
+
+            <th scope="col" class="text-end text-nowrap due-points">
+              <%= t("student_performance.records.columns.maximum") %>
             </th>
 
             <th scope="col" class="text-end due-share">
@@ -175,33 +177,22 @@
         <tbody>
           <% @records.each do |record| %>
             <tr id="<%= dom_id(record) %>">
-              <% personal_max = @due_points.max_for(record.user_id) %>
-
               <td class="text-nowrap">
                 <%= record.user.tutorial_name %>
-
-                <%#
-                  An excused sheet is a fact about this student, so it is said
-                  next to her name and leaves the figures a column of plain
-                  numbers.
-                %>
-
-                <% if personal_max != @due_points.total %>
-                  <%= helpdesk(
-                        t("student_performance.records.columns.personal_max",
-                          max: number_with_precision(
-                                 personal_max,
-                                 precision: 1,
-                                 strip_insignificant_zeros: true)),
-                        false) %>
-                <% end %>
               </td>
 
               <td class="text-end text-nowrap numeric due-points">
                 <%= number_with_precision(record.points_total_materialized, precision: 1, strip_insignificant_zeros: true) %>
               </td>
 
-              <% percentage = @due_points.percentage_for(record) %>
+              <td class="text-end text-nowrap numeric due-points text-muted">
+                <%= number_with_precision(
+                      @due_points.marked_max_for(record.user_id),
+                      precision: 1,
+                      strip_insignificant_zeros: true) %>
+              </td>
+
+              <% percentage = @due_points.marked_percentage_for(record) %>
 
               <td class="text-end text-nowrap numeric due-share">
                 <span class="fw-semibold">

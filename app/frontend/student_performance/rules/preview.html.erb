@@ -89,7 +89,7 @@
                         precision: 1,
                         strip_insignificant_zeros: true) %>
                   <% else %>
-                    <% percentage = @due_points.percentage_for(change.record) %>
+                    <% percentage = @due_points.marked_percentage_for(change.record) %>
                     <% if percentage.nil? %>
                       <span class="text-muted" aria-hidden="true">&mdash;</span>
                       <span class="visually-hidden">

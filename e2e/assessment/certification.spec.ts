@@ -13,8 +13,11 @@ test.describe("exam eligibility decisions", () => {
     factory: FactoryBot,
     teacherId: number,
     percentages: number[],
+    { complete = false }: { complete?: boolean } = {},
   ): Promise<FactoryBotObject> {
-    const lecture = await createEligibilityLecture(factory, teacherId);
+    const lecture = await createEligibilityLecture(
+      factory, teacherId, complete ? { assignments_complete: true } : {},
+    );
     await factory.create("student_performance_rule", ["active"], {
       lecture_id: lecture.id,
       threshold_mode: "percentage",
@@ -54,11 +57,16 @@ test.describe("exam eligibility decisions", () => {
       .toHaveLength(0);
   });
 
+  // Nothing is proposed while sheets can still be added: another one moves both
+  // what is reachable and what the threshold asks. So a lecture that is to have
+  // proposals has to say its sheets are all in.
   test("turns the open proposals into decisions in one go", async ({
     factory,
     teacher,
   }) => {
-    const lecture = await lectureWithRule(factory, teacher.user.id, [80, 30]);
+    const lecture = await lectureWithRule(
+      factory, teacher.user.id, [80, 30], { complete: true },
+    );
 
     const page = new AssessmentDashboardPage(teacher.page, lecture.id);
     await openEligibility(page);

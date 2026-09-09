@@ -19,6 +19,14 @@ test.describe("performance records", () => {
     teacher,
   }) => {
     const lecture = await createLecture(factory, teacher.user.id);
+    // The figures are measured against the sheets that have come due, so a
+    // lecture without one has nothing to divide by and shows a dash.
+    const assignment = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id,
+      title: "Problem Set 1",
+    });
+    const assessment = await assignment.__call("assessment");
+    await addTask(factory, assessment.id, "Prove it", 90);
     await recordFor(factory, lecture.id, "Ada Lovelace", {
       points_total_materialized: 72,
       points_max_materialized: 90,
@@ -35,6 +43,8 @@ test.describe("performance records", () => {
 
     const row = teacher.page.getByRole("row", { name: /Ada Lovelace/ });
     await expect(row).toContainText("72");
+    // Her own maximum, in its own column: it differs from student to student.
+    await expect(row).toContainText("90");
     await expect(row).toContainText("80");
     await expect(teacher.page.getByText("Grace Hopper")).toBeVisible();
   });
@@ -100,7 +110,7 @@ test.describe("performance records", () => {
     await expect(
       teacher.page.getByText("Recomputation for this student completed."),
     ).toBeVisible();
-    await expect(teacher.page.getByText("out of 10 possible")).toBeVisible();
+    await expect(teacher.page.getByText("out of 10 marked so far")).toBeVisible();
     await expect(teacher.page.getByText("70%")).toBeVisible();
   });
 

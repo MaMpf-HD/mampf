@@ -14,12 +14,18 @@ module StudentPerformance
       due_assessment_ids.include?(assessment_id)
     end
 
-    def max_for(user_id)
-      total - exempted_due_points.fetch(user_id, 0)
+    # What this student has been weighed against so far: the sheets that are
+    # due, minus the ones she was let off, minus the ones still sitting with a
+    # tutor. The last of those is why the figure differs from student to
+    # student - a sheet nobody has marked yet is neither earned nor lost, and
+    # counting it as a zero would put the tutor's backlog on the student's
+    # account.
+    def marked_max_for(user_id)
+      max_for(user_id) - awaiting_marks_points.fetch(user_id, 0)
     end
 
-    def percentage_for(record)
-      max = max_for(record.user_id)
+    def marked_percentage_for(record)
+      max = marked_max_for(record.user_id)
       return nil unless max.positive?
 
       ((record.points_total_materialized || 0) / max * 100).round(2)
@@ -35,6 +41,22 @@ module StudentPerformance
     end
 
     private
+
+      def max_for(user_id)
+        total - exempted_due_points.fetch(user_id, 0)
+      end
+
+      # Handed in, deadline behind it, and still pending: `points_total` counts
+      # only what has been reviewed, so these points are in no numerator either.
+      # Same shape as the exempt sum above, one grouped query for the page.
+      def awaiting_marks_points
+        @awaiting_marks_points ||= points_per_user(
+          Assessment::Participation
+            .where(assessment_id: due_assessments.map(&:id), status: :pending)
+            .where.not(submitted_at: nil),
+          due_assessments
+        )
+      end
 
       def assignment_assessments
         Assessment::Assessment
