@@ -54,6 +54,18 @@ RSpec.describe("Main", type: :request) do
       expect(response.body).not_to include("dashboard-bookmarked-lectures")
     end
 
+    it "shows the user's talks alongside the lectures they are registered for" do
+      seminar = create(:lecture, :released_for_all, sort: "seminar", term: term)
+      talk = create(:talk, lecture: seminar, title: "Divisibility")
+      talk.speakers << user
+
+      get root_path
+
+      expect(response.body).to include("dashboard-enrolled-lectures")
+      expect(response.body).not_to include("dashboard-bookmarked-lectures")
+      expect(response.body).to include("Divisibility")
+    end
+
     it "shows the empty state when there is nothing at all" do
       get root_path
 

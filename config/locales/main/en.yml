@@ -5,9 +5,8 @@ en:
         You are not enrolled in any event series of the current term yet, and
         have not bookmarked any.
       sections:
-        enrolled: "Your event series"
-        bookmarked: "Bookmarked event series"
-        talks: "Your talks"
+        enrolled: "You are registered for these"
+        bookmarked: "You bookmarked these"
       registration_open: "Registration open — register now"
       homework_due: "Homework due %{date}"
     next_term_banner:

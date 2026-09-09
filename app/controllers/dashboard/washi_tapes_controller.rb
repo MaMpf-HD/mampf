@@ -1,9 +1,9 @@
 module Dashboard
   # Saves the colour a student wants one of their dashboard cards taped up in.
   #
-  # A card is on the dashboard because the student is enrolled in the lecture
-  # or has bookmarked it, so that is what may be styled — checking it here is
-  # the whole of the authorization.
+  # A card is on the dashboard because the student holds a place on the
+  # lecture's roster, gives one of its talks, or has bookmarked it, so that is
+  # what may be styled — checking it here is the whole of the authorization.
   class WashiTapesController < ApplicationController
     def update
       lecture = dashboard_lecture
@@ -26,7 +26,10 @@ module Dashboard
         id = params[:lecture_id]
 
         current_user.enrolled_lectures.find_by(id: id) ||
-          current_user.lectures.find_by(id: id)
+          current_user.lectures.find_by(id: id) ||
+          Lecture.where(id: id)
+                 .where(id: current_user.talks.select(:lecture_id))
+                 .first
       end
   end
 end

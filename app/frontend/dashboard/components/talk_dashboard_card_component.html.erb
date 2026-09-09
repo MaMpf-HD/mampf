@@ -2,10 +2,13 @@
       href: talk_path(talk),
       image_url: image_url,
       title: talk.title,
-      tape: WashiTapeComponent.new(tape: tape),
+      tape: WashiTapeComponent.new(
+              tape: tape,
+              label: lecture.title_no_term,
+              update_url: dashboard_washi_tape_path(lecture)),
       data: { testid: "talk-dashboard-card" })) do |card| %>
 
-  <% card.with_subtitle { talk.lecture.title_term_info_no_type } %>
+  <% card.with_subtitle { lecture.title_term_info_no_type } %>
 
   <% card.with_corner do %>
     <%= link_to "",

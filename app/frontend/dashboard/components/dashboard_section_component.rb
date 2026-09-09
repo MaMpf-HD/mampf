@@ -1,10 +1,9 @@
 # One band of the dashboard's pinboard: the lectures a student holds a place
-# in, the ones they only bookmarked, their own talks.
+# in, their own talks, the lectures they only bookmarked.
 #
-# A hairline above the band is the whole visual separation — the bands are
-# meant to read as one continuous board that changes subject as you scroll,
-# not as boxed-off panels. The heading that says which band this is exists for
-# screen readers only, for the same reason.
+# A hairline with a short label above the band is the whole separation — the
+# bands are meant to read as one continuous board that names what it is showing
+# as you scroll past each line, not as boxed-off panels.
 class DashboardSectionComponent < ViewComponent::Base
   def initialize(title:, testid:)
     super()

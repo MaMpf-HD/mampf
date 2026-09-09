@@ -40,11 +40,22 @@ $card-ring-width: 5px;
     }
 }
 
-// A hairline is the only separation between the bands of the board, so that
-// they read as one continuous surface that changes subject as you scroll.
+// A hairline with a small caption is the only separation between the bands of
+// the board, so that they read as one continuous surface that names what it is
+// showing as you scroll past each line.
 .dashboard-section {
     border-top: 1px solid rgb(0 0 0 / 8%);
     padding-bottom: 1.5rem;
+
+    &__label {
+        margin: 0;
+        padding-top: 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #868e96;
+    }
 }
 
 .dashboard-card {

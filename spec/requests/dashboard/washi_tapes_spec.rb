@@ -57,6 +57,19 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
       expect(style.tape_color).to eq("clay")
     end
 
+    it "styles a seminar the user gives a talk in" do
+      seminar = create(:lecture, sort: "seminar")
+      talk = create(:talk, lecture: seminar)
+      talk.speakers << user
+
+      patch dashboard_washi_tape_path(seminar),
+            params: { washi_tape: { tape_color: "lavender" } }
+
+      expect(response).to have_http_status(:no_content)
+      expect(Dashboard::CardStyle.find_by(user: user, lecture: seminar)
+                                 .tape_color).to eq("lavender")
+    end
+
     it "refuses a lecture that is not on this user's dashboard" do
       patch dashboard_washi_tape_path(lecture),
             params: { washi_tape: { tape_color: "mint" } }
