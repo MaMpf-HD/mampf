@@ -4,16 +4,13 @@ import { Modal } from "bootstrap";
 export default class extends Controller {
   static targets = ["checkbox", "reset", "dialog"];
 
+  // Both directions turn every eligibility verdict in the lecture over, so
+  // neither of them goes through unasked.
   change() {
-    if (this.checkboxTarget.checked || !this.hasDialogTarget) {
-      this.submit(false);
-      return;
-    }
-
     this.modal.show();
   }
 
-  keep() {
+  confirm() {
     this.submitOnceHidden(false);
   }
 
@@ -21,8 +18,9 @@ export default class extends Controller {
     this.submitOnceHidden(true);
   }
 
+  // Back to where the box stood before the click, whichever way it went.
   cancel() {
-    this.checkboxTarget.checked = true;
+    this.checkboxTarget.checked = !this.checkboxTarget.checked;
     this.modal.hide();
   }
 

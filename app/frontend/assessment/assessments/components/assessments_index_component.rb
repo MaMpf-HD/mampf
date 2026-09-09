@@ -22,6 +22,34 @@ class AssessmentsIndexComponent < ViewComponent::Base
     @legacy_by_type ||= legacy.group_by { |a| a.class.name }
   end
 
+  # Both directions have consequences, so both are asked about: closing the
+  # list sets the rule judging, opening it puts every verdict back to deferred.
+  # Reopening on top of computed decisions has one more thing to say, and it is
+  # the only dialog with a third button.
+  def confirmation
+    return :close unless lecture.assignments_complete?
+    return :reopen if computed_decisions_count.positive?
+
+    :open
+  end
+
+  def confirmation_title
+    t("assessment.assignments_complete.#{confirmation}_dialog.title")
+  end
+
+  def confirmation_body
+    if confirmation == :reopen
+      return t("assessment.assignments_complete.reopen_dialog.body",
+               count: computed_decisions_count)
+    end
+
+    t("assessment.assignments_complete.#{confirmation}_dialog.body")
+  end
+
+  def confirmation_button
+    t("assessment.assignments_complete.#{confirmation}_dialog.confirm")
+  end
+
   def computed_decisions_count
     @computed_decisions_count ||= lecture.student_performance_certifications
                                          .computed

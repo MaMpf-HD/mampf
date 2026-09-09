@@ -34,6 +34,59 @@ test.describe("homework sheets", () => {
       .toBeVisible();
   });
 
+  /**
+   * Ticking the box turns every eligibility verdict in the lecture over, so it
+   * does not go through unasked - and a dialog that is dismissed has to leave
+   * the box where it was.
+   */
+  test("asks before closing the assignment list", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture } = await createAssessedAssignment(factory, teacher.user.id);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    const box = teacher.page.getByLabel("The assignment list is complete");
+    await box.check();
+
+    const dialog = teacher.page
+      .getByRole("dialog", { name: "Close the assignment list" });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+
+    await expect(box).not.toBeChecked();
+    await dashboard.gotoOverview();
+    await expect(teacher.page.getByLabel("The assignment list is complete"))
+      .not.toBeChecked();
+  });
+
+  test("closes the assignment list once the question is answered", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture } = await createAssessedAssignment(factory, teacher.user.id);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    await teacher.page.getByLabel("The assignment list is complete").check();
+
+    const dialog = teacher.page
+      .getByRole("dialog", { name: "Close the assignment list" });
+    // The overview lives in a Turbo frame, so the answer replaces the frame
+    // and leaves the address alone - the round trip is what there is to wait
+    // for, and the page is loaded again to see that it stuck.
+    const saved = teacher.page.waitForResponse(
+      r => r.request().method() === "POST",
+    );
+    await dialog.getByRole("button", { name: "Close", exact: true }).click();
+    await saved;
+
+    await dashboard.gotoOverview();
+    await expect(teacher.page.getByLabel("The assignment list is complete"))
+      .toBeChecked();
+  });
+
   test("keeps the form and the entered title when the title is taken", async ({
     factory,
     teacher,
