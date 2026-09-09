@@ -28,6 +28,9 @@ test.describe("from a mark to a decision", () => {
       threshold_mode: "percentage",
       min_percentage: 50,
     });
+    // Nothing is proposed while sheets can still be added, and creating one
+    // opens the list again - so it is closed once the sheet is there.
+    await lecture.update({ assignments_complete: true });
 
     const member = await factory.create("confirmed_user", [], {
       name_in_tutorials: "Ada Lovelace",
@@ -69,7 +72,10 @@ test.describe("from a mark to a decision", () => {
     factory,
     teacher,
   }) => {
-    const lecture = await createEligibilityLecture(factory, teacher.user.id);
+    // Nothing is proposed while the lecture may still add sheets.
+    const lecture = await createEligibilityLecture(
+      factory, teacher.user.id, { assignments_complete: true },
+    );
     await factory.create("student_performance_rule", ["active"], {
       lecture_id: lecture.id,
       threshold_mode: "percentage",
@@ -109,10 +115,10 @@ test.describe("from a mark to a decision", () => {
     await teacher.page.getByLabel("Minimum percentage").fill("70");
     await teacher.page.getByRole("button", { name: "Save Rule" }).click();
 
-    await expect(teacher.page.getByText(/Eligibility rule changed/))
+    await expect(teacher.page.getByText(/Eligibility rule updated/))
       .toBeVisible();
     await teacher.page
-      .getByRole("button", { name: "Reconcile with current rule" }).click();
+      .getByRole("button", { name: "Reconcile with rule" }).click();
 
     // the row says "Not Eligible" either way — once as the rule's objection,
     // once as the decision. What only reconciling does is settle the argument.
