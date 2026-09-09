@@ -8,10 +8,15 @@ class RegistrationsController < Devise::RegistrationsController
   def create
     altcha_param = params.permit(:altcha)[:altcha]
     if altcha_param.present? && Altcha.verify(altcha_param)
-      super
+      super do |user|
+        next if user.persisted?
+
+        log_rejected_sign_up(user.errors.full_messages.to_sentence)
+      end
     else
       build_resource(devise_parameter_sanitizer.sanitize(:sign_up))
       clean_up_passwords(resource)
+      log_rejected_sign_up("captcha verification failed")
       flash.now[:alert] = I18n.t("devise.registrations.user.captcha_error")
       render_flash
     end
@@ -69,7 +74,8 @@ class RegistrationsController < Devise::RegistrationsController
   private
 
     def check_registration_limit
-      timeframe = (ENV.fetch("MAMPF_REGISTRATION_TIMEFRAME", 15).to_i.minutes.ago..)
+      minutes = ENV.fetch("MAMPF_REGISTRATION_TIMEFRAME", 15).to_i
+      timeframe = (minutes.minutes.ago..)
       num_new_registrations = User.where(confirmed_at: nil, created_at: timeframe).count
       max_registrations = ENV.fetch("MAMPF_MAX_REGISTRATION_PER_TIMEFRAME", 40).to_i
       return if num_new_registrations <= max_registrations
@@ -77,9 +83,19 @@ class RegistrationsController < Devise::RegistrationsController
       # Current number of new registrations is too high
       self.resource = resource_class.new(devise_parameter_sanitizer.sanitize(:sign_up))
       resource.validate # Look for any other validation errors besides reCAPTCHA
+      log_rejected_sign_up("registration limit reached: #{num_new_registrations} " \
+                           "unconfirmed in the last #{minutes} min, " \
+                           "max #{max_registrations}")
       set_flash_message(:alert, :too_many_registrations)
       set_minimum_password_length
       respond_with_navigational(resource) { render :new }
+    end
+
+    # A rejected sign-up is ordinary control flow, so nothing else records why
+    # the form came back. Emails are filtered out of the logs, so after the
+    # fact the reason is otherwise unreachable.
+    def log_rejected_sign_up(reason)
+      Rails.logger.info { "Sign-up rejected: #{reason}" }
     end
 
     def deletion_params

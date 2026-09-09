@@ -30,11 +30,44 @@ module FormUnknownErrorHelper
 
       last_submit = submit_buttons.last
       error_span = Nokogiri::HTML::DocumentFragment.parse(
-        content_tag(:span, t("errors.unknown"),
+        content_tag(:span, whole_form_error_text(form_object),
                     class: "invalid-feedback d-block",
                     "aria-live": "polite")
       )
       last_submit.add_next_sibling(error_span)
+      log_whole_form_error(form_object)
       doc.to_html
+    end
+
+    # Which attributes had no field to show them. Nothing else records this:
+    # the request completes normally, so only the attribute names say why the
+    # page fell back to a whole-form message.
+    def log_whole_form_error(form_object)
+      codes = form_object.errors.details.transform_values do |list|
+        list.map { |detail| error_code(detail[:error]) }
+      end
+      Rails.logger.info do
+        "Form error with no field: #{form_object.class.name} #{codes.inspect}"
+      end
+    end
+
+    # `errors.add` stores a message string here whenever it was given one, and
+    # this helper logs for every form in the app, so a free-text message could
+    # carry a submitted value into a log that filters email on purpose -- or a
+    # newline that forges a line. Symbols are ours, anything else is named but
+    # not repeated.
+    def error_code(error)
+      error.is_a?(Symbol) ? error : :custom_message
+    end
+
+    # The errors no field could show. Naming them beats the generic fallback,
+    # which blames the server for what is really a validation failure.
+    def whole_form_error_text(form_object)
+      messages = form_object.errors.full_messages.uniq.compact_blank
+      return t("errors.unknown") if messages.empty?
+
+      # full_messages hands a :base message straight through, so a caller that
+      # marked one html_safe would reach the page unescaped. Drop that flag.
+      safe_join(messages.map { |message| String.new(message) }, tag.br)
     end
 end
