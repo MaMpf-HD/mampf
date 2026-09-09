@@ -1,6 +1,7 @@
 <% if @success %>
 $card = $('.lectureCard[data-id="<%= @lecture.id %>"][data-parent="<%= @parent %>"]')
-<% if @parent.in?(['inactive', 'current_subscribed', 'next_term_subscribed']) %>
+<% if @parent.in?(['inactive', 'current_subscribed', 'next_term_subscribed']) &&
+      !@application_left %>
 $card.remove()
 <% if @none_left %>
 <% if @parent == 'current_subscribed' %>

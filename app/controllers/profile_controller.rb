@@ -98,6 +98,11 @@ class ProfileController < ApplicationController
 
   def unsubscribe_lecture
     @success = current_user.unsubscribe_lecture!(@lecture)
+    # An application outlives the subscription, so the card stays: a reload
+    # shows it among the applications of the coming term.
+    @application_left =
+      @parent == "next_term_subscribed" &&
+      current_user.next_term_registered_lectures.include?(@lecture)
     @none_left = case @parent
                  when "current_subscribed" then current_user.current_subscribed_lectures
                                                             .empty?

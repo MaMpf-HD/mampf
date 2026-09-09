@@ -71,6 +71,23 @@ RSpec.describe("Profile", type: :request) do
         expect(response.body).to include("$('#emptyNextTermStuff').show()")
       end
 
+      # The application outlives the subscription: on the next load the
+      # lecture stands among the applications, so its card has to survive.
+      it "keeps the card of a lecture that is still applied for" do
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        create(:registration_user_registration, :pending,
+               user: user, registration_campaign: campaign)
+        user.subscribe_lecture!(lecture)
+
+        patch(unsubscribe_lecture_path,
+              params: { lecture: { id: lecture.id,
+                                   parent: "next_term_subscribed" } },
+              xhr: true)
+
+        expect(response.body).not_to include("$card.remove()")
+        expect(response.body).to include("$card.empty()")
+      end
+
       it "keeps the empty state hidden while an application is left" do
         user.subscribe_lecture!(lecture)
         other = create(:lecture, :released_for_all, term: next_term)
