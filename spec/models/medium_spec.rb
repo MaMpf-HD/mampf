@@ -474,5 +474,22 @@ RSpec.describe(Medium, type: :model) do
       expect(medium.transcription_status).to eq("not_transcribed")
       expect(medium.transcript).to be_nil
     end
+
+    it "resets state and enqueues ingest job when a video without transcript is replaced" do
+      medium = FactoryBot.create(:valid_medium, :with_video,
+                                 transcription_status: :queued,
+                                 transcription_attempts: 1,
+                                 transcription_error: "Previous error",
+                                 transcription_requested_at: 10.minutes.ago)
+
+      expect(MampfsearchIngestJob).to receive(:perform_later).with(medium.id)
+
+      medium.update!(video: File.open(File.join(SPEC_FILES, "talk.mp4"), "rb"))
+
+      expect(medium.transcription_status).to eq("not_transcribed")
+      expect(medium.transcription_attempts).to eq(0)
+      expect(medium.transcription_error).to be_nil
+      expect(medium.transcription_requested_at).to be_nil
+    end
   end
 end

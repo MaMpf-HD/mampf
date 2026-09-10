@@ -1145,14 +1145,10 @@ class Medium < ApplicationRecord
     end
 
     def handle_video_attachment_change
-      return unless will_save_change_to_video_data?
+      return unless video_attacher.changed?
 
-      if video.blank?
-        @video_detached_to_purge = true
-        reset_transcription_state
-      elsif transcript.present?
-        reset_transcription_state
-      end
+      @video_detached_to_purge = true if video.blank?
+      reset_transcription_state
     end
 
     def reset_transcription_state
