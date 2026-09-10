@@ -1,6 +1,6 @@
 <% if @assignments.any? %>
   <div class="row mb-3">
-    <div class="col-12 col-md-6 border-end">
+    <div class="col-12 col-md-6 border-end" data-testid="current-submissions">
       <div class="row">
         <div class="col-12">
           <h4 class="mb-3">
@@ -12,17 +12,17 @@
                data-id="<%= a.id %>">
             <%= render partial: 'submissions/card',
                        locals: { assignment: a,
-                                 submission: a.submission(current_user) }%>
+                                 submission: a.submission(current_user) } %>
           </div>
         <% end %>
         <% if @current_assignments.none? %>
-        	<div class="col-12">
-	          <%= t('assignment.no_current') %>
-	        </div>
+          <div class="col-12">
+            <%= t('assignment.no_current') %>
+          </div>
         <% end %>
       </div>
     </div>
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-md-6" data-testid="previous-submissions">
       <div class="row">
         <div class="col-10">
           <h4 class="mb-3">
@@ -51,9 +51,9 @@
           </div>
         <% end %>
         <% if @previous_assignments.none? %>
-        	<div class="col-12">
-	          <%= t('assignment.no_previous') %>
-	        </div>
+          <div class="col-12">
+            <%= t('assignment.no_previous') %>
+          </div>
         <% end %>
       </div>
     </div>
