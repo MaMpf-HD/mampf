@@ -334,6 +334,86 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         end
       end
 
+      # The one screen staff work through student by student, so it has to be
+      # possible to go to one student and to get through a full lecture.
+      context "with a search" do
+        # Spelled out rather than drawn from Faker: what a search finds has to
+        # be a matter of the search term alone.
+        def named(name, email)
+          FactoryBot.create(:confirmed_user, name: name,
+                                             name_in_tutorials: name,
+                                             email: email)
+        end
+
+        def listed_names
+          Nokogiri::HTML(response.body).css("tbody tr td:first-child")
+                  .map { |td| td.text.strip }
+        end
+
+        let(:ada) { named("Ada Lovelace", "ada@algol.test") }
+        let(:grace) { named("Grace Hopper", "grace@cobol.test") }
+
+        before do
+          [ada, grace].each do |user|
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user)
+          end
+        end
+
+        it "narrows the table to the searched name" do
+          get lecture_student_performance_certifications_path(lecture, q: "hopper")
+
+          expect(listed_names).to eq(["Grace Hopper"])
+        end
+
+        it "searches within the status that is filtered for" do
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: ada)
+
+          get lecture_student_performance_certifications_path(
+            lecture, status: "passed", q: "hopper"
+          )
+
+          expect(listed_names).to be_empty
+          expect(response.body).to include(
+            I18n.t("student_performance.lists.no_match")
+          )
+        end
+
+        it "carries the search into the status filter's own links" do
+          get lecture_student_performance_certifications_path(lecture, q: "hopper")
+
+          pills = Nokogiri::HTML(response.body)
+                          .css("#performance-certifications-frame .nav-pills a")
+                          .pluck("href")
+
+          expect(pills).to all(include("q=hopper"))
+        end
+      end
+
+      context "with more students than fit on a page" do
+        before do
+          21.times do
+            FactoryBot.create(:student_performance_record, lecture: lecture)
+          end
+        end
+
+        it "cuts the list into pages" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          pagy = controller.instance_variable_get(:@pagy)
+
+          expect(pagy.count).to eq(21)
+          expect(Nokogiri::HTML(response.body).css("tbody tr").size).to eq(20)
+        end
+
+        it "serves the rest on the second page" do
+          get lecture_student_performance_certifications_path(lecture, page: 2)
+
+          expect(Nokogiri::HTML(response.body).css("tbody tr").size).to eq(1)
+        end
+      end
+
       context "with an active rule and proposals" do
         let!(:rule) do
           FactoryBot.create(:student_performance_rule, :active,

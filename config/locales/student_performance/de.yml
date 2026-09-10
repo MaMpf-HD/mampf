@@ -13,6 +13,10 @@ de:
             achievement:
               must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
   student_performance:
+    lists:
+      search: "Studierende suchen"
+      no_match: "Keine Studierenden gefunden."
+      showing: "%{from}–%{to} von %{count} Studierenden"
     errors:
       no_record: "Leistungsdatensatz nicht gefunden."
       no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
@@ -52,8 +56,6 @@ de:
           other: "%{count} Abgaben sind noch nicht bewertet"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
         details: "Details"
-
-        showing: "%{from}–%{to} von %{count} Studierenden"
       show:
         back: "Zurück zur Übersicht"
         recompute: "Datensatz neu berechnen"

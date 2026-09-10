@@ -13,6 +13,10 @@ en:
             achievement:
               must_belong_to_same_lecture: "must belong to the same lecture as the rule"
   student_performance:
+    lists:
+      search: "Search students"
+      no_match: "No students found."
+      showing: "Showing %{from}–%{to} of %{count} students"
     errors:
       no_record: "Performance record not found."
       no_member: "User is not a member of this lecture."
@@ -52,8 +56,6 @@ en:
           other: "%{count} submissions are not graded yet"
         empty: "No performance records have been computed yet."
         details: "Details"
-
-        showing: "Showing %{from}–%{to} of %{count} students"
       show:
         back: "Back to records"
         recompute: "Recompute record"

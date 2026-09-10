@@ -302,7 +302,7 @@ module StudentPerformance
         records = @lecture.student_performance_records
                           .includes(:user)
                           .order(:created_at)
-        @filtered_records = filter_records(records)
+        @pagy, @filtered_records = pagy(filter_records(filter_by_name(records)))
       end
 
       def filter_records(records)

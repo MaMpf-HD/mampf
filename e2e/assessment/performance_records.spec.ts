@@ -142,6 +142,62 @@ test.describe("performance records", () => {
     await expect(teacher.page.getByText("Grace Hopper")).toHaveCount(0);
   });
 
+  // The two shortcuts on a long list: go to one person, or bring the lowest
+  // figures to the top. Both are wired through Turbo, so they are worth a
+  // click rather than only a request.
+  test("narrows the list to the name that is typed", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    await recordFor(factory, lecture.id, "Ada Lovelace");
+    await recordFor(factory, lecture.id, "Grace Hopper");
+
+    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await openPerformance(page);
+    await expect(teacher.page.getByText("Ada Lovelace")).toBeVisible();
+
+    await teacher.page.getByRole("textbox", { name: "Search students" })
+      .fill("Hopper");
+
+    await expect(teacher.page.getByText("Grace Hopper")).toBeVisible();
+    await expect(teacher.page.getByText("Ada Lovelace")).toHaveCount(0);
+  });
+
+  test("brings the lowest percentage to the top when asked", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    const assignment = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id,
+      title: "Problem Set 1",
+    });
+    const assessment = await assignment.__call("assessment");
+    await addTask(factory, assessment.id, "Prove it", 100);
+    await recordFor(factory, lecture.id, "Ada Lovelace", {
+      points_total_materialized: 20,
+    });
+    await recordFor(factory, lecture.id, "Grace Hopper", {
+      points_total_materialized: 80,
+    });
+
+    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await openPerformance(page);
+
+    const body = teacher.page.getByRole("rowgroup").last();
+    // by name, which is the order the table arrives in
+    await expect(body.getByRole("row").first()).toContainText("Ada Lovelace");
+
+    // the first click asks for the largest, so Grace comes up
+    await teacher.page.getByRole("link", { name: "Percentage" }).click();
+    await expect(body.getByRole("row").first()).toContainText("Grace Hopper");
+
+    // and the second turns the column around, which is what finds the weakest
+    await teacher.page.getByRole("link", { name: "Percentage" }).click();
+    await expect(body.getByRole("row").first()).toContainText("Ada Lovelace");
+  });
+
   test("finds the members who are in no group at all", async ({
     factory,
     teacher,

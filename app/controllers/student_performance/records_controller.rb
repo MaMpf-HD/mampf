@@ -20,26 +20,9 @@ module StudentPerformance
 
     def index
       @due_points = due_points
-      scope = @lecture.student_performance_records
-                      .includes(:user)
-                      .joins(:user)
-                      .order(Arel.sql(
-                               "COALESCE(NULLIF(users.name_in_tutorials, " \
-                               "''), users.name) ASC"
-                             ))
+      scope = filter_by_tutorial(filter_by_name(records_scope))
 
-      if params[:tutorial_id] == NO_TUTORIAL
-        scope = scope.where.not(user_id: tutorial_member_ids)
-      elsif params[:tutorial_id].present?
-        tutorial = @lecture.tutorials.find_by(id: params[:tutorial_id])
-
-        if tutorial
-          user_ids = TutorialMembership.where(tutorial: tutorial).select(:user_id)
-          scope = scope.where(user_id: user_ids)
-        end
-      end
-
-      @pagy, @records = pagy(scope)
+      @pagy, @records = pagy(sorted(scope))
       assessments = assignment_assessments
       # A sheet nobody could hand in yet counts towards none of the figures in
       # this table, so it gets no column of its own — the detail page lists it.
@@ -69,6 +52,61 @@ module StudentPerformance
     end
 
     private
+
+      def records_scope
+        @lecture.student_performance_records
+                .includes(:user)
+                .joins(:user)
+                .order(Arel.sql(
+                         "COALESCE(NULLIF(users.name_in_tutorials, " \
+                         "''), users.name) ASC"
+                       ))
+      end
+
+      def filter_by_tutorial(scope)
+        return scope if params[:tutorial_id].blank?
+        return scope.where.not(user_id: tutorial_member_ids) if no_tutorial?
+
+        tutorial = @lecture.tutorials.find_by(id: params[:tutorial_id])
+        return scope unless tutorial
+
+        scope.where(user_id: TutorialMembership.where(tutorial: tutorial)
+                                               .select(:user_id))
+      end
+
+      # The filter that asks for nobody's group rather than for a group.
+      def no_tutorial?
+        params[:tutorial_id] == NO_TUTORIAL
+      end
+
+      # The name is the order the database can give. The maximum and the
+      # percentage are worked out per request from what the tutors have marked,
+      # so those are ordered here and the page cut from the result - Pagy takes
+      # an Array as readily as a relation.
+      def sorted(scope)
+        key = sort_key
+        return scope unless key
+
+        sign = params[:dir] == "desc" ? -1 : 1
+        # The position is the tie-breaker, so equal numbers keep the order by
+        # name the scope arrives in, whichever way round the column is sorted.
+        scope.to_a.each_with_index
+             .sort_by { |record, position| [sign * key.call(record), position] }
+             .map(&:first)
+      end
+
+      # A student without a basis is not at 0 % but below it: she sorts with
+      # the lowest, and never above someone who has actually scored nothing.
+      def sort_key
+        case params[:sort]
+        when "points"
+          ->(record) { record.points_total_materialized.to_f }
+        when "maximum"
+          ->(record) { due_points.marked_max_for(record.user_id).to_f }
+        when "percentage"
+          ->(record) { due_points.marked_percentage_for(record)&.to_f || -1 }
+        end
+      end
 
       def tutorial_member_ids
         TutorialMembership.where(tutorial: @lecture.tutorials).select(:user_id)
