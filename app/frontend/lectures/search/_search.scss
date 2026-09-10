@@ -104,13 +104,17 @@
     position: relative;
 }
 
-// A bookmark toggle pinned to the right edge of the result, over the card's
-// own link. Grey outline when the lecture is not bookmarked, amber and filled
-// once it is (the icon swap is done in the bookmark Stimulus controller).
-.lecture-search-result-bookmark {
+// The control pinned to the right edge of a result, over the card's own link.
+// One of three, by how the user relates to the lecture:
+//   .lecture-search-result-bookmark - a bookmark toggle (neither joined nor
+//     joinable); grey outline, amber and filled once bookmarked
+//   .lecture-search-result-register - a link to the lecture home, where an open
+//     registration can be joined; grey outline, green on hover
+//   .is-registered - a non-interactive marker that the user is registered
+.lecture-search-result-control {
     position: absolute;
     top: 50%;
-    right: 0.75rem;
+    right: 1.15rem;
     transform: translateY(-50%);
     z-index: 2;
     display: inline-flex;
@@ -125,13 +129,13 @@
     color: #adb5bd;
     font-size: 1.05rem;
     line-height: 1;
-    cursor: pointer;
+    text-decoration: none;
     backdrop-filter: blur(2px);
     transition: color 150ms ease, transform 150ms ease;
 
+    // the global `a:hover` rule would otherwise underline this link
     &:hover {
-        color: #f59f00;
-        transform: translateY(-50%) scale(1.12);
+        text-decoration: none;
     }
 
     &:focus-visible {
@@ -140,8 +144,27 @@
     }
 }
 
+.lecture-search-result-bookmark,
+.lecture-search-result-register {
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-50%) scale(1.12);
+    }
+}
+
+.lecture-search-result-bookmark:hover,
 .lecture-search-result-wrap.is-bookmarked .lecture-search-result-bookmark {
     color: #f59f00;
+}
+
+.lecture-search-result-register:hover {
+    color: #2f9e44;
+}
+
+.lecture-search-result-control.is-registered {
+    color: #2f9e44;
+    cursor: default;
 }
 
 .lecture-search-result-link {
@@ -182,8 +205,8 @@
 
 .lecture-search-result-body {
     padding: 1.5em;
-    // room for the bookmark toggle pinned to the right edge
-    padding-right: 3.75em;
+    // room for the control pinned to the right edge
+    padding-right: 4.75em;
 }
 
 .lecture-search-result-title {

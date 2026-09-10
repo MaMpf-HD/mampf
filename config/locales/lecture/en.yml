@@ -10,7 +10,7 @@ en:
       placeholder: Search for lectures...
       bookmark: Bookmark
       registration_open: Registration open
-      registered: Registered
-      subscribed: Subscribed
+      registered_status: You are registered for this lecture
+      go_register: Registration open — go to the lecture page to register
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.

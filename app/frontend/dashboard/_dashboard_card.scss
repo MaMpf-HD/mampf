@@ -302,6 +302,9 @@ $card-rail-width: 12rem;
         &:focus-visible {
             background: #e9ecef;
             color: #343a40;
+            // the global `a:hover` rule would otherwise underline the link
+            // this class is used on (the talk card's edit pencil)
+            text-decoration: none;
         }
 
         &:focus-visible {

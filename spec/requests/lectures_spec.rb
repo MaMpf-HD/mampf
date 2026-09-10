@@ -107,7 +107,7 @@ RSpec.describe("Lectures", type: :request) do
           .not_to include("lecture-search-registration-badge")
       end
 
-      it "shows a registered badge instead when the user has registered" do
+      it "shows the registered marker instead when the user has registered" do
         campaign = create(:registration_campaign, :open,
                           :first_come_first_served,
                           campaignable: lecture_algebra)
@@ -116,7 +116,7 @@ RSpec.describe("Lectures", type: :request) do
 
         search_algebra
 
-        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body).to include("lecture-search-registered-control")
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
       end
@@ -132,7 +132,7 @@ RSpec.describe("Lectures", type: :request) do
 
         expect(response.body).to include("lecture-search-registration-badge")
         expect(response.body)
-          .not_to include("lecture-search-registered-badge")
+          .not_to include("lecture-search-registered-control")
       end
     end
 
@@ -152,14 +152,14 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include("lecture-search-registration-badge")
       end
 
-      it "shows the registered badge when the user is already in a group" do
+      it "shows the registered marker when the user is already in a group" do
         tutorial = create(:tutorial, lecture: lecture_algebra,
                                      self_materialization_mode: :add_only)
         create(:tutorial_membership, tutorial: tutorial, user: user)
 
         search_algebra
 
-        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body).to include("lecture-search-registered-control")
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
       end
@@ -173,30 +173,31 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
         expect(response.body)
-          .not_to include("lecture-search-registered-badge")
+          .not_to include("lecture-search-registered-control")
       end
     end
 
-    context "with subscribed lectures" do
+    context "with bookmarked lectures" do
       def search_algebra
         get(search_lectures_path,
             params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
             as: :turbo_stream)
       end
 
-      it "shows a subscribed indicator on the card" do
+      it "shows the bookmark button pressed on a bookmarked lecture" do
         create(:lecture_user_join, user: user, lecture: lecture_algebra)
 
         search_algebra
 
-        expect(response.body).to include("lecture-search-subscribed-indicator")
+        expect(response.body).to include("lecture-search-bookmark-button")
+        expect(response.body).to include('aria-pressed="true"')
       end
 
-      it "does not show a subscribed indicator otherwise" do
+      it "shows the bookmark button unpressed otherwise" do
         search_algebra
 
-        expect(response.body)
-          .not_to include("lecture-search-subscribed-indicator")
+        expect(response.body).to include("lecture-search-bookmark-button")
+        expect(response.body).to include('aria-pressed="false"')
       end
     end
 

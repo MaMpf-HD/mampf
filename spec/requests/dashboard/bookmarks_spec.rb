@@ -32,7 +32,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
       user.subscribe_lecture!(other_lecture)
 
       post dashboard_bookmark_path(lecture),
-           params: { term: other_term.dashboard_param }, as: :turbo_stream
+           params: { term: other_term.id }, as: :turbo_stream
 
       expect(response.body).to include(other_lecture.title_no_term)
     end
