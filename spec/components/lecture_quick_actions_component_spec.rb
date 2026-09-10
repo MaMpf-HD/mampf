@@ -21,7 +21,9 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
       action = render_actions.at_css("[data-testid='quick-action-assignment']")
 
       expect(action["href"]).to eq("/lectures/#{lecture.id}/submissions")
-      expect(action.text).to include(I18n.t("dashboard.quick_actions.assignment.cta"))
+      label_prefix = I18n.t("dashboard.quick_actions.assignment.label")
+                          .split("%{").first.strip
+      expect(action.text).to include(label_prefix)
     end
 
     it "stays quiet about a deadline that is still weeks away" do
@@ -41,7 +43,7 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
       action = render_actions.at_css("[data-testid='quick-action-exam']")
 
       expect(action["href"]).to eq("/lectures/#{lecture.id}")
-      expect(action.text).to include(I18n.t("dashboard.quick_actions.exam.cta"))
+      expect(action.text).to include(I18n.t("dashboard.quick_actions.exam.label"))
     end
 
     it "stays quiet once the student has answered it" do

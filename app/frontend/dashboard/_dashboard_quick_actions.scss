@@ -14,6 +14,9 @@
 // are already dyed six different pastels, and a second colour code beside that
 // one would be read as related to it. The icon says which errand it is, and
 // none of these is an alarm that would earn a colour of its own.
+//
+// The whole bubble is one link, so it carries no arrow or other affordance of
+// its own: the hover lift is what says it is clickable.
 
 $quick-action-tail: 0.55rem;
 // half the tail's diagonal, minus a hair so it tucks under the bubble's border
@@ -75,6 +78,8 @@ $quick-action-tail-offset: -0.3rem;
         rotate: 45deg;
     }
 
+    // the whole bubble answers to the pointer, lifting a little so it does not
+    // have to move far to feel alive
     &:hover,
     &:focus-visible {
         rotate: 0deg;
@@ -100,26 +105,6 @@ $quick-action-tail-offset: -0.3rem;
         margin-right: 0.4rem;
         color: var(--quick-action-ink);
         font-size: 0.95rem;
-    }
-
-    &__cta {
-        color: $mampf-blue;
-        font-size: 0.8rem;
-        text-decoration: underline;
-        text-decoration-thickness: 1px;
-        text-underline-offset: 2px;
-    }
-
-    // the arrow, and only the arrow, answers to the pointer, so the bubble
-    // does not have to move far to feel alive
-    &__arrow {
-        display: inline-block;
-        transition: translate 0.2s ease;
-    }
-
-    &:hover &__arrow,
-    &:focus-visible &__arrow {
-        translate: 0.15rem 0;
     }
 }
 
@@ -157,15 +142,6 @@ $quick-action-tail-offset: -0.3rem;
 
         &:hover,
         &:focus-visible {
-            translate: none;
-        }
-
-        &__arrow {
-            transition: none;
-        }
-
-        &:hover &__arrow,
-        &:focus-visible &__arrow {
             translate: none;
         }
     }

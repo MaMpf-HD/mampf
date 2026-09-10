@@ -6,10 +6,8 @@ de:
       list_label: "Zu erledigen für %{lecture}"
       assignment:
         label: "Abgabe fällig am %{date}."
-        cta: "Hier hochladen"
       exam:
         label: "Die Klausuranmeldung ist offen."
-        cta: "Hier anmelden"
       activity:
         forum:
           one: "1 neuer Forenbeitrag"
@@ -17,7 +15,6 @@ de:
         comments:
           one: "1 neuer Kommentar"
           other: "%{count} neue Kommentare"
-        cta: "Hier nachlesen"
     points_progress:
       title: "Übungspunkte"
       label: "%{points} von %{max} (%{percentage} %)"

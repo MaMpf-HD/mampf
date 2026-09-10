@@ -6,10 +6,8 @@ en:
       list_label: "Things to do for %{lecture}"
       assignment:
         label: "Assignment due %{date}."
-        cta: "Upload it here"
       exam:
         label: "Exam registration is open."
-        cta: "Register here"
       activity:
         forum:
           one: "1 new forum post"
@@ -17,7 +15,6 @@ en:
         comments:
           one: "1 new comment"
           other: "%{count} new comments"
-        cta: "Read them here"
     points_progress:
       title: "Assignment points"
       label: "%{points} of %{max} (%{percentage}%)"

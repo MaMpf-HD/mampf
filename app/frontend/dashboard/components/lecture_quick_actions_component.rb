@@ -13,7 +13,7 @@ class LectureQuickActionsComponent < ViewComponent::Base
   # starts to look broken rather than hand-placed.
   MAX_TILT = 1.5
 
-  Action = Struct.new(:kind, :icon, :label, :cta, :href, keyword_init: true)
+  Action = Struct.new(:kind, :icon, :label, :href, keyword_init: true)
 
   def initialize(lecture:, user:, activity: nil)
     super()
@@ -70,7 +70,6 @@ class LectureQuickActionsComponent < ViewComponent::Base
         icon: "bi-alarm",
         label: t("dashboard.quick_actions.assignment.label",
                  date: I18n.l(next_assignment_deadline, format: :long)),
-        cta: t("dashboard.quick_actions.assignment.cta"),
         href: lecture_submissions_path(lecture)
       )
     end
@@ -82,7 +81,6 @@ class LectureQuickActionsComponent < ViewComponent::Base
         kind: "exam",
         icon: "bi-pencil-square",
         label: t("dashboard.quick_actions.exam.label"),
-        cta: t("dashboard.quick_actions.exam.cta"),
         href: lecture_path(lecture)
       )
     end
@@ -98,7 +96,6 @@ class LectureQuickActionsComponent < ViewComponent::Base
         kind: "activity",
         icon: "bi-chat-left-text",
         label: parts.to_sentence,
-        cta: t("dashboard.quick_actions.activity.cta"),
         href: lecture_path(lecture)
       )
     end
