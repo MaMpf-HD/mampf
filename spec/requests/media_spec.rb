@@ -357,7 +357,7 @@ RSpec.describe("Media", type: :request) do
       post transcribe_medium_path(medium)
 
       expect(response).to have_http_status(:redirect)
-      expect(flash[:notice]).to eq("Transcription started.")
+      expect(flash[:notice]).to eq(I18n.t("controllers.media.transcription_started"))
     end
 
     it "returns not found in production" do
@@ -376,7 +376,7 @@ RSpec.describe("Media", type: :request) do
       post transcribe_medium_path(videoless_medium)
 
       expect(response).to have_http_status(:redirect)
-      expect(flash[:alert]).to eq("Medium cannot be transcribed.")
+      expect(flash[:alert]).to eq(I18n.t("controllers.media.cannot_transcribe"))
     end
   end
 

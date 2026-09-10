@@ -4025,6 +4025,9 @@ de:
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
         liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
         wurden.
+    media:
+      transcription_started: 'Transkription gestartet.'
+      cannot_transcribe: 'Medium kann nicht transkribiert werden.'
     no_certificate: 'Ein Zertifikat mit der angeforderten id existiert nicht.'
     certificate_already_claimed: >
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
