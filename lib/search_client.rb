@@ -50,7 +50,7 @@ class SearchClient
     payload[:lesson_rails_id] = lesson_rails_id if lesson_rails_id.present?
 
     perform_request(scope: "/lesson/ingest") do |client|
-      client.post("/lesson/ingest", params: payload)
+      client.post("/lesson/ingest", json: payload)
     end
   end
   # rubocop:enable Metrics/ParameterLists

@@ -28,7 +28,7 @@ RSpec.describe(SearchClient, :mampfsearch) do
     it "posts to /lesson/ingest with correct parameters" do
       fake_client = double("client")
       allow(fake_client).to receive(:headers).and_return(fake_client)
-      expect(fake_client).to receive(:post).with("/lesson/ingest", params: {
+      expect(fake_client).to receive(:post).with("/lesson/ingest", json: {
                                                    media_rails_id: 1,
                                                    lecture_rails_id: 2,
                                                    course_rails_id: 3,
@@ -53,7 +53,7 @@ RSpec.describe(SearchClient, :mampfsearch) do
     it "omits nil lecture_rails_id and lesson_rails_id from payload in transcribe_lesson" do
       fake_http = double("http")
       allow(fake_http).to receive(:headers).and_return(fake_http)
-      expect(fake_http).to receive(:post).with("/lesson/ingest", params: {
+      expect(fake_http).to receive(:post).with("/lesson/ingest", json: {
                                                  media_rails_id: 1,
                                                  course_rails_id: 3,
                                                  video_url: "http://video.url",
@@ -86,7 +86,7 @@ RSpec.describe(SearchClient, :mampfsearch) do
     it "includes the transcription failure callback URL when provided" do
       fake_client = double("client")
       allow(fake_client).to receive(:headers).and_return(fake_client)
-      expect(fake_client).to receive(:post).with("/lesson/ingest", params: hash_including(
+      expect(fake_client).to receive(:post).with("/lesson/ingest", json: hash_including(
         transcription_failed_url: "http://failure.url"
       )).and_return(fake_response(200,
                                   '{"status":"queued"}'))
@@ -230,7 +230,7 @@ RSpec.describe(SearchClient, :mampfsearch) do
         expect(payload["scope"]).to eq("/lesson/ingest")
         fake_http
       end
-      expect(fake_http).to receive(:post).with("/lesson/ingest", params: {
+      expect(fake_http).to receive(:post).with("/lesson/ingest", json: {
                                                  media_rails_id: 1,
                                                  course_rails_id: 3,
                                                  video_url: "http://video.url",
