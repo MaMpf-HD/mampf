@@ -3,18 +3,31 @@ import { Controller } from "@hotwired/stimulus";
 /**
  * The dashboard's semester picker.
  *
- * Changing the `<select>` does a Turbo visit to the chosen semester
- * (`/?term=<id>`, optionally with a `#lecture-search` fragment), which
- * re-renders the dashboard sections and the lecture search for that term.
- * Every copy of the picker on the page is server-rendered from the same
- * selected term, so they stay in sync without any client state.
+ * Changing the `<select>` refreshes only the term-dependent parts of the page
+ * in place — the dashboard sections, every copy of the picker, and the hidden
+ * field the lecture search reads its term from — through a Turbo Stream
+ * response (`main/start.turbo_stream.erb`). No full navigation happens, so the
+ * scroll position is kept. The URL is still updated to `/?term=<id>` so the
+ * choice survives a reload or a shared link.
  *
- * The option values are the target paths themselves, so a plain form GET is
- * still a sensible fallback when JS is unavailable.
+ * The lecture search below listens for the `dashboard-term-select:changed`
+ * event and re-runs itself once the hidden term field has been swapped.
  */
 export default class extends Controller {
-  visit(event) {
-    // set globally by @hotwired/turbo-rails in initHotwire
-    window.Turbo.visit(event.target.value);
+  change(event) {
+    const url = event.target.value;
+
+    window.history.replaceState(window.history.state, "", url);
+
+    fetch(url, {
+      headers: { Accept: "text/vnd.turbo-stream.html" },
+      credentials: "same-origin",
+    })
+      .then(response => response.text())
+      .then((html) => {
+        // set globally by @hotwired/turbo-rails in initHotwire
+        window.Turbo.renderStreamMessage(html);
+        this.dispatch("changed", { target: document });
+      });
   }
 }

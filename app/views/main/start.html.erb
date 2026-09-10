@@ -12,34 +12,7 @@
                                                 id: "dashboard-term-select")) %>
   </div>
 
-  <div id="dashboardLectureCards" class="container-md small-width mb-3">
-    <%= render(DashboardSectionComponent.new(
-                 title: t("main.start.sections.enrolled"),
-                 testid: "dashboard-enrolled-lectures")) do %>
-      <% @enrolled_lectures.each do |lecture| %>
-        <%= render(LectureDashboardCardComponent.new(lecture: lecture, user: current_user)) %>
-      <% end %>
-      <% @talks.each do |talk| %>
-        <%= render(TalkDashboardCardComponent.new(talk: talk, user: current_user)) %>
-      <% end %>
-    <% end %>
-
-    <%= render(DashboardSectionComponent.new(
-                 title: t("main.start.sections.bookmarked"),
-                 testid: "dashboard-bookmarked-lectures")) do %>
-      <% @bookmarked_lectures.each do |lecture| %>
-        <%= render(LectureDashboardCardComponent.new(lecture: lecture, user: current_user)) %>
-      <% end %>
-    <% end %>
-
-    <% if @enrolled_lectures.empty? && @bookmarked_lectures.empty? && @talks.empty? %>
-      <%= tag.div id: "dashboardEmptyState",
-                  class: "text-center text-muted my-5",
-                  data: { testid: "dashboard-empty-state" } do %>
-        <p class="mb-0"><%= t("main.start.no_lectures") %></p>
-      <% end %>
-    <% end %>
-  </div>
+  <%= render "main/start/lecture_cards" %>
 
   <a href="#lecture-search" id="go-to-lecture-search">
     <span style="font-size: 0.9em; font-weight: 500;">

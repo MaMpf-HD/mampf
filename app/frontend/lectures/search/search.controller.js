@@ -35,6 +35,10 @@ export default class extends Controller {
 
     this.handleScroll = this.handleScroll.bind(this);
     window.addEventListener("scroll", this.handleScroll);
+
+    this.reloadForTermChange = this.reloadForTermChange.bind(this);
+    document.addEventListener("dashboard-term-select:changed",
+      this.reloadForTermChange);
   }
 
   scrollObserverTargetConnected() {
@@ -61,6 +65,20 @@ export default class extends Controller {
       this.scrollObserver.disconnect();
     }
     window.removeEventListener("scroll", this.handleScroll);
+    document.removeEventListener("dashboard-term-select:changed",
+      this.reloadForTermChange);
+  }
+
+  /**
+   * The semester picker changed the term (and our hidden `search[term]` field
+   * with it). Re-run the search from the first page if results are already on
+   * screen; otherwise the new term is picked up when the user scrolls down to
+   * the search.
+   */
+  reloadForTermChange() {
+    if (!this.initiallyLoaded) return;
+
+    this.search();
   }
 
   handleScroll() {

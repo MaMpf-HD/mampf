@@ -47,11 +47,13 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
     expect(values).to all(end_with("#lecture-search"))
   end
 
-  it "wires the select up for a Turbo visit on change" do
-    select = render_select(id: "lecture-search-term-select").at_css("select")
+  it "wires the select up to refresh the page on change" do
+    rendered = render_select(id: "lecture-search-term-select")
+    select = rendered.at_css("select")
 
+    expect(rendered.at_css("div")["id"]).to eq("lecture-search-term-select-wrapper")
     expect(select["id"]).to eq("lecture-search-term-select")
     expect(select["data-testid"]).to eq("lecture-search-term-select")
-    expect(select["data-action"]).to eq("change->dashboard-term-select#visit")
+    expect(select["data-action"]).to eq("change->dashboard-term-select#change")
   end
 end

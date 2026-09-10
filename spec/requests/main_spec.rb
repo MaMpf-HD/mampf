@@ -112,6 +112,17 @@ RSpec.describe("Main", type: :request) do
 
         expect(response.body).to include("Here Now")
       end
+
+      it "swaps the term-dependent regions in place for a Turbo Stream request" do
+        get root_path(term: other_term.id),
+            headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+        expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+        expect(response.body).to include('target="dashboardLectureCards"')
+        expect(response.body)
+          .to include('target="lecture-search-term-select-wrapper"')
+        expect(response.body).to include('target="lecture-search-term-field"')
+      end
     end
   end
 end

@@ -21,7 +21,8 @@
       <%# Scopes the results to the semester the dashboard's picker points at.
           Server-rendered, so the search and the dashboard above it always
           agree on the term. %>
-      <%= hidden_field_tag "search[term]", @selected_term&.id %>
+      <%= hidden_field_tag "search[term]", @selected_term&.id,
+                           id: "lecture-search-term-field" %>
 
       <div id="lecture-search-input-group">
         <%= f.text_field "search[fulltext]",

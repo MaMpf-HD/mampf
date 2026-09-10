@@ -47,16 +47,21 @@ export class DashboardLectureBrowsePage {
     return this.page.getByTestId("dashboard-term-select");
   }
 
+  get searchTermSelect() {
+    return this.page.getByTestId("lecture-search-term-select");
+  }
+
   /**
-   * Picks a semester in the dashboard's term dropdown and waits for the Turbo
-   * visit it triggers.
+   * Picks a semester in the dashboard's term dropdown. This refreshes the
+   * term-dependent regions in place via Turbo Stream (no navigation) and
+   * updates the URL; we wait for the `?term=<id>` to land.
    */
   async selectTerm(termId: number) {
-    const navigation = this.page.waitForURL(
+    const urlUpdated = this.page.waitForURL(
       url => url.searchParams.get("term") === String(termId),
     );
     await this.termSelect.selectOption(`/?term=${termId}`);
-    await navigation;
+    await urlUpdated;
   }
 
   async scrollToBottom() {

@@ -123,10 +123,16 @@ test("scopes results to the semester picked in the dropdown",
     await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Next");
 
-    // pick the upcoming semester in the dropdown
+    // pick the upcoming semester: the sections and the search refresh in
+    // place, without navigating away or jumping the scroll position
+    const scrollBefore = await page.evaluate(() => window.scrollY);
+    const searchReloaded = dashboard.getLectureSearchPromise();
     await dashboard.selectTerm(nextTerm.id);
-    await dashboard.scrollToSearchAndWaitForResults();
-    await dashboard.searchFor("Topology");
+    await searchReloaded;
+
+    const scrollAfter = await page.evaluate(() => window.scrollY);
+    expect(Math.abs(scrollAfter - scrollBefore)).toBeLessThan(5);
+
     await expect(dashboard.results).toContainText("Topology Next");
     await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Current");
