@@ -50,20 +50,7 @@ class MampfsearchSyncJob < ApplicationJob
                          .order(created_at: :desc)
                          .limit(batch_size)
       candidates.each do |medium|
-        claimed = false
-        medium.with_lock do
-          eligible = (medium.not_transcribed? || medium.failed_temporarily?) &&
-                     medium.transcription_attempts < SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
-          if eligible
-            medium.update!(
-              transcription_status: :queued,
-              transcription_requested_at: Time.current,
-              transcription_error: nil
-            )
-            claimed = true
-          end
-        end
-        MampfsearchIngestJob.perform_later(medium.id) if claimed
+        claim_and_enqueue(medium)
       end
     end
 
@@ -85,10 +72,26 @@ class MampfsearchSyncJob < ApplicationJob
                             .where(transcription_status: :completed)
                             .pluck(:id).to_set
       missing_from_search = completed_ids - indexed_ids
-      missing_from_search.each do |missing_id|
-        MampfsearchIngestJob.perform_later(missing_id)
+      Medium.where(id: missing_from_search).find_each do |medium|
+        claim_and_enqueue(medium)
       end
     rescue SearchClient::MampfSearchError => e
       Rails.logger.warn("Search index reconciliation skipped (#{e.class}): #{e.message}")
+    end
+
+    def claim_and_enqueue(medium)
+      claimed = false
+      medium.with_lock do
+        unless medium.queued?
+          medium.update!(
+            transcription_status: :queued,
+            transcription_requested_at: Time.current,
+            transcription_error: nil
+          )
+          claimed = true
+        end
+      end
+      MampfsearchIngestJob.perform_later(medium.id) if claimed
+      claimed
     end
 end

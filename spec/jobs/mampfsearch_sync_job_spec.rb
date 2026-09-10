@@ -102,6 +102,8 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       expect(MampfsearchIngestJob).to receive(:perform_later).with(missing_medium.id)
 
       described_class.perform_now
+
+      expect(missing_medium.reload.transcription_status).to eq("queued")
     end
 
     it "logs a warning and recovers gracefully when search client raises MampfSearchError" do
