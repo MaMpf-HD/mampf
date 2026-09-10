@@ -10,6 +10,10 @@ import { addDataToForm } from "~/js/form_helper.js";
  * Only when the user scrolls again to the bottom of the page, more lectures are
  * loaded (infinite scrolling).
  *
+ * The semester the results are scoped to is not chosen here: it comes from the
+ * dashboard's semester picker as a server-rendered hidden `search[term]`
+ * field, so the search and the dashboard above it always show the same
+ * semester.
  */
 export default class extends Controller {
   static targets = ["form", "scrollObserver"];
@@ -17,7 +21,6 @@ export default class extends Controller {
   connect() {
     addDataToForm(this.formTarget, { infinite_scroll: true });
     this.isSubmitting = false;
-    this.applyTermScopeFromUrl();
 
     this.observer = new IntersectionObserver((entries) => {
       if (this.initiallyLoaded) return;
@@ -91,78 +94,6 @@ export default class extends Controller {
     }, 200);
   }
 
-  rememberTermFilterState(event) {
-    const input = this.termFilterInput(event);
-    if (!input) return;
-
-    input.dataset.wasChecked = input.checked ? "true" : "false";
-  }
-
-  toggleTermFilter(event) {
-    const input = this.termFilterInput(event);
-    if (!input || input.dataset.wasChecked !== "true") return;
-
-    delete input.dataset.wasChecked;
-    event.preventDefault();
-    input.checked = false;
-    this.search();
-  }
-
-  clearTermFilterWithKeyboard(event) {
-    if (!event.target.checked) return;
-
-    event.preventDefault();
-    event.target.checked = false;
-    this.search();
-  }
-
-  /**
-   * Applies the term filter from the URL (e.g. /?term_scope=next), so that
-   * banners, announcements etc. can deep-link into a pre-filtered lecture
-   * search. The initial search (triggered by the IntersectionObserver once
-   * the form becomes visible) then picks up the pre-selected filter.
-   */
-  applyTermScopeFromUrl() {
-    const termScope = new URLSearchParams(window.location.search).get("term_scope");
-    if (!["current", "next"].includes(termScope)) return;
-
-    const radios = this.formTarget.querySelectorAll("input[name='search[term_scope]']");
-    radios.forEach((radio) => {
-      radio.checked = radio.value === termScope;
-    });
-
-    // The deep link should always bring the search into view. We cannot rely
-    // on the #lecture-search anchor alone: when the hash did not change
-    // (e.g. the banner CTA is clicked a second time), the browser does not
-    // scroll to it again.
-    requestAnimationFrame(() => this.element.scrollIntoView());
-  }
-
-  rememberTermFilterState(event) {
-    const input = this.termFilterInput(event);
-    if (!input) return;
-
-    input.dataset.wasChecked = input.checked ? "true" : "false";
-  }
-
-  toggleTermFilter(event) {
-    const input = this.termFilterInput(event);
-    if (!input || input.dataset.wasChecked !== "true") return;
-
-    delete input.dataset.wasChecked;
-    event.preventDefault();
-    input.checked = false;
-    this.search();
-  }
-
-  clearTermFilterWithKeyboard(event) {
-    if (!event.target.checked) return;
-
-    event.preventDefault();
-    event.target.checked = false;
-    this.search();
-  }
-
   /**
    * Retrieves the next page of results when the user scrolls to the bottom
    * of the page. This is important for performance when there are many results.
@@ -191,14 +122,5 @@ export default class extends Controller {
     const unlockHandler = () => this.isSubmitting = false;
     document.addEventListener("turbo:submit-end", unlockHandler, { once: true });
     this.formTarget.requestSubmit();
-  }
-
-  termFilterInput(event) {
-    if (event.currentTarget instanceof HTMLInputElement) return event.currentTarget;
-
-    const inputId = event.currentTarget.getAttribute("for");
-    if (!inputId) return null;
-
-    return document.getElementById(inputId);
   }
 }

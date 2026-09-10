@@ -1,5 +1,10 @@
 de:
   dashboard:
+    term_select:
+      label: "Semester"
+      season:
+        SS: "Sommersemester"
+        WS: "Wintersemester"
     washi_tape:
       open: "Klebeband für %{subject} auswählen"
       color: "Farbe"

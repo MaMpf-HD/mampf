@@ -30,15 +30,18 @@ class MainController < ApplicationController
   end
 
   def start
-    @enrolled_lectures = current_user.current_enrolled_lectures
-    @bookmarked_lectures = current_user.current_bookmarked_lectures
+    @available_terms = Dashboard::TermSelector.terms
+    @selected_term = Dashboard::TermSelector.selected(params)
+
+    @enrolled_lectures = current_user.current_enrolled_lectures(@selected_term)
+    @bookmarked_lectures = current_user.current_bookmarked_lectures(@selected_term)
     next_term_banner
     @talks = current_user.talks.includes(lecture: :term)
-                         .select { |t| t.visible_for_user?(current_user) }
-                         .sort_by do |t|
-                           [-t.lecture.term.begin_date.jd,
-                            t.position]
+                         .select do |t|
+                           t.lecture.term_id == @selected_term&.id &&
+                             t.visible_for_user?(current_user)
                          end
+                         .sort_by(&:position)
   end
 
   private
@@ -59,7 +62,7 @@ class MainController < ApplicationController
       @next_term = Term.active&.next
       return if @next_term.blank?
 
-      # matches Search::Filters::CurrentNextTermFilter: term-independent
+      # matches Search::Filters::DashboardTermFilter: term-independent
       # lectures (term: nil) are part of the results the banner links to,
       # so they are part of the count as well
       @next_term_lecture_count = Lecture.published

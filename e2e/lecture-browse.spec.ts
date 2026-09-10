@@ -25,8 +25,8 @@ async function createLecturesWithCourses(
 
 test("loads initial results when scrolling to search bar",
   async ({ factory, student: { page } }) => {
-    const { nextTerm } = await createLectureSearchTerms(factory);
-    await createLecturesWithCourses(factory, 5, "Course", nextTerm.id);
+    const { currentTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 5, "Course", currentTerm.id);
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
@@ -40,8 +40,8 @@ test("loads initial results when scrolling to search bar",
 
 test("loads more results when scrolling to bottom (even multiple times)",
   async ({ factory, student: { page } }) => {
-    const { nextTerm } = await createLectureSearchTerms(factory);
-    await createLecturesWithCourses(factory, 50, "Sample Course", nextTerm.id);
+    const { currentTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 50, "Sample Course", currentTerm.id);
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
@@ -62,21 +62,21 @@ test("loads more results when scrolling to bottom (even multiple times)",
 
 test("filters results based on search input",
   async ({ factory, student: { page } }) => {
-    const { nextTerm } = await createLectureSearchTerms(factory);
+    const { currentTerm } = await createLectureSearchTerms(factory);
     const calculusCourse = await factory.create("course", [], { title: "Advanced Calculus" });
     await factory.create("lecture", ["released_for_all"], {
       course_id: calculusCourse.id,
-      term_id: nextTerm.id,
+      term_id: currentTerm.id,
     });
     const algebraCourse = await factory.create("course", [], { title: "Linear Algebra" });
     await factory.create("lecture", ["released_for_all"], {
       course_id: algebraCourse.id,
-      term_id: nextTerm.id,
+      term_id: currentTerm.id,
     });
     const mathCourse = await factory.create("course", [], { title: "Discrete Mathematics" });
     await factory.create("lecture", ["released_for_all"], {
       course_id: mathCourse.id,
-      term_id: nextTerm.id,
+      term_id: currentTerm.id,
     });
 
     const dashboard = new DashboardLectureBrowsePage(page);
@@ -93,7 +93,7 @@ test("filters results based on search input",
     await expect(dashboard.results).not.toContainText("Mathematics");
   });
 
-test("filters results by selected term",
+test("scopes results to the semester picked in the dropdown",
   async ({ factory, student: { page } }) => {
     const { currentTerm, nextTerm } = await createLectureSearchTerms(factory);
     const currentCourse = await factory.create("course", [], { title: "Topology Current" });
@@ -114,59 +114,27 @@ test("filters results by selected term",
     });
 
     const dashboard = new DashboardLectureBrowsePage(page);
+
+    // default: the active term (plus term-independent lectures)
     await dashboard.goto();
     await dashboard.scrollToSearchAndWaitForResults();
+    await dashboard.searchFor("Topology");
+    await expect(dashboard.results).toContainText("Topology Current");
+    await expect(dashboard.results).toContainText("Topology Independent");
+    await expect(dashboard.results).not.toContainText("Topology Next");
 
-    await expect(dashboard.nextTermFilter).toBeChecked();
-
+    // pick the upcoming semester in the dropdown
+    await dashboard.selectTerm(nextTerm.id);
+    await dashboard.scrollToSearchAndWaitForResults();
     await dashboard.searchFor("Topology");
     await expect(dashboard.results).toContainText("Topology Next");
     await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Current");
 
-    await dashboard.clearNextTerm();
-    await expect(dashboard.nextTermFilter).not.toBeChecked();
-    await expect(dashboard.currentTermFilter).not.toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
+    // a shared ?term=<id> link lands on the same scope
+    await dashboard.gotoTerm(nextTerm.id);
+    await dashboard.scrollToSearchAndWaitForResults();
+    await dashboard.searchFor("Topology");
     await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
-
-    await dashboard.selectCurrentTerm();
-    await expect(dashboard.currentTermFilter).toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).toContainText("Topology Independent");
-    await expect(dashboard.results).not.toContainText("Topology Next");
-
-    await dashboard.clearCurrentTermWithKeyboard();
-    await expect(dashboard.currentTermFilter).not.toBeChecked();
-    await expect(dashboard.nextTermFilter).not.toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
-
-    await dashboard.selectCurrentTerm();
-    await expect(dashboard.currentTermFilter).toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).toContainText("Topology Independent");
-    await expect(dashboard.results).not.toContainText("Topology Next");
-
-    await dashboard.clearCurrentTerm();
-    await expect(dashboard.currentTermFilter).not.toBeChecked();
-    await expect(dashboard.nextTermFilter).not.toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
-
-    await dashboard.selectNextTerm();
-    await expect(dashboard.nextTermFilter).toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Current");
-
-    await dashboard.clearNextTermWithKeyboard();
-    await expect(dashboard.currentTermFilter).not.toBeChecked();
-    await expect(dashboard.nextTermFilter).not.toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
   });

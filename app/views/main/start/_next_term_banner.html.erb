@@ -25,7 +25,7 @@
 
       <div class="w-100">
         <%= link_to t("main.next_term_banner.cta"),
-                    root_path(term_scope: "next", anchor: "lecture-search"),
+                    root_path(term: next_term.id, anchor: "lecture-search"),
                     class: "btn btn-primary btn-sm w-100",
                     data: { testid: "next-term-banner-cta" } %>
       </div>

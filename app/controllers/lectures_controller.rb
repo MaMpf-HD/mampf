@@ -488,7 +488,7 @@ class LecturesController < ApplicationController
 
     def search_params
       params.expect(search: [:all_types, :all_terms, :all_programs,
-                             :all_teachers, :fulltext, :per, :term_scope,
+                             :all_teachers, :fulltext, :per, :term,
                              { types: [],
                                term_ids: [],
                                program_ids: [],

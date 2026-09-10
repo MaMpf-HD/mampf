@@ -20,6 +20,10 @@ class Term < ApplicationRecord
   after_save :touch_lectures_and_lessons
   after_save :touch_media
 
+  # "SS" sorts before "WS", so ordering by (year, season) is already the
+  # chronological order the dashboard's semester picker is built from.
+  scope :chronological, -> { order(:year, :season) }
+
   def self.active
     Term.find_by(active: true)
   end
@@ -46,6 +50,14 @@ class Term < ApplicationRecord
   # short label contains season and year(s) with two digits
   def to_label_short
     "#{season} #{year_corrected_short}"
+  end
+
+  # Spelled-out label for places where "SS 2026" is too terse to stand on its
+  # own, e.g. the dashboard's semester picker: "Summer semester 2026".
+  def to_long_label
+    return if season.blank?
+
+    "#{I18n.t("dashboard.term_select.season.#{season}")} #{year_corrected}"
   end
 
   def compact_title

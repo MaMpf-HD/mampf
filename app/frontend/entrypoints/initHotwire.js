@@ -184,6 +184,9 @@ window.Stimulus.register("lectures-new-form", LecturesNewFormController);
 import WashiTapeController from "~/dashboard/washi_tape.controller.js";
 window.Stimulus.register("washi-tape", WashiTapeController);
 
+import DashboardTermSelectController from "~/dashboard/dashboard_term_select.controller.js";
+window.Stimulus.register("dashboard-term-select", DashboardTermSelectController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

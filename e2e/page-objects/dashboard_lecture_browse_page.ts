@@ -11,7 +11,11 @@ export class DashboardLectureBrowsePage {
     await this.page.goto("/");
   }
 
-  async gotoWithTermScopeDeepLink(termScope: string) {
+  async gotoTerm(termId: number) {
+    await this.page.goto(`/?term=${termId}`);
+  }
+
+  async gotoTermScopeDeepLink(termScope: string) {
     const lectureSearchPromise = this.getLectureSearchPromise();
     await this.page.goto(`/?term_scope=${termScope}#lecture-search`);
     await lectureSearchPromise;
@@ -39,50 +43,20 @@ export class DashboardLectureBrowsePage {
     await lectureSearchPromise;
   }
 
-  get currentTermFilter() {
-    return this.page.getByLabel("Current term");
+  get termSelect() {
+    return this.page.getByTestId("dashboard-term-select");
   }
 
-  get nextTermFilter() {
-    return this.page.getByLabel("Next term");
-  }
-
-  async selectCurrentTerm() {
-    const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByTestId("lecture-search").getByText("Current term").click();
-    await lectureSearchPromise;
-  }
-
-  async selectNextTerm() {
-    const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByTestId("lecture-search").getByText("Next term").click();
-    await lectureSearchPromise;
-  }
-
-  async clearNextTerm() {
-    const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByTestId("lecture-search").getByText("Next term").click();
-    await lectureSearchPromise;
-  }
-
-  async clearNextTermWithKeyboard() {
-    const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.nextTermFilter.focus();
-    await this.nextTermFilter.press("Space");
-    await lectureSearchPromise;
-  }
-
-  async clearCurrentTerm() {
-    const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.getByTestId("lecture-search").getByText("Current term").click();
-    await lectureSearchPromise;
-  }
-
-  async clearCurrentTermWithKeyboard() {
-    const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.currentTermFilter.focus();
-    await this.currentTermFilter.press("Space");
-    await lectureSearchPromise;
+  /**
+   * Picks a semester in the dashboard's term dropdown and waits for the Turbo
+   * visit it triggers.
+   */
+  async selectTerm(termId: number) {
+    const navigation = this.page.waitForURL(
+      url => url.searchParams.get("term") === String(termId),
+    );
+    await this.termSelect.selectOption(`/?term=${termId}`);
+    await navigation;
   }
 
   async scrollToBottom() {
@@ -103,12 +77,12 @@ export class DashboardLectureBrowsePage {
 
   async clickNextTermBannerCta() {
     const lectureSearchPromise = this.getLectureSearchPromise();
-    const nextTermUrlPromise = this.page.waitForURL(url =>
-      url.searchParams.get("term_scope") === "next",
+    const termUrlPromise = this.page.waitForURL(url =>
+      url.searchParams.has("term"),
     );
 
     await this.page.getByTestId("next-term-banner-cta").click();
-    await Promise.all([lectureSearchPromise, nextTermUrlPromise]);
+    await Promise.all([lectureSearchPromise, termUrlPromise]);
   }
 
   async getLectureCardCount() {

@@ -629,21 +629,22 @@ class User < ApplicationRecord
     true
   end
 
-  def current_subscribed_lectures
-    lectures_of_current_term(lectures)
+  def current_subscribed_lectures(term = Term.active)
+    lectures_of_term(lectures, term)
   end
 
-  # The lectures this user holds a place on the roster for. These come first on
-  # the dashboard: they are the ones the user is actually taking, as opposed to
-  # the ones they only bookmarked to look in on now and then.
-  def current_enrolled_lectures
-    lectures_of_current_term(enrolled_lectures)
+  # The lectures this user holds a place on the roster for in the given term.
+  # These come first on the dashboard: they are the ones the user is actually
+  # taking, as opposed to the ones they only bookmarked to look in on now and
+  # then.
+  def current_enrolled_lectures(term = Term.active)
+    lectures_of_term(enrolled_lectures, term)
   end
 
   # Bookmarked but not enrolled. A lecture the user holds a place in is already
   # shown in the section above, so it is not listed a second time.
-  def current_bookmarked_lectures
-    current_subscribed_lectures - current_enrolled_lectures
+  def current_bookmarked_lectures(term = Term.active)
+    current_subscribed_lectures(term) - current_enrolled_lectures(term)
   end
 
   def current_subscribable_lectures
@@ -835,9 +836,9 @@ class User < ApplicationRecord
   private
 
     # Term-independent lectures belong to every term, so they follow the ones
-    # of the active term rather than being left out.
-    def lectures_of_current_term(scope)
-      scope.where(term: Term.active).includes(:course, :term, :teacher)
+    # of the selected term rather than being left out.
+    def lectures_of_term(scope, term)
+      scope.where(term: term).includes(:course, :term, :teacher)
            .natural_sort_by(&:title) +
         scope.where(term: nil).includes(:course, :teacher)
              .natural_sort_by(&:title)

@@ -1,0 +1,11 @@
+<div class="dashboard-term-select" data-controller="dashboard-term-select">
+  <%= label_tag id, t("dashboard.term_select.label"),
+                class: "dashboard-term-select__label" %>
+  <%= select_tag id,
+                 options_for_select(options, target_path(selected)),
+                 class: "form-select form-select-sm dashboard-term-select__input",
+                 data: {
+                   testid: id,
+                   action: "change->dashboard-term-select#visit"
+                 } %>
+</div>

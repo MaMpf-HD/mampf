@@ -6,7 +6,13 @@
                locals: { next_term: @next_term,
                          lecture_count: @next_term_lecture_count } %>
   <% end %>
-  <div id="dashboardLectureCards" class="container-md small-width mt-4 mb-3">
+  <div class="container-md small-width mt-4">
+    <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
+                                                selected: @selected_term,
+                                                id: "dashboard-term-select")) %>
+  </div>
+
+  <div id="dashboardLectureCards" class="container-md small-width mb-3">
     <%= render(DashboardSectionComponent.new(
                  title: t("main.start.sections.enrolled"),
                  testid: "dashboard-enrolled-lectures")) do %>
