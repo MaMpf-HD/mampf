@@ -2825,16 +2825,17 @@ en:
       standing:
         mark_percentage: "%{percentage} %"
         heading: Exam admission
-        of_due: "of %{max} points due so far"
+        of_marked: "of %{max} points marked so far"
         of_needed: "of %{max} points needed"
         no_max: "of no points yet"
         nothing_marked: Nothing has been marked yet.
         awaiting_marks:
           one: >-
-            1 sheet worth %{points} of the %{max} points due is not marked yet.
+            1 sheet worth %{points} points is still with your tutor and is not
+            counted above.
           other: >-
-            %{count} sheets worth %{points} of the %{max} points due in total
-            are not marked yet.
+            %{count} sheets worth %{points} points in total are still with your
+            tutor and are not counted above.
         needed: "%{points} needed"
         bar_plain: "%{percentage} percent of the points earned"
         bar_absolute: "%{points} of the %{needed} points needed"

@@ -759,7 +759,7 @@ RSpec.describe("Submissions", type: :request) do
       # The number the block leads with is the reader's standing, and it used to
       # be taken of every sheet the lecture had set up: two sheets marked in
       # full, a third still running, and the page said 47 %.
-      it "measures the reader against the sheets that have come due" do
+      it "measures the reader against the sheets that have been marked" do
         create(:lecture_membership, lecture: lecture, user: user)
         create(:student_performance_rule, :active, :with_percentage,
                lecture: lecture, min_percentage: 50)
@@ -773,7 +773,7 @@ RSpec.describe("Submissions", type: :request) do
         get lecture_submissions_path(lecture)
 
         expect(response.body).to include(
-          I18n.t("submission.hub.standing.of_due", max: "18")
+          I18n.t("submission.hub.standing.of_marked", max: "18")
         )
         expect(response.body).to include(
           I18n.t("submission.hub.standing.you_have_percent", percentage: "100")

@@ -4,9 +4,10 @@ module Assessment
     # id lists, met and not graded yet, and never the value behind one - so
     # "you have 67.3 %" comes alongside rather than out of it.
     Standing = Struct.new(:record, :rule, :achievement_values,
-                          :points_still_open, :points_due, :points_awaiting_marks,
-                          :sheets_awaiting_marks, :assignments_complete,
-                          :uses_exam_eligibility, keyword_init: true) do
+                          :points_still_open, :points_marked_so_far,
+                          :points_awaiting_marks, :sheets_awaiting_marks,
+                          :assignments_complete, :uses_exam_eligibility,
+                          keyword_init: true) do
       def required_achievements
         rule ? rule.required_achievements.to_a : []
       end
@@ -28,11 +29,11 @@ module Assessment
         record&.points_total_materialized
       end
 
-      # Two maxima live here, and they answer different questions. `points_due`
-      # is what the reader has been measured against so far and is what the
-      # block shows; `points_max_at_end` is everything the term will hold and
-      # is only ever used to ask whether a threshold can still be reached. They
-      # are never to be put over one another.
+      # Two maxima live here, and they answer different questions.
+      # `points_marked_so_far` is what the reader has been weighed against and
+      # is what the block shows; `points_max_at_end` is everything the term
+      # will hold and is only ever used to ask whether a threshold can still be
+      # reached. They are never to be put over one another.
       def points_max_at_end
         record&.points_max_materialized
       end
@@ -41,14 +42,14 @@ module Assessment
       # the lecture has set up, the one still running included, so it measures
       # how far the term has got rather than how the reader is doing.
       def percentage
-        return unless points_total && points_due.to_f.positive?
+        return unless points_total && points_marked_so_far.to_f.positive?
 
-        (points_total / points_due * 100).round(2)
+        (points_total / points_marked_so_far * 100).round(2)
       end
 
-      # What the rule asks of the points due so far - the mark on the bar.
-      def required_points_due
-        rule&.required_points(points_due)
+      # What the rule asks of what has been marked - the mark on the bar.
+      def required_points_so_far
+        rule&.required_points(points_marked_so_far)
       end
 
       # What it will ask once every sheet is in - the only threshold a

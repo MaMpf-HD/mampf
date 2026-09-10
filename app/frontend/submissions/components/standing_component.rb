@@ -14,8 +14,9 @@ class StandingComponent < ViewComponent::Base
 
   attr_reader :standing
 
-  delegate :rule, :record, :points_total, :points_due, :points_awaiting_marks,
-           :sheets_awaiting_marks, :percentage, :required_points_due,
+  delegate :rule, :record, :points_total, :points_marked_so_far,
+           :points_awaiting_marks,
+           :sheets_awaiting_marks, :percentage, :required_points_so_far,
            :required_points_at_end, :reachable_points, :points_out_of_reach?,
            :required_achievements, to: :standing
 
@@ -40,15 +41,16 @@ class StandingComponent < ViewComponent::Base
   end
 
   # The base has to be said aloud. "34 of 36" on its own reads as a term worth
-  # 36 points, when what it means is the two sheets that have come back.
+  # 36 points, when what it means is the two sheets that have come back marked.
   def points_line
     if absolute?
       return t("submission.hub.standing.of_needed",
                max: number(rule.min_points_absolute))
     end
-    return t("submission.hub.standing.no_max") unless points_due.to_f.positive?
+    base = points_marked_so_far
+    return t("submission.hub.standing.no_max") unless base.to_f.positive?
 
-    t("submission.hub.standing.of_due", max: number(points_due))
+    t("submission.hub.standing.of_marked", max: number(base))
   end
 
   def total
@@ -56,11 +58,11 @@ class StandingComponent < ViewComponent::Base
   end
 
   # A bar needs a scale, and which scale is the rule's question. A percentage
-  # rule weighs the reader against what is due, so bar and mark end up the same
-  # quantity; an absolute rule weighs them against the number it names. Either
-  # way a full bar means the condition is met.
+  # rule weighs the reader against what has been marked, so bar and mark end up
+  # the same quantity; an absolute rule weighs them against the number it
+  # names. Either way a full bar means the condition is met.
   def bar_max
-    absolute? ? rule.min_points_absolute : points_due
+    absolute? ? rule.min_points_absolute : points_marked_so_far
   end
 
   def bar?
@@ -92,7 +94,7 @@ class StandingComponent < ViewComponent::Base
   def mark_title
     return unless mark_percentage
 
-    t("submission.hub.standing.needed", points: number(required_points_due))
+    t("submission.hub.standing.needed", points: number(required_points_so_far))
   end
 
   def bar_reader_label
@@ -110,16 +112,16 @@ class StandingComponent < ViewComponent::Base
                                                required: number(mark_percentage))
   end
 
-  # Both numbers, because one alone leaves the reader guessing where it sits:
-  # "8 points are still being marked" says nothing about whether the 8 are in
-  # the total already. Named against the points due, they are.
+  # The line above names its base - "of 10 points marked so far" - so this one
+  # only has to say what is outstanding and that it is not in there. Naming a
+  # second number here would put two maxima next to each other and leave the
+  # reader to work out which of them they are being measured against.
   def pending_line
     return t("submission.hub.standing.nothing_marked") unless marked?
     return unless points_awaiting_marks.to_f.positive?
 
     t("submission.hub.standing.awaiting_marks",
-      count: sheets_awaiting_marks, points: number(points_awaiting_marks),
-      max: number(points_due))
+      count: sheets_awaiting_marks, points: number(points_awaiting_marks))
   end
 
   def conditions?

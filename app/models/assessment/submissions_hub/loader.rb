@@ -97,26 +97,54 @@ module Assessment
           Standing.new(record: record, rule: rule,
                        achievement_values: achievement_values,
                        points_still_open: points_still_open,
-                       points_due: points_due,
-                       points_awaiting_marks: awaiting_marks_sheets
-                                                .sum { |sheet| sheet.max_points || 0 },
+                       points_marked_so_far: points_marked_so_far,
+                       points_awaiting_marks: points_awaiting_marks,
                        sheets_awaiting_marks: awaiting_marks_sheets.size,
                        assignments_complete: lecture.assignments_complete?,
                        uses_exam_eligibility: lecture.uses_exam_eligibility?)
         end
 
-        # What the reader has been measured against so far. The record cannot
-        # say this either: its maximum counts every sheet the lecture has set
-        # up, so after two sheets full marks read as 64 % - a number about the
-        # calendar rather than about the reader.
+        # What the reader has been measured against: the sheets that are
+        # settled for them. The record cannot say this - its maximum counts
+        # every sheet the lecture has set up, so after two sheets full marks
+        # read as 64 %, a number about the calendar rather than about the
+        # reader.
         #
-        # `StudentPerformance::DuePoints` draws the same line for the
-        # performance table, down to the grace period and the exemptions, and
-        # the two must not drift apart. It is not called here because it would
-        # fetch the assignments again; these are already in hand.
+        # A sheet sitting with the tutor is out of it: those points are neither
+        # earned nor lost, and counting them as a zero would put the tutor's
+        # backlog on the reader's account - which is the complaint this basis
+        # answers, a flawless reader dropping below half overnight because a
+        # deadline passed on a Friday.
+        #
+        # `StudentPerformance::DuePoints#marked_max_for` draws the same line
+        # for the performance table, down to the grace period and the
+        # exemptions, and the two must not drift apart. It is not called here
+        # because it would fetch the assignments again; these are already in
+        # hand.
+        def points_marked_so_far
+          points_due - points_awaiting_marks + points_marked_not_due
+        end
+
         def points_due
           sheets.select { |sheet| due_for_points?(sheet) }
                 .sum { |sheet| sheet.max_points || 0 }
+        end
+
+        # Marked although the deadline is still ahead: a deadline may be moved
+        # forward at any time, and nothing forbids it once marking has begun.
+        # The points are in the total whatever the clock says, so they have to
+        # be in the base as well - otherwise 20 of 20 turns into 200 %.
+        def points_marked_not_due
+          sheets.select { |sheet| marked_not_due?(sheet) }
+                .sum { |sheet| sheet.max_points || 0 }
+        end
+
+        def marked_not_due?(sheet)
+          !due_for_points?(sheet) && sheet.participation&.reviewed?
+        end
+
+        def points_awaiting_marks
+          awaiting_marks_sheets.sum { |sheet| sheet.max_points || 0 }
         end
 
         # Due once nothing more can be handed in - `totally_expired?` is the
@@ -127,14 +155,13 @@ module Assessment
         end
 
         # Handed in, its deadline behind it, nothing marked on it yet: these
-        # points are already in the denominator and count as nothing until the
-        # tutor gets to them, which is the whole reason the share sits lower
-        # than it will end up.
+        # points are in neither half of the fraction until the tutor gets to
+        # them, and the block says so rather than leaving the reader to wonder
+        # where they went.
         #
         # Deliberately not the record's `points_max_pending_materialized`: that
-        # counts a sheet handed in early as well, and such a sheet is in neither
-        # half of the fraction - so the two kinds together could not be put
-        # "of the points due" without saying something false.
+        # counts a sheet handed in early as well, and one of those is not due
+        # in the first place.
         def awaiting_marks_sheets
           @awaiting_marks_sheets ||= sheets.select { |sheet| awaiting_marks?(sheet) }
         end

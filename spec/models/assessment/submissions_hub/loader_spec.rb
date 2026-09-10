@@ -462,24 +462,24 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
-  # What the reader has been measured against so far. The record cannot say this
-  # either: its maximum counts every sheet the lecture has set up, the one still
-  # running included, so after two sheets full marks read as a fraction of the
-  # term. `StudentPerformance::DuePoints` draws the same line for the
-  # performance table, and the two must not part company.
-  describe "the points due so far" do
+  # What the reader has been weighed against: the sheets that are settled for
+  # them. The record cannot say this - its maximum counts every sheet the
+  # lecture has set up, the one still running included, so after two sheets full
+  # marks read as a fraction of the term. `DuePoints#marked_max_for` draws the
+  # same line for the performance table, and the two must not part company.
+  describe "the points marked so far" do
     it "counts a sheet whose deadline is past" do
       create_assignment(title: "Homework 1", deadline: 1.week.ago,
                         max_points: [4, 6])
 
-      expect(result.standing.points_due).to eq(10)
+      expect(result.standing.points_marked_so_far).to eq(10)
     end
 
     it "does not count a sheet that can still be handed in" do
       create_assignment(title: "Homework 1", deadline: 1.week.from_now,
                         max_points: [4, 6])
 
-      expect(result.standing.points_due).to be_zero
+      expect(result.standing.points_marked_so_far).to be_zero
     end
 
     # The grace period counts as part of the deadline here as it does
@@ -489,7 +489,7 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       create_assignment(title: "Homework 1", deadline: 10.minutes.ago,
                         max_points: [4, 6])
 
-      expect(result.standing.points_due).to be_zero
+      expect(result.standing.points_marked_so_far).to be_zero
     end
 
     it "does not count a sheet the reader was let off" do
@@ -497,7 +497,39 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
                                      max_points: [4, 6])
       participate(assignment, status: :exempt)
 
-      expect(result.standing.points_due).to be_zero
+      expect(result.standing.points_marked_so_far).to be_zero
+    end
+
+    # The complaint this basis answers: a deadline passes on a Friday, the tutor
+    # has not got to it, and a reader with full marks drops below half overnight
+    # for something they did not do.
+    it "does not count one that is sitting with the tutor" do
+      marked = create_assignment(title: "Homework 1", deadline: 2.weeks.ago,
+                                 max_points: [10])
+      participate(marked, status: :reviewed)
+      waiting = create_assignment(title: "Homework 2", deadline: 1.week.ago,
+                                  max_points: [10])
+      participate(waiting, submitted_at: 8.days.ago)
+      hand_in(waiting)
+
+      expect(result.standing.points_marked_so_far).to eq(10)
+    end
+
+    # A deadline may be moved forward at any time, and nothing forbids it once
+    # marking has begun. The points are in the total whatever the clock says, so
+    # taking them out of the base would turn 10 of 10 into 200 %.
+    it "counts one that was marked before its deadline was moved ahead" do
+      sheet = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                max_points: [10])
+      participate(sheet, status: :reviewed)
+      # The order it happens in: marking is refused before the deadline, so the
+      # deadline moves afterwards - which is what the lecturer does when they
+      # give the group another week.
+      # rubocop:disable Rails/SkipsModelValidations
+      sheet.update_column(:deadline, 1.week.from_now)
+      # rubocop:enable Rails/SkipsModelValidations
+
+      expect(result.standing.points_marked_so_far).to eq(10)
     end
   end
 

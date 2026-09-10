@@ -44,7 +44,7 @@ RSpec.describe(StandingComponent, type: :component) do
     Assessment::SubmissionsHub::Standing.new(
       record: record(**record_options), rule: attrs[:rule],
       achievement_values: attrs[:values], points_still_open: attrs[:still_open],
-      points_due: attrs[:due], points_awaiting_marks: attrs[:awaiting],
+      points_marked_so_far: attrs[:due], points_awaiting_marks: attrs[:awaiting],
       sheets_awaiting_marks: attrs[:awaiting_sheets],
       assignments_complete: attrs[:complete],
       uses_exam_eligibility: attrs[:eligibility]
@@ -81,18 +81,18 @@ RSpec.describe(StandingComponent, type: :component) do
     # The base belongs in the line. Measured against every sheet the lecture has
     # set up, a reader with full marks on the two that came back reads as 64 %,
     # which is a statement about the calendar.
-    it "says what has been earned of what has come due" do
+    it "says what has been earned of what has been marked" do
       content = render_standing(standing(total: 34, due: 36))
 
       expect(content).to include("34")
       expect(content)
-        .to include(I18n.t("submission.hub.standing.of_due", max: "36"))
+        .to include(I18n.t("submission.hub.standing.of_marked", max: "36"))
       expect(content).not_to include(
-        I18n.t("submission.hub.standing.of_due", max: "176")
+        I18n.t("submission.hub.standing.of_marked", max: "176")
       )
     end
 
-    it "takes the share of what is due, not of what the term will hold" do
+    it "takes the share of what is marked, not of what the term will hold" do
       content = render_standing(standing(total: 36, due: 36, max: 56))
 
       expect(content).to include("width: 100.0%")
@@ -105,7 +105,7 @@ RSpec.describe(StandingComponent, type: :component) do
     end
 
     # A bar without a scale claims a ratio that does not exist.
-    it "draws no bar while nothing has come due yet" do
+    it "draws no bar while nothing has been marked yet" do
       content = render_standing(standing(due: 0))
 
       expect(content).not_to include("standing-bar")
@@ -120,18 +120,18 @@ RSpec.describe(StandingComponent, type: :component) do
         .to include(I18n.t("submission.hub.standing.nothing_marked"))
     end
 
-    # Where the number sits is the whole question a reader has here: "16 points
+    # Where those points sit is the whole question a reader has here: "16 points
     # are still being marked" leaves them guessing whether the 16 are in their
-    # total already. Said against the points due, they are - and the sheets are
-    # named so that the number has something to belong to.
-    it "says how much is waiting, and of what" do
+    # total already. They are in neither half of the figure above, and the
+    # sentence says so; the sheets are named so that the number has something
+    # to belong to.
+    it "says how much is waiting, and that it counts neither way" do
       content = render_standing(standing(due: 176, awaiting: 16,
                                          awaiting_sheets: 2))
 
       expect(content).to include(
         I18n.t("submission.hub.standing.awaiting_marks", count: 2,
-                                                         points: "16",
-                                                         max: "176")
+                                                         points: "16")
       )
     end
 
@@ -139,8 +139,7 @@ RSpec.describe(StandingComponent, type: :component) do
       content = render_standing(standing(awaiting: 8, awaiting_sheets: 1))
 
       expect(content).to include(
-        I18n.t("submission.hub.standing.awaiting_marks", count: 1, points: "8",
-                                                         max: "176")
+        I18n.t("submission.hub.standing.awaiting_marks", count: 1, points: "8")
       )
     end
 
@@ -265,7 +264,7 @@ RSpec.describe(StandingComponent, type: :component) do
     it "says not recorded yet for a reader who has no record at all" do
       built = Assessment::SubmissionsHub::Standing.new(
         record: nil, rule: achievements_only, achievement_values: {},
-        points_still_open: 0, points_due: 0, points_awaiting_marks: 0,
+        points_still_open: 0, points_marked_so_far: 0, points_awaiting_marks: 0,
         sheets_awaiting_marks: 0, assignments_complete: true,
         uses_exam_eligibility: true
       )

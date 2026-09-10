@@ -71,9 +71,9 @@ test.describe("the standing beside the card", () => {
     const standing = student.page
       .getByRole("complementary", { name: "Exam admission" });
 
-    // The sheet still running is not something the reader has been measured
-    // against: 8 points have come due, not the 24 the lecture has set up.
-    await expect(standing.getByText("of 8 points due so far")).toBeVisible();
+    // The sheet still running is not something the reader has been weighed
+    // against: 8 points are marked, not the 24 the lecture has set up.
+    await expect(standing.getByText("of 8 points marked so far")).toBeVisible();
     // Bar and mark are shares of the same thing, so the mark is the rule's own
     // number.
     await expect(standing.getByText("50 %", { exact: true })).toBeVisible();
@@ -100,11 +100,11 @@ test.describe("the standing beside the card", () => {
     await page.goto();
     const standing = student.page
       .getByRole("complementary", { name: "Exam admission" });
-    await expect(standing.getByText("of 8 points due so far")).toBeVisible();
+    await expect(standing.getByText("of 8 points marked so far")).toBeVisible();
 
     await page.createSubmission();
 
-    await expect(standing.getByText("of 8 points due so far")).toBeVisible();
-    await expect(standing.getByText("not marked yet")).toHaveCount(0);
+    await expect(standing.getByText("of 8 points marked so far")).toBeVisible();
+    await expect(standing.getByText("still with your tutor")).toHaveCount(0);
   });
 });
