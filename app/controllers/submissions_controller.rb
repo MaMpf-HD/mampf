@@ -268,11 +268,13 @@ class SubmissionsController < ApplicationController
     send_acceptance_email(@submission.users)
   end
 
-  # A rejected hand-in waits for nothing any more, and the gradebook has to know
+  # A refused hand-in waits for nothing any more, and the gradebook has to know
   # it: `submitted_at` is what counts a sheet among the points still being
-  # marked, so left standing it would keep the sheet in the student's reachable
-  # total for good. Only the record is touched here - the state the page shows
-  # is read from `accepted`, and the tutor's own views belong to another branch.
+  # marked, and those are taken out of the base a student is measured against.
+  # Left standing, refusing a sheet would raise her percentage and keep telling
+  # her the sheet is with her tutor. Only the record is touched here - the state
+  # the page shows is read from `accepted`, and the tutor's own views belong to
+  # another branch.
   def reject
     @submission.update(accepted: false)
     clear_submitted_at(@submission.users)
@@ -624,10 +626,11 @@ class SubmissionsController < ApplicationController
     end
 
     # `update_all` is what keeps the two above to one statement each, and it is
-    # also what skips the callback behind them. The materialized record counts a
-    # sheet as awaiting marks by its `submitted_at`, and the same answer renders
-    # the standing block from that record - so without this the reader takes a
-    # file back and is still told its points are being marked.
+    # also what skips the callback behind them. Everything downstream reads the
+    # materialized record - the student's own standing block, the performance
+    # table, the admission rule - so it has to be put back in step by hand.
+    # Without it the reader takes a file back and is still told its points are
+    # being marked.
     def recompute_performance_records(lecture, users)
       return unless lecture
 

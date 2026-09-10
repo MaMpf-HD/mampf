@@ -14,12 +14,26 @@ module StudentPerformance
       due_assessment_ids.include?(assessment_id)
     end
 
-    def max_for(user_id)
-      total - exempted_due_points.fetch(user_id, 0)
+    # What this student has been weighed against so far: the sheets that are
+    # due, minus the ones she was let off, minus the ones still sitting with a
+    # tutor, plus the ones she was marked on before their deadline was moved
+    # forward. The last of those is the odd one, and it is not hypothetical: a
+    # deadline may be extended at any time, and nothing forbids it once marking
+    # has begun. `points_total_materialized` counts every reviewed
+    # participation whatever the clock says, so a sheet dropped from the base
+    # while its points stay in the total turns 20 of 20 into 200 %. What is
+    # marked has been weighed, whether or not it can still be handed in.
+    #
+    # The queue is why the figure differs from student to student otherwise - a
+    # sheet nobody has marked yet is neither earned nor lost, and counting it as
+    # a zero would put the tutor's backlog on the student's account.
+    def marked_max_for(user_id)
+      max_for(user_id) - awaiting_marks_points.fetch(user_id, 0) +
+        reviewed_coming_points.fetch(user_id, 0)
     end
 
-    def percentage_for(record)
-      max = max_for(record.user_id)
+    def marked_percentage_for(record)
+      max = marked_max_for(record.user_id)
       return nil unless max.positive?
 
       ((record.points_total_materialized || 0) / max * 100).round(2)
@@ -31,10 +45,45 @@ module StudentPerformance
     def not_yet_due_for(user_id)
       coming_total -
         exempted_coming_points.fetch(user_id, 0) -
-        submitted_coming_points.fetch(user_id, 0)
+        submitted_coming_points.fetch(user_id, 0) -
+        reviewed_coming_points.fetch(user_id, 0)
+    end
+
+    # The same two sets counted rather than added. A reason on the certification
+    # page says how many sheets it is about; the points beside it say what they
+    # are worth, and one without the other leaves the reader guessing.
+    def not_yet_due_count_for(user_id)
+      coming_assessments.size -
+        exempted_coming_counts.fetch(user_id, 0) -
+        submitted_coming_counts.fetch(user_id, 0) -
+        reviewed_coming_counts.fetch(user_id, 0)
+    end
+
+    # Deliberately every sheet, not only the due ones: the reason it belongs to
+    # says that something is sitting with a tutor, and for that the deadline is
+    # beside the point. It counts what `points_max_pending_materialized` sums,
+    # so the two are the same set.
+    def pending_count_for(user_id)
+      pending_counts.fetch(user_id, 0)
     end
 
     private
+
+      def max_for(user_id)
+        total - exempted_due_points.fetch(user_id, 0)
+      end
+
+      # Handed in, deadline behind it, and still pending: `points_total` counts
+      # only what has been reviewed, so these points are in no numerator either.
+      # Same shape as the exempt sum above, one grouped query for the page.
+      def awaiting_marks_points
+        @awaiting_marks_points ||= points_per_user(
+          Assessment::Participation
+            .where(assessment_id: due_assessments.map(&:id), status: :pending)
+            .where.not(submitted_at: nil),
+          due_assessments
+        )
+      end
 
       def assignment_assessments
         Assessment::Assessment
@@ -93,13 +142,53 @@ module StudentPerformance
       # Match ComputationService#pending_points so pending submissions are
       # not counted again as points not yet due.
       def submitted_coming_points
-        @submitted_coming_points ||= points_per_user(
-          Assessment::Participation
-            .where(assessment_id: coming_assessments.map(&:id),
-                   status: :pending)
-            .where.not(submitted_at: nil),
-          coming_assessments
+        @submitted_coming_points ||= points_per_user(submitted_coming, coming_assessments)
+      end
+
+      def submitted_coming
+        Assessment::Participation
+          .where(assessment_id: coming_assessments.map(&:id), status: :pending)
+          .where.not(submitted_at: nil)
+      end
+
+      def exempted_coming_counts
+        @exempted_coming_counts ||= count_per_user(
+          exempt_participations(coming_assessments)
         )
+      end
+
+      def submitted_coming_counts
+        @submitted_coming_counts ||= count_per_user(submitted_coming)
+      end
+
+      # Marked before its deadline was moved forward: those points are in the
+      # total, so they are in the base as well - and they are not still to be
+      # had, which is what `not_yet_due_for` would otherwise say about them.
+      def reviewed_coming
+        Assessment::Participation
+          .where(assessment_id: coming_assessments.map(&:id), status: :reviewed)
+      end
+
+      def reviewed_coming_points
+        @reviewed_coming_points ||= points_per_user(reviewed_coming,
+                                                    coming_assessments)
+      end
+
+      def reviewed_coming_counts
+        @reviewed_coming_counts ||= count_per_user(reviewed_coming)
+      end
+
+      def pending_counts
+        @pending_counts ||= count_per_user(
+          Assessment::Participation
+            .where(assessment_id: assignment_assessments.select(:id),
+                   status: :pending)
+            .where.not(submitted_at: nil)
+        )
+      end
+
+      def count_per_user(scope)
+        scope.group(:user_id).count
       end
 
       def points_per_user(scope, assessments)

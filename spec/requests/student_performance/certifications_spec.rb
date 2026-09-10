@@ -334,6 +334,129 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         end
       end
 
+      # The one screen staff work through student by student, so it has to be
+      # possible to go to one student and to get through a full lecture.
+      context "with a search" do
+        # Spelled out rather than drawn from Faker: what a search finds has to
+        # be a matter of the search term alone.
+        def named(name, email)
+          FactoryBot.create(:confirmed_user, name: name,
+                                             name_in_tutorials: name,
+                                             email: email)
+        end
+
+        def listed_names
+          Nokogiri::HTML(response.body).css("tbody tr td:first-child")
+                  .map { |td| td.text.strip }
+        end
+
+        let(:ada) { named("Ada Lovelace", "ada@algol.test") }
+        let(:grace) { named("Grace Hopper", "grace@cobol.test") }
+
+        before do
+          [ada, grace].each do |user|
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user)
+          end
+        end
+
+        it "narrows the table to the searched name" do
+          get lecture_student_performance_certifications_path(lecture, q: "hopper")
+
+          expect(listed_names).to eq(["Grace Hopper"])
+        end
+
+        it "searches within the status that is filtered for" do
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: ada)
+
+          get lecture_student_performance_certifications_path(
+            lecture, status: "passed", q: "hopper"
+          )
+
+          expect(listed_names).to be_empty
+          expect(response.body).to include(
+            I18n.t("student_performance.lists.no_match")
+          )
+        end
+
+        # A decision is made from a list that may be searched, filtered and on
+        # its third page; landing back on the unfiltered first page loses the
+        # student who was being worked through.
+        it "comes back to the list a decision was made from" do
+          get lecture_student_performance_certifications_path(
+            lecture, q: "hopper", status: "uncertified"
+          )
+
+          form = Nokogiri::HTML(response.body)
+                         .css("#performance-certifications-frame tbody form")
+                         .first
+          return_to = form.at_css("input[name='return_to']")["value"]
+
+          expect(return_to).to include("q=hopper")
+          expect(return_to).to include("status=uncertified")
+        end
+
+        it "carries the search into the status filter's own links" do
+          get lecture_student_performance_certifications_path(lecture, q: "hopper")
+
+          pills = Nokogiri::HTML(response.body)
+                          .css("#performance-certifications-frame .nav-pills a")
+                          .pluck("href")
+
+          expect(pills).to all(include("q=hopper"))
+        end
+      end
+
+      context "with more students than fit on a page" do
+        before do
+          21.times do
+            FactoryBot.create(:student_performance_record, lecture: lecture)
+          end
+        end
+
+        it "cuts the list into pages" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          pagy = controller.instance_variable_get(:@pagy)
+
+          expect(pagy.count).to eq(21)
+          expect(Nokogiri::HTML(response.body).css("tbody tr").size).to eq(20)
+        end
+
+        it "serves the rest on the second page" do
+          get lecture_student_performance_certifications_path(lecture, page: 2)
+
+          expect(Nokogiri::HTML(response.body).css("tbody tr").size).to eq(1)
+        end
+
+        # The records of a lecture are written in one go, so their timestamps
+        # are the same, and an order that cannot tell two rows apart hands them
+        # out in any order it likes - once on one page, once on the next, and
+        # somebody else on neither. Measured before the tie-breaker: 100 rows,
+        # 99 of them different students.
+        it "shows every student exactly once across the pages" do
+          stamp = Time.zone.now
+          100.times do |i|
+            user = FactoryBot.create(:confirmed_user,
+                                     name: "Student #{i.to_s.rjust(3, "0")}",
+                                     name_in_tutorials: "Student #{i.to_s.rjust(3, "0")}")
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user,
+                              created_at: stamp, updated_at: stamp)
+          end
+
+          seen = (1..7).flat_map do |page|
+            get(lecture_student_performance_certifications_path(lecture, page: page))
+            Nokogiri::HTML(response.body)
+                    .css("#performance-certifications-frame tbody tr td:first-child")
+                    .map { |cell| cell.text.strip }
+          end
+
+          expect(seen.uniq.size).to eq(seen.size)
+        end
+      end
+
       context "with an active rule and proposals" do
         let!(:rule) do
           FactoryBot.create(:student_performance_rule, :active,
@@ -600,8 +723,12 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         let(:rule_today) do
           I18n.t("student_performance.certifications.columns.rule_today")
         end
-        def deferral(reason)
-          I18n.t("student_performance.evaluator.deferral.#{reason}")
+        # The two open points reasons say how many sheets they are about, so a
+        # test that names one has to say how many too.
+        def deferral(reason, count: nil)
+          return I18n.t("student_performance.evaluator.deferral.#{reason}") unless count
+
+          I18n.t("student_performance.evaluator.deferral.#{reason}", count: count)
         end
 
         let!(:rule) do
@@ -657,14 +784,26 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           it "says so instead of blaming missing input" do
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body).to include(deferral(:points_not_measurable))
-            expect(response.body).not_to include(deferral(:points_pending))
+            expect(response.body)
+              .not_to include(deferral(:points_pending, count: 0))
           end
         end
 
         context "when the marking still outstanding could carry the student" do
           let(:awaited_user) { FactoryBot.create(:confirmed_user) }
 
+          # The hand-in behind the materialized figure is created too: the page
+          # counts the sheets that are waiting, and the record sums what they
+          # are worth. In real data both come from the same participations.
           before do
+            waiting = FactoryBot.create(:assignment, :expired, lecture: lecture)
+            FactoryBot.create(:assessment_task,
+                              assessment: waiting.assessment, max_points: 40)
+            FactoryBot.create(:assessment_participation,
+                              assessment: waiting.assessment, user: awaited_user,
+                              submitted_at: 1.day.ago)
+            # The new sheet reopened the list; the lecturer has closed it again.
+            lecture.update!(assignments_complete: true)
             FactoryBot.create(:student_performance_record,
                               lecture: lecture,
                               user: awaited_user,
@@ -678,7 +817,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
           it "points at the marking rather than at the student" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(deferral(:points_pending))
+            expect(response.body)
+              .to include(deferral(:points_pending, count: 1))
           end
         end
 
@@ -709,8 +849,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
           it "names the sheets to come rather than refusing the student" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(deferral(:points_not_due))
-            expect(response.body).not_to include(deferral(:points_pending))
+            expect(response.body)
+              .to include(deferral(:points_not_due, count: 1))
+            expect(response.body)
+              .not_to include(deferral(:points_pending, count: 0))
           end
         end
 
@@ -729,7 +871,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           it "offers no reason where there is nothing to explain" do
             get lecture_student_performance_certifications_path(lecture)
             StudentPerformance::Evaluator::DEFERRAL_REASONS.each do |reason|
-              expect(response.body).not_to include(deferral(reason))
+              expect(response.body)
+                .not_to include(deferral(reason, count: 0))
             end
           end
         end
@@ -819,6 +962,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
           expect(response.body).to include(
             I18n.t("student_performance.evaluator.missed.points")
+          )
+        end
+
+        # Nothing is open for this student, so the plain sentence is the right
+        # one; the stronger one belongs to a student who still has marking
+        # outstanding that would not be enough either.
+        it "does not claim more than that the threshold was not reached" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).not_to include(
+            I18n.t("student_performance.evaluator.missed.points_out_of_reach")
           )
         end
 

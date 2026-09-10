@@ -292,23 +292,76 @@
     </div>
   <% end %>
 
-  <nav class="nav nav-pills small mb-3">
-    <% %i[all passed failed uncertified flagged].each do |filter| %>
-      <% active = (params[:status].presence || "all") == filter.to_s %>
+  <div
+    class="
+      d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3
+    "
+  >
+    <nav class="nav nav-pills small">
+      <% %i[all passed failed uncertified flagged].each do |filter| %>
+        <% active = (params[:status].presence || "all") == filter.to_s %>
 
-      <%= link_to lecture_student_performance_certifications_path(
-                    @lecture,
-                    status: filter == :all ? nil : filter),
-                 class: "nav-link rounded-pill py-1 px-3 #{'active' if active} #{'text-muted' unless active}",
-                 data: { turbo_frame: "performance-certifications-frame" } do %>
-        <%= t("student_performance.certifications.filters.#{filter}") %>
+        <%#
+          The search travels with the pill: a name typed in and then narrowed
+          to "flagged" is still the name staff are looking for.
+        %>
+        <%= link_to lecture_student_performance_certifications_path(
+                      @lecture,
+                      status: filter == :all ? nil : filter,
+                      q: params[:q].presence),
+                   class: "nav-link rounded-pill py-1 px-3 #{'active' if active} #{'text-muted' unless active}",
+                   data: { turbo_frame: "performance-certifications-frame" } do %>
+          <%= t("student_performance.certifications.filters.#{filter}") %>
+        <% end %>
       <% end %>
-    <% end %>
-  </nav>
+    </nav>
+
+    <div data-controller="auto-submit-form">
+      <%= form_tag lecture_student_performance_certifications_path(@lecture),
+                   method: :get, class: "m-0",
+                   data: { auto_submit_form_target: "form",
+                           turbo_frame: "performance-certifications-frame" } do %>
+        <%= hidden_field_tag :status, params[:status] if params[:status].present? %>
+
+        <div class="position-relative">
+          <span
+            class="
+              position-absolute top-50 start-0 translate-middle-y ps-3 pe-none
+              text-muted
+            "
+          >
+            <i class="bi bi-search"></i>
+          </span>
+
+          <%= text_field_tag :q, params[:q],
+                             placeholder: t("student_performance.lists.search"),
+                             "aria-label": t("student_performance.lists.search"),
+                             autocomplete: "off",
+                             class: "form-control form-control-sm ps-5 pe-5",
+                             data: {
+                               action: "input->auto-submit-form#debouncedSubmit",
+                               auto_submit_form_target: "searchInput"
+                             } %>
+
+          <button
+            type="button"
+            class="btn-close position-absolute top-50 end-0 translate-middle-y me-3 <%= "d-none" if params[:q].blank? %>"
+            data-auto-submit-form-target="clearButton"
+            data-action="mousedown->auto-submit-form#keepFocus click->auto-submit-form#clear"
+            aria-label="<%= t("basics.clear") %>"
+          ></button>
+        </div>
+      <% end %>
+    </div>
+  </div>
 
   <% if @filtered_records.empty? %>
     <p class="text-center text-muted py-4">
-      <%= t("student_performance.certifications.index.empty") %>
+      <% if params[:q].present? %>
+        <%= t("student_performance.lists.no_match") %>
+      <% else %>
+        <%= t("student_performance.certifications.index.empty") %>
+      <% end %>
     </p>
   <% else %>
     <div class="table-responsive">
@@ -385,7 +438,7 @@
                             precision: 1,
                             strip_insignificant_zeros: true) %>
                 <% else %>
-                  <% percentage = @due_points.percentage_for(record) %>
+                  <% percentage = @due_points.marked_percentage_for(record) %>
                   <% if percentage.nil? %>
                     <span class="text-muted" aria-hidden="true">&mdash;</span>
                     <span class="visually-hidden">
@@ -513,7 +566,7 @@
                   <% Array(proposal.verdict_deferral_reasons).each do |reason| %>
                     <span class="text-amber d-block">
                       <i class="bi bi-question-circle me-1"></i>
-                      <%= t("student_performance.evaluator.deferral.#{reason}") %>
+                      <%= deferral_text(proposal, reason) %>
                     </span>
                   <% end %>
                   <% proposal.missed_criteria.each do |criterion| %>
@@ -558,6 +611,7 @@
                       class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
                       data-action="certification-inline#toggleEdit"
                       title="<%= t('student_performance.certifications.index.edit_certification') %>"
+                      aria-label="<%= t('student_performance.certifications.index.edit_certification') %>"
                     >
                       <i class="bi bi-pencil"></i>
                     </button>
@@ -569,6 +623,7 @@
                         class="btn btn-sm btn-primary py-0 px-1"
                         data-action="certification-inline#save"
                         title="<%= t('student_performance.certifications.index.save') %>"
+                        aria-label="<%= t('student_performance.certifications.index.save') %>"
                       >
                         <i class="bi bi-check-lg"></i>
                       </button>
@@ -578,6 +633,7 @@
                         class="btn btn-sm btn-outline-secondary py-0 px-1"
                         data-action="certification-inline#cancel"
                         title="<%= t('student_performance.certifications.index.cancel') %>"
+                        aria-label="<%= t('student_performance.certifications.index.cancel') %>"
                       >
                         <i class="bi bi-x-lg"></i>
                       </button>
@@ -596,6 +652,7 @@
                                 "student_performance.certifications.index.reset"
                               )
                             },
+                            params: { return_to: request.fullpath },
                             form: {
                               data: {
                                 turbo_frame: "performance-certifications-frame",
@@ -619,6 +676,14 @@
                           },
                           style: "display: none"
                         ) do %>
+                      <%#
+                        Where the decision was made from: the list may be
+                        searched, filtered and on its third page, and a person
+                        who lands back on an unfiltered first page has lost the
+                        student they were working through.
+                      %>
+                      <%= hidden_field_tag :return_to, request.fullpath %>
+
                       <input
                         type="hidden"
                         name="certification[status]"
@@ -648,7 +713,14 @@
                             "student_performance.certifications" \
                             ".index.certify_pass"
                           ),
+                          aria: {
+                            label: t(
+                              "student_performance.certifications" \
+                              ".index.certify_pass"
+                            )
+                          },
                           params: {
+                            return_to: request.fullpath,
                             certification: {
                               user_id: record.user_id,
                               status: :passed
@@ -668,7 +740,14 @@
                             "student_performance.certifications" \
                             ".index.certify_fail"
                           ),
+                          aria: {
+                            label: t(
+                              "student_performance.certifications" \
+                              ".index.certify_fail"
+                            )
+                          },
                           params: {
+                            return_to: request.fullpath,
                             certification: {
                               user_id: record.user_id,
                               status: :failed
@@ -685,5 +764,16 @@
         </tbody>
       </table>
     </div>
+
+    <% if @pagy.pages > 1 %>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="text-muted small">
+          <%= t("student_performance.lists.showing",
+                from: @pagy.from, to: @pagy.to, count: @pagy.count) %>
+        </div>
+
+        <nav><%== pagy_series_nav(@pagy) %></nav>
+      </div>
+    <% end %>
   <% end %>
 <% end %>

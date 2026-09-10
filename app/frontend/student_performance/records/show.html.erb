@@ -46,7 +46,7 @@
             <div class="text-muted small mt-1">
               <%= t("student_performance.records.show.out_of",
                   max: number_with_precision(
-                         @due_points.max_for(@record.user_id),
+                         @due_points.marked_max_for(@record.user_id),
                          precision: 1,
                          strip_insignificant_zeros: true)) %>
             </div>
@@ -55,7 +55,7 @@
 
         <div class="col-12 col-md-4">
           <div class="text-center p-3 border rounded bg-light">
-            <% percentage = @due_points.percentage_for(@record) %>
+            <% percentage = @due_points.marked_percentage_for(@record) %>
 
             <div class="display-6 fw-bold">
               <% if percentage.nil? %>

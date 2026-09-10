@@ -1,9 +1,7 @@
 require "rails_helper"
 
-# The demo hands sheets in with `update_all`, which skips the callback that
-# would otherwise stamp the gradebook. What it stamps is the point of these
-# examples: a hand-in that nobody recorded shows up on the student's page in
-# red, and a stamp on somebody who was excused undoes an entry a tutor made.
+# When the demo dates its hand-ins. The stamping that goes with them lives in
+# `Demo::HandInSupport` and is covered there.
 RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
   let(:lecture) { create(:lecture, :released_for_all) }
   let(:assignment) { create(:assignment, lecture: lecture) }
@@ -12,15 +10,6 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
   let(:submission) do
     create(:submission, assignment: assignment, tutorial: tutorial,
                         last_modification_by_users_at: 1.day.ago)
-  end
-
-  def participation_for(user, *traits)
-    create(:assessment_participation, *traits, assessment: assessment,
-                                               user: user)
-  end
-
-  def record_hand_in!(team)
-    Demo::SetupSupport.send(:record_hand_in!, assignment, team, submission)
   end
 
   # The demo dates its hand-ins around the deadline they belong to, and the
@@ -37,7 +26,7 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
           create(:assignment, :expired, lecture: lecture,
                                         expired_since: (Time.zone.now - deadline).seconds)
         end
-      Demo::SetupSupport.send(:hand_in_time, sheet, late: late)
+      Demo::SetupSupport.send(:handed_in_at, sheet, late: late)
     end
 
     it "hands in before now rather than around a deadline still to come" do
@@ -56,29 +45,5 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
       expect(hand_in_time(deadline, late: true)).to be > deadline
       expect(hand_in_time(deadline, late: false)).to be < deadline
     end
-  end
-
-  it "stamps the hand-in the demo just built" do
-    user = create(:confirmed_user)
-    participation = participation_for(user, :pending)
-
-    record_hand_in!([user])
-
-    expect(participation.reload.submitted_at)
-      .to be_within(1.second).of(submission.last_modification_by_users_at)
-  end
-
-  # `Assessment::AbsenceHandling` clears the stamp when it sets either status,
-  # and it means it: a stamp back would say the sheet was handed in after all.
-  it "leaves somebody who was marked absent or exempt alone" do
-    absent = create(:confirmed_user)
-    exempt = create(:confirmed_user)
-    absent_participation = participation_for(absent, :absent)
-    exempt_participation = participation_for(exempt, :exempt)
-
-    record_hand_in!([absent, exempt])
-
-    expect(absent_participation.reload.submitted_at).to be_nil
-    expect(exempt_participation.reload.submitted_at).to be_nil
   end
 end

@@ -15,9 +15,6 @@ module Seeds
     # What a group hands in per sheet. Also the ceiling, so that a rebuild does
     # not pile more on top of what the last one left.
     TEAMS_PER_TUTORIAL = 2
-    # Below this a manuscript in the seed is a placeholder rather than a
-    # document; above it, the smallest one is an exercise sheet.
-    MIN_SHEET_BYTES = 10 * 1024
 
     def setup!
       lecture = demo_lecture
@@ -94,10 +91,14 @@ module Seeds
                 .first&.tutorial
     end
 
+    # The lecture's own sheets only. The demo homework has a stager of its own,
+    # which clears and rebuilds what it covers - staging it here would be work
+    # thrown away, in a shape that differs from what a developer sees after
+    # `demo:setup`.
     def hand_in_sheets!(lecture)
-      return if manuscript_path.nil?
+      return if Demo::HandInSupport.manuscript_path.nil?
 
-      lecture.assignments.order(:deadline).each_with_index do |assignment, index|
+      own_sheets(lecture).each_with_index do |assignment, index|
         seated_tutorials(lecture).each do |tutorial|
           teams_for(tutorial).each_with_index do |team, position|
             corrected = assignment.expired? && position.even?
@@ -106,6 +107,11 @@ module Seeds
           end
         end
       end
+    end
+
+    def own_sheets(lecture)
+      demo_titles = Demo::SetupSupport.demo_assignment_titles
+      lecture.assignments.where.not(title: demo_titles).order(:deadline)
     end
 
     # Two hand in together, the next one alone, and the rest of the group does
@@ -123,44 +129,8 @@ module Seeds
       return if Submission.where(assignment: assignment,
                                  tutorial: tutorial).count >= TEAMS_PER_TUTORIAL
 
-      submission = Submission.new(assignment: assignment, tutorial: tutorial,
-                                  users: [team.first])
-      submission.manuscript = manuscript_copy
-      submission.save!
-      # A partner joins an existing submission; handing both users to a new one
-      # trips the team-size check, which counts what is already in the team.
-      team.drop(1).each do |partner|
-        UserSubmissionJoin.create!(user: partner, submission: submission)
-      end
-      record_hand_in!(assignment, team, submission)
-      return unless correction
-
-      submission.correction = manuscript_copy
-      submission.accepted = correction == :accepted
-      submission.save!
-    end
-
-    # What the controller does on every upload: the gradebook learns that the
-    # sheet was handed in. Without it the seeds build a state that is real but
-    # rare - a file on record with no hand-in against it, which the student's
-    # page has to flag in red.
-    #
-    # Absent and exempt are left alone: `Assessment::AbsenceHandling` clears
-    # `submitted_at` on purpose when it sets them.
-    def record_hand_in!(assignment, team, submission)
-      participations = assignment.assessment&.assessment_participations
-      return unless participations
-
-      # Nothing here goes through the controller, so nobody has written the
-      # modification time the hand-in would otherwise be dated by.
-      handed_in_at = submission.last_modification_by_users_at ||
-                     submission.created_at
-      # rubocop:disable Rails/SkipsModelValidations
-      participations.where(user_id: team.map(&:id), submitted_at: nil)
-                    .where.not(status: [:absent, :exempt])
-                    .update_all(submitted_at: handed_in_at,
-                                updated_at: Time.current)
-      # rubocop:enable Rails/SkipsModelValidations
+      Demo::HandInSupport.hand_in!(assignment: assignment, tutorial: tutorial,
+                                   team: team, correction: correction)
     end
 
     # One submission per assignment and person: a team whose member has handed
@@ -188,33 +158,6 @@ module Seeds
       named_user(SECOND_TUTOR_EMAIL) ||
         FactoryBot.create(:confirmed_user, email: SECOND_TUTOR_EMAIL,
                                            name: "Toni Tutor")
-    end
-
-    # A file the seed already ships, so the dump grows by nothing that is not
-    # already in it. The smallest document does, because the archive beside the
-    # dump carries a copy per hand-in. It is opened again for every one of them,
-    # because Shrine closes what it has uploaded.
-    def manuscript_path
-      return @manuscript_path if defined?(@manuscript_path)
-
-      source = smallest_document
-      @manuscript_path = source && write_copy(source.manuscript.download)
-    end
-
-    def smallest_document
-      documents = Medium.where.not(manuscript_data: nil)
-                        .select { |medium| medium.manuscript.size.to_i >= MIN_SHEET_BYTES }
-      documents.min_by { |medium| medium.manuscript.size.to_i }
-    end
-
-    def write_copy(download)
-      path = File.join(Dir.mktmpdir, "abgabe.pdf")
-      File.binwrite(path, download.read)
-      path
-    end
-
-    def manuscript_copy
-      manuscript_path && File.open(manuscript_path, "rb")
     end
   end
 end

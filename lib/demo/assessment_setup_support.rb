@@ -27,6 +27,12 @@ module Demo
       raise("Lecture 1 has no tutorial roster. Run demo:rosters first.")
     end
 
+    # Which sheets belong to the demo, asked from outside as well: the seed
+    # build stages the lecture's own hand-ins and has to leave these alone.
+    def demo_assignment_titles
+      demo_assignment_attributes.pluck(:title)
+    end
+
     private
 
       def demo_assignment_attributes
@@ -45,10 +51,6 @@ module Demo
         when 9 then 3.days.ago
         else (10 - index).weeks.ago
         end
-      end
-
-      def demo_assignment_titles
-        demo_assignment_attributes.pluck(:title)
       end
 
       def demo_assignments(lecture)

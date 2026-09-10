@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       resources :factories_playwright, only: :create
       post "factories_playwright/call_instance_method",
            to: "factories_playwright#call_instance_method"
+      post "factories_playwright/update_instance",
+           to: "factories_playwright#update_instance"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :user_creator_playwright, only: :create

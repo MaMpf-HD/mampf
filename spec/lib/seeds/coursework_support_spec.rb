@@ -1,5 +1,9 @@
 require "rails_helper"
 
+# The hand-in itself lives in `Demo::HandInSupport` and is covered there; what
+# these examples are about is that the seed path reaches it - the gradebook is
+# stamped for a sheet the build handed in, and an excused participation is left
+# where the tutor put it.
 RSpec.describe(Seeds::CourseworkSupport, type: :model) do
   let(:lecture) { create(:lecture, :released_for_all) }
   let(:assignment) { create(:assignment, lecture: lecture) }
@@ -7,7 +11,7 @@ RSpec.describe(Seeds::CourseworkSupport, type: :model) do
   let(:tutorial) { create(:tutorial, lecture: lecture) }
 
   before do
-    allow(described_class).to receive(:manuscript_copy) do
+    allow(Demo::HandInSupport).to receive(:manuscript_copy) do
       File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
     end
   end

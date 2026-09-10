@@ -13,10 +13,24 @@ module StudentPerformance
         return [] unless lecture.assignments_complete?
 
         proposal.verdict_deferral_reasons.map do |reason|
-          t("student_performance.evaluator.deferral.#{reason}")
+          deferral_text(proposal, reason)
         end
       else
         []
+      end
+    end
+
+    # Two of the reasons can say how many sheets they are about, and a reader
+    # deciding on somebody needs that: "not due yet" covers anything between
+    # one sheet and the rest of the term.
+    def deferral_text(proposal, reason)
+      case reason
+      when :points_not_due
+        deferral_count(reason, proposal.details[:not_due_sheets])
+      when :points_pending
+        deferral_count(reason, proposal.details[:pending_sheets])
+      else
+        t("student_performance.evaluator.deferral.#{reason}")
       end
     end
 
@@ -27,5 +41,11 @@ module StudentPerformance
 
       "#{text} #{t("student_performance.certifications.index.reset_confirm_passed")}"
     end
+
+    private
+
+      def deferral_count(reason, sheets)
+        t("student_performance.evaluator.deferral.#{reason}", count: sheets.to_i)
+      end
   end
 end
