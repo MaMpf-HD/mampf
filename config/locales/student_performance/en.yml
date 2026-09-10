@@ -26,7 +26,7 @@ en:
         percentage: "Percentage"
         of_due_points: "of the points marked so far"
         due_so_far: "Marked so far"
-        due_so_far_hint: "Points and percentage count the assignments whose deadline, grace period included, has passed - minus the excused ones and those still waiting to be marked. The maximum therefore differs from student to student."
+        due_so_far_hint: "Points and percentage count what is settled for the student: assignments whose deadline, grace period included, has passed, and any already marked - minus the excused ones and those still waiting to be marked. The maximum therefore differs from student to student."
         maximum: "Maximum"
         assignments: "Assignments"
         not_due_count: "%{count} not due yet"

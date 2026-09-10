@@ -140,6 +140,46 @@ RSpec.describe(Assignment, type: :model) do
 
       expect(lecture.reload.assignments_complete?).to be(false)
     end
+
+    # What a record has to say for itself at commit time is what its last save
+    # left behind, and a record can be saved more than once in one transaction.
+    # Neither reason may be lost on the way there.
+    it "is reopened by a new sheet that is renamed before the commit" do
+      ActiveRecord::Base.transaction do
+        FactoryBot.create(:assignment, lecture: lecture).update!(title: "Renamed")
+      end
+
+      expect(lecture.reload.assignments_complete?).to be(false)
+    end
+
+    it "is reopened by a moved deadline, renamed before the commit" do
+      assignment = FactoryBot.create(:assignment, :expired, lecture: lecture)
+      lecture.update!(assignments_complete: true)
+
+      ActiveRecord::Base.transaction do
+        assignment.update!(deadline: 5.days.from_now)
+        assignment.update!(title: "Renamed")
+      end
+
+      expect(lecture.reload.assignments_complete?).to be(false)
+    end
+
+    # A reason that outlived its transaction would open the list on some later,
+    # unrelated save.
+    it "is not reopened by a save after a move that was rolled back" do
+      assignment = FactoryBot.create(:assignment, :expired, lecture: lecture)
+      lecture.update!(assignments_complete: true)
+
+      suppress(ActiveRecord::Rollback) do
+        ActiveRecord::Base.transaction do
+          assignment.update!(deadline: 5.days.from_now)
+          raise(ActiveRecord::Rollback)
+        end
+      end
+      assignment.reload.update!(title: "Renamed")
+
+      expect(lecture.reload.assignments_complete?).to be(true)
+    end
   end
 
   describe "destructibility" do

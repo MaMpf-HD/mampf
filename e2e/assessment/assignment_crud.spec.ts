@@ -64,10 +64,9 @@ test.describe("homework sheets", () => {
   /**
    * The box is put back when the dialog closes, not when its Cancel button is
    * pressed - so every way out of an unanswered question leaves the page and
-   * the database saying the same thing. Bootstrap's own closing event stands in
-   * for those ways here: I could not dismiss this dialog with Escape or with a
-   * click beside it in Chromium, so driving one of them would have tested the
-   * browser rather than the page.
+   * the database saying the same thing. Escape is one of those ways, and it
+   * only works once the dialog has finished coming in: Bootstrap moves the
+   * focus at the end of that, which is what the test waits for.
    */
   test("puts the box back when the question goes away unanswered", async ({
     factory,
@@ -79,14 +78,12 @@ test.describe("homework sheets", () => {
     await dashboard.gotoOverview();
     const box = teacher.page.getByLabel("The assignment list is complete");
     await box.check();
-    await expect(teacher.page.getByRole("dialog", { name: "Tick the box" }))
-      .toBeVisible();
 
-    await teacher.page.evaluate(() => {
-      document.querySelector(".modal.show")
-        ?.dispatchEvent(new Event("hidden.bs.modal"));
-    });
+    const dialog = teacher.page.getByRole("dialog", { name: "Tick the box" });
+    await expect(dialog).toBeFocused();
+    await dialog.press("Escape");
 
+    await expect(dialog).toBeHidden();
     await expect(box).not.toBeChecked();
   });
 
