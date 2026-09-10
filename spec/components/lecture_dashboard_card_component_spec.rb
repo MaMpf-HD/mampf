@@ -8,8 +8,8 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
     user.subscribe_lecture!(lecture)
   end
 
-  def render_card
-    render_inline(described_class.new(lecture: lecture, user: user))
+  def render_card(**)
+    render_inline(described_class.new(lecture: lecture, user: user, **))
   end
 
   it "renders the lecture on a tilted card" do
@@ -62,5 +62,21 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
   it "no longer carries a bookmark toggle" do
     expect(render_card.at_css(".bi-bookmark, .bi-bookmark-fill")).to be_nil
+  end
+
+  it "carries no remove-bookmark control by default" do
+    expect(render_card.at_css("[data-controller='bookmark-removal']")).to be_nil
+  end
+
+  context "when the card sits in the bookmarked band" do
+    it "offers a remove-bookmark control wired to the lecture" do
+      rendered = render_card(bookmarked: true)
+
+      control = rendered.at_css("[data-controller='bookmark-removal']")
+      expect(control["data-bookmark-removal-url-value"])
+        .to eq("/dashboard/bookmarks/#{lecture.id}")
+      expect(rendered.at_css("[data-action='bookmark-removal#open']"))
+        .to be_present
+    end
   end
 end

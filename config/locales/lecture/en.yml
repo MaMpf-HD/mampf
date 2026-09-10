@@ -8,6 +8,7 @@ en:
     search:
       go_to_search: Search lectures
       placeholder: Search for lectures...
+      bookmark: Bookmark
       registration_open: Registration open
       registered: Registered
       subscribed: Subscribed

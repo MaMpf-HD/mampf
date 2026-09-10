@@ -115,5 +115,6 @@
     </div>
   </div>
 
-  <%= render partial: "lectures/search/search" %>
+  <%# Spans all semesters, so each result keeps its term label. %>
+  <%= render partial: "lectures/search/search", locals: { show_term: true } %>
 </div>

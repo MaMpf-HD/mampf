@@ -275,6 +275,11 @@ class LecturesController < ApplicationController
     @rosterized_lecture_ids = status.rosterized_lecture_ids
     @self_enrollable_lecture_ids = status.enrollable_lecture_ids
 
+    # The dashboard search is scoped to one semester by the picker above it, so
+    # the term on each result card is redundant there and switched off via a
+    # hidden field. Other callers (e.g. /search/index) keep it.
+    @show_term = params.dig(:search, :show_term) != "0"
+
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
       format.turbo_stream do

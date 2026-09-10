@@ -659,6 +659,13 @@ Rails.application.routes.draw do
         to: "dashboard/washi_tapes#update",
         as: "dashboard_washi_tape"
 
+  # add / remove a lecture from the student's dashboard bookmarks
+  post "dashboard/bookmarks/:lecture_id",
+       to: "dashboard/bookmarks#create",
+       as: "dashboard_bookmark"
+  delete "dashboard/bookmarks/:lecture_id",
+         to: "dashboard/bookmarks#destroy"
+
   get "profile/request_data",
       as: "request_data"
 

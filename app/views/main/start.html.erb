@@ -25,4 +25,5 @@
 </div>
 
 <%= render partial: 'profile/subscription_modal' %>
-<%= render partial: "lectures/search/search" %>
+<%# The picker above names the semester, so the term on each result is dropped. %>
+<%= render partial: "lectures/search/search", locals: { show_term: false } %>

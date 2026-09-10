@@ -13,6 +13,54 @@
     <% card.with_subtitle { lecture.teacher.name } %>
   <% end %>
 
+  <% if bookmarked? %>
+    <% card.with_corner do %>
+      <div data-controller="bookmark-removal"
+           data-bookmark-removal-url-value="<%= dashboard_bookmark_path(lecture) %>">
+        <button type="button"
+                class="bi bi-x-lg text-muted dashboard-card__action"
+                data-action="bookmark-removal#open"
+                title="<%= t('main.start.remove_bookmark') %>"
+                aria-label="<%= t('main.start.remove_bookmark') %>"></button>
+
+        <div class="modal fade"
+             tabindex="-1"
+             aria-hidden="true"
+             data-bookmark-removal-target="dialog">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  <%= t("main.start.remove_bookmark_title") %>
+                </h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="<%= t('buttons.close') %>"></button>
+              </div>
+              <div class="modal-body">
+                <%= t("main.start.remove_bookmark_body",
+                      lecture: lecture.title_no_term) %>
+              </div>
+              <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                  <%= t("buttons.cancel") %>
+                </button>
+                <button type="button"
+                        class="btn btn-danger"
+                        data-bookmark-removal-confirm>
+                  <%= t("main.start.remove_bookmark_confirm") %>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
   <% if registration_status %>
     <% card.with_note do %>
       <i class="bi <%= registration_status_icon %>" aria-hidden="true"></i>

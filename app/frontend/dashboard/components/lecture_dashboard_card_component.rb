@@ -12,14 +12,20 @@ class LectureDashboardCardComponent < ViewComponent::Base
   # `activity` is the board's shared digest of unread forum topics and
   # comments. It is passed in so that it is gathered once for all cards; a card
   # rendered on its own falls back to gathering it for its own lecture.
-  def initialize(lecture:, user:, activity: nil)
+  #
+  # `bookmarked` marks a card that sits in the "Bookmarked" band rather than
+  # among the enrolled lectures: it gets the small "x" that removes the
+  # bookmark.
+  def initialize(lecture:, user:, activity: nil, bookmarked: false)
     super()
     @lecture = lecture
     @user = user
     @activity = activity
+    @bookmarked = bookmarked
   end
 
-  attr_reader :lecture, :user, :activity
+  attr_reader :lecture, :user, :activity, :bookmarked
+  alias bookmarked? bookmarked
 
   def image_url
     return "/no_course_information.png" unless lecture.course.normalized_image_file

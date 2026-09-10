@@ -23,7 +23,8 @@
       <%= render(LectureDashboardCardComponent.new(
                     lecture: lecture,
                     user: current_user,
-                    activity: @lecture_activity)) %>
+                    activity: @lecture_activity,
+                    bookmarked: true)) %>
     <% end %>
   <% end %>
 

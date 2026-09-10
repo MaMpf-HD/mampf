@@ -100,6 +100,50 @@
     max-width: 800px;
 }
 
+.lecture-search-result-wrap {
+    position: relative;
+}
+
+// A bookmark toggle pinned to the right edge of the result, over the card's
+// own link. Grey outline when the lecture is not bookmarked, amber and filled
+// once it is (the icon swap is done in the bookmark Stimulus controller).
+.lecture-search-result-bookmark {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    color: #adb5bd;
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+    backdrop-filter: blur(2px);
+    transition: color 150ms ease, transform 150ms ease;
+
+    &:hover {
+        color: #f59f00;
+        transform: translateY(-50%) scale(1.12);
+    }
+
+    &:focus-visible {
+        outline: 2px solid $mampf-blue;
+        outline-offset: 2px;
+    }
+}
+
+.lecture-search-result-wrap.is-bookmarked .lecture-search-result-bookmark {
+    color: #f59f00;
+}
+
 .lecture-search-result-link {
     text-decoration: none;
     color: inherit;
@@ -138,6 +182,8 @@
 
 .lecture-search-result-body {
     padding: 1.5em;
+    // room for the bookmark toggle pinned to the right edge
+    padding-right: 3.75em;
 }
 
 .lecture-search-result-title {

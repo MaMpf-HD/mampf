@@ -190,6 +190,12 @@ window.Stimulus.register("dashboard-term-select", DashboardTermSelectController)
 import DashboardSectionController from "~/dashboard/dashboard_section.controller.js";
 window.Stimulus.register("dashboard-section", DashboardSectionController);
 
+import BookmarkRemovalController from "~/dashboard/bookmark_removal.controller.js";
+window.Stimulus.register("bookmark-removal", BookmarkRemovalController);
+
+import BookmarkController from "~/lectures/search/bookmark.controller.js";
+window.Stimulus.register("bookmark", BookmarkController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

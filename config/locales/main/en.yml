@@ -8,6 +8,12 @@ en:
         enrolled: "You are registered for these"
         bookmarked: "You bookmarked these"
       registration_open: "Registration open — register now"
+      remove_bookmark: "Remove bookmark"
+      remove_bookmark_title: "Remove bookmark?"
+      remove_bookmark_body: >-
+        Remove “%{lecture}” from your bookmarks? You can bookmark it again from
+        the lecture search.
+      remove_bookmark_confirm: "Remove"
     next_term_banner:
       heading:
         one: "Lectures for %{term} are being published — the first one is already in MaMpf."

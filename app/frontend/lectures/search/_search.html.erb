@@ -24,6 +24,13 @@
       <%= hidden_field_tag "search[term]", @selected_term&.dashboard_param,
                            id: "lecture-search-term-field" %>
 
+      <%# The term on each result card is redundant when the search is already
+          scoped to one semester (the dashboard); callers that span all
+          semesters pass show_term: true. %>
+      <%= hidden_field_tag "search[show_term]",
+                           local_assigns.fetch(:show_term, true) ? "1" : "0",
+                           id: "lecture-search-show-term-field" %>
+
       <div id="lecture-search-input-group">
         <%= f.text_field "search[fulltext]",
                           class: "form-control",

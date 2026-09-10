@@ -8,6 +8,12 @@ de:
         enrolled: "Für diese bist Du angemeldet"
         bookmarked: "Diese hast Du Dir gemerkt"
       registration_open: "Anmeldung offen — jetzt anmelden"
+      remove_bookmark: "Merkung entfernen"
+      remove_bookmark_title: "Nicht mehr merken?"
+      remove_bookmark_body: >-
+        „%{lecture}“ aus Deinen gemerkten Veranstaltungen entfernen? Du kannst
+        sie über die Vorlesungssuche erneut merken.
+      remove_bookmark_confirm: "Entfernen"
     next_term_banner:
       heading:
         one: "Die Veranstaltungen für das %{term} werden gerade veröffentlicht — die erste ist schon in MaMpf."
