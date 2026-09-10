@@ -315,17 +315,19 @@ class MediaController < ApplicationController
     return unless verify_search_api_token!
     return unless verify_transcription_token!(purpose: :transcription_failed)
 
-    attempts = @medium.transcription_attempts + 1
-    status = if attempts >= SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
-      :failed_permanently
-    else
-      :failed_temporarily
+    @medium.with_lock do
+      attempts = @medium.transcription_attempts + 1
+      status = if attempts >= SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
+        :failed_permanently
+      else
+        :failed_temporarily
+      end
+      @medium.update!(
+        transcription_status: status,
+        transcription_attempts: attempts,
+        transcription_error: params[:error].presence || "MampfSearch transcription failed."
+      )
     end
-    @medium.update!(
-      transcription_status: status,
-      transcription_attempts: attempts,
-      transcription_error: params[:error].presence || "MampfSearch transcription failed."
-    )
     head :ok
   end
 
