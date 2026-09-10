@@ -1,6 +1,20 @@
 <%= tag.section class: "dashboard-section",
                 aria: { labelledby: heading_id },
-                data: { testid: testid } do %>
-  <h2 class="dashboard-section__label" id="<%= heading_id %>"><%= title %></h2>
-  <div class="dashboard-cards"><%= content %></div>
+                data: { testid: testid,
+                        controller: "dashboard-section",
+                        dashboard_section_key_value: testid } do %>
+  <h2 class="dashboard-section__label" id="<%= heading_id %>">
+    <button type="button"
+            class="dashboard-section__toggle"
+            aria-expanded="true"
+            aria-controls="<%= body_id %>"
+            data-dashboard-section-target="toggle"
+            data-action="dashboard-section#toggle">
+      <span class="dashboard-section__caret" aria-hidden="true"></span>
+      <%= title %>
+    </button>
+  </h2>
+  <div class="dashboard-cards"
+       id="<%= body_id %>"
+       data-dashboard-section-target="cards"><%= content %></div>
 <% end %>

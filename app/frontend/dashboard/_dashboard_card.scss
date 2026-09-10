@@ -34,6 +34,12 @@ $card-rail-width: 12rem;
     max-width: 42rem;
     margin-inline: auto;
     padding-top: 1.5rem;
+
+    // `display: grid` outranks the `hidden` attribute's UA rule, so a folded
+    // band would still show its cards without this.
+    &[hidden] {
+        display: none;
+    }
 }
 
 @media (min-width: 576px) {
@@ -99,6 +105,56 @@ $card-rail-width: 12rem;
         text-transform: uppercase;
         letter-spacing: 0.06em;
         color: #868e96;
+    }
+
+    // The label is the disclosure button: same small caps as before, with the
+    // caret sitting in the margin to its left so the words stay where they
+    // were.
+    &__toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-inline-start: -0.9rem;
+        padding: 0.15rem 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        letter-spacing: inherit;
+        text-transform: inherit;
+        color: inherit;
+        cursor: pointer;
+
+        &:hover {
+            color: #5c636a;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $mampf-blue-focus;
+            outline-offset: 3px;
+            border-radius: 2px;
+        }
+    }
+
+    // A small triangle, pointing down while the band is open and turning to
+    // point at the label when it is folded away.
+    &__caret {
+        flex: none;
+        width: 0;
+        height: 0;
+        border-left: 0.3rem solid transparent;
+        border-right: 0.3rem solid transparent;
+        border-top: 0.35rem solid currentcolor;
+        transition: transform 0.2s ease;
+    }
+
+    &__toggle[aria-expanded="false"] &__caret {
+        transform: rotate(-90deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-section__caret {
+        transition: none;
     }
 }
 
