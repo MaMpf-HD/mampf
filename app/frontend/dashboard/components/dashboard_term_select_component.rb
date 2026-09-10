@@ -24,8 +24,14 @@ class DashboardTermSelectComponent < ViewComponent::Base
 
   # Newest first: a student changing semester is far likelier to be heading
   # into the upcoming term than digging into the past.
+  #
+  # The terse form ("SS 2026", "WS 2025/26") rather than the spelled-out one:
+  # every option then starts with a two-letter season, so the years line up in
+  # a column and the list can be read down instead of word by word. The word
+  # "Semester" is said once, by the label in front of the select, and would
+  # only be noise repeated in each option.
   def options
-    terms.reverse.map { |term| [term.to_long_label, target_path(term)] }
+    terms.reverse.map { |term| [term.to_label, target_path(term)] }
   end
 
   def target_path(term)

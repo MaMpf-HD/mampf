@@ -127,7 +127,7 @@ test("scopes results to the semester picked in the dropdown",
     // place, without navigating away or jumping the scroll position
     const scrollBefore = await page.evaluate(() => window.scrollY);
     const searchReloaded = dashboard.getLectureSearchPromise();
-    await dashboard.selectTerm("Winter semester 2025/26");
+    await dashboard.selectTerm("WS 2025/26");
     await searchReloaded;
 
     const scrollAfter = await page.evaluate(() => window.scrollY);

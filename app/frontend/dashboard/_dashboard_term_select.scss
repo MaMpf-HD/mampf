@@ -19,8 +19,12 @@
     white-space: nowrap;
 }
 
+// A fixed width rather than one that follows the current option: the control
+// would otherwise change size as you step from "SS 2026" to "WS 2025/26", and
+// the digits are tabular so the years stay in one column down the list.
 .dashboard-term-select__input {
     width: auto;
-    min-width: 11rem;
+    min-width: 8.5rem;
     max-width: 100%;
+    font-variant-numeric: tabular-nums;
 }

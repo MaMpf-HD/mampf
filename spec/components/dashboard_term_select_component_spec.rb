@@ -18,12 +18,10 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
     expect(rendered.to_html).to be_blank
   end
 
-  it "lists every semester newest first, spelled out" do
+  it "lists every semester newest first, each starting with its season" do
     labels = render_select.css("option").map(&:text)
 
-    expect(labels).to eq([future.to_long_label,
-                          current.to_long_label,
-                          past.to_long_label])
+    expect(labels).to eq(["WS 2025/26", "SS 2025", "WS 2024/25"])
   end
 
   it "points each option at its own term by semester slug" do

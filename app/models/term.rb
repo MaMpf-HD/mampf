@@ -52,14 +52,6 @@ class Term < ApplicationRecord
     "#{season} #{year_corrected_short}"
   end
 
-  # Spelled-out label for places where "SS 2026" is too terse to stand on its
-  # own, e.g. the dashboard's semester picker: "Summer semester 2026".
-  def to_long_label
-    return if season.blank?
-
-    "#{I18n.t("dashboard.term_select.season.#{season}")} #{year_corrected}"
-  end
-
   def compact_title
     season + year_corrected_short
   end

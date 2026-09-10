@@ -2,9 +2,6 @@ de:
   dashboard:
     term_select:
       label: "Semester"
-      season:
-        SS: "Sommersemester"
-        WS: "Wintersemester"
     quick_actions:
       list_label: "Zu erledigen für %{lecture}"
       assignment:
