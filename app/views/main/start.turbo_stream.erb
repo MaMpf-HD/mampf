@@ -21,6 +21,6 @@
 <% end %>
 
 <%= turbo_stream.replace "lecture-search-term-field" do %>
-  <%= hidden_field_tag "search[term]", @selected_term&.id,
+  <%= hidden_field_tag "search[term]", @selected_term&.dashboard_param,
                        id: "lecture-search-term-field" %>
 <% end %>

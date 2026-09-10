@@ -14,8 +14,8 @@ RSpec.describe(Search::Filters::DashboardTermFilter, type: :filter) do
       described_class.filter(scope: scope, params: params, user: user)
     end
 
-    context "with an explicit term id" do
-      let(:params) { { term: next_term.id } }
+    context "with an explicit term slug" do
+      let(:params) { { term: next_term.dashboard_param } }
 
       it "returns that term's lectures plus the term-independent ones" do
         expect(filtered_scope).to contain_exactly(lecture_in_next_term,
@@ -23,7 +23,16 @@ RSpec.describe(Search::Filters::DashboardTermFilter, type: :filter) do
       end
     end
 
-    context "with no term id" do
+    context "with a bare term id" do
+      let(:params) { { term: next_term.id } }
+
+      it "still resolves the term" do
+        expect(filtered_scope).to contain_exactly(lecture_in_next_term,
+                                                  lecture_without_term)
+      end
+    end
+
+    context "with no term" do
       let(:params) { {} }
 
       it "falls back to the active term" do

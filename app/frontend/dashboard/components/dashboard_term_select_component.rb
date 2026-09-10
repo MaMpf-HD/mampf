@@ -1,6 +1,6 @@
 # A plain semester picker for the dashboard: a `<select>` of every semester
-# that, on change, does a Turbo visit to `/?term=<id>` and re-renders the
-# dashboard sections and the lecture search for that term.
+# that, on change, refreshes the dashboard sections and the lecture search for
+# that term in place (Turbo Stream), with the URL set to `/?term=<slug>`.
 #
 # The page shows two copies — one at the top, one just above the search bar —
 # both server-rendered from the same selected term, so they stay in sync. The
@@ -29,6 +29,6 @@ class DashboardTermSelectComponent < ViewComponent::Base
   end
 
   def target_path(term)
-    root_path(term: term.id, anchor: anchor)
+    root_path(term: term.dashboard_param, anchor: anchor)
   end
 end

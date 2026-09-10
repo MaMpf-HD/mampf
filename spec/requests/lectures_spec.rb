@@ -52,7 +52,8 @@ RSpec.describe("Lectures", type: :request) do
         create(:lecture, :term_independent, course: term_independent_course)
 
         get search_lectures_path,
-            params: { search: { fulltext: "Topology", term: other_term.id } },
+            params: { search: { fulltext: "Topology",
+                                term: other_term.dashboard_param } },
             xhr: true
 
         expect(response.body).to include(selected_course.title)

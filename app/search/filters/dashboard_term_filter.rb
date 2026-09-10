@@ -1,9 +1,10 @@
 module Search
   module Filters
     # Scopes the dashboard's lecture search to the semester the picker is
-    # pointing at: `search[term]` carries its id, server-rendered next to the
-    # dashboard so the two always agree. With no id it falls back to the active
-    # term, so the search shows one semester at a time rather than everything.
+    # pointing at: `search[term]` carries its slug (see Term#dashboard_param),
+    # server-rendered next to the dashboard so the two always agree. With no
+    # value it falls back to the active term, so the search shows one semester
+    # at a time rather than everything.
     #
     # Term-independent lectures (term: nil, e.g. the helpdesk) belong to every
     # semester and are always kept in.
@@ -15,7 +16,7 @@ module Search
       def filter
         return scope if params[:term].blank? && Term.active.blank?
 
-        term = Term.find_by(id: params[:term]) || Term.active
+        term = Term.from_dashboard_param(params[:term]) || Term.active
         return scope.where(term: nil) if term.blank?
 
         scope.where(term: [term, nil])

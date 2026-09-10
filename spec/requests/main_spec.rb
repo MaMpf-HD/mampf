@@ -88,27 +88,37 @@ RSpec.describe("Main", type: :request) do
       end
     end
 
-    describe "?term=<id>" do
+    describe "?term=<slug>" do
       let!(:other_term) { create(:term, :winter, year: 2025) }
 
-      it "scopes the dashboard sections to the given semester" do
+      it "scopes the dashboard sections to the semester the slug names" do
         here = lecture_with_title("Here Now")
         there = create(:lecture, course: create(:course, title: "Over There"),
                                  term: other_term)
         here.lecture_memberships.create!(user: user)
         there.lecture_memberships.create!(user: user)
 
-        get root_path(term: other_term.id)
+        get root_path(term: other_term.dashboard_param)
 
         expect(response.body).to include("Over There")
         expect(response.body).not_to include("Here Now")
       end
 
-      it "falls back to the active term for an unknown id" do
+      it "still understands a bare id" do
+        there = create(:lecture, course: create(:course, title: "Over There"),
+                                 term: other_term)
+        there.lecture_memberships.create!(user: user)
+
+        get root_path(term: other_term.id)
+
+        expect(response.body).to include("Over There")
+      end
+
+      it "falls back to the active term for an unknown value" do
         here = lecture_with_title("Here Now")
         here.lecture_memberships.create!(user: user)
 
-        get root_path(term: 0)
+        get root_path(term: "SS99")
 
         expect(response.body).to include("Here Now")
       end

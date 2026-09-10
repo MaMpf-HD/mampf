@@ -26,19 +26,19 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
                           past.to_long_label])
   end
 
-  it "points each option at its own term" do
+  it "points each option at its own term by semester slug" do
     values = render_select.css("option").pluck("value")
 
-    expect(values).to contain_exactly("/?term=#{future.id}",
-                                      "/?term=#{current.id}",
-                                      "/?term=#{past.id}")
+    expect(values).to contain_exactly("/?term=WS24-25",
+                                      "/?term=SS25",
+                                      "/?term=WS25-26")
   end
 
   it "preselects the current semester" do
     selected = render_select.css("option[selected]")
 
     expect(selected.size).to eq(1)
-    expect(selected.first["value"]).to eq("/?term=#{current.id}")
+    expect(selected.first["value"]).to eq("/?term=SS25")
   end
 
   it "keeps the search in view when given an anchor" do

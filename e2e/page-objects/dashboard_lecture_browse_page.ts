@@ -11,8 +11,8 @@ export class DashboardLectureBrowsePage {
     await this.page.goto("/");
   }
 
-  async gotoTerm(termId: number) {
-    await this.page.goto(`/?term=${termId}`);
+  async gotoTerm(termSlug: string) {
+    await this.page.goto(`/?term=${termSlug}`);
   }
 
   async gotoTermScopeDeepLink(termScope: string) {
@@ -52,15 +52,17 @@ export class DashboardLectureBrowsePage {
   }
 
   /**
-   * Picks a semester in the dashboard's term dropdown. This refreshes the
-   * term-dependent regions in place via Turbo Stream (no navigation) and
-   * updates the URL; we wait for the `?term=<id>` to land.
+   * Picks a semester in the dashboard's term dropdown, by its visible label.
+   * This refreshes the term-dependent regions in place via Turbo Stream (no
+   * navigation) and updates the URL to `/?term=<slug>`; we wait for the
+   * `?term=` value to change.
    */
-  async selectTerm(termId: number) {
+  async selectTerm(label: string) {
+    const before = new URL(this.page.url()).searchParams.get("term");
     const urlUpdated = this.page.waitForURL(
-      url => url.searchParams.get("term") === String(termId),
+      url => (url.searchParams.get("term") ?? null) !== before,
     );
-    await this.termSelect.selectOption(`/?term=${termId}`);
+    await this.termSelect.selectOption({ label });
     await urlUpdated;
   }
 

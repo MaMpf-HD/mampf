@@ -7,7 +7,7 @@ import { Controller } from "@hotwired/stimulus";
  * in place — the dashboard sections, every copy of the picker, and the hidden
  * field the lecture search reads its term from — through a Turbo Stream
  * response (`main/start.turbo_stream.erb`). No full navigation happens, so the
- * scroll position is kept. The URL is still updated to `/?term=<id>` so the
+ * scroll position is kept. The URL is still updated to `/?term=<slug>` so the
  * choice survives a reload or a shared link.
  *
  * The lecture search below listens for the `dashboard-term-select:changed`

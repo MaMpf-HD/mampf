@@ -127,7 +127,7 @@ test("scopes results to the semester picked in the dropdown",
     // place, without navigating away or jumping the scroll position
     const scrollBefore = await page.evaluate(() => window.scrollY);
     const searchReloaded = dashboard.getLectureSearchPromise();
-    await dashboard.selectTerm(nextTerm.id);
+    await dashboard.selectTerm("Winter semester 2025/26");
     await searchReloaded;
 
     const scrollAfter = await page.evaluate(() => window.scrollY);
@@ -137,8 +137,8 @@ test("scopes results to the semester picked in the dropdown",
     await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Current");
 
-    // a shared ?term=<id> link lands on the same scope
-    await dashboard.gotoTerm(nextTerm.id);
+    // a shared ?term=<slug> link lands on the same scope
+    await dashboard.gotoTerm("WS25-26");
     await dashboard.scrollToSearchAndWaitForResults();
     await dashboard.searchFor("Topology");
     await expect(dashboard.results).toContainText("Topology Next");

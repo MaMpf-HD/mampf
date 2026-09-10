@@ -11,17 +11,14 @@ module Dashboard
       Term.chronological.to_a
     end
 
-    # The term this request is scoped to: an explicit `?term=<id>`, the legacy
-    # `?term_scope=current|next` that a few deep links still use, or, failing
-    # both, the active term.
+    # The term this request is scoped to: an explicit `?term=<slug>` (see
+    # Term#dashboard_param), the legacy `?term_scope=current|next` that a few
+    # deep links still use, or, failing both, the active term.
     def self.selected(params)
-      by_id(params[:term]) || by_scope(params[:term_scope]) || Term.active
+      Term.from_dashboard_param(params[:term]) ||
+        by_scope(params[:term_scope]) ||
+        Term.active
     end
-
-    def self.by_id(id)
-      id.present? ? Term.find_by(id: id) : nil
-    end
-    private_class_method :by_id
 
     def self.by_scope(scope)
       case scope
