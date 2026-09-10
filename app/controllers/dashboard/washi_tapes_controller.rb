@@ -25,7 +25,7 @@ module Dashboard
       def dashboard_lecture
         id = params[:lecture_id]
 
-        current_user.enrolled_lectures.find_by(id: id) ||
+        current_user.roster_lectures.find_by(id: id) ||
           current_user.lectures.find_by(id: id) ||
           Lecture.where(id: id)
                  .where(id: current_user.talks.select(:lecture_id))

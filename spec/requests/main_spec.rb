@@ -54,6 +54,18 @@ RSpec.describe("Main", type: :request) do
       expect(response.body).not_to include("dashboard-bookmarked-lectures")
     end
 
+    it "counts a place in a tutorial group as being registered, not bookmarked" do
+      lecture = lecture_with_title("Tutorial Topology")
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:tutorial_membership, user: user, tutorial: tutorial)
+      user.subscribe_lecture!(lecture)
+
+      get root_path
+
+      expect(response.body).to include("dashboard-enrolled-lectures")
+      expect(response.body).not_to include("dashboard-bookmarked-lectures")
+    end
+
     it "shows the user's talks alongside the lectures they are registered for" do
       seminar = create(:lecture, :released_for_all, sort: "seminar", term: term)
       talk = create(:talk, lecture: seminar, title: "Divisibility")

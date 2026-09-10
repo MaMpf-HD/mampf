@@ -633,12 +633,19 @@ class User < ApplicationRecord
     lectures_of_term(lectures, term)
   end
 
-  # The lectures this user holds a place on the roster for in the given term.
-  # These come first on the dashboard: they are the ones the user is actually
-  # taking, as opposed to the ones they only bookmarked to look in on now and
-  # then.
+  # Every lecture this user holds a place in: a seat on the lecture roster, or
+  # a place in one of the lecture's tutorial groups (a tutorial membership does
+  # not create a lecture membership of its own).
+  def roster_lectures
+    Lecture.where(id: lecture_memberships.select(:lecture_id))
+           .or(Lecture.where(id: tutorial_memberships.select(:lecture_id)))
+  end
+
+  # The lectures this user holds a place in for the given term. These come
+  # first on the dashboard: they are the ones the user is actually taking, as
+  # opposed to the ones they only bookmarked to look in on now and then.
   def current_enrolled_lectures(term = Term.active)
-    lectures_of_term(enrolled_lectures, term)
+    lectures_of_term(roster_lectures, term)
   end
 
   # Bookmarked but not enrolled. A lecture the user holds a place in is already

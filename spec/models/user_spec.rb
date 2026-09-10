@@ -196,6 +196,35 @@ RSpec.describe(User, type: :model) do
     end
   end
 
+  describe "#current_enrolled_lectures" do
+    let(:term) { create(:term, :summer, :active, year: 2025) }
+    let(:user) { create(:user) }
+
+    it "includes lectures the user holds a roster seat in" do
+      lecture = create(:lecture, term: term)
+      create(:lecture_membership, user: user, lecture: lecture)
+
+      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
+    end
+
+    it "includes lectures the user is only in a tutorial group of" do
+      lecture = create(:lecture, term: term)
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:tutorial_membership, user: user, tutorial: tutorial)
+
+      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
+    end
+
+    it "keeps such a lecture out of the bookmarked ones even when subscribed" do
+      lecture = create(:lecture, term: term)
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:tutorial_membership, user: user, tutorial: tutorial)
+      user.subscribe_lecture!(lecture)
+
+      expect(user.current_bookmarked_lectures(term)).to be_empty
+    end
+  end
+
   # test callbacks - NEEDS TO BE REFACTORED
 
   # it 'is given the default subscription type if subscription type is nil' do
