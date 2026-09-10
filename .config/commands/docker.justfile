@@ -2,9 +2,15 @@
 help:
     @just --list --justfile {{source_file()}}
 
+[private]
+ensure-network:
+    #!/usr/bin/env bash
+    docker network inspect mampf_dev >/dev/null 2>&1 || docker network create mampf_dev
+
 # Starts the dev containers (assumes a valid database)
 @up *args:
     #!/usr/bin/env bash
+    just docker ensure-network
     cd {{justfile_directory()}}/docker/development/
     docker compose up {{args}}
 
@@ -28,6 +34,7 @@ recreate *args:
     # This is the same as deleting the MaMpf container via Docker Desktop,
     # then running `just docker up`. It will enforce that the container is
     # recreated, thus also dependencies will be rechecked.
+    just docker ensure-network
     cd {{justfile_directory()}}/docker/development/
     docker compose up mampf --force-recreate {{args}}
 
