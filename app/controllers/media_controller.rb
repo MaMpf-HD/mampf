@@ -287,7 +287,7 @@ class MediaController < ApplicationController
 
     @medium.update!(transcription_attempts: 0, transcription_error: nil)
     MampfsearchIngestJob.perform_later(@medium.id)
-    head :accepted
+    redirect_back_or_to(root_path, notice: "Transcription started.")
   end
 
   def add_transcript

@@ -12,7 +12,7 @@
       <% if MampfsearchHealth.ingest_available? %>
         <%= link_to t("video.transcribe"), transcribe_medium_path(medium),
                     class: "btn btn-outline-secondary", role: "button",
-                    data: { turbo_method: :post } %>
+                    data: { turbo_method: :post, turbo_submits_with: "Queuing..." } %>
       <% else %>
         <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip"
               title="<%= t('search.mampfsearch_unavailable') %>">

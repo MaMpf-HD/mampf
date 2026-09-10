@@ -351,12 +351,13 @@ RSpec.describe("Media", type: :request) do
   describe "POST /media/:id/transcribe", :mampfsearch do
     let(:medium) { create(:lecture_medium, :with_video) }
 
-    it "enqueues MampfsearchIngestJob and returns accepted" do
+    it "enqueues MampfsearchIngestJob and redirects with notice" do
       expect(MampfsearchIngestJob).to receive(:perform_later).with(medium.id)
 
       post transcribe_medium_path(medium)
 
-      expect(response).to have_http_status(:accepted)
+      expect(response).to have_http_status(:redirect)
+      expect(flash[:notice]).to eq("Transcription started.")
     end
 
     it "returns not found in production" do
