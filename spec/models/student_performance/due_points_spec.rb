@@ -102,6 +102,20 @@ RSpec.describe(StudentPerformance::DuePoints) do
       expect(due_points.marked_max_for(student.id)).to eq(36)
     end
 
+    # A deadline may be moved forward at any time, and nothing forbids it once
+    # marking has begun. The points stay in the total either way, so the sheet
+    # has to stay in the base - otherwise 20 of 20 reads as 200 %.
+    it "keeps a sheet that was marked before its deadline was moved forward" do
+      extended = sheet(deadline: 3.days.ago, points: 20)
+      FactoryBot.create(:assessment_participation, assessment: extended,
+                                                   user: student,
+                                                   submitted_at: 4.days.ago,
+                                                   status: :reviewed)
+      extended.assessable.update!(deadline: 5.days.from_now)
+
+      expect(due_points.marked_max_for(student.id)).to eq(20)
+    end
+
     it "keeps a sheet that has come back" do
       marked = sheet(deadline: 3.days.ago, points: 20)
       sheet(deadline: 2.days.ago, points: 16)
@@ -146,6 +160,20 @@ RSpec.describe(StudentPerformance::DuePoints) do
 
   # The reasons on the certification page say how many sheets they are about,
   # and the points beside them what those are worth. Both out of the same set.
+  describe "#marked_percentage_for and a deadline that moved" do
+    it "does not read full marks as more than everything" do
+      extended = sheet(deadline: 3.days.ago, points: 20)
+      FactoryBot.create(:assessment_participation, assessment: extended,
+                                                   user: student,
+                                                   submitted_at: 4.days.ago,
+                                                   status: :reviewed)
+      extended.assessable.update!(deadline: 5.days.from_now)
+      record = record_for(student, total: 20, max: 20)
+
+      expect(due_points.marked_percentage_for(record)).to eq(100)
+    end
+  end
+
   describe "#not_yet_due_count_for" do
     it "counts the sheets still to come" do
       sheet(deadline: 2.days.ago, points: 20)
@@ -202,6 +230,24 @@ RSpec.describe(StudentPerformance::DuePoints) do
                                                    submitted_at: nil)
 
       expect(due_points.pending_count_for(student.id)).to be_zero
+    end
+  end
+
+  # The same sheet must not be counted twice: its points are in the total, so
+  # they are not also still to be had. Counted again, a threshold nobody can
+  # reach any more would look reachable.
+  describe "#not_yet_due_for and a deadline that moved" do
+    it "does not offer marked points as still to be had" do
+      extended = sheet(deadline: 3.days.ago, points: 20)
+      sheet(deadline: 5.days.from_now, points: 16)
+      FactoryBot.create(:assessment_participation, assessment: extended,
+                                                   user: student,
+                                                   submitted_at: 4.days.ago,
+                                                   status: :reviewed)
+      extended.assessable.update!(deadline: 5.days.from_now)
+
+      expect(due_points.not_yet_due_for(student.id)).to eq(16)
+      expect(due_points.not_yet_due_count_for(student.id)).to eq(1)
     end
   end
 

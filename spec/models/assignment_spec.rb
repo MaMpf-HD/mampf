@@ -128,6 +128,18 @@ RSpec.describe(Assignment, type: :model) do
 
       expect(lecture.reload.assignments_complete?).to be(true)
     end
+
+    # Nothing forbids extending a deadline, not even once the sheet has been
+    # marked - and a sheet that can be handed in again is a sheet the verdicts
+    # cannot be final over.
+    it "is reopened by a deadline moved into the future" do
+      assignment = FactoryBot.create(:assignment, :expired, lecture: lecture)
+      lecture.update!(assignments_complete: true)
+
+      assignment.update!(deadline: 5.days.from_now)
+
+      expect(lecture.reload.assignments_complete?).to be(false)
+    end
   end
 
   describe "destructibility" do

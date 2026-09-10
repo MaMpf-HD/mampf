@@ -9,8 +9,13 @@ class Assignment < ApplicationRecord
 
   before_save :inherit_deletion_date_from_lecture
   after_create :setup_assessment
-  after_create_commit :reopen_lecture_assignment_list
   before_destroy :check_destructibility, prepend: true
+  # A new sheet opens the list, and so does a deadline moved into the future:
+  # the sheet is back in play, and a verdict that calls itself final over an
+  # open sheet is what the list is there to prevent. A deadline moved within
+  # the past is a correction and changes nothing.
+  after_commit :reopen_lecture_assignment_list,
+               on: [:create, :update], if: :reopens_the_list?
 
   def requires_submission
     return assessment.requires_submission if assessment
@@ -196,6 +201,10 @@ class Assignment < ApplicationRecord
       participations.exists?(status: [:reviewed, :exempt]) ||
         participations.where.not(points_total: nil).exists? ||
         participations.joins(:task_points).exists?
+    end
+
+    def reopens_the_list?
+      previously_new_record? || (saved_change_to_deadline? && active?)
     end
 
     def setup_assessment
