@@ -6,7 +6,8 @@
 <div class="lecture-search-result-wrap <%= "is-bookmarked" if bookmarked %>"
      data-controller="bookmark"
      data-bookmark-url-value="<%= dashboard_bookmark_path(lecture) %>"
-     data-bookmark-bookmarked-value="<%= bookmarked %>">
+     data-bookmark-bookmarked-value="<%= bookmarked %>"
+     data-bookmark-lecture-id-value="<%= lecture.id %>">
 
   <%= link_to lecture, class: "lecture-search-result-link",
                        "data-testid": "lecture-search-result-card" do %>

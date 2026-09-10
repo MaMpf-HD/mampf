@@ -16,7 +16,8 @@
   <% if bookmarked? %>
     <% card.with_corner do %>
       <div data-controller="bookmark-removal"
-           data-bookmark-removal-url-value="<%= dashboard_bookmark_path(lecture) %>">
+           data-bookmark-removal-url-value="<%= dashboard_bookmark_path(lecture) %>"
+           data-bookmark-removal-lecture-id-value="<%= lecture.id %>">
         <button type="button"
                 class="bi bi-x-lg dashboard-card__action"
                 data-action="bookmark-removal#open"

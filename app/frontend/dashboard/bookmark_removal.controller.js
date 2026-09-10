@@ -3,8 +3,12 @@ import { Modal } from "bootstrap";
 
 /**
  * The small "x" on a bookmarked dashboard card. It opens a confirmation modal
- * and, once confirmed, removes the lecture from the student's bookmarks and
- * reloads so the board reflects the change.
+ * and, once confirmed, removes the lecture from the student's bookmarks.
+ *
+ * The request comes back as a Turbo Stream that re-renders the lecture bands,
+ * so the card drops out of the "Bookmarked" section (and the section itself
+ * goes once it is empty). A `bookmark:changed` event then flips the matching
+ * bookmark button in the search results below.
  *
  * The dialog is moved to <body> on connect: the card is rotated with a CSS
  * transform, which would otherwise become the containing block for the
@@ -15,7 +19,7 @@ import { Modal } from "bootstrap";
  */
 export default class extends Controller {
   static targets = ["dialog"];
-  static values = { url: String };
+  static values = { url: String, lectureId: Number };
 
   connect() {
     if (!this.hasDialogTarget) return;
@@ -47,17 +51,36 @@ export default class extends Controller {
     const response = await fetch(this.urlValue, {
       method: "DELETE",
       headers: {
-        "Accept": "application/json",
+        "Accept": "text/vnd.turbo-stream.html",
         "X-CSRF-Token": csrfToken,
       },
     });
 
-    if (response.ok) {
-      window.location.reload();
+    if (!response.ok) {
+      console.error(`bookmark-removal: failed (${response.status})`);
+      Modal.getInstance(this.dialog)?.hide();
       return;
     }
 
-    console.error(`bookmark-removal: failed (${response.status})`);
-    Modal.getInstance(this.dialog)?.hide();
+    const html = await response.text();
+    // Let the modal finish closing (backdrop, body class) before the stream
+    // replaces this card and disconnects the controller.
+    this.applyOnceHidden(() => {
+      window.Turbo.renderStreamMessage(html);
+      window.dispatchEvent(new CustomEvent("bookmark:changed", {
+        detail: { lectureId: this.lectureIdValue, bookmarked: false },
+      }));
+    });
+  }
+
+  applyOnceHidden(callback) {
+    const modal = Modal.getInstance(this.dialog);
+    if (!modal) {
+      callback();
+      return;
+    }
+
+    this.dialog.addEventListener("hidden.bs.modal", callback, { once: true });
+    modal.hide();
   }
 }
