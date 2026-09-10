@@ -62,7 +62,11 @@ RSpec.describe(GradeTableComponent, type: :component) do
       it "renders a table with the reviewed participation" do
         render_inline(component)
         expect(rendered_content).to include("2.3")
-        expect(rendered_content).to include(reviewed_participation.user.tutorial_name)
+        # Escaped, because the name comes from Faker and every so often
+        # carries an apostrophe - which the markup spells `&#39;`.
+        expect(rendered_content).to include(
+          CGI.escapeHTML(reviewed_participation.user.tutorial_name)
+        )
       end
 
       it "reports any_gradeable? as true" do
@@ -102,7 +106,7 @@ RSpec.describe(GradeTableComponent, type: :component) do
       it "lists absent in the summary section" do
         render_inline(component)
         expect(rendered_content).to include(
-          absent_participation.user.tutorial_name
+          CGI.escapeHTML(absent_participation.user.tutorial_name)
         )
         expect(rendered_content).to include("5.0")
       end
@@ -129,7 +133,7 @@ RSpec.describe(GradeTableComponent, type: :component) do
       it "lists exempt in the summary section" do
         render_inline(component)
         expect(rendered_content).to include(
-          exempt_participation.user.tutorial_name
+          CGI.escapeHTML(exempt_participation.user.tutorial_name)
         )
         expect(rendered_content).to include("&mdash;")
       end
@@ -373,7 +377,9 @@ RSpec.describe(GradeTableComponent, type: :component) do
                       assessment: assessment, tutorial: tutorial)
 
       render_inline(component)
-      expect(rendered_content).to include(absent.user.tutorial_name)
+      expect(rendered_content).to include(
+        CGI.escapeHTML(absent.user.tutorial_name)
+      )
       expect(rendered_content).to include("5.0")
     end
 

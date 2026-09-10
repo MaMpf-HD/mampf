@@ -73,7 +73,11 @@ RSpec.describe(PointGridComponent, type: :component) do
 
     it "renders the student name" do
       render_inline(component)
-      expect(rendered_content).to include(participation.user.tutorial_name)
+      # Escaped, because the name comes from Faker and every so often
+      # carries an apostrophe - which the markup spells `&#39;`.
+      expect(rendered_content).to include(
+        CGI.escapeHTML(participation.user.tutorial_name)
+      )
     end
 
     it "renders task descriptions in the header" do
@@ -176,7 +180,7 @@ RSpec.describe(PointGridComponent, type: :component) do
         I18n.t("assessment.grade_table.excluded_heading")
       )
       expect(rendered_content).to include(
-        absent_participation.user.tutorial_name
+        CGI.escapeHTML(absent_participation.user.tutorial_name)
       )
     end
   end
