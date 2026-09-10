@@ -97,6 +97,17 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include("lecture-search-registration-badge")
       end
 
+      it "offers both the register shortcut and the bookmark toggle " \
+         "while the user is not registered" do
+        create(:registration_campaign, :open, :first_come_first_served,
+               campaignable: lecture_algebra)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-register-link")
+        expect(response.body).to include("lecture-search-bookmark-button")
+      end
+
       it "does not show a badge for draft campaigns" do
         create(:registration_campaign, :first_come_first_served,
                campaignable: lecture_algebra)

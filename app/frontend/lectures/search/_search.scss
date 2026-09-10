@@ -104,19 +104,25 @@
     position: relative;
 }
 
-// The control pinned to the right edge of a result, over the card's own link.
-// One of three, by how the user relates to the lecture:
-//   .lecture-search-result-bookmark - a bookmark toggle (neither joined nor
-//     joinable); grey outline, amber and filled once bookmarked
-//   .lecture-search-result-register - a link to the lecture home, where an open
-//     registration can be joined; grey outline, green on hover
-//   .is-registered - a non-interactive marker that the user is registered
-.lecture-search-result-control {
+// The controls pinned to the right edge of a result, over the card's own link.
+// A registered lecture shows only .is-registered; everyone else gets the
+// bookmark toggle, plus a register shortcut while a registration is open.
+.lecture-search-result-controls {
     position: absolute;
     top: 50%;
     right: 1.15rem;
     transform: translateY(-50%);
     z-index: 2;
+    display: flex;
+    gap: 0.4rem;
+}
+
+//   .lecture-search-result-bookmark - a bookmark toggle; grey outline, amber
+//     and filled once bookmarked
+//   .lecture-search-result-register - a link to the lecture home, where an open
+//     registration can be joined; grey outline, green on hover
+//   .is-registered - a non-interactive marker that the user is registered
+.lecture-search-result-control {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -149,7 +155,7 @@
     cursor: pointer;
 
     &:hover {
-        transform: translateY(-50%) scale(1.12);
+        transform: scale(1.12);
     }
 }
 
@@ -205,8 +211,8 @@
 
 .lecture-search-result-body {
     padding: 1.5em;
-    // room for the control pinned to the right edge
-    padding-right: 4.75em;
+    // room for the (up to two) controls pinned to the right edge
+    padding-right: 7em;
 }
 
 .lecture-search-result-title {

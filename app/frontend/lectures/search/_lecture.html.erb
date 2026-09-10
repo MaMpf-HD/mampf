@@ -6,9 +6,10 @@
 <% registration_possible = !registered &&
                            (registration_open?(lecture) ||
                             @self_enrollable_lecture_ids&.include?(lecture.id)) %>
-<%# The bookmark toggle only makes sense when the lecture is neither joined nor
-    joinable: otherwise the card carries a registration control instead. %>
-<% bookmarkable = !registered && !registration_possible %>
+<%# Anyone not yet registered can bookmark - even when a registration is open,
+    they may want to keep the lecture in view before deciding. Someone already
+    registered sees it in their "Registered" band, so bookmarking is moot. %>
+<% bookmarkable = !registered %>
 <%# term is redundant on the dashboard, where the picker above already names
     the semester; still shown on /search/index, which spans all semesters %>
 <% show_term = @show_term.nil? ? true : @show_term %>
@@ -72,37 +73,42 @@
     </div>
   <% end %>
 
-  <%# The control on the right edge, over the card's own link. Its shape
-      depends on how the user relates to the lecture. %>
-  <% if registered %>
-    <span class="lecture-search-result-control is-registered"
-          role="img"
-          aria-label="<%= t('lecture.search.registered_status') %>"
-          title="<%= t('lecture.search.registered_status') %>"
-          data-testid="lecture-search-registered-control">
-      <i class="fas fa-user-check" aria-hidden="true"></i>
-    </span>
-  <% elsif registration_possible %>
-    <%= link_to lecture_home_path(lecture),
-                class: "lecture-search-result-control " \
-                       "lecture-search-result-register",
-                title: t("lecture.search.go_register"),
-                "aria-label": t("lecture.search.go_register"),
-                data: { testid: "lecture-search-register-link" } do %>
-      <i class="fas fa-plus" aria-hidden="true"></i>
+  <%# The controls on the right edge, over the card's own link. A registered
+      lecture shows only a marker; otherwise the user can bookmark it, and also
+      jump to the lecture home to register while that is open. %>
+  <div class="lecture-search-result-controls">
+    <% if registered %>
+      <span class="lecture-search-result-control is-registered"
+            role="img"
+            aria-label="<%= t('lecture.search.registered_status') %>"
+            title="<%= t('lecture.search.registered_status') %>"
+            data-testid="lecture-search-registered-control">
+        <i class="fas fa-user-check" aria-hidden="true"></i>
+      </span>
+    <% else %>
+      <% if registration_possible %>
+        <%= link_to lecture_home_path(lecture),
+                    class: "lecture-search-result-control " \
+                           "lecture-search-result-register",
+                    title: t("lecture.search.go_register"),
+                    "aria-label": t("lecture.search.go_register"),
+                    data: { testid: "lecture-search-register-link" } do %>
+          <i class="fas fa-plus" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+
+      <button type="button"
+              class="lecture-search-result-control lecture-search-result-bookmark"
+              data-bookmark-target="button"
+              data-action="bookmark#toggle"
+              aria-pressed="<%= bookmarked %>"
+              aria-label="<%= t('lecture.search.bookmark') %>"
+              title="<%= t('lecture.search.bookmark') %>"
+              data-testid="lecture-search-bookmark-button">
+        <i class="<%= bookmarked ? 'fas' : 'far' %> fa-bookmark"
+           data-bookmark-target="icon"
+           aria-hidden="true"></i>
+      </button>
     <% end %>
-  <% else %>
-    <button type="button"
-            class="lecture-search-result-control lecture-search-result-bookmark"
-            data-bookmark-target="button"
-            data-action="bookmark#toggle"
-            aria-pressed="<%= bookmarked %>"
-            aria-label="<%= t('lecture.search.bookmark') %>"
-            title="<%= t('lecture.search.bookmark') %>"
-            data-testid="lecture-search-bookmark-button">
-      <i class="<%= bookmarked ? 'fas' : 'far' %> fa-bookmark"
-         data-bookmark-target="icon"
-         aria-hidden="true"></i>
-    </button>
-  <% end %>
+  </div>
 <% end %>
