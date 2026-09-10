@@ -8,7 +8,6 @@ en:
         enrolled: "You are registered for these"
         bookmarked: "You bookmarked these"
       registration_open: "Registration open — register now"
-      homework_due: "Homework due %{date}"
     next_term_banner:
       heading:
         one: "Lectures for %{term} are being published — the first one is already in MaMpf."

@@ -16,6 +16,8 @@ $card-border-tint: 78%;
 // a second border.
 $card-ring-tint: 38%;
 $card-ring-width: 5px;
+// How much of the board one rail of quick actions takes on a wide screen.
+$card-rail-width: 12rem;
 
 // Two columns at most: a card is a glance, not a page, and a third column
 // would shrink the photos past the point where they are recognisable.
@@ -37,6 +39,48 @@ $card-ring-width: 5px;
 @media (min-width: 576px) {
     .dashboard-cards {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+// A card and the quick actions belonging to it. Narrow screens stack them, the
+// card first — which is also the order they are written in, so what a keyboard
+// reaches matches what the eye sees.
+.dashboard-card-slot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+// Wide enough for a rail beside each card: the board grows sideways and the
+// rail moves to the outer edge of whichever column its slot sits in, so the
+// bubbles frame the two columns instead of being squeezed between them.
+//
+// The width is the widest the board's own container allows (see .small-width),
+// so nothing here can push the page into a horizontal scroll.
+@media (min-width: 1200px) {
+    .dashboard-cards {
+        max-width: 65rem;
+    }
+
+    .dashboard-card-slot {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) $card-rail-width;
+        column-gap: 1rem;
+        align-items: start;
+    }
+
+    // The left-hand column of the board: rail outside, i.e. to the left. The
+    // right-hand column keeps the source order and needs no rules.
+    .dashboard-cards > .dashboard-card-slot:nth-child(odd) {
+        grid-template-columns: $card-rail-width minmax(0, 1fr);
+
+        .dashboard-card {
+            grid-area: 1 / 2;
+        }
+
+        .dashboard-card-slot__rail {
+            grid-area: 1 / 1;
+        }
     }
 }
 

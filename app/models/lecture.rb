@@ -744,6 +744,21 @@ class Lecture < ApplicationRecord
     assignments.first.deadline
   end
 
+  # The exam registration this user could still act on: a campaign that is
+  # open, whose deadline has not passed, and that they have not answered yet.
+  # Returns nil when there is nothing left to do, so a card can ask for it
+  # directly.
+  def open_exam_registration_for(user)
+    campaigns = registration_campaigns.exam.open
+                                      .where.not(
+                                        id: Registration::UserRegistration
+                                              .where(user: user)
+                                              .select(:registration_campaign_id)
+                                      )
+
+    campaigns.find(&:open_for_registrations?)
+  end
+
   def term_to_label
     return term.to_label if term
 

@@ -5,6 +5,25 @@ en:
       season:
         SS: "Summer semester"
         WS: "Winter semester"
+    quick_actions:
+      list_label: "Things to do for %{lecture}"
+      assignment:
+        label: "Assignment due %{date}."
+        cta: "Upload it here"
+      exam:
+        label: "Exam registration is open."
+        cta: "Register here"
+      activity:
+        forum:
+          one: "1 new forum post"
+          other: "%{count} new forum posts"
+        comments:
+          one: "1 new comment"
+          other: "%{count} new comments"
+        cta: "Read them here"
+    points_progress:
+      title: "Assignment points"
+      label: "%{points} of %{max} (%{percentage}%)"
     washi_tape:
       open: "Choose the tape for %{subject}"
       color: "Colour"

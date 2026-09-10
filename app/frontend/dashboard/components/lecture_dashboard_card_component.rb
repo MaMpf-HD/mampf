@@ -2,8 +2,6 @@
 # (main/start), showing the lecture image, title, lecturer, registration
 # status and upcoming homework deadlines.
 class LectureDashboardCardComponent < ViewComponent::Base
-  DUE_SOON_WINDOW = 7.days
-
   REGISTRATION_STATUS_ICONS = {
     confirmed: "bi-check-circle-fill text-success",
     pending: "bi-hourglass-split text-warning",
@@ -11,13 +9,17 @@ class LectureDashboardCardComponent < ViewComponent::Base
     open: "bi-person-plus text-primary"
   }.freeze
 
-  def initialize(lecture:, user:)
+  # `activity` is the board's shared digest of unread forum topics and
+  # comments. It is passed in so that it is gathered once for all cards; a card
+  # rendered on its own falls back to gathering it for its own lecture.
+  def initialize(lecture:, user:, activity: nil)
     super()
     @lecture = lecture
     @user = user
+    @activity = activity
   end
 
-  attr_reader :lecture, :user
+  attr_reader :lecture, :user, :activity
 
   def image_url
     return "/no_course_information.png" unless lecture.course.normalized_image_file
@@ -52,14 +54,5 @@ class LectureDashboardCardComponent < ViewComponent::Base
 
   def registration_status_icon
     REGISTRATION_STATUS_ICONS[registration_status]
-  end
-
-  def next_assignment_deadline
-    @next_assignment_deadline ||= lecture.next_pending_assignment_deadline_for(user)
-  end
-
-  def homework_due_soon?
-    next_assignment_deadline.present? &&
-      next_assignment_deadline <= DUE_SOON_WINDOW.from_now
   end
 end

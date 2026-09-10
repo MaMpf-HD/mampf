@@ -35,4 +35,8 @@ RSpec.describe(TalkDashboardCardComponent, type: :component) do
 
     expect(card["style"]).to include("--washi-tape-color: var(--washi-tape-color-rose)")
   end
+
+  it "carries no rail: a talk has no quick actions of its own" do
+    expect(render_card.at_css(".dashboard-card-slot__rail")).to be_nil
+  end
 end

@@ -1,0 +1,23 @@
+<ul class="quick-actions"
+    role="list"
+    aria-label="<%= list_label %>"
+    data-testid="lecture-quick-actions">
+  <% actions.each_with_index do |action, index| %>
+    <li class="quick-actions__item">
+      <%= link_to action.href,
+                  class: "quick-action",
+                  style: style(index),
+                  data: { testid: "quick-action-#{action.kind}" } do %>
+        <span class="quick-action__label">
+          <i class="bi <%= action.icon %> quick-action__icon" aria-hidden="true"></i>
+          <%= action.label %>
+        </span>
+        <span class="quick-action__cta">
+          <%= action.cta %>
+          <span class="quick-action__arrow" aria-hidden="true">&rarr;</span>
+        </span>
+        <span class="visually-hidden"><%= lecture.title_no_term %></span>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

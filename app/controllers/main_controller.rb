@@ -42,6 +42,14 @@ class MainController < ApplicationController
                              t.visible_for_user?(current_user)
                          end
                          .sort_by(&:position)
+
+    # Gathered once for the whole board: every card asks the same two questions
+    # of it, and asking them per card would multiply the queries by the number
+    # of cards.
+    @lecture_activity = Dashboard::LectureActivity.new(
+      user: current_user,
+      lectures: @enrolled_lectures + @bookmarked_lectures
+    )
   end
 
   private

@@ -20,11 +20,14 @@
     <% end %>
   <% end %>
 
-  <% if homework_due_soon? %>
-    <% card.with_note do %>
-      <i class="bi bi-alarm text-danger" aria-hidden="true"></i>
-      <%= t("main.start.homework_due",
-            date: I18n.l(next_assignment_deadline, format: :long)) %>
-    <% end %>
+  <% card.with_progress do %>
+    <%= render(DashboardPointsProgressComponent.new(lecture: lecture,
+                                                    user: user)) %>
+  <% end %>
+
+  <% card.with_rail do %>
+    <%= render(LectureQuickActionsComponent.new(lecture: lecture,
+                                                user: user,
+                                                activity: activity)) %>
   <% end %>
 <% end %>

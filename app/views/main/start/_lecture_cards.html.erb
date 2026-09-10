@@ -6,7 +6,10 @@
                title: t("main.start.sections.enrolled"),
                testid: "dashboard-enrolled-lectures")) do %>
     <% @enrolled_lectures.each do |lecture| %>
-      <%= render(LectureDashboardCardComponent.new(lecture: lecture, user: current_user)) %>
+      <%= render(LectureDashboardCardComponent.new(
+                    lecture: lecture,
+                    user: current_user,
+                    activity: @lecture_activity)) %>
     <% end %>
     <% @talks.each do |talk| %>
       <%= render(TalkDashboardCardComponent.new(talk: talk, user: current_user)) %>
@@ -17,7 +20,10 @@
                title: t("main.start.sections.bookmarked"),
                testid: "dashboard-bookmarked-lectures")) do %>
     <% @bookmarked_lectures.each do |lecture| %>
-      <%= render(LectureDashboardCardComponent.new(lecture: lecture, user: current_user)) %>
+      <%= render(LectureDashboardCardComponent.new(
+                    lecture: lecture,
+                    user: current_user,
+                    activity: @lecture_activity)) %>
     <% end %>
   <% end %>
 

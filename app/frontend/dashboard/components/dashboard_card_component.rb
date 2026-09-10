@@ -17,6 +17,14 @@ class DashboardCardComponent < ViewComponent::Base
   # Short lines of status below the title: deadlines, registration state, …
   renders_many :notes
 
+  # A wider piece of status under the notes, such as the points bar.
+  renders_one :progress
+
+  # The quick actions pinned beside the card. They sit outside the card rather
+  # than on it, because the card's title link is stretched over the whole card
+  # and would swallow anything clickable inside it.
+  renders_one :rail
+
   # Whole degrees the card is rotated on the board, in half-degree steps and
   # small enough to stay readable. Kept apart from the tape's own tilt so the
   # strip does not sit square on a card that is itself askew.

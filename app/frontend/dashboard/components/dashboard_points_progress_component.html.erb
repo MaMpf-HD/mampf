@@ -1,0 +1,9 @@
+<div class="dashboard-progress" data-testid="dashboard-points-progress">
+  <p class="dashboard-progress__label">
+    <span><%= t("dashboard.points_progress.title") %></span>
+    <span class="dashboard-progress__value"><%= label %></span>
+  </p>
+  <div class="dashboard-progress__track" aria-hidden="true">
+    <div class="dashboard-progress__fill" style="width: <%= percentage %>%"></div>
+  </div>
+</div>

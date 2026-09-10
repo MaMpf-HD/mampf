@@ -1,0 +1,40 @@
+@import "~/styles/branding";
+
+// How many of the assignment points that have come up so far a student has
+// collected, drawn under the card's notes.
+//
+// One colour, always: the bar reports where somebody stands, and a fill that
+// turned from green to red on the way down would be reading a verdict into a
+// number that is still moving.
+.dashboard-progress {
+    margin-top: 0.65rem;
+
+    &__label {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+        font-size: 0.72rem;
+        color: #6c757d;
+    }
+
+    &__value {
+        font-variant-numeric: tabular-nums;
+        color: #495057;
+        white-space: nowrap;
+    }
+
+    &__track {
+        height: 0.4rem;
+        border-radius: 999px;
+        background: #eceef0;
+        overflow: hidden;
+    }
+
+    &__fill {
+        height: 100%;
+        min-width: 0.4rem;
+        border-radius: 999px;
+        background: $mampf-blue;
+    }
+}

@@ -1,29 +1,47 @@
-<%= tag.article class: "dashboard-card", style: style, **attributes do %>
-  <%= render(tape) %>
+<%# The card and the rail of quick actions beside it are one slot on the board,
+    so that the two stay on the same row and the rail can swap to the outer
+    side of whichever column the slot lands in (see _dashboard_card.scss).
 
-  <% if corner? %>
-    <div class="dashboard-card__corner"><%= corner %></div>
+    The card comes first: read in order it is the subject, and the rail is what
+    there is to do about it. %>
+<div class="dashboard-card-slot">
+  <%= tag.article class: "dashboard-card", style: style, **attributes do %>
+    <%= render(tape) %>
+
+    <% if corner? %>
+      <div class="dashboard-card__corner"><%= corner %></div>
+    <% end %>
+
+    <div class="dashboard-card__photo">
+      <%= image_tag image_url, class: "dashboard-card__image", alt: "", loading: "lazy" %>
+    </div>
+
+    <div class="dashboard-card__body">
+      <h3 class="dashboard-card__title">
+        <%= link_to title, href, class: "dashboard-card__link stretched-link" %>
+      </h3>
+
+      <% if subtitle? %>
+        <p class="dashboard-card__subtitle"><%= subtitle %></p>
+      <% end %>
+
+      <% if notes.any? %>
+        <ul class="dashboard-card__notes">
+          <% notes.each do |note| %>
+            <li class="dashboard-card__note"><%= note %></li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <%= progress %>
+    </div>
   <% end %>
 
-  <div class="dashboard-card__photo">
-    <%= image_tag image_url, class: "dashboard-card__image", alt: "", loading: "lazy" %>
-  </div>
-
-  <div class="dashboard-card__body">
-    <h3 class="dashboard-card__title">
-      <%= link_to title, href, class: "dashboard-card__link stretched-link" %>
-    </h3>
-
-    <% if subtitle? %>
-      <p class="dashboard-card__subtitle"><%= subtitle %></p>
-    <% end %>
-
-    <% if notes.any? %>
-      <ul class="dashboard-card__notes">
-        <% notes.each do |note| %>
-          <li class="dashboard-card__note"><%= note %></li>
-        <% end %>
-      </ul>
-    <% end %>
-  </div>
-<% end %>
+  <%# The rail is dropped rather than left standing empty: the slot stacks with
+      a gap on narrow screens, and most cards have nothing to act on. Asking
+      the slot itself is not enough - it is set for every lecture, and the
+      component inside it is what decides whether there is anything to say. %>
+  <% if rail? && rail.to_s.strip.present? %>
+    <div class="dashboard-card-slot__rail"><%= rail %></div>
+  <% end %>
+</div>
