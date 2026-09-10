@@ -5,7 +5,7 @@ de:
     quick_actions:
       list_label: "Zu erledigen für %{lecture}"
       assignment:
-        label: "Abgabe fällig am %{date}."
+        label: "Abgabe fällig am %{date}"
       exam:
         label: "Die Klausuranmeldung ist offen."
       activity:

@@ -1,7 +1,7 @@
 # The strip of washi tape across the top of a dashboard card.
 #
 # With an `update_url` the strip becomes a button that opens a small picker for
-# its colour, and the choice is saved for this user. Without one it is
+# its color, and the choice is saved for this user. Without one it is
 # decoration and is hidden from assistive technology, which is what talk cards
 # get: there is nothing to remember a choice against.
 class WashiTapeComponent < ViewComponent::Base
@@ -15,7 +15,7 @@ class WashiTapeComponent < ViewComponent::Base
   attr_reader :tape, :label, :update_url
 
   # The card this strip holds tilts by the same seed and is bordered in the
-  # same colour, so both stay tied to the same subject.
+  # same color, so both stay tied to the same subject.
   delegate :seed, :color, to: :tape
 
   def editable?
@@ -30,7 +30,7 @@ class WashiTapeComponent < ViewComponent::Base
               testid: "washi-tape" } }
   end
 
-  # The colour is set on the card, so that the border can pick it up too; the
+  # The color is set on the card, so that the border can pick it up too; the
   # strip only has to say how far it is tilted against it.
   def strip_style
     "--washi-tape-tilt: #{tape.tilt}deg"

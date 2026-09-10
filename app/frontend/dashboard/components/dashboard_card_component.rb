@@ -45,7 +45,7 @@ class DashboardCardComponent < ViewComponent::Base
     @tilt ||= ((tape.seed * 37 % ((4 * MAX_TILT) + 1)) - (2 * MAX_TILT)) / 2.0
   end
 
-  # The card's own border and its tape are dyed the same colour, so the colour
+  # The card's own border and its tape are dyed the same color, so the color
   # is set here once and both read it from the card.
   def style
     "--dashboard-card-tilt: #{tilt}deg; " \

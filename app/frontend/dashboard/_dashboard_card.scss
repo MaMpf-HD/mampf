@@ -3,14 +3,14 @@
 // The dashboard's top half is a pinboard: cards of card stock, each pinned at
 // a slightly different angle with a strip of washi tape (see _washi_tape).
 //
-// The tilt and the tape colour arrive per card as custom properties, so no two
+// The tilt and the tape color arrive per card as custom properties, so no two
 // neighbours look alike and the card's border matches its own tape. Hovering
 // or focusing straightens a card, lifts it, and lays a wider, paler ring of
-// the same colour around it — the whole hover affordance, so no separate
-// highlight colour is needed to say what is being pointed at.
+// the same color around it — the whole hover affordance, so no separate
+// highlight color is needed to say what is being pointed at.
 
 // How far the card's own border is toned down from the tape it matches: the
-// strip is meant to stay the strongest note of the colour on the card.
+// strip is meant to stay the strongest note of the color on the card.
 $card-border-tint: 78%;
 // The ring that grows on hover, paler still so it reads as a halo rather than
 // a second border.
@@ -20,11 +20,11 @@ $card-ring-width: 5px;
 $card-rail-width: 12rem;
 
 // Two columns at most: a card is a glance, not a page, and a third column
-// would shrink the photos past the point where they are recognisable.
+// would shrink the photos past the point where they are recognizable.
 //
 // The board is narrower than the page it sits on. A card that fills half of a
 // wide container ends up with a photo tall enough to push everything else off
-// the screen, so the columns are capped and the board is centred instead.
+// the screen, so the columns are capped and the board is centered instead.
 .dashboard-cards {
     display: grid;
     grid-template-columns: 1fr;

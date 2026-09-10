@@ -5,7 +5,7 @@ en:
     quick_actions:
       list_label: "Things to do for %{lecture}"
       assignment:
-        label: "Assignment due %{date}."
+        label: "Assignment due %{date}"
       exam:
         label: "Exam registration is open."
       activity:
@@ -20,7 +20,7 @@ en:
       label: "%{points} of %{max} (%{percentage}%)"
     washi_tape:
       open: "Choose the tape for %{subject}"
-      color: "Colour"
+      color: "Color"
       colors:
         butter: "Butter"
         rose: "Rose"

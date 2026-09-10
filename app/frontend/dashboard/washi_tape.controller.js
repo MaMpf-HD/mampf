@@ -1,13 +1,13 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * The washi tape strip on a dashboard card: opens the picker for its colour,
+ * The washi tape strip on a dashboard card: opens the picker for its color,
  * applies a choice straight away and saves it for this user.
  *
- * The colour is set on the card rather than the strip, because the card's
+ * The color is set on the card rather than the strip, because the card's
  * border is dyed in it too. Updating it locally rather than re-rendering keeps
  * picking instant; a request that fails only costs the saved preference, and
- * the card shows the stored colour again on the next load.
+ * the card shows the stored color again on the next load.
  */
 export default class extends Controller {
   static targets = ["strip", "picker"];
@@ -75,7 +75,7 @@ export default class extends Controller {
     });
 
     if (!response.ok) {
-      console.error(`washi-tape: the colour was not saved (${response.status})`);
+      console.error(`washi-tape: the color was not saved (${response.status})`);
     }
   }
 }

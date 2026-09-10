@@ -3,7 +3,7 @@
 #
 # "So far" is what makes it readable at a glance: sheets whose deadline has not
 # passed are left out of both numbers, so the bar answers "how am I doing"
-# rather than "how much of the term is over". The fill is one colour whatever
+# rather than "how much of the term is over". The fill is one color whatever
 # the score - a bar that turns red on a bad week would be a judgement, and this
 # is a status.
 class DashboardPointsProgressComponent < ViewComponent::Base

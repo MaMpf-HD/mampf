@@ -25,7 +25,7 @@ class TalkDashboardCardComponent < ViewComponent::Base
   end
 
   # Keyed to the seminar, not the single talk: a student presenting in a
-  # seminar they are also enrolled in should see one colour for it, and
+  # seminar they are also enrolled in should see one color for it, and
   # changing it on either card should move the other.
   def tape
     @tape ||= Dashboard::WashiTape.for(seed: lecture.id,
