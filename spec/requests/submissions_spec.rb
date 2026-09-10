@@ -226,6 +226,69 @@ RSpec.describe("Submissions", type: :request) do
     end
   end
 
+  # A rejected hand-in waits for nothing any more. Until the gradebook is told,
+  # it stays among the points still being marked - and those are taken out of
+  # the base the student is measured against, so refusing a sheet would raise
+  # her percentage instead of leaving it where it was.
+  describe "PATCH /submissions/:id/reject" do
+    let(:tutor) { create(:confirmed_user) }
+    let(:due_points) { StudentPerformance::DuePoints.new(lecture: lecture) }
+
+    def sheet_worth(points, title:)
+      created = create(:assignment, :expired, lecture: lecture, title: title)
+      create(:assessment_task, assessment: created.assessment,
+                               max_points: points)
+      created
+    end
+
+    def hand_in(for_assignment)
+      submission = create(:submission, :with_manuscript,
+                          assignment: for_assignment, tutorial: tutorial)
+      submission.users << user
+      create(:assessment_participation, assessment: for_assignment.assessment,
+                                        user: user, submitted_at: 2.days.ago)
+      submission
+    end
+
+    before do
+      create(:tutor_tutorial_join, tutorial: tutorial, tutor: tutor)
+      create(:lecture_membership, lecture: lecture, user: user)
+      marked = sheet_worth(20, title: "Homework 1")
+      participation = create(:assessment_participation,
+                             assessment: marked.assessment, user: user,
+                             submitted_at: 3.days.ago)
+      create(:assessment_task_point, task: marked.assessment.tasks.first,
+                                     assessment_participation: participation,
+                                     points: 20)
+      participation.reload.update!(status: :reviewed, graded_at: 1.day.ago)
+    end
+
+    it "leaves the refused sheet in what the student is measured against" do
+      submission = hand_in(sheet_worth(20, title: "Homework 2"))
+
+      sign_in tutor
+      patch reject_submission_path(submission, format: :js)
+
+      record = lecture.student_performance_records.find_by(user_id: user.id)
+
+      expect(due_points.marked_max_for(user.id)).to eq(40)
+      expect(due_points.marked_percentage_for(record)).to eq(50)
+    end
+
+    # And back again: a hand-in refused and then accepted after all is waiting
+    # to be marked, so its points leave the base a second time.
+    it "puts it back in the queue once the tutor accepts after all" do
+      submission = hand_in(sheet_worth(20, title: "Homework 2"))
+
+      sign_in tutor
+      patch reject_submission_path(submission, format: :js)
+      patch accept_submission_path(submission, format: :js)
+
+      expect(due_points.marked_max_for(user.id)).to eq(20)
+      expect(due_points.pending_count_for(user.id)).to eq(1)
+    end
+  end
+
   describe "GET /lectures/:id/submissions" do
     let!(:assignments) { create_list(:assignment, 5, lecture: lecture, accepted_file_type: ".pdf") }
 

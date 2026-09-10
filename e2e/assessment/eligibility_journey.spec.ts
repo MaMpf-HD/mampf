@@ -65,7 +65,10 @@ test.describe("from a mark to a decision", () => {
     await page.overviewTab("Exam Eligibility").click();
     const decision = teacher.page.getByRole("row", { name: /Ada Lovelace/ });
     await expect(decision).toContainText("Proposed");
+    // "Eligible" is a substring of "Not Eligible", so the verdict has to be
+    // pinned from both sides.
     await expect(decision).toContainText("Eligible");
+    await expect(decision).not.toContainText("Not Eligible");
   });
 
   test("moves the recorded decisions when the rule is tightened", async ({
@@ -103,11 +106,18 @@ test.describe("from a mark to a decision", () => {
       .click();
     // the row already said "Eligible" as a proposal, so what marks the swap is
     // that it stopped being one
+    // A decided row carries the inline editor with it, and that lists both
+    // verdicts - so the row's own text says nothing. The decision as displayed
+    // is the first of the two `display` blocks in the row; read whole, it can
+    // only be one verdict.
+    const verdict = (name: RegExp) =>
+      teacher.page.getByRole("row", { name })
+        .locator("[data-certification-inline-target='display']").first();
+
     const ada = teacher.page.getByRole("row", { name: /Ada Lovelace/ });
     await expect(ada).not.toContainText("Proposed");
-    await expect(ada).toContainText("Eligible");
-    await expect(teacher.page.getByRole("row", { name: /Grace Hopper/ }))
-      .toContainText("Not Eligible");
+    await expect(verdict(/Ada Lovelace/)).toHaveText("Eligible");
+    await expect(verdict(/Grace Hopper/)).toHaveText("Not Eligible");
 
     await teacher.page.getByRole("link", { name: "Edit Rule" }).click();
     await teacher.page.getByRole("radio", { name: "Percentage of total points" })
@@ -124,8 +134,9 @@ test.describe("from a mark to a decision", () => {
     // once as the decision. What only reconciling does is settle the argument.
     const reconciled = teacher.page.getByRole("row", { name: /Ada Lovelace/ });
     await expect(reconciled).not.toContainText("Per rule:");
-    await expect(reconciled).toContainText("Not Eligible");
-    await expect(teacher.page.getByText(/Eligibility rule changed/))
+    await expect(verdict(/Ada Lovelace/)).toHaveText("Not Eligible");
+    // And the page stops asking: nothing contradicts the rule any more.
+    await expect(teacher.page.getByRole("button", { name: "Reconcile with rule" }))
       .toHaveCount(0);
   });
 });

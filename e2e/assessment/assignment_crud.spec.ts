@@ -61,6 +61,35 @@ test.describe("homework sheets", () => {
       .not.toBeChecked();
   });
 
+  /**
+   * The box is put back when the dialog closes, not when its Cancel button is
+   * pressed - so every way out of an unanswered question leaves the page and
+   * the database saying the same thing. Bootstrap's own closing event stands in
+   * for those ways here: I could not dismiss this dialog with Escape or with a
+   * click beside it in Chromium, so driving one of them would have tested the
+   * browser rather than the page.
+   */
+  test("puts the box back when the question goes away unanswered", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture } = await createAssessedAssignment(factory, teacher.user.id);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    const box = teacher.page.getByLabel("The assignment list is complete");
+    await box.check();
+    await expect(teacher.page.getByRole("dialog", { name: "Tick the box" }))
+      .toBeVisible();
+
+    await teacher.page.evaluate(() => {
+      document.querySelector(".modal.show")
+        ?.dispatchEvent(new Event("hidden.bs.modal"));
+    });
+
+    await expect(box).not.toBeChecked();
+  });
+
   test("calls the list complete once the question is answered", async ({
     factory,
     teacher,
