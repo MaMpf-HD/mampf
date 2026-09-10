@@ -164,6 +164,33 @@ test.describe("performance records", () => {
     await expect(teacher.page.getByText("Ada Lovelace")).toHaveCount(0);
   });
 
+  // Typing is not one event but a stream of them, and the answer to the first
+  // keystrokes arrives while the later ones are still coming.
+  test("keeps the caret in the search field while the list updates", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    await recordFor(factory, lecture.id, "Ada Lovelace");
+    await recordFor(factory, lecture.id, "Grace Hopper");
+
+    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await openPerformance(page);
+
+    const search = teacher.page.getByRole("textbox", { name: "Search students" });
+    await search.click();
+    await teacher.page.keyboard.type("Hopp");
+    // the list has answered, which is the moment the field is replaced
+    await expect(teacher.page.getByText("Ada Lovelace")).toHaveCount(0);
+
+    // typed at the keyboard, not into a located element: what matters is where
+    // the caret went, not whether Playwright can find the field again
+    await teacher.page.keyboard.type("er");
+
+    await expect(search).toHaveValue("Hopper");
+    await expect(teacher.page.getByText("Grace Hopper")).toBeVisible();
+  });
+
   test("brings the lowest percentage to the top when asked", async ({
     factory,
     teacher,

@@ -611,6 +611,7 @@
                       class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
                       data-action="certification-inline#toggleEdit"
                       title="<%= t('student_performance.certifications.index.edit_certification') %>"
+                      aria-label="<%= t('student_performance.certifications.index.edit_certification') %>"
                     >
                       <i class="bi bi-pencil"></i>
                     </button>
@@ -622,6 +623,7 @@
                         class="btn btn-sm btn-primary py-0 px-1"
                         data-action="certification-inline#save"
                         title="<%= t('student_performance.certifications.index.save') %>"
+                        aria-label="<%= t('student_performance.certifications.index.save') %>"
                       >
                         <i class="bi bi-check-lg"></i>
                       </button>
@@ -631,6 +633,7 @@
                         class="btn btn-sm btn-outline-secondary py-0 px-1"
                         data-action="certification-inline#cancel"
                         title="<%= t('student_performance.certifications.index.cancel') %>"
+                        aria-label="<%= t('student_performance.certifications.index.cancel') %>"
                       >
                         <i class="bi bi-x-lg"></i>
                       </button>
@@ -649,6 +652,7 @@
                                 "student_performance.certifications.index.reset"
                               )
                             },
+                            params: { return_to: request.fullpath },
                             form: {
                               data: {
                                 turbo_frame: "performance-certifications-frame",
@@ -672,6 +676,14 @@
                           },
                           style: "display: none"
                         ) do %>
+                      <%#
+                        Where the decision was made from: the list may be
+                        searched, filtered and on its third page, and a person
+                        who lands back on an unfiltered first page has lost the
+                        student they were working through.
+                      %>
+                      <%= hidden_field_tag :return_to, request.fullpath %>
+
                       <input
                         type="hidden"
                         name="certification[status]"
@@ -701,7 +713,14 @@
                             "student_performance.certifications" \
                             ".index.certify_pass"
                           ),
+                          aria: {
+                            label: t(
+                              "student_performance.certifications" \
+                              ".index.certify_pass"
+                            )
+                          },
                           params: {
+                            return_to: request.fullpath,
                             certification: {
                               user_id: record.user_id,
                               status: :passed
@@ -721,7 +740,14 @@
                             "student_performance.certifications" \
                             ".index.certify_fail"
                           ),
+                          aria: {
+                            label: t(
+                              "student_performance.certifications" \
+                              ".index.certify_fail"
+                            )
+                          },
                           params: {
+                            return_to: request.fullpath,
                             certification: {
                               user_id: record.user_id,
                               status: :failed

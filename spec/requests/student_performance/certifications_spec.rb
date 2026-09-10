@@ -380,6 +380,23 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
+        # A decision is made from a list that may be searched, filtered and on
+        # its third page; landing back on the unfiltered first page loses the
+        # student who was being worked through.
+        it "comes back to the list a decision was made from" do
+          get lecture_student_performance_certifications_path(
+            lecture, q: "hopper", status: "uncertified"
+          )
+
+          form = Nokogiri::HTML(response.body)
+                         .css("#performance-certifications-frame tbody form")
+                         .first
+          return_to = form.at_css("input[name='return_to']")["value"]
+
+          expect(return_to).to include("q=hopper")
+          expect(return_to).to include("status=uncertified")
+        end
+
         it "carries the search into the status filter's own links" do
           get lecture_student_performance_certifications_path(lecture, q: "hopper")
 
@@ -411,6 +428,32 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture, page: 2)
 
           expect(Nokogiri::HTML(response.body).css("tbody tr").size).to eq(1)
+        end
+
+        # The records of a lecture are written in one go, so their timestamps
+        # are the same, and an order that cannot tell two rows apart hands them
+        # out in any order it likes - once on one page, once on the next, and
+        # somebody else on neither. Measured before the tie-breaker: 100 rows,
+        # 99 of them different students.
+        it "shows every student exactly once across the pages" do
+          stamp = Time.zone.now
+          100.times do |i|
+            user = FactoryBot.create(:confirmed_user,
+                                     name: "Student #{i.to_s.rjust(3, "0")}",
+                                     name_in_tutorials: "Student #{i.to_s.rjust(3, "0")}")
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user,
+                              created_at: stamp, updated_at: stamp)
+          end
+
+          seen = (1..7).flat_map do |page|
+            get(lecture_student_performance_certifications_path(lecture, page: page))
+            Nokogiri::HTML(response.body)
+                    .css("#performance-certifications-frame tbody tr td:first-child")
+                    .map { |cell| cell.text.strip }
+          end
+
+          expect(seen.uniq.size).to eq(seen.size)
         end
       end
 

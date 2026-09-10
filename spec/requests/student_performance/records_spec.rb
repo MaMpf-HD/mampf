@@ -605,6 +605,28 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(pagy.count).to eq(26)
         end
 
+        # Two students may share a name, and the order that puts them side by
+        # side cannot say which comes first - so with OFFSET one of them can
+        # turn up on both pages and somebody else on neither. Measured before
+        # the tie-breaker: 100 rows, 99 of them different people.
+        it "shows every student exactly once across the pages" do
+          100.times do
+            user = FactoryBot.create(:confirmed_user,
+                                     name: "Max Mustermann",
+                                     name_in_tutorials: "Max Mustermann")
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user)
+          end
+
+          seen = (1..6).flat_map do |page|
+            get(lecture_student_performance_records_path(lecture, page: page))
+            Nokogiri::HTML(response.body)
+                    .css("#performance-records-frame tbody tr").pluck("id")
+          end
+
+          expect(seen.uniq.size).to eq(seen.size)
+        end
+
         # A sorted table is an Array by the time it is cut into pages, and a
         # page is a page either way.
         it "still cuts the list into pages when a column is sorted" do
