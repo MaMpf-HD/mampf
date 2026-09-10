@@ -36,30 +36,32 @@ module Demo
       Rails.logger.debug("=== Demo Roster Setup Complete ===")
     end
 
-    def setup!
+    # The everyday one, on a database restored from the shipped seed: that
+    # already has the demo tutorials and talks, and people seated in them so
+    # that submissions line up with the group they were handed in to. Building
+    # the rosters again would empty those groups and allocate them anew, which
+    # is why it is not part of this.
+    # `homework` is for the seed build alone: it seats the accounts a developer
+    # signs in with a few steps later, and homework staged before that would
+    # leave them without a hand-in.
+    def setup!(homework: true)
       ensure_non_production!
       reset_eligibility!
-      setup_rosters!
       setup_assessment!
+      setup_homework_submissions! if homework
       setup_performance!
       setup_eligibility!
       setup_exams!
       setup_grading!
     end
 
-    # The same, minus the rosters. A database restored from the shipped seed
-    # already has the demo tutorials and talks, and people seated in them so
-    # that submissions line up with the group they were handed in to; the
-    # roster step would empty those groups and allocate them anew.
-    def setup_on_seed!
+    # The same on a database that has no demo groups yet - it builds them
+    # first. That is where the ones in the shipped seed come from, so this is
+    # what the seed build runs; on a seeded database it is the wrong one.
+    def setup_from_scratch!(homework: true)
       ensure_non_production!
-      reset_eligibility!
-      setup_assessment!
-      setup_homework_submissions!
-      setup_performance!
-      setup_eligibility!
-      setup_exams!
-      setup_grading!
+      setup_rosters!
+      setup!(homework: homework)
     end
 
     private
