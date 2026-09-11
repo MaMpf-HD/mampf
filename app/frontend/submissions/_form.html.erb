@@ -29,9 +29,7 @@
     <div class="col-12">
       <%= f.label :tutorial_id, t('basics.tutorial') %>
 
-      <%#
-        Named, not chosen: the hand-in goes to the group the reader sits in.
-      %>
+      <%# Named, not chosen: the hand-in goes to the group the reader sits in. %>
       <p><%= enrolled_tutorial.title_with_tutors %></p>
 
       <%= f.hidden_field :assignment_id, value: assignment.id %>
