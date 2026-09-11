@@ -79,4 +79,51 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
         .to be_present
     end
   end
+
+  context "with a registration status" do
+    let(:campaign) do
+      create(:registration_campaign, :open, campaignable: lecture)
+    end
+
+    it "does not show a badge for a confirmed registration - the band already says so" do
+      create(:registration_user_registration, :confirmed,
+             user: user, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      rendered = render_card
+
+      expect(rendered.text).not_to include(
+        I18n.t("registration.user_registration.status.confirmed")
+      )
+    end
+
+    it "shows a badge for a pending registration" do
+      create(:registration_user_registration, :pending,
+             user: user, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      rendered = render_card
+
+      expect(rendered.text).to include(
+        I18n.t("registration.user_registration.status.pending")
+      )
+    end
+
+    it "shows a badge and a removal control for a rejected registration" do
+      closed_campaign = create(:registration_campaign, :closed,
+                               campaignable: lecture)
+      create(:registration_user_registration, :rejected,
+             user: user, registration_campaign: closed_campaign,
+             registration_item: closed_campaign.registration_items.first)
+
+      rendered = render_card
+
+      expect(rendered.text).to include(
+        I18n.t("registration.user_registration.status.rejected")
+      )
+      control = rendered.at_css("[data-controller='registration-notice-removal']")
+      expect(control["data-registration-notice-removal-url-value"])
+        .to eq("/dashboard/registration_notice/#{lecture.id}")
+    end
+  end
 end

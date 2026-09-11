@@ -15,7 +15,7 @@ de:
         sie über die Vorlesungssuche erneut merken.
       remove_bookmark_confirm: "Entfernen"
       remove_registration_notice: "Ausblenden"
-      remove_registration_notice_title: "Diesen Hinweis ausblenden?"
+      remove_registration_notice_title: "Entfernen?"
       remove_registration_notice_body: >-
         Deine Anmeldung für „%{lecture}“ wurde abgelehnt. Du kannst die
         Veranstaltung als Merkung behalten oder ganz von Deinem Dashboard

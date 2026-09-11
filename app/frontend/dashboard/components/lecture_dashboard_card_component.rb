@@ -45,6 +45,14 @@ class LectureDashboardCardComponent < ViewComponent::Base
     @registration_status ||= lecture.registration_status_for(user)
   end
 
+  # A confirmed registration is not shown here: this band already means
+  # "you are registered for these", so saying it again on every card the
+  # student sees every day is just noise. Pending/rejected/open are worth
+  # the badge - they are the states still in flux.
+  def show_registration_status?
+    registration_status.present? && registration_status != :confirmed
+  end
+
   def registration_status_label
     Registration::StatusPresenter.label(registration_status)
   end

@@ -114,7 +114,7 @@
     <% end %>
   <% end %>
 
-  <% if registration_status %>
+  <% if show_registration_status? %>
     <% card.with_note do %>
       <i class="bi <%= registration_status_icon %>" aria-hidden="true"></i>
       <%= registration_status_label %>

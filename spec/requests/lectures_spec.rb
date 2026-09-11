@@ -146,7 +146,7 @@ RSpec.describe("Lectures", type: :request) do
           .not_to include("lecture-search-registered-control")
       end
 
-      it "shows the pending label and still offers the bookmark toggle" do
+      it "shows the pending label and hides the bookmark toggle" do
         campaign = create(:registration_campaign, :open,
                           :first_come_first_served,
                           campaignable: lecture_algebra)
@@ -157,10 +157,10 @@ RSpec.describe("Lectures", type: :request) do
 
         expect(response.body).to include("lecture-search-registered-control")
         expect(response.body).to include(I18n.t("registration.user_registration.status.pending"))
-        expect(response.body).to include("lecture-search-bookmark-button")
+        expect(response.body).not_to include("lecture-search-bookmark-button")
       end
 
-      it "shows the rejected label once the campaign is closed, still bookmarkable" do
+      it "shows the rejected label once the campaign is closed, hides the bookmark toggle" do
         campaign = create(:registration_campaign, :closed,
                           :first_come_first_served,
                           campaignable: lecture_algebra)
@@ -171,7 +171,7 @@ RSpec.describe("Lectures", type: :request) do
 
         expect(response.body).to include("lecture-search-registered-control")
         expect(response.body).to include(I18n.t("registration.user_registration.status.rejected"))
-        expect(response.body).to include("lecture-search-bookmark-button")
+        expect(response.body).not_to include("lecture-search-bookmark-button")
       end
 
       it "shows the confirmed label and hides the bookmark toggle" do
