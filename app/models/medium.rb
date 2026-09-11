@@ -1164,6 +1164,8 @@ class Medium < ApplicationRecord
     end
 
     def purge_from_mampfsearch
+      return if video_data.blank?
+
       MampfsearchDeleteJob.perform_later(id)
     end
 
