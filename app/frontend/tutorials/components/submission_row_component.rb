@@ -8,16 +8,14 @@ class SubmissionRowComponent < ViewComponent::Base
     @assignment = assignment
     @grading_scope = grading_scope
     @lecture = @tutorial.lecture
-    check_grading_scope
   end
 
-  def check_grading_scope
-    case @grading_scope
-    when Tutorial
-      @mode = "tutor"
-    when Lecture
-      @mode = "teacher"
-    end
+  def tutorial_scope?
+    @grading_scope.is_a?(Tutorial)
+  end
+
+  def lecture_scope?
+    @grading_scope.is_a?(Lecture)
   end
 
   # Feature guard: grading is only possible if the feature flag is enabled
@@ -76,7 +74,7 @@ class SubmissionRowComponent < ViewComponent::Base
       step: 0.5,
       min: 0,
       data: {
-        participation_row_target: "input",
+        participation_row_target: "pointInput",
         task_id: task.id,
         below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
         action: "change->participation-row#onPointSubmissionChanged input->participation-row#onPointSubmissionChanged" # rubocop:disable Layout/LineLength

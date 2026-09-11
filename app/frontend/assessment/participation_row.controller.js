@@ -1,26 +1,41 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["input", "form", "refreshForm", "payload", "save", "totalPoints"];
+  static targets = [
+    "pointInput", "gradeInput", "noteInput",
+    "form", "refreshForm",
+    "taskPointsPayload", "gradePayload", "notePayload",
+    "save",
+    "totalPoints",
+  ];
 
   connect() {
-    this.originalValues = this.inputTargets.map(i => i.value);
+    this.originalPoints = this.hasPointInputTarget ? this.pointInputTargets.map(i => i.value) : null;
+    this.originalGrade = this.hasGradeInputTarget ? this.gradeInputTarget.value : null;
+    this.originalNote = this.hasNoteInputTarget ? this.noteInputTarget.value : null;
     if (this.hasSaveTarget) {
       this.saveTarget.disabled = true;
     }
     this.calculateTotalPoints();
   }
 
+  // -- Actions ---
   saveRow() {
     // Collect all input values for this row
     const newValues = {};
-    this.inputTargets.forEach((input) => {
+    this.pointInputTargets.forEach((input) => {
       const taskId = input.dataset.taskId;
       newValues[taskId] = input.value;
     });
 
     // Set hidden input value as JSON
-    this.payloadTarget.value = JSON.stringify(newValues);
+    this.taskPointsPayloadTarget.value = JSON.stringify(newValues);
+    if (this.hasGradeInputTarget && this.hasGradePayloadTarget) {
+      this.gradePayloadTarget.value = this.gradeInputTarget.value;
+    }
+    if (this.hasNoteInputTarget && this.hasNotePayloadTarget) {
+      this.notePayloadTarget.value = this.noteInputTarget.value;
+    }
 
     // Submit the hidden form
     this.formTarget.requestSubmit();
@@ -30,25 +45,7 @@ export default class extends Controller {
     this.refreshFormTarget.requestSubmit();
   }
 
-  calculateTotalPoints() {
-    let totalPoints = 0;
-    this.inputTargets.forEach((input) => {
-      const points = parseFloat(input.value);
-      if (!isNaN(points)) {
-        totalPoints += points;
-      }
-    });
-    if (this.hasTotalPointsTarget) {
-      this.totalPointsTarget.textContent = totalPoints.toFixed(2);
-    }
-  }
-
-  alertTotalPointsInvalid() {
-    if (this.hasTotalPointsTarget) {
-      this.totalPointsTarget.textContent = "N/A";
-    }
-  }
-
+  // --- Change Handlers ---
   onPointSubmissionChanged(event) {
     const valid = this.validateNewPoint(event);
     if (valid) {
@@ -61,9 +58,12 @@ export default class extends Controller {
     }
   }
 
-  onPointParticipationChanged(event) {
-    const valid = this.validateNewPoint(event);
-    if (valid) {
+  onParticipationChanged(event) {
+    const validPoints = this.validateNewPoint(event);
+    const validGrade = this.validateNewGrade(event);
+    const validNote = this.validateNewNote(event);
+
+    if (validPoints && validGrade && validNote) {
       this.markDirty("participation");
       this.calculateTotalPoints();
     }
@@ -71,6 +71,75 @@ export default class extends Controller {
       this.alertTotalPointsInvalid();
       this.handleClean("participation");
     }
+  }
+
+  markDirty(targetType) {
+    const pointDirty = this.pointInputTargets.some((input, idx) => input.value != this.originalPoints[idx]);
+    let gradeDirty = false;
+    let noteDirty = false;
+    if (this.hasGradeInputTarget) {
+      gradeDirty = this.gradeInputTarget.value !== this.originalGrade;
+    }
+    if (this.hasNoteInputTarget) {
+      noteDirty = this.noteInputTarget.value !== this.originalNote;
+    }
+
+    if (pointDirty || gradeDirty || noteDirty) {
+      this.handleDirty(targetType);
+    }
+    else {
+      this.handleClean(targetType);
+    }
+  }
+
+  handleDirty(targetType) {
+    // Add the "row-dirty" style to the row
+    this.element.classList.add("row-dirty");
+
+    // Force table controller to add the row to the dirty rows list
+    // (so that it would be saved)
+    this.dispatch("dirty", {
+      prefix: false,
+      bubbles: true,
+      detail: {
+        id: this.element.dataset.rowId,
+        target: targetType,
+        task_points: this.extractTasksPoints(this.pointInputTargets),
+        // extend this if want to save bulk also with grade and note
+      },
+    });
+
+    // Enable the save button
+    if (this.hasSaveTarget) this.saveTarget.disabled = false;
+  }
+
+  handleClean(targetType) {
+    // Remove the "row-dirty" style
+    this.element.classList.remove("row-dirty");
+
+    // Force table controller to remove the row from the dirty rows list
+    // (so that it would not be saved)
+    this.dispatch("clean", {
+      prefix: false,
+      bubbles: true,
+      detail: { id: this.element.dataset.rowId,
+        target: targetType },
+    });
+
+    // Disable the save button
+    if (this.hasSaveTarget) this.saveTarget.disabled = true;
+  }
+
+  // --- Validation Methods ---
+
+  validateNewGrade(_event) {
+    // GradeEntryService will validate the grade
+    return true;
+  }
+
+  validateNewNote(_event) {
+    // No validation for notes, any text is allowed
+    return true;
   }
 
   validateNewPoint(event) {
@@ -95,45 +164,11 @@ export default class extends Controller {
     }
   }
 
-  markDirty(targetType) {
-    const dirty = this.inputTargets.some((input, idx) => input.value != this.originalValues[idx]);
-    if (dirty) {
-      this.handleDirty(targetType);
-    }
-    else {
-      this.handleClean(targetType);
-    }
-  }
+  // --- Data extraction Methods ---
 
-  handleDirty(targetType) {
-    this.element.classList.add("row-dirty");
-    this.dispatch("dirty", {
-      prefix: false,
-      bubbles: true,
-      detail: {
-        id: this.element.dataset.rowId,
-        target: targetType,
-        task_points: this.extractTasksPoints(this.inputTargets),
-      },
-    });
-    if (this.hasSaveTarget) this.saveTarget.disabled = false;
-  }
-
-  handleClean(targetType) {
-    this.element.classList.remove("row-dirty");
-    this.dispatch("clean", {
-      prefix: false,
-      bubbles: true,
-      detail: { id: this.element.dataset.rowId,
-        target: targetType },
-    });
-
-    if (this.hasSaveTarget) this.saveTarget.disabled = true;
-  }
-
-  extractTasksPoints(inputTargets) {
+  extractTasksPoints(pointInputTargets) {
     const participationNewTasksPoints = {};
-    for (const input of inputTargets) {
+    for (const input of pointInputTargets) {
       const id = this.extractId(input.name);
       const points = input.value;
       participationNewTasksPoints[id] = points;
@@ -145,5 +180,24 @@ export default class extends Controller {
     const startIndex = name.indexOf("[") + 1;
     const length = name.indexOf("]", startIndex) - startIndex;
     return name.substring(startIndex, startIndex + length);
+  }
+
+  calculateTotalPoints() {
+    let totalPoints = 0;
+    this.pointInputTargets.forEach((input) => {
+      const points = parseFloat(input.value);
+      if (!isNaN(points)) {
+        totalPoints += points;
+      }
+    });
+    if (this.hasTotalPointsTarget) {
+      this.totalPointsTarget.textContent = totalPoints.toFixed(2);
+    }
+  }
+
+  alertTotalPointsInvalid() {
+    if (this.hasTotalPointsTarget) {
+      this.totalPointsTarget.textContent = "N/A";
+    }
   }
 }

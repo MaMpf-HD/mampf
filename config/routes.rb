@@ -1160,6 +1160,15 @@ Rails.application.routes.draw do
          as: :save_preferences
   end
 
+  # participations routes
+  patch "participations/:participation_id/grade_participation",
+        to: "assessment/grades#update",
+        as: "grade_participation"
+
+  patch "participations/:participation_id/refresh_grade_participation",
+        to: "assessment/grades#refresh",
+        as: "refresh_grade_participation"
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not

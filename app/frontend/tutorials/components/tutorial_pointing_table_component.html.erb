@@ -23,17 +23,19 @@
 
       <div
         class="table-wrapper"
-        data-mode="<%= @mode %>"
+        style="<%= sticky_css_vars %>"
         data-controller="table-fade"
       >
         <div class="table-overflow" data-table-fade-target="inner">
           <table
             class="table align-middle my-3"
+            style="<%= sticky_css_vars %>"
             data-cy="tutorial-submissions-table"
           >
             <thead style="background: #fafafa;">
               <%= render(PointingTableHeaderComponent.new(
                 grading_scope: @grading_scope,
+                assessable_type: Assignment.name,
                 grading_enabled: grading_enabled?,
                 tasks: tasks,
                 total_max_points: total_max_points,
@@ -43,7 +45,7 @@
             </thead>
 
             <tbody>
-              <% if @mode == "tutor" %>
+              <% if tutorial_scope? %>
                 <!-- TUTOR -->
                 <!-- Submissions -->
                 <% @stack.each do |submission| %>
@@ -102,7 +104,7 @@
     </div>
   <% else %>
     <div class="jumbotron mt-3">
-      <%= t('assessment.grading_tutorial.no_submissions') %>
+      <%= t('assessment.grading_tutorial.no_submissions_gradable') %>
     </div>
   <% end %>
 

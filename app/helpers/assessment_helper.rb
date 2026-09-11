@@ -137,6 +137,16 @@ module AssessmentHelper
     end
   end
 
+  def sticky_css_vars_calc(sticky_layout)
+    left = sticky_layout.left_offsets.map { |k, v| "--#{k.to_s.dasherize}-left:#{v}px" }
+    right = sticky_layout.right_offsets.map { |k, v| "--#{k.to_s.dasherize}-right:#{v}px" }
+    edges = [
+      "--sticky-left-width:#{sticky_layout.total_left_width}px",
+      "--sticky-right-width:#{sticky_layout.total_right_width}px"
+    ]
+    (left + right + edges).join(";")
+  end
+
   private
 
     def overview_frame_src(lecture)

@@ -13,10 +13,16 @@ class TutorialPointingTableComponent < ViewComponent::Base
     elsif grading_scope.is_a?(Lecture)
       init_teacher_case
     end
+    @config = Assessment::DisplayConfigResolver.resolve(
+      assessable: @assignment, grading_scope: @grading_scope
+    )
+  end
+
+  def tutorial_scope?
+    @grading_scope.is_a?(Tutorial)
   end
 
   def init_tutor_case
-    @mode = "tutor"
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
     @non_submitters = @assignment&.non_submitters_in_tutorial(@tutorial)
@@ -24,7 +30,6 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def init_teacher_case
-    @mode = "teacher"
     @tutorials = @lecture.tutorials
     @stack = @assignment&.submissions&.proper
                         &.order(:last_modification_by_users_at)
@@ -65,7 +70,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def column_count
-    if @mode == "tutor"
+    if @grading_scope.is_a?(Tutorial)
       6 + tasks.count
     else
       5 + tasks.count
@@ -127,5 +132,18 @@ class TutorialPointingTableComponent < ViewComponent::Base
     return unless movement
 
     helpers.non_submitter_status(movement, @tutorial)
+  end
+
+  def sticky_layout
+    @sticky_layout ||= Assessment::StickyColumnLayout.new(
+      left_columns: @config.left_columns,
+      right_columns: @config.right_columns
+    )
+  end
+
+  def sticky_css_vars
+    return unless @config
+
+    helpers.sticky_css_vars_calc(sticky_layout)
   end
 end

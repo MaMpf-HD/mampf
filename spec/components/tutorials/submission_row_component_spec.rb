@@ -41,20 +41,6 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     assessment.reload
   end
 
-  describe "#initialize" do
-    context "when grading_scope is a Tutorial" do
-      it "sets @mode to tutor" do
-        expect(component_tutorial.instance_variable_get(:@mode)).to eq("tutor")
-      end
-    end
-
-    context "when grading_scope is a Lecture" do
-      it "sets @mode to teacher" do
-        expect(component_lecture.instance_variable_get(:@mode)).to eq("teacher")
-      end
-    end
-  end
-
   describe "#row_id" do
     it "returns the correct row id" do
       expect(component_tutorial.row_id).to eq("submission-row-#{submission.id}")
@@ -78,7 +64,6 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   end
 
   describe "#grading_enabled?" do
-
     context "when flipper is enabled and assignment is assessable" do
       before do
         allow(assignment).to receive(:assessable?).and_return(true)
