@@ -73,6 +73,8 @@ If you are not sure of something, you are free to admit it instead of being over
 
 You can directly propose some code changes instead of asking developers for permission à la "Should I implement this for you?". For very big changes, you should still ask for confirmation first (while outlining a short plan of what you will do). But in general, we can always refine later on.
 
+Use American English throughout, not British English. For example, use "color" instead of "colour", "behavior" instead of "behaviour", etc.
+
 ## Interacting with MaMpf
 
 - You can use the available browser MCP to inspect the current state of the application. 
