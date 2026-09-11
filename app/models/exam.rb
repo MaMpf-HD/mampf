@@ -85,6 +85,10 @@ class Exam < ApplicationRecord
     participants_with_grading_data.exclude?(user.id)
   end
 
+  def assessable?
+    assessment != nil
+  end
+
   def ensure_participant_removable!(user)
     return if participant_removable?(user)
 

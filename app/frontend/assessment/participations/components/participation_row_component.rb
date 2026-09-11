@@ -4,7 +4,9 @@ class ParticipationRowComponent < ViewComponent::Base
 
   # rubocop:disable Metrics/ParameterLists
   def initialize(participation:, assessment:, grading_scope:,
-                 save_url:, refresh_url:, group_id: nil)
+                 save_url:, refresh_url:,
+                 absent_url: nil, exempt_url: nil,
+                 group_id: nil)
     # rubocop:enable Metrics/ParameterLists
     super()
     @participation = participation
@@ -14,7 +16,8 @@ class ParticipationRowComponent < ViewComponent::Base
 
     @save_url = save_url
     @refresh_url = refresh_url
-
+    @absent_url = absent_url
+    @exempt_url = exempt_url
     @group_id = group_id
 
     @grading_scope = grading_scope

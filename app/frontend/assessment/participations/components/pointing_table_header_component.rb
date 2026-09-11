@@ -5,6 +5,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
   def initialize(grading_scope:, # rubocop:disable Metrics/ParameterLists
                  grading_enabled:,
                  assessable_type:,
+                 table_option: nil,
                  tasks: [],
                  total_max_points: 0,
                  accepted_file_type: nil,
@@ -12,6 +13,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
     @grading_scope = grading_scope
     @grading_enabled = grading_enabled
     @assessable_type = assessable_type
+    @table_option = table_option
     @tasks = tasks
     @total_max_points = total_max_points
     @accepted_file_type = accepted_file_type
@@ -50,12 +52,37 @@ class PointingTableHeaderComponent < ViewComponent::Base
     ].compact
   end
 
+  def exam_pointing_columns
+    [
+      team_column,
+      *status_col,
+      *pointing_columns,
+      *action_column
+    ].compact
+  end
+
+  def exam_grading_columns
+    [
+      team_column,
+      *status_col,
+      *grading_columns,
+      *action_column
+    ].compact
+  end
+
   def columns
     case @assessable_type
     when "Assignment"
       assignment_columns
     when "Talk"
       talk_columns
+    when "Exam"
+      case @table_option
+      when :pointing
+        exam_pointing_columns
+      when :grading
+        exam_grading_columns
+      end
     else
       raise(ArgumentError, "Unsupported assessable type: #{@assessable_type} ")
     end

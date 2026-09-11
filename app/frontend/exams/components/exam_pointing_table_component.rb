@@ -3,10 +3,11 @@ class ExamPointingTableComponent < ViewComponent::Base
     super()
     @exam = exam
     @lecture = exam.lecture
-    @stack = []
+    @assessment = exam.assessment
     @config = Assessment::DisplayConfigResolver.resolve(
-      assessable: @exam, grading_scope: @grading_scope
+      assessable: @exam, grading_scope: @grading_scope, table_option: :pointing
     )
+    @participations = participations_index.values
   end
 
   def grading_enabled?
@@ -21,9 +22,8 @@ class ExamPointingTableComponent < ViewComponent::Base
     @exam&.assessment&.effective_total_points || 0
   end
 
-  # have any grading records for this exam? (either by submission or by participation)
   def grading_records?
-    @stack&.any?
+    @participations.any?
   end
 
   def column_count
@@ -75,4 +75,18 @@ class ExamPointingTableComponent < ViewComponent::Base
 
     helpers.sticky_css_vars_calc(sticky_layout)
   end
+
+  private
+
+    def participations_index
+      @participations_index ||= Assessment::ExamGraderService.init_participations(
+        @exam.roster_entries.map do |exam_roster_entry|
+          [exam_roster_entry.exam.assessment, exam_roster_entry.user]
+        end
+      )
+    end
+
+    def exam_users
+      @exam.lecture.students
+    end
 end

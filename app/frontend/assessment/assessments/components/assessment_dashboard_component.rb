@@ -145,6 +145,10 @@ class AssessmentDashboardComponent < ViewComponent::Base
         TutorialPointingTableComponent.new(
           assignment: assessable, grading_scope: lecture
         )
+      elsif assessment.assessable.is_a?(Exam)
+        ExamPointingTableComponent.new(
+          exam: assessable
+        )
       else
         PointGridComponent.new(assessment: assessment)
       end
