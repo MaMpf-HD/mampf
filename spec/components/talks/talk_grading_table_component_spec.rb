@@ -99,24 +99,6 @@ RSpec.describe(TalkGradingTableComponent, type: :component) do
     end
   end
 
-  describe "#init_participation" do
-    let(:speaker) { create(:confirmed_user) }
-    let!(:talk) { create(:talk, lecture: seminar, dates: [1.week.from_now]) }
-    let(:assessment) { talk.reload.assessment }
-
-    before do
-      create(:speaker_talk_join, talk: talk, speaker: speaker)
-      create(:assessment, assessable: talk, lecture: seminar)
-      talk.reload
-    end
-
-    it "delegates to Assessment::TalkGraderService" do
-      expect(Assessment::TalkGraderService).to receive(:init_participation)
-        .with(assessment, speaker)
-      component.init_participation(assessment, speaker)
-    end
-  end
-
   describe "#initialize" do
     it "sets @seminar" do
       expect(component.instance_variable_get(:@seminar)).to eq(seminar)

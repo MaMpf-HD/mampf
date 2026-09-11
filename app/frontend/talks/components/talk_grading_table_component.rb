@@ -26,7 +26,11 @@ class TalkGradingTableComponent < ViewComponent::Base
     ["pending", "reviewed"]
   end
 
-  delegate :init_participation, to: :"Assessment::TalkGraderService"
+  def participation_for(assessment, user)
+    return if assessment.nil? || user.nil?
+
+    participations_index[[assessment.id, user.id]]
+  end
 
   def grade_form_url(participation)
     helpers.grade_participation_path(participation)
@@ -50,4 +54,16 @@ class TalkGradingTableComponent < ViewComponent::Base
 
     helpers.sticky_css_vars_calc(sticky_layout)
   end
+
+  private
+
+    def participations_index
+      @participations_index ||= Assessment::TalkGraderService.init_participations(
+        gradable_talks.flat_map do |talk|
+          talk.speakers.map do |speaker|
+            [talk.assessment, speaker]
+          end
+        end
+      )
+    end
 end

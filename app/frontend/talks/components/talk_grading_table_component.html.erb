@@ -52,7 +52,7 @@
                 </tr>
 
                 <% talk.speakers.each do |speaker| %>
-                  <% participation = init_participation(talk.assessment, speaker) %>
+                  <% participation = participation_for(talk.assessment, speaker) %>
 
                   <% if participation %>
                     <%= render ParticipationRowComponent.new(
