@@ -663,9 +663,20 @@ class User < ApplicationRecord
   # These come first on the dashboard: they are the ones the user is actually
   # taking (or trying to), as opposed to the ones they only bookmarked to
   # look in on now and then.
+  #
+  # Within the list, settled lectures (a roster seat, or a confirmed
+  # application) sort before ones still in flux (pending, or open for a new
+  # application), which sort before rejected ones - see
+  # Registration::StatusPresenter.sort_priority. Ties keep the title order
+  # `lectures_of_term` already sorted them into.
   def current_enrolled_lectures(term = Term.active)
     combined = roster_lectures.or(lectures_with_registration_application)
-    lectures_of_term(combined, term)
+    enrolled = lectures_of_term(combined, term)
+    statuses = Registration::StatusQuery.new(self, enrolled.map(&:id)).statuses
+
+    enrolled.sort_by.with_index do |lecture, index|
+      [Registration::StatusPresenter.sort_priority(statuses[lecture.id]), index]
+    end
   end
 
   # Bookmarked but not enrolled. A lecture the user holds a place in is already

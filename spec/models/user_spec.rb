@@ -257,6 +257,29 @@ RSpec.describe(User, type: :model) do
 
       expect(user.current_enrolled_lectures(term)).to be_empty
     end
+
+    it "sorts settled lectures before pending, before rejected" do
+      rejected_lecture = create(:lecture, term: term, course: create(:course, title: "Z Rejected"))
+      rejected_campaign = create(:registration_campaign, :closed,
+                                 campaignable: rejected_lecture)
+      create(:registration_user_registration, :rejected,
+             user: user, registration_campaign: rejected_campaign,
+             registration_item: rejected_campaign.registration_items.first)
+
+      pending_lecture = create(:lecture, term: term, course: create(:course, title: "A Pending"))
+      pending_campaign = create(:registration_campaign, :open,
+                                campaignable: pending_lecture)
+      create(:registration_user_registration, :pending,
+             user: user, registration_campaign: pending_campaign,
+             registration_item: pending_campaign.registration_items.first)
+
+      confirmed_lecture = create(:lecture, term: term,
+                                           course: create(:course, title: "M Confirmed"))
+      create(:lecture_membership, user: user, lecture: confirmed_lecture)
+
+      expect(user.current_enrolled_lectures(term))
+        .to eq([confirmed_lecture, pending_lecture, rejected_lecture])
+    end
   end
 
   # test callbacks - NEEDS TO BE REFACTORED
