@@ -85,15 +85,28 @@ class SubmissionCardComponent < ViewComponent::Base
   # Without a group there is nobody to hand in to, so the card says that instead
   # of offering buttons that would fail. At the start of a term this is the
   # ordinary state rather than the exception, which is why it says which of the
-  # two it is.
+  # two it is - and a lecture from before the groups were kept in the system
+  # gets neither: its reader was in a group, only nobody wrote that down, and
+  # what they can still do here is read.
   def may_start?
     helpers.rostered_tutorial_for(assignment.lecture).present?
   end
 
   def no_seat_reason
+    return t("submission.hub.card.before_groups") if before_groups?
     return t("submission.hub.card.no_tutorials_yet") if lecture_tutorials.empty?
 
     t("submission.hub.card.no_seat_yet")
+  end
+
+  # The reader has handed in here, and the lecture has never kept anybody in a
+  # group: that is the old world, read off the data rather than off a date or
+  # a switch. It ends by itself - when the old hand-ins are deleted at the end
+  # of term there is nothing left that says "before", and the moment the
+  # lecture seats anybody the reader is simply somebody without a seat.
+  def before_groups?
+    helpers.handed_in_before?(assignment.lecture) &&
+      !assignment.lecture.roster_managed?
   end
 
   def lecture_home_path

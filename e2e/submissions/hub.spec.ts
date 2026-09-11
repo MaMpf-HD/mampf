@@ -64,12 +64,29 @@ test.describe("the student's sheet list", () => {
       .toBeVisible();
 
     // and once there is a group but no seat in it, it says that instead
-    await factory.create("tutorial", [], {
+    const tutorial = await factory.create("tutorial", [], {
       lecture_id: lecture.id, title: "Monday group",
     });
     await student.page.reload();
 
     await expect(student.page.getByText("not in a tutorial group"))
+      .toBeVisible();
+
+    // A reader who has handed in here while nobody was ever seated was in a
+    // group - only nobody wrote it down. That is the old world, and the card
+    // says so instead of "you are in no group".
+    const earlier = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id, title: "Problem Set 0",
+    });
+    const handedIn = await factory.create("submission", ["with_manuscript"], {
+      assignment_id: earlier.id, tutorial_id: tutorial.id,
+    });
+    await factory.create("user_submission_join", [], {
+      submission_id: handedIn.id, user_id: student.user.id,
+    });
+    await student.page.reload();
+
+    await expect(student.page.getByText("ran before groups were kept here"))
       .toBeVisible();
   });
 

@@ -3084,6 +3084,9 @@ de:
         recorded_as_failed: "%{names} wurde als nicht bestanden vermerkt."
         ask_your_tutor: Dein Tutor kann Dir sagen, was noch möglich ist.
       card:
+        before_groups: >-
+          Diese Veranstaltung lief noch ohne Gruppenverwaltung. Abgeben kannst
+          Du hier nicht mehr; Deine Abgaben und Korrekturen bleiben einsehbar.
         no_tutorials_yet: >-
           Für diese Veranstaltung gibt es noch keine Übungsgruppen. Sobald es
           welche gibt und Du in einer bist, kannst Du hier abgeben.

@@ -284,6 +284,22 @@ RSpec.describe("Submissions", type: :request) do
         .to include(I18n.t("submission.hub.card.no_seat_yet"))
     end
 
+    # A lecture from before the groups were kept here - nobody seated, and the
+    # reader has handed in all the same - refuses just the same; only the
+    # sentence differs.
+    it "is refused the same way in a lecture from before the groups" do
+      TutorialMembership.where(tutorial: tutorial).destroy_all
+      earlier = create(:assignment, :expired, lecture: lecture, title: "Sheet 0")
+      create(:submission, :with_manuscript, assignment: earlier, tutorial: tutorial)
+        .users << user
+
+      get lecture_submissions_path(lecture)
+
+      expect(response.body).not_to include("create-submission")
+      expect(response.body)
+        .to include(I18n.t("submission.hub.card.before_groups"))
+    end
+
     # The form names the group instead of offering a choice, and there is none
     # to name. It used to reach the view and blow up there; now it gives the
     # refusal the save gives, and the reader is told what is missing.
@@ -520,7 +536,7 @@ RSpec.describe("Submissions", type: :request) do
         create(:assignment, lecture: without_tutorials, title: "Sheet 1")
         user.lectures << without_tutorials
 
-        get lecture_submissions_path(without_tutorials)
+        get(lecture_submissions_path(without_tutorials))
 
         expect(response).to have_http_status(:success)
         expect(response.body)

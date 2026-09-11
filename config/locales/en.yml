@@ -2860,6 +2860,9 @@ en:
         recorded_as_failed: "%{names} was recorded as not passed."
         ask_your_tutor: Your tutor can tell you what is still possible.
       card:
+        before_groups: >-
+          This event series ran before groups were kept here. Handing in is
+          over; your hand-ins and corrections stay readable.
         no_tutorials_yet: >-
           This event series has no tutorial groups yet. Once there are some and
           you are in one, you can hand in here.

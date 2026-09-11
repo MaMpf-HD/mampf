@@ -4,7 +4,7 @@ module Rosters
   # shares the cache no matter which controller started it.
   module RosterCaching
     def roster_cache
-      @roster_cache ||= { tutorial: {} }
+      @roster_cache ||= { tutorial: {}, handed_in: {} }
     end
   end
 end

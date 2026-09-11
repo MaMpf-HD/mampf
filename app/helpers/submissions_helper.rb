@@ -17,6 +17,18 @@ module SubmissionsHelper
       (submission.users + submission.invited_users).map(&:id)
   end
 
+  # Whether the reader has handed anything in to this lecture - the one fact
+  # that tells a lecture from before the groups apart. Cached like the seat:
+  # every open card asks, and the answer is one per lecture.
+  def handed_in_before?(lecture)
+    roster_cache[:handed_in].fetch(lecture.id) do
+      roster_cache[:handed_in][lecture.id] =
+        UserSubmissionJoin.joins(submission: :assignment)
+                          .exists?(assignments: { lecture_id: lecture.id },
+                                   user: current_user)
+    end
+  end
+
   def rostered_tutorial_for(lecture)
     roster_cache[:tutorial].fetch(lecture.id) do
       roster_cache[:tutorial][lecture.id] = current_user.rostered_tutorial_in(lecture)

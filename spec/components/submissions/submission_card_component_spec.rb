@@ -52,6 +52,7 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
 
       expect(content).not_to include(I18n.t("submission.hub.card.hand_in"))
       expect(content).to include(I18n.t("submission.hub.card.no_seat_yet"))
+      expect(content).to include(I18n.t("submission.hub.card.where_to_enrol"))
     end
 
     it "says instead that there are no groups at all, where there are none" do
@@ -61,6 +62,23 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
 
       expect(content).to include(I18n.t("submission.hub.card.no_tutorials_yet"))
       expect(content).not_to include(I18n.t("submission.hub.card.no_seat_yet"))
+    end
+
+    # A reader who has handed in here while the lecture never kept anybody in
+    # a group was in one - nobody wrote it down - so "you are in no group"
+    # would be wrong, and there is nothing left to enrol in. Read off the
+    # data: it ends by itself once the old hand-ins are deleted.
+    it "tells a reader of a lecture from before the groups what is left to do" do
+      earlier = create(:assignment, :expired, lecture: lecture, title: "Sheet 0")
+      create(:submission, :with_manuscript, assignment: earlier, tutorial: tutorial)
+        .users << user
+
+      content = render_card
+
+      expect(content).not_to include(I18n.t("submission.hub.card.hand_in"))
+      expect(content).to include(I18n.t("submission.hub.card.before_groups"))
+      expect(content).not_to include(I18n.t("submission.hub.card.no_seat_yet"))
+      expect(content).not_to include(I18n.t("submission.hub.card.where_to_enrol"))
     end
   end
 

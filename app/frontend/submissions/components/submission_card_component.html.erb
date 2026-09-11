@@ -176,9 +176,12 @@
         <%#
           The lecture's home page is where the enrolment stands - which
           registration is open, what one is registered for. Linked rather than
-          repeated, so that story lives in one place.
+          repeated, so that story lives in one place. Not for a lecture from
+          before the groups: there is nothing left to enrol in.
         %>
-        <%= link_to t("submission.hub.card.where_to_enrol"), lecture_home_path %>
+        <% unless before_groups? %>
+          <%= link_to t("submission.hub.card.where_to_enrol"), lecture_home_path %>
+        <% end %>
       </p>
     <% end %>
   </section>
