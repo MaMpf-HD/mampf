@@ -12,6 +12,52 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
                         last_modification_by_users_at: 1.day.ago)
   end
 
+  # A team is marked as one. The gradebook rolls per person, so a pair can
+  # arrive with one member marked and one not; after the hand-in they agree.
+  describe "marking a team" do
+    let(:sheet) { create(:assignment, :expired, lecture: lecture) }
+    let(:task) { create(:assessment_task, assessment: sheet.assessment, max_points: 10) }
+    let(:marked) { create(:confirmed_user) }
+    let(:partner) { create(:confirmed_user) }
+    let(:tutor) { create(:confirmed_user) }
+
+    before do
+      [marked, partner].each do |member|
+        create(:lecture_membership, lecture: lecture, user: member)
+        create(:tutorial_membership, tutorial: tutorial, user: member)
+      end
+      one = create(:assessment_participation, assessment: sheet.assessment,
+                                              user: marked, status: :pending,
+                                              submitted_at: 2.days.ago)
+      create(:assessment_task_point, assessment_participation: one, task: task,
+                                     points: 7.5, grader: tutor)
+      one.update!(status: :reviewed, graded_at: 1.day.ago, grader: tutor,
+                  points_total: 7.5)
+      create(:assessment_participation, assessment: sheet.assessment,
+                                        user: partner, status: :pending,
+                                        submitted_at: 2.days.ago)
+    end
+
+    it "gives the partner the marked member's points and verdict" do
+      Demo::SetupSupport.send(:align_team_marks!, sheet, [marked, partner])
+
+      partners = sheet.assessment.assessment_participations.find_by(user: partner)
+      expect(partners.task_points.pluck(:task_id, :points)).to eq([[task.id, 7.5]])
+      expect(partners).to be_reviewed
+      expect(partners.points_total).to eq(7.5)
+    end
+
+    # An excused member does not hand in that week, so the team that does
+    # is the rest of it.
+    it "keeps an excused member out of the week's team" do
+      sheet.assessment.assessment_participations.find_by(user: partner)
+           .update!(status: :exempt, submitted_at: nil)
+
+      expect(Demo::SetupSupport.send(:excused?, sheet, partner)).to be(true)
+      expect(Demo::SetupSupport.send(:excused?, sheet, marked)).to be(false)
+    end
+  end
+
   # The demo dates its hand-ins around the deadline they belong to, and the
   # last sheet has none behind it: its deadline is still ahead, so anything
   # measured from it would be a hand-in from the future.
