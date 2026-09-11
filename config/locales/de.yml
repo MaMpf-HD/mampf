@@ -3059,7 +3059,7 @@ de:
         heading: Klausurzulassung
         of_marked: "von %{max} bisher korrigierten Punkten"
         of_needed: "von %{max} nötigen Punkten"
-        no_max: "von noch keinen Punkten"
+        no_max: "Punkte, noch nichts korrigiert"
         nothing_marked: Es ist noch nichts korrigiert.
         awaiting_marks:
           one: >-
