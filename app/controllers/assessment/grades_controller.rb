@@ -11,7 +11,8 @@ module Assessment
       respond_with_flash(:alert, I18n.t("assessment.errors.invalid_request_params"))
     end
 
-    rescue_from GradeEntryService::GradeEntryError do |e|
+    rescue_from TalkGraderService::TalkGraderError,
+                GradeEntryService::GradeEntryError do |e|
       respond_with_flash(:alert, e.message)
     end
 
@@ -81,6 +82,8 @@ module Assessment
           user_id: @user.id
         )
         empty_resource_check
+        return if performed?
+
         return if @assessable.speakers.exists?(id: @user.id)
 
         respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
@@ -94,6 +97,8 @@ module Assessment
         @assessable = @assessment&.assessable
         @lecture = @assessable&.lecture
         empty_resource_check
+        return if performed?
+
         return if @assessable&.speakers&.exists?(id: @user.id)
 
         respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))

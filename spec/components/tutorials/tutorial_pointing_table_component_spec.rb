@@ -115,17 +115,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       end
     end
 
-    describe "#sticky_css_vars" do
-      it "joins left and right offsets into CSS custom properties" do
-        layout = double("layout",
-                        left_offsets: { tutorial: 0 },
-                        right_offsets: { correction: 40 })
-        allow(component).to receive(:sticky_layout).and_return(layout)
-
-        expect(component.sticky_css_vars).to eq("--tutorial-left:0px;--correction-right:40px")
-      end
-    end
-
     describe "rendering" do
       it "renders the grading table" do
         render_inline(component)

@@ -80,7 +80,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
       if @tutorials&.count&.zero? || @tutorials.nil?
         [Column.new(
-          css_class: "stickreturn [] unless lecture_scope?y-col tutorial-col grade-th text-center",
+          css_class: "sticky-col tutorial-col grade-th text-center",
           label: t("basics.tutorial")
         )]
       else
