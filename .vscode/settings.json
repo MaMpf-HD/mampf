@@ -138,6 +138,7 @@
     "cSpell.words": [
         "activerecord",
         "ajax",
+        "bookmarkable",
         "buildcache",
         "cicd",
         "clipboardpopup",
@@ -177,10 +178,14 @@
         "tomselect",
         "trix",
         "turbo",
+        "unbookmark",
+        "unbookmarkable",
+        "unbookmarked",
         "uncached",
         "Unsets",
         "vite",
         "Vite",
+        "washi",
         "webpacker",
         "whitespaces"
     ],

@@ -115,6 +115,11 @@
     z-index: 2;
     display: flex;
     gap: 0.4rem;
+
+    @include media-breakpoint-down(sm) {
+        right: 0.65rem;
+        gap: 0.25rem;
+    }
 }
 
 //   .lecture-search-result-bookmark - a bookmark toggle; grey outline, amber
@@ -138,6 +143,12 @@
     text-decoration: none;
     backdrop-filter: blur(2px);
     transition: color 150ms ease, transform 150ms ease;
+
+    @include media-breakpoint-down(sm) {
+        width: 1.85rem;
+        height: 1.85rem;
+        font-size: 0.9rem;
+    }
 
     // the global `a:hover` rule would otherwise underline this link
     &:hover {
@@ -213,6 +224,10 @@
     padding: 1.5em;
     // room for the (up to two) controls pinned to the right edge
     padding-right: 7em;
+
+    @include media-breakpoint-down(sm) {
+        padding-right: 5em;
+    }
 }
 
 .lecture-search-result-title {

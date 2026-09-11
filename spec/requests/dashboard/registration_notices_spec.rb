@@ -54,5 +54,29 @@ RSpec.describe("Dashboard::RegistrationNotices", type: :request) do
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it "is idempotent when the notice was already dismissed" do
+      registration.dismiss!
+
+      expect do
+        delete(dashboard_registration_notice_path(lecture), as: :turbo_stream)
+      end.not_to raise_error
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "leaves another user's rejected registration for the same lecture untouched" do
+      other_user = create(:confirmed_user)
+      other_registration = create(
+        :registration_user_registration, :rejected,
+        user: other_user,
+        registration_campaign: campaign,
+        registration_item: campaign.registration_items.first
+      )
+
+      delete dashboard_registration_notice_path(lecture), as: :turbo_stream
+
+      expect(other_registration.reload.dismissed_at).to be_nil
+    end
   end
 end

@@ -73,7 +73,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
       expect(lecture.in?(user.reload.lectures)).to be(false)
     end
 
-    it "also drops the lecture from favourites" do
+    it "also drops the lecture from favorites" do
       user.subscribe_lecture!(lecture)
       user.favorite_lectures << lecture
 

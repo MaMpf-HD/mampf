@@ -681,8 +681,13 @@ class User < ApplicationRecord
 
   # Bookmarked but not enrolled. A lecture the user holds a place in is already
   # shown in the section above, so it is not listed a second time.
-  def current_bookmarked_lectures(term = Term.active)
-    current_subscribed_lectures(term) - current_enrolled_lectures(term)
+  #
+  # `enrolled` lets a caller that already computed `current_enrolled_lectures`
+  # pass it in, instead of paying for its roster/application/status queries
+  # again.
+  def current_bookmarked_lectures(term = Term.active,
+                                  enrolled: current_enrolled_lectures(term))
+    current_subscribed_lectures(term) - enrolled
   end
 
   def current_subscribable_lectures

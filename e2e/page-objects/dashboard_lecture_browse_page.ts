@@ -96,4 +96,66 @@ export class DashboardLectureBrowsePage {
     const lectureCards = this.page.getByTestId("lecture-search-result-card");
     return await lectureCards.count();
   }
+
+  get enrolledSection() {
+    return this.page.getByTestId("dashboard-enrolled-lectures");
+  }
+
+  get bookmarkedSection() {
+    return this.page.getByTestId("dashboard-bookmarked-lectures");
+  }
+
+  dashboardCard(lectureId: number) {
+    return this.page.getByTestId("lecture-dashboard-card")
+      .and(this.page.locator(`[data-lecture-id="${lectureId}"]`));
+  }
+
+  searchResultBookmarkButton(lectureId: number) {
+    return this.page.locator(`[data-bookmark-lecture-id-value="${lectureId}"]`)
+      .getByTestId("lecture-search-bookmark-button");
+  }
+
+  async waitForBoardRefresh(action: () => Promise<void>) {
+    const refreshed = this.page.waitForResponse(response =>
+      response.url().includes("/dashboard/") && response.status() === 200,
+    );
+    await action();
+    await refreshed;
+  }
+
+  /** Removes a bookmarked lecture from the dashboard, confirming the modal. */
+  async removeBookmark(lectureId: number) {
+    const card = this.dashboardCard(lectureId);
+    await this.waitForBoardRefresh(async () => {
+      await card.getByRole("button", { name: "Remove bookmark" }).click();
+      await this.page.getByRole("button", { name: "Remove", exact: true }).click();
+    });
+  }
+
+  /** Dismisses a rejected registration's notice, either bookmarking or dropping the lecture. */
+  async dismissRegistrationNotice(lectureId: number, keepBookmarked: boolean) {
+    const card = this.dashboardCard(lectureId);
+    const buttonName = keepBookmarked
+      ? "Keep in bookmarked lectures"
+      : "Remove entirely";
+
+    await this.waitForBoardRefresh(async () => {
+      await card.getByRole("button", { name: "Dismiss" }).click();
+      await this.page.getByRole("button", { name: buttonName }).click();
+    });
+  }
+
+  async openWashiTapePicker(lectureId: number) {
+    await this.dashboardCard(lectureId).getByTestId("washi-tape-strip").click();
+  }
+
+  async chooseWashiTapeColor(lectureId: number, colorLabel: string) {
+    await this.openWashiTapePicker(lectureId);
+    await this.dashboardCard(lectureId)
+      .getByRole("radio", { name: colorLabel }).click();
+  }
+
+  sectionToggle(sectionTestid: string, title: string) {
+    return this.page.getByTestId(sectionTestid).getByRole("button", { name: title });
+  }
 }

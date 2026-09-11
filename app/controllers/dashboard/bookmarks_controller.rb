@@ -29,6 +29,9 @@ module Dashboard
     def destroy
       return head(:not_found) unless @lecture
 
+      # unsubscribe_lecture! is itself scoped to the user's own subscriptions
+      # (it no-ops unless the lecture is in current_user.lectures), so no
+      # separate ownership check is needed here.
       current_user.unsubscribe_lecture!(@lecture)
       current_user.touch
       render_board

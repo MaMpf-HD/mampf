@@ -18,7 +18,7 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
         user.subscribe_lecture!(lecture)
       end
 
-      it "saves the chosen colour" do
+      it "saves the chosen color" do
         patch dashboard_washi_tape_path(lecture),
               params: { washi_tape: { tape_color: "mint" } }
 
@@ -26,7 +26,7 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
         expect(style.tape_color).to eq("mint")
       end
 
-      it "replaces a colour that was picked before" do
+      it "replaces a color that was picked before" do
         Dashboard::CardStyle.create!(user: user, lecture: lecture,
                                      tape_color: "sky")
 
@@ -38,7 +38,7 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
           .to eq(1)
       end
 
-      it "rejects a colour that does not exist" do
+      it "rejects a color that does not exist" do
         patch dashboard_washi_tape_path(lecture),
               params: { washi_tape: { tape_color: "holographic" } }
 
@@ -76,6 +76,15 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
 
       expect(response).to have_http_status(:not_found)
       expect(style).to be_nil
+    end
+
+    it "redirects an unauthenticated request to sign in" do
+      sign_out user
+
+      patch dashboard_washi_tape_path(lecture),
+            params: { washi_tape: { tape_color: "mint" } }
+
+      expect(response).to redirect_to(new_user_session_path)
     end
   end
 end

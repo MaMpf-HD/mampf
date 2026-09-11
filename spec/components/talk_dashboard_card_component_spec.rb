@@ -19,7 +19,7 @@ RSpec.describe(TalkDashboardCardComponent, type: :component) do
     expect(card.text).to include(talk.title)
   end
 
-  it "offers the colour picker, keyed to the seminar" do
+  it "offers the color picker, keyed to the seminar" do
     rendered = render_card
 
     expect(rendered.at_css("[data-testid='washi-tape-strip']")).to be_present
@@ -27,7 +27,7 @@ RSpec.describe(TalkDashboardCardComponent, type: :component) do
       .to eq("/dashboard/washi_tape/#{seminar.id}")
   end
 
-  it "shows the colour picked for the seminar" do
+  it "shows the color picked for the seminar" do
     Dashboard::CardStyle.create!(user: user, lecture: seminar,
                                  tape_color: "rose")
 

@@ -1,4 +1,6 @@
 class MainController < ApplicationController
+  include Dashboard::RendersBoard
+
   before_action :check_for_consent
   authorize_resource class: false, only: :start
   layout "application_no_sidebar"
@@ -33,23 +35,8 @@ class MainController < ApplicationController
     @available_terms = Dashboard::TermSelector.terms
     @selected_term = Dashboard::TermSelector.selected(params)
 
-    @enrolled_lectures = current_user.current_enrolled_lectures(@selected_term)
-    @bookmarked_lectures = current_user.current_bookmarked_lectures(@selected_term)
+    load_board(@selected_term)
     next_term_banner
-    @talks = current_user.talks.includes(lecture: :term)
-                         .select do |t|
-                           t.lecture.term_id == @selected_term&.id &&
-                             t.visible_for_user?(current_user)
-                         end
-                         .sort_by(&:position)
-
-    # Gathered once for the whole board: every card asks the same two questions
-    # of it, and asking them per card would multiply the queries by the number
-    # of cards.
-    @lecture_activity = Dashboard::LectureActivity.new(
-      user: current_user,
-      lectures: @enrolled_lectures + @bookmarked_lectures
-    )
   end
 
   private

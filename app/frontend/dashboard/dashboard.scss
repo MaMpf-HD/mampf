@@ -1,4 +1,7 @@
 @import "~/styles/branding";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
 @import "./dashboard_card";
 @import "./washi_tape";
 @import "./dashboard_quick_actions";
@@ -44,6 +47,15 @@
     }
 }
 
+.go-to-lecture-search-label {
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+#arrow-go-to-lecture-wrapper {
+    transition: transform 0.3s ease;
+}
+
 .next-term-banner {
     width: fit-content;
     max-width: 100%;
@@ -61,7 +73,7 @@
     padding-top: 0.5rem;
 }
 
-@media (min-width: 768px) {
+@include media-breakpoint-up(md) {
     .next-term-banner__transition {
         flex: 0 0 30%;
         border-top: 0;

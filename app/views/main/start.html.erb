@@ -1,6 +1,6 @@
 <%= vite_stylesheet_tag "dashboard/dashboard.scss" %>
 
-<div style="min-height: 100vh; display: flex; flex-direction: column; padding-left: 1em; padding-right: 1em;">
+<div class="dashboard-hero">
   <% if @next_term_lecture_count.to_i.positive? %>
     <%= render partial: "main/start/next_term_banner",
                locals: { next_term: @next_term,
@@ -15,10 +15,10 @@
   <%= render "main/start/lecture_cards" %>
 
   <a href="#lecture-search" id="go-to-lecture-search">
-    <span style="font-size: 0.9em; font-weight: 500;">
+    <span class="go-to-lecture-search-label">
       <%= t("lecture.search.go_to_search") %>
     </span>
-    <div id="arrow-go-to-lecture-wrapper" style="transition: transform 0.3s ease;">
+    <div id="arrow-go-to-lecture-wrapper">
       <i class="fas fa-chevron-down" id="arrow-go-to-lecture"></i>
     </div>
   </a>

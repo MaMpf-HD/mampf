@@ -1,10 +1,13 @@
 @import "~/styles/branding";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
 
 // The dashboard's top half is a pinboard: cards of card stock, each pinned at
 // a slightly different angle with a strip of washi tape (see _washi_tape).
 //
 // The tilt and the tape color arrive per card as custom properties, so no two
-// neighbours look alike and the card's border matches its own tape. Hovering
+// neighbors look alike and the card's border matches its own tape. Hovering
 // or focusing straightens a card, lifts it, and lays a wider, paler ring of
 // the same color around it — the whole hover affordance, so no separate
 // highlight color is needed to say what is being pointed at.
@@ -42,7 +45,7 @@ $card-rail-width: 12rem;
     }
 }
 
-@media (min-width: 576px) {
+@include media-breakpoint-up(sm) {
     .dashboard-cards {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -63,7 +66,7 @@ $card-rail-width: 12rem;
 //
 // The width is the widest the board's own container allows (see .small-width),
 // so nothing here can push the page into a horizontal scroll.
-@media (min-width: 1200px) {
+@include media-breakpoint-up(xl) {
     .dashboard-cards {
         max-width: 65rem;
     }

@@ -1,4 +1,7 @@
 @import "~/styles/branding";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
 
 // The quick actions beside a dashboard card: small speech bubbles, each one a
 // single link to the one page where the errand it names gets done.
@@ -109,8 +112,8 @@ $quick-action-tail-offset: -0.3rem;
 }
 
 // Beside the card rather than under it: the tail turns to point sideways at
-// the card, which is now the bubble's horizontal neighbour.
-@media (min-width: 1200px) {
+// the card, which is now the bubble's horizontal neighbor.
+@include media-breakpoint-up(xl) {
     .quick-action::after {
         top: 0.85rem;
         left: $quick-action-tail-offset;

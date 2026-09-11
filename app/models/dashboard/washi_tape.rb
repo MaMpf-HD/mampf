@@ -1,16 +1,16 @@
 module Dashboard
   # The strip of tape that holds one card onto the dashboard's pinboard.
   #
-  # The colour is the student's own choice and is stored in a CardStyle. A card
+  # The color is the student's own choice and is stored in a CardStyle. A card
   # nobody has styled yet still gets a strip, picked deterministically from a
   # seed, so that an untouched dashboard already looks like a hand-arranged
   # board instead of a stack of identical strips — and so that the strip stays
-  # put across reloads instead of flickering to a new colour.
+  # put across reloads instead of flickering to a new color.
   class WashiTape
     COLORS = ["butter", "rose", "mint", "sky", "lavender", "clay"].freeze
 
-    # Coprime to the number of colours, so neighbouring seeds (consecutive
-    # lecture ids) step through the list instead of repeating a colour.
+    # Coprime to the number of colors, so neighboring seeds (consecutive
+    # lecture ids) step through the list instead of repeating a color.
     COLOR_STRIDE = 5
 
     # Degrees the strip is tilted against the card it holds. Small enough to

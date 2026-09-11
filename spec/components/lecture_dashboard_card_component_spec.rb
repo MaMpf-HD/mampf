@@ -19,7 +19,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
     expect(card.text).to include(lecture.title_no_term)
   end
 
-  it "dyes the card in the tape colour, so the border can follow it" do
+  it "dyes the card in the tape color, so the border can follow it" do
     Dashboard::CardStyle.create!(user: user, lecture: lecture,
                                  tape_color: "mint")
 
@@ -28,14 +28,14 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
     expect(card["style"]).to include("--washi-tape-color: var(--washi-tape-color-mint)")
   end
 
-  it "falls back to a seeded colour when the user has not picked one" do
+  it "falls back to a seeded color when the user has not picked one" do
     card = render_card.at_css("[data-testid='lecture-dashboard-card']")
 
     tape = Dashboard::WashiTape.for(seed: lecture.id)
     expect(card["style"]).to include("var(--washi-tape-color-#{tape.color})")
   end
 
-  it "offers the colour picker" do
+  it "offers the color picker" do
     rendered = render_card
 
     expect(rendered.at_css("[data-testid='washi-tape-strip']")).to be_present
