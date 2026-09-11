@@ -393,15 +393,19 @@ RSpec.describe(Medium, type: :model) do
                                                          transcription_attempts: 0)
       m2 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_temporarily,
                                                          transcription_attempts: 1)
+      m2.update_columns(updated_at: 15.minutes.ago) # rubocop:disable Rails/SkipsModelValidations
       m3 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :completed)
       m4 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_permanently)
       m5 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_temporarily,
                                                          transcription_attempts: 3)
+      m5.update_columns(updated_at: 15.minutes.ago) # rubocop:disable Rails/SkipsModelValidations
       m6 = FactoryBot.create(:valid_medium, video: nil, transcription_status: :not_transcribed)
+      m7 = FactoryBot.create(:valid_medium, :with_video, transcription_status: :failed_temporarily,
+                                                         transcription_attempts: 1)
 
       results = Medium.needs_transcription
       expect(results).to include(m1, m2)
-      expect(results).not_to include(m3, m4, m5, m6)
+      expect(results).not_to include(m3, m4, m5, m6, m7)
     end
 
     it "identifies stuck media in stuck_transcriptions scope" do

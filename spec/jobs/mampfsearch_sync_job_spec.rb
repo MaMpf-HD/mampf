@@ -115,5 +115,41 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
       expect { described_class.perform_now }.not_to raise_error
     end
+
+    it "caps enqueuing of missing media when in-flight jobs approach threshold" do
+      FactoryBot.create_list(:valid_medium, 12, :with_video,
+                             transcription_status: :queued,
+                             transcription_requested_at: 5.minutes.ago)
+      missing_media = FactoryBot.create_list(:valid_medium, 5, :with_video,
+                                             transcription_status: :completed)
+      allow(search_client).to receive(:list_media_rails_ids).and_return([])
+
+      RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
+      # 15 max in-flight - 12 existing queued = 3 batch size
+      expect(MampfsearchIngestJob).to receive(:perform_later).exactly(3).times
+
+      described_class.perform_now
+
+      expect(Medium.where(transcription_status: :queued).count).to eq(15)
+      expect(missing_media.count { |m| m.reload.queued? }).to eq(3)
+      expect(missing_media.count { |m| m.reload.completed? }).to eq(2)
+    end
+
+    it "does not enqueue missing media when in-flight queued jobs are at threshold" do
+      FactoryBot.create_list(:valid_medium, SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS,
+                             :with_video,
+                             transcription_status: :queued,
+                             transcription_requested_at: 5.minutes.ago)
+      missing_medium = FactoryBot.create(:valid_medium, :with_video,
+                                         transcription_status: :completed)
+      allow(search_client).to receive(:list_media_rails_ids).and_return([])
+
+      RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
+      expect(MampfsearchIngestJob).not_to receive(:perform_later)
+
+      described_class.perform_now
+
+      expect(missing_medium.reload.transcription_status).to eq("completed")
+    end
   end
 end

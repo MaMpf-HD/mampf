@@ -9,6 +9,7 @@ class SearchClient
   STUCK_TRANSCRIPTION_TIMEOUT = 2.hours
   MAX_IN_FLIGHT_TRANSCRIPTIONS = 15
   SYNC_BATCH_SIZE = 10
+  RETRY_COOLDOWN = 30.minutes
 
   class MampfSearchError < StandardError; end
 

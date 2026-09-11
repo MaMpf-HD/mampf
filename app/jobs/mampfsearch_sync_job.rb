@@ -2,16 +2,14 @@ class MampfsearchSyncJob < ApplicationJob
   queue_as :default
 
   def perform
-    recovered_ids = recover_stuck_jobs
-    feed_next_batch(exclude_ids: recovered_ids)
+    recover_stuck_jobs
+    feed_next_batch
     reconcile_search_index
   end
 
   private
 
     def recover_stuck_jobs
-      recovered_ids = []
-
       Medium.stuck_transcriptions.find_each do |medium|
         if medium.transcription_attempts >= SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
           medium.update!(
@@ -32,26 +30,12 @@ class MampfsearchSyncJob < ApplicationJob
             "Mampfsearch transcription timed out for medium #{medium.id} " \
             "(attempt #{medium.transcription_attempts}), marked failed_temporarily"
           )
-          recovered_ids << medium.id
         end
       end
-
-      recovered_ids
     end
 
-    def feed_next_batch(exclude_ids: [])
-      in_flight = Medium.where(transcription_status: :queued).count
-      return if in_flight >= SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS
-
-      batch_size = [SearchClient::SYNC_BATCH_SIZE,
-                    SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS - in_flight].min
-      candidates = Medium.needs_transcription
-                         .where.not(id: exclude_ids)
-                         .order(created_at: :desc)
-                         .limit(batch_size)
-      candidates.each do |medium|
-        claim_and_enqueue(medium)
-      end
+    def feed_next_batch
+      enqueue_batch(Medium.needs_transcription)
     end
 
     def reconcile_search_index
@@ -72,11 +56,30 @@ class MampfsearchSyncJob < ApplicationJob
                             .where(transcription_status: :completed)
                             .pluck(:id).to_set
       missing_from_search = completed_ids - indexed_ids
-      Medium.where(id: missing_from_search).find_each do |medium|
-        claim_and_enqueue(medium)
-      end
+      return if missing_from_search.empty?
+
+      enqueue_batch(Medium.where(id: missing_from_search))
     rescue SearchClient::MampfSearchError => e
       Rails.logger.warn("Search index reconciliation skipped (#{e.class}): #{e.message}")
+    end
+
+    def enqueue_batch(relation)
+      batch_size = available_batch_capacity
+      return if batch_size.zero?
+
+      relation.order(created_at: :desc)
+              .limit(batch_size)
+              .each do |medium|
+        claim_and_enqueue(medium)
+      end
+    end
+
+    def available_batch_capacity
+      in_flight = Medium.where(transcription_status: :queued).count
+      return 0 if in_flight >= SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS
+
+      [SearchClient::SYNC_BATCH_SIZE,
+       SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS - in_flight].min
     end
 
     def claim_and_enqueue(medium)

@@ -172,10 +172,14 @@ class Medium < ApplicationRecord
                     where(sort: "RandomQuiz").where(created_at: ...1.day.ago)
                   }
   scope :needs_transcription, lambda {
-                                where(transcription_status: [:not_transcribed, :failed_temporarily])
-                                  .where(transcription_attempts: ...SearchClient::MAX_TRANSCRIPTION_ATTEMPTS)
-                                  .where.not(video_data: nil)
-                              }
+    not_transcribed = where(transcription_status: :not_transcribed)
+    retryable = where(transcription_status: :failed_temporarily)
+                .where(updated_at: ...SearchClient::RETRY_COOLDOWN.ago)
+
+    not_transcribed.or(retryable)
+                   .where(transcription_attempts: ...SearchClient::MAX_TRANSCRIPTION_ATTEMPTS)
+                   .where.not(video_data: nil)
+  }
   scope :stuck_transcriptions, lambda {
                                  where(transcription_status: :queued)
                                    .where(transcription_requested_at: ...SearchClient::STUCK_TRANSCRIPTION_TIMEOUT.ago)
