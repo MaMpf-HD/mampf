@@ -119,7 +119,7 @@
       <% end %>
 
       <!-- Save and refresh -->
-      <% if can_grade? && grading_enabled? %>
+      <% if can_enter_points? && grading_enabled? %>
         <!-- Hidden form for this row to submit -->
         <%= form_with url: point_submission_tutorial_path(
           @submission, 

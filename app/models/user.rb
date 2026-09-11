@@ -824,9 +824,9 @@ class User < ApplicationRecord
     in?(something.editors_with_inheritance.to_a)
   end
 
-  def can_grade_in_scope?(something)
+  def can_enter_points_in?(something)
     unless something.is_a?(Lecture) || something.is_a?(Tutorial)
-      raise(IncompatibleTypeError, "can_grade_in_scope? was called with incompatible class")
+      raise(IncompatibleTypeError, "can_enter_points_in? was called with incompatible class")
     end
     return true if admin
 

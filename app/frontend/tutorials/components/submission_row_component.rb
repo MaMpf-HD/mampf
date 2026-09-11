@@ -140,9 +140,9 @@ class SubmissionRowComponent < ViewComponent::Base
     "#{text} (#{t("tutorial.late_submission_decision")})"
   end
 
-  def can_grade?
+  def can_enter_points?
     user = helpers.current_user
-    user.admin? || user.can_grade_in_scope?(@grading_scope)
+    user.admin? || user.can_enter_points_in?(@grading_scope)
   end
 
   def users_movement_map

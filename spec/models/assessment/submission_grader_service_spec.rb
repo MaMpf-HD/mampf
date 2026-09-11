@@ -24,7 +24,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
 
     before do
-      allow(user).to receive(:can_grade_in_scope?).and_return(true)
+      allow(user).to receive(:can_enter_points_in?).and_return(true)
       Timecop.travel(3.hours.from_now)
     end
     after { Timecop.return }
@@ -148,7 +148,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
 
     before do
-      allow(user).to receive(:can_grade_in_scope?).and_return(true)
+      allow(user).to receive(:can_enter_points_in?).and_return(true)
       Timecop.travel(3.hours.from_now)
     end
     after { Timecop.return }
@@ -528,7 +528,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       @submission.reload
       @participation.reload
       assessment.reload
-      allow(scorer).to receive(:can_grade_in_scope?).and_return(true)
+      allow(scorer).to receive(:can_enter_points_in?).and_return(true)
       Timecop.travel(3.hours.from_now)
     end
     after { Timecop.return }
@@ -561,7 +561,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       end
 
       it "raises SubmissionGraderError when the scorer cannot grade the submission's tutorial" do
-        allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
+        allow(scorer).to receive(:can_enter_points_in?).and_return(false)
 
         expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
@@ -610,7 +610,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       end
 
       it "raises SubmissionGraderError when the scorer cannot grade the participation's tutorial" do
-        allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
+        allow(scorer).to receive(:can_enter_points_in?).and_return(false)
 
         expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
@@ -644,7 +644,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         end
 
         it "does not attempt to authorize against a scope" do
-          expect(scorer).not_to receive(:can_grade_in_scope?)
+          expect(scorer).not_to receive(:can_enter_points_in?)
           begin
             subject
           rescue StandardError
@@ -696,7 +696,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
                                       assignment: assignment,
                                       tutorial: tutorial,
                                       users: [user])
-      allow(scorer).to receive(:can_grade_in_scope?).and_return(true)
+      allow(scorer).to receive(:can_enter_points_in?).and_return(true)
       Timecop.travel(2.hours.from_now)
     end
     after { Timecop.return }

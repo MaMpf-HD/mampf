@@ -25,12 +25,12 @@ module Assessment
       respond_with_flash(:alert, e.message)
     end
 
-    # Who may grade follows the record, not the page it sits on: the group
-    # the participation or hand-in belongs to, or the lecture where it has
-    # none. The bulk save names the group of its page; the service checks
+    # Who may enter points follows the record, not the page it sits on: the
+    # group the participation or hand-in belongs to, or the lecture where it
+    # has none. The bulk save names the group of its page; the service checks
     # every entry against its own.
     def authorize_assessment!
-      authorize!(:grade, @tutorial || @lecture)
+      authorize!(:enter_points, @tutorial || @lecture)
     end
 
     def update_team_multi
@@ -125,7 +125,7 @@ module Assessment
                                   t("assessment.task_points.user_not_rostered"))
       end
 
-      authorize! :grade, roster_tutorial
+      authorize! :enter_points, roster_tutorial
       @tutorial = roster_tutorial
       SubmissionGraderService.init_participation(@assessment, user, @tutorial)
       rerender_submission_table
@@ -143,8 +143,8 @@ module Assessment
     private
 
       # Which table the row goes back into - the group's or the lecture's -
-      # is the page's business and travels with the request; who may grade
-      # it is settled from the record in `authorize_assessment!`.
+      # is the page's business and travels with the request; who may enter
+      # points is settled from the record in `authorize_assessment!`.
       def table_scope
         (@tutorial if @grading_scope_type == "tutorial") || @lecture
       end

@@ -88,7 +88,7 @@ class ParticipationRowComponent < ViewComponent::Base
         action: "change->participation-row#onPointParticipationChanged input->participation-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
-      disabled: !allow_grading || !grading_enabled? || !can_grade?
+      disabled: !allow_grading || !grading_enabled? || !can_enter_points?
     )
   end
 
@@ -108,7 +108,7 @@ class ParticipationRowComponent < ViewComponent::Base
                        participation_row_target: "save",
                        action: "click->participation-row#saveRow" },
                title: helpers.t("buttons.save"),
-               disabled: !allow_grading || !grading_enabled? || !can_grade?) do
+               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
       tag.i(class: "bi bi-save")
     end
   end
@@ -121,14 +121,14 @@ class ParticipationRowComponent < ViewComponent::Base
                class: class_name,
                data: { bs_toggle: "tooltip", action: "click->participation-row#refreshRow" },
                title: helpers.t("buttons.refresh"),
-               disabled: !allow_grading || !grading_enabled? || !can_grade?) do
+               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
       tag.i(class: "bi bi-arrow-clockwise")
     end
   end
 
-  def can_grade?
+  def can_enter_points?
     user = helpers.current_user
-    user.admin? || user.can_grade_in_scope?(@grading_scope)
+    user.admin? || user.can_enter_points_in?(@grading_scope)
   rescue User::IncompatibleTypeError
     false
   end

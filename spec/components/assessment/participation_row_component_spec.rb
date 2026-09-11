@@ -278,7 +278,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  describe "#can_grade?" do
+  describe "#can_enter_points?" do
     context "when grading_scope is a Tutorial" do
       context "when current_user is an admin" do
         before do
@@ -287,7 +287,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_tutor.can_grade?).to eq(true)
+          expect(component_tutor.can_enter_points?).to eq(true)
         end
       end
 
@@ -298,7 +298,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_tutor.can_grade?).to eq(true)
+          expect(component_tutor.can_enter_points?).to eq(true)
         end
       end
 
@@ -309,7 +309,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns false" do
-          expect(component_tutor.can_grade?).to eq(false)
+          expect(component_tutor.can_enter_points?).to eq(false)
         end
       end
     end
@@ -322,7 +322,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_teacher.can_grade?).to eq(true)
+          expect(component_teacher.can_enter_points?).to eq(true)
         end
       end
 
@@ -333,7 +333,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_teacher.can_grade?).to eq(true)
+          expect(component_teacher.can_enter_points?).to eq(true)
         end
       end
 
@@ -344,7 +344,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns false" do
-          expect(component_teacher.can_grade?).to eq(false)
+          expect(component_teacher.can_enter_points?).to eq(false)
         end
       end
 
@@ -355,7 +355,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns false" do
-          expect(component_teacher.can_grade?).to eq(false)
+          expect(component_teacher.can_enter_points?).to eq(false)
         end
       end
     end
@@ -375,7 +375,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       end
 
       it "does not raise and returns false for a non-admin" do
-        expect(component_unknown.can_grade?).to eq(false)
+        expect(component_unknown.can_enter_points?).to eq(false)
       end
     end
   end

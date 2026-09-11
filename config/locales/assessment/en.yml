@@ -258,7 +258,7 @@ en:
       no_tutorial: 'Tutorial not found.'
       user_not_found: 'User not found.'
       no_participation: 'Participation not found.'
-      user_cannot_grade: 'The user is not authorized to grade in this scope.'
+      user_cannot_enter_points: 'You may not enter points here.'
       invalid_request_params: 'Invalid request parameters.'
       invalid_assessable_type: 'Invalid assessable type.'
     info:

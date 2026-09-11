@@ -74,7 +74,7 @@
   <td class="text-end sticky-col action-col" data-mode="<%= @mode %>">
     <div class="d-inline-flex align-items-center flex-wrap justify-content-end gap-1">
       <!-- Save and refresh -->
-      <% if can_grade? && grading_enabled? && @participation %>
+      <% if can_enter_points? && grading_enabled? && @participation %>
         <!-- Hidden form for this row to submit -->
         <%= form_with url: @save_url,
                     method: :patch,

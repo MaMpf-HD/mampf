@@ -124,7 +124,7 @@ module Assessment
           return if tutorial_id.blank? || validated_tutorial_ids.include?(tutorial_id)
 
           tutorial = Tutorial.find(tutorial_id)
-          raise_if_errors!(validate_current_user_can_grade(tutorial, scorer))
+          raise_if_errors!(validate_scorer_may_enter_points(tutorial, scorer))
           validated_tutorial_ids << tutorial_id
         end
 
@@ -182,10 +182,10 @@ module Assessment
           I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
         end
 
-        def validate_current_user_can_grade(scope, user)
-          return if scope.nil? || user.can_grade_in_scope?(scope)
+        def validate_scorer_may_enter_points(scope, user)
+          return if scope.nil? || user.can_enter_points_in?(scope)
 
-          I18n.t("assessment.errors.user_cannot_grade")
+          I18n.t("assessment.errors.user_cannot_enter_points")
         end
 
         # ── error raising ───────────────────────────────────────────────────
