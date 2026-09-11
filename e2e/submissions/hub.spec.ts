@@ -36,6 +36,43 @@ test.describe("the student's sheet list", () => {
     return lecture;
   }
 
+  // At the start of a term nobody has a seat yet. The page used to send them to
+  // the start page, which took the archive with it; now it opens and says which
+  // of the two is missing.
+  test("opens for somebody who sits in no group, and says why", async ({
+    factory,
+    teacher,
+    student,
+  }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      teacher_id: teacher.user.id, locale: "en",
+    });
+    await factory.create("lecture_user_join", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("assignment", [], {
+      lecture_id: lecture.id, title: "Problem Set 1",
+    });
+
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+
+    await expect(student.page.getByRole("heading", { name: "Problem Set 1" }))
+      .toBeVisible();
+    await expect(student.page.getByRole("link", { name: "Hand in" }))
+      .toHaveCount(0);
+    await expect(student.page.getByText("has no tutorial groups yet"))
+      .toBeVisible();
+
+    // and once there is a group but no seat in it, it says that instead
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Monday group",
+    });
+    await student.page.reload();
+
+    await expect(student.page.getByText("not in a tutorial group"))
+      .toBeVisible();
+  });
+
   /** A sheet whose deadline has passed, so the gradebook has the last word. */
   async function closedSheet(
     factory: FactoryBot,

@@ -51,11 +51,11 @@ RSpec.describe(SubmissionsHelper, type: :helper) do
       expect(helper.rostered_tutorial_for(other_lecture)).to eq(other_tutorial)
     end
 
-    it "returns nil without querying rostered_tutorial_in when lecture is not roster-eligible" do
-      not_eligible_lecture = create(:lecture)
-      expect(user).not_to receive(:rostered_tutorial_in)
-
-      expect(helper.rostered_tutorial_for(not_eligible_lecture)).to be_nil
+    # The question is the seat, not what kind of lecture it is: a hand-in goes
+    # to the group the reader sits in, and somebody who sits in none has no
+    # group here either.
+    it "returns nil for a lecture the reader sits in no group of" do
+      expect(helper.rostered_tutorial_for(create(:lecture))).to be_nil
     end
   end
 

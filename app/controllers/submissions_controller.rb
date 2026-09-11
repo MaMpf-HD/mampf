@@ -12,7 +12,6 @@ class SubmissionsController < ApplicationController
                                          :cancel_edit, :join]
   before_action :set_lecture, only: :index
   before_action :prevent_caching, only: :show_manuscript
-  before_action :check_if_tutorials, only: :index
   before_action :check_student_status, only: :index
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
@@ -84,9 +83,9 @@ class SubmissionsController < ApplicationController
     render_card_and_standing
   end
 
+  # Nothing about the group: the work stays with the tutor it was handed in to,
+  # whatever became of the reader's seat since. Only the file moves here.
   def update
-    update_params = submission_update_params
-
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
@@ -100,7 +99,6 @@ class SubmissionsController < ApplicationController
       @errors = @submission.errors
       return render_form(status: :unprocessable_content) unless @submission.valid?
     end
-    @submission.update(update_params)
     if @submission.valid?
       @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == "true"
@@ -328,11 +326,11 @@ class SubmissionsController < ApplicationController
     # The form back in the frame with its messages beside the fields, rather
     # than an alert box next to a card that still shows the old state.
     def render_form(status: :ok)
-      # In roster mode the form names the group instead of offering a choice,
-      # and there is no name to print for somebody who has not been placed in
-      # one. The refusal the save would give, before the page is built rather
-      # than halfway through it.
-      rostered_tutorial!(@assignment.lecture) if @assignment.lecture.roster_managed?
+      # The form names the group rather than offering a choice, and there is no
+      # name to print for somebody who has not been placed in one. The refusal
+      # the save would give, before the page is built rather than halfway
+      # through it.
+      rostered_tutorial!(@assignment.lecture)
       @partners = hub.possible_partners
       render :form, status: status
     end
@@ -355,23 +353,21 @@ class SubmissionsController < ApplicationController
       render :gone, status: :gone
     end
 
+    # The group is the one the reader sits in, never one they picked: the form
+    # has no field for it any more, and a hand-in that is not in a group reaches
+    # no tutor and no gradebook.
     def submission_create_params
-      permitted = params.expect(submission: [:tutorial_id, :assignment_id])
+      permitted = params.expect(submission: [:assignment_id])
       lecture = Assignment.find_by(id: permitted[:assignment_id])&.lecture
-      return permitted unless lecture&.roster_managed?
 
       permitted.merge(tutorial_id: rostered_tutorial!(lecture).id)
     end
 
-    # disallow modification of assignment
-    def submission_update_params
-      lecture = @submission.assignment.lecture
-      # The form has no tutorial field in roster mode, so there is nothing to expect.
-      return { tutorial_id: rostered_tutorial!(lecture).id } if lecture&.roster_managed?
-
-      params.expect(submission: [:tutorial_id])
-    end
-
+    # The gate every way in goes through: a hand-in belongs to the group the
+    # reader sits in - that is who marks it and how it reaches the gradebook -
+    # and there is nothing to file one under without a seat. Raising here
+    # rather than refusing in the ability is what gets the reader the sentence
+    # that names what is missing.
     def rostered_tutorial!(lecture)
       current_user.rostered_tutorial_in(lecture) || raise(TutorialNotRosteredError)
     end
@@ -544,9 +540,10 @@ class SubmissionsController < ApplicationController
       check_code_validity
       return if @error
 
-      # Joining by code (which is also how an invitation is accepted) would place
-      # the submission in a tutorial the user is not a member of.
-      rostered_tutorial!(@assignment.lecture) if @assignment.lecture.roster_managed?
+      # Joining by code (which is also how an invitation is accepted) is a
+      # hand-in like any other: without a group of one's own there is nothing to
+      # join from.
+      rostered_tutorial!(@assignment.lecture)
 
       @join = UserSubmissionJoin.new(user: current_user,
                                      submission: @submission)
@@ -591,12 +588,6 @@ class SubmissionsController < ApplicationController
 
       redirect_to :root,
                   alert: I18n.t("controllers.no_student_status_in_lecture")
-    end
-
-    def check_if_tutorials
-      return if @lecture.tutorials.any?
-
-      redirect_to :root, alert: I18n.t("controllers.no_tutorials_in_lecture")
     end
 
     def clear_submitted_at(users)

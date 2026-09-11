@@ -2150,6 +2150,7 @@ en:
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'
+    create_tutorials: Create tutorial groups
     no_tutorials_yet: >
       For this event series, no tutorials have been created yet.
     tutorials: >
@@ -2859,6 +2860,13 @@ en:
         recorded_as_failed: "%{names} was recorded as not passed."
         ask_your_tutor: Your tutor can tell you what is still possible.
       card:
+        no_tutorials_yet: >-
+          This event series has no tutorial groups yet. Once there are some and
+          you are in one, you can hand in here.
+        no_seat_yet: >-
+          You are not in a tutorial group for this event series, so you cannot
+          hand anything in.
+        where_to_enrol: To the event page
         team_label: Team
         invited_label: Invited
         due: "Due %{time}"

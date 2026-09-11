@@ -7,6 +7,9 @@ class SubmissionAbility
     can [:index, :new, :join, :cancel_edit, :cancel_new, :redeem_code,
          :enter_code], Submission
 
+    # Enrolment is what this asks; the group is asked for by
+    # `SubmissionsController#rostered_tutorial!`, which every way in goes
+    # through and which says what is missing rather than "not authorized".
     can :create, Submission do |submission|
       lecture = submission.assignment&.lecture
       lecture.present? && user.proper_student_in?(lecture)

@@ -92,8 +92,6 @@ class Assignment < ApplicationRecord
     deadline + lecture.submission_grace_period.minutes
   end
 
-  # `#previous` stays: `Submission#preceding_tutorial` reads it to pre-select the
-  # group somebody handed in with last time.
   def previous
     siblings = lecture.assignments_by_deadline
     position = siblings.map(&:first).find_index(deadline)

@@ -89,22 +89,25 @@
 
   <%# Tutorials %>
   <% if lecture %>
+    <%#
+      Never greyed out for want of groups. Both pages behind this entry say
+      what there is to say when there are none - the overview offers to create
+      the first, the hub says whether one is missing or only a seat in one -
+      and greying it out hid exactly the page somebody was looking for.
+    %>
     <% if current_user.in?(lecture.tutors)
         link_text, path = [t('categories.tutorials'), lecture_tutorials_path(lecture)]
-        exists = true
       elsif current_user.editor_or_teacher_in?(lecture)
         link_text, path = [t('categories.tutorials'), lecture_tutorial_overview_path(lecture)]
-        exists = lecture.tutorials.any?
       else
         link_text, path = [t('categories.submissions'), lecture_submissions_path(lecture)]
-        exists = lecture.tutorials.any?
       end %>
     <% active_class = get_class_for_any_path(
         [lecture_tutorials_path(lecture),
         lecture_tutorial_overview_path(lecture),
         lecture_submissions_path(lecture)]) %>
     <li class="sidebar-item nav-link <%= active_class %>
-        <%= !content_accessible || !exists ? "disabled" : ""%>">
+        <%= content_accessible ? "" : "disabled" %>">
       <%= link_to url_for(path),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
         <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>

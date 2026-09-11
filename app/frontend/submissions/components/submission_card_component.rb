@@ -83,9 +83,21 @@ class SubmissionCardComponent < ViewComponent::Base
   end
 
   # Without a group there is nobody to hand in to, so the card says that instead
-  # of offering buttons that would fail.
+  # of offering buttons that would fail. At the start of a term this is the
+  # ordinary state rather than the exception, which is why it says which of the
+  # two it is.
   def may_start?
-    !roster_eligible? || helpers.rostered_tutorial_for(assignment.lecture).present?
+    helpers.rostered_tutorial_for(assignment.lecture).present?
+  end
+
+  def no_seat_reason
+    return t("submission.hub.card.no_tutorials_yet") if lecture_tutorials.empty?
+
+    t("submission.hub.card.no_seat_yet")
+  end
+
+  def lecture_home_path
+    helpers.lecture_path(assignment.lecture)
   end
 
   def editable?
@@ -137,8 +149,8 @@ class SubmissionCardComponent < ViewComponent::Base
 
   private
 
-    def roster_eligible?
-      helpers.enabled_roster_for_lecture?(assignment.lecture)
+    def lecture_tutorials
+      @lecture_tutorials ||= assignment.lecture.tutorials
     end
 
     # Only while the deadline is ahead: `distance_of_time_in_words` has no sign,

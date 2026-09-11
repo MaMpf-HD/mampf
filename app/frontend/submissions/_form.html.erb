@@ -4,7 +4,6 @@
   Turbo into the card's frame.
 %>
 <% messages = errors ? errors.to_hash : {} %>
-<% roster_eligible = enabled_roster_for_lecture?(lecture) %>
 <% enrolled_tutorial = rostered_tutorial_for(lecture) %>
 
 <%= form_with model: submission,
@@ -30,24 +29,10 @@
     <div class="col-12">
       <%= f.label :tutorial_id, t('basics.tutorial') %>
 
-      <% if roster_eligible %>
-        <p><%= enrolled_tutorial.title_with_tutors %></p>
-      <% else %>
-        <%= f.select :tutorial_id,
-                     options_for_select(tutorials_selection(lecture),
-                                        submission.tutorial&.id ||
-                                          submission.preceding_tutorial(current_user)&.id),
-                     {},
-                     { class: class_names("form-select", "selectize",
-                                          "is-invalid" => messages[:tutorial].present?) } %>
-      <% end %>
-
-      <div
-        class="invalid-feedback d-block"
-        id="submission-tutorial-error-<%= assignment.id %>"
-      >
-        <%= messages[:tutorial]&.to_sentence %>
-      </div>
+      <%#
+        Named, not chosen: the hand-in goes to the group the reader sits in.
+      %>
+      <p><%= enrolled_tutorial.title_with_tutors %></p>
 
       <%= f.hidden_field :assignment_id, value: assignment.id %>
     </div>

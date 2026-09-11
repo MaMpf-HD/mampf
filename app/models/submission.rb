@@ -69,10 +69,6 @@ class Submission < ApplicationRecord
     correction.metadata["size"]
   end
 
-  def preceding_tutorial(user)
-    assignment.previous&.filter_map { |a| a.tutorial(user) }&.first
-  end
-
   def invited_users
     User.where(id: invited_user_ids)
   end

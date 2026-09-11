@@ -104,12 +104,40 @@ RSpec.describe("Submissions", type: :request) do
     # answer thrown away - so the response is the part worth checking.
     it "lets a student enrolled in the lecture create a submission" do
       user.lectures << lecture
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+
       expect { post(submissions_path, params: create_params) }
         .to change(Submission, :count).by(1)
 
       expect(response).to have_http_status(:success)
       expect(response.body)
         .to include(SubmissionCardComponent.frame_id(assignment))
+    end
+
+    # The hand-in goes to the group the reader sits in - that is who marks it
+    # and how it reaches the gradebook - so being enrolled is not enough.
+    it "refuses somebody who sits in no group" do
+      user.lectures << lecture
+
+      expect { post(submissions_path, params: create_params) }
+        .not_to change(Submission, :count)
+
+      expect(response).to redirect_to(start_path)
+      follow_redirect!
+      expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
+    end
+
+    it "files it under the group the reader sits in, not one they name" do
+      user.lectures << lecture
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+      elsewhere = create(:tutorial, lecture: lecture)
+
+      post(submissions_path,
+           params: { submission: { assignment_id: assignment.id,
+                                   tutorial_id: elsewhere.id,
+                                   manuscript: "" } })
+
+      expect(Submission.last.tutorial).to eq(tutorial)
     end
 
     it "does not let a user not enrolled in the lecture create a submission" do
@@ -252,7 +280,8 @@ RSpec.describe("Submissions", type: :request) do
 
       expect(response.body).not_to include("create-submission")
       expect(response.body).not_to include("submission-join")
-      expect(response.body).to include(I18n.t("submission.tutorial_needed"))
+      expect(response.body)
+        .to include(I18n.t("submission.hub.card.no_seat_yet"))
     end
 
     # The form names the group instead of offering a choice, and there is none
@@ -295,16 +324,13 @@ RSpec.describe("Submissions", type: :request) do
         create(:tutorial_membership, tutorial: other_tutorial, user: other_user)
       end
 
-      it "does not update the submission and redirects to lecture submissions with an alert" do
-        # The form sends no tutorial_id in roster mode.
+      # The work stays where it was handed in, whatever became of the reader's
+      # seat since: it is the tutor who has it who marks it.
+      it "leaves the submission with the group it was handed in to" do
         patch submission_path(submission, format: :js),
               params: { submission: { manuscript: "" } }
 
-        expect(response).to redirect_to(start_path)
-        follow_redirect!
-        expect(flash[:alert]).to eq(
-          I18n.t("submission.tutorial_not_assigned")
-        )
+        expect(submission.reload.tutorial).to eq(tutorial)
       end
     end
 
@@ -314,7 +340,7 @@ RSpec.describe("Submissions", type: :request) do
         create(:tutorial_membership, tutorial: tutorial, user: user)
       end
 
-      it "updates the submission, keeping it on the student's rostered tutorial" do
+      it "updates the submission, keeping the group it was handed in to" do
         patch submission_path(submission, format: :js),
               params: update_params(tutorial_id: other_tutorial.id)
 
@@ -392,13 +418,6 @@ RSpec.describe("Submissions", type: :request) do
     before do
       create(:tutorial_membership, tutorial: tutorial, user: user)
       user.lectures << lecture
-    end
-
-    it "queries roster_managed? once per lecture across all assignment rows" do
-      expect_any_instance_of(Lecture).to receive(:roster_managed?)
-        .once.and_call_original
-
-      get lecture_submissions_path(lecture)
     end
 
     it "queries rostered_tutorial_in once per lecture across all assignment rows" do
@@ -493,13 +512,19 @@ RSpec.describe("Submissions", type: :request) do
         expect(response).to redirect_to(:root)
       end
 
-      it "turns everybody away from a lecture without tutorials" do
+      # A lecture without groups used to send everybody back to the start page,
+      # which took the archive with it - last term's hand-ins and corrections
+      # are read here too. The page opens and says what is missing instead.
+      it "opens a lecture without tutorials and says so" do
         without_tutorials = create(:lecture, :released_for_all)
+        create(:assignment, lecture: without_tutorials, title: "Sheet 1")
         user.lectures << without_tutorials
 
         get lecture_submissions_path(without_tutorials)
 
-        expect(response).to redirect_to(:root)
+        expect(response).to have_http_status(:success)
+        expect(response.body)
+          .to include(I18n.t("submission.hub.card.no_tutorials_yet"))
       end
 
       # The page draws the first week of a term and a lecture whose sheets are
@@ -868,30 +893,6 @@ RSpec.describe("Submissions", type: :request) do
         expect(response).to have_http_status(:success)
         expect(response.body).to include(frame_id)
         expect(response.body).to include(I18n.t("submission.hub.card.code"))
-      end
-
-      # The message belongs beside the field, not in an alert next to a card
-      # that still shows the old state. A group of another lecture only reaches
-      # the model where the lecture does not assign groups itself - where it
-      # does, the controller picks the group and the field is not even shown.
-      it "answers a refused group with the form and the reason" do
-        free = create(:lecture, :released_for_all)
-        create(:tutorial, lecture: free)
-        user.lectures << free
-        free_assignment = create(:assignment, lecture: free, title: "Sheet")
-        elsewhere = create(:tutorial, lecture: create(:lecture))
-
-        post submissions_path, params: {
-          submission: { assignment_id: free_assignment.id, invitee_ids: [""],
-                        tutorial_id: elsewhere.id, manuscript: "" }
-        }
-
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(response.body)
-          .to include(SubmissionCardComponent.frame_id(free_assignment))
-        expect(response.body).to include("submission-tutorial-error")
-        expect(response.body)
-          .not_to include(I18n.t("submission.hub.card.replace"))
       end
     end
 

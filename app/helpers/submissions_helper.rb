@@ -17,6 +17,8 @@ module SubmissionsHelper
       (submission.users + submission.invited_users).map(&:id)
   end
 
+  # Only the tutor's "move" button still asks: it belongs to the world in which
+  # a reader picked their own group, and it shows itself only there.
   def enabled_roster_for_lecture?(lecture)
     roster_cache[:enabled].fetch(lecture.id) do
       roster_cache[:enabled][lecture.id] = lecture.roster_managed?
@@ -25,8 +27,7 @@ module SubmissionsHelper
 
   def rostered_tutorial_for(lecture)
     roster_cache[:tutorial].fetch(lecture.id) do
-      roster_cache[:tutorial][lecture.id] =
-        enabled_roster_for_lecture?(lecture) ? current_user.rostered_tutorial_in(lecture) : nil
+      roster_cache[:tutorial][lecture.id] = current_user.rostered_tutorial_in(lecture)
     end
   end
 

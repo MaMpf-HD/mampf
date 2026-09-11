@@ -18,6 +18,9 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
   # session to answer from.
   before do
     user.lectures << lecture
+    # Handing in goes to the group the reader sits in, so the card only offers
+    # it to somebody who has a seat.
+    create(:tutorial_membership, tutorial: tutorial, user: user)
     allow(vc_test_controller).to receive(:current_user).and_return(user)
   end
 
@@ -36,6 +39,29 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
   def render_card(**)
     render_inline(described_class.new(sheet: sheet_for, **))
     rendered_content
+  end
+
+  # At the start of a term this is the ordinary state, not the exception: the
+  # groups are not there yet, or the reader has not been placed in one. The card
+  # says which of the two it is instead of offering buttons that would fail.
+  describe "a reader who sits in no group" do
+    before { TutorialMembership.where(user: user).destroy_all }
+
+    it "offers no way to hand in, and says a seat is missing" do
+      content = render_card
+
+      expect(content).not_to include(I18n.t("submission.hub.card.hand_in"))
+      expect(content).to include(I18n.t("submission.hub.card.no_seat_yet"))
+    end
+
+    it "says instead that there are no groups at all, where there are none" do
+      tutorial.destroy
+
+      content = render_card
+
+      expect(content).to include(I18n.t("submission.hub.card.no_tutorials_yet"))
+      expect(content).not_to include(I18n.t("submission.hub.card.no_seat_yet"))
+    end
   end
 
   describe "a sheet nothing has been handed in for" do
