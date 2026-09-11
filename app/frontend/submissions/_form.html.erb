@@ -4,7 +4,14 @@
   Turbo into the card's frame.
 %>
 <% messages = errors ? errors.to_hash : {} %>
-<% enrolled_tutorial = rostered_tutorial_for(lecture) %>
+
+<%#
+  The group is named, not chosen: a new hand-in goes to the one the reader
+  sits in, an existing one stays where it was filed - which is not the same
+  group once the reader has moved, and it is the tutor who has the work who
+  matters here.
+%>
+<% named_tutorial = submission.persisted? ? submission.tutorial : rostered_tutorial_for(lecture) %>
 
 <%= form_with model: submission,
               local: true,
@@ -29,8 +36,7 @@
     <div class="col-12">
       <%= f.label :tutorial_id, t('basics.tutorial') %>
 
-      <%# Named, not chosen: the hand-in goes to the group the reader sits in. %>
-      <p><%= enrolled_tutorial.title_with_tutors %></p>
+      <p><%= named_tutorial.title_with_tutors %></p>
 
       <%= f.hidden_field :assignment_id, value: assignment.id %>
     </div>

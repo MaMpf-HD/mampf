@@ -64,14 +64,22 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
       expect(content).not_to include(I18n.t("submission.hub.card.no_seat_yet"))
     end
 
-    # A reader who has handed in here while the lecture never kept anybody in
-    # a group was in one - nobody wrote it down - so "you are in no group"
-    # would be wrong, and there is nothing left to enrol in. Read off the
-    # data: it ends by itself once the old hand-ins are deleted.
-    it "tells a reader of a lecture from before the groups what is left to do" do
-      earlier = create(:assignment, :expired, lecture: lecture, title: "Sheet 0")
-      create(:submission, :with_manuscript, assignment: earlier, tutorial: tutorial)
-        .users << user
+    # The roster can be emptied again. A lecture of the new world whose last
+    # seat was cleared is not from before anything - its sheet has a pointbook.
+    it "does not mistake a lecture that lost its last seat for one from before" do
+      tutorial.tutorial_memberships.destroy_all
+
+      content = render_card
+
+      expect(content).to include(I18n.t("submission.hub.card.no_seat_yet"))
+      expect(content).not_to include(I18n.t("submission.hub.card.before_groups"))
+    end
+
+    # A sheet without a pointbook is from before Müsli. Its reader was in a
+    # group - nobody wrote it down - so "you are in no group" would be wrong,
+    # and there is nothing left to enrol in.
+    it "tells a reader of a sheet from before the groups what is left to do" do
+      assignment.assessment.destroy
 
       content = render_card
 

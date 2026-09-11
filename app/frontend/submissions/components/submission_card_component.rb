@@ -99,14 +99,13 @@ class SubmissionCardComponent < ViewComponent::Base
     t("submission.hub.card.no_seat_yet")
   end
 
-  # The reader has handed in here, and the lecture has never kept anybody in a
-  # group: that is the old world, read off the data rather than off a date or
-  # a switch. It ends by itself - when the old hand-ins are deleted at the end
-  # of term there is nothing left that says "before", and the moment the
-  # lecture seats anybody the reader is simply somebody without a seat.
+  # A sheet without a pointbook is from before Müsli: every sheet made since
+  # gets one the moment it is created, and nothing takes it away. That is the
+  # old world, read off the sheet itself rather than off a date, a switch or
+  # the roster - the roster can be emptied again, and a lecture of the new
+  # world whose last seat was cleared is not from before anything.
   def before_groups?
-    helpers.handed_in_before?(assignment.lecture) &&
-      !assignment.lecture.roster_managed?
+    sheet.assessment.nil?
   end
 
   def lecture_home_path

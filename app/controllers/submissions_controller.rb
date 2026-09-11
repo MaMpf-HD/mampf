@@ -53,11 +53,15 @@ class SubmissionsController < ApplicationController
 
   def create
     @submission = Submission.new(submission_create_params)
+    # Deleted between the form and the save: the same answer as any other sheet
+    # that is gone, before anything asks it for a lecture or a seat.
+    return render_sheet_gone unless @submission.assignment
+
     # authorize_resource only sees the Submission class here (no @submission is
     # preloaded for :create), so re-authorize the built instance to run the
     # enrollment check in SubmissionAbility.
     authorize! :create, @submission
-    @lecture = @submission&.assignment&.lecture
+    @lecture = @submission.assignment.lecture
     set_submission_locale
     @assignment = @submission.assignment
     return render_card(status: :unprocessable_content) if @submission.not_updatable?
@@ -312,11 +316,12 @@ class SubmissionsController < ApplicationController
     # The form back in the frame with its messages beside the fields, rather
     # than an alert box next to a card that still shows the old state.
     def render_form(status: :ok)
-      # The form names the group rather than offering a choice, and there is no
-      # name to print for somebody who has not been placed in one. The refusal
-      # the save would give, before the page is built rather than halfway
-      # through it.
-      rostered_tutorial!(@assignment.lecture)
+      # A new hand-in is filed under the group the reader sits in, and there is
+      # no name to print for somebody who has not been placed in one - the
+      # refusal the save would give, before the page is built rather than
+      # halfway through it. A hand-in that exists stays where it was filed,
+      # seat or no seat, so replacing its file asks for none.
+      rostered_tutorial!(@assignment.lecture) unless @submission&.persisted?
       @partners = hub.possible_partners
       render :form, status: status
     end
@@ -344,9 +349,11 @@ class SubmissionsController < ApplicationController
     # no tutor and no gradebook.
     def submission_create_params
       permitted = params.expect(submission: [:assignment_id])
-      lecture = Assignment.find_by(id: permitted[:assignment_id])&.lecture
+      assignment = Assignment.find_by(id: permitted[:assignment_id])
+      # nothing to file it under, and no seat to ask for - `create` answers
+      return permitted unless assignment
 
-      permitted.merge(tutorial_id: rostered_tutorial!(lecture).id)
+      permitted.merge(tutorial_id: rostered_tutorial!(assignment.lecture).id)
     end
 
     # The gate every way in goes through: a hand-in belongs to the group the
@@ -376,8 +383,12 @@ class SubmissionsController < ApplicationController
       set_submission_locale
       return if @assignment
 
-      # Same answer as a submission that is gone, for the same reason: the frame
-      # says what happened instead of steering the whole page elsewhere.
+      render_sheet_gone
+    end
+
+    # Same answer as a submission that is gone, for the same reason: the frame
+    # says what happened instead of steering the whole page elsewhere.
+    def render_sheet_gone
       @gone_message = I18n.t("controllers.no_assignment")
       render :gone, status: :gone
     end

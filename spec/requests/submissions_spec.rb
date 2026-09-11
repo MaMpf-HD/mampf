@@ -127,6 +127,21 @@ RSpec.describe("Submissions", type: :request) do
       expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
     end
 
+    # Deleted between the form and the save. It used to fall over asking a
+    # lecture that was not there for a seat; the frame says what happened.
+    it "answers a sheet deleted in the meantime with the frame that says so" do
+      user.lectures << lecture
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+      gone = create(:assignment, lecture: lecture, accepted_file_type: ".pdf")
+      gone.destroy!
+
+      post(submissions_path, params: { submission: { assignment_id: gone.id,
+                                                     manuscript: "" } })
+
+      expect(response).to have_http_status(:gone)
+      expect(response.body).to include(I18n.t("controllers.no_assignment"))
+    end
+
     it "files it under the group the reader sits in, not one they name" do
       user.lectures << lecture
       create(:tutorial_membership, tutorial: tutorial, user: user)
@@ -284,14 +299,10 @@ RSpec.describe("Submissions", type: :request) do
         .to include(I18n.t("submission.hub.card.no_seat_yet"))
     end
 
-    # A lecture from before the groups were kept here - nobody seated, and the
-    # reader has handed in all the same - refuses just the same; only the
-    # sentence differs.
-    it "is refused the same way in a lecture from before the groups" do
-      TutorialMembership.where(tutorial: tutorial).destroy_all
-      earlier = create(:assignment, :expired, lecture: lecture, title: "Sheet 0")
-      create(:submission, :with_manuscript, assignment: earlier, tutorial: tutorial)
-        .users << user
+    # A sheet from before the groups were kept here - one without a pointbook -
+    # refuses just the same; only the sentence differs.
+    it "is refused the same way on a sheet from before the groups" do
+      assignment.assessment.destroy
 
       get lecture_submissions_path(lecture)
 
@@ -347,6 +358,27 @@ RSpec.describe("Submissions", type: :request) do
               params: { submission: { manuscript: "" } }
 
         expect(submission.reload.tutorial).to eq(tutorial)
+      end
+
+      # The card offers to replace the file; the form behind that offer must
+      # open. A seat is what a new hand-in needs, not what replacing a file on
+      # one that exists needs.
+      it "still opens the form to replace the file without a seat" do
+        get edit_submission_path(submission)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(SubmissionCardComponent.frame_id(assignment))
+      end
+
+      # The group named on the form is the one the work is filed under - the
+      # tutor who has it - not the seat the reader happens to have now.
+      it "names the group the work is filed under, not the reader's seat" do
+        create(:tutorial_membership, tutorial: other_tutorial, user: user)
+
+        get edit_submission_path(submission)
+
+        expect(response.body).to include(CGI.escapeHTML(tutorial.title))
+        expect(response.body).not_to include(CGI.escapeHTML(other_tutorial.title))
       end
     end
 
