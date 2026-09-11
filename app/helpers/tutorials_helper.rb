@@ -11,8 +11,4 @@ module TutorialsHelper
                          [t.tutorial_info, t.id]
                        end, tutorial.tutor_ids)
   end
-
-  def tutorials_selection(lecture)
-    lecture.tutorials.map { |t| [t.title_with_tutors, t.id] }
-  end
 end

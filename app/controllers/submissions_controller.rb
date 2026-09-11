@@ -246,20 +246,6 @@ class SubmissionsController < ApplicationController
     render :add_correction
   end
 
-  def select_tutorial
-    @tutorial = @submission.tutorial
-    @lecture = @submission.assignment.lecture
-  end
-
-  def cancel_action
-  end
-
-  def move
-    @old_tutorial = @submission.tutorial
-    @submission.update(move_params)
-    @tutorial = @submission.tutorial
-  end
-
   def accept
     @submission.update(accepted: true)
     restore_submitted_at(@submission.users)
@@ -440,10 +426,6 @@ class SubmissionsController < ApplicationController
 
     def correction_params
       params.expect(submission: [:correction])
-    end
-
-    def move_params
-      params.expect(submission: [:tutorial_id])
     end
 
     def send_invitation_emails

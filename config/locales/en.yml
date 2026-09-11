@@ -3061,7 +3061,6 @@ en:
     merge: Merge
     merging_failed: Merging failed
     no_correction_yet: Currently, no file is stored.
-    move_to_tutorial: move to tutorial
     manuscript_no_pdf: The uploaded file is not a valid pdf file.
     manuscript_size_too_big: >
       The uploaded file is too big (maximum allowed size is %{max_size}).
@@ -3770,7 +3769,6 @@ en:
     send: 'Send'
     send_variant: 'Send'
     download: 'Download'
-    move: 'Move'
     accept: 'Accept'
     reject: 'Reject'
     dismiss: 'Dismiss'

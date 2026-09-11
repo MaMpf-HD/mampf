@@ -3282,7 +3282,6 @@ de:
     merge: Zusammenführen
     merging_failed: Zusammenführen fehlgeschlagen.
     no_correction_yet: Es ist keine Datei hinterlegt.
-    move_to_tutorial: verschieben in Tutorium
     manuscript_no_pdf: Die hochgeladene Datei ist keine gültige pdf-Datei.
     manuscript_size_too_big: >
       Die hochgeladene Datei ist zu groß (sie darf höchstens %{max_size} groß
@@ -4002,7 +4001,6 @@ de:
     send: 'Versenden'
     send_variant: 'Absenden'
     download: 'Herunterladen'
-    move: 'Verschieben'
     accept: 'Akzeptieren'
     reject: 'Ablehnen'
     dismiss: 'Ausblenden'

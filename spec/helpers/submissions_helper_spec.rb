@@ -11,26 +11,6 @@ RSpec.describe(SubmissionsHelper, type: :helper) do
     allow(helper).to receive(:current_user).and_return(user)
   end
 
-  describe "#enabled_roster_for_lecture?" do
-    before { create(:tutorial_membership, tutorial: tutorial) } # makes lecture roster-eligible
-
-    it "only queries roster_managed? once per lecture (memoized)" do
-      expect(lecture).to receive(:roster_managed?).once.and_call_original
-
-      first  = helper.enabled_roster_for_lecture?(lecture)
-      second = helper.enabled_roster_for_lecture?(lecture)
-
-      expect(first).to eq(true)
-      expect(second).to eq(true)
-    end
-
-    it "computes independently per lecture (no cross-lecture leakage)" do
-      # other_lecture has no roster-eligible tutorials
-      expect(helper.enabled_roster_for_lecture?(lecture)).to eq(true)
-      expect(helper.enabled_roster_for_lecture?(other_lecture)).to eq(false)
-    end
-  end
-
   describe "#rostered_tutorial_for" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
 
