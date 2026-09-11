@@ -43,7 +43,7 @@ module Assessment
         end
 
         participation.recompute_points_total!
-        participation.update_status_if_all_scored!
+        participation.update_status_if_all_scored!(grader: grader)
       end
 
       participation

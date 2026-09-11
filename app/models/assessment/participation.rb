@@ -56,9 +56,10 @@ module Assessment
     end
 
     # absent and exempt -> no change
-    # pending -> reviewed if all tasks scored, otherwise remains pending
-    # reviewed -> pending if any task points are changed to nil, otherwise remains reviewed
-    def update_status_if_all_scored!
+    # every task scored -> reviewed, stamped with when and by whom, on every
+    #   save: the student's page tells a fresh mark from an old one by the stamp
+    # a task unscored again -> pending, stamp cleared
+    def update_status_if_all_scored!(grader: nil)
       return if absent? || exempt?
 
       task_ids = assessment.tasks.pluck(:id)
@@ -67,14 +68,13 @@ module Assessment
       points_by_task_id = task_points.pluck(:task_id, :points).to_h
       missing_scored_tasks = task_ids.any? { |task_id| points_by_task_id[task_id].nil? }
 
-      if pending? && !missing_scored_tasks
-        update!(status: :reviewed)
+      if missing_scored_tasks
+        update!(status: :pending, graded_at: nil, grader: nil) if reviewed?
         return
       end
 
-      return unless reviewed? && missing_scored_tasks
-
-      update!(status: :pending)
+      update!(status: :reviewed, graded_at: Time.current,
+              grader: grader || self.grader)
     end
 
     def graded_tasks_points
