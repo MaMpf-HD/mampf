@@ -92,14 +92,6 @@ class Assignment < ApplicationRecord
     deadline + lecture.submission_grace_period.minutes
   end
 
-  def current?
-    in?(lecture.current_assignments)
-  end
-
-  def previous?
-    in?(lecture.previous_assignments)
-  end
-
   def previous
     siblings = lecture.assignments_by_deadline
     position = siblings.map(&:first).find_index(deadline)

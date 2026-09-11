@@ -94,16 +94,23 @@ test.describe("uploading through Uppy", () => {
     async ({ factory, student: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
       await factory.create("assignment", [], { lecture_id: lecture.id });
-      await factory.create("tutorial", [], { lecture_id: lecture.id, title: "Mo 10" });
+      const tutorial = await factory.create("tutorial", [],
+        { lecture_id: lecture.id, title: "Mo 10" });
       await factory.create("lecture_user_join", [], {
         lecture_id: lecture.id, user_id: user.id,
       });
+      // A hand-in goes to the group one sits in, so there has to be a seat.
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
+      });
 
       await page.goto(`/lectures/${lecture.id}/submissions`);
-      await page.getByRole("button", { name: "create" }).click();
+      await page.getByRole("link", { name: "Hand in" }).click();
       await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
 
-      const stored = page.locator("#userManuscriptMetadata");
+      const stored = page.locator(
+        `${SUBMISSION_FORM} [data-submission-upload-target='metadata']`,
+      );
 
       // Nothing is stored until the box about third-party rights is ticked.
       page.once("dialog", dialog => dialog.accept());
@@ -118,22 +125,28 @@ test.describe("uploading through Uppy", () => {
       const created = page.waitForResponse(response => response.request().method() !== "GET");
       await page.getByRole("button", { name: "Save" }).click();
       await created;
-      await page.goto(`/lectures/${lecture.id}/submissions`);
 
-      await expect(page.getByRole("link", { name: "Submission ↓" })).toBeVisible();
+      // The card comes back in its own frame, with the file on it.
+      await expect(page.getByRole("link", { name: "manuscript.pdf" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Replace file" })).toBeVisible();
     });
 
   test("a submission, up to the moment the file is taken back out",
     async ({ factory, student: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
       await factory.create("assignment", [], { lecture_id: lecture.id });
-      await factory.create("tutorial", [], { lecture_id: lecture.id, title: "Mo 10" });
+      const tutorial = await factory.create("tutorial", [],
+        { lecture_id: lecture.id, title: "Mo 10" });
       await factory.create("lecture_user_join", [], {
         lecture_id: lecture.id, user_id: user.id,
       });
+      // A hand-in goes to the group one sits in, so there has to be a seat.
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
+      });
 
       await page.goto(`/lectures/${lecture.id}/submissions`);
-      await page.getByRole("button", { name: "create" }).click();
+      await page.getByRole("link", { name: "Hand in" }).click();
       const save = page.getByRole("button", { name: "Save" });
       await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
 
@@ -142,7 +155,9 @@ test.describe("uploading through Uppy", () => {
       await page.getByRole("button", { name: "Remove file" }).click();
 
       await expect(save).toBeEnabled();
-      await expect(page.locator("#userManuscript-not-upload-notice")).toBeHidden();
+      await expect(page.locator(
+        `${SUBMISSION_FORM} [data-submission-upload-target='pendingNotice']`,
+      )).toBeHidden();
     });
 
   test("a correction, once the deadline has passed",

@@ -29,12 +29,40 @@ module Demo
       team.drop(1).each do |partner|
         UserSubmissionJoin.create!(user: partner, submission: submission)
       end
+      record_hand_in!(assignment, team, submission)
       return submission unless correction
 
       submission.correction = manuscript_copy
       submission.accepted = correction == :accepted
       submission.save!
       submission
+    end
+
+    # What the controller does on every upload: the gradebook learns that the
+    # sheet was handed in. Without it the demo builds a state that is real but
+    # rare - a file on record with no hand-in against it, which the student's
+    # page has to flag in red - and builds it by the dozen. A sheet without an
+    # assessment behind it has nothing to tell, which is the old way and what
+    # the lecture's own sheets are.
+    #
+    # Only the stamp, and only where it is missing: the statuses and points were
+    # dealt beforehand and are what the demo is for. Absent and exempt are left
+    # alone - `Assessment::AbsenceHandling` clears `submitted_at` on purpose
+    # when it sets them, and writing it back would undo that.
+    def record_hand_in!(assignment, team, submission)
+      participations = assignment.assessment&.assessment_participations
+      return unless participations
+
+      # Nothing here goes through the controller, so nobody has written the
+      # modification time a hand-in would otherwise be dated by.
+      handed_in_at = submission.last_modification_by_users_at ||
+                     submission.created_at
+      # rubocop:disable Rails/SkipsModelValidations
+      participations.where(user_id: team.map(&:id), submitted_at: nil)
+                    .where.not(status: [:absent, :exempt])
+                    .update_all(submitted_at: handed_in_at,
+                                updated_at: Time.current)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     # A file the seed already ships, so the dump grows by nothing that is not

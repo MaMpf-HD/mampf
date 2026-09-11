@@ -66,6 +66,12 @@ namespace :demo do
     )
   end
 
+  desc "Stage a lecture the way they ran before the roster: groups nobody " \
+       "sits in, subscribed students, sheets handed in the old way"
+  task legacy_lecture: :environment do
+    Demo::LegacyLectureSupport.setup!
+  end
+
   desc "Stage the next-term banner scenario (flag, next term, demo lectures)"
   task next_term_banner: :environment do
     Demo::NextTermBannerSupport.setup!
