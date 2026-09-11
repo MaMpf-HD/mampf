@@ -1,11 +1,12 @@
-<%= form_with url: questionnaires_path do |form| %>
+<%= form_with url: questionnaires_path, local: true do |form| %>
   <%= form.hidden_field :lecture_id, value: lecture.id %>
   
   <div class="modal-body">
     <div class="form-floating">
       <%= form.text_field :title,
           id: 'new-vignette-title', class: 'form-control',
-          required: true, placeholder: "" %>
+          required: true, placeholder: "",
+          data: { vignettes_modal_autofocus_target: "field" } %>
       <%= form.label t("basics.title"), class: 'form-label' %>
     </div>
   </div>

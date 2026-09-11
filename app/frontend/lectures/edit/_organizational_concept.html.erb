@@ -3,6 +3,8 @@
 </h3>
 
 <%= form_with model: lecture,
+              data: { action: "change->lecture-edit#markUnsaved",
+                      lecture_edit_warning_param: "lecture-organizational-warning" },
               html: { id: 'lecture-organizational-form' } do |f| %>
   <div class="row mb-3">
     <div class="col-6">
@@ -43,7 +45,10 @@
     <div class="col-12">
       <%= f.trix_editor :organizational_concept,
                         id: 'lecture-concept-trix',
-                        data: { content: lecture.organizational_concept } %>
+                        data: { content: lecture.organizational_concept,
+                                action: "trix-change->lecture-edit#markUnsaved",
+                                lecture_edit_warning_param:
+                                  "lecture-organizational-warning" } %>
     </div>
   </div>
   <div class="row mt-3">
@@ -54,6 +59,7 @@
         <%= f.submit t('buttons.save'),
                       class: "btn btn-primary" %>
         <button type="button" id="cancel-lecture-organizational"
+                data-action="click->lecture-edit#reload"
                 class="btn btn-secondary">
           <%= t('buttons.cancel') %>
         </button>

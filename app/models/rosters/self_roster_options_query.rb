@@ -6,6 +6,9 @@ module Rosters
     end
 
     def call
+      # The lecture home page asks this for whoever opens it, staff included.
+      return [] unless Registration::Participation.allowed?(@user, @lecture)
+
       # get all rosterables for the lecture
       rosterables = []
       rosterables.concat(@lecture.talks)

@@ -3,12 +3,16 @@ require "rails_helper"
 RSpec.describe("SubmissionUploads", type: :request) do
   let(:user) { create(:confirmed_user, locale: "en") }
   let(:scanner) { instance_double(ClamavScanner) }
+  let(:assignment) { create(:assignment, :with_lecture) }
+  let(:submission) { Submission.new(assignment: assignment) }
   let(:upload) do
     Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
                                  "application/pdf")
   end
 
   before do
+    assignment.lecture.users << user
+    user.reload
     sign_in user
     allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
     allow(MalwareScanMetrics).to receive(:record_scan)
@@ -18,7 +22,10 @@ RSpec.describe("SubmissionUploads", type: :request) do
     allow(scanner).to receive(:scan)
       .and_return(UploadScanResult.infected("Eicar-Signature"))
 
-    post "/submissions/upload", params: { file: upload }
+    post "/submissions/upload",
+         params: { file: upload },
+         headers: upload_intent_headers(SubmissionUploader, user: user,
+                                                            target: submission)
 
     expect(response).to have_http_status(:unprocessable_entity)
     expect(response.body).to include(
@@ -29,7 +36,10 @@ RSpec.describe("SubmissionUploads", type: :request) do
   it "adds clean scan metadata to cached uploads" do
     allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
 
-    post "/submissions/upload", params: { file: upload }
+    post "/submissions/upload",
+         params: { file: upload },
+         headers: upload_intent_headers(SubmissionUploader, user: user,
+                                                            target: submission)
 
     expect(response).to have_http_status(:ok)
     expect(MalwareScanMetrics).to have_received(:record_scan).with(
@@ -47,13 +57,17 @@ RSpec.describe("SubmissionUploads", type: :request) do
   it "adds clean scan metadata to correction uploads" do
     allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
 
-    tutor = create(:confirmed_user, locale: "en").tap do |u|
-      create(:tutorial, :with_tutor_by_id, tutor_id: u.id)
-      u.reload
-    end
+    tutorial = create(:tutorial, :with_tutor_by_id, tutor_id: user.id,
+                                                    lecture: assignment.lecture)
+    tutor = user.reload
+    corrected = create(:submission, assignment: assignment, tutorial: tutorial)
     sign_in tutor
 
-    post "/corrections/upload", params: { file: upload }
+    post "/corrections/upload",
+         params: { file: upload },
+         headers: upload_intent_headers(CorrectionUploader,
+                                        user: tutor, target: corrected,
+                                        action: :add_correction)
 
     expect(response).to have_http_status(:ok)
     data = JSON.parse(response.body)
@@ -64,7 +78,10 @@ RSpec.describe("SubmissionUploads", type: :request) do
     allow(scanner).to receive(:scan)
       .and_return(UploadScanResult.unavailable("Connection refused"))
 
-    post "/submissions/upload", params: { file: upload }
+    post "/submissions/upload",
+         params: { file: upload },
+         headers: upload_intent_headers(SubmissionUploader, user: user,
+                                                            target: submission)
 
     expect(response).to have_http_status(:service_unavailable)
     expect(response.body).to include(
@@ -76,7 +93,10 @@ RSpec.describe("SubmissionUploads", type: :request) do
   it "treats scan timeouts as scanner unavailable for submission uploads" do
     allow(scanner).to receive(:scan).and_return(UploadScanResult.timeout)
 
-    post "/submissions/upload", params: { file: upload }
+    post "/submissions/upload",
+         params: { file: upload },
+         headers: upload_intent_headers(SubmissionUploader, user: user,
+                                                            target: submission)
 
     expect(response).to have_http_status(:service_unavailable)
     expect(response.body).to include(
@@ -89,7 +109,10 @@ RSpec.describe("SubmissionUploads", type: :request) do
     allow(scanner).to receive(:scan)
       .and_return(UploadScanResult.infected("Eicar-Signature"))
 
-    post "/submissions/upload", params: { file: upload, locale: "de" }
+    post "/submissions/upload",
+         params: { file: upload, locale: "de" },
+         headers: upload_intent_headers(SubmissionUploader, user: user,
+                                                            target: submission)
 
     expect(response).to have_http_status(:unprocessable_entity)
     expect(response.body).to include(

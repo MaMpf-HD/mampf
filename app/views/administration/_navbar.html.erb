@@ -7,7 +7,8 @@
   <nav class="navbar navbar-expand" id="first-admin-nav">
     <%= link_to image_tag("/images/mampf-logo.svg",
                           class: 'me-2',
-                          id: 'mampf-logo'),
+                          id: 'mampf-logo',
+                          width: 35, height: 35),
                 exit_administration_path,
                 title: t('admin.navbar.exit'),
                 data: { 'bs-toggle': 'tooltip' } %>

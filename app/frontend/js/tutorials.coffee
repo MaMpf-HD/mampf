@@ -9,6 +9,15 @@ window.clearBulkUploadArea = ->
 
 $(document).on 'turbo:load', ->
 
+  $(document).on 'click', '#show-bulk-upload-area', ->
+    $('#bulk-upload-area').show()
+    $('#show-bulk-upload-area').hide()
+    return
+
+  $(document).on 'click', '#cancel-bulk-upload', ->
+    clearBulkUploadArea()
+    return
+
   $(document).on 'click', '#dismiss-bulk-upload-report', ->
     $('#bulk-upload-report').empty().hide()
     return

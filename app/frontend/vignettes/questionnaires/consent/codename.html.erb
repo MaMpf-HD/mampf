@@ -1,0 +1,17 @@
+<div class="container-md small-width mt-4 mb-5">
+  <h1 class="fs-3 fw-bold mb-3"><%= t('vignettes.consent.codename_heading') %></h1>
+
+  <p><%= t('vignettes.consent.codename_intro') %></p>
+
+  <p class="display-6 font-monospace user-select-all my-4"><%= @codename.grouped %></p>
+
+  <div class="alert alert-warning" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <%= t('vignettes.consent.codename_warning') %>
+  </div>
+
+  <%= link_to take_questionnaire_path(@questionnaire),
+              class: "btn btn-primary" do %>
+    <%= t('vignettes.consent.codename_acknowledged') %>
+  <% end %>
+</div>

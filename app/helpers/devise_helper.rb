@@ -1,4 +1,23 @@
 module DeviseHelper
+  # After a failed submit the current request is the POST, so `url_for` would
+  # build the path the form posts to instead of the form's own. The reset form
+  # additionally needs its token in the link.
+  def devise_locale_switch_path(locale)
+    case [controller_name, action_name]
+    when ["registrations", "create"]
+      new_user_registration_path(locale: locale)
+    when ["registrations", "update"]
+      edit_user_registration_path(locale: locale)
+    when ["passwords", "create"]
+      new_user_password_path(locale: locale)
+    when ["passwords", "edit"], ["passwords", "update"]
+      edit_user_password_path(locale: locale,
+                              reset_password_token: reset_password_token)
+    else
+      url_for(locale: locale)
+    end
+  end
+
   def devise_links(resource_name, devise_mapping, resource_class, controller_name)
     links = []
 
@@ -28,4 +47,11 @@ module DeviseHelper
 
     links
   end
+
+  private
+
+    def reset_password_token
+      params[:reset_password_token] ||
+        params[:user].try(:dig, :reset_password_token)
+    end
 end

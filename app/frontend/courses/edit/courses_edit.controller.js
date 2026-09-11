@@ -15,7 +15,6 @@ export default class extends Controller {
 
   connect() {
     this.initializeTrixEditor();
-    window.initCourseImageUpload();
   }
 
   disconnect() {

@@ -1,4 +1,7 @@
 import { expect, Page } from "../_support/fixtures";
+import { attachToUploadArea } from "../_support/uploads";
+
+const SUBMISSION_FORM = "form[data-controller~='submission-upload']";
 
 export class SubmissionsPage {
   readonly page: Page;
@@ -14,22 +17,18 @@ export class SubmissionsPage {
   }
 
   /**
-   * Uploads a submission file.
-   *
-   * Adapted from: https://playwright.dev/docs/input#upload-files
+   * Hands a file to the submission form and uploads it. The upload waits for
+   * the assurance about third-party rights, so the box is ticked first.
    */
   async uploadSubmission(filePath = "e2e/files/manuscript.pdf") {
     await expect(this.page.getByText("invitations to")).toBeVisible();
 
-    const fileChooserPromise = this.page.waitForEvent("filechooser"); // no await
-    await this.page.getByRole("button", { name: "files" }).click();
-    const fileChooser = await fileChooserPromise;
-    await fileChooser.setFiles(filePath);
-
-    await expect(this.page.getByText("correct size")).toBeVisible();
+    await attachToUploadArea(this.page, SUBMISSION_FORM, filePath);
     await this.page.getByRole("checkbox", { name: "I assure that" }).check();
-    await this.page.getByRole("button", { name: "upload" }).click();
-    await expect(this.page.getByText("upload successful")).toBeVisible();
+    await this.page.getByRole("button", { name: "Upload file" }).click();
+
+    const fileName = filePath.split("/").at(-1) ?? filePath;
+    await expect(this.page.getByText(fileName)).toBeVisible();
   }
 
   async createSubmission() {
