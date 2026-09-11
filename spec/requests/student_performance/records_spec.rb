@@ -760,6 +760,133 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
     end
   end
 
+  # A certificate is decided per person, here: an excused sheet leaves the
+  # reckoning for this student, and the note stays with the decision.
+  describe "PATCH /lectures/:lecture_id/performance/records/:id/excuse" do
+    let(:member) { FactoryBot.create(:confirmed_user) }
+    # Joining the roster computes the record; the page is reached through it.
+    let!(:record) do
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+      lecture.student_performance_records.find_by!(user: member)
+    end
+    let(:assignment) do
+      FactoryBot.create(:assignment, :expired, lecture: lecture, title: "Sheet 3")
+    end
+    let(:assessment) { assignment.assessment }
+
+    def excuse(sheet = assessment, note: nil)
+      patch(excuse_lecture_student_performance_record_path(lecture, record),
+            params: { assessment_id: sheet.id, note: note })
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "excuses a sheet nothing was handed in for, with the note" do
+        FactoryBot.create(:assessment_participation, :pending,
+                          assessment: assessment, user: member)
+
+        excuse(note: "Certificate until May 17")
+
+        expect(response).to redirect_to(
+          lecture_student_performance_record_path(lecture, record)
+        )
+        participation = assessment.assessment_participations.find_by(user: member)
+        expect(participation).to be_exempt
+        expect(participation.note).to eq("Certificate until May 17")
+        expect(flash[:notice]).to eq(
+          I18n.t("student_performance.records.show.excused", sheet: "Sheet 3")
+        )
+      end
+
+      it "makes the row the backfill has not made yet" do
+        excuse
+
+        participation = assessment.assessment_participations.find_by(user: member)
+        expect(participation).to be_exempt
+      end
+
+      it "takes the sheet out of the student's maximum" do
+        FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+        StudentPerformance::ComputationService.new(lecture: lecture)
+                                              .compute_and_upsert_record_for(member)
+        expect(record.reload.points_max_materialized).to eq(10)
+
+        excuse
+
+        expect(record.reload.points_max_materialized).to eq(0)
+      end
+
+      it "refuses a sheet the student handed in with a team" do
+        tutorial = FactoryBot.create(:tutorial, lecture: lecture)
+        FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                         tutorial: tutorial).users << member
+
+        excuse
+
+        expect(response).to redirect_to(
+          lecture_student_performance_record_path(lecture, record)
+        )
+        expect(flash[:alert]).to include(
+          I18n.t("activerecord.errors.models.assessment/participation.attributes" \
+                 ".status.handed_in")
+        )
+        expect(assessment.assessment_participations.find_by(user: member)).to be_nil
+      end
+
+      it "refuses a sheet the tutor took on paper" do
+        FactoryBot.create(:assessment_participation, :submitted,
+                          assessment: assessment, user: member)
+
+        excuse
+
+        expect(flash[:alert]).to be_present
+        expect(assessment.assessment_participations.find_by(user: member)).to be_pending
+      end
+
+      it "says so for a sheet of another lecture" do
+        foreign = FactoryBot.create(:assignment, :expired, lecture: FactoryBot.create(:lecture))
+
+        excuse(foreign.assessment)
+
+        expect(flash[:alert]).to eq(I18n.t("student_performance.errors.no_sheet"))
+      end
+
+      it "revokes the excuse again" do
+        excuse(note: "Certificate")
+
+        patch unexcuse_lecture_student_performance_record_path(lecture, record),
+              params: { assessment_id: assessment.id }
+
+        participation = assessment.assessment_participations.find_by(user: member)
+        expect(participation).to be_pending
+        expect(participation.note).to be_nil
+        expect(flash[:notice]).to eq(
+          I18n.t("student_performance.records.show.unexcused", sheet: "Sheet 3")
+        )
+      end
+    end
+
+    # Tutors enter points; a certificate is above their pay grade.
+    context "as a tutor of the student's group" do
+      let(:tutor) { FactoryBot.create(:confirmed_user) }
+
+      before do
+        tutorial = FactoryBot.create(:tutorial, lecture: lecture)
+        tutorial.tutors << tutor
+        FactoryBot.create(:tutorial_membership, tutorial: tutorial, user: member)
+        sign_in tutor
+      end
+
+      it "is turned away" do
+        excuse
+
+        expect(response).to redirect_to(root_path)
+        expect(assessment.assessment_participations.find_by(user: member)).to be_nil
+      end
+    end
+  end
+
   describe "POST /lectures/:lecture_id/performance/records/recompute" do
     context "as an editor" do
       before { sign_in editor }

@@ -183,13 +183,15 @@ module Demo
 
             submission_rate = submission_rate_for(profile)
 
-            if rand < 0.03
-              participation.update!(status: :exempt, submitted_at: nil)
-            elsif rand > submission_rate
+            # Only somebody who handed nothing in can be excused, and the
+            # participation refuses anything else - so the excuse comes second,
+            # for a few of those the gradebook has just recorded as missing.
+            if rand > submission_rate
               if future_deadline
                 participation.destroy!
               else
                 participation.update!(submitted_at: nil)
+                participation.update!(status: :exempt) if rand < 0.15
               end
             elsif future_deadline || (recent_deadline && rand < 0.6)
               next

@@ -50,8 +50,9 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
     # An excused member does not hand in that week, so the team that does
     # is the rest of it.
     it "keeps an excused member out of the week's team" do
-      sheet.assessment.assessment_participations.find_by(user: partner)
-           .update!(status: :exempt, submitted_at: nil)
+      partners = sheet.assessment.assessment_participations.find_by(user: partner)
+      partners.update!(submitted_at: nil)
+      partners.update!(status: :exempt)
 
       expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
       expect(Demo::SetupSupport.send(:sits_out?, sheet, marked)).to be(false)

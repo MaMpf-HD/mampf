@@ -478,12 +478,6 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet.new_correction?).to be(false)
       expect(sheet.new_points?).to be(true)
     end
-
-    it "is not the marks of a sheet the reader was excused from" do
-      mark(assignment, [1.5, 2]).update!(status: :exempt)
-
-      expect(sheet_for(assignment).new_points?).to be(false)
-    end
   end
 
   describe "#open_sheets" do

@@ -371,6 +371,10 @@ Rails.application.routes.draw do
         collection do
           post :recompute
         end
+        member do
+          patch :excuse
+          patch :unexcuse
+        end
       end
 
       resource :rules, only: [:edit, :update] do

@@ -33,6 +33,8 @@ module Assessment
                 allow_nil: true
               }
     validate :assessment_must_be_gradable, if: -> { grade_numeric.present? }
+    validate :absence_only_without_hand_in,
+             if: -> { (absent? || exempt?) && status_changed? }
 
     def self.tutorial_for(user, lecture)
       TutorialMembership.joins(:tutorial)
@@ -123,6 +125,25 @@ module Assessment
         return if assessment.assessable.is_a?(::Assessment::Gradable)
 
         errors.add(:grade_numeric, :not_gradable)
+      end
+
+      # Excused or absent is said of somebody who handed nothing in. A person
+      # on a team's hand-in is neither, and neither is one whose sheet the
+      # tutor took on paper or marked. A hand-in the tutor refused does not
+      # count - a certificate may be exactly what explains it.
+      def absence_only_without_hand_in
+        return unless assessment&.assessable.is_a?(Assignment)
+        return unless handed_in? || results_visible?
+
+        errors.add(:status, :handed_in)
+      end
+
+      def handed_in?
+        submitted_at_was.present? ||
+          Submission.joins(:user_submission_joins)
+                    .where(assignment_id: assessment.assessable_id,
+                           user_submission_joins: { user_id: user_id })
+                    .exists?(accepted: [nil, true])
       end
 
       def should_recompute_performance_record?

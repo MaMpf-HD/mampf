@@ -20,6 +20,7 @@ en:
     errors:
       no_record: "Performance record not found."
       no_member: "User is not a member of this lecture."
+      no_sheet: "There is no such sheet in this lecture."
     records:
       tooltip_points: "points"
       percentage_unavailable: "Percentage unavailable"
@@ -75,6 +76,13 @@ en:
         total_row: "Total"
         total_row_hint: "over every assignment of the term"
         last_computed: "Last computed %{time} ago."
+        excuse: "Excuse"
+        excuse_column: "Excuse"
+        unexcuse: "Revoke excuse"
+        note_placeholder: "Note (optional)"
+        note_label: "Note for the excuse on %{sheet}"
+        excused: "%{sheet} is excused for this student and no longer counts."
+        unexcused: "The excuse on %{sheet} was revoked; the sheet counts again."
 
       recompute:
         single: "Recomputation for this student completed."

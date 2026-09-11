@@ -92,8 +92,7 @@ module Assessment
         newer_than?(submission&.corrected_at, sighting&.seen_at)
       end
 
-      # Only where the row shows marks: an excused sheet may still carry the
-      # stamp from before it was excused. The stamp moves with every complete
+      # Only where the row shows marks. The stamp moves with every complete
       # save, so a correction of the points reads as new again.
       def new_points?
         return false unless state == :marked
