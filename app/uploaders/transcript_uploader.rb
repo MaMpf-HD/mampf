@@ -33,6 +33,8 @@ class TranscriptUploader < Shrine
                                                  accepted_file_type: ".vtt")
     validate_max_size MAX_SIZE, message: I18n.t("package.too_big")
 
+    next if errors.any?
+
     error = TranscriptUploader.structure_error(file)
     errors << error if error
   end

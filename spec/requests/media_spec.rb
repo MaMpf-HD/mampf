@@ -455,17 +455,22 @@ RSpec.describe("Media", type: :request) do
         purpose: :transcript,
         ttl: 5.minutes
       )
-      file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
-                                          "text/vtt")
+      temp_vtt = Tempfile.new(["invalid", ".vtt"]).tap do |f|
+        f.write("WEBVTT\n\n00:00:11.12 --> 00:00:42.771\ninvalid\n")
+        f.rewind
+      end
+      file = Rack::Test::UploadedFile.new(temp_vtt.path, "text/vtt")
 
-      post add_transcript_path(medium),
+      post(add_transcript_path(medium),
            params: { token: token, transcript: file },
-           headers: auth_headers
+           headers: auth_headers)
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(JSON.parse(response.body)["errors"]).to include(
         "Transcript #{I18n.t("submission.invalid_transcript")}"
       )
+    ensure
+      temp_vtt&.close!
     end
   end
 
