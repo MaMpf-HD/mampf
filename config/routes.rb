@@ -1167,6 +1167,14 @@ Rails.application.routes.draw do
         to: "assessment/grades#refresh",
         as: "refresh_grade_participation"
 
+  patch "participations/:participation_id/refresh_point_participation",
+        to: "assessment/task_points#refresh_user",
+        as: "refresh_point_participation"
+
+  patch "participations/:participation_id/point_participation",
+        to: "assessment/task_points#update_participation",
+        as: "point_participation"
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not
