@@ -3075,6 +3075,7 @@ de:
         condition_percentage: "%{percentage} % der Punkte"
         condition_absolute: "%{points} Punkte"
         you_have_percent: "Du hast %{percentage} %"
+        you_have_nothing_marked: noch nichts korrigiert
         you_have_points: "Du hast %{points}"
         you_have_value: "Du hast %{value} %{unit}"
         achievement_threshold: "%{title}, mindestens %{threshold} %{unit}"

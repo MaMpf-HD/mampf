@@ -164,6 +164,22 @@ RSpec.describe(StandingComponent, type: :component) do
       )
     end
 
+    # Two sheets due and both still with the tutor: the base is nothing, and
+    # "you have 0 %" would pass a verdict on somebody who has not been
+    # measured. The table shows a dash for the same record; the block says
+    # in words what the dash means.
+    it "claims no percentage while nothing has been marked" do
+      content = render_standing(standing(rule: percentage_rule, total: 0, due: 0,
+                                         awaiting: 20, awaiting_sheets: 2))
+
+      expect(content).to include(
+        I18n.t("submission.hub.standing.you_have_nothing_marked")
+      )
+      expect(content).not_to include(
+        I18n.t("submission.hub.standing.you_have_percent", percentage: "0")
+      )
+    end
+
     # Bar and mark are the same quantity now - both shares of what is due - so
     # the mark is the rule's own number and needs no converting.
     it "marks the rule's own percentage" do

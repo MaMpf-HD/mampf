@@ -143,10 +143,15 @@ class StandingComponent < ViewComponent::Base
     end
   end
 
+  # No base, no share: with nothing marked yet there is no percentage to
+  # have, and "0 %" would read as a verdict on somebody who has not been
+  # measured at all. The table shows a dash for the same record.
   def points_standing
     if rule.threshold_mode_percentage?
+      return t("submission.hub.standing.you_have_nothing_marked") if percentage.nil?
+
       return t("submission.hub.standing.you_have_percent",
-               percentage: number(percentage || 0))
+               percentage: number(percentage))
     end
 
     t("submission.hub.standing.you_have_points", points: total)
