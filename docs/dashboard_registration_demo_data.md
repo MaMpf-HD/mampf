@@ -51,13 +51,24 @@ FactoryBot.create(:lecture_membership, user: demo, lecture: enrolled_plain)
 # b) Pending registration, no roster seat yet.
 # Shows in "You are registered for these" with the hourglass "Pending"
 # badge. Still bookmarkable/unbookmarkable.
+#
+# The campaign must be :preference_based, not the default
+# first-come-first-served: FCFS decides synchronously (confirmed or
+# rejected right away), so a *pending* FCFS row is not a state the app's
+# own UI ever produces or has anything to show for - clicking into such a
+# lecture would display nothing, which looks like a bug but is really just
+# an unrealistic combination. A preference-based campaign is what actually
+# stays pending until the teacher finalizes it, and the lecture's own home
+# tab then shows the student's submitted preference ranking.
 pending_lecture = lecture_for("Einfuehrung in die Numerik", term)
 pending_campaign = FactoryBot.create(:registration_campaign, :open,
+                                     :preference_based,
                                      campaignable: pending_lecture)
 FactoryBot.create(:registration_user_registration, :pending,
                   user: demo,
                   registration_campaign: pending_campaign,
-                  registration_item: pending_campaign.registration_items.first)
+                  registration_item: pending_campaign.registration_items.first,
+                  preference_rank: 1)
 
 # c) Confirmed registration, not yet rostered.
 # `Registration::UserRegistration` confirming an applicant does not by
@@ -66,6 +77,13 @@ FactoryBot.create(:registration_user_registration, :pending,
 # confirmed-but-not-yet-rostered lecture was invisible on the dashboard.
 # Shows the check-mark "Confirmed" badge; no longer bookmarkable/
 # unbookmarkable.
+#
+# Known limitation, not fixed here: because no roster/tutorial-membership
+# row exists for this made-up case, the lecture's own home tab shows
+# nothing about the confirmation either (RosterizedEntriesComponent reads
+# actual roster entries, not Registration::UserRegistration directly). In
+# the real app this window is normally short - confirmation is followed by
+# rostering - so this is a demo-data artifact, not a new bug.
 confirmed_lecture = lecture_for("Masstheorie und Wahrscheinlichkeit", term)
 confirmed_campaign = FactoryBot.create(:registration_campaign, :open,
                                        campaignable: confirmed_lecture)
@@ -75,16 +93,27 @@ FactoryBot.create(:registration_user_registration, :confirmed,
                   registration_item: confirmed_campaign.registration_items.first)
 
 # d) Rejected registration, not dismissed.
-# The campaign must be *closed* (not open for registrations): while a
-# campaign is still open, a rejected applicant could simply reapply, so
-# `Lecture#registration_status_for` reports `:open` rather than
-# `:rejected` in that case (see the "open beats rejected" precedence
-# there). Shows the x-circle "Rejected" badge plus the small "x" removal
-# corner (see below).
+#
+# The campaign must be :completed, not just :closed:
+# - Lecture#registration_status_for only reports :rejected once the
+#   campaign is no longer open for registrations (see the "open beats
+#   rejected" precedence there) - :closed alone is enough for that.
+# - But the lecture's own home tab only explains *why* via
+#   RosterizedEntriesComponent#policy_rejected_campaigns, which
+#   specifically requires status: :completed. A :closed campaign leaves
+#   the dashboard badge correct but the lecture page blank - looks like a
+#   bug, but is really just an unrealistic combination again (in the real
+#   app a campaign is closed only briefly, on its way to :completed).
+# - Use the :policy_rejected trait (not :capacity_rejected): the
+#   lecture-page notice for a *capacity* rejection only exists for
+#   preference_based campaigns; a first-come-first-served capacity
+#   rejection (this campaign's default allocation mode) has no notice
+#   anywhere on the lecture page at all - a genuine gap in the app, out of
+#   scope here. :policy_rejected renders regardless of allocation mode.
 rejected_lecture = lecture_for("Algebraische Topologie", term)
-rejected_campaign = FactoryBot.create(:registration_campaign, :closed,
+rejected_campaign = FactoryBot.create(:registration_campaign, :completed,
                                       campaignable: rejected_lecture)
-FactoryBot.create(:registration_user_registration, :rejected,
+FactoryBot.create(:registration_user_registration, :policy_rejected,
                   user: demo,
                   registration_campaign: rejected_campaign,
                   registration_item: rejected_campaign.registration_items.first)
@@ -94,9 +123,9 @@ FactoryBot.create(:registration_user_registration, :rejected,
 # status takes precedence over a plain bookmark) - not duplicated into
 # "You bookmarked these".
 rejected_bookmarked_lecture = lecture_for("Funktionalanalysis", term)
-rejected_bookmarked_campaign = FactoryBot.create(:registration_campaign, :closed,
+rejected_bookmarked_campaign = FactoryBot.create(:registration_campaign, :completed,
                                                  campaignable: rejected_bookmarked_lecture)
-FactoryBot.create(:registration_user_registration, :rejected,
+FactoryBot.create(:registration_user_registration, :policy_rejected,
                   user: demo,
                   registration_campaign: rejected_bookmarked_campaign,
                   registration_item: rejected_bookmarked_campaign.registration_items.first)
@@ -127,8 +156,19 @@ FactoryBot.create(:registration_campaign, :open, campaignable: open_lecture)
 | Diskrete Mathematik | Bookmarked | — | yes | yes - plain unbookmark |
 | Partielle Differentialgleichungen | not shown | (would show "Registration open" if surfaced) | — | — |
 
+The lecture search results (below the dashboard bands) now show the same
+four-state icon/label instead of a single generic green checkmark for
+"registered" - see `Registration::StatusPresenter` and
+`Registration::StatusQuery`, shared between the dashboard card and the
+search result card. A pending or rejected search result still offers the
+bookmark toggle, matching the dashboard's rule; only a confirmed
+registration (or an actual self-enrolled group seat) removes it.
+
 Verified against the running dev server on 2026-09-11 with Playwright:
-signing in as `dashboard.demo@mampf.test` renders exactly this layout,
-and dismissing "Funktionalanalysis" via "Keep in bookmarked lectures"
-moves it from "Registered" to "Bookmarked" with its rejection notice
-gone, as designed.
+signing in as `dashboard.demo@mampf.test` renders exactly this layout;
+clicking into "Einfuehrung in die Numerik" (pending) shows the student's
+submitted preference ranking, and clicking into "Algebraische Topologie" /
+"Funktionalanalysis" (rejected) shows the actual rejection notice on the
+lecture's home tab. Dismissing "Funktionalanalysis" via "Keep in
+bookmarked lectures" moves it from "Registered" to "Bookmarked" with its
+rejection notice gone, as designed.

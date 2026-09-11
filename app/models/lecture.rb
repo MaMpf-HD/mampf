@@ -717,20 +717,14 @@ class Lecture < ApplicationRecord
 
   # A single status symbol summarizing the user's registration state across
   # this lecture's (non-draft) registration campaigns, for compact display
-  # (e.g. on the student dashboard). Returns nil if there is nothing to show:
-  # no campaigns, or a campaign that isn't open yet and no registration at all.
+  # (e.g. on the student dashboard). nil if there is nothing to show: no
+  # campaigns, or a campaign that isn't open yet and no registration at all.
+  #
+  # For a page of lectures at once (e.g. the search result cards), use
+  # Registration::StatusQuery instead - it answers the same question in a
+  # fixed, small number of queries rather than one per lecture.
   def registration_status_for(user)
-    campaigns = registration_campaigns.where.not(status: :draft)
-    return if campaigns.empty?
-
-    regs = Registration::UserRegistration.where(user: user,
-                                                registration_campaign: campaigns)
-
-    return :confirmed if regs.confirmed.exists?
-    return :pending if regs.pending.exists?
-    return :open if campaigns.any?(&:open_for_registrations?)
-
-    :rejected if regs.rejected.not_dismissed.exists?
+    Registration::StatusQuery.new(user, [id]).statuses[id]
   end
 
   # The deadline of the next assignment the user has not yet submitted for,

@@ -145,6 +145,48 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body)
           .not_to include("lecture-search-registered-control")
       end
+
+      it "shows the pending label and still offers the bookmark toggle" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :pending,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-control")
+        expect(response.body).to include(I18n.t("registration.user_registration.status.pending"))
+        expect(response.body).to include("lecture-search-bookmark-button")
+      end
+
+      it "shows the rejected label once the campaign is closed, still bookmarkable" do
+        campaign = create(:registration_campaign, :closed,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :rejected,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-control")
+        expect(response.body).to include(I18n.t("registration.user_registration.status.rejected"))
+        expect(response.body).to include("lecture-search-bookmark-button")
+      end
+
+      it "shows the confirmed label and hides the bookmark toggle" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-control")
+        expect(response.body).to include(I18n.t("registration.user_registration.status.confirmed"))
+        expect(response.body).not_to include("lecture-search-bookmark-button")
+      end
     end
 
     context "with self-enrollment groups" do

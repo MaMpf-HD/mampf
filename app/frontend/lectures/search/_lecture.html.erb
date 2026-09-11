@@ -1,15 +1,21 @@
 <% bookmarked = @subscribed_lecture_ids&.include?(lecture.id) || false %>
-<% registered = @registered_lecture_ids&.include?(lecture.id) ||
-                @rosterized_lecture_ids&.include?(lecture.id) %>
+<% registration_status = @registration_status_by_lecture_id&.[](lecture.id) %>
+<% rosterized = @rosterized_lecture_ids&.include?(lecture.id) %>
+<%# :open just means a campaign is open with no application from this user
+    yet - shown as the "+ register" shortcut below, not the marker. The other
+    three statuses mean the user already has a registration on record. %>
+<% marker_status = registration_status if
+     [:confirmed, :pending, :rejected].include?(registration_status) %>
+<% registered = marker_status.present? || rosterized %>
 <%# @self_enrollable_lecture_ids ignores whether the user is a member, so it
     may only be consulted once being registered has been ruled out %>
 <% registration_possible = !registered &&
-                           (registration_open?(lecture) ||
+                           (registration_status == :open ||
                             @self_enrollable_lecture_ids&.include?(lecture.id)) %>
-<%# Anyone not yet registered can bookmark - even when a registration is open,
-    they may want to keep the lecture in view before deciding. Someone already
-    registered sees it in their "Registered" band, so bookmarking is moot. %>
-<% bookmarkable = !registered %>
+<%# A pending or rejected application still lets the student bookmark/
+    unbookmark the lecture - only an actual seat (confirmed, or a
+    self-enrolled group) takes that away, mirroring the dashboard's rule. %>
+<% bookmarkable = !(registration_status == :confirmed || rosterized) %>
 <%# term is redundant on the dashboard, where the picker above already names
     the semester; still shown on /search/index, which spans all semesters %>
 <% show_term = @show_term.nil? ? true : @show_term %>
@@ -73,30 +79,43 @@
     </div>
   <% end %>
 
-  <%# The controls on the right edge, over the card's own link. A registered
-      lecture shows only a marker; otherwise the user can bookmark it, and also
-      jump to the lecture home to register while that is open. %>
+  <%# The controls on the right edge, over the card's own link. Whoever
+      already has a registration on record (or a self-enrolled group seat)
+      sees a marker for it; a pending or rejected application still leaves
+      room for the bookmark toggle next to it, only a confirmed seat or
+      group membership replaces it entirely. %>
   <div class="lecture-search-result-controls">
-    <% if registered %>
+    <% if marker_status || rosterized %>
+      <%# A self-enrolled group membership with no formal application of its
+          own (marker_status nil) keeps the plain "registered" wording; the
+          other three statuses get the same icon/label as the dashboard. %>
+      <% label = marker_status ?
+                   Registration::StatusPresenter.label(marker_status) :
+                   t('lecture.search.registered_status') %>
       <span class="lecture-search-result-control is-registered"
             role="img"
-            aria-label="<%= t('lecture.search.registered_status') %>"
-            title="<%= t('lecture.search.registered_status') %>"
+            aria-label="<%= label %>"
+            title="<%= label %>"
             data-testid="lecture-search-registered-control">
-        <i class="fas fa-user-check" aria-hidden="true"></i>
+        <i class="bi <%= marker_status ?
+                            Registration::StatusPresenter.icon(marker_status) :
+                            'bi-check-circle-fill text-success' %>"
+           aria-hidden="true"></i>
       </span>
-    <% else %>
-      <% if registration_possible %>
-        <%= link_to lecture_home_path(lecture),
-                    class: "lecture-search-result-control " \
-                           "lecture-search-result-register",
-                    title: t("lecture.search.go_register"),
-                    "aria-label": t("lecture.search.go_register"),
-                    data: { testid: "lecture-search-register-link" } do %>
-          <i class="fas fa-plus" aria-hidden="true"></i>
-        <% end %>
-      <% end %>
+    <% end %>
 
+    <% if registration_possible %>
+      <%= link_to lecture_home_path(lecture),
+                  class: "lecture-search-result-control " \
+                         "lecture-search-result-register",
+                  title: t("lecture.search.go_register"),
+                  "aria-label": t("lecture.search.go_register"),
+                  data: { testid: "lecture-search-register-link" } do %>
+        <i class="fas fa-plus" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+
+    <% if bookmarkable %>
       <button type="button"
               class="lecture-search-result-control lecture-search-result-bookmark"
               data-bookmark-target="button"

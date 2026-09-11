@@ -263,14 +263,8 @@ class LecturesController < ApplicationController
       current_user.lecture_user_joins
                   .where(lecture_id: page_lecture_ids)
                   .pluck(:lecture_id).to_set
-    @registered_lecture_ids =
-      Registration::UserRegistration
-      .where(user: current_user, status: [:pending, :confirmed])
-      .joins(:registration_campaign)
-      .where(registration_campaigns: { campaignable_type: "Lecture",
-                                       campaignable_id: page_lecture_ids })
-      .pluck("registration_campaigns.campaignable_id")
-      .to_set
+    @registration_status_by_lecture_id =
+      Registration::StatusQuery.new(current_user, page_lecture_ids).statuses
     status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
     @rosterized_lecture_ids = status.rosterized_lecture_ids
     @self_enrollable_lecture_ids = status.enrollable_lecture_ids
