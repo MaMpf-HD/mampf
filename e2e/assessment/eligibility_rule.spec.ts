@@ -179,7 +179,11 @@ test.describe("the eligibility rule", () => {
     factory,
     teacher,
   }) => {
-    const lecture = await createEligibilityLecture(factory, teacher.user.id);
+    // A preview compares verdicts, and there are none while the lecture may
+    // still add sheets.
+    const lecture = await createEligibilityLecture(
+      factory, teacher.user.id, { assignments_complete: true },
+    );
     await factory.create("student_performance_rule", ["active"], {
       lecture_id: lecture.id,
       threshold_mode: "percentage",

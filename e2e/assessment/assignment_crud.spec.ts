@@ -34,6 +34,85 @@ test.describe("homework sheets", () => {
       .toBeVisible();
   });
 
+  /**
+   * Ticking the box turns every eligibility verdict in the lecture over, so it
+   * does not go through unasked - and a dialog that is dismissed has to leave
+   * the box where it was.
+   */
+  test("asks before the assignment list is called complete", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture } = await createAssessedAssignment(factory, teacher.user.id);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    const box = teacher.page.getByLabel("The assignment list is complete");
+    await box.check();
+
+    const dialog = teacher.page
+      .getByRole("dialog", { name: "Tick the box" });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+
+    await expect(box).not.toBeChecked();
+    await dashboard.gotoOverview();
+    await expect(teacher.page.getByLabel("The assignment list is complete"))
+      .not.toBeChecked();
+  });
+
+  /**
+   * The box is put back when the dialog closes, not when its Cancel button is
+   * pressed - so every way out of an unanswered question leaves the page and
+   * the database saying the same thing. Escape is one of those ways, and it
+   * only works once the dialog has finished coming in: Bootstrap moves the
+   * focus at the end of that, which is what the test waits for.
+   */
+  test("puts the box back when the question goes away unanswered", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture } = await createAssessedAssignment(factory, teacher.user.id);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    const box = teacher.page.getByLabel("The assignment list is complete");
+    await box.check();
+
+    const dialog = teacher.page.getByRole("dialog", { name: "Tick the box" });
+    await expect(dialog).toBeFocused();
+    await dialog.press("Escape");
+
+    await expect(dialog).toBeHidden();
+    await expect(box).not.toBeChecked();
+  });
+
+  test("calls the list complete once the question is answered", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture } = await createAssessedAssignment(factory, teacher.user.id);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    await teacher.page.getByLabel("The assignment list is complete").check();
+
+    const dialog = teacher.page
+      .getByRole("dialog", { name: "Tick the box" });
+    // The overview lives in a Turbo frame, so the answer replaces the frame
+    // and leaves the address alone - the round trip is what there is to wait
+    // for, and the page is loaded again to see that it stuck.
+    const saved = teacher.page.waitForResponse(
+      r => r.request().method() === "POST",
+    );
+    await dialog.getByRole("button", { name: "Tick the box" }).click();
+    await saved;
+
+    await dashboard.gotoOverview();
+    await expect(teacher.page.getByLabel("The assignment list is complete"))
+      .toBeChecked();
+  });
+
   test("keeps the form and the entered title when the title is taken", async ({
     factory,
     teacher,

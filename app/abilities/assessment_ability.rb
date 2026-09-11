@@ -4,7 +4,7 @@ class AssessmentAbility
   def initialize(user)
     clear_aliased_actions
 
-    can :index, Lecture do |lecture|
+    can [:index, :update], Lecture do |lecture|
       user.can_edit?(lecture)
     end
 

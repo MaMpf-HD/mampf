@@ -175,6 +175,8 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   describe "#task_points_input" do
     let!(:task) { create(:assessment_task, assessment: assignment.assessment, max_points: 10) }
 
+    # The input carries a translated message, and a component can only
+    # translate once it has been rendered.
     before do
       allow(vc_test_controller).to receive(:current_user).and_return(tutor)
       render_inline(component_tutorial)

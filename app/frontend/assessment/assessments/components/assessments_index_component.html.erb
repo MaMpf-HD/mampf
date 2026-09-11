@@ -76,6 +76,92 @@
           </div>
         <% end %>
       </div>
+      <%= form_with url: assignments_complete_assessment_assessments_path(
+                          lecture_id: lecture.id
+                        ),
+                    method: :patch,
+                    data: { controller: "assessments--assignments-complete" },
+                    class: "border-top pt-3" do %>
+        <%= hidden_field_tag :complete, "0", id: nil %>
+
+        <%= hidden_field_tag :reset_certifications, "0", id: nil,
+                             data: {
+                               assessments__assignments_complete_target: "reset"
+                             } %>
+
+        <div class="form-check">
+          <%= check_box_tag :complete, "1", lecture.assignments_complete?,
+                            class: "form-check-input",
+                            data: {
+                              assessments__assignments_complete_target: "checkbox",
+                              action: "change->assessments--assignments-complete#change"
+                            } %>
+
+          <%= label_tag :complete,
+                        t('assessment.assignments_complete.label'),
+                        class: "form-check-label" %>
+        </div>
+
+        <p class="text-muted small mb-0 mt-1">
+          <%= t('assessment.assignments_complete.hint') %>
+        </p>
+
+        <%#
+          Ticked or unticked, the answer turns every eligibility verdict in the
+          lecture over, so neither direction goes through unasked. Only the one
+          that would leave computed decisions behind offers a third way.
+        %>
+
+        <div
+          class="modal fade"
+          tabindex="-1"
+          aria-labelledby="assignments-complete-title"
+          aria-hidden="true"
+          data-assessments--assignments-complete-target="dialog"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="assignments-complete-title">
+                  <%= confirmation_title %>
+                </h5>
+              </div>
+
+              <div class="modal-body">
+                <p class="mb-0"><%= confirmation_body %></p>
+              </div>
+
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="assessments--assignments-complete#cancel"
+                >
+                  <%= t('assessment.assignments_complete.cancel') %>
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-action="assessments--assignments-complete#confirm"
+                >
+                  <%= confirmation_button %>
+                </button>
+
+                <% if confirmation == :reopen %>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger"
+                    data-action="assessments--assignments-complete#reset"
+                  >
+                    <%= t('assessment.assignments_complete.reopen_dialog.reset') %>
+                  </button>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
     <% end %>
   <% end %>
 

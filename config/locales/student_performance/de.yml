@@ -13,6 +13,10 @@ de:
             achievement:
               must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
   student_performance:
+    lists:
+      search: "Studierende suchen"
+      no_match: "Keine Studierenden gefunden."
+      showing: "%{from}–%{to} von %{count} Studierenden"
     errors:
       no_record: "Leistungsdatensatz nicht gefunden."
       no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
@@ -24,11 +28,19 @@ de:
         email: "E-Mail"
         points: "Punkte"
         percentage: "Prozent"
+        of_due_points: "von den bisher korrigierten Punkten"
+        due_so_far: "Bisher korrigiert"
+        due_so_far_hint: "Punkte und Prozent zählen, was für die Studierende feststeht: Blätter, deren Frist samt Nachfrist vorbei ist, und bereits korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
+        maximum: "Maximum"
+        assignments: "Übungsblätter"
+        not_due_count: "%{count} noch nicht fällig"
+        achievements: "Zusatzkriterien"
         assessments: "Bewertungen"
 
         reviewed: "Bewertet"
         graded: "bewertet"
         pending_grading: "Noch nicht bewertet"
+        not_due: "Noch nicht fällig"
         not_submitted: "Nicht abgegeben"
         absent: "Abwesend"
         exempt: "Befreit"
@@ -44,15 +56,13 @@ de:
           other: "%{count} Abgaben sind noch nicht bewertet"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
         details: "Details"
-
-        showing: "%{from}–%{to} von %{count} Studierenden"
       show:
         back: "Zurück zur Übersicht"
         recompute: "Datensatz neu berechnen"
         recompute_hint: "Nur als Fallback: Verwende dies, wenn die angezeigten Daten veraltet oder fehlerhaft wirken."
         review_proposal: "Vorschlag prüfen"
         total_points: "Gesamtpunkte"
-        out_of: "von %{max} möglichen"
+        out_of: "von %{max} bisher korrigierten"
         percentage: "Prozent"
         achievements_met: "Erfüllte Zusatzkriterien"
         assessment_breakdown: "Übungsblätter im Detail"
@@ -63,6 +73,7 @@ de:
         view_manuscript: "Abgabe ansehen"
         view_correction: "Korrektur ansehen"
         total_row: "Gesamt"
+        total_row_hint: "über alle Blätter des Semesters"
         last_computed: "Zuletzt berechnet vor %{time}."
 
       recompute:
@@ -104,7 +115,7 @@ de:
         newly_inconclusive: "neu zurückgestellt"
         current_status: "Aktuell"
         new_status: "Mit neuer Regel"
-        deferred_hint: "Zurückgestellt heißt: noch offen — die ausstehenden Bewertungen könnten die Schwelle noch erreichen. Eine höhere Schwelle kann deshalb aus zurückgestellt „nicht zugelassen“ machen und aus zugelassen „zurückgestellt“."
+        deferred_hint: "Zurückgestellt heißt: noch offen — was noch aussteht (nicht bewertete Abgaben, noch nicht fällige Blätter) könnte die Schwelle noch erreichen. Eine höhere Schwelle kann deshalb aus zurückgestellt „nicht zugelassen“ machen und aus zugelassen „zurückgestellt“."
         manual_conflicts:
           one: "%{count} Einzelentscheidung widerspricht der neuen Regel und bleibt bestehen:"
           other: "%{count} Einzelentscheidungen widersprechen der neuen Regel und bleiben bestehen:"
@@ -121,15 +132,26 @@ de:
         failed: "Nicht zugelassen"
         inconclusive: "Zurückgestellt"
       deferral:
-        points_pending: "Abgaben noch nicht bewertet"
+        assignments_incomplete: "Die Blätterliste ist noch offen"
+        points_not_due:
+          one: "1 Blatt noch nicht fällig"
+          other: "%{count} Blätter noch nicht fällig"
+        points_pending:
+          one: "1 Abgabe noch nicht bewertet"
+          other: "%{count} Abgaben noch nicht bewertet"
         points_not_measurable: "Keine Punkte zu messen"
         achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
+      missed:
+        points: "Schwelle nicht erreicht"
+        points_out_of_reach: "Schwelle auch mit allem Offenen nicht mehr erreichbar"
+        achievements: "Zusatzkriterium nicht erfüllt"
       single_proposal:
         title: "Zulassungsvorschlag"
         back_to_record: "Zurück zum Datensatz"
         points_check: "Punkte-Prüfung"
         student_points: "Punkte (Studierende/r)"
         student_percentage: "Prozent (Studierende/r)"
+        measured_against_all: "Die Regel misst gegen alle bisher angelegten Blätter, nicht nur gegen die fälligen."
         required: "Erforderlich"
         result: "Ergebnis"
         achievements_check: "Zusatzkriterien-Prüfung"
@@ -139,16 +161,28 @@ de:
       back_to_dashboard: "Zurück zum Dashboard"
       index:
         subtitle: "Zulassungsvorschläge prüfen und Studierende zulassen."
+        assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich. Lege die fehlenden Blätter an und setze im Reiter %{tab} das Häkchen „Die Blätterliste ist vollständig“."
         total: "Studierende gesamt"
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
         uncertified: "Offen"
-        stale: "Veraltet"
-        stale_hint: "Zugelassen bevor Regel oder Daten geändert wurden"
+        list_open: "Blätterliste noch offen — die Regel entscheidet derzeit nichts."
+        list_open_link: "Zum Reiter %{tab}"
+        todo_title: "Zu klären"
         bulk_accept: "Offene Vorschläge akzeptieren"
+        bulk_accept_hint: "Übernimmt den Vorschlag für alle Studierenden ohne Entscheidung. Zurückgestellte Vorschläge bleiben offen."
+        bulk_reset:
+          one: "%{count} berechnete Zulassung zurücksetzen"
+          other: "%{count} berechnete Zulassungen zurücksetzen"
+        bulk_reset_confirm:
+          one: "%{count} berechnete Entscheidung wird gelöscht; diese Zulassung ist danach wieder offen. Einzelentscheidungen bleiben."
+          other: "%{count} berechnete Entscheidungen werden gelöscht; diese Zulassungen sind danach wieder offen. Einzelentscheidungen bleiben."
+        reset: "Zurücksetzen auf Vorschlag"
+        reset_confirm: "Die Entscheidung wird gelöscht; die Zulassung ist danach wieder offen."
+        reset_confirm_passed: "Ohne Zulassung kann die Prüfungsanmeldung bei der Zuteilung nicht automatisch bestätigt werden."
         proposed_passed: "zugelassen"
         proposed_failed: "nicht zugelassen"
-        proposed_inconclusive: "zurückgestellt"
+        proposed_inconclusive: "bleiben zurückgestellt"
         accept: "Akzeptieren"
         override: "Überschreiben"
         certify_pass: "Zulassen"
@@ -161,37 +195,36 @@ de:
         setup_rule: "Regel einrichten"
         no_rule_hint: "Du kannst Zulassungen jederzeit manuell pro Studierende:r erfassen — auch ohne Regel."
         required_achievements_label: "Zusatzkriterien"
-        stale_rule_warning:
-          one: "Zulassungsregel wurde geändert — %{count} Zulassung ist nicht mehr aktuell."
-          other: "Zulassungsregel wurde geändert — %{count} Zulassungen sind nicht mehr aktuell."
-        stale_rule_manual_warning:
-          one: "%{count} manuelle Einzelentscheidung sollte nach Regeländerung überprüft werden."
-          other: "%{count} manuelle Einzelentscheidungen sollten nach Regeländerung überprüft werden."
-        stale_data_warning:
-          one: "Leistungsdaten wurden aktualisiert — %{count} Zulassung ist nicht mehr aktuell."
-          other: "Leistungsdaten wurden aktualisiert — %{count} Zulassungen sind nicht mehr aktuell."
-        stale_data_manual_warning:
-          one: "%{count} manuelle Einzelentscheidung sollte nach Datenänderung überprüft werden."
-          other: "%{count} manuelle Einzelentscheidungen sollten nach Datenänderung überprüft werden."
-        reevaluate_rules: "Mit aktueller Regel abgleichen"
-        reevaluate_data: "Mit aktuellen Daten abgleichen"
+        disagreeing_warning:
+          one: "%{count} Zulassung widerspricht der aktuellen Regel."
+          other: "%{count} Zulassungen widersprechen der aktuellen Regel."
+        stale_manual_warning:
+          one: "%{count} manuelle Entscheidung: Regel oder Leistungsdaten haben sich seither geändert."
+          other: "%{count} manuelle Entscheidungen: Regel oder Leistungsdaten haben sich seither geändert."
+        reevaluate: "Mit Regel abgleichen"
         confirm_manual: "Einzelentscheidungen bestätigen"
       status:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
-        pending: "Offen"
-        manual: "Einzelentscheidung"
-        stale: "Nicht mehr aktuell — Abgleich erforderlich"
+        pending: "Zurückgestellt"
+        manual_passed: "Zugelassen (manuell)"
+        manual_failed: "Nicht zugelassen (manuell)"
+        manual_stale: "Regel oder Leistungsdaten haben sich nach dieser Entscheidung geändert"
       columns:
         proposed: "Vorschlag"
-        rule_suggests: "Laut Regel:"
+        rule_today: "Regel heute:"
         certification: "Zulassung"
+        hint: "Hinweis"
         note: "Anmerkung"
+      rule_today:
+        passed: "zugelassen"
+        failed: "nicht zugelassen"
+        inconclusive: "kann nicht entscheiden"
       filters:
         all: "Alle"
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
-        stale: "Veraltet"
+        flagged: "Auffällig"
         uncertified: "Offen"
       override:
         title: "Manuell überschreiben"
@@ -203,6 +236,10 @@ de:
       flash:
         created: "Zulassung gespeichert."
         updated: "Zulassung aktualisiert."
+        reset_one: "Zulassung zurückgesetzt."
+        reset:
+          one: "%{count} Zulassung zurückgesetzt."
+          other: "%{count} Zulassungen zurückgesetzt."
         manual_exists: "Für diese/n Studierende/n existiert bereits eine manuelle Entscheidung. Nutzen Sie die Bearbeitungsfunktion, um sie zu ändern."
         bulk_accepted:
           one: "%{count} Zulassung akzeptiert."
@@ -210,6 +247,7 @@ de:
         confirmed:
           one: "%{count} Einzelentscheidung bestätigt."
           other: "%{count} Einzelentscheidungen bestätigt."
+        reevaluated_nothing: "Nichts zu ändern — jede berechnete Zulassung entspricht der Regel."
         reevaluated:
           one: "%{count} Zulassung neu bewertet."
           other: "%{count} Zulassungen neu bewertet."

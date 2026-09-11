@@ -3,6 +3,15 @@ require "rails_helper"
 RSpec.describe(StudentPerformance::RuleChangePreview) do
   let(:lecture) { FactoryBot.create(:lecture) }
   let(:teacher) { FactoryBot.create(:confirmed_user) }
+  let(:build_evaluator) do
+    lambda do |rule|
+      StudentPerformance::Evaluator.new(
+        rule,
+        assignments_complete: true,
+        due_points: StudentPerformance::DuePoints.new(lecture: lecture)
+      )
+    end
+  end
 
   let(:current_rule) do
     FactoryBot.create(:student_performance_rule, :active, :with_percentage,
@@ -19,6 +28,17 @@ RSpec.describe(StudentPerformance::RuleChangePreview) do
     StudentPerformance::PreviewRule.new(min_percentage: 70,
                                         min_points_absolute: nil,
                                         required_achievements: Achievement.none)
+  end
+
+  # The preview compares two rules on one set of figures. A term whose sheets
+  # are all due keeps the calendar out of that comparison.
+  before do
+    assignment = FactoryBot.create(:assignment, lecture: lecture)
+    # rubocop:disable Rails/SkipsModelValidations
+    assignment.update_column(:deadline, 2.days.ago)
+    # rubocop:enable Rails/SkipsModelValidations
+    FactoryBot.create(:assessment_task, assessment: assignment.assessment,
+                                        max_points: 100)
   end
 
   def record_for(percentage)
@@ -41,7 +61,8 @@ RSpec.describe(StudentPerformance::RuleChangePreview) do
     described_class.new(current_rule: current_rule,
                         preview_rule: stricter_rule,
                         records: records,
-                        certifications: certifications)
+                        certifications: certifications,
+                        build_evaluator: build_evaluator)
   end
 
   describe "#changes" do
@@ -99,7 +120,8 @@ RSpec.describe(StudentPerformance::RuleChangePreview) do
       result = described_class.new(current_rule: current_rule,
                                    preview_rule: looser_rule,
                                    records: [by_hand],
-                                   certifications: [certify(by_hand, :manual)])
+                                   certifications: [certify(by_hand, :manual)],
+                                   build_evaluator: build_evaluator)
       expect(result.changes).to be_empty
       expect(result.manual_conflicts).to be_empty
     end

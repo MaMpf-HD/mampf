@@ -4,6 +4,7 @@ module StudentPerformance
 
     before_action :set_rule, only: [:index, :create, :bulk_accept,
                                     :bulk_reevaluate]
+    before_action :set_certification, only: [:update, :destroy]
 
     rescue_from CanCan::AccessDenied do |exception|
       redirect_to main_app.root_url, alert: exception.message
@@ -14,25 +15,21 @@ module StudentPerformance
     end
 
     def index
+      # A link saved under the filter's old name would land on an empty table.
+      if params[:status] == "stale"
+        redirect_to lecture_student_performance_certifications_path(
+          @lecture, status: "flagged"
+        )
+        return
+      end
+
+      @due_points = due_points
       load_certifications
       load_proposals if @rule
       @proposal_by_user ||= {}
       compute_summary_counts
       compute_proposal_counts if @rule
-      @stale_user_ids = @lecture.student_performance_certifications
-                                .stale.pluck(:user_id).to_set
-      stale_from_rule = @lecture.student_performance_certifications
-                                .stale_from_rule
-      @stale_from_rule_auto_count = stale_from_rule
-                                    .where.not(source: :manual).count
-      @stale_from_rule_manual_count = stale_from_rule
-                                      .where(source: :manual).count
-      stale_from_data = @lecture.student_performance_certifications
-                                .stale_from_data
-      @stale_from_data_auto_count = stale_from_data
-                                    .where.not(source: :manual).count
-      @stale_from_data_manual_count = stale_from_data
-                                      .where(source: :manual).count
+      flag_certifications
       @achievements = if @rule
         @rule.required_achievements.order(:title)
       else
@@ -85,9 +82,20 @@ module StudentPerformance
         return
       end
 
+      # When assignments_complete? is false, every proposal is inconclusive;
+      # bulk_accept would only create or update pending certifications.
+      unless @lecture.assignments_complete?
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t(
+                      "student_performance.certifications.index.assignments_incomplete",
+                      tab: I18n.t("assessment.tabs.assignments")
+                    )
+        return
+      end
+
       records = @lecture.student_performance_records
                         .includes(:user)
-      evaluator = StudentPerformance::Evaluator.new(@rule)
+      evaluator = evaluator_for(@rule)
       proposals = evaluator.bulk_evaluate(records)
 
       existing_certs = @lecture.student_performance_certifications
@@ -131,19 +139,24 @@ module StudentPerformance
         return
       end
 
-      stale_certs = @lecture.student_performance_certifications
-                            .stale.where.not(source: :manual)
-      evaluator = StudentPerformance::Evaluator.new(@rule)
+      # A computed decision is compared with today's proposal rather than with
+      # a timestamp, and rewritten only where the two differ. `pending` rows
+      # carry no decision; `bulk_accept` writes those.
+      computed_certs = @lecture.student_performance_certifications
+                               .computed.decided
+      evaluator = evaluator_for(@rule)
       records_by_user = @lecture.student_performance_records.index_by(&:user_id)
       updated = 0
       reset_to_pending = 0
 
       ActiveRecord::Base.transaction do
-        stale_certs.find_each do |cert|
+        computed_certs.find_each do |cert|
           record = records_by_user[cert.user_id]
           next unless record
 
           result = evaluator.evaluate(record)
+          next unless cert.disagrees_with?(result.proposed_status)
+
           cert.update!(attributes_for_proposal(result.proposed_status))
           if result.proposed_status == :inconclusive
             reset_to_pending += 1
@@ -160,7 +173,7 @@ module StudentPerformance
     def bulk_confirm_manual
       # rubocop:disable Rails/SkipsModelValidations
       confirmed = @lecture.student_performance_certifications
-                          .stale.where(source: :manual)
+                          .stale_manual
                           .update_all(certified_at: Time.current)
       # rubocop:enable Rails/SkipsModelValidations
 
@@ -171,9 +184,16 @@ module StudentPerformance
                   )
     end
 
+    def bulk_reset
+      count = @lecture.student_performance_certifications.reset_computed!
+
+      redirect_to lecture_student_performance_certifications_path(@lecture),
+                  notice: I18n.t("student_performance.certifications.flash.reset",
+                                 count: count)
+    end
+
     def update
-      cert = @lecture.student_performance_certifications
-                     .find(params[:id])
+      cert = @certification
       cert.assign_attributes(
         status: update_certification_params[:status],
         note: update_certification_params[:note],
@@ -191,6 +211,16 @@ module StudentPerformance
       end
     end
 
+    # Deleting the row puts the student back to "no decision":
+    # Registration::Policy::StudentPerformanceHandler counts a missing row as
+    # outstanding, so no reset can admit anybody.
+    def destroy
+      @certification.destroy!
+
+      redirect_to return_to_path,
+                  notice: I18n.t("student_performance.certifications.flash.reset_one")
+    end
+
     private
 
       def return_to_path
@@ -203,6 +233,11 @@ module StudentPerformance
           end
         end
         lecture_student_performance_certifications_path(@lecture)
+      end
+
+      def set_certification
+        @certification = @lecture.student_performance_certifications
+                                 .find(params[:id])
       end
 
       def set_rule
@@ -224,7 +259,7 @@ module StudentPerformance
                           .includes(:user)
                           .order(:created_at)
 
-        evaluator = StudentPerformance::Evaluator.new(@rule)
+        evaluator = evaluator_for(@rule)
         @proposals = evaluator.bulk_evaluate(records)
         @proposal_by_user = @proposals.transform_keys(&:user_id)
       end
@@ -233,10 +268,23 @@ module StudentPerformance
         @total_students = @lecture.student_performance_records.count
         @passed_count = @certifications.count(&:passed?)
         @failed_count = @certifications.count(&:failed?)
+        @computed_count = @certifications.count { |c| c.computed? && !c.pending? }
         decided_count = @passed_count + @failed_count
         @uncertified_count = @total_students - decided_count
-        @stale_count = @lecture.student_performance_certifications
-                               .stale.count
+      end
+
+      # One reason per source: a `computed` row the rule would decide
+      # differently today, a `manual` row whose rule or record changed after it
+      # was made. A `pending` row is no decision, so nothing can contradict it.
+      def flag_certifications
+        @disagreeing_user_ids = @certifications.select do |cert|
+          proposal = @proposal_by_user[cert.user_id]
+          cert.computed? && !cert.pending? && proposal &&
+            cert.disagrees_with?(proposal.proposed_status)
+        end.to_set(&:user_id)
+        @stale_manual_user_ids = @lecture.student_performance_certifications
+                                         .stale_manual.pluck(:user_id).to_set
+        @flagged_user_ids = @disagreeing_user_ids | @stale_manual_user_ids
       end
 
       def compute_proposal_counts
@@ -250,11 +298,14 @@ module StudentPerformance
         end
       end
 
+      # By id after the timestamp, because the records of a lecture are written
+      # in one go and carry the same one: a page cut with OFFSET would then
+      # show a student twice and skip another. Measured, not feared.
       def load_filtered_records
         records = @lecture.student_performance_records
                           .includes(:user)
-                          .order(:created_at)
-        @filtered_records = filter_records(records)
+                          .order(:created_at, :id)
+        @pagy, @filtered_records = pagy(filter_records(filter_by_name(records)))
       end
 
       def filter_records(records)
@@ -265,7 +316,7 @@ module StudentPerformance
           return records.where.not(user_id: decided_user_ids)
         end
 
-        return records.where(user_id: @stale_user_ids.to_a) if params[:status] == "stale"
+        return records.where(user_id: @flagged_user_ids.to_a) if params[:status] == "flagged"
 
         certified_user_ids = @certifications
                              .select { |c| c.status.to_sym == params[:status].to_sym }
@@ -294,31 +345,28 @@ module StudentPerformance
       end
 
       def bulk_accept_notice(created, inconclusive)
-        parts = [
-          I18n.t("student_performance.certifications.flash.bulk_accepted",
-                 count: created)
-        ]
-        if inconclusive.positive?
-          parts << I18n.t(
-            "student_performance.certifications.flash.bulk_inconclusive",
-            count: inconclusive
-          )
-        end
-        parts.join(" ")
+        counted_notice(
+          { bulk_accepted: created, bulk_inconclusive: inconclusive },
+          empty: :bulk_accepted
+        )
       end
 
       def reevaluated_notice(updated, reset_to_pending)
-        parts = [
-          I18n.t("student_performance.certifications.flash.reevaluated",
-                 count: updated)
-        ]
-        if reset_to_pending.positive?
-          parts << I18n.t(
-            "student_performance.certifications.flash.reevaluated_inconclusive",
-            count: reset_to_pending
-          )
+        counted_notice(
+          { reevaluated: updated, reevaluated_inconclusive: reset_to_pending },
+          empty: :reevaluated_nothing
+        )
+      end
+
+      def counted_notice(counts, empty:)
+        parts = counts.filter_map do |key, count|
+          next unless count.positive?
+
+          I18n.t("student_performance.certifications.flash.#{key}", count: count)
         end
-        parts.join(" ")
+        return parts.join(" ") if parts.any?
+
+        I18n.t("student_performance.certifications.flash.#{empty}", count: 0)
       end
   end
 end

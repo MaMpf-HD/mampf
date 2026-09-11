@@ -8,6 +8,9 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
   before do
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
+    # Every example below is about a term whose assignments have all been
+    # created; the examples about the state before that say so themselves.
+    lecture.update!(assignments_complete: true)
     lecture.reload
   end
   describe "GET /lectures/:lecture_id/performance/certifications" do
@@ -24,6 +27,82 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(response.body).to include(
           I18n.t("student_performance.certifications.index.subtitle")
         )
+      end
+
+      # Mid-term the screen has to say why it proposes nothing, or it reads as
+      # broken rather than as "too early".
+      context "while the list of assignments is open" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture, min_percentage: 50)
+        end
+
+        let(:hint) do
+          I18n.t("student_performance.certifications.index.assignments_incomplete",
+                 tab: I18n.t("assessment.tabs.assignments"))
+        end
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture, user: student,
+                            percentage_materialized: 90,
+                            points_total_materialized: 90,
+                            points_max_materialized: 100)
+          lecture.update!(assignments_complete: false)
+        end
+
+        it "says why nothing is proposed and what to do" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(CGI.escapeHTML(hint))
+        end
+
+        it "leaves the sweep visible but refuses to run it" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.bulk_accept")
+          )
+          expect(response.body).to include("disabled")
+        end
+
+        # The banner carries the same words, so the whole page is no evidence:
+        # the reason has to stand on the student's own row.
+        it "defers a student who clears the threshold today" do
+          FactoryBot.create(:student_performance_certification,
+                            lecture: lecture, user: student)
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+            tr.text.include?(student.tutorial_name)
+          end
+
+          expect(row.text).to include(
+            I18n.t("student_performance.evaluator.deferral.assignments_incomplete")
+          )
+        end
+
+        # Searching the whole page would find the box's wording, so the
+        # assertion is scoped to the row.
+        it "does not repeat the banner on a decided row" do
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: student)
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+            tr.text.include?(student.tutorial_name)
+          end
+
+          expect(row.text).to include(
+            I18n.t("student_performance.certifications.rule_today.inconclusive")
+          )
+          expect(row.text).not_to include(
+            I18n.t("student_performance.evaluator.deferral.assignments_incomplete")
+          )
+        end
       end
 
       it "shows zero counts when no data exists" do
@@ -117,29 +196,40 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body).to include(CGI.escapeHTML(user_c.tutorial_name))
           end
 
-          it "filters by stale status" do
-            record_a = StudentPerformance::Record.find_by(
-              lecture: lecture, user: user_a
-            )
+          # user_a is certified as passed but would fail today; user_b is
+          # certified as failed and would fail today as well.
+          it "filters by flagged status" do
+            FactoryBot.create(:student_performance_rule, :active,
+                              :with_percentage,
+                              lecture: lecture, min_percentage: 50)
             # rubocop:disable Rails/SkipsModelValidations
-            record_a.update_columns(computed_at: 1.hour.ago)
-            cert_passed.update_columns(certified_at: 2.hours.ago)
-
-            record_b = StudentPerformance::Record.find_by(
-              lecture: lecture, user: user_b
-            )
-            record_b.update_columns(computed_at: 3.hours.ago)
+            StudentPerformance::Record.where(lecture: lecture)
+                                      .update_all(percentage_materialized: 40,
+                                                  points_total_materialized: 40,
+                                                  points_max_materialized: 100)
             # rubocop:enable Rails/SkipsModelValidations
 
             get lecture_student_performance_certifications_path(
-              lecture, status: "stale"
+              lecture, status: "flagged"
             )
             expect(response.body).to include(CGI.escapeHTML(user_a.tutorial_name))
             expect(response.body).not_to include(CGI.escapeHTML(user_b.tutorial_name))
           end
+
+          it "sends the filter's old name to its new one" do
+            get lecture_student_performance_certifications_path(
+              lecture, status: "stale"
+            )
+
+            expect(response).to redirect_to(
+              lecture_student_performance_certifications_path(
+                lecture, status: "flagged"
+              )
+            )
+          end
         end
 
-        context "with stale banners" do
+        context "with the attention banners" do
           let!(:rule) do
             FactoryBot.create(:student_performance_rule, :active,
                               :with_percentage,
@@ -147,7 +237,29 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                               min_percentage: 50)
           end
 
-          it "shows the rule-change banner when rule was updated" do
+          def record_for(user, percentage)
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user,
+                              percentage_materialized: percentage,
+                              points_total_materialized: percentage,
+                              points_max_materialized: 100)
+          end
+
+          it "offers to reconcile when the rule contradicts a computed decision" do
+            record_for(user_a, 40)
+
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.index.disagreeing_warning",
+                     count: 1)
+            )
+            expect(response.body).to include(
+              I18n.t("student_performance.certifications.index.reevaluate")
+            )
+          end
+
+          it "leaves a computed decision the rule still agrees with alone" do
+            record_for(user_a, 60)
             cert_passed.update!(rule: rule)
             # rubocop:disable Rails/SkipsModelValidations
             cert_passed.update_columns(certified_at: 2.hours.ago)
@@ -155,22 +267,26 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             # rubocop:enable Rails/SkipsModelValidations
 
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(
-              I18n.t("student_performance.certifications.index.reevaluate_rules")
+            expect(response.body).not_to include(
+              I18n.t("student_performance.certifications.index.reevaluate")
             )
+            row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+              tr.text.include?(user_a.tutorial_name)
+            end
+
+            expect(row.css("td")[-3].text.strip).to be_empty
           end
 
-          it "shows the data-change banner when record was recomputed" do
-            FactoryBot.create(:student_performance_record,
-                              lecture: lecture, user: user_a,
-                              computed_at: 1.hour.ago)
-            # rubocop:disable Rails/SkipsModelValidations
-            cert_passed.update_columns(certified_at: 2.hours.ago)
-            # rubocop:enable Rails/SkipsModelValidations
+          it "does not call a deferred row a contradiction" do
+            record_for(user_c, 40)
 
             get lecture_student_performance_certifications_path(lecture)
+            expect(response.body).not_to include(
+              I18n.t("student_performance.certifications.index.disagreeing_warning",
+                     count: 1)
+            )
             expect(response.body).to include(
-              I18n.t("student_performance.certifications.index.reevaluate_data")
+              I18n.t("student_performance.certifications.columns.proposed")
             )
           end
 
@@ -191,7 +307,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body).to include(
               I18n.t(
                 "student_performance.certifications.index" \
-                ".stale_rule_manual_warning",
+                ".stale_manual_warning",
                 count: 1
               )
             )
@@ -212,11 +328,132 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body).not_to include(
-              I18n.t(
-                "student_performance.certifications.index.reevaluate_rules"
-              )
+              I18n.t("student_performance.certifications.index.reevaluate")
             )
           end
+        end
+      end
+
+      # The one screen staff work through student by student, so it has to be
+      # possible to go to one student and to get through a full lecture.
+      context "with a search" do
+        # Spelled out rather than drawn from Faker: what a search finds has to
+        # be a matter of the search term alone.
+        def named(name, email)
+          FactoryBot.create(:confirmed_user, name: name,
+                                             name_in_tutorials: name,
+                                             email: email)
+        end
+
+        def listed_names
+          Nokogiri::HTML(response.body).css("tbody tr td:first-child")
+                  .map { |td| td.text.strip }
+        end
+
+        let(:ada) { named("Ada Lovelace", "ada@algol.test") }
+        let(:grace) { named("Grace Hopper", "grace@cobol.test") }
+
+        before do
+          [ada, grace].each do |user|
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user)
+          end
+        end
+
+        it "narrows the table to the searched name" do
+          get lecture_student_performance_certifications_path(lecture, q: "hopper")
+
+          expect(listed_names).to eq(["Grace Hopper"])
+        end
+
+        it "searches within the status that is filtered for" do
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: ada)
+
+          get lecture_student_performance_certifications_path(
+            lecture, status: "passed", q: "hopper"
+          )
+
+          expect(listed_names).to be_empty
+          expect(response.body).to include(
+            I18n.t("student_performance.lists.no_match")
+          )
+        end
+
+        # A decision is made from a list that may be searched, filtered and on
+        # its third page; landing back on the unfiltered first page loses the
+        # student who was being worked through.
+        it "comes back to the list a decision was made from" do
+          get lecture_student_performance_certifications_path(
+            lecture, q: "hopper", status: "uncertified"
+          )
+
+          form = Nokogiri::HTML(response.body)
+                         .css("#performance-certifications-frame tbody form")
+                         .first
+          return_to = form.at_css("input[name='return_to']")["value"]
+
+          expect(return_to).to include("q=hopper")
+          expect(return_to).to include("status=uncertified")
+        end
+
+        it "carries the search into the status filter's own links" do
+          get lecture_student_performance_certifications_path(lecture, q: "hopper")
+
+          pills = Nokogiri::HTML(response.body)
+                          .css("#performance-certifications-frame .nav-pills a")
+                          .pluck("href")
+
+          expect(pills).to all(include("q=hopper"))
+        end
+      end
+
+      context "with more students than fit on a page" do
+        before do
+          21.times do
+            FactoryBot.create(:student_performance_record, lecture: lecture)
+          end
+        end
+
+        it "cuts the list into pages" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          pagy = controller.instance_variable_get(:@pagy)
+
+          expect(pagy.count).to eq(21)
+          expect(Nokogiri::HTML(response.body).css("tbody tr").size).to eq(20)
+        end
+
+        it "serves the rest on the second page" do
+          get lecture_student_performance_certifications_path(lecture, page: 2)
+
+          expect(Nokogiri::HTML(response.body).css("tbody tr").size).to eq(1)
+        end
+
+        # The records of a lecture are written in one go, so their timestamps
+        # are the same, and an order that cannot tell two rows apart hands them
+        # out in any order it likes - once on one page, once on the next, and
+        # somebody else on neither. Measured before the tie-breaker: 100 rows,
+        # 99 of them different students.
+        it "shows every student exactly once across the pages" do
+          stamp = Time.zone.now
+          100.times do |i|
+            user = FactoryBot.create(:confirmed_user,
+                                     name: "Student #{i.to_s.rjust(3, "0")}",
+                                     name_in_tutorials: "Student #{i.to_s.rjust(3, "0")}")
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user,
+                              created_at: stamp, updated_at: stamp)
+          end
+
+          seen = (1..7).flat_map do |page|
+            get(lecture_student_performance_certifications_path(lecture, page: page))
+            Nokogiri::HTML(response.body)
+                    .css("#performance-certifications-frame tbody tr td:first-child")
+                    .map { |cell| cell.text.strip }
+          end
+
+          expect(seen.uniq.size).to eq(seen.size)
         end
       end
 
@@ -483,11 +720,15 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       context "with a pending certification" do
         let(:achievement) { FactoryBot.create(:achievement, lecture: lecture) }
         let(:undecided_user) { FactoryBot.create(:confirmed_user) }
-        let(:rule_suggests) do
-          I18n.t("student_performance.certifications.columns.rule_suggests")
+        let(:rule_today) do
+          I18n.t("student_performance.certifications.columns.rule_today")
         end
-        def deferral(reason)
-          I18n.t("student_performance.evaluator.deferral.#{reason}")
+        # The two open points reasons say how many sheets they are about, so a
+        # test that names one has to say how many too.
+        def deferral(reason, count: nil)
+          return I18n.t("student_performance.evaluator.deferral.#{reason}") unless count
+
+          I18n.t("student_performance.evaluator.deferral.#{reason}", count: count)
         end
 
         let!(:rule) do
@@ -517,7 +758,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
           it "does not claim the rule says something else" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).not_to include(rule_suggests)
+            expect(response.body).not_to include(rule_today)
           end
 
           it "names the unmarked achievement as the reason" do
@@ -543,14 +784,26 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           it "says so instead of blaming missing input" do
             get lecture_student_performance_certifications_path(lecture)
             expect(response.body).to include(deferral(:points_not_measurable))
-            expect(response.body).not_to include(deferral(:points_pending))
+            expect(response.body)
+              .not_to include(deferral(:points_pending, count: 0))
           end
         end
 
         context "when the marking still outstanding could carry the student" do
           let(:awaited_user) { FactoryBot.create(:confirmed_user) }
 
+          # The hand-in behind the materialized figure is created too: the page
+          # counts the sheets that are waiting, and the record sums what they
+          # are worth. In real data both come from the same participations.
           before do
+            waiting = FactoryBot.create(:assignment, :expired, lecture: lecture)
+            FactoryBot.create(:assessment_task,
+                              assessment: waiting.assessment, max_points: 40)
+            FactoryBot.create(:assessment_participation,
+                              assessment: waiting.assessment, user: awaited_user,
+                              submitted_at: 1.day.ago)
+            # The new sheet reopened the list; the lecturer has closed it again.
+            lecture.update!(assignments_complete: true)
             FactoryBot.create(:student_performance_record,
                               lecture: lecture,
                               user: awaited_user,
@@ -564,24 +817,62 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
           it "points at the marking rather than at the student" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(deferral(:points_pending))
+            expect(response.body)
+              .to include(deferral(:points_pending, count: 1))
+          end
+        end
+
+        # Mid-term the sheets to come outnumber the ones handed out; refusing
+        # a student for work nobody has set yet is the worse mistake.
+        context "when the term still has sheets to come" do
+          let(:early_user) { FactoryBot.create(:confirmed_user) }
+
+          before do
+            assignment = FactoryBot.create(:assignment, lecture: lecture,
+                                                        deadline: 3.days.from_now)
+            FactoryBot.create(:assessment_task,
+                              assessment: assignment.assessment,
+                              max_points: 40)
+            # The new sheet reopened the list; here the lecturer has said that
+            # this one is the last.
+            lecture.update!(assignments_complete: true)
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture,
+                              user: early_user,
+                              percentage_materialized: 30,
+                              points_total_materialized: 30,
+                              points_max_materialized: 100,
+                              points_max_pending_materialized: 0)
+            FactoryBot.create(:student_performance_certification,
+                              lecture: lecture, user: early_user)
+          end
+
+          it "names the sheets to come rather than refusing the student" do
+            get lecture_student_performance_certifications_path(lecture)
+            expect(response.body)
+              .to include(deferral(:points_not_due, count: 1))
+            expect(response.body)
+              .not_to include(deferral(:points_pending, count: 0))
           end
         end
 
         context "when the rule would let the student through" do
-          it "names what the rule says" do
+          it "shows the proposal rather than a contradiction" do
             get lecture_student_performance_certifications_path(lecture)
-            expect(response.body).to include(rule_suggests)
+            expect(response.body).not_to include(rule_today)
             expect(response.body).to include(
-              I18n.t("student_performance.certifications.status.passed")
-                 .downcase
+              I18n.t("student_performance.certifications.columns.proposed")
+            )
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.status.passed")
             )
           end
 
           it "offers no reason where there is nothing to explain" do
             get lecture_student_performance_certifications_path(lecture)
             StudentPerformance::Evaluator::DEFERRAL_REASONS.each do |reason|
-              expect(response.body).not_to include(deferral(reason))
+              expect(response.body)
+                .not_to include(deferral(reason, count: 0))
             end
           end
         end
@@ -615,17 +906,91 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         it "says the rule disagrees" do
           get lecture_student_performance_certifications_path(lecture)
           expect(response.body).to include(
-            I18n.t("student_performance.certifications.columns.rule_suggests")
+            I18n.t("student_performance.certifications.columns.rule_today")
+          )
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.rule_today.inconclusive")
           )
         end
 
-        it "does not reopen a settled row with the rule's reasons" do
+        it "names why the rule would defer now" do
           get lecture_student_performance_certifications_path(lecture)
-          StudentPerformance::Evaluator::DEFERRAL_REASONS.each do |reason|
-            expect(response.body).not_to include(
-              I18n.t("student_performance.evaluator.deferral.#{reason}")
-            )
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator.deferral.achievements_ungraded")
+          )
+        end
+
+        it "keeps the note column for the note" do
+          StudentPerformance::Certification
+            .find_by(lecture: lecture, user: decided_user)
+            .update!(note: "Sick note on file")
+
+          get lecture_student_performance_certifications_path(lecture)
+          row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+            tr.text.include?(decided_user.tutorial_name)
           end
+
+          expect(row.css("td")[-2].text.strip).to eq("Sick note on file")
+        end
+      end
+
+      context "with a decided certification the rule would now fail" do
+        let(:decided_user) { FactoryBot.create(:confirmed_user) }
+
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        before do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            user: decided_user,
+                            percentage_materialized: 40,
+                            points_total_materialized: 40,
+                            points_max_materialized: 100)
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: decided_user)
+        end
+
+        it "names the criterion the student misses" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.rule_today.failed")
+          )
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator.missed.points")
+          )
+        end
+
+        # Nothing is open for this student, so the plain sentence is the right
+        # one; the stronger one belongs to a student who still has marking
+        # outstanding that would not be enough either.
+        it "does not claim more than that the threshold was not reached" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).not_to include(
+            I18n.t("student_performance.evaluator.missed.points_out_of_reach")
+          )
+        end
+
+        it "keeps the decision as it is" do
+          get lecture_student_performance_certifications_path(lecture)
+          row = Nokogiri::HTML(response.body).css("tbody tr").find do |tr|
+            tr.text.include?(decided_user.tutorial_name)
+          end
+
+          expect(row.text).to include(
+            I18n.t("student_performance.certifications.status.passed")
+          )
+        end
+
+        it "offers the reset on the row" do
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.reset")
+          )
         end
       end
     end
@@ -751,7 +1116,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       end
 
       it "rejects overwriting a manual certification" do
-        FactoryBot.create(:student_performance_certification, :manual,
+        FactoryBot.create(:student_performance_certification, :passed, :manual,
                           lecture: lecture,
                           user: target_user,
                           certified_by: editor)
@@ -816,6 +1181,23 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
     context "as an editor" do
       before { sign_in editor }
+
+      # Reachable past a disabled button, and it would write nothing but
+      # "deferred" over every decision already taken.
+      it "refuses to sweep while the list of assignments is open" do
+        lecture.update!(assignments_complete: false)
+
+        expect do
+          post(bulk_accept_lecture_student_performance_certifications_path(
+                 lecture
+               ))
+        end.not_to change(StudentPerformance::Certification, :count)
+
+        expect(flash[:alert]).to eq(
+          I18n.t("student_performance.certifications.index.assignments_incomplete",
+                 tab: I18n.t("assessment.tabs.assignments"))
+        )
+      end
 
       it "creates certifications for all students" do
         expect do
@@ -1112,7 +1494,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "re-evaluates stale certifications" do
+      it "rewrites the decisions the rule contradicts and leaves the rest" do
         cert_a = FactoryBot.create(
           :student_performance_certification, :passed,
           lecture: lecture, user: user_a, rule: rule,
@@ -1135,8 +1517,22 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         cert_a.reload
         cert_b.reload
         expect(cert_a.status).to eq("passed")
+        expect(cert_a.certified_at).to be_within(5.seconds).of(4.hours.ago)
         expect(cert_b.status).to eq("failed")
-        expect(cert_a.certified_at).to be_within(5.seconds).of(Time.current)
+        expect(cert_b.certified_at).to be_within(5.seconds).of(Time.current)
+      end
+
+      it "leaves a deferred row to the accept sweep" do
+        cert = FactoryBot.create(
+          :student_performance_certification, :pending,
+          lecture: lecture, user: user_b, rule: rule
+        )
+
+        post bulk_reevaluate_lecture_student_performance_certifications_path(
+          lecture
+        )
+
+        expect(cert.reload.status).to eq("pending")
       end
 
       it "skips manual overrides" do
@@ -1159,7 +1555,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       it "shows a flash message with count" do
         FactoryBot.create(
           :student_performance_certification, :passed,
-          lecture: lecture, user: user_a, rule: rule,
+          lecture: lecture, user: user_b, rule: rule,
           certified_at: 4.hours.ago
         )
         rule.update!(min_percentage: 50)
@@ -1381,6 +1777,157 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         post bulk_confirm_manual_lecture_student_performance_certifications_path(
           lecture
         )
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
+  describe "DELETE /lectures/:lecture_id/performance/certifications/:id" do
+    let(:target_user) { FactoryBot.create(:confirmed_user) }
+
+    let!(:cert) do
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture, user: target_user)
+    end
+
+    before do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: target_user)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "drops the decision so the proposal shows again" do
+        delete lecture_student_performance_certification_path(lecture, cert)
+
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        expect(StudentPerformance::Certification.exists?(cert.id)).to be(false)
+      end
+
+      it "drops a manual decision too, one at a time" do
+        manual = FactoryBot.create(
+          :student_performance_certification, :passed, :manual,
+          lecture: lecture, user: FactoryBot.create(:confirmed_user)
+        )
+
+        delete lecture_student_performance_certification_path(lecture, manual)
+
+        expect(StudentPerformance::Certification.exists?(manual.id)).to be(false)
+      end
+
+      it "says so" do
+        delete lecture_student_performance_certification_path(lecture, cert)
+        follow_redirect!
+
+        expect(response.body).to include(
+          I18n.t("student_performance.certifications.flash.reset_one")
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        delete lecture_student_performance_certification_path(lecture, cert)
+
+        expect(response).to redirect_to(root_url)
+        expect(StudentPerformance::Certification.exists?(cert.id)).to be(true)
+      end
+    end
+
+    context "as an unauthenticated user" do
+      it "redirects to sign in" do
+        delete lecture_student_performance_certification_path(lecture, cert)
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
+
+  describe "POST /lectures/:lecture_id/performance/certifications/bulk_reset" do
+    let!(:computed_passed) do
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture)
+    end
+
+    let!(:computed_failed) do
+      FactoryBot.create(:student_performance_certification, :failed,
+                        lecture: lecture)
+    end
+
+    let!(:computed_pending) do
+      FactoryBot.create(:student_performance_certification, :pending,
+                        lecture: lecture)
+    end
+
+    let!(:manual) do
+      FactoryBot.create(:student_performance_certification, :failed, :manual,
+                        lecture: lecture)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "drops everything computed and keeps the manual ones" do
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
+        expect(response).to redirect_to(
+          lecture_student_performance_certifications_path(lecture)
+        )
+        remaining = StudentPerformance::Certification.where(lecture: lecture)
+        expect(remaining).to contain_exactly(manual)
+      end
+
+      it "leaves other lectures alone" do
+        elsewhere = FactoryBot.create(:student_performance_certification,
+                                      :passed)
+
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
+        expect(StudentPerformance::Certification.exists?(elsewhere.id)).to be(true)
+      end
+
+      it "counts the decisions it dropped" do
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+        follow_redirect!
+
+        expect(response.body).to include(
+          I18n.t("student_performance.certifications.flash.reset", count: 2)
+        )
+      end
+
+      it "offers the sweep only while there is something to reset" do
+        get lecture_student_performance_certifications_path(lecture)
+        expect(response.body).to include(
+          I18n.t("student_performance.certifications.index.bulk_reset",
+                 count: 2)
+        )
+
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+        get lecture_student_performance_certifications_path(lecture)
+        expect(response.body).not_to include(
+          bulk_reset_lecture_student_performance_certifications_path(lecture)
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
+        expect(response).to redirect_to(root_url)
+        expect(StudentPerformance::Certification.where(lecture: lecture).count)
+          .to eq(4)
+      end
+    end
+
+    context "as an unauthenticated user" do
+      it "redirects to sign in" do
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
         expect(response).to redirect_to(new_user_session_path)
       end
     end

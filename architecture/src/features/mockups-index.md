@@ -157,6 +157,32 @@ Assessments (teacher/editor/tutor/student)
   [assessments_student_results_detail.html](../mockups/assessments_student_results_detail.html)
 
 ```admonish abstract
+Submissions hub (student) — decided; the earlier drafts stay for the record
+```
+
+- **The one being built** — quiet zones in house style, with the news band and the
+  per-sheet markers:
+  [submissions_hub_calm.html](../mockups/submissions_hub_calm.html)
+- Independent counter-draft — where the split head and dropping the deadline column
+  came from:
+  [submissions_hub_independent.html](../mockups/submissions_hub_independent.html)
+- Draft A — three zones, superseded by the one above:
+  [submissions_hub_zones.html](../mockups/submissions_hub_zones.html)
+- Draft B — points ledger, the term as one table:
+  [submissions_hub_ledger.html](../mockups/submissions_hub_ledger.html)
+- Draft C — one card per sheet on a timeline:
+  [submissions_hub_stack.html](../mockups/submissions_hub_stack.html)
+
+```admonish note
+The two superseded student results mockups —
+[assessments_student_results_overview.html](../mockups/assessments_student_results_overview.html)
+and
+[assessments_student_results_detail.html](../mockups/assessments_student_results_detail.html)
+— are kept as history. For assignments the hub replaces them; see
+[12-views.md](12-views.md).
+```
+
+```admonish abstract
 Student Performance (teacher/editor/student)
 ```
 

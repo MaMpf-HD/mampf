@@ -500,8 +500,8 @@ RSpec.describe(Exam, type: :model) do
         expect(exam.destructible?).to be(true)
       end
 
-      it "returns nil for non_destructible_reason" do
-        expect(exam.non_destructible_reason).to be_nil
+      it "names no blocker" do
+        expect(exam.destruction_blockers).to be_empty
       end
     end
 
@@ -514,8 +514,8 @@ RSpec.describe(Exam, type: :model) do
         expect(exam.destructible?).to be(false)
       end
 
-      it "returns :roster_not_empty as non_destructible_reason" do
-        expect(exam.non_destructible_reason).to eq(:roster_not_empty)
+      it "names the roster as the blocker" do
+        expect(exam.destruction_blockers).to eq([:roster_not_empty])
       end
     end
 
@@ -531,8 +531,8 @@ RSpec.describe(Exam, type: :model) do
         expect(exam.destructible?).to be(true)
       end
 
-      it "returns nil for non_destructible_reason" do
-        expect(exam.non_destructible_reason).to be_nil
+      it "names no blocker" do
+        expect(exam.destruction_blockers).to be_empty
       end
 
       it "#in_campaign? returns true" do
@@ -553,8 +553,8 @@ RSpec.describe(Exam, type: :model) do
         expect(exam.destructible?).to be(false)
       end
 
-      it "returns :in_campaign as non_destructible_reason" do
-        expect(exam.non_destructible_reason).to eq(:in_campaign)
+      it "names the campaign as the blocker" do
+        expect(exam.destruction_blockers).to eq([:in_campaign])
       end
     end
 
@@ -571,12 +571,12 @@ RSpec.describe(Exam, type: :model) do
         # rubocop:enable Rails/SkipsModelValidations
       end
 
-      it "is not destructible" do
-        expect(exam.destructible?).to be(false)
+      it "is destructible: a finalized process no longer decides the roster" do
+        expect(exam.destructible?).to be(true)
       end
 
-      it "returns :in_campaign as non_destructible_reason" do
-        expect(exam.non_destructible_reason).to eq(:in_campaign)
+      it "names no blocker" do
+        expect(exam.destruction_blockers).to be_empty
       end
     end
 
@@ -592,8 +592,8 @@ RSpec.describe(Exam, type: :model) do
         expect(exam.destructible?).to be(false)
       end
 
-      it "returns :roster_not_empty as first non_destructible_reason" do
-        expect(exam.non_destructible_reason).to eq(:roster_not_empty)
+      it "names the roster, the draft campaign being no reason" do
+        expect(exam.destruction_blockers).to eq([:roster_not_empty])
       end
     end
   end

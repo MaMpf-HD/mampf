@@ -22,6 +22,16 @@ RSpec.describe(
       expect(rendered_content).to include("bi-hourglass-split")
     end
 
+    it "renders not_due as a muted dash rather than a cross" do
+      render_inline(described_class.new(status: :not_due, variant: :full))
+      expect(rendered_content).to include("text-muted")
+      expect(rendered_content).to include("bi-dash")
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.not_due")
+      )
+      expect(rendered_content).not_to include("bi-x-circle-fill")
+    end
+
     it "renders not_submitted with danger styling" do
       render_inline(described_class.new(
                       status: :not_submitted, variant: :full
@@ -60,6 +70,17 @@ RSpec.describe(
       expect(rendered_content).to include(
         I18n.t("student_performance.records.columns.pending_grading")
       )
+    end
+
+    it "renders not_due as a muted dash" do
+      render_inline(described_class.new(
+                      status: :not_due, variant: :compact
+                    ))
+      expect(rendered_content).to include("text-muted")
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.not_due")
+      )
+      expect(rendered_content).not_to include("\u2717")
     end
 
     it "renders not_submitted as cross mark" do

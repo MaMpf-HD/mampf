@@ -30,7 +30,7 @@ module StudentPerformance
         return
       end
 
-      evaluator = StudentPerformance::Evaluator.new(@rule)
+      evaluator = evaluator_for(@rule)
       @result = evaluator.evaluate(@record)
     end
 

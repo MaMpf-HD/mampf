@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<!--
+  DESIGN B of three for the student submissions hub (/lectures/:id/submissions).
+  Sibling drafts: submissions_hub_zones.html, submissions_hub_stack.html
+
+  THE POINTS LEDGER: the whole term as one table - sheets down, problems across,
+  your points in the cells. Handing in is a strip above it, not a zone.
+
+  Good for: it answers "how do I stand" and "where do I lose points" in one
+    look, without a single click - the per-problem column shows a pattern that
+    ten separate cards hide.
+  Breaks when: the sheet count is small or the term has just started (a table
+    with two rows is a poor front door), and when a sheet is in any state other
+    than marked - the row then has cells it cannot fill and has to say so in words.
+  Costs: the most expensive of the three - a ragged matrix (four or five problems
+    per sheet), a real mobile fallback because a 7-column table does not fold,
+    and a drawer for everything the row cannot hold.
+
+  All figures are from the development database (demo:setup_on_seed), lecture 1,
+  student1@mampf.edu, 30 Aug 2026.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignments — (V) Lineare Algebra 2 (Design B: ledger)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    body { background-color: #f2f3f5; }
+    .mock-note { border-left: 4px solid #6c757d; background: #fff; }
+    .viewport-label { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase;
+                      color: #6c757d; border-bottom: 1px solid #dee2e6; }
+    .phone { width: 390px; border: 10px solid #2b2b2b; border-radius: 30px;
+             overflow: hidden; background: #f2f3f5; }
+    .phone-body { height: 760px; overflow-y: auto; }
+
+    .chip { font-size: .72rem; font-weight: 600; padding: .18rem .5rem;
+            border-radius: 1rem; white-space: nowrap; }
+    .chip-wait { background: #e9ecef; color: #495057; }
+    .chip-act  { background: #fff3cd; color: #7a5b00; }
+    .chip-lost { background: #f8d7da; color: #842029; }
+
+    .points { font-variant-numeric: tabular-nums; }
+    .points-big { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+
+    .bar { height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: #6c8ebf; }
+    .bar-thin { height: 3px; }
+    .threshold-track { position: relative; }
+    .threshold-mark { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #212529; }
+
+    /* the ledger */
+    .ledger { font-size: .875rem; }
+    .ledger th { font-weight: 600; color: #6c757d; font-size: .78rem; }
+    .ledger td, .ledger th { vertical-align: middle; }
+    .ledger .sheet-name { position: sticky; left: 0; background: #fff; }
+    .cell { text-align: center; width: 68px; }
+    /* Each cell carries its own share as a hairline underneath, so a column can
+       be read down the page without reading the numbers. */
+    .cell .bar { width: 40px; margin: 3px auto 0; }
+    .cell-empty { color: #ced4da; }
+    .cell-zero { color: #b02a37; }
+    .row-open td { background: #fbfcfd; }
+    .row-muted, .row-muted a { color: #98a2ab; }
+    .ledger tfoot td { border-top: 2px solid #adb5bd; font-weight: 700; }
+    .now-strip { border-left: 4px solid #6c8ebf; }
+    .mini-cells { display: flex; gap: 4px; }
+    .mini-cell { flex: 1 1 0; text-align: center; font-size: .72rem; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1"><i class="bi bi-mortarboard-fill me-2"></i>MaMpf</span>
+  </div>
+</nav>
+
+<div class="container my-4" style="max-width: 1160px;">
+
+  <div class="mock-note p-3 mb-4 shadow-sm">
+    <div class="fw-bold mb-1">Design B — the points ledger</div>
+    <div class="small text-muted">
+      The term as one table. Handing in is a strip, not a zone.
+      Real data: lecture 1, <code>student1@mampf.edu</code>, 30 Aug 2026.
+    </div>
+  </div>
+
+  <!-- ============================ WIDE ============================ -->
+  <div class="viewport-label mb-3 pb-1">Wide — desktop, ≥ 992 px</div>
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+      <li class="breadcrumb-item"><a href="#">Start</a></li>
+      <li class="breadcrumb-item"><a href="#">(V) Lineare Algebra 2</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Assignments</li>
+    </ol>
+  </nav>
+
+  <div class="mb-3">
+    <h4 class="mb-0">Assignments</h4>
+    <div class="text-muted small">(V) Lineare Algebra 2, SS 2026 · Tutorial Mo 14–16 (Dr. Tutor)</div>
+  </div>
+
+  <!-- standing: one line -->
+  <div class="card shadow-sm mb-3">
+    <div class="card-body py-3">
+      <div class="row align-items-center g-3">
+        <div class="col-lg-3">
+          <div class="d-flex align-items-baseline gap-2">
+            <span class="points-big points">32.5</span>
+            <span class="text-muted points">of 176</span>
+          </div>
+          <div class="text-muted small">18 % of the term</div>
+        </div>
+        <div class="col-lg-5">
+          <div class="threshold-track">
+            <div class="bar"><span style="width:18.5%"></span></div>
+            <div class="threshold-mark" style="left:50%"></div>
+          </div>
+          <div class="small text-muted mt-1 d-flex justify-content-between">
+            <span>7 marked · 1 waiting · 2 missed</span>
+            <span>88 needed</span>
+          </div>
+        </div>
+        <div class="col-lg-4 border-start">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-x-circle-fill text-danger"></i>
+            <span class="fw-bold">Exam admission out of reach</span>
+          </div>
+          <div class="small text-muted">
+            88 points needed, 48.5 still possible · blackboard talk not passed
+            <a href="#" class="ms-1">details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- the action, as a strip -->
+  <div class="card shadow-sm mb-4 now-strip">
+    <div class="card-body py-3">
+      <div class="row align-items-center g-3">
+        <div class="col-lg-5">
+          <span class="fw-bold">Blatt 6</span>
+          <span class="chip chip-wait ms-2"><i class="bi bi-check2 me-1"></i>Handed in</span>
+          <div class="small text-muted">due Thu, Sep 3, 19:00 — in 4 days · team: you and student2</div>
+        </div>
+        <div class="col-lg-4 small">
+          <i class="bi bi-file-earmark-pdf text-danger me-1"></i>
+          blatt6.pdf <span class="text-muted">· 1.2 MB · Aug 30, 14:12</span>
+        </div>
+        <div class="col-lg-3 text-lg-end">
+          <a href="#" class="btn btn-sm btn-primary">Replace file</a>
+          <a href="#" class="btn btn-sm btn-outline-secondary">Team</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- the ledger -->
+  <div class="card shadow-sm mb-3">
+    <div class="table-responsive">
+      <table class="table table-hover ledger mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th class="sheet-name">Sheet</th>
+            <th>Due</th>
+            <th class="cell">P1</th>
+            <th class="cell">P2</th>
+            <th class="cell">P3</th>
+            <th class="cell">P4</th>
+            <th class="cell">P5</th>
+            <th class="cell">Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-open">
+            <td class="sheet-name fw-semibold">Homework 10</td>
+            <td class="text-muted small">Aug 27</td>
+            <td colspan="5" class="text-center">
+              <span class="chip chip-wait">Waiting to be marked</span>
+              <span class="text-muted small ms-2">handed in Aug 26, 22:27</span>
+            </td>
+            <td class="cell text-muted">— / 16</td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr>
+            <td class="sheet-name fw-semibold">Homework 9</td>
+            <td class="text-muted small">Aug 23</td>
+            <td colspan="5" class="text-center">
+              <span class="chip chip-lost">Not handed in</span>
+            </td>
+            <td class="cell cell-zero fw-bold">0 <span class="text-muted fw-normal">/ 16</span></td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr>
+            <td class="sheet-name fw-semibold">Homework 8</td>
+            <td class="text-muted small">Aug 16</td>
+            <td class="cell">1.5<div class="bar bar-thin"><span style="width:37.5%"></span></div></td>
+            <td class="cell">2<div class="bar bar-thin"><span style="width:50%"></span></div></td>
+            <td class="cell">1<div class="bar bar-thin"><span style="width:25%"></span></div></td>
+            <td class="cell">2<div class="bar bar-thin"><span style="width:50%"></span></div></td>
+            <td class="cell cell-empty">—</td>
+            <td class="cell fw-bold">6.5 <span class="text-muted fw-normal">/ 16</span></td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr>
+            <td class="sheet-name">
+              <span class="fw-semibold">Homework 7</span>
+              <span class="chip chip-act ms-1">Late — accepted</span>
+            </td>
+            <td class="text-muted small">Aug 9</td>
+            <td class="cell">1<div class="bar bar-thin"><span style="width:25%"></span></div></td>
+            <td class="cell">1.5<div class="bar bar-thin"><span style="width:37.5%"></span></div></td>
+            <td class="cell">0.5<div class="bar bar-thin"><span style="width:12.5%"></span></div></td>
+            <td class="cell">1<div class="bar bar-thin"><span style="width:25%"></span></div></td>
+            <td class="cell">0.5<div class="bar bar-thin"><span style="width:12.5%"></span></div></td>
+            <td class="cell fw-bold">4.5 <span class="text-muted fw-normal">/ 20</span></td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr>
+            <td class="sheet-name fw-semibold">Homework 6</td>
+            <td class="text-muted small">Aug 2</td>
+            <td class="cell cell-zero">0<div class="bar bar-thin"><span style="width:0%"></span></div></td>
+            <td class="cell">1.5<div class="bar bar-thin"><span style="width:37.5%"></span></div></td>
+            <td class="cell">1<div class="bar bar-thin"><span style="width:25%"></span></div></td>
+            <td class="cell">1<div class="bar bar-thin"><span style="width:25%"></span></div></td>
+            <td class="cell cell-empty">—</td>
+            <td class="cell fw-bold">3.5 <span class="text-muted fw-normal">/ 16</span></td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr>
+            <td class="sheet-name fw-semibold">Homework 5</td>
+            <td class="text-muted small">Jul 26</td>
+            <td class="cell">1<div class="bar bar-thin"><span style="width:25%"></span></div></td>
+            <td class="cell">0.5<div class="bar bar-thin"><span style="width:12.5%"></span></div></td>
+            <td class="cell">1.5<div class="bar bar-thin"><span style="width:37.5%"></span></div></td>
+            <td class="cell">2<div class="bar bar-thin"><span style="width:50%"></span></div></td>
+            <td class="cell">1.5<div class="bar bar-thin"><span style="width:37.5%"></span></div></td>
+            <td class="cell fw-bold">6.5 <span class="text-muted fw-normal">/ 20</span></td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr>
+            <td class="sheet-name fw-semibold">Homework 4</td>
+            <td class="text-muted small">Jul 19</td>
+            <td class="cell">2<div class="bar bar-thin"><span style="width:50%"></span></div></td>
+            <td class="cell cell-zero">0<div class="bar bar-thin"><span style="width:0%"></span></div></td>
+            <td class="cell">0.5<div class="bar bar-thin"><span style="width:12.5%"></span></div></td>
+            <td class="cell">0.5<div class="bar bar-thin"><span style="width:12.5%"></span></div></td>
+            <td class="cell cell-empty">—</td>
+            <td class="cell fw-bold">3 <span class="text-muted fw-normal">/ 16</span></td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr>
+            <td class="sheet-name fw-semibold">Homework 3</td>
+            <td class="text-muted small">Jul 12</td>
+            <td class="cell">1<div class="bar bar-thin"><span style="width:25%"></span></div></td>
+            <td class="cell">0.5<div class="bar bar-thin"><span style="width:12.5%"></span></div></td>
+            <td class="cell">1.5<div class="bar bar-thin"><span style="width:37.5%"></span></div></td>
+            <td class="cell">1<div class="bar bar-thin"><span style="width:25%"></span></div></td>
+            <td class="cell cell-empty">—</td>
+            <td class="cell fw-bold">4 <span class="text-muted fw-normal">/ 16</span></td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr>
+            <td class="sheet-name">
+              <span class="fw-semibold">Homework 2</span>
+              <span class="chip chip-act ms-1">Late — accepted</span>
+            </td>
+            <td class="text-muted small">Jul 5</td>
+            <td class="cell">0.5<div class="bar bar-thin"><span style="width:12.5%"></span></div></td>
+            <td class="cell">2<div class="bar bar-thin"><span style="width:50%"></span></div></td>
+            <td class="cell cell-zero">0<div class="bar bar-thin"><span style="width:0%"></span></div></td>
+            <td class="cell">0.5<div class="bar bar-thin"><span style="width:12.5%"></span></div></td>
+            <td class="cell">1.5<div class="bar bar-thin"><span style="width:37.5%"></span></div></td>
+            <td class="cell fw-bold">4.5 <span class="text-muted fw-normal">/ 20</span></td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr>
+            <td class="sheet-name fw-semibold">Homework 1</td>
+            <td class="text-muted small">Jun 28</td>
+            <td colspan="5" class="text-center">
+              <span class="chip chip-lost">Not handed in</span>
+              <span class="small text-danger ms-2">
+                <i class="bi bi-exclamation-triangle me-1"></i>your file is here — ask your tutor
+              </span>
+            </td>
+            <td class="cell cell-zero fw-bold">0 <span class="text-muted fw-normal">/ 20</span></td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+
+          <tr class="row-muted">
+            <td class="sheet-name">Blatt 5</td>
+            <td class="small">May 9</td>
+            <td colspan="5" class="text-center small">no points on this sheet</td>
+            <td class="cell">—</td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+          <tr class="row-muted">
+            <td class="sheet-name">Blatt 4</td>
+            <td class="small">May 1</td>
+            <td colspan="5" class="text-center small">no points on this sheet</td>
+            <td class="cell">—</td>
+            <td class="text-end"><a href="#" class="text-secondary"><i class="bi bi-three-dots"></i></a></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="sheet-name">Your total</td>
+            <td></td>
+            <td colspan="5" class="text-end text-muted small fw-normal">
+              needed for the exam: 88
+            </td>
+            <td class="cell">32.5 <span class="text-muted fw-normal">/ 176</span></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="card-footer bg-white small text-muted">
+      Points are yours alone, also on sheets you handed in as a team.
+      Files and corrections are deleted on Oct 15, 2026.
+    </div>
+  </div>
+
+  <!-- what the three dots open -->
+  <div class="card shadow-sm mb-5" style="max-width: 520px;">
+    <div class="card-header bg-white py-2 small fw-bold">
+      <i class="bi bi-box-arrow-in-left me-1"></i>Drawer — Homework 8
+    </div>
+    <div class="card-body small">
+      <div class="row g-2">
+        <div class="col-4 text-muted">Team</div>
+        <div class="col-8">you and student2 <span class="text-muted">— 6.5 is yours</span></div>
+        <div class="col-4 text-muted">Handed in</div>
+        <div class="col-8">Aug 15, 16:27</div>
+        <div class="col-4 text-muted">Marked</div>
+        <div class="col-8">Aug 16 by Dr. Tutor</div>
+        <div class="col-4 text-muted">Files</div>
+        <div class="col-8">
+          <a href="#" class="badge text-bg-secondary text-decoration-none">Submission ↓</a>
+          <a href="#" class="badge text-bg-secondary text-decoration-none">Correction ↓</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ NARROW ============================ -->
+  <div class="viewport-label mb-3 pb-1">Narrow — phone, 390 px (the table cannot fold, so it becomes cards)</div>
+
+  <div class="phone shadow mb-5">
+    <div class="phone-body">
+
+      <div class="p-3 pb-0">
+        <h5 class="mb-0">Assignments</h5>
+        <div class="text-muted" style="font-size:.78rem">(V) Lineare Algebra 2 · Mo 14–16</div>
+      </div>
+
+      <div class="card m-3 shadow-sm">
+        <div class="card-body py-3">
+          <div class="d-flex justify-content-between align-items-baseline mb-2">
+            <div><span class="points-big points">32.5</span><span class="text-muted points small"> of 176</span></div>
+            <span class="chip chip-lost">Out of reach</span>
+          </div>
+          <div class="threshold-track">
+            <div class="bar"><span style="width:18.5%"></span></div>
+            <div class="threshold-mark" style="left:50%"></div>
+          </div>
+          <div class="d-flex justify-content-between small text-muted mt-1">
+            <span>7 marked · 1 waiting</span><span>88 needed</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card m-3 shadow-sm now-strip">
+        <div class="card-body py-3">
+          <div class="d-flex justify-content-between">
+            <div>
+              <div class="fw-bold small">Blatt 6</div>
+              <div class="text-muted" style="font-size:.72rem">due Sep 3, 19:00 · in 4 days</div>
+            </div>
+            <span class="chip chip-wait">Handed in</span>
+          </div>
+          <a href="#" class="btn btn-primary btn-sm w-100 mt-2">Replace file</a>
+        </div>
+      </div>
+
+      <div class="px-3 pb-1 small fw-bold text-muted">Your points, sheet by sheet</div>
+
+      <div class="card mx-3 mb-2 shadow-sm">
+        <div class="card-body py-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-semibold small">Homework 10</span>
+            <span class="chip chip-wait">Waiting</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mx-3 mb-2 shadow-sm">
+        <div class="card-body py-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-semibold small">Homework 9</span>
+            <span><span class="cell-zero fw-bold points">0</span><span class="text-muted small points"> / 16</span></span>
+          </div>
+          <span class="chip chip-lost">Not handed in</span>
+        </div>
+      </div>
+
+      <div class="card mx-3 mb-2 shadow-sm">
+        <div class="card-body py-2">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-semibold small">Homework 8</span>
+            <span><span class="fw-bold points">6.5</span><span class="text-muted small points"> / 16</span></span>
+          </div>
+          <div class="mini-cells">
+            <div class="mini-cell">P1<div class="bar bar-thin my-1"><span style="width:37.5%"></span></div>1.5</div>
+            <div class="mini-cell">P2<div class="bar bar-thin my-1"><span style="width:50%"></span></div>2</div>
+            <div class="mini-cell">P3<div class="bar bar-thin my-1"><span style="width:25%"></span></div>1</div>
+            <div class="mini-cell">P4<div class="bar bar-thin my-1"><span style="width:50%"></span></div>2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mx-3 mb-2 shadow-sm">
+        <div class="card-body py-2">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-semibold small">Homework 7 <span class="chip chip-act">Late</span></span>
+            <span><span class="fw-bold points">4.5</span><span class="text-muted small points"> / 20</span></span>
+          </div>
+          <div class="mini-cells">
+            <div class="mini-cell">P1<div class="bar bar-thin my-1"><span style="width:25%"></span></div>1</div>
+            <div class="mini-cell">P2<div class="bar bar-thin my-1"><span style="width:37.5%"></span></div>1.5</div>
+            <div class="mini-cell">P3<div class="bar bar-thin my-1"><span style="width:12.5%"></span></div>0.5</div>
+            <div class="mini-cell">P4<div class="bar bar-thin my-1"><span style="width:25%"></span></div>1</div>
+            <div class="mini-cell">P5<div class="bar bar-thin my-1"><span style="width:12.5%"></span></div>0.5</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mx-3 mb-2 shadow-sm">
+        <div class="card-body py-2">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-semibold small">Homework 6</span>
+            <span><span class="fw-bold points">3.5</span><span class="text-muted small points"> / 16</span></span>
+          </div>
+          <div class="mini-cells">
+            <div class="mini-cell">P1<div class="bar bar-thin my-1"><span style="width:0%"></span></div><span class="cell-zero">0</span></div>
+            <div class="mini-cell">P2<div class="bar bar-thin my-1"><span style="width:37.5%"></span></div>1.5</div>
+            <div class="mini-cell">P3<div class="bar bar-thin my-1"><span style="width:25%"></span></div>1</div>
+            <div class="mini-cell">P4<div class="bar bar-thin my-1"><span style="width:25%"></span></div>1</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 pt-1">
+        <button class="btn btn-sm btn-outline-secondary w-100">Show 7 earlier sheets</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================ STATE GALLERY ============================ -->
+  <div class="viewport-label mb-3 pb-1">Every state a row can be in</div>
+  <div class="card shadow-sm mb-5">
+    <div class="card-body">
+      <p class="small text-muted">
+        Rule of this design: <strong>the cells carry the marked states, a badge across the
+        cells carries the rest.</strong> A row that has points shows only numbers; a row
+        that cannot have them yet replaces all five cells with one sentence. That keeps the
+        badge count per screen low even though the state space is large.
+      </p>
+      <div class="table-responsive">
+        <table class="table table-sm ledger align-middle mb-0">
+          <tbody>
+            <tr><td style="width:220px" class="text-muted small">deadline open, nothing there</td>
+                <td colspan="5" class="text-center"><span class="chip chip-wait">Not handed in yet</span></td><td class="cell text-muted">— / 16</td></tr>
+            <tr><td class="text-muted small">deadline open, file there</td>
+                <td colspan="5" class="text-center"><span class="chip chip-wait">Handed in</span></td><td class="cell text-muted">— / 16</td></tr>
+            <tr><td class="text-muted small">grace period running</td>
+                <td colspan="5" class="text-center"><span class="chip chip-act">Grace period — 15 min left</span></td><td class="cell text-muted">— / 16</td></tr>
+            <tr><td class="text-muted small">late, tutor has not decided</td>
+                <td colspan="5" class="text-center"><span class="chip chip-act">Late — your tutor decides</span></td><td class="cell text-muted">— / 16</td></tr>
+            <tr><td class="text-muted small">late, let through</td>
+                <td colspan="5" class="text-center"><span class="chip chip-act">Late — accepted</span></td><td class="cell text-muted">— / 16</td></tr>
+            <tr><td class="text-muted small">late, refused</td>
+                <td colspan="5" class="text-center"><span class="chip chip-lost">Late — rejected</span></td><td class="cell cell-zero fw-bold">0 / 16</td></tr>
+            <tr><td class="text-muted small">handed in, tutor behind</td>
+                <td colspan="5" class="text-center"><span class="chip chip-wait">Waiting to be marked</span></td><td class="cell text-muted">— / 16</td></tr>
+            <tr><td class="text-muted small">marked</td>
+                <td class="cell">1.5<div class="bar bar-thin"><span style="width:37.5%"></span></div></td>
+                <td class="cell">2<div class="bar bar-thin"><span style="width:50%"></span></div></td>
+                <td class="cell">1<div class="bar bar-thin"><span style="width:25%"></span></div></td>
+                <td class="cell">2<div class="bar bar-thin"><span style="width:50%"></span></div></td>
+                <td class="cell cell-empty">—</td>
+                <td class="cell fw-bold">6.5 / 16</td></tr>
+            <tr><td class="text-muted small">correction uploaded, no points</td>
+                <td colspan="5" class="text-center"><span class="chip chip-wait">Correction there, no points</span></td><td class="cell text-muted">— / 16</td></tr>
+            <tr><td class="text-muted small">nothing arrived</td>
+                <td colspan="5" class="text-center"><span class="chip chip-lost">Not handed in</span></td><td class="cell cell-zero fw-bold">0 / 16</td></tr>
+            <tr><td class="text-muted small">excused (<code>exempt</code>)</td>
+                <td colspan="5" class="text-center"><span class="chip chip-wait">Excused — does not count</span></td><td class="cell text-muted">—</td></tr>
+            <tr><td class="text-muted small">absent</td>
+                <td colspan="5" class="text-center"><span class="chip chip-lost">Absent</span></td><td class="cell cell-zero fw-bold">0 / 16</td></tr>
+            <tr class="row-muted"><td class="small">old-style sheet, no assessment</td>
+                <td colspan="5" class="text-center small">no points on this sheet</td><td class="cell">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small text-muted mb-0 mt-3">
+        Not in this list: <em>graded</em>. An <code>Assignment</code> is
+        <code>Assessment::Pointable</code> and never <code>Gradable</code>, so a sheet
+        cannot carry a grade.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

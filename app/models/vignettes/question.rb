@@ -16,6 +16,14 @@ module Vignettes
 
     self.abstract_class = false
 
+    # Answers are single table inheritance too, and each kind of question takes
+    # exactly one kind of them. A slide whose question type is "No Answer" keeps
+    # the base class here: there is nothing to answer, but the time spent on it
+    # still counts.
+    def answer_class
+      Vignettes::Answer
+    end
+
     def question_text_required?
       type.present? && type != ""
     end

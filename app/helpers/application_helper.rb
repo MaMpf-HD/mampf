@@ -117,13 +117,9 @@ module ApplicationHelper
   end
 
   # media_sorts
-  def media_sorts(lecture = nil)
-    if lecture && lecture.sort == "vignettes"
-      ["miscellaneous"]
-    else
-      ["lesson_material", "worked_example", "quiz", "repetition",
-       "exercise", "script", "questions", "remarks", "miscellaneous"]
-    end
+  def media_sorts
+    ["lesson_material", "worked_example", "quiz", "repetition",
+     "exercise", "script", "questions", "remarks", "miscellaneous"]
   end
 
   # media_sort -> acronym

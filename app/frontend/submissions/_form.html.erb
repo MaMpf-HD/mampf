@@ -1,0 +1,161 @@
+<%#
+  `local: true` keeps rails-ujs out of the way: the app turns every form_with
+  into a data-remote form (config/application.rb), and this one is answered by
+  Turbo into the card's frame.
+%>
+<% messages = errors ? errors.to_hash : {} %>
+
+<%#
+  The group is named, not chosen: a new hand-in goes to the one the reader
+  sits in, an existing one stays where it was filed - which is not the same
+  group once the reader has moved, and it is the tutor who has the work who
+  matters here.
+%>
+<% named_tutorial = submission.persisted? ? submission.tutorial : rostered_tutorial_for(lecture) %>
+
+<%= form_with model: submission,
+              local: true,
+              html: { data: { controller: 'submission-upload',
+                              submission_upload_endpoint_value: '/submissions/upload',
+                              submission_upload_accepted_file_types_value: assignment.accepted_for_file_input,
+                              submission_upload_max_file_size_value: SubmissionUploader::MAX_SIZE,
+                              submission_upload_intent_value:
+                                upload_intent_token(SubmissionUploader, target: submission),
+                              submission_upload_failure_message_value: t('submission.upload_failure'),
+                              submission_upload_missing_consent_message_value: t('submission.missing_consent'),
+                              submission_upload_upload_button_label_value: t('submission.upload_file') } } do |f| %>
+  <h2 class="h4 mb-3"><%= assignment.title %></h2>
+
+  <% [:manuscript, :user_submission_joins, :base].each do |key| %>
+    <% next if messages[key].blank? %>
+
+    <div class="alert alert-warning py-2"><%= messages[key].to_sentence %></div>
+  <% end %>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <%= f.label :tutorial_id, t('basics.tutorial') %>
+
+      <p><%= named_tutorial.title_with_tutors %></p>
+
+      <%= f.hidden_field :assignment_id, value: assignment.id %>
+    </div>
+  </div>
+
+  <% unless submission.persisted? %>
+    <div class="row">
+      <div class="col-12">
+        <%= f.label :invitee_ids, t('submission.invitations_to') %>
+
+        <%= f.select :invitee_ids,
+                     options_for_select(partners.map { |u| [u.tutorial_name, u.id] },
+                                        partner_preselection(current_user, lecture)),
+                     {},
+                     { multiple: true, class: "form-select selectize" } %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-12">
+      <%= f.label :manuscript, t('basics.submission') %>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= f.hidden_field :manuscript,
+                         value: submission.cached_manuscript_data,
+                         data: { submission_upload_target: 'hiddenInput' } %>
+
+      <%#
+        A target rather than a global lookup: with two cards open, the id is on
+        the page twice and `getElementById` finds whichever came first.
+      %>
+
+      <%= f.hidden_field :detach_user_manuscript, value: false,
+                         data: { submission_upload_target: 'detachInput' } %>
+
+      <div data-submission-upload-target="dashboard"></div>
+    </div>
+
+    <div class="col-12">
+      <i
+        class="fas fa-lg fa-trash-alt me-2 clickable"
+        data-action="click->submission-upload#remove"
+        data-submission-upload-target="removeButton"
+        style="display: <%= show_inline(submission.manuscript) %>"
+      ></i>
+
+      <span
+        data-submission-upload-target="metadata"
+        style="display: <%= show_inline(submission.manuscript) %>"
+      >
+        <%= submission.manuscript_filename %>
+        (<%= number_to_human_size(submission.manuscript_size) %>)
+      </span>
+
+      <span
+        data-submission-upload-target="noMetadata"
+        style="display: <%= show_inline(!submission.manuscript) %>"
+      >
+        <%= t('submission.no_manuscript_yet') %>
+      </span>
+    </div>
+
+    <div class="col-12 mt-2">
+      <div class="col-12 my-1" data-submission-upload-target="permissionField">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value="0"
+            id="file-permission-<%= assignment.id %>"
+            data-submission-upload-target="permission"
+          >
+
+          <%#
+            The label reaches its box by id, so with two cards open the id has
+            to say which sheet it belongs to.
+          %>
+
+          <label
+            class="form-check-label"
+            for="file-permission-<%= assignment.id %>"
+          >
+            <%= t('submission.assure_third_party') %>
+          </label>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <small><%= t('submission.removal_notice_html') %></small>
+      </div>
+
+      <div class="col-12">
+        <small
+          class="text-danger submission-initially-hidden"
+          data-submission-upload-target="pendingNotice"
+        >
+          <%= t('submission.submission_not_upload_notice_html') %>
+        </small>
+      </div>
+
+      <div class="col-12">
+        <small
+          class="text-danger submission-initially-hidden"
+          data-submission-upload-target="uploadedNotice"
+        >
+          <%= t('submission.submission_upload_notice_html') %>
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-3 align-items-center mt-3">
+    <%= f.submit t('buttons.save'),
+                 class: 'btn btn-sm btn-primary',
+                 data: { submission_upload_target: 'saveButton' } %>
+
+    <%= link_to t('buttons.cancel'), cancel_editing_submission_path(submission),
+                class: 'small' %>
+  </div>
+<% end %>

@@ -56,9 +56,10 @@ module Assessment
     end
 
     # absent and exempt -> no change
-    # pending -> reviewed if all tasks scored, otherwise remains pending
-    # reviewed -> pending if any task points are changed to nil, otherwise remains reviewed
-    def update_status_if_all_scored!
+    # every task scored -> reviewed, stamped with when and by whom, on every
+    #   save: the student's page tells a fresh mark from an old one by the stamp
+    # a task unscored again -> pending, stamp cleared
+    def update_status_if_all_scored!(grader: nil)
       return if absent? || exempt?
 
       task_ids = assessment.tasks.pluck(:id)
@@ -67,18 +68,32 @@ module Assessment
       points_by_task_id = task_points.pluck(:task_id, :points).to_h
       missing_scored_tasks = task_ids.any? { |task_id| points_by_task_id[task_id].nil? }
 
-      if pending? && !missing_scored_tasks
-        update!(status: :reviewed)
+      if missing_scored_tasks
+        update!(status: :pending, graded_at: nil, grader: nil) if reviewed?
         return
       end
 
-      return unless reviewed? && missing_scored_tasks
-
-      update!(status: :pending)
+      update!(status: :reviewed, graded_at: Time.current,
+              grader: grader || self.grader)
     end
 
     def graded_tasks_points
       task_points
+    end
+
+    # The one place the student side asks whether marks may be shown. Sheets
+    # have no release step - what a tutor saves, the student sees - so the
+    # answer today is "somebody wrote a value on some task". Everything student
+    # facing reads it here, so should sheets ever get a release step, this is
+    # the single line that changes.
+    #
+    # Deliberately not `points_total`: a row saved with every field left blank
+    # creates task points of nil, and the sum `Assessment::TaskPoint` writes
+    # back arrives as 0, not nil - "nothing entered" would read as "zero".
+    def results_visible?
+      return task_points.any? { |point| !point.points.nil? } if task_points.loaded?
+
+      task_points.where.not(points: nil).exists?
     end
 
     private

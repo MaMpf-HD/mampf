@@ -231,14 +231,14 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         it "calls SubmissionGraderService.score_tasks_by_participation!" do
           expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "lecture" },
                 as: :turbo_stream
         end
 
         it "returns turbo_stream success" do
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "lecture" },
                 as: :turbo_stream
@@ -248,7 +248,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         context "when participation is not found" do
           it "responds with turbo_stream alert" do
-            patch point_user_tutorial_path(999_999),
+            patch point_participation_path(999_999),
                   params: { task_points: {}.to_json, grading_scope_type: "lecture" },
                   as: :turbo_stream
             expect(response).to have_http_status(:success)
@@ -262,7 +262,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       context "before deadline" do
         it "returns turbo_stream success" do
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "lecture" },
                 as: :turbo_stream
@@ -284,14 +284,14 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         it "calls SubmissionGraderService.score_tasks_by_participation!" do
           expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "tutorial" },
                 as: :turbo_stream
         end
 
         it "returns turbo_stream success" do
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "tutorial" },
                 as: :turbo_stream
@@ -312,14 +312,14 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       it "does not call SubmissionGraderService.score_tasks_by_participation!" do
         expect(Assessment::SubmissionGraderService).not_to receive(:score_tasks_by_participation!)
-        patch point_user_tutorial_path(exam_participation),
+        patch point_participation_path(exam_participation),
               params: { task_points: { task.id => "6" }.to_json,
                         grading_scope_type: "lecture" },
               as: :turbo_stream
       end
 
       it "returns turbo_stream with the not-yet-supported alert" do
-        patch point_user_tutorial_path(exam_participation),
+        patch point_participation_path(exam_participation),
               params: { task_points: { task.id => "6" }.to_json,
                         grading_scope_type: "lecture" },
               as: :turbo_stream
@@ -330,7 +330,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       it "does not raise NameError from unset grading_scope/save_url/refresh_url" do
         expect do
-          patch(point_user_tutorial_path(exam_participation),
+          patch(point_participation_path(exam_participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "lecture" },
                 as: :turbo_stream)
@@ -349,7 +349,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       before { sign_in teacher }
 
       it "returns turbo_stream with the invalid-assessable-type alert" do
-        patch point_user_tutorial_path(talk_participation),
+        patch point_participation_path(talk_participation),
               params: { task_points: { task.id => "6" }.to_json,
                         grading_scope_type: "lecture" },
               as: :turbo_stream
@@ -389,7 +389,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     end
   end
 
-  # PATCH refresh_point_user_tutorial
+  # PATCH refresh_point_participation
   describe "PATCH /participations/:participation_id/refresh_point_user" do
     let!(:participation) do
       create(:assessment_participation, assessment: assessment, user: student)
@@ -398,7 +398,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     before { sign_in teacher }
 
     it "returns turbo_stream success" do
-      patch refresh_point_user_tutorial_path(participation),
+      patch refresh_point_participation_path(participation),
             params: { grading_scope_type: "lecture" },
             as: :turbo_stream
       expect(response).to have_http_status(:success)
@@ -407,7 +407,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
     context "when participation is not found" do
       it "responds with turbo_stream alert" do
-        patch refresh_point_user_tutorial_path(999_999),
+        patch refresh_point_participation_path(999_999),
               params: { grading_scope_type: "lecture" },
               as: :turbo_stream
         expect(response).to have_http_status(:success)
@@ -543,7 +543,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       it "redirects point_user to sign in" do
         participation = create(:assessment_participation, assessment: assessment, user: student)
-        patch point_user_tutorial_path(participation),
+        patch point_participation_path(participation),
               params: { task_points: {}.to_json, grading_scope_type: "lecture" },
               as: :turbo_stream
         expect(response).to have_http_status(:redirect)
@@ -569,7 +569,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         participation = create(:assessment_participation, assessment: assessment, user: student,
                                                           tutorial: tutorial)
         Timecop.travel(3.hours.from_now)
-        patch point_user_tutorial_path(participation),
+        patch point_participation_path(participation),
               params: { task_points: { task.id => "6" }.to_json,
                         grading_scope_type: "tutorial" },
               as: :turbo_stream

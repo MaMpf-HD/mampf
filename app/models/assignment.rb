@@ -6,10 +6,25 @@ class Assignment < ApplicationRecord
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
+  has_many :sightings, class_name: "AssignmentSighting", dependent: :destroy
 
   before_save :inherit_deletion_date_from_lecture
   after_create :setup_assessment
   before_destroy :check_destructibility, prepend: true
+  # A new sheet opens the list, and so does a deadline moved into the future:
+  # the sheet is back in play, and a verdict that calls itself final over an
+  # open sheet is what the list is there to prevent. A deadline moved within
+  # the past is a correction and changes nothing.
+  #
+  # Rails keeps track of which action a record was committed for, so the
+  # creation hangs on that. The deadline cannot: `saved_change_to_deadline?`
+  # describes the last save alone, and a record may be saved twice inside one
+  # transaction - moved and then renamed. The reason is noted where it happens
+  # and kept until the commit.
+  after_save :note_deadline_move
+  after_create_commit :reopen_lecture_assignment_list
+  after_update_commit :reopen_after_deadline_move, if: :deadline_moved_ahead?
+  after_rollback :forget_deadline_move
 
   def requires_submission
     return assessment.requires_submission if assessment
@@ -106,14 +121,6 @@ class Assignment < ApplicationRecord
     deadline + lecture.submission_grace_period.minutes
   end
 
-  def current?
-    in?(lecture.current_assignments)
-  end
-
-  def previous?
-    in?(lecture.previous_assignments)
-  end
-
   def previous
     siblings = lecture.assignments_by_deadline
     position = siblings.map(&:first).find_index(deadline)
@@ -134,15 +141,17 @@ class Assignment < ApplicationRecord
   end
 
   def destructible?
-    non_destructible_reason.nil?
+    destruction_blockers.empty?
   end
 
-  def non_destructible_reason
-    return :has_submissions if submissions.proper.any?
-
-    return :has_grading_data if grading_data?
-
-    nil
+  # Named the way Rosterable names them, so a view can ask any deletable thing
+  # the same question. A sheet whose points are already in the pointbook goes
+  # nowhere either, even if nobody uploaded anything.
+  def destruction_blockers
+    blockers = []
+    blockers << :has_submissions if submissions.with_uploads.any?
+    blockers << :has_grading_data if grading_data?
+    blockers
   end
 
   def check_destructibility
@@ -223,6 +232,29 @@ class Assignment < ApplicationRecord
         participations.joins(:task_points).exists?
     end
 
+    # A creation is not a move, and it has its own callback - noting it here
+    # would leave the reason lying around for the next save to pick up.
+    def note_deadline_move
+      return if saved_change_to_id?
+      return unless saved_change_to_deadline? && active?
+
+      @deadline_moved_ahead = true
+    end
+
+    # Asked once, by the callback below, and forgotten in the asking: a reason
+    # that outlived its transaction would reopen the list on the next save.
+    def deadline_moved_ahead?
+      @deadline_moved_ahead.tap { @deadline_moved_ahead = nil }
+    end
+
+    def forget_deadline_move
+      @deadline_moved_ahead = nil
+    end
+
+    def reopen_after_deadline_move
+      reopen_lecture_assignment_list
+    end
+
     def setup_assessment
       ensure_pointbook!(requires_submission: requires_submission)
     end
@@ -293,5 +325,15 @@ class Assignment < ApplicationRecord
         .where(assessment_id: assessment.id, tutorial_id: tutorial.id)
         .distinct
         .pluck(:user_id)
+    end
+
+    # Skip Lecture validations so an unrelated validation error cannot
+    # leave assignments_complete_at set after an Assignment is added.
+    def reopen_lecture_assignment_list
+      return unless lecture&.assignments_complete?
+
+      # rubocop:disable Rails/SkipsModelValidations
+      lecture.update_column(:assignments_complete_at, nil)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 end

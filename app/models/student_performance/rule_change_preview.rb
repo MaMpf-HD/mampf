@@ -6,9 +6,10 @@ module StudentPerformance
     Change = Struct.new(:record, :from, :to, keyword_init: true)
     Conflict = Struct.new(:record, :decision, :proposed, keyword_init: true)
 
-    def initialize(current_rule:, preview_rule:, records:, certifications:)
-      @current_evaluator = Evaluator.new(current_rule)
-      @preview_evaluator = Evaluator.new(preview_rule)
+    def initialize(current_rule:, preview_rule:, records:, certifications:,
+                   build_evaluator:)
+      @current_evaluator = build_evaluator.call(current_rule)
+      @preview_evaluator = build_evaluator.call(preview_rule)
       @records = records
       @manual_certifications = certifications.select(&:manual?)
                                              .index_by(&:user_id)

@@ -117,10 +117,35 @@ module Registration
 
     def campaign_open_confirmation(campaign)
       msg = t("registration.campaign.confirmations.open")
+      msg += "\n\n#{t("registration.campaign.confirmations.open_consequences_intro")}"
+      t("registration.campaign.confirmations.open_consequences").each do |line|
+        msg += "\n\u2022 #{line}"
+      end
       if campaign.registration_items.any? { |i| i.capacity.nil? }
         msg += "\n\n#{t("registration.campaign.warnings.unlimited_items")}"
       end
       msg
+    end
+
+    def campaign_discard_confirmation(campaign)
+      key = if campaign.draft?
+        "confirm_delete"
+      elsif campaign.completed?
+        "confirm_discard_untouched"
+      else
+        "confirm_discard"
+      end
+      t("registration.campaign.#{key}")
+    end
+
+    def campaign_revert_confirmation
+      t("registration.campaign.confirm_revert_to_draft")
+    end
+
+    def campaign_discard_title(campaign)
+      return t("buttons.delete") if campaign.draft?
+
+      t("registration.campaign.actions.discard")
     end
 
     def campaign_finalize_confirmation
