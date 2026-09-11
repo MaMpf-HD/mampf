@@ -39,7 +39,7 @@ module Demo
         assignments.each_with_index do |assignment, index|
           sheets_left = assignments.size - index
           demo_teams(lecture).each_with_index do |(tutorial, team), position|
-            team = team.reject { |member| excused?(assignment, member) }
+            team = team.reject { |member| sits_out?(assignment, member) }
             next if team.empty?
             next unless hands_in?(assignment, team)
 
@@ -57,12 +57,16 @@ module Demo
         recompute_performance_records!(lecture)
       end
 
-      # Somebody the gradebook excused for this sheet did not hand it in; the
-      # partner hands in alone that week.
-      def excused?(assignment, member)
-        assignment.assessment
-                  &.assessment_participations
-                  &.exists?(user_id: member.id, status: [:exempt, :absent])
+      # Somebody the gradebook excused for this sheet, or dropped from it
+      # altogether, did not hand it in; the partner hands in alone that week.
+      # A dropped member matters twice over: the backfill worker writes them a
+      # pending participation a minute later, and a team formed with them
+      # would then carry one marked and one blank member.
+      def sits_out?(assignment, member)
+        participation = assignment.assessment
+                                  &.assessment_participations
+                                  &.find_by(user_id: member.id)
+        participation.nil? || participation.exempt? || participation.absent?
       end
 
       # A team is marked as one: the tutor enters the points once and every

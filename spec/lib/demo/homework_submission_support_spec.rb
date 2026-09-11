@@ -53,8 +53,14 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
       sheet.assessment.assessment_participations.find_by(user: partner)
            .update!(status: :exempt, submitted_at: nil)
 
-      expect(Demo::SetupSupport.send(:excused?, sheet, partner)).to be(true)
-      expect(Demo::SetupSupport.send(:excused?, sheet, marked)).to be(false)
+      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
+      expect(Demo::SetupSupport.send(:sits_out?, sheet, marked)).to be(false)
+    end
+
+    it "keeps a member the gradebook dropped out of it as well" do
+      sheet.assessment.assessment_participations.find_by(user: partner).destroy!
+
+      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
     end
   end
 
