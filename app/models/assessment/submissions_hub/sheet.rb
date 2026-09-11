@@ -4,7 +4,8 @@ module Assessment
     # model because a row's state is the assignment, the participation and the
     # submission read together, and no one of the three knows the other two.
     Sheet = Struct.new(:assignment, :assessment, :participation, :submission,
-                       :tasks, :points_by_task_id, :user, keyword_init: true) do
+                       :tasks, :points_by_task_id, :user, :sighting,
+                       keyword_init: true) do
       # The first line that applies wins, and the order is the whole content of
       # this method. Entered points come before everything below them: sheets
       # have no release step, so a value a tutor wrote shows as soon as it is
@@ -83,6 +84,27 @@ module Assessment
         participation.grader || latest_task_point&.grader
       end
 
+      # "New" is "changed since the reader last looked", not "corrected": a
+      # correction that was there at their last look is old news, one uploaded
+      # since is not, and somebody who never opened the row has not looked at
+      # all.
+      def new_correction?
+        newer_than?(submission&.corrected_at, sighting&.seen_at)
+      end
+
+      # Only where the row shows marks: an excused sheet may still carry the
+      # stamp from before it was excused. The stamp moves with every complete
+      # save, so a correction of the points reads as new again.
+      def new_points?
+        return false unless state == :marked
+
+        newer_than?(participation.graded_at, sighting&.seen_at)
+      end
+
+      def news?
+        new_correction? || new_points?
+      end
+
       def team
         submission ? submission.users.to_a : []
       end
@@ -92,6 +114,12 @@ module Assessment
       end
 
       private
+
+        def newer_than?(happened_at, seen_at)
+          return false unless happened_at
+
+          seen_at.nil? || seen_at < happened_at
+        end
 
         def latest_task_point
           task_points.select(&:updated_at).max_by(&:updated_at)

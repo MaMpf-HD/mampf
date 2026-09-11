@@ -2922,6 +2922,17 @@ en:
       column_status: Status
       column_points: Your points
       old_style: old-style sheet
+      news:
+        lead: "New since you last looked:"
+        marker: New since you last looked.
+        prefix: "New —"
+        correction_html: "%{sheet} (correction)"
+        points_html: "%{sheet} (points)"
+        both_html: "%{sheet} (correction and points)"
+        more:
+          one: "and %{count} more"
+          other: "and %{count} more"
+        seen_all: mark all as seen
       fold:
         handed_in_label: Hand-in
         not_uploaded_yet: not uploaded yet

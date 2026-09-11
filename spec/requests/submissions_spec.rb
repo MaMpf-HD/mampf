@@ -876,6 +876,96 @@ RSpec.describe("Submissions", type: :request) do
           .to include(SubmissionCardComponent.frame_id(later))
       end
     end
+
+    describe "what is new" do
+      let(:lead) { I18n.t("submission.hub.news.lead") }
+      let(:seen_all) { I18n.t("submission.hub.news.seen_all") }
+
+      it "names a corrected sheet the reader has not looked at, with a way to clear it" do
+        hand_in(sheet(title: "Homework 8"), correction: true)
+
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).to include(lead)
+        expect(response.body).to include(seen_all)
+        expect(response.body).to include(I18n.t("submission.hub.news.marker"))
+      end
+
+      it "says nothing once every sheet has been looked at" do
+        assignment = sheet(title: "Homework 8")
+        hand_in(assignment, correction: true)
+        AssignmentSighting.stamp!(user: user, assignment: assignment)
+
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).not_to include(lead)
+        expect(response.body).not_to include(seen_all)
+      end
+
+      describe "POST /submissions/seen" do
+        let(:assignment) { sheet(title: "Homework 8") }
+
+        before { hand_in(assignment, correction: true) }
+
+        it "stamps the reader's look and takes the marker off the page" do
+          post sheet_seen_path, params: { assignment_id: assignment.id },
+                                as: :turbo_stream
+
+          sighting = AssignmentSighting.find_by!(user: user, assignment: assignment)
+          expect(sighting.seen_at).to be_within(5.seconds).of(Time.current)
+          expect(response.body).to include("news_assignment_#{assignment.id}")
+          expect(response.body).not_to include(lead)
+        end
+
+        it "leaves a partner's marker standing" do
+          partner = create(:confirmed_user)
+          Submission.last.users << partner
+
+          post sheet_seen_path, params: { assignment_id: assignment.id },
+                                as: :turbo_stream
+
+          expect(AssignmentSighting.where(user: partner)).to be_empty
+        end
+
+        it "turns a stranger away" do
+          sign_in create(:confirmed_user)
+
+          post sheet_seen_path, params: { assignment_id: assignment.id },
+                                as: :turbo_stream
+
+          expect(response).to redirect_to(root_url)
+          expect(AssignmentSighting.count).to eq(0)
+        end
+      end
+
+      describe "POST /lectures/:id/submissions/seen_all" do
+        it "stamps every sheet with news and nothing else" do
+          fresh = sheet(title: "Homework 8")
+          hand_in(fresh, correction: true)
+          marked = sheet(title: "Homework 7")
+          mark(marked, [1.5, 2])
+          hand_in(sheet(title: "Homework 6"))
+
+          post lecture_sheets_seen_path(lecture), as: :turbo_stream
+
+          expect(AssignmentSighting.where(user: user).map(&:assignment))
+            .to contain_exactly(fresh, marked)
+          expect(response.body).to include("news_assignment_#{fresh.id}")
+          expect(response.body).to include("news_assignment_#{marked.id}")
+          expect(response.body).not_to include(seen_all)
+        end
+
+        it "turns a stranger away" do
+          hand_in(sheet(title: "Homework 8"), correction: true)
+          sign_in create(:confirmed_user)
+
+          post lecture_sheets_seen_path(lecture), as: :turbo_stream
+
+          expect(response).to redirect_to(root_url)
+          expect(AssignmentSighting.count).to eq(0)
+        end
+      end
+    end
   end
 
   # Every student action answers with the card's own Turbo frame. What matters

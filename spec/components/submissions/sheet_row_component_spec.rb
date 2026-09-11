@@ -15,14 +15,17 @@ RSpec.describe(SheetRowComponent, type: :component) do
   # matters - a problem may be set at 0.
   def sheet(state, points: nil, max_points: 16, tasks_set_up: nil,
             friendly_deadline: 15.minutes.from_now)
+    # `dom_id` names the row after the assignment, which takes a key.
     assignment = instance_double(Assignment, title: "Homework 8",
-                                             friendly_deadline: friendly_deadline)
+                                             friendly_deadline: friendly_deadline,
+                                             id: 8, to_key: [8],
+                                             model_name: Assignment.model_name)
     scale = max_points.to_f.positive?
     instance_double(Assessment::SubmissionsHub::Sheet,
                     state: state, points: points, max_points: max_points,
                     scale?: scale,
                     tasks_set_up?: tasks_set_up.nil? ? scale : tasks_set_up,
-                    assignment: assignment,
+                    assignment: assignment, news?: false,
                     # The row renders its fold with it; the fold has a spec of
                     # its own, so here it only has to stay out of the way.
                     submission: nil, tasks: [], partners: [],
@@ -202,6 +205,33 @@ RSpec.describe(SheetRowComponent, type: :component) do
       expect(content).to include(I18n.t("submission.hub.old_style"))
       expect(content).to include(I18n.t("submission.hub.no_points"))
       expect(content).to include("sheet-muted")
+    end
+  end
+
+  # The dot is for the eye; the words are for a reader, and the form is what
+  # the row submits when it is opened, so the server can take both away.
+  describe "what is new" do
+    it "marks a row with news and gives it the form that reports the look" do
+      fresh = sheet(:marked, points: 6.5)
+      allow(fresh).to receive(:news?).and_return(true)
+
+      render_inline(described_class.new(sheet: fresh))
+      content = rendered_content
+
+      expect(content).to include("new-dot")
+      expect(content).to include(I18n.t("submission.hub.news.marker"))
+      expect(content).to include("id=\"news_assignment_8\"")
+      expect(content).to include("action=\"/submissions/seen\"")
+      expect(content).to include(
+        "<input value=\"8\" autocomplete=\"off\" type=\"hidden\" name=\"assignment_id\" />"
+      )
+    end
+
+    it "leaves a row without news alone" do
+      content = render_state(:marked, points: 6.5)
+
+      expect(content).not_to include("new-dot")
+      expect(content).not_to include("/submissions/seen")
     end
   end
 end

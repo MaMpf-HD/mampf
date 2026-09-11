@@ -122,6 +122,9 @@ window.Stimulus.register("uppy-upload", UppyUploadController);
 import SubmissionUploadController from "~/controllers/submission_upload.controller.js";
 window.Stimulus.register("submission-upload", SubmissionUploadController);
 
+import SheetNewsController from "~/submissions/components/sheet_news.controller.js";
+window.Stimulus.register("sheet-news", SheetNewsController);
+
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);
 

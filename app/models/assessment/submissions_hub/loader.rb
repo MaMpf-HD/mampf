@@ -37,7 +37,7 @@ module Assessment
                     participation: participation, submission: submission,
                     tasks: sorted_tasks(assessment),
                     points_by_task_id: task_points_by_task_id(participation),
-                    user: user)
+                    user: user, sighting: sightings[assignment.id])
         end
 
         # `tasks.order(:position)` would go back to the database for a list that is
@@ -90,6 +90,18 @@ module Assessment
                                assignment_id: assignments.map(&:id))
                         .includes(:users)
                         .index_by(&:assignment_id)
+            end
+        end
+
+        # The reader's own looks, one row per sheet; a partner's are not read.
+        def sightings
+          @sightings ||=
+            if assignments.empty?
+              {}
+            else
+              AssignmentSighting.where(user_id: user.id,
+                                       assignment_id: assignments.map(&:id))
+                                .index_by(&:assignment_id)
             end
         end
 

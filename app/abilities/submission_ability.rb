@@ -5,7 +5,7 @@ class SubmissionAbility
     clear_aliased_actions
 
     can [:index, :new, :join, :cancel_edit, :cancel_new, :redeem_code,
-         :enter_code], Submission
+         :enter_code, :seen, :seen_all], Submission
 
     # Enrolment is what this asks; the group is asked for by
     # `SubmissionsController#rostered_tutorial!`, which every way in goes

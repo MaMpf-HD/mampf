@@ -316,6 +316,10 @@ Rails.application.routes.draw do
       to: "submissions#index",
       as: "lecture_submissions"
 
+  post "lectures/:id/submissions/seen_all",
+       to: "submissions#seen_all",
+       as: "lecture_sheets_seen"
+
   get "lectures/:id/tutorials",
       to: "tutorials#index",
       as: "lecture_tutorials"
@@ -811,6 +815,10 @@ Rails.application.routes.draw do
   post "submissions/join",
        to: "submissions#join",
        as: "join_submission"
+
+  post "submissions/seen",
+       to: "submissions#seen",
+       as: "sheet_seen"
 
   get "submissions/enter_code",
       to: "submissions#enter_code",

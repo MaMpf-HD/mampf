@@ -3147,6 +3147,17 @@ de:
       column_status: Status
       column_points: Deine Punkte
       old_style: Blatt alter Art
+      news:
+        lead: "Neu seit Deinem letzten Blick:"
+        marker: Neu seit Deinem letzten Blick.
+        prefix: "Neu —"
+        correction_html: "%{sheet} (Korrektur)"
+        points_html: "%{sheet} (Punkte)"
+        both_html: "%{sheet} (Korrektur und Punkte)"
+        more:
+          one: "und %{count} weiteres"
+          other: "und %{count} weitere"
+        seen_all: alle als gesehen markieren
       fold:
         handed_in_label: Abgabe
         not_uploaded_yet: noch nicht hochgeladen

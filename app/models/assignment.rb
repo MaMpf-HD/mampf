@@ -6,6 +6,7 @@ class Assignment < ApplicationRecord
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
+  has_many :sightings, class_name: "AssignmentSighting", dependent: :destroy
 
   before_save :inherit_deletion_date_from_lecture
   after_create :setup_assessment

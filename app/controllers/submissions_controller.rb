@@ -6,13 +6,15 @@ class SubmissionsController < ApplicationController
              with: -> { redirect_to :start, alert: I18n.t("submission.too_many_attempts") }
 
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
-                                          :redeem_code, :join, :cancel_new]
-  before_action :set_assignment, only: [:new, :enter_code, :cancel_new, :join]
+                                          :redeem_code, :join, :cancel_new,
+                                          :seen, :seen_all]
+  before_action :set_assignment, only: [:new, :enter_code, :cancel_new, :join,
+                                        :seen]
   before_action :authorize_sheet, only: [:new, :enter_code, :cancel_new,
-                                         :cancel_edit, :join]
-  before_action :set_lecture, only: :index
+                                         :cancel_edit, :join, :seen]
+  before_action :set_lecture, only: [:index, :seen_all]
   before_action :prevent_caching, only: :show_manuscript
-  before_action :check_student_status, only: :index
+  before_action :check_student_status, only: [:index, :seen_all]
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
   authorize_resource
@@ -29,13 +31,29 @@ class SubmissionsController < ApplicationController
   # NOTE: authorization for #index is done manually via before_actions
   # SubmissionAbility lets anyone pass
   def index
-    # Everything still open has a card above the list, so the list is what is
-    # behind you - a sheet in both places would be told twice, and a row cannot
-    # be handed in.
-    @history = hub.sheets - hub.open_sheets
+    @history = history
 
     render template: "submissions/index/index",
            layout: turbo_frame_request? ? "turbo_frame" : "application"
+  end
+
+  # A row reports its opening here. The stamp is the reader's own, so a
+  # partner opening the same sheet leaves this reader's marker standing.
+  def seen
+    AssignmentSighting.stamp!(user: current_user, assignment: @assignment)
+
+    render turbo_stream: [*clear_marker(@assignment), replace_news(history)]
+  end
+
+  # Same gate as #index, by the same before_actions.
+  def seen_all
+    assignments = history.select(&:news?).map(&:assignment)
+    assignments.each do |assignment|
+      AssignmentSighting.stamp!(user: current_user, assignment: assignment)
+    end
+
+    render turbo_stream: [*assignments.flat_map { |assignment| clear_marker(assignment) },
+                          replace_news([])]
   end
 
   # `new` and `edit` are the same frame with the same form in it; only the
@@ -369,6 +387,25 @@ class SubmissionsController < ApplicationController
     def hub
       @hub ||= Assessment::SubmissionsHub::Loader.new(lecture: @lecture,
                                                       user: current_user).call
+    end
+
+    # Everything still open has a card above the list, so the list is what is
+    # behind you - a sheet in both places would be told twice, and a row cannot
+    # be handed in.
+    def history
+      hub.sheets - hub.open_sheets
+    end
+
+    # The dot in the row and the form that reported the look; the news line is
+    # drawn afresh, since the sheet has left it.
+    def clear_marker(assignment)
+      [turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :news)),
+       turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :seen))]
+    end
+
+    def replace_news(sheets)
+      turbo_stream.replace("sheet-news",
+                           SheetNewsComponent.new(sheets: sheets, lecture: @lecture))
     end
 
     def set_submission

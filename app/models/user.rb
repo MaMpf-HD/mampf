@@ -16,6 +16,7 @@ class User < ApplicationRecord
 
   # Roster memberships
   has_many :lecture_memberships, dependent: :destroy
+  has_many :assignment_sightings, dependent: :destroy
   has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
 
   has_many :tutorial_memberships, dependent: :destroy
