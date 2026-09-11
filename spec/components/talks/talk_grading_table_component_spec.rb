@@ -117,30 +117,6 @@ RSpec.describe(TalkGradingTableComponent, type: :component) do
     end
   end
 
-  describe "#grade_form_url" do
-    let(:speaker) { create(:confirmed_user) }
-    let!(:talk) { create(:talk, lecture: seminar, dates: [1.week.from_now]) }
-
-    before { render_inline(component) }
-
-    it "returns the grade_talk_user path for the talk and user" do
-      expect(component.grade_form_url(talk, speaker))
-        .to eq(component.helpers.grade_talk_user_path(talk, speaker))
-    end
-  end
-
-  describe "#refresh_form_url" do
-    let(:speaker) { create(:confirmed_user) }
-    let!(:talk) { create(:talk, lecture: seminar, dates: [1.week.from_now]) }
-
-    before { render_inline(component) }
-
-    it "returns the refresh_grade_talk_user path for the talk and user" do
-      expect(component.refresh_form_url(talk, speaker))
-        .to eq(component.helpers.refresh_grade_talk_user_path(talk, speaker))
-    end
-  end
-
   describe "#initialize" do
     it "sets @seminar" do
       expect(component.instance_variable_get(:@seminar)).to eq(seminar)

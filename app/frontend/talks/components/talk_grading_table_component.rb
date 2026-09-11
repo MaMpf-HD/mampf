@@ -28,12 +28,12 @@ class TalkGradingTableComponent < ViewComponent::Base
 
   delegate :init_participation, to: :"Assessment::TalkGraderService"
 
-  def grade_form_url(talk, user)
-    helpers.grade_talk_user_path(talk, user)
+  def grade_form_url(participation)
+    helpers.grade_participation_path(participation)
   end
 
-  def refresh_form_url(talk, user)
-    helpers.refresh_grade_talk_user_path(talk, user)
+  def refresh_form_url(participation)
+    helpers.refresh_grade_participation_path(participation)
   end
 
   def sticky_layout
@@ -48,12 +48,6 @@ class TalkGradingTableComponent < ViewComponent::Base
   def sticky_css_vars
     return unless @config
 
-    left = sticky_layout.left_offsets.map { |k, v| "--#{k}-left:#{v}px" }
-    right = sticky_layout.right_offsets.map { |k, v| "--#{k}-right:#{v}px" }
-    edges = [
-      "--sticky-left-width:#{sticky_layout.total_left_width}px",
-      "--sticky-right-width:#{sticky_layout.total_right_width}px"
-    ]
-    (left + right + edges).join(";")
+    helpers.sticky_css_vars_calc(sticky_layout)
   end
 end

@@ -59,7 +59,6 @@ export default class extends Controller {
   }
 
   onParticipationChanged(event) {
-    console.log("onParticipationChanged called");
     const validPoints = this.validateNewPoint(event);
     const validGrade = this.validateNewGrade(event);
     const validNote = this.validateNewNote(event);

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Assessment::TalkGraderService, type: :model) do
+RSpec.describe(Assessment::GradesController, type: :request) do
   let(:teacher) { FactoryBot.create(:confirmed_user) }
   let(:seminar) do
     FactoryBot.create(:lecture, :released_for_all, sort: "seminar", teacher: teacher)
@@ -9,197 +9,194 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
   let(:speaker) { FactoryBot.create(:confirmed_user) }
   let(:assessment) { talk.reload.assessment }
   let(:grader) { FactoryBot.create(:confirmed_user) }
+  let!(:participation) do
+    FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
+  end
+  let(:turbo_stream_headers) { { "Accept" => "text/vnd.turbo-stream.html" } }
 
   before do
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
-    allow(grader).to receive(:can_grade_in_scope?).and_return(true)
+    allow_any_instance_of(User).to receive(:can_grade_in_scope?).and_return(true)
+    sign_in grader
   end
 
-  describe ".find_participation" do
-    context "when a participation already exists" do
-      let!(:existing) do
-        FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
-      end
-
-      it "returns the existing participation" do
-        result = described_class.find_participation(assessment, speaker)
-        expect(result.id).to eq(existing.id)
-      end
-
-      it "does not create a duplicate" do
-        expect do
-          described_class.find_participation(assessment, speaker)
-        end.not_to change(Assessment::Participation, :count)
-      end
+  describe "PATCH #update" do
+    subject do
+      patch grade_participation_path(participation),
+            params: { grade: "1.0", comment: "well done" },
+            headers: turbo_stream_headers
     end
 
-    context "when no participation exists" do
-      it "returns nil" do
-        expect(described_class.find_participation(assessment, speaker)).to be_nil
+    context "when the grade is set successfully" do
+      it "returns a successful turbo_stream response" do
+        subject
+        expect(response).to have_http_status(:ok)
       end
 
-      it "does not create a participation" do
-        expect do
-          described_class.find_participation(assessment, speaker)
-        end.not_to change(Assessment::Participation, :count)
-      end
-    end
-  end
-
-  describe ".set_grade" do
-    let(:participation) do
-      FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
-    end
-
-    context "when participation is nil" do
-      subject { described_class.set_grade(nil, "1.0", grader) }
-
-      it "raises TalkGraderError" do
-        expect { subject }.to raise_error(Assessment::TalkGraderService::TalkGraderError)
-      end
-
-      it "does not call GradeEntryService" do
-        expect(Assessment::GradeEntryService).not_to receive(:set_grade)
-        begin
-          subject
-        rescue StandardError
-          nil
-        end
-      end
-    end
-
-    context "when participation's assessment is not attached to a talk" do
-      let(:assignment) { FactoryBot.create(:assignment, :with_lecture) }
-      let(:assignment_assessment) do
-        FactoryBot.create(:assessment, assessable: assignment, lecture: assignment.lecture)
-      end
-      let(:assignment_participation) do
-        FactoryBot.create(:assessment_participation,
-                          assessment: assignment_assessment,
-                          user: speaker)
-      end
-
-      subject { described_class.set_grade(assignment_participation, "1.0", grader) }
-
-      it "raises TalkGraderError" do
-        expect { subject }.to raise_error(Assessment::TalkGraderService::TalkGraderError)
-      end
-
-      it "does not call GradeEntryService" do
-        expect(Assessment::GradeEntryService).not_to receive(:set_grade)
-        begin
-          subject
-        rescue StandardError
-          nil
-        end
-      end
-    end
-
-    context "when grader cannot grade in the talk's lecture scope" do
-      before { allow(grader).to receive(:can_grade_in_scope?).and_return(false) }
-
-      subject { described_class.set_grade(participation, "1.0", grader) }
-
-      it "raises TalkGraderError" do
-        expect { subject }.to raise_error(Assessment::TalkGraderService::TalkGraderError)
-      end
-
-      it "does not call GradeEntryService" do
-        expect(Assessment::GradeEntryService).not_to receive(:set_grade)
-        begin
-          subject
-        rescue StandardError
-          nil
-        end
-      end
-    end
-
-    context "when participation and talk are valid" do
-      subject { described_class.set_grade(participation, "1.0", grader, "well done") }
-
-      it "builds grade_info via GradeEntryService.build_grade_info with grade_numeric" do
-        expect(Assessment::GradeEntryService).to receive(:build_grade_info)
-          .with(grade_numeric: "1.0")
-          .and_call_original
-
-        allow(Assessment::GradeEntryService).to receive(:set_grade)
+      it "persists the grade via TalkGraderService" do
+        expect(Assessment::TalkGraderService).to receive(:set_grade).with(
+          instance_of(Assessment::Participation), "1.0", grader, "well done"
+        ).and_call_original
 
         subject
       end
 
-      it "calls GradeEntryService.set_grade with info" do
-        grade_info = Assessment::GradeEntryService.build_grade_info(grade_numeric: "1.0")
-        allow(Assessment::GradeEntryService).to receive(:build_grade_info).and_return(grade_info)
+      it "renders the replaced participation row" do
+        subject
+        expect(response.body).to include("participation-row-#{participation.id}")
+      end
 
-        expect(Assessment::GradeEntryService).to receive(:set_grade).once.with(
-          participation,
-          grade_info,
-          grader,
-          "well done"
+      it "sets a success flash notice" do
+        subject
+        expect(flash.now[:notice]).to eq(I18n.t("assessment.grades_updated"))
+      end
+    end
+
+    context "when TalkGraderService raises TalkGraderError" do
+      before do
+        allow(Assessment::TalkGraderService).to receive(:set_grade)
+          .and_raise(Assessment::TalkGraderService::TalkGraderError, "bad grade")
+      end
+
+      it "rescues the error instead of raising a 500" do
+        expect { subject }.not_to raise_error
+      end
+
+      it "responds with the alert flash" do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("bad grade")
+      end
+    end
+
+    context "when GradeEntryService raises GradeEntryError" do
+      before do
+        allow(Assessment::TalkGraderService).to receive(:set_grade)
+          .and_raise(Assessment::GradeEntryService::GradeEntryError, "invalid entry")
+      end
+
+      it "rescues the error instead of raising a 500" do
+        expect { subject }.not_to raise_error
+      end
+
+      it "responds with the alert flash" do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("invalid entry")
+      end
+    end
+
+    context "when participation_id does not exist" do
+      subject do
+        patch grade_participation_path(participation_id: -1),
+              params: { grade: "1.0" },
+              headers: turbo_stream_headers
+      end
+
+      it "rescues ActiveRecord::RecordNotFound instead of raising a 500" do
+        expect { subject }.not_to raise_error
+      end
+
+      it "responds with the invalid params alert" do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(
+          I18n.t("assessment.errors.invalid_request_params")
         )
+      end
+    end
 
+    context "when the user is not a speaker on the talk" do
+      let(:non_speaker_participation) do
+        other_user = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:assessment_participation, assessment: assessment, user: other_user)
+      end
+
+      subject do
+        patch grade_participation_path(non_speaker_participation),
+              params: { grade: "1.0" },
+              headers: turbo_stream_headers
+      end
+
+      it "responds with the user_not_speaker alert" do
+        subject
+        expect(response.body).to include(
+          I18n.t("assessment.talk_grader.user_not_speaker")
+        )
+      end
+
+      it "does not call TalkGraderService" do
+        expect(Assessment::TalkGraderService).not_to receive(:set_grade)
         subject
       end
 
-      it "does not raise" do
-        allow(Assessment::GradeEntryService).to receive(:set_grade)
+      it "does not double-render" do
+        expect { subject }.not_to raise_error(AbstractController::DoubleRenderError)
+      end
+    end
+
+    context "when the current user is not authorized to grade" do
+      before do
+        allow_any_instance_of(AssessmentAbility).to receive(:can?).and_return(false)
+      end
+
+      it "does not raise an unhandled error" do
         expect { subject }.not_to raise_error
       end
     end
-
-    context "when comment is not provided" do
-      subject { described_class.set_grade(participation, "1.0", grader) }
-
-      it "calls GradeEntryService.set_grade with nil comment" do
-        expect(Assessment::GradeEntryService).to receive(:set_grade).once.with(
-          participation,
-          anything,
-          grader,
-          nil
-        )
-
-        subject
-      end
-    end
   end
 
-  describe "#init_participation (private)" do
-    it "creates and persists a new participation when none exists" do
-      expect do
-        result = described_class.send(:init_participation, assessment, speaker)
-        result.save!
-        expect(result).to be_persisted
-      end.to change(Assessment::Participation, :count).by(1)
+  describe "PATCH #refresh" do
+    subject do
+      patch refresh_grade_participation_path(participation),
+            headers: turbo_stream_headers
     end
 
-    it "associates the participation with the correct assessment and user" do
-      result = described_class.send(:init_participation, assessment, speaker)
-      expect(result.assessment_id).to eq(assessment.id)
-      expect(result.user_id).to eq(speaker.id)
+    it "returns a successful turbo_stream response" do
+      subject
+      expect(response).to have_http_status(:ok)
     end
 
-    it "returns the existing participation when one already exists" do
-      existing = FactoryBot.create(:assessment_participation,
-                                   assessment: assessment,
-                                   user: speaker)
-      result = described_class.send(:init_participation, assessment, speaker)
-      expect(result.id).to eq(existing.id)
+    it "re-renders the participation row" do
+      subject
+      expect(response.body).to include("participation-row-#{participation.id}")
     end
 
-    it "does not create a duplicate when participation already exists" do
-      FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
+    context "when participation_id does not exist" do
+      subject do
+        patch refresh_grade_participation_path(participation_id: -1),
+              headers: turbo_stream_headers
+      end
 
-      expect do
-        described_class.send(:init_participation, assessment, speaker)
-      end.not_to change(Assessment::Participation, :count)
+      it "rescues ActiveRecord::RecordNotFound instead of raising a 500" do
+        expect { subject }.not_to raise_error
+      end
+
+      it "responds with the invalid params alert" do
+        subject
+        expect(response.body).to include(
+          I18n.t("assessment.errors.invalid_request_params")
+        )
+      end
     end
 
-    it "returns nil when assessment is nil" do
-      expect(described_class.send(:init_participation, nil, speaker)).to be_nil
-    end
+    context "when the user is not a speaker on the talk" do
+      let(:non_speaker_participation) do
+        other_user = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:assessment_participation, assessment: assessment, user: other_user)
+      end
 
-    it "returns nil when user is nil" do
-      expect(described_class.send(:init_participation, assessment, nil)).to be_nil
+      subject do
+        patch refresh_grade_participation_path(non_speaker_participation),
+              headers: turbo_stream_headers
+      end
+
+      it "responds with the user_not_speaker alert" do
+        subject
+        expect(response.body).to include(
+          I18n.t("assessment.talk_grader.user_not_speaker")
+        )
+      end
     end
   end
 end

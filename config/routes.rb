@@ -984,14 +984,6 @@ Rails.application.routes.draw do
     end
   end
 
-  patch "talks/:talk_id/grade_user/:user_id",
-        to: "assessment/grades#update",
-        as: "grade_talk_user"
-
-  patch "talks/:talk_id/refresh_grade_user/:user_id",
-        to: "assessment/grades#refresh",
-        as: "refresh_grade_talk_user"
-
   # tutorials routes
 
   get "tutorials/:id/cancel_edit",
@@ -1165,6 +1157,15 @@ Rails.application.routes.draw do
          to: "user_registrations#save_preferences",
          as: :save_preferences
   end
+
+  # participations routes
+  patch "participations/:participation_id/grade_participation",
+        to: "assessment/grades#update",
+        as: "grade_participation"
+
+  patch "participations/:participation_id/refresh_grade_participation",
+        to: "assessment/grades#refresh",
+        as: "refresh_grade_participation"
 
   # main routes
 

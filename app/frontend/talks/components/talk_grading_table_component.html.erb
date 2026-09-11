@@ -59,8 +59,8 @@
                       participation: participation,
                       grading_scope: @seminar,
                       assessment: talk.assessment,
-                      save_url: grade_form_url(talk, speaker),
-                      refresh_url: refresh_form_url(talk, speaker),
+                      save_url: grade_form_url(participation),
+                      refresh_url: refresh_form_url(participation),
                       group_id: talk.id
                     ) %>
                   <% end %>
