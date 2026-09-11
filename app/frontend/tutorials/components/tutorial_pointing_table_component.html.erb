@@ -60,9 +60,9 @@
                     <%= render(ParticipationRowComponent.new(
                         participation: participation,
                         assessment: @assignment.assessment,
-                        save_url: point_user_tutorial_path(participation, 
+                        save_url: point_participation_path(participation, 
                                                     grading_scope_type: "tutorial"),
-                        refresh_url: refresh_point_user_tutorial_path(participation, 
+                        refresh_url: refresh_point_participation_path(participation, 
                                                             grading_scope_type: "tutorial"),
                         grading_scope: @tutorial)) %>
                   <% end %>
@@ -86,9 +86,9 @@
                       <%= render(ParticipationRowComponent.new(
                         participation: participation,
                         assessment: @assignment.assessment,
-                        save_url: point_user_tutorial_path(participation, 
+                        save_url: point_participation_path(participation, 
                                                     grading_scope_type: "lecture"),
-                        refresh_url: refresh_point_user_tutorial_path(participation, 
+                        refresh_url: refresh_point_participation_path(participation, 
                                                             grading_scope_type: "lecture"),
                         grading_scope: @lecture)) %>
                     <% end %>

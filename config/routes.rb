@@ -888,9 +888,9 @@ Rails.application.routes.draw do
         to: "assessment/task_points#update_team",
         as: "point_submission_tutorial"
 
-  patch "participations/:participation_id/point_user",
+  patch "participations/:participation_id/point_participation",
         to: "assessment/task_points#update_participation",
-        as: "point_user_tutorial"
+        as: "point_participation"
 
   patch "submissions/point_multi_submissions",
         to: "assessment/task_points#update_team_multi",
@@ -900,9 +900,9 @@ Rails.application.routes.draw do
         to: "assessment/task_points#refresh_submission",
         as: "refresh_point_submission_tutorial"
 
-  patch "participations/:participation_id/refresh_point_user",
-        to: "assessment/task_points#refresh_user",
-        as: "refresh_point_user_tutorial"
+  patch "participations/:participation_id/refresh_point_participation",
+        to: "assessment/task_points#refresh_participation",
+        as: "refresh_point_participation"
 
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",

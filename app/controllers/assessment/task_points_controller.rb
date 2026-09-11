@@ -3,13 +3,13 @@ module Assessment
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_team,
                          :update_participation, :refresh_submission,
-                         :refresh_user, :mark_as_participated, :remove_participated]
+                         :refresh_participation, :mark_as_participated, :remove_participated]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update_team_multi,
                                                  :update_team,
                                                  :update_participation,
                                                  :refresh_submission,
-                                                 :refresh_user,
+                                                 :refresh_participation,
                                                  :remove_participated]
 
     rescue_from ActiveRecord::RecordNotFound,
@@ -97,11 +97,11 @@ module Assessment
           )
         end
         grading_scope = @grading_scope_type == "tutorial" ? @tutorial : @lecture
-        save_url = point_user_tutorial_path(
+        save_url = point_participation_path(
           @participation,
           grading_scope_type: @grading_scope_type
         )
-        refresh_url = refresh_point_user_tutorial_path(
+        refresh_url = refresh_point_participation_path(
           @participation,
           grading_scope_type: @grading_scope_type
         )
@@ -135,7 +135,7 @@ module Assessment
       rerender_submission_row
     end
 
-    def refresh_user
+    def refresh_participation
       @user = @participation.user
       rerender_user_row
     end
@@ -197,12 +197,12 @@ module Assessment
                   grading_scope:
                      @grading_scope_type == "tutorial" ? @tutorial : @lecture,
                   save_url:
-                     point_user_tutorial_path(
+                     point_participation_path(
                        @participation,
                        grading_scope_type: @grading_scope_type
                      ),
                   refresh_url:
-                     refresh_point_user_tutorial_path(
+                     refresh_point_participation_path(
                        @participation,
                        grading_scope_type: @grading_scope_type
                      )
@@ -222,7 +222,7 @@ module Assessment
         respond_to do |format|
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
-              "grading-table",
+              "pointing-table",
               html: render_to_string(
                 TutorialPointingTableComponent.new(
                   assignment: @assessable,
