@@ -39,6 +39,8 @@ module Demo
         assignments.each_with_index do |assignment, index|
           sheets_left = assignments.size - index
           demo_teams(lecture).each_with_index do |(tutorial, team), position|
+            team = team.reject { |member| excused?(assignment, member) }
+            next if team.empty?
             next unless hands_in?(assignment, team)
 
             late = (handed_in % LATE_EVERY).zero?
@@ -47,11 +49,52 @@ module Demo
               correction: correction_for(sheets_left, position),
               handed_in_at: handed_in_at(assignment, late: late)
             )
+            align_team_marks!(assignment, team)
             handed_in += 1
           end
         end
 
         recompute_performance_records!(lecture)
+      end
+
+      # Somebody the gradebook excused for this sheet did not hand it in; the
+      # partner hands in alone that week.
+      def excused?(assignment, member)
+        assignment.assessment
+                  &.assessment_participations
+                  &.exists?(user_id: member.id, status: [:exempt, :absent])
+      end
+
+      # A team is marked as one: the tutor enters the points once and every
+      # member gets them (`SubmissionGraderService#enter_points_for_each_team_member!`).
+      # The gradebook rolled its statuses and points per person before the
+      # teams existed, so a pair could carry two verdicts; the marked member's
+      # now stands for the team.
+      def align_team_marks!(assignment, team)
+        return if team.size < 2
+
+        assessment = assignment.assessment
+        return unless assessment
+
+        participations = assessment.assessment_participations
+                                   .where(user_id: team.map(&:id)).to_a
+        marked = participations.find { |p| p.reviewed? && p.task_points.any? }
+        return unless marked
+
+        participations.each do |participation|
+          next if participation == marked
+
+          participation.task_points.delete_all
+          marked.task_points.each do |point|
+            participation.task_points.create!(task_id: point.task_id,
+                                              points: point.points,
+                                              grader_id: point.grader_id)
+          end
+          participation.update!(status: :reviewed,
+                                graded_at: marked.graded_at,
+                                grader_id: marked.grader_id,
+                                points_total: marked.points_total)
+        end
       end
 
       # `record_hand_in!` stamps with `update_all`, which is what keeps the run
