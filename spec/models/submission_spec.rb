@@ -301,7 +301,8 @@ RSpec.describe(Submission, type: :model) do
                                          tutorial: tutorial,
                                          users: [user1, user2])
         Timecop.travel(2.hours.from_now)
-        participation = create(:assessment_participation, assessment: assessment)
+        participation = create(:assessment_participation, assessment: assessment,
+                                                          user: user1)
         create(:assessment_task_point, submission: submission,
                                        assessment_participation: participation,
                                        task: task1)
@@ -309,6 +310,34 @@ RSpec.describe(Submission, type: :model) do
                                        assessment_participation: participation,
                                        task: task2)
         expect(submission.graded_tasks_points.size).to eq(2)
+        Timecop.return
+      end
+
+      # Seeded, imported and backfilled points name no submission; they are
+      # the student's all the same.
+      it "finds points that were never scored on the submission itself" do
+        submission = create(:submission, assignment: assignment,
+                                         tutorial: tutorial, users: [user1])
+        Timecop.travel(2.hours.from_now)
+        participation = create(:assessment_participation, assessment: assessment,
+                                                          user: user1)
+        create(:assessment_task_point, assessment_participation: participation,
+                                       task: task1, points: 7)
+
+        expect(submission.graded_tasks_points.map(&:points)).to eq([7])
+        Timecop.return
+      end
+
+      it "does not show a stranger's points on the submission" do
+        submission = create(:submission, assignment: assignment,
+                                         tutorial: tutorial, users: [user1])
+        Timecop.travel(2.hours.from_now)
+        stranger = create(:assessment_participation, assessment: assessment)
+        create(:assessment_task_point, submission: submission,
+                                       assessment_participation: stranger,
+                                       task: task1, points: 7)
+
+        expect(submission.graded_tasks_points).to be_empty
         Timecop.return
       end
     end
