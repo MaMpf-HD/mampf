@@ -46,6 +46,87 @@
       </div>
     </div>
   <% end %>
+  <%# Rendered with the page rather than fetched when it opens: this fold
+    carries no `subscriptionsCollapse` class, so nothing asks the server for
+    its contents. %>
+
+  <% if Term.active&.next %>
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <button class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseNextTermStuff"
+                aria-expanded="false"
+                aria-controls="collapseNextTermStuff">
+          <h4 class="text-dark" id="nextTermStuffLink">
+            <%= t("profile.my_next_term_html",
+                  term: Term.active.next.to_label) %>
+          </h4>
+        </button>
+      </div>
+      <div class="collapse" id="collapseNextTermStuff"
+           data-bs-parent="#subscriptionsAccordion">
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
+                      row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
+               id="collapseNextTermStuffContent"
+               data-testid="next-term-subscribed">
+            <%= render partial: "main/start/lecture",
+                       collection: @next_term_stuff,
+                       locals: { current: false,
+                                 subscribed: true,
+                                 parent: "next_term_subscribed" },
+                       as: :lecture %>
+
+          </div>
+
+          <% if @next_term_seats.any? %>
+            <p class="text-muted small mb-2">
+              <%= t("profile.next_term_seats") %>
+            </p>
+
+            <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
+                        row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
+                 data-testid="next-term-seats">
+              <%= render partial: "main/start/lecture",
+                         collection: @next_term_seats,
+                         locals: { current: false,
+                                   subscribed: false,
+                                   parent: "next_term_subscribed" },
+                         as: :lecture %>
+            </div>
+          <% end %>
+
+          <% if @next_term_pending.any? %>
+            <p class="text-muted small mb-2">
+              <%= t("profile.next_term_registrations") %>
+            </p>
+
+            <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
+                        row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
+                 data-testid="next-term-registrations">
+              <%= render partial: "main/start/lecture",
+                         collection: @next_term_pending,
+                         locals: { current: false,
+                                   subscribed: false,
+                                   parent: "next_term_registered" },
+                         as: :lecture %>
+            </div>
+          <% end %>
+
+          <% fold_filled = @next_term_stuff.any? || @next_term_seats.any? ||
+                           @next_term_pending.any? %>
+
+          <%= tag.div id: "emptyNextTermStuff",
+                      style: fold_filled ? "display: none;" : "" do %>
+            <%= t("profile.no_next_term_stuff") %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <div class="accordion-item">
     <div class="accordion-header">
       <button class="accordion-button collapsed"

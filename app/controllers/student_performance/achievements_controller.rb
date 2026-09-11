@@ -117,10 +117,14 @@ module StudentPerformance
         ]
       else
         # `restrict_with_error` phrases this in table names; the only thing that
-        # can block a deletion here is a rule that needs the achievement.
+        # can block a deletion here is a rule that needs the achievement. The
+        # flash says so in words - and the errors go with it, or the settings
+        # form on the dashboard would repeat the table names under a button
+        # nobody pressed.
         flash.now[:alert] = I18n.t(
           "assessment.achievements.errors.referenced_by_rules"
         )
+        @achievement.errors.clear
         render turbo_stream: [
           turbo_stream.update(
             "assessments_container",
