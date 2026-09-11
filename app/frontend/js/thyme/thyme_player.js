@@ -16,6 +16,7 @@ import { SeekBar } from "./components/seek_bar";
 import { SpeedSelector } from "./components/speed_selector";
 import { TimeButton } from "./components/time_button";
 import { VolumeBar } from "./components/volume_bar";
+import { SubtitleButton } from "./components/subtitle_button";
 import { ControlBarHider } from "./control_bar_hider";
 import { DisplayManager } from "./display_manager";
 import { addGeneralShortcuts, addPlayerShortcuts } from "./key_shortcuts";
@@ -56,6 +57,9 @@ $(document).on("turbo:load", function () {
   const annotationsToggle = new AnnotationsToggle("annotations-toggle");
 
   // regular components
+  if (document.getElementById("subtitle-toggle")) {
+    (new SubtitleButton("subtitle-toggle")).add();
+  }
   (new FullScreenButton("full-screen", thymeContainer)).add();
   (new MuteButton("mute")).add();
   (new NextChapterButton("next-chapter")).add();

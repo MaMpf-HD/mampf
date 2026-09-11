@@ -2266,6 +2266,7 @@ en:
     no_video: 'There is no video.'
     play: 'THymE Player'
     download: 'download video'
+    transcribe: 'Transcribe'
     length: 'Length'
     resolution: 'Resolution'
     size: 'Size'
@@ -2662,9 +2663,13 @@ en:
       student_registration: '%B %-d, %Hh%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
     last_updated: 'Last updated %{time_ago} ago'
+  search:
+    mampfsearch_unavailable: 'MampfSearch is currently unavailable.'
   thyme:
     back: 'back'
     back_to: 'back to '
+    toggle_subtitles: 'Toggle subtitles'
+    transcript: 'Transcript'
   thyme_editor:
     add_item: 'Add Item to Table of Contents'
     add_referral: 'Add Reference'
@@ -2903,6 +2908,9 @@ en:
       %{accepted_mime_types}.
     correction_size_too_big: >
       The uploaded file is too big. Maximum file size is 15 MB.
+    invalid_transcript: The uploaded file is not a valid WebVTT transcript.
+    transcript_too_many_cues: >
+      The transcript contains too many cues (maximum is %{max_cues}).
     too_late_no_saving:
       The due date for this assignment has expired, therefore this change
       cannot be saved.
@@ -3846,6 +3854,9 @@ en:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
+    media:
+      transcription_started: 'Transcription started.'
+      cannot_transcribe: 'Medium cannot be transcribed.'
     no_certificate: 'There is no quiz certificate with this id.'
     certificate_already_claimed: >
       The certificate has already been claimed by another user.

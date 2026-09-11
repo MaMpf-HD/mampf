@@ -6,6 +6,7 @@ include:
 
 services:
   app:
+    entrypoint: []
     command: "sleep infinity"
     environment:
       # Relocate Claude Code's data dir into the persisted volume below so

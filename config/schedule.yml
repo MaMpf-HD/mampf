@@ -33,3 +33,15 @@ campaign_status_worker:
   class: "CampaignStatusWorker"
   queue: critical
   description: "Auto-closes campaigns based on their scheduled dates"
+
+mampfsearch_health_job:
+  cron: "*/2 * * * *"
+  class: "MampfsearchHealthJob"
+  queue: default
+  description: "Polls MampfSearch readiness and caches search/ingest availability"
+
+mampfsearch_sync_job:
+  cron: "*/30 * * * *"
+  class: "MampfsearchSyncJob"
+  queue: default
+  description: "Syncs backlog media to MampfSearch and purges orphaned index entries"

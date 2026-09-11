@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   # cannot execute as our own origin (a content-sniffed text/html submission served
   # inline would run as the viewing tutor).
   INLINE_SAFE_MIME_TYPES = [
-    "application/pdf", "image/png", "image/jpeg", "image/gif",
+    "application/pdf", "image/png", "image/jpeg", "image/gif", "text/vtt",
     "video/mp4", "application/zip"
   ].freeze
 
