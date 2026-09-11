@@ -604,8 +604,57 @@ class User < ApplicationRecord
     lectures.where(term: Term.active).includes(:course, :term)
   end
 
+  # A subscription (LectureUserJoin), a seat (LectureMembership,
+  # CohortMembership) and an application (Registration::UserRegistration) exist
+  # independently of each other, which is why the start page asks
+  # `next_term_lectures`, `next_term_seated_lectures` and
+  # `next_term_registered_lectures` rather than one of them.
+  #
+  # What this user has subscribed for the term after the running one. Lectures
+  # without a term are not among them: they run always, and the fold of the
+  # running term carries them.
+  def next_term_lectures
+    coming = Term.active&.next
+    return [] if coming.blank?
+
+    lectures.where(term: coming).includes(:course, :term)
+            .natural_sort_by(&:title)
+  end
+
+  # Cohorts with propagate_to_lecture: false do not create lecture memberships.
+  # Include them directly so their lectures remain visible on the start page.
+  def next_term_seated_lectures
+    coming = Term.active&.next
+    return [] if coming.blank?
+
+    seat_ids = cohorts.where(context_type: "Lecture").pluck(:context_id) |
+               lecture_memberships.pluck(:lecture_id)
+
+    Lecture.where(id: seat_ids, term: coming)
+           .includes(:course, :term).natural_sort_by(&:title)
+  end
+
+  # After Registration::Campaign#finalize! a confirmed registration has a seat,
+  # and the two methods above carry the lecture from then on.
+  def next_term_registered_lectures
+    coming = Term.active&.next
+    return [] if coming.blank?
+
+    campaigns = Registration::UserRegistration
+                .where(user: self).where.not(status: :rejected)
+                .joins(:registration_campaign)
+                .merge(Registration::Campaign.where.not(status: :completed))
+                .where(registration_campaigns: { campaignable_type: "Lecture" })
+
+    Lecture.where(id: campaigns.select("registration_campaigns.campaignable_id"),
+                  term: coming)
+           .includes(:course, :term).natural_sort_by(&:title)
+  end
+
+  # The start page shows Term.active and Term.active.next separately, so
+  # exclude both here to avoid duplicate lecture cards.
   def inactive_lectures
-    lectures.where.not(term: Term.active)
+    lectures.where.not(term: [Term.active, Term.active&.next])
   end
 
   def nonsubscribed_lectures
