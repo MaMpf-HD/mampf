@@ -487,7 +487,8 @@ RSpec.describe("Submissions", type: :request) do
   describe "the page's own heading" do
     it "names the page and the lecture, for readers who navigate by heading" do
       user = create(:confirmed_user)
-      lecture = create(:lecture, :released_for_all)
+      course = create(:course, title: "All the King's Men")
+      lecture = create(:lecture, :released_for_all, course: course)
       tutorial = create(:tutorial, lecture: lecture)
       create(:tutorial_membership, tutorial: tutorial, user: user)
       user.lectures << lecture
@@ -495,7 +496,10 @@ RSpec.describe("Submissions", type: :request) do
 
       get lecture_submissions_path(lecture)
 
-      expect(response.body).to include(
+      # Through the parser, not the raw body: a title with an apostrophe
+      # arrives escaped, and the comparison is about the words.
+      heading = Nokogiri::HTML(response.body).at_css("h1")
+      expect(heading.text.squish).to eq(
         I18n.t("submission.hub.page_title", lecture: lecture.title_for_viewers)
       )
     end
