@@ -1,6 +1,6 @@
 module Assessment
   class TaskPointsController < ApplicationController
-    before_action :set_assignment_resource,
+    before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_team,
                          :update_participation, :refresh_submission,
                          :refresh_user, :mark_as_participated, :remove_participated]
@@ -234,7 +234,7 @@ module Assessment
         end
       end
 
-      def set_assignment_resource
+      def set_assessable_resource
         @grading_scope_type = params[:grading_scope_type]
         if params[:submissions]
           set_resources_from_bulk_params_submissions
