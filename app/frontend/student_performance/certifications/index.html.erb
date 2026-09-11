@@ -292,11 +292,7 @@
     </div>
   <% end %>
 
-  <div
-    class="
-      d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3
-    "
-  >
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
     <nav class="nav nav-pills small">
       <% %i[all passed failed uncertified flagged].each do |filter| %>
         <% active = (params[:status].presence || "all") == filter.to_s %>
@@ -305,6 +301,7 @@
           The search travels with the pill: a name typed in and then narrowed
           to "flagged" is still the name staff are looking for.
         %>
+
         <%= link_to lecture_student_performance_certifications_path(
                       @lecture,
                       status: filter == :all ? nil : filter,
@@ -326,8 +323,8 @@
         <div class="position-relative">
           <span
             class="
-              position-absolute top-50 start-0 translate-middle-y ps-3 pe-none
-              text-muted
+              position-absolute top-50 start-0 translate-middle-y ps-3
+              pe-none text-muted
             "
           >
             <i class="bi bi-search"></i>
@@ -764,7 +761,6 @@
         </tbody>
       </table>
     </div>
-
     <% if @pagy.pages > 1 %>
       <div class="d-flex justify-content-between align-items-center mt-3">
         <div class="text-muted small">
