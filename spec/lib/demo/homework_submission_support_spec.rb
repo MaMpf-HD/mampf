@@ -63,6 +63,15 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
 
       expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
     end
+
+    # The cross in the performance table is a participation without a stamp;
+    # a hand-in for that person would put the stamp there.
+    it "keeps a member the gradebook recorded as missing out of it" do
+      sheet.assessment.assessment_participations.find_by(user: partner)
+           .update!(submitted_at: nil)
+
+      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
+    end
   end
 
   # The demo dates its hand-ins around the deadline they belong to, and the

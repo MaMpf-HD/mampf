@@ -57,16 +57,20 @@ module Demo
         recompute_performance_records!(lecture)
       end
 
-      # Somebody the gradebook excused for this sheet, or dropped from it
-      # altogether, did not hand it in; the partner hands in alone that week.
-      # A dropped member matters twice over: the backfill worker writes them a
-      # pending participation a minute later, and a team formed with them
-      # would then carry one marked and one blank member.
+      # The gradebook has already said who handed this sheet in: somebody it
+      # recorded as missing, excused, or dropped from the sheet altogether is
+      # not on the week's team, and the partner hands in alone. Handing in for
+      # them anyway would stamp the hand-in the gradebook denied, and the table
+      # would lose every cross. A dropped member matters twice over: the
+      # backfill worker writes them a pending participation a minute later,
+      # and a team formed with them would carry one marked and one blank
+      # member.
       def sits_out?(assignment, member)
         participation = assignment.assessment
                                   &.assessment_participations
                                   &.find_by(user_id: member.id)
-        participation.nil? || participation.exempt? || participation.absent?
+        participation.nil? || participation.exempt? || participation.absent? ||
+          participation.submitted_at.nil?
       end
 
       # A team is marked as one: the tutor enters the points once and every
