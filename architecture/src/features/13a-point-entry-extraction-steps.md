@@ -92,6 +92,18 @@ an empty 200.
 The submission actions stay assignment-specific. They are about a team handing something
 in, which exams do not do.
 
+```admonish note title="Where this landed"
+Who may grade is settled from the record: the participation's or hand-in's own group, or
+the lecture where it has none - an exam, or a sheet handed in on paper by somebody in no
+group, which the loader no longer refuses. The page still says which table the row goes
+back into (`grading_scope_type`), because the group's table and the lecture's table draw
+different columns; that hint decides the shape of the answer and nothing else.
+
+A participation in anything but an assignment is refused with 400 before the actions run:
+this page has no row to draw it into. A record that is not there answers 404. Both carry
+the flash, and Turbo renders it either way.
+```
+
 ## 5 · Project the exam roster onto participations
 
 `Assessment#seed_participations_from!` already exists, is idempotent through a unique

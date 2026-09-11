@@ -11,6 +11,9 @@ module Assessment
                                                  :refresh_submission,
                                                  :refresh_participation,
                                                  :remove_participated]
+    before_action :refuse_without_row, only: [:update_participation,
+                                              :refresh_participation,
+                                              :remove_participated]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
@@ -22,12 +25,12 @@ module Assessment
       respond_with_flash(:alert, e.message)
     end
 
+    # Who may grade follows the record, not the page it sits on: the group
+    # the participation or hand-in belongs to, or the lecture where it has
+    # none. The bulk save names the group of its page; the service checks
+    # every entry against its own.
     def authorize_assessment!
-      if @grading_scope_type == "tutorial"
-        authorize! :grade, @tutorial
-      else
-        authorize! :grade, @lecture
-      end
+      authorize!(:grade, @tutorial || @lecture)
     end
 
     def update_team_multi
@@ -73,8 +76,7 @@ module Assessment
             SubmissionRowComponent.new(
               submission: @submission,
               assignment: @assessable,
-              grading_scope:
-                 @grading_scope_type == "tutorial" ? @tutorial : @lecture
+              grading_scope: table_scope
             )
           )
         )
@@ -89,44 +91,17 @@ module Assessment
         return
       end
 
-      case @assessable
-      when Assignment
-        ActiveRecord::Base.transaction do
-          SubmissionGraderService.score_tasks_by_participation!(
-            @participation, task_points, current_user
-          )
-        end
-        grading_scope = @grading_scope_type == "tutorial" ? @tutorial : @lecture
-        save_url = point_participation_path(
-          @participation,
-          grading_scope_type: @grading_scope_type
+      ActiveRecord::Base.transaction do
+        SubmissionGraderService.score_tasks_by_participation!(
+          @participation, task_points, current_user
         )
-        refresh_url = refresh_point_participation_path(
-          @participation,
-          grading_scope_type: @grading_scope_type
-        )
-
-      when Exam
-        return respond_with_flash(:alert, "exam_not_yet_supported")
-      else
-        return respond_with_flash(:alert, t("assessment.errors.invalid_assessable_type"))
       end
 
       @participation = @participation.reload
-      @assessable = @participation.assessment&.assessable
       render_task_points_update(
         turbo_stream.replace(
           "participation-row-#{@participation.id}",
-          html:
-            render_to_string(
-              ParticipationRowComponent.new(
-                participation: @participation,
-                assessment: @assessable.assessment,
-                grading_scope: grading_scope,
-                save_url: save_url,
-                refresh_url: refresh_url
-              )
-            )
+          html: render_to_string(participation_row)
         )
       )
     end
@@ -167,6 +142,34 @@ module Assessment
 
     private
 
+      # Which table the row goes back into - the group's or the lecture's -
+      # is the page's business and travels with the request; who may grade
+      # it is settled from the record in `authorize_assessment!`.
+      def table_scope
+        (@tutorial if @grading_scope_type == "tutorial") || @lecture
+      end
+
+      def participation_row
+        ParticipationRowComponent.new(
+          participation: @participation,
+          assessment: @assessment,
+          grading_scope: table_scope,
+          save_url: point_participation_path(@participation,
+                                             grading_scope_type: @grading_scope_type),
+          refresh_url: refresh_point_participation_path(@participation,
+                                                        grading_scope_type: @grading_scope_type)
+        )
+      end
+
+      # The rows on this page are drawn for assignments; a participation in
+      # anything else has no row to go back into.
+      def refuse_without_row
+        return if @assessable.is_a?(Assignment)
+
+        respond_with_flash(:alert, t("assessment.task_points.unsupported_assessment_type"),
+                           status: :bad_request)
+      end
+
       def rerender_submission_row
         respond_to do |format|
           format.turbo_stream do
@@ -176,8 +179,7 @@ module Assessment
                 SubmissionRowComponent.new(
                   submission: @submission,
                   assignment: @assessable,
-                  grading_scope:
-                     @grading_scope_type == "tutorial" ? @tutorial : @lecture
+                  grading_scope: table_scope
                 )
               )
             )
@@ -190,24 +192,7 @@ module Assessment
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
               "participation-row-#{@participation.id}",
-              html: render_to_string(
-                ParticipationRowComponent.new(
-                  participation: @participation,
-                  assessment: @assessable.assessment,
-                  grading_scope:
-                     @grading_scope_type == "tutorial" ? @tutorial : @lecture,
-                  save_url:
-                     point_participation_path(
-                       @participation,
-                       grading_scope_type: @grading_scope_type
-                     ),
-                  refresh_url:
-                     refresh_point_participation_path(
-                       @participation,
-                       grading_scope_type: @grading_scope_type
-                     )
-                )
-              )
+              html: render_to_string(participation_row)
             )
           end
         end
@@ -226,7 +211,7 @@ module Assessment
               html: render_to_string(
                 TutorialPointingTableComponent.new(
                   assignment: @assessable,
-                  grading_scope: @grading_scope_type == "tutorial" ? @tutorial : @lecture
+                  grading_scope: table_scope
                 )
               )
             )
@@ -252,90 +237,67 @@ module Assessment
         @assessable = Assignment.find_by(id: params["assignment_id"])
 
         unless @tutorial
-          return respond_with_flash(:alert,
-                                    t("assessment.errors.no_tutorial"))
+          return respond_with_flash(:alert, t("assessment.errors.no_tutorial"),
+                                    status: :not_found)
         end
 
         @lecture = @tutorial.lecture
 
         unless @assessable
-          return respond_with_flash(:alert,
-                                    t("assessment.errors.no_assignment"))
+          return respond_with_flash(:alert, t("assessment.errors.no_assignment"),
+                                    status: :not_found)
         end
 
         @assessment = @assessable.assessment
         return if @assessment
 
-        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"))
+        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"),
+                           status: :not_found)
       end
 
       def set_resources_from_submission
         @submission = Submission.find_by(id: params[:submission_id])
         unless @submission
-          return respond_with_flash(:alert,
-                                    t("assessment.errors.no_submission"))
+          return respond_with_flash(:alert, t("assessment.errors.no_submission"),
+                                    status: :not_found)
         end
 
         @assessable = @submission.assignment
-        unless @assessable
-          return respond_with_flash(:alert,
-                                    t("assessment.task_points.submission_missing_assignment"))
-        end
-
         @tutorial = @submission.tutorial
-        unless @tutorial
-          return respond_with_flash(:alert,
-                                    t("assessment.task_points.submission_missing_tutorial"))
-        end
-
         @lecture = @tutorial.lecture
 
         @assessment = @assessable.assessment
         return if @assessment
 
-        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"))
+        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"),
+                           status: :not_found)
       end
 
+      # The group is the participation's own, and may be none: an exam has no
+      # groups, and a sheet handed in on paper by somebody in no group still
+      # gets its points. The lecture is the scope then.
       def set_resources_from_participation
         @participation = Participation.find_by(id: params[:participation_id])
         unless @participation
-          return respond_with_flash(:alert,
-                                    t("assessment.errors.no_participation"))
+          return respond_with_flash(:alert, t("assessment.errors.no_participation"),
+                                    status: :not_found)
         end
 
         @assessment = @participation.assessment
-        unless @assessment
-          return respond_with_flash(:alert,
-                                    t("assessment.task_points.participation_missing_assessment"))
-        end
-
         @lecture = @assessment.lecture
-
         @assessable = @assessment.assessable
-        unless @assessable
-          return respond_with_flash(:alert,
-                                    t("assessment.task_points.participation_missing_assignment"))
-        end
+        @tutorial = @participation.tutorial
+        return if @assessable
 
-        case @assessable
-        when Assignment
-          @tutorial = @participation.tutorial
-          unless @tutorial
-            respond_with_flash(:alert,
-                               t("assessment.task_points.participation_missing_tutorial"))
-          end
-        when Exam
-          respond_with_flash(:alert, "exam_not_yet_supported")
-        else
-          respond_with_flash(:alert, t("assessment.errors.invalid_assessable_type"))
-        end
+        respond_with_flash(:alert, t("assessment.task_points.participation_missing_assignment"),
+                           status: :not_found)
       end
 
       def set_resources_from_assignment
         @assessable = Assignment.find_by(id: params[:assignment_id])
         unless @assessable
-          return respond_with_flash(:alert,
-                                    t("assessment.errors.no_assignment"))
+          return respond_with_flash(:alert, t("assessment.errors.no_assignment"),
+                                    status: :not_found)
         end
 
         @tutorial = Tutorial.find_by(id: params[:tutorial_id])
@@ -343,7 +305,8 @@ module Assessment
         @assessment = @assessable.assessment
         return if @assessment
 
-        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"))
+        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"),
+                           status: :not_found)
       end
 
       def current_ability

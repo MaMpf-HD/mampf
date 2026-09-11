@@ -228,12 +228,8 @@ en:
     submission_settings: 'Submission Settings'
     task_points:
       update: 'Task points updated successfully.'
-      submission_missing_tutorial: 'This submission has no tutorial assigned.'
-      submission_missing_assignment: 'This submission has no assignment assigned.'
       submission_missing_assessment: 'This assignment has no assessment configured.'
-      participation_missing_tutorial: 'This participation has no tutorial assigned.'
-      unsupported_assessment_type: 'This assessment type is not supported for task points.'
-      participation_missing_assessment: 'This participation has no assessment assigned.'
+      unsupported_assessment_type: 'Points for this kind of assessment cannot be entered here.'
       participation_missing_assignment: 'This assessment has no assignment configured.'
       assignment_missing_assessment: 'This assignment has no assessment configured.'
       user_not_rostered: 'This user is not assigned to a tutorial for this lecture.'
