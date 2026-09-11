@@ -34,19 +34,6 @@ class Submission < ApplicationRecord
     users.map { |user| found[user.id] }
   end
 
-  # The points of the people who handed this in, read off their
-  # participations. `submission_id` on a task point only says where a value
-  # was scored, and a value that was seeded, imported or backfilled carries
-  # none — filtering by it showed those as 0.
-  def graded_tasks_points
-    return unless assignment.assessable?
-
-    Assessment::TaskPoint
-      .joins(:assessment_participation)
-      .where(assessment_participations: { assessment_id: assignment.assessment.id,
-                                          user_id: user_ids })
-  end
-
   def partners_of_user(user)
     return unless user.in?(users)
 

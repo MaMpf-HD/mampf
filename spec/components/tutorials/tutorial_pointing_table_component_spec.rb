@@ -139,22 +139,33 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
   end
 
-  describe "#preload_non_submitter_participations" do
+  describe "#preload_participations" do
     let(:component) do
       described_class.new(assignment: assignment, grading_scope: tutorial)
     end
     let(:user) { create(:confirmed_user) }
+    let(:submitter) { create(:confirmed_user) }
     let!(:participation) do
       create(:assessment_participation, assessment: assessment, user: user, tutorial: tutorial)
     end
+    let!(:submitter_participation) do
+      create(:assessment_participation, assessment: assessment, user: submitter,
+                                        tutorial: tutorial)
+    end
+    let(:submission) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [submitter])
+    end
 
-    it "returns a hash keyed by user_id" do
-      result = component.preload_non_submitter_participations([user])
+    it "returns a hash keyed by user_id, submitters and non-submitters alike" do
+      result = component.preload_participations([user], [submission])
+
       expect(result[user.id]).to eq(participation)
+      expect(result[submitter.id]).to eq(submitter_participation)
     end
 
     it "preloads task_points so no further query is issued" do
-      preloaded = component.preload_non_submitter_participations([user])[user.id]
+      preloaded = component.preload_participations([user], [])[user.id]
       query_count = 0
       callback = lambda { |*, payload|
         query_count += 1 unless payload[:sql].match?(/SCHEMA|TRANSACTION/)
@@ -163,6 +174,13 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         preloaded.task_points.to_a
       end
       expect(query_count).to eq(0)
+    end
+
+    it "hands a submission row the participations of its team" do
+      submission
+      built = described_class.new(assignment: assignment, grading_scope: tutorial)
+
+      expect(built.team_participations(submission)).to eq([submitter_participation])
     end
   end
 

@@ -107,8 +107,10 @@ module Assessment
       recompute_all_performance_records if recompute
     end
 
+    # Off the loaded association, sorted here rather than in SQL: every row of
+    # a pointing table asks the same assessment, and the tasks are read once.
     def persisted_tasks
-      tasks.order(:position)
+      tasks.select(&:persisted?).sort_by(&:position)
     end
 
     private

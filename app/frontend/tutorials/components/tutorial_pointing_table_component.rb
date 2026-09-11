@@ -17,34 +17,45 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   def init_tutor_case
     @mode = "tutor"
-    @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
-                        &.order(:last_modification_by_users_at)
+    @stack = @assignment.submissions.where(tutorial: @tutorial).proper
+                        .order(:last_modification_by_users_at)
+                        .includes(:users, tutorial: :tutors)
     @non_submitters = @assignment&.non_submitters_in_tutorial(@tutorial)
-    @non_submitter_participations = preload_non_submitter_participations(@non_submitters)
+    @participations_by_user_id = preload_participations(@non_submitters, @stack)
   end
 
   def init_teacher_case
     @mode = "teacher"
     @tutorials = @lecture.tutorials
-    @stack = @assignment&.submissions&.proper
-                        &.order(:last_modification_by_users_at)
+    @stack = @assignment.submissions.proper
+                        .order(:last_modification_by_users_at)
+                        .includes(:users, tutorial: :tutors)
     @submissions_by_tutorial = @stack.group_by(&:tutorial)
 
     @non_submitters = @assignment&.non_submitters_in_tutorials
-    @non_submitter_participations = preload_non_submitter_participations(@non_submitters)
+    @participations_by_user_id = preload_participations(@non_submitters, @stack)
 
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
 
     @non_submitters_by_tutorial = @non_submitters.group_by do |user|
-      @non_submitter_participations[user.id]&.tutorial
+      @participations_by_user_id[user.id]&.tutorial
     end
   end
 
-  def preload_non_submitter_participations(users)
+  # One query for everybody on the page, marks included: the rows read theirs
+  # off this rather than asking per row.
+  def preload_participations(non_submitters, submissions)
+    return {} unless @assignment.assessment
+
+    user_ids = non_submitters.map(&:id) + submissions.flat_map(&:user_ids)
     Assessment::Participation
-      .where(user: users, assessment: @assignment.assessment)
+      .where(user_id: user_ids, assessment: @assignment.assessment)
       .includes(:task_points)
       .index_by(&:user_id)
+  end
+
+  def team_participations(submission)
+    submission.users.map { |user| @participations_by_user_id[user.id] }
   end
 
   def grading_enabled?
@@ -61,7 +72,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   # have any grading records for this assignment? (either by submission or by participation)
   def grading_records?
-    @stack&.any? || @non_submitters&.any? { |user| @non_submitter_participations[user.id] }
+    @stack&.any? || @non_submitters&.any? { |user| @participations_by_user_id[user.id] }
   end
 
   def column_count
@@ -96,7 +107,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def remove_participated_link(user)
-    participation = @non_submitter_participations[user.id]
+    participation = @participations_by_user_id[user.id]
     return unless participation
 
     path = remove_participation_path(

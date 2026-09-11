@@ -38,6 +38,59 @@ RSpec.describe("Tutorials", type: :request) do
     end
   end
 
+  describe "the pointing table's queries" do
+    def count_queries
+      count = 0
+      subscription = ActiveSupport::Notifications
+                     .subscribe("sql.active_record") do |*, payload|
+        count += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION|CACHE/)
+      end
+      yield
+      count
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscription)
+    end
+
+    # A group of its own per measurement, every hand-in marked on every task,
+    # so that a row asking per row for its team, its marks or its tasks shows
+    # up in the count.
+    def marked_group(hand_ins)
+      built = create(:lecture, :released_for_all)
+      group = create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: built)
+      assignment = create(:assignment, :expired, lecture: built, accepted_file_type: ".pdf")
+      tasks = Array.new(3) do
+        create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+      end
+      hand_ins.times do
+        student = create(:confirmed_user)
+        create(:tutorial_membership, tutorial: group, user: student)
+        create(:submission, :with_manuscript, assignment: assignment,
+                                              tutorial: group).users << student
+        participation = create(:assessment_participation,
+                               assessment: assignment.assessment, user: student,
+                               submitted_at: 2.days.ago)
+        tasks.each do |task|
+          create(:assessment_task_point, task: task, points: 2,
+                                         assessment_participation: participation)
+        end
+      end
+      [built, group, assignment]
+    end
+
+    def queries_for(hand_ins)
+      built, group, assignment = marked_group(hand_ins)
+      params = { tutorial: group.id, assignment: assignment.id }
+
+      count_queries { get(lecture_tutorials_path(built, params: params)) }
+    end
+
+    it "does not grow with the number of hand-ins" do
+      sign_in tutor
+
+      expect(queries_for(8)).to eq(queries_for(2))
+    end
+  end
+
   # The page somebody lands on before there is anything: it used to be
   # unreachable, because the sidebar greyed the entry out exactly then.
   describe "GET /lectures/:id/tutorial_overview" do

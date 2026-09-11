@@ -65,6 +65,18 @@ Two things are worth correcting while the file is open:
 Nothing about assignments should change. If a spec has to move, something else moved
 with it.
 
+```admonish note title="Both corrections are in"
+The table reads the participations of everybody on the page, marks included, in one
+query and hands each row its team's; the tasks are read once and handed down the same
+way. The request spec pins the count: a group of eight hand-ins costs what a group of two
+does.
+
+The maximum is decided as no ceiling at any layer: `TaskPoint` allows more than
+`max_points` because a bonus is points, the input carries no `max`, and the controller
+checks only the minimum. What a task is worth is what the header says, not what a tutor
+may enter.
+```
+
 ## 4 · Derive the assessable instead of being told it
 
 Drop `params[:type]`. The assessable and the grading scope both follow from the

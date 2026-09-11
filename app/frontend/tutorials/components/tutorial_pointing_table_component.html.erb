@@ -50,11 +50,12 @@
                   <%= render(SubmissionRowComponent.new(
                       submission: submission,
                       assignment: @assignment,
-                      grading_scope: @tutorial)) %>
+                      grading_scope: @tutorial,
+                      participations: team_participations(submission))) %>
                 <% end %>
                 <!-- Non-submitters + have grading records -->
                 <% @non_submitters.each do |user| %>
-                  <% participation = @non_submitter_participations[user.id] %>
+                  <% participation = @participations_by_user_id[user.id] %>
 
                   <% if participation %>
                     <%= render(ParticipationRowComponent.new(
@@ -75,12 +76,13 @@
                     <%= render(SubmissionRowComponent.new(
                         submission: submission,
                         assignment: @assignment,
-                        grading_scope: @lecture)) %>
+                        grading_scope: @lecture,
+                        participations: team_participations(submission))) %>
                   <% end %>
 
                   <!-- Non-submitters + have grading records -->
                   <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
-                    <% participation = @non_submitter_participations[user.id] %>
+                    <% participation = @participations_by_user_id[user.id] %>
 
                     <% if participation %>
                       <%= render(ParticipationRowComponent.new(

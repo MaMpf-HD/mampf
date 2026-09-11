@@ -1,13 +1,16 @@
 # Renders a single submission row in the pointing table
 class SubmissionRowComponent < ViewComponent::Base
-  def initialize(submission:, assignment:, grading_scope:)
+  # The table hands its rows the team's participations, read once for the
+  # whole page; a row rendered on its own reads them itself.
+  def initialize(submission:, assignment:, grading_scope:, participations: nil)
     super()
     @submission = submission
     @tutorial = @submission.tutorial
     @assessment = assignment&.assessment
     @assignment = assignment
     @grading_scope = grading_scope
-    @lecture = @tutorial.lecture
+    @lecture = @assignment.lecture
+    @participations = (participations || @submission.participations || []).compact
     check_grading_scope
   end
 
@@ -36,6 +39,16 @@ class SubmissionRowComponent < ViewComponent::Base
     @assessment.persisted_tasks || []
   end
 
+  # A team is marked as one - every member gets the same points and the same
+  # status - so the first participation there is speaks for the row.
+  def participation
+    @participations.first
+  end
+
+  def status
+    participation&.status
+  end
+
   def late?
     @submission.too_late?
   end
@@ -51,7 +64,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def graded_task_points
-    @graded_task_points ||= @submission.graded_tasks_points
+    participation ? participation.task_points : []
   end
 
   def badge_status_participation_color(status)
@@ -84,6 +97,12 @@ class SubmissionRowComponent < ViewComponent::Base
       class: "form-control",
       disabled: !allow_grading
     )
+  end
+
+  def task_points_cell(task, allow_grading)
+    tag.td(class: "sticky-col task-col") do
+      task_points_input(task, allow_grading)
+    end
   end
 
   def save_row_button(allow_grading)
