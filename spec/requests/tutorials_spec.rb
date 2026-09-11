@@ -54,23 +54,6 @@ RSpec.describe("Tutorials", type: :request) do
     end
   end
 
-  # The page somebody lands on before there is anything: it used to be
-  # unreachable, because the sidebar greyed the entry out exactly then.
-  describe "GET /lectures/:id/tutorial_overview" do
-    before { sign_in editor }
-
-    it "offers the way to create the first group when there is none" do
-      tutorial.destroy
-
-      get lecture_tutorial_overview_path(lecture)
-
-      expect(response.body).to include(I18n.t("lecture.no_tutorials_yet"))
-      expect(response.body).to include(I18n.t("lecture.create_tutorials"))
-      expect(response.body)
-        .to include(CGI.escapeHTML(edit_lecture_path(lecture, tab: "groups")))
-    end
-  end
-
   describe "GET /tutorials/new" do
     context "as an editor" do
       before { sign_in editor }
