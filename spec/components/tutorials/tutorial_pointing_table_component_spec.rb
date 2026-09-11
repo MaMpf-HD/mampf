@@ -87,7 +87,7 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     describe "rendering" do
       it "renders the grading table" do
         render_inline(component)
-        expect(rendered_content).to include("grading-table")
+        expect(rendered_content).to include("pointing-table")
       end
     end
   end
@@ -134,7 +134,7 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     describe "rendering" do
       it "renders the grading table" do
         render_inline(component)
-        expect(rendered_content).to include("grading-table")
+        expect(rendered_content).to include("pointing-table")
       end
     end
   end
