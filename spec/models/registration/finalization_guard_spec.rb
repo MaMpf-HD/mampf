@@ -89,9 +89,76 @@ RSpec.describe(Registration::FinalizationGuard, type: :model) do
         expect(result.screening_result)
           .to be_a(Registration::ScreeningService::Result)
         expect(result.violations).to eq(result.screening_result.violations)
+        expect(result.success?).to be(true)
         expect(result.blocker_violations).to be_empty
         expect(result.auto_reject_violations.size).to eq(1)
         expect(result.auto_reject_violations.first[:user_id]).to eq(user.id)
+      end
+    end
+
+    context "when a closed FCFS campaign has a multi-lecture performance policy" do
+      let(:lecture) { create(:lecture) }
+      let(:campaign) { create(:registration_campaign, campaignable: lecture) }
+      let(:item) { create(:registration_item, registration_campaign: campaign) }
+      let(:user) { create(:confirmed_user) }
+      let(:passed_lecture) { create(:lecture, :with_organizational_stuff) }
+      let(:other_lecture) { create(:lecture, :with_organizational_stuff) }
+
+      before do
+        create(:registration_policy, :student_performance,
+               registration_campaign: campaign,
+               phase: :finalization,
+               config: {
+                 "lecture_ids" => [other_lecture.id.to_s, passed_lecture.id.to_s]
+               })
+
+        campaign.update!(status: :closed)
+
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: campaign,
+               registration_item: item,
+               user: user)
+      end
+
+      # Every lecture the policy names has to be passed, so one pass alongside an
+      # undecided second is not enough — and the campaign waits for that second.
+      it "blocks while one of the selected lectures is still undecided" do
+        create(:student_performance_certification, :pending,
+               lecture: other_lecture, user: user)
+        create(:student_performance_certification, :passed,
+               lecture: passed_lecture, user: user)
+
+        result = described_class.new(campaign).check
+
+        expect(result.success?).to be(false)
+        expect(result.error_code).to eq(:policy_violation)
+      end
+
+      it "does not block once every selected lecture is passed" do
+        certifier = create(:confirmed_user)
+        [other_lecture, passed_lecture].each do |l|
+          create(:student_performance_certification, :passed,
+                 lecture: l, user: user, certified_by: certifier)
+        end
+
+        result = described_class.new(campaign).check
+
+        expect(result.success?).to be(true)
+        expect(result.blocker_violations).to be_empty
+      end
+
+      # A lecture that is definitively failed cannot be salvaged by the pending
+      # one, so the student is rejected rather than the campaign held up.
+      it "rejects rather than blocking when one lecture is failed outright" do
+        create(:student_performance_certification, :pending,
+               lecture: other_lecture, user: user)
+        create(:student_performance_certification, :failed,
+               lecture: passed_lecture, user: user)
+
+        result = described_class.new(campaign).check
+
+        expect(result.blocker_violations).to be_empty
+        expect(result.auto_reject_violations.size).to eq(1)
       end
     end
 

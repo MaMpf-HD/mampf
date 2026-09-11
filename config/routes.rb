@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       resources :factories_playwright, only: :create
       post "factories_playwright/call_instance_method",
            to: "factories_playwright#call_instance_method"
+      post "factories_playwright/update_instance",
+           to: "factories_playwright#update_instance"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :user_creator_playwright, only: :create
@@ -121,6 +123,28 @@ Rails.application.routes.draw do
 
   resources :assignments, only: [:new, :edit, :create, :update, :destroy]
 
+  # assessment routes
+  namespace :assessment do
+    resources :assessments, only: [:index, :show, :update] do
+      collection do
+        patch :assignments_complete
+      end
+      resources :tasks, except: [:index] do
+        member do
+          get :cancel
+        end
+        collection do
+          post :reorder
+        end
+      end
+      resources :grade_schemes, only: [:new, :create, :edit, :update, :destroy] do
+        member do
+          patch :apply
+        end
+      end
+    end
+  end
+
   # chapters routes
 
   get "chapters/:id/list_sections",
@@ -152,6 +176,16 @@ Rails.application.routes.draw do
   # divisions routes
 
   resources :divisions, except: [:show]
+
+  # exam routes
+  resources :exams, only: [:index, :new, :show, :edit, :create, :update,
+                           :destroy] do
+    member do
+      post "participants", action: :add_participant
+      delete "participants/:user_id", action: :remove_participant,
+                                      as: :remove_participant
+    end
+  end
 
   # feedback routes
   resources :feedbacks, only: [:new, :create]
@@ -325,6 +359,35 @@ Rails.application.routes.draw do
         post "members", action: :add_member, as: :add_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
+      end
+    end
+
+    namespace :student_performance, path: "performance" do
+      resources :records, only: [:index, :show] do
+        collection do
+          post :recompute
+        end
+      end
+
+      resource :rules, only: [:edit, :update] do
+        patch :preview, on: :collection
+      end
+
+      resource :evaluator, only: [], controller: "evaluator" do
+        get :single_proposal, on: :member
+      end
+
+      resources :achievements,
+                only: [:index, :new, :show, :create, :update, :destroy]
+
+      resources :certifications,
+                only: [:index, :create, :update, :destroy] do
+        collection do
+          post :bulk_accept
+          post :bulk_reevaluate
+          post :bulk_confirm_manual
+          post :bulk_reset
+        end
       end
     end
 
@@ -792,18 +855,6 @@ Rails.application.routes.draw do
   get "submissions/:id/show_correction",
       to: "submissions#show_correction",
       as: "show_correction"
-
-  get "submissions/:id/select_tutorial",
-      to: "submissions#select_tutorial",
-      as: "select_tutorial"
-
-  patch "submissions/:id/move",
-        to: "submissions#move",
-        as: "move_submission"
-
-  get "submissions/:id/cancel_action",
-      to: "submissions#cancel_action",
-      as: "cancel_submission_action"
 
   delete "submissions/:id/delete_correction",
          to: "submissions#delete_correction",

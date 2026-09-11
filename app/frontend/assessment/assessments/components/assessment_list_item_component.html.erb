@@ -1,0 +1,91 @@
+<%= tag.tr(**row_tag_attrs) do %>
+  <td>
+    <% if legacy %>
+      <span class="text-muted"><%= title %></span>
+    <% elsif clickable? %>
+      <%= link_to title, show_path, class: "text-decoration-none",
+          data: { row_link: true, turbo_stream: true } %>
+    <% else %>
+      <%= title %>
+    <% end %>
+  </td>
+
+  <% if assessable.is_a?(Talk) %>
+    <td><%= speaker_names %></td>
+    <td class="text-center">
+      <% if grade_display %>
+        <span class="badge bg-success"><%= grade_display %></span>
+      <% else %>
+        <span class="text-muted">&mdash;</span>
+      <% end %>
+    </td>
+    <td><%= talk_date %></td>
+  <% elsif legacy %>
+    <td colspan="5" class="text-muted">
+      <%= I18n.t("assessment.legacy_description") %>
+
+      <% if edit_path.present? || delete_path.present? %>
+        <div class="float-end d-flex gap-2">
+          <% if edit_path.present? %>
+            <%= link_to t("basics.edit"), edit_path,
+                class: "btn btn-sm btn-outline-primary", remote: true %>
+          <% end %>
+
+          <% if delete_path.present? %>
+            <%= button_to t("basics.delete"), delete_path,
+                method: :delete,
+                data: { confirm: t("basics.confirm_delete") },
+                class: "btn btn-sm btn-outline-danger",
+                remote: true %>
+          <% end %>
+        </div>
+      <% end %>
+    </td>
+  <% else %>
+    <td>
+      <% if medium %>
+        <span
+          class="text-truncate d-inline-block"
+          style="max-width: 200px;"
+          title="<%= medium_title %>"
+        >
+          <%= link_to medium_title, medium_path(medium),
+                      data: { turbo_frame: "_top" } %>
+        </span>
+      <% end %>
+    </td>
+    <td>
+      <%= content_tag(:code, file_type, class: "small") if file_type %>
+    </td>
+    <td class="text-center">
+      <%= tasks_count %>
+
+      <% if tasks_count.zero? %>
+        <span
+          class="ms-1 text-warning"
+          title="<%= t('assessment.task.missing_warning') %>"
+          data-bs-toggle="tooltip"
+        >
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </span>
+      <% end %>
+    </td>
+    <td class="text-center">
+      <%= total_points_display %>
+    </td>
+    <td class="text-center">
+      <% if requires_submission? %>
+        <i
+          class="bi bi-check-lg text-success"
+          title="<%= t('assessment.requires_submission') %>"
+        ></i>
+      <% else %>
+        <i
+          class="bi bi-x-lg text-muted"
+          title="<%= t('assessment.no_submission_required') %>"
+        ></i>
+      <% end %>
+    </td>
+    <td><%= deadline_display %></td>
+  <% end %>
+<% end %>

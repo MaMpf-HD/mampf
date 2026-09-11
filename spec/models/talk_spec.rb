@@ -60,7 +60,26 @@ RSpec.describe(Talk, type: :model) do
       expect(@talk).to be_valid
     end
     it "has a speaker" do
-      expect(@talk.speakers).not_to be_nil
+      expect(@talk.speakers.first).to be_kind_of(User)
+    end
+  end
+
+  describe "assessment integration" do
+    let(:seminar_lecture) { FactoryBot.create(:lecture, sort: "seminar") }
+    let(:talk) { FactoryBot.build(:talk, lecture: seminar_lecture, title: "Group Theory Talk") }
+    let(:speaker1) { FactoryBot.create(:confirmed_user) }
+    let(:speaker2) { FactoryBot.create(:confirmed_user) }
+
+    context "when assessment_grading flag is enabled" do
+      it "creates an assessment on talk creation" do
+        talk.save!
+
+        expect(talk.assessment).to be_present
+        expect(talk.assessment.title).to eq("Group Theory Talk")
+        expect(talk.assessment.requires_points).to be(false)
+        expect(talk.assessment.requires_submission).to be(false)
+        expect(talk.assessment.lecture).to eq(seminar_lecture)
+      end
     end
   end
 

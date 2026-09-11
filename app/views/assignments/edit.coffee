@@ -2,6 +2,8 @@ $('.assignmentRow[data-id="<%= @assignment.id %>"')
   .replaceWith('<%= j render partial: "assignments/form",
                       locals: { assignment: @assignment } %>')
 
+initializeDatetimePickers($('.assignmentRow[data-id="<%= @assignment.id %>"'))
+
 new TomSelect('#assignment_medium_id_<%= @assignment.id %>',
   sortField:
     field: 'text'

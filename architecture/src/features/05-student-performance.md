@@ -519,6 +519,22 @@ The "proposal calculator" for teachers: shows which students would pass/fail bas
 | `evaluate(record)` | Evaluates a single `StudentPerformance::Record` and returns a structured proposal. |
 | `bulk_evaluate(records)` | Convenience method to evaluate multiple records at once for UI display. |
 
+The result carries the proposal plus seven booleans — whether the assignment
+list is still open, and the state of the two criteria — and reads them out in
+two ways that must not be confused:
+
+| Method | Answers |
+|---|---|
+| `verdict_deferral_reasons` | why the **row** is deferred — empty unless the proposal is `:inconclusive` |
+| `points_criterion_deferral` | whether the **points criterion** is open, whatever the verdict |
+
+They deliberately do not nest. Points still reachable next to a missed
+achievement gives a `:failed` verdict — no verdict reason — while the points
+criterion itself stays open, which is what the single-proposal screen shows.
+While the assignment list is open, `verdict_deferral_reasons` answers with that
+alone: the other reasons hold too, but they are not what holds the verdict, and
+repeating them in every row of the table says nothing.
+
 ### Behavior Highlights
 - **Teacher-only tool:** Used in Certification UI and rule editing workflows
 - **No runtime gating:** Never called by `Registration::Policy` during registration/finalization
@@ -554,6 +570,7 @@ defers it.
       end
 
       def propose(*statuses)
+        return :inconclusive unless @assignments_complete
         return :failed if statuses.include?(:not_met)
         return :inconclusive if statuses.intersect?(UNDECIDED)
 
@@ -563,17 +580,30 @@ defers it.
 
 | Criterion | States |
 |---|---|
-| points | `:met` · `:pending` (marking outstanding) · `:not_measurable` (nothing to measure) · `:not_met` |
+| points | `:met` · `:pending` (marking outstanding, or a sheet not due yet) · `:not_measurable` (nothing to measure) · `:not_met` |
 | achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
 
-**`:pending`** means the student is below the threshold but the points still
-awaiting marking — `points_max_pending_materialized` — would carry them over it.
-Marking only ever adds points, and the sheets awaiting it are already inside
-`points_max_materialized`, so the best case is everything outstanding awarded in
-full. That distinction matters in both directions: without it a tutor's backlog
-reads as a failed threshold and the student is refused for somebody else's
-unfinished work, while a blunt "anything outstanding defers the decision" would
-defer the entire cohort over a single unmarked sheet.
+**`:pending`** means the student is below the threshold but what is still
+outstanding would carry them over it. Two things are outstanding: work handed in
+and not marked yet — `points_max_pending_materialized` — and sheets whose
+deadline, grace period included, has not passed. The second is counted at read
+time by `StudentPerformance::DuePoints`, because
+it moves with the clock and a stored calendar figure would go stale in silence;
+a sheet handed in early sits in both counts, so that one subtracts it. Both are
+already inside `points_max_materialized`, so the best case is all of it awarded
+in full. That distinction matters in both directions: without it a tutor's
+backlog or a term that is not over reads as a failed threshold and the student is
+refused for time that has not run out, while a blunt "anything outstanding defers
+the decision" would defer the entire cohort over a single unmarked sheet.
+
+**Nothing is proposed at all while assignments can still be added.** Another
+sheet worth *p* points raises the points needed by *p*/2 and the points reachable
+by *p*, so it can overturn a pass and a fail alike — the arithmetic, not the
+implementation, is what makes a mid-term verdict worthless. `Lecture#assignments_complete?`,
+a checkbox next to the assignment list, is what says no more are coming; until it
+is set every verdict is `:inconclusive` with `assignments_incomplete` as its
+reason, and the certification screen says so next to a disabled sweep instead of
+proposing. Creating an assignment takes the statement back, without asking.
 
 **`:not_measurable`** means `points_max_materialized` is zero — the student is
 exempt from every assignment, or the lecture has none yet. A share of nothing is
@@ -585,6 +615,12 @@ student in silence.
 A rule with no criterion at all is refused by the model, so "no points threshold"
 always means the rule asks for an achievement instead — and then a zero maximum is
 no obstacle, because points were never part of the question.
+
+A threshold of **zero** is a legal rule and behaves the same way: it is cleared
+before the zero-maximum check ever runs, so such a student passes on points
+rather than going to a person. It is the only way to say "everyone qualifies"
+while a live registration policy names the lecture, since that policy also blocks
+switching exam eligibility off.
 
 ---
 
@@ -637,7 +673,10 @@ the timestamp in.
 - **Auto-reject at finalization:** Students with `status: :failed` are automatically moved to rejected status during finalization (if finalization-phase policy exists).
 - **Rule change handling:** When teacher edits rule thresholds, show diff modal with:
   - Computed certifications that would flip (failed → passed or vice versa)
-  - Manual certifications that conflict with new proposal
+  - Manual certifications that conflict with new proposal — the recorded
+    decision is compared against the *new* proposal, not the old proposal
+    against the new one, so a rule that catches up with a hand-set decision
+    reports nothing and one that keeps contradicting it reports every time
   - Teacher reviews and applies changes manually via modal
   - No automatic updates to Certification table; teacher must confirm
 

@@ -12,6 +12,10 @@ class CampaignCardComponent < ViewComponent::Base
   delegate :eligibility, :finalization_eligibility, :items, :item_preferences,
            to: :details
 
+  def readonly_description_key
+    campaign.exam_campaign? ? "description_exam" : "description"
+  end
+
   def readonly?
     helpers.student_registration_readonly?(campaign)
   end

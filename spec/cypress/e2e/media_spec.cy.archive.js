@@ -249,7 +249,6 @@ describe("Media", () => {
         cy.get('input[name="medium[release_date]"]').click().clear().type(date.toLocaleString("de")).type("{enter}");
         date.setDate(date.getDate() + 8);
         cy.get('input[name="medium[assignment_deadline]"]').click().clear().type(date.toLocaleString("de"));
-        cy.get('select[name="medium[assignment_deletion_date]"]').should("exist");
         cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
         cy.get("#publishMediumModal").contains("Speichern").click();
         cy.contains("Dieses Medium wird planmäßig").should("exist");
@@ -279,7 +278,6 @@ describe("Media", () => {
         date.setDate(date.getDate() + 8);
         cy.wait(100);
         cy.get('input[name="medium[assignment_deadline]"]').click().clear().type(date.toLocaleString("de"));
-        cy.get('select[name="medium[assignment_deletion_date]"]').should("exist");
         cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
         cy.get("#publishMediumModal").contains("Speichern").click();
         cy.contains("Dieses Medium wird planmäßig").should("not.exist");
