@@ -60,6 +60,58 @@
         </div>
       </div>
     <% end %>
+  <% elsif registration_status == :rejected %>
+    <% card.with_corner do %>
+      <div data-controller="registration-notice-removal"
+           data-registration-notice-removal-url-value="<%= dashboard_registration_notice_path(lecture) %>"
+           data-registration-notice-removal-lecture-id-value="<%= lecture.id %>">
+        <button type="button"
+                class="bi bi-x-lg dashboard-card__action"
+                data-action="registration-notice-removal#open"
+                title="<%= t('main.start.remove_registration_notice') %>"
+                aria-label="<%= t('main.start.remove_registration_notice') %>"></button>
+
+        <div class="modal fade"
+             tabindex="-1"
+             aria-hidden="true"
+             data-registration-notice-removal-target="dialog">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  <%= t("main.start.remove_registration_notice_title") %>
+                </h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="<%= t('buttons.close') %>"></button>
+              </div>
+              <div class="modal-body">
+                <%= t("main.start.remove_registration_notice_body",
+                      lecture: lecture.title_no_term) %>
+              </div>
+              <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                  <%= t("buttons.cancel") %>
+                </button>
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        data-registration-notice-removal-keep-bookmarked>
+                  <%= t("main.start.remove_registration_notice_keep_bookmarked") %>
+                </button>
+                <button type="button"
+                        class="btn btn-danger"
+                        data-registration-notice-removal-remove-entirely>
+                  <%= t("main.start.remove_registration_notice_remove_entirely") %>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
   <% end %>
 
   <% if registration_status %>

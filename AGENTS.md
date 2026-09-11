@@ -72,3 +72,8 @@ If you are not sure of something, you are free to admit it instead of being over
 ## Implement
 
 You can directly propose some code changes instead of asking developers for permission à la "Should I implement this for you?". For very big changes, you should still ask for confirmation first (while outlining a short plan of what you will do). But in general, we can always refine later on.
+
+## Interacting with MaMpf
+
+- You can use the available browser MCP to inspect the current state of the application. 
+- Use `rails runner` to run commands dedicated to the backend. You can also use `rails console` to inspect the current state of the backend.

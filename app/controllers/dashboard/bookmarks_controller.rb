@@ -10,6 +10,8 @@ module Dashboard
   # result's own button is kept in sync on the client (see the bookmark and
   # bookmark-removal Stimulus controllers).
   class BookmarksController < ApplicationController
+    include Dashboard::RendersBoard
+
     before_action :set_lecture
 
     def create
@@ -36,33 +38,6 @@ module Dashboard
 
       def set_lecture
         @lecture = Lecture.find_by(id: params[:lecture_id])
-      end
-
-      # Re-renders the term-dependent lecture bands. Mirrors the setup in
-      # MainController#start; kept scoped to the semester the search's hidden
-      # term field points at, passed through as `?term=`.
-      def render_board
-        term = Dashboard::TermSelector.selected(params)
-        @enrolled_lectures = current_user.current_enrolled_lectures(term)
-        @bookmarked_lectures = current_user.current_bookmarked_lectures(term)
-        @talks = current_user.talks.includes(lecture: :term)
-                             .select do |talk|
-                               talk.lecture.term_id == term&.id &&
-                                 talk.visible_for_user?(current_user)
-                             end
-                             .sort_by(&:position)
-        @lecture_activity = Dashboard::LectureActivity.new(
-          user: current_user,
-          lectures: @enrolled_lectures + @bookmarked_lectures
-        )
-
-        respond_to do |format|
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              "dashboardLectureCards", partial: "main/start/lecture_cards"
-            )
-          end
-        end
       end
 
       # Mirrors the guard in ProfileController#subscribe_lecture: an unpublished

@@ -666,6 +666,11 @@ Rails.application.routes.draw do
   delete "dashboard/bookmarks/:lecture_id",
          to: "dashboard/bookmarks#destroy"
 
+  # dismiss a rejected registration's notice from the dashboard
+  delete "dashboard/registration_notice/:lecture_id",
+         to: "dashboard/registration_notices#destroy",
+         as: "dashboard_registration_notice"
+
   get "profile/request_data",
       as: "request_data"
 

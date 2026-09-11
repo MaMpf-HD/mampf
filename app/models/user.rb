@@ -641,11 +641,31 @@ class User < ApplicationRecord
            .or(Lecture.where(id: tutorial_memberships.select(:lecture_id)))
   end
 
-  # The lectures this user holds a place in for the given term. These come
-  # first on the dashboard: they are the ones the user is actually taking, as
-  # opposed to the ones they only bookmarked to look in on now and then.
+  # Lectures with a pending application, or a rejected one not yet dismissed
+  # (see Registration::UserRegistration#dismiss!). A confirmed application
+  # normally comes with a roster seat already and is thus covered by
+  # `roster_lectures`; this is a safety net for the window before rostering
+  # happens, and for campaigns that never roster the user at all.
+  def lectures_with_registration_application
+    campaign_ids = user_registrations
+                   .where(status: [:pending, :confirmed])
+                   .or(user_registrations.rejected.not_dismissed)
+                   .select(:registration_campaign_id)
+    Lecture.where(
+      id: Registration::Campaign.where(id: campaign_ids,
+                                       campaignable_type: "Lecture")
+                                .select(:campaignable_id)
+    )
+  end
+
+  # The lectures this user holds a place in for the given term, or has an
+  # open application for (see `lectures_with_registration_application`).
+  # These come first on the dashboard: they are the ones the user is actually
+  # taking (or trying to), as opposed to the ones they only bookmarked to
+  # look in on now and then.
   def current_enrolled_lectures(term = Term.active)
-    lectures_of_term(roster_lectures, term)
+    combined = roster_lectures.or(lectures_with_registration_application)
+    lectures_of_term(combined, term)
   end
 
   # Bookmarked but not enrolled. A lecture the user holds a place in is already

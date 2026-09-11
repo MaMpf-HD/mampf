@@ -223,6 +223,40 @@ RSpec.describe(User, type: :model) do
 
       expect(user.current_bookmarked_lectures(term)).to be_empty
     end
+
+    it "includes a lecture with a pending registration but no roster seat" do
+      lecture = create(:lecture, term: term)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: user,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
+    end
+
+    it "includes a lecture with a rejected, not-yet-dismissed registration" do
+      lecture = create(:lecture, term: term)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :rejected,
+             user: user,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
+    end
+
+    it "excludes a lecture whose rejected registration was dismissed" do
+      lecture = create(:lecture, term: term)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :rejected,
+             user: user,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             dismissed_at: Time.current)
+
+      expect(user.current_enrolled_lectures(term)).to be_empty
+    end
   end
 
   # test callbacks - NEEDS TO BE REFACTORED

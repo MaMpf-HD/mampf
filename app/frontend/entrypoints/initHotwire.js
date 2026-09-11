@@ -193,6 +193,9 @@ window.Stimulus.register("dashboard-section", DashboardSectionController);
 import BookmarkRemovalController from "~/dashboard/bookmark_removal.controller.js";
 window.Stimulus.register("bookmark-removal", BookmarkRemovalController);
 
+import RegistrationNoticeRemovalController from "~/dashboard/registration_notice_removal.controller.js";
+window.Stimulus.register("registration-notice-removal", RegistrationNoticeRemovalController);
+
 import BookmarkController from "~/lectures/search/bookmark.controller.js";
 window.Stimulus.register("bookmark", BookmarkController);
 

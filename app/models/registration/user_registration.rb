@@ -57,6 +57,10 @@ module Registration
       where(rejection_overridden_at: nil)
     }
 
+    scope :not_dismissed, lambda {
+      where(dismissed_at: nil)
+    }
+
     before_validation :set_exclusive_assignment
 
     validates :status, presence: true
@@ -145,6 +149,12 @@ module Registration
         rejected_at: nil,
         rejection_overridden_at: nil
       )
+    end
+
+    # Hides a rejected registration from the dashboard without deleting it, so
+    # the application stays around for auditing but no longer nags the user.
+    def dismiss!
+      update!(dismissed_at: Time.current)
     end
 
     def resolved_rejection_reason_label

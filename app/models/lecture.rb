@@ -730,7 +730,7 @@ class Lecture < ApplicationRecord
     return :pending if regs.pending.exists?
     return :open if campaigns.any?(&:open_for_registrations?)
 
-    :rejected if regs.rejected.exists?
+    :rejected if regs.rejected.not_dismissed.exists?
   end
 
   # The deadline of the next assignment the user has not yet submitted for,
