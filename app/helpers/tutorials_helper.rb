@@ -12,21 +12,8 @@ module TutorialsHelper
                        end, tutorial.tutor_ids)
   end
 
-  def tutorials_selection(lecture)
-    lecture.tutorials.map { |t| [t.title_with_tutors, t.id] }
-  end
-
   def grading_enabled?(assignment)
     assignment.assessable?
-  end
-
-  def badge_status_participation_color(status)
-    {
-      pending: "warning",
-      reviewed: "success",
-      exempt: "info",
-      absent: "info"
-    }[status&.to_sym]
   end
 
   def tutorials_for_dropdown(user, lecture, current_tutorial)
@@ -61,7 +48,7 @@ module TutorialsHelper
 
     participations_by_user_id =
       Assessment::Participation.where(user: non_submitters, assessment: assignment.assessment)
-                     .index_by(&:user_id)
+                               .index_by(&:user_id)
 
     num_non_submitters = non_submitters.size
     num_participated = non_submitters.count { |u| participations_by_user_id[u.id] }

@@ -98,7 +98,7 @@ module Rosters
       # count. Rosterables with an empty roster are absent from the result.
       def member_counts(klass, candidates)
         klass.where(id: candidates.map(&:id))
-             .joins(candidates.first.roster_association_name)
+             .joins(klass.roster_association_name)
              .group(klass.arel_table[:id])
              .count
       end

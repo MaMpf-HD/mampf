@@ -12,6 +12,13 @@ class Submission < ApplicationRecord
 
   scope :proper, -> { where.not(manuscript_data: nil) }
 
+  # Submissions that still hold a file. Detaching a manuscript leaves the
+  # tutor's correction behind, which #proper does not see - and a deleted
+  # correction cannot be restored.
+  scope :with_uploads, lambda {
+    where.not(manuscript_data: nil).or(where.not(correction_data: nil))
+  }
+
   validate :matching_lecture, if: :tutorial
 
   before_save :set_corrected_at, if: :correction_data_changed?
@@ -77,10 +84,6 @@ class Submission < ApplicationRecord
     return if correction.blank?
 
     correction.metadata["size"]
-  end
-
-  def preceding_tutorial(user)
-    assignment.previous&.filter_map { |a| a.tutorial(user) }&.first
   end
 
   def invited_users

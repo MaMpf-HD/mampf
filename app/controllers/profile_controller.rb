@@ -44,17 +44,9 @@ class ProfileController < ApplicationController
     end
   end
 
-  # this is triggered after every sign in
-  # if profile has never been edited user is redirected
+  # Asks users who have not consented yet to do so; everyone else is sent on.
   def check_for_consent
-    if @user.consents
-      redirect_to :root
-      return
-    end
-    return unless @user.consents
-
-    redirect_to edit_profile_path,
-                notice: t("profile.please_update")
+    redirect_to :root if @user.consents
   end
 
   # DSGVO consent action
@@ -106,10 +98,20 @@ class ProfileController < ApplicationController
 
   def unsubscribe_lecture
     @success = current_user.unsubscribe_lecture!(@lecture)
+    # A seat or an application outlives the subscription, so the card stays:
+    # the next load shows the lecture in the group that carries it.
+    @place_left =
+      @parent == "next_term_subscribed" &&
+      (current_user.next_term_seated_lectures +
+       current_user.next_term_registered_lectures).include?(@lecture)
     @none_left = case @parent
                  when "current_subscribed" then current_user.current_subscribed_lectures
                                                             .empty?
                  when "inactive" then current_user.inactive_lectures.empty?
+                 when "next_term_subscribed"
+                   current_user.next_term_lectures.empty? &&
+                   current_user.next_term_seated_lectures.empty? &&
+                   current_user.next_term_registered_lectures.empty?
     end
   end
 
@@ -193,7 +195,8 @@ class ProfileController < ApplicationController
       @lecture = Lecture.find_by(id: lecture_params[:id])
       @passphrase = lecture_params[:passphrase]
       @parent = lecture_params[:parent]
-      @current = !@parent.in?(["lectureSearch", "inactive"])
+      @current = !@parent.in?(["lectureSearch", "inactive",
+                               "next_term_subscribed", "next_term_registered"])
       redirect_to start_path unless @lecture
     end
 

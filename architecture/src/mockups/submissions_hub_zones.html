@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<!--
+  DESIGN A of three for the student submissions hub (/lectures/:id/submissions).
+  Sibling drafts: submissions_hub_ledger.html, submissions_hub_stack.html
+
+  THREE ZONES: standing (header) - the sheet that is due now (large) - history
+  (one row per sheet, expandable into its tasks).
+
+  Good for: the three questions the page has to answer get one zone each, so
+    nobody has to search; the hand-in stays a large target while the standing
+    is visible without scrolling.
+  Breaks when: the term is long - the header keeps its size while the history
+    grows past the fold, and between two sheets the "now" zone has nothing to
+    say and still takes a third of the screen.
+  Costs: one new query object, three partials, an expandable row with Turbo;
+    the header is the only piece that needs the performance record and the rule.
+
+  All figures are from the development database (demo:setup_on_seed), lecture 1,
+  student1@mampf.edu, 30 Aug 2026. The demo task randomises points, so a fresh
+  run shows different numbers.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignments — (V) Lineare Algebra 2 (Design A: zones)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    body { background-color: #f2f3f5; }
+    .mock-note { border-left: 4px solid #6c757d; background: #fff; }
+    .viewport-label { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase;
+                      color: #6c757d; border-bottom: 1px solid #dee2e6; }
+    .phone { width: 390px; border: 10px solid #2b2b2b; border-radius: 30px;
+             overflow: hidden; background: #f2f3f5; }
+    .phone-body { height: 760px; overflow-y: auto; }
+
+    /* Three chips, no more. Grey = nothing to do yet, amber = you must act,
+       red = this has cost you points. Marked sheets carry no chip at all:
+       the points are the status. */
+    .chip { font-size: .72rem; font-weight: 600; padding: .18rem .5rem;
+            border-radius: 1rem; white-space: nowrap; }
+    .chip-wait { background: #e9ecef; color: #495057; }
+    .chip-act  { background: #fff3cd; color: #7a5b00; }
+    .chip-lost { background: #f8d7da; color: #842029; }
+
+    .points { font-variant-numeric: tabular-nums; }
+    .points-big { font-size: 2rem; font-weight: 700; line-height: 1; }
+    .points-row { font-size: 1rem; font-weight: 600; }
+    .points-none { color: #adb5bd; }
+
+    .bar { height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: #6c8ebf; }
+    .bar-thin { height: 4px; }
+
+    .threshold-track { position: relative; }
+    .threshold-mark { position: absolute; top: -3px; bottom: -3px; width: 2px;
+                      background: #212529; }
+    .threshold-label { position: absolute; top: 10px; font-size: .68rem; color: #495057;
+                       transform: translateX(-50%); white-space: nowrap; }
+
+    .sheet-row { border-bottom: 1px solid #e9ecef; }
+    .sheet-row:hover { background: #fafbfc; }
+    .sheet-row.muted { color: #98a2ab; }
+    .task-grid { font-size: .8rem; }
+    .task-grid .bar { width: 70px; }
+    .now-card { border: 2px solid #6c8ebf; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1"><i class="bi bi-mortarboard-fill me-2"></i>MaMpf</span>
+  </div>
+</nav>
+
+<div class="container my-4" style="max-width: 1160px;">
+
+  <div class="mock-note p-3 mb-4 shadow-sm">
+    <div class="fw-bold mb-1">Design A — three zones</div>
+    <div class="small text-muted">
+      Standing on top, the sheet that is due now in the middle, the history below.
+      Real data: lecture 1, <code>student1@mampf.edu</code>, 30 Aug 2026.
+    </div>
+  </div>
+
+  <!-- ============================ WIDE ============================ -->
+  <div class="viewport-label mb-3 pb-1">Wide — desktop, ≥ 992 px</div>
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+      <li class="breadcrumb-item"><a href="#">Start</a></li>
+      <li class="breadcrumb-item"><a href="#">(V) Lineare Algebra 2</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Assignments</li>
+    </ol>
+  </nav>
+
+  <div class="d-flex justify-content-between align-items-end mb-3">
+    <div>
+      <h4 class="mb-0">Assignments</h4>
+      <div class="text-muted small">(V) Lineare Algebra 2, SS 2026 · Tutorial Mo 14–16 (Dr. Tutor)</div>
+    </div>
+  </div>
+
+  <!-- ---------- ZONE 1: standing ---------- -->
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <div class="row g-4">
+
+        <div class="col-lg-4 border-end">
+          <div class="text-muted small text-uppercase mb-2" style="letter-spacing:.06em;">Your points</div>
+          <div class="d-flex align-items-baseline gap-2 mb-2">
+            <span class="points-big points">32.5</span>
+            <span class="text-muted points">of 176</span>
+          </div>
+          <div class="threshold-track mb-4">
+            <div class="bar"><span style="width:18.5%"></span></div>
+            <div class="threshold-mark" style="left:50%"></div>
+            <div class="threshold-label" style="left:50%">88 needed</div>
+          </div>
+          <div class="small text-muted">
+            7 of 12 sheets marked · 1 waiting · 2 not handed in
+          </div>
+        </div>
+
+        <div class="col-lg-5 border-end">
+          <div class="text-muted small text-uppercase mb-2" style="letter-spacing:.06em;">Exam admission</div>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-x-circle-fill text-danger fs-5"></i>
+            <span class="fw-bold">Out of reach</span>
+          </div>
+          <p class="small mb-2">
+            You need half the points of the term — <strong>88 of 176</strong>. You have 32.5.
+            Even if the sheet still being marked were full marks, you would end at 48.5.
+          </p>
+          <p class="small mb-2">
+            You also need the <strong>blackboard talk</strong>, and it is recorded as not passed.
+          </p>
+          <a href="#" class="small">Talk to your tutor about this →</a>
+        </div>
+
+        <div class="col-lg-3">
+          <div class="text-muted small text-uppercase mb-2" style="letter-spacing:.06em;">Next deadline</div>
+          <div class="fw-bold">Blatt 6</div>
+          <div class="small">Thu, Sep 3, 2026, 19:00</div>
+          <div class="small text-muted mb-2">in 4 days</div>
+          <span class="chip chip-wait"><i class="bi bi-check2 me-1"></i>Handed in</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- ZONE 2: the sheet that is due now ---------- -->
+  <div class="card shadow-sm mb-4 now-card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <div>
+        <span class="fw-bold">Blatt 6</span>
+        <span class="text-muted small ms-2">due Thu, Sep 3, 2026, 19:00 · PDF</span>
+      </div>
+      <span class="chip chip-wait"><i class="bi bi-check2 me-1"></i>Handed in</span>
+    </div>
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-lg-7">
+
+          <div class="list-group list-group-flush mb-3">
+            <div class="list-group-item px-0 d-flex align-items-center">
+              <i class="bi bi-file-earmark-pdf text-danger fs-4 me-3"></i>
+              <div class="flex-grow-1">
+                <div class="fw-semibold small">blatt6.pdf</div>
+                <div class="text-muted small">1.2 MB · uploaded Aug 30, 2026, 14:12 by you</div>
+              </div>
+              <a href="#" class="btn btn-sm btn-outline-secondary">Open</a>
+            </div>
+          </div>
+
+          <div class="row small g-2">
+            <div class="col-4 text-muted">Team</div>
+            <div class="col-8">
+              you and <strong>student2</strong>
+              <div class="text-muted">Points are recorded for each of you separately.</div>
+            </div>
+            <div class="col-4 text-muted">Join code</div>
+            <div class="col-8">
+              <code>7F3K2</code>
+              <i class="bi bi-clipboard ms-2 text-secondary"></i>
+              <i class="bi bi-arrow-clockwise ms-1 text-secondary"></i>
+            </div>
+            <div class="col-4 text-muted">Tutorial</div>
+            <div class="col-8">Mo 14–16 (Dr. Tutor)</div>
+          </div>
+
+        </div>
+        <div class="col-lg-5">
+          <div class="d-grid gap-2 mb-3">
+            <a href="#" class="btn btn-primary"><i class="bi bi-upload me-1"></i>Replace file</a>
+            <div class="d-flex gap-2">
+              <a href="#" class="btn btn-outline-secondary flex-fill btn-sm">Invite</a>
+              <a href="#" class="btn btn-outline-danger flex-fill btn-sm">Leave team</a>
+            </div>
+          </div>
+          <p class="small text-muted mb-0">
+            You can change the file until the deadline. Points appear here once the
+            deadline has passed and your tutor has marked the sheet.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- ZONE 3: history ---------- -->
+  <div class="card shadow-sm mb-3">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <span class="fw-bold">Earlier sheets</span>
+      <span class="small text-muted">32.5 of 176 points collected</span>
+    </div>
+
+    <div class="px-3 py-2 small text-muted border-bottom d-none d-lg-block">
+      <div class="row">
+        <div class="col-4">Sheet</div>
+        <div class="col-3">Due</div>
+        <div class="col-4">Your points</div>
+        <div class="col-1"></div>
+      </div>
+    </div>
+
+    <!-- waiting to be marked -->
+    <div class="sheet-row px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4"><span class="fw-semibold">Homework 10</span></div>
+        <div class="col-3 small text-muted">Aug 27, 14:27</div>
+        <div class="col-4">
+          <span class="chip chip-wait">Waiting to be marked</span>
+          <div class="small text-muted mt-1">handed in Aug 26, 22:27</div>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <!-- not handed in -->
+    <div class="sheet-row px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4"><span class="fw-semibold">Homework 9</span></div>
+        <div class="col-3 small text-muted">Aug 23, 14:27</div>
+        <div class="col-4">
+          <span class="points points-row points-none">0</span>
+          <span class="text-muted points"> / 16</span>
+          <span class="chip chip-lost ms-2">Not handed in</span>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <!-- marked, expanded -->
+    <div class="sheet-row px-3 py-2 bg-white">
+      <div class="row align-items-center">
+        <div class="col-4"><span class="fw-semibold">Homework 8</span></div>
+        <div class="col-3 small text-muted">Aug 16, 14:27</div>
+        <div class="col-4">
+          <span class="points points-row">6.5</span>
+          <span class="text-muted points"> / 16</span>
+          <div class="bar bar-thin mt-1" style="max-width:180px"><span style="width:40.6%"></span></div>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-up"></i></div>
+      </div>
+
+      <div class="row mt-3 pt-3 border-top g-4">
+        <div class="col-lg-6 task-grid">
+          <div class="d-flex align-items-center mb-1">
+            <span class="text-muted" style="width:5.5rem">Problem 1</span>
+            <span class="bar me-2"><span style="width:37.5%"></span></span>
+            <span class="points">1.5 <span class="text-muted">/ 4</span></span>
+          </div>
+          <div class="d-flex align-items-center mb-1">
+            <span class="text-muted" style="width:5.5rem">Problem 2</span>
+            <span class="bar me-2"><span style="width:50%"></span></span>
+            <span class="points">2 <span class="text-muted">/ 4</span></span>
+          </div>
+          <div class="d-flex align-items-center mb-1">
+            <span class="text-muted" style="width:5.5rem">Problem 3</span>
+            <span class="bar me-2"><span style="width:25%"></span></span>
+            <span class="points">1 <span class="text-muted">/ 4</span></span>
+          </div>
+          <div class="d-flex align-items-center">
+            <span class="text-muted" style="width:5.5rem">Problem 4</span>
+            <span class="bar me-2"><span style="width:50%"></span></span>
+            <span class="points">2 <span class="text-muted">/ 4</span></span>
+          </div>
+        </div>
+        <div class="col-lg-6 small">
+          <div class="row g-2">
+            <div class="col-4 text-muted">Team</div>
+            <div class="col-8">you and student2 — <span class="text-muted">these are your points</span></div>
+            <div class="col-4 text-muted">Handed in</div>
+            <div class="col-8">Aug 15, 16:27</div>
+            <div class="col-4 text-muted">Marked</div>
+            <div class="col-8">Aug 16 by Dr. Tutor</div>
+            <div class="col-4 text-muted">Files</div>
+            <div class="col-8">
+              <a href="#" class="badge text-bg-secondary text-decoration-none">Submission ↓</a>
+              <a href="#" class="badge text-bg-secondary text-decoration-none">Correction ↓</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet-row px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4">
+          <span class="fw-semibold">Homework 7</span>
+          <span class="chip chip-act ms-2">Late — accepted</span>
+        </div>
+        <div class="col-3 small text-muted">Aug 9, 14:27</div>
+        <div class="col-4">
+          <span class="points points-row">4.5</span><span class="text-muted points"> / 20</span>
+          <div class="bar bar-thin mt-1" style="max-width:180px"><span style="width:22.5%"></span></div>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <div class="sheet-row px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4"><span class="fw-semibold">Homework 6</span></div>
+        <div class="col-3 small text-muted">Aug 2, 14:27</div>
+        <div class="col-4">
+          <span class="points points-row">3.5</span><span class="text-muted points"> / 16</span>
+          <div class="bar bar-thin mt-1" style="max-width:180px"><span style="width:21.9%"></span></div>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <div class="sheet-row px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4"><span class="fw-semibold">Homework 5</span></div>
+        <div class="col-3 small text-muted">Jul 26, 14:27</div>
+        <div class="col-4">
+          <span class="points points-row">6.5</span><span class="text-muted points"> / 20</span>
+          <div class="bar bar-thin mt-1" style="max-width:180px"><span style="width:32.5%"></span></div>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <div class="sheet-row px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4"><span class="fw-semibold">Homework 4</span></div>
+        <div class="col-3 small text-muted">Jul 19, 14:27</div>
+        <div class="col-4">
+          <span class="points points-row">3</span><span class="text-muted points"> / 16</span>
+          <div class="bar bar-thin mt-1" style="max-width:180px"><span style="width:18.8%"></span></div>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <div class="sheet-row px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4"><span class="fw-semibold">Homework 3</span></div>
+        <div class="col-3 small text-muted">Jul 12, 14:27</div>
+        <div class="col-4">
+          <span class="points points-row">4</span><span class="text-muted points"> / 16</span>
+          <div class="bar bar-thin mt-1" style="max-width:180px"><span style="width:25%"></span></div>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <div class="sheet-row px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4">
+          <span class="fw-semibold">Homework 2</span>
+          <span class="chip chip-act ms-2">Late — accepted</span>
+        </div>
+        <div class="col-3 small text-muted">Jul 5, 14:27</div>
+        <div class="col-4">
+          <span class="points points-row">4.5</span><span class="text-muted points"> / 20</span>
+          <div class="bar bar-thin mt-1" style="max-width:180px"><span style="width:22.5%"></span></div>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <!-- the awkward one: a file is there, the gradebook says nothing arrived -->
+    <div class="sheet-row px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4"><span class="fw-semibold">Homework 1</span></div>
+        <div class="col-3 small text-muted">Jun 28, 14:27</div>
+        <div class="col-4">
+          <span class="points points-row points-none">0</span><span class="text-muted points"> / 20</span>
+          <span class="chip chip-lost ms-2">Not handed in</span>
+          <div class="small text-danger mt-1">
+            <i class="bi bi-exclamation-triangle me-1"></i>Your file is here, but the sheet is
+            recorded as not handed in. Ask your tutor.
+          </div>
+        </div>
+        <div class="col-1 text-end text-muted"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <div class="sheet-row muted px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4">Blatt 5</div>
+        <div class="col-3 small">May 9, 18:00</div>
+        <div class="col-4 small">No points on this sheet</div>
+        <div class="col-1 text-end"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <div class="sheet-row muted px-3 py-2">
+      <div class="row align-items-center">
+        <div class="col-4">Blatt 4</div>
+        <div class="col-3 small">May 1, 17:50</div>
+        <div class="col-4 small">No points on this sheet</div>
+        <div class="col-1 text-end"><i class="bi bi-chevron-down"></i></div>
+      </div>
+    </div>
+
+    <div class="card-footer bg-white small text-muted">
+      Submitted files and corrections are deleted on Oct 15, 2026.
+    </div>
+  </div>
+
+  <!-- ============================ NARROW ============================ -->
+  <div class="viewport-label mt-5 mb-3 pb-1">Narrow — phone, 390 px</div>
+
+  <div class="phone shadow mb-5">
+    <div class="phone-body">
+
+      <div class="p-3 pb-0">
+        <h5 class="mb-0">Assignments</h5>
+        <div class="text-muted" style="font-size:.78rem">(V) Lineare Algebra 2 · Mo 14–16</div>
+      </div>
+
+      <!-- standing, folded into one card -->
+      <div class="card m-3 shadow-sm">
+        <div class="card-body py-3">
+          <div class="d-flex justify-content-between align-items-baseline">
+            <div>
+              <span class="points-big points">32.5</span>
+              <span class="text-muted points small"> of 176</span>
+            </div>
+            <span class="chip chip-lost">Admission out of reach</span>
+          </div>
+          <div class="threshold-track mt-2 mb-4">
+            <div class="bar"><span style="width:18.5%"></span></div>
+            <div class="threshold-mark" style="left:50%"></div>
+            <div class="threshold-label" style="left:50%">88 needed</div>
+          </div>
+          <button class="btn btn-sm btn-outline-secondary w-100" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#whyA">
+            Why? <i class="bi bi-chevron-down"></i>
+          </button>
+          <div class="collapse" id="whyA">
+            <p class="small mt-2 mb-0">
+              You need half the points of the term — 88 of 176. Even full marks on the
+              sheet still being marked would put you at 48.5. The blackboard talk is
+              recorded as not passed.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- now -->
+      <div class="card m-3 shadow-sm now-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-1">
+            <div class="fw-bold">Blatt 6</div>
+            <span class="chip chip-wait">Handed in</span>
+          </div>
+          <div class="small text-muted mb-3">due Thu, Sep 3, 19:00 · in 4 days</div>
+
+          <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-file-earmark-pdf text-danger fs-4 me-2"></i>
+            <div class="flex-grow-1" style="min-width:0">
+              <div class="small fw-semibold text-truncate">blatt6.pdf</div>
+              <div class="text-muted" style="font-size:.72rem">1.2 MB · Aug 30, 14:12</div>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <a href="#" class="btn btn-primary btn-sm"><i class="bi bi-upload me-1"></i>Replace file</a>
+            <a href="#" class="btn btn-outline-secondary btn-sm">Team: you and student2</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- history -->
+      <div class="card m-3 shadow-sm">
+        <div class="card-header bg-white py-2 small fw-bold">Earlier sheets</div>
+
+        <div class="sheet-row px-3 py-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold small">Homework 10</div>
+              <div class="text-muted" style="font-size:.72rem">Aug 27</div>
+            </div>
+            <span class="chip chip-wait">Waiting</span>
+          </div>
+        </div>
+
+        <div class="sheet-row px-3 py-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold small">Homework 9</div>
+              <div class="text-muted" style="font-size:.72rem">Aug 23</div>
+            </div>
+            <div class="text-end">
+              <span class="points points-none">0</span><span class="text-muted points small"> / 16</span>
+              <div><span class="chip chip-lost">Not handed in</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sheet-row px-3 py-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold small">Homework 8</div>
+              <div class="text-muted" style="font-size:.72rem">Aug 16 · you and student2</div>
+            </div>
+            <div class="text-end">
+              <span class="points fw-semibold">6.5</span><span class="text-muted points small"> / 16</span>
+            </div>
+          </div>
+          <div class="bar bar-thin mt-2"><span style="width:40.6%"></span></div>
+          <div class="task-grid mt-2 d-flex gap-1">
+            <div class="flex-fill text-center">
+              <div class="bar bar-thin"><span style="width:37.5%"></span></div>
+              <div class="text-muted" style="font-size:.68rem">1.5</div>
+            </div>
+            <div class="flex-fill text-center">
+              <div class="bar bar-thin"><span style="width:50%"></span></div>
+              <div class="text-muted" style="font-size:.68rem">2</div>
+            </div>
+            <div class="flex-fill text-center">
+              <div class="bar bar-thin"><span style="width:25%"></span></div>
+              <div class="text-muted" style="font-size:.68rem">1</div>
+            </div>
+            <div class="flex-fill text-center">
+              <div class="bar bar-thin"><span style="width:50%"></span></div>
+              <div class="text-muted" style="font-size:.68rem">2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sheet-row px-3 py-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold small">Homework 7 <span class="chip chip-act">Late</span></div>
+              <div class="text-muted" style="font-size:.72rem">Aug 9</div>
+            </div>
+            <div class="text-end">
+              <span class="points fw-semibold">4.5</span><span class="text-muted points small"> / 20</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sheet-row px-3 py-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold small">Homework 6</div>
+              <div class="text-muted" style="font-size:.72rem">Aug 2</div>
+            </div>
+            <div class="text-end">
+              <span class="points fw-semibold">3.5</span><span class="text-muted points small"> / 16</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sheet-row px-3 py-2">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold small">Homework 5</div>
+              <div class="text-muted" style="font-size:.72rem">Jul 26</div>
+            </div>
+            <div class="text-end">
+              <span class="points fw-semibold">6.5</span><span class="text-muted points small"> / 20</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-2 text-center">
+          <button class="btn btn-sm btn-outline-secondary w-100">Show 6 earlier sheets</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================ STATE GALLERY ============================ -->
+  <div class="viewport-label mb-3 pb-1">Every state a row can be in</div>
+  <div class="card shadow-sm mb-5">
+    <div class="card-body">
+      <p class="small text-muted">
+        Rule of this design: <strong>the points are the status.</strong> A marked sheet gets
+        no badge at all, only its number. A badge appears only when there is no number to
+        show, and it comes in three colours — grey (nothing to do yet), amber (you have to
+        act), red (this has cost you points). Green is never used: points already say it.
+      </p>
+      <div class="row row-cols-1 row-cols-lg-2 g-3 small">
+        <div class="col"><span class="chip chip-wait">Not handed in yet</span> — deadline still open, no file.</div>
+        <div class="col"><span class="chip chip-wait">Handed in</span> — deadline still open, file there.</div>
+        <div class="col"><span class="chip chip-act">Grace period — 15 min left</span> — deadline passed, the lecture's grace period is running.</div>
+        <div class="col"><span class="chip chip-act">Late — your tutor decides</span> — handed in after the grace period, <code>accepted</code> is still null.</div>
+        <div class="col"><span class="chip chip-act">Late — accepted</span> — the tutor let it count.</div>
+        <div class="col"><span class="chip chip-lost">Late — rejected</span> — it does not count.</div>
+        <div class="col"><span class="chip chip-wait">Waiting to be marked</span> — handed in, tutor has not got to it.</div>
+        <div class="col"><span class="points fw-semibold">6.5</span> <span class="text-muted">/ 16</span> — marked. No badge.</div>
+        <div class="col"><span class="chip chip-wait">Correction there, no points</span> — a correction file was uploaded but no points were entered.</div>
+        <div class="col"><span class="chip chip-lost">Not handed in</span> — counts as 0 towards the term.</div>
+        <div class="col"><span class="chip chip-wait">Excused</span> — <code>exempt</code>: the sheet leaves your maximum entirely.</div>
+        <div class="col"><span class="chip chip-lost">Absent</span> — <code>absent</code>: counts as 0.</div>
+        <div class="col"><span class="text-muted">No points on this sheet</span> — an old-style sheet with no assessment behind it (Blatt 4, 5, 6).</div>
+      </div>
+      <p class="small text-muted mb-0 mt-3">
+        Not in this list: <em>graded</em>. An <code>Assignment</code> is
+        <code>Assessment::Pointable</code> and never <code>Gradable</code>, so a sheet
+        cannot carry a grade — only exams and talks can.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

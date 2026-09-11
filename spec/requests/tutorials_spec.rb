@@ -26,13 +26,32 @@ RSpec.describe("Tutorials", type: :request) do
       sign_in editor
     end
 
-    it "queries roster_managed? once per lecture across all submission rows" do
-      expect_any_instance_of(Lecture).to receive(:roster_managed?)
-        .once.and_call_original
+    # The rows used to ask the lecture, per row, whether it ran a roster - for
+    # a "move" button that existed only where it did not. Nothing asks now.
+    it "lists the group's submissions without asking about the roster" do
+      expect_any_instance_of(Lecture).not_to receive(:roster_managed?)
 
       get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
 
       expect(response).to have_http_status(:success)
+      expect(Nokogiri::HTML(response.body).css("tr.submission-row").size).to eq(5)
+    end
+  end
+
+  # The page somebody lands on before there is anything: it used to be
+  # unreachable, because the sidebar greyed the entry out exactly then.
+  describe "GET /lectures/:id/tutorial_overview" do
+    before { sign_in editor }
+
+    it "offers the way to create the first group when there is none" do
+      tutorial.destroy
+
+      get lecture_tutorial_overview_path(lecture)
+
+      expect(response.body).to include(I18n.t("lecture.no_tutorials_yet"))
+      expect(response.body).to include(I18n.t("lecture.create_tutorials"))
+      expect(response.body)
+        .to include(CGI.escapeHTML(edit_lecture_path(lecture, tab: "groups")))
     end
   end
 

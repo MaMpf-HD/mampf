@@ -138,6 +138,25 @@ de:
       registered: 'angemeldet'
       registration_not_open: 'Anmeldung noch nicht geöffnet.'
       go_to_registration: 'Zur Anmeldung →'
+    assignments_complete:
+      label: 'Die Blätterliste ist vollständig'
+      hint: 'Setze das Häkchen, wenn alle Übungsblätter des Semesters angelegt sind. Solange es fehlt, stellt die Prüfungszulassung jedes Urteil zurück — jedes weitere Blatt kann es umwerfen. Ein neues Blatt entfernt das Häkchen wieder.'
+      cancel: 'Abbrechen'
+      close_dialog:
+        title: 'Häkchen setzen'
+        body: 'Die Zulassungsregel urteilt dann: Für jede und jeden entsteht ein Vorschlag, den Du einzeln oder gesammelt annehmen kannst. Ein neues Blatt entfernt das Häkchen wieder.'
+        confirm: 'Häkchen setzen'
+      open_dialog:
+        title: 'Häkchen entfernen'
+        body: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts: Jedes Urteil wird zurückgestellt, bis Du es wieder setzt.'
+        confirm: 'Häkchen entfernen'
+      reopen_dialog:
+        title: 'Häkchen entfernen'
+        body:
+          one: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassung widerspricht ihr danach. Jetzt zurücksetzen? Diese Zulassung ist dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
+          other: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassungen widersprechen ihr danach. Jetzt zurücksetzen? Diese Zulassungen sind dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
+        reset: 'Zurücksetzen'
+        confirm: 'Behalten'
     campaign_status:
       title: 'Anmeldung'
       none: 'Kein Verfahren'
@@ -148,6 +167,7 @@ de:
       title: 'Status'
       draft: 'Entwurf'
       registration_open: 'Anmeldung offen'
+      registration_processing: 'Anmeldung in Bearbeitung'
       registration_closed: 'Anmeldung geschlossen'
       finalized: 'Finalisiert'
       conducted: 'Durchgeführt'

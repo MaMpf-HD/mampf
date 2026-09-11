@@ -24,6 +24,31 @@ module StudentPerformance
         authorize!(:edit, @lecture)
       end
 
+      # Reuse DuePoints within the request because the assignment
+      # deadlines and total points are the same for every student.
+      def due_points
+        @due_points ||= DuePoints.new(lecture: @lecture)
+      end
+
+      # The one field staff reach for when they are looking for a person, on
+      # every table that lists them. Matched against both names and the
+      # address, so the search works with whatever the person is known by.
+      def filter_by_name(scope)
+        query = params[:q].presence
+        return scope unless query
+
+        scope.joins(:user)
+             .where("users.name ILIKE :q OR users.name_in_tutorials ILIKE :q " \
+                    "OR users.email ILIKE :q",
+                    q: "%#{query}%")
+      end
+
+      def evaluator_for(rule)
+        Evaluator.new(rule,
+                      assignments_complete: @lecture.assignments_complete?,
+                      due_points: due_points)
+      end
+
       def use_lecture_locale
         I18n.locale = @lecture&.locale_with_inheritance || I18n.default_locale
       end

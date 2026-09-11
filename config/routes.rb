@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       resources :factories_playwright, only: :create
       post "factories_playwright/call_instance_method",
            to: "factories_playwright#call_instance_method"
+      post "factories_playwright/update_instance",
+           to: "factories_playwright#update_instance"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :user_creator_playwright, only: :create
@@ -124,6 +126,9 @@ Rails.application.routes.draw do
   # assessment routes
   namespace :assessment do
     resources :assessments, only: [:index, :show, :update] do
+      collection do
+        patch :assignments_complete
+      end
       resources :tasks, except: [:index] do
         member do
           get :cancel
@@ -375,11 +380,13 @@ Rails.application.routes.draw do
       resources :achievements,
                 only: [:index, :new, :show, :create, :update, :destroy]
 
-      resources :certifications, only: [:index, :create, :update] do
+      resources :certifications,
+                only: [:index, :create, :update, :destroy] do
         collection do
           post :bulk_accept
           post :bulk_reevaluate
           post :bulk_confirm_manual
+          post :bulk_reset
         end
       end
     end
@@ -401,6 +408,7 @@ Rails.application.routes.draw do
       patch :open
       patch :close
       patch :reopen
+      patch :revert_to_draft
       patch :self_service
       get :rejected
       get :unassigned
@@ -427,6 +435,7 @@ Rails.application.routes.draw do
               only: [:create, :destroy, :update] do
       member do
         get :roster
+        delete :with_registerable, action: :destroy_with_registerable
       end
     end
 
@@ -742,29 +751,24 @@ Rails.application.routes.draw do
   get "questionnaires/:id/preview",
       to: "vignettes/questionnaires#preview",
       as: "preview_questionnaire"
-  post "lectures/:id/questionnaires/set_codename",
-       to: "vignettes/codenames#set_codename",
-       as: "set_lecture_codename"
-  post "lectures/:id/questionnaires/set_completion_message",
-       to: "vignettes/completion_message#set_completion_message",
-       as: "set_lecture_completion_message"
-  delete "lectures/:id/questionnaires/destroy_completion_message",
-         to: "vignettes/completion_message#destroy",
-         as: "destroy_lecture_completion_message"
 
   scope module: "vignettes", path: "" do
     resources :questionnaires, only: [:create, :edit, :update, :destroy] do
       member do
         get :export_statistics
+        get :consent
+        post :decide_consent
+        get :codename
+        get :finish
+        post :revoke_consent
         post :submit_answer
         post :duplicate
         patch :publish
+        patch :update_closing_text
         patch :update_slide_position
       end
       resources :info_slides, only: [:new, :create, :edit, :update, :destroy]
-      resources :slides, only: [:new, :create, :edit, :update, :destroy] do
-        resources :answers, only: [:new, :create]
-      end
+      resources :slides, only: [:new, :create, :edit, :update, :destroy]
     end
   end
 
@@ -851,18 +855,6 @@ Rails.application.routes.draw do
   get "submissions/:id/show_correction",
       to: "submissions#show_correction",
       as: "show_correction"
-
-  get "submissions/:id/select_tutorial",
-      to: "submissions#select_tutorial",
-      as: "select_tutorial"
-
-  patch "submissions/:id/move",
-        to: "submissions#move",
-        as: "move_submission"
-
-  get "submissions/:id/cancel_action",
-      to: "submissions#cancel_action",
-      as: "cancel_submission_action"
 
   delete "submissions/:id/delete_correction",
          to: "submissions#delete_correction",
@@ -1074,8 +1066,10 @@ Rails.application.routes.draw do
   # devise routes for users
 
   devise_for :users, controllers: { confirmations: "confirmations",
+                                    passwords: "passwords",
                                     registrations: "registrations",
-                                    sessions: "sessions" }
+                                    sessions: "sessions",
+                                    unlocks: "unlocks" }
   # users routes
 
   get "users/elevate",
@@ -1177,6 +1171,9 @@ Rails.application.routes.draw do
   # Allow /login besides /users/sign_in
   devise_scope :user do
     get "/login" => "devise/sessions#new"
+    post "/users/password/restart",
+         to: "passwords#restart",
+         as: :restart_user_password
   end
 
   get "error",

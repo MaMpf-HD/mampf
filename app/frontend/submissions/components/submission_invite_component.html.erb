@@ -1,0 +1,12 @@
+<div
+  class="alert alert-info d-flex align-items-center flex-wrap gap-2"
+  role="alert"
+>
+  <span class="me-2">
+    <i class="bi bi-people-fill" aria-hidden="true"></i>
+    <%= t("submission.invited", inviter: inviter_name) %>
+  </span>
+
+  <%= button_to t("submission.accept_invitation"), join_submission_path,
+                params: join_params, class: "btn btn-sm btn-primary" %>
+</div>

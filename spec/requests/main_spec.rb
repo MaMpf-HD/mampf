@@ -8,6 +8,107 @@ RSpec.describe("Main", type: :request) do
   end
 
   describe "GET / (start page)" do
+    describe "the fold for the coming term" do
+      let!(:current_term) { create(:term, :summer, :active, year: 2025) }
+      let(:next_term) { create(:term, :winter, year: 2025) }
+
+      def cards_in(testid)
+        Nokogiri::HTML(response.body)
+                .css("[data-testid='#{testid}'] .lectureCard")
+                .pluck("data-id")
+      end
+
+      def heading_for(term)
+        CGI.escapeHTML(
+          I18n.t("profile.my_next_term_html", term: term.to_label)
+        ).gsub("&amp;ndash;", "&ndash;")
+      end
+
+      it "lists a lecture the user subscribed for the coming term" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        user.subscribe_lecture!(lecture)
+
+        get root_path
+
+        expect(response.body).to include(heading_for(next_term))
+        expect(cards_in("next-term-subscribed")).to include(lecture.id.to_s)
+      end
+
+      it "stands there empty when nothing is subscribed for that term" do
+        create(:lecture, :released_for_all, term: next_term)
+
+        get root_path
+
+        expect(response.body).to include(heading_for(next_term))
+        expect(cards_in("next-term-subscribed")).to be_empty
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("profile.no_next_term_stuff").strip)
+        )
+      end
+
+      it "shows a lecture the user has applied to, apart from the rest" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        create(:registration_user_registration, :pending,
+               user: user, registration_campaign: campaign)
+
+        get root_path
+
+        expect(cards_in("next-term-registrations")).to include(lecture.id.to_s)
+        expect(cards_in("next-term-subscribed")).to be_empty
+      end
+
+      it "shows a lecture the user has a seat in without a subscription" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
+        create(:cohort_membership, cohort: cohort, user: user)
+
+        get root_path
+
+        expect(cards_in("next-term-seats")).to include(lecture.id.to_s)
+        expect(user.lectures).not_to include(lecture)
+      end
+
+      it "says nothing about an application that was turned down" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        create(:registration_user_registration, :rejected,
+               user: user, registration_campaign: campaign)
+
+        get root_path
+
+        expect(response.body).not_to include("next-term-registrations")
+      end
+
+      it "shows a subscribed lecture once, even when applied for as well" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        create(:registration_user_registration, :pending,
+               user: user, registration_campaign: campaign)
+        user.subscribe_lecture!(lecture)
+
+        get root_path
+
+        expect(cards_in("next-term-subscribed")).to include(lecture.id.to_s)
+        expect(response.body).not_to include("next-term-registrations")
+      end
+
+      it "has no fold where there is no term to prepare for" do
+        get root_path
+
+        expect(response.body).not_to include("collapseNextTermStuff")
+      end
+
+      it "takes the lecture out of the subscriptions of terms gone by" do
+        lecture = create(:lecture, :released_for_all, term: next_term)
+        user.subscribe_lecture!(lecture)
+
+        get root_path
+
+        expect(cards_in("further-subscribed")).not_to include(lecture.id.to_s)
+      end
+    end
+
     describe "next term banner" do
       let!(:current_term) { create(:term, :summer, :active, year: 2025) }
 

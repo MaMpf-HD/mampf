@@ -130,6 +130,80 @@ RSpec.describe(Assignment, type: :model) do
     end
   end
 
+  describe "the lecture's assignment list" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    before { lecture.update!(assignments_complete: true) }
+
+    # A statement that can go quietly false is worse than none.
+    it "is reopened by a new sheet, without asking" do
+      FactoryBot.create(:assignment, lecture: lecture)
+
+      expect(lecture.reload.assignments_complete?).to be(false)
+    end
+
+    it "stays closed while an existing sheet is edited" do
+      assignment = FactoryBot.create(:assignment, lecture: lecture)
+      lecture.update!(assignments_complete: true)
+
+      assignment.update!(title: "Renamed")
+
+      expect(lecture.reload.assignments_complete?).to be(true)
+    end
+
+    # Nothing forbids extending a deadline, not even once the sheet has been
+    # marked - and a sheet that can be handed in again is a sheet the verdicts
+    # cannot be final over.
+    it "is reopened by a deadline moved into the future" do
+      assignment = FactoryBot.create(:assignment, :expired, lecture: lecture)
+      lecture.update!(assignments_complete: true)
+
+      assignment.update!(deadline: 5.days.from_now)
+
+      expect(lecture.reload.assignments_complete?).to be(false)
+    end
+
+    # What a record has to say for itself at commit time is what its last save
+    # left behind, and a record can be saved more than once in one transaction.
+    # Neither reason may be lost on the way there.
+    it "is reopened by a new sheet that is renamed before the commit" do
+      ActiveRecord::Base.transaction do
+        FactoryBot.create(:assignment, lecture: lecture).update!(title: "Renamed")
+      end
+
+      expect(lecture.reload.assignments_complete?).to be(false)
+    end
+
+    it "is reopened by a moved deadline, renamed before the commit" do
+      assignment = FactoryBot.create(:assignment, :expired, lecture: lecture)
+      lecture.update!(assignments_complete: true)
+
+      ActiveRecord::Base.transaction do
+        assignment.update!(deadline: 5.days.from_now)
+        assignment.update!(title: "Renamed")
+      end
+
+      expect(lecture.reload.assignments_complete?).to be(false)
+    end
+
+    # A reason that outlived its transaction would open the list on some later,
+    # unrelated save.
+    it "is not reopened by a save after a move that was rolled back" do
+      assignment = FactoryBot.create(:assignment, :expired, lecture: lecture)
+      lecture.update!(assignments_complete: true)
+
+      suppress(ActiveRecord::Rollback) do
+        ActiveRecord::Base.transaction do
+          assignment.update!(deadline: 5.days.from_now)
+          raise(ActiveRecord::Rollback)
+        end
+      end
+      assignment.reload.update!(title: "Renamed")
+
+      expect(lecture.reload.assignments_complete?).to be(true)
+    end
+  end
+
   describe "destructibility" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:assignment) { FactoryBot.create(:assignment, lecture: lecture) }
@@ -139,8 +213,8 @@ RSpec.describe(Assignment, type: :model) do
         expect(assignment.destructible?).to be(true)
       end
 
-      it "returns nil for non_destructible_reason" do
-        expect(assignment.non_destructible_reason).to be_nil
+      it "names no blocker" do
+        expect(assignment.destruction_blockers).to be_empty
       end
     end
 
@@ -159,8 +233,8 @@ RSpec.describe(Assignment, type: :model) do
         expect(assignment.destructible?).to be(false)
       end
 
-      it "returns :has_submissions as non_destructible_reason" do
-        expect(assignment.non_destructible_reason).to eq(:has_submissions)
+      it "names the submissions as the blocker" do
+        expect(assignment.destruction_blockers).to eq([:has_submissions])
       end
     end
 
@@ -182,8 +256,8 @@ RSpec.describe(Assignment, type: :model) do
           expect(assignment.destructible?).to be(false)
         end
 
-        it "returns :has_grading_data as non_destructible_reason" do
-          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        it "names the grading data as the blocker" do
+          expect(assignment.destruction_blockers).to eq([:has_grading_data])
         end
       end
 
@@ -198,8 +272,8 @@ RSpec.describe(Assignment, type: :model) do
           expect(assignment.destructible?).to be(false)
         end
 
-        it "returns :has_grading_data as non_destructible_reason" do
-          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        it "names the grading data as the blocker" do
+          expect(assignment.destruction_blockers).to eq([:has_grading_data])
         end
       end
 
@@ -218,8 +292,8 @@ RSpec.describe(Assignment, type: :model) do
           expect(assignment.destructible?).to be(false)
         end
 
-        it "returns :has_grading_data as non_destructible_reason" do
-          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        it "names the grading data as the blocker" do
+          expect(assignment.destruction_blockers).to eq([:has_grading_data])
         end
       end
 
@@ -234,8 +308,8 @@ RSpec.describe(Assignment, type: :model) do
           expect(assignment.destructible?).to be(false)
         end
 
-        it "returns :has_grading_data as non_destructible_reason" do
-          expect(assignment.non_destructible_reason).to eq(:has_grading_data)
+        it "names the grading data as the blocker" do
+          expect(assignment.destruction_blockers).to eq([:has_grading_data])
         end
       end
     end

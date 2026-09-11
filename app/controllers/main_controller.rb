@@ -36,6 +36,10 @@ class MainController < ApplicationController
                                                                    :term)
                                        .sort
     end
+    @next_term_stuff = current_user.next_term_lectures
+    @next_term_seats = current_user.next_term_seated_lectures - @next_term_stuff
+    @next_term_pending = current_user.next_term_registered_lectures -
+                         @next_term_stuff - @next_term_seats
     next_term_banner
     @talks = current_user.talks.includes(lecture: :term)
                          .select { |t| t.visible_for_user?(current_user) }

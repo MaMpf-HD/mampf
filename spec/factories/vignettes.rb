@@ -15,15 +15,24 @@ FactoryBot.define do
     "Option #{n}"
   end
 
+  # ALPHABET is exactly 32 characters wide, so base 32 maps onto it directly.
   sequence :vignette_codename do |n|
-    "codename#{n}"
+    n.to_s(32)
+     .upcase
+     .tr("0123456789ABCDEFGHIJKLMNOPQRSTUV", Vignettes::Codename::ALPHABET)
+     .rjust(Vignettes::Codename::LENGTH, Vignettes::Codename::ALPHABET[0])
   end
 
   factory :vignettes_questionnaire, class: "Vignettes::Questionnaire" do
-    association :lecture
+    association :lecture, :with_vignettes
     title { generate(:vignette_title) }
     published { true }
     editable { true }
+
+    trait :collecting do
+      data_collection { true }
+      consent_text { "We store your answers under the code you are given." }
+    end
   end
 
   factory :vignettes_slide, class: "Vignettes::Slide" do
@@ -70,13 +79,18 @@ FactoryBot.define do
   end
 
   factory :vignettes_codename, class: "Vignettes::Codename" do
-    association :user, factory: :confirmed_user
-    association :lecture
     pseudonym { generate(:vignette_codename) }
   end
 
   factory :vignettes_user_answer, class: "Vignettes::UserAnswer" do
-    association :user, factory: :confirmed_user
+    association :codename, factory: :vignettes_codename
     association :questionnaire, factory: :vignettes_questionnaire
+  end
+
+  factory :vignettes_text_answer, class: "Vignettes::TextAnswer" do
+    association :user_answer, factory: :vignettes_user_answer
+    association :slide, factory: :vignettes_slide
+    association :question, factory: :vignettes_text_question
+    text { "An answer" }
   end
 end

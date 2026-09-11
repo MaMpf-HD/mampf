@@ -7,6 +7,9 @@ class SubmissionAbility
     can [:index, :new, :join, :cancel_edit, :cancel_new, :redeem_code,
          :enter_code], Submission
 
+    # Enrolment is what this asks; the group is asked for by
+    # `SubmissionsController#rostered_tutorial!`, which every way in goes
+    # through and which says what is missing rather than "not authorized".
     can :create, Submission do |submission|
       lecture = submission.assignment&.lecture
       lecture.present? && user.proper_student_in?(lecture)
@@ -17,15 +20,9 @@ class SubmissionAbility
       user.in?(submission.users) && !submission.not_updatable?
     end
 
-    can [:add_correction, :delete_correction, :select_tutorial,
-         :cancel_action, :accept, :reject, :edit_correction,
-         :cancel_edit_correction], Submission do |submission|
+    can [:add_correction, :delete_correction, :accept, :reject,
+         :edit_correction, :cancel_edit_correction], Submission do |submission|
       user.in?(submission.tutorial.tutors)
-    end
-
-    can :move, Submission do |submission|
-      user.in?(submission.tutorial.tutors) &&
-        !submission.tutorial.lecture.roster_managed?
     end
 
     can [:show_manuscript, :show_correction], Submission do |submission|

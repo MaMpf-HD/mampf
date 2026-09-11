@@ -81,7 +81,18 @@
       </div>
     <% end %>
   <% else %>
+    <%#
+      The page somebody lands on when there is nothing yet, so it carries the
+      way on: groups are created on the lecture's own edit page, and hunting
+      for that tab is what made this a dead end.
+    %>
     <div class="jumbotron">
-      <%= t('lecture.no_tutorials_yet') %>
+      <p><%= t('lecture.no_tutorials_yet') %></p>
+
+      <% if current_user.editor_or_teacher_in?(@lecture) %>
+        <%= link_to t('lecture.create_tutorials'),
+                    edit_lecture_path(@lecture, tab: 'groups'),
+                    class: 'btn btn-primary' %>
+      <% end %>
     </div>
 <% end %>

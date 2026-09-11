@@ -7,7 +7,14 @@ module Cypress
     # Creates an instance of the factory (via FactoryBot) and returns it as JSON.
     def create
       attributes, should_validate = to_attribute_list(params)
-      data = create_class_instance_via_factorybot(attributes, should_validate)
+      data = retrying_deadlocks do
+        # One transaction per attempt: a factory persists a record's
+        # associations before the record itself, and the aborted attempt would
+        # otherwise leave them behind for the next one to duplicate.
+        ActiveRecord::Base.transaction do
+          create_class_instance_via_factorybot(attributes, should_validate)
+        end
+      end
       render json: data.as_json, status: :created
     end
 
@@ -51,6 +58,20 @@ module Cypress
         result = { error: "Method '#{method_name}' not found on instance" }
         render json: result.to_json, status: :bad_request
       end
+    end
+
+    # Writes attributes onto an instance FactoryBot.create() made earlier.
+    # A test sometimes needs a record in a state no factory can hand it: a
+    # lecture whose assignment list is closed, for instance, cannot be created
+    # that way, because creating an assignment opens the list again.
+    def update_instance
+      factory_name = validate_factory_name(params["factory_name"])
+      instance = factory_class_for(factory_name).find(params["instance_id"])
+      instance.update!(params[:args].to_unsafe_hash)
+      render json: instance.as_json, status: :created
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Instance to update was not found" }.to_json,
+             status: :bad_request
     end
 
     private

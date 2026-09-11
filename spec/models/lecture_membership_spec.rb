@@ -42,5 +42,20 @@ RSpec.describe(LectureMembership, type: :model) do
       expect(StudentPerformance::Record.where(lecture: lecture, user: user))
         .not_to exist
     end
+
+    # An admission whose performance data is gone is one nobody could account
+    # for later, and it would still admit: the screening reads the row alone.
+    it "removes the exam admission as well, decided by hand or not" do
+      membership = FactoryBot.create(:lecture_membership,
+                                     lecture: lecture, user: user)
+      FactoryBot.create(:student_performance_certification, :passed, :manual,
+                        lecture: lecture, user: user)
+
+      membership.destroy!
+
+      expect(StudentPerformance::Certification.where(lecture: lecture,
+                                                     user: user))
+        .not_to exist
+    end
   end
 end

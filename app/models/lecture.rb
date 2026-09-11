@@ -43,16 +43,6 @@ class Lecture < ApplicationRecord
            dependent: :destroy,
            inverse_of: :lecture
 
-  has_many :vignettes_codenames,
-           class_name: "Vignettes::Codename",
-           dependent: :destroy,
-           inverse_of: :lecture
-
-  has_one :vignettes_completion_message,
-          class_name: "Vignettes::CompletionMessage",
-          dependent: :destroy,
-          inverse_of: :lecture
-
   # in a lecture, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
@@ -87,10 +77,11 @@ class Lecture < ApplicationRecord
 
   # a lecture has many tutorials
   has_many :tutorials, -> { order(:title) },
+           dependent: :destroy,
            inverse_of: :lecture
 
   # a lecture has many assignments (e.g. exercises with deadlines)
-  has_many :assignments
+  has_many :assignments, dependent: :destroy
 
   # a lecture has many exams (scheduled assessment events)
   has_many :exams, dependent: :destroy
@@ -130,7 +121,7 @@ class Lecture < ApplicationRecord
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
   validates :sort, inclusion: { in: ["lecture", "seminar", "oberseminar",
-                                     "proseminar", "special", "vignettes"] }
+                                     "proseminar", "special"] }
 
   validates :term, presence: { unless: :term_independent? }
 
@@ -153,6 +144,12 @@ class Lecture < ApplicationRecord
             allow_nil: true
 
   before_save :initialize_submission_deletion_date
+  # Saying that the assignments are all there, or taking it back, turns every
+  # eligibility proposal in the lecture over. The figures do not move, but the
+  # decisions taken before rested on the answer that just changed, so the
+  # records are touched and the reconciliation banner picks them up.
+  after_update_commit :recompute_performance_records,
+                      if: :saved_change_to_assignments_complete_at?
   # if the lecture is destroyed, its forum (if existent) should be destroyed
   # as well
   before_destroy :destroy_forum
@@ -660,7 +657,7 @@ class Lecture < ApplicationRecord
   end
 
   def self.sorts
-    ["lecture", "seminar", "proseminar", "oberseminar", "vignettes"]
+    ["lecture", "seminar", "proseminar", "oberseminar"]
   end
 
   def self.sort_localized
@@ -766,6 +763,23 @@ class Lecture < ApplicationRecord
     media.where(sort: "Exercise").where.not(publisher: nil)
          .select { |m| m.publisher.create_assignment }
          .map { |m| m.publisher.assignment }
+  end
+
+  # What a lecturer has set up for release but not released yet. Not an
+  # `Assignment`: that record does not exist until the medium is published, and
+  # the date it appears on lives on the publisher rather than on the sheet.
+  ScheduledSheet = Struct.new(:release_date, :title, :deadline,
+                              keyword_init: true)
+
+  # The next of them, soonest release first: what the submissions page says when
+  # nothing is due right now. Deliberately not built on `scheduled_assignments`,
+  # which asks `MediumPublisher#assignment` for an `Assignment` and pays a
+  # `medium.teachable` per medium for it - and still cannot say when the sheet
+  # appears.
+  def next_scheduled_sheet
+    media.where(sort: "Exercise").where.not(publisher: nil)
+         .filter_map { |medium| scheduled_release(medium.publisher) }
+         .min_by(&:release_date)
   end
 
   def assignments?
@@ -895,6 +909,19 @@ class Lecture < ApplicationRecord
     sync_student_performance_for_members!(new_user_ids)
   end
 
+  def assignments_complete?
+    assignments_complete_at.present?
+  end
+
+  # Preserve assignments_complete_at when the value is unchanged to
+  # avoid recomputing records and making certifications stale again.
+  def assignments_complete=(value)
+    complete = ActiveModel::Type::Boolean.new.cast(value).present?
+    return if complete == assignments_complete?
+
+    self.assignments_complete_at = complete ? Time.current : nil
+  end
+
   def sync_student_performance_for_members!(user_ids)
     new_user_ids = user_ids.uniq
     return if new_user_ids.empty?
@@ -972,10 +999,6 @@ class Lecture < ApplicationRecord
     talks.where.not(id: talk_ids_for_speaker(speaker))
   end
 
-  def vignettes?
-    vignettes_questionnaires.any?
-  end
-
   def roster_entries
     lecture_memberships
   end
@@ -988,8 +1011,25 @@ class Lecture < ApplicationRecord
 
   private
 
+    # A publisher whose release date has passed has already made its assignment,
+    # so it is no longer scheduled.
+    def scheduled_release(publisher)
+      return unless publisher&.create_assignment
+      return unless publisher.release_date&.future?
+
+      ScheduledSheet.new(release_date: publisher.release_date,
+                         title: publisher.assignment_title,
+                         deadline: publisher.assignment_deadline)
+    end
+
     def initialize_submission_deletion_date
       self.submission_deletion_date ||= default_submission_deletion_date
+    end
+
+    def recompute_performance_records
+      StudentPerformance::ComputationService
+        .new(lecture: self)
+        .compute_and_upsert_all_records!
     end
 
     def fan_out_submission_deletion_date

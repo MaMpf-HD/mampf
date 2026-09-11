@@ -128,8 +128,8 @@ test.describe("exams", () => {
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await page.open("Main Exam");
     await page.tab("Roster").click();
-    await page.pane.getByRole("button", { name: "Add person by email" })
-      .click();
+    // The form stands open while nobody is on the list -- that is what the
+    // empty state offers. Opening it by hand is the neighbouring test's job.
     await page.pane.getByLabel("Add person by email").fill(candidate.email);
     await page.pane.getByRole("button", { name: "Add", exact: true }).click();
 

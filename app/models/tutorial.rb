@@ -19,8 +19,6 @@ class Tutorial < ApplicationRecord
 
   has_many :claims, as: :claimable, dependent: :destroy
 
-  before_destroy :check_destructibility, prepend: true
-
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validate :lecture_must_not_be_seminar
   validate :lecture_id_immutable, on: :update
@@ -49,8 +47,12 @@ class Tutorial < ApplicationRecord
     tutors.map(&:tutorial_name).join(", ")
   end
 
-  def destructible?
-    super && Submission.where(tutorial: self).proper.none?
+  # Uploaded submissions are the one thing a tutorial carries that cannot be
+  # recreated; tutor assignments and voucher claims are links, not content.
+  def destruction_blockers
+    blockers = super
+    blockers << :submissions if submissions.with_uploads.exists?
+    blockers
   end
 
   def teams_to_csv(assignment)
@@ -116,21 +118,6 @@ class Tutorial < ApplicationRecord
         unique_by: :index_tutorial_memberships_on_user_id_and_lecture_id,
         update_only: [:tutorial_id, :source_campaign_id]
       )
-    end
-
-    def check_destructibility
-      return if destructible?
-
-      if submissions.proper.exists?
-        errors.add(:base,
-                   I18n.t("controllers.tutorials.errors.cannot_delete_with_submissions"))
-      elsif in_campaign?
-        errors.add(:base, I18n.t("roster.errors.cannot_delete_in_campaign"))
-      elsif !roster_empty?
-        errors.add(:base, I18n.t("roster.errors.cannot_delete_not_empty"))
-      end
-
-      throw(:abort)
     end
 
     def lecture_must_not_be_seminar

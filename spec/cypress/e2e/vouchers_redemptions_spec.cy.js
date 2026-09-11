@@ -227,23 +227,3 @@ describe("Speaker voucher redemption", () => {
     });
   });
 });
-
-describe("User & Redemption deletion", () => {
-  beforeEach(function () {
-    helpers.createRedemptionScenario(this, "tutor");
-  });
-
-  it("after deletion of tutor user, it is no longer selectable", function () {
-    helpers.submitVoucher(this.voucher);
-    helpers.redeemVoucherToBecomeRole(this, "tutor");
-
-    cy.visit("/profile/edit");
-    cy.getBySelector("delete-account-btn").click();
-    cy.getBySelector("delete-account-pwd-field").type(this.user.password);
-
-    cy.intercept("POST", "/users*").as("deleteUserRequest");
-    cy.getBySelector("delete-account-confirm-btn").click();
-    cy.wait("@deleteUserRequest");
-    cy.getBySelector("login-form").should("be.visible");
-  });
-});

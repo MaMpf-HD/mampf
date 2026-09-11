@@ -1,6 +1,6 @@
 module Assessment
   class AssessmentsController < ApplicationController
-    before_action :set_lecture, only: [:index]
+    before_action :set_lecture, only: [:index, :assignments_complete]
     before_action :set_assessable, only: [:show]
     before_action :set_assessment, only: [:update]
     before_action :set_locale
@@ -25,6 +25,25 @@ module Assessment
           )
         end
       end
+    end
+
+    def assignments_complete
+      authorize! :update, @lecture
+
+      @lecture.update!(assignments_complete: params[:complete])
+      # Without the change check, a resubmitted form would delete a second
+      # time — after the dialog had already been answered with "keep".
+      reset = params[:reset_certifications] == "1" &&
+              @lecture.saved_change_to_assignments_complete_at? &&
+              !@lecture.assignments_complete?
+      count = reset ? @lecture.student_performance_certifications.reset_computed! : 0
+
+      redirect_to assessment_assessments_path(lecture_id: @lecture.id,
+                                              tab: "assessments"),
+                  notice: (if reset
+                             I18n.t("student_performance.certifications.flash.reset",
+                                    count: count)
+                           end)
     end
 
     def show

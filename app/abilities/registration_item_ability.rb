@@ -4,7 +4,8 @@ class RegistrationItemAbility
   def initialize(user)
     clear_aliased_actions
 
-    can [:read, :roster, :create, :update, :destroy], Registration::Item do |item|
+    can [:read, :roster, :create, :update, :destroy,
+         :destroy_with_registerable], Registration::Item do |item|
       user.can_edit?(item.registration_campaign.campaignable)
     end
   end
