@@ -291,7 +291,6 @@ en:
       status: 'Status'
       correction: 'Correction'
       max_points: 'pts'
-      save: 'Save'
       no_submissions_gradable: 'No pointable submissions exist for this assignment.'
       no_submission_zone: 'No submissions'
       has_been_moved_badge: ' Has been moved to another tutorial'

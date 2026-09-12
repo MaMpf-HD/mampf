@@ -109,11 +109,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
           css_class: "text-center total-col grade-th",
           label: t("assessment.grading_tutorial.total_points"),
           sublabel: "(#{@total_max_points} #{t("assessment.grading_tutorial.max_points")})"
-        ),
-        # Two icons need no heading over them; a reader without eyes gets one.
-        Column.new(css_class: "text-center sticky-col save-col grade-th",
-                   label: t("buttons.save"),
-                   label_hidden: true)
+        )
       ]
     end
 
@@ -137,8 +133,9 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def save_column
-      [Column.new(css_class: "text-center sticky-col save-col grade-th",
-                  label: t("assessment.grading_tutorial.save"))]
+      [Column.new(css_class: "text-center sticky-col save-col",
+                  label: t("buttons.save"),
+                  label_hidden: true)]
     end
 
     def hand_in_column

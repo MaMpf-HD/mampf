@@ -291,7 +291,6 @@ de:
       status: 'Status'
       correction: 'Korrektur'
       max_points: 'Pkt'
-      save: 'Speichern'
       no_submissions_gradable: 'Keine Abgaben für diese Hausaufgabe, die bewertet werden können.'
       no_submission_zone: 'Keine Abgaben'
       has_been_moved_badge: ' Wurde in ein anderes Tutorium verschoben'

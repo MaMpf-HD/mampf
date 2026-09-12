@@ -102,14 +102,6 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @stack.any? || @non_submitters.any? || @non_tutorial_participants.present?
   end
 
-  def column_count
-    if @grading_scope.is_a?(Tutorial)
-      7 + tasks.count
-    else
-      6 + tasks.count
-    end
-  end
-
   def sticky_layout
     return unless @config
 
