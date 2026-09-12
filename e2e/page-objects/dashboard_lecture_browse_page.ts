@@ -91,6 +91,12 @@ export class DashboardLectureBrowsePage {
     return await lectureCards.count();
   }
 
+  /** Hrefs of all currently rendered lecture cards, in DOM order (duplicates kept). */
+  async getLectureCardHrefs() {
+    return await this.page.getByTestId("lecture-search-result-card")
+      .evaluateAll(links => links.map(link => (link as HTMLAnchorElement).href));
+  }
+
   get enrolledSection() {
     return this.page.getByTestId("dashboard-enrolled-lectures");
   }

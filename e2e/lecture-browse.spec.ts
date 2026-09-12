@@ -60,6 +60,43 @@ test("loads more results when scrolling to bottom (even multiple times)",
     expect(thirdCount).toBeGreaterThan(secondCount);
   });
 
+test("does not duplicate cards when scrolling triggers overlapping page loads",
+  async ({ factory, student: { page } }) => {
+    const { currentTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 60, "Rapid Course", currentTerm.id);
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+    await dashboard.scrollToSearchAndWaitForResults();
+
+    // Continuously fire synthetic scroll events (dispatching one does not
+    // actually move the viewport) while we scroll to the bottom repeatedly.
+    // This provokes the race where a page is requested again before its
+    // predecessor's turbo-stream response has updated the "next page"
+    // marker, which used to duplicate that page's cards.
+    await page.evaluate(() => {
+      setInterval(() => window.dispatchEvent(new Event("scroll")), 3);
+    });
+
+    for (let i = 0; i < 8; i++) {
+      const responsePromise = dashboard.getLectureSearchPromise()
+        .catch(() => null);
+      await page.evaluate(() => {
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      const response = await Promise.race([
+        responsePromise,
+        page.waitForTimeout(3000).then(() => null),
+      ]);
+      if (!response) break; // no more pages to load
+    }
+    await page.waitForTimeout(300);
+
+    const hrefs = await dashboard.getLectureCardHrefs();
+    const duplicates = hrefs.filter((href, index) => hrefs.indexOf(href) !== index);
+    expect(duplicates).toEqual([]);
+  });
+
 test("filters results based on search input",
   async ({ factory, student: { page } }) => {
     const { currentTerm } = await createLectureSearchTerms(factory);

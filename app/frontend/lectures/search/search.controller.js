@@ -108,6 +108,7 @@ export default class extends Controller {
       // This is especially important when the user has already scrolled down
       // and we were on a later page.
       addDataToForm(this.formTarget, { page: "" });
+      this.lastRequestedPage = null;
       this.submitForm();
     }, 200);
   }
@@ -127,6 +128,15 @@ export default class extends Controller {
     // Recursion-anchor: when no next page token is present, we are at the end.
     const nextPage = pagyDataElement.dataset.nextPage;
     if (!nextPage) return;
+
+    // `turbo:submit-end` (which unlocks `isSubmitting` below) fires before
+    // the turbo-stream response is actually rendered, so `#pagy-nav-next`
+    // can still carry the page we just requested for a moment after
+    // `isSubmitting` is unlocked. Without this guard, a scroll/intersection
+    // event landing in that window would request the same page a second
+    // time, duplicating that page's cards once both responses render.
+    if (nextPage === this.lastRequestedPage) return;
+    this.lastRequestedPage = nextPage;
 
     addDataToForm(this.formTarget, { page: nextPage });
     this.submitForm();
