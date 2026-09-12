@@ -298,11 +298,14 @@ module StudentPerformance
         end
       end
 
+      # By id after the timestamp, because the records of a lecture are written
+      # in one go and carry the same one: a page cut with OFFSET would then
+      # show a student twice and skip another. Measured, not feared.
       def load_filtered_records
         records = @lecture.student_performance_records
                           .includes(:user)
-                          .order(:created_at)
-        @filtered_records = filter_records(records)
+                          .order(:created_at, :id)
+        @pagy, @filtered_records = pagy(filter_records(filter_by_name(records)))
       end
 
       def filter_records(records)

@@ -109,7 +109,26 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
           end
         end
 
+        # The hand-in behind a materialized pending figure. The page counts the
+        # sheets that are waiting and the record sums what they are worth, so a
+        # figure without the rows behind it would say "0 sheets, 40 points".
+        def waiting_hand_in(user, points)
+          waiting = FactoryBot.create(:assignment, :expired, lecture: lecture)
+          FactoryBot.create(:assessment_task, assessment: waiting.assessment,
+                                              max_points: points)
+          FactoryBot.create(:assessment_participation,
+                            assessment: waiting.assessment, user: user,
+                            submitted_at: 1.day.ago)
+        end
+
+        def pending_reason(count:)
+          I18n.t("student_performance.evaluator.deferral.points_pending",
+                 count: count)
+        end
+
         context "when the marking still outstanding could carry the student" do
+          before { waiting_hand_in(student, 40) }
+
           let!(:record) do
             FactoryBot.create(:student_performance_record,
                               lecture: lecture,
@@ -129,9 +148,8 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
 
           it "names the outstanding marking as the reason" do
             get path, params: { record_id: record.id }
-            expect(response.body).to include(
-              I18n.t("student_performance.evaluator.deferral.points_pending")
-            )
+            expect(response.body)
+              .to include(pending_reason(count: 1))
           end
         end
 
@@ -170,15 +188,15 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
           end
 
           before do
+            waiting_hand_in(student, 40)
             FactoryBot.create(:student_performance_rule_achievement,
                               rule: rule, achievement: achievement)
           end
 
           it "keeps the points check open even though the verdict is failed" do
             get path, params: { record_id: record.id }
-            expect(response.body).to include(
-              I18n.t("student_performance.evaluator.deferral.points_pending")
-            )
+            expect(response.body)
+              .to include(pending_reason(count: 1))
             expect(response.body).to include(
               I18n.t("student_performance.evaluator.status.failed")
             )

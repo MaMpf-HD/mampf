@@ -27,17 +27,30 @@ module Demo
       raise("Lecture 1 has no tutorial roster. Run demo:rosters first.")
     end
 
+    # Which sheets belong to the demo, asked from outside as well: the seed
+    # build stages the lecture's own hand-ins and has to leave these alone.
+    def demo_assignment_titles
+      demo_assignment_attributes.pluck(:title)
+    end
+
     private
 
       def demo_assignment_attributes
         (1..10).map do |i|
-          deadline = i < 10 ? (10 - i).weeks.ago : 3.days.ago
-          { title: "Homework #{i}", deadline: deadline }
+          { title: "Homework #{i}", deadline: demo_deadline(i) }
         end
       end
 
-      def demo_assignment_titles
-        demo_assignment_attributes.pluck(:title)
+      # Nine sheets behind the term and one still to come. The open one is what
+      # the student's page leads with - without it the action card has nothing
+      # to offer and the page shows its emptiest state. The one before it closed
+      # three days ago, so there is a sheet waiting to be marked as well.
+      def demo_deadline(index)
+        case index
+        when 10 then 5.days.from_now
+        when 9 then 3.days.ago
+        else (10 - index).weeks.ago
+        end
       end
 
       def demo_assignments(lecture)
@@ -120,12 +133,20 @@ module Demo
               user_id: membership.user_id,
               tutorial_id: membership.tutorial_id,
               status: :pending,
-              submitted_at: assignment.deadline - rand(1..72).hours
+              submitted_at: handed_in_before(assignment.deadline)
             )
           end
         end
 
         Rails.logger.debug("Seeded participations from lecture 1 tutorial memberships.")
+      end
+
+      # A sheet that is still open was handed in at some point before now, not
+      # around a deadline that has not arrived.
+      def handed_in_before(deadline)
+        return rand(1..72).hours.ago if deadline.future?
+
+        deadline - rand(1..72).hours
       end
 
       def randomize_demo_statuses!(lecture)

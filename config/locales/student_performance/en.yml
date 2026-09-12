@@ -13,6 +13,10 @@ en:
             achievement:
               must_belong_to_same_lecture: "must belong to the same lecture as the rule"
   student_performance:
+    lists:
+      search: "Search students"
+      no_match: "No students found."
+      showing: "Showing %{from}–%{to} of %{count} students"
     errors:
       no_record: "Performance record not found."
       no_member: "User is not a member of this lecture."
@@ -24,11 +28,10 @@ en:
         email: "Email"
         points: "Points"
         percentage: "Percentage"
-        of_due_points: "of the points due so far"
-        due_so_far: "Due so far"
-        due_so_far_hint: "Points and percentage count only the assignments whose deadline, grace period included, has passed."
-        points_max: "max. %{max}"
-        personal_max: "Personal maximum: %{max} points, because of exemptions"
+        of_due_points: "of the points marked so far"
+        due_so_far: "Marked so far"
+        due_so_far_hint: "Points and percentage count what is settled for the student: assignments whose deadline, grace period included, has passed, and any already marked - minus the excused ones and those still waiting to be marked. The maximum therefore differs from student to student."
+        maximum: "Maximum"
         assignments: "Assignments"
         not_due_count: "%{count} not due yet"
         achievements: "Achievements"
@@ -53,15 +56,13 @@ en:
           other: "%{count} submissions are not graded yet"
         empty: "No performance records have been computed yet."
         details: "Details"
-
-        showing: "Showing %{from}–%{to} of %{count} students"
       show:
         back: "Back to records"
         recompute: "Recompute record"
         recompute_hint: "Fallback only: use this if the displayed data seems out of date or incorrect."
         review_proposal: "Review Proposal"
         total_points: "Total Points"
-        out_of: "out of %{max} due so far"
+        out_of: "out of %{max} marked so far"
         percentage: "Percentage"
         achievements_met: "Achievements Met"
         assessment_breakdown: "Assignment Breakdown"
@@ -132,12 +133,17 @@ en:
         inconclusive: "Deferred"
       deferral:
         assignments_incomplete: "The assignment list is still open"
-        points_not_due: "Assignments not due yet"
-        points_pending: "Submissions not graded yet"
+        points_not_due:
+          one: "1 assignment not due yet"
+          other: "%{count} assignments not due yet"
+        points_pending:
+          one: "1 submission not graded yet"
+          other: "%{count} submissions not graded yet"
         points_not_measurable: "No points to measure"
         achievements_ungraded: "Achievement not graded yet"
       missed:
         points: "Threshold not reached"
+        points_out_of_reach: "Threshold out of reach even with everything still open"
         achievements: "Achievement not met"
       single_proposal:
         title: "Eligibility Proposal"

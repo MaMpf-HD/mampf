@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       resources :factories_playwright, only: :create
       post "factories_playwright/call_instance_method",
            to: "factories_playwright#call_instance_method"
+      post "factories_playwright/update_instance",
+           to: "factories_playwright#update_instance"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :user_creator_playwright, only: :create
@@ -875,18 +877,6 @@ Rails.application.routes.draw do
   get "submissions/:id/show_correction",
       to: "submissions#show_correction",
       as: "show_correction"
-
-  get "submissions/:id/select_tutorial",
-      to: "submissions#select_tutorial",
-      as: "select_tutorial"
-
-  patch "submissions/:id/move",
-        to: "submissions#move",
-        as: "move_submission"
-
-  get "submissions/:id/cancel_action",
-      to: "submissions#cancel_action",
-      as: "cancel_submission_action"
 
   delete "submissions/:id/delete_correction",
          to: "submissions#delete_correction",

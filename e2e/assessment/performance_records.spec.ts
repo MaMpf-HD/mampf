@@ -19,6 +19,14 @@ test.describe("performance records", () => {
     teacher,
   }) => {
     const lecture = await createLecture(factory, teacher.user.id);
+    // The figures are measured against the sheets that have come due, so a
+    // lecture without one has nothing to divide by and shows a dash.
+    const assignment = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id,
+      title: "Problem Set 1",
+    });
+    const assessment = await assignment.__call("assessment");
+    await addTask(factory, assessment.id, "Prove it", 90);
     await recordFor(factory, lecture.id, "Ada Lovelace", {
       points_total_materialized: 72,
       points_max_materialized: 90,
@@ -35,6 +43,8 @@ test.describe("performance records", () => {
 
     const row = teacher.page.getByRole("row", { name: /Ada Lovelace/ });
     await expect(row).toContainText("72");
+    // Her own maximum, in its own column: it differs from student to student.
+    await expect(row).toContainText("90");
     await expect(row).toContainText("80");
     await expect(teacher.page.getByText("Grace Hopper")).toBeVisible();
   });
@@ -100,7 +110,7 @@ test.describe("performance records", () => {
     await expect(
       teacher.page.getByText("Recomputation for this student completed."),
     ).toBeVisible();
-    await expect(teacher.page.getByText("out of 10 possible")).toBeVisible();
+    await expect(teacher.page.getByText("out of 10 marked so far")).toBeVisible();
     await expect(teacher.page.getByText("70%")).toBeVisible();
   });
 
@@ -130,6 +140,89 @@ test.describe("performance records", () => {
 
     await expect(teacher.page.getByText("Ada Lovelace")).toBeVisible();
     await expect(teacher.page.getByText("Grace Hopper")).toHaveCount(0);
+  });
+
+  // The two shortcuts on a long list: go to one person, or bring the lowest
+  // figures to the top. Both are wired through Turbo, so they are worth a
+  // click rather than only a request.
+  test("narrows the list to the name that is typed", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    await recordFor(factory, lecture.id, "Ada Lovelace");
+    await recordFor(factory, lecture.id, "Grace Hopper");
+
+    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await openPerformance(page);
+    await expect(teacher.page.getByText("Ada Lovelace")).toBeVisible();
+
+    await teacher.page.getByRole("textbox", { name: "Search students" })
+      .fill("Hopper");
+
+    await expect(teacher.page.getByText("Grace Hopper")).toBeVisible();
+    await expect(teacher.page.getByText("Ada Lovelace")).toHaveCount(0);
+  });
+
+  // Typing is not one event but a stream of them, and the answer to the first
+  // keystrokes arrives while the later ones are still coming.
+  test("keeps the caret in the search field while the list updates", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    await recordFor(factory, lecture.id, "Ada Lovelace");
+    await recordFor(factory, lecture.id, "Grace Hopper");
+
+    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await openPerformance(page);
+
+    const search = teacher.page.getByRole("textbox", { name: "Search students" });
+    await search.click();
+    await teacher.page.keyboard.type("Hopp");
+    // the list has answered, which is the moment the field is replaced
+    await expect(teacher.page.getByText("Ada Lovelace")).toHaveCount(0);
+
+    // typed at the keyboard, not into a located element: what matters is where
+    // the caret went, not whether Playwright can find the field again
+    await teacher.page.keyboard.type("er");
+
+    await expect(search).toHaveValue("Hopper");
+    await expect(teacher.page.getByText("Grace Hopper")).toBeVisible();
+  });
+
+  test("brings the lowest percentage to the top when asked", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    const assignment = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id,
+      title: "Problem Set 1",
+    });
+    const assessment = await assignment.__call("assessment");
+    await addTask(factory, assessment.id, "Prove it", 100);
+    await recordFor(factory, lecture.id, "Ada Lovelace", {
+      points_total_materialized: 20,
+    });
+    await recordFor(factory, lecture.id, "Grace Hopper", {
+      points_total_materialized: 80,
+    });
+
+    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await openPerformance(page);
+
+    const body = teacher.page.getByRole("rowgroup").last();
+    // by name, which is the order the table arrives in
+    await expect(body.getByRole("row").first()).toContainText("Ada Lovelace");
+
+    // the first click asks for the largest, so Grace comes up
+    await teacher.page.getByRole("link", { name: "Percentage" }).click();
+    await expect(body.getByRole("row").first()).toContainText("Grace Hopper");
+
+    // and the second turns the column around, which is what finds the weakest
+    await teacher.page.getByRole("link", { name: "Percentage" }).click();
+    await expect(body.getByRole("row").first()).toContainText("Ada Lovelace");
   });
 
   test("finds the members who are in no group at all", async ({

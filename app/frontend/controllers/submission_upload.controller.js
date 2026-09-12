@@ -11,6 +11,7 @@ export default class extends Controller {
   static targets = [
     "dashboard",
     "hiddenInput",
+    "detachInput",
     "permission",
     "permissionField",
     "metadata",
@@ -172,11 +173,11 @@ export default class extends Controller {
     }
   }
 
+  // Scoped to this form: several cards can be open at once, and a lookup by id
+  // would set the mark on whichever of them came first.
   setDetachValue(value) {
-    const detachInput = document.getElementById("submission_detach_user_manuscript");
-
-    if (detachInput) {
-      detachInput.value = value;
+    if (this.hasDetachInputTarget) {
+      this.detachInputTarget.value = value;
     }
   }
 

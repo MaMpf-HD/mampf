@@ -76,7 +76,6 @@
           </div>
         <% end %>
       </div>
-      <% reopen_count = lecture.assignments_complete? ? computed_decisions_count : 0 %>
       <%= form_with url: assignments_complete_assessment_assessments_path(
                           lecture_id: lecture.id
                         ),
@@ -107,49 +106,49 @@
           <%= t('assessment.assignments_complete.hint') %>
         </p>
 
-        <% if reopen_count.positive? %>
-          <div
-            class="modal fade"
-            tabindex="-1"
-            aria-labelledby="assignments-complete-reopen-title"
-            aria-hidden="true"
-            data-assessments--assignments-complete-target="dialog"
-          >
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5
-                    class="modal-title"
-                    id="assignments-complete-reopen-title"
-                  >
-                    <%= t('assessment.assignments_complete.reopen_dialog.title') %>
-                  </h5>
-                </div>
+        <%#
+          Ticked or unticked, the answer turns every eligibility verdict in the
+          lecture over, so neither direction goes through unasked. Only the one
+          that would leave computed decisions behind offers a third way.
+        %>
 
-                <div class="modal-body">
-                  <p class="mb-0">
-                    <%= t('assessment.assignments_complete.reopen_dialog.body',
-                          count: reopen_count) %>
-                  </p>
-                </div>
+        <div
+          class="modal fade"
+          tabindex="-1"
+          aria-labelledby="assignments-complete-title"
+          aria-hidden="true"
+          data-assessments--assignments-complete-target="dialog"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="assignments-complete-title">
+                  <%= confirmation_title %>
+                </h5>
+              </div>
 
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary"
-                    data-action="assessments--assignments-complete#cancel"
-                  >
-                    <%= t('assessment.assignments_complete.reopen_dialog.cancel') %>
-                  </button>
+              <div class="modal-body">
+                <p class="mb-0"><%= confirmation_body %></p>
+              </div>
 
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    data-action="assessments--assignments-complete#keep"
-                  >
-                    <%= t('assessment.assignments_complete.reopen_dialog.keep') %>
-                  </button>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-action="assessments--assignments-complete#cancel"
+                >
+                  <%= t('assessment.assignments_complete.cancel') %>
+                </button>
 
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-action="assessments--assignments-complete#confirm"
+                >
+                  <%= confirmation_button %>
+                </button>
+
+                <% if confirmation == :reopen %>
                   <button
                     type="button"
                     class="btn btn-outline-danger"
@@ -157,11 +156,11 @@
                   >
                     <%= t('assessment.assignments_complete.reopen_dialog.reset') %>
                   </button>
-                </div>
+                <% end %>
               </div>
             </div>
           </div>
-        <% end %>
+        </div>
       <% end %>
     <% end %>
   <% end %>

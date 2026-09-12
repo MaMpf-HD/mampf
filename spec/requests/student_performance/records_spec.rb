@@ -135,6 +135,32 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           )
         end
 
+        # The complaint this basis answers: a deadline passes, the tutor has not
+        # got to it, and a flawless student drops to half her figure overnight
+        # for something she did not do.
+        it "does not let a tutor's backlog read as a student's shortfall" do
+          sheet(deadline: 3.days.ago, points: 20)
+          waiting = sheet(deadline: 2.days.ago, points: 20)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, assessment: waiting,
+                                                       user: member,
+                                                       submitted_at: 1.day.ago)
+          # rubocop:disable Rails/SkipsModelValidations
+          StudentPerformance::Record
+            .where(lecture: lecture, user: member)
+            .update_all(points_total_materialized: 20,
+                        points_max_materialized: 40)
+          # rubocop:enable Rails/SkipsModelValidations
+
+          get lecture_student_performance_records_path(lecture)
+
+          helpers = ApplicationController.helpers
+          expect(response.body)
+            .to include(helpers.number_to_percentage(100, precision: 0))
+          expect(response.body)
+            .not_to include(helpers.number_to_percentage(50, precision: 0))
+        end
+
         it "measures the percentage against the sheets due so far" do
           sheet(deadline: 2.days.ago, points: 20)
           sheet(deadline: 3.days.from_now, points: 20)
@@ -156,9 +182,9 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             .not_to include(helpers.number_to_percentage(50, precision: 0))
         end
 
-        # One heading over both figures, and it has to be readable without
+        # One heading over all three figures, and it has to be readable without
         # opening anything — the sentence behind the icon only elaborates.
-        it "names what both figures are measured against, once" do
+        it "names what the figures are measured against, once" do
           sheet(deadline: 2.days.ago, points: 20)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
 
@@ -171,31 +197,37 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             )
           end
 
-          expect(heading["colspan"]).to eq("2")
+          expect(heading["colspan"]).to eq("3")
           expect(heading.at_css("[data-bs-content]")["data-bs-content"]).to eq(
             I18n.t("student_performance.records.columns.due_so_far_hint")
           )
           expect(columns.css("th").first.text)
             .to include(I18n.t("student_performance.records.columns.points"))
           expect(columns.css("th")[1].text)
+            .to include(I18n.t("student_performance.records.columns.maximum"))
+          expect(columns.css("th")[2].text)
             .to include(I18n.t("student_performance.records.columns.percentage"))
         end
 
-        it "puts the lecture's maximum in the heading" do
-          sheet(deadline: 2.days.ago, points: 20)
+        # The maximum differs from student to student - by what she was let off
+        # and by what her tutor has not marked yet - so it cannot stand once in
+        # the heading. It is a column, and every row fills it.
+        it "gives each student her own maximum, in its own column" do
+          excused = sheet(deadline: 3.days.ago, points: 20)
+          sheet(deadline: 2.days.ago, points: 16)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, :exempt,
+                            assessment: excused, user: member)
+          other = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: other)
 
           get lecture_student_performance_records_path(lecture)
 
-          columns = Nokogiri::HTML(response.body).css("thead tr")[1]
-
-          expect(columns.css("th").first.text).to include(
-            I18n.t("student_performance.records.columns.points_max", max: "20")
-          )
+          expect(cells_for(member)[2].text.strip).to eq("16")
+          expect(cells_for(other)[2].text.strip).to eq("36")
         end
 
-        # The lecture's maximum stands in the heading, so the column holds a
-        # plain number in every row — the excused student's too.
+        # Each figure keeps its own column, so none of them carries a fraction.
         it "keeps the points column to one figure" do
           excused = sheet(deadline: 3.days.ago, points: 20)
           sheet(deadline: 2.days.ago, points: 16)
@@ -208,27 +240,14 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(cells_for(member)[1].text).not_to include("/")
         end
 
-        # An exemption is a fact about the student, so it is said next to her
-        # name — and it has to name her maximum, not just mark the row.
-        it "spells out a personal maximum and why it is one" do
+        # With the maximum in the row, a footnote by the name would say the
+        # same thing twice - and it could only name one of the two reasons.
+        it "says nothing next to the name of an excused student" do
           excused = sheet(deadline: 3.days.ago, points: 20)
           sheet(deadline: 2.days.ago, points: 16)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
           FactoryBot.create(:assessment_participation, :exempt,
                             assessment: excused, user: member)
-
-          get lecture_student_performance_records_path(lecture)
-
-          name_cell = cells_for(member).first
-
-          expect(name_cell.at_css("[data-bs-content]")["data-bs-content"]).to eq(
-            I18n.t("student_performance.records.columns.personal_max", max: "16")
-          )
-        end
-
-        it "says nothing next to the name of a student with no exemption" do
-          sheet(deadline: 2.days.ago, points: 20)
-          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
 
           get lecture_student_performance_records_path(lecture)
 
@@ -370,6 +389,140 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         end
       end
 
+      # The two questions staff arrive with: where is this one person, and
+      # who is at the bottom.
+      context "with a search and a sort order" do
+        # Names and addresses are spelled out rather than drawn from Faker:
+        # what a search finds has to be a matter of the search term alone.
+        def named(name, email)
+          FactoryBot.create(:confirmed_user, name: name,
+                                             name_in_tutorials: name,
+                                             email: email)
+        end
+
+        let(:ada) { named("Ada Lovelace", "ada@algol.test") }
+        let(:grace) { named("Grace Hopper", "grace@cobol.test") }
+        let(:nina) { named("Nina Simone", "nina@jazz.test") }
+
+        def sheet(points)
+          assignment = FactoryBot.create(:assignment, lecture: lecture,
+                                                      deadline: 1.year.from_now)
+          # rubocop:disable Rails/SkipsModelValidations
+          assignment.update_column(:deadline, 2.days.ago)
+          # rubocop:enable Rails/SkipsModelValidations
+          FactoryBot.create(:assessment_task,
+                            assessment: assignment.assessment,
+                            max_points: points)
+          assignment.assessment.reload
+        end
+
+        # A hand-in recomputes the record it belongs to, so the figures are
+        # written down once everything else is in place.
+        def scored(user, points)
+          record = lecture.student_performance_records
+                          .find_or_initialize_by(user: user)
+          record.update!(points_total_materialized: points)
+        end
+
+        def listed_names
+          Nokogiri::HTML(response.body).css("tbody tr td:first-child")
+                  .map { |td| td.text.strip }
+        end
+
+        before do
+          sheet(10)
+          awaiting = sheet(10)
+          # Ada's second sheet sits with her tutor, so it is out of her base:
+          # she is measured against 10 points where the others face 20.
+          FactoryBot.create(:assessment_participation, :submitted,
+                            assessment: awaiting, user: ada)
+          scored(ada, 8)
+          scored(grace, 20)
+          scored(nina, 5)
+        end
+
+        it "narrows the table to the searched name" do
+          get lecture_student_performance_records_path(lecture, q: "hopper")
+
+          expect(listed_names).to eq(["Grace Hopper"])
+        end
+
+        # The tutorial filter has its own examples above; what this one is
+        # about is that the search narrows what the filter left standing.
+        it "searches within the tutorial that is filtered for" do
+          tutorial = FactoryBot.create(:tutorial, lecture: lecture)
+          [grace, nina].each do |user|
+            FactoryBot.create(:tutorial_membership, tutorial: tutorial,
+                                                    user: user)
+          end
+
+          get lecture_student_performance_records_path(
+            lecture, tutorial_id: tutorial.id, q: "simone"
+          )
+
+          expect(listed_names).to eq(["Nina Simone"])
+        end
+
+        it "says so when nobody matches" do
+          get lecture_student_performance_records_path(lecture, q: "Turing")
+
+          expect(response.body).to include(
+            I18n.t("student_performance.lists.no_match")
+          )
+        end
+
+        it "orders by points, largest first" do
+          get lecture_student_performance_records_path(
+            lecture, sort: "points", dir: "desc"
+          )
+
+          expect(listed_names).to eq(["Grace Hopper", "Ada Lovelace",
+                                      "Nina Simone"])
+        end
+
+        # Grace and Nina face the same 20 points; between the two the table
+        # falls back on the order it would have had anyway.
+        it "orders by the maximum, largest first" do
+          get lecture_student_performance_records_path(
+            lecture, sort: "maximum", dir: "desc"
+          )
+
+          expect(listed_names).to eq(["Grace Hopper", "Nina Simone",
+                                      "Ada Lovelace"])
+        end
+
+        it "orders by percentage, smallest first" do
+          get lecture_student_performance_records_path(
+            lecture, sort: "percentage", dir: "asc"
+          )
+
+          expect(listed_names).to eq(["Nina Simone", "Ada Lovelace",
+                                      "Grace Hopper"])
+        end
+
+        it "keeps the search when a column is sorted" do
+          get lecture_student_performance_records_path(
+            lecture, q: "ac", sort: "points", dir: "desc"
+          )
+
+          expect(listed_names).to eq(["Grace Hopper", "Ada Lovelace"])
+        end
+
+        # Clicking the column that is already sorted is how the order is turned
+        # around, so its header has to offer the other direction.
+        it "offers the opposite direction on the column it sorted by" do
+          get lecture_student_performance_records_path(
+            lecture, sort: "points", dir: "desc"
+          )
+
+          header = Nokogiri::HTML(response.body)
+                           .css("thead tr")[1].css("th")
+                           .find { |th| th["aria-sort"] == "descending" }
+
+          expect(header.at_css("a")["href"]).to include("dir=asc")
+        end
+      end
+
       # An unmarked sheet holds back everyone at once, so the warning belongs on
       # the assignment's column, not on each student's row.
       context "with submissions still awaiting marking" do
@@ -450,6 +603,38 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           pagy = controller.instance_variable_get(:@pagy)
           expect(pagy).to be_present
           expect(pagy.count).to eq(26)
+        end
+
+        # Two students may share a name, and the order that puts them side by
+        # side cannot say which comes first - so with OFFSET one of them can
+        # turn up on both pages and somebody else on neither. Measured before
+        # the tie-breaker: 100 rows, 99 of them different people.
+        it "shows every student exactly once across the pages" do
+          100.times do
+            user = FactoryBot.create(:confirmed_user,
+                                     name: "Max Mustermann",
+                                     name_in_tutorials: "Max Mustermann")
+            FactoryBot.create(:student_performance_record,
+                              lecture: lecture, user: user)
+          end
+
+          seen = (1..6).flat_map do |page|
+            get(lecture_student_performance_records_path(lecture, page: page))
+            Nokogiri::HTML(response.body)
+                    .css("#performance-records-frame tbody tr").pluck("id")
+          end
+
+          expect(seen.uniq.size).to eq(seen.size)
+        end
+
+        # A sorted table is an Array by the time it is cut into pages, and a
+        # page is a page either way.
+        it "still cuts the list into pages when a column is sorted" do
+          get lecture_student_performance_records_path(
+            lecture, sort: "percentage", dir: "desc"
+          )
+
+          expect(Nokogiri::HTML(response.body).css("tbody tr").size).to eq(20)
         end
       end
     end

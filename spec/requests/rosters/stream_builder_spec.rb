@@ -98,7 +98,9 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
       # re-renders the side panel with all unassigned users, which should still
       # include the removed student (since they are still a lecture member,
       # just not assigned to a tutorial anymore)
-      expect(response.body).to include(new_student.name)
+      # Escaped, because the name comes from Faker and every so often
+      # carries an apostrophe - which the markup spells `&#39;`.
+      expect(response.body).to include(CGI.escapeHTML(new_student.name))
     end
   end
 

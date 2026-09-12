@@ -13,6 +13,10 @@ de:
             achievement:
               must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
   student_performance:
+    lists:
+      search: "Studierende suchen"
+      no_match: "Keine Studierenden gefunden."
+      showing: "%{from}–%{to} von %{count} Studierenden"
     errors:
       no_record: "Leistungsdatensatz nicht gefunden."
       no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
@@ -24,11 +28,10 @@ de:
         email: "E-Mail"
         points: "Punkte"
         percentage: "Prozent"
-        of_due_points: "von den bisher fälligen Punkten"
-        due_so_far: "Bisher fällig"
-        due_so_far_hint: "Punkte und Prozent zählen nur die Blätter, deren Frist samt Nachfrist vorbei ist."
-        points_max: "max. %{max}"
-        personal_max: "Persönliches Maximum: %{max} Punkte, wegen Entschuldigungen"
+        of_due_points: "von den bisher korrigierten Punkten"
+        due_so_far: "Bisher korrigiert"
+        due_so_far_hint: "Punkte und Prozent zählen, was für die Studierende feststeht: Blätter, deren Frist samt Nachfrist vorbei ist, und bereits korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
+        maximum: "Maximum"
         assignments: "Übungsblätter"
         not_due_count: "%{count} noch nicht fällig"
         achievements: "Zusatzkriterien"
@@ -53,15 +56,13 @@ de:
           other: "%{count} Abgaben sind noch nicht bewertet"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
         details: "Details"
-
-        showing: "%{from}–%{to} von %{count} Studierenden"
       show:
         back: "Zurück zur Übersicht"
         recompute: "Datensatz neu berechnen"
         recompute_hint: "Nur als Fallback: Verwende dies, wenn die angezeigten Daten veraltet oder fehlerhaft wirken."
         review_proposal: "Vorschlag prüfen"
         total_points: "Gesamtpunkte"
-        out_of: "von %{max} bisher fälligen"
+        out_of: "von %{max} bisher korrigierten"
         percentage: "Prozent"
         achievements_met: "Erfüllte Zusatzkriterien"
         assessment_breakdown: "Übungsblätter im Detail"
@@ -132,12 +133,17 @@ de:
         inconclusive: "Zurückgestellt"
       deferral:
         assignments_incomplete: "Die Blätterliste ist noch offen"
-        points_not_due: "Blätter noch nicht fällig"
-        points_pending: "Abgaben noch nicht bewertet"
+        points_not_due:
+          one: "1 Blatt noch nicht fällig"
+          other: "%{count} Blätter noch nicht fällig"
+        points_pending:
+          one: "1 Abgabe noch nicht bewertet"
+          other: "%{count} Abgaben noch nicht bewertet"
         points_not_measurable: "Keine Punkte zu messen"
         achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
       missed:
         points: "Schwelle nicht erreicht"
+        points_out_of_reach: "Schwelle auch mit allem Offenen nicht mehr erreichbar"
         achievements: "Zusatzkriterium nicht erfüllt"
       single_proposal:
         title: "Zulassungsvorschlag"

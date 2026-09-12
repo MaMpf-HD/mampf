@@ -8,15 +8,53 @@
     <%= t("student_performance.records.index.subtitle") %>
   </p>
 
-  <div class="row mb-3 g-2">
-    <div class="col-12 col-md-4">
-      <%= form_tag lecture_student_performance_records_path(@lecture),
-                   method: :get, class: "d-inline",
-                   data: { controller: "auto-submit-form",
-                           turbo_frame: "performance-records-frame" } do %>
+  <div data-controller="auto-submit-form">
+    <%= form_tag lecture_student_performance_records_path(@lecture),
+                 method: :get, class: "row mb-3 g-2",
+                 data: { auto_submit_form_target: "form",
+                         turbo_frame: "performance-records-frame" } do %>
+      <%# the order outlives a filter, so nobody has to set it up twice %>
+      <% if params[:sort].present? %>
+        <%= hidden_field_tag :sort, params[:sort] %>
+        <%= hidden_field_tag :dir, params[:dir] %>
+      <% end %>
+
+      <div class="col-12 col-md-4">
+        <div class="position-relative">
+          <span
+            class="
+              position-absolute top-50 start-0 translate-middle-y ps-3
+              pe-none text-muted
+            "
+          >
+            <i class="bi bi-search"></i>
+          </span>
+
+          <%= text_field_tag :q, params[:q],
+                             placeholder: t("student_performance.lists.search"),
+                             "aria-label": t("student_performance.lists.search"),
+                             autocomplete: "off",
+                             class: "form-control ps-5 pe-5",
+                             data: {
+                               action: "input->auto-submit-form#debouncedSubmit",
+                               auto_submit_form_target: "searchInput"
+                             } %>
+
+          <button
+            type="button"
+            class="btn-close position-absolute top-50 end-0 translate-middle-y me-3 <%= "d-none" if params[:q].blank? %>"
+            data-auto-submit-form-target="clearButton"
+            data-action="mousedown->auto-submit-form#keepFocus click->auto-submit-form#clear"
+            aria-label="<%= t("basics.clear") %>"
+          ></button>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
         <select
           name="tutorial_id"
           class="form-select"
+          aria-label="<%= t("student_performance.records.index.all_participants") %>"
           data-action="change->auto-submit-form#submit"
         >
           <option value="">
@@ -43,13 +81,17 @@
             <%= t("student_performance.records.index.without_tutorial") %>
           </option>
         </select>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
   </div>
 
   <% if @records.empty? %>
     <p class="text-center text-muted py-4">
-      <%= t("student_performance.records.index.empty") %>
+      <% if params[:q].present? %>
+        <%= t("student_performance.lists.no_match") %>
+      <% else %>
+        <%= t("student_performance.records.index.empty") %>
+      <% end %>
     </p>
   <% else %>
     <div class="table-responsive performance-records-scroll">
@@ -62,7 +104,7 @@
 
             <th
               scope="colgroup"
-              colspan="2"
+              colspan="3"
               class="text-center text-nowrap due-group-end"
             >
               <%= t("student_performance.records.columns.due_so_far") %>
@@ -103,24 +145,44 @@
           </tr>
 
           <tr>
-            <th scope="col" class="text-end text-nowrap due-points">
-              <%= t("student_performance.records.columns.points") %>
-
-              <span class="fw-normal text-muted" style="font-size: 0.75em">
-                (<%= t("student_performance.records.columns.points_max",
-                       max: number_with_precision(
-                              @due_points.total,
-                              precision: 1,
-                              strip_insignificant_zeros: true)) %>)
-              </span>
+            <th
+              scope="col"
+              class="text-end text-nowrap due-points"
+              aria-sort="<%= records_sort_state("points") %>"
+            >
+              <%= records_sort_link(@lecture, "points") do %>
+                <%= t("student_performance.records.columns.points") %>
+              <% end %>
             </th>
 
-            <th scope="col" class="text-end due-share">
-              <span aria-hidden="true">%</span>
+            <%#
+              The maximum is a column rather than a note on the header: it
+              differs from student to student, by what she was let off and by
+              what her tutor has not marked yet.
+            %>
 
-              <span class="visually-hidden">
-                <%= t("student_performance.records.columns.percentage") %>
-              </span>
+            <th
+              scope="col"
+              class="text-end text-nowrap due-points"
+              aria-sort="<%= records_sort_state("maximum") %>"
+            >
+              <%= records_sort_link(@lecture, "maximum") do %>
+                <%= t("student_performance.records.columns.maximum") %>
+              <% end %>
+            </th>
+
+            <th
+              scope="col"
+              class="text-end due-share"
+              aria-sort="<%= records_sort_state("percentage") %>"
+            >
+              <%= records_sort_link(@lecture, "percentage") do %>
+                <span aria-hidden="true">%</span>
+
+                <span class="visually-hidden">
+                  <%= t("student_performance.records.columns.percentage") %>
+                </span>
+              <% end %>
             </th>
 
             <% @assessments.each do |assessment| %>
@@ -175,33 +237,22 @@
         <tbody>
           <% @records.each do |record| %>
             <tr id="<%= dom_id(record) %>">
-              <% personal_max = @due_points.max_for(record.user_id) %>
-
               <td class="text-nowrap">
                 <%= record.user.tutorial_name %>
-
-                <%#
-                  An excused sheet is a fact about this student, so it is said
-                  next to her name and leaves the figures a column of plain
-                  numbers.
-                %>
-
-                <% if personal_max != @due_points.total %>
-                  <%= helpdesk(
-                        t("student_performance.records.columns.personal_max",
-                          max: number_with_precision(
-                                 personal_max,
-                                 precision: 1,
-                                 strip_insignificant_zeros: true)),
-                        false) %>
-                <% end %>
               </td>
 
               <td class="text-end text-nowrap numeric due-points">
                 <%= number_with_precision(record.points_total_materialized, precision: 1, strip_insignificant_zeros: true) %>
               </td>
 
-              <% percentage = @due_points.percentage_for(record) %>
+              <td class="text-end text-nowrap numeric due-points text-muted">
+                <%= number_with_precision(
+                      @due_points.marked_max_for(record.user_id),
+                      precision: 1,
+                      strip_insignificant_zeros: true) %>
+              </td>
+
+              <% percentage = @due_points.marked_percentage_for(record) %>
 
               <td class="text-end text-nowrap numeric due-share">
                 <span class="fw-semibold">
@@ -287,7 +338,7 @@
     <% if @pagy.pages > 1 %>
       <div class="d-flex justify-content-between align-items-center mt-3">
         <div class="text-muted small">
-          <%= t("student_performance.records.index.showing",
+          <%= t("student_performance.lists.showing",
               from: @pagy.from, to: @pagy.to, count: @pagy.count) %>
         </div>
 

@@ -27,9 +27,19 @@ module StudentPerformance
         return [] unless proposed_status == :failed
 
         missed = []
-        missed << :points if !details[:meets_points] && points_criterion_deferral.nil?
+        missed << points_criterion if !details[:meets_points] &&
+                                      points_criterion_deferral.nil?
         missed << :achievements if !details[:meets_achievements] && !details[:achievements_ungraded]
         missed
+      end
+
+      # A threshold is only ever called missed once it cannot be met any more:
+      # while anything is still open the case is deferred, not failed. Where
+      # something *is* still open and would not be enough, the stronger
+      # sentence is the fair one - it says the student cannot make it up, not
+      # that they have not made it yet.
+      def points_criterion
+        details[:points_outstanding] ? :points_out_of_reach : :points
       end
     end
 
@@ -66,9 +76,10 @@ module StudentPerformance
           points_not_due: points == :pending && not_yet_due(record).positive?,
           points_pending: points == :pending && awaiting_marking(record).positive?,
           points_not_measurable: points == :not_measurable,
+          points_outstanding: outstanding_points(record).positive?,
           meets_achievements: achievements == :met,
           achievements_ungraded: achievements == :ungraded
-        }
+        }.merge(deferral_amounts(record))
       )
     end
 
@@ -77,6 +88,21 @@ module StudentPerformance
     end
 
     private
+
+      # How many sheets each of the two open points reasons is about, so that
+      # the page can say it rather than leaving "not due yet" to stand for
+      # anything between one sheet and the rest of the term. A count and not
+      # the points behind it: the page shows no total to hold them against,
+      # and a bare "60 points" is a number out of nowhere.
+      #
+      # Kept beside the reasons rather than in them: `0` is true in Ruby, and a
+      # reason picked by its own count would then always be picked.
+      def deferral_amounts(record)
+        {
+          not_due_sheets: not_yet_due_count(record),
+          pending_sheets: pending_count(record)
+        }
+      end
 
       # A criterion nobody can satisfy any more settles the case; one that is
       # merely unfinished defers it.
@@ -120,7 +146,7 @@ module StudentPerformance
       # points_max_materialized already includes points awaiting marking
       # and points not yet due, so awarding them changes only best_total.
       def points_still_reachable?(record)
-        outstanding = awaiting_marking(record) + not_yet_due(record)
+        outstanding = outstanding_points(record)
         return false unless outstanding.positive?
 
         best_total = (record.points_total_materialized || 0) + outstanding
@@ -135,6 +161,12 @@ module StudentPerformance
         end
       end
 
+      # Everything that could still bring points: what a tutor has not marked
+      # and what nobody has been asked for yet.
+      def outstanding_points(record)
+        awaiting_marking(record) + not_yet_due(record)
+      end
+
       def awaiting_marking(record)
         record.points_max_pending_materialized || 0
       end
@@ -143,6 +175,18 @@ module StudentPerformance
         return 0 unless @due_points
 
         @due_points.not_yet_due_for(record.user_id)
+      end
+
+      def not_yet_due_count(record)
+        return 0 unless @due_points
+
+        @due_points.not_yet_due_count_for(record.user_id)
+      end
+
+      def pending_count(record)
+        return 0 unless @due_points
+
+        @due_points.pending_count_for(record.user_id)
       end
 
       def achievements_status(record)

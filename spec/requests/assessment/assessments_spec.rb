@@ -237,6 +237,37 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         )
       end
 
+      # Both directions turn every eligibility verdict over, so the page asks
+      # first - and the question it asks depends on which way the tick is
+      # about to go.
+      it "asks before closing the list, and says what closing does" do
+        create(:valid_assignment, lecture: lecture)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(
+          CGI.escapeHTML(
+            I18n.t("assessment.assignments_complete.close_dialog.body")
+          )
+        )
+      end
+
+      it "asks before reopening a list nobody has decided anything on" do
+        create(:valid_assignment, lecture: lecture)
+        lecture.update!(assignments_complete: true)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(
+          CGI.escapeHTML(
+            I18n.t("assessment.assignments_complete.open_dialog.body")
+          )
+        )
+        expect(response.body).not_to include(
+          I18n.t("assessment.assignments_complete.reopen_dialog.reset")
+        )
+      end
+
       it "closes the list" do
         patch assignments_complete_assessment_assessments_path(
           lecture_id: lecture.id, complete: "1"
@@ -287,14 +318,22 @@ RSpec.describe("Assessment::Assessments", type: :request) do
           )
         end
 
-        it "does not ask while the list is still open" do
+        # The list is open, so the question is the other one: what closing it
+        # would do. Nothing is said about decisions, because closing leaves
+        # them alone.
+        it "asks about closing instead while the list is still open" do
           lecture.update!(assignments_complete: false)
           create(:valid_assignment, lecture: lecture)
 
           get assessment_assessments_path(lecture_id: lecture.id)
 
+          expect(response.body).to include(
+            CGI.escapeHTML(
+              I18n.t("assessment.assignments_complete.close_dialog.body")
+            )
+          )
           expect(response.body).not_to include(
-            I18n.t("assessment.assignments_complete.reopen_dialog.title")
+            I18n.t("assessment.assignments_complete.reopen_dialog.reset")
           )
         end
 
