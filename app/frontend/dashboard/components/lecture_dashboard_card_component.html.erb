@@ -8,7 +8,6 @@
               update_url: dashboard_washi_tape_path(lecture)),
       data: { lecture_id: lecture.id,
               testid: "lecture-dashboard-card" })) do |card| %>
-
   <% if show_teacher? %>
     <% card.with_subtitle { lecture.teacher.name } %>
   <% end %>

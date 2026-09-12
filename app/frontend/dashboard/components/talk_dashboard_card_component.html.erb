@@ -7,7 +7,6 @@
               label: lecture.title_no_term,
               update_url: dashboard_washi_tape_path(lecture)),
       data: { testid: "talk-dashboard-card" })) do |card| %>
-
   <% card.with_subtitle { lecture.title_term_info_no_type } %>
 
   <% card.with_corner do %>
