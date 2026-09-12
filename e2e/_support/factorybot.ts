@@ -90,4 +90,26 @@ export class FactoryBotObject {
       "factories_playwright/call_instance_method", payload);
     return result;
   }
+
+  /**
+   * Writes attributes onto the record this object stands for.
+   *
+   * For the states no factory can hand out, because creating the record's
+   * neighbours changes them: a lecture whose assignment list is closed, say -
+   * adding an assignment opens it again, so it can only be closed afterwards.
+   *
+   * @param attributes The attributes to write, as an object.
+   *
+   * @examples
+   * await lecture.update({ assignments_complete: true });
+   */
+  async update(attributes: Record<string, any>): Promise<any> {
+    const payload = {
+      factory_name: this.factoryName,
+      instance_id: this.factoryId,
+      args: attributes,
+    };
+    return await callBackend(this.context,
+      "factories_playwright/update_instance", payload);
+  }
 }

@@ -61,7 +61,7 @@ Manage registration campaigns for lectures.
 | show    | View campaign details and status |
 | edit    | Edit campaign settings (before allocation) |
 | update  | Update campaign |
-| destroy | Delete campaign (if no registrations exist) |
+| destroy | Delete a draft campaign, or discard an opened/closed one. Refused once registrations or an allocation exist, see `Registration::Campaign#discardable?` |
 | open    | Open campaign for registration |
 | close   | Close campaign (stop registration) |
 | reopen  | Reopen a closed campaign |
@@ -138,6 +138,33 @@ Admin interface for managing registration policies.
 - Select policy type (eligibility vs allocation scoring)
 - Configure policies (score thresholds, enrollment requirements, etc.)
 - Policy preview/testing interface
+```
+
+### `Registration::ItemsController`
+
+```admonish info "Purpose"
+Manage the catalog of groups a campaign registers for.
+```
+
+| Controller | Primary callers | Responses |
+|------------|------------------|-----------|
+| Registration::ItemsController | Teacher/Editor UI | HTML, Turbo Streams |
+
+**Actions**
+
+| Action  | Purpose |
+|---------|---------|
+| create  | Put an existing group into the campaign |
+| update  | Change the group's capacity |
+| roster  | Side panel with the item's registrations |
+| destroy | Take the group out of the campaign; the group itself is kept and falls back to manual management |
+| destroy_with_registerable | Take the group out of the campaign **and** delete it, in one transaction |
+
+```admonish warning "Two deletions, two confirmations"
+`destroy` and `destroy_with_registerable` are deliberately separate routes with
+separate wording. Both go through `Registration::Item#remove`, which holds a row
+lock on the campaign for the whole check-and-delete. See
+[Campaign, Item and Registerable](02-registration.md#campaign-item-and-registerable).
 ```
 
 ### `Registration::AllocationController`

@@ -101,17 +101,23 @@ input[type="file"] {
   width: 120px; min-width: 120px; max-width: 120px;
   background: white; z-index: 2; 
 }
-.action-col     { 
+.save-col     { 
   position: sticky; 
-  right: var(--action-right);     
-  width: 200px; max-width: 200px; min-width: 200px;
+  right: var(--save-right);     
+  width: 90px; max-width: 90px; min-width: 90px;
   background: white; z-index: 2; padding: 0.5rem; 
 }
 .correction-col { 
   position: sticky; 
   right: var(--correction-right); 
-  width: 200px; max-width: 200px; min-width: 200px;
+  width: 150px; max-width: 150px; min-width: 150px;
   background: white; z-index: 2; 
+}
+.hand-in-col {
+  position: sticky; 
+  width: 150px; min-width: 150px; max-width: 150px;
+  right: var(--hand-in-right); 
+  background-color: white; z-index: 2;
 }
 
 

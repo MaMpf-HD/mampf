@@ -1,27 +1,21 @@
-# Renders a single participation row in the pointing table
+# One row of the pointing table for somebody without a hand-in file: a sheet
+# taken on paper, one never handed in, an excused or an absent one. Before
+# the backfill worker has been round the participation may not exist yet;
+# the row is drawn from an unsaved one and offers what makes it real.
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  # rubocop:disable Metrics/ParameterLists
-  def initialize(participation:, assessment:, grading_scope:,
-                 save_url:, refresh_url:,
-                 absent_url: nil, exempt_url: nil,
-                 group_id: nil)
-    # rubocop:enable Metrics/ParameterLists
+  def initialize(participation:, assessment:, grading_scope:, group_id: nil,
+                 table_option: :pointing)
     super()
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
     @lecture = @assessable.lecture
-
-    @save_url = save_url
-    @refresh_url = refresh_url
-    @absent_url = absent_url
-    @exempt_url = exempt_url
-    @group_id = group_id
-
     @grading_scope = grading_scope
-
+    @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
+    @group_id = group_id
+    @table_option = table_option
     @config = Assessment::DisplayConfigResolver.resolve(
       assessable: @assessable, grading_scope: @grading_scope
     )
@@ -42,26 +36,160 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.grading_open?
   end
 
-  def badge_status_participation_color(status)
-    {
-      pending: "warning",
-      reviewed: "success",
-      exempt: "info",
-      absent: "info"
-    }[status&.to_sym]
+  # Points go where the sheet is: a participation a group already holds is not
+  # this group's to mark, even if the person has since moved in.
+  def elsewhere?
+    @tutorial.present? && @participation.tutorial_id.present? &&
+      @participation.tutorial_id != @tutorial.id
   end
 
-  def badge_status_participation_class(status)
-    "badge rounded-pill bg-#{badge_status_participation_color(status)}"
+  # Points go on a sheet that came in; a row nothing was handed in for waits
+  # for the mark in the hand-in column first.
+  def points_enterable?
+    paper_hand_in? && !elsewhere? &&
+      !@participation.exempt? && !@participation.absent?
+  end
+
+  def status
+    @participation.display_status
   end
 
   def row_id
-    "participation-row-#{@participation.id}"
+    return "participation-row-#{@participation.id}" if @participation.persisted?
+
+    "participation-row-user-#{@user.id}"
   end
 
-  def can_grade?
+  def grading_scope_type
+    @grading_scope.class.name.downcase
+  end
+
+  def save_url
+    case @table_option
+    when :pointing
+      point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    when :grading
+      grade_participation_path(@participation)
+    else
+      raise(ArgumentError, "Unsupported table option: #{@table_option}")
+    end
+  end
+
+  def refresh_url
+    case @table_option
+    when :pointing
+      refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    when :grading
+      refresh_grade_participation_path(@participation)
+    else
+      raise(ArgumentError, "Unsupported table option: #{@table_option}")
+    end
+  end
+
+  def absent_url
+    mark_as_absent_path(@participation, grading_scope_type: grading_scope_type)
+  end
+
+  def exempt_url
+    mark_as_exempt_path(@participation, grading_scope_type: grading_scope_type)
+  end
+
+  # The hand-in column of a row without a file: whether the sheet came in on
+  # paper. The mark can be taken back until points sit on it.
+  def paper_hand_in?
+    @participation.submitted_at.present?
+  end
+
+  # The page's group travels along so the answer comes back in the shape of
+  # the table it sits in.
+  def paper_hand_in_url
+    mark_user_as_participated_path(user_id: @user.id, assignment_id: @assessable.id,
+                                   tutorial_id: @tutorial&.id,
+                                   grading_scope_type: grading_scope_type)
+  end
+
+  def paper_hand_in_removal_url
+    remove_participation_path(participation_id: @participation.id,
+                              grading_scope_type: grading_scope_type)
+  end
+
+  def paper_hand_in_removable?
+    graded_task_points.all? { |point| point.points.nil? }
+  end
+
+  def task_points_participation_input(task, allow_grading)
+    tag.input(
+      type: "number",
+      autocomplete: "off",
+      name: "task_points[#{task.id}]",
+      value: extract_task_points_participation(task),
+      step: 0.5,
+      min: 0,
+      data: {
+        participation_row_target: "pointInput",
+        task_id: task.id,
+        below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
+        action: "change->participation-row#onParticipationChanged input->participation-row#onParticipationChanged" # rubocop:disable Layout/LineLength
+      },
+      class: "form-control",
+      aria: { label: points_input_label(task) },
+      disabled: !allow_grading || !grading_enabled? || !can_enter_points? || !points_enterable?
+    )
+  end
+
+  def points_input_label(task)
+    t("assessment.grading_tutorial.points_input_label",
+      task: "#{t("assessment.grading_tutorial.task")} #{task.position}",
+      name: @user.tutorial_name)
+  end
+
+  def task_points_participation_cell(task, allow_grading)
+    tag.td(class: "sticky-col task-col") do
+      task_points_participation_input(task, allow_grading)
+    end
+  end
+
+  # Neutral until the row has something to save; the controller turns it
+  # green with the first edit.
+  def save_row_button(allow_grading)
+    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+
+    tag.button(type: "button",
+               class: class_name,
+               data: { participation_row_target: "save",
+                       action: "click->participation-row#saveRow" },
+               title: helpers.t("assessment.grading_tutorial.save_row"),
+               aria: { label: helpers.t("assessment.grading_tutorial.save_row") },
+               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
+      tag.i(class: "far fa-save")
+    end
+  end
+
+  def refresh_row_button(allow_grading)
+    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+
+    tag.button(type: "button",
+               class: class_name,
+               data: { action: "click->participation-row#refreshRow" },
+               title: helpers.t("assessment.grading_tutorial.reload_row"),
+               aria: { label: helpers.t("assessment.grading_tutorial.reload_row") },
+               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
+      tag.i(class: "bi bi-arrow-clockwise")
+    end
+  end
+
+  def can_enter_points?
     user = helpers.current_user
-    user.admin? || user.can_grade_in_scope?(@grading_scope)
+    user.admin? || user.can_enter_points_in?(@grading_scope)
+  rescue User::IncompatibleTypeError
+    false
+  end
+
+  def can_enter_grade?
+    user = helpers.current_user
+    user.admin? || user.can_enter_grades_in?(@grading_scope)
   rescue User::IncompatibleTypeError
     false
   end
@@ -92,6 +220,10 @@ class ParticipationRowComponent < ViewComponent::Base
     @config.left_columns.include?(:tutorial)
   end
 
+  def show_hand_in_col?
+    @config.left_columns.include?(:hand_in)
+  end
+
   # if display correction column
   def show_correction_col?
     @config.right_columns.include?(:correction)
@@ -110,31 +242,6 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def tasks
     @assessable.assessment.persisted_tasks || []
-  end
-
-  def task_points_participation_input(task, allow_grading)
-    tag.input(
-      type: "number",
-      autocomplete: "off",
-      name: "task_points[#{task.id}]",
-      value: extract_task_points_participation(task),
-      step: 0.5,
-      min: 0,
-      data: {
-        participation_row_target: "pointInput",
-        task_id: task.id,
-        below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
-        action: "change->participation-row#onParticipationChanged input->participation-row#onParticipationChanged" # rubocop:disable Layout/LineLength
-      },
-      class: "form-control",
-      disabled: !allow_grading || !grading_enabled? || !can_grade?
-    )
-  end
-
-  def task_points_participation_cell(task, allow_grading)
-    tag.td(class: "sticky-col task-col") do
-      task_points_participation_input(task, allow_grading)
-    end
   end
 
   # ---- single_grade mode helpers ----
@@ -173,33 +280,5 @@ class ParticipationRowComponent < ViewComponent::Base
     return nil unless @participation&.graded_at
 
     I18n.l(@participation.graded_at, format: :short)
-  end
-
-  # ---- shared buttons ----
-
-  def save_row_button(allow_grading)
-    class_name = "btn btn-sm btn-success d-inline-flex align-items-center " \
-                 "justify-content-center text-nowrap px-2 py-1 lh-1"
-    tag.button(type: "button",
-               class: class_name,
-               data: { bs_toggle: "tooltip",
-                       "participation-row_target": "save",
-                       action: "click->participation-row#saveRow" },
-               title: helpers.t("buttons.save"),
-               disabled: !allow_grading || !grading_enabled? || !can_grade?) do
-      tag.i(class: "bi bi-save")
-    end
-  end
-
-  def refresh_row_button(allow_grading)
-    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
-                 "justify-content-center text-nowrap px-2 py-1 lh-1"
-    tag.button(type: "button",
-               class: class_name,
-               data: { bs_toggle: "tooltip", action: "click->participation-row#refreshRow" },
-               title: helpers.t("buttons.refresh"),
-               disabled: !allow_grading || !grading_enabled? || !can_grade?) do
-      tag.i(class: "bi bi-arrow-clockwise")
-    end
   end
 end

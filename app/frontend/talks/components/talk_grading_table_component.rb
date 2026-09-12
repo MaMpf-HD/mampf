@@ -32,14 +32,6 @@ class TalkGradingTableComponent < ViewComponent::Base
     participations_index[[assessment.id, user.id]]
   end
 
-  def grade_form_url(participation)
-    helpers.grade_participation_path(participation)
-  end
-
-  def refresh_form_url(participation)
-    helpers.refresh_grade_participation_path(participation)
-  end
-
   def sticky_layout
     return unless @config
 

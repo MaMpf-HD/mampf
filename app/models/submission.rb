@@ -12,6 +12,13 @@ class Submission < ApplicationRecord
 
   scope :proper, -> { where.not(manuscript_data: nil) }
 
+  # Submissions that still hold a file. Detaching a manuscript leaves the
+  # tutor's correction behind, which #proper does not see - and a deleted
+  # correction cannot be restored.
+  scope :with_uploads, lambda {
+    where.not(manuscript_data: nil).or(where.not(correction_data: nil))
+  }
+
   validate :matching_lecture, if: :tutorial
 
   before_save :set_corrected_at, if: :correction_data_changed?
@@ -25,12 +32,6 @@ class Submission < ApplicationRecord
     found = Assessment::Participation.where(assessment: assignment.assessment, user: users)
                                      .index_by(&:user_id)
     users.map { |user| found[user.id] }
-  end
-
-  def graded_tasks_points
-    return unless assignment.assessable?
-
-    Assessment::TaskPoint.where(submission: self)
   end
 
   def partners_of_user(user)
@@ -77,10 +78,6 @@ class Submission < ApplicationRecord
     return if correction.blank?
 
     correction.metadata["size"]
-  end
-
-  def preceding_tutorial(user)
-    assignment.previous&.filter_map { |a| a.tutorial(user) }&.first
   end
 
   def invited_users
@@ -296,38 +293,6 @@ class Submission < ApplicationRecord
       report[:errors] = e.message.to_s
     end
     report
-  end
-
-  def self.number_of_submissions(tutorial, assignment)
-    Submission.where(tutorial: tutorial, assignment: assignment)
-              .where.not(manuscript_data: nil).size
-  end
-
-  def self.number_of_corrections(tutorial, assignment)
-    Submission.where(tutorial: tutorial, assignment: assignment)
-              .where.not(correction_data: nil).size
-  end
-
-  def self.number_of_late_submissions(tutorial, assignment)
-    Submission.where(tutorial: tutorial, assignment: assignment)
-              .where.not(manuscript_data: nil)
-              .count(&:too_late?)
-  end
-
-  def self.submissions_total(assignment)
-    Submission.where(assignment: assignment)
-              .where.not(manuscript_data: nil).size
-  end
-
-  def self.corrections_total(assignment)
-    Submission.where(assignment: assignment)
-              .where.not(correction_data: nil).size
-  end
-
-  def self.late_submissions_total(assignment)
-    Submission.where(assignment: assignment)
-              .where.not(manuscript_data: nil)
-              .count(&:too_late?)
   end
 
   private

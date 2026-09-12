@@ -2,22 +2,20 @@ module Assessment
   class PointEntryService
     class PointEntryError < StandardError; end
 
-    # must ensure participation and task valid before calling this method
-    # task_points is a Hash of task_id => points, points potentially nil and string
+    # task_points maps task IDs to numeric values or strings; nil and empty
+    # strings clear points so a blank form field can undo a point entry.
     def self.enter_points(participation,
                           task_points,
                           grader,
                           submission = nil)
       assessment = participation.assessment
 
-      # check requires_points
       unless assessment.requires_points?
         raise(PointEntryError,
               I18n.t("assessment.task_points.assessment_does_not_require_points",
                      assessment_id: assessment.id))
       end
 
-      # validate task ids belong to the assessment
       valid_task_ids = assessment.tasks.pluck(:id)
 
       ApplicationRecord.transaction do
@@ -32,7 +30,6 @@ module Assessment
             task_id: task_id
           )
 
-          # validate points is a number if present, allow nil for unscoring
           validate_points(points, task_id)
 
           value = points.presence&.to_f
@@ -43,7 +40,7 @@ module Assessment
         end
 
         participation.recompute_points_total!
-        participation.update_status_if_all_scored!
+        participation.update_status_if_all_scored!(grader: grader)
       end
 
       participation

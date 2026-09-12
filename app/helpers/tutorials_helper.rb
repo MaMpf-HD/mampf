@@ -12,21 +12,8 @@ module TutorialsHelper
                        end, tutorial.tutor_ids)
   end
 
-  def tutorials_selection(lecture)
-    lecture.tutorials.map { |t| [t.title_with_tutors, t.id] }
-  end
-
   def grading_enabled?(assignment)
     assignment.assessable?
-  end
-
-  def badge_status_participation_color(status)
-    {
-      pending: "warning",
-      reviewed: "success",
-      exempt: "info",
-      absent: "info"
-    }[status&.to_sym]
   end
 
   def tutorials_for_dropdown(user, lecture, current_tutorial)
@@ -49,19 +36,21 @@ module TutorialsHelper
   end
 
   def overview_info(tutorial, assignment)
-    stack = assignment&.submissions&.where(tutorial: tutorial)&.proper
-                      &.order(:last_modification_by_users_at)
+    stack = assignment.submissions.where(tutorial: tutorial).proper
+                      .order(:last_modification_by_users_at).includes(:users)
     non_submitters = assignment.non_submitters_in_tutorial(tutorial)
+
+    participations_by_user_id =
+      Assessment::Participation.where(user_id: non_submitters.map(&:id) +
+                                               stack.flat_map(&:user_ids),
+                                      assessment: assignment.assessment)
+                               .index_by(&:user_id)
 
     num_submissions = stack.size
     num_submissions_with_points = stack.count do |s|
-      s.participations && s.participations.first&.status == "reviewed"
+      participations_by_user_id[s.user_ids.first]&.status == "reviewed"
     end
     num_submissions_without_points = num_submissions - num_submissions_with_points
-
-    participations_by_user_id =
-      Assessment::Participation.where(user: non_submitters, assessment: assignment.assessment)
-                               .index_by(&:user_id)
 
     num_non_submitters = non_submitters.size
     num_participated = non_submitters.count { |u| participations_by_user_id[u.id] }

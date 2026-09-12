@@ -12,7 +12,25 @@ module Cypress
     rescue_from Exception, with: :show_errors
     skip_before_action :authenticate_user!
 
+    ATTEMPTS = 3
+
     private
+
+      # A test's own page can still be finishing a request while the next test
+      # asks the bridge for something, and Postgres picks one of the two to
+      # abort. Nothing is half-done when it does, so the way out is to ask again.
+      def retrying_deadlocks
+        attempt = 0
+        begin
+          yield
+        rescue ActiveRecord::Deadlocked
+          attempt += 1
+          raise if attempt >= ATTEMPTS
+
+          sleep(0.1 * attempt)
+          retry
+        end
+      end
 
       # Returns the error as JSON such that it can be displayed in the Cypress test.
       def show_errors(exception)

@@ -9,8 +9,9 @@ module Assessment
       note: 180,
       graded_by: 120,
       graded_at: 120,
-      action: 200,
-      correction: 200
+      save: 90,
+      hand_in: 150,
+      correction: 150
     }.freeze
 
     def initialize(left_columns:, right_columns:)

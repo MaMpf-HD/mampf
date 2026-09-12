@@ -138,6 +138,25 @@ en:
       registered: 'registered'
       registration_not_open: 'Registration not yet open.'
       go_to_registration: 'Go to Registration →'
+    assignments_complete:
+      label: 'The assignment list is complete'
+      hint: 'Tick this once every assignment of the term exists. Until then, exam eligibility defers every verdict — each assignment still to come can overturn it. Creating a new assignment clears the tick again.'
+      cancel: 'Cancel'
+      close_dialog:
+        title: 'Tick the box'
+        body: 'The eligibility rule then judges: everybody gets a proposal, which you can accept one by one or all at once. Creating a new assignment clears the tick again.'
+        confirm: 'Tick the box'
+      open_dialog:
+        title: 'Clear the tick'
+        body: 'Without the tick the eligibility rule decides nothing: every verdict is deferred until you set it again.'
+        confirm: 'Clear the tick'
+      reopen_dialog:
+        title: 'Clear the tick'
+        body:
+          one: 'Without the tick the eligibility rule decides nothing — %{count} computed decision will contradict it afterwards. Reset it now? That eligibility is then undecided again. Individual decisions stay either way.'
+          other: 'Without the tick the eligibility rule decides nothing — %{count} computed decisions will contradict it afterwards. Reset them now? Those eligibilities are then undecided again. Individual decisions stay either way.'
+        reset: 'Reset'
+        confirm: 'Keep'
     campaign_status:
       title: 'Registration'
       none: 'No registration'
@@ -148,6 +167,7 @@ en:
       title: 'Status'
       draft: 'Draft'
       registration_open: 'Registration open'
+      registration_processing: 'Registration processing'
       registration_closed: 'Registration closed'
       finalized: 'Finalized'
       conducted: 'Conducted'
@@ -213,17 +233,12 @@ en:
     grades_updated: 'Grades updated successfully.'
     task_points:
       update: 'Task points updated successfully.'
-      submission_missing_tutorial: 'This submission has no tutorial assigned.'
-      submission_missing_assignment: 'This submission has no assignment assigned.'
       submission_missing_assessment: 'This assignment has no assessment configured.'
-      participation_missing_tutorial: 'This participation has no tutorial assigned.'
-      unsupported_assessment_type: 'This assessment type is not supported for task points.'
-      participation_missing_assessment: 'This participation has no assessment assigned.'
+      unsupported_assessment_type: 'Points for this kind of assessment cannot be entered here.'
       participation_missing_assignment: 'This assessment has no assignment configured.'
       assignment_missing_assessment: 'This assignment has no assessment configured.'
-      user_not_rostered: 'This user is not assigned to a tutorial for this lecture.'
       participation_id_missing_tutorial: 'Participation %{participation_id} has no tutorial assigned. Grading is only possible when the user is assigned to a tutorial.'
-      init_participation_missing_args: 'Assessment, user, and tutorial must be present.'
+      init_participation_missing_args: 'Assessment and user must be present.'
       assessment_does_not_require_points: 'Assessment %{assessment_id} does not accept points.'
       invalid_task_id: 'Invalid task %{task_id}.'
       invalid_points_value: 'Invalid points value for task %{task_id}.'
@@ -236,7 +251,6 @@ en:
       assignment_id_has_no_assessment: 'Assignment %{assignment_id} has no associated assessment.'
       participation_id_has_no_assignment: 'Participation %{participation_id} has no associated assignment.'
       participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
-      participation_removed: 'Participation of student has been revoked.'
     errors:
       feature_not_available: 'Assessment feature is not available.'
       no_assessable: 'Assignment or talk not found.'
@@ -248,6 +262,7 @@ en:
       user_not_found: 'User not found.'
       no_participation: 'Participation not found.'
       user_cannot_grade: 'The user is not authorized to grade in this scope.'
+      user_cannot_enter_points: 'You may not enter points here.'
       not_gradable: 'This assessment is not gradable.'
       invalid_grade: 'Invalid grade value'
       invalid_request_params: 'Invalid request parameters.'
@@ -274,28 +289,35 @@ en:
       task: 'Task'
       total_points: 'Total Points'
       status: 'Status'
-      actions: 'Actions'
-      excluded_reason: 'Reason for Exclusion'
       correction: 'Correction'
       max_points: 'pts'
       no_submissions_gradable: 'No pointable submissions exist for this assignment.'
       no_submission_zone: 'No submissions'
-      no_submission_badge: 'No submission'
-      marked_as_participated_badge: 'Marked as participated'
       has_been_moved_badge: ' Has been moved to another tutorial'
-      no_tutorial_badge: 'Not belonging to any tutorial'
+      no_tutorial_badge: 'No tutorial'
       participated: 'participated'
-      mark_as_participated: 'Mark as participated'
-      remove_participated: 'Remove participation record'
-      confirm_unsaved_changes: 'Unsaved changes in the grading table will be lost. Continue?'
+      paper_hand_in: 'Record a hand-in on paper'
+      paper_hand_in_remove: 'Take the paper hand-in back'
+      paper_hand_in_kept: 'Handed in on paper; with points entered the record stays'
+      paper_hand_in_select: 'Select %{name} for a hand-in on paper'
+      paper_hand_in_selected: 'Record selected as handed in on paper'
+      download_hand_in: 'Download hand-in'
+      show_hand_in: 'View hand-in'
+      download_correction: 'Download correction'
+      show_correction: 'View correction'
+      upload_correction: 'Upload correction'
+      upload_correction_closed: 'Corrections can be uploaded once the deadline has passed'
+      delete_correction: 'Delete correction'
+      confirm_delete_correction: 'Delete the correction? The file is gone then, the points stay.'
+      accept_late: 'Accept the late hand-in'
+      reject_late: 'Reject the late hand-in'
+      confirm_accept_late: 'Accept the late hand-in? It then counts like one handed in on time.'
+      confirm_reject_late: 'Reject the late hand-in? It then counts as not submitted.'
+      save_row: "Save this row's points"
+      reload_row: 'Reload the saved points; unsaved changes are lost'
+      points_input_label: '%{task} for %{name}'
       point_below_minimum: "Must be higher than %{min}"
       filter_name: 'Filter by name'
-      filter_options:
-        filter_all: "All"
-        filter_pending: "Pending"
-        filter_reviewed: "Reviewed"
-        filter_absent: "Absent"
-        filter_exempt: "Exempt"
       header_overview:
         submission:
           total: 'submissions'
@@ -308,7 +330,9 @@ en:
           graded: 'graded'
           pending: 'pending'
       no_user_for_config: 'No user for participation %{participation_id}'
-      user_moved_tutorial: 'submitted in tutorial %{old_tutorial}, moved to tutorial %{new_tutorial}'
+      user_moved_tutorial: 'Handed in in %{old_tutorial}, since then in %{new_tutorial}.'
+      user_left_tutorials: 'Handed in in %{old_tutorial}, since then in no tutorial.'
+      user_joined_tutorial: 'Handed in without a tutorial, since then in %{new_tutorial}.'
       no_tutorial: 'N/A'
     grading_talk:
       note_placeholder: "Add note..."
@@ -480,6 +504,8 @@ en:
           attributes:
             grade_numeric:
               not_gradable: "cannot be set on a non-gradable assessment"
+            status:
+              handed_in: "cannot be exempt or absent: this sheet was handed in"
             base:
               early_grading_not_allowed: "Grading is not permitted before the deadline"
         assessment/task_point:

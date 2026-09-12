@@ -180,8 +180,9 @@ class ExamsController < ApplicationController
     else
       respond_to do |format|
         format.turbo_stream do
-          reason = @exam.non_destructible_reason
-          flash[:error] = t("assessment.exam_not_destructible.#{reason}")
+          flash[:error] = @exam.destruction_blockers
+                               .map { |blocker| t("assessment.exam_not_destructible.#{blocker}") }
+                               .to_sentence
           render turbo_stream: stream_flash,
                  status: :unprocessable_content
         end

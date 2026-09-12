@@ -1,0 +1,28 @@
+<div class="container-md small-width mt-4 mb-5"
+     data-controller="vignettes-position"
+     data-vignettes-position-questionnaire-value="<%= @questionnaire.id %>"
+     data-vignettes-position-finished-value="true">
+  <h1 class="fs-3 fw-bold mb-3">
+    <i class="bi bi-check-circle-fill text-success me-2"></i>
+    <%= t('vignettes.closing.heading') %>
+  </h1>
+
+  <div class="trix-content mb-4">
+    <% if @questionnaire.closing_text_present? %>
+      <%= @questionnaire.closing_text %>
+    <% else %>
+      <p><%= t('vignettes.closing.default') %></p>
+    <% end %>
+  </div>
+
+  <% if @codename %>
+    <div class="alert alert-light border" role="alert">
+      <p class="mb-1"><%= t('vignettes.closing.your_code') %></p>
+      <p class="fs-4 font-monospace user-select-all mb-0"><%= @codename.grouped %></p>
+    </div>
+  <% end %>
+
+  <%= link_to t('vignettes.closing.back'),
+              lecture_questionnaires_path(@questionnaire.lecture),
+              class: "btn btn-primary" %>
+</div>

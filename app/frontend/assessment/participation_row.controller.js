@@ -110,7 +110,10 @@ export default class extends Controller {
     });
 
     // Enable the save button
-    if (this.hasSaveTarget) this.saveTarget.disabled = false;
+    if (this.hasSaveTarget) {
+      this.saveTarget.disabled = false;
+      this.saveTarget.classList.replace("btn-outline-secondary", "btn-success");
+    }
   }
 
   handleClean(targetType) {
@@ -127,7 +130,10 @@ export default class extends Controller {
     });
 
     // Disable the save button
-    if (this.hasSaveTarget) this.saveTarget.disabled = true;
+    if (this.hasSaveTarget) {
+      this.saveTarget.disabled = true;
+      this.saveTarget.classList.replace("btn-success", "btn-outline-secondary");
+    }
   }
 
   // --- Validation Methods ---

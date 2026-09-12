@@ -8,7 +8,8 @@ module StudentPerformance
     # as 0 % — the filter is how staff find them, not a tutorial id.
     NO_TUTORIAL = "none".freeze
 
-    before_action :set_record, only: :show
+    before_action :set_record, only: [:show, :exempt, :unexempt]
+    before_action :set_sheet, only: [:exempt, :unexempt]
 
     rescue_from CanCan::AccessDenied do |exception|
       redirect_to main_app.root_url, alert: exception.message
@@ -19,34 +20,46 @@ module StudentPerformance
     end
 
     def index
-      scope = @lecture.student_performance_records
-                      .includes(:user)
-                      .joins(:user)
-                      .order(Arel.sql(
-                               "COALESCE(NULLIF(users.name_in_tutorials, " \
-                               "''), users.name) ASC"
-                             ))
+      @due_points = due_points
+      scope = filter_by_tutorial(filter_by_name(records_scope))
 
-      if params[:tutorial_id] == NO_TUTORIAL
-        scope = scope.where.not(user_id: tutorial_member_ids)
-      elsif params[:tutorial_id].present?
-        tutorial = @lecture.tutorials.find_by(id: params[:tutorial_id])
-
-        if tutorial
-          user_ids = TutorialMembership.where(tutorial: tutorial).select(:user_id)
-          scope = scope.where(user_id: user_ids)
-        end
-      end
-
-      @pagy, @records = pagy(scope)
+      @pagy, @records = pagy(sorted(scope))
+      assessments = assignment_assessments
+      # A sheet nobody could hand in yet counts towards none of the figures in
+      # this table, so it gets no column of its own — the detail page lists it.
+      # The heading says how many were left out.
+      @assessments = assessments.select { |a| due_points.due?(a.id) }
+      @not_due_count = assessments.size - @assessments.size
       load_assessment_statuses
-      @awaiting_marking = awaiting_marking_counts(scope)
-      @standard_max = @assessments.sum(&:effective_total_points)
+      @awaiting_marking = awaiting_marking_counts(scope, assessments)
       @achievements = @lecture.achievements.order(:title)
     end
 
     def show
+      @due_points = due_points
       load_show_data
+    end
+
+    # Exemptions require :edit on the lecture: :enter_points alone must not let
+    # tutors change which assignments count towards a student's required points.
+    def exempt
+      participation = participation_for(@sheet)
+      begin
+        Assessment::AbsenceHandling.mark_exempt(participation, note: params[:note])
+      rescue ActiveRecord::RecordInvalid => e
+        return redirect_to_record(alert: e.record.errors.full_messages.to_sentence)
+      end
+
+      redirect_to_record(notice: I18n.t("student_performance.records.show.exempted",
+                                        sheet: @sheet.title))
+    end
+
+    def unexempt
+      participation = @sheet.assessment_participations.find_by(user_id: @record.user_id)
+      participation.update!(status: :pending, note: nil) if participation&.exempt?
+
+      redirect_to_record(notice: I18n.t("student_performance.records.show.unexempted",
+                                        sheet: @sheet.title))
     end
 
     def recompute
@@ -63,6 +76,65 @@ module StudentPerformance
 
     private
 
+      # The id decides nothing a reader sees; it is there because a page is cut
+      # with OFFSET, and two rows the order cannot tell apart may come back in
+      # either order - once on one page, once on the next, and somebody else
+      # not at all. Two students may well share a name.
+      def records_scope
+        @lecture.student_performance_records
+                .includes(:user)
+                .joins(:user)
+                .order(Arel.sql(
+                         "COALESCE(NULLIF(users.name_in_tutorials, " \
+                         "''), users.name) ASC"
+                       ), :id)
+      end
+
+      def filter_by_tutorial(scope)
+        return scope if params[:tutorial_id].blank?
+        return scope.where.not(user_id: tutorial_member_ids) if no_tutorial?
+
+        tutorial = @lecture.tutorials.find_by(id: params[:tutorial_id])
+        return scope unless tutorial
+
+        scope.where(user_id: TutorialMembership.where(tutorial: tutorial)
+                                               .select(:user_id))
+      end
+
+      # The filter that asks for nobody's group rather than for a group.
+      def no_tutorial?
+        params[:tutorial_id] == NO_TUTORIAL
+      end
+
+      # The name is the order the database can give. The maximum and the
+      # percentage are worked out per request from what the tutors have marked,
+      # so those are ordered here and the page cut from the result - Pagy takes
+      # an Array as readily as a relation.
+      def sorted(scope)
+        key = sort_key
+        return scope unless key
+
+        sign = params[:dir] == "desc" ? -1 : 1
+        # The position is the tie-breaker, so equal numbers keep the order by
+        # name the scope arrives in, whichever way round the column is sorted.
+        scope.to_a.each_with_index
+             .sort_by { |record, position| [sign * key.call(record), position] }
+             .map(&:first)
+      end
+
+      # A student without a basis is not at 0 % but below it: she sorts with
+      # the lowest, and never above someone who has actually scored nothing.
+      def sort_key
+        case params[:sort]
+        when "points"
+          ->(record) { record.points_total_materialized.to_f }
+        when "maximum"
+          ->(record) { due_points.marked_max_for(record.user_id).to_f }
+        when "percentage"
+          ->(record) { due_points.marked_percentage_for(record)&.to_f || -1 }
+        end
+      end
+
       def tutorial_member_ids
         TutorialMembership.where(tutorial: @lecture.tutorials).select(:user_id)
       end
@@ -70,9 +142,16 @@ module StudentPerformance
       # Per assignment, how many of the listed students handed in without being
       # marked yet. Counted over the whole filtered set rather than the current
       # page, because the number describes the sheet, not the page.
-      def awaiting_marking_counts(scope)
+      #
+      # Only over sheets that are due: nobody may mark before the grace period
+      # is over, so an early hand-in is waiting for the deadline, not for a
+      # tutor, and counting it claims a backlog nobody could work off.
+      def awaiting_marking_counts(scope, assessments)
+        ids = assessments.select { |a| due_points.due?(a.id) }.map(&:id)
+        return {} if ids.empty?
+
         Assessment::Participation
-          .where(assessment_id: @assessments.select(:id),
+          .where(assessment_id: ids,
                  user_id: scope.reorder(nil).select(:user_id),
                  status: :pending)
           .where.not(submitted_at: nil)
@@ -86,6 +165,25 @@ module StudentPerformance
 
         redirect_to lecture_student_performance_records_path(@lecture),
                     alert: I18n.t("student_performance.errors.no_record")
+      end
+
+      def set_sheet
+        @sheet = assignment_assessments.find { |a| a.id == params[:assessment_id] }
+        return if @sheet
+
+        redirect_to_record(alert: I18n.t("student_performance.errors.no_sheet"))
+      end
+
+      # AssessmentBackfillWorker may not have created this participation yet;
+      # mark_exempt still needs one to store the exemption.
+      def participation_for(sheet)
+        sheet.assessment_participations.find_or_initialize_by(user_id: @record.user_id) do |p|
+          p.tutorial_id = Assessment::Participation.tutorial_for(@record.user, @lecture)
+        end
+      end
+
+      def redirect_to_record(**flash)
+        redirect_to lecture_student_performance_record_path(@lecture, @record), **flash
       end
 
       def recompute_single(user_id)
@@ -109,18 +207,26 @@ module StudentPerformance
                     )
       end
 
+      # Every sheet of the lecture, oldest deadline first.
+      def assignment_assessments
+        Assessment::Assessment
+          .where(lecture_id: @lecture.id, assessable_type: "Assignment")
+          .includes(:tasks)
+          .joins("JOIN assignments ON assignments.id = " \
+                 "assessment_assessments.assessable_id")
+          .order("assignments.deadline ASC")
+          .to_a
+      end
+
+      # The detail page is a list, not a grid: a sheet that is not due yet costs
+      # a row rather than a column, and the badge writes out what it is.
       def load_show_data
-        @assessments = Assessment::Assessment
-                       .where(lecture_id: @lecture.id, assessable_type: "Assignment")
-                       .includes(:tasks)
-                       .joins("JOIN assignments ON assignments.id = " \
-                              "assessment_assessments.assessable_id")
-                       .order("assignments.deadline ASC")
+        @assessments = assignment_assessments
 
         participations = Assessment::Participation
-                         .where(assessment_id: @assessments.select(:id),
+                         .where(assessment_id: @assessments.map(&:id),
                                 user_id: @record.user_id)
-                         .select(:id, :assessment_id, :status, :submitted_at)
+                         .select(:id, :assessment_id, :status, :submitted_at, :note)
 
         @participation_by_assessment = participations.index_by(&:assessment_id)
 
@@ -149,19 +255,11 @@ module StudentPerformance
       end
 
       def load_assessment_statuses
-        @assessments = Assessment::Assessment
-                       .where(lecture_id: @lecture.id,
-                              assessable_type: "Assignment")
-                       .includes(:tasks)
-                       .joins("JOIN assignments ON assignments.id = " \
-                              "assessment_assessments.assessable_id")
-                       .order("assignments.deadline ASC")
-
         user_ids = @records.map(&:user_id)
         return if user_ids.empty?
 
         participations = Assessment::Participation
-                         .where(assessment_id: @assessments.select(:id),
+                         .where(assessment_id: @assessments.map(&:id),
                                 user_id: user_ids)
                          .select(:id, :assessment_id, :user_id,
                                  :status, :submitted_at)

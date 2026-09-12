@@ -55,9 +55,11 @@ RSpec.describe("Assignments", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
+      # Escaped, because the factory's title comes from Faker and every so
+      # often carries an apostrophe - which the response spells `&#39;`.
       it "renders the form with assignment data" do
         get edit_assignment_path(assignment), xhr: true
-        expect(response.body).to include(assignment.title)
+        expect(response.body).to include(CGI.escapeHTML(assignment.title))
       end
     end
 

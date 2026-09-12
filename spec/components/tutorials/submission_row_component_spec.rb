@@ -126,55 +126,60 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
   describe "#extract_task_points" do
     let!(:task) { create(:assessment_task, assessment: assignment.assessment) }
+    let(:participation) do
+      create(:assessment_participation, assessment: assignment.assessment, user: student)
+    end
 
-    context "when task points exist for submission" do
+    # The row is handed the team's participations by the table; the points it
+    # shows are theirs.
+    context "when task points exist for the team" do
       it "returns the points" do
-        graded_task = double("graded_task", task_id: task.id, points: 8.0)
-        allow(submission).to receive(:graded_tasks_points).and_return([graded_task])
-        expect(component_tutorial.extract_task_points(task)).to eq(8.0)
+        Timecop.travel(assignment.deadline + 2.hours) do
+          create(:assessment_task_point, task: task, points: 8,
+                                         assessment_participation: participation)
+        end
+        component = described_class.new(submission: submission, assignment: assignment,
+                                        grading_scope: tutorial,
+                                        participations: [participation.reload])
+
+        expect(component.extract_task_points(task)).to eq(8.0)
       end
     end
 
-    context "when no task points exist for submission" do
+    context "when no task points exist for the team" do
       it "returns nil" do
-        allow(submission).to receive(:graded_tasks_points).and_return([])
+        component = described_class.new(submission: submission, assignment: assignment,
+                                        grading_scope: tutorial,
+                                        participations: [participation])
+
+        expect(component.extract_task_points(task)).to be_nil
+      end
+    end
+
+    # A single row rendered on its own - after a save, say - is not handed
+    # anything and reads the team's participations itself.
+    context "when the row is not handed the participations" do
+      it "reads them off the submission" do
+        participation
+
+        expect(component_tutorial.participation).to eq(participation)
+      end
+    end
+
+    context "when nobody on the team has a participation" do
+      it "shows no status and no points" do
+        expect(component_tutorial.participation).to be_nil
+        expect(component_tutorial.status).to be_nil
         expect(component_tutorial.extract_task_points(task)).to be_nil
       end
-    end
-  end
-
-  describe "#badge_status_participation_color" do
-    it "returns warning for pending" do
-      expect(component_tutorial.badge_status_participation_color(:pending)).to eq("warning")
-    end
-
-    it "returns success for reviewed" do
-      expect(component_tutorial.badge_status_participation_color(:reviewed)).to eq("success")
-    end
-
-    it "returns info for exempt" do
-      expect(component_tutorial.badge_status_participation_color(:exempt)).to eq("info")
-    end
-
-    it "returns info for absent" do
-      expect(component_tutorial.badge_status_participation_color(:absent)).to eq("info")
-    end
-
-    it "returns nil for unknown status" do
-      expect(component_tutorial.badge_status_participation_color(:unknown)).to be_nil
-    end
-  end
-
-  describe "#badge_status_participation_class" do
-    it "returns correct class string" do
-      expect(component_tutorial.badge_status_participation_class(:pending))
-        .to eq("badge rounded-pill bg-warning")
     end
   end
 
   describe "#task_points_input" do
     let!(:task) { create(:assessment_task, assessment: assignment.assessment, max_points: 10) }
 
+    # The input carries a translated message, and a component can only
+    # translate once it has been rendered.
     before do
       allow(vc_test_controller).to receive(:current_user).and_return(tutor)
       render_inline(component_tutorial)
@@ -219,7 +224,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
     it "renders a button with the save icon" do
       html = component_tutorial.save_row_button(true)
-      expect(html).to include("bi-save")
+      expect(html).to include("fa-save")
     end
 
     context "when grading is not allowed" do
@@ -290,7 +295,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     end
   end
 
-  describe "#can_grade?" do
+  describe "#can_enter_points?" do
     context "when grading_scope is a Tutorial" do
       context "when current_user is an admin" do
         before do
@@ -299,7 +304,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_tutorial.can_grade?).to eq(true)
+          expect(component_tutorial.can_enter_points?).to eq(true)
         end
       end
 
@@ -309,7 +314,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
           render_inline(component_tutorial)
         end
         it "returns true" do
-          expect(component_tutorial.can_grade?).to eq(true)
+          expect(component_tutorial.can_enter_points?).to eq(true)
         end
       end
 
@@ -319,7 +324,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
           render_inline(component_tutorial)
         end
         it "returns true" do
-          expect(component_tutorial.can_grade?).to eq(true)
+          expect(component_tutorial.can_enter_points?).to eq(true)
         end
       end
 
@@ -330,7 +335,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         end
 
         it "returns false" do
-          expect(component_tutorial.can_grade?).to eq(false)
+          expect(component_tutorial.can_enter_points?).to eq(false)
         end
       end
     end
@@ -343,7 +348,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_lecture.can_grade?).to eq(true)
+          expect(component_lecture.can_enter_points?).to eq(true)
         end
       end
 
@@ -354,7 +359,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         end
 
         it "returns false" do
-          expect(component_lecture.can_grade?).to eq(false)
+          expect(component_lecture.can_enter_points?).to eq(false)
         end
       end
 
@@ -365,7 +370,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_lecture.can_grade?).to eq(true)
+          expect(component_lecture.can_enter_points?).to eq(true)
         end
       end
     end

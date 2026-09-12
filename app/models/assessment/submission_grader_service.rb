@@ -1,15 +1,8 @@
 module Assessment
-  # Delegates to PointEntryService for actual point recording.
-  # Triggers Participation.recompute_points_total! after point entry (via PointEntryService).
-  # Validates that the task belongs to the submission's assessment (via PointEntryService).
-  # Only allows scoring if the assignment is inactive (after deadline).
   class SubmissionGraderService
     class SubmissionGraderError < StandardError; end
 
     class << self
-      # Scores a batch of mixed submission/participation entries in one transaction.
-      # Tutorials/lectures are only authorization-checked once per batch (see
-      # `authorize_tutorial_or_lecture!` below).
       def score_multi_teams_by_types!(records, scorer)
         validated_tutorial_ids = []
 
@@ -20,7 +13,6 @@ module Assessment
         end
       end
 
-      # Routes a single bulk entry to the correct scoring method based on target type.
       def score_tasks_by_types!(entry, scorer, validated_tutorial_ids)
         case entry["target"]
         when "submission"
@@ -32,8 +24,6 @@ module Assessment
         end
       end
 
-      # Enters points of all tasks for all team members of a submission.
-      # points_by_task_id: Hash of task_id => points (points potentially nil or a string).
       def score_tasks_by_submission!(submission, points_by_task_id, scorer)
         raise_if_errors!(validate_submission_present(submission))
 
@@ -61,10 +51,16 @@ module Assessment
         )
 
         PointEntryService.enter_points(participation, points_by_task_id, scorer, nil)
+        stamp_paper_hand_in!(participation, points_by_task_id)
+        participation
       end
 
+      # The sheet came in - as a file, or on paper. A row the backfill worker
+      # wrote carries no stamp yet and gets one; a stamp already there is the
+      # time the sheet came in and stays. Somebody in no group takes part in
+      # the lecture itself.
       def init_participation(assessment, user, tutorial)
-        if assessment.nil? || user.nil? || tutorial.nil?
+        if assessment.nil? || user.nil?
           raise(SubmissionGraderError,
                 I18n.t("assessment.task_points.init_participation_missing_args"))
         end
@@ -73,19 +69,20 @@ module Assessment
           assessment_id: assessment.id,
           user_id: user.id
         )
-        if participation.new_record?
-          participation.update!(tutorial_id: tutorial.id,
-                                submitted_at: Time.current)
-        end
+        participation.tutorial_id ||= tutorial&.id
+        participation.submitted_at ||= Time.current if participation.pending?
+        participation.save! if participation.changed?
         participation
       end
 
+      # The other way round: the sheet did not come in after all. Only while
+      # nothing is written on it - points say it did.
       def remove_participation(participation)
         raise_if_errors!(validate_participation_present(participation))
         task_points = participation.task_points
         if task_points.empty? || task_points.all? { |tp| tp.points.nil? }
           task_points.destroy_all
-          participation.destroy!
+          participation.update!(submitted_at: nil)
         else
           raise(SubmissionGraderError,
                 I18n.t("assessment.task_points.participation_has_task_points"))
@@ -94,7 +91,15 @@ module Assessment
 
       private
 
-        # ── entry routing helpers ──────────────────────────────────────────
+        # Points on a sheet nobody recorded a hand-in for say the sheet was
+        # there: the tutor had it on paper. The stamp is what the student's
+        # page and the performance table read.
+        def stamp_paper_hand_in!(participation, points_by_task_id)
+          return if participation.submitted_at.present?
+          return if points_by_task_id.values.all?(&:blank?)
+
+          participation.update!(submitted_at: Time.current)
+        end
 
         def score_submission_entry!(entry, scorer, validated_tutorial_ids)
           submission = Submission.find(entry["id"])
@@ -117,14 +122,13 @@ module Assessment
           score_tasks_by_participation!(participation, entry["task_points"], scorer)
         end
 
-        # Authorizes the scorer against a tutorial, skipping the check (and the
-        # Tutorial.find lookup) if that tutorial was already validated earlier
-        # in this batch.
+        # Cache authorized tutorial IDs so a bulk save does not repeat
+        # Tutorial.find and permission checks for every row.
         def authorize_tutorial!(tutorial_id, scorer, validated_tutorial_ids)
           return if tutorial_id.blank? || validated_tutorial_ids.include?(tutorial_id)
 
           tutorial = Tutorial.find(tutorial_id)
-          raise_if_errors!(validate_current_user_can_grade(tutorial, scorer))
+          raise_if_errors!(validate_scorer_may_enter_points(tutorial, scorer))
           validated_tutorial_ids << tutorial_id
         end
 
@@ -134,8 +138,6 @@ module Assessment
             PointEntryService.enter_points(participation, points_by_task_id, scorer, submission)
           end
         end
-
-        # ── validations: each returns nil (valid) or an error string (invalid) ──
 
         def validate_submission_present(submission)
           return if submission.present?
@@ -182,13 +184,11 @@ module Assessment
           I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
         end
 
-        def validate_current_user_can_grade(scope, user)
-          return if scope.nil? || user.can_grade_in_scope?(scope)
+        def validate_scorer_may_enter_points(scope, user)
+          return if scope.nil? || user.can_enter_points_in?(scope)
 
-          I18n.t("assessment.errors.user_cannot_grade")
+          I18n.t("assessment.errors.user_cannot_enter_points")
         end
-
-        # ── error raising ───────────────────────────────────────────────────
 
         def raise_if_errors!(*errors)
           errors = errors.flatten.compact

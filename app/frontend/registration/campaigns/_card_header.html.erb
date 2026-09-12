@@ -1,27 +1,44 @@
 <%= turbo_frame_tag campaign_header_frame_id(campaign) do %>
   <div class="card-header registration-campaign-card-header position-relative">
     <div class="registration-campaign-header-actions d-flex gap-1">
+      <% if campaign.revertible_to_draft? %>
+        <%= button_to revert_to_draft_registration_campaign_path(campaign),
+                      method: :patch,
+                      form: { class: "d-inline" },
+                      data: {
+                        turbo_confirm: campaign_revert_confirmation,
+                        turbo_stream: true
+                      },
+                      class: "btn btn-sm btn-outline-secondary",
+                      title: t("registration.campaign.actions.revert_to_draft"),
+                      aria: {
+                        label: t("registration.campaign.actions.revert_to_draft")
+                      } do %>
+          <i class="bi bi-arrow-90deg-left"></i>
+        <% end %>
+      <% end %>
+
+      <% if campaign.discardable? %>
+        <%= button_to registration_campaign_path(campaign),
+                      method: :delete,
+                      form: { class: "d-inline" },
+                      data: {
+                        turbo_confirm: campaign_discard_confirmation(campaign),
+                        turbo_stream: true
+                      },
+                      class: "btn btn-sm btn-outline-danger",
+                      title: campaign_discard_title(campaign),
+                      aria: { label: campaign_discard_title(campaign) } do %>
+          <i class="bi bi-trash"></i>
+        <% end %>
+      <% end %>
+
       <%= link_to edit_registration_campaign_path(campaign),
                   class: "btn btn-sm btn-outline-secondary",
                   data: { turbo_frame: campaign_header_frame_id(campaign) },
                   title: t("basics.edit"),
                   aria: { label: t("basics.edit") } do %>
         <i class="bi bi-pencil"></i>
-      <% end %>
-
-      <% if campaign.can_be_deleted? %>
-        <%= button_to registration_campaign_path(campaign),
-                      method: :delete,
-                      form: { class: "d-inline" },
-                      data: {
-                        turbo_confirm: t("registration.campaign.confirm_delete"),
-                        turbo_stream: true
-                      },
-                      class: "btn btn-sm btn-outline-danger",
-                      title: t("buttons.delete"),
-                      aria: { label: t("buttons.delete") } do %>
-          <i class="bi bi-trash"></i>
-        <% end %>
       <% end %>
     </div>
 

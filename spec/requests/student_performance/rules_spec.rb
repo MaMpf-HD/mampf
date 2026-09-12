@@ -8,6 +8,9 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
   before do
     FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
     editor.reload
+    # Every example below is about a term whose assignments have all been
+    # created; the examples about the state before that say so themselves.
+    lecture.update!(assignments_complete: true)
     lecture.reload
   end
   describe "GET /lectures/:lecture_id/performance/rules/edit" do
@@ -337,6 +340,55 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
   describe "PATCH /lectures/:lecture_id/performance/rules/preview" do
     context "as an editor" do
       before { sign_in editor }
+
+      # The number next to the verdict has to be the one a teacher can check
+      # against the sheets handed out so far.
+      context "with a sheet that is not due yet" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active,
+                            :with_percentage,
+                            lecture: lecture,
+                            min_percentage: 50)
+        end
+
+        before do
+          [[2.days.ago, 50], [3.days.from_now, 50]].each do |deadline, points|
+            assignment = FactoryBot.create(:assignment, lecture: lecture,
+                                                        deadline: 1.year.from_now)
+            # rubocop:disable Rails/SkipsModelValidations
+            assignment.update_column(:deadline, deadline)
+            # rubocop:enable Rails/SkipsModelValidations
+            FactoryBot.create(:assessment_task,
+                              assessment: assignment.assessment,
+                              max_points: points)
+          end
+          # Creating the sheets reopened the list; the preview is about a term
+          # whose assignments have all been created.
+          lecture.update!(assignments_complete: true)
+        end
+
+        let!(:record) do
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture,
+                            points_total_materialized: 45,
+                            points_max_materialized: 100,
+                            percentage_materialized: 45)
+        end
+
+        it "measures the percentage against the sheets due so far" do
+          patch preview_lecture_student_performance_rules_path(lecture),
+                params: { rule: {
+                  threshold_mode: "percentage",
+                  min_percentage: "96"
+                } }
+
+          helpers = ApplicationController.helpers
+          expect(response.body)
+            .to include(helpers.number_to_percentage(90, precision: 1))
+          expect(response.body)
+            .not_to include(helpers.number_to_percentage(45, precision: 1))
+        end
+      end
 
       context "with an active rule and records" do
         let!(:rule) do

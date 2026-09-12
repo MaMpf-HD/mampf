@@ -40,6 +40,15 @@
     </div>
 
     <div class="card-body">
+      <% if @result.details[:assignments_incomplete] %>
+        <div class="alert alert-info d-flex align-items-center">
+          <i class="bi bi-info-circle me-2"></i>
+
+          <%= t("student_performance.certifications.index.assignments_incomplete",
+                tab: t("assessment.tabs.assignments")) %>
+        </div>
+      <% end %>
+
       <div class="row g-4 mb-4">
         <div class="col-12 col-md-6">
           <div class="p-3 border rounded bg-light">
@@ -77,6 +86,10 @@
                       precision: 1) %>
               </span>
             </div>
+
+            <p class="text-muted small mb-2">
+              <%= t("student_performance.evaluator.single_proposal.measured_against_all") %>
+            </p>
 
             <div class="d-flex justify-content-between mb-2">
               <span class="text-muted">
@@ -122,7 +135,7 @@
 
             <% if @result.points_criterion_deferral %>
               <p class="text-amber small mb-0 mt-2">
-                <%= t("student_performance.evaluator.deferral.#{@result.points_criterion_deferral}") %>
+                <%= deferral_text(@result, @result.points_criterion_deferral) %>
               </p>
             <% end %>
           </div>

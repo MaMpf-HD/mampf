@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe(Assessment::PointEntryService, type: :model) do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
   let(:task1) { FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10) }
   let(:task2) { FactoryBot.create(:assessment_task, assessment: assessment, max_points: 5) }
@@ -67,8 +69,42 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
       end
 
       it "calls update_status_if_all_scored! on participation" do
-        expect(participation).to receive(:update_status_if_all_scored!)
+        expect(participation).to receive(:update_status_if_all_scored!).with(grader: grader)
         described_class.enter_points(participation, { task1.id => "5" }, grader)
+      end
+
+      # The stamp is what the student's page compares against, so it has to
+      # move with every complete save, not only with the first.
+      it "stamps the participation with the grader and the time once every task is scored" do
+        described_class.enter_points(participation, { task1.id => "5" }, grader)
+        expect(participation.reload.graded_at).to be_nil
+
+        described_class.enter_points(participation, { task2.id => "3" }, grader)
+        participation.reload
+        expect(participation).to be_reviewed
+        expect(participation.grader).to eq(grader)
+        expect(participation.graded_at).to be_within(5.seconds).of(Time.current)
+      end
+
+      it "moves the stamp when the marks are saved again" do
+        described_class.enter_points(participation, { task1.id => "5", task2.id => "3" }, grader)
+        first = participation.reload.graded_at
+
+        travel_to(1.hour.from_now) do
+          described_class.enter_points(participation, { task1.id => "6" }, grader)
+        end
+
+        expect(participation.reload.graded_at).to be > first
+      end
+
+      it "clears the stamp when a task is unscored again" do
+        described_class.enter_points(participation, { task1.id => "5", task2.id => "3" }, grader)
+        described_class.enter_points(participation, { task2.id => nil }, grader)
+
+        participation.reload
+        expect(participation).to be_pending
+        expect(participation.graded_at).to be_nil
+        expect(participation.grader).to be_nil
       end
     end
 

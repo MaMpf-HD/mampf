@@ -165,7 +165,6 @@ The main fields and methods of `StudentPerformance::Record` are:
 | `user_id`                 | DB column (FK)    | The student whose performance is materialized                            |
 | `points_total_materialized` | DB column       | Points awarded so far — only participations that are fully marked count  |
 | `points_max_materialized` | DB column         | Maximum of every assignment in the lecture, minus the ones this student is exempt from |
-| `points_max_pending_materialized` | DB column | Of that maximum, how much belongs to work handed in but not yet fully marked |
 | `percentage_materialized` | DB column         | Computed percentage (points_total / points_max)                          |
 | `achievements_met_ids`    | DB column (JSONB) | Optional list of achievement IDs currently met (factual audit)           |
 | `achievements_ungraded_ids` | DB column (JSONB) | Achievement IDs with no grade recorded yet — not met, but not missed either |
@@ -519,8 +518,9 @@ The "proposal calculator" for teachers: shows which students would pass/fail bas
 | `evaluate(record)` | Evaluates a single `StudentPerformance::Record` and returns a structured proposal. |
 | `bulk_evaluate(records)` | Convenience method to evaluate multiple records at once for UI display. |
 
-The result carries the proposal plus five booleans describing the two criteria,
-and reads them out in two ways that must not be confused:
+The result carries the proposal plus seven booleans — whether the assignment
+list is still open, and the state of the two criteria — and reads them out in
+two ways that must not be confused:
 
 | Method | Answers |
 |---|---|
@@ -530,6 +530,9 @@ and reads them out in two ways that must not be confused:
 They deliberately do not nest. Points still reachable next to a missed
 achievement gives a `:failed` verdict — no verdict reason — while the points
 criterion itself stays open, which is what the single-proposal screen shows.
+While the assignment list is open, `verdict_deferral_reasons` answers with that
+alone: the other reasons hold too, but they are not what holds the verdict, and
+repeating them in every row of the table says nothing.
 
 ### Behavior Highlights
 - **Teacher-only tool:** Used in Certification UI and rule editing workflows
@@ -566,6 +569,7 @@ defers it.
       end
 
       def propose(*statuses)
+        return :inconclusive unless @assignments_complete
         return :failed if statuses.include?(:not_met)
         return :inconclusive if statuses.intersect?(UNDECIDED)
 
@@ -575,17 +579,31 @@ defers it.
 
 | Criterion | States |
 |---|---|
-| points | `:met` · `:pending` (marking outstanding) · `:not_measurable` (nothing to measure) · `:not_met` |
+| points | `:met` · `:pending` (marking outstanding, or a sheet not due yet) · `:not_measurable` (nothing to measure) · `:not_met` |
 | achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
 
-**`:pending`** means the student is below the threshold but the points still
-awaiting marking — `points_max_pending_materialized` — would carry them over it.
-Marking only ever adds points, and the sheets awaiting it are already inside
-`points_max_materialized`, so the best case is everything outstanding awarded in
-full. That distinction matters in both directions: without it a tutor's backlog
-reads as a failed threshold and the student is refused for somebody else's
-unfinished work, while a blunt "anything outstanding defers the decision" would
-defer the entire cohort over a single unmarked sheet.
+**`:pending`** means the student is below the threshold but what is still
+outstanding would carry them over it. Two things are outstanding: work handed in,
+due, and not marked yet — with a tutor — and sheets whose deadline, grace period
+included, has not passed. Both are counted at read time by
+`StudentPerformance::DuePoints`, because both move with the clock and a stored
+calendar figure would go stale in silence: a deadline passes without anything
+being written. A sheet handed in early is among the ones to come, not with a
+tutor — until its deadline the file can still be replaced or withdrawn, and
+nobody can mark it. Both are already inside `points_max_materialized`, so the
+best case is all of it awarded in full. That distinction matters in both directions: without it a tutor's
+backlog or a term that is not over reads as a failed threshold and the student is
+refused for time that has not run out, while a blunt "anything outstanding defers
+the decision" would defer the entire cohort over a single unmarked sheet.
+
+**Nothing is proposed at all while assignments can still be added.** Another
+sheet worth *p* points raises the points needed by *p*/2 and the points reachable
+by *p*, so it can overturn a pass and a fail alike — the arithmetic, not the
+implementation, is what makes a mid-term verdict worthless. `Lecture#assignments_complete?`,
+a checkbox next to the assignment list, is what says no more are coming; until it
+is set every verdict is `:inconclusive` with `assignments_incomplete` as its
+reason, and the certification screen says so next to a disabled sweep instead of
+proposing. Creating an assignment takes the statement back, without asking.
 
 **`:not_measurable`** means `points_max_materialized` is zero — the student is
 exempt from every assignment, or the lecture has none yet. A share of nothing is

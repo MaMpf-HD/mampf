@@ -1,7 +1,6 @@
-<%= helpers.turbo_frame_tag "grading-table" do %>
-  <!-- ── ZONE 1: has grading records ── -->
-  <% if grading_records? %>
-    <div data-controller="status-filter">
+<%= helpers.turbo_frame_tag "pointing-table" do %>
+  <% if rows? %>
+    <div data-controller="status-filter paper-selection">
       <% if grading_enabled? %>
         <div class="d-flex gap-2 m-3 align-items-center">
           <div class="d-flex align-items-center">
@@ -18,6 +17,44 @@
             class="d-flex gap-2 align-items-center"
             data-status-filter-target="activeFilters"
           ></div>
+
+          <%# The rows' checkboxes belong to this form by its id. %>
+          <% if can_enter_points? %>
+            <%= form_with url: mark_users_as_participated_path,
+                          method: :patch,
+                          id: "paper-hand-ins",
+                          local: true,
+                          class: "ms-auto",
+                          data: { turbo: true } do %>
+              <input
+                type="hidden"
+                name="assignment_id"
+                value="<%= @assignment.id %>"
+              >
+
+              <input
+                type="hidden"
+                name="tutorial_id"
+                value="<%= @tutorial&.id %>"
+              >
+
+              <input
+                type="hidden"
+                name="grading_scope_type"
+                value="<%= @grading_scope.class.name.downcase %>"
+              >
+
+              <button
+                type="submit"
+                class="btn btn-outline-secondary btn-sm"
+                disabled
+                data-paper-selection-target="button"
+              >
+                <i class="bi bi-file-earmark-check me-1"></i>
+                <%= t('assessment.grading_tutorial.paper_hand_in_selected') %>
+              </button>
+            <% end %>
+          <% end %>
         </div>
       <% end %>
 
@@ -40,61 +77,51 @@
                 tasks: tasks,
                 total_max_points: total_max_points,
                 accepted_file_type: @assignment.accepted_file_type,
-                tutorials: @tutorials
+                tutorials: @tutorials,
+                status_without_hand_in: @assignment.assessment&.status_without_hand_in
               )) %>
             </thead>
 
             <tbody>
               <% if tutorial_scope? %>
-                <!-- TUTOR -->
-                <!-- Submissions -->
                 <% @stack.each do |submission| %>
                   <%= render(SubmissionRowComponent.new(
                       submission: submission,
                       assignment: @assignment,
+                      grading_scope: @tutorial,
+                      participations: team_participations(submission))) %>
+                <% end %>
+                <% @non_submitters.each do |user| %>
+                  <%= render(ParticipationRowComponent.new(
+                      participation: participation_for(user, @tutorial),
+                      assessment: @assignment.assessment,
+                      table_option: :grading,
                       grading_scope: @tutorial)) %>
                 <% end %>
-                <!-- Non-submitters + have grading records -->
-                <% @non_submitters.each do |user| %>
-                  <% participation = @non_submitter_participations[user.id] %>
-
-                  <% if participation %>
-                    <%= render(ParticipationRowComponent.new(
-                        participation: participation,
-                        assessment: @assignment.assessment,
-                        save_url: point_user_tutorial_path(participation, 
-                                                    grading_scope_type: "tutorial"),
-                        refresh_url: refresh_point_user_tutorial_path(participation, 
-                                                            grading_scope_type: "tutorial"),
-                        grading_scope: @tutorial)) %>
-                  <% end %>
-                <% end %>
               <% else %>
-                <!-- TEACHER -->
                 <% @tutorials.each do |tutorial| %>
-                  <!-- Submissions -->
                   <% (@submissions_by_tutorial[tutorial] || []).each do |submission| %>
                     <%= render(SubmissionRowComponent.new(
                         submission: submission,
                         assignment: @assignment,
-                        grading_scope: @lecture)) %>
+                        grading_scope: @lecture,
+                        participations: team_participations(submission))) %>
                   <% end %>
 
-                  <!-- Non-submitters + have grading records -->
                   <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
-                    <% participation = @non_submitter_participations[user.id] %>
-
-                    <% if participation %>
-                      <%= render(ParticipationRowComponent.new(
-                        participation: participation,
+                    <%= render(ParticipationRowComponent.new(
+                        participation: participation_for(user, tutorial),
                         assessment: @assignment.assessment,
-                        save_url: point_user_tutorial_path(participation, 
-                                                    grading_scope_type: "lecture"),
-                        refresh_url: refresh_point_user_tutorial_path(participation, 
-                                                            grading_scope_type: "lecture"),
+                        table_option: :pointing,
                         grading_scope: @lecture)) %>
-                    <% end %>
                   <% end %>
+                <% end %>
+                <% @non_tutorial_participants.each do |user| %>
+                  <%= render(ParticipationRowComponent.new(
+                      participation: participation_for(user, nil),
+                      assessment: @assignment.assessment,
+                      table_option: :pointing,
+                      grading_scope: @lecture)) %>
                 <% end %>
               <% end %>
             </tbody>
@@ -105,61 +132,6 @@
   <% else %>
     <div class="jumbotron mt-3">
       <%= t('assessment.grading_tutorial.no_submissions_gradable') %>
-    </div>
-  <% end %>
-
-  <!-- ── ZONE 2: on roster, no submission ── -->
-  <% if grading_enabled? && (@non_submitters.present? || @non_tutorial_participants.present?) %>
-    <div class="card mt-3">
-      <div class="card-header">
-        <h6 class="mb-0">
-          <i class="bi bi-person-dash me-1"></i>
-          <%= t("assessment.grade_table.excluded_heading") %>
-        </h6>
-      </div>
-
-      <div class="card-body p-0">
-        <table class="table align-middle my-3">
-          <thead style="background: #fafafa;">
-            <tr>
-              <th class="grade-th"><%= t('basics.user') %></th>
-
-              <th class="text-start grade-th">
-                <%= t('assessment.grading_tutorial.excluded_reason') %>
-              </th>
-
-              <th class="text-end grade-th">
-                <%= t('assessment.grading_tutorial.actions') %>
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <!-- Non-submitters have or not have grading records -->
-            <% @non_submitters.to_a.each do |user| %>
-              <% status = non_submitter_status(user) %>
-
-              <%= render(layout: "tutorials/components/excluded_user_row",
-                       locals: { user: user,
-                                 reason: status ? status[:message] : nil }) do %>
-                <% if status && status[:allowed] %>
-                  <% if status[:remove_participation_allow] %>
-                    <%= remove_participated_link(user) %>
-                  <% elsif status[:mark_participation_allow] %>
-                    <%= mark_as_participated_link(user) %>
-                  <% end %>
-                <% end %>
-              <% end %>
-            <% end %>
-
-            <% @non_tutorial_participants.to_a.each do |user| %>
-              <%= render partial: "tutorials/components/excluded_user_row",
-                       locals: { user: user,
-                                 reason: t('assessment.grading_tutorial.no_tutorial_badge') } %>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
     </div>
   <% end %>
 <% end %>

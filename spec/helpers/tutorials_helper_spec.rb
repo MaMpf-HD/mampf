@@ -4,42 +4,20 @@ RSpec.describe(TutorialsHelper, type: :helper) do
   describe "#grading_enabled?" do
     let(:assignment) { instance_double("Assignment") }
 
-    context "when flipper is enabled and assignment is assessable" do
+    context "when the assignment is assessable" do
       before do
-        allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(true)
         allow(assignment).to receive(:assessable?).and_return(true)
       end
 
       it { expect(helper.grading_enabled?(assignment)).to be(true) }
     end
 
-    context "when flipper is disabled" do
-      before do
-        allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(false)
-        allow(assignment).to receive(:assessable?).and_return(true)
-      end
-
-      it { expect(helper.grading_enabled?(assignment)).to be(false) }
-    end
-
     context "when assignment is not assessable" do
       before do
-        allow(Flipper).to receive(:enabled?).with(:assessment_grading).and_return(true)
         allow(assignment).to receive(:assessable?).and_return(false)
       end
 
       it { expect(helper.grading_enabled?(assignment)).to be(false) }
-    end
-  end
-
-  describe "#badge_status_participation_color" do
-    it { expect(helper.badge_status_participation_color(:pending)).to eq("warning") }
-    it { expect(helper.badge_status_participation_color(:reviewed)).to eq("success") }
-    it { expect(helper.badge_status_participation_color(:exempt)).to eq("info") }
-    it { expect(helper.badge_status_participation_color(:absent)).to eq("info") }
-    it { expect(helper.badge_status_participation_color(nil)).to be_nil }
-    it "accepts string status" do
-      expect(helper.badge_status_participation_color("pending")).to eq("warning")
     end
   end
 

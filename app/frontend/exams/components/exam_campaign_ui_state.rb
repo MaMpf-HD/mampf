@@ -1,5 +1,14 @@
 class ExamCampaignUiState
-  ACTIVE_CAMPAIGN_STATUSES = [:draft, :open, :closed, :processing].freeze
+  # Qualify campaign statuses with registration so the exam badge
+  # does not describe the exam itself as open or closed.
+  CAMPAIGN_STATUS_KEYS = {
+    draft: "draft",
+    open: "registration_open",
+    closed: "registration_closed",
+    processing: "registration_processing"
+  }.freeze
+
+  ACTIVE_CAMPAIGN_STATUSES = CAMPAIGN_STATUS_KEYS.keys.freeze
 
   # While the campaign is running its own status drives the badge; afterwards
   # the exam's phase does.
@@ -59,11 +68,13 @@ class ExamCampaignUiState
   end
 
   def status_label
-    if active_campaign_status?
-      I18n.t("registration.campaign.status.#{campaign.status}")
+    key = if active_campaign_status?
+      CAMPAIGN_STATUS_KEYS.fetch(campaign.status.to_sym)
     else
-      I18n.t("assessment.exam_status.#{exam.status_phase}")
+      exam.status_phase
     end
+
+    I18n.t("assessment.exam_status.#{key}")
   end
 
   private

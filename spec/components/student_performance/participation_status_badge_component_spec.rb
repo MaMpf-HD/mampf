@@ -18,8 +18,18 @@ RSpec.describe(
       render_inline(described_class.new(
                       status: :pending_grading, variant: :full
                     ))
-      expect(rendered_content).to include("text-warning")
+      expect(rendered_content).to include("text-warning-emphasis")
       expect(rendered_content).to include("bi-hourglass-split")
+    end
+
+    it "renders not_due as a muted dash rather than a cross" do
+      render_inline(described_class.new(status: :not_due, variant: :full))
+      expect(rendered_content).to include("text-muted")
+      expect(rendered_content).to include("bi-dash")
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.not_due")
+      )
+      expect(rendered_content).not_to include("bi-x-circle-fill")
     end
 
     it "renders not_submitted with danger styling" do
@@ -55,11 +65,22 @@ RSpec.describe(
       render_inline(described_class.new(
                       status: :pending_grading, variant: :compact
                     ))
-      expect(rendered_content).to include("text-warning")
+      expect(rendered_content).to include("text-warning-emphasis")
       expect(rendered_content).to include("visually-hidden")
       expect(rendered_content).to include(
         I18n.t("student_performance.records.columns.pending_grading")
       )
+    end
+
+    it "renders not_due as a muted dash" do
+      render_inline(described_class.new(
+                      status: :not_due, variant: :compact
+                    ))
+      expect(rendered_content).to include("text-muted")
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.not_due")
+      )
+      expect(rendered_content).not_to include("\u2717")
     end
 
     it "renders not_submitted as cross mark" do
@@ -70,6 +91,17 @@ RSpec.describe(
       expect(rendered_content).to include("aria-hidden=\"true\"")
       expect(rendered_content).to include(
         I18n.t("student_performance.records.columns.not_submitted")
+      )
+    end
+
+    it "renders awaiting_record as an ellipsis, not a cross" do
+      render_inline(described_class.new(
+                      status: :awaiting_record, variant: :compact
+                    ))
+      expect(rendered_content).to include("\u2026")
+      expect(rendered_content).not_to include("\u2717")
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.awaiting_record")
       )
     end
   end

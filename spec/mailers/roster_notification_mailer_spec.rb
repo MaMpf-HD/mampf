@@ -155,6 +155,45 @@ describe RosterNotificationMailer do
       end
     end
 
+    context "when the move is between tutorials" do
+      let(:lecture) { create(:lecture) }
+      let(:old_tutorial) { create(:tutorial, lecture: lecture, title: "Mo 10") }
+      let(:new_tutorial) { create(:tutorial, lecture: lecture, title: "Di 14") }
+      let!(:old_tutor) { create(:tutor_tutorial_join, tutorial: old_tutorial).tutor }
+      let!(:new_tutor) { create(:tutor_tutorial_join, tutorial: new_tutorial).tutor }
+
+      it "tells the tutor left behind that the work stays with them" do
+        expect do
+          described_class.moved(user, old_tutorial, new_tutorial)
+        end.to have_enqueued_mail(described_class, :participant_left_group_email)
+          .with(a_hash_including(params: a_hash_including(recipient: old_tutor)))
+      end
+
+      it "tells the receiving tutor that someone joins them" do
+        expect do
+          described_class.moved(user, old_tutorial, new_tutorial)
+        end.to have_enqueued_mail(described_class, :participant_joined_group_email)
+          .with(a_hash_including(params: a_hash_including(recipient: new_tutor)))
+      end
+
+      it "names the participant and where their earlier work stays" do
+        email = described_class.with(
+          participant: user,
+          rosterable: old_tutorial,
+          old_rosterable: old_tutorial,
+          new_rosterable: new_tutorial,
+          recipient: old_tutor
+        ).participant_left_group_email
+
+        delivered = deliver(email)
+
+        expect(delivered.to).to eq([old_tutor.email])
+        expect(delivered.subject).to include("Mo 10")
+        expect(delivered_body(delivered)).to include("Alice")
+        expect(delivered_body(delivered)).to include("Di 14")
+      end
+    end
+
     context "with an unsupported rosterable" do
       it "does not enqueue an email and logs instead" do
         old_unsupported = create(:registration_campaign)
@@ -303,6 +342,21 @@ describe RosterNotificationMailer do
         new_rosterable: create(:tutorial, title: "Übung 7"),
         recipient: user
       ).moved_between_groups_email))
+    end
+
+    it "names both the tutor and the participant when someone leaves a tutorial" do
+      tutor = create(:confirmed_user, name: "Bob", locale: "de")
+
+      body = text_part_of(described_class.with(
+        participant: user,
+        rosterable: rosterable,
+        old_rosterable: rosterable,
+        new_rosterable: create(:tutorial, title: "Übung 7"),
+        recipient: tutor
+      ).participant_left_group_email)
+
+      expect(body).to include("Bob")
+      expect_plain_text(body)
     end
 
     it "spells the group link out as a plain URL" do

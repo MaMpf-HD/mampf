@@ -47,9 +47,13 @@ test.describe("Account settings", () => {
       await page.getByRole("textbox", { name: "name in tutorials" }).fill(newName);
       await profilePage.save();
 
-      await factory.create("tutorial", ["with_tutor_by_id"],
+      const tutorial = await factory.create("tutorial", ["with_tutor_by_id"],
         { lecture_id: lecture.id, tutor_id: tutorUser.id });
       await new LecturePage(page, lecture.id).subscribe();
+      // A hand-in goes to the group one sits in, so there has to be a seat.
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
+      });
       const submissionsPage = new SubmissionsPage(page, lecture.id);
       await submissionsPage.goto();
       await submissionsPage.createSubmission();
@@ -91,17 +95,19 @@ test.describe("Account settings", () => {
 
       await page.locator("#user_email").fill(newEmail);
       await page.getByLabel("Current password", { exact: true }).fill(user.password);
-      await page.getByRole("button", { name: "Update" }).click();
+      await page.getByRole("button", { name: "Save" }).click();
 
       await expect(page.getByRole("alert")).toBeVisible();
 
       const confirmationLink = await confirmationLinkFor(request, newEmail);
       await page.goto(confirmationLink);
 
-      await expect(page).toHaveURL(/\/profile\/edit/);
+      await expect(page.getByRole("alert")).toContainText(
+        "Your email address has been confirmed.",
+      );
 
       await page.getByTitle("Logout").click();
-      await expect(page).not.toHaveURL(/\/profile\/edit/);
+      await expect(page.getByRole("alert")).toContainText("Signed out successfully.");
 
       const loginPage = new LoginPage(page);
       await loginPage.goto();

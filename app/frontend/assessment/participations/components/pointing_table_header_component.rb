@@ -1,6 +1,6 @@
 class PointingTableHeaderComponent < ViewComponent::Base
   Column = Struct.new(:css_class, :label, :sublabel,
-                      :data_mode, :action_tag, keyword_init: true)
+                      :data_mode, :action_tag, :label_hidden, keyword_init: true)
 
   def initialize(grading_scope:, # rubocop:disable Metrics/ParameterLists
                  grading_enabled:,
@@ -9,7 +9,8 @@ class PointingTableHeaderComponent < ViewComponent::Base
                  tasks: [],
                  total_max_points: 0,
                  accepted_file_type: nil,
-                 tutorials: [])
+                 tutorials: [],
+                 status_without_hand_in: nil)
     @grading_scope = grading_scope
     @grading_enabled = grading_enabled
     @assessable_type = assessable_type
@@ -18,23 +19,23 @@ class PointingTableHeaderComponent < ViewComponent::Base
     @total_max_points = total_max_points
     @accepted_file_type = accepted_file_type
     @tutorials = tutorials || []
-    @status = ["all", "pending", "reviewed"]
+    # The filter offers the states the badge in the column can show.
+    @status = ["all", "reviewed", "pending_grading",
+               (status_without_hand_in || :not_submitted).to_s]
     super()
   end
 
-  # team is mandatory for all
-  # tutorial is only for lecture scope only
-  # status is only when having assessment
-  # pointing_columns are only when having assessment
-  # action_column is mandatory for all
-  # correction_column for tutorial scope
+  # Columns are named after what they act on: the points, the hand-in, the
+  # correction. Two file columns read alike, and saving sits by the total it
+  # saves.
   def assignment_columns
     [
       team_column,
       *tutorial_column,
       *status_col,
       *pointing_columns,
-      *action_column,
+      *save_column,
+      hand_in_column,
       *correction_column
     ].compact
   end
@@ -42,13 +43,13 @@ class PointingTableHeaderComponent < ViewComponent::Base
   # team is mandatory for all
   # status is only when having assessment
   # grading_columns are only when having assessment
-  # action_column is mandatory for all
+  # save_column is mandatory for all
   def talk_columns
     [
       team_column,
       *status_col,
       *grading_columns,
-      *action_column
+      *save_column
     ].compact
   end
 
@@ -111,8 +112,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
           label: t("basics.tutorial")
         )]
       else
-        # need to use action_tag to identify the column for the filter dropdown
-        # need to increase z-index of the header cell
+        # The tutorial dropdown must appear above the sticky status header (z-10).
         [Column.new(css_class: "sticky-col tutorial-col grade-th text-center z-20",
                     label: t("basics.tutorial"),
                     action_tag: "filter-tutorials")]
@@ -133,7 +133,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
       [
         *@tasks.map { |task| task_column(task) },
         Column.new(
-          css_class: "text-center sticky-col total-col grade-th",
+          css_class: "text-center total-col grade-th",
           label: t("assessment.grading_tutorial.total_points"),
           sublabel: "(#{@total_max_points} #{t("assessment.grading_tutorial.max_points")})"
         )
@@ -159,9 +159,16 @@ class PointingTableHeaderComponent < ViewComponent::Base
       )
     end
 
-    def action_column
-      [Column.new(css_class: "text-center sticky-col action-col grade-th",
-                  label: t("assessment.grading_tutorial.actions"))]
+    def save_column
+      [Column.new(css_class: "text-center sticky-col save-col",
+                  label: t("buttons.save"),
+                  label_hidden: true)]
+    end
+
+    def hand_in_column
+      Column.new(css_class: "text-center sticky-col hand-in-col grade-th",
+                 label: t("basics.submission"),
+                 sublabel: "(#{@accepted_file_type})")
     end
 
     def correction_column

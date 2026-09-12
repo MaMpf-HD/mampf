@@ -94,6 +94,17 @@ RSpec.describe(StudentPerformance::Certification, type: :model) do
       expect(cert).to be_valid
     end
 
+    it "refuses a manual decision that decides nothing" do
+      cert = FactoryBot.build(:student_performance_certification, :manual,
+                              status: :pending)
+
+      expect(cert).not_to be_valid
+      expect(cert.errors[:status]).to include(
+        I18n.t("activerecord.errors.models.student_performance/certification" \
+               ".attributes.status.manual_cannot_be_pending")
+      )
+    end
+
     it "requires certified_by when failed" do
       cert = FactoryBot.build(:student_performance_certification,
                               status: :failed,
@@ -126,6 +137,109 @@ RSpec.describe(StudentPerformance::Certification, type: :model) do
     it "leaves a decided proposal as it is" do
       expect(described_class.status_for_proposal(:passed)).to eq(:passed)
       expect(described_class.status_for_proposal(:failed)).to eq(:failed)
+    end
+  end
+
+  describe ".reset_computed!" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    it "drops the computed decisions of the scope and keeps the manual ones" do
+      computed = FactoryBot.create(:student_performance_certification, :passed,
+                                   lecture: lecture)
+      pending = FactoryBot.create(:student_performance_certification, :pending,
+                                  lecture: lecture)
+      manual = FactoryBot.create(:student_performance_certification,
+                                 :failed, :manual, lecture: lecture)
+      elsewhere = FactoryBot.create(:student_performance_certification, :passed)
+
+      lecture.student_performance_certifications.reset_computed!
+
+      expect(described_class.where(id: [computed.id, pending.id])).to be_empty
+      expect(described_class.exists?(manual.id)).to be(true)
+      expect(described_class.exists?(elsewhere.id)).to be(true)
+    end
+
+    it "reports the decisions it dropped, not the rows" do
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture)
+      FactoryBot.create(:student_performance_certification, :pending,
+                        lecture: lecture)
+
+      count = lecture.student_performance_certifications.reset_computed!
+
+      expect(count).to eq(1)
+    end
+  end
+
+  describe ".stale_manual" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:rule) { FactoryBot.create(:student_performance_rule, lecture: lecture) }
+
+    def manual_cert(user:, rule: nil, certified_at: 3.hours.ago)
+      FactoryBot.create(:student_performance_certification, :passed, :manual,
+                        lecture: lecture, user: user, rule: rule,
+                        certified_at: certified_at)
+    end
+
+    def touch_rule(time)
+      # rubocop:disable Rails/SkipsModelValidations
+      rule.update_columns(updated_at: time)
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    # `stale` inner-joins the records; a student who never got one drops out of
+    # it, and the rule reason with them.
+    it "keeps a rule-stale decision for a student without a record" do
+      user = FactoryBot.create(:confirmed_user)
+      cert = manual_cert(user: user, rule: rule)
+      touch_rule(1.hour.ago)
+
+      certifications = lecture.student_performance_certifications
+
+      expect(certifications.stale).to be_empty
+      expect(certifications.stale_manual).to contain_exactly(cert)
+    end
+
+    it "names a decision that is stale for both reasons once" do
+      user = FactoryBot.create(:confirmed_user)
+      cert = manual_cert(user: user, rule: rule)
+      touch_rule(1.hour.ago)
+      FactoryBot.create(:student_performance_record, lecture: lecture,
+                                                     user: user,
+                                                     computed_at: 1.hour.ago)
+
+      expect(lecture.student_performance_certifications.stale_manual)
+        .to contain_exactly(cert)
+    end
+
+    # Decided before the lecture had a rule, so the row names none: the rule it
+    # would be measured against today is the lecture's active one.
+    it "names a decision taken before the lecture had a rule" do
+      user = FactoryBot.create(:confirmed_user)
+      cert = manual_cert(user: user)
+      rule.update!(active: true)
+
+      expect(lecture.student_performance_certifications.stale_manual)
+        .to contain_exactly(cert)
+    end
+
+    it "lets confirming such a decision settle it" do
+      user = FactoryBot.create(:confirmed_user)
+      manual_cert(user: user, certified_at: Time.current)
+      rule.update!(active: true)
+      touch_rule(1.hour.ago)
+
+      expect(lecture.student_performance_certifications.stale_manual).to be_empty
+    end
+
+    it "leaves the computed decisions to their proposal" do
+      user = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture, user: user, rule: rule,
+                        certified_at: 3.hours.ago)
+      touch_rule(1.hour.ago)
+
+      expect(lecture.student_performance_certifications.stale_manual).to be_empty
     end
   end
 

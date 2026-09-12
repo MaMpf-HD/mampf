@@ -1,0 +1,77 @@
+<details
+  class="<%= entry_class %>"
+  id="<%= dom_id(sheet.assignment, :sheet) %>"
+  data-action="toggle->sheet-news#seen"
+>
+  <summary>
+    <div class="sheet-row">
+      <div>
+        <div class="sheet-name">
+          <% if news? %>
+            <span
+              class="news-marker"
+              id="<%= dom_id(sheet.assignment, :news) %>"
+            >
+              <span class="new-dot" aria-hidden="true"></span>
+
+              <span class="visually-hidden">
+                <%= t("submission.hub.news.marker") %>
+              </span>
+            </span>
+          <% end %>
+
+          <%= sheet.assignment.title %>
+        </div>
+
+        <% if note %>
+          <div class="<%= note_class %>"><%= note %></div>
+        <% end %>
+      </div>
+
+      <div>
+        <% if legacy? %>
+          <span class="hub-aside"><%= t("submission.hub.old_style") %></span>
+        <% elsif chip? %>
+          <%= render(SheetChipComponent.new(sheet: sheet)) %>
+        <% end %>
+      </div>
+
+      <div class="<%= points_class %>">
+        <% if legacy? %>
+          <span class="hub-aside"><%= t("submission.hub.no_points") %></span>
+        <% elsif number? %>
+          <span class="visually-hidden"><%= points_reader_label %></span>
+          <span aria-hidden="true">
+            <%= tag.span(points, class: ("num-zero" if zero?)) %>
+
+            <% if maximum? %>
+              <span class="text-muted">/ <%= max_points %></span>
+            <% end %>
+          </span>
+          <% if bar_percentage %>
+            <div class="spark">
+              <span style="width: <%= bar_percentage %>%"></span>
+            </div>
+          <% end %>
+        <% else %>
+          <span aria-hidden="true">
+            &mdash;
+            <%= tag.span("/ #{max_points}", class: "text-muted") if maximum? %>
+          </span>
+        <% end %>
+      </div>
+
+      <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+    </div>
+  </summary>
+
+  <%# `local: true` as on the hand-in form: Turbo answers this, not rails-ujs. %>
+  <% if news? %>
+    <%= form_with url: sheet_seen_path, id: dom_id(sheet.assignment, :seen),
+                  local: true, data: { sheet_news_target: "report" } do |form| %>
+      <%= form.hidden_field :assignment_id, value: sheet.assignment.id, id: nil %>
+    <% end %>
+  <% end %>
+
+  <%= render(SheetFoldComponent.new(sheet: sheet)) %>
+</details>

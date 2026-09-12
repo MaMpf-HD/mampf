@@ -45,29 +45,35 @@
 
             <div class="text-muted small mt-1">
               <%= t("student_performance.records.show.out_of",
-                  max: number_with_precision(@record.points_max_materialized,
-                                             precision: 1,
-                                             strip_insignificant_zeros: true)) %>
+                  max: number_with_precision(
+                         @due_points.marked_max_for(@record.user_id),
+                         precision: 1,
+                         strip_insignificant_zeros: true)) %>
             </div>
           </div>
         </div>
 
         <div class="col-12 col-md-4">
           <div class="text-center p-3 border rounded bg-light">
+            <% percentage = @due_points.marked_percentage_for(@record) %>
+
             <div class="display-6 fw-bold">
-              <% if @record.percentage_materialized.nil? %>
+              <% if percentage.nil? %>
                 <span class="text-muted" aria-hidden="true">&mdash;</span>
                 <span class="visually-hidden">
                   <%= t("student_performance.records.percentage_unavailable") %>
                 </span>
               <% else %>
-                <%= number_to_percentage(@record.percentage_materialized,
-                                         precision: 0) %>
+                <%= number_to_percentage(percentage, precision: 0) %>
               <% end %>
             </div>
 
             <div class="text-muted small">
               <%= t("student_performance.records.show.percentage") %>
+            </div>
+
+            <div class="text-muted small mt-1">
+              <%= t("student_performance.records.columns.of_due_points") %>
             </div>
           </div>
         </div>
@@ -112,13 +118,24 @@
               <th scope="col" class="text-center">
                 <%= t("student_performance.records.show.files") %>
               </th>
+
+              <th scope="col" class="text-end">
+                <span class="visually-hidden">
+                  <%= t("student_performance.records.show.exempt_column") %>
+                </span>
+              </th>
             </tr>
           </thead>
 
           <tbody>
             <% @assessments.each do |assessment| %>
               <% participation = @participation_by_assessment[assessment.id] %>
-              <% status = participation&.display_status || :not_submitted %>
+              <% status = participation&.display_status || assessment.status_without_hand_in %>
+
+              <%# A hand-in before the deadline is not with a tutor yet: nobody can mark it. %>
+              <% status = :not_due if status.in?([:not_submitted, :awaiting_record, :pending_grading]) &&
+                                      !@due_points.due?(assessment.id) %>
+
               <% points = @points_by_assessment[assessment.id] %>
               <% max = assessment.effective_total_points %>
 
@@ -171,13 +188,59 @@
                     <span class="text-muted">&mdash;</span>
                   <% end %>
                 </td>
+
+                <%#
+                  Only a sheet nothing came in for offers an exemption; :not_due
+                  may still receive a submission. `local: true` lets Turbo
+                  submit the form without rails-ujs.
+                %>
+
+                <td class="text-end">
+                  <% if status.in?([:not_submitted, :awaiting_record]) %>
+                    <%= form_with url: exempt_lecture_student_performance_record_path(
+                                         @lecture, @record),
+                                  method: :patch, local: true,
+                                  class: "d-inline-flex gap-1 justify-content-end" do |form| %>
+                      <%= form.hidden_field :assessment_id, value: assessment.id, id: nil %>
+
+                      <%= form.text_field :note, id: nil, class: "form-control form-control-sm",
+                                                 placeholder: t("student_performance.records.show.note_placeholder"),
+                                                 aria: { label: t("student_performance.records.show.note_label",
+                                                                  sheet: assessment.title) } %>
+
+                      <%= form.button t("student_performance.records.show.exempt"),
+                                      class: "btn btn-outline-secondary btn-sm text-nowrap" %>
+                    <% end %>
+                  <% elsif status == :exempt %>
+                    <div class="d-inline-flex align-items-center gap-2">
+                      <% if participation.note.present? %>
+                        <span class="text-muted small">
+                          <%= participation.note %>
+                        </span>
+                      <% end %>
+
+                      <%= button_to t("student_performance.records.show.unexempt"),
+                                    unexempt_lecture_student_performance_record_path(
+                                      @lecture, @record, assessment_id: assessment.id),
+                                    method: :patch,
+                                    class: "btn btn-outline-secondary btn-sm text-nowrap" %>
+                    </div>
+                  <% end %>
+                </td>
               </tr>
             <% end %>
           </tbody>
 
           <tfoot class="table-light">
             <tr class="fw-bold">
-              <td><%= t("student_performance.records.show.total_row") %></td>
+              <td>
+                <%= t("student_performance.records.show.total_row") %>
+                <br>
+
+                <span class="fw-normal text-muted" style="font-size: 0.75em">
+                  <%= t("student_performance.records.show.total_row_hint") %>
+                </span>
+              </td>
 
               <td></td>
 
@@ -192,6 +255,8 @@
                                         precision: 1,
                                         strip_insignificant_zeros: true) %>
               </td>
+
+              <td></td>
 
               <td></td>
             </tr>

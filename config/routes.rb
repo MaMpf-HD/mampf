@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       resources :factories_playwright, only: :create
       post "factories_playwright/call_instance_method",
            to: "factories_playwright#call_instance_method"
+      post "factories_playwright/update_instance",
+           to: "factories_playwright#update_instance"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :user_creator_playwright, only: :create
@@ -124,6 +126,9 @@ Rails.application.routes.draw do
   # assessment routes
   namespace :assessment do
     resources :assessments, only: [:index, :show, :update] do
+      collection do
+        patch :assignments_complete
+      end
       resources :tasks, except: [:index] do
         member do
           get :cancel
@@ -311,13 +316,13 @@ Rails.application.routes.draw do
       to: "submissions#index",
       as: "lecture_submissions"
 
+  post "lectures/:id/submissions/seen_all",
+       to: "submissions#seen_all",
+       as: "lecture_sheets_seen"
+
   get "lectures/:id/tutorials",
       to: "tutorials#index",
       as: "lecture_tutorials"
-
-  get "lectures/:id/tutorial_overview",
-      to: "tutorials#overview",
-      as: "lecture_tutorial_overview"
 
   get "lectures/:id/subscribe",
       to: "lectures#subscribe_page",
@@ -362,6 +367,10 @@ Rails.application.routes.draw do
         collection do
           post :recompute
         end
+        member do
+          patch :exempt
+          patch :unexempt
+        end
       end
 
       resource :rules, only: [:edit, :update] do
@@ -375,11 +384,13 @@ Rails.application.routes.draw do
       resources :achievements,
                 only: [:index, :new, :show, :create, :update, :destroy]
 
-      resources :certifications, only: [:index, :create, :update] do
+      resources :certifications,
+                only: [:index, :create, :update, :destroy] do
         collection do
           post :bulk_accept
           post :bulk_reevaluate
           post :bulk_confirm_manual
+          post :bulk_reset
         end
       end
     end
@@ -401,6 +412,7 @@ Rails.application.routes.draw do
       patch :open
       patch :close
       patch :reopen
+      patch :revert_to_draft
       patch :self_service
       get :rejected
       get :unassigned
@@ -427,6 +439,7 @@ Rails.application.routes.draw do
               only: [:create, :destroy, :update] do
       member do
         get :roster
+        delete :with_registerable, action: :destroy_with_registerable
       end
     end
 
@@ -742,29 +755,24 @@ Rails.application.routes.draw do
   get "questionnaires/:id/preview",
       to: "vignettes/questionnaires#preview",
       as: "preview_questionnaire"
-  post "lectures/:id/questionnaires/set_codename",
-       to: "vignettes/codenames#set_codename",
-       as: "set_lecture_codename"
-  post "lectures/:id/questionnaires/set_completion_message",
-       to: "vignettes/completion_message#set_completion_message",
-       as: "set_lecture_completion_message"
-  delete "lectures/:id/questionnaires/destroy_completion_message",
-         to: "vignettes/completion_message#destroy",
-         as: "destroy_lecture_completion_message"
 
   scope module: "vignettes", path: "" do
     resources :questionnaires, only: [:create, :edit, :update, :destroy] do
       member do
         get :export_statistics
+        get :consent
+        post :decide_consent
+        get :codename
+        get :finish
+        post :revoke_consent
         post :submit_answer
         post :duplicate
         patch :publish
+        patch :update_closing_text
         patch :update_slide_position
       end
       resources :info_slides, only: [:new, :create, :edit, :update, :destroy]
-      resources :slides, only: [:new, :create, :edit, :update, :destroy] do
-        resources :answers, only: [:new, :create]
-      end
+      resources :slides, only: [:new, :create, :edit, :update, :destroy]
     end
   end
 
@@ -807,6 +815,10 @@ Rails.application.routes.draw do
   post "submissions/join",
        to: "submissions#join",
        as: "join_submission"
+
+  post "submissions/seen",
+       to: "submissions#seen",
+       as: "sheet_seen"
 
   get "submissions/enter_code",
       to: "submissions#enter_code",
@@ -852,18 +864,6 @@ Rails.application.routes.draw do
       to: "submissions#show_correction",
       as: "show_correction"
 
-  get "submissions/:id/select_tutorial",
-      to: "submissions#select_tutorial",
-      as: "select_tutorial"
-
-  patch "submissions/:id/move",
-        to: "submissions#move",
-        as: "move_submission"
-
-  get "submissions/:id/cancel_action",
-      to: "submissions#cancel_action",
-      as: "cancel_submission_action"
-
   delete "submissions/:id/delete_correction",
          to: "submissions#delete_correction",
          as: "delete_correction"
@@ -880,6 +880,10 @@ Rails.application.routes.draw do
         to: "assessment/task_points#mark_as_participated",
         as: "mark_user_as_participated"
 
+  patch "participations/mark_as_participated_multi",
+        to: "assessment/task_points#mark_as_participated_multi",
+        as: "mark_users_as_participated"
+
   patch "participations/:participation_id/remove_participated",
         to: "assessment/task_points#remove_participated",
         as: "remove_participation"
@@ -888,9 +892,9 @@ Rails.application.routes.draw do
         to: "assessment/task_points#update_team",
         as: "point_submission_tutorial"
 
-  patch "participations/:participation_id/point_user",
+  patch "participations/:participation_id/point_participation",
         to: "assessment/task_points#update_participation",
-        as: "point_user_tutorial"
+        as: "point_participation"
 
   patch "submissions/point_multi_submissions",
         to: "assessment/task_points#update_team_multi",
@@ -900,9 +904,9 @@ Rails.application.routes.draw do
         to: "assessment/task_points#refresh_submission",
         as: "refresh_point_submission_tutorial"
 
-  patch "participations/:participation_id/refresh_point_user",
-        to: "assessment/task_points#refresh_user",
-        as: "refresh_point_user_tutorial"
+  patch "participations/:participation_id/refresh_point_participation",
+        to: "assessment/task_points#refresh_participation",
+        as: "refresh_point_participation"
 
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",
@@ -1074,8 +1078,10 @@ Rails.application.routes.draw do
   # devise routes for users
 
   devise_for :users, controllers: { confirmations: "confirmations",
+                                    passwords: "passwords",
                                     registrations: "registrations",
-                                    sessions: "sessions" }
+                                    sessions: "sessions",
+                                    unlocks: "unlocks" }
   # users routes
 
   get "users/elevate",
@@ -1202,6 +1208,9 @@ Rails.application.routes.draw do
   # Allow /login besides /users/sign_in
   devise_scope :user do
     get "/login" => "devise/sessions#new"
+    post "/users/password/restart",
+         to: "passwords#restart",
+         as: :restart_user_password
   end
 
   get "error",

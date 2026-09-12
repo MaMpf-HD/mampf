@@ -379,6 +379,15 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).not_to include(I18n.t("errors.unknown"))
       end
 
+      it "sends a saved settings pane back to its tab" do
+        patch lecture_path(lecture),
+              params: { lecture: { locale: "de" }, subpage: "settings" },
+              as: :turbo_stream
+
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "settings"))
+        expect(lecture.reload.locale).to eq("de")
+      end
+
       it "leaves the people pane alone" do
         patch lecture_path(lecture),
               params: { lecture: { term_id: other_term.id, sort: "lecture",
@@ -533,6 +542,19 @@ RSpec.describe("Lectures", type: :request) do
 
         expect(response).to have_http_status(:success)
       end
+    end
+  end
+
+  describe "GET /lectures/:id/edit (seminar content)" do
+    # Talks can only be created and deleted in the groups tab, so the content
+    # page says where to go rather than growing its own controls.
+    it "points at the tab that manages the talks" do
+      seminar = create(:seminar, teacher: user)
+
+      I18n.with_locale(:en) { get(edit_lecture_path(seminar)) }
+
+      expect(response.body).to include("Talks are created and deleted in the")
+      expect(response.body).to include(edit_lecture_path(seminar, tab: "groups"))
     end
   end
 

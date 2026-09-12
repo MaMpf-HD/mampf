@@ -12,6 +12,35 @@ RSpec.describe(AssessmentBackfillWorker) do
   end
 
   describe "#perform" do
+    # The sheet is past its deadline and can still be handed in. Writing a
+    # participation here says the student did not hand in, on a screen that
+    # calls the same sheet "not due yet".
+    context "with an assignment inside the grace period" do
+      let(:lecture) do
+        create(:lecture, :released_for_all,
+               submission_deletion_date: 6.months.from_now,
+               submission_grace_period: 60)
+      end
+
+      it "waits while the grace period runs" do
+        create(:assignment, :expired, lecture: lecture,
+                                      expired_since: 30.minutes)
+
+        expect do
+          described_class.new.perform
+        end.not_to change(Assessment::Participation, :count)
+      end
+
+      it "backfills once the grace period is over" do
+        create(:assignment, :expired, lecture: lecture,
+                                      expired_since: 90.minutes)
+
+        expect do
+          described_class.new.perform
+        end.to change(Assessment::Participation, :count).by(2)
+      end
+    end
+
     context "with an expired assignment" do
       let!(:assignment) do
         create(:assignment, :expired, lecture: lecture)

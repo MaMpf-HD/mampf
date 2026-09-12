@@ -59,8 +59,7 @@
                       participation: participation,
                       grading_scope: @seminar,
                       assessment: talk.assessment,
-                      save_url: grade_form_url(participation),
-                      refresh_url: refresh_form_url(participation),
+                      table_option: :grading,
                       group_id: talk.id
                     ) %>
                   <% end %>

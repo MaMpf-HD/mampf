@@ -419,7 +419,7 @@ test.describe("campaign registration", () => {
     await student.page.locator("#user_email").fill(newEmail);
     await student.page.getByLabel("Current password", { exact: true })
       .fill(student.user.password);
-    await student.page.getByRole("button", { name: "Update" }).click();
+    await student.page.getByRole("button", { name: "Save" }).click();
     await expect(student.page.getByRole("alert")).toBeVisible();
 
     const confirmationLink = await confirmationLinkFor(request, newEmail);

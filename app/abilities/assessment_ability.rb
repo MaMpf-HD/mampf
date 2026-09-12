@@ -4,7 +4,7 @@ class AssessmentAbility
   def initialize(user)
     clear_aliased_actions
 
-    can :index, Lecture do |lecture|
+    can [:index, :update], Lecture do |lecture|
       user.can_edit?(lecture)
     end
 
@@ -13,14 +13,19 @@ class AssessmentAbility
       lecture.present? && user.can_edit?(lecture)
     end
 
-    can :grade, Tutorial do |tutorial|
+    can :enter_points, Tutorial do |tutorial|
       user.admin? ||
-        user.can_grade_in_scope?(tutorial)
+        user.can_enter_points_in?(tutorial)
     end
 
-    can :grade, Lecture do |lecture|
+    can :enter_points, Lecture do |lecture|
       user.admin? ||
-        user.can_grade_in_scope?(lecture)
+        user.can_enter_points_in?(lecture)
+    end
+
+    can :enter_grades, Lecture do |lecture|
+      user.admin? ||
+        user.can_enter_grades_in?(lecture)
     end
   end
 end

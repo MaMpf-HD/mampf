@@ -84,7 +84,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
                           grading_scope_type: "tutorial",
                           submissions: [].to_json },
                 as: :turbo_stream
-          expect(response).to have_http_status(:success)
+          expect(response).to have_http_status(:not_found)
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include(
             I18n.t("assessment.errors.no_assignment")
@@ -164,7 +164,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             patch point_submission_tutorial_path(999_999),
                   params: { task_points: {}.to_json, grading_scope_type: "tutorial" },
                   as: :turbo_stream
-            expect(response).to have_http_status(:success)
+            expect(response).to have_http_status(:not_found)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
               I18n.t("assessment.errors.no_submission")
@@ -231,14 +231,14 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         it "calls SubmissionGraderService.score_tasks_by_participation!" do
           expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "lecture" },
                 as: :turbo_stream
         end
 
         it "returns turbo_stream success" do
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "lecture" },
                 as: :turbo_stream
@@ -248,10 +248,10 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         context "when participation is not found" do
           it "responds with turbo_stream alert" do
-            patch point_user_tutorial_path(999_999),
+            patch point_participation_path(999_999),
                   params: { task_points: {}.to_json, grading_scope_type: "lecture" },
                   as: :turbo_stream
-            expect(response).to have_http_status(:success)
+            expect(response).to have_http_status(:not_found)
             expect(response.media_type).to eq(Mime[:turbo_stream])
             expect(response.body).to include(
               I18n.t("assessment.errors.no_participation")
@@ -262,7 +262,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       context "before deadline" do
         it "returns turbo_stream success" do
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "lecture" },
                 as: :turbo_stream
@@ -284,14 +284,14 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         it "calls SubmissionGraderService.score_tasks_by_participation!" do
           expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "tutorial" },
                 as: :turbo_stream
         end
 
         it "returns turbo_stream success" do
-          patch point_user_tutorial_path(participation),
+          patch point_participation_path(participation),
                 params: { task_points: { task.id => "6" }.to_json,
                           grading_scope_type: "tutorial" },
                 as: :turbo_stream
@@ -301,6 +301,58 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
     end
 
+    # A sheet handed in on paper by somebody in no group: the participation
+    # has no tutorial, and the lecture is what the grader is checked against.
+    context "when the participation belongs to no group" do
+      let!(:ungrouped) do
+        create(:assessment_participation, assessment: assessment,
+                                          user: create(:confirmed_user))
+      end
+
+      before { Timecop.travel(3.hours.from_now) }
+      after { Timecop.return }
+
+      it "is scored by the teacher" do
+        sign_in teacher
+
+        patch point_participation_path(ungrouped),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(ungrouped.reload.task_points.pick(:points)).to eq(6)
+      end
+
+      it "is not scored by a tutor" do
+        tutorial.tutors << tutor
+        sign_in tutor
+
+        patch point_participation_path(ungrouped),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(ungrouped.reload.task_points).to be_empty
+      end
+    end
+
+    context "when the participation is not found" do
+      before { sign_in teacher }
+
+      it "says so with a 404" do
+        patch point_participation_path("00000000-0000-0000-0000-000000000000"),
+              params: { task_points: {}.to_json, grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to include(I18n.t("assessment.errors.no_participation"))
+      end
+    end
+
+    # The rows of this page are drawn for sheets. Exams get their own table
+    # later; until then a participation in one is refused, not half-served.
     context "when the participation's assessable is an Exam" do
       let(:exam) { create(:exam, lecture: lecture) }
       let(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
@@ -310,37 +362,32 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       before { sign_in teacher }
 
-      it "does not call SubmissionGraderService.score_tasks_by_participation!" do
+      it "refuses with a 400 and enters nothing" do
         expect(Assessment::SubmissionGraderService).not_to receive(:score_tasks_by_participation!)
-        patch point_user_tutorial_path(exam_participation),
-              params: { task_points: { task.id => "6" }.to_json,
-                        grading_scope_type: "lecture" },
-              as: :turbo_stream
-      end
 
-      it "returns turbo_stream with the not-yet-supported alert" do
-        patch point_user_tutorial_path(exam_participation),
+        patch point_participation_path(exam_participation),
               params: { task_points: { task.id => "6" }.to_json,
                         grading_scope_type: "lecture" },
               as: :turbo_stream
-        expect(response).to have_http_status(:success)
+
+        expect(response).to have_http_status(:bad_request)
         expect(response.media_type).to eq(Mime[:turbo_stream])
-        expect(response.body).to include("exam_not_yet_supported")
+        expect(response.body).to include(
+          I18n.t("assessment.task_points.unsupported_assessment_type")
+        )
       end
 
-      it "does not raise NameError from unset grading_scope/save_url/refresh_url" do
-        expect do
-          patch(point_user_tutorial_path(exam_participation),
-                params: { task_points: { task.id => "6" }.to_json,
-                          grading_scope_type: "lecture" },
-                as: :turbo_stream)
-        end.not_to raise_error
+      it "refuses a refresh the same way" do
+        patch refresh_point_participation_path(exam_participation),
+              params: { grading_scope_type: "lecture" }, as: :turbo_stream
+
+        expect(response).to have_http_status(:bad_request)
       end
     end
 
-    context "when the participation's assessable is an unsupported type" do
-      let(:seminar) { create(:seminar) }
-      let(:talk) { create(:talk, lecture: seminar) } # adjust factory to your schema
+    context "when the participation's assessable is a talk" do
+      let(:seminar) { create(:seminar, teacher: teacher) }
+      let(:talk) { create(:talk, lecture: seminar) }
       let(:talk_assessment) { create(:assessment, :with_points, assessable: talk) }
       let!(:talk_participation) do
         create(:assessment_participation, assessment: talk_assessment, user: student)
@@ -348,14 +395,15 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       before { sign_in teacher }
 
-      it "returns turbo_stream with the invalid-assessable-type alert" do
-        patch point_user_tutorial_path(talk_participation),
+      it "refuses with a 400" do
+        patch point_participation_path(talk_participation),
               params: { task_points: { task.id => "6" }.to_json,
                         grading_scope_type: "lecture" },
               as: :turbo_stream
-        expect(response).to have_http_status(:success)
+
+        expect(response).to have_http_status(:bad_request)
         expect(response.body).to include(
-          I18n.t("assessment.errors.invalid_assessable_type")
+          I18n.t("assessment.task_points.unsupported_assessment_type")
         )
       end
     end
@@ -382,14 +430,14 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         patch refresh_point_submission_tutorial_path(999_999),
               params: { grading_scope_type: "lecture" },
               as: :turbo_stream
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:not_found)
         expect(response.media_type).to eq(Mime[:turbo_stream])
         expect(response.body).to include(I18n.t("assessment.errors.no_submission"))
       end
     end
   end
 
-  # PATCH refresh_point_user_tutorial
+  # PATCH refresh_point_participation
   describe "PATCH /participations/:participation_id/refresh_point_user" do
     let!(:participation) do
       create(:assessment_participation, assessment: assessment, user: student)
@@ -398,7 +446,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     before { sign_in teacher }
 
     it "returns turbo_stream success" do
-      patch refresh_point_user_tutorial_path(participation),
+      patch refresh_point_participation_path(participation),
             params: { grading_scope_type: "lecture" },
             as: :turbo_stream
       expect(response).to have_http_status(:success)
@@ -407,10 +455,10 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
     context "when participation is not found" do
       it "responds with turbo_stream alert" do
-        patch refresh_point_user_tutorial_path(999_999),
+        patch refresh_point_participation_path(999_999),
               params: { grading_scope_type: "lecture" },
               as: :turbo_stream
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:not_found)
         expect(response.media_type).to eq(Mime[:turbo_stream])
         expect(response.body).to include(I18n.t("assessment.errors.no_participation"))
       end
@@ -425,11 +473,52 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         sign_in tutor
       end
 
-      it "calls SubmissionGraderService.init_participation" do
-        expect(Assessment::SubmissionGraderService).to receive(:init_participation)
+      it "records the paper hand-in and answers with the student's row" do
         patch mark_user_as_participated_path,
-              params: { assignment_id: assignment.id, user_id: student.id },
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
               as: :turbo_stream
+
+        participation = assessment.assessment_participations.find_by(user: student)
+        expect(participation.submitted_at).to be_present
+        expect(response.body).to include("target=\"participation-row-user-#{student.id}\"")
+        expect(response.body).to include("participation-row-#{participation.id}")
+      end
+
+      # The tutor's page lists one group; a row drawn for the lecture's page
+      # would bring the group column with it.
+      it "draws the row in the shape of the page's group" do
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(response.body).not_to include(tutorial.title)
+      end
+
+      it "names the group in the row drawn for the lecture's page" do
+        sign_in teacher
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response.body).to include(tutorial.title)
+      end
+
+      it "answers with the row alone when the student already has one" do
+        participation = FactoryBot.create(:assessment_participation,
+                                          assessment: assessment, user: student,
+                                          tutorial: tutorial, submitted_at: nil)
+
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(participation.reload.submitted_at).to be_present
+        expect(response.body).to include("target=\"participation-row-#{participation.id}\"")
+        expect(response.body).not_to include("target=\"pointing-table\"")
       end
 
       context "when user is not found" do
@@ -448,23 +537,94 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         end
       end
 
-      context "when user is not rostered in the lecture" do
-        let!(:unrostered_student) { FactoryBot.create(:confirmed_user) }
+      # A member in no group takes part in the lecture itself, and that is the
+      # lecturer's row, not a tutor's.
+      context "when the member is in no group" do
+        let!(:ungrouped) do
+          FactoryBot.create(:confirmed_user).tap do |member|
+            FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          end
+        end
 
-        it "does not call init_participation" do
+        it "is turned away as a tutor" do
           expect(Assessment::SubmissionGraderService).not_to receive(:init_participation)
           patch mark_user_as_participated_path,
-                params: { assignment_id: assignment.id, user_id: unrostered_student.id },
+                params: { assignment_id: assignment.id, user_id: ungrouped.id },
                 as: :turbo_stream
+
+          expect(response).to redirect_to(root_path)
         end
 
-        it "sets an alert flash message" do
+        it "records the paper hand-in as the teacher, in no group" do
+          sign_in teacher
           patch mark_user_as_participated_path,
-                params: { assignment_id: assignment.id, user_id: unrostered_student.id },
+                params: { assignment_id: assignment.id, user_id: ungrouped.id,
+                          grading_scope_type: "lecture" },
                 as: :turbo_stream
-          expect(flash[:alert]).to eq(I18n.t("assessment.task_points.user_not_rostered"))
+
+          participation = assessment.assessment_participations.find_by(user: ungrouped)
+          expect(participation.tutorial_id).to be_nil
+          expect(participation.submitted_at).to be_present
         end
       end
+
+      context "when the user is not a member of the lecture" do
+        it "says so with a 404" do
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id,
+                          user_id: FactoryBot.create(:confirmed_user).id },
+                as: :turbo_stream
+
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+    end
+  end
+
+  describe "PATCH /participations/mark_as_participated_multi" do
+    let(:classmate) { create(:confirmed_user) }
+
+    before do
+      create(:tutorial_membership, user: classmate, tutorial: tutorial)
+      create(:lecture_membership, user: classmate, lecture: lecture)
+      tutorial.tutors << tutor
+      sign_in tutor
+    end
+
+    it "records the pile and answers with one row per sheet" do
+      patch mark_users_as_participated_path,
+            params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                      grading_scope_type: "tutorial",
+                      user_ids: [student.id, classmate.id] },
+            as: :turbo_stream
+
+      stamped = assessment.assessment_participations.where(user: [student, classmate])
+      expect(stamped.map(&:submitted_at)).to all(be_present)
+      expect(response.body.scan("<turbo-stream").size).to eq(2)
+      expect(response.body).to include("target=\"participation-row-user-#{student.id}\"")
+      expect(response.body).to include("target=\"participation-row-user-#{classmate.id}\"")
+    end
+
+    # One sheet the tutor may not mark rolls the whole pile back.
+    it "records nothing when one of the sheets is another group's" do
+      patch mark_users_as_participated_path,
+            params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                      grading_scope_type: "tutorial",
+                      user_ids: [student.id, student2.id] },
+            as: :turbo_stream
+
+      expect(response).to redirect_to(root_path)
+      expect(assessment.assessment_participations.where(user: [student, student2])).to be_empty
+    end
+
+    it "answers with nothing for an empty selection" do
+      patch mark_users_as_participated_path,
+            params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                      grading_scope_type: "tutorial" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).not_to include("<turbo-stream")
     end
   end
 
@@ -488,19 +648,14 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             as: :turbo_stream
     end
 
-    it "returns turbo_stream success" do
+    it "answers with the row alone" do
       patch remove_participation_path(participation),
             params: { grading_scope_type: "tutorial" },
             as: :turbo_stream
       expect(response).to have_http_status(:success)
       expect(response.media_type).to eq(Mime[:turbo_stream])
-    end
-
-    it "sets a notice flash message when removal succeeds" do
-      patch remove_participation_path(participation),
-            params: { grading_scope_type: "tutorial" },
-            as: :turbo_stream
-      expect(flash[:notice]).to eq(I18n.t("assessment.task_points.participation_removed"))
+      expect(response.body).to include("target=\"participation-row-#{participation.id}\"")
+      expect(response.body).not_to include("target=\"pointing-table\"")
     end
 
     context "when the participation has task points with points assigned" do
@@ -521,10 +676,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     end
 
     context "when the participation has no task points" do
-      it "destroys the participation" do
+      it "takes the stamp off and keeps the row" do
+        participation.update!(submitted_at: 1.day.ago)
+
         patch remove_participation_path(participation),
               params: { grading_scope_type: "tutorial" }, as: :turbo_stream
-        expect(Assessment::Participation.exists?(participation.id)).to be(false)
+
+        expect(participation.reload.submitted_at).to be_nil
       end
     end
   end
@@ -543,7 +701,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       it "redirects point_user to sign in" do
         participation = create(:assessment_participation, assessment: assessment, user: student)
-        patch point_user_tutorial_path(participation),
+        patch point_participation_path(participation),
               params: { task_points: {}.to_json, grading_scope_type: "lecture" },
               as: :turbo_stream
         expect(response).to have_http_status(:redirect)
@@ -569,7 +727,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         participation = create(:assessment_participation, assessment: assessment, user: student,
                                                           tutorial: tutorial)
         Timecop.travel(3.hours.from_now)
-        patch point_user_tutorial_path(participation),
+        patch point_participation_path(participation),
               params: { task_points: { task.id => "6" }.to_json,
                         grading_scope_type: "tutorial" },
               as: :turbo_stream
@@ -595,8 +753,9 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
-      it "denies point_submission with grading_scope_type=lecture " \
-         "(tutor has no lecture-wide grant)" do
+      # The page hint says which table the row goes back into; who may grade
+      # follows the hand-in's own group, whatever the hint says.
+      it "allows point_submission on the group's hand-in whatever the page says" do
         submission = create(:submission, assignment: assignment, tutorial: tutorial,
                                          users: [student])
         Timecop.travel(3.hours.from_now)
@@ -604,7 +763,31 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               params: { task_points: { task.id => "8" }.to_json,
                         grading_scope_type: "lecture" },
               as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+
+      it "denies point_submission on another group's hand-in whatever the page says" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial2,
+                                         users: [student2])
+        Timecop.travel(3.hours.from_now)
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
         expect(response).to redirect_to(root_path)
+        expect(submission.users.first.assessment_participations).to be_empty
+      end
+
+      it "denies point_participation on another group's participation" do
+        other = create(:assessment_participation, assessment: assessment, user: student2,
+                                                  tutorial: tutorial2)
+        Timecop.travel(3.hours.from_now)
+        patch point_participation_path(other),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+        expect(other.reload.task_points).to be_empty
       end
     end
 
@@ -616,23 +799,23 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
       after { Timecop.return }
 
-      it "authorize from the default scope (lecture) for missing grading_scope_type" do
+      it "still grades the group's hand-in without a grading_scope_type" do
         submission = create(:submission, assignment: assignment, tutorial: tutorial,
                                          users: [student])
         patch point_submission_tutorial_path(submission),
               params: { task_points: { task.id => "8" }.to_json },
               as: :turbo_stream
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:success)
       end
 
-      it "authorize from the default scope (lecture) for invalid grading_scope_type" do
+      it "still grades the group's hand-in with a bogus grading_scope_type" do
         submission = create(:submission, assignment: assignment, tutorial: tutorial,
                                          users: [student])
         patch point_submission_tutorial_path(submission),
               params: { task_points: { task.id => "8" }.to_json,
                         grading_scope_type: "bogus" },
               as: :turbo_stream
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:success)
       end
     end
 

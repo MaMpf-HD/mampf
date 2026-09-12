@@ -38,15 +38,20 @@ class Exam < ApplicationRecord
   after_create :create_registration_campaign, if: -> { !skip_campaigns }
   after_update :update_campaign_deadline,
                if: -> { registration_deadline.present? }
-  before_destroy :destroy_draft_campaign
+  # Before the concern's dependent: :destroy takes the registration item: the
+  # campaign is found through that item, and without it there is nothing left
+  # to look up.
+  before_destroy :destroy_draft_campaign, prepend: true
 
-  def non_destructible_reason
-    return :roster_not_empty unless roster_empty?
-
+  # An exam brings its own campaign into the world and takes it out again
+  # (`destroy_draft_campaign`), so one still in draft is no reason to refuse.
+  # A finalized process is none either -- it no longer decides who is on the
+  # list, and whoever is on it blocks through the roster.
+  def destruction_blockers
+    blockers = super - [:in_campaign]
     campaign = registration_campaign
-    return :in_campaign if campaign && !campaign.draft?
-
-    nil
+    blockers << :in_campaign if campaign && !campaign.draft? && !campaign.completed?
+    blockers
   end
 
   def roster_entries
@@ -54,6 +59,12 @@ class Exam < ApplicationRecord
   end
 
   def roster_association_name
+    :exam_roster_entries
+  end
+
+  # Rosterable derives this from the class name, which would look for
+  # exam_memberships; the entries live in their own table.
+  def self.roster_association_name
     :exam_roster_entries
   end
 

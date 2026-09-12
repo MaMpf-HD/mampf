@@ -7,19 +7,16 @@
   data-row-id="<%= @submission.id %>"
   data-row-target-type="submission"
   data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
-  data-status-filter-status="<%= @submission&.participations&.first&.status %>"
+  data-status-filter-status="<%= status %>"
   data-status-filter-tutorial="<%= @submission.tutorial_id %>"
   data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
 >
   <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
-    <div class="row">
-      <div
-        class="d-flex flex-column justify-content-between"
-        style="width: fit-content;"
-      >
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
         <% @submission.users.each do |user| %>
-          <div style="width: fit-content;">
+          <div>
             <%= user.tutorial_name %>
             <% movement = movement_info_for_user(user) %>
 
@@ -32,35 +29,37 @@
             <% end %>
           </div>
         <% end %>
+
+        <% if @submission.too_late? %>
+          <i
+            class="fas fa-exclamation-triangle"
+            data-bs-toggle="tooltip"
+            title="<%= late_submission_info(@submission, @submission.tutorial) %>"
+          ></i>
+        <% end %>
       </div>
 
-      <i
+      <button
+        type="button"
         class="
-          clipboardpopup bi bi-clipboard clickable
-          text-secondary clipboard-btn ms-3 clipboard-button
+          clipboardpopup btn btn-link p-0 ms-3 text-secondary
+          clipboard-btn clipboard-button
         "
-        style="width: fit-content;"
         data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
-        data-bs-toggle="tooltip"
         data-id="<%= @submission.id %>"
         title="<%= t('buttons.copy_email_to_clipboard') %>"
+        aria-label="<%= t('buttons.copy_email_to_clipboard') %>"
       >
+        <i class="bi bi-clipboard"></i>
+
         <span
           class="clipboardpopuptext token-clipboard-popup"
           data-id="<%= @submission.id %>"
         >
           <%= t('basics.emails_copied_to_clipboard') %>
         </span>
-      </i>
+      </button>
     </div>
-
-    <% if @submission.too_late? %>
-      <i
-        class="fas fa-exclamation-triangle"
-        data-bs-toggle="tooltip"
-        title="<%= late_submission_info(@submission, @submission.tutorial) %>"
-      ></i>
-    <% end %>
   </td>
 
   <!-- Column 1.5: Tutorial -->
@@ -73,83 +72,82 @@
   <% if grading_enabled? %>
     <!-- Column 4: Status -->
     <td class="text-center sticky-col status-col">
-      <% if @submission&.participations %>
-        <% status = @submission&.participations.first&.status %>
-        <span
-          class="<%= badge_status_participation_class(status) %>"
-          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
-        >
-          <%= status %>
-        </span>
+      <% if participation %>
+        <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
       <% end %>
     </td>
     <!-- batch of columns 3: grade zone -->
     <!-- support point by task -->
-    <% tasks.each do |assignment_task| %>
-      <td class="sticky-col task-col">
-        <%= task_points_input(assignment_task, allow_grading?) %>
-      </td>
+    <% tasks.each do |task| %>
+      <%= task_points_cell(task, allow_grading?) %>
     <% end %>
     <!-- Column 4: Total Points -->
     <td class="text-center sticky-col total-col">
       <span data-participation-row-target="totalPoints">0</span>
     </td>
+    <!-- Save and refresh the row's points -->
+    <td class="text-center sticky-col save-col">
+      <% if can_enter_points? %>
+        <div class="d-inline-flex align-items-center gap-1">
+          <%= form_with url: point_submission_tutorial_path(
+            @submission,
+            grading_scope_type: @grading_scope.class.name.downcase),
+                      method: :patch,
+                      data: { turbo: true, participation_row_target: "form" },
+                      html: { style: "display:none;" } do %>
+            <input
+              type="hidden"
+              name="task_points"
+              data-participation-row-target="taskPointsPayload"
+            >
+          <% end %>
+
+          <%= save_row_button(allow_grading?) %>
+
+          <%= form_with url: refresh_point_submission_tutorial_path(
+            @submission,
+            grading_scope_type: @grading_scope.class.name.downcase),
+                      method: :patch,
+                      data: { turbo: true, participation_row_target: "refreshForm" },
+                      html: { style: "display:none;" } do %>
+            <input
+              type="hidden"
+              name="task_points"
+              data-participation-row-target="taskPointsPayload"
+            >
+          <% end %>
+
+          <%= refresh_row_button(allow_grading?) %>
+        </div>
+      <% end %>
+    </td>
   <% end %>
 
-  <!-- Column 5: Actions buttons -->
-  <td class="text-end sticky-col action-col" data-id="<%= @submission.id %>">
-    <div class="d-inline-flex align-items-center flex-wrap justify-content-end gap-1">
-      <!-- Download -->
+  <!-- The hand-in: the file, and for a late one the tutor's decision -->
+  <td
+    class="text-center sticky-col hand-in-col"
+    data-mode="<%= @mode %>"
+    data-id="<%= @submission.id %>"
+  >
+    <div class="d-inline-flex align-items-center gap-1">
       <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
-                class: "btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
-                data: { bs_toggle: "tooltip", turbo: false },
-                title: t('buttons.download') do %>
+                class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                data: { turbo: false },
+                title: t('assessment.grading_tutorial.download_hand_in'),
+                aria: { label: t('assessment.grading_tutorial.download_hand_in') } do %>
         <i class="bi bi-download"></i>
       <% end %>
 
-      <!-- Show -->
       <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
         <%= link_to show_submission_manuscript_path(@submission),
-                  class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center text-nowrap px-2 py-1 lh-1",
-                  data: { bs_toggle: "tooltip", turbo: false },
-                  title: t('buttons.show') do %>
+                  class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                  data: { turbo: false },
+                  title: t('assessment.grading_tutorial.show_hand_in'),
+                  aria: { label: t('assessment.grading_tutorial.show_hand_in') } do %>
           <i class="bi bi-eye"></i>
         <% end %>
       <% end %>
 
-      <!-- Save and refresh -->
-      <% if can_grade? && grading_enabled? %>
-        <!-- Save row -->
-        <%= form_with url: point_submission_tutorial_path(
-          @submission, 
-          grading_scope_type: @grading_scope.class.name.downcase),
-                    method: :patch,
-                    data: { turbo: true, participation_row_target: "form" },
-                    html: { style: "display:none;" } do %>
-          <input
-            type="hidden"
-            name="task_points"
-            data-participation-row-target="taskPointsPayload"
-          >
-        <% end %>
-        <%= save_row_button(allow_grading?) %>
-        <!-- Refresh row -->
-        <%= form_with url: refresh_point_submission_tutorial_path(
-          @submission, 
-          grading_scope_type: @grading_scope.class.name.downcase),
-                    method: :patch,
-                    data: { turbo: true, participation_row_target: "refreshForm" },
-                    html: { style: "display:none;" } do %>
-          <input
-            type="hidden"
-            name="task_points"
-            data-participation-row-target="taskPointsPayload"
-          >
-        <% end %>
-        <%= refresh_row_button(allow_grading?) %>
-      <% end %>
-
-      <!-- accept / reject late submissions -->
       <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
         <%= render partial: 'submissions/other_actions',
                   locals: { submission: @submission, grading_scope: @grading_scope} %>
@@ -157,11 +155,12 @@
     </div>
   </td>
 
-  <!-- Column 6: Correction or download correction -->
-  <!-- tutor can upload correction, student + teacher can download correction -->
-  <!-- there is case when teacher is also tutor, in that case use tutor view for correction -->
+  <!-- The correction: the tutor's to upload and remove, anybody else's to read -->
   <% if tutorial_scope? %>
-    <td class="sticky-col correction-col" data-id="<%= @submission.id %>">
+    <td
+      class="text-center sticky-col correction-col"
+      data-id="<%= @submission.id %>"
+    >
       <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
         <%= render partial: 'submissions/correction_column',
                   locals: { submission: @submission } %>
