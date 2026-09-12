@@ -51,10 +51,10 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
       lecture.lecture_memberships.create!(user: user)
 
       patch dashboard_washi_tape_path(lecture),
-            params: { washi_tape: { tape_color: "clay" } }
+            params: { washi_tape: { tape_color: "peach" } }
 
       expect(response).to have_http_status(:no_content)
-      expect(style.tape_color).to eq("clay")
+      expect(style.tape_color).to eq("peach")
     end
 
     it "styles a lecture shown only through a pending registration application" do
@@ -64,10 +64,10 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
              registration_item: campaign.registration_items.first)
 
       patch dashboard_washi_tape_path(lecture),
-            params: { washi_tape: { tape_color: "clay" } }
+            params: { washi_tape: { tape_color: "peach" } }
 
       expect(response).to have_http_status(:no_content)
-      expect(style.tape_color).to eq("clay")
+      expect(style.tape_color).to eq("peach")
     end
 
     it "styles a seminar the user gives a talk in" do

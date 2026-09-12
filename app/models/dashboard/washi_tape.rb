@@ -3,7 +3,7 @@ module Dashboard
   # deterministic pick from the seed, so an untouched card still gets a
   # stable, varied color instead of always the same one.
   class WashiTape
-    COLORS = ["butter", "rose", "mint", "sky", "lavender", "clay"].freeze
+    COLORS = ["butter", "rose", "mint", "sky", "lavender", "peach"].freeze
     COLOR_STRIDE = 5 # coprime to COLORS.size, so consecutive seeds don't repeat
     MAX_TILT = 6
 
