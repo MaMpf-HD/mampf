@@ -77,6 +77,43 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         end
       end
 
+      # The lecture's table names no group: it holds rows of every group and
+      # of people in none, and only the lecturer saves from it.
+      context "from the lecture's table" do
+        let!(:ungrouped) do
+          member = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, :submitted, assessment: assessment,
+                                                                   user: member, tutorial: nil)
+        end
+        let(:payload) do
+          [{ "target" => "participation", "id" => ungrouped.id,
+             "task_points" => { task.id => "3" } }].to_json
+        end
+
+        it "lets the lecturer save somebody in no group" do
+          sign_in teacher
+          patch point_multi_submissions_tutorial_path,
+                params: { assignment_id: assignment.id, grading_scope_type: "lecture",
+                          submissions: payload },
+                as: :turbo_stream
+
+          expect(response).to have_http_status(:success)
+          expect(ungrouped.reload.task_points.find_by(task: task).points).to eq(3)
+          expect(response.body).to include("target=\"pointing-table\"")
+        end
+
+        it "turns a tutor away" do
+          patch point_multi_submissions_tutorial_path,
+                params: { assignment_id: assignment.id, grading_scope_type: "lecture",
+                          submissions: payload },
+                as: :turbo_stream
+
+          expect(response).to redirect_to(root_path)
+          expect(ungrouped.reload.task_points).to be_empty
+        end
+      end
+
       context "when assignment is not found" do
         it "returns turbo_stream with alert" do
           patch point_multi_submissions_tutorial_path,

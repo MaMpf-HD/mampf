@@ -243,20 +243,22 @@ module Assessment
         end
       end
 
+      # The lecture's table saves rows of every group and of people in none,
+      # so it names no tutorial; the group's table names its own.
       def set_resources_from_bulk_params_submissions
-        @tutorial = Tutorial.find_by(id: params["tutorial_id"])
         @assessable = Assignment.find_by(id: params["assignment_id"])
-
-        unless @tutorial
-          return respond_with_flash(:alert, t("assessment.errors.no_tutorial"),
-                                    status: :not_found)
-        end
-
-        @lecture = @tutorial.lecture
-
         unless @assessable
           return respond_with_flash(:alert, t("assessment.errors.no_assignment"),
                                     status: :not_found)
+        end
+
+        @lecture = @assessable.lecture
+        if params["tutorial_id"].present?
+          @tutorial = @lecture.tutorials.find_by(id: params["tutorial_id"])
+          unless @tutorial
+            return respond_with_flash(:alert, t("assessment.errors.no_tutorial"),
+                                      status: :not_found)
+          end
         end
 
         @assessment = @assessable.assessment

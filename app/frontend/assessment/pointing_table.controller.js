@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["bulkSave", "form", "payload"];
+  static targets = ["bulkSave", "dirtyCount", "form", "payload"];
 
   connect() {
     this.newValues = [];
@@ -21,10 +21,14 @@ export default class extends Controller {
   }
 
   updateBulkState() {
-    const anyDirty = this.newValues.length > 0;
+    const count = this.newValues.length;
 
     if (this.hasBulkSaveTarget) {
-      this.bulkSaveTarget.disabled = !anyDirty;
+      this.bulkSaveTarget.disabled = count === 0;
+    }
+    if (this.hasDirtyCountTarget) {
+      this.dirtyCountTarget.textContent = count;
+      this.dirtyCountTarget.hidden = count === 0;
     }
   }
 

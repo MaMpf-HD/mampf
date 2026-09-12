@@ -58,39 +58,10 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
           .to include(a_string_matching(/tutorial-col/))
       end
 
-      it "does not include the correction column" do
+      # The lecturer reads the tutors' corrections here; they upload none.
+      it "includes the correction column" do
         expect(columns_for(component).map(&:css_class))
-          .not_to include(a_string_matching(/correction-col/))
-      end
-
-      context "when no tutorials are given" do
-        it "renders a plain tutorial column with no action_tag" do
-          tutorial_col = columns_for(component).find { |c| c.css_class.include?("tutorial-col") }
-          expect(tutorial_col.action_tag).to be_nil
-        end
-
-        it "does not add the z-20 class" do
-          tutorial_col = columns_for(component).find { |c| c.css_class.include?("tutorial-col") }
-          expect(tutorial_col.css_class).not_to include("z-20")
-        end
-      end
-
-      context "when tutorials are given" do
-        let(:tutorial) { build_stubbed(:tutorial) }
-        let(:component) do
-          described_class.new(grading_scope: lecture_scope, grading_enabled: false,
-                              tutorials: [tutorial])
-        end
-
-        it "adds the filter-tutorials action_tag" do
-          tutorial_col = columns_for(component).find { |c| c.css_class.include?("tutorial-col") }
-          expect(tutorial_col.action_tag).to eq("filter-tutorials")
-        end
-
-        it "adds the z-20 class for stacking above the filter dropdown" do
-          tutorial_col = columns_for(component).find { |c| c.css_class.include?("tutorial-col") }
-          expect(tutorial_col.css_class).to include("z-20")
-        end
+          .to include(a_string_matching(/correction-col/))
       end
     end
 
@@ -123,11 +94,6 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
 
       it "includes a status column" do
         expect(columns_for(component).map(&:css_class)).to include(a_string_matching(/status-col/))
-      end
-
-      it "includes the filter-status action_tag on the status column" do
-        status_column = columns_for(component).find { |c| c.css_class.include?("status-col") }
-        expect(status_column.action_tag).to eq("filter-status")
       end
 
       it "includes one column per task" do
@@ -201,7 +167,7 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
           .not_to include(a_string_matching(/tutorial-col/))
       end
 
-      it "includes the correction column (treated as tutor-like)" do
+      it "includes the correction column" do
         expect(columns_for(component).map(&:css_class))
           .to include(a_string_matching(/correction-col/))
       end

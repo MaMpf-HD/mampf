@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 // The rows ticked for a hand-in on paper and the one button that records
 // them. Rows come and go with every answer, so the button follows the ticks.
 export default class extends Controller {
-  static targets = ["checkbox", "button"];
+  static targets = ["checkbox", "button", "count"];
 
   checkboxTargetConnected() {
     this.sync();
@@ -17,6 +17,10 @@ export default class extends Controller {
     if (!this.hasButtonTarget) {
       return;
     }
-    this.buttonTarget.disabled = !this.checkboxTargets.some(box => box.checked);
+    const selected = this.checkboxTargets.filter(box => box.checked).length;
+    this.buttonTarget.hidden = selected === 0;
+    if (this.hasCountTarget) {
+      this.countTarget.textContent = selected;
+    }
   }
 }

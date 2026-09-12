@@ -1,0 +1,226 @@
+<p class="text-muted small mb-2"><%= summary %></p>
+
+<div class="d-flex flex-wrap align-items-end gap-2 mb-2">
+  <div>
+    <label
+      class="form-label small mb-1"
+      for="pointing-filter-name-<%= @assignment.id %>"
+    >
+      <%= t("assessment.grading_tutorial.filter_name") %>
+    </label>
+
+    <input
+      type="search"
+      id="pointing-filter-name-<%= @assignment.id %>"
+      class="form-control form-control-sm"
+      autocomplete="off"
+      data-status-filter-target="name"
+      data-action="input->status-filter#search"
+    >
+  </div>
+
+  <div>
+    <label
+      class="form-label small mb-1"
+      for="pointing-filter-status-<%= @assignment.id %>"
+    >
+      <%= t("assessment.grading_tutorial.status") %>
+    </label>
+
+    <select
+      id="pointing-filter-status-<%= @assignment.id %>"
+      class="form-select form-select-sm"
+      data-status-filter-target="status"
+      data-action="change->status-filter#apply"
+    >
+      <option value="all">
+        <%= t("assessment.grading_tutorial.filter_all") %>
+      </option>
+
+      <% status_options.each do |value, label| %>
+        <option value="<%= value %>"><%= label %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <% if lecture_form? %>
+    <div>
+      <label
+        class="form-label small mb-1"
+        for="pointing-filter-tutorial-<%= @assignment.id %>"
+      >
+        <%= t("basics.tutorial") %>
+      </label>
+
+      <select
+        id="pointing-filter-tutorial-<%= @assignment.id %>"
+        class="form-select form-select-sm"
+        data-status-filter-target="tutorial"
+        data-action="change->status-filter#apply"
+      >
+        <option value="all">
+          <%= t("assessment.grading_tutorial.filter_all") %>
+        </option>
+
+        <% tutorial_options.each do |value, label| %>
+          <option value="<%= value %>"><%= label %></option>
+        <% end %>
+      </select>
+    </div>
+  <% end %>
+
+  <button
+    type="button"
+    class="btn btn-link btn-sm"
+    hidden
+    data-status-filter-target="reset"
+    data-action="click->status-filter#reset"
+  >
+    <%= t("assessment.grading_tutorial.filter_reset") %>
+  </button>
+
+  <span
+    class="small text-muted pb-1"
+    hidden
+    data-status-filter-target="count"
+    data-template="<%= t("assessment.grading_tutorial.filter_count", shown: "%{shown}", total: "%{total}") %>"
+  ></span>
+
+  <div class="ms-auto d-flex flex-wrap align-items-end gap-2">
+    <% if can_enter_points? %>
+      <%# The rows' checkboxes belong to this form by its id. %>
+      <%= form_with url: mark_users_as_participated_path,
+                    method: :patch,
+                    id: "paper-hand-ins",
+                    local: true,
+                    data: { turbo: true } do %>
+        <input type="hidden" name="assignment_id" value="<%= @assignment.id %>">
+        <input type="hidden" name="tutorial_id" value="<%= @tutorial&.id %>">
+
+        <input
+          type="hidden"
+          name="grading_scope_type"
+          value="<%= grading_scope_type %>"
+        >
+
+        <button
+          type="submit"
+          class="btn btn-outline-secondary btn-sm"
+          hidden
+          data-paper-selection-target="button"
+        >
+          <i class="bi bi-file-earmark-check me-1"></i>
+          <%= t("assessment.grading_tutorial.paper_hand_in_selected") %>
+
+          <span
+            class="badge text-bg-secondary ms-1"
+            data-paper-selection-target="count"
+          ></span>
+        </button>
+      <% end %>
+    <% end %>
+
+    <% if menu? %>
+      <div class="dropdown">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm dropdown-toggle"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <%= t("assessment.grading_tutorial.more_actions") %>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end">
+          <% if tutor? && hand_in_files? %>
+            <li>
+              <button
+                type="button"
+                class="dropdown-item"
+                id="show-bulk-upload-area"
+              >
+                <%= t("submission.bulk_upload") %>
+              </button>
+            </li>
+          <% end %>
+
+          <% if hand_in_files? %>
+            <li>
+              <%= link_to t("submission.bulk_download_submissions"),
+                          bulk_download_submissions_path(id: @tutorial.id, ass_id: @assignment.id),
+                          class: "dropdown-item",
+                          data: { turbo: false } %>
+            </li>
+          <% end %>
+
+          <% if corrections? %>
+            <li>
+              <%= link_to t("submission.bulk_download_corrections"),
+                          bulk_download_corrections_path(id: @tutorial.id, ass_id: @assignment.id),
+                          class: "dropdown-item",
+                          data: { turbo: false } %>
+            </li>
+          <% end %>
+
+          <% if hand_in_files? %>
+            <li>
+              <%= link_to t("tutorial.teams_as_csv"),
+                          export_teams_to_csv_path(id: @tutorial.id, ass_id: @assignment.id,
+                                                   format: "csv"),
+                          class: "dropdown-item",
+                          data: { turbo: false } %>
+            </li>
+          <% end %>
+
+          <% if certificate_check? %>
+            <li>
+              <%= link_to t("tutorial.certificate_check"),
+                          validate_certificate_as_tutor_path(params: { lecture_id: @assignment.lecture.id }),
+                          class: "dropdown-item",
+                          remote: true %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if can_enter_points? %>
+      <button
+        type="button"
+        class="btn btn-success btn-sm"
+        disabled
+        data-pointing-table-target="bulkSave"
+        data-action="click->pointing-table#submitAll"
+      >
+        <i class="far fa-save me-1"></i>
+        <%= t("assessment.grading_tutorial.save_all") %>
+
+        <span
+          class="badge text-bg-light ms-1"
+          hidden
+          data-pointing-table-target="dirtyCount"
+        ></span>
+      </button>
+      <%= form_with url: point_multi_submissions_tutorial_path,
+                    method: :patch,
+                    local: true,
+                    data: { turbo: true, pointing_table_target: "form" },
+                    html: { hidden: true } do %>
+        <input
+          type="hidden"
+          name="submissions"
+          data-pointing-table-target="payload"
+        >
+
+        <input type="hidden" name="assignment_id" value="<%= @assignment.id %>">
+        <input type="hidden" name="tutorial_id" value="<%= @tutorial&.id %>">
+
+        <input
+          type="hidden"
+          name="grading_scope_type"
+          value="<%= grading_scope_type %>"
+        >
+      <% end %>
+    <% end %>
+  </div>
+</div>

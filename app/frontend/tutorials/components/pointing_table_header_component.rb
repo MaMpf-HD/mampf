@@ -1,23 +1,14 @@
 class PointingTableHeaderComponent < ViewComponent::Base
   Column = Struct.new(:css_class, :label, :sublabel,
-                      :data_mode, :action_tag, :label_hidden, keyword_init: true)
+                      :data_mode, :label_hidden, keyword_init: true)
 
-  def initialize(grading_scope:, # rubocop:disable Metrics/ParameterLists
-                 grading_enabled:,
-                 tasks: [],
-                 total_max_points: 0,
-                 accepted_file_type: nil,
-                 tutorials: [],
-                 status_without_hand_in: nil)
+  def initialize(grading_scope:, grading_enabled:, tasks: [], total_max_points: 0,
+                 accepted_file_type: nil)
     @grading_scope = grading_scope
     @grading_enabled = grading_enabled
     @tasks = tasks
     @total_max_points = total_max_points
     @accepted_file_type = accepted_file_type
-    @tutorials = tutorials || []
-    # The filter offers the states the badge in the column can show.
-    @status = ["all", "reviewed", "pending_grading",
-               (status_without_hand_in || :not_submitted).to_s]
     super()
   end
 
@@ -30,7 +21,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
       *tutorial_column,
       *grading_columns,
       hand_in_column,
-      *correction_column
+      correction_column
     ].compact
   end
 
@@ -59,21 +50,13 @@ class PointingTableHeaderComponent < ViewComponent::Base
     def tutorial_column
       return [] unless lecture_scope?
 
-      if @tutorials&.count&.zero? || @tutorials.nil?
-        [Column.new(css_class: "sticky-col tutorial-col grade-th text-center",
-                    label: t("basics.tutorial"))]
-      else
-        # The tutorial dropdown must appear above the sticky status header (z-10).
-        [Column.new(css_class: "sticky-col tutorial-col grade-th text-center z-20",
-                    label: t("basics.tutorial"),
-                    action_tag: "filter-tutorials")]
-      end
+      [Column.new(css_class: "sticky-col tutorial-col grade-th text-center",
+                  label: t("basics.tutorial"))]
     end
 
     def status_col
-      Column.new(css_class: "text-center sticky-col status-col grade-th z-10",
+      Column.new(css_class: "text-center sticky-col status-col grade-th",
                  data_mode: mode,
-                 action_tag: "filter-status",
                  label: t("assessment.grading_tutorial.status"))
     end
 
@@ -113,12 +96,10 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def correction_column
-      return [] if lecture_scope?
-
-      [Column.new(
+      Column.new(
         css_class: "text-center sticky-col correction-col grade-th",
         label: t("basics.correction"),
         sublabel: "(#{@accepted_file_type})"
-      )]
+      )
     end
 end

@@ -563,14 +563,14 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     end
     after { Timecop.return }
 
-    let(:validated_tutorials_ids) { [] }
+    let(:validated_scopes) { [] }
 
     context "when target is submission" do
       subject do
         described_class.score_tasks_by_types!(
           { "target" => "submission", "id" => @submission.id, "task_points" => points_by_task_id },
           scorer,
-          validated_tutorials_ids
+          validated_scopes
         )
       end
 
@@ -586,7 +586,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       it "raises ActiveRecord::RecordNotFound when the submission id does not exist" do
         entry = { "target" => "submission", "id" => 999_999, "task_points" => points_by_task_id }
         expect do
-          described_class.score_tasks_by_types!(entry, scorer, validated_tutorials_ids)
+          described_class.score_tasks_by_types!(entry, scorer, validated_scopes)
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
 
@@ -596,18 +596,18 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
 
-      it "adds the tutorial id to validated_tutorials_ids on success" do
+      it "adds the tutorial to validated_scopes on success" do
         allow(Assessment::PointEntryService).to receive(:enter_points)
 
         subject
 
-        expect(validated_tutorials_ids).to include(tutorial.id)
+        expect(validated_scopes).to include(tutorial)
       end
 
-      it "does not re-validate a tutorial already in validated_tutorials_ids" do
+      it "does not re-validate a tutorial already in validated_scopes" do
         allow(Assessment::PointEntryService).to receive(:enter_points)
-        validated_tutorials_ids << tutorial.id
-        expect(Tutorial).not_to receive(:find)
+        validated_scopes << tutorial
+        expect(scorer).not_to receive(:can_enter_points_in?)
         subject
       end
     end
@@ -618,7 +618,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           { "target" => "participation", "id" => @participation.id,
             "task_points" => points_by_task_id },
           scorer,
-          validated_tutorials_ids
+          validated_scopes
         )
       end
 
@@ -635,7 +635,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         entry = { "target" => "participation", "id" => 999_999,
                   "task_points" => points_by_task_id }
         expect do
-          described_class.score_tasks_by_types!(entry, scorer, validated_tutorials_ids)
+          described_class.score_tasks_by_types!(entry, scorer, validated_scopes)
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
 
@@ -645,15 +645,18 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
 
-      it "adds the tutorial id to validated_tutorials_ids on success" do
+      it "adds the tutorial to validated_scopes on success" do
         subject
-        expect(validated_tutorials_ids).to include(tutorial.id)
+        expect(validated_scopes).to include(tutorial)
       end
 
-      context "when participation has no tutorial_id" do
+      # Somebody in no group takes part in the lecture itself, and that is
+      # the lecturer's to enter.
+      context "when the participation belongs to no group" do
         let!(:participation_no_tutorial) do
-          FactoryBot.create(:assessment_participation, assessment: assessment, user:
-            FactoryBot.create(:confirmed_user), tutorial: nil)
+          FactoryBot.create(:assessment_participation, :submitted,
+                            assessment: assessment, tutorial: nil,
+                            user: FactoryBot.create(:confirmed_user))
         end
 
         subject do
@@ -661,25 +664,21 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
             { "target" => "participation", "id" => participation_no_tutorial.id,
               "task_points" => points_by_task_id },
             scorer,
-            validated_tutorials_ids
+            validated_scopes
           )
         end
 
-        it "raises SubmissionGraderError with the missing-tutorial message" do
-          expect { subject }.to raise_error(
-            Assessment::SubmissionGraderService::SubmissionGraderError,
-            I18n.t("assessment.task_points.participation_id_missing_tutorial",
-                   participation_id: participation_no_tutorial.id)
-          )
+        it "asks whether the scorer may enter points in the lecture" do
+          expect(scorer).to receive(:can_enter_points_in?).with(assessment.lecture)
+                                                          .and_return(true)
+          subject
+          expect(validated_scopes).to include(assessment.lecture)
         end
 
-        it "does not attempt to authorize against a scope" do
-          expect(scorer).not_to receive(:can_enter_points_in?)
-          begin
-            subject
-          rescue StandardError
-            nil
-          end
+        it "refuses a scorer who may not" do
+          allow(scorer).to receive(:can_enter_points_in?).and_return(false)
+
+          expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
         end
       end
     end
@@ -689,7 +688,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         described_class.score_tasks_by_types!(
           { "target" => "unknown", "id" => @submission.id, "task_points" => points_by_task_id },
           scorer,
-          validated_tutorials_ids
+          validated_scopes
         )
       end
 

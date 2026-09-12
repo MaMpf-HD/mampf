@@ -7,6 +7,7 @@
   data-row-id="<%= @submission.id %>"
   data-row-target-type="submission"
   data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
+  data-status-filter-target="row"
   data-status-filter-status="<%= status %>"
   data-status-filter-tutorial="<%= @submission.tutorial_id %>"
   data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
@@ -156,18 +157,16 @@
   </td>
 
   <!-- The correction: the tutor's to upload and remove, anybody else's to read -->
-  <% if @mode == "tutor" %>
-    <td
-      class="text-center sticky-col correction-col"
-      data-id="<%= @submission.id %>"
-    >
-      <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
-        <%= render partial: 'submissions/correction_column',
-                  locals: { submission: @submission } %>
-      <% else %>
-        <%= render partial: 'submissions/download',
-                  locals: { submission: @submission } %>
-      <% end %>
-    </td>
-  <% end %>
+  <td
+    class="text-center sticky-col correction-col"
+    data-id="<%= @submission.id %>"
+  >
+    <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+      <%= render partial: 'submissions/correction_column',
+                locals: { submission: @submission } %>
+    <% else %>
+      <%= render partial: 'submissions/download',
+                locals: { submission: @submission } %>
+    <% end %>
+  </td>
 </tr>

@@ -1,60 +1,9 @@
 <%= helpers.turbo_frame_tag "pointing-table" do %>
   <% if rows? %>
-    <div data-controller="status-filter paper-selection">
+    <div data-controller="pointing-table status-filter paper-selection">
       <% if grading_enabled? %>
-        <div class="d-flex gap-2 m-3 align-items-center">
-          <div class="d-flex align-items-center">
-            <input
-              type="text"
-              class="form-control form-control-sm w-auto"
-              placeholder="<%= t('assessment.grading_tutorial.filter_name') %>"
-              autocomplete="off"
-              data-action="input->status-filter#search"
-            >
-          </div>
-
-          <div
-            class="d-flex gap-2 align-items-center"
-            data-status-filter-target="activeFilters"
-          ></div>
-
-          <%# The rows' checkboxes belong to this form by its id. %>
-          <% if can_enter_points? %>
-            <%= form_with url: mark_users_as_participated_path,
-                          method: :patch,
-                          id: "paper-hand-ins",
-                          local: true,
-                          class: "ms-auto",
-                          data: { turbo: true } do %>
-              <input
-                type="hidden"
-                name="assignment_id"
-                value="<%= @assignment.id %>"
-              >
-
-              <input
-                type="hidden"
-                name="tutorial_id"
-                value="<%= @tutorial&.id %>"
-              >
-
-              <input
-                type="hidden"
-                name="grading_scope_type"
-                value="<%= @grading_scope.class.name.downcase %>"
-              >
-
-              <button
-                type="submit"
-                class="btn btn-outline-secondary btn-sm"
-                disabled
-                data-paper-selection-target="button"
-              >
-                <i class="bi bi-file-earmark-check me-1"></i>
-                <%= t('assessment.grading_tutorial.paper_hand_in_selected') %>
-              </button>
-            <% end %>
-          <% end %>
+        <div class="m-3">
+          <%= render toolbar %>
         </div>
       <% end %>
 
@@ -74,9 +23,7 @@
                 grading_enabled: grading_enabled?,
                 tasks: tasks,
                 total_max_points: total_max_points,
-                accepted_file_type: @assignment.accepted_file_type,
-                tutorials: @tutorials,
-                status_without_hand_in: @assignment.assessment&.status_without_hand_in
+                accepted_file_type: @assignment.accepted_file_type
               )) %>
             </thead>
 
@@ -123,6 +70,10 @@
           </table>
         </div>
       </div>
+
+      <p class="text-muted m-3" hidden data-status-filter-target="empty">
+        <%= t("assessment.grading_tutorial.filter_no_match") %>
+      </p>
     </div>
   <% else %>
     <div class="jumbotron mt-3">

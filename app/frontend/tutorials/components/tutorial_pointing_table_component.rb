@@ -78,6 +78,21 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @assignment.assessable?
   end
 
+  def toolbar
+    PointingToolbarComponent.new(assignment: @assignment, grading_scope: @grading_scope,
+                                 statuses: row_statuses, submissions: @stack,
+                                 tutorials: @tutorials || [])
+  end
+
+  # What every row will say, read off the same records the rows read.
+  def row_statuses
+    from_files = @stack.map { |submission| team_participations(submission).first&.display_status }
+    from_rows = roster_rows.map do |user, tutorial|
+      participation_for(user, tutorial).display_status
+    end
+    (from_files + from_rows).map { |status| status || :pending_grading }
+  end
+
   def tasks
     @assignment&.assessment&.persisted_tasks || []
   end
@@ -97,15 +112,16 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @stack.any? || @non_submitters.any? || @non_tutorial_participants.present?
   end
 
-  def column_count
-    if @mode == "tutor"
-      7 + tasks.count
-    else
-      6 + tasks.count
-    end
-  end
-
   private
+
+    def roster_rows
+      if @mode == "tutor"
+        @non_submitters.map { |user| [user, @tutorial] }
+      else
+        @non_submitters_by_tutorial.flat_map { |tutorial, users| users.map { |u| [u, tutorial] } } +
+          @non_tutorial_participants.map { |user| [user, nil] }
+      end
+    end
 
     def membership_tutorials
       @membership_tutorials ||=
