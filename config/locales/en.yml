@@ -50,7 +50,6 @@ en:
       singular: 'Quiz Remark'
       plural: 'Quiz Remarks'
       short: 'Rem'
-    muesli: 'MUESLI'
     board: 'Board'
     comments: 'Comments'
     organizational_html: 'General Information'
@@ -596,10 +595,6 @@ en:
         organizational_on_top: >
           If you check this box, the page for general information will be the
           starting page for this event series.
-        muesli: >
-          If you check this box, the link to MUESLI will be activated in the
-          sidebar for this event series.
-          their profile settings.
         vignettes: >
           If you check this box, the vignettes of this event series appear in
           the sidebar for everyone who can see its contents.
@@ -730,7 +725,6 @@ en:
       imported_media: 'Imported Media'
       organizational_visible: 'General information visible'
       organizational_on_top: 'General Information as start page'
-      uses_muesli: 'Event series uses MUESLI'
       uses_vignettes: 'Event series uses vignettes'
       first_chapter: 'Number of the first chapter (talk)'
       first_section: 'Nummer of the first section'

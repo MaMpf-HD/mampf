@@ -113,16 +113,6 @@
     </li>
   <% end %>
 
-  <% if lecture %>
-    <%# Müsli (external link) %>
-    <li class="sidebar-item nav-link <%= !content_accessible || !lecture.muesli ? "disabled" : ""%>">
-      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" rel="noopener noreferrer">
-        <i class="bi bi-list-check"></i>
-        <%= t('categories.muesli') %>
-      </a>
-    </li>
-  <% end %>
-
   <%# Divider %>
   <span class="border-top my-3"></span>
 

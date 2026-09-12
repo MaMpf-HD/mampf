@@ -89,7 +89,6 @@ de:
       singular: 'Quiz-Erläuterung'
       plural: 'Quiz-Erläuterungen'
       short: 'Erl'
-    muesli: 'MÜSLI'
     board: 'Forum'
     comments: 'Kommentare'
     organizational_html: 'Organisa&shy;torisches'
@@ -679,9 +678,6 @@ de:
         organizational_on_top: >
           Wenn Du diesen Haken setzt, wird die Seite "Organisatorisches"
           als Startseite für diese Veranstaltung erscheinen.
-        muesli: >
-          Wenn Du diesen Haken setzt, wird in der
-          Sidebar für diese Veranstaltung der Link zu MUESLI aktiviert.
         vignettes: >
           Wenn Du diesen Haken setzt, erscheinen die Vignetten dieser
           Veranstaltung in der Sidebar für alle, die ihre Inhalte sehen.
@@ -829,7 +825,6 @@ de:
       imported_media: 'Importierte Medien'
       organizational_visible: 'Organisatorisches sichtbar'
       organizational_on_top: 'Organisatorisches als Startseite'
-      uses_muesli: 'Veranstaltung verwendet MÜSLI'
       uses_vignettes: 'Veranstaltung verwendet Vignetten'
       first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
