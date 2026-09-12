@@ -61,7 +61,7 @@ en:
         back: "Back to records"
         recompute: "Recompute record"
         recompute_hint: "Fallback only: use this if the displayed data seems out of date or incorrect."
-        review_proposal: "Review Proposal"
+        review_proposal: "View eligibility proposal"
         total_points: "Total Points"
         out_of: "out of %{max} marked so far"
         percentage: "Percentage"
@@ -164,7 +164,7 @@ en:
         result: "Result"
         achievements_check: "Achievements Check"
         no_achievements_required: "No achievements are required by the current rule."
-        info: "This proposal is a read-only preview. Certifications will be created in a future update."
+        info: "This proposal is a preview only; decisions are made under Exam Eligibility."
     certifications:
       back_to_dashboard: "Back to dashboard"
       index:

@@ -61,7 +61,7 @@ de:
         back: "Zurück zur Übersicht"
         recompute: "Datensatz neu berechnen"
         recompute_hint: "Nur als Fallback: Verwende dies, wenn die angezeigten Daten veraltet oder fehlerhaft wirken."
-        review_proposal: "Vorschlag prüfen"
+        review_proposal: "Zulassungsvorschlag ansehen"
         total_points: "Gesamtpunkte"
         out_of: "von %{max} bisher korrigierten"
         percentage: "Prozent"
@@ -164,7 +164,7 @@ de:
         result: "Ergebnis"
         achievements_check: "Zusatzkriterien-Prüfung"
         no_achievements_required: "Die aktuelle Regel erfordert keine Zusatzkriterien."
-        info: "Dieser Vorschlag ist eine schreibgeschützte Vorschau. Zulassungen werden in einem zukünftigen Update erstellt."
+        info: "Dieser Vorschlag ist nur eine Ansicht; entschieden wird unter Prüfungszulassungen."
     certifications:
       back_to_dashboard: "Zurück zum Dashboard"
       index:
