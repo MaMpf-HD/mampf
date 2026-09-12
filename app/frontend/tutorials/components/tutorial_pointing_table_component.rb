@@ -110,6 +110,21 @@ class TutorialPointingTableComponent < ViewComponent::Base
     end
   end
 
+  def sticky_layout
+    return unless @config
+
+    @sticky_layout ||= Assessment::StickyColumnLayout.new(
+      left_columns: @config.left_columns,
+      right_columns: @config.right_columns
+    )
+  end
+
+  def sticky_css_vars
+    return unless @config
+
+    helpers.sticky_css_vars_calc(sticky_layout)
+  end
+
   private
 
     def membership_tutorials

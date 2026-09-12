@@ -138,12 +138,11 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
     def save_column
       [Column.new(css_class: "text-center sticky-col save-col grade-th",
-                  label: t("assessment.grading_tutorial.actions"))]
+                  label: t("assessment.grading_tutorial.save"))]
     end
 
     def hand_in_column
       Column.new(css_class: "text-center sticky-col hand-in-col grade-th",
-                 data_mode: mode,
                  label: t("basics.submission"),
                  sublabel: "(#{@accepted_file_type})")
     end

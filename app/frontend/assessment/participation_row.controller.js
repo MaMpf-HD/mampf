@@ -172,7 +172,7 @@ export default class extends Controller {
 
   // --- Data extraction Methods ---
 
-  extractTasksPoints(inputTargets) {
+  extractTasksPoints(pointInputTargets) {
     const participationNewTasksPoints = {};
     for (const input of pointInputTargets) {
       const id = this.extractId(input.name);

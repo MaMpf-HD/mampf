@@ -101,9 +101,9 @@ input[type="file"] {
   width: 120px; min-width: 120px; max-width: 120px;
   background: white; z-index: 2; 
 }
-.action-col     { 
+.save-col     { 
   position: sticky; 
-  right: var(--action-right);     
+  right: var(--save-right);     
   width: 90px; max-width: 90px; min-width: 90px;
   background: white; z-index: 2; padding: 0.5rem; 
 }

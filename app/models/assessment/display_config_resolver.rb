@@ -1,7 +1,6 @@
 module Assessment
   GradingDisplayConfig = Struct.new(
     :body_mode,
-    :mode,
     :left_columns,
     :right_columns,
     keyword_init: true
@@ -28,7 +27,12 @@ module Assessment
       GradingDisplayConfig.new(
         body_mode: [:tasks],
         left_columns: tutor ? [:team, :status] : [:team, :tutorial, :status],
-        right_columns: tutor ? [:total, :action, :correction] : [:total, :action]
+        right_columns: if tutor
+                         [:total, :save, :hand_in,
+                          :correction]
+                       else
+                         [:total, :save, :hand_in]
+                       end
       )
     end
     private_class_method :resolve_assignment
@@ -37,7 +41,7 @@ module Assessment
       GradingDisplayConfig.new(
         body_mode: [:single_grade],
         left_columns: [:team, :status],
-        right_columns: [:grade, :note, :graded_by, :graded_at, :action]
+        right_columns: [:grade, :note, :graded_by, :graded_at, :save]
       )
     end
     private_class_method :resolve_talk

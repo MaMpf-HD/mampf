@@ -169,7 +169,7 @@
     paper, and the tutor says it here; the answer replaces this row alone.
   %>
 
-  <td class="text-center sticky-col hand-in-col" data-mode="<%= @mode %>">
+  <td class="text-center sticky-col hand-in-col">
     <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
       <% if paper_hand_in? && !paper_hand_in_removable? %>
         <button
