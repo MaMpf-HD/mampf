@@ -2,21 +2,22 @@ import { Controller } from "@hotwired/stimulus";
 import { Modal } from "bootstrap";
 
 /**
- * Base for a dashboard card's removal-confirmation modal. The dialog is moved
- * to <body> on connect (else the card's CSS transform tilts the modal along
- * with it), which also moves it out of this controller's DOM subtree, so
- * confirm buttons are wired up by hand instead of via data-action. Not
- * registered directly - subclasses implement `bindings()`.
+ * Base for a dashboard card's removal-confirmation modal.
  */
 export default class extends Controller {
   static targets = ["dialog"];
   static values = { url: String, lectureId: Number };
 
-  connect() {
-    if (!this.hasDialogTarget) return;
+  dialogTargetConnected(dialog) {
+    this.dialog = dialog;
 
-    this.dialog = this.dialogTarget;
+    // placeholder node to mark original position of dialog in DOM
+    this.dialogPlaceholder = document.createComment("");
+    this.dialog.before(this.dialogPlaceholder);
     document.body.appendChild(this.dialog);
+
+    this.restoreDialogPosition = () => this.dialogPlaceholder.replaceWith(this.dialog);
+    document.addEventListener("turbo:before-cache", this.restoreDialogPosition);
 
     this.boundBindings = this.bindings().map(([selector, handler]) => {
       const button = this.dialog.querySelector(selector);
@@ -26,16 +27,17 @@ export default class extends Controller {
   }
 
   disconnect() {
-    if (!this.dialog) return;
-
+    document.removeEventListener("turbo:before-cache", this.restoreDialogPosition);
     this.boundBindings?.forEach(([button, handler]) => {
       button?.removeEventListener("click", handler);
     });
-    Modal.getInstance(this.dialog)?.dispose();
-    this.dialog.remove();
+
+    this.dialog = null;
   }
 
   open() {
+    if (!this.dialog) return;
+
     Modal.getOrCreateInstance(this.dialog).show();
   }
 
