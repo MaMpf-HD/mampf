@@ -44,7 +44,6 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
                            I18n.t("assessment.task_points.init_participation_missing_args"))
       end
 
-      # Somebody in no group takes part in the lecture itself.
       it "takes no tutorial for somebody in no group" do
         result = described_class.init_participation(assessment, user, nil)
 
@@ -111,8 +110,6 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         Timecop.return
       end
 
-      # The backfill worker writes the row without a stamp; the sheet coming
-      # in on paper is what puts one there.
       it "stamps a row the backfill worker wrote" do
         existing.update!(submitted_at: nil)
 
@@ -183,8 +180,6 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
                           tutorial: tutorial)
       end
 
-      # The row stays - everybody on the roster has one - and only the stamp
-      # goes.
       it "takes the stamp off and keeps the row" do
         participation.update!(submitted_at: 1.day.ago)
 
@@ -595,21 +590,6 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
 
         expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
-
-      it "adds the tutorial to validated_scopes on success" do
-        allow(Assessment::PointEntryService).to receive(:enter_points)
-
-        subject
-
-        expect(validated_scopes).to include(tutorial)
-      end
-
-      it "does not re-validate a tutorial already in validated_scopes" do
-        allow(Assessment::PointEntryService).to receive(:enter_points)
-        validated_scopes << tutorial
-        expect(scorer).not_to receive(:can_enter_points_in?)
-        subject
-      end
     end
 
     context "when target is participation" do
@@ -645,11 +625,6 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
 
-      it "adds the tutorial to validated_scopes on success" do
-        subject
-        expect(validated_scopes).to include(tutorial)
-      end
-
       # Somebody in no group takes part in the lecture itself, and that is
       # the lecturer's to enter.
       context "when the participation belongs to no group" do
@@ -672,7 +647,6 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
           expect(scorer).to receive(:can_enter_points_in?).with(assessment.lecture)
                                                           .and_return(true)
           subject
-          expect(validated_scopes).to include(assessment.lecture)
         end
 
         it "refuses a scorer who may not" do

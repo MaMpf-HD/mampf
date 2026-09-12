@@ -69,7 +69,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         end
       end
 
-      # Everybody on the roster is a row, hand-in or not.
       context "when somebody is in the group without a hand-in" do
         before { create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user)) }
 
@@ -85,8 +84,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       end
     end
 
-    # A sheet from before there were points: files to download, nobody to
-    # mark, so the roster does not become rows.
     context "when the assignment has no assessment" do
       let!(:assignment) { create(:assignment, :without_assessment, lecture: lecture) }
       let!(:assessment) { nil }
@@ -116,8 +113,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       let(:member) { create(:confirmed_user) }
       let(:partner) { create(:confirmed_user) }
 
-      # The row speaks for its first member with a participation; so does
-      # the line above the table.
       it "reads a team row the way the row reads itself" do
         create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
                                               users: [member, partner])
@@ -142,9 +137,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       end
     end
 
-    # The row of somebody without a hand-in is drawn from their participation
-    # where the worker has written one, and from an unsaved one where it has
-    # not - so the table never waits for the worker to show a person.
     describe "#participation_for" do
       let(:member) { create(:confirmed_user) }
 

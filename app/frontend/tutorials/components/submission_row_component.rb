@@ -94,8 +94,6 @@ class SubmissionRowComponent < ViewComponent::Base
     end
   end
 
-  # Neutral until the row has something to save; the controller turns it
-  # green with the first edit.
   def save_row_button(allow_grading)
     class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
                  "justify-content-center text-nowrap px-2 py-1 lh-1"

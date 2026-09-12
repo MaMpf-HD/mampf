@@ -1,11 +1,6 @@
 import { expect, test } from "../_support/fixtures";
 import { addTask, createAssessedAssignment, scoreTask } from "./helpers";
 
-/**
- * A sheet that came in on paper leaves no file behind, so the tutor says so
- * in the table. The answer swaps the row alone; the table around it has to
- * keep the group's shape.
- */
 test.describe("pointing table", () => {
   test("records a hand-in on paper and takes it back", async ({
     factory,
@@ -101,8 +96,6 @@ test.describe("pointing table", () => {
     await expect(button).toBeHidden();
   });
 
-  // The summary and the filters read the same rows; a filter that leaves
-  // nothing says so instead of showing bare headings.
   test("says where the sheet stands and narrows the rows", async ({
     factory,
     teacher,

@@ -58,7 +58,6 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
           .to include(a_string_matching(/tutorial-col/))
       end
 
-      # The lecturer reads the tutors' corrections here; they upload none.
       it "includes the correction column" do
         expect(columns_for(component).map(&:css_class))
           .to include(a_string_matching(/correction-col/))

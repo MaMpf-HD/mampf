@@ -102,11 +102,6 @@
     </td>
   <% end %>
 
-  <%#
-    No file to open. What the column can say is whether the sheet came in on
-    paper, and the tutor says it here; the answer replaces this row alone.
-  %>
-
   <td class="text-center hand-in-col">
     <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
       <% if paper_hand_in? && !paper_hand_in_removable? %>
@@ -124,7 +119,7 @@
       <% elsif paper_hand_in? %>
         <%= link_to paper_hand_in_removal_url,
                     class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                    data: { turbo_method: :patch, bs_toggle: "tooltip" },
+                    data: { turbo_method: :patch },
                     title: t("assessment.grading_tutorial.paper_hand_in_remove"),
                     aria: { label: t("assessment.grading_tutorial.paper_hand_in_remove") } do %>
           <i class="bi bi-file-earmark-check-fill"></i>
@@ -144,7 +139,7 @@
 
           <%= link_to paper_hand_in_url,
                       class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                      data: { turbo_method: :patch, bs_toggle: "tooltip" },
+                      data: { turbo_method: :patch },
                       title: t("assessment.grading_tutorial.paper_hand_in"),
                       aria: { label: t("assessment.grading_tutorial.paper_hand_in") } do %>
             <i class="bi bi-file-earmark"></i>

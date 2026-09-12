@@ -39,7 +39,6 @@ RSpec.describe(PointingToolbarComponent, type: :component) do
         .to eq(["All", "Tuesday group", "No tutorial"])
     end
 
-    # Downloads and uploads go per group; the lecture's table has no bundle.
     it "has no menu of group actions" do
       rendered = render_inline(toolbar(scope: lecture, tutorials: [tutorial]))
 

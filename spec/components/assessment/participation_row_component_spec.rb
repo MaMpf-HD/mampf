@@ -372,9 +372,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  # One row per person on the roster: a sheet taken on paper, one never handed
-  # in, and one the worker has not written a participation for yet all sit in
-  # the table, and the hand-in column says which it is.
   describe "the hand-in column" do
     before { allow(vc_test_controller).to receive(:current_user).and_return(tutor) }
 
@@ -453,7 +450,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       expect(component.points_enterable?).to be(true)
     end
 
-    # A sheet collected on paper says what to do before the points open.
     it "tells the tutor to record a paper sheet first" do
       assessment.update_column(:requires_submission, false) # rubocop:disable Rails/SkipsModelValidations
       participation.update!(submitted_at: nil)

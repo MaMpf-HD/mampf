@@ -1,7 +1,6 @@
-# One row of the pointing table for somebody without a hand-in file: a sheet
-# taken on paper, one never handed in, an excused or an absent one. Before
-# the backfill worker has been round the participation may not exist yet;
-# the row is drawn from an unsaved one and offers what makes it real.
+# One row of the pointing table for somebody without a hand-in file. The
+# participation may be unsaved until the backfill worker has been round;
+# recording the hand-in saves it.
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
@@ -54,8 +53,8 @@ class ParticipationRowComponent < ViewComponent::Base
       !@participation.exempt? && !@participation.absent?
   end
 
-  # Why the fields are locked, said under the status rather than left to a
-  # tooltip: the sheet is with another group, or nobody has recorded it yet.
+  # Greyed-out fields alone do not say why; the tooltip on the icon did, and
+  # nobody hovers over a table of thirty rows.
   def locked_reason
     if elsewhere?
       t("assessment.grading_tutorial.held_by", tutorial: @participation.tutorial.title)
@@ -100,8 +99,6 @@ class ParticipationRowComponent < ViewComponent::Base
     refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
   end
 
-  # The hand-in column of a row without a file: whether the sheet came in on
-  # paper. The mark can be taken back until points sit on it.
   def paper_hand_in?
     @participation.submitted_at.present?
   end
@@ -155,8 +152,6 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
-  # Neutral until the row has something to save; the controller turns it
-  # green with the first edit.
   def save_row_button(allow_grading)
     class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
                  "justify-content-center text-nowrap px-2 py-1 lh-1"

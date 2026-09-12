@@ -72,12 +72,9 @@ table.table tbody tr.row-dirty td {
     background-color: #fffbeb !important;
 }
 
-/* The pointing table scrolls inside its own box, sideways and down. Two
-   columns are pinned - the team on the left, the save pair on the right - so
-   the tasks get the width between them; the header row stays put on top.
-   The fades sit where the pinned column meets what scrolls under it. The
-   save column only sticks once its own place lies beyond the edge; until
-   then the fade sits on the edge itself, which the controller decides. */
+/* The fades sit where a pinned column meets what scrolls under it. The save
+   column only sticks once its own place lies beyond the edge; until then the
+   fade belongs on the edge, and the controller sets the offset. */
 .table-wrapper {
   --pin-left: 200px;
   --pin-right: 90px;

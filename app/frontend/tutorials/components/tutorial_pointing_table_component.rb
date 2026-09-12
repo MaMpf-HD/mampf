@@ -1,7 +1,5 @@
-# The pointing table of a sheet: one row for every hand-in of a group and one
-# for everybody else on its roster, so that a sheet taken on paper, a missing
-# one and an excused one are rows like any other rather than a list beneath
-# the table. A tutor sees their group, the lecturer every group.
+# The pointing table of a sheet: a row for every hand-in and one for everybody
+# else on the roster. A tutor sees their group, the lecturer every group.
 class TutorialPointingTableComponent < ViewComponent::Base
   def initialize(assignment:, grading_scope: nil)
     super()
@@ -49,15 +47,15 @@ class TutorialPointingTableComponent < ViewComponent::Base
     end
   end
 
-  # One query for everybody on the page, marks included: the rows read theirs
-  # off this rather than asking per row.
+  # Read once for the whole page; the rows take theirs from here instead of
+  # asking per row.
   def preload_participations(non_submitters, submissions)
     return {} unless @assignment.assessment
 
     user_ids = non_submitters.map(&:id) + submissions.flat_map(&:user_ids)
     Assessment::Participation
       .where(user_id: user_ids, assessment: @assignment.assessment)
-      .includes(:task_points, :tutorial)
+      .includes(:task_points, :tutorial, :assessment)
       .index_by(&:user_id)
   end
 
@@ -65,10 +63,8 @@ class TutorialPointingTableComponent < ViewComponent::Base
     submission.users.map { |user| @participations_by_user_id[user.id] }
   end
 
-  # The row of somebody without a hand-in. Before the backfill worker has
-  # been round there is no participation yet; the row is drawn from an unsaved
-  # one, and the first thing written to it - a paper hand-in, points - makes
-  # it real.
+  # Before the backfill worker has been round there is no participation yet;
+  # the row is drawn from an unsaved one, and recording the hand-in saves it.
   def participation_for(user, tutorial)
     @participations_by_user_id[user.id] ||
       Assessment::Participation.new(assessment: @assignment.assessment, user: user,
@@ -105,13 +101,6 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   def total_max_points
     @assignment&.assessment&.effective_total_points || 0
-  end
-
-  def can_enter_points?
-    user = helpers.current_user
-    user.admin? || user.can_enter_points_in?(@grading_scope)
-  rescue User::IncompatibleTypeError
-    false
   end
 
   # A sheet from before there were points has file rows only.

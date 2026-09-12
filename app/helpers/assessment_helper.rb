@@ -57,8 +57,8 @@ module AssessmentHelper
                                   tab: params[:assessment_tab])
     end
 
-    # Three ways a person and their sheet part company: they changed groups,
-    # they left the groups, or they joined one after handing in with none.
+    # The sheet stays with the group that has it; the wording has to say where
+    # it is and where the person is now.
     def movement_msg_assignment(movement)
       old_title = movement[:participated_tutorial_title]
       new_title = movement[:new_tutorial_title]

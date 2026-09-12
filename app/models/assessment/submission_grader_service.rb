@@ -55,10 +55,7 @@ module Assessment
         participation
       end
 
-      # The sheet came in - as a file, or on paper. A row the backfill worker
-      # wrote carries no stamp yet and gets one; a stamp already there is the
-      # time the sheet came in and stays. Somebody in no group takes part in
-      # the lecture itself.
+      # A stamp already there is the time the sheet came in and stays.
       def init_participation(assessment, user, tutorial)
         if assessment.nil? || user.nil?
           raise(SubmissionGraderError,
@@ -118,7 +115,8 @@ module Assessment
           score_tasks_by_participation!(participation, entry["task_points"], scorer)
         end
 
-        # A pile of rows from one group asks the permission question once.
+        # A bulk save carries thirty rows of one group; the permission check
+        # loads tutors and runs once per scope, not per row.
         def authorize_scope!(scope, scorer, validated_scopes)
           return if validated_scopes.include?(scope)
 

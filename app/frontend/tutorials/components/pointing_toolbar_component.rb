@@ -1,7 +1,5 @@
-# The strip between the page and the pointing table, the same for a group's
-# page and the lecture's: one line saying where the sheet stands, the filters
-# into the rows, the rare actions behind one menu, and the one button that
-# belongs to the table - saving every edited row at once.
+# The strip above the pointing table, the same on a group's page and in the
+# lecture's dashboard: summary, filters, the rare actions and saving.
 class PointingToolbarComponent < ViewComponent::Base
   def initialize(assignment:, grading_scope:, statuses:, submissions:, tutorials: [])
     super()
