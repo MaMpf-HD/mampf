@@ -10,8 +10,10 @@
       buttons: [{ action:, css_class:, label: }, ...] rendered after Cancel;
         `action` becomes data-#{controller}-#{action} on the button %>
 <div data-controller="<%= controller %>"
-     data-<%= controller %>-url-value="<%= url %>"
-     data-<%= controller %>-lecture-id-value="<%= lecture_id %>">
+     <%= tag.attributes(data: {
+           "#{controller}-url-value": url,
+           "#{controller}-lecture-id-value": lecture_id
+         }) %>>
   <button type="button"
           class="bi bi-x-lg dashboard-card__action"
           data-action="<%= controller %>#open"
@@ -21,7 +23,7 @@
   <div class="modal fade"
        tabindex="-1"
        aria-hidden="true"
-       data-<%= controller %>-target="dialog">
+       <%= tag.attributes(data: { "#{controller}-target": "dialog" }) %>>
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -41,7 +43,7 @@
           <% buttons.each do |button| %>
             <button type="button"
                     class="<%= button[:css_class] %>"
-                    data-<%= controller %>-<%= button[:action] %>>
+                    <%= tag.attributes("data-#{controller}-#{button[:action]}": true) %>>
               <%= button[:label] %>
             </button>
           <% end %>
