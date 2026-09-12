@@ -3,7 +3,8 @@ de:
     start:
       no_lectures: >-
         Du bist noch zu keiner Veranstaltung des aktuellen Semesters angemeldet
-        und hast Dir auch keine gemerkt.
+        und hast Dir auch keine gemerkt. Scrolle nach unten, um neue
+        Veranstaltungen zu entdecken.
       sections:
         enrolled: "Für diese bist Du angemeldet"
         bookmarked: "Diese hast Du Dir gemerkt"
