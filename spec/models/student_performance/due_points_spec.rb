@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe(StudentPerformance::DuePoints) do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:lecture) { FactoryBot.create(:lecture, :released_for_all) }
   let(:student) { FactoryBot.create(:confirmed_user) }
   let(:due_points) { described_class.new(lecture: lecture) }
@@ -183,7 +185,9 @@ RSpec.describe(StudentPerformance::DuePoints) do
       expect(due_points.not_yet_due_count_for(student.id)).to eq(2)
     end
 
-    it "leaves out one she was let off and one she has handed in early" do
+    # The early hand-in can still be withdrawn until its deadline; the sheet
+    # is to come like any other.
+    it "leaves out one she was let off, and keeps one she handed in early" do
       excused = sheet(deadline: 3.days.from_now, points: 16)
       early = sheet(deadline: 5.days.from_now, points: 10)
       sheet(deadline: 7.days.from_now, points: 8)
@@ -193,15 +197,14 @@ RSpec.describe(StudentPerformance::DuePoints) do
                                                    user: student,
                                                    submitted_at: 1.day.ago)
 
-      expect(due_points.not_yet_due_count_for(student.id)).to eq(1)
+      expect(due_points.not_yet_due_count_for(student.id)).to eq(2)
     end
   end
 
-  describe "#pending_count_for" do
-    # Every hand-in that is waiting, whether its deadline has passed or not:
-    # the reason it belongs to says something sits with a tutor, and for that
-    # the deadline is beside the point.
-    it "counts what is waiting to be marked, due or not" do
+  # With a tutor means: handed in, due, not marked. Before the deadline nobody
+  # can mark anything, so an early hand-in is not waiting on anyone.
+  describe "#pending_count_for and #pending_points_for" do
+    it "counts what is due and waiting to be marked, and only that" do
       due = sheet(deadline: 2.days.ago, points: 20)
       coming = sheet(deadline: 3.days.from_now, points: 16)
       [due, coming].each do |assessment|
@@ -210,7 +213,45 @@ RSpec.describe(StudentPerformance::DuePoints) do
                                                      submitted_at: 1.day.ago)
       end
 
-      expect(due_points.pending_count_for(student.id)).to eq(2)
+      expect(due_points.pending_count_for(student.id)).to eq(1)
+      expect(due_points.pending_points_for(student.id)).to eq(20)
+    end
+
+    # Nothing is written when a deadline passes; the count has to move on its
+    # own, which is why it is read off the clock rather than stored.
+    it "starts counting the moment the grace period runs out" do
+      lecture.update!(submission_grace_period: 60)
+      sheet_id = sheet(deadline: 10.minutes.ago, points: 20).id
+      FactoryBot.create(:assessment_participation, assessment_id: sheet_id,
+                                                   user: student,
+                                                   submitted_at: 1.day.ago)
+
+      expect(due_points.pending_count_for(student.id)).to be_zero
+      expect(due_points.not_yet_due_count_for(student.id)).to eq(1)
+
+      travel_to(2.hours.from_now) do
+        later = described_class.new(lecture: lecture)
+        expect(later.pending_count_for(student.id)).to eq(1)
+        expect(later.not_yet_due_count_for(student.id)).to be_zero
+      end
+    end
+
+    # A deadline extended after the hand-in makes the hand-in provisional
+    # again: the sheet goes back to the ones still to come.
+    it "lets go of a hand-in whose deadline was extended" do
+      assessment = sheet(deadline: 2.days.ago, points: 20)
+      FactoryBot.create(:assessment_participation, assessment: assessment,
+                                                   user: student,
+                                                   submitted_at: 3.days.ago)
+      expect(due_points.pending_points_for(student.id)).to eq(20)
+
+      # rubocop:disable Rails/SkipsModelValidations
+      assessment.assessable.update_column(:deadline, 3.days.from_now)
+      # rubocop:enable Rails/SkipsModelValidations
+      extended = described_class.new(lecture: lecture)
+
+      expect(extended.pending_points_for(student.id)).to be_zero
+      expect(extended.not_yet_due_for(student.id)).to eq(20)
     end
 
     it "does not count one that has come back" do
@@ -274,15 +315,14 @@ RSpec.describe(StudentPerformance::DuePoints) do
       expect(due_points.not_yet_due_for(student.id)).to eq(20)
     end
 
-    # The early hand-in is already in `points_max_pending_materialized`;
-    # counting it here as well would let one sheet carry a student twice.
-    it "drops a sheet to come that the student has already handed in" do
+    it "keeps a sheet to come that the student has already handed in" do
       early = sheet(deadline: 3.days.from_now, points: 16)
       sheet(deadline: 4.days.from_now, points: 20)
       FactoryBot.create(:assessment_participation, :submitted,
                         assessment: early, user: student)
 
-      expect(due_points.not_yet_due_for(student.id)).to eq(20)
+      expect(due_points.not_yet_due_for(student.id)).to eq(36)
+      expect(due_points.pending_points_for(student.id)).to be_zero
     end
 
     it "keeps a sheet to come that nobody has handed in" do

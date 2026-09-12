@@ -14,6 +14,7 @@ class SheetRowComponent < ViewComponent::Base
     tutor_decides: :quiet,
     partially_marked: :quiet,
     missed: :quiet,
+    awaiting_record: :quiet,
     absent: :quiet,
     exempt: :quiet,
     not_recorded: :bad,
@@ -50,8 +51,6 @@ class SheetRowComponent < ViewComponent::Base
     SheetChipComponent.for?(state)
   end
 
-  # The marker and the form that clears it go together: a row with nothing new
-  # has nothing to report when it is opened.
   delegate :news?, to: :sheet
 
   def points_class

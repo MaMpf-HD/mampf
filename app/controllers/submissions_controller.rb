@@ -37,8 +37,6 @@ class SubmissionsController < ApplicationController
            layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
-  # A row reports its opening here. The stamp is the reader's own, so a
-  # partner opening the same sheet leaves this reader's marker standing.
   def seen
     AssignmentSighting.stamp!(user: current_user, assignment: @assignment)
 
@@ -389,15 +387,12 @@ class SubmissionsController < ApplicationController
                                                       user: current_user).call
     end
 
-    # Everything still open has a card above the list, so the list is what is
-    # behind you - a sheet in both places would be told twice, and a row cannot
-    # be handed in.
+    # Open sheets already have submission forms in the hub.open_sheets cards;
+    # including them in history would show each assignment twice.
     def history
       hub.sheets - hub.open_sheets
     end
 
-    # The dot in the row and the form that reported the look; the news line is
-    # drawn afresh, since the sheet has left it.
     def clear_marker(assignment)
       [turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :news)),
        turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :seen))]
@@ -660,6 +655,8 @@ class SubmissionsController < ApplicationController
                   alert: I18n.t("controllers.no_student_status_in_lecture")
     end
 
+    # DuePoints and SubmissionsHub read submitted_at on each request, so
+    # clearing it does not require recomputing StudentPerformance::Record.
     def clear_submitted_at(users)
       assessment = @submission&.assignment&.assessment
       return unless assessment
@@ -667,7 +664,6 @@ class SubmissionsController < ApplicationController
       assessment.assessment_participations
                 .where(user_id: users.map(&:id))
                 .update_all(submitted_at: nil, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
-      recompute_performance_records(assessment.lecture, users)
     end
 
     # The other way round: a hand-in that was refused and then accepted after
@@ -683,20 +679,6 @@ class SubmissionsController < ApplicationController
                 .where(user_id: users.map(&:id), submitted_at: nil)
                 .where.not(status: [:absent, :exempt])
                 .update_all(submitted_at: handed_in_at, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
-      recompute_performance_records(assessment.lecture, users)
-    end
-
-    # `update_all` is what keeps the two above to one statement each, and it is
-    # also what skips the callback behind them. Everything downstream reads the
-    # materialized record - the student's own standing block, the performance
-    # table, the admission rule - so it has to be put back in step by hand.
-    # Without it the reader takes a file back and is still told its points are
-    # being marked.
-    def recompute_performance_records(lecture, users)
-      return unless lecture
-
-      service = StudentPerformance::ComputationService.new(lecture: lecture)
-      users.each { |user| service.compute_and_upsert_record_for(user) }
     end
 
     def sync_assessment_participations(users: nil)

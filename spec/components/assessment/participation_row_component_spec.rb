@@ -19,17 +19,17 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     create(:assessment, requires_points: true, assessable: assignment, lecture: lecture)
   end
   let(:participation) do
-    create(:assessment_participation, assessment: assessment,
-                                      user: student, tutorial: tutorial)
+    create(:assessment_participation, :submitted,
+           assessment: assessment, user: student, tutorial: tutorial)
   end
 
   let(:component_tutor) do
     described_class.new(participation: participation, assessment: assessment,
-                        grading_scope: tutorial, save_url: save_url, refresh_url: refresh_url)
+                        grading_scope: tutorial)
   end
   let(:component_teacher) do
     described_class.new(participation: participation, assessment: assessment,
-                        grading_scope: lecture, save_url: save_url, refresh_url: refresh_url)
+                        grading_scope: lecture)
   end
 
   # set up for talk
@@ -61,8 +61,50 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
   before do
     assignment.reload
     assessment.reload
-    talk.reload
-    assessment_talk.reload
+  end
+
+  describe "#initialize" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+    end
+
+    context "when participation has no user" do
+      let(:orphan_participation) do
+        create(:assessment_participation, assessment: assessment, user: student, tutorial: tutorial)
+          .tap { |p| allow(p).to receive(:user).and_return(nil) }
+      end
+
+      it "raises MissingUserError" do
+        expect do
+          described_class.new(participation: orphan_participation, assessment: assessment,
+                              grading_scope: tutorial)
+        end.to raise_error(ParticipationRowComponent::MissingUserError)
+      end
+    end
+
+    context "when grading_scope is a Tutorial" do
+      it "sets @tutorial" do
+        expect(component_tutor.instance_variable_get(:@tutorial)).to eq(tutorial)
+      end
+
+      it "sets @mode to tutor" do
+        expect(component_tutor.instance_variable_get(:@mode)).to eq("tutor")
+      end
+    end
+
+    context "when grading_scope is a Lecture" do
+      it "sets @lecture from the assessable's lecture" do
+        expect(component_teacher.instance_variable_get(:@lecture)).to eq(assignment.lecture)
+      end
+
+      it "sets @mode to teacher" do
+        expect(component_teacher.instance_variable_get(:@mode)).to eq("teacher")
+      end
+
+      it "leaves @tutorial nil" do
+        expect(component_teacher.instance_variable_get(:@tutorial)).to be_nil
+      end
+    end
   end
 
   describe "#row_id" do
@@ -89,39 +131,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       it "returns false" do
         expect(component_tutor.allow_grading?).to eq(false)
       end
-    end
-  end
-
-  describe "#badge_status_participation_color" do
-    it "returns warning for pending" do
-      expect(component_tutor.badge_status_participation_color(:pending)).to eq("warning")
-    end
-
-    it "returns success for reviewed" do
-      expect(component_tutor.badge_status_participation_color(:reviewed)).to eq("success")
-    end
-
-    it "returns info for exempt" do
-      expect(component_tutor.badge_status_participation_color(:exempt)).to eq("info")
-    end
-
-    it "returns info for absent" do
-      expect(component_tutor.badge_status_participation_color(:absent)).to eq("info")
-    end
-
-    it "returns nil for unknown status" do
-      expect(component_tutor.badge_status_participation_color(:unknown)).to be_nil
-    end
-
-    it "accepts a string status" do
-      expect(component_tutor.badge_status_participation_color("pending")).to eq("warning")
-    end
-  end
-
-  describe "#badge_status_participation_class" do
-    it "returns correct class string" do
-      expect(component_tutor.badge_status_participation_class(:pending))
-        .to eq("badge rounded-pill bg-warning")
     end
   end
 
@@ -236,20 +245,40 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  describe "#status_value" do
-    context "when participation has a status" do
-      before { allow(participation).to receive(:status).and_return(:reviewed) }
-
-      it "returns the participation's status" do
-        expect(component_tutor.status_value).to eq(:reviewed)
-      end
+  describe "#save_row_button" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      render_inline(component_tutor)
     end
 
-    context "when participation has no status" do
-      before { allow(participation).to receive(:status).and_return(nil) }
+    it "renders a button with the save icon" do
+      html = component_tutor.save_row_button(true)
+      expect(html).to include("fa-save")
+    end
 
-      it "returns :pending" do
-        expect(component_tutor.status_value).to eq(:pending)
+    context "when grading is not allowed" do
+      it "disables the button" do
+        html = component_tutor.save_row_button(false)
+        expect(html).to include("disabled")
+      end
+    end
+  end
+
+  describe "#refresh_row_button" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      render_inline(component_tutor)
+    end
+
+    it "renders a button with the refresh icon" do
+      html = component_tutor.refresh_row_button(true)
+      expect(html).to include("bi-arrow-clockwise")
+    end
+
+    context "when grading is not allowed" do
+      it "disables the button" do
+        html = component_tutor.refresh_row_button(false)
+        expect(html).to include("disabled")
       end
     end
   end
@@ -315,7 +344,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  describe "#can_grade?" do
+  describe "#can_enter_points?" do
     context "when grading_scope is a Tutorial" do
       context "when current_user is an admin" do
         before do
@@ -324,7 +353,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_tutor.can_grade?).to eq(true)
+          expect(component_tutor.can_enter_points?).to eq(true)
         end
       end
 
@@ -335,7 +364,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_tutor.can_grade?).to eq(true)
+          expect(component_tutor.can_enter_points?).to eq(true)
         end
       end
 
@@ -346,7 +375,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns false" do
-          expect(component_tutor.can_grade?).to eq(false)
+          expect(component_tutor.can_enter_points?).to eq(false)
         end
       end
     end
@@ -359,7 +388,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_teacher.can_grade?).to eq(true)
+          expect(component_teacher.can_enter_points?).to eq(true)
         end
       end
 
@@ -370,7 +399,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component_teacher.can_grade?).to eq(true)
+          expect(component_teacher.can_enter_points?).to eq(true)
         end
       end
 
@@ -381,7 +410,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns false" do
-          expect(component_teacher.can_grade?).to eq(false)
+          expect(component_teacher.can_enter_points?).to eq(false)
         end
       end
 
@@ -392,7 +421,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
         end
 
         it "returns false" do
-          expect(component_teacher.can_grade?).to eq(false)
+          expect(component_teacher.can_enter_points?).to eq(false)
         end
       end
     end
@@ -401,9 +430,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       let(:component_unknown) do
         described_class.new(participation: participation,
                             assessment: assessment,
-                            grading_scope: "not_a_scope",
-                            save_url: save_url,
-                            refresh_url: refresh_url)
+                            grading_scope: "not_a_scope")
       end
 
       before do
@@ -412,7 +439,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       end
 
       it "does not raise and returns false for a non-admin" do
-        expect(component_unknown.can_grade?).to eq(false)
+        expect(component_unknown.can_enter_points?).to eq(false)
       end
     end
   end
@@ -466,12 +493,111 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       render_inline(component_tutor)
     end
 
-    it "includes the save_url in the rendered markup" do
-      expect(rendered_content).to include(save_url)
+    it "posts the row's points to its own participation" do
+      expect(rendered_content).to include("/participations/#{participation.id}/point_participation")
+      expect(rendered_content)
+        .to include("/participations/#{participation.id}/refresh_point_participation")
+    end
+  end
+
+  # One row per person on the roster: a sheet taken on paper, one never handed
+  # in, and one the worker has not written a participation for yet all sit in
+  # the table, and the hand-in column says which it is.
+  describe "the hand-in column" do
+    before { allow(vc_test_controller).to receive(:current_user).and_return(tutor) }
+
+    it "offers to record a paper hand-in on a row nothing was handed in for" do
+      participation.update!(submitted_at: nil)
+      render_inline(component_tutor)
+
+      expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.not_submitted")
+      )
     end
 
-    it "includes the refresh_url in the rendered markup" do
-      expect(rendered_content).to include(refresh_url)
+    it "offers to take a paper hand-in back while no points sit on it" do
+      participation.update!(submitted_at: 1.day.ago)
+      render_inline(component_tutor)
+
+      expect(rendered_content)
+        .to include(I18n.t("assessment.grading_tutorial.paper_hand_in_remove"))
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.pending_grading")
+      )
+    end
+
+    it "keeps a paper hand-in that carries points" do
+      task = create(:assessment_task, assessment: assessment)
+      participation.update!(submitted_at: 1.day.ago)
+      Timecop.travel(3.hours.from_now) do
+        create(:assessment_task_point, task: task, points: 3,
+                                       assessment_participation: participation)
+      end
+      render_inline(described_class.new(participation: participation.reload,
+                                        assessment: assessment, grading_scope: tutorial))
+
+      expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.paper_hand_in_kept"))
+      expect(rendered_content).not_to include("remove_participated")
+    end
+
+    it "draws a row for somebody without a participation yet, with nothing to type into" do
+      unsaved = Assessment::Participation.new(assessment: assessment, user: student,
+                                              tutorial: tutorial)
+      component = described_class.new(participation: unsaved, assessment: assessment,
+                                      grading_scope: tutorial)
+      render_inline(component)
+
+      expect(component.row_id).to eq("participation-row-user-#{student.id}")
+      expect(component.points_enterable?).to be(false)
+      expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+      expect(rendered_content).not_to include("point_participation")
+    end
+
+    # Points go where the sheet is: somebody who moved into this group after
+    # handing in elsewhere is marked there, not here.
+    it "locks a row whose sheet another group holds" do
+      elsewhere = create(:tutorial, lecture: lecture)
+      participation.update!(tutorial: elsewhere)
+      component = described_class.new(participation: participation, assessment: assessment,
+                                      grading_scope: tutorial)
+      render_inline(component)
+
+      expect(component.elsewhere?).to be(true)
+      expect(component.points_enterable?).to be(false)
+      expect(rendered_content).not_to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+    end
+
+    it "lets the lecturer's table mark anybody" do
+      elsewhere = create(:tutorial, lecture: lecture)
+      participation.update!(tutorial: elsewhere)
+      component = described_class.new(participation: participation, assessment: assessment,
+                                      grading_scope: lecture)
+
+      expect(component.elsewhere?).to be(false)
+      expect(component.points_enterable?).to be(true)
+    end
+
+    it "opens the points only once the sheet is marked as handed in" do
+      participation.update!(submitted_at: nil)
+      component = described_class.new(participation: participation, assessment: assessment,
+                                      grading_scope: tutorial)
+
+      expect(component.points_enterable?).to be(false)
+      participation.update!(submitted_at: 1.day.ago)
+      expect(component.points_enterable?).to be(true)
+    end
+
+    it "offers nothing on an excused row" do
+      participation.update!(submitted_at: nil)
+      participation.update!(status: :exempt)
+      component = described_class.new(participation: participation, assessment: assessment,
+                                      grading_scope: tutorial)
+      render_inline(component)
+
+      expect(component.points_enterable?).to be(false)
+      expect(rendered_content).not_to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+      expect(rendered_content).to include(I18n.t("student_performance.records.columns.exempt"))
     end
   end
 

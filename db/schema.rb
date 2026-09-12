@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_12_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -513,7 +513,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.integer "start_section"
     t.text "organizational_concept"
     t.boolean "organizational"
-    t.boolean "muesli"
     t.text "released"
     t.text "content_mode"
     t.text "passphrase"
@@ -867,7 +866,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.bigint "user_id", null: false
     t.decimal "points_total_materialized", precision: 10, scale: 2
     t.decimal "points_max_materialized", precision: 10, scale: 2
-    t.decimal "points_max_pending_materialized", precision: 10, scale: 2
     t.decimal "percentage_materialized", precision: 5, scale: 2
     t.jsonb "achievements_met_ids", default: [], null: false
     t.jsonb "achievements_ungraded_ids", default: [], null: false

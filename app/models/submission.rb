@@ -34,19 +34,6 @@ class Submission < ApplicationRecord
     users.map { |user| found[user.id] }
   end
 
-  # The points of the people who handed this in, read off their
-  # participations. `submission_id` on a task point only says where a value
-  # was scored, and a value that was seeded, imported or backfilled carries
-  # none — filtering by it showed those as 0.
-  def graded_tasks_points
-    return unless assignment.assessable?
-
-    Assessment::TaskPoint
-      .joins(:assessment_participation)
-      .where(assessment_participations: { assessment_id: assignment.assessment.id,
-                                          user_id: user_ids })
-  end
-
   def partners_of_user(user)
     return unless user.in?(users)
 
@@ -306,38 +293,6 @@ class Submission < ApplicationRecord
       report[:errors] = e.message.to_s
     end
     report
-  end
-
-  def self.number_of_submissions(tutorial, assignment)
-    Submission.where(tutorial: tutorial, assignment: assignment)
-              .where.not(manuscript_data: nil).size
-  end
-
-  def self.number_of_corrections(tutorial, assignment)
-    Submission.where(tutorial: tutorial, assignment: assignment)
-              .where.not(correction_data: nil).size
-  end
-
-  def self.number_of_late_submissions(tutorial, assignment)
-    Submission.where(tutorial: tutorial, assignment: assignment)
-              .where.not(manuscript_data: nil)
-              .count(&:too_late?)
-  end
-
-  def self.submissions_total(assignment)
-    Submission.where(assignment: assignment)
-              .where.not(manuscript_data: nil).size
-  end
-
-  def self.corrections_total(assignment)
-    Submission.where(assignment: assignment)
-              .where.not(correction_data: nil).size
-  end
-
-  def self.late_submissions_total(assignment)
-    Submission.where(assignment: assignment)
-              .where.not(manuscript_data: nil)
-              .count(&:too_late?)
   end
 
   private

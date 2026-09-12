@@ -1264,10 +1264,8 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
 
-    # `clear_submitted_at` writes with `update_all`, which skips the callback
-    # that keeps the materialized record honest. Everything downstream reads
-    # that record - the performance table, the admission rule - so what is
-    # checked here is that the record is put back in step.
+    # What is with the tutor is read off the participations' stamp, so taking
+    # a file back has to take the stamp with it.
     describe "the standing when a hand-in stops waiting to be marked" do
       # Something marked, so the block has a total to talk about.
       def a_marked_sheet
@@ -1296,34 +1294,34 @@ RSpec.describe("Submissions", type: :request) do
         hand_in
       end
 
-      def pending_points
-        lecture.student_performance_records.find_by(user_id: user.id)
-               .points_max_pending_materialized
+      def handed_in?
+        assignment.assessment.assessment_participations.find_by(user: user)
+                  .submitted_at.present?
       end
 
-      it "stops counting the points of a hand-in the reader deleted" do
+      it "takes the stamp off a hand-in the reader deleted" do
         submission = waiting_beside_a_marked_sheet
 
         expect { delete(submission_path(submission)) }
-          .to change { pending_points }.from(8).to(0)
+          .to change { handed_in? }.from(true).to(false)
       end
 
-      it "stops counting them when the reader leaves the team instead" do
+      it "takes it off when the reader leaves the team instead" do
         submission = waiting_beside_a_marked_sheet
         submission.users << create(:confirmed_user)
 
         expect { delete(leave_submission_path(submission)) }
-          .to change { pending_points }.from(8).to(0)
+          .to change { handed_in? }.from(true).to(false)
       end
 
-      it "stops counting them when the file is taken back out" do
+      it "takes it off when the file is taken back out" do
         submission = waiting_beside_a_marked_sheet
 
         expect do
           patch(submission_path(submission), params: {
                   submission: { manuscript: "", detach_user_manuscript: "true" }
                 })
-        end.to change { pending_points }.from(8).to(0)
+        end.to change { handed_in? }.from(true).to(false)
       end
 
       # A closed sheet is in the reckoning, so this is the one the page itself

@@ -1,5 +1,7 @@
 module Assessment
   module AbsenceHandling
+    extend self
+
     class InvalidTransitionError < StandardError; end
 
     def mark_absent(participation)

@@ -324,10 +324,6 @@ Rails.application.routes.draw do
       to: "tutorials#index",
       as: "lecture_tutorials"
 
-  get "lectures/:id/tutorial_overview",
-      to: "tutorials#overview",
-      as: "lecture_tutorial_overview"
-
   get "lectures/:id/subscribe",
       to: "lectures#subscribe_page",
       as: "subscribe_lecture_page"
@@ -370,6 +366,10 @@ Rails.application.routes.draw do
       resources :records, only: [:index, :show] do
         collection do
           post :recompute
+        end
+        member do
+          patch :exempt
+          patch :unexempt
         end
       end
 
@@ -879,6 +879,10 @@ Rails.application.routes.draw do
   patch "participations/mark_as_participated",
         to: "assessment/task_points#mark_as_participated",
         as: "mark_user_as_participated"
+
+  patch "participations/mark_as_participated_multi",
+        to: "assessment/task_points#mark_as_participated_multi",
+        as: "mark_users_as_participated"
 
   patch "participations/:participation_id/remove_participated",
         to: "assessment/task_points#remove_participated",

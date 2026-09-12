@@ -8,7 +8,8 @@ module StudentPerformance
     # as 0 % — the filter is how staff find them, not a tutorial id.
     NO_TUTORIAL = "none".freeze
 
-    before_action :set_record, only: :show
+    before_action :set_record, only: [:show, :exempt, :unexempt]
+    before_action :set_sheet, only: [:exempt, :unexempt]
 
     rescue_from CanCan::AccessDenied do |exception|
       redirect_to main_app.root_url, alert: exception.message
@@ -37,6 +38,28 @@ module StudentPerformance
     def show
       @due_points = due_points
       load_show_data
+    end
+
+    # Exemptions require :edit on the lecture: :enter_points alone must not let
+    # tutors change which assignments count towards a student's required points.
+    def exempt
+      participation = participation_for(@sheet)
+      begin
+        Assessment::AbsenceHandling.mark_exempt(participation, note: params[:note])
+      rescue ActiveRecord::RecordInvalid => e
+        return redirect_to_record(alert: e.record.errors.full_messages.to_sentence)
+      end
+
+      redirect_to_record(notice: I18n.t("student_performance.records.show.exempted",
+                                        sheet: @sheet.title))
+    end
+
+    def unexempt
+      participation = @sheet.assessment_participations.find_by(user_id: @record.user_id)
+      participation.update!(status: :pending, note: nil) if participation&.exempt?
+
+      redirect_to_record(notice: I18n.t("student_performance.records.show.unexempted",
+                                        sheet: @sheet.title))
     end
 
     def recompute
@@ -144,6 +167,25 @@ module StudentPerformance
                     alert: I18n.t("student_performance.errors.no_record")
       end
 
+      def set_sheet
+        @sheet = assignment_assessments.find { |a| a.id == params[:assessment_id] }
+        return if @sheet
+
+        redirect_to_record(alert: I18n.t("student_performance.errors.no_sheet"))
+      end
+
+      # AssessmentBackfillWorker may not have created this participation yet;
+      # mark_exempt still needs one to store the exemption.
+      def participation_for(sheet)
+        sheet.assessment_participations.find_or_initialize_by(user_id: @record.user_id) do |p|
+          p.tutorial_id = Assessment::Participation.tutorial_for(@record.user, @lecture)
+        end
+      end
+
+      def redirect_to_record(**flash)
+        redirect_to lecture_student_performance_record_path(@lecture, @record), **flash
+      end
+
       def recompute_single(user_id)
         user = @lecture.members.find_by(id: user_id)
 
@@ -184,7 +226,7 @@ module StudentPerformance
         participations = Assessment::Participation
                          .where(assessment_id: @assessments.map(&:id),
                                 user_id: @record.user_id)
-                         .select(:id, :assessment_id, :status, :submitted_at)
+                         .select(:id, :assessment_id, :status, :submitted_at, :note)
 
         @participation_by_assessment = participations.index_by(&:assessment_id)
 

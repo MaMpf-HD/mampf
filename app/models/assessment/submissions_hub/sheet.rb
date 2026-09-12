@@ -84,17 +84,12 @@ module Assessment
         participation.grader || latest_task_point&.grader
       end
 
-      # "New" is "changed since the reader last looked", not "corrected": a
-      # correction that was there at their last look is old news, one uploaded
-      # since is not, and somebody who never opened the row has not looked at
-      # all.
       def new_correction?
         newer_than?(submission&.corrected_at, sighting&.seen_at)
       end
 
-      # Only where the row shows marks: an excused sheet may still carry the
-      # stamp from before it was excused. The stamp moves with every complete
-      # save, so a correction of the points reads as new again.
+      # Participation#update_status_if_all_scored! refreshes graded_at on each
+      # complete point entry, so editing reviewed points makes them new again.
       def new_points?
         return false unless state == :marked
 
@@ -126,13 +121,16 @@ module Assessment
         end
 
         # A file without a `submitted_at` costs points without anybody having done
-        # anything wrong, which is why it has a state of its own.
+        # anything wrong, which is why it has a state of its own. A sheet that
+        # comes in on paper is with the tutor until they record it, so nothing
+        # is missing yet.
         def closed_state
           if participation&.submitted_at
             return submission&.correction.present? ? :correction_uploaded : :awaiting_marks
           end
+          return :not_recorded if submission&.manuscript.present?
 
-          submission&.manuscript.present? ? :not_recorded : :missed
+          assessment.requires_submission ? :missed : :awaiting_record
         end
 
         def open_state

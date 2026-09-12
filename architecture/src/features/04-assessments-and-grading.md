@@ -47,9 +47,9 @@ participation removes its assessment from the maximum entirely; an exemption is
 not a zero. `pending` and `absent` contribute nothing while their assessment stays
 in the maximum.
 
-**Work handed in but not yet marked is recorded separately.** A `pending`
-participation that carries a `submitted_at` is waiting for a tutor rather than
-missing, and `points_max_pending_materialized` on the performance record adds up
+**Work handed in but not yet marked is counted separately.** A `pending`
+participation that carries a `submitted_at` on a sheet that is due is waiting
+for a tutor rather than missing, and `StudentPerformance::DuePoints` adds up
 what that is worth. Without it a marking backlog is indistinguishable from work
 never done, and eligibility reads it as a failure.
 
@@ -236,7 +236,7 @@ The `requires_submission` field controls whether students must upload files:
 - **Exams:** Always `false`. Exams are graded in person or from scanned papers.
 - **Talks:** Always `false`. Presentations are graded live.
 
-When `requires_submission: false`, no file uploads occur and `submitted_at` remains `nil`. The Grading Tab shows only grading progress (not submission progress).
+When `requires_submission: false`, no file uploads occur; `submitted_at` is set by the tutor recording the paper hand-in in the pointing table (one row at a time, or the ticked rows at once). Until then a row reads *not yet recorded* rather than *not submitted*, on every page that shows it. The Grading Tab shows only grading progress (not submission progress).
 
 **It freezes once the deadline has passed.** The flag imposes no obligation on
 students — nothing in the submission path consults it — so the reason is not to

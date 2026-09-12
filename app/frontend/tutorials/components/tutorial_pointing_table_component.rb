@@ -1,6 +1,7 @@
-# Pointing table component for the assignment of tutorials
-# This includes pointing rows for both by submission and by participation
-# Also includes the zone for non-submitters with the possibility to mark them as participated
+# The pointing table of a sheet: one row for every hand-in of a group and one
+# for everybody else on its roster, so that a sheet taken on paper, a missing
+# one and an excused one are rows like any other rather than a list beneath
+# the table. A tutor sees their group, the lecturer every group.
 class TutorialPointingTableComponent < ViewComponent::Base
   def initialize(assignment:, grading_scope: nil)
     super()
@@ -23,33 +24,59 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def init_tutor_case
-    @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
-                        &.order(:last_modification_by_users_at)
-    @non_submitters = @assignment&.non_submitters_in_tutorial(@tutorial)
-    @non_submitter_participations = preload_non_submitter_participations(@non_submitters)
+    @stack = @assignment.submissions.where(tutorial: @tutorial).proper
+                        .order(:last_modification_by_users_at)
+                        .includes(:users, tutorial: :tutors)
+    @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial)
+    @participations_by_user_id = preload_participations(@non_submitters, @stack)
   end
 
   def init_teacher_case
     @tutorials = @lecture.tutorials
-    @stack = @assignment&.submissions&.proper
-                        &.order(:last_modification_by_users_at)
+    @stack = @assignment.submissions.proper
+                        .order(:last_modification_by_users_at)
+                        .includes(:users, tutorial: :tutors)
     @submissions_by_tutorial = @stack.group_by(&:tutorial)
 
-    @non_submitters = @assignment&.non_submitters_in_tutorials
-    @non_submitter_participations = preload_non_submitter_participations(@non_submitters)
-
+    @non_submitters = @assignment.non_submitters_in_tutorials
+    # Somebody who left the groups after handing in sits with the group that
+    # has the sheet, not among those in no group.
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
+                                            .where.not(id: @non_submitters.map(&:id))
+    @participations_by_user_id =
+      preload_participations(@non_submitters.to_a + @non_tutorial_participants.to_a, @stack)
 
+    # Somebody who moved groups after handing in on paper stays with the group
+    # that has the sheet; everybody else sits with the group they are in.
     @non_submitters_by_tutorial = @non_submitters.group_by do |user|
-      @non_submitter_participations[user.id]&.tutorial
+      @participations_by_user_id[user.id]&.tutorial || membership_tutorials[user.id]
     end
   end
 
-  def preload_non_submitter_participations(users)
+  # One query for everybody on the page, marks included: the rows read theirs
+  # off this rather than asking per row.
+  def preload_participations(non_submitters, submissions)
+    return {} unless @assignment.assessment
+
+    user_ids = non_submitters.map(&:id) + submissions.flat_map(&:user_ids)
     Assessment::Participation
-      .where(user: users, assessment: @assignment.assessment)
-      .includes(:task_points)
+      .where(user_id: user_ids, assessment: @assignment.assessment)
+      .includes(:task_points, :tutorial)
       .index_by(&:user_id)
+  end
+
+  def team_participations(submission)
+    submission.users.map { |user| @participations_by_user_id[user.id] }
+  end
+
+  # The row of somebody without a hand-in. Before the backfill worker has
+  # been round there is no participation yet; the row is drawn from an unsaved
+  # one, and the first thing written to it - a paper hand-in, points - makes
+  # it real.
+  def participation_for(user, tutorial)
+    @participations_by_user_id[user.id] ||
+      Assessment::Participation.new(assessment: @assignment.assessment, user: user,
+                                    tutorial: tutorial)
   end
 
   def grading_enabled?
@@ -64,86 +91,30 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @assignment&.assessment&.effective_total_points || 0
   end
 
-  # have any grading records for this assignment? (either by submission or by participation)
-  def grading_records?
-    @stack&.any? || @non_submitters&.any? { |user| @non_submitter_participations[user.id] }
+  def can_enter_points?
+    user = helpers.current_user
+    user.admin? || user.can_enter_points_in?(@grading_scope)
+  rescue User::IncompatibleTypeError
+    false
+  end
+
+  def rows?
+    @stack.any? || @non_submitters.any? || @non_tutorial_participants.present?
   end
 
   def column_count
     if @grading_scope.is_a?(Tutorial)
-      6 + tasks.count
+      7 + tasks.count
     else
-      5 + tasks.count
+      6 + tasks.count
     end
   end
 
-  LINK_STYLE = "display:inline-flex; align-items:center; gap:4px; " \
-               "padding:4px 10px; border-radius:6px; " \
-               "border:1px solid #e0e0e0; background:#fff; " \
-               "font-size:12px; color:#555; text-decoration:none;".freeze
+  private
 
-  def mark_as_participated_link(user)
-    path = mark_user_as_participated_path(
-      user_id: user.id,
-      assignment_id: @assignment.id,
-      grading_scope_type: @grading_scope.class.name.downcase
-    )
-
-    link_to(path,
-            style: LINK_STYLE,
-            data: { turbo_method: :patch,
-                    turbo_confirm: t("assessment.grading_tutorial.confirm_unsaved_changes") }) do
-      safe_join([
-                  content_tag(:span, "check", class: "material-icons", style: "font-size: 14px;"),
-                  t("assessment.grading_tutorial.mark_as_participated")
-                ])
+    def membership_tutorials
+      @membership_tutorials ||=
+        TutorialMembership.where(tutorial: @tutorials).includes(:tutorial)
+                          .index_by(&:user_id).transform_values(&:tutorial)
     end
-  end
-
-  def remove_participated_link(user)
-    participation = @non_submitter_participations[user.id]
-    return unless participation
-
-    path = remove_participation_path(
-      participation_id: participation.id,
-      grading_scope_type: @grading_scope.class.name.downcase
-    )
-
-    link_to(path,
-            style: LINK_STYLE,
-            data: { turbo_method: :patch,
-                    turbo_confirm: t("assessment.grading_tutorial.confirm_unsaved_changes") }) do
-      safe_join([
-                  content_tag(:span, "close", class: "material-icons", style: "font-size: 14px;"),
-                  t("assessment.grading_tutorial.remove_participated")
-                ])
-    end
-  end
-
-  # Returns a hash mapping user IDs to their old and new tutorial titles
-  # consider only when user has participation record but not in membership
-  def users_movement_map
-    helpers.users_movement_map_cache[@assignment.id] ||=
-      helpers.calculate_user_movement_map_assignment(@assignment, @lecture)
-  end
-
-  def non_submitter_status(user)
-    movement = users_movement_map[user.id]
-    return unless movement
-
-    helpers.non_submitter_status(movement, @tutorial)
-  end
-
-  def sticky_layout
-    @sticky_layout ||= Assessment::StickyColumnLayout.new(
-      left_columns: @config.left_columns,
-      right_columns: @config.right_columns
-    )
-  end
-
-  def sticky_css_vars
-    return unless @config
-
-    helpers.sticky_css_vars_calc(sticky_layout)
-  end
 end

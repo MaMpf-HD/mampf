@@ -233,19 +233,14 @@ de:
     grades_updated: 'Noten erfolgreich aktualisiert.'
     task_points:
       update: 'Punkte erfolgreich aktualisiert.'
-      submission_missing_tutorial: 'Diese Abgabe ist keinem Tutorium zugeordnet.'
-      submission_missing_assignment: 'Diese Abgabe ist keiner Hausaufgabe zugeordnet.'
       submission_missing_assessment: 'Für diese Hausaufgabe ist keine Bewertung konfiguriert.'
-      participation_missing_tutorial: 'Diese Teilnahme ist keinem Tutorium zugeordnet.'
-      unsupported_assessment_type: 'Dieser Bewertungstyp wird für die Punktevergabe nicht unterstützt.'
-      participation_missing_assessment: 'Dieser Teilnahme ist keine Bewertung zugeordnet.'
+      unsupported_assessment_type: 'Punkte für diese Art von Leistung können hier nicht eingetragen werden.'
       participation_missing_assignment: 'Für diese Bewertung ist keine Hausaufgabe konfiguriert.'
       assignment_missing_assessment: 'Für diese Hausaufgabe ist keine Bewertung konfiguriert.'
-      user_not_rostered: 'Dieser Benutzer ist keinem Tutorium für diese Vorlesung zugeordnet.'
       assessment_not_found: 'Bewertung für diese Hausaufgabe nicht gefunden.'
       cannot_score_not_grading_open_assignment: 'Punkte können für diese Hausaufgaben nicht eingetragen werden.'
       participation_id_missing_tutorial: 'Teilnahme %{participation_id} ist keinem Tutorium zugeordnet. Eine Bewertung ist nur möglich, wenn der Benutzer einem Tutorium zugeordnet ist.'
-      init_participation_missing_args: 'Bewertung, Benutzer und Tutorium müssen angegeben sein.'
+      init_participation_missing_args: 'Bewertung und Benutzer müssen angegeben sein.'
       assessment_does_not_require_points: 'Bewertung %{assessment_id} erfordert keine Punkteingabe.'
       invalid_task_id: 'Ungültige Aufgabe %{task_id}.'
       invalid_points_value: 'Ungültiger Punktwert für Aufgabe %{task_id}.'
@@ -256,7 +251,6 @@ de:
       assignment_id_has_no_assessment: 'Hausaufgabe %{assignment_id} hat keine zugehörige Bewertung'
       participation_id_has_no_assignment: 'Teilnahme %{participation_id} hat keine zugehörige Hausaufgabe'
       participation_has_task_points: 'Für diese Teilnahme wurden bereits Punkte eingetragen, daher kann sie nicht gelöscht werden.'
-      participation_removed: 'Die Teilnahme des Studierenden wurde widerrufen.'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
       no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'
@@ -268,6 +262,7 @@ de:
       user_not_found: 'Benutzer nicht gefunden.'
       no_participation: 'Teilnahme nicht gefunden.'
       user_cannot_grade: 'Der Benutzer ist nicht berechtigt, in diesem Bereich zu bewerten.'
+      user_cannot_enter_points: 'Du darfst hier keine Punkte eintragen.'
       not_gradable: 'Diese Bewertung ist nicht bewertbar.'
       invalid_grade: 'Ungültiger Notenwert'
       invalid_request_params: 'Ungültige Anfrageparameter.'
@@ -294,28 +289,35 @@ de:
       task: 'Aufgabe'
       total_points: 'Gesamtpunkte'
       status: 'Status'
-      actions: 'Aktionen'
-      excluded_reason: 'Grund für Ausschluss'
       correction: 'Korrektur'
       max_points: 'Pkt'
       no_submissions_gradable: 'Keine Abgaben für diese Hausaufgabe, die bewertet werden können.'
       no_submission_zone: 'Keine Abgaben'
-      no_submission_badge: 'Keine Abgabe'
-      marked_as_participated_badge: 'Als teilgenommen markiert'
       has_been_moved_badge: ' Wurde in ein anderes Tutorium verschoben'
-      no_tutorial_badge: 'Keinem Übungsgruppe zugeordnet'
+      no_tutorial_badge: 'Ohne Übungsgruppe'
       participated: 'teilgenommen'
-      mark_as_participated: 'Als teilgenommen markieren'
-      remove_participated: 'Teilnahme entfernen'
-      confirm_unsaved_changes: 'Ungespeicherte Änderungen in der Punktetabelle gehen verloren. Fortfahren?'
+      paper_hand_in: 'Abgabe auf Papier vermerken'
+      paper_hand_in_remove: 'Vermerk „auf Papier abgegeben“ zurücknehmen'
+      paper_hand_in_kept: 'Auf Papier abgegeben; mit eingetragenen Punkten bleibt der Vermerk'
+      paper_hand_in_select: '%{name} für Abgabe auf Papier auswählen'
+      paper_hand_in_selected: 'Ausgewählte als auf Papier abgegeben vermerken'
+      download_hand_in: 'Abgabe herunterladen'
+      show_hand_in: 'Abgabe anzeigen'
+      download_correction: 'Korrektur herunterladen'
+      show_correction: 'Korrektur anzeigen'
+      upload_correction: 'Korrektur hochladen'
+      upload_correction_closed: 'Korrekturen können erst nach der Frist hochgeladen werden'
+      delete_correction: 'Korrektur löschen'
+      confirm_delete_correction: 'Korrektur löschen? Die Datei ist dann weg, die Punkte bleiben.'
+      accept_late: 'Verspätete Abgabe annehmen'
+      reject_late: 'Verspätete Abgabe ablehnen'
+      confirm_accept_late: 'Verspätete Abgabe annehmen? Sie zählt dann wie eine pünktliche.'
+      confirm_reject_late: 'Verspätete Abgabe ablehnen? Sie zählt dann als nicht abgegeben.'
+      save_row: 'Punkte dieser Zeile speichern'
+      reload_row: 'Gespeicherte Punkte neu laden; ungespeicherte Änderungen gehen verloren'
+      points_input_label: '%{task} für %{name}'
       point_below_minimum: "Muss höher als %{min} sein"
       filter_name: 'Name filtern'
-      filter_options:
-        filter_all: "Alle"
-        filter_pending: "Ausstehend"
-        filter_reviewed: "Überprüft"
-        filter_absent: "Nicht angetreten"
-        filter_exempt: "Entschuldigt"
       header_overview:
         submission:
           total: 'Abgaben'
@@ -328,8 +330,11 @@ de:
           graded: 'benotet'
           pending: 'ausstehend'
       no_user_for_config: 'Keine Benutzer für Teilnahme %{participation_id}'
-      user_moved_tutorial: 'In Tutorium %{old_tutorial} eingereicht, in Tutorium %{new_tutorial} verschoben.'
+      user_moved_tutorial: 'In %{old_tutorial} abgegeben, seitdem in %{new_tutorial}.'
       no_tutorial: 'N/A'
+      user_moved_tutorial: 'In %{old_tutorial} abgegeben, seitdem in %{new_tutorial}.'
+      user_left_tutorials: 'In %{old_tutorial} abgegeben, seitdem in keiner Übungsgruppe.'
+      user_joined_tutorial: 'Ohne Übungsgruppe abgegeben, seitdem in %{new_tutorial}.'
     grading_talk:
       note_placeholder: "Notiz hinzufügen..."
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
@@ -500,6 +505,8 @@ de:
           attributes:
             grade_numeric:
               not_gradable: "kann nicht für ein nicht-benotbares Assessment gesetzt werden"
+            status:
+              handed_in: "kann nicht befreit oder abwesend sein: dieses Blatt wurde abgegeben"
             base:
               early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
         assessment/task_point:

@@ -3,10 +3,10 @@
               class: "btn btn-sm btn-outline-success d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
               data: {
                 turbo_method: :patch,
-                turbo_confirm: t('confirmation.generic'),
-                bs_toggle: "tooltip"
+                turbo_confirm: t('assessment.grading_tutorial.confirm_accept_late')
               },
-              title: t('buttons.accept') do %>
+              title: t('assessment.grading_tutorial.accept_late'),
+              aria: { label: t('assessment.grading_tutorial.accept_late') } do %>
     <span class="material-icons" style="font-size: 16px;">check</span>
   <% end %>
 
@@ -14,10 +14,10 @@
               class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
               data: {
                 turbo_method: :patch,
-                turbo_confirm: t('confirmation.generic'),
-                bs_toggle: "tooltip"
+                turbo_confirm: t('assessment.grading_tutorial.confirm_reject_late')
               },
-              title: t('buttons.reject') do %>
+              title: t('assessment.grading_tutorial.reject_late'),
+              aria: { label: t('assessment.grading_tutorial.reject_late') } do %>
     <span class="material-icons" style="font-size: 16px;">close</span>
   <% end %>
 <% end %>

@@ -89,6 +89,63 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  # Excused or absent is said of somebody who handed nothing in; the rule
+  # holds for sheets, where a hand-in is a thing, and stays out of exams.
+  describe "excusing and absence" do
+    let(:assignment) { FactoryBot.create(:assignment, :with_lecture, :expired) }
+    let(:assessment) { assignment.assessment }
+    let(:member) { FactoryBot.create(:confirmed_user) }
+    let(:participation) do
+      FactoryBot.create(:assessment_participation, :pending,
+                        assessment: assessment, user: member)
+    end
+
+    it "excuses somebody who handed nothing in" do
+      expect(participation.update(status: :exempt)).to be(true)
+    end
+
+    it "refuses somebody on a team's hand-in" do
+      tutorial = FactoryBot.create(:tutorial, lecture: assignment.lecture)
+      FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                       tutorial: tutorial).users << member
+
+      expect(participation.update(status: :exempt)).to be(false)
+      expect(participation.errors[:status]).to be_present
+    end
+
+    it "excuses somebody whose late hand-in was refused" do
+      tutorial = FactoryBot.create(:tutorial, lecture: assignment.lecture)
+      FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                       tutorial: tutorial,
+                                                       accepted: false).users << member
+
+      expect(participation.update(status: :exempt)).to be(true)
+    end
+
+    it "refuses a sheet the tutor took on paper" do
+      participation.update!(submitted_at: 1.day.ago)
+
+      expect(participation.update(status: :absent, submitted_at: nil)).to be(false)
+    end
+
+    it "refuses a sheet that carries marks" do
+      task = FactoryBot.create(:assessment_task, assessment: assessment)
+      FactoryBot.create(:assessment_task_point, task: task, points: 3,
+                                                assessment_participation: participation)
+
+      expect(participation.reload.update(status: :exempt)).to be(false)
+    end
+
+    it "leaves an exam alone" do
+      exam = FactoryBot.create(:exam)
+      exam_participation = FactoryBot.create(:assessment_participation,
+                                             assessment: exam.assessment,
+                                             submitted_at: 1.day.ago)
+
+      expect(exam_participation.update(status: :absent, submitted_at: nil)).to be(true)
+    end
+  end
+
   describe "the grading lifecycle guard" do
     let(:grader) { FactoryBot.create(:confirmed_user) }
 
@@ -257,13 +314,18 @@ RSpec.describe(Assessment::Participation, type: :model) do
           participation.update_status_if_all_scored!
           expect(participation.status).to eq("pending")
         end
+        # A sheet with marks cannot be excused or absent any more; the guard
+        # is still what an exam relies on, so the state is written past the
+        # rule.
         it "if current status is absent, keeps the status as absent" do
-          participation.update!(status: :absent)
+          participation.status = :absent
+          participation.save(validate: false)
           participation.update_status_if_all_scored!
           expect(participation.status).to eq("absent")
         end
         it "if current status is exempt, keeps the status as exempt" do
-          participation.update!(status: :exempt)
+          participation.status = :exempt
+          participation.save(validate: false)
           participation.update_status_if_all_scored!
           expect(participation.status).to eq("exempt")
         end
@@ -314,13 +376,18 @@ RSpec.describe(Assessment::Participation, type: :model) do
           participation.update_status_if_all_scored!
           expect(participation.status).to eq("reviewed")
         end
+        # A sheet with marks cannot be excused or absent any more; the guard
+        # is still what an exam relies on, so the state is written past the
+        # rule.
         it "if current status is absent, keeps the status as absent" do
-          participation.update!(status: :absent)
+          participation.status = :absent
+          participation.save(validate: false)
           participation.update_status_if_all_scored!
           expect(participation.status).to eq("absent")
         end
         it "if current status is exempt, keeps the status as exempt" do
-          participation.update!(status: :exempt)
+          participation.status = :exempt
+          participation.save(validate: false)
           participation.update_status_if_all_scored!
           expect(participation.status).to eq("exempt")
         end
@@ -404,8 +471,15 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
 
     it "is :not_submitted while pending with no submission" do
-      expect(display_status_for(status: :pending, submitted_at: nil))
+      assessment = FactoryBot.create(:assessment, requires_submission: true)
+      expect(display_status_for(assessment: assessment, status: :pending, submitted_at: nil))
         .to eq(:not_submitted)
+    end
+
+    it "is :awaiting_record while pending on a sheet collected on paper" do
+      assessment = FactoryBot.create(:assessment, requires_submission: false)
+      expect(display_status_for(assessment: assessment, status: :pending, submitted_at: nil))
+        .to eq(:awaiting_record)
     end
 
     it "is :pending_grading while pending with a submission" do

@@ -1,8 +1,6 @@
-# When somebody last opened their row of a sheet. The row is keyed by the
-# sheet rather than by the hand-in because points sit on a participation and
-# may have no hand-in behind them, while a hand-in on an old sheet has no
-# participation - the sheet is what every row has. And it is per person, so
-# a partner's look does not clear the other's marker.
+# Key sightings by assignment because points can exist without a Submission,
+# and assignments without an assessment can still have a Submission.
+# Each user needs a separate seen_at so partners do not clear each other's news.
 class AssignmentSighting < ApplicationRecord
   belongs_to :user
   belongs_to :assignment

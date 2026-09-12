@@ -24,7 +24,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
 
     before do
-      allow(user).to receive(:can_grade_in_scope?).and_return(true)
+      allow(user).to receive(:can_enter_points_in?).and_return(true)
       Timecop.travel(3.hours.from_now)
     end
     after { Timecop.return }
@@ -44,11 +44,12 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
                            I18n.t("assessment.task_points.init_participation_missing_args"))
       end
 
-      it "raises SubmissionGraderError when tutorial is nil" do
-        expect do
-          described_class.init_participation(assessment, user, nil)
-        end.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError,
-                           I18n.t("assessment.task_points.init_participation_missing_args"))
+      # Somebody in no group takes part in the lecture itself.
+      it "takes no tutorial for somebody in no group" do
+        result = described_class.init_participation(assessment, user, nil)
+
+        expect(result).to be_persisted
+        expect(result.tutorial_id).to be_nil
       end
     end
 
@@ -101,12 +102,23 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       end
 
       it "does not overwrite the existing submitted_at" do
-        original_submitted_at = existing.submitted_at
+        existing.update!(submitted_at: 2.days.ago)
+        original_submitted_at = existing.reload.submitted_at
         Timecop.travel(1.day.from_now) do
           result = described_class.init_participation(assessment, user, tutorial)
-          expect(result.submitted_at).to eq(original_submitted_at)
+          expect(result.submitted_at).to be_within(1.second).of(original_submitted_at)
         end
         Timecop.return
+      end
+
+      # The backfill worker writes the row without a stamp; the sheet coming
+      # in on paper is what puts one there.
+      it "stamps a row the backfill worker wrote" do
+        existing.update!(submitted_at: nil)
+
+        result = described_class.init_participation(assessment, user, tutorial)
+
+        expect(result.submitted_at).to be_within(1.second).of(Time.current)
       end
     end
 
@@ -148,7 +160,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
 
     before do
-      allow(user).to receive(:can_grade_in_scope?).and_return(true)
+      allow(user).to receive(:can_enter_points_in?).and_return(true)
       Timecop.travel(3.hours.from_now)
     end
     after { Timecop.return }
@@ -171,16 +183,15 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
                           tutorial: tutorial)
       end
 
-      it "destroys the participation" do
-        described_class.remove_participation(participation)
-        expect(Assessment::Participation.exists?(participation.id)).to be(false)
-      end
+      # The row stays - everybody on the roster has one - and only the stamp
+      # goes.
+      it "takes the stamp off and keeps the row" do
+        participation.update!(submitted_at: 1.day.ago)
 
-      it "decreases the participation count by 1" do
-        participation
-        expect do
-          described_class.remove_participation(participation)
-        end.to change(Assessment::Participation, :count).by(-1)
+        described_class.remove_participation(participation)
+
+        expect(participation.reload.submitted_at).to be_nil
+        expect(Assessment::Participation.exists?(participation.id)).to be(true)
       end
     end
 
@@ -231,20 +242,13 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
                             assessment_participation: participation, task: task, points: nil)
         end
 
-        it "destroys the participation" do
-          begin
-            described_class.remove_participation(participation)
-          rescue Assessment::SubmissionGraderService::SubmissionGraderError
-            nil
-          end
-          expect(Assessment::Participation.exists?(participation.id)).to be(false)
-        end
+        it "takes the stamp off and keeps the row" do
+          participation.update!(submitted_at: 1.day.ago)
 
-        it "decreases the participation count by 1" do
-          participation
-          expect do
-            described_class.remove_participation(participation)
-          end.to change(Assessment::Participation, :count).by(-1)
+          described_class.remove_participation(participation)
+
+          expect(participation.reload.submitted_at).to be_nil
+          expect(Assessment::Participation.exists?(participation.id)).to be(true)
         end
 
         it "destroys the task points" do
@@ -382,6 +386,32 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         allow(assessment).to receive(:requires_points?).and_return(false)
         allow(Assessment::PointEntryService).to receive(:enter_points)
         expect { subject }.not_to raise_error
+      end
+
+      # Points on a sheet nobody recorded a hand-in for say the sheet was there.
+      it "stamps a hand-in on a row that had none once points land on it" do
+        participation.update!(submitted_at: nil)
+
+        subject
+
+        expect(participation.reload.submitted_at).to be_within(5.seconds).of(Time.current)
+      end
+
+      it "keeps the stamp a hand-in already carries" do
+        participation.update!(submitted_at: 2.days.ago)
+        stamped_at = participation.reload.submitted_at
+
+        subject
+
+        expect(participation.reload.submitted_at).to be_within(1.second).of(stamped_at)
+      end
+
+      it "leaves a row without a stamp alone when nothing was entered" do
+        participation.update!(submitted_at: nil)
+
+        described_class.score_tasks_by_participation!(participation, { task.id => "" }, scorer)
+
+        expect(participation.reload.submitted_at).to be_nil
       end
     end
   end
@@ -528,7 +558,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       @submission.reload
       @participation.reload
       assessment.reload
-      allow(scorer).to receive(:can_grade_in_scope?).and_return(true)
+      allow(scorer).to receive(:can_enter_points_in?).and_return(true)
       Timecop.travel(3.hours.from_now)
     end
     after { Timecop.return }
@@ -561,7 +591,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       end
 
       it "raises SubmissionGraderError when the scorer cannot grade the submission's tutorial" do
-        allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
+        allow(scorer).to receive(:can_enter_points_in?).and_return(false)
 
         expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
@@ -610,7 +640,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       end
 
       it "raises SubmissionGraderError when the scorer cannot grade the participation's tutorial" do
-        allow(scorer).to receive(:can_grade_in_scope?).and_return(false)
+        allow(scorer).to receive(:can_enter_points_in?).and_return(false)
 
         expect { subject }.to raise_error(Assessment::SubmissionGraderService::SubmissionGraderError)
       end
@@ -644,7 +674,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         end
 
         it "does not attempt to authorize against a scope" do
-          expect(scorer).not_to receive(:can_grade_in_scope?)
+          expect(scorer).not_to receive(:can_enter_points_in?)
           begin
             subject
           rescue StandardError
@@ -696,7 +726,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
                                       assignment: assignment,
                                       tutorial: tutorial,
                                       users: [user])
-      allow(scorer).to receive(:can_grade_in_scope?).and_return(true)
+      allow(scorer).to receive(:can_enter_points_in?).and_return(true)
       Timecop.travel(2.hours.from_now)
     end
     after { Timecop.return }

@@ -89,7 +89,6 @@ de:
       singular: 'Quiz-Erläuterung'
       plural: 'Quiz-Erläuterungen'
       short: 'Erl'
-    muesli: 'MÜSLI'
     board: 'Forum'
     comments: 'Kommentare'
     organizational_html: 'Organisa&shy;torisches'
@@ -679,9 +678,6 @@ de:
         organizational_on_top: >
           Wenn Du diesen Haken setzt, wird die Seite "Organisatorisches"
           als Startseite für diese Veranstaltung erscheinen.
-        muesli: >
-          Wenn Du diesen Haken setzt, wird in der
-          Sidebar für diese Veranstaltung der Link zu MUESLI aktiviert.
         vignettes: >
           Wenn Du diesen Haken setzt, erscheinen die Vignetten dieser
           Veranstaltung in der Sidebar für alle, die ihre Inhalte sehen.
@@ -829,7 +825,6 @@ de:
       imported_media: 'Importierte Medien'
       organizational_visible: 'Organisatorisches sichtbar'
       organizational_on_top: 'Organisatorisches als Startseite'
-      uses_muesli: 'Veranstaltung verwendet MÜSLI'
       uses_vignettes: 'Veranstaltung verwendet Vignetten'
       first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
@@ -2350,13 +2345,6 @@ de:
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
-    create_tutorials: Übungsgruppen anlegen
-    no_tutorials_yet: >
-      Für diese Veranstaltung wurden noch keine Tutorien angelegt.
-    tutorials: >
-      Für diese Veranstaltung gibt es die folgenden Tutorien:
-    no_submissions_yet: >
-      Es waren bisher noch keine Hausaufgaben abzugeben.
   sure: 'Bist Du sicher?'
   details: 'Details'
   none: 'keine'
@@ -3204,6 +3192,7 @@ de:
         grace_period: "noch %{time}"
         tutor_decides: Dein Tutor entscheidet
         awaiting_marks: Wartet auf Korrektur
+        awaiting_record: Noch nicht erfasst
         correction_uploaded: Korrektur da
         exempt: Entschuldigt
       notes:
@@ -3212,6 +3201,7 @@ de:
         rejected: verspätet abgegeben, Dein Tutor hat es nicht gelten lassen
         partially_marked: noch nicht alle Aufgaben korrigiert
         missed: bis zur Frist kam nichts an
+        awaiting_record: Abgabe auf Papier - Dein Tutor trägt ein, was ankam
         absent: als abwesend vermerkt
         exempt: wird bei Dir nicht gewertet
         not_recorded: >
@@ -3322,7 +3312,6 @@ de:
     already_rejected: >
       Diese Abgabe wurde abgelehnt, Du kannst ihr nicht mehr beitreten.
     late: verspätete Abgabe
-    late_submissions: verspätetete Abgaben
     rejected: abgelehnt
     bulk_download_submissions: Paketdownload der Abgaben
     bulk_download_corrections: Paketdownload der Korrekturen
