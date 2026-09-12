@@ -27,19 +27,22 @@
         <% end %>
       </div>
 
-      <i
+      <button
+        type="button"
         class="
-          clipboardpopup bi bi-clipboard clickable
-          text-secondary clipboard-btn ms-3 clipboard-button
+          clipboardpopup btn btn-link p-0 ms-3 text-secondary
+          clipboard-btn clipboard-button
         "
         data-clipboard-text="<%= @user.email %>"
-        data-bs-toggle="tooltip"
         title="<%= t('buttons.copy_email_to_clipboard') %>"
+        aria-label="<%= t('buttons.copy_email_to_clipboard') %>"
       >
+        <i class="bi bi-clipboard"></i>
+
         <span class="clipboardpopuptext token-clipboard-popup">
           <%= t('basics.emails_copied_to_clipboard') %>
         </span>
-      </i>
+      </button>
     </div>
   </td>
 
@@ -54,6 +57,10 @@
   <% if grading_enabled? %>
     <td class="text-center status-col">
       <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
+
+      <% if locked_reason %>
+        <div class="small text-muted"><%= locked_reason %></div>
+      <% end %>
     </td>
     <% tasks.each do |task| %>
       <%= task_points_participation_cell(task, allow_grading?) %>

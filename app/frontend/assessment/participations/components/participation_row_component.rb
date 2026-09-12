@@ -54,6 +54,16 @@ class ParticipationRowComponent < ViewComponent::Base
       !@participation.exempt? && !@participation.absent?
   end
 
+  # Why the fields are locked, said under the status rather than left to a
+  # tooltip: the sheet is with another group, or nobody has recorded it yet.
+  def locked_reason
+    if elsewhere?
+      t("assessment.grading_tutorial.held_by", tutorial: @participation.tutorial.title)
+    elsif status == :awaiting_record && can_enter_points?
+      t("assessment.grading_tutorial.record_first")
+    end
+  end
+
   def extract_task_points_participation(task)
     graded_task_points.find do |sp|
       sp.task_id == task.id

@@ -438,6 +438,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       expect(component.elsewhere?).to be(true)
       expect(component.points_enterable?).to be(false)
       expect(rendered_content).not_to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+      expect(rendered_content).to include(
+        I18n.t("assessment.grading_tutorial.held_by", tutorial: elsewhere.title)
+      )
     end
 
     it "lets the lecturer's table mark anybody" do
@@ -448,6 +451,16 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
       expect(component.elsewhere?).to be(false)
       expect(component.points_enterable?).to be(true)
+    end
+
+    # A sheet collected on paper says what to do before the points open.
+    it "tells the tutor to record a paper sheet first" do
+      assessment.update_column(:requires_submission, false) # rubocop:disable Rails/SkipsModelValidations
+      participation.update!(submitted_at: nil)
+      render_inline(described_class.new(participation: participation.reload,
+                                        assessment: assessment.reload, grading_scope: tutorial))
+
+      expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.record_first"))
     end
 
     it "opens the points only once the sheet is marked as handed in" do

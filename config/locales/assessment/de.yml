@@ -286,6 +286,8 @@ de:
       paper_hand_in_kept: 'Auf Papier abgegeben; mit eingetragenen Punkten bleibt der Vermerk'
       paper_hand_in_select: '%{name} für Abgabe auf Papier auswählen'
       paper_hand_in_selected: 'Ausgewählte als auf Papier abgegeben vermerken'
+      held_by: 'Abgabe bei %{tutorial}'
+      record_first: 'Vermerke zuerst die Abgabe'
       download_hand_in: 'Abgabe herunterladen'
       show_hand_in: 'Abgabe anzeigen'
       download_correction: 'Korrektur herunterladen'

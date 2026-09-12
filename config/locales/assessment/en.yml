@@ -286,6 +286,8 @@ en:
       paper_hand_in_kept: 'Handed in on paper; with points entered the record stays'
       paper_hand_in_select: 'Select %{name} for a hand-in on paper'
       paper_hand_in_selected: 'Record selected as handed in on paper'
+      held_by: 'Hand-in held by %{tutorial}'
+      record_first: 'Record the hand-in first'
       download_hand_in: 'Download hand-in'
       show_hand_in: 'View hand-in'
       download_correction: 'Download correction'
