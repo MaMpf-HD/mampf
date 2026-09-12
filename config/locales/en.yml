@@ -2157,13 +2157,6 @@ en:
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'
-    create_tutorials: Create tutorial groups
-    no_tutorials_yet: >
-      For this event series, no tutorials have been created yet.
-    tutorials: >
-      For this event series there are the following tutorials:
-    no_submissions_yet: >
-      No assignments have been due yet.
   sure: 'Are you sure?'
   details: 'Details'
   none: 'none'
@@ -3102,7 +3095,6 @@ en:
     already_rejected: >
       This submission was rejected, so it can no longer be joined.
     late: late submission
-    late_submissions: late submissions
     rejected: rejected
     bulk_download_submissions: Bulk download of submissions
     bulk_download_corrections: Bulk download of corrections

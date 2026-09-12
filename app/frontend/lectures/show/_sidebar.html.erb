@@ -87,24 +87,21 @@
     <% end %>
   </li>
 
-  <%# Tutorials %>
-  <% if lecture %>
-    <%#
-      Never greyed out for want of groups. Both pages behind this entry say
-      what there is to say when there are none - the overview offers to create
-      the first, the hub says whether one is missing or only a seat in one -
-      and greying it out hid exactly the page somebody was looking for.
-    %>
+  <%#
+    Tutors get their groups' pointing table, students the hub with their
+    sheets. Lecturers and editors get no entry: sheets and points are theirs
+    to edit under the lecture's edit page, not to look at from here. Never
+    greyed out for want of groups - the hub says whether one is missing or
+    only a seat in one, and greying it out hid exactly that page.
+  %>
+  <% if lecture && (current_user.in?(lecture.tutors) || !current_user.editor_or_teacher_in?(lecture)) %>
     <% if current_user.in?(lecture.tutors)
         link_text, path = [t('categories.tutorials'), lecture_tutorials_path(lecture)]
-      elsif current_user.editor_or_teacher_in?(lecture)
-        link_text, path = [t('categories.tutorials'), lecture_tutorial_overview_path(lecture)]
       else
         link_text, path = [t('categories.submissions'), lecture_submissions_path(lecture)]
       end %>
     <% active_class = get_class_for_any_path(
         [lecture_tutorials_path(lecture),
-        lecture_tutorial_overview_path(lecture),
         lecture_submissions_path(lecture)]) %>
     <li class="sidebar-item nav-link <%= active_class %>
         <%= content_accessible ? "" : "disabled" %>">
