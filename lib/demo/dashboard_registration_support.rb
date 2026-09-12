@@ -6,9 +6,8 @@ module Demo
   # state. The fifth lecture stays unapplied-for, to show what "Registration
   # open" looks like in search. student2 additionally gets a second lecture
   # with two campaigns in conflicting states, to demonstrate the
-  # confirmed > pending > open > rejected precedence across campaigns. See
-  # docs/dashboard_registration_demo_data.md for the reasoning behind each
-  # campaign status and registration trait.
+  # confirmed > pending > open > rejected precedence across campaigns (see
+  # Registration::StatusQuery).
   module DashboardRegistrationSupport
     extend self
 
