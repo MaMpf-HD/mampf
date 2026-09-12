@@ -49,12 +49,7 @@
                   <%= render(ParticipationRowComponent.new(
                         participation: participation,
                         assessment: @exam.assessment,
-                        save_url: point_participation_path(participation, 
-                                                            grading_scope_type: "lecture"),
-                        refresh_url: refresh_point_participation_path(participation,
-                                                            grading_scope_type: "lecture"),
-                        absent_url: mark_as_absent_path(participation),
-                        exempt_url: mark_as_exempt_path(participation),
+                        table_option: :pointing,
                         grading_scope: @lecture)) %>
                 <% end %>
               <% end %>
