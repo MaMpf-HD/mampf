@@ -1,13 +1,14 @@
 class PointingTableHeaderComponent < ViewComponent::Base
   Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, keyword_init: true)
 
-  def initialize(grading_scope:, grading_enabled:, tasks: [], total_max_points: 0,
-                 accepted_file_type: nil)
+  def initialize(assignment:, grading_scope:, layout:)
+    @assignment = assignment
     @grading_scope = grading_scope
-    @grading_enabled = grading_enabled
-    @tasks = tasks
-    @total_max_points = total_max_points
-    @accepted_file_type = accepted_file_type
+    @layout = layout
+    @grading_enabled = assignment.assessable?
+    @tasks = assignment.assessment&.persisted_tasks || []
+    @total_max_points = assignment.assessment&.effective_total_points || 0
+    @accepted_file_type = assignment.accepted_file_type
     super()
   end
 
@@ -31,18 +32,18 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def team_column
-      Column.new(css_class: "sticky-col team-col grade-th", label: t("basics.team"))
+      Column.new(css_class: "#{@layout.column_class(:team)} grade-th", label: t("basics.team"))
     end
 
     def tutorial_column
       return [] unless lecture_scope?
 
-      [Column.new(css_class: "tutorial-col grade-th text-center",
+      [Column.new(css_class: "#{@layout.column_class(:tutorial)} grade-th text-center",
                   label: t("basics.tutorial"))]
     end
 
     def status_col
-      Column.new(css_class: "text-center status-col grade-th",
+      Column.new(css_class: "text-center #{@layout.column_class(:status)} grade-th",
                  label: t("assessment.grading_tutorial.status"))
     end
 
@@ -53,12 +54,12 @@ class PointingTableHeaderComponent < ViewComponent::Base
         status_col,
         *@tasks.map { |task| task_column(task) },
         Column.new(
-          css_class: "text-center total-col grade-th",
+          css_class: "text-center #{@layout.column_class(:total)} grade-th",
           label: t("assessment.grading_tutorial.total_points"),
           sublabel: "(#{@total_max_points} #{t("assessment.grading_tutorial.max_points")})"
         ),
         # Two icons need no heading over them; a reader without eyes gets one.
-        Column.new(css_class: "text-center sticky-col save-col grade-th",
+        Column.new(css_class: "text-center #{@layout.column_class(:save)} grade-th",
                    label: t("buttons.save"),
                    label_hidden: true)
       ]
@@ -66,21 +67,21 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
     def task_column(task)
       Column.new(
-        css_class: "text-center task-col grade-th",
+        css_class: "text-center #{@layout.column_class(:task)} grade-th",
         label: "#{t("assessment.grading_tutorial.task")} #{task.position}",
         sublabel: "(#{task.max_points || 0} #{t("assessment.grading_tutorial.max_points")})"
       )
     end
 
     def hand_in_column
-      Column.new(css_class: "text-center hand-in-col grade-th",
+      Column.new(css_class: "text-center #{@layout.column_class(:hand_in)} grade-th",
                  label: t("basics.submission"),
                  sublabel: "(#{@accepted_file_type})")
     end
 
     def correction_column
       Column.new(
-        css_class: "text-center correction-col grade-th",
+        css_class: "text-center #{@layout.column_class(:correction)} grade-th",
         label: t("basics.correction"),
         sublabel: "(#{@accepted_file_type})"
       )

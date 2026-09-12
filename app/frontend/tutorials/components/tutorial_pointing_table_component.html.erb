@@ -5,7 +5,11 @@
         <%= render toolbar %>
       </div>
 
-      <div class="table-wrapper" data-controller="table-fade">
+      <div
+        class="table-wrapper"
+        style="<%= layout.css_vars %>"
+        data-controller="table-fade"
+      >
         <div class="table-overflow" data-table-fade-target="inner">
           <table
             class="table align-middle my-3"
@@ -13,11 +17,9 @@
           >
             <thead>
               <%= render(PointingTableHeaderComponent.new(
+                assignment: @assignment,
                 grading_scope: @grading_scope,
-                grading_enabled: grading_enabled?,
-                tasks: tasks,
-                total_max_points: total_max_points,
-                accepted_file_type: @assignment.accepted_file_type
+                layout: layout
               )) %>
             </thead>
 

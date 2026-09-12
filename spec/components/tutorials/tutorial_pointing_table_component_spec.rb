@@ -36,26 +36,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       end
     end
 
-    describe "#total_max_points" do
-      context "when there are no tasks" do
-        it "returns 0" do
-          expect(component.total_max_points).to eq(0)
-        end
-      end
-
-      context "when there are tasks with max_points" do
-        before do
-          create(:assessment_task, assessment: assessment, max_points: 10)
-          create(:assessment_task, assessment: assessment, max_points: 5)
-          assignment.reload
-        end
-
-        it "returns the sum of max points" do
-          expect(component.total_max_points).to eq(15)
-        end
-      end
-    end
-
     describe "#rows?" do
       context "when there are submissions" do
         let!(:submission) do

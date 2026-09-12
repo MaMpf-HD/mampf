@@ -35,6 +35,10 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.assessable?
   end
 
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: @assessable)
+  end
+
   def allow_grading?
     @assessable.grading_open?
   end
@@ -147,7 +151,7 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def task_points_participation_cell(task, allow_grading)
-    tag.td(class: "task-col") do
+    tag.td(class: layout.column_class(:task)) do
       task_points_participation_input(task, allow_grading)
     end
   end

@@ -12,7 +12,7 @@
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
   data-status-filter-name="<%= @user.tutorial_name %>"
 >
-  <td class="sticky-col team-col">
+  <td class="<%= layout.column_class(:team) %>">
     <div class="d-flex justify-content-between align-items-start">
       <div>
         <%= @user.tutorial_name %>
@@ -48,7 +48,7 @@
   </td>
 
   <% if @mode == "teacher" %>
-    <td class="text-center tutorial-col">
+    <td class="text-center <%= layout.column_class(:tutorial) %>">
       <span>
         <%= @participation.tutorial&.title || t("assessment.grading_tutorial.no_tutorial_badge") %>
       </span>
@@ -56,7 +56,7 @@
   <% end %>
 
   <% if grading_enabled? %>
-    <td class="text-center status-col">
+    <td class="text-center <%= layout.column_class(:status) %>">
       <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
 
       <% if locked_reason %>
@@ -66,10 +66,10 @@
     <% tasks.each do |task| %>
       <%= task_points_participation_cell(task, allow_grading?) %>
     <% end %>
-    <td class="text-center total-col">
+    <td class="text-center <%= layout.column_class(:total) %>">
       <span data-participation-row-target="totalPoints">0</span>
     </td>
-    <td class="text-center sticky-col save-col">
+    <td class="text-center <%= layout.column_class(:save) %>">
       <% if can_enter_points? && points_enterable? %>
         <div class="d-inline-flex align-items-center gap-1">
           <%= form_with url: save_url,
@@ -102,7 +102,7 @@
     </td>
   <% end %>
 
-  <td class="text-center hand-in-col">
+  <td class="text-center <%= layout.column_class(:hand_in) %>">
     <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
       <% if paper_hand_in? && !paper_hand_in_removable? %>
         <button
@@ -149,5 +149,5 @@
     <% end %>
   </td>
 
-  <td class="correction-col"></td>
+  <td class="<%= layout.column_class(:correction) %>"></td>
 </tr>

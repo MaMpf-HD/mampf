@@ -26,6 +26,10 @@ class SubmissionRowComponent < ViewComponent::Base
     @assessment.present?
   end
 
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: @assignment)
+  end
+
   def allow_grading?
     @submission.valid_for_pointing? && @assignment&.grading_open?
   end
@@ -89,7 +93,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def task_points_cell(task, allow_grading)
-    tag.td(class: "task-col") do
+    tag.td(class: layout.column_class(:task)) do
       task_points_input(task, allow_grading)
     end
   end

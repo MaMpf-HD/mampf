@@ -75,6 +75,10 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @assignment.assessable?
   end
 
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: @assignment)
+  end
+
   def toolbar
     PointingToolbarComponent.new(assignment: @assignment, grading_scope: @grading_scope,
                                  statuses: row_statuses, submissions: @stack,
@@ -97,10 +101,6 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   def tasks
     @assignment&.assessment&.persisted_tasks || []
-  end
-
-  def total_max_points
-    @assignment&.assessment&.effective_total_points || 0
   end
 
   # A sheet from before there were points has file rows only.
