@@ -186,11 +186,8 @@
                 </td>
 
                 <%#
-                  A certificate is decided per person, here, by whoever may edit
-                  the lecture. Only a sheet nothing was handed in for can be
-                  excused, and only once it is due: an excuse for a sheet still
-                  open would be a forecast.
-                  `local: true` keeps rails-ujs off the form; Turbo submits it.
+                  Only :not_submitted offers an exemption; :not_due may still receive a submission.
+                  `local: true` lets Turbo submit the form without rails-ujs.
                 %>
 
                 <td class="text-end">

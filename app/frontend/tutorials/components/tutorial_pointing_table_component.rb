@@ -1,6 +1,3 @@
-# Pointing table component for the assignment of tutorials
-# This includes pointing rows for both by submission and by participation
-# Also includes the zone for non-submitters with the possibility to mark them as participated
 class TutorialPointingTableComponent < ViewComponent::Base
   def initialize(assignment:, grading_scope: nil)
     super()
@@ -42,8 +39,8 @@ class TutorialPointingTableComponent < ViewComponent::Base
     end
   end
 
-  # One query for everybody on the page, marks included: the rows read theirs
-  # off this rather than asking per row.
+  # Preload each submission team's participations and task_points to avoid
+  # queries per submission.
   def preload_participations(non_submitters, submissions)
     return {} unless @assignment.assessment
 
@@ -70,7 +67,6 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @assignment&.assessment&.effective_total_points || 0
   end
 
-  # have any grading records for this assignment? (either by submission or by participation)
   def grading_records?
     @stack&.any? || @non_submitters&.any? { |user| @participations_by_user_id[user.id] }
   end
@@ -126,8 +122,6 @@ class TutorialPointingTableComponent < ViewComponent::Base
     end
   end
 
-  # Returns a hash mapping user IDs to their old and new tutorial titles
-  # consider only when user has participation record but not in membership
   def users_movement_map
     helpers.users_movement_map_cache[@assignment.id] ||=
       helpers.calculate_user_movement_map_assignment(@assignment, @lecture)

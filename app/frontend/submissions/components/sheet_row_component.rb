@@ -50,8 +50,6 @@ class SheetRowComponent < ViewComponent::Base
     SheetChipComponent.for?(state)
   end
 
-  # The marker and the form that clears it go together: a row with nothing new
-  # has nothing to report when it is opened.
   delegate :news?, to: :sheet
 
   def points_class

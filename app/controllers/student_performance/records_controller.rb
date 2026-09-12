@@ -40,9 +40,8 @@ module StudentPerformance
       load_show_data
     end
 
-    # A certificate is decided here, per person, by whoever may edit the
-    # lecture - tutors enter points and never this. Only a sheet nothing was
-    # handed in for can be excused; the participation says so if it is not.
+    # Exemptions require :edit on the lecture: :enter_points alone must not let
+    # tutors change which assignments count towards a student's required points.
     def excuse
       participation = participation_for(@sheet)
       begin
@@ -175,8 +174,8 @@ module StudentPerformance
         redirect_to_record(alert: I18n.t("student_performance.errors.no_sheet"))
       end
 
-      # A member the backfill has not reached yet has no row to excuse; one is
-      # made, in their group, so the excuse has somewhere to sit.
+      # AssessmentBackfillWorker may not have created this participation yet;
+      # mark_exempt still needs one to store the exemption.
       def participation_for(sheet)
         sheet.assessment_participations.find_or_initialize_by(user_id: @record.user_id) do |p|
           p.tutorial_id = Assessment::Participation.tutorial_for(@record.user, @lecture)

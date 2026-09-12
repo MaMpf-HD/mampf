@@ -25,10 +25,9 @@ module Assessment
       respond_with_flash(:alert, e.message)
     end
 
-    # Who may enter points follows the record, not the page it sits on: the
-    # group the participation or hand-in belongs to, or the lecture where it
-    # has none. The bulk save names the group of its page; the service checks
-    # every entry against its own.
+    # Authorization uses the Submission or Participation tutorial, even when
+    # points are entered from the lecture table. Bulk entries are authorized
+    # separately by SubmissionGraderService.
     def authorize_assessment!
       authorize!(:enter_points, @tutorial || @lecture)
     end
@@ -142,9 +141,8 @@ module Assessment
 
     private
 
-      # Which table the row goes back into - the group's or the lecture's -
-      # is the page's business and travels with the request; who may enter
-      # points is settled from the record in `authorize_assessment!`.
+      # grading_scope_type selects the table to update, not the permission scope;
+      # a lecture table can contain participations from several tutorials.
       def table_scope
         (@tutorial if @grading_scope_type == "tutorial") || @lecture
       end
@@ -273,9 +271,8 @@ module Assessment
                            status: :not_found)
       end
 
-      # The group is the participation's own, and may be none: an exam has no
-      # groups, and a sheet handed in on paper by somebody in no group still
-      # gets its points. The lecture is the scope then.
+      # A Participation can have no tutorial, including for paper submissions.
+      # Authorization then uses its assessment's lecture.
       def set_resources_from_participation
         @participation = Participation.find_by(id: params[:participation_id])
         unless @participation

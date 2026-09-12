@@ -57,8 +57,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
         [Column.new(css_class: "sticky-col tutorial-col grade-th text-center",
                     label: t("basics.tutorial"))]
       else
-        # need to use action_tag to identify the column for the filter dropdown
-        # need to increase z-index of the header cell
+        # The tutorial dropdown must appear above the sticky status header (z-10).
         [Column.new(css_class: "sticky-col tutorial-col grade-th text-center z-20",
                     label: t("basics.tutorial"),
                     action_tag: "filter-tutorials")]

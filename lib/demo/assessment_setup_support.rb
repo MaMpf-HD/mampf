@@ -183,9 +183,8 @@ module Demo
 
             submission_rate = submission_rate_for(profile)
 
-            # Only somebody who handed nothing in can be excused, and the
-            # participation refuses anything else - so the excuse comes second,
-            # for a few of those the gradebook has just recorded as missing.
+            # Clear submitted_at before setting exempt: absence_only_without_hand_in
+            # checks submitted_at_was, so both changes cannot share a save.
             if rand > submission_rate
               if future_deadline
                 participation.destroy!

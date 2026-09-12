@@ -1,4 +1,3 @@
-# Renders a single submission row in the pointing table
 class SubmissionRowComponent < ViewComponent::Base
   # The table hands its rows the team's participations, read once for the
   # whole page; a row rendered on its own reads them itself.
@@ -23,14 +22,10 @@ class SubmissionRowComponent < ViewComponent::Base
     end
   end
 
-  # Feature guard: grading is only possible if the feature flag is enabled
-  # and the assignment supports assessment
   def grading_enabled?
     @assessment.present?
   end
 
-  # Business rule: grading is only allowed once the assignment is no longer active
-  # and the submission is valid for pointing (i.e. not late or rejected)
   def allow_grading?
     @submission.valid_for_pointing? && @assignment&.grading_open?
   end

@@ -93,7 +93,6 @@ module Assessment
             end
         end
 
-        # The reader's own looks, one row per sheet; a partner's are not read.
         def sightings
           @sightings ||=
             if assignments.empty?
@@ -166,11 +165,8 @@ module Assessment
           sheet.assignment.totally_expired? && sheet.state != :exempt
         end
 
-        # Handed in, its deadline behind it, nothing marked on it yet: these
-        # points are in neither half of the fraction until the tutor gets to
-        # them, and the block says so rather than leaving the reader to wonder
-        # where they went. The same line `StudentPerformance::DuePoints` draws
-        # for the tables, read here off the sheets the page has loaded anyway.
+        # Reuse the loaded sheets for the same due, pending, and submitted_at
+        # conditions as StudentPerformance::DuePoints, avoiding another query.
         def awaiting_marks_sheets
           @awaiting_marks_sheets ||= sheets.select { |sheet| awaiting_marks?(sheet) }
         end
@@ -182,10 +178,8 @@ module Assessment
             sheet.participation.submitted_at.present?
         end
 
-        # What is still there to be won. The record cannot say this: a sheet
-        # nobody has handed in yet looks, from the record alone, like a sheet
-        # that is already lost. Read off the sheets instead - they are the only
-        # place that knows which are decided.
+        # StudentPerformance::Record does not track assignment deadlines or sheet
+        # states, so it cannot distinguish available points from missed work.
         def points_still_open
           sheets.reject { |sheet| decided?(sheet) }
                 .sum { |sheet| sheet.max_points || 0 }

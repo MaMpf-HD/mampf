@@ -55,14 +55,9 @@ module Demo
         end
       end
 
-      # The gradebook has already said who handed this sheet in: somebody it
-      # recorded as missing, excused, or dropped from the sheet altogether is
-      # not on the week's team, and the partner hands in alone. Handing in for
-      # them anyway would stamp the hand-in the gradebook denied, and the table
-      # would lose every cross. A dropped member matters twice over: the
-      # backfill worker writes them a pending participation a minute later,
-      # and a team formed with them would carry one marked and one blank
-      # member.
+      # HandInSupport would fill submitted_at for students recorded as missing.
+      # A missing participation can also be recreated by AssessmentBackfillWorker
+      # as pending, leaving that team member's status different from the others.
       def sits_out?(assignment, member)
         participation = assignment.assessment
                                   &.assessment_participations

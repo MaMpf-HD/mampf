@@ -1,15 +1,8 @@
 module Assessment
-  # Delegates to PointEntryService for actual point recording.
-  # Triggers Participation.recompute_points_total! after point entry (via PointEntryService).
-  # Validates that the task belongs to the submission's assessment (via PointEntryService).
-  # Only allows scoring if the assignment is inactive (after deadline).
   class SubmissionGraderService
     class SubmissionGraderError < StandardError; end
 
     class << self
-      # Scores a batch of mixed submission/participation entries in one transaction.
-      # Tutorials/lectures are only authorization-checked once per batch (see
-      # `authorize_tutorial_or_lecture!` below).
       def score_multi_teams_by_types!(records, scorer)
         validated_tutorial_ids = []
 
@@ -20,7 +13,6 @@ module Assessment
         end
       end
 
-      # Routes a single bulk entry to the correct scoring method based on target type.
       def score_tasks_by_types!(entry, scorer, validated_tutorial_ids)
         case entry["target"]
         when "submission"
@@ -32,8 +24,6 @@ module Assessment
         end
       end
 
-      # Enters points of all tasks for all team members of a submission.
-      # points_by_task_id: Hash of task_id => points (points potentially nil or a string).
       def score_tasks_by_submission!(submission, points_by_task_id, scorer)
         raise_if_errors!(validate_submission_present(submission))
 
@@ -94,8 +84,6 @@ module Assessment
 
       private
 
-        # ── entry routing helpers ──────────────────────────────────────────
-
         def score_submission_entry!(entry, scorer, validated_tutorial_ids)
           submission = Submission.find(entry["id"])
 
@@ -117,9 +105,8 @@ module Assessment
           score_tasks_by_participation!(participation, entry["task_points"], scorer)
         end
 
-        # Authorizes the scorer against a tutorial, skipping the check (and the
-        # Tutorial.find lookup) if that tutorial was already validated earlier
-        # in this batch.
+        # Cache authorized tutorial IDs so a bulk save does not repeat
+        # Tutorial.find and permission checks for every row.
         def authorize_tutorial!(tutorial_id, scorer, validated_tutorial_ids)
           return if tutorial_id.blank? || validated_tutorial_ids.include?(tutorial_id)
 
@@ -134,8 +121,6 @@ module Assessment
             PointEntryService.enter_points(participation, points_by_task_id, scorer, submission)
           end
         end
-
-        # ── validations: each returns nil (valid) or an error string (invalid) ──
 
         def validate_submission_present(submission)
           return if submission.present?
@@ -187,8 +172,6 @@ module Assessment
 
           I18n.t("assessment.errors.user_cannot_enter_points")
         end
-
-        # ── error raising ───────────────────────────────────────────────────
 
         def raise_if_errors!(*errors)
           errors = errors.flatten.compact

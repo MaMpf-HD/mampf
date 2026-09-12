@@ -84,16 +84,12 @@ module Assessment
         participation.grader || latest_task_point&.grader
       end
 
-      # "New" is "changed since the reader last looked", not "corrected": a
-      # correction that was there at their last look is old news, one uploaded
-      # since is not, and somebody who never opened the row has not looked at
-      # all.
       def new_correction?
         newer_than?(submission&.corrected_at, sighting&.seen_at)
       end
 
-      # Only where the row shows marks. The stamp moves with every complete
-      # save, so a correction of the points reads as new again.
+      # Participation#update_status_if_all_scored! refreshes graded_at on each
+      # complete point entry, so editing reviewed points makes them new again.
       def new_points?
         return false unless state == :marked
 

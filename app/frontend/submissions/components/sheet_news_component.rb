@@ -1,8 +1,5 @@
-# The line over the sheet list that says what arrived since the reader last
-# looked, sheet by sheet, and lets them clear it in one go. It is drawn even
-# when there is nothing to say - empty, and with its id - because the row of
-# a sheet reports its opening to the server, and the server answers by
-# replacing this.
+# Render the sheet-news element even without news: SubmissionsController
+# needs its id as the target for Turbo Stream replacements.
 class SheetNewsComponent < ViewComponent::Base
   # Three sheets name themselves; past that the rest are a count, because a
   # reader who has been away a month gets a sentence, not a paragraph.

@@ -37,8 +37,6 @@ class SubmissionsController < ApplicationController
            layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
-  # A row reports its opening here. The stamp is the reader's own, so a
-  # partner opening the same sheet leaves this reader's marker standing.
   def seen
     AssignmentSighting.stamp!(user: current_user, assignment: @assignment)
 
@@ -389,15 +387,12 @@ class SubmissionsController < ApplicationController
                                                       user: current_user).call
     end
 
-    # Everything still open has a card above the list, so the list is what is
-    # behind you - a sheet in both places would be told twice, and a row cannot
-    # be handed in.
+    # Open sheets already have submission forms in the hub.open_sheets cards;
+    # including them in history would show each assignment twice.
     def history
       hub.sheets - hub.open_sheets
     end
 
-    # The dot in the row and the form that reported the look; the news line is
-    # drawn afresh, since the sheet has left it.
     def clear_marker(assignment)
       [turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :news)),
        turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :seen))]
@@ -660,8 +655,8 @@ class SubmissionsController < ApplicationController
                   alert: I18n.t("controllers.no_student_status_in_lecture")
     end
 
-    # The stamp is read live wherever it counts - the standing block, the
-    # performance table, the admission rule - so `update_all` is all it takes.
+    # DuePoints and SubmissionsHub read submitted_at on each request, so
+    # clearing it does not require recomputing StudentPerformance::Record.
     def clear_submitted_at(users)
       assessment = @submission&.assignment&.assessment
       return unless assessment

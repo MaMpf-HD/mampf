@@ -39,12 +39,9 @@ module StudentPerformance
       ((record.points_total_materialized || 0) / max * 100).round(2)
     end
 
-    # Sum points from the current assignments: subtracting due points
-    # from points_max_materialized could count outdated totals as
-    # points that are not yet due.
-    #
-    # A sheet handed in early stays in here: until its deadline has passed the
-    # file can still be replaced or withdrawn, and nobody can mark it.
+    # Use current assignment totals; points_max_materialized may be outdated.
+    # An early submission remains not yet due because it can still be replaced
+    # or withdrawn until the deadline and submission_grace_period have passed.
     def not_yet_due_for(user_id)
       coming_total -
         exempted_coming_points.fetch(user_id, 0) -
@@ -60,11 +57,8 @@ module StudentPerformance
         reviewed_coming_counts.fetch(user_id, 0)
     end
 
-    # With a tutor: handed in, due, and not marked yet. Only due sheets, because
-    # before the deadline nobody can mark anything - a hand-in that early is a
-    # sheet not yet due with a file already in place. Read at request time like
-    # everything else here that moves with the clock: a stored figure would
-    # keep yesterday's count until the next point entry happened to refresh it.
+    # Early submissions are not awaiting points: tutors cannot enter points
+    # until the deadline and submission_grace_period have passed.
     def pending_points_for(user_id)
       awaiting_marks_points.fetch(user_id, 0)
     end

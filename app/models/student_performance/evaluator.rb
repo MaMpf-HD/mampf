@@ -45,16 +45,9 @@ module StudentPerformance
 
     attr_reader :rule
 
-    # `rule` is a `Rule` or the duck-typed `PreviewRule`: anything answering
-    # `min_percentage`, `min_points_absolute` — at most one of them set — and
-    # `required_achievements`. The threshold mode is deliberately not part of
-    # that contract, since the preview has none.
-    #
-    # `due_points` is where the clock is read: what is still to come and what
-    # is with a tutor both move with it, and without them a student below the
-    # threshold would be refused for time that has not run out.
-    # Require assignments_complete explicitly because assuming it is
-    # true would allow decisions before all assignments exist.
+    # PreviewRule provides min_percentage and min_points_absolute, no
+    # threshold_mode. Require assignments_complete and current due_points so
+    # decisions account for assignments being created and points still reachable.
     def initialize(rule, assignments_complete:, due_points:)
       @rule = rule
       @assignments_complete = assignments_complete

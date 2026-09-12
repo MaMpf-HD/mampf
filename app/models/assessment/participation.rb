@@ -57,10 +57,8 @@ module Assessment
       update!(points_total: task_points.sum(:points))
     end
 
-    # absent and exempt -> no change
-    # every task scored -> reviewed, stamped with when and by whom, on every
-    #   save: the student's page tells a fresh mark from an old one by the stamp
-    # a task unscored again -> pending, stamp cleared
+    # Refresh graded_at even when already reviewed: SubmissionsHub::Sheet
+    # uses it to show newly entered points since the user's last seen_at.
     def update_status_if_all_scored!(grader: nil)
       return if absent? || exempt?
 
@@ -127,10 +125,9 @@ module Assessment
         errors.add(:grade_numeric, :not_gradable)
       end
 
-      # Excused or absent is said of somebody who handed nothing in. A person
-      # on a team's hand-in is neither, and neither is one whose sheet the
-      # tutor took on paper or marked. A hand-in the tutor refused does not
-      # count - a certificate may be exactly what explains it.
+      # submitted_at also records paper submissions, so absence cannot depend
+      # only on a Submission. Rejected submissions may still be excused with
+      # a certificate.
       def absence_only_without_hand_in
         return unless assessment&.assessable.is_a?(Assignment)
         return unless handed_in? || results_visible?

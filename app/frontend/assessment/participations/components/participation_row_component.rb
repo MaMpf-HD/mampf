@@ -1,4 +1,3 @@
-# Renders a single participation row in the pointing table
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
@@ -32,12 +31,10 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
-  # Determines if grading is enabled for the current assignment
   def grading_enabled?
     @assessable.assessable?
   end
 
-  # Determines if grading is allowed for the current assignment
   def allow_grading?
     @assessable.grading_open?
   end
