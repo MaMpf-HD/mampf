@@ -64,6 +64,125 @@ test("picks a washi tape colour for a card and keeps it across a reload",
       .getByRole("radio", { name: "Mint" })).toBeChecked();
   });
 
+test.describe("registration status with multiple campaigns for one lecture", () => {
+  async function createLecture(factory: FactoryBot, title: string) {
+    const term = await createActiveTerm(factory);
+    const course = await factory.create("course", [], { title });
+    return factory.create("lecture", ["released_for_all"], {
+      course_id: course.id,
+      term_id: term.id,
+    });
+  }
+
+  async function createRegistration(
+    factory: FactoryBot,
+    lecture: FactoryBotObject,
+    userId: number,
+    campaignTrait: "open" | "closed",
+    registrationStatus: "confirmed" | "pending" | "rejected",
+  ) {
+    const campaign = await factory.create("registration_campaign", [campaignTrait], {
+      campaignable_type: "Lecture",
+      campaignable_id: lecture.id,
+    });
+    const items = await campaign.__call("registration_items");
+    await factory.create("registration_user_registration", [registrationStatus], {
+      user_id: userId,
+      registration_campaign_id: campaign.id,
+      registration_item_id: items[0].id,
+    });
+    return campaign;
+  }
+
+  async function createOpenCampaignWithoutRegistration(
+    factory: FactoryBot, lecture: FactoryBotObject,
+  ) {
+    return factory.create("registration_campaign", ["open"], {
+      campaignable_type: "Lecture",
+      campaignable_id: lecture.id,
+    });
+  }
+
+  test("a confirmed registration wins over a rejected one in another campaign",
+    async ({ factory, student: { page, user } }) => {
+      const lecture = await createLecture(factory, "Algebraic Topology");
+      await createRegistration(factory, lecture, user.id, "closed", "rejected");
+      await createRegistration(factory, lecture, user.id, "closed", "confirmed");
+
+      const dashboard = new DashboardLectureBrowsePage(page);
+      await dashboard.goto();
+
+      // confirmed is the default state and shows no status note/corner at all
+      await expect(dashboard.enrolledSection).toContainText("Algebraic Topology");
+      const card = dashboard.dashboardCard(lecture.id);
+      await expect(card.getByText("Rejected")).not.toBeVisible();
+      await expect(card.getByText("Pending")).not.toBeVisible();
+      await expect(card.getByRole("button", { name: "Dismiss" })).not.toBeVisible();
+    });
+
+  test("a confirmed registration wins over a pending one in another campaign",
+    async ({ factory, student: { page, user } }) => {
+      const lecture = await createLecture(factory, "Complex Analysis");
+      await createRegistration(factory, lecture, user.id, "open", "pending");
+      await createRegistration(factory, lecture, user.id, "closed", "confirmed");
+
+      const dashboard = new DashboardLectureBrowsePage(page);
+      await dashboard.goto();
+
+      const card = dashboard.dashboardCard(lecture.id);
+      await expect(card.getByText("Pending")).not.toBeVisible();
+    });
+
+  test("a pending registration wins over a rejected one in another campaign",
+    async ({ factory, student: { page, user } }) => {
+      const lecture = await createLecture(factory, "Differential Geometry");
+      await createRegistration(factory, lecture, user.id, "closed", "rejected");
+      await createRegistration(factory, lecture, user.id, "open", "pending");
+
+      const dashboard = new DashboardLectureBrowsePage(page);
+      await dashboard.goto();
+
+      const card = dashboard.dashboardCard(lecture.id);
+      await expect(card.getByText("Pending")).toBeVisible();
+      await expect(card.getByText("Rejected")).not.toBeVisible();
+      // the rejected notice's dismiss corner is only shown for :rejected
+      await expect(card.getByRole("button", { name: "Dismiss" })).not.toBeVisible();
+    });
+
+  test("a still-open campaign wins over a rejected registration in a closed one",
+    async ({ factory, student: { page, user } }) => {
+      const lecture = await createLecture(factory, "Number Theory II");
+      await createRegistration(factory, lecture, user.id, "closed", "rejected");
+      await createOpenCampaignWithoutRegistration(factory, lecture);
+
+      const dashboard = new DashboardLectureBrowsePage(page);
+      await dashboard.goto();
+
+      const card = dashboard.dashboardCard(lecture.id);
+      await expect(card.getByText("Registration open")).toBeVisible();
+      await expect(card.getByText("Rejected")).not.toBeVisible();
+    });
+
+  test("rejected registrations in two different closed campaigns are both cleared by one dismiss",
+    async ({ factory, student: { page, user } }) => {
+      const lecture = await createLecture(factory, "Topology");
+      await createRegistration(factory, lecture, user.id, "closed", "rejected");
+      await createRegistration(factory, lecture, user.id, "closed", "rejected");
+
+      const dashboard = new DashboardLectureBrowsePage(page);
+      await dashboard.goto();
+
+      const card = dashboard.dashboardCard(lecture.id);
+      await expect(card.getByText("Rejected")).toBeVisible();
+
+      await dashboard.dismissRegistrationNotice(lecture.id, true);
+
+      await expect(dashboard.bookmarkedSection).toContainText("Topology");
+      await expect(dashboard.dashboardCard(lecture.id).getByText("Rejected"))
+        .not.toBeVisible();
+    });
+});
+
 test.describe("a rejected registration's notice", () => {
   async function createLectureWithRejectedRegistration(
     factory: FactoryBot, userId: number,
