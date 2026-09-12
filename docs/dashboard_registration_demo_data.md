@@ -76,13 +76,29 @@ impersonate one from an admin account.
   discoverable via lecture search, where it carries the "Registration open"
   badge.
 
-The pending/confirmed/open-unapplied lectures are placed in the *next*
-term (`Demo::TermSupport.next_term`), not the one the seed plays in:
-`Seeds::BuildSupport#settle_current_term_campaigns!` discards any campaign
-still `:open` (not `:completed`) in the current term on every rebuild, on
-the assumption that registration in a term that has started is over. The
-two rejected lectures use `:completed` campaigns, which survive that step,
-so they stay in the current term like a real rejection by now would.
+- **student2 — pending in a later campaign overrides an older rejection.**
+  A second lecture, "Algebra und Zahlentheorie", with *two* campaigns:
+  an older `:first_come_first_served`/`:completed` one the student was
+  `:policy_rejected` from (like student3's scenario), and a later
+  `:preference_based`/`:closed` reapplication where the student is still
+  `:pending` a decision. Placed in the *next* term, like the
+  pending/confirmed/open-unapplied lectures below: `:closed` alone does
+  not survive `settle_current_term_campaigns!` in the current term, unlike
+  `:completed`. `Registration::StatusQuery` pools registrations across all
+  of a lecture's campaigns and applies one precedence order
+  (confirmed > pending > open > rejected), so the dashboard shows "Pending"
+  for this lecture, not "Rejected" - see `status_query_spec.rb` and
+  `e2e/dashboard.spec.ts` ("registration status with multiple campaigns for
+  one lecture") for the underlying precedence rules this demonstrates.
+
+The pending/confirmed/open-unapplied/multi-campaign lectures are placed in
+the *next* term (`Demo::TermSupport.next_term`), not the one the seed plays
+in: `Seeds::BuildSupport#settle_current_term_campaigns!` discards any
+non-`:completed` campaign (open, closed, processing, ...) on a lecture in
+the current term on every rebuild, on the assumption that registration in a
+term that has started is over. The two rejected lectures use `:completed`
+campaigns, which survive that step, so they stay in the current term like a
+real rejection by now would.
 
 ## Resulting dashboard state
 
@@ -94,6 +110,7 @@ so they stay in the current term like a real rejection by now would.
 | student4 | Funktionalanalysis | Registered | Rejected (x-circle) | yes | yes - "keep bookmarked" / "remove entirely" |
 | student5 | Diskrete Mathematik | Bookmarked | — | yes | yes - plain unbookmark |
 | (search only) | Partielle Differentialgleichungen | not shown | (would show "Registration open" if surfaced) | — | — |
+| student2 | Algebra und Zahlentheorie | Registered | Pending (hourglass) | yes | no |
 
 The lecture search results (below the dashboard bands) show the same
 four-state icon/label instead of a single generic green checkmark for

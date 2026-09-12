@@ -4,8 +4,11 @@ module Demo
   # dashboard's pending/confirmed/rejected/bookmarked bands all have
   # something to show without waiting for a real campaign to reach that
   # state. The fifth lecture stays unapplied-for, to show what "Registration
-  # open" looks like in search. See docs/dashboard_registration_demo_data.md
-  # for the reasoning behind each campaign status and registration trait.
+  # open" looks like in search. student2 additionally gets a second lecture
+  # with two campaigns in conflicting states, to demonstrate the
+  # confirmed > pending > open > rejected precedence across campaigns. See
+  # docs/dashboard_registration_demo_data.md for the reasoning behind each
+  # campaign status and registration trait.
   module DashboardRegistrationSupport
     extend self
 
@@ -22,6 +25,7 @@ module Demo
       setup_rejected_and_bookmarked!(student4)
       setup_plain_bookmark!(student5)
       setup_open_unapplied!
+      setup_pending_overrides_older_rejection!(student2)
     end
 
     private
@@ -111,6 +115,34 @@ module Demo
       def setup_open_unapplied!
         lecture = lecture_for("Partielle Differentialgleichungen", next_term)
         reset_campaign!(lecture, :first_come_first_served, :open)
+      end
+
+      # A second lecture for student2, with two campaigns: an older one the
+      # student was rejected from (:completed), and a later reapplication
+      # still awaiting a decision (:closed, a preference-based campaign
+      # whose deadline passed but that the teacher has not finalized yet).
+      # Placed in the next term, like setup_pending! above:
+      # settle_current_term_campaigns! discards any campaign that is not
+      # :completed on a lecture in the *current* term on every rebuild, and
+      # would otherwise wipe out the :closed one here.
+      # Registration::StatusQuery pools registrations across all of a
+      # lecture's campaigns and applies one precedence order
+      # (confirmed > pending > open > rejected), so the dashboard must show
+      # "Pending" here, not "Rejected" - see status_query_spec.rb and
+      # e2e/dashboard.spec.ts for the precedence rules this demonstrates.
+      def setup_pending_overrides_older_rejection!(student)
+        lecture = lecture_for("Algebra und Zahlentheorie", next_term)
+        Demo::CampaignCleanup.discard_all!(lecture)
+
+        rejected_campaign = FactoryBot.create(:registration_campaign, :completed,
+                                              campaignable: lecture,
+                                              allocation_mode: :first_come_first_served)
+        create_registration!(student, rejected_campaign, :policy_rejected)
+
+        pending_campaign = FactoryBot.create(:registration_campaign, :closed,
+                                             campaignable: lecture,
+                                             allocation_mode: :preference_based)
+        create_registration!(student, pending_campaign, :pending, preference_rank: 1)
       end
 
       def current_term
