@@ -53,8 +53,6 @@ module Demo
             handed_in += 1
           end
         end
-
-        recompute_performance_records!(lecture)
       end
 
       # The gradebook has already said who handed this sheet in: somebody it
@@ -103,15 +101,6 @@ module Demo
                                 grader_id: marked.grader_id,
                                 points_total: marked.points_total)
         end
-      end
-
-      # `record_hand_in!` stamps with `update_all`, which is what keeps the run
-      # quick and what skips the callback behind it. The materialized record
-      # counts a sheet as awaiting marks by its `submitted_at`, so without this
-      # the standing block ends up disagreeing with the list beneath it.
-      def recompute_performance_records!(lecture)
-        service = StudentPerformance::ComputationService.new(lecture: lecture)
-        lecture.members.find_each { |member| service.compute_and_upsert_record_for(member) }
       end
 
       # On a sheet that is still open the gradebook has already decided who has

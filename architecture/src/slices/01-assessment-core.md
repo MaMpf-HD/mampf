@@ -201,11 +201,11 @@ different statements — *this is due for grading* and *this was handed in* — 
 is the kind of collision that only surfaces when the branches meet, since both are
 green apart.
 
-**Why it reaches into slice 2.** `points_max_pending_materialized` recognises work
+**Why it reaches into slice 2.** `StudentPerformance::DuePoints` recognises work
 awaiting marking as `pending` **and** `submitted_at` present. A paper assignment
 has no `submitted_at`, so for those lectures the figure is permanently zero and
 slice 3 cannot defer an eligibility decision that a marking backlog has distorted —
-exactly the case the column was added for.
+exactly the case the figure exists for.
 
 **What would fix it, on that branch.** Have `init_participation` set
 `submitted_at` as well, the way the upload path already does in

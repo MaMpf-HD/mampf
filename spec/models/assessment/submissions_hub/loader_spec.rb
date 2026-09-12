@@ -759,7 +759,6 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       record = create(:student_performance_record, lecture: lecture, user: user,
                                                    points_total_materialized: 32.5,
                                                    points_max_materialized: 176,
-                                                   points_max_pending_materialized: 16,
                                                    percentage_materialized: 18.47)
 
       standing = result.standing

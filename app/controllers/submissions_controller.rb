@@ -660,6 +660,8 @@ class SubmissionsController < ApplicationController
                   alert: I18n.t("controllers.no_student_status_in_lecture")
     end
 
+    # The stamp is read live wherever it counts - the standing block, the
+    # performance table, the admission rule - so `update_all` is all it takes.
     def clear_submitted_at(users)
       assessment = @submission&.assignment&.assessment
       return unless assessment
@@ -667,7 +669,6 @@ class SubmissionsController < ApplicationController
       assessment.assessment_participations
                 .where(user_id: users.map(&:id))
                 .update_all(submitted_at: nil, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
-      recompute_performance_records(assessment.lecture, users)
     end
 
     # The other way round: a hand-in that was refused and then accepted after
@@ -683,20 +684,6 @@ class SubmissionsController < ApplicationController
                 .where(user_id: users.map(&:id), submitted_at: nil)
                 .where.not(status: [:absent, :exempt])
                 .update_all(submitted_at: handed_in_at, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
-      recompute_performance_records(assessment.lecture, users)
-    end
-
-    # `update_all` is what keeps the two above to one statement each, and it is
-    # also what skips the callback behind them. Everything downstream reads the
-    # materialized record - the student's own standing block, the performance
-    # table, the admission rule - so it has to be put back in step by hand.
-    # Without it the reader takes a file back and is still told its points are
-    # being marked.
-    def recompute_performance_records(lecture, users)
-      return unless lecture
-
-      service = StudentPerformance::ComputationService.new(lecture: lecture)
-      users.each { |user| service.compute_and_upsert_record_for(user) }
     end
 
     def sync_assessment_participations(users: nil)

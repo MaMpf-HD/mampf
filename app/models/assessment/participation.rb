@@ -147,9 +147,7 @@ module Assessment
       end
 
       def should_recompute_performance_record?
-        achievement_grade_text_changed? ||
-          saved_change_to_status? ||
-          saved_change_to_submitted_at?
+        achievement_grade_text_changed? || saved_change_to_status?
       end
 
       def achievement_grade_text_changed?

@@ -169,11 +169,8 @@ module Assessment
         # Handed in, its deadline behind it, nothing marked on it yet: these
         # points are in neither half of the fraction until the tutor gets to
         # them, and the block says so rather than leaving the reader to wonder
-        # where they went.
-        #
-        # Deliberately not the record's `points_max_pending_materialized`: that
-        # counts a sheet handed in early as well, and one of those is not due
-        # in the first place.
+        # where they went. The same line `StudentPerformance::DuePoints` draws
+        # for the tables, read here off the sheets the page has loaded anyway.
         def awaiting_marks_sheets
           @awaiting_marks_sheets ||= sheets.select { |sheet| awaiting_marks?(sheet) }
         end
@@ -185,11 +182,10 @@ module Assessment
             sheet.participation.submitted_at.present?
         end
 
-        # What is still there to be won. The record cannot say this: its
-        # `points_max_pending` counts only sheets that are handed in and waiting,
-        # so a sheet nobody has handed in yet looks, from the record alone, like
-        # a sheet that is already lost. Read off the sheets instead - they are
-        # the only place that knows which are decided.
+        # What is still there to be won. The record cannot say this: a sheet
+        # nobody has handed in yet looks, from the record alone, like a sheet
+        # that is already lost. Read off the sheets instead - they are the only
+        # place that knows which are decided.
         def points_still_open
           sheets.reject { |sheet| decided?(sheet) }
                 .sum { |sheet| sheet.max_points || 0 }

@@ -792,9 +792,8 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         context "when the marking still outstanding could carry the student" do
           let(:awaited_user) { FactoryBot.create(:confirmed_user) }
 
-          # The hand-in behind the materialized figure is created too: the page
-          # counts the sheets that are waiting, and the record sums what they
-          # are worth. In real data both come from the same participations.
+          # The page counts the sheets that are waiting and sums what they
+          # are worth, both off the participations.
           before do
             waiting = FactoryBot.create(:assignment, :expired, lecture: lecture)
             FactoryBot.create(:assessment_task,
@@ -809,8 +808,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                               user: awaited_user,
                               percentage_materialized: 30,
                               points_total_materialized: 30,
-                              points_max_materialized: 100,
-                              points_max_pending_materialized: 40)
+                              points_max_materialized: 100)
             FactoryBot.create(:student_performance_certification,
                               lecture: lecture, user: awaited_user)
           end
@@ -841,8 +839,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                               user: early_user,
                               percentage_materialized: 30,
                               points_total_materialized: 30,
-                              points_max_materialized: 100,
-                              points_max_pending_materialized: 0)
+                              points_max_materialized: 100)
             FactoryBot.create(:student_performance_certification,
                               lecture: lecture, user: early_user)
           end

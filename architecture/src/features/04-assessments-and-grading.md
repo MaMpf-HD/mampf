@@ -47,9 +47,9 @@ participation removes its assessment from the maximum entirely; an exemption is
 not a zero. `pending` and `absent` contribute nothing while their assessment stays
 in the maximum.
 
-**Work handed in but not yet marked is recorded separately.** A `pending`
-participation that carries a `submitted_at` is waiting for a tutor rather than
-missing, and `points_max_pending_materialized` on the performance record adds up
+**Work handed in but not yet marked is counted separately.** A `pending`
+participation that carries a `submitted_at` on a sheet that is due is waiting
+for a tutor rather than missing, and `StudentPerformance::DuePoints` adds up
 what that is worth. Without it a marking backlog is indistinguishable from work
 never done, and eligibility reads it as a failure.
 
