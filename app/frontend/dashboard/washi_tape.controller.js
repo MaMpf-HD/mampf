@@ -1,14 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 
-/**
- * The washi tape strip on a dashboard card: opens the picker for its color,
- * applies a choice straight away and saves it for this user.
- *
- * The color is set on the card rather than the strip, because the card's
- * border is dyed in it too. Updating it locally rather than re-rendering keeps
- * picking instant; a request that fails only costs the saved preference, and
- * the card shows the stored color again on the next load.
- */
+/** Opens the color picker for a dashboard card's washi tape and saves a choice. */
 export default class extends Controller {
   static targets = ["strip", "picker"];
   static values = { url: String };

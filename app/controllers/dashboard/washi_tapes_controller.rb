@@ -1,9 +1,5 @@
 module Dashboard
-  # Saves the color a student wants one of their dashboard cards taped up in.
-  #
-  # A card is on the dashboard because the student holds a place on the
-  # lecture's roster, gives one of its talks, or has bookmarked it, so that is
-  # what may be styled — checking it here is the whole of the authorization.
+  # Saves the washi tape color for one of a student's dashboard cards.
   class WashiTapesController < ApplicationController
     def update
       lecture = dashboard_lecture

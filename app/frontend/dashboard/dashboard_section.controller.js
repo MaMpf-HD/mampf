@@ -1,14 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 
-/**
- * A collapsible band of the dashboard's pinboard. The label is the button; the
- * caret in front of it turns from pointing down to pointing right when the
- * band is folded away.
- *
- * The choice is kept in localStorage, keyed by the band, so a folded band
- * stays folded across a reload and across the Turbo Stream swap that the
- * semester picker triggers (which re-renders both bands from scratch).
- */
+/** Collapses a dashboard band, remembering the fold state in localStorage. */
 export default class extends Controller {
   static targets = ["toggle", "cards"];
   static values = { key: String };

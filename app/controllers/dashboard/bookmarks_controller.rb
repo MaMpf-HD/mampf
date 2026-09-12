@@ -1,14 +1,5 @@
 module Dashboard
-  # Adds or removes a lecture from the student's dashboard bookmarks, straight
-  # from the lecture search on the dashboard.
-  #
-  # A bookmark is a plain lecture subscription - the same thing the "Bookmarked"
-  # band on the dashboard is built from (see User#current_bookmarked_lectures).
-  #
-  # The response re-renders the dashboard's lecture bands as a Turbo Stream, so
-  # the "Bookmarked" section above the search updates in place. The search
-  # result's own button is kept in sync on the client (see the bookmark and
-  # bookmark-removal Stimulus controllers).
+  # Bookmarks (= lecture subscriptions) a lecture from the dashboard search.
   class BookmarksController < ApplicationController
     include Dashboard::RendersBoard
 
@@ -19,19 +10,13 @@ module Dashboard
       return head(:forbidden) unless bookmarkable?(@lecture)
 
       current_user.subscribe_lecture!(@lecture)
-      # favorite lectures and the navbar are cached against the user, so the
-      # subscription change has to touch the user to show up (mirrors
-      # ProfileController#star_lecture)
-      current_user.touch
+      current_user.touch # busts the cached navbar/favorites (see ProfileController#star_lecture)
       render_board
     end
 
     def destroy
       return head(:not_found) unless @lecture
 
-      # unsubscribe_lecture! is itself scoped to the user's own subscriptions
-      # (it no-ops unless the lecture is in current_user.lectures), so no
-      # separate ownership check is needed here.
       current_user.unsubscribe_lecture!(@lecture)
       current_user.touch
       render_board
@@ -43,9 +28,7 @@ module Dashboard
         @lecture = Lecture.find_by(id: params[:lecture_id])
       end
 
-      # Mirrors the guard in ProfileController#subscribe_lecture: an unpublished
-      # lecture, or one behind a passphrase the user has not already cleared, is
-      # not something to bookmark in a single click.
+      # Mirrors ProfileController#subscribe_lecture's guard.
       def bookmarkable?(lecture)
         return true if lecture.in?(current_user.lectures)
         unless lecture.published? || current_user.admin ||

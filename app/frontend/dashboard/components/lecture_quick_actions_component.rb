@@ -1,16 +1,8 @@
-# The little speech bubbles pinned beside a lecture's dashboard card: the one
-# or two things the student could act on in that lecture right now, each one a
-# single link to the page where they would do it.
-#
-# Only what is actionable belongs here. Anything that is merely the lecture's
-# state (the registration status, the points so far) stays on the card itself,
-# so a bubble always means "there is something for you to do".
+# Speech bubbles beside a lecture's card, one per actionable item (deadlines,
+# open exam registration, unread activity). Purely informational state stays
+# on the card itself.
 class LectureQuickActionsComponent < ViewComponent::Base
   DUE_SOON_WINDOW = 7.days
-
-  # Degrees a bubble is tilted against the rail. Far smaller than the cards'
-  # tilt: a bubble is a few words wide, and past a degree or two the text
-  # starts to look broken rather than hand-placed.
   MAX_TILT = 1.5
 
   Action = Struct.new(:kind, :icon, :label, :href, keyword_init: true)
@@ -37,8 +29,6 @@ class LectureQuickActionsComponent < ViewComponent::Base
     t("dashboard.quick_actions.list_label", lecture: lecture.title_no_term)
   end
 
-  # Alternating directions in half-degree steps, seeded by the lecture, so a
-  # rail of bubbles reads as stuck on one by one rather than printed.
   def tilt(index)
     magnitude = ((lecture.id + (index * 7)) % ((2 * MAX_TILT) + 1)) / 2.0
     magnitude * (index.even? ? 1 : -1)
@@ -85,9 +75,7 @@ class LectureQuickActionsComponent < ViewComponent::Base
       )
     end
 
-    # The forum and the comments under the media are one bubble, not two: they
-    # are the same errand ("people have written things"), and they lead to the
-    # same page.
+    # Forum and comment activity share one bubble since both link to the lecture page.
     def activity_action
       parts = activity_parts
       return if parts.empty?

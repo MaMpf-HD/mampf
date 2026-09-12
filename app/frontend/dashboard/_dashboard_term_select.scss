@@ -1,9 +1,5 @@
 @import "~/styles/branding";
 
-// The dashboard's semester picker: a small labeled `<select>` shown at the
-// top of the dashboard and again right above the search bar. Deliberately
-// low-key — students rarely change semester.
-
 .dashboard-term-select {
     display: flex;
     align-items: center;
@@ -19,9 +15,8 @@
     white-space: nowrap;
 }
 
-// A fixed width rather than one that follows the current option: the control
-// would otherwise change size as you step from "SS 2026" to "WS 2025/26", and
-// the digits are tabular so the years stay in one column down the list.
+// Fixed width so the control doesn't resize between options; tabular digits
+// keep years aligned down the list.
 .dashboard-term-select__input {
     width: auto;
     min-width: 8.5rem;

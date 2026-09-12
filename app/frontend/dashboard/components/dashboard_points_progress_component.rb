@@ -1,11 +1,5 @@
-# The bar under a lecture's title on the dashboard, showing how many of the
-# assignment points that have come up so far the student has collected.
-#
-# "So far" is what makes it readable at a glance: sheets whose deadline has not
-# passed are left out of both numbers, so the bar answers "how am I doing"
-# rather than "how much of the term is over". The fill is one color whatever
-# the score - a bar that turns red on a bad week would be a judgement, and this
-# is a status.
+# Progress bar under a lecture's title showing points collected out of points
+# due so far (assignments not yet expired are excluded from both numbers).
 class DashboardPointsProgressComponent < ViewComponent::Base
   def initialize(lecture:, user:)
     super()
@@ -15,8 +9,6 @@ class DashboardPointsProgressComponent < ViewComponent::Base
 
   attr_reader :lecture, :user
 
-  # Nothing has been due yet, or nothing that was due carried points: either
-  # way there is no ratio to draw.
   def render?
     lecture.assignments.expired.exists? && max_points.positive?
   end

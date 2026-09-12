@@ -2,13 +2,8 @@
 # (main/start), showing the lecture image, title, lecturer, registration
 # status and upcoming homework deadlines.
 class LectureDashboardCardComponent < ViewComponent::Base
-  # `activity` is the board's shared digest of unread forum topics and
-  # comments. It is passed in so that it is gathered once for all cards; a card
-  # rendered on its own falls back to gathering it for its own lecture.
-  #
-  # `bookmarked` marks a card that sits in the "Bookmarked" band rather than
-  # among the enrolled lectures: it gets the small "x" that removes the
-  # bookmark.
+  # `activity` lets the board gather the unread digest once for all cards.
+  # `bookmarked` marks a card in the "Bookmarked" band, which gets a remove "x".
   def initialize(lecture:, user:, activity: nil, bookmarked: false)
     super()
     @lecture = lecture
@@ -45,10 +40,7 @@ class LectureDashboardCardComponent < ViewComponent::Base
     @registration_status ||= lecture.registration_status_for(user)
   end
 
-  # A confirmed registration is not shown here: this band already means
-  # "you are registered for these", so saying it again on every card the
-  # student sees every day is just noise. Pending/rejected/open are worth
-  # the badge - they are the states still in flux.
+  # Confirmed is the default state of this band, so only show flux states.
   def show_registration_status?
     registration_status.present? && registration_status != :confirmed
   end

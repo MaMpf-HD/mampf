@@ -47,10 +47,7 @@ class MainController < ApplicationController
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    # Transitional banner pointing to the lectures of the upcoming term
-    # (see main/start/_next_term_banner). It is only shown when the
-    # feature flag is enabled and there is at least one lecture for the next
-    # term that is visible to students (i.e. published).
+    # See main/start/_next_term_banner.
     def next_term_banner
       return unless Flipper.enabled?(:next_term_banner)
 

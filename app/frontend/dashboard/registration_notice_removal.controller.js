@@ -1,11 +1,9 @@
 import RemovalModalController from "./removal_modal.controller";
 
-/**
- * The small "x" on a rejected-registration dashboard card. It offers two
- * outcomes: keep the lecture as a plain bookmark, or remove it from the
- * dashboard entirely. Either way the rejected registration is only dismissed
- * (hidden), never deleted - see Registration::UserRegistration#dismiss! and
- * RemovalModalController for the shared modal/fetch plumbing.
+/** The "x" on a rejected-registration dashboard card.
+ *
+ * Dismisses the notice (see Registration::UserRegistration#dismiss!),
+ * keeping or dropping the bookmark.
  */
 export default class extends RemovalModalController {
   bindings() {

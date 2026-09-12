@@ -1,9 +1,5 @@
-# The strip of washi tape across the top of a dashboard card.
-#
-# With an `update_url` the strip becomes a button that opens a small picker for
-# its color, and the choice is saved for this user. Without one it is
-# decoration and is hidden from assistive technology, which is what talk cards
-# get: there is nothing to remember a choice against.
+# Washi tape strip across the top of a dashboard card. With an `update_url`
+# it becomes a color picker button; without one it's decoration (talk cards).
 class WashiTapeComponent < ViewComponent::Base
   def initialize(tape:, label: nil, update_url: nil)
     super()
@@ -14,8 +10,6 @@ class WashiTapeComponent < ViewComponent::Base
 
   attr_reader :tape, :label, :update_url
 
-  # The card this strip holds tilts by the same seed and is bordered in the
-  # same color, so both stay tied to the same subject.
   delegate :seed, :color, to: :tape
 
   def editable?
@@ -30,8 +24,6 @@ class WashiTapeComponent < ViewComponent::Base
               testid: "washi-tape" } }
   end
 
-  # The color is set on the card, so that the border can pick it up too; the
-  # strip only has to say how far it is tilted against it.
   def strip_style
     "--washi-tape-tilt: #{tape.tilt}deg"
   end
@@ -40,8 +32,7 @@ class WashiTapeComponent < ViewComponent::Base
     "--washi-tape-color: var(--washi-tape-color-#{color})"
   end
 
-  # Unique per card, so one picker's radios do not capture the ones next to it.
-  # The update path names the lecture, which is what makes them distinct.
+  # Unique per card, so one picker's radios don't capture the ones next to it.
   def group_name
     "washi-tape-color-#{update_url.parameterize}"
   end

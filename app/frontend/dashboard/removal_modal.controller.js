@@ -2,19 +2,11 @@ import { Controller } from "@hotwired/stimulus";
 import { Modal } from "bootstrap";
 
 /**
- * Shared behavior for a dashboard card's removal-confirmation modal: the
- * dialog is moved to <body> on connect (the card's CSS transform would
- * otherwise become the containing block for the fixed-positioned modal and
- * tilt it along with the card), which also takes it out of this controller's
- * DOM subtree - so its confirm button(s) are wired up here by hand rather
- * than with a data-action.
- *
- * A confirmed click DELETEs a URL and, once the response's Turbo Stream has
- * replaced the lecture bands, dispatches `bookmark:changed` so the matching
- * button in the search results below can update too.
- *
- * Not registered directly - subclasses provide `bindings()` (which buttons
- * call `confirmRemoval`) and are registered under their own identifier.
+ * Base for a dashboard card's removal-confirmation modal. The dialog is moved
+ * to <body> on connect (else the card's CSS transform tilts the modal along
+ * with it), which also moves it out of this controller's DOM subtree, so
+ * confirm buttons are wired up by hand instead of via data-action. Not
+ * registered directly - subclasses implement `bindings()`.
  */
 export default class extends Controller {
   static targets = ["dialog"];

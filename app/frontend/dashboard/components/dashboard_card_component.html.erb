@@ -1,9 +1,3 @@
-<%# The card and the rail of quick actions beside it are one slot on the board,
-    so that the two stay on the same row and the rail can swap to the outer
-    side of whichever column the slot lands in (see _dashboard_card.scss).
-
-    The card comes first: read in order it is the subject, and the rail is what
-    there is to do about it. %>
 <div class="dashboard-card-slot">
   <%= tag.article class: "dashboard-card", style: style, **attributes do %>
     <%= render(tape) %>
@@ -37,10 +31,6 @@
     </div>
   <% end %>
 
-  <%# The rail is dropped rather than left standing empty: the slot stacks with
-      a gap on narrow screens, and most cards have nothing to act on. Asking
-      the slot itself is not enough - it is set for every lecture, and the
-      component inside it is what decides whether there is anything to say. %>
   <% if rail? && rail.to_s.strip.present? %>
     <div class="dashboard-card-slot__rail"><%= rail %></div>
   <% end %>

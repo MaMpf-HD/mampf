@@ -3,27 +3,8 @@
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/mixins";
 
-// The quick actions beside a dashboard card: small speech bubbles, each one a
-// single link to the one page where the errand it names gets done.
-//
-// They are shaped like notes rather than balloons - square-ish, one corner
-// squared off, tilted a degree or two - so that they belong to the pinboard
-// the cards sit on, and each one grows a little tail pointing at the card it
-// speaks for. The tail's direction follows the rail: up when the rail is
-// stacked under the card, sideways when it sits beside it (see
-// _dashboard_card.scss for where the rail lands).
-//
-// They are all one color, MaMpf's own blue: the rail sits next to cards that
-// are already dyed six different pastels, and a second color code beside that
-// one would be read as related to it. The icon says which errand it is, and
-// none of these is an alarm that would earn a color of its own.
-//
-// The whole bubble is one link, so it carries no arrow or other affordance of
-// its own: the hover lift is what says it is clickable.
-
 $quick-action-tail: 0.55rem;
-// half the tail's diagonal, minus a hair so it tucks under the bubble's border
-$quick-action-tail-offset: -0.3rem;
+$quick-action-tail-offset: -0.3rem; // half the tail's diagonal, tucked under the border
 
 .quick-actions {
     display: flex;
@@ -35,9 +16,7 @@ $quick-action-tail-offset: -0.3rem;
 }
 
 .quick-action {
-    // A pale wash of $mampf-blue, mixed rather than made translucent: the tail
-    // is a second box laid over this one, and a see-through fill would show
-    // the seam between them.
+    // Mixed rather than translucent, else the overlapping tail would show a seam.
     --quick-action-bg: #{color-mix(in srgb, $mampf-blue 5%, #fff)};
     --quick-action-border: #{color-mix(in srgb, $mampf-blue 25%, #fff)};
     --quick-action-ink: #{$mampf-blue};
@@ -47,9 +26,6 @@ $quick-action-tail-offset: -0.3rem;
     flex-direction: column;
     gap: 0.25rem;
     padding: 0.65rem 0.8rem;
-    // one corner left square, the one on the card's side: the bubble reads as
-    // a torn-off note rather than a pill, and the squared corner says which
-    // way it is facing even where the tail is clipped away
     border: 1px solid var(--quick-action-border);
     border-radius: 0.6rem 0.6rem 0.6rem 0.15rem;
     background: var(--quick-action-bg);
@@ -75,14 +51,11 @@ $quick-action-tail-offset: -0.3rem;
         width: $quick-action-tail;
         height: $quick-action-tail;
         background: var(--quick-action-bg);
-        // the two upper edges of the rotated square: a tail pointing up
         border-top: 1px solid var(--quick-action-border);
         border-left: 1px solid var(--quick-action-border);
         rotate: 45deg;
     }
 
-    // the whole bubble answers to the pointer, lifting a little so it does not
-    // have to move far to feel alive
     &:hover,
     &:focus-visible {
         rotate: 0deg;
@@ -102,8 +75,6 @@ $quick-action-tail-offset: -0.3rem;
         font-weight: 500;
     }
 
-    // The only thing that tells the errands apart, so it is given a little
-    // more room and weight than a decorative icon would get.
     &__icon {
         margin-right: 0.4rem;
         color: var(--quick-action-ink);
@@ -111,26 +82,22 @@ $quick-action-tail-offset: -0.3rem;
     }
 }
 
-// Beside the card rather than under it: the tail turns to point sideways at
-// the card, which is now the bubble's horizontal neighbor.
+// Rail beside the card: tail points sideways instead of up.
 @include media-breakpoint-up(xl) {
     .quick-action::after {
         top: 0.85rem;
         left: $quick-action-tail-offset;
-        // the two left-facing edges: a tail pointing at a card on the right
         border-top: 0;
         border-bottom: 1px solid var(--quick-action-border);
     }
 
-    // Left-hand column of the board: the rail is on the outside, so its card
-    // is to the right of the bubbles and the tail turns around.
+    // Left column: rail sits outside, so the tail points right instead.
     .dashboard-cards > .dashboard-card-slot:nth-child(odd) .quick-action {
         border-radius: 0.6rem 0.6rem 0.15rem;
 
         &::after {
             right: $quick-action-tail-offset;
             left: auto;
-            // the two right-facing edges
             border-top: 1px solid var(--quick-action-border);
             border-right: 1px solid var(--quick-action-border);
             border-bottom: 0;

@@ -1,14 +1,7 @@
 module Dashboard
-  # What has happened in a set of lectures since the student last looked:
-  # unread forum topics, and comments other people left under the lecture's
-  # media.
-  #
-  # Built once for the whole board rather than once per card, because both
-  # questions are answered from a handful of queries over all lectures at once
-  # and asking them per card would multiply them by the number of cards.
+  # Unread forum topics and media comments across a set of lectures, gathered
+  # once for the whole board rather than once per card.
   class LectureActivity
-    # Media a student never comments under, so counting them would only ever
-    # produce noise.
     IGNORED_MEDIA_SORTS = ["RandomQuiz", "Question", "Remark"].freeze
 
     def initialize(user:, lectures:)
@@ -32,17 +25,14 @@ module Dashboard
 
     private
 
-      # Thredded answers this one lecture at a time; there is no grouped count
-      # to ask for, and a student's board holds a handful of lectures.
       def forum_topic_counts
         @forum_topic_counts ||= lectures.to_h do |lecture|
           [lecture.id, lecture.unread_forum_topics_count(user).to_i]
         end
       end
 
-      # A medium counts when somebody else has commented on it after the last
-      # time this user opened its thread. Never having opened it makes every
-      # foreign comment new, which is what `Reader` missing means.
+      # Counts when someone else commented after this user's last read (missing
+      # `Reader` means never read, so every foreign comment counts as new).
       def comment_counts
         @comment_counts ||= commentable_media.each_with_object({}) do |medium, counts|
           lecture_id = lecture_id_of(medium)
@@ -64,13 +54,7 @@ module Dashboard
           latest.created_at
       end
 
-      # Restricted to what belongs to one lecture: media hanging off the course
-      # are shared by all of its lectures and could not be attributed to any
-      # single card.
-      #
-      # The student is subscribed to these lectures, so the only visibility
-      # left to check is whether the medium is out at all, which is a scope
-      # rather than a per-medium question.
+      # Excludes course-level media, which can't be attributed to one lecture.
       def commentable_media
         @commentable_media ||=
           Medium.published
