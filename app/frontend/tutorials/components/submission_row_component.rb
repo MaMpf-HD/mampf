@@ -44,6 +44,15 @@ class SubmissionRowComponent < ViewComponent::Base
     participation&.status
   end
 
+  # The words of the filter above the column; an excused or absent row says
+  # what the performance table says.
+  def status_label
+    return t("assessment.grading_tutorial.filter_options.filter_#{status}") if
+      status.in?(["pending", "reviewed"])
+
+    t("student_performance.records.columns.#{status}")
+  end
+
   def late?
     @submission.too_late?
   end
@@ -111,7 +120,7 @@ class SubmissionRowComponent < ViewComponent::Base
                        action: "click->participation-row#saveRow" },
                title: helpers.t("buttons.save"),
                disabled: !allow_grading) do
-      tag.i(class: "bi bi-save")
+      tag.i(class: "far fa-save")
     end
   end
 

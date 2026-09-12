@@ -1,6 +1,6 @@
 class PointingTableHeaderComponent < ViewComponent::Base
   Column = Struct.new(:css_class, :label, :sublabel,
-                      :data_mode, :action_tag, keyword_init: true)
+                      :data_mode, :action_tag, :label_hidden, keyword_init: true)
 
   def initialize(grading_scope:, # rubocop:disable Metrics/ParameterLists
                  grading_enabled:,
@@ -18,12 +18,15 @@ class PointingTableHeaderComponent < ViewComponent::Base
     super()
   end
 
+  # Columns are named after what they act on: the points, the hand-in, the
+  # correction. Two file columns read alike, and saving sits by the total it
+  # saves.
   def columns
     [
       team_column,
       *tutorial_column,
       *grading_columns,
-      *action_column,
+      hand_in_column,
       *correction_column
     ].compact
   end
@@ -82,7 +85,12 @@ class PointingTableHeaderComponent < ViewComponent::Base
           data_mode: mode,
           label: t("assessment.grading_tutorial.total_points"),
           sublabel: "(#{@total_max_points} #{t("assessment.grading_tutorial.max_points")})"
-        )
+        ),
+        # Two icons need no heading over them; a reader without eyes gets one.
+        Column.new(css_class: "text-center sticky-col save-col grade-th",
+                   data_mode: mode,
+                   label: t("buttons.save"),
+                   label_hidden: true)
       ]
     end
 
@@ -94,10 +102,11 @@ class PointingTableHeaderComponent < ViewComponent::Base
       )
     end
 
-    def action_column
-      [Column.new(css_class: "text-center sticky-col action-col grade-th",
-                  data_mode: mode,
-                  label: t("assessment.grading_tutorial.actions"))]
+    def hand_in_column
+      Column.new(css_class: "text-center sticky-col hand-in-col grade-th",
+                 data_mode: mode,
+                 label: t("basics.submission"),
+                 sublabel: "(#{@accepted_file_type})")
     end
 
     def correction_column

@@ -248,7 +248,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
     it "renders a button with the save icon" do
       html = component_tutor.save_row_button(true)
-      expect(html).to include("bi-save")
+      expect(html).to include("fa-save")
     end
 
     context "when grading is not allowed" do

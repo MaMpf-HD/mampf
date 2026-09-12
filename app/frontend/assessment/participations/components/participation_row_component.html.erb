@@ -56,7 +56,7 @@
         class="<%= badge_status_participation_class(@participation.status) %>"
         style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
       >
-        <%= @participation.status %>
+        <%= status_label %>
       </span>
     </td>
     <!-- batch of columns 3: grade zone -->
@@ -68,44 +68,43 @@
     <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
       <span data-participation-row-target="totalPoints">0</span>
     </td>
+    <!-- Save and refresh the row's points -->
+    <td class="text-center sticky-col save-col" data-mode="<%= @mode %>">
+      <% if can_enter_points? %>
+        <div class="d-inline-flex align-items-center gap-1">
+          <%= form_with url: @save_url,
+                      method: :patch,
+                      data: { turbo: true, participation_row_target: "form" },
+                      html: { style: "display:none;" } do %>
+            <input
+              type="hidden"
+              name="task_points"
+              data-participation-row-target="payload"
+            >
+          <% end %>
+
+          <%= save_row_button(allow_grading?) %>
+
+          <%= form_with url: @refresh_url,
+                      method: :patch,
+                      data: { turbo: true, participation_row_target: "refreshForm" },
+                      html: { style: "display:none;" } do %>
+            <input
+              type="hidden"
+              name="task_points"
+              data-participation-row-target="payload"
+            >
+          <% end %>
+
+          <%= refresh_row_button(allow_grading?) %>
+        </div>
+      <% end %>
+    </td>
   <% end %>
 
-  <!-- Column 5: Actions buttons -->
-  <td class="text-end sticky-col action-col" data-mode="<%= @mode %>">
-    <div class="d-inline-flex align-items-center flex-wrap justify-content-end gap-1">
-      <!-- Save and refresh -->
-      <% if can_enter_points? && grading_enabled? && @participation %>
-        <!-- Hidden form for this row to submit -->
-        <%= form_with url: @save_url,
-                    method: :patch,
-                    data: { turbo: true, participation_row_target: "form" },
-                    html: { style: "display:none;" } do %>
-          <input
-            type="hidden"
-            name="task_points"
-            data-participation-row-target="payload"
-          >
-        <% end %>
-        <!-- Save row -->
-        <%= save_row_button(allow_grading?) %>
-        <!-- Refresh row -->
-        <%= form_with url: @refresh_url,
-                    method: :patch,
-                    data: { turbo: true, participation_row_target: "refreshForm" },
-                    html: { style: "display:none;" } do %>
-          <input
-            type="hidden"
-            name="task_points"
-            data-participation-row-target="payload"
-          >
-        <% end %>
-        <!-- refresh row -->
-        <%= refresh_row_button(allow_grading?) %>
-      <% end %>
-    </div>
-  </td>
+  <!-- No hand-in and no correction: the sheet was taken on paper -->
+  <td class="sticky-col hand-in-col" data-mode="<%= @mode %>"></td>
 
-  <!-- empty correction column -->
   <% if @mode == "tutor" %>
     <td class="sticky-col correction-col"></td>
   <% end %>

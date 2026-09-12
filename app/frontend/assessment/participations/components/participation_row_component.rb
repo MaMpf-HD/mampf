@@ -53,6 +53,16 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.assessment.persisted_tasks || []
   end
 
+  # The words of the filter above the column; an excused or absent row says
+  # what the performance table says.
+  def status_label
+    status = @participation.status
+    return t("assessment.grading_tutorial.filter_options.filter_#{status}") if
+      status.in?(["pending", "reviewed"])
+
+    t("student_performance.records.columns.#{status}")
+  end
+
   def badge_status_participation_color(status)
     {
       pending: "warning",
@@ -106,7 +116,7 @@ class ParticipationRowComponent < ViewComponent::Base
                        action: "click->participation-row#saveRow" },
                title: helpers.t("buttons.save"),
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
-      tag.i(class: "bi bi-save")
+      tag.i(class: "far fa-save")
     end
   end
 

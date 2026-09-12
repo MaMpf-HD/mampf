@@ -73,9 +73,9 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   def column_count
     if @mode == "tutor"
-      6 + tasks.count
+      7 + tasks.count
     else
-      5 + tasks.count
+      6 + tasks.count
     end
   end
 

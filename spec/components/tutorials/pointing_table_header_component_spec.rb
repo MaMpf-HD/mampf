@@ -24,9 +24,22 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
           .not_to include(a_string_matching(/tutorial-col/))
       end
 
-      it "includes the action column" do
-        expect(columns_for(component).map(&:css_class))
-          .to include(a_string_matching(/action-col/))
+      it "includes the hand-in column, named after the file it holds" do
+        hand_in = columns_for(component).find { |c| c.css_class.include?("hand-in-col") }
+
+        expect(hand_in.label).to eq(I18n.t("basics.submission"))
+      end
+
+      # Two icons need no heading over them, but a screen reader still gets
+      # one.
+      it "puts the save column beside the total, with a heading only for readers" do
+        component = described_class.new(grading_scope: tutorial_scope, grading_enabled: true)
+        classes = columns_for(component).map(&:css_class)
+        save = columns_for(component).find { |c| c.css_class.include?("save-col") }
+
+        expect(classes.index { |c| c.include?("save-col") })
+          .to eq(classes.index { |c| c.include?("total-col") } + 1)
+        expect(save.label_hidden).to be(true)
       end
 
       it "includes the correction column" do

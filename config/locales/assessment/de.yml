@@ -301,7 +301,7 @@ de:
       filter_options:
         filter_all: 'Alle'
         filter_pending: 'Ausstehend'
-        filter_reviewed: 'Überprüft'
+        filter_reviewed: 'Bewertet'
       header_overview:
         submission:
           total: 'Abgaben'

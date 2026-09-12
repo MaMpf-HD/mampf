@@ -57,10 +57,10 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
 
     describe "#column_count" do
-      it "returns 6 plus the number of tasks" do
+      it "returns 7 plus the number of tasks" do
         create(:assessment_task, assessment: assessment)
         assignment.reload
-        expect(component.column_count).to eq(6 + component.tasks.count)
+        expect(component.column_count).to eq(7 + component.tasks.count)
       end
     end
 

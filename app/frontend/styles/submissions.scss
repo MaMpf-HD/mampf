@@ -100,23 +100,52 @@ table.table tbody tr.row-dirty td {
   min-width: 90px;
 }
 
+/* The right-hand columns are pinned from the edge inwards: correction (tutor
+   view only), the hand-in, the save pair, the total. Each offset is the sum
+   of the widths to its right. */
 .correction-col {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
   right: 0px;
   background-color: white;
   z-index: 2;
 }
 
-.action-col[data-mode="tutor"] {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  right: 200px;
+.hand-in-col[data-mode="tutor"] {
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+  right: 150px;
   background-color: white;
   z-index: 2;
-  padding: 0.5rem;
+}
+
+.hand-in-col[data-mode="teacher"] {
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+  right: 0px;
+  background-color: white;
+  z-index: 2;
+}
+
+.save-col[data-mode="tutor"] {
+  width: 90px;
+  min-width: 90px;
+  max-width: 90px;
+  right: 300px;
+  background-color: white;
+  z-index: 2;
+}
+
+.save-col[data-mode="teacher"] {
+  width: 90px;
+  min-width: 90px;
+  max-width: 90px;
+  right: 150px;
+  background-color: white;
+  z-index: 2;
 }
 
 .tutorial-col {
@@ -136,28 +165,6 @@ table.table tbody tr.row-dirty td {
   z-index: 2;
 }
 
-.action-col[data-mode="teacher"] {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  right: 0px;
-  background-color: white;
-  z-index: 2;
-
-  padding: 0.5rem;
-}
-
-.action-icon {
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  text-decoration: none;
-  background: transparent;
-  border: none;
-}
-
 
 input[type="file"] {
   max-width: 100%;
@@ -168,7 +175,7 @@ input[type="file"] {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
-  right: 400px;
+  right: 390px;
   background-color: white;
   z-index: 2;
 }
@@ -177,7 +184,7 @@ input[type="file"] {
   width: 100px;
   min-width: 100px;
   max-width: 100px;
-  right: 200px;
+  right: 240px;
   background-color: white;
   z-index: 2;
 }
