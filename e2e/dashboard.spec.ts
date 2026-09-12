@@ -35,6 +35,31 @@ test("bookmarks a lecture from the search results and removes it again from the 
       .toHaveAttribute("aria-pressed", "false");
   });
 
+test("removes a bookmark after navigating to the lecture and back",
+  async ({ factory, student: { page, user } }) => {
+    const term = await createActiveTerm(factory);
+    const course = await factory.create("course", [], { title: "Measure Theory" });
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      course_id: course.id,
+      term_id: term.id,
+    });
+    await factory.create("lecture_user_join", [], {
+      lecture_id: lecture.id,
+      user_id: user.id,
+    });
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+
+    // regression test: RemovalModalController parks the removal-confirmation
+    // dialog in <body>.  Turbo Drive's page cache used to lose track of it
+    // across a back-navigation, breaking the "x" button on a restored dashboard.
+    await dashboard.openLectureAndGoBack(lecture.id);
+
+    await dashboard.removeBookmark(lecture.id);
+    await expect(dashboard.bookmarkedSection).not.toBeVisible();
+  });
+
 test("picks a washi tape color for a card and keeps it across a reload",
   async ({ factory, student: { page, user } }) => {
     const term = await createActiveTerm(factory);
@@ -270,6 +295,26 @@ test.describe("a rejected registration's notice", () => {
 
       await expect(dashboard.enrolledSection).not.toBeVisible();
       await expect(dashboard.bookmarkedSection).not.toBeVisible();
+    });
+
+  test("can still be dismissed after navigating to the lecture and back",
+    async ({ factory, student: { page, user } }) => {
+      const lecture = await createLectureWithRejectedRegistration(factory, user.id);
+
+      const dashboard = new DashboardLectureBrowsePage(page);
+      await dashboard.goto();
+
+      // regression test: RemovalModalController parks the removal-confirmation
+      // dialog in <body> (see the comment there for why) - Turbo Drive's page
+      // cache used to lose track of it across a back-navigation, silently
+      // breaking the "x" button on a restored dashboard
+      await dashboard.openLectureAndGoBack(lecture.id);
+
+      await expect(dashboard.enrolledSection).toContainText("Discrete Optimization");
+      await dashboard.dismissRegistrationNotice(lecture.id, true);
+
+      await expect(dashboard.enrolledSection).not.toBeVisible();
+      await expect(dashboard.bookmarkedSection).toContainText("Discrete Optimization");
     });
 });
 

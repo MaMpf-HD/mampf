@@ -109,6 +109,13 @@ export class DashboardLectureBrowsePage {
       .getByTestId("lecture-search-bookmark-button");
   }
 
+  async openLectureAndGoBack(lectureId: number) {
+    await this.dashboardCard(lectureId).click();
+    await this.page.waitForURL(/\/lectures\//);
+    await this.page.goBack();
+    await this.page.waitForURL("/");
+  }
+
   async waitForBoardRefresh(action: () => Promise<void>) {
     const refreshed = this.page.waitForResponse(response =>
       response.url().includes("/dashboard/") && response.status() === 200,
