@@ -1,0 +1,66 @@
+<%= helpers.turbo_frame_tag "grading-table" do %>
+  <!-- ── ZONE 1: has grading records ── -->
+  <% if grading_records? %>
+    <div data-controller="status-filter">
+      <% if grading_enabled? %>
+        <div class="d-flex gap-2 m-3 align-items-center">
+          <div class="d-flex align-items-center">
+            <input
+              type="text"
+              class="form-control form-control-sm w-auto"
+              placeholder="<%= t('assessment.grading_tutorial.filter_name') %>"
+              autocomplete="off"
+              data-action="input->status-filter#search"
+            >
+          </div>
+
+          <div
+            class="d-flex gap-2 align-items-center"
+            data-status-filter-target="activeFilters"
+          ></div>
+        </div>
+      <% end %>
+
+      <div
+        class="table-wrapper"
+        style="<%= sticky_css_vars %>"
+        data-controller="table-fade"
+      >
+        <div class="table-overflow" data-table-fade-target="inner">
+          <table
+            class="table align-middle my-3"
+            style="<%= sticky_css_vars %>"
+            data-cy="exam-pointing-table"
+          >
+            <thead style="background: #fafafa;">
+              <%= render(PointingTableHeaderComponent.new(
+                grading_scope: @grading_scope,
+                assessable_type: Exam.name,
+                table_option: :pointing,
+                grading_enabled: grading_enabled?,
+                tasks: tasks,
+                total_max_points: total_max_points
+              )) %>
+            </thead>
+
+            <tbody>
+              <% @participations.each do |participation| %>
+                <% if participation %>
+                  <%= render(ParticipationRowComponent.new(
+                        participation: participation,
+                        assessment: @exam.assessment,
+                        table_option: :pointing,
+                        grading_scope: @lecture)) %>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="jumbotron mt-3">
+      <%= t('assessment.grading_tutorial.no_submissions_gradable') %>
+    </div>
+  <% end %>
+<% end %>

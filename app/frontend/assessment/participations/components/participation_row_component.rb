@@ -86,6 +86,14 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
+  def absent_url
+    mark_as_absent_path(@participation, grading_scope_type: grading_scope_type)
+  end
+
+  def exempt_url
+    mark_as_exempt_path(@participation, grading_scope_type: grading_scope_type)
+  end
+
   # The hand-in column of a row without a file: whether the sheet came in on
   # paper. The mark can be taken back until points sit on it.
   def paper_hand_in?
