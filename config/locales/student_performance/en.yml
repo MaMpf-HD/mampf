@@ -43,6 +43,7 @@ en:
         pending_grading: "Pending Grading"
         not_due: "Not due yet"
         not_submitted: "Not Submitted"
+        awaiting_record: "Not yet recorded"
         absent: "Absent"
         exempt: "Exempt"
         achievement_met: "Met"

@@ -130,10 +130,10 @@
           <tbody>
             <% @assessments.each do |assessment| %>
               <% participation = @participation_by_assessment[assessment.id] %>
-              <% status = participation&.display_status || :not_submitted %>
+              <% status = participation&.display_status || assessment.status_without_hand_in %>
 
               <%# A hand-in before the deadline is not with a tutor yet: nobody can mark it. %>
-              <% status = :not_due if status.in?([:not_submitted, :pending_grading]) &&
+              <% status = :not_due if status.in?([:not_submitted, :awaiting_record, :pending_grading]) &&
                                       !@due_points.due?(assessment.id) %>
 
               <% points = @points_by_assessment[assessment.id] %>
@@ -190,12 +190,13 @@
                 </td>
 
                 <%#
-                  Only :not_submitted offers an exemption; :not_due may still receive a submission.
-                  `local: true` lets Turbo submit the form without rails-ujs.
+                  Only a sheet nothing came in for offers an exemption; :not_due
+                  may still receive a submission. `local: true` lets Turbo
+                  submit the form without rails-ujs.
                 %>
 
                 <td class="text-end">
-                  <% if status == :not_submitted %>
+                  <% if status.in?([:not_submitted, :awaiting_record]) %>
                     <%= form_with url: exempt_lecture_student_performance_record_path(
                                          @lecture, @record),
                                   method: :patch, local: true,

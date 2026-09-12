@@ -14,6 +14,7 @@ class SheetRowComponent < ViewComponent::Base
     tutor_decides: :quiet,
     partially_marked: :quiet,
     missed: :quiet,
+    awaiting_record: :quiet,
     absent: :quiet,
     exempt: :quiet,
     not_recorded: :bad,

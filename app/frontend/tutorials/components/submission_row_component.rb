@@ -41,16 +41,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def status
-    participation&.status
-  end
-
-  # The words of the filter above the column; an excused or absent row says
-  # what the performance table says.
-  def status_label
-    return t("assessment.grading_tutorial.filter_options.filter_#{status}") if
-      status.in?(["pending", "reviewed"])
-
-    t("student_performance.records.columns.#{status}")
+    participation&.display_status
   end
 
   def late?
@@ -69,19 +60,6 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def graded_task_points
     participation ? participation.task_points : []
-  end
-
-  def badge_status_participation_color(status)
-    {
-      pending: "warning",
-      reviewed: "success",
-      exempt: "info",
-      absent: "info"
-    }[status&.to_sym]
-  end
-
-  def badge_status_participation_class(status)
-    "badge rounded-pill bg-#{badge_status_participation_color(status)}"
   end
 
   def task_points_input(task, allow_grading)

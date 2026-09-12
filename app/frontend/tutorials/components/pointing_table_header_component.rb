@@ -7,14 +7,17 @@ class PointingTableHeaderComponent < ViewComponent::Base
                  tasks: [],
                  total_max_points: 0,
                  accepted_file_type: nil,
-                 tutorials: [])
+                 tutorials: [],
+                 status_without_hand_in: nil)
     @grading_scope = grading_scope
     @grading_enabled = grading_enabled
     @tasks = tasks
     @total_max_points = total_max_points
     @accepted_file_type = accepted_file_type
     @tutorials = tutorials || []
-    @status = ["all", "pending", "reviewed"]
+    # The filter offers the states the badge in the column can show.
+    @status = ["all", "reviewed", "pending_grading",
+               (status_without_hand_in || :not_submitted).to_s]
     super()
   end
 

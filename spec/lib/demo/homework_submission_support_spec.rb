@@ -54,14 +54,14 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
       partners.update!(submitted_at: nil)
       partners.update!(status: :exempt)
 
-      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
-      expect(Demo::SetupSupport.send(:sits_out?, sheet, marked)).to be(false)
+      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner, tutorial)).to be(true)
+      expect(Demo::SetupSupport.send(:sits_out?, sheet, marked, tutorial)).to be(false)
     end
 
     it "keeps a member the gradebook dropped out of it as well" do
       sheet.assessment.assessment_participations.find_by(user: partner).destroy!
 
-      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
+      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner, tutorial)).to be(true)
     end
 
     # The cross in the performance table is a participation without a stamp;
@@ -70,7 +70,17 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
       sheet.assessment.assessment_participations.find_by(user: partner)
            .update!(submitted_at: nil)
 
-      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
+      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner, tutorial)).to be(true)
+    end
+
+    # The sheet was handed in where the participation says, before the move;
+    # the new group gets no file for it.
+    it "keeps a member whose sheet another group holds out of it" do
+      elsewhere = create(:tutorial, lecture: lecture)
+      sheet.assessment.assessment_participations.find_by(user: partner)
+           .update!(tutorial: elsewhere)
+
+      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner, tutorial)).to be(true)
     end
   end
 

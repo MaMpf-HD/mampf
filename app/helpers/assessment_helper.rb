@@ -44,56 +44,8 @@ module AssessmentHelper
         participated_tutorial_id: participated_tutorial&.id,
         new_tutorial_id: current_tutorial&.id,
         submitted_at: participation&.submitted_at,
-        participated_tutorial_title: participated_tutorial&.title ||
-                                     t("assessment.grading_tutorial.no_tutorial"),
-        new_tutorial_title: current_tutorial&.title ||
-                            t("assessment.grading_tutorial.no_tutorial")
-      }
-    end
-  end
-
-  # When tutorials differ, keep point entry with participated_tutorial_id.
-  # Recreating a participation would use the current tutorial membership;
-  # a nil host_tutorial allows point entry for the whole lecture.
-  def non_submitter_status(movement, host_tutorial)
-    return unless movement
-
-    if never_participated?(movement)
-      {
-        allowed: true,
-        mark_participation_allow: true,
-        message: t("assessment.grading_tutorial.no_submission_badge")
-      }
-    elsif participation_matches_membership?(movement)
-      if movement[:submitted_at].nil?
-        {
-          allowed: true,
-          remove_participation_allow: false,
-          message: t("assessment.grading_tutorial.no_submission_badge")
-        }
-      else
-        {
-          allowed: true,
-          remove_participation_allow: true,
-          message: t("assessment.grading_tutorial.marked_as_participated_badge")
-        }
-      end
-    elsif participation_differs_from_membership_lecture_mode?(host_tutorial)
-      {
-        allowed: true,
-        message: t("assessment.grading_tutorial.no_submission_badge") +
-          movement_msg_assignment(movement)
-      }
-    elsif moved_into_host_tutorial?(movement, host_tutorial)
-      {
-        allowed: false,
-        message: movement_msg_assignment(movement)
-      }
-    elsif participated_in_host_tutorial?(movement, host_tutorial) # rubocop:disable Lint/DuplicateBranch
-      {
-        allowed: true,
-        message: t("assessment.grading_tutorial.no_submission_badge") +
-          movement_msg_assignment(movement)
+        participated_tutorial_title: participated_tutorial&.title,
+        new_tutorial_title: current_tutorial&.title
       }
     end
   end
@@ -105,30 +57,18 @@ module AssessmentHelper
                                   tab: params[:assessment_tab])
     end
 
-    def never_participated?(movement)
-      movement[:participated_tutorial_id].nil?
-    end
-
-    def participation_matches_membership?(movement)
-      movement[:participated_tutorial_id] == movement[:new_tutorial_id]
-    end
-
-    def participation_differs_from_membership_lecture_mode?(host_tutorial)
-      host_tutorial.nil?
-    end
-
-    def moved_into_host_tutorial?(movement, host_tutorial)
-      host_tutorial.id == movement[:new_tutorial_id]
-    end
-
-    def participated_in_host_tutorial?(movement, host_tutorial)
-      host_tutorial.id == movement[:participated_tutorial_id]
-    end
-
+    # Three ways a person and their sheet part company: they changed groups,
+    # they left the groups, or they joined one after handing in with none.
     def movement_msg_assignment(movement)
-      t("assessment.grading_tutorial.user_moved_tutorial",
-        old_tutorial: movement[:participated_tutorial_title] ||
-                                  t("assessment.grading_tutorial.no_tutorial"),
-        new_tutorial: movement[:new_tutorial_title] || t("assessment.grading_tutorial.no_tutorial"))
+      old_title = movement[:participated_tutorial_title]
+      new_title = movement[:new_tutorial_title]
+      if movement[:participated_tutorial_id].nil?
+        t("assessment.grading_tutorial.user_joined_tutorial", new_tutorial: new_title)
+      elsif movement[:new_tutorial_id].nil?
+        t("assessment.grading_tutorial.user_left_tutorials", old_tutorial: old_title)
+      else
+        t("assessment.grading_tutorial.user_moved_tutorial",
+          old_tutorial: old_title, new_tutorial: new_title)
+      end
     end
 end

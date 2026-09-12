@@ -45,7 +45,7 @@ module Assessment
 
     def display_status
       if pending? && submitted_at.nil?
-        :not_submitted
+        assessment.status_without_hand_in
       elsif pending?
         :pending_grading
       else

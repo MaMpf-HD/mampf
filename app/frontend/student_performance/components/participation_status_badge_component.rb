@@ -10,6 +10,7 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
     pending_grading: { icon: "bi-hourglass-split", color: "warning" },
     not_due: { icon: "bi-dash", color: "muted" },
     not_submitted: { icon: "bi-x-circle-fill", color: "danger" },
+    awaiting_record: { icon: "bi-hourglass", color: "muted" },
     absent: { icon: "bi-person-slash", color: "secondary" },
     exempt: { icon: "bi-dash-circle", color: "secondary" }
   }.freeze
@@ -18,6 +19,7 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
     pending_grading: { text: "\u2013", color: "warning" },
     not_due: { text: "\u2013", color: "muted" },
     not_submitted: { text: "\u2717", color: "muted" },
+    awaiting_record: { text: "\u2026", color: "muted" },
     exempt: { text: "\u25CB", color: "muted" },
     absent: { text: "\u00B7", color: "muted" }
   }.freeze

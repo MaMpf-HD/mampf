@@ -64,7 +64,7 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       end
     end
 
-    describe "#grading_records?" do
+    describe "#rows?" do
       context "when there are submissions" do
         let!(:submission) do
           create(:submission, :with_manuscript,
@@ -73,14 +73,46 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         end
 
         it "returns true" do
-          expect(component.grading_records?).to be_truthy
+          expect(component.rows?).to be(true)
         end
       end
 
-      context "when there are no submissions and no non-submitters with participation" do
-        it "returns falsey" do
-          expect(component.grading_records?).to be_falsey
+      # Everybody on the roster is a row, hand-in or not.
+      context "when somebody is in the group without a hand-in" do
+        before { create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user)) }
+
+        it "returns true" do
+          expect(component.rows?).to be(true)
         end
+      end
+
+      context "when nobody is in the group and nothing was handed in" do
+        it "returns false" do
+          expect(component.rows?).to be(false)
+        end
+      end
+    end
+
+    # The row of somebody without a hand-in is drawn from their participation
+    # where the worker has written one, and from an unsaved one where it has
+    # not - so the table never waits for the worker to show a person.
+    describe "#participation_for" do
+      let(:member) { create(:confirmed_user) }
+
+      it "is the participation on file" do
+        participation = create(:assessment_participation, assessment: assessment, user: member,
+                                                          tutorial: tutorial)
+        allow(assignment).to receive(:non_submitters_in_tutorial).and_return([member])
+
+        expect(component.participation_for(member, tutorial)).to eq(participation)
+      end
+
+      it "is an unsaved one for the group otherwise" do
+        built = component.participation_for(member, tutorial)
+
+        expect(built).to be_new_record
+        expect(built.user).to eq(member)
+        expect(built.tutorial).to eq(tutorial)
       end
     end
 
@@ -181,89 +213,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       built = described_class.new(assignment: assignment, grading_scope: tutorial)
 
       expect(built.team_participations(submission)).to eq([submitter_participation])
-    end
-  end
-
-  describe "#mark_as_participated_link" do
-    let(:component) do
-      described_class.new(assignment: assignment, grading_scope: tutorial)
-    end
-    let(:user) { create(:confirmed_user) }
-
-    before { render_inline(component) }
-
-    it "renders a link containing the mark-as-participated text" do
-      html = component.mark_as_participated_link(user)
-      expect(html).to include(component.send(:t,
-                                             "assessment.grading_tutorial.mark_as_participated"))
-    end
-
-    it "includes a turbo_method patch data attribute" do
-      html = component.mark_as_participated_link(user)
-      expect(html).to include("data-turbo-method=\"patch\"")
-    end
-  end
-
-  describe "#users_movement_map" do
-    let(:tutorial2) { create(:tutorial, lecture: lecture) }
-
-    let(:student1) { create(:confirmed_user) }
-    let(:student2) { create(:confirmed_user) }
-    let(:student3) { create(:confirmed_user) }
-    let(:foreign_submission) do
-      create(:submission, assignment: assignment, tutorial: tutorial)
-        .tap do |s|
-        s.users << student2
-        s.users << student3
-      end
-    end
-
-    let(:component) do
-      described_class.new(assignment: assignment, grading_scope: tutorial)
-    end
-
-    before do
-      create(:tutorial_membership, tutorial: tutorial, user: student1)
-      create(:tutorial_membership, tutorial: tutorial, user: student2)
-      create(:tutorial_membership, tutorial: tutorial, user: student3)
-    end
-
-    context "when assignment is past deadline" do
-      before do
-        Timecop.travel(2.hours.from_now)
-      end
-      after do
-        Timecop.return
-      end
-
-      it "memoizes the result and only computes it once across multiple calls" do
-        movement_map = { 1 => { participated_tutorial_id: 1, new_tutorial_id: 2 } }
-
-        expect_any_instance_of(AssessmentHelper).to receive(:calculate_user_movement_map_assignment)
-          .with(assignment, anything)
-          .once
-          .and_return(movement_map)
-
-        render_inline(component)
-
-        first_call = component.users_movement_map
-        second_call = component.users_movement_map
-
-        expect(first_call).to eq(movement_map)
-        expect(second_call).to eq(movement_map)
-      end
-
-      it "caches the value in the helpers' users_movement_map_cache" do
-        movement_map = { 1 => { old_tutorial: "A", new_tutorial: "B" } }
-        expect_any_instance_of(AssessmentHelper).to receive(:calculate_user_movement_map_assignment)
-          .and_return(movement_map)
-
-        render_inline(component)
-
-        component.users_movement_map
-
-        expect(component.helpers.users_movement_map_cache[assignment.id]).to eq(movement_map)
-      end
     end
   end
 end

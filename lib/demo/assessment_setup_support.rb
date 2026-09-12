@@ -1,5 +1,10 @@
 module Demo
   module AssessmentSetupSupport
+    MOVED_STUDENT = "demo_lecture_student_30@example.com".freeze
+    UNSEATED_STUDENT = "demo_lecture_student_31@example.com".freeze
+    SHEETS_BEFORE_THE_MOVE = 6
+    ON_PAPER_SHEET = 4
+
     def setup_assessment!
       lecture = nil
       Demo::QuietLoggingSupport.with_quiet_logging do
@@ -12,6 +17,7 @@ module Demo
         create_demo_assignments!(lecture)
         create_demo_tasks!(lecture)
         seed_demo_participations!(lecture)
+        vary_demo_roster!(lecture)
         randomize_demo_statuses!(lecture)
         seed_demo_task_points!(lecture)
         seed_demo_talk_grades!
@@ -35,9 +41,12 @@ module Demo
 
     private
 
+      # One sheet is collected on paper: no file anywhere, the tutor's record is
+      # all there is, and a row without one is not "missing" but not recorded.
       def demo_assignment_attributes
         (1..10).map do |i|
-          { title: "Homework #{i}", deadline: demo_deadline(i) }
+          { title: "Homework #{i}", deadline: demo_deadline(i),
+            requires_submission: i != ON_PAPER_SHEET }
         end
       end
 
@@ -91,7 +100,8 @@ module Demo
           assignment = lecture.assignments.create!(
             title: attrs[:title],
             deadline: 1.year.from_now,
-            accepted_file_type: ".pdf"
+            accepted_file_type: ".pdf",
+            requires_submission: attrs[:requires_submission]
           )
           # rubocop:disable Rails/SkipsModelValidations
           assignment.update_column(:deadline, attrs[:deadline])
@@ -139,6 +149,47 @@ module Demo
         end
 
         Rails.logger.debug("Seeded participations from lecture 1 tutorial memberships.")
+      end
+
+      # Two things a term does to a roster, so the pointing table has them to
+      # show: one student changes groups after a few sheets - the early sheets
+      # stay with the group that has them - and one leaves the groups
+      # altogether. Both by name, so running this again changes nothing more.
+      def vary_demo_roster!(lecture)
+        move_one_student!(lecture)
+        unseat_one_student!(lecture)
+      end
+
+      def move_one_student!(lecture)
+        user = User.find_by(email: MOVED_STUDENT)
+        membership = user && TutorialMembership.find_by(user: user, lecture: lecture)
+        return unless membership
+
+        tutorials = staffed_tutorials(lecture)
+        destination = tutorials.find { |t| t.id != membership.tutorial_id }
+        return unless destination
+
+        origin_id = membership.tutorial_id
+        membership.update!(tutorial: destination) if tutorials.include?(membership.tutorial)
+        demo_assignments(lecture).to_a.drop(SHEETS_BEFORE_THE_MOVE).each do |assignment|
+          assignment.assessment&.assessment_participations
+                    &.where(user: user, tutorial_id: origin_id)
+                    &.update_all(tutorial_id: destination.id) # rubocop:disable Rails/SkipsModelValidations
+        end
+      end
+
+      # The sheets after leaving belong to no group; the lecturer's table is
+      # where they are marked.
+      def unseat_one_student!(lecture)
+        user = User.find_by(email: UNSEATED_STUDENT)
+        return unless user
+
+        TutorialMembership.where(user: user, lecture: lecture).destroy_all
+        demo_assignments(lecture).to_a.drop(SHEETS_BEFORE_THE_MOVE).each do |assignment|
+          assignment.assessment&.assessment_participations
+                    &.where(user: user)
+                    &.update_all(tutorial_id: nil) # rubocop:disable Rails/SkipsModelValidations
+        end
       end
 
       # A sheet that is still open was handed in at some point before now, not

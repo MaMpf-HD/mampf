@@ -328,6 +328,18 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet_for(assignment).state).to eq(:missed)
     end
 
+    # A sheet collected on paper is with the tutor until they record it, so
+    # nothing is missing yet.
+    it "is :awaiting_record when a sheet collected on paper has no record yet" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Homework",
+                                                 expired_since: 1.week,
+                                                 requires_submission: false)
+      create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+
+      expect(sheet_for(assignment).state).to eq(:awaiting_record)
+      expect(sheet_for(assignment).points).to be_nil
+    end
+
     it "is :tutor_decides for a late hand-in nobody has ruled on" do
       assignment = create_assignment(deadline: 10.minutes.ago)
       hand_in(assignment)

@@ -1,15 +1,16 @@
+# One row of the pointing table for somebody without a hand-in file: a sheet
+# taken on paper, one never handed in, an excused or an absent one. Before
+# the backfill worker has been round the participation may not exist yet;
+# the row is drawn from an unsaved one and offers what makes it real.
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  def initialize(participation:, assessment:, grading_scope:,
-                 save_url:, refresh_url:)
+  def initialize(participation:, assessment:, grading_scope:)
     super()
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
     @lecture = @assessable.lecture
-    @save_url = save_url
-    @refresh_url = refresh_url
     @grading_scope = grading_scope
     check_grading_scope
     @user ||= @participation&.user
@@ -39,6 +40,20 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.grading_open?
   end
 
+  # Points go where the sheet is: a participation a group already holds is not
+  # this group's to mark, even if the person has since moved in.
+  def elsewhere?
+    @tutorial.present? && @participation.tutorial_id.present? &&
+      @participation.tutorial_id != @tutorial.id
+  end
+
+  # Points go on a sheet that came in; a row nothing was handed in for waits
+  # for the mark in the hand-in column first.
+  def points_enterable?
+    paper_hand_in? && !elsewhere? &&
+      !@participation.exempt? && !@participation.absent?
+  end
+
   def extract_task_points_participation(task)
     graded_task_points.find do |sp|
       sp.task_id == task.id
@@ -53,31 +68,49 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.assessment.persisted_tasks || []
   end
 
-  # The words of the filter above the column; an excused or absent row says
-  # what the performance table says.
-  def status_label
-    status = @participation.status
-    return t("assessment.grading_tutorial.filter_options.filter_#{status}") if
-      status.in?(["pending", "reviewed"])
-
-    t("student_performance.records.columns.#{status}")
-  end
-
-  def badge_status_participation_color(status)
-    {
-      pending: "warning",
-      reviewed: "success",
-      exempt: "info",
-      absent: "info"
-    }[status&.to_sym]
-  end
-
-  def badge_status_participation_class(status)
-    "badge rounded-pill bg-#{badge_status_participation_color(status)}"
+  def status
+    @participation.display_status
   end
 
   def row_id
-    "participation-row-#{@participation.id}"
+    return "participation-row-#{@participation.id}" if @participation.persisted?
+
+    "participation-row-user-#{@user.id}"
+  end
+
+  def grading_scope_type
+    @grading_scope.class.name.downcase
+  end
+
+  def save_url
+    point_participation_path(@participation, grading_scope_type: grading_scope_type)
+  end
+
+  def refresh_url
+    refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
+  end
+
+  # The hand-in column of a row without a file: whether the sheet came in on
+  # paper. The mark can be taken back until points sit on it.
+  def paper_hand_in?
+    @participation.submitted_at.present?
+  end
+
+  # The page's group travels along so the answer comes back in the shape of
+  # the table it sits in.
+  def paper_hand_in_url
+    mark_user_as_participated_path(user_id: @user.id, assignment_id: @assessable.id,
+                                   tutorial_id: @tutorial&.id,
+                                   grading_scope_type: grading_scope_type)
+  end
+
+  def paper_hand_in_removal_url
+    remove_participation_path(participation_id: @participation.id,
+                              grading_scope_type: grading_scope_type)
+  end
+
+  def paper_hand_in_removable?
+    graded_task_points.all? { |point| point.points.nil? }
   end
 
   def task_points_participation_input(task, allow_grading)
@@ -95,7 +128,7 @@ class ParticipationRowComponent < ViewComponent::Base
         action: "change->participation-row#onPointParticipationChanged input->participation-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
-      disabled: !allow_grading || !grading_enabled? || !can_enter_points?
+      disabled: !allow_grading || !grading_enabled? || !can_enter_points? || !points_enterable?
     )
   end
 

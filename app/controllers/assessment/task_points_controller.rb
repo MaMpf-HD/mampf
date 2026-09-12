@@ -3,7 +3,8 @@ module Assessment
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_team,
                          :update_participation, :refresh_submission,
-                         :refresh_participation, :mark_as_participated, :remove_participated]
+                         :refresh_participation, :mark_as_participated,
+                         :mark_as_participated_multi, :remove_participated]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update_team_multi,
                                                  :update_team,
@@ -115,28 +116,29 @@ module Assessment
     end
 
     def mark_as_participated
-      user = User.find_by(id: params[:user_id])
-      return respond_with_flash(:alert, t("assessment.errors.user_not_found")) unless user
-
-      roster_tutorial = user.rostered_tutorial_in(@lecture)
-      unless roster_tutorial
-        return respond_with_flash(:alert,
-                                  t("assessment.task_points.user_not_rostered"))
+      user = @lecture.members.find_by(id: params[:user_id])
+      unless user
+        return respond_with_flash(:alert, t("assessment.errors.user_not_found"),
+                                  status: :not_found)
       end
 
-      authorize! :enter_points, roster_tutorial
-      @tutorial = roster_tutorial
-      SubmissionGraderService.init_participation(@assessment, user, @tutorial)
-      rerender_submission_table
+      render turbo_stream: record_paper_hand_in(user)
+    end
+
+    # One request for the pile of paper sheets; a row the tutor may not mark
+    # rolls the whole pile back.
+    def mark_as_participated_multi
+      users = @lecture.members.where(id: Array(params[:user_ids]))
+      streams = ActiveRecord::Base.transaction do
+        users.map { |user| record_paper_hand_in(user) }
+      end
+      render turbo_stream: streams
     end
 
     def remove_participated
-      removed_participation = SubmissionGraderService.remove_participation(@participation)
-      if removed_participation
-        flash.now[:notice] =
-          t("assessment.task_points.participation_removed")
-      end
-      rerender_submission_table
+      SubmissionGraderService.remove_participation(@participation)
+      @participation.reload
+      rerender_user_row
     end
 
     private
@@ -147,16 +149,27 @@ module Assessment
         (@tutorial if @grading_scope_type == "tutorial") || @lecture
       end
 
-      def participation_row
-        ParticipationRowComponent.new(
-          participation: @participation,
-          assessment: @assessment,
-          grading_scope: table_scope,
-          save_url: point_participation_path(@participation,
-                                             grading_scope_type: @grading_scope_type),
-          refresh_url: refresh_point_participation_path(@participation,
-                                                        grading_scope_type: @grading_scope_type)
-        )
+      def participation_row(participation = @participation)
+        ParticipationRowComponent.new(participation: participation,
+                                      assessment: @assessment,
+                                      grading_scope: table_scope)
+      end
+
+      # Somebody in no group takes part in the lecture itself, and that is
+      # the lecturer's to enter. Until there is a participation, the row goes
+      # by the user; the answer has to find it under that name.
+      def record_paper_hand_in(user)
+        roster_tutorial = user.rostered_tutorial_in(@lecture)
+        authorize!(:enter_points, roster_tutorial || @lecture)
+        row_before = @assessment.assessment_participations.find_by(user: user)
+        row_id = if row_before
+          "participation-row-#{row_before.id}"
+        else
+          "participation-row-user-#{user.id}"
+        end
+        participation = SubmissionGraderService.init_participation(@assessment, user,
+                                                                   roster_tutorial)
+        turbo_stream.replace(row_id, html: render_to_string(participation_row(participation)))
       end
 
       # The rows on this page are drawn for assignments; a participation in

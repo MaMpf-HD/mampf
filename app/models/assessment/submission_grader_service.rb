@@ -51,10 +51,16 @@ module Assessment
         )
 
         PointEntryService.enter_points(participation, points_by_task_id, scorer, nil)
+        stamp_paper_hand_in!(participation, points_by_task_id)
+        participation
       end
 
+      # The sheet came in - as a file, or on paper. A row the backfill worker
+      # wrote carries no stamp yet and gets one; a stamp already there is the
+      # time the sheet came in and stays. Somebody in no group takes part in
+      # the lecture itself.
       def init_participation(assessment, user, tutorial)
-        if assessment.nil? || user.nil? || tutorial.nil?
+        if assessment.nil? || user.nil?
           raise(SubmissionGraderError,
                 I18n.t("assessment.task_points.init_participation_missing_args"))
         end
@@ -63,19 +69,20 @@ module Assessment
           assessment_id: assessment.id,
           user_id: user.id
         )
-        if participation.new_record?
-          participation.update!(tutorial_id: tutorial.id,
-                                submitted_at: Time.current)
-        end
+        participation.tutorial_id ||= tutorial&.id
+        participation.submitted_at ||= Time.current if participation.pending?
+        participation.save! if participation.changed?
         participation
       end
 
+      # The other way round: the sheet did not come in after all. Only while
+      # nothing is written on it - points say it did.
       def remove_participation(participation)
         raise_if_errors!(validate_participation_present(participation))
         task_points = participation.task_points
         if task_points.empty? || task_points.all? { |tp| tp.points.nil? }
           task_points.destroy_all
-          participation.destroy!
+          participation.update!(submitted_at: nil)
         else
           raise(SubmissionGraderError,
                 I18n.t("assessment.task_points.participation_has_task_points"))
@@ -83,6 +90,16 @@ module Assessment
       end
 
       private
+
+        # Points on a sheet nobody recorded a hand-in for say the sheet was
+        # there: the tutor had it on paper. The stamp is what the student's
+        # page and the performance table read.
+        def stamp_paper_hand_in!(participation, points_by_task_id)
+          return if participation.submitted_at.present?
+          return if points_by_task_id.values.all?(&:blank?)
+
+          participation.update!(submitted_at: Time.current)
+        end
 
         def score_submission_entry!(entry, scorer, validated_tutorial_ids)
           submission = Submission.find(entry["id"])

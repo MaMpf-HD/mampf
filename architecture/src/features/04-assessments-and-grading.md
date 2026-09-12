@@ -236,7 +236,7 @@ The `requires_submission` field controls whether students must upload files:
 - **Exams:** Always `false`. Exams are graded in person or from scanned papers.
 - **Talks:** Always `false`. Presentations are graded live.
 
-When `requires_submission: false`, no file uploads occur and `submitted_at` remains `nil`. The Grading Tab shows only grading progress (not submission progress).
+When `requires_submission: false`, no file uploads occur; `submitted_at` is set by the tutor recording the paper hand-in in the pointing table (one row at a time, or the ticked rows at once). Until then a row reads *not yet recorded* rather than *not submitted*, on every page that shows it. The Grading Tab shows only grading progress (not submission progress).
 
 **It freezes once the deadline has passed.** The flag imposes no obligation on
 students — nothing in the submission path consults it — so the reason is not to

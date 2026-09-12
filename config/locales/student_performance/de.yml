@@ -43,6 +43,7 @@ de:
         pending_grading: "Noch nicht bewertet"
         not_due: "Noch nicht fällig"
         not_submitted: "Nicht abgegeben"
+        awaiting_record: "Noch nicht erfasst"
         absent: "Abwesend"
         exempt: "Befreit"
         achievement_met: "Erfüllt"

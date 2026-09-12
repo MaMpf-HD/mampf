@@ -121,13 +121,16 @@ module Assessment
         end
 
         # A file without a `submitted_at` costs points without anybody having done
-        # anything wrong, which is why it has a state of its own.
+        # anything wrong, which is why it has a state of its own. A sheet that
+        # comes in on paper is with the tutor until they record it, so nothing
+        # is missing yet.
         def closed_state
           if participation&.submitted_at
             return submission&.correction.present? ? :correction_uploaded : :awaiting_marks
           end
+          return :not_recorded if submission&.manuscript.present?
 
-          submission&.manuscript.present? ? :not_recorded : :missed
+          assessment.requires_submission ? :missed : :awaiting_record
         end
 
         def open_state

@@ -884,6 +884,10 @@ Rails.application.routes.draw do
         to: "assessment/task_points#mark_as_participated",
         as: "mark_user_as_participated"
 
+  patch "participations/mark_as_participated_multi",
+        to: "assessment/task_points#mark_as_participated_multi",
+        as: "mark_users_as_participated"
+
   patch "participations/:participation_id/remove_participated",
         to: "assessment/task_points#remove_participated",
         as: "remove_participation"

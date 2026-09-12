@@ -70,12 +70,7 @@
     <!-- Column 4: Status -->
     <td class="text-center sticky-col status-col" data-mode="<%= @mode %>">
       <% if participation %>
-        <span
-          class="<%= badge_status_participation_class(status) %>"
-          style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
-        >
-          <%= status_label %>
-        </span>
+        <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
       <% end %>
     </td>
     <!-- batch of columns 3: grade zone -->

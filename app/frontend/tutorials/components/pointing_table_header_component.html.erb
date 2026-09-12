@@ -65,7 +65,11 @@
                 data-action="click->status-filter#filterStatus"
                 data-status-filter-status-value="<%= status %>"
               >
-                <%= t("assessment.grading_tutorial.filter_options.filter_#{status}") %>
+                <% if status == "all" %>
+                  <%= t("basics.all") %>
+                <% else %>
+                  <%= t("student_performance.records.columns.#{status}") %>
+                <% end %>
               </button>
             </li>
           <% end %>

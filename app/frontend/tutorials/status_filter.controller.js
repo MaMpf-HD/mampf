@@ -5,6 +5,7 @@ export default class extends Controller {
 
   connect() {
     this.selectedStatus = "all";
+    this.selectedStatusLabel = null;
     this.selectedTutorial = "all";
     this.selectedTutorialLabel = null;
     this.searchQuery = "";
@@ -12,6 +13,7 @@ export default class extends Controller {
 
   filterStatus(event) {
     this.selectedStatus = event.currentTarget.dataset.statusFilterStatusValue;
+    this.selectedStatusLabel = event.currentTarget.textContent.trim();
     this.applySearchFilter();
     this.renderActiveFilters();
   }
@@ -25,7 +27,10 @@ export default class extends Controller {
 
   clearFilter(event) {
     const key = event.currentTarget.dataset.filterKey;
-    if (key === "status") this.selectedStatus = "all";
+    if (key === "status") {
+      this.selectedStatus = "all";
+      this.selectedStatusLabel = null;
+    }
     if (key === "tutorial") {
       this.selectedTutorial = "all";
       this.selectedTutorialLabel = null;
@@ -36,6 +41,7 @@ export default class extends Controller {
 
   clearAllFilters() {
     this.selectedStatus = "all";
+    this.selectedStatusLabel = null;
     this.selectedTutorial = "all";
     this.selectedTutorialLabel = null;
     this.applySearchFilter();
@@ -46,7 +52,7 @@ export default class extends Controller {
     const chips = [];
 
     if (this.selectedStatus !== "all") {
-      chips.push(this.chipHtml("status", this.selectedStatus));
+      chips.push(this.chipHtml("status", this.selectedStatusLabel || this.selectedStatus));
     }
     if (this.selectedTutorial !== "all") {
       chips.push(this.chipHtml("tutorial", this.selectedTutorialLabel || this.selectedTutorial));

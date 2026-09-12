@@ -16,20 +16,18 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     create(:assessment, requires_points: true, assessable: assignment, lecture: lecture)
   end
   let(:participation) do
-    create(:assessment_participation, assessment: assessment, user: student, tutorial: tutorial)
+    create(:assessment_participation, :submitted,
+           assessment: assessment, user: student, tutorial: tutorial)
   end
-
-  let(:save_url) { "/participations/1/point_user" }
-  let(:refresh_url) { "/participations/1/refresh_point_user" }
 
   let(:component_tutor) do
     described_class.new(participation: participation, assessment: assessment,
-                        grading_scope: tutorial, save_url: save_url, refresh_url: refresh_url)
+                        grading_scope: tutorial)
   end
 
   let(:component_teacher) do
     described_class.new(participation: participation, assessment: assessment,
-                        grading_scope: lecture, save_url: save_url, refresh_url: refresh_url)
+                        grading_scope: lecture)
   end
 
   before do
@@ -51,7 +49,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       it "raises MissingUserError" do
         expect do
           described_class.new(participation: orphan_participation, assessment: assessment,
-                              grading_scope: tutorial, save_url: save_url, refresh_url: refresh_url)
+                              grading_scope: tutorial)
         end.to raise_error(ParticipationRowComponent::MissingUserError)
       end
     end
@@ -130,35 +128,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       it "returns true" do
         expect(component_tutor.allow_grading?).to eq(true)
       end
-    end
-  end
-
-  describe "#badge_status_participation_color" do
-    it "returns warning for pending" do
-      expect(component_tutor.badge_status_participation_color(:pending)).to eq("warning")
-    end
-
-    it "returns success for reviewed" do
-      expect(component_tutor.badge_status_participation_color(:reviewed)).to eq("success")
-    end
-
-    it "returns info for exempt" do
-      expect(component_tutor.badge_status_participation_color(:exempt)).to eq("info")
-    end
-
-    it "returns info for absent" do
-      expect(component_tutor.badge_status_participation_color(:absent)).to eq("info")
-    end
-
-    it "returns nil for unknown status" do
-      expect(component_tutor.badge_status_participation_color(:unknown)).to be_nil
-    end
-  end
-
-  describe "#badge_status_participation_class" do
-    it "returns correct class string" do
-      expect(component_tutor.badge_status_participation_class(:pending))
-        .to eq("badge rounded-pill bg-warning")
     end
   end
 
@@ -364,9 +333,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       let(:component_unknown) do
         described_class.new(participation: participation,
                             assessment: assessment,
-                            grading_scope: "not_a_scope",
-                            save_url: save_url,
-                            refresh_url: refresh_url)
+                            grading_scope: "not_a_scope")
       end
 
       before do
@@ -398,12 +365,111 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       render_inline(component_tutor)
     end
 
-    it "includes the save_url in the rendered markup" do
-      expect(rendered_content).to include(save_url)
+    it "posts the row's points to its own participation" do
+      expect(rendered_content).to include("/participations/#{participation.id}/point_participation")
+      expect(rendered_content)
+        .to include("/participations/#{participation.id}/refresh_point_participation")
+    end
+  end
+
+  # One row per person on the roster: a sheet taken on paper, one never handed
+  # in, and one the worker has not written a participation for yet all sit in
+  # the table, and the hand-in column says which it is.
+  describe "the hand-in column" do
+    before { allow(vc_test_controller).to receive(:current_user).and_return(tutor) }
+
+    it "offers to record a paper hand-in on a row nothing was handed in for" do
+      participation.update!(submitted_at: nil)
+      render_inline(component_tutor)
+
+      expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.not_submitted")
+      )
     end
 
-    it "includes the refresh_url in the rendered markup" do
-      expect(rendered_content).to include(refresh_url)
+    it "offers to take a paper hand-in back while no points sit on it" do
+      participation.update!(submitted_at: 1.day.ago)
+      render_inline(component_tutor)
+
+      expect(rendered_content)
+        .to include(I18n.t("assessment.grading_tutorial.paper_hand_in_remove"))
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.pending_grading")
+      )
+    end
+
+    it "keeps a paper hand-in that carries points" do
+      task = create(:assessment_task, assessment: assessment)
+      participation.update!(submitted_at: 1.day.ago)
+      Timecop.travel(3.hours.from_now) do
+        create(:assessment_task_point, task: task, points: 3,
+                                       assessment_participation: participation)
+      end
+      render_inline(described_class.new(participation: participation.reload,
+                                        assessment: assessment, grading_scope: tutorial))
+
+      expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.paper_hand_in_kept"))
+      expect(rendered_content).not_to include("remove_participated")
+    end
+
+    it "draws a row for somebody without a participation yet, with nothing to type into" do
+      unsaved = Assessment::Participation.new(assessment: assessment, user: student,
+                                              tutorial: tutorial)
+      component = described_class.new(participation: unsaved, assessment: assessment,
+                                      grading_scope: tutorial)
+      render_inline(component)
+
+      expect(component.row_id).to eq("participation-row-user-#{student.id}")
+      expect(component.points_enterable?).to be(false)
+      expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+      expect(rendered_content).not_to include("point_participation")
+    end
+
+    # Points go where the sheet is: somebody who moved into this group after
+    # handing in elsewhere is marked there, not here.
+    it "locks a row whose sheet another group holds" do
+      elsewhere = create(:tutorial, lecture: lecture)
+      participation.update!(tutorial: elsewhere)
+      component = described_class.new(participation: participation, assessment: assessment,
+                                      grading_scope: tutorial)
+      render_inline(component)
+
+      expect(component.elsewhere?).to be(true)
+      expect(component.points_enterable?).to be(false)
+      expect(rendered_content).not_to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+    end
+
+    it "lets the lecturer's table mark anybody" do
+      elsewhere = create(:tutorial, lecture: lecture)
+      participation.update!(tutorial: elsewhere)
+      component = described_class.new(participation: participation, assessment: assessment,
+                                      grading_scope: lecture)
+
+      expect(component.elsewhere?).to be(false)
+      expect(component.points_enterable?).to be(true)
+    end
+
+    it "opens the points only once the sheet is marked as handed in" do
+      participation.update!(submitted_at: nil)
+      component = described_class.new(participation: participation, assessment: assessment,
+                                      grading_scope: tutorial)
+
+      expect(component.points_enterable?).to be(false)
+      participation.update!(submitted_at: 1.day.ago)
+      expect(component.points_enterable?).to be(true)
+    end
+
+    it "offers nothing on an excused row" do
+      participation.update!(submitted_at: nil)
+      participation.update!(status: :exempt)
+      component = described_class.new(participation: participation, assessment: assessment,
+                                      grading_scope: tutorial)
+      render_inline(component)
+
+      expect(component.points_enterable?).to be(false)
+      expect(rendered_content).not_to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+      expect(rendered_content).to include(I18n.t("student_performance.records.columns.exempt"))
     end
   end
 end

@@ -471,8 +471,15 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
 
     it "is :not_submitted while pending with no submission" do
-      expect(display_status_for(status: :pending, submitted_at: nil))
+      assessment = FactoryBot.create(:assessment, requires_submission: true)
+      expect(display_status_for(assessment: assessment, status: :pending, submitted_at: nil))
         .to eq(:not_submitted)
+    end
+
+    it "is :awaiting_record while pending on a sheet collected on paper" do
+      assessment = FactoryBot.create(:assessment, requires_submission: false)
+      expect(display_status_for(assessment: assessment, status: :pending, submitted_at: nil))
+        .to eq(:awaiting_record)
     end
 
     it "is :pending_grading while pending with a submission" do

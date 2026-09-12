@@ -67,7 +67,7 @@ class Assignment < ApplicationRecord
   end
 
   def applicable_users_not_in_tutorials
-    applicable_user_ids_not_in_tutorials_from_memberships
+    User.where(id: applicable_user_ids_not_in_tutorials_from_memberships)
   end
 
   def non_submitters_in_tutorials

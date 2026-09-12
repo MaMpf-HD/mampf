@@ -268,8 +268,12 @@
               </td>
 
               <% @assessments.each do |assessment| %>
-                <% status = @participation_map&.dig([record.user_id, assessment.id]) || :not_submitted %>
-                <% status = :not_due if status == :not_submitted && !@due_points.due?(assessment.id) %>
+                <% status = @participation_map&.dig([record.user_id, assessment.id]) ||
+                            assessment.status_without_hand_in %>
+
+                <% status = :not_due if status.in?([:not_submitted, :awaiting_record]) &&
+                                        !@due_points.due?(assessment.id) %>
+
                 <% points = @points_map&.dig([record.user_id, assessment.id]) %>
                 <% max = assessment.effective_total_points %>
 

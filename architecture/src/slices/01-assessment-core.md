@@ -219,6 +219,13 @@ entry](#submission-is-a-timestamp-so-the-display-status-is-derived), where
 Fixing it here instead — by seeding fewer rows — would be the wrong end. The
 worker creates them so that tutors have something to grade against; that is its
 purpose, not its mistake.
+
+**Resolved on that branch.** The pointing table draws one row per person on the
+roster, hand-in or not; `submitted_at` is the one record of whether the sheet
+came in, on paper or as a file. `init_participation` stamps a row the worker
+wrote, points entered on a row without a stamp put one there, and the mark can
+be taken back while nothing is written on it. The list of "special cases"
+beneath the table is gone with it.
 ~~~
 
 ### Entered points block deleting a task; the deadline does not
@@ -251,10 +258,14 @@ points exist and stops once they do.
 ### Submission is a timestamp, so the display status is derived
 
 The enum has four values — `pending`, `reviewed`, `absent`, `exempt` — but the
-views need five, because `pending` covers two quite different situations.
+views need more, because `pending` covers two quite different situations.
 [`display_status`][c1-display] tells them apart by `submitted_at`: pending with
 no submission reads as `:not_submitted`, pending with one as `:pending_grading`,
-and every other status passes through unchanged.
+and every other status passes through unchanged. On a sheet collected on paper
+(`requires_submission: false`) the first case reads as `:awaiting_record`
+instead — the sheet is with the tutor until they record it, so nothing is
+missing yet; `Assessment#status_without_hand_in` is where the two are told
+apart, and the student's hub says the same thing for the same sheet.
 
 Why it is derived rather than stored is in
 [the status workflow](../features/04-assessments-and-grading.md#status-workflow).
@@ -263,8 +274,8 @@ Querying is barely affected: `submitted` is already a scope, so
 `pending.submitted` is exactly the "waiting to be marked" set and
 `pending.where(submitted_at: nil)` the other one.
 
-`ParticipationStatusBadgeComponent` knows all five symbols and falls back to
-`:not_submitted` for anything unexpected, so the contract has no gap.
+`ParticipationStatusBadgeComponent` knows all of these symbols and falls back
+to `:not_submitted` for anything unexpected, so the contract has no gap.
 
 Note the method is defined here but first used in slice 2, by
 `records_controller` and the record view.

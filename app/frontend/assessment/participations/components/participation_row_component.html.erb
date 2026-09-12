@@ -6,31 +6,31 @@
   data-row-id="<%= @participation.id %>"
   data-row-target-type="participation"
   data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
-  data-status-filter-status="<%= @participation.status %>"
+  data-status-filter-status="<%= status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
   data-status-filter-name="<%= @user.tutorial_name %>"
 >
-  <!-- Column 1: User names + copy emails + late icon -->
   <td class="sticky-col team-col">
-    <div class="d-flex justify-content-between">
-      <%= @user.tutorial_name %>
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <%= @user.tutorial_name %>
 
-      <% movement = movement_info_for_user(@user) %>
+        <% movement = movement_info_for_user(@user) %>
 
-      <% if movement %>
-        <i
-          class="bi bi-info-circle me-2 ps-1"
-          title="<%= movement %>"
-          data-bs-toggle="tooltip"
-        ></i>
-      <% end %>
+        <% if movement %>
+          <i
+            class="bi bi-info-circle me-2 ps-1"
+            title="<%= movement %>"
+            data-bs-toggle="tooltip"
+          ></i>
+        <% end %>
+      </div>
 
       <i
         class="
           clipboardpopup bi bi-clipboard clickable
           text-secondary clipboard-btn ms-3 clipboard-button
         "
-        style="width: fit-content;"
         data-clipboard-text="<%= @user.email %>"
         data-bs-toggle="tooltip"
         title="<%= t('buttons.copy_email_to_clipboard') %>"
@@ -42,37 +42,28 @@
     </div>
   </td>
 
-  <!-- Column 1.5: Tutorial -->
   <% if @mode == "teacher" %>
     <td class="text-center sticky-col tutorial-col">
-      <span><%= @participation.tutorial&.title %></span>
+      <span>
+        <%= @participation.tutorial&.title || t("assessment.grading_tutorial.no_tutorial_badge") %>
+      </span>
     </td>
   <% end %>
 
   <% if grading_enabled? %>
-    <!-- Column 2: Status -->
     <td class="text-center sticky-col status-col" data-mode="<%= @mode %>">
-      <span
-        class="<%= badge_status_participation_class(@participation.status) %>"
-        style="font-size: 11px; font-weight: 500; letter-spacing: 0.02em; padding: 4px 10px;"
-      >
-        <%= status_label %>
-      </span>
+      <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
     </td>
-    <!-- batch of columns 3: grade zone -->
-    <!-- support point by task -->
     <% tasks.each do |task| %>
       <%= task_points_participation_cell(task, allow_grading?) %>
     <% end %>
-    <!-- Column 4: Total Points -->
     <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
       <span data-participation-row-target="totalPoints">0</span>
     </td>
-    <!-- Save and refresh the row's points -->
     <td class="text-center sticky-col save-col" data-mode="<%= @mode %>">
-      <% if can_enter_points? %>
+      <% if can_enter_points? && points_enterable? %>
         <div class="d-inline-flex align-items-center gap-1">
-          <%= form_with url: @save_url,
+          <%= form_with url: save_url,
                       method: :patch,
                       data: { turbo: true, participation_row_target: "form" },
                       html: { style: "display:none;" } do %>
@@ -85,7 +76,7 @@
 
           <%= save_row_button(allow_grading?) %>
 
-          <%= form_with url: @refresh_url,
+          <%= form_with url: refresh_url,
                       method: :patch,
                       data: { turbo: true, participation_row_target: "refreshForm" },
                       html: { style: "display:none;" } do %>
@@ -102,8 +93,57 @@
     </td>
   <% end %>
 
-  <!-- No hand-in and no correction: the sheet was taken on paper -->
-  <td class="sticky-col hand-in-col" data-mode="<%= @mode %>"></td>
+  <%#
+    No file to open. What the column can say is whether the sheet came in on
+    paper, and the tutor says it here; the answer replaces this row alone.
+  %>
+
+  <td class="text-center sticky-col hand-in-col" data-mode="<%= @mode %>">
+    <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
+      <% if paper_hand_in? && !paper_hand_in_removable? %>
+        <button
+          class="
+            btn btn-sm btn-outline-secondary d-inline-flex
+            align-items-center justify-content-center px-2 py-1 lh-1
+          "
+          disabled
+          title="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
+          aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
+        >
+          <i class="bi bi-file-earmark-check-fill"></i>
+        </button>
+      <% elsif paper_hand_in? %>
+        <%= link_to paper_hand_in_removal_url,
+                    class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                    data: { turbo_method: :patch, bs_toggle: "tooltip" },
+                    title: t("assessment.grading_tutorial.paper_hand_in_remove"),
+                    aria: { label: t("assessment.grading_tutorial.paper_hand_in_remove") } do %>
+          <i class="bi bi-file-earmark-check-fill"></i>
+        <% end %>
+      <% else %>
+        <div class="d-inline-flex align-items-center gap-2">
+          <input
+            type="checkbox"
+            class="form-check-input m-0"
+            form="paper-hand-ins"
+            name="user_ids[]"
+            value="<%= @user.id %>"
+            aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_select", name: @user.tutorial_name) %>"
+            data-paper-selection-target="checkbox"
+            data-action="paper-selection#sync"
+          >
+
+          <%= link_to paper_hand_in_url,
+                      class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                      data: { turbo_method: :patch, bs_toggle: "tooltip" },
+                      title: t("assessment.grading_tutorial.paper_hand_in"),
+                      aria: { label: t("assessment.grading_tutorial.paper_hand_in") } do %>
+            <i class="bi bi-file-earmark"></i>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </td>
 
   <% if @mode == "tutor" %>
     <td class="sticky-col correction-col"></td>

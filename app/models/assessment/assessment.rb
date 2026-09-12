@@ -60,6 +60,13 @@ module Assessment
     # issue a query even then. The nil guard belongs to that path only: the task
     # form builds a blank task into a loaded association before saving it, and
     # `build` never marks an unloaded one as loaded.
+    # What a row with nothing recorded reads as. A sheet that comes in on
+    # paper is with the tutor until they record it, so it is not "missing"
+    # the way an upload that never came is.
+    def status_without_hand_in
+      requires_submission ? :not_submitted : :awaiting_record
+    end
+
     def effective_total_points
       return tasks.sum { |task| task.max_points || 0 } if tasks.loaded?
 

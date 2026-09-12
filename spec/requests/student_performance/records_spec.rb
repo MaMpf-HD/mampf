@@ -690,6 +690,25 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         )
       end
 
+      # A sheet collected on paper is with the tutor until they record it; the
+      # lecture can still let the student off it.
+      it "says a sheet collected on paper is not recorded yet and offers the exemption" do
+        assignment = FactoryBot.create(:assignment, :expired, lecture: lecture,
+                                                              requires_submission: false)
+        FactoryBot.create(:assessment_task,
+                          assessment: assignment.assessment, max_points: 16)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body).to include(
+          I18n.t("student_performance.records.columns.awaiting_record")
+        )
+        expect(response.body).not_to include(
+          I18n.t("student_performance.records.columns.not_submitted")
+        )
+        expect(response.body).to include(I18n.t("student_performance.records.show.exempt"))
+      end
+
       # Nobody can mark a sheet before its deadline, so a file handed in early
       # is not waiting on anyone.
       it "says an early hand-in is not due rather than waiting to be marked" do

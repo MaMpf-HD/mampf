@@ -189,35 +189,6 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     end
   end
 
-  describe "#badge_status_participation_color" do
-    it "returns warning for pending" do
-      expect(component_tutorial.badge_status_participation_color(:pending)).to eq("warning")
-    end
-
-    it "returns success for reviewed" do
-      expect(component_tutorial.badge_status_participation_color(:reviewed)).to eq("success")
-    end
-
-    it "returns info for exempt" do
-      expect(component_tutorial.badge_status_participation_color(:exempt)).to eq("info")
-    end
-
-    it "returns info for absent" do
-      expect(component_tutorial.badge_status_participation_color(:absent)).to eq("info")
-    end
-
-    it "returns nil for unknown status" do
-      expect(component_tutorial.badge_status_participation_color(:unknown)).to be_nil
-    end
-  end
-
-  describe "#badge_status_participation_class" do
-    it "returns correct class string" do
-      expect(component_tutorial.badge_status_participation_class(:pending))
-        .to eq("badge rounded-pill bg-warning")
-    end
-  end
-
   describe "#task_points_input" do
     let!(:task) { create(:assessment_task, assessment: assignment.assessment, max_points: 10) }
 
