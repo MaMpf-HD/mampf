@@ -259,15 +259,17 @@ class LecturesController < ApplicationController
     # per request and scoped to the current page, so the cards do not
     # trigger per-lecture queries and the cost is bounded by the page size)
     page_lecture_ids = @lectures.map(&:id)
-    @subscribed_lecture_ids =
-      current_user.lecture_user_joins
-                  .where(lecture_id: page_lecture_ids)
-                  .pluck(:lecture_id).to_set
-    @registration_status_by_lecture_id =
-      Registration::StatusQuery.new(current_user, page_lecture_ids).statuses
-    status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
-    @rosterized_lecture_ids = status.rosterized_lecture_ids
-    @self_enrollable_lecture_ids = status.enrollable_lecture_ids
+    self_enrollment = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
+    @search_result_ids = LecturesHelper::SearchResultIds.new(
+      subscribed_lecture_ids:
+        current_user.lecture_user_joins
+                    .where(lecture_id: page_lecture_ids)
+                    .pluck(:lecture_id).to_set,
+      registration_status_by_lecture_id:
+        Registration::StatusQuery.new(current_user, page_lecture_ids).statuses,
+      rosterized_lecture_ids: self_enrollment.rosterized_lecture_ids,
+      self_enrollable_lecture_ids: self_enrollment.enrollable_lecture_ids
+    )
 
     # The dashboard search is scoped to one semester by the picker above it, so
     # the term on each result card is redundant there and switched off via a
