@@ -27,22 +27,28 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
   it "points each option at its own term by semester slug" do
     values = render_select.css("option").pluck("value")
 
-    expect(values).to contain_exactly("/?term=WS24-25",
-                                      "/?term=SS25",
-                                      "/?term=WS25-26")
+    expect(values).to contain_exactly("WS24-25", "SS25", "WS25-26")
   end
 
   it "preselects the current semester" do
     selected = render_select.css("option[selected]")
 
     expect(selected.size).to eq(1)
-    expect(selected.first["value"]).to eq("/?term=SS25")
+    expect(selected.first["value"]).to eq("SS25")
+  end
+
+  it "carries the shareable dashboard URL for each option separately" do
+    urls = render_select.css("option").pluck("data-url")
+
+    expect(urls).to contain_exactly("/?term=WS24-25",
+                                    "/?term=SS25",
+                                    "/?term=WS25-26")
   end
 
   it "keeps the search in view when given an anchor" do
-    values = render_select(anchor: "lecture-search").css("option").pluck("value")
+    urls = render_select(anchor: "lecture-search").css("option").pluck("data-url")
 
-    expect(values).to all(end_with("#lecture-search"))
+    expect(urls).to all(end_with("#lecture-search"))
   end
 
   it "wires the select up to refresh the page on change" do

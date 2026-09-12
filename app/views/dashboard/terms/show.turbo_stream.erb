@@ -1,9 +1,3 @@
-<%# Answered when the semester picker changes (fetched by the
-    dashboard-term-select Stimulus controller). Swaps only the term-dependent
-    regions in place — both copies of the picker, the dashboard sections, and
-    the hidden field the lecture search reads its term from — so the page does
-    not navigate and the scroll position is kept. The search results below
-    re-run themselves once this hidden field has changed. %>
 <%= turbo_stream.replace "dashboard-term-select-wrapper" do %>
   <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
                                               selected: @selected_term,

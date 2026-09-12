@@ -1,10 +1,4 @@
 module Dashboard
-  # The list of semesters the dashboard's semester picker offers, and the rule
-  # for which one a given request is scoped to.
-  #
-  # The dashboard sections and the lecture search below them both scope to
-  # `selected`, so that picking a semester moves the whole page to that
-  # semester in one Turbo visit.
   class TermSelector
     # Every term there is, oldest first.
     def self.terms

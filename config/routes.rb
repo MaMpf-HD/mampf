@@ -671,6 +671,11 @@ Rails.application.routes.draw do
          to: "dashboard/registration_notices#destroy",
          as: "dashboard_registration_notice"
 
+  # switch the dashboard to a different term in place, via Turbo Stream
+  get "dashboard/term",
+      to: "dashboard/terms#show",
+      as: "dashboard_term"
+
   get "profile/request_data",
       as: "request_data"
 
