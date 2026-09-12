@@ -35,7 +35,7 @@ test("bookmarks a lecture from the search results and removes it again from the 
       .toHaveAttribute("aria-pressed", "false");
   });
 
-test("picks a washi tape colour for a card and keeps it across a reload",
+test("picks a washi tape color for a card and keeps it across a reload",
   async ({ factory, student: { page, user } }) => {
     const term = await createActiveTerm(factory);
     const course = await factory.create("course", [], { title: "Functional Analysis" });
@@ -62,6 +62,38 @@ test("picks a washi tape colour for a card and keeps it across a reload",
     await dashboard.openWashiTapePicker(lecture.id);
     await expect(dashboard.dashboardCard(lecture.id)
       .getByRole("radio", { name: "Mint" })).toBeChecked();
+  });
+
+test("picks a washi tape color for a card shown only through a pending registration",
+  async ({ factory, student: { page, user } }) => {
+    const term = await createActiveTerm(factory);
+    const course = await factory.create("course", [], { title: "Topological Groups" });
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      course_id: course.id,
+      term_id: term.id,
+    });
+    const campaign = await factory.create("registration_campaign", ["open"], {
+      campaignable_type: "Lecture",
+      campaignable_id: lecture.id,
+    });
+    const items = await campaign.__call("registration_items");
+    await factory.create("registration_user_registration", ["pending"], {
+      user_id: user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: items[0].id,
+    });
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+
+    const card = dashboard.dashboardCard(lecture.id);
+    await expect(card).toBeVisible();
+    await dashboard.chooseWashiTapeColor(lecture.id, "Mint");
+    await expect(card).toHaveAttribute("style", /--washi-tape-color-mint/);
+
+    await page.reload();
+    await expect(dashboard.dashboardCard(lecture.id))
+      .toHaveAttribute("style", /--washi-tape-color-mint/);
   });
 
 test.describe("registration status with multiple campaigns for one lecture", () => {

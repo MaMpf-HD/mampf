@@ -57,6 +57,19 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
       expect(style.tape_color).to eq("clay")
     end
 
+    it "styles a lecture shown only through a pending registration application" do
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: user, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      patch dashboard_washi_tape_path(lecture),
+            params: { washi_tape: { tape_color: "clay" } }
+
+      expect(response).to have_http_status(:no_content)
+      expect(style.tape_color).to eq("clay")
+    end
+
     it "styles a seminar the user gives a talk in" do
       seminar = create(:lecture, sort: "seminar")
       talk = create(:talk, lecture: seminar)
