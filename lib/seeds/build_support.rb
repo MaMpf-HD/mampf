@@ -194,13 +194,11 @@ module Seeds
       end
 
       def lecture_for(term)
-        find_or_create_lecture!(term, "lecture", "Analysis #{label(term)}",
-                                "Ana #{label(term)}")
+        find_or_create_lecture!(term, "lecture", "Analysis", "Ana")
       end
 
       def seminar_for(term)
-        find_or_create_lecture!(term, "seminar", "Seminar #{label(term)}",
-                                "Sem #{label(term)}")
+        find_or_create_lecture!(term, "seminar", "Seminar", "Sem")
       end
 
       def label(term)
