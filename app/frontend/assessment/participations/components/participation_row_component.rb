@@ -5,7 +5,8 @@
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  def initialize(participation:, assessment:, grading_scope:, group_id: nil)
+  def initialize(participation:, assessment:, grading_scope:, group_id: nil,
+                 table_option: :pointing)
     super()
     @participation = participation
     @assessment = assessment
@@ -14,7 +15,7 @@ class ParticipationRowComponent < ViewComponent::Base
     @grading_scope = grading_scope
     @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
     @group_id = group_id
-
+    @table_option = table_option
     @config = Assessment::DisplayConfigResolver.resolve(
       assessable: @assessable, grading_scope: @grading_scope
     )
@@ -64,11 +65,25 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def save_url
-    point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    case @table_option
+    when :pointing
+      point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    when :grading
+      grade_participation_path(@participation)
+    else
+      raise(ArgumentError, "Unsupported table option: #{@table_option}")
+    end
   end
 
   def refresh_url
-    refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    case @table_option
+    when :pointing
+      refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    when :grading
+      refresh_grade_participation_path(@participation)
+    else
+      raise(ArgumentError, "Unsupported table option: #{@table_option}")
+    end
   end
 
   # The hand-in column of a row without a file: whether the sheet came in on
@@ -164,6 +179,13 @@ class ParticipationRowComponent < ViewComponent::Base
     false
   end
 
+  def can_enter_grade?
+    user = helpers.current_user
+    user.admin? || user.can_enter_grades_in?(@grading_scope)
+  rescue User::IncompatibleTypeError
+    false
+  end
+
   def users_movement_map
     helpers.users_movement_map_cache[@assessable.id] ||=
       helpers.calculate_user_movement_map_assignment(@assessable, @lecture)
@@ -188,6 +210,10 @@ class ParticipationRowComponent < ViewComponent::Base
   # if display tutorial column
   def show_tutorial_col?
     @config.left_columns.include?(:tutorial)
+  end
+
+  def show_hand_in_col?
+    @config.left_columns.include?(:hand_in)
   end
 
   # if display correction column

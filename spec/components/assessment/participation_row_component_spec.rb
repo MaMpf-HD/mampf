@@ -6,9 +6,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
   let(:tutor) { create(:confirmed_user) }
   let(:student) { create(:confirmed_user) }
 
-  let(:save_url) { "/participations/1/point_user" }
-  let(:refresh_url) { "/participations/1/refresh_point_user" }
-
   # set up for assignment
   let(:lecture) { create(:lecture, teacher: teacher, submission_grace_period: 70) }
   let(:tutorial) { create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: lecture) }
@@ -51,11 +48,11 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
   let(:component_tutor_talk) do
     described_class.new(participation: participation_talk, assessment: assessment_talk,
-                        grading_scope: seminar, save_url: save_url, refresh_url: refresh_url)
+                        grading_scope: seminar)
   end
   let(:component_teacher_talk) do
     described_class.new(participation: participation_talk, assessment: assessment_talk,
-                        grading_scope: seminar, save_url: save_url, refresh_url: refresh_url)
+                        grading_scope: seminar)
   end
 
   before do

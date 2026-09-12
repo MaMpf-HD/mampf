@@ -837,6 +837,15 @@ class User < ApplicationRecord
     in?(something.graders_with_inheritance.to_a)
   end
 
+  def can_enter_grades_in?(something)
+    unless something.is_a?(Lecture)
+      raise(IncompatibleTypeError, "can_enter_grades_in? was called with incompatible class")
+    end
+    return true if admin
+
+    in?(something.graders_with_inheritance.to_a)
+  end
+
   def speaker?
     talks.any?
   end

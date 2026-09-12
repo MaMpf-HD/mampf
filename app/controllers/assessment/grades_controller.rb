@@ -17,7 +17,7 @@ module Assessment
     end
 
     def authorize_assessment!
-      authorize! :grade, @lecture if @lecture.present?
+      authorize! :enter_grades, @lecture if @lecture.present?
     end
 
     def update
@@ -44,8 +44,7 @@ module Assessment
                                    assessment: @assessment,
                                    grading_scope: @lecture,
                                    participation: @participation,
-                                   save_url: grade_participation_path(@participation),
-                                   refresh_url: refresh_grade_participation_path(@participation),
+                                   table_option: :grading,
                                    group_id: @assessable.id
                                  ))
         )

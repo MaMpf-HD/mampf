@@ -152,6 +152,7 @@ module Assessment
       def participation_row(participation = @participation)
         ParticipationRowComponent.new(participation: participation,
                                       assessment: @assessment,
+                                      table_option: :pointing,
                                       grading_scope: table_scope)
       end
 

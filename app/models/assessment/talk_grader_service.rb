@@ -61,7 +61,7 @@ module Assessment
       private
 
         def authorize_talk!(talk, user)
-          return if talk.nil? || user.can_grade_in_scope?(talk.lecture)
+          return if talk.nil? || user.can_enter_grades_in?(talk.lecture)
 
           I18n.t("assessment.errors.user_cannot_grade")
         end

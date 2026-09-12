@@ -95,6 +95,7 @@
                   <%= render(ParticipationRowComponent.new(
                       participation: participation_for(user, @tutorial),
                       assessment: @assignment.assessment,
+                      table_option: :grading,
                       grading_scope: @tutorial)) %>
                 <% end %>
               <% else %>
@@ -111,6 +112,7 @@
                     <%= render(ParticipationRowComponent.new(
                         participation: participation_for(user, tutorial),
                         assessment: @assignment.assessment,
+                        table_option: :pointing,
                         grading_scope: @lecture)) %>
                   <% end %>
                 <% end %>
@@ -118,6 +120,7 @@
                   <%= render(ParticipationRowComponent.new(
                       participation: participation_for(user, nil),
                       assessment: @assignment.assessment,
+                      table_option: :pointing,
                       grading_scope: @lecture)) %>
                 <% end %>
               <% end %>

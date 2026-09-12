@@ -22,5 +22,10 @@ class AssessmentAbility
       user.admin? ||
         user.can_enter_points_in?(lecture)
     end
+
+    can :enter_grades, Lecture do |lecture|
+      user.admin? ||
+        user.can_enter_grades_in?(lecture)
+    end
   end
 end

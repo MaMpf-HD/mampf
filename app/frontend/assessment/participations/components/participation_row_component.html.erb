@@ -114,16 +114,16 @@
     <% end %>
 
     <td class="text-center sticky-col save-col">
-      <% if can_enter_points? && points_enterable? %>
+      <% if (can_enter_points? && points_enterable?) || can_enter_grade? %>
         <div class="d-inline-flex align-items-center gap-1">
           <%= form_with url: save_url,
                       method: :patch,
                       data: { turbo: true, participation_row_target: "form" },
                       html: { style: "display:none;" } do %>
             <input
-            type="hidden"
-            name="task_points"
-            data-participation-row-target="taskPointsPayload"
+              type="hidden"
+              name="task_points"
+              data-participation-row-target="taskPointsPayload"
             >
 
             <input
@@ -169,52 +169,54 @@
     paper, and the tutor says it here; the answer replaces this row alone.
   %>
 
-  <td class="text-center sticky-col hand-in-col">
-    <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
-      <% if paper_hand_in? && !paper_hand_in_removable? %>
-        <button
-          class="
-            btn btn-sm btn-outline-secondary d-inline-flex
-            align-items-center justify-content-center px-2 py-1 lh-1
-          "
-          disabled
-          title="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
-          aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
-        >
-          <i class="bi bi-file-earmark-check-fill"></i>
-        </button>
-      <% elsif paper_hand_in? %>
-        <%= link_to paper_hand_in_removal_url,
+  <% if show_hand_in_col? %>
+    <td class="text-center sticky-col hand-in-col">
+      <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
+        <% if paper_hand_in? && !paper_hand_in_removable? %>
+          <button
+            class="
+              btn btn-sm btn-outline-secondary d-inline-flex
+              align-items-center justify-content-center px-2 py-1 lh-1
+            "
+            disabled
+            title="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
+            aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
+          >
+            <i class="bi bi-file-earmark-check-fill"></i>
+          </button>
+        <% elsif paper_hand_in? %>
+          <%= link_to paper_hand_in_removal_url,
                     class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
                     data: { turbo_method: :patch, bs_toggle: "tooltip" },
                     title: t("assessment.grading_tutorial.paper_hand_in_remove"),
                     aria: { label: t("assessment.grading_tutorial.paper_hand_in_remove") } do %>
-          <i class="bi bi-file-earmark-check-fill"></i>
-        <% end %>
-      <% else %>
-        <div class="d-inline-flex align-items-center gap-2">
-          <input
-            type="checkbox"
-            class="form-check-input m-0"
-            form="paper-hand-ins"
-            name="user_ids[]"
-            value="<%= @user.id %>"
-            aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_select", name: @user.tutorial_name) %>"
-            data-paper-selection-target="checkbox"
-            data-action="paper-selection#sync"
-          >
+            <i class="bi bi-file-earmark-check-fill"></i>
+          <% end %>
+        <% else %>
+          <div class="d-inline-flex align-items-center gap-2">
+            <input
+              type="checkbox"
+              class="form-check-input m-0"
+              form="paper-hand-ins"
+              name="user_ids[]"
+              value="<%= @user.id %>"
+              aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_select", name: @user.tutorial_name) %>"
+              data-paper-selection-target="checkbox"
+              data-action="paper-selection#sync"
+            >
 
-          <%= link_to paper_hand_in_url,
+            <%= link_to paper_hand_in_url,
                       class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
                       data: { turbo_method: :patch, bs_toggle: "tooltip" },
                       title: t("assessment.grading_tutorial.paper_hand_in"),
                       aria: { label: t("assessment.grading_tutorial.paper_hand_in") } do %>
-            <i class="bi bi-file-earmark"></i>
-          <% end %>
-        </div>
+              <i class="bi bi-file-earmark"></i>
+            <% end %>
+          </div>
+        <% end %>
       <% end %>
-    <% end %>
-  </td>
+    </td>
+  <% end %>
 
   <% if show_correction_col? %>
     <td class="sticky-col correction-col"></td>
