@@ -15,12 +15,6 @@ export class DashboardLectureBrowsePage {
     await this.page.goto(`/?term=${termSlug}`);
   }
 
-  async gotoTermScopeDeepLink(termScope: string) {
-    const lectureSearchPromise = this.getLectureSearchPromise();
-    await this.page.goto(`/?term_scope=${termScope}#lecture-search`);
-    await lectureSearchPromise;
-  }
-
   async scrollToSearchBar() {
     await this.page.getByTestId("lecture-search").scrollIntoViewIfNeeded();
   }

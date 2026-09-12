@@ -5,21 +5,9 @@ module Dashboard
       Term.chronological.to_a
     end
 
-    # The term this request is scoped to: an explicit `?term=<slug>` (see
-    # Term#dashboard_param), the legacy `?term_scope=current|next` that a few
-    # deep links still use, or, failing both, the active term.
+    # The currently selected term.
     def self.selected(params)
-      Term.from_dashboard_param(params[:term]) ||
-        by_scope(params[:term_scope]) ||
-        Term.active
+      Term.from_dashboard_param(params[:term]) || Term.active
     end
-
-    def self.by_scope(scope)
-      case scope
-      when "current" then Term.active
-      when "next" then Term.active&.next
-      end
-    end
-    private_class_method :by_scope
   end
 end

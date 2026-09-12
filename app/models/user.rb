@@ -651,12 +651,6 @@ class User < ApplicationRecord
            .includes(:course, :term).natural_sort_by(&:title)
   end
 
-  # The start page shows Term.active and Term.active.next separately, so
-  # exclude both here to avoid duplicate lecture cards.
-  def inactive_lectures
-    lectures.where.not(term: [Term.active, Term.active&.next])
-  end
-
   def nonsubscribed_lectures
     Lecture.where.not(id: lectures.pluck(:id))
   end
@@ -737,18 +731,6 @@ class User < ApplicationRecord
   def current_bookmarked_lectures(term = Term.active,
                                   enrolled: current_enrolled_lectures(term))
     current_subscribed_lectures(term) - enrolled
-  end
-
-  def current_subscribable_lectures
-    current_lectures = Lecture.in_current_term.includes(:course, :term)
-    no_term_lectures = Lecture.no_term.includes(:course, :term)
-    return current_lectures.sort + no_term_lectures.sort if admin
-    unless editor? || teacher?
-      return current_lectures.published.sort + no_term_lectures.published.sort
-    end
-
-    current_lectures.select { |l| l.edited_by?(self) || l.published? }.sort +
-      no_term_lectures.select { |l| l.edited_by?(self) || l.published? }.sort
   end
 
   def submission_partners(lecture)

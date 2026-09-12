@@ -56,14 +56,3 @@ test("does not show the banner when the feature flag is disabled",
 
     await expect(dashboard.nextTermBanner).not.toBeVisible();
   });
-
-test("the legacy term_scope=current deep link still scopes the search",
-  async ({ factory, student: { page } }) => {
-    await createTermsWithLectures(factory);
-
-    const dashboard = new DashboardLectureBrowsePage(page);
-    await dashboard.gotoTermScopeDeepLink("current");
-
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).not.toContainText("Topology Next");
-  });
