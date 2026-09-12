@@ -475,7 +475,7 @@ de:
             grade_numeric:
               not_gradable: "kann nicht für ein nicht-benotbares Assessment gesetzt werden"
             status:
-              handed_in: "kann nicht entschuldigt oder abwesend sein: dieses Blatt wurde abgegeben"
+              handed_in: "kann nicht befreit oder abwesend sein: dieses Blatt wurde abgegeben"
             base:
               early_grading_not_allowed: "Bewertung ist vor Ablauf der Frist nicht zulässig"
         assessment/task_point:

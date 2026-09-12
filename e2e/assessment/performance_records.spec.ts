@@ -116,7 +116,7 @@ test.describe("performance records", () => {
 
   // A certificate is decided here, per person: the sheet leaves the
   // reckoning, the note stays with the decision, and both can be undone.
-  test("excuses a sheet nothing was handed in for, and takes it back", async ({
+  test("exempts a sheet nothing was handed in for, and takes it back", async ({
     factory,
     teacher,
   }) => {
@@ -144,18 +144,18 @@ test.describe("performance records", () => {
     await expect(row.getByText("Not Submitted")).toBeVisible();
     await expect(teacher.page.getByText("out of 10 marked so far")).toBeVisible();
 
-    await row.getByRole("textbox", { name: "Note for the excuse on Problem Set 1" })
+    await row.getByRole("textbox", { name: "Note for the exemption on Problem Set 1" })
       .fill("Certificate until May 17");
-    await row.getByRole("button", { name: "Excuse" }).click();
+    await row.getByRole("button", { name: "Record exemption" }).click();
 
     await expect(teacher.page.getByText(
-      "Problem Set 1 is excused for this student and no longer counts.",
+      "Problem Set 1 is exempt for this student and no longer counts.",
     )).toBeVisible();
-    await expect(row.getByText("Exempt")).toBeVisible();
+    await expect(row.getByText("Exempt", { exact: true })).toBeVisible();
     await expect(row.getByText("Certificate until May 17")).toBeVisible();
     await expect(teacher.page.getByText("out of 0 marked so far")).toBeVisible();
 
-    await row.getByRole("button", { name: "Revoke excuse" }).click();
+    await row.getByRole("button", { name: "Revoke exemption" }).click();
 
     await expect(row.getByText("Not Submitted")).toBeVisible();
     await expect(teacher.page.getByText("out of 10 marked so far")).toBeVisible();

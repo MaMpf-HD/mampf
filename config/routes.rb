@@ -372,8 +372,8 @@ Rails.application.routes.draw do
           post :recompute
         end
         member do
-          patch :excuse
-          patch :unexcuse
+          patch :exempt
+          patch :unexempt
         end
       end
 

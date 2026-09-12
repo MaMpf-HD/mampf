@@ -121,7 +121,7 @@
 
               <th scope="col" class="text-end">
                 <span class="visually-hidden">
-                  <%= t("student_performance.records.show.excuse_column") %>
+                  <%= t("student_performance.records.show.exempt_column") %>
                 </span>
               </th>
             </tr>
@@ -131,7 +131,11 @@
             <% @assessments.each do |assessment| %>
               <% participation = @participation_by_assessment[assessment.id] %>
               <% status = participation&.display_status || :not_submitted %>
-              <% status = :not_due if status == :not_submitted && !@due_points.due?(assessment.id) %>
+
+              <%# A hand-in before the deadline is not with a tutor yet: nobody can mark it. %>
+              <% status = :not_due if status.in?([:not_submitted, :pending_grading]) &&
+                                      !@due_points.due?(assessment.id) %>
+
               <% points = @points_by_assessment[assessment.id] %>
               <% max = assessment.effective_total_points %>
 
@@ -192,7 +196,7 @@
 
                 <td class="text-end">
                   <% if status == :not_submitted %>
-                    <%= form_with url: excuse_lecture_student_performance_record_path(
+                    <%= form_with url: exempt_lecture_student_performance_record_path(
                                          @lecture, @record),
                                   method: :patch, local: true,
                                   class: "d-inline-flex gap-1 justify-content-end" do |form| %>
@@ -203,7 +207,7 @@
                                                  aria: { label: t("student_performance.records.show.note_label",
                                                                   sheet: assessment.title) } %>
 
-                      <%= form.button t("student_performance.records.show.excuse"),
+                      <%= form.button t("student_performance.records.show.exempt"),
                                       class: "btn btn-outline-secondary btn-sm text-nowrap" %>
                     <% end %>
                   <% elsif status == :exempt %>
@@ -214,11 +218,11 @@
                         </span>
                       <% end %>
 
-                      <%= button_to t("student_performance.records.show.unexcuse"),
-                                    unexcuse_lecture_student_performance_record_path(
+                      <%= button_to t("student_performance.records.show.unexempt"),
+                                    unexempt_lecture_student_performance_record_path(
                                       @lecture, @record, assessment_id: assessment.id),
                                     method: :patch,
-                                    class: "btn btn-link btn-sm text-nowrap p-0" %>
+                                    class: "btn btn-outline-secondary btn-sm text-nowrap" %>
                     </div>
                   <% end %>
                 </td>

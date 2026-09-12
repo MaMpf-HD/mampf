@@ -475,7 +475,7 @@ en:
             grade_numeric:
               not_gradable: "cannot be set on a non-gradable assessment"
             status:
-              handed_in: "cannot be excused or absent: this sheet was handed in"
+              handed_in: "cannot be exempt or absent: this sheet was handed in"
             base:
               early_grading_not_allowed: "Grading is not permitted before the deadline"
         assessment/task_point:

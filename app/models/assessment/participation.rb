@@ -126,7 +126,7 @@ module Assessment
       end
 
       # submitted_at also records paper submissions, so absence cannot depend
-      # only on a Submission. Rejected submissions may still be excused with
+      # only on a Submission. Rejected submissions may still be exempted with
       # a certificate.
       def absence_only_without_hand_in
         return unless assessment&.assessable.is_a?(Assignment)

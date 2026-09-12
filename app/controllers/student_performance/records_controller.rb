@@ -8,8 +8,8 @@ module StudentPerformance
     # as 0 % — the filter is how staff find them, not a tutorial id.
     NO_TUTORIAL = "none".freeze
 
-    before_action :set_record, only: [:show, :excuse, :unexcuse]
-    before_action :set_sheet, only: [:excuse, :unexcuse]
+    before_action :set_record, only: [:show, :exempt, :unexempt]
+    before_action :set_sheet, only: [:exempt, :unexempt]
 
     rescue_from CanCan::AccessDenied do |exception|
       redirect_to main_app.root_url, alert: exception.message
@@ -42,7 +42,7 @@ module StudentPerformance
 
     # Exemptions require :edit on the lecture: :enter_points alone must not let
     # tutors change which assignments count towards a student's required points.
-    def excuse
+    def exempt
       participation = participation_for(@sheet)
       begin
         Assessment::AbsenceHandling.mark_exempt(participation, note: params[:note])
@@ -50,15 +50,15 @@ module StudentPerformance
         return redirect_to_record(alert: e.record.errors.full_messages.to_sentence)
       end
 
-      redirect_to_record(notice: I18n.t("student_performance.records.show.excused",
+      redirect_to_record(notice: I18n.t("student_performance.records.show.exempted",
                                         sheet: @sheet.title))
     end
 
-    def unexcuse
+    def unexempt
       participation = @sheet.assessment_participations.find_by(user_id: @record.user_id)
       participation.update!(status: :pending, note: nil) if participation&.exempt?
 
-      redirect_to_record(notice: I18n.t("student_performance.records.show.unexcused",
+      redirect_to_record(notice: I18n.t("student_performance.records.show.unexempted",
                                         sheet: @sheet.title))
     end
 
