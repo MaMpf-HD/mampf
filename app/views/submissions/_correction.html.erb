@@ -2,14 +2,16 @@
   <% if !@assignment&.active? %>
     <%= link_to edit_correction_path(submission),
                 class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                data: { turbo_stream: true, bs_toggle: "tooltip" },
-                title: t('buttons.upload') do %>
+                data: { turbo_stream: true },
+                title: t('assessment.grading_tutorial.upload_correction'),
+                aria: { label: t('assessment.grading_tutorial.upload_correction') } do %>
       <i class="bi bi-upload"></i>
     <% end %>
   <% else %>
     <button class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1"
             disabled
-            title="<%= t('buttons.upload') %>">
+            title="<%= t('assessment.grading_tutorial.upload_correction_closed') %>"
+            aria-label="<%= t('assessment.grading_tutorial.upload_correction_closed') %>">
       <i class="bi bi-upload"></i>
     </button>
   <% end %>
@@ -17,16 +19,18 @@
   <% if submission.correction %>
     <%= link_to show_correction_path(submission, params: { download: 'true' }),
                 class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                data: { bs_toggle: "tooltip", turbo: false },
-                title: t('buttons.download') do %>
+                data: { turbo: false },
+                title: t('assessment.grading_tutorial.download_correction'),
+                aria: { label: t('assessment.grading_tutorial.download_correction') } do %>
       <i class="bi bi-download"></i>
     <% end %>
 
     <% unless submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
       <%= link_to show_correction_path(submission),
                   class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                  data: { bs_toggle: "tooltip", turbo: false },
-                  title: t('buttons.show') do %>
+                  data: { turbo: false },
+                  title: t('assessment.grading_tutorial.show_correction'),
+                  aria: { label: t('assessment.grading_tutorial.show_correction') } do %>
         <i class="bi bi-eye"></i>
       <% end %>
     <% end %>
@@ -34,10 +38,10 @@
     <%= link_to delete_correction_path(submission),
                 class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
                 data: { turbo_method: :delete,
-                        turbo_confirm: t('confirmation.generic'),
-                        turbo_stream: true,
-                        bs_toggle: "tooltip" },
-                title: t('buttons.delete') do %>
+                        turbo_confirm: t('assessment.grading_tutorial.confirm_delete_correction'),
+                        turbo_stream: true },
+                title: t('assessment.grading_tutorial.delete_correction'),
+                aria: { label: t('assessment.grading_tutorial.delete_correction') } do %>
       <i class="bi bi-trash"></i>
     <% end %>
   <% end %>

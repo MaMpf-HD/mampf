@@ -2,16 +2,18 @@
   <% if submission.correction %>
     <%= link_to show_correction_path(submission, params: { download: 'true' }),
                 class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                data: { bs_toggle: "tooltip", turbo: false },
-                title: t('buttons.download') do %>
+                data: { turbo: false },
+                title: t('assessment.grading_tutorial.download_correction'),
+                aria: { label: t('assessment.grading_tutorial.download_correction') } do %>
       <i class="bi bi-download"></i>
     <% end %>
 
     <% unless submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
       <%= link_to show_correction_path(submission),
                   class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                  data: { bs_toggle: "tooltip", turbo: false },
-                  title: t('buttons.show') do %>
+                  data: { turbo: false },
+                  title: t('assessment.grading_tutorial.show_correction'),
+                  aria: { label: t('assessment.grading_tutorial.show_correction') } do %>
         <i class="bi bi-eye"></i>
       <% end %>
     <% end %>

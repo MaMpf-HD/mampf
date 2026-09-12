@@ -292,6 +292,21 @@ en:
       paper_hand_in_kept: 'Handed in on paper; with points entered the record stays'
       paper_hand_in_select: 'Select %{name} for a hand-in on paper'
       paper_hand_in_selected: 'Record selected as handed in on paper'
+      download_hand_in: 'Download hand-in'
+      show_hand_in: 'View hand-in'
+      download_correction: 'Download correction'
+      show_correction: 'View correction'
+      upload_correction: 'Upload correction'
+      upload_correction_closed: 'Corrections can be uploaded once the deadline has passed'
+      delete_correction: 'Delete correction'
+      confirm_delete_correction: 'Delete the correction? The file is gone then, the points stay.'
+      accept_late: 'Accept the late hand-in'
+      reject_late: 'Reject the late hand-in'
+      confirm_accept_late: 'Accept the late hand-in? It then counts like one handed in on time.'
+      confirm_reject_late: 'Reject the late hand-in? It then counts as not submitted.'
+      save_row: "Save this row's points"
+      reload_row: 'Reload the saved points; unsaved changes are lost'
+      points_input_label: '%{task} for %{name}'
       point_below_minimum: "Must be higher than %{min}"
       filter_name: 'Filter by name'
       header_overview:

@@ -39,23 +39,26 @@
         <% end %>
       </div>
 
-      <i
+      <button
+        type="button"
         class="
-          clipboardpopup bi bi-clipboard clickable
-          text-secondary clipboard-btn ms-3 clipboard-button
+          clipboardpopup btn btn-link p-0 ms-3 text-secondary
+          clipboard-btn clipboard-button
         "
         data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
-        data-bs-toggle="tooltip"
         data-id="<%= @submission.id %>"
         title="<%= t('buttons.copy_email_to_clipboard') %>"
+        aria-label="<%= t('buttons.copy_email_to_clipboard') %>"
       >
+        <i class="bi bi-clipboard"></i>
+
         <span
           class="clipboardpopuptext token-clipboard-popup"
           data-id="<%= @submission.id %>"
         >
           <%= t('basics.emails_copied_to_clipboard') %>
         </span>
-      </i>
+      </button>
     </div>
   </td>
 
@@ -129,16 +132,18 @@
     <div class="d-inline-flex align-items-center gap-1">
       <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
                 class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                data: { bs_toggle: "tooltip", turbo: false },
-                title: t('buttons.download') do %>
+                data: { turbo: false },
+                title: t('assessment.grading_tutorial.download_hand_in'),
+                aria: { label: t('assessment.grading_tutorial.download_hand_in') } do %>
         <i class="bi bi-download"></i>
       <% end %>
 
       <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
         <%= link_to show_submission_manuscript_path(@submission),
                   class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                  data: { bs_toggle: "tooltip", turbo: false },
-                  title: t('buttons.show') do %>
+                  data: { turbo: false },
+                  title: t('assessment.grading_tutorial.show_hand_in'),
+                  aria: { label: t('assessment.grading_tutorial.show_hand_in') } do %>
           <i class="bi bi-eye"></i>
         <% end %>
       <% end %>

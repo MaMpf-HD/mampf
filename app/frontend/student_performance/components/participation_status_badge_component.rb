@@ -7,7 +7,7 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
 
   STATUS_CONFIG = {
     reviewed: { icon: "bi-check-circle-fill", color: "success" },
-    pending_grading: { icon: "bi-hourglass-split", color: "warning" },
+    pending_grading: { icon: "bi-hourglass-split", color: "warning-emphasis" },
     not_due: { icon: "bi-dash", color: "muted" },
     not_submitted: { icon: "bi-x-circle-fill", color: "danger" },
     awaiting_record: { icon: "bi-hourglass", color: "muted" },
@@ -16,7 +16,7 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
   }.freeze
 
   COMPACT_SYMBOLS = {
-    pending_grading: { text: "\u2013", color: "warning" },
+    pending_grading: { text: "\u2013", color: "warning-emphasis" },
     not_due: { text: "\u2013", color: "muted" },
     not_submitted: { text: "\u2717", color: "muted" },
     awaiting_record: { text: "\u2026", color: "muted" },

@@ -18,7 +18,7 @@ RSpec.describe(
       render_inline(described_class.new(
                       status: :pending_grading, variant: :full
                     ))
-      expect(rendered_content).to include("text-warning")
+      expect(rendered_content).to include("text-warning-emphasis")
       expect(rendered_content).to include("bi-hourglass-split")
     end
 
@@ -65,7 +65,7 @@ RSpec.describe(
       render_inline(described_class.new(
                       status: :pending_grading, variant: :compact
                     ))
-      expect(rendered_content).to include("text-warning")
+      expect(rendered_content).to include("text-warning-emphasis")
       expect(rendered_content).to include("visually-hidden")
       expect(rendered_content).to include(
         I18n.t("student_performance.records.columns.pending_grading")

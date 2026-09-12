@@ -128,8 +128,15 @@ class ParticipationRowComponent < ViewComponent::Base
         action: "change->participation-row#onPointParticipationChanged input->participation-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
+      aria: { label: points_input_label(task) },
       disabled: !allow_grading || !grading_enabled? || !can_enter_points? || !points_enterable?
     )
+  end
+
+  def points_input_label(task)
+    t("assessment.grading_tutorial.points_input_label",
+      task: "#{t("assessment.grading_tutorial.task")} #{task.position}",
+      name: @user.tutorial_name)
   end
 
   def task_points_participation_cell(task, allow_grading)
@@ -138,16 +145,18 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
+  # Neutral until the row has something to save; the controller turns it
+  # green with the first edit.
   def save_row_button(allow_grading)
-    class_name = "btn btn-sm btn-success d-inline-flex align-items-center " \
+    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
                  "justify-content-center text-nowrap px-2 py-1 lh-1"
 
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip",
-                       participation_row_target: "save",
+               data: { participation_row_target: "save",
                        action: "click->participation-row#saveRow" },
-               title: helpers.t("buttons.save"),
+               title: helpers.t("assessment.grading_tutorial.save_row"),
+               aria: { label: helpers.t("assessment.grading_tutorial.save_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
       tag.i(class: "far fa-save")
     end
@@ -159,8 +168,9 @@ class ParticipationRowComponent < ViewComponent::Base
 
     tag.button(type: "button",
                class: class_name,
-               data: { bs_toggle: "tooltip", action: "click->participation-row#refreshRow" },
-               title: helpers.t("buttons.refresh"),
+               data: { action: "click->participation-row#refreshRow" },
+               title: helpers.t("assessment.grading_tutorial.reload_row"),
+               aria: { label: helpers.t("assessment.grading_tutorial.reload_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
       tag.i(class: "bi bi-arrow-clockwise")
     end
