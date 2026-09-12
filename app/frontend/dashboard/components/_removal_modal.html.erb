@@ -1,49 +1,70 @@
-<%# Shared by bookmark-removal and registration-notice-removal (see
-    RemovalModalController).
+<%#
+  Shared by bookmark-removal and registration-notice-removal (see
+  RemovalModalController).
 
-    Locals:
-      controller: the data-controller name, e.g. "bookmark-removal"
-      url: the update-url Stimulus value
-      lecture_id: the lecture-id Stimulus value
-      icon_title: title/aria-label of the corner "x" button
-      modal_title, modal_body: the modal's copy
-      buttons: [{ action:, css_class:, label: }, ...] rendered after Cancel;
-        `action` becomes data-#{controller}-#{action} on the button %>
-<div data-controller="<%= controller %>"
-     <%= tag.attributes(data: {
+  Locals:
+    controller: the data-controller name, e.g. "bookmark-removal"
+    url: the update-url Stimulus value
+    lecture_id: the lecture-id Stimulus value
+    icon_title: title/aria-label of the corner "x" button
+    modal_title, modal_body: the modal's copy
+    buttons: [{ action:, css_class:, label: }, ...] rendered after Cancel;
+      `action` becomes data-#{controller}-#{action} on the button
+%>
+
+<div
+  data-controller="<%= controller %>"
+  <%= tag.attributes(data: {
            "#{controller}-url-value": url,
            "#{controller}-lecture-id-value": lecture_id
-         }) %>>
-  <button type="button"
-          class="bi bi-x-lg dashboard-card__action"
-          data-action="<%= controller %>#open"
-          title="<%= icon_title %>"
-          aria-label="<%= icon_title %>"></button>
+         }) %>
+>
+  <button
+    type="button"
+    class="bi bi-x-lg dashboard-card__action"
+    data-action="<%= controller %>#open"
+    title="<%= icon_title %>"
+    aria-label="<%= icon_title %>"
+  ></button>
 
-  <div class="modal fade"
-       tabindex="-1"
-       aria-hidden="true"
-       <%= tag.attributes(data: { "#{controller}-target": "dialog" }) %>>
+  <div
+    class="modal fade"
+    tabindex="-1"
+    aria-hidden="true"
+    <%= tag.attributes(data: { "#{controller}-target": "dialog" }) %>
+  >
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title"><%= modal_title %></h5>
-          <button type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="<%= t('buttons.close') %>"></button>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="<%= t('buttons.close') %>"
+          ></button>
         </div>
+
         <div class="modal-body">
           <%= modal_body %>
         </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
             <%= t("buttons.cancel") %>
           </button>
+
           <% buttons.each do |button| %>
-            <button type="button"
-                    class="<%= button[:css_class] %>"
-                    <%= tag.attributes("data-#{controller}-#{button[:action]}": true) %>>
+            <button
+              type="button"
+              class="<%= button[:css_class] %>"
+              <%= tag.attributes("data-#{controller}-#{button[:action]}": true) %>
+            >
               <%= button[:label] %>
             </button>
           <% end %>
