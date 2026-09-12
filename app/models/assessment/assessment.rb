@@ -56,6 +56,13 @@ module Assessment
       parts.length > 1 ? parts.last.presence || title.truncate(5) : title.truncate(5)
     end
 
+    # What a row with nothing recorded reads as. A sheet that comes in on
+    # paper is with the tutor until they record it, so it is not "missing"
+    # the way an upload that never came is.
+    def status_without_hand_in
+      requires_submission ? :not_submitted : :awaiting_record
+    end
+
     # A preloaded association is summed in Ruby, because `sum(:max_points)` would
     # issue a query even then. The nil guard belongs to that path only: the task
     # form builds a blank task into a loaded association before saving it, and
@@ -105,6 +112,12 @@ module Assessment
       # rubocop:enable Rails/SkipsModelValidations
 
       recompute_all_performance_records if recompute
+    end
+
+    # Off the loaded association, sorted here rather than in SQL: every row of
+    # a pointing table asks the same assessment, and the tasks are read once.
+    def persisted_tasks
+      tasks.select(&:persisted?).sort_by(&:position)
     end
 
     private

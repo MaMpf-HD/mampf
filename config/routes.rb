@@ -316,13 +316,13 @@ Rails.application.routes.draw do
       to: "submissions#index",
       as: "lecture_submissions"
 
+  post "lectures/:id/submissions/seen_all",
+       to: "submissions#seen_all",
+       as: "lecture_sheets_seen"
+
   get "lectures/:id/tutorials",
       to: "tutorials#index",
       as: "lecture_tutorials"
-
-  get "lectures/:id/tutorial_overview",
-      to: "tutorials#overview",
-      as: "lecture_tutorial_overview"
 
   get "lectures/:id/subscribe",
       to: "lectures#subscribe_page",
@@ -366,6 +366,10 @@ Rails.application.routes.draw do
       resources :records, only: [:index, :show] do
         collection do
           post :recompute
+        end
+        member do
+          patch :exempt
+          patch :unexempt
         end
       end
 
@@ -812,6 +816,10 @@ Rails.application.routes.draw do
        to: "submissions#join",
        as: "join_submission"
 
+  post "submissions/seen",
+       to: "submissions#seen",
+       as: "sheet_seen"
+
   get "submissions/enter_code",
       to: "submissions#enter_code",
       as: "enter_submission_code"
@@ -867,6 +875,38 @@ Rails.application.routes.draw do
   patch "submissions/:id/reject",
         to: "submissions#reject",
         as: "reject_submission"
+
+  patch "participations/mark_as_participated",
+        to: "assessment/task_points#mark_as_participated",
+        as: "mark_user_as_participated"
+
+  patch "participations/mark_as_participated_multi",
+        to: "assessment/task_points#mark_as_participated_multi",
+        as: "mark_users_as_participated"
+
+  patch "participations/:participation_id/remove_participated",
+        to: "assessment/task_points#remove_participated",
+        as: "remove_participation"
+
+  patch "submissions/:submission_id/point_submission",
+        to: "assessment/task_points#update_team",
+        as: "point_submission_tutorial"
+
+  patch "participations/:participation_id/point_participation",
+        to: "assessment/task_points#update_participation",
+        as: "point_participation"
+
+  patch "submissions/point_multi_submissions",
+        to: "assessment/task_points#update_team_multi",
+        as: "point_multi_submissions_tutorial"
+
+  patch "submissions/:submission_id/refresh_point_submission",
+        to: "assessment/task_points#refresh_submission",
+        as: "refresh_point_submission_tutorial"
+
+  patch "participations/:participation_id/refresh_point_participation",
+        to: "assessment/task_points#refresh_participation",
+        as: "refresh_point_participation"
 
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",

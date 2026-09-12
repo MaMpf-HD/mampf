@@ -89,6 +89,63 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  # Excused or absent is said of somebody who handed nothing in; the rule
+  # holds for sheets, where a hand-in is a thing, and stays out of exams.
+  describe "excusing and absence" do
+    let(:assignment) { FactoryBot.create(:assignment, :with_lecture, :expired) }
+    let(:assessment) { assignment.assessment }
+    let(:member) { FactoryBot.create(:confirmed_user) }
+    let(:participation) do
+      FactoryBot.create(:assessment_participation, :pending,
+                        assessment: assessment, user: member)
+    end
+
+    it "excuses somebody who handed nothing in" do
+      expect(participation.update(status: :exempt)).to be(true)
+    end
+
+    it "refuses somebody on a team's hand-in" do
+      tutorial = FactoryBot.create(:tutorial, lecture: assignment.lecture)
+      FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                       tutorial: tutorial).users << member
+
+      expect(participation.update(status: :exempt)).to be(false)
+      expect(participation.errors[:status]).to be_present
+    end
+
+    it "excuses somebody whose late hand-in was refused" do
+      tutorial = FactoryBot.create(:tutorial, lecture: assignment.lecture)
+      FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                       tutorial: tutorial,
+                                                       accepted: false).users << member
+
+      expect(participation.update(status: :exempt)).to be(true)
+    end
+
+    it "refuses a sheet the tutor took on paper" do
+      participation.update!(submitted_at: 1.day.ago)
+
+      expect(participation.update(status: :absent, submitted_at: nil)).to be(false)
+    end
+
+    it "refuses a sheet that carries marks" do
+      task = FactoryBot.create(:assessment_task, assessment: assessment)
+      FactoryBot.create(:assessment_task_point, task: task, points: 3,
+                                                assessment_participation: participation)
+
+      expect(participation.reload.update(status: :exempt)).to be(false)
+    end
+
+    it "leaves an exam alone" do
+      exam = FactoryBot.create(:exam)
+      exam_participation = FactoryBot.create(:assessment_participation,
+                                             assessment: exam.assessment,
+                                             submitted_at: 1.day.ago)
+
+      expect(exam_participation.update(status: :absent, submitted_at: nil)).to be(true)
+    end
+  end
+
   describe "the grading lifecycle guard" do
     let(:grader) { FactoryBot.create(:confirmed_user) }
 
@@ -207,6 +264,136 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  context "when assignment is ready to be pointed" do
+    let!(:user) { FactoryBot.create(:confirmed_user) }
+    let!(:assignment) do
+      FactoryBot.create(:valid_assignment, deadline: 1.hour.from_now)
+    end
+    let!(:assessment) do
+      FactoryBot.create(:assessment, assessable: assignment, requires_points: true)
+    end
+    let!(:task1) { FactoryBot.create(:assessment_task, assessment: assessment) }
+    let!(:task2) { FactoryBot.create(:assessment_task, assessment: assessment) }
+    let!(:task3) { FactoryBot.create(:assessment_task, assessment: assessment) }
+    let!(:participation) do
+      FactoryBot.create(:assessment_participation,
+                        assessment: assessment, user: user,
+                        status: :pending,
+                        points_total: nil)
+    end
+
+    before do
+      Timecop.travel(2.hours.from_now)
+    end
+    after { Timecop.return }
+
+    context "when some tasks are scored and some are not" do
+      before do
+        FactoryBot.create(:assessment_task_point, :with_grader,
+                          assessment_participation: participation,
+                          task: task1,
+                          points: 5.0)
+        FactoryBot.create(:assessment_task_point, :with_grader,
+                          assessment_participation: participation,
+                          task: task2,
+                          points: nil)
+      end
+      describe "recompute_points_total!" do
+        it "updates points_total to the sum of task points" do
+          participation.recompute_points_total!
+          expect(participation.points_total).to eq(5)
+        end
+      end
+      describe "update_status_if_all_scored!" do
+        it "if current status is pending, still keeps the status as pending" do
+          participation.update_status_if_all_scored!
+          expect(participation.status).to eq("pending")
+        end
+        it "if current status is reviewed, changes the status to pending" do
+          participation.update!(status: :reviewed)
+          participation.update_status_if_all_scored!
+          expect(participation.status).to eq("pending")
+        end
+        # A sheet with marks cannot be excused or absent any more; the guard
+        # is still what an exam relies on, so the state is written past the
+        # rule.
+        it "if current status is absent, keeps the status as absent" do
+          participation.status = :absent
+          participation.save(validate: false)
+          participation.update_status_if_all_scored!
+          expect(participation.status).to eq("absent")
+        end
+        it "if current status is exempt, keeps the status as exempt" do
+          participation.status = :exempt
+          participation.save(validate: false)
+          participation.update_status_if_all_scored!
+          expect(participation.status).to eq("exempt")
+        end
+        it "if there are no tasks, keeps the status as pending" do
+          assignment_empty =
+            FactoryBot.create(:valid_assignment, deadline: 1.hour.from_now)
+          assessment_empty =
+            FactoryBot.create(:assessment, assessable: assignment_empty, requires_points: true)
+          participation_empty =
+            FactoryBot.create(:assessment_participation,
+                              assessment: assessment_empty, user: user,
+                              status: :pending,
+                              points_total: nil)
+          participation_empty.update_status_if_all_scored!
+          expect(participation_empty.status).to eq("pending")
+        end
+      end
+    end
+
+    context "when all tasks are scored" do
+      before do
+        FactoryBot.create(:assessment_task_point, :with_grader,
+                          assessment_participation: participation,
+                          task: task1,
+                          points: 5.0)
+        FactoryBot.create(:assessment_task_point, :with_grader,
+                          assessment_participation: participation,
+                          task: task2,
+                          points: 3.0)
+        FactoryBot.create(:assessment_task_point, :with_grader,
+                          assessment_participation: participation,
+                          task: task3,
+                          points: 10.0)
+      end
+      describe "recompute_points_total!" do
+        it "updates points_total to the sum of task points" do
+          participation.recompute_points_total!
+          expect(participation.points_total).to eq(18)
+        end
+      end
+      describe "update_status_if_all_scored!" do
+        it "changes the status to reviewed" do
+          participation.update_status_if_all_scored!
+          expect(participation.status).to eq("reviewed")
+        end
+        it "keeps the status as reviewed if already reviewed" do
+          participation.update!(status: :reviewed)
+          participation.update_status_if_all_scored!
+          expect(participation.status).to eq("reviewed")
+        end
+        # A sheet with marks cannot be excused or absent any more; the guard
+        # is still what an exam relies on, so the state is written past the
+        # rule.
+        it "if current status is absent, keeps the status as absent" do
+          participation.status = :absent
+          participation.save(validate: false)
+          participation.update_status_if_all_scored!
+          expect(participation.status).to eq("absent")
+        end
+        it "if current status is exempt, keeps the status as exempt" do
+          participation.status = :exempt
+          participation.save(validate: false)
+          participation.update_status_if_all_scored!
+          expect(participation.status).to eq("exempt")
+        end
+      end
+    end
+  end
   describe "achievement recomputation trigger" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:user) { FactoryBot.create(:confirmed_user) }
@@ -284,8 +471,15 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
 
     it "is :not_submitted while pending with no submission" do
-      expect(display_status_for(status: :pending, submitted_at: nil))
+      assessment = FactoryBot.create(:assessment, requires_submission: true)
+      expect(display_status_for(assessment: assessment, status: :pending, submitted_at: nil))
         .to eq(:not_submitted)
+    end
+
+    it "is :awaiting_record while pending on a sheet collected on paper" do
+      assessment = FactoryBot.create(:assessment, requires_submission: false)
+      expect(display_status_for(assessment: assessment, status: :pending, submitted_at: nil))
+        .to eq(:awaiting_record)
     end
 
     it "is :pending_grading while pending with a submission" do

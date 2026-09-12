@@ -1,0 +1,85 @@
+<%= helpers.turbo_frame_tag "pointing-table" do %>
+  <% if rows? %>
+    <div data-controller="pointing-table status-filter paper-selection">
+      <div class="m-3">
+        <%= render toolbar %>
+      </div>
+
+      <div
+        class="table-wrapper"
+        style="<%= layout.css_vars %>"
+        data-controller="table-fade"
+      >
+        <div class="table-overflow" data-table-fade-target="inner">
+          <table
+            class="table align-middle my-3"
+            data-cy="tutorial-submissions-table"
+          >
+            <thead>
+              <%= render(PointingTableHeaderComponent.new(
+                assignment: @assignment,
+                grading_scope: @grading_scope,
+                layout: layout
+              )) %>
+            </thead>
+
+            <tbody>
+              <% if @mode == "tutor" %>
+                <% @stack.each do |submission| %>
+                  <%= render(SubmissionRowComponent.new(
+                      submission: submission,
+                      assignment: @assignment,
+                      grading_scope: @tutorial,
+                      participations: team_participations(submission))) %>
+                <% end %>
+                <% if grading_enabled? %>
+                  <% @non_submitters.each do |user| %>
+                    <%= render(ParticipationRowComponent.new(
+                        participation: participation_for(user, @tutorial),
+                        assessment: @assignment.assessment,
+                        grading_scope: @tutorial)) %>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <% @tutorials.each do |tutorial| %>
+                  <% (@submissions_by_tutorial[tutorial] || []).each do |submission| %>
+                    <%= render(SubmissionRowComponent.new(
+                        submission: submission,
+                        assignment: @assignment,
+                        grading_scope: @lecture,
+                        participations: team_participations(submission))) %>
+                  <% end %>
+
+                  <% if grading_enabled? %>
+                    <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
+                      <%= render(ParticipationRowComponent.new(
+                          participation: participation_for(user, tutorial),
+                          assessment: @assignment.assessment,
+                          grading_scope: @lecture)) %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+                <% if grading_enabled? %>
+                  <% @non_tutorial_participants.each do |user| %>
+                    <%= render(ParticipationRowComponent.new(
+                        participation: participation_for(user, nil),
+                        assessment: @assignment.assessment,
+                        grading_scope: @lecture)) %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="text-muted m-3" hidden data-status-filter-target="empty">
+        <%= t("assessment.grading_tutorial.filter_no_match") %>
+      </p>
+    </div>
+  <% else %>
+    <div class="jumbotron mt-3">
+      <%= t('assessment.grading_tutorial.no_submissions') %>
+    </div>
+  <% end %>
+<% end %>

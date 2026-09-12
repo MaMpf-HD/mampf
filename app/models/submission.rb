@@ -21,7 +21,18 @@ class Submission < ApplicationRecord
 
   validate :matching_lecture, if: :tutorial
 
+  before_save :set_corrected_at, if: :correction_data_changed?
   before_create :set_token
+
+  delegate :assessment, to: :assignment
+
+  def participations
+    return nil unless assignment.assessable?
+
+    found = Assessment::Participation.where(assessment: assignment.assessment, user: users)
+                                     .index_by(&:user_id)
+    users.map { |user| found[user.id] }
+  end
 
   def partners_of_user(user)
     return unless user.in?(users)
@@ -96,6 +107,10 @@ class Submission < ApplicationRecord
     return false if assignment.active?
 
     assignment.totally_expired? || correction.present? || accepted == false
+  end
+
+  def valid_for_pointing?
+    in_time? || accepted == true
   end
 
   # def file_path(downloadable)
@@ -280,38 +295,6 @@ class Submission < ApplicationRecord
     report
   end
 
-  def self.number_of_submissions(tutorial, assignment)
-    Submission.where(tutorial: tutorial, assignment: assignment)
-              .where.not(manuscript_data: nil).size
-  end
-
-  def self.number_of_corrections(tutorial, assignment)
-    Submission.where(tutorial: tutorial, assignment: assignment)
-              .where.not(correction_data: nil).size
-  end
-
-  def self.number_of_late_submissions(tutorial, assignment)
-    Submission.where(tutorial: tutorial, assignment: assignment)
-              .where.not(manuscript_data: nil)
-              .count(&:too_late?)
-  end
-
-  def self.submissions_total(assignment)
-    Submission.where(assignment: assignment)
-              .where.not(manuscript_data: nil).size
-  end
-
-  def self.corrections_total(assignment)
-    Submission.where(assignment: assignment)
-              .where.not(correction_data: nil).size
-  end
-
-  def self.late_submissions_total(assignment)
-    Submission.where(assignment: assignment)
-              .where.not(manuscript_data: nil)
-              .count(&:too_late?)
-  end
-
   private
 
     def matching_lecture
@@ -322,5 +305,9 @@ class Submission < ApplicationRecord
 
     def set_token
       self.token = Submission.generate_token
+    end
+
+    def set_corrected_at
+      self.corrected_at = correction.present? ? Time.current : nil
     end
 end

@@ -12,5 +12,15 @@ class AssessmentAbility
       lecture = assessment.assessable&.lecture
       lecture.present? && user.can_edit?(lecture)
     end
+
+    can :enter_points, Tutorial do |tutorial|
+      user.admin? ||
+        user.can_enter_points_in?(tutorial)
+    end
+
+    can :enter_points, Lecture do |lecture|
+      user.admin? ||
+        user.can_enter_points_in?(lecture)
+    end
   end
 end

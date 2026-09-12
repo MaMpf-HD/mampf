@@ -122,6 +122,9 @@ window.Stimulus.register("uppy-upload", UppyUploadController);
 import SubmissionUploadController from "~/controllers/submission_upload.controller.js";
 window.Stimulus.register("submission-upload", SubmissionUploadController);
 
+import SheetNewsController from "~/submissions/components/sheet_news.controller.js";
+window.Stimulus.register("sheet-news", SheetNewsController);
+
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);
 
@@ -164,6 +167,20 @@ window.Stimulus.register("threshold-mode", ThresholdModeController);
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
 
+import ParticipationRowController from "~/assessment/participation_row.controller.js";
+window.Stimulus.register("participation-row", ParticipationRowController);
+
+import PointingTableController from "~/assessment/pointing_table.controller.js";
+window.Stimulus.register("pointing-table", PointingTableController);
+
+import TableFadeController from "~/tutorials/table_fade.controller.js";
+window.Stimulus.register("table-fade", TableFadeController);
+
+import StatusFilterController from "~/tutorials/status_filter.controller.js";
+window.Stimulus.register("status-filter", StatusFilterController);
+
+import PaperSelectionController from "~/tutorials/paper_selection.controller.js";
+window.Stimulus.register("paper-selection", PaperSelectionController);
 import ExamFormController from "~/exams/form.controller.js";
 window.Stimulus.register("exams--form", ExamFormController);
 

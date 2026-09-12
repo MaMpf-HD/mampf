@@ -1,0 +1,153 @@
+<tr
+  id="<%= row_id %>"
+  is="turbo-frame"
+  data-id="<%= @participation.id %>"
+  data-controller="participation-row"
+  data-row-id="<%= @participation.id %>"
+  data-row-target-type="participation"
+  data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
+  data-pointing-table-target="row"
+  data-status-filter-target="row"
+  data-status-filter-status="<%= status %>"
+  data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
+  data-status-filter-name="<%= @user.tutorial_name %>"
+>
+  <td class="<%= layout.column_class(:team) %>">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <%= @user.tutorial_name %>
+
+        <% movement = movement_info_for_user(@user) %>
+
+        <% if movement %>
+          <i
+            class="bi bi-info-circle me-2 ps-1"
+            title="<%= movement %>"
+            data-bs-toggle="tooltip"
+          ></i>
+        <% end %>
+      </div>
+
+      <button
+        type="button"
+        class="
+          clipboardpopup btn btn-link p-0 ms-3 text-secondary
+          clipboard-btn clipboard-button
+        "
+        data-clipboard-text="<%= @user.email %>"
+        title="<%= t('buttons.copy_email_to_clipboard') %>"
+        aria-label="<%= t('buttons.copy_email_to_clipboard') %>"
+      >
+        <i class="bi bi-clipboard"></i>
+
+        <span class="clipboardpopuptext token-clipboard-popup">
+          <%= t('basics.emails_copied_to_clipboard') %>
+        </span>
+      </button>
+    </div>
+  </td>
+
+  <% if @mode == "teacher" %>
+    <td class="text-center <%= layout.column_class(:tutorial) %>">
+      <span>
+        <%= @participation.tutorial&.title || t("assessment.grading_tutorial.no_tutorial_badge") %>
+      </span>
+    </td>
+  <% end %>
+
+  <% if grading_enabled? %>
+    <td class="text-center <%= layout.column_class(:status) %>">
+      <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
+
+      <% if locked_reason %>
+        <div class="small text-muted"><%= locked_reason %></div>
+      <% end %>
+    </td>
+    <% tasks.each do |task| %>
+      <%= task_points_participation_cell(task, allow_grading?) %>
+    <% end %>
+    <td class="text-center <%= layout.column_class(:total) %>">
+      <span data-participation-row-target="totalPoints">0</span>
+    </td>
+    <td class="text-center <%= layout.column_class(:save) %>">
+      <% if can_enter_points? && points_enterable? %>
+        <div class="d-inline-flex align-items-center gap-1">
+          <%= form_with url: save_url,
+                      method: :patch,
+                      data: { turbo: true, participation_row_target: "form" },
+                      html: { style: "display:none;" } do %>
+            <input
+              type="hidden"
+              name="task_points"
+              data-participation-row-target="payload"
+            >
+          <% end %>
+
+          <%= save_row_button(allow_grading?) %>
+
+          <%= form_with url: refresh_url,
+                      method: :patch,
+                      data: { turbo: true, participation_row_target: "refreshForm" },
+                      html: { style: "display:none;" } do %>
+            <input
+              type="hidden"
+              name="task_points"
+              data-participation-row-target="payload"
+            >
+          <% end %>
+
+          <%= refresh_row_button(allow_grading?) %>
+        </div>
+      <% end %>
+    </td>
+  <% end %>
+
+  <td class="text-center <%= layout.column_class(:hand_in) %>">
+    <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
+      <% if paper_hand_in? && !paper_hand_in_removable? %>
+        <button
+          class="
+            btn btn-sm btn-outline-secondary d-inline-flex
+            align-items-center justify-content-center px-2 py-1 lh-1
+          "
+          disabled
+          title="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
+          aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
+        >
+          <i class="bi bi-file-earmark-check-fill"></i>
+        </button>
+      <% elsif paper_hand_in? %>
+        <%= link_to paper_hand_in_removal_url,
+                    class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                    data: { turbo_method: :patch },
+                    title: t("assessment.grading_tutorial.paper_hand_in_remove"),
+                    aria: { label: t("assessment.grading_tutorial.paper_hand_in_remove") } do %>
+          <i class="bi bi-file-earmark-check-fill"></i>
+        <% end %>
+      <% else %>
+        <div class="d-inline-flex align-items-center gap-2">
+          <input
+            type="checkbox"
+            class="form-check-input m-0"
+            form="paper-hand-ins"
+            name="user_ids[]"
+            value="<%= @user.id %>"
+            aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_select", name: @user.tutorial_name) %>"
+            data-paper-selection-target="checkbox"
+            data-action="paper-selection#sync"
+          >
+
+          <%= link_to paper_hand_in_url,
+                      class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                      data: { turbo_method: :patch },
+                      title: t("assessment.grading_tutorial.paper_hand_in"),
+                      aria: { label: t("assessment.grading_tutorial.paper_hand_in") } do %>
+            <i class="bi bi-file-earmark"></i>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </td>
+
+  <td class="<%= layout.column_class(:correction) %>"></td>
+</tr>

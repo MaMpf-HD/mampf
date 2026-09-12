@@ -6,13 +6,15 @@ class SubmissionsController < ApplicationController
              with: -> { redirect_to :start, alert: I18n.t("submission.too_many_attempts") }
 
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
-                                          :redeem_code, :join, :cancel_new]
-  before_action :set_assignment, only: [:new, :enter_code, :cancel_new, :join]
+                                          :redeem_code, :join, :cancel_new,
+                                          :seen, :seen_all]
+  before_action :set_assignment, only: [:new, :enter_code, :cancel_new, :join,
+                                        :seen]
   before_action :authorize_sheet, only: [:new, :enter_code, :cancel_new,
-                                         :cancel_edit, :join]
-  before_action :set_lecture, only: :index
+                                         :cancel_edit, :join, :seen]
+  before_action :set_lecture, only: [:index, :seen_all]
   before_action :prevent_caching, only: :show_manuscript
-  before_action :check_student_status, only: :index
+  before_action :check_student_status, only: [:index, :seen_all]
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
   authorize_resource
@@ -29,13 +31,27 @@ class SubmissionsController < ApplicationController
   # NOTE: authorization for #index is done manually via before_actions
   # SubmissionAbility lets anyone pass
   def index
-    # Everything still open has a card above the list, so the list is what is
-    # behind you - a sheet in both places would be told twice, and a row cannot
-    # be handed in.
-    @history = hub.sheets - hub.open_sheets
+    @history = history
 
     render template: "submissions/index/index",
            layout: turbo_frame_request? ? "turbo_frame" : "application"
+  end
+
+  def seen
+    AssignmentSighting.stamp!(user: current_user, assignment: @assignment)
+
+    render turbo_stream: [*clear_marker(@assignment), replace_news(history)]
+  end
+
+  # Same gate as #index, by the same before_actions.
+  def seen_all
+    assignments = history.select(&:news?).map(&:assignment)
+    assignments.each do |assignment|
+      AssignmentSighting.stamp!(user: current_user, assignment: assignment)
+    end
+
+    render turbo_stream: [*assignments.flat_map { |assignment| clear_marker(assignment) },
+                          replace_news([])]
   end
 
   # `new` and `edit` are the same frame with the same form in it; only the
@@ -221,39 +237,58 @@ class SubmissionsController < ApplicationController
   end
 
   def edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_edit_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def cancel_edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def add_correction
-    if correction_params[:correction].present?
-      @submission.correction = correction_params[:correction]
-      @errors = @submission.check_file_properties_any(@submission.correction
-                                                             .metadata,
-                                                      :correction)
-      return if @errors.present?
+    @submission.assign_attributes(correction_params)
+    @errors = @submission.check_file_properties_any(
+      @submission.correction&.metadata,
+      :correction
+    )
 
-      @submission.save
-      @errors = @submission.errors
-      return unless @submission.valid?
+    if @errors.present?
+      return render partial: "submissions/correction_wrap",
+                    locals: { submission: @submission }
     end
-    @submission.update(correction_params)
-    @errors = @submission.errors
-    return if @errors.present?
 
-    send_correction_upload_email(@submission.users)
+    send_correction_upload_email(@submission.users) if @submission.save
+
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def delete_correction
     @submission.update(correction: nil)
-    render :add_correction
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def accept
     @submission.update(accepted: true)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
     restore_submitted_at(@submission.users)
     send_acceptance_email(@submission.users)
+    rerender_submission_row
   end
 
   # A refused hand-in waits for nothing any more, and the gradebook has to know
@@ -265,11 +300,32 @@ class SubmissionsController < ApplicationController
   # another branch.
   def reject
     @submission.update(accepted: false)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
     clear_submitted_at(@submission.users)
     send_rejection_email(@submission.users)
+    rerender_submission_row
   end
 
   private
+
+    def rerender_submission_row
+      grading_scope = params[:grading_scope_type] == "tutorial" ? @tutorial : @tutorial.lecture
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "submission-row-#{@submission.id}",
+            html: render_to_string(
+              SubmissionRowComponent.new(
+                submission: @submission,
+                assignment: @assignment,
+                grading_scope: grading_scope
+              )
+            )
+          )
+        end
+      end
+    end
 
     # Everything a student does changes one sheet and nothing else - the history
     # list holds only sheets that are closed - so every action answers by
@@ -329,6 +385,22 @@ class SubmissionsController < ApplicationController
     def hub
       @hub ||= Assessment::SubmissionsHub::Loader.new(lecture: @lecture,
                                                       user: current_user).call
+    end
+
+    # Open sheets already have submission forms in the hub.open_sheets cards;
+    # including them in history would show each assignment twice.
+    def history
+      hub.sheets - hub.open_sheets
+    end
+
+    def clear_marker(assignment)
+      [turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :news)),
+       turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :seen))]
+    end
+
+    def replace_news(sheets)
+      turbo_stream.replace("sheet-news",
+                           SheetNewsComponent.new(sheets: sheets, lecture: @lecture))
     end
 
     def set_submission
@@ -583,6 +655,8 @@ class SubmissionsController < ApplicationController
                   alert: I18n.t("controllers.no_student_status_in_lecture")
     end
 
+    # DuePoints and SubmissionsHub read submitted_at on each request, so
+    # clearing it does not require recomputing StudentPerformance::Record.
     def clear_submitted_at(users)
       assessment = @submission&.assignment&.assessment
       return unless assessment
@@ -590,7 +664,6 @@ class SubmissionsController < ApplicationController
       assessment.assessment_participations
                 .where(user_id: users.map(&:id))
                 .update_all(submitted_at: nil, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
-      recompute_performance_records(assessment.lecture, users)
     end
 
     # The other way round: a hand-in that was refused and then accepted after
@@ -606,20 +679,6 @@ class SubmissionsController < ApplicationController
                 .where(user_id: users.map(&:id), submitted_at: nil)
                 .where.not(status: [:absent, :exempt])
                 .update_all(submitted_at: handed_in_at, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
-      recompute_performance_records(assessment.lecture, users)
-    end
-
-    # `update_all` is what keeps the two above to one statement each, and it is
-    # also what skips the callback behind them. Everything downstream reads the
-    # materialized record - the student's own standing block, the performance
-    # table, the admission rule - so it has to be put back in step by hand.
-    # Without it the reader takes a file back and is still told its points are
-    # being marked.
-    def recompute_performance_records(lecture, users)
-      return unless lecture
-
-      service = StudentPerformance::ComputationService.new(lecture: lecture)
-      users.each { |user| service.compute_and_upsert_record_for(user) }
     end
 
     def sync_assessment_participations(users: nil)

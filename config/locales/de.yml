@@ -89,7 +89,6 @@ de:
       singular: 'Quiz-Erläuterung'
       plural: 'Quiz-Erläuterungen'
       short: 'Erl'
-    muesli: 'MÜSLI'
     board: 'Forum'
     comments: 'Kommentare'
     organizational_html: 'Organisa&shy;torisches'
@@ -679,9 +678,6 @@ de:
         organizational_on_top: >
           Wenn Du diesen Haken setzt, wird die Seite "Organisatorisches"
           als Startseite für diese Veranstaltung erscheinen.
-        muesli: >
-          Wenn Du diesen Haken setzt, wird in der
-          Sidebar für diese Veranstaltung der Link zu MUESLI aktiviert.
         vignettes: >
           Wenn Du diesen Haken setzt, erscheinen die Vignetten dieser
           Veranstaltung in der Sidebar für alle, die ihre Inhalte sehen.
@@ -829,7 +825,6 @@ de:
       imported_media: 'Importierte Medien'
       organizational_visible: 'Organisatorisches sichtbar'
       organizational_on_top: 'Organisatorisches als Startseite'
-      uses_muesli: 'Veranstaltung verwendet MÜSLI'
       uses_vignettes: 'Veranstaltung verwendet Vignetten'
       first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
@@ -2350,13 +2345,6 @@ de:
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
-    create_tutorials: Übungsgruppen anlegen
-    no_tutorials_yet: >
-      Für diese Veranstaltung wurden noch keine Tutorien angelegt.
-    tutorials: >
-      Für diese Veranstaltung gibt es die folgenden Tutorien:
-    no_submissions_yet: >
-      Es waren bisher noch keine Hausaufgaben abzugeben.
   sure: 'Bist Du sicher?'
   details: 'Details'
   none: 'keine'
@@ -3147,6 +3135,17 @@ de:
       column_status: Status
       column_points: Deine Punkte
       old_style: Blatt alter Art
+      news:
+        lead: "Neu seit Deinem letzten Blick:"
+        marker: Neu seit Deinem letzten Blick.
+        prefix: "Neu —"
+        correction_html: "%{sheet} (Korrektur)"
+        points_html: "%{sheet} (Punkte)"
+        both_html: "%{sheet} (Korrektur und Punkte)"
+        more:
+          one: "und %{count} weiteres"
+          other: "und %{count} weitere"
+        seen_all: alle als gesehen markieren
       fold:
         handed_in_label: Abgabe
         not_uploaded_yet: noch nicht hochgeladen
@@ -3193,6 +3192,7 @@ de:
         grace_period: "noch %{time}"
         tutor_decides: Dein Tutor entscheidet
         awaiting_marks: Wartet auf Korrektur
+        awaiting_record: Noch nicht erfasst
         correction_uploaded: Korrektur da
         exempt: Entschuldigt
       notes:
@@ -3201,6 +3201,7 @@ de:
         rejected: verspätet abgegeben, Dein Tutor hat es nicht gelten lassen
         partially_marked: noch nicht alle Aufgaben korrigiert
         missed: bis zur Frist kam nichts an
+        awaiting_record: Abgabe auf Papier - Dein Tutor trägt ein, was ankam
         absent: als abwesend vermerkt
         exempt: wird bei Dir nicht gewertet
         not_recorded: >
@@ -3311,7 +3312,6 @@ de:
     already_rejected: >
       Diese Abgabe wurde abgelehnt, Du kannst ihr nicht mehr beitreten.
     late: verspätete Abgabe
-    late_submissions: verspätetete Abgaben
     rejected: abgelehnt
     bulk_download_submissions: Paketdownload der Abgaben
     bulk_download_corrections: Paketdownload der Korrekturen
@@ -3336,6 +3336,10 @@ de:
   tutorial:
     no_submissions_for_assignment: >
       Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.
+    no_submissions: >
+      Keine Abgaben eingereicht
+    no_submission: >
+      Keine Abgabe
     destruction_info:
       <i>
       Hinweis.
@@ -3348,8 +3352,7 @@ de:
       Eigene Tutorien
     other_tutorials: 'Sonstige Tutorien'
     deadline_warning: >
-      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Abgabefrist
-      können Korrekturen hochgeladen werden.
+      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Frist kann der Bewertungsprozess erfolgen und die Korrekturen können von den Tutoren hochgeladen werden.
     grace_period_warning: >
       Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
@@ -3917,6 +3920,7 @@ de:
     create_cohort: 'Gruppe erstellen'
     edit_cohort: 'Gruppe bearbeiten'
     save: 'Speichern'
+    refresh: 'Aktualisieren'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
     save_changes: "Änderungen speichern"

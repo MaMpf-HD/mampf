@@ -4,8 +4,10 @@ import { LecturePage } from "./page-objects/lecture_page";
 test("can access tutorial submission page (only as tutor)",
   async ({ factory,
     student: { page: studentPage },
+    teacher: { page: teacherPage, user: teacherUser },
     tutor: { page: tutorPage, user: tutorUser } }) => {
-    const lecture = await factory.create("lecture", ["released_for_all", "with_sparse_toc"]);
+    const lecture = await factory.create("lecture", ["released_for_all", "with_sparse_toc"],
+      { teacher_id: teacherUser.id });
     await factory.create("assignment", [], { lecture_id: lecture.id });
     await factory.create("tutorial", ["with_tutor_by_id"],
       { lecture_id: lecture.id, tutor_id: tutorUser.id });
@@ -17,6 +19,11 @@ test("can access tutorial submission page (only as tutor)",
         name: "Tutorials",
       });
     await expect(studentTutorialsLink).toHaveCount(0);
+
+    await teacherPage.goto(`/lectures/${lecture.id}`);
+    const teacherSidebar = teacherPage.locator('[data-controller="lecture-sidebar"]');
+    await expect(teacherSidebar.getByRole("link", { name: "Tutorials" })).toHaveCount(0);
+    await expect(teacherSidebar.getByRole("link", { name: "Submissions" })).toHaveCount(0);
 
     // tutor should see tutorials link
     await new LecturePage(tutorPage, lecture.id).subscribe();

@@ -308,6 +308,65 @@ details[open] .chev {
   color: #98a2ab;
 }
 
+/* Something arrived since the reader last opened the row. The dot sits in the
+   row's left margin so it never stands next to a badge and the names keep
+   their line, and it goes when the row is opened. The blue is the page's own,
+   so it cannot be read as one of the three status colours. */
+.new-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #4977a8;
+}
+
+.sheet-name {
+  position: relative;
+}
+
+.news-marker {
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  line-height: 0;
+}
+
+details[open] > summary .news-marker {
+  visibility: hidden;
+}
+
+/* The news belongs to the list, not to the standing: it is an event, the
+   standing is a state, and a pointer belongs beside what it points at. Its dot
+   sits in the same gutter as the row markers, so the eye joins them. */
+.news-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: var(--hub-aside);
+  padding: 0.5rem 0.75rem 0.5rem 1.25rem;
+  background: #f5f7f9;
+  border-radius: 0.4rem;
+  margin-bottom: 0.75rem;
+
+  .new-dot {
+    margin-left: -1rem;
+    margin-right: 0.5rem;
+    vertical-align: 0.1em;
+  }
+}
+
+.seen-all {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: var(--hub-rubric);
+  color: #4977a8;
+  text-decoration: underline;
+}
+
 /* Badges only where no number can stand. Three colours, never green. */
 /* A pill with a ground of its own; a weight on top would say the same thing
    twice. */
@@ -384,6 +443,12 @@ details[open] .chev {
 
   .sheet-row.sheet-head {
     display: none;
+  }
+
+  /* The row's padding is too narrow for a gutter, so the dot hangs just past
+     the row's edge. */
+  .news-marker {
+    left: -0.9rem;
   }
 
   .fold-grid {

@@ -690,6 +690,41 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         )
       end
 
+      it "says a sheet collected on paper is not recorded yet and offers the exemption" do
+        assignment = FactoryBot.create(:assignment, :expired, lecture: lecture,
+                                                              requires_submission: false)
+        FactoryBot.create(:assessment_task,
+                          assessment: assignment.assessment, max_points: 16)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body).to include(
+          I18n.t("student_performance.records.columns.awaiting_record")
+        )
+        expect(response.body).not_to include(
+          I18n.t("student_performance.records.columns.not_submitted")
+        )
+        expect(response.body).to include(I18n.t("student_performance.records.show.exempt"))
+      end
+
+      # Nobody can mark a sheet before its deadline, so a file handed in early
+      # is not waiting on anyone.
+      it "says an early hand-in is not due rather than waiting to be marked" do
+        assignment = FactoryBot.create(:assignment, lecture: lecture,
+                                                    deadline: 3.days.from_now)
+        FactoryBot.create(:assessment_participation, :submitted,
+                          assessment: assignment.assessment, user: record.user)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body).to include(
+          I18n.t("student_performance.records.columns.not_due")
+        )
+        expect(response.body).not_to include(
+          I18n.t("student_performance.records.columns.pending_grading")
+        )
+      end
+
       it "scopes record to the lecture" do
         other_lecture = FactoryBot.create(:lecture)
         other_record = FactoryBot.create(:student_performance_record,
@@ -756,6 +791,133 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       it "redirects to root (unauthorized)" do
         get lecture_student_performance_record_path(lecture, record)
         expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  # A certificate is decided per person, here: an exempt sheet leaves the
+  # reckoning for this student, and the note stays with the decision.
+  describe "PATCH /lectures/:lecture_id/performance/records/:id/exempt" do
+    let(:member) { FactoryBot.create(:confirmed_user) }
+    # Joining the roster computes the record; the page is reached through it.
+    let!(:record) do
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+      lecture.student_performance_records.find_by!(user: member)
+    end
+    let(:assignment) do
+      FactoryBot.create(:assignment, :expired, lecture: lecture, title: "Sheet 3")
+    end
+    let(:assessment) { assignment.assessment }
+
+    def exempt(sheet = assessment, note: nil)
+      patch(exempt_lecture_student_performance_record_path(lecture, record),
+            params: { assessment_id: sheet.id, note: note })
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "exempts a sheet nothing was handed in for, with the note" do
+        FactoryBot.create(:assessment_participation, :pending,
+                          assessment: assessment, user: member)
+
+        exempt(note: "Certificate until May 17")
+
+        expect(response).to redirect_to(
+          lecture_student_performance_record_path(lecture, record)
+        )
+        participation = assessment.assessment_participations.find_by(user: member)
+        expect(participation).to be_exempt
+        expect(participation.note).to eq("Certificate until May 17")
+        expect(flash[:notice]).to eq(
+          I18n.t("student_performance.records.show.exempted", sheet: "Sheet 3")
+        )
+      end
+
+      it "makes the row the backfill has not made yet" do
+        exempt
+
+        participation = assessment.assessment_participations.find_by(user: member)
+        expect(participation).to be_exempt
+      end
+
+      it "takes the sheet out of the student's maximum" do
+        FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+        StudentPerformance::ComputationService.new(lecture: lecture)
+                                              .compute_and_upsert_record_for(member)
+        expect(record.reload.points_max_materialized).to eq(10)
+
+        exempt
+
+        expect(record.reload.points_max_materialized).to eq(0)
+      end
+
+      it "refuses a sheet the student handed in with a team" do
+        tutorial = FactoryBot.create(:tutorial, lecture: lecture)
+        FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                         tutorial: tutorial).users << member
+
+        exempt
+
+        expect(response).to redirect_to(
+          lecture_student_performance_record_path(lecture, record)
+        )
+        expect(flash[:alert]).to include(
+          I18n.t("activerecord.errors.models.assessment/participation.attributes" \
+                 ".status.handed_in")
+        )
+        expect(assessment.assessment_participations.find_by(user: member)).to be_nil
+      end
+
+      it "refuses a sheet the tutor took on paper" do
+        FactoryBot.create(:assessment_participation, :submitted,
+                          assessment: assessment, user: member)
+
+        exempt
+
+        expect(flash[:alert]).to be_present
+        expect(assessment.assessment_participations.find_by(user: member)).to be_pending
+      end
+
+      it "says so for a sheet of another lecture" do
+        foreign = FactoryBot.create(:assignment, :expired, lecture: FactoryBot.create(:lecture))
+
+        exempt(foreign.assessment)
+
+        expect(flash[:alert]).to eq(I18n.t("student_performance.errors.no_sheet"))
+      end
+
+      it "revokes the exemption again" do
+        exempt(note: "Certificate")
+
+        patch unexempt_lecture_student_performance_record_path(lecture, record),
+              params: { assessment_id: assessment.id }
+
+        participation = assessment.assessment_participations.find_by(user: member)
+        expect(participation).to be_pending
+        expect(participation.note).to be_nil
+        expect(flash[:notice]).to eq(
+          I18n.t("student_performance.records.show.unexempted", sheet: "Sheet 3")
+        )
+      end
+    end
+
+    # Tutors enter points; a certificate is above their pay grade.
+    context "as a tutor of the student's group" do
+      let(:tutor) { FactoryBot.create(:confirmed_user) }
+
+      before do
+        tutorial = FactoryBot.create(:tutorial, lecture: lecture)
+        tutorial.tutors << tutor
+        FactoryBot.create(:tutorial_membership, tutorial: tutorial, user: member)
+        sign_in tutor
+      end
+
+      it "is turned away" do
+        exempt
+
+        expect(response).to redirect_to(root_path)
+        expect(assessment.assessment_participations.find_by(user: member)).to be_nil
       end
     end
   end

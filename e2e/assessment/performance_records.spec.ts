@@ -114,6 +114,53 @@ test.describe("performance records", () => {
     await expect(teacher.page.getByText("70%")).toBeVisible();
   });
 
+  // A certificate is decided here, per person: the sheet leaves the
+  // reckoning, the note stays with the decision, and both can be undone.
+  test("exempts a sheet nothing was handed in for, and takes it back", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    const assignment = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id,
+      title: "Problem Set 1",
+    });
+    const assessment = await assignment.__call("assessment");
+    await addTask(factory, assessment.id, "Prove it", 10);
+    const member = await factory.create("confirmed_user", [], {
+      name_in_tutorials: "Ada Lovelace",
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id,
+      user_id: member.id,
+    });
+
+    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await openPerformance(page);
+    await teacher.page.getByRole("row", { name: /Ada Lovelace/ })
+      .getByRole("link", { name: "Details" }).click();
+    const row = teacher.page.getByRole("row", { name: /Problem Set 1/ });
+
+    await expect(row.getByText("Not Submitted")).toBeVisible();
+    await expect(teacher.page.getByText("out of 10 marked so far")).toBeVisible();
+
+    await row.getByRole("textbox", { name: "Note for the exemption on Problem Set 1" })
+      .fill("Certificate until May 17");
+    await row.getByRole("button", { name: "Record exemption" }).click();
+
+    await expect(teacher.page.getByText(
+      "Problem Set 1 is exempt for this student and no longer counts.",
+    )).toBeVisible();
+    await expect(row.getByText("Exempt", { exact: true })).toBeVisible();
+    await expect(row.getByText("Certificate until May 17")).toBeVisible();
+    await expect(teacher.page.getByText("out of 0 marked so far")).toBeVisible();
+
+    await row.getByRole("button", { name: "Revoke exemption" }).click();
+
+    await expect(row.getByText("Not Submitted")).toBeVisible();
+    await expect(teacher.page.getByText("out of 10 marked so far")).toBeVisible();
+  });
+
   test("narrows the list to one tutorial group", async ({
     factory,
     teacher,

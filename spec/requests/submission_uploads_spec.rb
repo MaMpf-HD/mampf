@@ -74,6 +74,24 @@ RSpec.describe("SubmissionUploads", type: :request) do
     expect(data.dig("metadata", "malware_scan", "status")).to eq("clean")
   end
 
+  # The tutor's correction form in the grading table has to go through the
+  # upload endpoint: a file posted straight to the record is one no scan has
+  # seen, and the attacher refuses it.
+  it "hands the tutor a correction form that uploads through the endpoint" do
+    tutorial = create(:tutorial, :with_tutor_by_id, tutor_id: user.id,
+                                                    lecture: assignment.lecture)
+    corrected = create(:submission, assignment: assignment, tutorial: tutorial)
+    sign_in user.reload
+
+    get edit_correction_path(corrected), as: :turbo_stream
+
+    expect(response).to have_http_status(:ok)
+    form = Nokogiri::HTML(response.body).at_css("form.correction-upload")
+    expect(form["data-controller"]).to eq("uppy-upload")
+    expect(form["data-uppy-upload-intent-value"]).to be_present
+    expect(form.at_css("input[type=file]")).to be_nil
+  end
+
   it "returns a scanner unavailable message for submission uploads" do
     allow(scanner).to receive(:scan)
       .and_return(UploadScanResult.unavailable("Connection refused"))

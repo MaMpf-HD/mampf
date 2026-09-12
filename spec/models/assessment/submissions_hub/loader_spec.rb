@@ -328,6 +328,18 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet_for(assignment).state).to eq(:missed)
     end
 
+    # A sheet collected on paper is with the tutor until they record it, so
+    # nothing is missing yet.
+    it "is :awaiting_record when a sheet collected on paper has no record yet" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Homework",
+                                                 expired_since: 1.week,
+                                                 requires_submission: false)
+      create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+
+      expect(sheet_for(assignment).state).to eq(:awaiting_record)
+      expect(sheet_for(assignment).points).to be_nil
+    end
+
     it "is :tutor_decides for a late hand-in nobody has ruled on" do
       assignment = create_assignment(deadline: 10.minutes.ago)
       hand_in(assignment)
@@ -366,9 +378,9 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet.marked_at).to be_within(1.second).of(participation.graded_at)
     end
 
-    # Nothing in the app stamps the participation yet, so the task points are
-    # what actually carries the marking.
-    it "falls back to the task points while it is not" do
+    # Rows marked before the stamp existed carry none; the task points then
+    # say when and by whom.
+    it "falls back to the task points where there is no stamp" do
       participation = mark(assignment, [1.5, 2])
       participation.update!(graded_at: nil, grader: nil)
 
@@ -381,6 +393,102 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     it "is nil for a sheet with no participation at all" do
       expect(sheet_for(assignment).marked_at).to be_nil
       expect(sheet_for(assignment).marked_by).to be_nil
+    end
+  end
+
+  describe "what is new since the reader last looked" do
+    let(:assignment) { create_assignment(deadline: 1.week.ago) }
+
+    def look(at:, by: user)
+      AssignmentSighting.create!(user: by, assignment: assignment, seen_at: at)
+    end
+
+    it "is nothing on a sheet with neither correction nor marks" do
+      hand_in(assignment)
+
+      expect(sheet_for(assignment).news?).to be(false)
+    end
+
+    it "is the correction the reader has never looked at" do
+      hand_in(assignment, correction: true)
+
+      sheet = sheet_for(assignment)
+      expect(sheet.new_correction?).to be(true)
+      expect(sheet.news?).to be(true)
+    end
+
+    it "is no longer the correction once they looked after it was uploaded" do
+      hand_in(assignment, correction: true)
+      look(at: Time.current)
+
+      expect(sheet_for(assignment).new_correction?).to be(false)
+    end
+
+    it "is the correction again when a fresh one replaced it after their look" do
+      submission = hand_in(assignment, correction: true)
+      look(at: 1.day.ago)
+      submission.update!(corrected_at: 1.hour.ago)
+
+      expect(sheet_for(assignment).new_correction?).to be(true)
+    end
+
+    it "is the marks the reader has never looked at" do
+      mark(assignment, [1.5, 2])
+
+      sheet = sheet_for(assignment)
+      expect(sheet.new_points?).to be(true)
+      expect(sheet.news?).to be(true)
+    end
+
+    it "is no longer the marks once they looked after the stamp" do
+      mark(assignment, [1.5, 2])
+      look(at: 1.day.ago)
+
+      expect(sheet_for(assignment).new_points?).to be(false)
+    end
+
+    it "is the marks again when they were saved anew after the look" do
+      mark(assignment, [1.5, 2])
+      look(at: 3.days.ago)
+
+      expect(sheet_for(assignment).new_points?).to be(true)
+    end
+
+    # Only a complete save stamps the participation, and the fold shows the
+    # values as they come; the dot waits for the tutor to finish the row.
+    it "is not a half-marked sheet" do
+      mark_partially(assignment, [1.5, nil])
+
+      expect(sheet_for(assignment).new_points?).to be(false)
+    end
+
+    # Marks with no hand-in behind them still land on the reader's row, which
+    # is why the look is keyed by the sheet rather than the hand-in.
+    it "is the marks on a sheet that was never handed in here" do
+      mark(assignment, [1.5, 2])
+
+      expect(sheet_for(assignment).submission).to be_nil
+      expect(sheet_for(assignment).new_points?).to be(true)
+    end
+
+    it "does not count a partner's look as the reader's" do
+      hand_in(assignment, correction: true)
+      look(at: Time.current, by: create(:confirmed_user))
+
+      expect(sheet_for(assignment).new_correction?).to be(true)
+    end
+
+    # One look, two facts: the correction was there at the look, the marks
+    # came after it.
+    it "tells the correction from the marks" do
+      hand_in(assignment, correction: true)
+      look(at: Time.current)
+      mark(assignment, [1.5, 2])
+      assignment.assessment.assessment_participations.first.update!(graded_at: Time.current)
+
+      sheet = sheet_for(assignment)
+      expect(sheet.new_correction?).to be(false)
+      expect(sheet.new_points?).to be(true)
     end
   end
 
@@ -663,7 +771,6 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       record = create(:student_performance_record, lecture: lecture, user: user,
                                                    points_total_materialized: 32.5,
                                                    points_max_materialized: 176,
-                                                   points_max_pending_materialized: 16,
                                                    percentage_materialized: 18.47)
 
       standing = result.standing
@@ -843,7 +950,7 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
 
     it "stays in the low teens" do
-      expect(queries_for(12)).to be <= 15
+      expect(queries_for(12)).to be <= 16
     end
   end
 end

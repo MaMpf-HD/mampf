@@ -38,7 +38,7 @@
       <%= link_to t('buttons.cancel'),
                   cancel_edit_correction_path(submission),
                   class: 'btn btn-sm btn-secondary',
-                  remote: true %>
+                  data: { turbo_stream: true } %>
     </div>
   </div>
 <% end %>

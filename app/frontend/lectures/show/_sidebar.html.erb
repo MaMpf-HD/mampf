@@ -87,24 +87,19 @@
     <% end %>
   </li>
 
-  <%# Tutorials %>
-  <% if lecture %>
-    <%#
-      Never greyed out for want of groups. Both pages behind this entry say
-      what there is to say when there are none - the overview offers to create
-      the first, the hub says whether one is missing or only a seat in one -
-      and greying it out hid exactly the page somebody was looking for.
-    %>
+  <%#
+    Tutors get their groups' table, students the hub; lecturers and editors
+    edit sheets and points on the lecture's edit page and get no entry here.
+    Not greyed out for want of groups: the hub is where that is explained.
+  %>
+  <% if lecture && (current_user.in?(lecture.tutors) || !current_user.editor_or_teacher_in?(lecture)) %>
     <% if current_user.in?(lecture.tutors)
         link_text, path = [t('categories.tutorials'), lecture_tutorials_path(lecture)]
-      elsif current_user.editor_or_teacher_in?(lecture)
-        link_text, path = [t('categories.tutorials'), lecture_tutorial_overview_path(lecture)]
       else
         link_text, path = [t('categories.submissions'), lecture_submissions_path(lecture)]
       end %>
     <% active_class = get_class_for_any_path(
         [lecture_tutorials_path(lecture),
-        lecture_tutorial_overview_path(lecture),
         lecture_submissions_path(lecture)]) %>
     <li class="sidebar-item nav-link <%= active_class %>
         <%= content_accessible ? "" : "disabled" %>">
@@ -113,16 +108,6 @@
         <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
         <%= link_text %>
       <% end %>
-    </li>
-  <% end %>
-
-  <% if lecture %>
-    <%# Müsli (external link) %>
-    <li class="sidebar-item nav-link <%= !content_accessible || !lecture.muesli ? "disabled" : ""%>">
-      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" rel="noopener noreferrer">
-        <i class="bi bi-list-check"></i>
-        <%= t('categories.muesli') %>
-      </a>
     </li>
   <% end %>
 

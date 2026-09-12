@@ -61,3 +61,8 @@
     outline:none;
     box-shadow:none;
 }
+
+input[type="file"] {
+  max-width: 100%;
+  min-width: 0;
+}

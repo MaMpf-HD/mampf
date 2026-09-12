@@ -136,8 +136,18 @@ class AssessmentDashboardComponent < ViewComponent::Base
       TabConfig.new(
         "points",
         I18n.t("assessment.points"),
-        PointGridComponent.new(assessment: assessment)
+        point_tab_component
       )
+    end
+
+    def point_tab_component
+      if assessment.assessable.is_a?(Assignment)
+        TutorialPointingTableComponent.new(
+          assignment: assessable, grading_scope: lecture
+        )
+      else
+        PointGridComponent.new(assessment: assessment)
+      end
     end
 
     def grades_tab

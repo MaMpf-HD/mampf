@@ -123,6 +123,20 @@ RSpec.describe(Assessment::Assessment, type: :model) do
     end
   end
 
+  describe "#status_without_hand_in" do
+    it "calls a sheet that wants a file and got none not submitted" do
+      assessment = FactoryBot.build(:assessment, requires_submission: true)
+
+      expect(assessment.status_without_hand_in).to eq(:not_submitted)
+    end
+
+    it "calls a sheet collected on paper not yet recorded" do
+      assessment = FactoryBot.build(:assessment, requires_submission: false)
+
+      expect(assessment.status_without_hand_in).to eq(:awaiting_record)
+    end
+  end
+
   describe "#effective_total_points" do
     let(:assessment) { FactoryBot.create(:assessment, :with_points) }
 

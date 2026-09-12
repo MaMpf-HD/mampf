@@ -164,61 +164,16 @@ Covered by `assessment_backfill_worker_spec` — thirteen examples, including
 idempotency, that existing participations are never overwritten, and that a
 second run does no work at all.
 
-~~~admonish danger "Concerns another PR: this seeding disables a feature on `muesli/tutor-grading-view`"
-**What that branch is trying to do.** With a paper assignment nobody uploads
-anything, so the system has no way of knowing who handed a sheet in. Without that,
-a student whose work is sitting in the tutor's pile is indistinguishable from one
-who brought nothing. The grading view therefore gives the tutor a button, "Mark as
-participated", and records the answer by **creating a participation row**:
-
-```ruby
-def init_participation(assessment, user, tutorial)
-  participation = Participation.find_or_initialize_by(
-    assessment_id: assessment.id, user_id: user.id
-  )
-  participation.update!(tutorial_id: tutorial.id) if participation.new_record?
-  participation
-end
-```
-
-Whether the button is offered at all is decided the same way — by asking whether a
-row is already there, with no further condition:
-
-```ruby
-def assessment_participation_in_assignment(assignment)
-  assessment_participations.where(assessment: assignment.assessment)&.first
-end
-```
-
-**Why it cannot work.** The worker described above creates exactly that row, for
-every tutorial member of every expired assignment, and `config/schedule.yml` runs
-it on `*/1 * * * *` — every minute. A minute after the deadline everyone has a
-row. The button is never offered, every non-submitter counts as having
-participated, and the "not yet marked" tally sits at zero for good.
-
-Neither change is wrong on its own. They simply use the same fact for two
-different statements — *this is due for grading* and *this was handed in* — which
-is the kind of collision that only surfaces when the branches meet, since both are
-green apart.
-
-**Why it reaches into slice 2.** `points_max_pending_materialized` recognises work
-awaiting marking as `pending` **and** `submitted_at` present. A paper assignment
-has no `submitted_at`, so for those lectures the figure is permanently zero and
-slice 3 cannot defer an eligibility decision that a marking backlog has distorted —
-exactly the case the column was added for.
-
-**What would fix it, on that branch.** Have `init_participation` set
-`submitted_at` as well, the way the upload path already does in
-`SubmissionsController`, and have the view ask for that instead of for the row.
-Then `submitted_at` means one thing everywhere — handed in, on paper or digitally
-— the seeding stops interfering, and slice 2's figure covers both kinds of
-assignment. It is also the convention this slice set: see [the display status
-entry](#submission-is-a-timestamp-so-the-display-status-is-derived), where
-`submitted_at` is deliberately the only record of whether something was handed in.
-
-Fixing it here instead — by seeding fewer rows — would be the wrong end. The
-worker creates them so that tutors have something to grade against; that is its
-purpose, not its mistake.
+~~~admonish note "The worker's rows carry no stamp"
+The worker creates a participation for every tutorial member of an expired
+assignment, so that tutors have something to grade against; a paper assignment
+has no upload to say who handed in. The row itself must therefore not mean
+"handed in": `submitted_at` is the one record of that, set by the upload path
+for files and by `SubmissionGraderService.init_participation` when the tutor
+records a hand-in on paper in the pointing table. A stamp already there stays;
+the mark can be taken back while nothing is written on the row.
+`StudentPerformance::DuePoints` reads work awaiting marking as `pending`
+**and** `submitted_at` present, which holds for both kinds of assignment.
 ~~~
 
 ### Entered points block deleting a task; the deadline does not
@@ -251,10 +206,14 @@ points exist and stops once they do.
 ### Submission is a timestamp, so the display status is derived
 
 The enum has four values — `pending`, `reviewed`, `absent`, `exempt` — but the
-views need five, because `pending` covers two quite different situations.
+views need more, because `pending` covers two quite different situations.
 [`display_status`][c1-display] tells them apart by `submitted_at`: pending with
 no submission reads as `:not_submitted`, pending with one as `:pending_grading`,
-and every other status passes through unchanged.
+and every other status passes through unchanged. On a sheet collected on paper
+(`requires_submission: false`) the first case reads as `:awaiting_record`
+instead — the sheet is with the tutor until they record it, so nothing is
+missing yet; `Assessment#status_without_hand_in` is where the two are told
+apart, and the student's hub says the same thing for the same sheet.
 
 Why it is derived rather than stored is in
 [the status workflow](../features/04-assessments-and-grading.md#status-workflow).
@@ -263,8 +222,8 @@ Querying is barely affected: `submitted` is already a scope, so
 `pending.submitted` is exactly the "waiting to be marked" set and
 `pending.where(submitted_at: nil)` the other one.
 
-`ParticipationStatusBadgeComponent` knows all five symbols and falls back to
-`:not_submitted` for anything unexpected, so the contract has no gap.
+`ParticipationStatusBadgeComponent` knows all of these symbols and falls back
+to `:not_submitted` for anything unexpected, so the contract has no gap.
 
 Note the method is defined here but first used in slice 2, by
 `records_controller` and the record view.

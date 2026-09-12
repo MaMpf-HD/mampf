@@ -14,6 +14,7 @@ class SheetRowComponent < ViewComponent::Base
     tutor_decides: :quiet,
     partially_marked: :quiet,
     missed: :quiet,
+    awaiting_record: :quiet,
     absent: :quiet,
     exempt: :quiet,
     not_recorded: :bad,
@@ -49,6 +50,8 @@ class SheetRowComponent < ViewComponent::Base
   def chip?
     SheetChipComponent.for?(state)
   end
+
+  delegate :news?, to: :sheet
 
   def points_class
     ["text-end", "num", ("num-none" unless number?)].compact.join(" ")

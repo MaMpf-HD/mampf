@@ -18,7 +18,7 @@ RSpec.describe(
       render_inline(described_class.new(
                       status: :pending_grading, variant: :full
                     ))
-      expect(rendered_content).to include("text-warning")
+      expect(rendered_content).to include("text-warning-emphasis")
       expect(rendered_content).to include("bi-hourglass-split")
     end
 
@@ -65,7 +65,7 @@ RSpec.describe(
       render_inline(described_class.new(
                       status: :pending_grading, variant: :compact
                     ))
-      expect(rendered_content).to include("text-warning")
+      expect(rendered_content).to include("text-warning-emphasis")
       expect(rendered_content).to include("visually-hidden")
       expect(rendered_content).to include(
         I18n.t("student_performance.records.columns.pending_grading")
@@ -91,6 +91,17 @@ RSpec.describe(
       expect(rendered_content).to include("aria-hidden=\"true\"")
       expect(rendered_content).to include(
         I18n.t("student_performance.records.columns.not_submitted")
+      )
+    end
+
+    it "renders awaiting_record as an ellipsis, not a cross" do
+      render_inline(described_class.new(
+                      status: :awaiting_record, variant: :compact
+                    ))
+      expect(rendered_content).to include("\u2026")
+      expect(rendered_content).not_to include("\u2717")
+      expect(rendered_content).to include(
+        I18n.t("student_performance.records.columns.awaiting_record")
       )
     end
   end

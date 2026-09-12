@@ -165,7 +165,6 @@ The main fields and methods of `StudentPerformance::Record` are:
 | `user_id`                 | DB column (FK)    | The student whose performance is materialized                            |
 | `points_total_materialized` | DB column       | Points awarded so far — only participations that are fully marked count  |
 | `points_max_materialized` | DB column         | Maximum of every assignment in the lecture, minus the ones this student is exempt from |
-| `points_max_pending_materialized` | DB column | Of that maximum, how much belongs to work handed in but not yet fully marked |
 | `percentage_materialized` | DB column         | Computed percentage (points_total / points_max)                          |
 | `achievements_met_ids`    | DB column (JSONB) | Optional list of achievement IDs currently met (factual audit)           |
 | `achievements_ungraded_ids` | DB column (JSONB) | Achievement IDs with no grade recorded yet — not met, but not missed either |
@@ -584,14 +583,15 @@ defers it.
 | achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
 
 **`:pending`** means the student is below the threshold but what is still
-outstanding would carry them over it. Two things are outstanding: work handed in
-and not marked yet — `points_max_pending_materialized` — and sheets whose
-deadline, grace period included, has not passed. The second is counted at read
-time by `StudentPerformance::DuePoints`, because
-it moves with the clock and a stored calendar figure would go stale in silence;
-a sheet handed in early sits in both counts, so that one subtracts it. Both are
-already inside `points_max_materialized`, so the best case is all of it awarded
-in full. That distinction matters in both directions: without it a tutor's
+outstanding would carry them over it. Two things are outstanding: work handed in,
+due, and not marked yet — with a tutor — and sheets whose deadline, grace period
+included, has not passed. Both are counted at read time by
+`StudentPerformance::DuePoints`, because both move with the clock and a stored
+calendar figure would go stale in silence: a deadline passes without anything
+being written. A sheet handed in early is among the ones to come, not with a
+tutor — until its deadline the file can still be replaced or withdrawn, and
+nobody can mark it. Both are already inside `points_max_materialized`, so the
+best case is all of it awarded in full. That distinction matters in both directions: without it a tutor's
 backlog or a term that is not over reads as a failed threshold and the student is
 refused for time that has not run out, while a blunt "anything outstanding defers
 the decision" would defer the entire cohort over a single unmarked sheet.
