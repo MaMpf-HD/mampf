@@ -22,7 +22,7 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
 
       expect(action["href"]).to eq("/lectures/#{lecture.id}/submissions")
       label_prefix = I18n.t("dashboard.quick_actions.assignment.label")
-                          .split("%{").first.strip
+                         .split("%{").first.strip
       expect(action.text).to include(label_prefix)
     end
 

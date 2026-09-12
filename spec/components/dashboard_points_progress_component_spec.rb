@@ -40,7 +40,7 @@ RSpec.describe(DashboardPointsProgressComponent, type: :component) do
 
     expect(rendered.at_css(".dashboard-progress__value").text.strip)
       .to eq(I18n.t("dashboard.points_progress.label", points: "10", max: "20",
-                    percentage: 50))
+                                                       percentage: 50))
     expect(rendered.at_css(".dashboard-progress__fill")["style"])
       .to eq("width: 50%")
   end
