@@ -2151,18 +2151,6 @@ de:
     passphrase_required: >
       Du möchtest Dir die Veranstaltung %{lecture_title} merken. Diese ist
       durch einen Zugangsschlüssel geschützt. Gib diesen bitte hier ein.
-    my_term_html: Mein Semester &ndash; %{term}
-    inactive_lectures: Weitere gemerkte Veranstaltungen
-    active_nonsubscribed_lectures_html: >
-      Aktuelle Veranstaltungen &ndash; %{term}
-    no_current_stuff: >
-      Du hast Dir keine Veranstaltungen aus dem aktuellen Semester gemerkt.
-    no_inactive_stuff: >
-      Du hast Dir keine Veranstaltungen außerhalb des aktuellen Semesters
-      gemerkt.
-    no_current_at_all: >
-      Im aktuellen Semester sind noch keine Veranstaltungen veröffentlicht
-      worden.
     other_preferences: >
       Sonstige Einstellungen
     changes_made: >
@@ -2217,7 +2205,6 @@ de:
     miscellaneous: Sonstiges
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
-    my_talks: Meine Vorträge
     media_search: Mediensuche
     my_data: Welchen Daten werden über mich gespeichert?
     data_explanation: >
