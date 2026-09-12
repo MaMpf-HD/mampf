@@ -1,6 +1,5 @@
 class PointingTableHeaderComponent < ViewComponent::Base
-  Column = Struct.new(:css_class, :label, :sublabel,
-                      :data_mode, :label_hidden, keyword_init: true)
+  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, keyword_init: true)
 
   def initialize(grading_scope:, grading_enabled:, tasks: [], total_max_points: 0,
                  accepted_file_type: nil)
@@ -27,20 +26,8 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
   private
 
-    def mode
-      if lecture_scope?
-        "teacher"
-      else
-        "tutor"
-      end
-    end
-
     def lecture_scope?
       @grading_scope.is_a?(Lecture)
-    end
-
-    def tutorial_scope?
-      @grading_scope.is_a?(Tutorial)
     end
 
     def team_column
@@ -50,13 +37,12 @@ class PointingTableHeaderComponent < ViewComponent::Base
     def tutorial_column
       return [] unless lecture_scope?
 
-      [Column.new(css_class: "sticky-col tutorial-col grade-th text-center",
+      [Column.new(css_class: "tutorial-col grade-th text-center",
                   label: t("basics.tutorial"))]
     end
 
     def status_col
-      Column.new(css_class: "text-center sticky-col status-col grade-th",
-                 data_mode: mode,
+      Column.new(css_class: "text-center status-col grade-th",
                  label: t("assessment.grading_tutorial.status"))
     end
 
@@ -67,14 +53,12 @@ class PointingTableHeaderComponent < ViewComponent::Base
         status_col,
         *@tasks.map { |task| task_column(task) },
         Column.new(
-          css_class: "text-center sticky-col total-col grade-th",
-          data_mode: mode,
+          css_class: "text-center total-col grade-th",
           label: t("assessment.grading_tutorial.total_points"),
           sublabel: "(#{@total_max_points} #{t("assessment.grading_tutorial.max_points")})"
         ),
         # Two icons need no heading over them; a reader without eyes gets one.
         Column.new(css_class: "text-center sticky-col save-col grade-th",
-                   data_mode: mode,
                    label: t("buttons.save"),
                    label_hidden: true)
       ]
@@ -82,22 +66,21 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
     def task_column(task)
       Column.new(
-        css_class: "text-center sticky-col task-col grade-th",
+        css_class: "text-center task-col grade-th",
         label: "#{t("assessment.grading_tutorial.task")} #{task.position}",
         sublabel: "(#{task.max_points || 0} #{t("assessment.grading_tutorial.max_points")})"
       )
     end
 
     def hand_in_column
-      Column.new(css_class: "text-center sticky-col hand-in-col grade-th",
-                 data_mode: mode,
+      Column.new(css_class: "text-center hand-in-col grade-th",
                  label: t("basics.submission"),
                  sublabel: "(#{@accepted_file_type})")
     end
 
     def correction_column
       Column.new(
-        css_class: "text-center sticky-col correction-col grade-th",
+        css_class: "text-center correction-col grade-th",
         label: t("basics.correction"),
         sublabel: "(#{@accepted_file_type})"
       )

@@ -89,7 +89,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def task_points_cell(task, allow_grading)
-    tag.td(class: "sticky-col task-col") do
+    tag.td(class: "task-col") do
       task_points_input(task, allow_grading)
     end
   end

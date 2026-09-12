@@ -7,17 +7,13 @@
         </div>
       <% end %>
 
-      <div
-        class="table-wrapper"
-        data-mode="<%= @mode %>"
-        data-controller="table-fade"
-      >
+      <div class="table-wrapper" data-controller="table-fade">
         <div class="table-overflow" data-table-fade-target="inner">
           <table
             class="table align-middle my-3"
             data-cy="tutorial-submissions-table"
           >
-            <thead style="background: #fafafa;">
+            <thead>
               <%= render(PointingTableHeaderComponent.new(
                 grading_scope: @grading_scope,
                 grading_enabled: grading_enabled?,

@@ -204,7 +204,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
     it "wraps the input in a td with the expected classes" do
       html = component_tutor.task_points_participation_cell(task, true)
-      expect(html).to include("sticky-col task-col")
+      expect(html).to include("task-col")
       expect(html).to include("task_points[#{task.id}]")
     end
   end

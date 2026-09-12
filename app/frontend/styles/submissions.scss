@@ -72,27 +72,75 @@ table.table tbody tr.row-dirty td {
     background-color: #fffbeb !important;
 }
 
+/* The pointing table scrolls inside its own box, sideways and down. Two
+   columns are pinned - the team on the left, the save pair on the right - so
+   the tasks get the width between them; the header row stays put on top.
+   The fades sit exactly on the pins, so they read as "more under here". */
+.table-wrapper {
+  --pin-left: 200px;
+  --pin-right: 90px;
+  position: relative;
+}
+
+.table-overflow {
+  overflow: auto;
+  max-height: 75vh;
+  width: 100%;
+
+  > table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  &:not([data-overflowing]) {
+    overflow-x: hidden;
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: #fafafa;
+    /* A line rather than an exact seam: at a shared edge the row scrolling
+       underneath draws a slice of itself between the two bands. */
+    box-shadow: inset 0 -1px 0 var(--bs-border-color);
+  }
+}
+
 .sticky-col {
-  position: -webkit-sticky;
   position: sticky;
   background-color: white;
+  z-index: 2;
+}
+
+thead th.sticky-col {
+  z-index: 4;
+  background-color: #fafafa;
 }
 
 .team-col {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  left: 0px;
-  z-index: 2;
+  width: var(--pin-left);
+  min-width: var(--pin-left);
+  max-width: var(--pin-left);
+  left: 0;
 }
 
-.status-col[data-mode="tutor"] {
-  width: 180px;
-  min-width: 180px;
-  max-width: 180px;
-  left: 200px;
-  background-color: white;
-  z-index: 2;
+.save-col {
+  width: var(--pin-right);
+  min-width: var(--pin-right);
+  max-width: var(--pin-right);
+  right: 0;
+}
+
+.tutorial-col {
+  width: 120px;
+  min-width: 120px;
+}
+
+.status-col {
+  width: 170px;
+  min-width: 170px;
 }
 
 .task-col {
@@ -100,129 +148,56 @@ table.table tbody tr.row-dirty td {
   min-width: 90px;
 }
 
-/* The right-hand columns are pinned from the edge inwards: the correction,
-   the hand-in, the save pair, the total. Each offset is the sum of the
-   widths to its right. */
-.correction-col {
-  width: 150px;
-  min-width: 150px;
-  max-width: 150px;
-  right: 0px;
-  background-color: white;
-  z-index: 2;
-}
-
-.hand-in-col {
-  width: 150px;
-  min-width: 150px;
-  max-width: 150px;
-  right: 150px;
-  background-color: white;
-  z-index: 2;
-}
-
-.save-col {
-  width: 90px;
-  min-width: 90px;
-  max-width: 90px;
-  right: 300px;
-  background-color: white;
-  z-index: 2;
-}
-
-.tutorial-col {
-  width: 100px;
-  min-width: 100px;
-  max-width: 100px;
-  left: 200px;
-  z-index: 2;
-}
-
-.status-col[data-mode="teacher"] {
-  width: 180px;
-  min-width: 180px;
-  max-width: 180px;
-  left: 300px;
-  background-color: white;
-  z-index: 2;
-}
-
-
-input[type="file"] {
-  max-width: 100%;
-  min-width: 0;
-}
-
 .total-col {
   width: 100px;
   min-width: 100px;
-  max-width: 100px;
-  right: 390px;
-  background-color: white;
-  z-index: 2;
 }
 
-.table-overflow {
-  overflow-x: auto;
-  width: 100%;
-  min-height: 200px; // to ensure that filter dropdowns are not cut off when table is empty
-
-  > table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-  }
-  &:not([data-overflowing]) {
-    overflow-x: hidden;
-  }
-
+.hand-in-col,
+.correction-col {
+  width: 140px;
+  min-width: 140px;
 }
 
-.table-wrapper[data-mode="tutor"],
-.table-wrapper[data-mode="teacher"] {
-  position: relative;
-}
-
-.table-wrapper[data-mode="tutor"]::before,
-.table-wrapper[data-mode="tutor"]::after,
-.table-wrapper[data-mode="teacher"]::before,
-.table-wrapper[data-mode="teacher"]::after {
+.table-wrapper::before,
+.table-wrapper::after {
   content: '';
   position: absolute;
   top: 0;
   width: 48px;
-  height: 100%;
+  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
   pointer-events: none;
-  z-index: 3;
+  z-index: 5;
   transition: opacity 0.2s;
 }
 
-.table-wrapper[data-mode="tutor"]::before {
-  left: 300px;
+.table-wrapper::before {
+  left: var(--pin-left);
   background: linear-gradient(to right, #f8f9fa, transparent);
   opacity: var(--fade-left, 0);
-  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
-.table-wrapper[data-mode="tutor"]::after {
-  right: 500px;
+.table-wrapper::after {
+  right: var(--pin-right);
   background: linear-gradient(to left, #f8f9fa, transparent);
   opacity: var(--fade-right, 0);
-  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
 }
 
-.table-wrapper[data-mode="teacher"]::before {
-  left: 400px;
-  background: linear-gradient(to right, #f8f9fa, transparent);
-  opacity: var(--fade-left, 0);
-  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+/* A phone has no room for pins: the whole row scrolls as one. */
+@media (max-width: 575.98px) {
+  .sticky-col {
+    position: static;
+  }
+
+  .table-wrapper::before,
+  .table-wrapper::after {
+    display: none;
+  }
 }
 
-.table-wrapper[data-mode="teacher"]::after {
-  right: 500px;
-  background: linear-gradient(to left, #f8f9fa, transparent);
-  opacity: var(--fade-right, 0);
-  height: calc(100% - 16px); /* 16px ≈ scrollbar height */
+input[type="file"] {
+  max-width: 100%;
+  min-width: 0;
 }
 
 .grade-th {

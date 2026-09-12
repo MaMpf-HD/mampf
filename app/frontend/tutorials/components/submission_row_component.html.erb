@@ -65,14 +65,14 @@
 
   <!-- Column 1.5: Tutorial -->
   <% if @mode == "teacher" %>
-    <td class="text-center sticky-col tutorial-col">
+    <td class="text-center tutorial-col">
       <span><%= @submission.tutorial&.title %></span>
     </td>
   <% end %>
 
   <% if grading_enabled? %>
     <!-- Column 4: Status -->
-    <td class="text-center sticky-col status-col" data-mode="<%= @mode %>">
+    <td class="text-center status-col">
       <% if participation %>
         <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
       <% end %>
@@ -83,11 +83,11 @@
       <%= task_points_cell(task, allow_grading?) %>
     <% end %>
     <!-- Column 4: Total Points -->
-    <td class="text-center sticky-col total-col" data-mode="<%= @mode %>">
+    <td class="text-center total-col">
       <span data-participation-row-target="totalPoints">0</span>
     </td>
     <!-- Save and refresh the row's points -->
-    <td class="text-center sticky-col save-col" data-mode="<%= @mode %>">
+    <td class="text-center sticky-col save-col">
       <% if can_enter_points? %>
         <div class="d-inline-flex align-items-center gap-1">
           <%= form_with url: point_submission_tutorial_path(
@@ -125,11 +125,7 @@
   <% end %>
 
   <!-- The hand-in: the file, and for a late one the tutor's decision -->
-  <td
-    class="text-center sticky-col hand-in-col"
-    data-mode="<%= @mode %>"
-    data-id="<%= @submission.id %>"
-  >
+  <td class="text-center hand-in-col" data-id="<%= @submission.id %>">
     <div class="d-inline-flex align-items-center gap-1">
       <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
                 class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
@@ -157,10 +153,7 @@
   </td>
 
   <!-- The correction: the tutor's to upload and remove, anybody else's to read -->
-  <td
-    class="text-center sticky-col correction-col"
-    data-id="<%= @submission.id %>"
-  >
+  <td class="text-center correction-col" data-id="<%= @submission.id %>">
     <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
       <%= render partial: 'submissions/correction_column',
                 locals: { submission: @submission } %>
