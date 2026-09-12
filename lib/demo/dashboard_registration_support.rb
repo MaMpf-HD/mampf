@@ -1,13 +1,10 @@
 module Demo
-  # Gives four of the five seeded students (student1..student5@mampf.edu) a
-  # different registration state on a lecture of their own, so the
-  # dashboard's pending/confirmed/rejected/bookmarked bands all have
-  # something to show without waiting for a real campaign to reach that
-  # state. The fifth lecture stays unapplied-for, to show what "Registration
-  # open" looks like in search. student2 additionally gets a second lecture
-  # with two campaigns in conflicting states, to demonstrate the
-  # confirmed > pending > open > rejected precedence across campaigns (see
-  # Registration::StatusQuery).
+  # Gives students 1-4 a different registration state (pending, confirmed,
+  # rejected, rejected + bookmarked) so the dashboard's bands all have
+  # something to show; student5 stays plain-bookmarked, and a fifth lecture
+  # stays open and unapplied-for, to show the search's "Registration open"
+  # badge. student2 also gets a second lecture with two campaigns in
+  # conflicting states, to demonstrate Registration::StatusQuery precedence.
   module DashboardRegistrationSupport
     extend self
 
@@ -51,14 +48,9 @@ module Demo
       end
       # rubocop:enable Rails/Exit
 
-      # Pending registration, no roster seat yet. The campaign must be
-      # preference_based, not the default first-come-first-served: FCFS
-      # decides synchronously, so a pending FCFS row is not a state the
-      # app's own UI ever produces or has anything to show for.
-      #
-      # Placed in the next term, like add_running_campaigns!: a campaign that
-      # is still :open (not :completed) in the term the seed plays in is
-      # exactly what settle_current_term_campaigns! discards afterwards.
+      # Pending, no roster seat yet. Must be preference_based, since FCFS
+      # decides synchronously and never leaves a row pending. Next term,
+      # since an :open campaign would not survive in the current one.
       def setup_pending!(student)
         lecture = lecture_for("Einführung in die Numerik", next_term)
         campaign = reset_campaign!(lecture, :preference_based, :open)
@@ -66,11 +58,8 @@ module Demo
         create_registration!(student, campaign, :pending, preference_rank: 1)
       end
 
-      # Confirmed registration, not yet rostered - confirming an applicant
-      # does not by itself create a LectureMembership, rostering is a
-      # separate step. Also placed in the next term, for the same reason as
-      # setup_pending! above: an :open campaign does not survive in the
-      # current one.
+      # Confirmed, not yet rostered - confirming does not by itself create a
+      # LectureMembership. Next term, same reason as setup_pending! above.
       def setup_confirmed_not_rostered!(student)
         lecture = lecture_for("Maßtheorie und Wahrscheinlichkeit", next_term)
         campaign = reset_campaign!(lecture, :first_come_first_served, :open)
@@ -78,11 +67,9 @@ module Demo
         create_registration!(student, campaign, :confirmed)
       end
 
-      # Rejected registration, not dismissed. The campaign must be
-      # :completed, not just :closed, and the trait must be :policy_rejected,
-      # not :capacity_rejected, for the lecture's own home tab to explain why.
-      # :completed survives settle_current_term_campaigns!, so this can sit
-      # in the current term, like a real rejection would by now.
+      # Rejected, not dismissed. :completed (not :closed) so the campaign
+      # survives the seed's cleanup; :policy_rejected so the lecture's home
+      # tab can explain why.
       def setup_rejected!(student)
         lecture = lecture_for("Algebraische Topologie", current_term)
         campaign = reset_campaign!(lecture, :first_come_first_served, :completed)
@@ -90,9 +77,8 @@ module Demo
         create_registration!(student, campaign, :policy_rejected)
       end
 
-      # Same as above, but the student separately bookmarked the lecture too -
-      # still shown once in "You are registered for these", registration
-      # status takes precedence over a plain bookmark.
+      # Same as above, plus a separate bookmark - registration status takes
+      # precedence, so it still shows only once.
       def setup_rejected_and_bookmarked!(student)
         lecture = lecture_for("Funktionalanalysis", current_term)
         campaign = reset_campaign!(lecture, :first_come_first_served, :completed)
@@ -107,28 +93,18 @@ module Demo
         bookmark!(student, lecture)
       end
 
-      # Registration open, nobody has applied yet - not shown on any
-      # dashboard, only discoverable via lecture search, where it carries
-      # the "Registration open" badge. Next term, for the same reason as
-      # setup_pending! above.
+      # Open, nobody applied yet - only discoverable via search's
+      # "Registration open" badge, not shown on any dashboard.
       def setup_open_unapplied!
         lecture = lecture_for("Partielle Differentialgleichungen", next_term)
         reset_campaign!(lecture, :first_come_first_served, :open)
       end
 
-      # A second lecture for student2, with two campaigns: an older one the
-      # student was rejected from (:completed), and a later reapplication
-      # still awaiting a decision (:closed, a preference-based campaign
-      # whose deadline passed but that the teacher has not finalized yet).
-      # Placed in the next term, like setup_pending! above:
-      # settle_current_term_campaigns! discards any campaign that is not
-      # :completed on a lecture in the *current* term on every rebuild, and
-      # would otherwise wipe out the :closed one here.
-      # Registration::StatusQuery pools registrations across all of a
-      # lecture's campaigns and applies one precedence order
-      # (confirmed > pending > open > rejected), so the dashboard must show
-      # "Pending" here, not "Rejected" - see status_query_spec.rb and
-      # e2e/dashboard.spec.ts for the precedence rules this demonstrates.
+      # A second lecture for student2: an older rejected campaign
+      # (:completed) plus a later reapplication still awaiting a decision
+      # (:closed). Registration::StatusQuery's precedence means the
+      # dashboard must show "Pending" here, not "Rejected" - see
+      # status_query_spec.rb. Next term, same reason as setup_pending!.
       def setup_pending_overrides_older_rejection!(student)
         lecture = lecture_for("Algebra und Zahlentheorie", next_term)
         Demo::CampaignCleanup.discard_all!(lecture)

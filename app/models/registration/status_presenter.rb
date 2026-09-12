@@ -20,11 +20,8 @@ module Registration
       I18n.t("registration.user_registration.status.#{status}")
     end
 
-    # Where a status sorts in the "You are registered for these" band:
-    # settled first (a plain roster seat, or a confirmed application), then
-    # the still-open ones (an application awaiting a decision, or a campaign
-    # the student could still apply to), then rejected last - it is the one
-    # state that needs the student to do something about the card itself.
+    # Sort order for the "You are registered for these" band: settled
+    # statuses first, then still-open ones, rejected last.
     SORT_PRIORITY = { nil => 0, confirmed: 0, open: 1, pending: 1, rejected: 2 }.freeze
 
     def self.sort_priority(status)

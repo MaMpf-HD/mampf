@@ -1,26 +1,10 @@
-<% bookmarked = @subscribed_lecture_ids&.include?(lecture.id) || false %>
-<% registration_status = @registration_status_by_lecture_id&.[](lecture.id) %>
-<% rosterized = @rosterized_lecture_ids&.include?(lecture.id) %>
-<%# :open just means a campaign is open with no application from this user
-    yet - shown as the "+ register" shortcut below, not the marker. The other
-    three statuses mean the user already has a registration on record. %>
-<% marker_status = registration_status if
-     [:confirmed, :pending, :rejected].include?(registration_status) %>
-<% registered = marker_status.present? || rosterized %>
-<%# @self_enrollable_lecture_ids ignores whether the user is a member, so it
-    may only be consulted once being registered has been ruled out %>
-<% registration_possible = !registered &&
-                           (registration_status == :open ||
-                            @self_enrollable_lecture_ids&.include?(lecture.id)) %>
-<%# Once there is a registration on record - pending, confirmed or
-    rejected - the lecture already sits in "You are registered for these";
-    bookmarking it too would be redundant. Only a lecture with no
-    application at all (or one still open, not yet applied to) can be
-    bookmarked. %>
-<% bookmarkable = marker_status.nil? && !rosterized %>
-<%# term is redundant on the dashboard, where the picker above already names
-    the semester; still shown on /search/index, which spans all semesters %>
-<% show_term = @show_term.nil? ? true : @show_term %>
+<% status = lecture_search_result_status(lecture, @search_result_ids,
+                                         show_term: @show_term != false) %>
+<% marker_status = status.marker_status %>
+<% bookmarked = status.bookmarked %>
+<% registration_possible = status.registration_possible %>
+<% bookmarkable = status.bookmarkable %>
+<% show_term = status.show_term %>
 
 <% wrap_attributes = {
      class: ["lecture-search-result-wrap",
@@ -87,7 +71,7 @@
       room for the bookmark toggle next to it, only a confirmed seat or
       group membership replaces it entirely. %>
   <div class="lecture-search-result-controls">
-    <% if marker_status || rosterized %>
+    <% if status.registered %>
       <%# A self-enrolled group membership with no formal application of its
           own (marker_status nil) keeps the plain "registered" wording; the
           other three statuses get the same icon/label as the dashboard. %>

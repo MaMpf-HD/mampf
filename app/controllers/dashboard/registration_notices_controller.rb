@@ -1,7 +1,6 @@
 module Dashboard
   # Dismisses a rejected registration's notice from a lecture's dashboard
-  # card (the "x" shown only for `registration_status == :rejected`). The
-  # registration itself is kept for auditing - only the dashboard notice
+  # card. The registration itself is kept for auditing - only the notice
   # about it is hidden, optionally in exchange for a plain bookmark.
   class RegistrationNoticesController < ApplicationController
     include Dashboard::RendersBoard

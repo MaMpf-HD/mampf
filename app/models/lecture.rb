@@ -715,14 +715,9 @@ class Lecture < ApplicationRecord
     in?(user.lectures)
   end
 
-  # A single status symbol summarizing the user's registration state across
-  # this lecture's (non-draft) registration campaigns, for compact display
-  # (e.g. on the student dashboard). nil if there is nothing to show: no
-  # campaigns, or a campaign that isn't open yet and no registration at all.
-  #
-  # For a page of lectures at once (e.g. the search result cards), use
-  # Registration::StatusQuery instead - it answers the same question in a
-  # fixed, small number of queries rather than one per lecture.
+  # This user's registration status for the lecture, nil if there is nothing
+  # to show. For a page of lectures at once, use Registration::StatusQuery
+  # instead - one query, not one per lecture.
   def registration_status_for(user)
     Registration::StatusQuery.new(user, [id]).statuses[id]
   end
@@ -738,10 +733,8 @@ class Lecture < ApplicationRecord
     assignments.first.deadline
   end
 
-  # The exam registration this user could still act on: a campaign that is
-  # open, whose deadline has not passed, and that they have not answered yet.
-  # Returns nil when there is nothing left to do, so a card can ask for it
-  # directly.
+  # The open exam campaign this user has not answered yet, nil if there is
+  # nothing left to register for.
   def open_exam_registration_for(user)
     campaigns = registration_campaigns.exam.open
                                       .where.not(

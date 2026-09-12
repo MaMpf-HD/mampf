@@ -686,9 +686,8 @@ class User < ApplicationRecord
 
   # Lectures with a pending application, or a rejected one not yet dismissed
   # (see Registration::UserRegistration#dismiss!). A confirmed application
-  # normally comes with a roster seat already and is thus covered by
-  # `roster_lectures`; this is a safety net for the window before rostering
-  # happens, and for campaigns that never roster the user at all.
+  # is normally already covered by `roster_lectures`; this catches it before
+  # rostering happens, or if the campaign never rosters the user at all.
   def lectures_with_registration_application
     campaign_ids = user_registrations
                    .where(status: [:pending, :confirmed])
@@ -703,15 +702,8 @@ class User < ApplicationRecord
 
   # The lectures this user holds a place in for the given term, or has an
   # open application for (see `lectures_with_registration_application`).
-  # These come first on the dashboard: they are the ones the user is actually
-  # taking (or trying to), as opposed to the ones they only bookmarked to
-  # look in on now and then.
-  #
-  # Within the list, settled lectures (a roster seat, or a confirmed
-  # application) sort before ones still in flux (pending, or open for a new
-  # application), which sort before rejected ones - see
-  # Registration::StatusPresenter.sort_priority. Ties keep the title order
-  # `lectures_of_term` already sorted them into.
+  # Sorted by Registration::StatusPresenter.sort_priority (settled first,
+  # rejected last), ties kept in `lectures_of_term`'s title order.
   def current_enrolled_lectures(term = Term.active)
     combined = roster_lectures.or(lectures_with_registration_application)
     enrolled = lectures_of_term(combined, term)
@@ -722,12 +714,8 @@ class User < ApplicationRecord
     end
   end
 
-  # Bookmarked but not enrolled. A lecture the user holds a place in is already
-  # shown in the section above, so it is not listed a second time.
-  #
-  # `enrolled` lets a caller that already computed `current_enrolled_lectures`
-  # pass it in, instead of paying for its roster/application/status queries
-  # again.
+  # Bookmarked but not already listed in `current_enrolled_lectures`. Pass
+  # `enrolled` when the caller already computed it, to avoid recomputing it.
   def current_bookmarked_lectures(term = Term.active,
                                   enrolled: current_enrolled_lectures(term))
     current_subscribed_lectures(term) - enrolled

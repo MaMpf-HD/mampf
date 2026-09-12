@@ -1,9 +1,7 @@
 module Registration
-  # Bulk equivalent of Lecture#registration_status_for, for a page of
-  # lectures (the search result cards render many at once): answered in a
-  # fixed, small number of queries rather than one per card, which would
-  # N+1. Mirrors that method's precedence rules exactly - the two must stay
-  # in sync (see the shared spec examples).
+  # Bulk equivalent of Lecture#registration_status_for: one fixed number of
+  # queries for a whole page of lectures instead of one per lecture. Mirrors
+  # that method's precedence rules exactly - keep the two in sync.
   class StatusQuery
     def initialize(user, lecture_ids)
       @user = user
