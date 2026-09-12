@@ -3,11 +3,6 @@
 # into the rows, the rare actions behind one menu, and the one button that
 # belongs to the table - saving every edited row at once.
 class PointingToolbarComponent < ViewComponent::Base
-  # The states a row can show, in the order the summary names them. Where a
-  # count is zero the summary keeps quiet, except about the hand-ins.
-  SUMMARY_PARTS = [:reviewed, :pending_grading, :not_submitted, :awaiting_record,
-                   :exempt, :absent].freeze
-
   def initialize(assignment:, grading_scope:, statuses:, submissions:, tutorials: [])
     super()
     @assignment = assignment
@@ -19,15 +14,7 @@ class PointingToolbarComponent < ViewComponent::Base
   end
 
   def summary
-    counts = @statuses.tally
-    handed_in = counts.fetch(:reviewed, 0) + counts.fetch(:pending_grading, 0)
-    parts = [I18n.t("assessment.grading_tutorial.summary.handed_in", count: handed_in)]
-    SUMMARY_PARTS.each do |status|
-      next unless counts[status]&.positive?
-
-      parts << I18n.t("assessment.grading_tutorial.summary.#{status}", count: counts[status])
-    end
-    parts.join(" · ")
+    PointingSummaryComponent.new(statuses: @statuses)
   end
 
   # The filter offers the states the rows can show; a sheet collected on
@@ -47,6 +34,16 @@ class PointingToolbarComponent < ViewComponent::Base
 
   def lecture_form?
     @tutorial.nil?
+  end
+
+  # A sheet from before there were points has files to download but no
+  # states, no points and nothing to record.
+  def grading_enabled?
+    @assignment.assessable?
+  end
+
+  def upload_open?
+    !@assignment.active?
   end
 
   def can_enter_points?

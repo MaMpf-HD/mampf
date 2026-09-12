@@ -156,5 +156,14 @@ test.describe("pointing table", () => {
     await expect(table.getByRole("row", { name: /Ada Lovelace/ })).toBeVisible();
     await expect(table.getByRole("row", { name: /Grace Hopper/ })).toBeVisible();
     await expect(tutor.page.getByText("No matching rows.")).toBeHidden();
+
+    // a row that comes back changed is measured against the filter again,
+    // and the summary follows it
+    await tutor.page.getByLabel("Status").selectOption("Not Submitted");
+    await table.getByRole("row", { name: /Grace Hopper/ })
+      .getByRole("link", { name: "Record a hand-in on paper" }).click();
+    await expect(table.getByRole("row", { name: /Grace Hopper/ })).toBeHidden();
+    await expect(tutor.page.getByText("No matching rows.")).toBeVisible();
+    await expect(tutor.page.getByText("2 hand-ins · 1 marked · 1 not yet marked")).toBeVisible();
   });
 });

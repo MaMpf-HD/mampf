@@ -186,10 +186,16 @@ thead th.sticky-col {
   opacity: var(--fade-right, 0);
 }
 
-/* A phone has no room for pins: the whole row scrolls as one. */
+/* A phone has no room for pins: the whole row scrolls as one, and the
+   header row keeps only its place on top. */
 @media (max-width: 575.98px) {
-  .sticky-col {
+  td.sticky-col {
     position: static;
+  }
+
+  thead th.sticky-col {
+    left: auto;
+    right: auto;
   }
 
   .table-wrapper::before,
@@ -206,7 +212,6 @@ input[type="file"] {
 .grade-th {
   font-size: 0.8rem;
   color: #6c757d;
-  font-weight: 500; 
+  font-weight: 500;
   padding: 10px 12px;
 }
-

@@ -1,4 +1,6 @@
-<p class="text-muted small mb-2"><%= summary %></p>
+<% if grading_enabled? %>
+  <%= render summary %>
+<% end %>
 
 <div class="d-flex flex-wrap align-items-end gap-2 mb-2">
   <div>
@@ -19,29 +21,31 @@
     >
   </div>
 
-  <div>
-    <label
-      class="form-label small mb-1"
-      for="pointing-filter-status-<%= @assignment.id %>"
-    >
-      <%= t("assessment.grading_tutorial.status") %>
-    </label>
+  <% if grading_enabled? %>
+    <div>
+      <label
+        class="form-label small mb-1"
+        for="pointing-filter-status-<%= @assignment.id %>"
+      >
+        <%= t("assessment.grading_tutorial.status") %>
+      </label>
 
-    <select
-      id="pointing-filter-status-<%= @assignment.id %>"
-      class="form-select form-select-sm"
-      data-status-filter-target="status"
-      data-action="change->status-filter#apply"
-    >
-      <option value="all">
-        <%= t("assessment.grading_tutorial.filter_all") %>
-      </option>
+      <select
+        id="pointing-filter-status-<%= @assignment.id %>"
+        class="form-select form-select-sm"
+        data-status-filter-target="status"
+        data-action="change->status-filter#apply"
+      >
+        <option value="all">
+          <%= t("assessment.grading_tutorial.filter_all") %>
+        </option>
 
-      <% status_options.each do |value, label| %>
-        <option value="<%= value %>"><%= label %></option>
-      <% end %>
-    </select>
-  </div>
+        <% status_options.each do |value, label| %>
+          <option value="<%= value %>"><%= label %></option>
+        <% end %>
+      </select>
+    </div>
+  <% end %>
 
   <% if lecture_form? %>
     <div>
@@ -87,8 +91,7 @@
   ></span>
 
   <div class="ms-auto d-flex flex-wrap align-items-end gap-2">
-    <% if can_enter_points? %>
-      <%# The rows' checkboxes belong to this form by its id. %>
+    <% if can_enter_points? && grading_enabled? %>
       <%= form_with url: mark_users_as_participated_path,
                     method: :patch,
                     id: "paper-hand-ins",
@@ -134,13 +137,12 @@
         <ul class="dropdown-menu dropdown-menu-end">
           <% if tutor? && hand_in_files? %>
             <li>
-              <button
-                type="button"
-                class="dropdown-item"
-                id="show-bulk-upload-area"
-              >
-                <%= t("submission.bulk_upload") %>
-              </button>
+              <%= button_tag t("submission.bulk_upload"),
+                             type: "button",
+                             class: "dropdown-item",
+                             id: "show-bulk-upload-area",
+                             disabled: !upload_open?,
+                             title: (t("assessment.grading_tutorial.upload_correction_closed") unless upload_open?) %>
             </li>
           <% end %>
 
@@ -184,7 +186,7 @@
       </div>
     <% end %>
 
-    <% if can_enter_points? %>
+    <% if can_enter_points? && grading_enabled? %>
       <button
         type="button"
         class="btn btn-success btn-sm"

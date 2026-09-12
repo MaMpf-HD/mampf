@@ -12,7 +12,7 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
 
   before do
     assignment.reload
-    assessment.reload
+    assessment&.reload
   end
 
   describe "when grading_scope is a Tutorial" do
@@ -82,6 +82,63 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         it "returns false" do
           expect(component.rows?).to be(false)
         end
+      end
+    end
+
+    # A sheet from before there were points: files to download, nobody to
+    # mark, so the roster does not become rows.
+    context "when the assignment has no assessment" do
+      let!(:assignment) { create(:assignment, :without_assessment, lecture: lecture) }
+      let!(:assessment) { nil }
+      let(:member) { create(:confirmed_user) }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        create(:tutorial_membership, tutorial: tutorial, user: member)
+      end
+
+      it "has no rows without a file" do
+        expect(component.rows?).to be(false)
+      end
+
+      it "draws the files and the downloads, and no roster row" do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [create(:confirmed_user)])
+        rendered = render_inline(component)
+
+        expect(rendered.css("tr[id^=participation-row]")).to be_empty
+        expect(rendered.text).to include(I18n.t("submission.bulk_download_submissions"))
+        expect(rendered.text).not_to include(I18n.t("assessment.grading_tutorial.save_all"))
+      end
+    end
+
+    describe "#row_statuses" do
+      let(:member) { create(:confirmed_user) }
+      let(:partner) { create(:confirmed_user) }
+
+      # The row speaks for its first member with a participation; so does
+      # the line above the table.
+      it "reads a team row the way the row reads itself" do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [member, partner])
+        Timecop.travel(3.hours.from_now) do
+          create(:assessment_participation, :reviewed, assessment: assessment, user: partner,
+                                                       tutorial: tutorial)
+          expect(component.row_statuses).to eq([:reviewed])
+        end
+      end
+
+      it "reads a file without any participation as still to be marked" do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [member])
+
+        expect(component.row_statuses).to eq([:pending_grading])
+      end
+
+      it "reads somebody without a hand-in off their unsaved row" do
+        create(:tutorial_membership, tutorial: tutorial, user: member)
+
+        expect(component.row_statuses).to eq([:not_submitted])
       end
     end
 

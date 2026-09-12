@@ -35,9 +35,10 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
     @non_submitters = @assignment.non_submitters_in_tutorials
     # Somebody who left the groups after handing in sits with the group that
-    # has the sheet, not among those in no group.
+    # has the sheet - as a file row or a roster row - not among those in none.
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
-                                            .where.not(id: @non_submitters.map(&:id))
+                                            .where.not(id: @non_submitters.map(&:id) +
+                                                           @stack.flat_map(&:user_ids))
     @participations_by_user_id =
       preload_participations(@non_submitters.to_a + @non_tutorial_participants.to_a, @stack)
 
@@ -84,13 +85,18 @@ class TutorialPointingTableComponent < ViewComponent::Base
                                  tutorials: @tutorials || [])
   end
 
-  # What every row will say, read off the same records the rows read.
+  # A team row speaks for its first member with a participation, as the row
+  # itself does; a file without any participation is still to be marked.
   def row_statuses
-    from_files = @stack.map { |submission| team_participations(submission).first&.display_status }
+    from_files = @stack.map do |submission|
+      team_participations(submission).compact.first&.display_status || :pending_grading
+    end
+    return from_files unless grading_enabled?
+
     from_rows = roster_rows.map do |user, tutorial|
       participation_for(user, tutorial).display_status
     end
-    (from_files + from_rows).map { |status| status || :pending_grading }
+    from_files + from_rows
   end
 
   def tasks
@@ -108,8 +114,10 @@ class TutorialPointingTableComponent < ViewComponent::Base
     false
   end
 
+  # A sheet from before there were points has file rows only.
   def rows?
-    @stack.any? || @non_submitters.any? || @non_tutorial_participants.present?
+    @stack.any? ||
+      (grading_enabled? && (@non_submitters.any? || @non_tutorial_participants.present?))
   end
 
   private

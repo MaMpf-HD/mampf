@@ -1,10 +1,18 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["bulkSave", "dirtyCount", "form", "payload"];
+  static targets = ["row", "bulkSave", "dirtyCount", "form", "payload"];
 
   connect() {
     this.newValues = [];
+  }
+
+  // A row that was swapped out - saved, or its hand-in taken back - has
+  // nothing left to save; what was typed into it must not come back with
+  // the next bulk save.
+  rowTargetDisconnected(row) {
+    this.newValues = this.newValues.filter(value => value.id !== row.dataset.rowId);
+    this.updateBulkState();
   }
 
   rowDirty(event) {

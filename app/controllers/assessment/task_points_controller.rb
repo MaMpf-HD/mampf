@@ -14,6 +14,8 @@ module Assessment
                                                  :remove_participated]
     before_action :refuse_without_row, only: [:update_participation,
                                               :refresh_participation,
+                                              :mark_as_participated,
+                                              :mark_as_participated_multi,
                                               :remove_participated]
 
     rescue_from ActiveRecord::RecordNotFound,
@@ -122,23 +124,31 @@ module Assessment
                                   status: :not_found)
       end
 
-      render turbo_stream: record_paper_hand_in(user)
+      render turbo_stream: [record_paper_hand_in(user), summary_stream]
     end
 
-    # One request for the pile of paper sheets; a row the tutor may not mark
-    # rolls the whole pile back.
+    # One request for the pile of paper sheets; a row the tutor may not mark,
+    # or one that is nobody's, rolls the whole pile back.
     def mark_as_participated_multi
-      users = @lecture.members.where(id: Array(params[:user_ids]))
+      ids = Array(params[:user_ids]).map(&:to_s).uniq
+      users = @lecture.members.where(id: ids).to_a
+      if users.size != ids.size
+        return respond_with_flash(:alert, t("assessment.errors.user_not_found"),
+                                  status: :not_found)
+      end
+
       streams = ActiveRecord::Base.transaction do
         users.map { |user| record_paper_hand_in(user) }
       end
-      render turbo_stream: streams
+      render turbo_stream: streams + [summary_stream]
     end
 
     def remove_participated
       SubmissionGraderService.remove_participation(@participation)
       @participation.reload
-      rerender_user_row
+      render turbo_stream: [turbo_stream.replace("participation-row-#{@participation.id}",
+                                                 html: render_to_string(participation_row)),
+                            summary_stream]
     end
 
     private
@@ -155,13 +165,16 @@ module Assessment
                                       grading_scope: table_scope)
       end
 
-      # Somebody in no group takes part in the lecture itself, and that is
-      # the lecturer's to enter. Until there is a participation, the row goes
-      # by the user; the answer has to find it under that name.
+      # A participation that exists belongs to the group that holds it, even
+      # if the person has since moved; a new one goes to the group they sit
+      # in, or to the lecture when they sit in none. Until there is a
+      # participation, the row goes by the user; the answer has to find it
+      # under that name.
       def record_paper_hand_in(user)
         roster_tutorial = user.rostered_tutorial_in(@lecture)
-        authorize!(:enter_points, roster_tutorial || @lecture)
         row_before = @assessment.assessment_participations.find_by(user: user)
+        scope = row_before ? row_before.tutorial : roster_tutorial
+        authorize!(:enter_points, scope || @lecture)
         row_id = if row_before
           "participation-row-#{row_before.id}"
         else
@@ -211,7 +224,16 @@ module Assessment
 
       def render_task_points_update(*streams)
         flash.now[:notice] = t("assessment.task_points.update")
-        render turbo_stream: streams.flatten.compact + [stream_flash].compact
+        render turbo_stream: streams.flatten.compact + [summary_stream, stream_flash].compact
+      end
+
+      # The line above the table counts the rows; an answer that changes one
+      # row brings the line along.
+      def summary_stream
+        statuses = TutorialPointingTableComponent.new(assignment: @assessable,
+                                                      grading_scope: table_scope).row_statuses
+        summary = PointingSummaryComponent.new(statuses: statuses)
+        turbo_stream.replace("pointing-summary", html: render_to_string(summary))
       end
 
       def rerender_submission_table
