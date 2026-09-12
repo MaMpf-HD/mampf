@@ -40,44 +40,41 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).not_to include(lecture_algebra.course.title)
       end
 
-      it "filters lectures to the current term" do
+      it "scopes results to the selected term, keeping term-independent ones" do
         current_term = create(:term, :summer, :active, year: 2025)
-        next_term = create(:term, :winter, year: 2025)
-        current_course = create(:course, title: "Topology Current")
-        next_course = create(:course, title: "Topology Next")
-        create(:lecture, course: current_course, term: current_term)
-        create(:lecture, course: next_course, term: next_term)
+        other_term = create(:term, :winter, year: 2025)
+        selected_course = create(:course, title: "Topology Selected")
+        other_course = create(:course, title: "Topology Other")
+        create(:lecture, course: selected_course, term: other_term)
+        create(:lecture, course: other_course, term: current_term)
         term_independent_course = create(:course, :term_independent,
                                          title: "Topology Independent")
         create(:lecture, :term_independent, course: term_independent_course)
 
         get search_lectures_path,
-            params: { search: { fulltext: "Topology", term_scope: "current" } },
+            params: { search: { fulltext: "Topology",
+                                term: other_term.dashboard_param } },
+            xhr: true
+
+        expect(response.body).to include(selected_course.title)
+        expect(response.body).to include(term_independent_course.title)
+        expect(response.body).not_to include(other_course.title)
+      end
+
+      it "falls back to the active term when no term is given" do
+        current_term = create(:term, :summer, :active, year: 2025)
+        other_term = create(:term, :winter, year: 2025)
+        current_course = create(:course, title: "Analysis Current")
+        other_course = create(:course, title: "Analysis Other")
+        create(:lecture, course: current_course, term: current_term)
+        create(:lecture, course: other_course, term: other_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Analysis" } },
             xhr: true
 
         expect(response.body).to include(current_course.title)
-        expect(response.body).to include(term_independent_course.title)
-        expect(response.body).not_to include(next_course.title)
-      end
-
-      it "filters lectures to the next term" do
-        current_term = create(:term, :summer, :active, year: 2025)
-        next_term = create(:term, :winter, year: 2025)
-        current_course = create(:course, title: "Analysis Current")
-        next_course = create(:course, title: "Analysis Next")
-        create(:lecture, course: current_course, term: current_term)
-        create(:lecture, course: next_course, term: next_term)
-        term_independent_course = create(:course, :term_independent,
-                                         title: "Analysis Independent")
-        create(:lecture, :term_independent, course: term_independent_course)
-
-        get search_lectures_path,
-            params: { search: { fulltext: "Analysis", term_scope: "next" } },
-            xhr: true
-
-        expect(response.body).to include(next_course.title)
-        expect(response.body).to include(term_independent_course.title)
-        expect(response.body).not_to include(current_course.title)
+        expect(response.body).not_to include(other_course.title)
       end
     end
 
@@ -100,6 +97,17 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include("lecture-search-registration-badge")
       end
 
+      it "offers both the register shortcut and the bookmark toggle " \
+         "while the user is not registered" do
+        create(:registration_campaign, :open, :first_come_first_served,
+               campaignable: lecture_algebra)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-register-link")
+        expect(response.body).to include("lecture-search-bookmark-button")
+      end
+
       it "does not show a badge for draft campaigns" do
         create(:registration_campaign, :first_come_first_served,
                campaignable: lecture_algebra)
@@ -110,7 +118,7 @@ RSpec.describe("Lectures", type: :request) do
           .not_to include("lecture-search-registration-badge")
       end
 
-      it "shows a registered badge instead when the user has registered" do
+      it "shows the registered marker instead when the user has registered" do
         campaign = create(:registration_campaign, :open,
                           :first_come_first_served,
                           campaignable: lecture_algebra)
@@ -119,7 +127,7 @@ RSpec.describe("Lectures", type: :request) do
 
         search_algebra
 
-        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body).to include("lecture-search-registered-control")
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
       end
@@ -135,7 +143,49 @@ RSpec.describe("Lectures", type: :request) do
 
         expect(response.body).to include("lecture-search-registration-badge")
         expect(response.body)
-          .not_to include("lecture-search-registered-badge")
+          .not_to include("lecture-search-registered-control")
+      end
+
+      it "shows the pending label and hides the bookmark toggle" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :pending,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-control")
+        expect(response.body).to include(I18n.t("registration.user_registration.status.pending"))
+        expect(response.body).not_to include("lecture-search-bookmark-button")
+      end
+
+      it "shows the rejected label once the campaign is closed, hides the bookmark toggle" do
+        campaign = create(:registration_campaign, :closed,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :rejected,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-control")
+        expect(response.body).to include(I18n.t("registration.user_registration.status.rejected"))
+        expect(response.body).not_to include("lecture-search-bookmark-button")
+      end
+
+      it "shows the confirmed label and hides the bookmark toggle" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-control")
+        expect(response.body).to include(I18n.t("registration.user_registration.status.confirmed"))
+        expect(response.body).not_to include("lecture-search-bookmark-button")
       end
     end
 
@@ -155,14 +205,14 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include("lecture-search-registration-badge")
       end
 
-      it "shows the registered badge when the user is already in a group" do
+      it "shows the registered marker when the user is already in a group" do
         tutorial = create(:tutorial, lecture: lecture_algebra,
                                      self_materialization_mode: :add_only)
         create(:tutorial_membership, tutorial: tutorial, user: user)
 
         search_algebra
 
-        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body).to include("lecture-search-registered-control")
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
       end
@@ -176,30 +226,31 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
         expect(response.body)
-          .not_to include("lecture-search-registered-badge")
+          .not_to include("lecture-search-registered-control")
       end
     end
 
-    context "with subscribed lectures" do
+    context "with bookmarked lectures" do
       def search_algebra
         get(search_lectures_path,
             params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
             as: :turbo_stream)
       end
 
-      it "shows a subscribed indicator on the card" do
+      it "shows the bookmark button pressed on a bookmarked lecture" do
         create(:lecture_user_join, user: user, lecture: lecture_algebra)
 
         search_algebra
 
-        expect(response.body).to include("lecture-search-subscribed-indicator")
+        expect(response.body).to include("lecture-search-bookmark-button")
+        expect(response.body).to include('aria-pressed="true"')
       end
 
-      it "does not show a subscribed indicator otherwise" do
+      it "shows the bookmark button unpressed otherwise" do
         search_algebra
 
-        expect(response.body)
-          .not_to include("lecture-search-subscribed-indicator")
+        expect(response.body).to include("lecture-search-bookmark-button")
+        expect(response.body).to include('aria-pressed="false"')
       end
     end
 

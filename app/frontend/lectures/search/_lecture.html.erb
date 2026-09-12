@@ -1,59 +1,119 @@
-<%= link_to lecture, class: "lecture-search-result-link",
-                     "data-testid": "lecture-search-result-card" do %>
-  <div class="lecture-search-result glass row g-0">
+<% status = lecture_search_result_status(lecture, @search_result_ids,
+                                         show_term: @show_term != false) %>
+<% marker_status = status.marker_status %>
+<% bookmarked = status.bookmarked %>
+<% registration_possible = status.registration_possible %>
+<% bookmarkable = status.bookmarkable %>
+<% show_term = status.show_term %>
 
-    <div class="col-md-3">
-      <%= image_tag(lecture.course.normalized_image_file ?
-                      image_course_path(lecture.course,
-                                        variant: "normalized") :
-                      "/no_course_information.png",
-                    class: "lecture-search-result-image",
-                    alt: lecture.title_no_term) %>
-    </div>
+<% wrap_attributes = {
+     class: ["lecture-search-result-wrap",
+             ("is-bookmarked" if bookmarkable && bookmarked)],
+   } %>
+<% if bookmarkable %>
+  <% wrap_attributes[:data] = {
+       controller: "bookmark",
+       bookmark_url_value: dashboard_bookmark_path(lecture),
+       bookmark_bookmarked_value: bookmarked,
+       bookmark_lecture_id_value: lecture.id,
+     } %>
+<% end %>
 
-    <div class="col-md-9">
-      <div class="lecture-search-result-body">
-        <h5 class="lecture-search-result-title">
-          <%= lecture.title_no_term %>
-        </h5>
-        <div class="lecture-search-result-info">
-          <% registered = @registered_lecture_ids&.include?(lecture.id) ||
-                          @rosterized_lecture_ids&.include?(lecture.id) %>
-          <% if registered %>
-            <span class="badge bg-success lecture-search-result-registration"
-                  data-testid="lecture-search-registered-badge">
-              <i class="fas fa-check" aria-hidden="true"></i>
-              <%= t('lecture.search.registered') %>
-            </span>
-          <%# @self_enrollable_lecture_ids ignores whether the user is a member,
-              so it may only be consulted after the branch above ruled that out %>
-          <% elsif registration_open?(lecture) ||
-                   @self_enrollable_lecture_ids&.include?(lecture.id) %>
-            <span class="badge bg-primary lecture-search-result-registration"
-                  data-testid="lecture-search-registration-badge">
-              <%= t('lecture.search.registration_open') %>
-            </span>
-          <% end %>
-          <% if @subscribed_lecture_ids&.include?(lecture.id) %>
-            <span class="lecture-search-result-subscribed text-muted"
-                  data-testid="lecture-search-subscribed-indicator">
-              <i class="fas fa-check-circle" aria-hidden="true"></i>
-              <%= t('lecture.search.subscribed') %>
-            </span>
-          <% end %>
-          <% if lecture.term %>
-            <span class="lecture-search-result-term">
-              <%= lecture.term.to_label_short %>
-            </span>
-          <% end %>
-          <% unless lecture.disable_teacher_display %>
-            <span class="lecture-search-result-teacher">
-              <%= lecture.teacher.name %>
-            </span>
-          <% end %>
+<%= tag.div(**wrap_attributes) do %>
+
+  <%= link_to lecture, class: "lecture-search-result-link",
+                       "data-testid": "lecture-search-result-card" do %>
+    <div class="lecture-search-result glass row g-0">
+
+      <div class="col-md-3">
+        <%= image_tag(lecture.course.normalized_image_file ?
+                        image_course_path(lecture.course,
+                                          variant: "normalized") :
+                        "/no_course_information.png",
+                      class: "lecture-search-result-image",
+                      alt: lecture.title_no_term) %>
+      </div>
+
+      <div class="col-md-9">
+        <div class="lecture-search-result-body">
+          <h5 class="lecture-search-result-title">
+            <%= lecture.title_no_term %>
+          </h5>
+          <div class="lecture-search-result-info">
+            <%# "Registered" is already carried by the marker on the right edge;
+                only the open-registration hint stays as a badge here. %>
+            <% if registration_possible %>
+              <span class="badge bg-primary lecture-search-result-registration"
+                    data-testid="lecture-search-registration-badge">
+                <%= t('lecture.search.registration_open') %>
+              </span>
+            <% end %>
+            <% if lecture.term && show_term %>
+              <span class="lecture-search-result-term">
+                <%= lecture.term.to_label_short %>
+              </span>
+            <% end %>
+            <% unless lecture.disable_teacher_display %>
+              <span class="lecture-search-result-teacher">
+                <%= lecture.teacher.name %>
+              </span>
+            <% end %>
+          </div>
         </div>
       </div>
-    </div>
 
+    </div>
+  <% end %>
+
+  <%# The controls on the right edge, over the card's own link. Whoever
+      already has a registration on record (or a self-enrolled group seat)
+      sees a marker for it; a pending or rejected application still leaves
+      room for the bookmark toggle next to it, only a confirmed seat or
+      group membership replaces it entirely. %>
+  <div class="lecture-search-result-controls">
+    <% if status.registered %>
+      <%# A self-enrolled group membership with no formal application of its
+          own (marker_status nil) keeps the plain "registered" wording; the
+          other three statuses get the same icon/label as the dashboard. %>
+      <% label = marker_status ?
+                   Registration::StatusPresenter.label(marker_status) :
+                   t('lecture.search.registered_status') %>
+      <span class="lecture-search-result-control is-registered"
+            role="img"
+            aria-label="<%= label %>"
+            title="<%= label %>"
+            data-testid="lecture-search-registered-control">
+        <i class="bi <%= marker_status ?
+                            Registration::StatusPresenter.icon(marker_status) :
+                            'bi-check-circle-fill text-success' %>"
+           aria-hidden="true"></i>
+      </span>
+    <% end %>
+
+    <% if registration_possible %>
+      <%= link_to lecture_home_path(lecture),
+                  class: "lecture-search-result-control " \
+                         "lecture-search-result-register",
+                  title: t("lecture.search.go_register"),
+                  "aria-label": t("lecture.search.go_register"),
+                  data: { testid: "lecture-search-register-link" } do %>
+        <i class="fas fa-plus" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+
+    <% if bookmarkable %>
+      <button type="button"
+              class="lecture-search-result-control lecture-search-result-bookmark"
+              data-bookmark-target="button"
+              data-action="bookmark#toggle"
+              aria-pressed="<%= bookmarked %>"
+              aria-label="<%= t('lecture.search.bookmark') %>"
+              title="<%= t('lecture.search.bookmark') %>"
+              data-testid="lecture-search-bookmark-button">
+        <i class="<%= bookmarked ? 'fas' : 'far' %> fa-bookmark"
+           data-bookmark-target="icon"
+           aria-hidden="true"></i>
+      </button>
+    <% end %>
   </div>
 <% end %>

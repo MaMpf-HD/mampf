@@ -715,6 +715,37 @@ class Lecture < ApplicationRecord
     in?(user.lectures)
   end
 
+  # This user's registration status for the lecture, nil if there is nothing
+  # to show. For a page of lectures at once, use Registration::StatusQuery
+  # instead - one query, not one per lecture.
+  def registration_status_for(user)
+    Registration::StatusQuery.new(user, [id]).statuses[id]
+  end
+
+  # The deadline of the next assignment the user has not yet submitted for,
+  # among this lecture's current assignments (the nearest upcoming deadline
+  # group). Returns nil if there is nothing pending.
+  def next_pending_assignment_deadline_for(user)
+    assignments = current_assignments
+    return if assignments.empty?
+    return if assignments.all? { |a| a.submission(user).present? }
+
+    assignments.first.deadline
+  end
+
+  # The open exam campaign this user has not answered yet, nil if there is
+  # nothing left to register for.
+  def open_exam_registration_for(user)
+    campaigns = registration_campaigns.exam.open
+                                      .where.not(
+                                        id: Registration::UserRegistration
+                                              .where(user: user)
+                                              .select(:registration_campaign_id)
+                                      )
+
+    campaigns.find(&:open_for_registrations?)
+  end
+
   def term_to_label
     return term.to_label if term
 

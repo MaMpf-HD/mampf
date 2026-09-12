@@ -53,6 +53,16 @@ module Registration
                               .select(:registration_campaign_id)
       )
     }
+
+    # The counterpart of `non_exam`, in one query rather than one `exam_campaign?`
+    # per campaign. An item of another kind cannot sit in the same campaign
+    # (see Registration::Item), so naming an exam item is enough.
+    scope :exam, lambda {
+      where(
+        id: Registration::Item.where(registerable_type: "Exam")
+                              .select(:registration_campaign_id)
+      )
+    }
     DISCARDABLE_STATUSES = ["draft", "open", "closed", "completed"].freeze
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze

@@ -42,13 +42,13 @@
         dev_teacher_login_path,
         role: "button",
         class: "devise-button btn btn-primary flex-fill w-100",
-        method: :post %>
+        data: { turbo_method: :post } %>
     <% elsif Rails.env.test? %>
       <%= link_to t('.login_as_last_playwright_user'),
         cypress_playwright_user_login_path,
         role: "button",
         class: "devise-button btn btn-primary login-button-row__playwright",
-        method: :post %>
+        data: { turbo_method: :post } %>
     <% end %>
 
   </div>

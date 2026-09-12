@@ -651,12 +651,6 @@ class User < ApplicationRecord
            .includes(:course, :term).natural_sort_by(&:title)
   end
 
-  # The start page shows Term.active and Term.active.next separately, so
-  # exclude both here to avoid duplicate lecture cards.
-  def inactive_lectures
-    lectures.where.not(term: [Term.active, Term.active&.next])
-  end
-
   def nonsubscribed_lectures
     Lecture.where.not(id: lectures.pluck(:id))
   end
@@ -678,21 +672,53 @@ class User < ApplicationRecord
     true
   end
 
-  def current_subscribed_lectures
-    active_lectures.includes(:course, :term).natural_sort_by(&:title) +
-      lectures.where(term: nil).natural_sort_by(&:title)
+  def current_subscribed_lectures(term = Term.active)
+    lectures_of_term(lectures, term)
   end
 
-  def current_subscribable_lectures
-    current_lectures = Lecture.in_current_term.includes(:course, :term)
-    no_term_lectures = Lecture.no_term.includes(:course, :term)
-    return current_lectures.sort + no_term_lectures.sort if admin
-    unless editor? || teacher?
-      return current_lectures.published.sort + no_term_lectures.published.sort
-    end
+  # Every lecture this user holds a place in: a seat on the lecture roster, or
+  # a place in one of the lecture's tutorial groups (a tutorial membership does
+  # not create a lecture membership of its own).
+  def roster_lectures
+    Lecture.where(id: lecture_memberships.select(:lecture_id))
+           .or(Lecture.where(id: tutorial_memberships.select(:lecture_id)))
+  end
 
-    current_lectures.select { |l| l.edited_by?(self) || l.published? }.sort +
-      no_term_lectures.select { |l| l.edited_by?(self) || l.published? }.sort
+  # Lectures with a pending application, or a rejected one not yet dismissed
+  # (see Registration::UserRegistration#dismiss!). A confirmed application
+  # is normally already covered by `roster_lectures`; this catches it before
+  # rostering happens, or if the campaign never rosters the user at all.
+  def lectures_with_registration_application
+    campaign_ids = user_registrations
+                   .where(status: [:pending, :confirmed])
+                   .or(user_registrations.rejected.not_dismissed)
+                   .select(:registration_campaign_id)
+    Lecture.where(
+      id: Registration::Campaign.where(id: campaign_ids,
+                                       campaignable_type: "Lecture")
+                                .select(:campaignable_id)
+    )
+  end
+
+  # The lectures this user holds a place in for the given term, or has an
+  # open application for (see `lectures_with_registration_application`).
+  # Sorted by Registration::StatusPresenter.sort_priority (settled first,
+  # rejected last), ties kept in `lectures_of_term`'s title order.
+  def current_enrolled_lectures(term = Term.active)
+    combined = roster_lectures.or(lectures_with_registration_application)
+    enrolled = lectures_of_term(combined, term)
+    statuses = Registration::StatusQuery.new(self, enrolled.map(&:id)).statuses
+
+    enrolled.sort_by.with_index do |lecture, index|
+      [Registration::StatusPresenter.sort_priority(statuses[lecture.id]), index]
+    end
+  end
+
+  # Bookmarked but not already listed in `current_enrolled_lectures`. Pass
+  # `enrolled` when the caller already computed it, to avoid recomputing it.
+  def current_bookmarked_lectures(term = Term.active,
+                                  enrolled: current_enrolled_lectures(term))
+    current_subscribed_lectures(term) - enrolled
   end
 
   def submission_partners(lecture)
@@ -870,6 +896,15 @@ class User < ApplicationRecord
   end
 
   private
+
+    # Term-independent lectures belong to every term, so they follow the ones
+    # of the selected term rather than being left out.
+    def lectures_of_term(scope, term)
+      scope.where(term: term).includes(:course, :term, :teacher)
+           .natural_sort_by(&:title) +
+        scope.where(term: nil).includes(:course, :teacher)
+             .natural_sort_by(&:title)
+    end
 
     def password_differs_from_current
       stored = encrypted_password_in_database

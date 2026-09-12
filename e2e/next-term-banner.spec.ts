@@ -38,8 +38,8 @@ test("shows the banner and leads to the next term lecture search",
     await expect(dashboard.nextTermBanner).toContainText("WS 2025/26");
 
     await dashboard.clickNextTermBannerCta();
-    expect(page.url()).toContain("term_scope=next");
-    await expect(dashboard.nextTermFilter).toBeChecked();
+    expect(page.url()).toContain("term=");
+    await dashboard.scrollToSearchAndWaitForResults();
     await expect(dashboard.results).toContainText("Topology Next");
     await expect(dashboard.results).not.toContainText("Topology Current");
 
@@ -55,17 +55,4 @@ test("does not show the banner when the feature flag is disabled",
     await dashboard.goto();
 
     await expect(dashboard.nextTermBanner).not.toBeVisible();
-  });
-
-test("deep-link with term_scope=current overrides the default filter",
-  async ({ factory, student: { page } }) => {
-    await createTermsWithLectures(factory);
-
-    const dashboard = new DashboardLectureBrowsePage(page);
-    await dashboard.gotoWithTermScopeDeepLink("current");
-
-    await expect(dashboard.currentTermFilter).toBeChecked();
-    await expect(dashboard.nextTermFilter).not.toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).not.toContainText("Topology Next");
   });

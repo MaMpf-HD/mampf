@@ -1,15 +1,54 @@
 # Lectures Helper
 module LecturesHelper
+  # ID sets/statuses for one page of lecture search results, computed once
+  # per request by LecturesController#search rather than once per card.
+  SearchResultIds = Struct.new(:subscribed_lecture_ids,
+                               :registration_status_by_lecture_id,
+                               :rosterized_lecture_ids,
+                               :self_enrollable_lecture_ids, keyword_init: true)
+
+  # Flags for one lecture search result card (dashboard search, /search/index).
+  # `marker_status` is nil for a plain self-enrolled roster seat with no
+  # registration of its own, and for :open (no application from this user
+  # yet - that case only shows the "+ register" shortcut, not the marker).
+  SearchResultStatus = Struct.new(:marker_status, :registered,
+                                  :registration_possible, :bookmarkable,
+                                  :bookmarked, :show_term, keyword_init: true)
+
+  def lecture_search_result_status(lecture, ids, show_term: true)
+    registration_status = ids.registration_status_by_lecture_id&.[](lecture.id)
+    marker_status = registration_status if
+      [:confirmed, :pending, :rejected].include?(registration_status)
+    rosterized = ids.rosterized_lecture_ids&.include?(lecture.id)
+    registered = marker_status.present? || rosterized
+
+    # self_enrollable_lecture_ids ignores whether the user is a member, so
+    # it may only be consulted once being registered has been ruled out.
+    registration_possible = !registered &&
+                            (registration_status == :open ||
+                             ids.self_enrollable_lecture_ids&.include?(lecture.id))
+
+    # Once there is a registration on record - pending, confirmed or
+    # rejected - the lecture already sits in "You are registered for these";
+    # bookmarking it too would be redundant. Only a lecture with no
+    # application at all (or one still open, not yet applied to) can be
+    # bookmarked.
+    bookmarkable = marker_status.nil? && !rosterized
+
+    SearchResultStatus.new(
+      marker_status: marker_status,
+      registered: registered,
+      registration_possible: registration_possible,
+      bookmarkable: bookmarkable,
+      bookmarked: ids.subscribed_lecture_ids&.include?(lecture.id) || false,
+      show_term: show_term
+    )
+  end
+
   def registration_sidebar_visible?(lecture)
     return false unless lecture && user_signed_in?
 
     RegistrationUserRegistrationAbility.new(current_user).can?(:index, lecture)
-  end
-
-  # Whether the lecture currently has an open registration campaign
-  # (one building block of the search-card badges, see _lecture.html.erb).
-  def registration_open?(lecture)
-    lecture.registration_campaigns.any?(&:open_for_registrations?)
   end
 
   # Deleting a lecture deletes its campaigns and every registration in them,

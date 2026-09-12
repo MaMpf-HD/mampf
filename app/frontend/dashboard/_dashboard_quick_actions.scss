@@ -1,0 +1,118 @@
+@import "~/styles/branding";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+$quick-action-tail: 0.55rem;
+$quick-action-tail-offset: -0.3rem; // half the tail's diagonal, tucked under the border
+
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.quick-action {
+    // Mixed rather than translucent, else the overlapping tail would show a seam.
+    --quick-action-bg: #{color-mix(in srgb, $mampf-blue 5%, #fff)};
+    --quick-action-border: #{color-mix(in srgb, $mampf-blue 25%, #fff)};
+    --quick-action-ink: #{$mampf-blue};
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--quick-action-border);
+    border-radius: 0.6rem 0.6rem 0.6rem 0.15rem;
+    background: var(--quick-action-bg);
+    color: #343a40;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    rotate: var(--quick-action-tilt, 0deg);
+    box-shadow:
+        0 1px 1px rgb(0 0 0 / 5%),
+        0 4px 10px rgb(0 0 0 / 6%);
+    transition:
+        rotate 0.2s ease,
+        translate 0.2s ease,
+        box-shadow 0.25s ease;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: $quick-action-tail-offset;
+        left: 1.25rem;
+        width: $quick-action-tail;
+        height: $quick-action-tail;
+        background: var(--quick-action-bg);
+        border-top: 1px solid var(--quick-action-border);
+        border-left: 1px solid var(--quick-action-border);
+        rotate: 45deg;
+    }
+
+    &:hover,
+    &:focus-visible {
+        rotate: 0deg;
+        translate: 0 -2px;
+        color: #343a40;
+        box-shadow:
+            0 1px 2px rgb(0 0 0 / 8%),
+            0 8px 18px rgb(0 0 0 / 10%);
+    }
+
+    &:focus-visible {
+        outline: 2px solid $mampf-blue-focus;
+        outline-offset: 2px;
+    }
+
+    &__label {
+        font-weight: 500;
+    }
+
+    &__icon {
+        margin-right: 0.4rem;
+        color: var(--quick-action-ink);
+        font-size: 0.95rem;
+    }
+}
+
+// Rail beside the card: tail points sideways instead of up.
+@include media-breakpoint-up(xl) {
+    .quick-action::after {
+        top: 0.85rem;
+        left: $quick-action-tail-offset;
+        border-top: 0;
+        border-bottom: 1px solid var(--quick-action-border);
+    }
+
+    // Left column: rail sits outside, so the tail points right instead.
+    .dashboard-cards > .dashboard-card-slot:nth-child(odd) .quick-action {
+        border-radius: 0.6rem 0.6rem 0.15rem;
+
+        &::after {
+            right: $quick-action-tail-offset;
+            left: auto;
+            border-top: 1px solid var(--quick-action-border);
+            border-right: 1px solid var(--quick-action-border);
+            border-bottom: 0;
+            border-left: 0;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .quick-action {
+        transition: box-shadow 0.25s ease;
+
+        &:hover,
+        &:focus-visible {
+            translate: none;
+        }
+    }
+}

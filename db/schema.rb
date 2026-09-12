@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -329,6 +329,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
     t.index ["short_title"], name: "index_courses_on_short_title_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["term_independent"], name: "index_courses_on_term_independent"
     t.index ["title"], name: "index_courses_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "dashboard_card_styles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "lecture_id", null: false
+    t.integer "tape_color", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_dashboard_card_styles_on_lecture_id"
+    t.index ["user_id", "lecture_id"], name: "index_dashboard_card_styles_on_user_id_and_lecture_id", unique: true
+    t.index ["user_id"], name: "index_dashboard_card_styles_on_user_id"
   end
 
   create_table "division_course_joins", force: :cascade do |t|
@@ -778,6 +789,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
     t.datetime "rejected_at"
     t.datetime "rejection_overridden_at"
     t.uuid "rejection_policy_id"
+    t.datetime "dismissed_at"
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
     t.index ["registration_campaign_id", "user_id", "registration_item_id"], name: "index_reg_user_regs_unique_item_user", unique: true
     t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_exclusive_assignment_unranked", unique: true, where: "((exclusive_assignment = true) AND (preference_rank IS NULL))"
@@ -1489,6 +1501,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
+  add_foreign_key "dashboard_card_styles", "lectures"
+  add_foreign_key "dashboard_card_styles", "users"
   add_foreign_key "divisions", "programs"
   add_foreign_key "exam_roster_entries", "exams"
   add_foreign_key "exam_roster_entries", "registration_campaigns", column: "source_campaign_id"

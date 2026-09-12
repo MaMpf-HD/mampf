@@ -1,0 +1,30 @@
+en:
+  dashboard:
+    term_select:
+      label: "Semester"
+    quick_actions:
+      list_label: "Things to do for %{lecture}"
+      assignment:
+        label: "Assignment due %{date}"
+      exam:
+        label: "Exam registration is open."
+      activity:
+        forum:
+          one: "1 new forum post"
+          other: "%{count} new forum posts"
+        comments:
+          one: "1 new comment"
+          other: "%{count} new comments"
+    points_progress:
+      title: "Assignment points"
+      label: "%{points} of %{max} (%{percentage}%)"
+    washi_tape:
+      open: "Choose the tape for %{subject}"
+      color: "Color"
+      colors:
+        butter: "Butter"
+        rose: "Rose"
+        mint: "Mint"
+        sky: "Sky"
+        lavender: "Lavender"
+        peach: "Peach"

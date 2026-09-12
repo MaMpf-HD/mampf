@@ -196,6 +196,92 @@ RSpec.describe(User, type: :model) do
     end
   end
 
+  describe "#current_enrolled_lectures" do
+    let(:term) { create(:term, :summer, :active, year: 2025) }
+    let(:user) { create(:user) }
+
+    it "includes lectures the user holds a roster seat in" do
+      lecture = create(:lecture, term: term)
+      create(:lecture_membership, user: user, lecture: lecture)
+
+      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
+    end
+
+    it "includes lectures the user is only in a tutorial group of" do
+      lecture = create(:lecture, term: term)
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:tutorial_membership, user: user, tutorial: tutorial)
+
+      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
+    end
+
+    it "keeps such a lecture out of the bookmarked ones even when subscribed" do
+      lecture = create(:lecture, term: term)
+      tutorial = create(:tutorial, lecture: lecture)
+      create(:tutorial_membership, user: user, tutorial: tutorial)
+      user.subscribe_lecture!(lecture)
+
+      expect(user.current_bookmarked_lectures(term)).to be_empty
+    end
+
+    it "includes a lecture with a pending registration but no roster seat" do
+      lecture = create(:lecture, term: term)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: user,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
+    end
+
+    it "includes a lecture with a rejected, not-yet-dismissed registration" do
+      lecture = create(:lecture, term: term)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :rejected,
+             user: user,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
+    end
+
+    it "excludes a lecture whose rejected registration was dismissed" do
+      lecture = create(:lecture, term: term)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :rejected,
+             user: user,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             dismissed_at: Time.current)
+
+      expect(user.current_enrolled_lectures(term)).to be_empty
+    end
+
+    it "sorts settled lectures before pending, before rejected" do
+      rejected_lecture = create(:lecture, term: term, course: create(:course, title: "Z Rejected"))
+      rejected_campaign = create(:registration_campaign, :closed,
+                                 campaignable: rejected_lecture)
+      create(:registration_user_registration, :rejected,
+             user: user, registration_campaign: rejected_campaign,
+             registration_item: rejected_campaign.registration_items.first)
+
+      pending_lecture = create(:lecture, term: term, course: create(:course, title: "A Pending"))
+      pending_campaign = create(:registration_campaign, :open,
+                                campaignable: pending_lecture)
+      create(:registration_user_registration, :pending,
+             user: user, registration_campaign: pending_campaign,
+             registration_item: pending_campaign.registration_items.first)
+
+      confirmed_lecture = create(:lecture, term: term,
+                                           course: create(:course, title: "M Confirmed"))
+      create(:lecture_membership, user: user, lecture: confirmed_lecture)
+
+      expect(user.current_enrolled_lectures(term))
+        .to eq([confirmed_lecture, pending_lecture, rejected_lecture])
+    end
+  end
+
   # test callbacks - NEEDS TO BE REFACTORED
 
   # it 'is given the default subscription type if subscription type is nil' do

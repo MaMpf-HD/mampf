@@ -1,8 +1,4 @@
-<%# Transitional banner announcing that lectures for the next term are
-  being published and that registration now happens in MaMpf.
-  Rendered only when the :next_term_banner feature flag is enabled and
-  at least one published lecture for the next term exists
-  (see MainController#next_term_banner). %>
+<%# See MainController#next_term_banner. %>
 <div class="next-term-banner alert alert-primary d-flex align-items-start gap-3 p-3 px-md-4 mx-auto"
      role="alert"
      data-testid="next-term-banner">
@@ -25,7 +21,7 @@
 
       <div class="w-100">
         <%= link_to t("main.next_term_banner.cta"),
-                    root_path(term_scope: "next", anchor: "lecture-search"),
+                    root_path(term: next_term.dashboard_param, anchor: "lecture-search"),
                     class: "btn btn-primary btn-sm w-100",
                     data: { testid: "next-term-banner-cta" } %>
       </div>

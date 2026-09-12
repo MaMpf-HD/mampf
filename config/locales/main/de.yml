@@ -1,5 +1,28 @@
 de:
   main:
+    start:
+      no_lectures: >-
+        Du bist noch zu keiner Veranstaltung des aktuellen Semesters angemeldet
+        und hast Dir auch keine gemerkt. Scrolle nach unten, um neue
+        Veranstaltungen zu entdecken.
+      sections:
+        enrolled: "Für diese bist Du angemeldet"
+        bookmarked: "Diese hast Du Dir gemerkt"
+      registration_open: "Anmeldung offen — jetzt anmelden"
+      remove_bookmark: "Merkung entfernen"
+      remove_bookmark_title: "Nicht mehr merken?"
+      remove_bookmark_body: >-
+        „%{lecture}“ aus Deinen gemerkten Veranstaltungen entfernen? Du kannst
+        sie über die Vorlesungssuche erneut merken.
+      remove_bookmark_confirm: "Entfernen"
+      remove_registration_notice: "Ausblenden"
+      remove_registration_notice_title: "Entfernen?"
+      remove_registration_notice_body: >-
+        Deine Anmeldung für „%{lecture}“ wurde abgelehnt. Du kannst die
+        Veranstaltung als Merkung behalten oder ganz von Deinem Dashboard
+        entfernen.
+      remove_registration_notice_keep_bookmarked: "Als Merkung behalten"
+      remove_registration_notice_remove_entirely: "Ganz entfernen"
     next_term_banner:
       heading:
         one: "Die Veranstaltungen für das %{term} werden gerade veröffentlicht — die erste ist schon in MaMpf."

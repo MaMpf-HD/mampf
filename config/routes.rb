@@ -656,6 +656,28 @@ Rails.application.routes.draw do
   patch "profile/unstar_lecture",
         as: "unstar_lecture"
 
+  # how this user wants their dashboard card for a lecture taped to the board
+  patch "dashboard/washi_tape/:lecture_id",
+        to: "dashboard/washi_tapes#update",
+        as: "dashboard_washi_tape"
+
+  # add / remove a lecture from the student's dashboard bookmarks
+  post "dashboard/bookmarks/:lecture_id",
+       to: "dashboard/bookmarks#create",
+       as: "dashboard_bookmark"
+  delete "dashboard/bookmarks/:lecture_id",
+         to: "dashboard/bookmarks#destroy"
+
+  # dismiss a rejected registration's notice from the dashboard
+  delete "dashboard/registration_notice/:lecture_id",
+         to: "dashboard/registration_notices#destroy",
+         as: "dashboard_registration_notice"
+
+  # switch the dashboard to a different term in place, via Turbo Stream
+  get "dashboard/term",
+      to: "dashboard/terms#show",
+      as: "dashboard_term"
+
   get "profile/request_data",
       as: "request_data"
 

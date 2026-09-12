@@ -1,0 +1,52 @@
+<%= tag.div class: "washi-tape", **wrapper_data do %>
+  <% if editable? %>
+    <%= tag.button type: "button",
+                   class: "washi-tape__strip",
+                   style: strip_style,
+                   aria: { haspopup: "dialog", expanded: false },
+                   data: { washi_tape_target: "strip",
+                           action: "washi-tape#toggle",
+                           testid: "washi-tape-strip" } do %>
+      <span class="visually-hidden">
+        <%= t("dashboard.washi_tape.open", subject: label) %>
+      </span>
+    <% end %>
+    <div
+      class="washi-tape__picker"
+      role="dialog"
+      aria-label="<%= t("dashboard.washi_tape.open", subject: label) %>"
+      data-washi-tape-target="picker"
+      data-testid="washi-tape-picker"
+      hidden
+    >
+      <fieldset class="washi-tape__group">
+        <legend class="washi-tape__legend">
+          <%= t("dashboard.washi_tape.color") %>
+        </legend>
+
+        <div class="washi-tape__swatches">
+          <% colors.each do |color| %>
+            <label class="washi-tape__swatch">
+              <%= tag.input type: "radio",
+                            class: "washi-tape__input",
+                            name: group_name,
+                            value: color,
+                            checked: color == tape.color,
+                            data: { action: "washi-tape#chooseColor" } %>
+
+              <%= tag.span class: "washi-tape__swatch-face",
+                           style: color_style(color),
+                           aria: { hidden: true } %>
+
+              <span class="visually-hidden"><%= color_label(color) %></span>
+            </label>
+          <% end %>
+        </div>
+      </fieldset>
+    </div>
+  <% else %>
+    <%= tag.span class: "washi-tape__strip",
+                 style: strip_style,
+                 aria: { hidden: true } %>
+  <% end %>
+<% end %>

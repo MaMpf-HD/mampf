@@ -28,6 +28,7 @@ module Seeds
         Demo::CampaignSetupSupport.setup!
         Demo::NextTermBannerSupport.setup!
         Demo::VignettesSupport.setup!
+        Demo::DashboardRegistrationSupport.setup!
         add_running_campaigns!
         settle_current_term_campaigns!
         extend_open_deadlines!

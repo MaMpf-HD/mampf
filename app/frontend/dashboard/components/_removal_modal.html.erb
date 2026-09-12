@@ -1,0 +1,67 @@
+<%#
+  Shared by bookmark-removal and registration-notice-removal (RemovalModalController).
+  Locals: controller (data-controller name), url, lecture_id, icon_title,
+  modal_title, modal_body, buttons ([{ action:, css_class:, label: }, ...]).
+%>
+
+<div
+  data-controller="<%= controller %>"
+  <%= tag.attributes(data: {
+           "#{controller}-url-value": url,
+           "#{controller}-lecture-id-value": lecture_id
+         }) %>
+>
+  <button
+    type="button"
+    class="bi bi-x-lg dashboard-card__action"
+    data-action="<%= controller %>#open"
+    title="<%= icon_title %>"
+    aria-label="<%= icon_title %>"
+  ></button>
+
+  <div
+    class="modal fade"
+    tabindex="-1"
+    aria-hidden="true"
+    <%= tag.attributes(data: { "#{controller}-target": "dialog" }) %>
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><%= modal_title %></h5>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="<%= t('buttons.close') %>"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <%= modal_body %>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            <%= t("buttons.cancel") %>
+          </button>
+
+          <% buttons.each do |button| %>
+            <button
+              type="button"
+              class="<%= button[:css_class] %>"
+              <%= tag.attributes("data-#{controller}-#{button[:action]}": true) %>
+            >
+              <%= button[:label] %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

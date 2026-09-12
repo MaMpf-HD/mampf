@@ -1,5 +1,26 @@
 en:
   main:
+    start:
+      no_lectures: >-
+        You are not enrolled in any event series of the current term yet, and
+        have not bookmarked any. Scroll down to discover new event series.
+      sections:
+        enrolled: "You are registered for these"
+        bookmarked: "You bookmarked these"
+      registration_open: "Registration open — register now"
+      remove_bookmark: "Remove bookmark"
+      remove_bookmark_title: "Remove bookmark?"
+      remove_bookmark_body: >-
+        Remove “%{lecture}” from your bookmarks? You can bookmark it again from
+        the lecture search.
+      remove_bookmark_confirm: "Remove"
+      remove_registration_notice: "Dismiss"
+      remove_registration_notice_title: "Remove?"
+      remove_registration_notice_body: >-
+        Your registration for “%{lecture}” was rejected. You can keep the
+        lecture as a bookmark, or remove it from your dashboard entirely.
+      remove_registration_notice_keep_bookmarked: "Keep in bookmarked lectures"
+      remove_registration_notice_remove_entirely: "Remove entirely"
     next_term_banner:
       heading:
         one: "Lectures for %{term} are being published — the first one is already in MaMpf."

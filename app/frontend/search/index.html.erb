@@ -33,12 +33,22 @@
                                 @search_string,
                                 class: "form-control",
                                 placeholder: t('navbar.search'),
-                                "aria-label": t('search.tag_search'),
                                 data: { action: "input->auto-submit-form#debouncedSubmit",
                                         auto_submit_form_target: "searchInput" } %>
           <% end %>
           <div class="tag-search-results-wrapper">
-            <%= render partial: 'search/tag_search_frame' %>
+            <%= turbo_frame_tag "tag-search-results", target: "_top" do %>
+              <% if @search_too_short %>
+                <div class="text-danger small">
+                  <%= t('search.term_too_short') %>
+                </div>
+              <% elsif @tags %>
+                <%= render partial: 'search/tag_search_results',
+                           locals: { tags: @tags,
+                                     filtered_tags: @filtered_tags,
+                                     search_string: @search_string } %>
+              <% end %>
+            <% end %>
             <div class="tag-search-spinner">
               <div class="spinner-border spinner-border-sm text-secondary" role="status">
                 <span class="visually-hidden"><%= t('basics.loading') %></span>
@@ -105,6 +115,6 @@
     </div>
   </div>
 
-  <%= render partial: 'profile/subscription_modal' %>
-  <%= render partial: "lectures/search/search" %>
+  <%# Spans all semesters, so each result keeps its term label. %>
+  <%= render partial: "lectures/search/search", locals: { show_term: true } %>
 </div>

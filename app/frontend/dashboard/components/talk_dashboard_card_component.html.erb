@@ -1,0 +1,34 @@
+<%= render(DashboardCardComponent.new(
+      href: talk_path(talk),
+      image_url: image_url,
+      title: talk.title,
+      tape: WashiTapeComponent.new(
+              tape: tape,
+              label: lecture.title_no_term,
+              update_url: dashboard_washi_tape_path(lecture)),
+      data: { testid: "talk-dashboard-card" })) do |card| %>
+  <% card.with_subtitle { lecture.title_term_info_no_type } %>
+
+  <% card.with_corner do %>
+    <%= link_to "",
+                assemble_talk_path(talk),
+                class: "bi bi-pencil text-muted dashboard-card__action",
+                title: t("buttons.edit"),
+                "aria-label": t("buttons.edit"),
+                data: { toggle: "tooltip", placement: "bottom" } %>
+  <% end %>
+
+  <% if talk.dates.any? %>
+    <% card.with_note do %>
+      <i class="bi bi-calendar-event" aria-hidden="true"></i>
+      <%= dates_text %>
+    <% end %>
+  <% end %>
+
+  <% if cospeaker? %>
+    <% card.with_note do %>
+      <i class="bi bi-people" aria-hidden="true"></i>
+      <%= cospeaker_text %>
+    <% end %>
+  <% end %>
+<% end %>

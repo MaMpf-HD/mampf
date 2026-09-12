@@ -1,236 +1,29 @@
 <%= vite_stylesheet_tag "dashboard/dashboard.scss" %>
 
-<div style="min-height: 100vh; display: flex; flex-direction: column; padding-left: 1em; padding-right: 1em;">
+<div class="dashboard-hero">
   <% if @next_term_lecture_count.to_i.positive? %>
     <%= render partial: "main/start/next_term_banner",
                locals: { next_term: @next_term,
                          lecture_count: @next_term_lecture_count } %>
   <% end %>
-  <div class="accordion" id="subscriptionsAccordion" style="flex: 1;">
-  <% if Term.active %>
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <button class="accordion-button"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseCurrentStuff"
-                aria-expanded="true"
-                aria-controls="collapseCurrentStuff">
-          <h4 class="<%= text_dark_link(@current_stuff.any?) %>"
-              id="currentStuffLink">
-            <%= t('profile.my_term_html', term: Term.active.to_label) %>
-          </h4>
-        </button>
-      </div>
-      <div class="subscriptionsCollapse <%= show_collapse(@current_stuff.any?) %>"
-           id="collapseCurrentStuff"
-           data-bs-parent="#subscriptionsAccordion"
-           data-link="#currentStuffLink">
-        <div class="accordion-body">
-          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
-               id="collapseCurrentStuffContent">
-            <% if @current_stuff.any? %>
-              <%= render partial: 'main/start/lecture',
-                         collection: @current_stuff,
-                         locals: { current: true,
-                                    subscribed: true,
-                                    parent: 'current_subscribed' },
-                           as: :lecture %>
-            <% end %>
-          </div>
-          <%= tag.div id: 'emptyCurrentStuff',
-                      style: @current_stuff.any? ? 'display: none;' : ''  do %>
-            <%= t('profile.no_current_stuff') %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  <% end %>
-  <%# Rendered with the page rather than fetched when it opens: this fold
-    carries no `subscriptionsCollapse` class, so nothing asks the server for
-    its contents. %>
-
-  <% if Term.active&.next %>
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseNextTermStuff"
-                aria-expanded="false"
-                aria-controls="collapseNextTermStuff">
-          <h4 class="text-dark" id="nextTermStuffLink">
-            <%= t("profile.my_next_term_html",
-                  term: Term.active.next.to_label) %>
-          </h4>
-        </button>
-      </div>
-      <div class="collapse" id="collapseNextTermStuff"
-           data-bs-parent="#subscriptionsAccordion">
-        <div class="accordion-body">
-          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
-                      row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
-               id="collapseNextTermStuffContent"
-               data-testid="next-term-subscribed">
-            <%= render partial: "main/start/lecture",
-                       collection: @next_term_stuff,
-                       locals: { current: false,
-                                 subscribed: true,
-                                 parent: "next_term_subscribed" },
-                       as: :lecture %>
-
-          </div>
-
-          <% if @next_term_seats.any? %>
-            <p class="text-muted small mb-2">
-              <%= t("profile.next_term_seats") %>
-            </p>
-
-            <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
-                        row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
-                 data-testid="next-term-seats">
-              <%= render partial: "main/start/lecture",
-                         collection: @next_term_seats,
-                         locals: { current: false,
-                                   subscribed: false,
-                                   parent: "next_term_subscribed" },
-                         as: :lecture %>
-            </div>
-          <% end %>
-
-          <% if @next_term_pending.any? %>
-            <p class="text-muted small mb-2">
-              <%= t("profile.next_term_registrations") %>
-            </p>
-
-            <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3
-                        row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
-                 data-testid="next-term-registrations">
-              <%= render partial: "main/start/lecture",
-                         collection: @next_term_pending,
-                         locals: { current: false,
-                                   subscribed: false,
-                                   parent: "next_term_registered" },
-                         as: :lecture %>
-            </div>
-          <% end %>
-
-          <% fold_filled = @next_term_stuff.any? || @next_term_seats.any? ||
-                           @next_term_pending.any? %>
-
-          <%= tag.div id: "emptyNextTermStuff",
-                      style: fold_filled ? "display: none;" : "" do %>
-            <%= t("profile.no_next_term_stuff") %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  <% end %>
-
-  <div class="accordion-item">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseInactiveLectures"
-              aria-expanded="false"
-              aria-controls="collapseInactiveLectures">
-        <h4 class="text-dark"
-            id="inactiveLecturesLink">
-          <%= t('profile.inactive_lectures') %>
-        </h4>
-      </button>
-    </div>
-    <div class="subscriptionsCollapse <%= show_collapse(@current_stuff.empty?) %>"
-         id="collapseInactiveLectures"
-         data-bs-parent="#subscriptionsAccordion" data-link="#inactiveLecturesLink">
-      <div class="accordion-body">
-        <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
-             id="collapseInactiveLecturesContent"
-             data-cy="subscribed-inactive-lectures-collapse"
-             data-testid="further-subscribed">
-          <% if @current_stuff.empty? %>
-            <%= render partial: 'main/start/lecture',
-                       collection: @inactive_lectures,
-                       locals: { current: false,
-                                  subscribed: true,
-                                  parent: 'inactive' },
-                        as: :lecture %>
-          <% end %>
-        </div>
-        <%= tag.div id: 'emptyInactiveLectures',
-                  style: @current_stuff.empty? && @inactive_lectures&.empty? ? '' : 'display: none;' do %>
-        <%= t('profile.no_inactive_stuff') %>
-      <% end %>
-      </div>
-    </div>
+  <div class="container-md small-width mt-4">
+    <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
+                                                selected: @selected_term,
+                                                id: "dashboard-term-select")) %>
   </div>
-  <% if Term.active %>
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseAllCurrent"
-                aria-expanded="false"
-                aria-controls="collapseAllCurrent">
-          <h4 class="text-dark"
-              id="allCurrentLink">
-            <%= t('profile.active_nonsubscribed_lectures_html',
-                  term: Term.active.to_label) %>
-          </h4>
-        </button>
-      </div>
-      <div class="collapse subscriptionsCollapse" id="collapseAllCurrent"
-           data-bs-parent="#subscriptionsAccordion" data-link="#allCurrentLink">
-        <div class="accordion-body">
-          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
-               id="collapseAllCurrentContent">
-          </div>
-          <%= tag.div id: 'emptyAllCurrent',
-                      style: 'display: none;' do %>
-            <%= t('profile.no_current_at_all') %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  <% end %>
-  <div class="accordion-item">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseTalks"
-              aria-expanded="false"
-              aria-controls="collapseTalks"
-              data-cy="my-talks-collapse-btn">
-        <h4 class="text-dark"
-            id="talkLink">
-          <%= t('profile.my_talks') %>
-        </h4>
-      </button>
-    </div>
-    <div class="collapse subscriptionsCollapse" id="collapseTalks"
-         data-bs-parent="#subscriptionsAccordion"
-         data-link="#talkLink"
-         data-cy="my-talks-collapse">
-      <div class="accordion-body">
-        <%= render partial: 'main/start/talks',
-                   locals: { talks: @talks } %>
-      </div>
-    </div>
-  </div>
-  </div>
+
+  <%= render "main/start/lecture_cards" %>
 
   <a href="#lecture-search" id="go-to-lecture-search">
-    <span style="font-size: 0.9em; font-weight: 500;">
+    <span class="go-to-lecture-search-label">
       <%= t("lecture.search.go_to_search") %>
     </span>
-    <div id="arrow-go-to-lecture-wrapper" style="transition: transform 0.3s ease;">
+    <div id="arrow-go-to-lecture-wrapper">
       <i class="fas fa-chevron-down" id="arrow-go-to-lecture"></i>
     </div>
   </a>
 </div>
 
 <%= render partial: 'profile/subscription_modal' %>
-<%= render partial: "lectures/search/search" %>
+<%# The picker above names the semester, so the term on each result is dropped. %>
+<%= render partial: "lectures/search/search", locals: { show_term: false } %>

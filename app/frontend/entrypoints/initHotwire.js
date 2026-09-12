@@ -181,6 +181,24 @@ window.Stimulus.register("media-download-button", MediaDownloadButtonController)
 import LecturesNewFormController from "~/lectures/new/_form.controller.js";
 window.Stimulus.register("lectures-new-form", LecturesNewFormController);
 
+import WashiTapeController from "~/dashboard/washi_tape.controller.js";
+window.Stimulus.register("washi-tape", WashiTapeController);
+
+import DashboardTermSelectController from "~/dashboard/dashboard_term_select.controller.js";
+window.Stimulus.register("dashboard-term-select", DashboardTermSelectController);
+
+import DashboardSectionController from "~/dashboard/dashboard_section.controller.js";
+window.Stimulus.register("dashboard-section", DashboardSectionController);
+
+import BookmarkRemovalController from "~/dashboard/bookmark_removal.controller.js";
+window.Stimulus.register("bookmark-removal", BookmarkRemovalController);
+
+import RegistrationNoticeRemovalController from "~/dashboard/registration_notice_removal.controller.js";
+window.Stimulus.register("registration-notice-removal", RegistrationNoticeRemovalController);
+
+import BookmarkController from "~/lectures/search/bookmark.controller.js";
+window.Stimulus.register("bookmark", BookmarkController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

@@ -1,0 +1,30 @@
+de:
+  dashboard:
+    term_select:
+      label: "Semester"
+    quick_actions:
+      list_label: "Zu erledigen für %{lecture}"
+      assignment:
+        label: "Abgabe fällig am %{date}"
+      exam:
+        label: "Die Klausuranmeldung ist offen."
+      activity:
+        forum:
+          one: "1 neuer Forenbeitrag"
+          other: "%{count} neue Forenbeiträge"
+        comments:
+          one: "1 neuer Kommentar"
+          other: "%{count} neue Kommentare"
+    points_progress:
+      title: "Übungspunkte"
+      label: "%{points} von %{max} (%{percentage} %)"
+    washi_tape:
+      open: "Klebeband für %{subject} auswählen"
+      color: "Farbe"
+      colors:
+        butter: "Butter"
+        rose: "Rosé"
+        mint: "Minze"
+        sky: "Himmel"
+        lavender: "Lavendel"
+        peach: "Pfirsich"

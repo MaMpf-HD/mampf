@@ -627,4 +627,38 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.update(uses_exam_eligibility: false)).to be(false)
     end
   end
+
+  describe "#open_exam_registration_for" do
+    let(:student) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+    it "finds an exam campaign that is still open" do
+      exam.registration_campaign.update!(status: :open)
+
+      expect(lecture.open_exam_registration_for(student))
+        .to eq(exam.registration_campaign)
+    end
+
+    it "ignores a campaign that has not been opened yet" do
+      expect(lecture.open_exam_registration_for(student)).to be_nil
+    end
+
+    it "ignores a campaign for anything but an exam" do
+      create(:registration_campaign, :open, campaignable: lecture)
+
+      expect(lecture.open_exam_registration_for(student)).to be_nil
+    end
+
+    it "ignores a campaign the student has already answered" do
+      campaign = exam.registration_campaign
+      campaign.update!(status: :open)
+      create(:registration_user_registration,
+             user: student,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(lecture.open_exam_registration_for(student)).to be_nil
+    end
+  end
 end

@@ -1,0 +1,18 @@
+<%= tag.div id: "#{id}-wrapper",
+            class: "dashboard-term-select",
+            data: { controller: "dashboard-term-select" } do %>
+  <%= label_tag id, t("dashboard.term_select.label"),
+                class: "dashboard-term-select__label" %>
+
+  <%= form_with url: dashboard_term_path, method: :get, local: true,
+                data: { turbo_stream: true } do %>
+    <%= select_tag "term",
+                   options_for_select(options, selected&.dashboard_param),
+                   id: id,
+                   class: "form-select form-select-sm dashboard-term-select__input",
+                   data: {
+                     testid: id,
+                     action: "change->dashboard-term-select#change"
+                   } %>
+  <% end %>
+<% end %>

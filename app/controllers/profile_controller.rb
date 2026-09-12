@@ -98,21 +98,6 @@ class ProfileController < ApplicationController
 
   def unsubscribe_lecture
     @success = current_user.unsubscribe_lecture!(@lecture)
-    # A seat or an application outlives the subscription, so the card stays:
-    # the next load shows the lecture in the group that carries it.
-    @place_left =
-      @parent == "next_term_subscribed" &&
-      (current_user.next_term_seated_lectures +
-       current_user.next_term_registered_lectures).include?(@lecture)
-    @none_left = case @parent
-                 when "current_subscribed" then current_user.current_subscribed_lectures
-                                                            .empty?
-                 when "inactive" then current_user.inactive_lectures.empty?
-                 when "next_term_subscribed"
-                   current_user.next_term_lectures.empty? &&
-                   current_user.next_term_seated_lectures.empty? &&
-                   current_user.next_term_registered_lectures.empty?
-    end
   end
 
   def star_lecture
@@ -133,17 +118,12 @@ class ProfileController < ApplicationController
     current_user.touch
   end
 
+  # Firefox scrolls a newly-opened accordion fold out of view (see
+  # show_accordion.coffee); other browsers do not need this.
   def show_accordion
     @collapse_id = params[:id]
     redirect_to :root and return if @collapse_id.blank?
 
-    @lectures = case @collapse_id
-                when "collapseCurrentStuff" then current_user.current_subscribed_lectures
-                when "collapseInactiveLectures" then current_user.inactive_lectures
-                                                                 .includes(:course, :term)
-                                                                 .sort
-                when "collapseAllCurrent" then current_user.current_subscribable_lectures
-    end
     @link = "#{@collapse_id.remove("collapse").camelize(:lower)}Link"
   end
 
