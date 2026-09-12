@@ -46,6 +46,7 @@ module Assessment
         user_ids = pairs.map { |_assessment, user| user.id }.uniq
 
         index = Participation
+                .includes(:user, :grader)
                 .where(assessment_id: assessment_ids, user_id: user_ids)
                 .index_by { |p| [p.assessment_id, p.user_id] }
 
