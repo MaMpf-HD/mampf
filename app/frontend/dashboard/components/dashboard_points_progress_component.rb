@@ -14,7 +14,7 @@ class DashboardPointsProgressComponent < ViewComponent::Base
   end
 
   def max_points
-    @max_points ||= due_points.max_for(user.id)
+    @max_points ||= due_points.marked_max_for(user.id)
   end
 
   def points
