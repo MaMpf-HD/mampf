@@ -24,8 +24,9 @@ class TalkGradingTableComponent < ViewComponent::Base
     rows.map(&:display_status)
   end
 
+  # A talk is graded or not; nothing marks a speaker absent or exempt.
   def status_options
-    [:reviewed, :pending_grading, :absent, :exempt].map do |status|
+    [:reviewed, :pending_grading].map do |status|
       [status.to_s, I18n.t("student_performance.records.columns.#{status}")]
     end
   end

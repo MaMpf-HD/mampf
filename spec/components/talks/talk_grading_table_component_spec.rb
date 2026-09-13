@@ -112,8 +112,7 @@ RSpec.describe(TalkGradingTableComponent, type: :component) do
 
   describe "#status_options" do
     it "offers the states a talk's row can show, by their labels" do
-      expect(component.status_options.map(&:first))
-        .to eq(["reviewed", "pending_grading", "absent", "exempt"])
+      expect(component.status_options.map(&:first)).to eq(["reviewed", "pending_grading"])
     end
   end
 
