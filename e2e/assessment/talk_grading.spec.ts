@@ -14,7 +14,10 @@ test.describe("talk grading", () => {
       speakers.push(await factory.create("confirmed_user", [], { name_in_tutorials: name }));
     }
     await factory.create("talk", [], {
-      lecture_id: seminar.id, title: "Riemann's hypothesis", speaker_ids: [speakers[0].id],
+      lecture_id: seminar.id,
+      title: "Riemann's hypothesis",
+      dates: ["2026-05-06"],
+      speaker_ids: [speakers[0].id],
     });
     await factory.create("talk", [], {
       lecture_id: seminar.id, title: "Compilers", speaker_ids: [speakers[1].id],
@@ -26,10 +29,12 @@ test.describe("talk grading", () => {
     const table = teacher.page.getByRole("table");
     const row = table.getByRole("row", { name: /Ada Lovelace/ });
     await expect(row.getByRole("link", { name: "Riemann's hypothesis" })).toBeVisible();
+    await expect(row.getByText("2026-05-06")).toBeVisible();
     await expect(row.getByText("Pending Grading")).toBeVisible();
 
     await row.getByRole("combobox", { name: "Grade for Ada Lovelace" }).selectOption("1.3");
-    await row.getByRole("textbox", { name: "Note for Ada Lovelace" }).fill("Clear and well paced");
+    await row.getByRole("textbox", { name: "Internal note on Ada Lovelace" })
+      .fill("Clear and well paced");
     await row.getByRole("button", { name: "Save this row's points" }).click();
     await expect(row.getByText("Reviewed")).toBeVisible();
     await expect(row.getByText(/\d{4}-\d{2}-\d{2}, \d{2}:\d{2}/)).toBeVisible();

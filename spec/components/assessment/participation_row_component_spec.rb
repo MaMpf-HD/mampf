@@ -31,7 +31,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
   # set up for talk
   let!(:seminar) { create(:seminar, teacher: teacher) }
-  let!(:talk) { create(:talk, lecture: seminar) }
+  let!(:talk) do
+    create(:talk, lecture: seminar, dates: [Date.new(2026, 5, 20), Date.new(2026, 5, 6)])
+  end
   let!(:assessment_talk) do
     create(:assessment, requires_points: false, assessable: talk, lecture: seminar)
   end
@@ -321,6 +323,13 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
       expect(link.text.strip).to eq(talk.title)
       expect(link["href"]).to eq("/talks/#{talk.id}/edit")
+    end
+
+    it "dates the talk under its title, earliest first" do
+      expect(row.css("td.talk-col").text).to include(
+        "#{I18n.l(Date.new(2026, 5, 6), format: :concise)}, " \
+        "#{I18n.l(Date.new(2026, 5, 20), format: :concise)}"
+      )
     end
 
     it "lets the name filter find the row by the talk as well" do

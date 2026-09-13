@@ -334,7 +334,7 @@ de:
       user_left_tutorials: 'In %{old_tutorial} abgegeben, seitdem in keiner Übungsgruppe.'
       user_joined_tutorial: 'Ohne Übungsgruppe abgegeben, seitdem in %{new_tutorial}.'
     grading_talk:
-      note_placeholder: "Notiz hinzufügen..."
+      note_placeholder: "Nur für DozentInnen sichtbar"
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
     grading_overview:
       submission_progress: 'Abgaben'
@@ -484,12 +484,12 @@ de:
       speaker: "Sprecher:in"
       status: "Status"
       grade: "Note"
-      note: "Notiz"
+      note: "Interne Notiz"
       graded: "Bewertet"
       graded_ago: "vor %{time}"
       pending: "Ausstehend"
       grade_for: 'Note für %{name}'
-      note_for: 'Notiz für %{name}'
+      note_for: 'Interne Notiz zu %{name}'
     mark_absent: "Als abwesend markieren"
 
   activerecord:

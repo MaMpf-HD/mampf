@@ -18,6 +18,10 @@
                   class: "link-body-emphasis link-underline-opacity-25 link-underline-opacity-100-hover",
                   target: "_blank",
                   rel: "noopener" %>
+
+      <% if talk_dates %>
+        <div class="text-muted small"><%= talk_dates %></div>
+      <% end %>
     </td>
   <% end %>
 

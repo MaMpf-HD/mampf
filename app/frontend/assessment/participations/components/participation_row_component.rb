@@ -84,6 +84,12 @@ class ParticipationRowComponent < ViewComponent::Base
     @participation.display_status
   end
 
+  def talk_dates
+    return nil if @assessable.dates.blank?
+
+    @assessable.dates.sort.map { |date| I18n.l(date, format: :concise) }.join(", ")
+  end
+
   # The name filter finds a talk's rows by the talk as well as by the person.
   def filter_name
     [(@assessable.title if layout.show?(:talk)), @user.tutorial_name].compact.join(" ")

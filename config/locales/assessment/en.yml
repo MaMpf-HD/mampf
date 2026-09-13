@@ -333,7 +333,7 @@ en:
       user_joined_tutorial: 'Handed in without a tutorial, since then in %{new_tutorial}.'
       no_tutorial: 'N/A'
     grading_talk:
-      note_placeholder: "Add note..."
+      note_placeholder: "Visible to teaching staff only"
       no_talks_gradable: 'No talks that can be graded.'
     grading_overview:
       submission_progress: 'Submissions'
@@ -483,12 +483,12 @@ en:
       speaker: "Speaker"
       status: "Status"
       grade: "Grade"
-      note: "Note"
+      note: "Internal note"
       graded: "Graded"
       graded_ago: "%{time} ago"
       pending: "Pending"
       grade_for: 'Grade for %{name}'
-      note_for: 'Note for %{name}'
+      note_for: 'Internal note on %{name}'
     mark_absent: "Mark absent"
 
   activerecord:
