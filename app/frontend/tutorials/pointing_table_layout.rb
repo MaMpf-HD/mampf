@@ -24,7 +24,7 @@ class PointingTableLayout
   # Whoever the row belongs to is pinned on the left, saving on the right;
   # everything else scrolls, so the marks get the width between them. A
   # talk's rows belong to the talk as much as to the speaker, so both stay.
-  def self.for(assessable:, grading_scope: nil)
+  def self.for(assessable:, grading_scope: nil, table_option: nil)
     case assessable
     when Assignment
       columns = [:team]
@@ -35,6 +35,15 @@ class PointingTableLayout
     when Talk
       new(columns: [:talk, :team, :status, :grade, :note, :graded, :save],
           body: :single_grade, left: [:talk, :team])
+    when Exam
+      case table_option
+      when :pointing
+        new(columns: [:team, :status, :tasks, :total, :save],
+            body: :tasks, left: [:team, :status])
+      when :grading
+        new(columns: [:team, :status, :grade, :note, :graded, :save],
+            body: :single_grade, left: [:team, :status])
+      end
     else
       raise(UnsupportedAssessableError, "No pointing table layout for #{assessable.class}")
     end
