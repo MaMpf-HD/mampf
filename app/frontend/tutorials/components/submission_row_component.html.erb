@@ -17,27 +17,30 @@
   <td class="<%= layout.column_class(:team) %>">
     <div class="d-flex justify-content-between align-items-start">
       <div>
-        <% @submission.users.each do |user| %>
+        <% @submission.users.each_with_index do |user, index| %>
           <div>
             <%= user.tutorial_name %>
             <% movement = movement_info_for_user(user) %>
 
             <% if movement %>
               <i
-                class="bi bi-info-circle me-2 ps-1"
+                class="bi bi-info-circle ms-1 text-secondary"
+                role="img"
                 title="<%= movement %>"
-                data-bs-toggle="tooltip"
+                aria-label="<%= movement %>"
+              ></i>
+            <% end %>
+
+            <%# The hand-in is late as a whole; the mark sits on the team's first line. %>
+            <% if index.zero? && @submission.too_late? %>
+              <i
+                class="bi bi-exclamation-triangle-fill ms-1 text-warning-emphasis"
+                role="img"
+                title="<%= late_submission_info(@submission, @submission.tutorial) %>"
+                aria-label="<%= late_submission_info(@submission, @submission.tutorial) %>"
               ></i>
             <% end %>
           </div>
-        <% end %>
-
-        <% if @submission.too_late? %>
-          <i
-            class="fas fa-exclamation-triangle"
-            data-bs-toggle="tooltip"
-            title="<%= late_submission_info(@submission, @submission.tutorial) %>"
-          ></i>
         <% end %>
       </div>
 
