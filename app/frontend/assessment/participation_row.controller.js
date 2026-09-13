@@ -118,7 +118,7 @@ export default class extends Controller {
     });
     if (this.hasSaveTarget) {
       this.saveTarget.disabled = false;
-      this.saveTarget.classList.replace("btn-outline-secondary", "btn-success");
+      this.saveTarget.classList.replace("btn-light", "btn-success");
     }
   }
 
@@ -133,7 +133,7 @@ export default class extends Controller {
 
     if (this.hasSaveTarget) {
       this.saveTarget.disabled = true;
-      this.saveTarget.classList.replace("btn-success", "btn-outline-secondary");
+      this.saveTarget.classList.replace("btn-success", "btn-light");
     }
   }
 
