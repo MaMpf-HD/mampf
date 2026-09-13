@@ -110,6 +110,39 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
       end
     end
 
+    # `^` and `$` match line boundaries in Ruby; a value with a newline in it
+    # must not be filed away as the number on its first line.
+    context "with a number followed by more lines" do
+      let(:grade_info) { described_class.build_grade_info(grade_numeric: "1.0\nand more") }
+
+      it "refuses it as a grade" do
+        expect { described_class.set_grade(participation, grade_info, grader) }
+          .to raise_error(described_class::GradeEntryError)
+      end
+    end
+
+    context "with a word as grade_text and no number" do
+      let(:grade_info) { described_class.build_grade_info(grade_text: "1.0\nand more") }
+
+      it "keeps the word whole" do
+        described_class.set_grade(participation, grade_info, grader)
+
+        expect(participation.reload).to have_attributes(grade_text: "1.0\nand more",
+                                                        grade_numeric: nil)
+      end
+    end
+
+    context "when the participation has no assessment" do
+      it "refuses with the not-gradable error" do
+        orphan = FactoryBot.build(:assessment_participation, assessment: nil)
+
+        grade_info = described_class.build_grade_info(grade_numeric: "1.0")
+
+        expect { described_class.set_grade(orphan, grade_info, grader) }
+          .to raise_error(described_class::GradeEntryError)
+      end
+    end
+
     context "with an invalid numeric grade" do
       let(:grade_info) { described_class.build_grade_info(grade_numeric: "6.0") }
 

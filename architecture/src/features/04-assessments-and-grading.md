@@ -1391,7 +1391,7 @@ end
 
 - **For seminar talks:** After creating a talk, the `setup_assessment` callback calls `ensure_gradebook!` to create an assessment without tasks. The lecturer grades every speaker in the seminar's table (`TalkGradingTableComponent`); each row saves through `Assessment::GradesController` and `Assessment::GradeEntryService`.
 
-- **For exams with final grades:** An exam includes both `Assessment::Pointable` and `Assessment::Gradable`. After all tasks are graded and points computed, the final grade goes through the same service, or through a grade scheme applying itself.
+- **For exams with final grades:** An exam includes both `Assessment::Pointable` and `Assessment::Gradable`. A grade scheme applying itself writes the grade on its own (`GradeSchemeApplier`); entering an exam grade by hand is planned to go through the same service and has no caller yet.
 
 ---
 
@@ -1690,10 +1690,12 @@ Assessment::GradeEntryService.set_grade(participation, grade_info, grader, comme
 - Used by: the seminar's talk table (through `TalkGraderService`, which only checks that the participation is a talk's)
 
 **Use Cases:**
-- **Talk grading:** Teacher enters "1.0" after seminar presentation
-- **Oral exam:** Teacher enters "2.3" directly (no written tasks)
-- **Small exam override:** 3 students, teacher skips points and enters final grades
-- **Grade scheme output:** Scheme calculates "2.7" from total points, calls this service
+- **Talk grading:** Teacher enters "1.0" after seminar presentation (built)
+- **Oral exam:** Teacher enters "2.3" directly (no written tasks) — planned
+- **Small exam override:** 3 students, teacher skips points and enters final grades — planned
+
+A grade scheme does not call this service: `GradeSchemeApplier` writes the
+grades it computes itself, and only onto participations without one.
 
 ---
 
