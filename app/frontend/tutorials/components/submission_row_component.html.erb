@@ -142,10 +142,11 @@
       <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
         <%= link_to show_submission_manuscript_path(@submission),
                   class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                  data: { turbo: false },
+                  target: "_blank",
+                  rel: "noopener",
                   title: t('assessment.grading_tutorial.show_hand_in'),
                   aria: { label: t('assessment.grading_tutorial.show_hand_in') } do %>
-          <i class="bi bi-eye"></i>
+          <i class="bi bi-file-earmark-text"></i>
         <% end %>
       <% end %>
 
