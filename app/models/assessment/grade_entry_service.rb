@@ -1,6 +1,9 @@
 module Assessment
+  # Writes manual grades and notes on assessment participations.
   class GradeEntryService
-    VALID_GRADES_NUMERIC = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0].freeze
+    class GradeEntryError < StandardError; end
+
+    VALID_GRADES_NUMERIC = (GradeScheme::PASSING_GRADES + [5.0]).sort.freeze
 
     def self.set_grade(participation, grade_info, grader, comment = nil)
       assessment = participation.assessment
@@ -12,21 +15,27 @@ module Assessment
 
       grade_info = validate_grade_info(grade_info)
       status = calculate_status(participation, grade_info)
-      # A grade taken back leaves nothing that was graded, so nobody graded it.
-      graded = status != :pending
-
-      participation.update!(
-        grade_text: grade_info[:grade_text],
-        grade_numeric: grade_info[:grade_numeric],
-        grader_id: (grader.id if graded),
-        graded_at: (Time.current if graded),
-        status: status,
-        note: comment || participation.note
-      )
+      participation.update!(grade_text: grade_info[:grade_text],
+                            grade_numeric: grade_info[:grade_numeric],
+                            status: status,
+                            note: comment || participation.note,
+                            **stamp_for(participation, grade_info, grader))
     end
 
-    # Returns :reviewed if a grade is provided, :pending if no grade is provided,
-    # and retains the current status if the participation is exempt or absent.
+    # Record who changed the grade and when; note-only edits must preserve
+    # grader_id and graded_at. No grade, no grader - whatever the status.
+    def self.stamp_for(participation, grade_info, grader)
+      return { grader_id: nil, graded_at: nil } if grade_info.values.none?(&:present?)
+      return {} unless grade_changed?(participation, grade_info)
+
+      { grader_id: grader.id, graded_at: Time.current }
+    end
+
+    def self.grade_changed?(participation, grade_info)
+      participation.grade_numeric != grade_info[:grade_numeric] ||
+        participation.grade_text != grade_info[:grade_text]
+    end
+
     def self.calculate_status(participation, new_grade_info)
       if participation.exempt? || participation.absent?
         participation.status
@@ -63,7 +72,5 @@ module Assessment
               I18n.t("assessment.errors.invalid_grade", grade: numeric_grade))
       end
     end
-
-    class GradeEntryError < StandardError; end
   end
 end

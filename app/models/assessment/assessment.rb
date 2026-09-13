@@ -56,10 +56,9 @@ module Assessment
       parts.length > 1 ? parts.last.presence || title.truncate(5) : title.truncate(5)
     end
 
-    # What a row with nothing recorded reads as. A sheet that comes in on
-    # paper is with the tutor until they record it, so it is not "missing"
-    # the way an upload that never came is. A talk has nothing to hand in;
-    # its grade is simply still to come.
+    # A paper assignment may be handed in before the tutor records it, so
+    # use :awaiting_record rather than :not_submitted. Talks have no hand-in
+    # to record and use :pending_grading.
     def status_without_hand_in
       return :pending_grading unless assessable_type == "Assignment"
 

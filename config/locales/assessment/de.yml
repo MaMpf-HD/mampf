@@ -228,11 +228,10 @@ de:
     submission_settings: 'Abgabe-Einstellungen'
     talk_grader:
       assessment_not_talk: 'Bewertung ist nicht für einen Vortrag.'
-      init_participation_missing_args: 'Bewertung, Benutzer und Vortrag müssen angegeben sein.'
       user_not_speaker: 'Benutzer ist nicht als Sprecher:in für diesen Vortrag eingetragen.'
     exam_grader:
       assessment_not_exam: 'Bewertung ist nicht für eine Prüfung.'
-    grades_updated: 'Noten erfolgreich aktualisiert.'
+    grades_updated: 'Änderungen gespeichert.'
     task_points:
       update: 'Punkte erfolgreich aktualisiert.'
       submission_missing_assessment: 'Für diese Hausaufgabe ist keine Bewertung konfiguriert.'
@@ -264,7 +263,6 @@ de:
       no_tutorial: 'Tutorium nicht gefunden.'
       user_not_found: 'Benutzer nicht gefunden.'
       no_participation: 'Teilnahme nicht gefunden.'
-      user_cannot_grade: 'Der Benutzer ist nicht berechtigt, in diesem Bereich zu bewerten.'
       user_cannot_enter_points: 'Du darfst hier keine Punkte eintragen.'
       not_gradable: 'Diese Bewertung ist nicht bewertbar.'
       invalid_grade: 'Ungültiger Notenwert'
@@ -272,7 +270,6 @@ de:
       invalid_assessable_type: 'Ungültiger Bewertungstyp.'
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
-      talks_without_assessment: 'Für diese Vorträge ist noch keine Bewertung hinterlegt.'
     grade_table:
       pending: 'ausstehend'
       reviewed: 'überprüft'
@@ -336,7 +333,6 @@ de:
       user_left_tutorials: 'In %{old_tutorial} abgegeben, seitdem in keiner Übungsgruppe.'
       user_joined_tutorial: 'Ohne Übungsgruppe abgegeben, seitdem in %{new_tutorial}.'
     grading_talk:
-      note_placeholder: "Nur für DozentInnen sichtbar"
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
     grading_overview:
       submission_progress: 'Abgaben'
@@ -484,18 +480,15 @@ de:
     statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
     grade_talk_row:
       speaker: "Sprecher:in"
-      status: "Status"
       grade: "Note"
-      note: "Interne Notiz"
+      note: "Interne Notiz (nur für DozentInnen)"
       graded: "Bewertet"
       graded_compact: ""
       graded_ago: "vor %{time}"
       save_row: "Note dieser Zeile speichern"
       reload_row: "Gespeicherte Note neu laden; ungespeicherte Änderungen gehen verloren"
-      pending: "Ausstehend"
       grade_for: 'Note für %{name}'
       note_for: 'Interne Notiz zu %{name}'
-    mark_absent: "Als abwesend markieren"
 
   activerecord:
     errors:

@@ -5,8 +5,10 @@
   data-controller="participation-row"
   data-row-id="<%= @participation.id %>"
   data-row-target-type="participation"
-  data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
-  data-pointing-table-target="row"
+  <% if tasks? %>
+    data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
+    data-pointing-table-target="row"
+  <% end %>
   data-status-filter-target="row"
   data-status-filter-status="<%= status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
@@ -138,7 +140,6 @@
         <% if allow_grading? && can_enter_grade? %>
           <%= text_area_tag "note", @participation&.note,
                     class: "form-control form-control-sm",
-                    placeholder: t("assessment.grading_talk.note_placeholder"),
                     aria: { label: t("assessment.grade_talk_row.note_for", name: @user.tutorial_name) },
                     maxlength: 255,
                     rows: 1,
@@ -241,7 +242,7 @@
   <% if layout.show?(:hand_in) %>
     <td class="text-center <%= layout.column_class(:hand_in) %>">
       <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
-        <%# A disabled button answers no hover, so the state is a mark, not a button. %>
+        <%# A non-removable paper hand-in is a status indicator, not an action. %>
         <% if paper_hand_in? && !paper_hand_in_removable? %>
           <span
             class="

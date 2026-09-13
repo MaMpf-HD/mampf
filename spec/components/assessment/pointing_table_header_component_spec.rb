@@ -147,6 +147,14 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
                                 I18n.t("assessment.grade_talk_row.graded"))
     end
 
+    # Said once, in the heading, rather than in every row's empty field.
+    it "says in the note heading who gets to read the note" do
+      note = columns_for(component).find { |c| c.css_class.include?("note-col") }
+
+      expect(note.label).to eq(I18n.t("assessment.grade_talk_row.note"))
+      expect(note.sublabel).to be_nil
+    end
+
     it "starts text headings at the left and centres the rest" do
       by_column = columns_for(component).to_h do |column|
         [column.css_class[/(\w[\w-]*)-col/, 1], column.css_class]

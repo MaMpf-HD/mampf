@@ -19,7 +19,6 @@ export default class extends Controller {
     this.calculateTotalPoints();
   }
 
-  // -- Actions ---
   saveRow() {
     const newValues = {};
     this.pointInputTargets.forEach((input) => {
@@ -64,12 +63,10 @@ export default class extends Controller {
     }
   }
 
+  // Grade options come from a select; GradeEntryService validates them.
+  // Only point inputs need the minimum-value check.
   onParticipationChanged(event) {
-    const validPoints = this.validateNewPoint(event);
-    const validGrade = this.validateNewGrade(event);
-    const validNote = this.validateNewNote(event);
-
-    if (validPoints && validGrade && validNote) {
+    if (this.validateNewPoint(event)) {
       this.markDirty("participation");
       this.calculateTotalPoints();
     }
@@ -99,11 +96,10 @@ export default class extends Controller {
   }
 
   handleDirty(targetType) {
-    // Add the "row-dirty" style to the row
     this.element.classList.add("row-dirty");
 
-    // Force table controller to add the row to the dirty rows list
-    // (so that it would be saved)
+    // pointing-table uses these task_points for submitAll; changing the
+    // row-dirty class alone does not update its bulk-save payload.
     this.dispatch("dirty", {
       prefix: false,
       bubbles: true,
@@ -111,11 +107,9 @@ export default class extends Controller {
         id: this.element.dataset.rowId,
         target: targetType,
         task_points: this.extractTasksPoints(this.pointInputTargets),
-        // extend this if want to save bulk also with grade and note
       },
     });
 
-    // Enable the save button
     if (this.hasSaveTarget) {
       this.saveTarget.disabled = false;
       this.saveTarget.classList.replace("text-body-tertiary", "text-success");
@@ -123,11 +117,8 @@ export default class extends Controller {
   }
 
   handleClean(targetType) {
-    // Remove the "row-dirty" style
     this.element.classList.remove("row-dirty");
 
-    // Force table controller to remove the row from the dirty rows list
-    // (so that it would not be saved)
     this.dispatch("clean", {
       prefix: false,
       bubbles: true,
@@ -135,23 +126,10 @@ export default class extends Controller {
         target: targetType },
     });
 
-    // Disable the save button
     if (this.hasSaveTarget) {
       this.saveTarget.disabled = true;
       this.saveTarget.classList.replace("text-success", "text-body-tertiary");
     }
-  }
-
-  // --- Validation Methods ---
-
-  validateNewGrade(_event) {
-    // GradeEntryService will validate the grade
-    return true;
-  }
-
-  validateNewNote(_event) {
-    // No validation for notes, any text is allowed
-    return true;
   }
 
   validateNewPoint(event) {
@@ -175,8 +153,6 @@ export default class extends Controller {
       return true;
     }
   }
-
-  // --- Data extraction Methods ---
 
   extractTasksPoints(pointInputTargets) {
     const participationNewTasksPoints = {};

@@ -1,11 +1,11 @@
-# One row of a pointing table for somebody without a hand-in file: a sheet's
-# tasks, or a talk's single grade. The participation may be unsaved until the
-# backfill worker has been round; recording the hand-in saves it.
+# Renders a participation's assignment task points or talk grade.
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  def initialize(participation:, assessment:, grading_scope:,
-                 table_option: :pointing, draft_scheme: nil)
+  # Assignment participations may be unsaved until AssessmentBackfillWorker
+  # runs or a paper hand-in is recorded.
+  def initialize(participation:, assessment:, grading_scope:, table_option: :pointing,
+                 draft_scheme: nil)
     super()
     @participation = participation
     @assessment = assessment
@@ -96,7 +96,6 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.dates.sort.map { |date| I18n.l(date, format: :concise) }.join(", ")
   end
 
-  # The name filter finds a talk's rows by the talk as well as by the person.
   def filter_name
     [(@assessable.title if layout.show?(:talk)), @user.tutorial_name].compact.join(" ")
   end
@@ -214,7 +213,7 @@ class ParticipationRowComponent < ViewComponent::Base
                        action: "click->participation-row#saveRow" },
                title: row_action_label("save_row"),
                aria: { label: row_action_label("save_row") },
-               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
+               disabled: !allow_grading || !grading_enabled? || !can_enter_row?) do
       tag.i(class: "bi bi-floppy-fill")
     end
   end
@@ -228,7 +227,7 @@ class ParticipationRowComponent < ViewComponent::Base
                data: { action: "click->participation-row#refreshRow" },
                title: row_action_label("reload_row"),
                aria: { label: row_action_label("reload_row") },
-               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
+               disabled: !allow_grading || !grading_enabled? || !can_enter_row?) do
       tag.i(class: "bi bi-arrow-counterclockwise")
     end
   end
@@ -301,19 +300,22 @@ class ParticipationRowComponent < ViewComponent::Base
     user_allowed && assessable_allowed
   end
 
+  def can_enter_row?
+    single_grade? ? can_enter_grade? : can_enter_points?
+  end
+
   def users_movement_map
     helpers.users_movement_map_cache[@assessable.id] ||=
       helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
   end
 
-  # A sheet is filed with the group that had it; a talk moves nowhere.
+  # Tutorial movement compares an assignment participation with the user's
+  # tutorial membership; a talk participation has no tutorial to compare.
   def movement_info_for_user(user)
     return nil if single_grade?
 
     helpers.movement_info_for_user_assignment(user, users_movement_map)
   end
-
-  # ---- single grade ----
 
   def grade_numeric
     @participation&.grade_numeric

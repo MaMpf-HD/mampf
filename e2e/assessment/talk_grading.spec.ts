@@ -40,6 +40,25 @@ test.describe("talk grading", () => {
     await expect(row.getByText(/\d{4}-\d{2}-\d{2}, \d{2}:\d{2}/)).toBeVisible();
     await expect(teacher.page.getByText("1 marked · 1 not yet marked")).toBeVisible();
 
+    // a grade taken back leaves the note, and nobody is named as its grader
+    await row.getByRole("combobox", { name: "Grade for Ada Lovelace" }).selectOption("");
+    await row.getByRole("button", { name: "Save this row's grade" }).click();
+    await expect(row.getByText("Pending Grading")).toBeVisible();
+    await expect(row.getByText(/\d{4}-\d{2}-\d{2}, \d{2}:\d{2}/)).toHaveCount(0);
+    await expect(row.getByRole("textbox", { name: "Internal note on Ada Lovelace" }))
+      .toHaveValue("Clear and well paced");
+    await expect(teacher.page.getByText("2 not yet marked")).toBeVisible();
+
+    // reloading brings back what is saved, and the line above with it
+    await row.getByRole("combobox", { name: "Grade for Ada Lovelace" }).selectOption("2.0");
+    await row.getByRole("button", { name: "Save this row's grade" }).click();
+    await expect(row.getByText("Reviewed")).toBeVisible();
+    await row.getByRole("combobox", { name: "Grade for Ada Lovelace" }).selectOption("4.0");
+    await row.getByRole("button", { name: "Reload the saved grade; unsaved changes are lost" })
+      .click();
+    await expect(row.getByRole("combobox", { name: "Grade for Ada Lovelace" })).toHaveValue("2.0");
+    await expect(teacher.page.getByText("1 marked · 1 not yet marked")).toBeVisible();
+
     // the filters find a row by its state, and by the talk as well as the person
     await teacher.page.getByLabel("Status").selectOption("Pending Grading");
     await expect(row).toBeHidden();

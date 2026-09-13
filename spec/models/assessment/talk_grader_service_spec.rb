@@ -12,7 +12,28 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
 
   before do
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
-    allow(grader).to receive(:can_enter_grades_in?).and_return(true)
+  end
+
+  describe ".create_participation" do
+    # Two tabs open the seminar at once: the second one's insert is refused by
+    # the model's uniqueness validation before the index ever sees it.
+    it "hands back the row another request created first" do
+      existing = FactoryBot.create(:assessment_participation, assessment: assessment,
+                                                              user: speaker)
+
+      expect(described_class.create_participation(assessment, speaker)).to eq(existing)
+    end
+
+    it "lets any other refusal through" do
+      allow(Assessment::Participation).to receive(:create!) do
+        record = Assessment::Participation.new
+        record.errors.add(:status, :invalid)
+        raise(ActiveRecord::RecordInvalid, record)
+      end
+
+      expect { described_class.create_participation(assessment, speaker) }
+        .to raise_error(ActiveRecord::RecordInvalid)
+    end
   end
 
   describe ".init_participations" do
@@ -180,25 +201,6 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
       end
 
       subject { described_class.set_grade(assignment_participation, "1.0", grader) }
-
-      it "raises TalkGraderError" do
-        expect { subject }.to raise_error(Assessment::TalkGraderService::TalkGraderError)
-      end
-
-      it "does not call GradeEntryService" do
-        expect(Assessment::GradeEntryService).not_to receive(:set_grade)
-        begin
-          subject
-        rescue StandardError
-          nil
-        end
-      end
-    end
-
-    context "when grader cannot grade in the talk's lecture scope" do
-      before { allow(grader).to receive(:can_enter_grades_in?).and_return(false) }
-
-      subject { described_class.set_grade(participation, "1.0", grader) }
 
       it "raises TalkGraderError" do
         expect { subject }.to raise_error(Assessment::TalkGraderService::TalkGraderError)

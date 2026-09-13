@@ -217,6 +217,16 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       expect(button["aria-label"]).to eq(I18n.t("assessment.grading_tutorial.save_row"))
     end
 
+    it "asks for the right to enter grades, not points, on a talk's row" do
+      allow(teacher).to receive_messages(can_enter_grades_in?: true, can_enter_points_in?: false)
+      allow(vc_test_controller).to receive(:current_user).and_return(teacher)
+      render_inline(component_teacher_talk)
+
+      button = Nokogiri::HTML.fragment(component_teacher_talk.save_row_button(true))
+                             .at_css("button")
+      expect(button["disabled"]).to be_nil
+    end
+
     context "when grading is not allowed" do
       it "disables the button" do
         html = component_tutor.save_row_button(false)

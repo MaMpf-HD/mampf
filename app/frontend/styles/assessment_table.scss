@@ -143,3 +143,15 @@ thead th.sticky-col {
     opacity: 1;
   }
 }
+
+/* The one destructive icon waits in grey like the others and turns red
+   only when reached, instead of shouting from every row. */
+.row-action-danger {
+  --bs-btn-color: var(--bs-secondary);
+  --bs-btn-hover-color: var(--bs-danger);
+  --bs-btn-active-color: var(--bs-danger);
+
+  &:focus-visible {
+    color: var(--bs-danger);
+  }
+}
