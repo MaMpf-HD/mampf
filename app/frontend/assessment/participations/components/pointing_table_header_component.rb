@@ -46,7 +46,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
       when :team then team_label
       when :talk then t("basics.talk")
       when :tutorial then t("basics.tutorial")
-      when :status then t("assessment.grading_tutorial.status")
+      when :status, :status_compact then t("assessment.grading_tutorial.status")
       when :hand_in then t("basics.submission")
       when :correction then t("basics.correction")
       else t("assessment.grade_talk_row.#{column}")

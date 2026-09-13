@@ -70,27 +70,35 @@
   <% end %>
 
   <% if grading_enabled? %>
-    <td class="text-center <%= layout.column_class(:status) %>">
-      <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
+    <% if layout.show?(:status_compact) %>
+      <td class="text-center <%= layout.column_class(:status_compact) %>">
+        <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :compact) %>
+      </td>
+    <% else %>
+      <td class="text-center <%= layout.column_class(:status) %>">
+        <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
 
-      <% if locked_reason %>
-        <div class="small text-muted"><%= locked_reason %></div>
-      <% end %>
-    </td>
+        <% if locked_reason %>
+          <div class="small text-muted"><%= locked_reason %></div>
+        <% end %>
+      </td>
+    <% end %>
 
     <% if tasks? %>
       <% tasks.each do |task| %>
         <%= task_points_participation_cell(task, allow_grading?) %>
       <% end %>
-    <% end %>
-
-    <% if layout.show?(:total) %>
       <td class="text-center <%= layout.column_class(:total) %>">
-        <span data-participation-row-target="totalPoints">0</span>
+        <span data-participation-row-target="totalPoints"><%= @participation.points_total %></span>
       </td>
     <% end %>
 
     <% if single_grade? %>
+      <% if layout.show?(:total) %>
+        <td class="text-center <%= layout.column_class(:total) %>">
+          <span><%= @participation.points_total %></span>
+        </td>
+      <% end %>
       <td class="text-center <%= layout.column_class(:grade) %>">
         <% if allow_grading? && can_enter_grade? %>
           <%= tag.select(
