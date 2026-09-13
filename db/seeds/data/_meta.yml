@@ -1,0 +1,35 @@
+---
+extracted_at: '2026-09-13'
+reference_date: '2026-09-13'
+active_term: SS 2026
+counts:
+  subjects: 2
+  programs: 2
+  divisions: 4
+  terms: 10
+  users: 14
+  courses: 16
+  tags: 48
+  notions: 84
+  relations: 58
+  lectures: 19
+  chapters: 9
+  sections: 37
+  lessons: 11
+  talks: 42
+  media: 51
+  items: 387
+  answers: 39
+  referrals: 12
+  assignments: 3
+  division_course_joins: 7
+  course_tag_joins: 48
+  medium_tag_joins: 47
+  section_tag_joins: 42
+  lesson_tag_joins: 29
+  talk_tag_joins: 5
+  lesson_section_joins: 11
+  speaker_talk_joins: 5
+  editable_user_joins: 60
+skipped:
+  speaker_talk_joins: 10

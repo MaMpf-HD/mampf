@@ -1,0 +1,86 @@
+---
+la_2:
+  title: Lineare Algebra 2
+  short_title: LA 2
+  organizational: true
+  organizational_concept: "<div><strong>Code<br></strong>MA5<br><strong><br>Leistungspunkte<br></strong>8
+    LP<strong><br><br>Turnus<br></strong>jährlich im Sommer<br><strong><br>Inhalt<br></strong>Ringe
+    und Ideale, Moduln und Homomorphismen, Basis und Rang, direkte Summen und Produkte,
+    Tensorprodukt, äußere und symmetrische Potenzen und Determinanten, Moduln über
+    Hauptidealringen, Elementarteilertheorie, Normalformen von Endomorphismen, verallgemeinerte
+    Eigenräume, Jordansche Normalform, nilpotente und halbeinfache Endomorphismen<br><br><strong>Lernziele</strong></div><ul><li>Vertiefende
+    Kenntnisse der Linearen Algebra</li><li>Fähigkeit zum selbständigen Beweisen von
+    Aussagen und Lösen von Aufgaben aus dem Themenbereich und zur schriftlichen und
+    mündlichen Darstellung der Ergebnisse.&nbsp;</li></ul>"
+  attachments:
+    image: la2.png
+alg_1:
+  title: Algebra 1
+  short_title: Alg 1
+  organizational: false
+  organizational_concept: "<div>Hier sollte der Text stehen.&nbsp;</div>"
+  attachments:
+    image: alg1.png
+geo:
+  title: Einführung in die Geometrie
+  short_title: Geo
+  organizational: false
+  organizational_concept: "<div>Hier sollte der Text stehen.&nbsp;</div>"
+  attachments:
+    image: geo.png
+hd:
+  title: Helpdesk
+  short_title: HD
+  organizational: false
+  organizational_concept: "<div>Hier sollte der Text stehen.&nbsp;</div>"
+  term_independent: true
+  attachments:
+    image: helpdesk.png
+ana_2:
+  title: Analysis 2
+  short_title: Ana 2
+  organizational: false
+  organizational_concept: "<div>Hier sollte der Text stehen.&nbsp;</div>"
+  term_independent: true
+  attachments:
+    image: ana2.png
+ezt:
+  title: Elementare Zahlentheorie
+  short_title: EZT
+  organizational_concept: |-
+    <!-- BEGIN app/views/courses/_organizational_default.html.erb -->This should be the text.
+    <!-- END app/views/courses/_organizational_default.html.erb -->
+drs:
+  title: Demo Roster Seminar
+  short_title: DRS
+cts:
+  title: Campaign Test Seminar
+  short_title: CTS
+  locale: en
+sansibar_oder_der_letzte_grund_1370:
+  title: Demo Next Term (with registration)
+  short_title: Sansibar oder der letzte Grund 1370
+  locale: en
+haus_ohne_hueter_765:
+  title: Demo Next Term (subscribe only)
+  short_title: Haus ohne Hüter 765
+  locale: en
+der_besuch_der_alten_dame_8131:
+  title: Demo Next Term (unpublished)
+  short_title: Der Besuch der alten Dame 8131
+  locale: en
+ana_ss_2026:
+  title: Analysis SS 2026
+  short_title: Ana SS 2026
+sem_ss_2026:
+  title: Seminar SS 2026
+  short_title: Sem SS 2026
+ana_ws_2026:
+  title: Analysis WS 2026
+  short_title: Ana WS 2026
+sem_ws_2026:
+  title: Seminar WS 2026
+  short_title: Sem WS 2026
+rp:
+  title: Registration Playground
+  short_title: RP

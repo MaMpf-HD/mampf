@@ -1,0 +1,227 @@
+---
+admin:
+  email: admin@mampf.edu
+  admin: true
+  subscription_type: 1
+  consents: true
+  consented_at: '2020-07-24T15:07:48+02:00'
+  name: admin
+  locale: en
+  email_for_medium: true
+  email_for_announcement: true
+  email_for_teachable: true
+  email_for_news: true
+  unread_comments: true
+  email_for_submission_upload: false
+  email_for_submission_removal: false
+  email_for_submission_join: false
+  email_for_submission_leave: false
+  email_for_correction_upload: false
+  email_for_submission_decision: false
+teacher:
+  email: teacher@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2020-07-24T15:14:59+02:00'
+  name: DozentIn
+  locale: en
+  email_for_medium: true
+  email_for_announcement: true
+  email_for_teachable: true
+  email_for_news: true
+  unread_comments: true
+  email_for_submission_upload: false
+  email_for_submission_removal: false
+  email_for_submission_join: false
+  email_for_submission_leave: false
+  email_for_correction_upload: false
+  email_for_submission_decision: false
+student1:
+  email: student1@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2020-11-28T17:25:23+01:00'
+  name: student1
+  locale: en
+  email_for_medium: false
+  email_for_announcement: false
+  email_for_teachable: false
+  email_for_news: true
+  unread_comments: true
+  email_for_submission_upload: true
+  email_for_submission_removal: true
+  email_for_submission_join: true
+  email_for_submission_leave: true
+  email_for_correction_upload: true
+  email_for_submission_decision: true
+  name_in_tutorials: Max Mustermann
+student2:
+  email: student2@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2020-11-28T17:26:55+01:00'
+  name: student2
+  locale: en
+  email_for_medium: true
+  email_for_announcement: true
+  email_for_teachable: true
+  email_for_news: false
+  unread_comments: true
+  email_for_submission_upload: false
+  email_for_submission_removal: false
+  email_for_submission_join: false
+  email_for_submission_leave: false
+  email_for_correction_upload: false
+  email_for_submission_decision: false
+  name_in_tutorials: Max Musterfrau
+student3:
+  email: student3@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2020-11-28T17:28:02+01:00'
+  name: student3
+  locale: en
+  email_for_medium: true
+  email_for_announcement: true
+  email_for_teachable: true
+  email_for_news: false
+  unread_comments: true
+  email_for_submission_upload: false
+  email_for_submission_removal: false
+  email_for_submission_join: false
+  email_for_submission_leave: false
+  email_for_correction_upload: false
+  email_for_submission_decision: false
+  name_in_tutorials: Berta Musterfrau
+student4:
+  email: student4@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2020-11-28T17:29:07+01:00'
+  name: student4
+  locale: en
+  email_for_medium: true
+  email_for_announcement: true
+  email_for_teachable: true
+  email_for_news: false
+  unread_comments: true
+  email_for_submission_upload: false
+  email_for_submission_removal: false
+  email_for_submission_join: false
+  email_for_submission_leave: false
+  email_for_correction_upload: false
+  email_for_submission_decision: false
+  name_in_tutorials: Berta Mustermann
+student5:
+  email: student5@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2020-11-28T17:30:12+01:00'
+  name: student5
+  locale: en
+  email_for_medium: false
+  email_for_announcement: false
+  email_for_teachable: false
+  email_for_news: true
+  unread_comments: true
+  email_for_submission_upload: true
+  email_for_submission_removal: true
+  email_for_submission_join: true
+  email_for_submission_leave: true
+  email_for_correction_upload: true
+  email_for_submission_decision: true
+  name_in_tutorials: Erika Musterfrau
+tutor:
+  email: tutor@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2020-11-28T17:34:08+01:00'
+  name: tutor
+  locale: en
+  email_for_medium: true
+  email_for_announcement: true
+  email_for_teachable: true
+  email_for_news: false
+  unread_comments: true
+  email_for_submission_upload: false
+  email_for_submission_removal: false
+  email_for_submission_join: false
+  email_for_submission_leave: false
+  email_for_correction_upload: false
+  email_for_submission_decision: false
+  name_in_tutorials: Benjamin Tutor
+moded:
+  email: moded@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2022-08-05T15:13:27+02:00'
+  name: moded
+  locale: en
+  email_for_medium: false
+  email_for_announcement: false
+  email_for_teachable: false
+  email_for_news: false
+  email_for_submission_upload: false
+  email_for_submission_removal: false
+  email_for_submission_join: false
+  email_for_submission_leave: false
+  email_for_correction_upload: false
+  email_for_submission_decision: false
+ed:
+  email: ed@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2022-08-05T15:14:08+02:00'
+  name: ed
+  locale: en
+  email_for_medium: false
+  email_for_announcement: false
+  email_for_teachable: false
+  email_for_news: false
+  email_for_submission_upload: false
+  email_for_submission_removal: false
+  email_for_submission_join: false
+  email_for_submission_leave: false
+  email_for_correction_upload: false
+  email_for_submission_decision: false
+yahaira_glover:
+  email: yahaira.glover@skiles-skiles.test
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2026-08-26T21:49:14+02:00'
+  name: Valerie von Eifert
+  locale: en
+adena_von:
+  email: adena_von@ziemann.test
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2026-08-26T21:49:14+02:00'
+  name: Mathis Steinert
+  locale: en
+alexis_bayer:
+  email: alexis_bayer@mcclure.test
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2026-08-26T21:49:15+02:00'
+  name: Hr. Sönke Weigel
+  locale: en
+tutor2:
+  email: tutor2@mampf.edu
+  admin: false
+  subscription_type: 1
+  consents: true
+  consented_at: '2026-08-28T17:08:33+02:00'
+  name: Toni Tutor
+  locale: en

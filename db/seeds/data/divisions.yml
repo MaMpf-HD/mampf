@@ -1,0 +1,25 @@
+---
+bsc_100_pflichtmodule:
+  program: programs/mathematik_bsc_100
+  translations:
+    name:
+      de: Pflichtmodule
+      en: Mandatory Courses
+bsc_100_wahlpflichtbereich_1:
+  program: programs/mathematik_bsc_100
+  translations:
+    name:
+      de: Wahlpflichtbereich 1
+      en: Elective Modules 1
+bsc_100_pflichtmodule_2:
+  program: programs/informatik_bsc_100
+  translations:
+    name:
+      de: Pflichtmodule
+      en: Elective Modules 1
+bsc_100_wahlbereich:
+  program: programs/informatik_bsc_100
+  translations:
+    name:
+      de: Wahlbereich
+      en: Elective Courses

@@ -1,0 +1,13 @@
+---
+mathematik_bsc_100:
+  subject: subjects/mathematik
+  translations:
+    name:
+      de: BSc 100%
+      en: BSc 100%
+informatik_bsc_100:
+  subject: subjects/informatik
+  translations:
+    name:
+      de: BSc 100%
+      en: BSc 100%

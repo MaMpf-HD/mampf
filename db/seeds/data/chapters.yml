@@ -1,0 +1,37 @@
+---
+la_2_lecture_ss2026_1:
+  lecture: lectures/la_2_lecture_ss2026
+  title: Unitäre Räume und der Spektralsatz
+  position: 1
+la_2_lecture_ss2026_2:
+  lecture: lectures/la_2_lecture_ss2026
+  title: Ringe
+  position: 2
+la_2_lecture_ss2026_3:
+  lecture: lectures/la_2_lecture_ss2026
+  title: Normalformen von Endomorphismen
+  position: 3
+alg_1_lecture_ws2025_1:
+  lecture: lectures/alg_1_lecture_ws2025
+  title: Einführung
+  position: 1
+geo_lecture_ss2026_1:
+  lecture: lectures/geo_lecture_ss2026
+  title: Analytische Geometrie
+  position: 1
+geo_lecture_ss2026_2:
+  lecture: lectures/geo_lecture_ss2026
+  title: Inzidenzgeometrie
+  position: 2
+geo_lecture_ss2026_3:
+  lecture: lectures/geo_lecture_ss2026
+  title: Hilbertebenen
+  position: 3
+geo_lecture_ss2026_4:
+  lecture: lectures/geo_lecture_ss2026
+  title: Euklidische Geometrie
+  position: 4
+geo_lecture_ss2026_5:
+  lecture: lectures/geo_lecture_ss2026
+  title: Nichteuklidische Geometrie
+  position: 5

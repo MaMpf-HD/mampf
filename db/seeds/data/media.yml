@@ -1,0 +1,911 @@
+---
+la_2_lecture_ss2026_lessonmaterial:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-04-21
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T15:54:47+02:00'
+  attachments:
+    video: LA2.E01.mp4
+    screenshot: screenshot20200724-1-16f6c1d.png
+    manuscript: LA2.E01.pdf
+la_2_lecture_ss2026_lessonmaterial_2:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-04-23
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T16:06:58+02:00'
+  attachments:
+    video: LA2E02.mp4
+    screenshot: screenshot20200724-1-1k4u0et.png
+    manuscript: LA2.E02.pdf
+la_2_lecture_ss2026_lessonmaterial_3:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-04-28
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T16:12:39+02:00'
+  attachments:
+    video: LAL2E03.mp4
+    screenshot: screenshot20200724-1-6gkzy3.png
+    manuscript: LA2.E03.pdf
+la_2_lecture_ss2026_lessonmaterial_4:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-04-30
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T16:18:30+02:00'
+  attachments:
+    video: LA2E04.mp4
+    screenshot: screenshot20200724-1-18t9svm.png
+    manuscript: LA2.E04.pdf
+la_2_lecture_ss2026_lessonmaterial_5:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-05-05
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T16:23:41+02:00'
+  attachments:
+    video: LA2E05.mp4
+    screenshot: screenshot20200724-1-swmdmi.png
+    manuscript: LA2.E05.pdf
+la_2_lecture_ss2026_lessonmaterial_6:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-05-07
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T16:29:17+02:00'
+  attachments:
+    video: LA2E06.mp4
+    screenshot: screenshot20200724-1-1ar4gk2.png
+    manuscript: LA2.E06.pdf
+la_2_lecture_ss2026_lessonmaterial_7:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-05-12
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T16:33:16+02:00'
+  attachments:
+    video: LA2E07.mp4
+    screenshot: screenshot20200724-1-1i8ba8i.png
+    manuscript: LA2.E07.pdf
+la_2_lecture_ss2026_lessonmaterial_8:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-05-14
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T16:46:06+02:00'
+  attachments:
+    video: LA2E08.mp4
+    screenshot: screenshot20200724-1-18a3lza.png
+    manuscript: LA2.E08.pdf
+la_2_lecture_ss2026_lessonmaterial_9:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-05-19
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T16:51:14+02:00'
+  attachments:
+    video: LA2E09.mp4
+    screenshot: screenshot20200724-1-17n4aon.png
+    manuscript: LA2.E09.pdf
+la_2_lecture_ss2026_lessonmaterial_10:
+  sort: LessonMaterial
+  teachable: lessons/la_2_lecture_ss2026_2026-05-28
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T16:56:40+02:00'
+  attachments:
+    video: LA2E10.mp4
+    screenshot: screenshot20200724-1-mo0aeb.png
+    manuscript: LA2.E10.pdf
+la_2_lecture_ss2026_script_skript:
+  sort: Script
+  description: Skript
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  imported_manuscript: false
+  locale: de
+  position: 0
+  released_at: '2021-07-24T17:09:22+02:00'
+  attachments:
+    manuscript: skript.pdf
+la_2_lecture_ss2026_exercise_blatt4:
+  sort: Exercise
+  description: Blatt4
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  locale: de
+  position: 1
+  released_at: '2021-07-24T17:15:19+02:00'
+  attachments:
+    manuscript: Übung.V.LA 2.SS20.LA2-Blatt02.pdf
+la_2_workedexample_frobenius-normalform:
+  sort: WorkedExample
+  description: Frobenius-Normalform
+  teachable: courses/la_2
+  released: all
+  locale: de
+  geogebra_app_name: classic
+  position: 0
+  released_at: '2021-07-24T17:43:22+02:00'
+  attachments:
+    video: Worked Example.v.la 2.ss17.frobenius-normalform.mp4
+    manuscript: Worked Example.V.LA 2.SS17.Frobenius-Normalform.pdf
+la_2_lecture_ss2026_repetition_euklidische_raeume:
+  sort: Repetition
+  description: Euklidische Räume
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  locale: de
+  position: 2
+  released_at: '2021-07-24T17:54:03+02:00'
+  attachments:
+    video: Wiederholung.v.la 2.ss20.euklidische Räume-1.mp4
+    manuscript: Wiederholung.V.LA 2.SS20.Euklidische Räume.pdf
+la_2_lecture_ss2026_miscellaneous_informationen_zur_vorlesung:
+  sort: Miscellaneous
+  description: Informationen zur Vorlesung
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  locale: de
+  position: 3
+  released_at: '2021-07-24T17:58:26+02:00'
+  attachments:
+    manuscript: Sonstiges.V.LA 2.SS20.Informationen zur Vorlesung.pdf
+la_2_lecture_ss2026_quiz_primideale_und_maximale_ideale:
+  sort: Quiz
+  description: Primideale und maximale Ideale
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  quiz_graph:
+    serialized: |
+      --- !ruby/object:QuizGraph
+      vertices:
+        1:
+          :type: Question
+          :id: 17
+        2:
+          :type: Question
+          :id: 18
+        3:
+          :type: Question
+          :id: 19
+        4:
+          :type: Question
+          :id: 20
+        5:
+          :type: Question
+          :id: 21
+      edges: {}
+      root: 1
+      default_table:
+        1: 2
+        2: 3
+        3: 4
+        4: 5
+        5: -1
+      hide_solution: []
+  level: 1
+  type: Quiz
+  locale: de
+  position: 4
+  released_at: '2021-07-24T18:01:47+02:00'
+la_2_lecture_ss2026_question_primideale_in_koerpern:
+  sort: Question
+  description: Primideale in Körpern
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: 'Welche dieser Aussagen ist stets wahr?
+
+    '
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 5
+  released_at: '2021-07-24T18:02:04+02:00'
+  answers_count: 4
+la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_z:
+  sort: Question
+  description: Beispiele für Primideale in Z
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: Welche dieser Aussagen sind wahr?
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 6
+  released_at: '2021-07-24T18:04:00+02:00'
+  answers_count: 4
+la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_q:
+  sort: Question
+  description: Beispiele für Primideale in Q
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: Welche dieser Aussagen sind wahr?
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 7
+  released_at: '2021-07-24T18:06:37+02:00'
+  answers_count: 4
+la_2_lecture_ss2026_question_beispiele_fuer_maximalideale_in_z:
+  sort: Question
+  description: Beispiele für Maximalideale in Z
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: "Betrachte den Ring der ganzen Zahlen $\\mathbb Z$. \n\nWelche dieser Ideale
+    sind Maximalideale in $\\mathbb Z$?"
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 8
+  released_at: '2021-07-24T18:08:25+02:00'
+  answers_count: 4
+la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_k_x:
+  sort: Question
+  description: Beispiele für Primideale in K[X]
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: |-
+    Sei $K$ ein Körper und $a\in K$. Betrachte den Polynomring in einer Variable $K[X]$ über $K$.
+
+    Welche der folgenden Ideale sind Primideale in $K[X]$?
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 9
+  released_at: '2021-07-24T18:10:17+02:00'
+  answers_count: 3
+la_2_lecture_ss2026_quiz_angeleiteter_beweis_ideale_in_z:
+  sort: Quiz
+  description: 'Angeleiteter Beweis: Ideale in Z'
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  quiz_graph:
+    serialized: |
+      --- !ruby/object:QuizGraph
+      vertices:
+        1:
+          :type: Remark
+          :id: 23
+        2:
+          :type: Question
+          :id: 24
+        3:
+          :type: Question
+          :id: 25
+        4:
+          :type: Question
+          :id: 26
+        5:
+          :type: Remark
+          :id: 27
+        6:
+          :type: Question
+          :id: 28
+        7:
+          :type: Remark
+          :id: 29
+        8:
+          :type: Remark
+          :id: 30
+        9:
+          :type: Question
+          :id: 31
+        10:
+          :type: Remark
+          :id: 32
+      edges:
+        ? - 2
+          - 8
+        : - 20: false
+            21: false
+            22: true
+          - 20: false
+            21: true
+            22: false
+          - 20: false
+            21: true
+            22: true
+          - 20: true
+            21: false
+            22: false
+          - 20: true
+            21: false
+            22: true
+          - 20: false
+            21: false
+            22: false
+          - 20: true
+            21: true
+            22: true
+      root: 1
+      default_table:
+        1: 2
+        2: 3
+        3: 4
+        4: 5
+        5: 6
+        6: 7
+        7: -1
+        8: 9
+        9: 10
+        10: 2
+      hide_solution:
+      - - 2
+        - 20: false
+          21: false
+          22: true
+      - - 2
+        - 20: false
+          21: true
+          22: false
+      - - 2
+        - 20: false
+          21: true
+          22: true
+      - - 2
+        - 20: true
+          21: false
+          22: false
+      - - 2
+        - 20: true
+          21: false
+          22: true
+      - - 2
+        - 20: false
+          21: false
+          22: false
+      - - 2
+        - 20: true
+          21: true
+          22: true
+  level: 1
+  type: Quiz
+  locale: de
+  position: 10
+  released_at: '2021-07-24T18:15:52+02:00'
+la_2_lecture_ss2026_remark_ideale_in_z_start:
+  sort: Remark
+  description: Ideale in Z Start
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  type: Remark
+  text: |-
+    In diesem angeleiteten Beweis wollen wir zeigen, dass jedes Ideal in $\mathbb{Z}$ von einem Element erzeugt wird. Ein Ideal $I$ eins (kommutativen) Ringes $R,$ welches von einem Element erzeugt wird, nennt man $\textbf{Hauptideal}.$ In diesem Fall gibt es ein $x \in I,$ sodass für jedes $y\in I$ ein $a \in R$ existiert mit $y = ax.$ Man schreibt dann auch $$I = (x) := Rx = \{ax \mid a\in R\}.$$
+    Ein kommutativer nullteilerfreier Ring, in dem jedes Ideal ein Hauptideal ist, wird $\textbf{Hauptidealring}$ genannt. Die ganzen Zahlen $\mathbb{Z}$ sind bekanntlich nullteilerfrei. Wir werden in diesem Quiz folglich zeigen, dass $\mathbb{Z}$ ein Hauptidealring ist.
+  position: 11
+  released_at: '2021-07-24T18:16:21+02:00'
+la_2_lecture_ss2026_question_ideale_in_z_erkennen:
+  sort: Question
+  description: Ideale in Z erkennen
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: Welche der folgenden Teilmengen von $\mathbb{Z}$ sind Ideale?
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 12
+  released_at: '2021-07-24T18:17:11+02:00'
+  answers_count: 3
+la_2_lecture_ss2026_question_ideale_in_z_erzeuger_finden:
+  sort: Question
+  description: Ideale in Z Erzeuger finden
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: |-
+    Bevor wir einen allgemeinen Beweis der Aussage führen, schauen wir uns ein Beispiel an. Betrachte das Ideal $$I:= 4\mathbb{Z} + 6 \mathbb{Z} = \{a4+b6 \mid a,b \in \mathbb{Z}\}.$$
+    Wir wollen zeigen, dass jedes Ideal in $\mathbb{Z}$ von einem Element erzeugt wird. Diese Aussage müsste insbesondere für $I$ stimmen.
+    Welche der folgenden Antwortoptionen sind wahr?
+  independent: false
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 13
+  released_at: '2021-07-24T18:18:56+02:00'
+  answers_count: 4
+la_2_lecture_ss2026_question_ideal_in_z_minimales_element:
+  sort: Question
+  description: Ideal in Z minimales Element
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: "Sei nun $I \\subset \\mathbb{Z}$ ein Ideal. Um zu zeigen, dass $I$ von einem
+    Element erzeugt wird, müssen wir einen Kandidaten für dieses Element finden. \nAus
+    dem Beispiel davor geht hervor, dass ein sinnvoller Kandidat \"die kleinste natürliche
+    Zahl, welche in $I$ liegt\" wäre. Formal müssen wir noch ein bisschen aufpassen.
+    Welche der folgenden Aussagen sind wahr?"
+  independent: false
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 14
+  released_at: '2021-07-24T18:20:48+02:00'
+  answers_count: 4
+la_2_lecture_ss2026_remark_ideale_in_z_erzeuger_kandidat:
+  sort: Remark
+  description: Ideale in Z Erzeuger Kandidat
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  type: Remark
+  text: "Wir können annehmen, dass $I$ nicht das Nullideal ist, da dieses bereits
+    ein Hauptideal ist.\nWenn $I$ nicht das Nullideal ist, dann enthält es ein von
+    $0$ verschiedenes Element $y$ und damit auch eine natürliche Zahl $\\lvert y \\rvert.$\nInsgesamt
+    können wir folgern, dass $I\\cap \\mathbb{N}$ eine nicht-leere Teilmenge der natürlichen
+    Zahlen ist und daher ein minimales Element $x$ besitzt. \nUm zu zeigen, dass $x$
+    ein Erzeuger von $I$ ist, müssen wir zeigen, dass jedes Element $y \\in I$ von
+    der Form $y=ax$ ist für ein $a \\in \\mathbb{Z}.$  Eine wichtige Zutat wird die
+    Division mit Rest."
+  position: 15
+  released_at: '2021-07-24T18:22:40+02:00'
+la_2_lecture_ss2026_question_ideale_in_z_division_mit_rest:
+  sort: Question
+  description: Ideale in Z Division mit Rest
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: |-
+    Sei wie zuvor $0 \neq I\subset \mathbb{Z}$ ein Ideal und $x \in I$ die kleinste natürliche Zahl in $I$. Sei weiterhin $y \in I$ ein weiteres Element. Mit Hilfe von Division mit Rest finden wir ein $a \in \mathbb{Z}$ und ein $0 \leq r < \lvert x\rvert$ mit $$y = ax+r.$$
+    Was können wir ableiten?
+  independent: false
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 16
+  released_at: '2021-07-24T18:23:22+02:00'
+  answers_count: 3
+la_2_lecture_ss2026_remark_ideale_in_z_final:
+  sort: Remark
+  description: Ideale in Z final
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  type: Remark
+  text: 'Damit haben wir gezeigt: Jedes $y \in I$ ist von der Form $y= ax$ für ein
+    $a \in \mathbb{Z}.$ Daher wird $I$ von $x$ erzeugt. Essentiell für den Beweis
+    war die Division mit Rest. Divison mit Rest ist in jedem $\textbf{``euklidischen
+    Ring''''}$ möglich. Die ganzen Zahl sind ein Beispiel eines euklidischen Rings.
+    Der Beweis, den wir in diesem Quiz geführt haben, lässt sich auch auf euklidische
+    Ringe übertragen. Damit würde man das folgende Ergebnis erhalten: Jeder $\textbf{euklidische
+    Ring}$ ist ein $\textbf{Hauptidealring}.$'
+  position: 17
+  released_at: '2021-07-24T18:24:37+02:00'
+la_2_lecture_ss2026_remark_wiederholung_ideal_ankuendigen:
+  sort: Remark
+  description: Wiederholung Ideal ankündigen
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  type: Remark
+  text: Wir schauen uns nochmal den Begriff des Ideals genauer an.
+  position: 18
+  released_at: '2021-07-24T18:29:29+02:00'
+la_2_lecture_ss2026_question_ideale_definition:
+  sort: Question
+  description: Ideale Definition
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: Sei $R$ ein kommutativer Ring mit Eins. Eine Teilmenge $I$ von $R$ von heißt
+    Ideal, wenn $0\in I$ ist, für alle $a,b\in I$ stets $a+b\in I$ gilt und
+  independent: false
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: '0'
+        tex: '0'
+        nerd: '0'
+  question_sort: mc
+  position: 19
+  released_at: '2021-07-24T18:30:41+02:00'
+  answers_count: 2
+la_2_lecture_ss2026_remark_naechster_versuch:
+  sort: Remark
+  description: nächster Versuch
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  type: Remark
+  text: Damit gehen wir die obige Frage nochmal an.
+  geogebra_app_name: classic
+  position: 20
+  released_at: '2021-07-24T18:34:24+02:00'
+la_2_lecture_ss2026_quiz_invarianten-_und_determinantenteiler:
+  sort: Quiz
+  description: Invarianten- und Determinantenteiler
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  quiz_graph:
+    serialized: |
+      --- !ruby/object:QuizGraph
+      vertices:
+        1:
+          :type: Question
+          :id: 34
+        2:
+          :type: Question
+          :id: 35
+        3:
+          :type: Question
+          :id: 36
+        4:
+          :type: Question
+          :id: 37
+      edges: {}
+      root: 1
+      default_table:
+        1: 2
+        2: 3
+        3: 4
+        4: -1
+      hide_solution: []
+  level: 1
+  type: Quiz
+  locale: de
+  position: 21
+  released_at: '2021-07-24T18:42:58+02:00'
+la_2_lecture_ss2026_question_zusammenhang_invarianten-_und_determinantenteiler:
+  sort: Question
+  description: Zusammenhang Invarianten- und Determinantenteiler
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: Die Matrix $A\in M_{4,4}(\mathbb{Q})$ habe die Invariantenteiler $1,t-2,t-2,(t-2)(t-3)$.
+    Gib die Determinantenteiler $d_1(A),\ldots,d_4(A)$ als Tupel von Polynomen aus
+    $\mathbb{Q}[t]$ an.
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfTuple
+        value: 1,t-2,(t-2)^2,(t-2)^3*(t-3)
+        tex: "(1, t-2, \\left(t-2\\right)^{2}, \\left(t-2\\right)^{3} \\cdot \\left(t-3\\right))"
+        nerd: vector(1,t-2,(t-2)^2,(t-2)^3*(t-3))
+      explanation: ''
+  question_sort: free
+  position: 22
+  released_at: '2021-07-24T18:43:21+02:00'
+  answers_count: 1
+la_2_lecture_ss2026_question_zusammenhang_invariantenteiler_und_charakteristisch:
+  sort: Question
+  description: Zusammenhang Invariantenteiler und charakteristisches Polynom
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: Die Matrix $A\in M_{5,5}(\mathbb{Q})$ habe die Invariantenteiler $1,1,t-2,(t-2)(t-3),(t-2)(t-3)$.
+    Gib das charakteristische Polynom von $A$ (als Polynom aus $\mathbb{Q}[t]$) an.
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfExpression
+        value: "(t-2)^3*(t-3)^2"
+        tex: "\\left(t-2\\right)^{3} \\cdot \\left(t-3\\right)^{2}"
+        nerd: "(t-2)^3*(t-3)^2"
+      explanation: Es ist $d_5(A)=c_1(A)\cdot\ldots\cdot c_5(A)$ und $d_5(A)=\chi^{\operatorname{char}}_A$.
+  question_sort: free
+  position: 23
+  released_at: '2021-07-24T18:44:51+02:00'
+  answers_count: 1
+la_2_lecture_ss2026_question_zusammenhang_invarianten-_und_determinantenteiler_2:
+  sort: Question
+  description: Zusammenhang Invarianten- und Determinantenteiler
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: Die Matrix $A\in M_{6,6}(\mathbb{Q})$ habe die Determinantenteiler $1,1,t-2,(t-2)^2,(t-2)^3,(t-2)^5(t-3)$.
+    Gib die Invariantenteiler $c_1(A),\ldots,c_6(A)$ als Tupel von Polynomen aus $\mathbb{Q}[t]$
+    an.
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfTuple
+        value: 1,1,t-2,t-2,t-2,(t-2)^2*(t-3)
+        tex: "(1, 1, t-2, t-2, t-2, \\left(t-2\\right)^{2} \\cdot \\left(t-3\\right))"
+        nerd: vector(1,1,t-2,t-2,t-2,(t-2)^2*(t-3))
+      explanation: ''
+  question_sort: free
+  position: 24
+  released_at: '2021-07-24T18:46:02+02:00'
+  answers_count: 1
+la_2_lecture_ss2026_question_frobenius-normalform_bestimmen:
+  sort: Question
+  description: Frobenius-Normalform bestimmen
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  level: 1
+  type: Question
+  text: Die Matrix $A\in M_{4,4}(\mathbb{Q})$ habe die Invariantenteiler $1,1,(t-3)^2,(t-3)^2$.
+    Gib die Frobenius-Normalform von $A$ an.
+  independent: true
+  solution:
+    serialized: |
+      --- !ruby/object:Solution
+      content: !ruby/object:MampfMatrix
+        row_count: 4
+        column_count: 4
+        coefficients:
+        - '0'
+        - "-9"
+        - '0'
+        - '0'
+        - '1'
+        - '6'
+        - '0'
+        - '0'
+        - '0'
+        - '0'
+        - '0'
+        - "-9"
+        - '0'
+        - '0'
+        - '1'
+        - '6'
+        tex: "\\begin{pmatrix}0 & -9 & 0 & 0 \\cr 1 & 6 & 0 & 0 \\cr 0 & 0 & 0 & -9 \\cr
+          0 & 0 & 1 & 6\\end{pmatrix}"
+        nerd: matrix([0,-9,0,0],[1,6,0,0],[0,0,0,-9],[0,0,1,6])
+      explanation: ''
+  question_sort: free
+  position: 25
+  released_at: '2021-07-24T18:48:30+02:00'
+  answers_count: 1
+alg_1_lecture_ws2025_lessonmaterial:
+  sort: LessonMaterial
+  teachable: lessons/alg_1_lecture_ws2025_2020-10-21
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-07-24T18:56:38+02:00'
+  attachments:
+    video: Lektion.v.alg 1.ws17 18.e1-1.mp4
+    manuscript: Lektion.V.Alg 1.WS17_18.E1.pdf
+geo_lecture_ss2026_script_vorlesungsskript:
+  sort: Script
+  description: Vorlesungsskript
+  teachable: lectures/geo_lecture_ss2026
+  released: all
+  imported_manuscript: true
+  locale: de
+  position: 0
+  released_at: '2021-07-24T19:03:37+02:00'
+  attachments:
+    manuscript: Skript.V.Geo.SS20.Vorlesungsskript.pdf
+hd_special_lessonmaterial_vorlesungszusatzvideo:
+  sort: LessonMaterial
+  description: Vorlesungszusatzvideo
+  teachable: lectures/hd_special
+  released: all
+  locale: de
+  position: 0
+  released_at: '2021-08-10T18:09:44+02:00'
+la_2_quiz_tensorprodukt:
+  sort: Quiz
+  description: Tensorprodukt
+  teachable: courses/la_2
+  released: all
+  quiz_graph:
+    serialized: |
+      --- !ruby/object:QuizGraph
+      vertices:
+        1:
+          :type: Question
+          :id: 25
+      edges: {}
+      root: 1
+      default_table:
+        1: -1
+      hide_solution: []
+  level: 1
+  type: Quiz
+  position: 1
+  released_at: '2021-09-01T16:30:02+02:00'
+randomquiz_zufallsquiz_lineare_algebra_2_2020-09-02_11_47_59_0000:
+  sort: RandomQuiz
+  description: Zufallsquiz Lineare Algebra 2 2020-09-02 11:47:59 +0000
+  quiz_graph:
+    serialized: |
+      --- !ruby/object:QuizGraph
+      vertices:
+        1:
+          :type: Question
+          :id: 17
+        2:
+          :type: Question
+          :id: 18
+        3:
+          :type: Question
+          :id: 35
+        4:
+          :type: Question
+          :id: 20
+        5:
+          :type: Question
+          :id: 37
+      edges: {}
+      root: 1
+      default_table:
+        1: 2
+        2: 3
+        3: 4
+        4: 5
+        5: -1
+      hide_solution: []
+  level: 1
+  type: Quiz
+  position: 0
+la_2_quiz_testquiz:
+  sort: Quiz
+  description: Testquiz
+  teachable: courses/la_2
+  released: all
+  quiz_graph:
+    serialized: |
+      --- !ruby/object:QuizGraph
+      vertices:
+        1:
+          :type: Question
+          :id: 24
+      edges: {}
+      root: 1
+      default_table:
+        1: -1
+      hide_solution: []
+  level: 1
+  type: Quiz
+  position: 2
+  released_at: '2021-09-03T12:31:05+02:00'
+la_2_lecture_ss2026_exercise_blatt_5:
+  sort: Exercise
+  description: Blatt 5
+  teachable: lectures/la_2_lecture_ss2026
+  released: all
+  locale: de
+  position: 26
+  released_at: '2021-11-28T17:23:26+01:00'
+  attachments:
+    manuscript: Übung.V.LA 2.SS20.LA2-Blatt05.pdf
+alg_1_seminar_ws2024_miscellaneous_groups:
+  external_reference_link: https://en.wikipedia.org/wiki/Group_(mathematics)
+  sort: Miscellaneous
+  description: Groups
+  teachable: talks/alg_1_seminar_ws2024_1
+  released: all
+  locale: en
+  content: "<div>Paper with lines.</div>"
+  position: 0
+  released_at: '2023-08-05T15:36:01+02:00'
+  attachments:
+    manuscript: empty.pdf
+alg_1_seminar_ws2024_workedexample_worked_example_free:
+  sort: WorkedExample
+  description: Worked Example Free
+  teachable: lectures/alg_1_seminar_ws2024
+  released: all
+  locale: en
+  geogebra_app_name: classic
+  position: 0
+  released_at: '2023-08-05T16:31:00+02:00'
+  attachments:
+    video: WorkedExample.mp4
+    screenshot: screenshot20220805-1-bony1x.png
+alg_1_seminar_ws2024_workedexample_worked_example_unpublished:
+  sort: WorkedExample
+  description: Worked Example Unpublished
+  teachable: lectures/alg_1_seminar_ws2024
+  locale: en
+  position: 1
+alg_1_seminar_ws2024_workedexample_worked_example_registered:
+  sort: WorkedExample
+  description: Worked Example Registered
+  teachable: lectures/alg_1_seminar_ws2024
+  released: users
+  locale: en
+  position: 2
+  released_at: '2023-08-05T16:34:12+02:00'
+alg_1_seminar_ws2024_workedexample_worked_example_subscribers:
+  sort: WorkedExample
+  description: Worked Example Subscribers
+  teachable: lectures/alg_1_seminar_ws2024
+  released: subscribers
+  locale: en
+  position: 3
+  released_at: '2023-08-05T16:34:46+02:00'
+alg_1_seminar_ws2024_workedexample_worked_example_locked:
+  sort: WorkedExample
+  description: Worked Example Locked
+  teachable: lectures/alg_1_seminar_ws2024
+  released: locked
+  locale: en
+  position: 4
+  released_at: '2023-08-05T16:35:41+02:00'
+ezt_proseminar_ss2026_lessonmaterial_teilbarkeit:
+  sort: LessonMaterial
+  description: Teilbarkeit
+  teachable: talks/ezt_proseminar_ss2026_1
+  released: all
+  locale: de
+  position: 0
+  released_at: '2026-07-15T14:14:43+02:00'
+  attachments:
+    manuscript: Vortrag1.pdf

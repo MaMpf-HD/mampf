@@ -1,0 +1,32 @@
+---
+ss_2021:
+  year: 2021
+  season: SS
+ws_2020:
+  year: 2020
+  season: WS
+ws_2019:
+  year: 2019
+  season: WS
+ws_2023:
+  year: 2023
+  season: WS
+ss_2026:
+  year: 2026
+  season: SS
+  active: true
+ws_2026:
+  year: 2026
+  season: WS
+ss_2027:
+  year: 2027
+  season: SS
+ws_2027:
+  year: 2027
+  season: WS
+ws_2025:
+  year: 2025
+  season: WS
+ws_2024:
+  year: 2024
+  season: WS

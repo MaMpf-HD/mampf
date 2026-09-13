@@ -1,0 +1,58 @@
+---
+- start_time: '00:00:00.000'
+  end_time: '00:01:00.000'
+  explanation: vorige Sitzung
+  item: items/la_2_lecture_ss2026_lessonmaterial_self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_2
+- start_time: '00:00:00.000'
+  end_time: '00:01:00.000'
+  explanation: vorige Sitzung
+  item: items/la_2_lecture_ss2026_lessonmaterial_self_2
+  medium: media/la_2_lecture_ss2026_lessonmaterial_3
+- start_time: '00:00:00.000'
+  end_time: '00:01:00.000'
+  explanation: vorige Sitzung
+  item: items/la_2_lecture_ss2026_lessonmaterial_self_3
+  medium: media/la_2_lecture_ss2026_lessonmaterial_4
+- start_time: '00:00:00.000'
+  end_time: '00:01:00.000'
+  explanation: vorige Sitzung
+  item: items/la_2_lecture_ss2026_lessonmaterial_self_4
+  medium: media/la_2_lecture_ss2026_lessonmaterial_5
+- start_time: '00:00:00.000'
+  end_time: '00:01:00.000'
+  explanation: vorige Sitzung
+  item: items/la_2_lecture_ss2026_lessonmaterial_self_5
+  medium: media/la_2_lecture_ss2026_lessonmaterial_6
+- start_time: '00:00:00.000'
+  end_time: '00:01:00.000'
+  explanation: vorige Sitzung
+  item: items/la_2_lecture_ss2026_lessonmaterial_self_6
+  medium: media/la_2_lecture_ss2026_lessonmaterial_7
+- start_time: '00:00:00.000'
+  end_time: '00:01:00.000'
+  item: items/la_2_lecture_ss2026_lessonmaterial_self_7
+  medium: media/la_2_lecture_ss2026_lessonmaterial_8
+- start_time: '00:00:00.000'
+  end_time: '00:01:00.000'
+  explanation: vorige Sitzung
+  item: items/la_2_lecture_ss2026_lessonmaterial_self_9
+  medium: media/la_2_lecture_ss2026_lessonmaterial_10
+- start_time: '00:00:00.000'
+  end_time: '00:01:00.000'
+  item: items/hd_special_lessonmaterial_vorlesungszusatzvideo_self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_9
+- start_time: '00:00:36.434'
+  end_time: '00:01:00.024'
+  item: items/hd_special_lessonmaterial_vorlesungszusatzvideo_self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_5
+- start_time: '00:00:33.828'
+  end_time: '00:00:53.526'
+  explanation: Der Zusammenhang ist offensichtlich.
+  item: items/alg_1_seminar_ws2024_workedexample_worked_example_free_self
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_free
+- start_time: '00:00:36.128'
+  end_time: '00:00:53.526'
+  explanation: Hier ein Wikipedia-Link zum Eisensteinkriterium.
+  item: items/item_link
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_free

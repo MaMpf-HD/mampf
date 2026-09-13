@@ -1,0 +1,155 @@
+---
+la_2_lecture_ss2026_2_1:
+  chapter: chapters/la_2_lecture_ss2026_2
+  title: Ringe und Ideale
+  position: 1
+  hidden: false
+la_2_lecture_ss2026_1_1:
+  chapter: chapters/la_2_lecture_ss2026_1
+  title: Unitäre Räume und der Spektralsatz
+  position: 1
+  hidden: false
+la_2_lecture_ss2026_2_2:
+  chapter: chapters/la_2_lecture_ss2026_2
+  title: Teilbarkeit
+  position: 2
+  hidden: false
+la_2_lecture_ss2026_2_3:
+  chapter: chapters/la_2_lecture_ss2026_2
+  title: Euklidische Ringe
+  position: 3
+  hidden: false
+la_2_lecture_ss2026_3_1:
+  chapter: chapters/la_2_lecture_ss2026_3
+  title: Invarianten- und Determinantenteiler
+  position: 1
+  hidden: false
+la_2_lecture_ss2026_3_2:
+  chapter: chapters/la_2_lecture_ss2026_3
+  title: Normalformen
+  position: 2
+  hidden: false
+alg_1_lecture_ws2025_1_1:
+  chapter: chapters/alg_1_lecture_ws2025_1
+  title: Eine kurze Geschichte der Algebra
+  position: 1
+geo_lecture_ss2026_1_1:
+  chapter: chapters/geo_lecture_ss2026_1
+  title: Affine Räume
+  position: 1
+geo_lecture_ss2026_1_2:
+  chapter: chapters/geo_lecture_ss2026_1
+  title: Affine Abbildungen
+  position: 2
+geo_lecture_ss2026_1_3:
+  chapter: chapters/geo_lecture_ss2026_1
+  title: Affine Koordinaten
+  position: 3
+geo_lecture_ss2026_1_4:
+  chapter: chapters/geo_lecture_ss2026_1
+  title: Polytope
+  position: 4
+geo_lecture_ss2026_1_5:
+  chapter: chapters/geo_lecture_ss2026_1
+  title: Projektive Räume
+  position: 5
+geo_lecture_ss2026_1_6:
+  chapter: chapters/geo_lecture_ss2026_1
+  title: Projektive Abbildungen
+  position: 6
+geo_lecture_ss2026_1_7:
+  chapter: chapters/geo_lecture_ss2026_1
+  title: Projektive Koordinaten
+  position: 7
+geo_lecture_ss2026_1_8:
+  chapter: chapters/geo_lecture_ss2026_1
+  title: Computergraphik
+  position: 8
+geo_lecture_ss2026_1_9:
+  chapter: chapters/geo_lecture_ss2026_1
+  title: Übungsaufgaben
+  position: 9
+geo_lecture_ss2026_2_1:
+  chapter: chapters/geo_lecture_ss2026_2
+  title: Inzidenzebenen
+  position: 1
+geo_lecture_ss2026_2_2:
+  chapter: chapters/geo_lecture_ss2026_2
+  title: Affine Ebenen
+  position: 2
+geo_lecture_ss2026_2_3:
+  chapter: chapters/geo_lecture_ss2026_2
+  title: Übungsaufgaben
+  position: 3
+geo_lecture_ss2026_3_1:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: Die Anordnungsaxiome
+  position: 1
+geo_lecture_ss2026_3_2:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: Die Kongruenzaxiome für Strecken
+  position: 2
+geo_lecture_ss2026_3_3:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: Die Kongruenzaxiome für Winkel
+  position: 3
+geo_lecture_ss2026_3_4:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: Ergänzungswinkel, Gegenwinkel und rechte Winkel
+  position: 4
+geo_lecture_ss2026_3_5:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: Orthogonalität und Parallelität
+  position: 5
+geo_lecture_ss2026_3_6:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: Der Kongruenzsatz für Dreiecke
+  position: 6
+geo_lecture_ss2026_3_7:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: Mittelsenkrechte und Winkelhalbierende
+  position: 7
+geo_lecture_ss2026_3_8:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: Innen- und Außenwinkel im Dreieck
+  position: 8
+geo_lecture_ss2026_3_9:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: In- und Umkreis
+  position: 9
+geo_lecture_ss2026_3_10:
+  chapter: chapters/geo_lecture_ss2026_3
+  title: Übungsaufgaben
+  position: 10
+geo_lecture_ss2026_4_1:
+  chapter: chapters/geo_lecture_ss2026_4
+  title: Das Vollständigkeitsaxiom
+  position: 1
+geo_lecture_ss2026_4_2:
+  chapter: chapters/geo_lecture_ss2026_4
+  title: Euklidische Ebenen
+  position: 2
+geo_lecture_ss2026_4_3:
+  chapter: chapters/geo_lecture_ss2026_4
+  title: Kreise
+  position: 3
+geo_lecture_ss2026_4_4:
+  chapter: chapters/geo_lecture_ss2026_4
+  title: Die Inversion am Kreis
+  position: 4
+geo_lecture_ss2026_4_5:
+  chapter: chapters/geo_lecture_ss2026_4
+  title: Übungsaufgaben
+  position: 5
+geo_lecture_ss2026_5_1:
+  chapter: chapters/geo_lecture_ss2026_5
+  title: Das Poincaré'sche Kreismodell
+  position: 1
+geo_lecture_ss2026_5_2:
+  chapter: chapters/geo_lecture_ss2026_5
+  title: Hyperbolische Geometrie
+  position: 2
+geo_lecture_ss2026_5_3:
+  chapter: chapters/geo_lecture_ss2026_5
+  title: Übungsaufgaben
+  position: 3

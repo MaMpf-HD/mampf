@@ -1,0 +1,19 @@
+---
+la_2_lecture_ss2026_blatt_4:
+  lecture: lectures/la_2_lecture_ss2026
+  medium: media/la_2_lecture_ss2026_exercise_blatt4
+  title: Blatt 4
+  deadline: '2026-05-01T17:50:00+02:00'
+  deletion_date: '2026-10-15'
+la_2_lecture_ss2026_blatt_5:
+  lecture: lectures/la_2_lecture_ss2026
+  medium: media/la_2_lecture_ss2026_exercise_blatt_5
+  title: Blatt 5
+  deadline: '2026-05-09T18:00:00+02:00'
+  deletion_date: '2026-10-15'
+la_2_lecture_ss2026_blatt_6:
+  lecture: lectures/la_2_lecture_ss2026
+  medium: media/la_2_lecture_ss2026_exercise_blatt_5
+  title: Blatt 6
+  deadline: '2026-09-03T19:00:00+02:00'
+  deletion_date: '2026-10-15'

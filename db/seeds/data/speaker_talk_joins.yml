@@ -1,0 +1,11 @@
+---
+- talk: talks/alg_1_seminar_ws2024_1
+  speaker: users/student1
+- talk: talks/alg_1_seminar_ws2024_1
+  speaker: users/student2
+- talk: talks/ezt_proseminar_ss2026_1
+  speaker: users/student1
+- talk: talks/ezt_proseminar_ss2026_1
+  speaker: users/student2
+- talk: talks/ezt_proseminar_ss2026_2
+  speaker: users/student3

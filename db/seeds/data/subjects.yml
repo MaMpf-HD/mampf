@@ -1,0 +1,11 @@
+---
+mathematik:
+  translations:
+    name:
+      de: Mathematik
+      en: Mathematics
+informatik:
+  translations:
+    name:
+      de: Informatik
+      en: Computer Science

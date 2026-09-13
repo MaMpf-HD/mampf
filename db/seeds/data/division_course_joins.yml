@@ -1,0 +1,15 @@
+---
+- division: divisions/bsc_100_pflichtmodule
+  course: courses/la_2
+- division: divisions/bsc_100_wahlbereich
+  course: courses/la_2
+- division: divisions/bsc_100_wahlpflichtbereich_1
+  course: courses/alg_1
+- division: divisions/bsc_100_wahlpflichtbereich_1
+  course: courses/geo
+- division: divisions/bsc_100_pflichtmodule
+  course: courses/hd
+- division: divisions/bsc_100_pflichtmodule
+  course: courses/ana_2
+- division: divisions/bsc_100_wahlpflichtbereich_1
+  course: courses/ezt

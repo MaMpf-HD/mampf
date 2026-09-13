@@ -1,0 +1,11 @@
+---
+- talk: talks/alg_1_seminar_ws2024_1
+  tag: tags/group
+- talk: talks/alg_1_seminar_ws2024_1
+  tag: tags/group_homomorphism
+- talk: talks/ezt_proseminar_ss2026_1
+  tag: tags/divisibility
+- talk: talks/ezt_proseminar_ss2026_2
+  tag: tags/prime_number
+- talk: talks/ezt_proseminar_ss2026_3
+  tag: tags/rsa_cryptosystem

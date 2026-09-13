@@ -1,0 +1,337 @@
+---
+de_unitaerer_raum:
+  title: unitärer Raum
+  locale: de
+  tag: tags/unitary_space
+en_unitary_space:
+  title: unitary space
+  locale: en
+  tag: tags/unitary_space
+de_skalarprodukt:
+  title: Skalarprodukt
+  locale: de
+  tag: tags/scalar_product
+en_scalar_product:
+  title: scalar product
+  locale: en
+  tag: tags/scalar_product
+de_norm:
+  title: Norm
+  locale: de
+  tag: tags/norm
+en_norm:
+  title: norm
+  locale: en
+  tag: tags/norm
+de_hermitesche_form:
+  title: hermitesche Form
+  locale: de
+  tag: tags/hermitian_form
+en_hermitian_form:
+  title: hermitian form
+  locale: en
+  tag: tags/hermitian_form
+de_normaler_endomorphismus:
+  title: normaler Endomorphismus
+  locale: de
+  tag: tags/normal_endomorphism
+en_normal_endomorphism:
+  title: normal endomorphism
+  locale: en
+  tag: tags/normal_endomorphism
+de_spektralsatz_fuer_normale_endomorphismen:
+  title: Spektralsatz für normale Endomorphismen
+  locale: de
+  tag: tags/spectral_theorem_for_normal_endomorphisms
+en_spectral_theorem_for_normal_endomorphisms:
+  title: spectral theorem for normal endomorphisms
+  locale: en
+  tag: tags/spectral_theorem_for_normal_endomorphisms
+de_unitaere_abbildung:
+  title: unitäre Abbildung
+  locale: de
+  tag: tags/unitary_map
+en_unitary_map:
+  title: unitary map
+  locale: en
+  tag: tags/unitary_map
+de_unitaere_matrix:
+  title: unitäre matrix
+  locale: de
+  tag: tags/unitary_matrix
+en_unitary_matrix:
+  title: unitary matrix
+  locale: en
+  tag: tags/unitary_matrix
+de_ring:
+  title: Ring
+  locale: de
+  tag: tags/ring
+en_ring:
+  title: ring
+  locale: en
+  tag: tags/ring
+de_ideal:
+  title: Ideal
+  locale: de
+  tag: tags/ideal
+en_ideal:
+  title: ideal
+  locale: en
+  tag: tags/ideal
+de_ringhomomorphismus:
+  title: Ringhomomorphismus
+  locale: de
+  tag: tags/ring_homomorphism
+en_ring_homomorphism:
+  title: ring homomorphism
+  locale: en
+  tag: tags/ring_homomorphism
+de_faktorring:
+  title: Faktorring
+  locale: de
+  tag: tags/factor_ring
+en_factor_ring:
+  title: factor ring
+  locale: en
+  tag: tags/factor_ring
+de_chinesischer_restsatz:
+  title: Chinesischer Restsatz
+  locale: de
+  tag: tags/chinese_remainder_theorem
+en_chinese_remainder_theorem:
+  title: chinese remainder theorem
+  locale: en
+  tag: tags/chinese_remainder_theorem
+de_koerper:
+  title: Körper
+  locale: de
+  tag: tags/field
+en_field:
+  title: field
+  locale: en
+  tag: tags/field
+de_teiler:
+  title: Teiler
+  locale: de
+  tag: tags/divisor
+en_divisor:
+  title: divisor
+  locale: en
+  tag: tags/divisor
+de_irreduzibles_element:
+  title: irreduzibles Element
+  locale: de
+  tag: tags/irreducible_element
+en_irreducible_element:
+  title: irreducible Element
+  locale: en
+  tag: tags/irreducible_element
+de_primelement:
+  title: Primelement
+  locale: de
+  tag: tags/prime_element
+en_prime_element:
+  title: prime element
+  locale: en
+  tag: tags/prime_element
+de_faktorieller_ring:
+  title: faktorieller Ring
+  locale: de
+  tag: tags/factorial_fdomain
+en_factorial_fdomain:
+  title: factorial fdomain
+  locale: en
+  tag: tags/factorial_fdomain
+de_zpe-ring:
+  title: ZPE-Ring
+  locale: de
+  aliased_tag: tags/factorial_fdomain
+de_euklidischer_ring:
+  title: euklidischer Ring
+  locale: de
+  tag: tags/euclidean_domain
+en_euclidean_domain:
+  title: euclidean domain
+  locale: en
+  tag: tags/euclidean_domain
+de_euklidischer_algorithmus:
+  title: euklidischer Algorithmus
+  locale: de
+  tag: tags/euclidean_algorithm
+en_euclidean_algorithm:
+  title: euclidean algorithm
+  locale: en
+  tag: tags/euclidean_algorithm
+de_elementarteilersatz_fuer_matrizen_ueber_eukl_ringen:
+  title: Elementarteilersatz für Matrizen über eukl. Ringen
+  locale: de
+  tag: tags/elementary_divisor_theorem_for_matrices_over_euclidean_domains
+en_elementary_divisor_theorem_for_matrices_over_euclidean_domains:
+  title: elementary divisor theorem for matrices over euclidean domains
+  locale: en
+  tag: tags/elementary_divisor_theorem_for_matrices_over_euclidean_domains
+de_satz_von_frobenius:
+  title: Satz von Frobenius
+  locale: de
+  tag: tags/frobenius_theorem
+en_frobenius_theorem:
+  title: Frobenius' theorem
+  locale: en
+  tag: tags/frobenius_theorem
+de_invarianten-_und_determinantenteiler_einer_matrix:
+  title: Invarianten- und Determinantenteiler einer Matrix
+  locale: de
+  tag: tags/invariant_and_derterminant_divisors_of_a_matrix
+en_invariant_and_derterminant_divisors_of_a_matrix:
+  title: invariant and derterminant divisors of a matrix
+  locale: en
+  tag: tags/invariant_and_derterminant_divisors_of_a_matrix
+de_frobenius-normalform:
+  title: Frobenius-Normalform
+  locale: de
+  tag: tags/frobenius_normal_form
+en_frobenius_normal_form:
+  title: Frobenius normal form
+  locale: en
+  tag: tags/frobenius_normal_form
+de_rationale_normalform:
+  title: rationale Normalform
+  locale: de
+  aliased_tag: tags/frobenius_normal_form
+de_weierstrass-normalform:
+  title: Weierstrass-Normalform
+  locale: de
+  tag: tags/weierstrass_normal_form
+en_weierstrass_normal_form:
+  title: Weierstrass normal form
+  locale: en
+  tag: tags/weierstrass_normal_form
+de_jordansche_normalform:
+  title: Jordansche Normalform
+  locale: de
+  tag: tags/jordan_normal_form
+en_jordan_normal_form:
+  title: Jordan normal form
+  locale: en
+  tag: tags/jordan_normal_form
+de_primideal:
+  title: Primideal
+  locale: de
+  tag: tags/prime_ideal
+en_prime_ideal:
+  title: prime ideal
+  locale: en
+  tag: tags/prime_ideal
+de_maximales_ideal:
+  title: maximales Ideal
+  locale: de
+  tag: tags/maximal_ideal
+en_maximal_ideal:
+  title: maximal ideal
+  locale: en
+  tag: tags/maximal_ideal
+de_geschichte_der_algebra:
+  title: Geschichte der Algebra
+  locale: de
+  tag: tags/history_of_algebra
+en_history_of_algebra:
+  title: history of algebra
+  locale: en
+  tag: tags/history_of_algebra
+de_affiner_raum:
+  title: affiner Raum
+  locale: de
+  tag: tags/affiner_raum
+de_affine_dimension:
+  title: affine Dimension
+  locale: de
+  tag: tags/affine_dimension
+de_affiner_standardraum:
+  title: affiner Standardraum
+  locale: de
+  tag: tags/affiner_standardraum
+de_affiner_unterraum:
+  title: affiner Unterraum
+  locale: de
+  tag: tags/affiner_unterraum
+de_affine_unterraeume_der_affinen_standardraeume:
+  title: affine Unterräume der affinen Standardräume
+  locale: de
+  tag: tags/affine_unterraeume_der_affinen_standardraeume
+de_beliebigkeit_des_aufpunkts_eines_affinen_unterraums:
+  title: Beliebigkeit des Aufpunkts eines affinen Unterraums
+  locale: de
+  tag: tags/beliebigkeit_des_aufpunkts_eines_affinen_unterraums
+de_dimension_eines_affinen_unterraums:
+  title: Dimension eines affinen Unterraums
+  locale: de
+  tag: tags/dimension_eines_affinen_unterraums
+de_affine_unterraeume_sind_affine_raeume:
+  title: affine Unterräume sind affine Räume
+  locale: de
+  tag: tags/affine_unterraeume_sind_affine_raeume
+de_durchschnitt_und_verbindungsraum_affiner_raeume:
+  title: Durchschnitt und Verbindungsraum affiner Räume
+  locale: de
+  tag: tags/durchschnitt_und_verbindungsraum_affiner_raeume
+de_verbindungsraum_als_vereinigung_von_verbindungsgeraden:
+  title: Verbindungsraum als Vereinigung von Verbindungsgeraden
+  locale: de
+  tag: tags/verbindungsraum_als_vereinigung_von_verbindungsgeraden
+de_dimensionsformel_fuer_affine_unterraeume:
+  title: Dimensionsformel für affine Unterräume
+  locale: de
+  tag: tags/dimensionsformel_fuer_affine_unterraeume
+de_parallel_und_windschief:
+  title: parallel und windschief
+  locale: de
+  tag: tags/parallel_und_windschief
+de_eine_hyperebene_ist_zu_keinem_affinen_unterraum_windschief:
+  title: eine Hyperebene ist zu keinem affinen Unterraum windschief
+  locale: de
+  tag: tags/eine_hyperebene_ist_zu_keinem_affinen_unterraum_windschief
+de_tensorprodukt:
+  title: Tensorprodukt
+  locale: de
+  tag: tags/tensorprodukt
+de_gruppe:
+  title: Gruppe
+  locale: de
+  tag: tags/group
+en_group:
+  title: group
+  locale: en
+  tag: tags/group
+de_gruppenhomomorphismus:
+  title: Gruppenhomomorphismus
+  locale: de
+  tag: tags/group_homomorphism
+en_group_homomorphism:
+  title: group homomorphism
+  locale: en
+  tag: tags/group_homomorphism
+en_divisibility:
+  title: divisibility
+  locale: en
+  tag: tags/divisibility
+de_teilbarkeit:
+  title: Teilbarkeit
+  locale: de
+  tag: tags/divisibility
+en_prime_number:
+  title: prime number
+  locale: en
+  tag: tags/prime_number
+de_primzahl:
+  title: Primzahl
+  locale: de
+  tag: tags/prime_number
+en_rsa_cryptosystem:
+  title: RSA cryptosystem
+  locale: en
+  tag: tags/rsa_cryptosystem
+de_rsa-verschlusselung:
+  title: RSA-Verschlusselung
+  locale: de
+  tag: tags/rsa_cryptosystem

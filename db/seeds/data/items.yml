@@ -1,0 +1,3511 @@
+---
+la_2_lecture_ss2026_lessonmaterial_self:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial
+la_2_lecture_ss2026_lessonmaterial_example_0_6:
+  start_time: '00:00:00.000'
+  sort: example
+  page: 1
+  description: Fundamentalmatrix einer Sesquilinearform
+  medium: media/la_2_lecture_ss2026_lessonmaterial
+  section: sections/la_2_lecture_ss2026_1_1
+  ref_number: '0.6'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_self_2:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_2
+la_2_lecture_ss2026_lessonmaterial_definition_0_24:
+  start_time: '00:00:01.000'
+  sort: definition
+  page: 1
+  description: selbstadjungierte, normale Endomorphismen bzw. Matrizen
+  medium: media/la_2_lecture_ss2026_lessonmaterial_2
+  section: sections/la_2_lecture_ss2026_1_1
+  ref_number: '0.24'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_self_3:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_3
+la_2_lecture_ss2026_lessonmaterial_remark_1_5:
+  start_time: '00:00:01.000'
+  sort: remark
+  page: 1
+  description: Division mit Rest in $\Z$
+  medium: media/la_2_lecture_ss2026_lessonmaterial_3
+  section: sections/la_2_lecture_ss2026_2_1
+  ref_number: '1.5'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_self_4:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_4
+la_2_lecture_ss2026_lessonmaterial_remark_1_17:
+  start_time: '00:00:00.540'
+  sort: remark
+  page: 1
+  description: Charakterisierung von Körpern
+  medium: media/la_2_lecture_ss2026_lessonmaterial_4
+  section: sections/la_2_lecture_ss2026_2_1
+  ref_number: '1.17'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_definition_1_18:
+  start_time: '00:00:54.127'
+  sort: definition
+  page: 1
+  description: Nullteiler
+  medium: media/la_2_lecture_ss2026_lessonmaterial_4
+  section: sections/la_2_lecture_ss2026_2_1
+  ref_number: '1.18'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_self_5:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_5
+la_2_lecture_ss2026_lessonmaterial_example_1_30:
+  start_time: '00:00:00.000'
+  sort: example
+  description: zu maximalen Elementen
+  medium: media/la_2_lecture_ss2026_lessonmaterial_5
+  section: sections/la_2_lecture_ss2026_2_1
+  ref_number: '1.30'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_self_6:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_6
+la_2_lecture_ss2026_lessonmaterial_remark_2_5:
+  start_time: '00:00:00.000'
+  sort: remark
+  description: Existenz eines ggT in HIR
+  medium: media/la_2_lecture_ss2026_lessonmaterial_6
+  section: sections/la_2_lecture_ss2026_2_2
+  ref_number: '2.5'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_self_7:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_7
+la_2_lecture_ss2026_lessonmaterial_corollary_3_5:
+  start_time: '00:00:00.000'
+  sort: corollary
+  description: Primfaktorzerlegung im Polynomring
+  medium: media/la_2_lecture_ss2026_lessonmaterial_7
+  section: sections/la_2_lecture_ss2026_2_3
+  ref_number: '3.5'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_theorem_3_6:
+  start_time: '00:00:41.670'
+  sort: theorem
+  description: Euklidischer Algorithmus
+  medium: media/la_2_lecture_ss2026_lessonmaterial_7
+  section: sections/la_2_lecture_ss2026_2_3
+  ref_number: '3.6'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_self_8:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_8
+la_2_lecture_ss2026_lessonmaterial_figure_3_15:
+  start_time: '00:00:00.180'
+  sort: figure
+  description: 'Fittings Lemma: $A\in M_{m,n}(R)$, $S\in\operatorname{GL}_m(R)$, $T\in\operatorname{GL}_n(R)$,
+    $l\leq\min\{m,n\}$. Dann: $\operatorname{Fit}_l(A)=\operatorname{Fit}_l(SA)=\operatorname{Fit}_l(AT)$'
+  medium: media/la_2_lecture_ss2026_lessonmaterial_8
+  section: sections/la_2_lecture_ss2026_2_3
+  ref_number: '3.15'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_self_9:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_9
+la_2_lecture_ss2026_lessonmaterial_theorem_4_2:
+  start_time: '00:00:00.000'
+  sort: theorem
+  description: 'Satz von Frobenius: $A,B\in M_{n,n}(K)$. Dann: $A\approx B$ $\Leftrightarrow$
+    $P_A\sim P_B$.'
+  medium: media/la_2_lecture_ss2026_lessonmaterial_9
+  section: sections/la_2_lecture_ss2026_3_1
+  ref_number: '4.2'
+  hidden: false
+la_2_lecture_ss2026_lessonmaterial_self_10:
+  sort: self
+  medium: media/la_2_lecture_ss2026_lessonmaterial_10
+la_2_lecture_ss2026_lessonmaterial_remark_5_3:
+  start_time: '00:00:00.000'
+  sort: remark
+  description: "$g_1,\\ldots,g_r\\in K[t]$ normiert, nichtkonstant mit $g_1|g_2|\\ldots|g_r$
+    , $n:=\\deg(g_1)+\\ldots+\\deg(g_r)$. Dann: $c_1(B_{g_1,\\ldots,g_r})=1,\\ldots$,
+    $c_{n-r}(B_{g_1,\\ldots,g_r})=1$, $c_{n-r+1}(B_{g_1,\\ldots,g_r})=g_1$, $c_n(B_{g_1,\\ldots,g_r})=g_r$."
+  medium: media/la_2_lecture_ss2026_lessonmaterial_10
+  section: sections/la_2_lecture_ss2026_3_2
+  ref_number: '5.3'
+  hidden: false
+la_2_lecture_ss2026_script_skript_self:
+  sort: self
+  medium: media/la_2_lecture_ss2026_script_skript
+la_2_lecture_ss2026_exercise_blatt4_self:
+  sort: self
+  medium: media/la_2_lecture_ss2026_exercise_blatt4
+la_2_workedexample_frobenius-normalform_self:
+  sort: self
+  medium: media/la_2_workedexample_frobenius-normalform
+la_2_lecture_ss2026_repetition_euklidische_raeume_self:
+  sort: self
+  medium: media/la_2_lecture_ss2026_repetition_euklidische_raeume
+la_2_lecture_ss2026_repetition_euklidische_raeume_label:
+  start_time: '00:00:00.000'
+  sort: label
+  page: 1
+  description: Bilinearform
+  medium: media/la_2_lecture_ss2026_repetition_euklidische_raeume
+  hidden: false
+la_2_lecture_ss2026_repetition_euklidische_raeume_label_f:
+  start_time: '00:00:27.731'
+  sort: label
+  page: 2
+  description: Fundamentalmatrix
+  medium: media/la_2_lecture_ss2026_repetition_euklidische_raeume
+  ref_number: F
+  hidden: false
+la_2_lecture_ss2026_miscellaneous_informationen_zur_vorlesung_self:
+  sort: self
+  medium: media/la_2_lecture_ss2026_miscellaneous_informationen_zur_vorlesung
+la_2_lecture_ss2026_quiz_primideale_und_maximale_ideale_self:
+  sort: self
+  medium: media/la_2_lecture_ss2026_quiz_primideale_und_maximale_ideale
+la_2_lecture_ss2026_quiz_angeleiteter_beweis_ideale_in_z_self:
+  sort: self
+  medium: media/la_2_lecture_ss2026_quiz_angeleiteter_beweis_ideale_in_z
+la_2_lecture_ss2026_quiz_invarianten-_und_determinantenteiler_self:
+  sort: self
+  medium: media/la_2_lecture_ss2026_quiz_invarianten-_und_determinantenteiler
+alg_1_lecture_ws2025_lessonmaterial_self:
+  sort: self
+  medium: media/alg_1_lecture_ws2025_lessonmaterial
+geo_lecture_ss2026_script_vorlesungsskript_self:
+  sort: self
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+geo_lecture_ss2026_script_vorlesungsskript_chapter_1:
+  sort: chapter
+  page: 3
+  description: Analytische Geometrie
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  ref_number: '1'
+  pdf_destination: chap:Analytische-Geometrie
+geo_lecture_ss2026_script_vorlesungsskript_chapter_2:
+  sort: chapter
+  page: 64
+  description: Inzidenzgeometrie
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  ref_number: '2'
+  pdf_destination: chap:Inzidenzgeometrie
+geo_lecture_ss2026_script_vorlesungsskript_chapter_3:
+  sort: chapter
+  page: 72
+  description: Hilbertebenen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  ref_number: '3'
+  pdf_destination: chap:Hilbertebenen
+geo_lecture_ss2026_script_vorlesungsskript_chapter_4:
+  sort: chapter
+  page: 111
+  description: Euklidische Geometrie
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  ref_number: '4'
+  pdf_destination: chap:Euklidische-Geometrie-kurz
+geo_lecture_ss2026_script_vorlesungsskript_chapter_5:
+  sort: chapter
+  page: 137
+  description: Nichteuklidische Geometrie
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  ref_number: '5'
+  pdf_destination: chap:Nichteuklidsche-Geometrie
+geo_lecture_ss2026_script_vorlesungsskript_section_1_1:
+  sort: section
+  page: 3
+  description: Affine Räume
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.1'
+  pdf_destination: sect:Affine-Raeume
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_1_2:
+  sort: section
+  page: 11
+  description: Affine Abbildungen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.2'
+  pdf_destination: sect:Affine-Abbildungen
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_1_3:
+  sort: section
+  page: 16
+  description: Affine Koordinaten
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.3'
+  pdf_destination: sect:Affine-Koordinaten
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_1_4:
+  sort: section
+  page: 27
+  description: Polytope
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.4'
+  pdf_destination: sect:Polytope
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_1_5:
+  sort: section
+  page: 36
+  description: Projektive Räume
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_5
+  ref_number: '1.5'
+  pdf_destination: sect:Projektive-Raeume
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_1_6:
+  sort: section
+  page: 40
+  description: Projektive Abbildungen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.6'
+  pdf_destination: sect:Projektive-Abbildungen
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_1_7:
+  sort: section
+  page: 49
+  description: Projektive Koordinaten
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.7'
+  pdf_destination: sect:Projektive-Koordinaten
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_1_8:
+  sort: section
+  page: 58
+  description: Computergraphik
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_8
+  ref_number: '1.8'
+  pdf_destination: sect:Computergraphik
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_1_9:
+  sort: section
+  page: 61
+  description: Übungsaufgaben
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.9'
+  pdf_destination: sect:Uebungsaufgaben-Analytische-Geometrie
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_2_1:
+  sort: section
+  page: 64
+  description: Inzidenzebenen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.1'
+  pdf_destination: sect:Inzidenzebenen
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_2_2:
+  sort: section
+  page: 67
+  description: Affine Ebenen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_2
+  ref_number: '2.2'
+  pdf_destination: sect:affine-Ebenen
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_2_3:
+  sort: section
+  page: 70
+  description: Übungsaufgaben
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_3
+  ref_number: '2.3'
+  pdf_destination: sect:Uebungsaufgaben-Inzidenzgeometrie
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_1:
+  sort: section
+  page: 72
+  description: Die Anordnungsaxiome
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.1'
+  pdf_destination: sect:Anordnungsaxiome
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_2:
+  sort: section
+  page: 78
+  description: Die Kongruenzaxiome für Strecken
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_2
+  ref_number: '3.2'
+  pdf_destination: sect:Die-Kongruenzaxiome-fuer-Strecken
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_3:
+  sort: section
+  page: 80
+  description: Die Kongruenzaxiome für Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.3'
+  pdf_destination: sect:Kongruenzaxiome-fuer-Winkel
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_4:
+  sort: section
+  page: 87
+  description: Ergänzungswinkel, Gegenwinkel und rechte Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_4
+  ref_number: '3.4'
+  pdf_destination: sect:Ergaenzungswinkel,-Gegenwinkel-und-rechte-Winkel
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_5:
+  sort: section
+  page: 89
+  description: Orthogonalität und Parallelität
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.5'
+  pdf_destination: sect:Orthogonalitaet-und-Parallelitaet
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_6:
+  sort: section
+  page: 94
+  description: Der Kongruenzsatz für Dreiecke
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_6
+  ref_number: '3.6'
+  pdf_destination: sect:Kongruenzsatz
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_7:
+  sort: section
+  page: 97
+  description: Mittelsenkrechte und Winkelhalbierende
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.7'
+  pdf_destination: sect:Mittelsenkrechte-und-Winkelhalbierende
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_8:
+  sort: section
+  page: 100
+  description: Innen- und Außenwinkel im Dreieck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_8
+  ref_number: '3.8'
+  pdf_destination: sect:Innen-und-Aussenwinkel-im-Dreieck
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_9:
+  sort: section
+  page: 104
+  description: In- und Umkreis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_9
+  ref_number: '3.9'
+  pdf_destination: sect:Kreise
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_3_10:
+  sort: section
+  page: 108
+  description: Übungsaufgaben
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.10'
+  pdf_destination: sect:Uebungsaufgaben-Hilbertebenen
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_4_1:
+  sort: section
+  page: 111
+  description: Das Vollständigkeitsaxiom
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_1
+  ref_number: '4.1'
+  pdf_destination: sect:Vollstaendigkeitsaxiom
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_4_2:
+  sort: section
+  page: 114
+  description: Euklidische Ebenen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_2
+  ref_number: '4.2'
+  pdf_destination: sect:Euklidische-Ebenen
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_4_3:
+  sort: section
+  page: 116
+  description: Kreise
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.3'
+  pdf_destination: sect:Kreise-in-der-euklidischen-Ebene
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_4_4:
+  sort: section
+  page: 126
+  description: Die Inversion am Kreis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.4'
+  pdf_destination: sect:Inversion-am-Kreis
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_4_5:
+  sort: section
+  page: 135
+  description: Übungsaufgaben
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_5
+  ref_number: '4.5'
+  pdf_destination: sect:Uebungsaufgaben-Euklidische-Geometrie
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_5_1:
+  sort: section
+  page: 137
+  description: Das Poincaré'sche Kreismodell
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.1'
+  pdf_destination: sect:Hyperbolische-Ebenen
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_5_2:
+  sort: section
+  page: 144
+  description: Hyperbolische Geometrie
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.2'
+  pdf_destination: sect:Hyperbolische-Geometrie
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_section_5_3:
+  sort: section
+  page: 151
+  description: Übungsaufgaben
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_3
+  ref_number: '5.3'
+  pdf_destination: sect:Uebungsaufgaben-Nichteuklidische-Geometrie
+  position: -1
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_1:
+  sort: definition
+  page: 3
+  description: affiner Raum
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.1'
+  pdf_destination: defn:affiner-Raum
+  position: 2
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_2:
+  sort: definition
+  page: 4
+  description: affine Dimension
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.2'
+  pdf_destination: defn:affine-Dimension
+  position: 3
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_3:
+  sort: example
+  page: 4
+  description: affiner Standardraum
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.3'
+  pdf_destination: bsp:affiner-Standardraum
+  position: 4
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_1:
+  sort: equation
+  page: 5
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.1'
+  pdf_destination: Aktion-der-Translationen
+  position: 5
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_2:
+  sort: equation
+  page: 5
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.2'
+  pdf_destination: Vektoraddition
+  position: 6
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_4:
+  sort: definition
+  page: 5
+  description: affiner Unterraum
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.4'
+  pdf_destination: defn:affiner-Unterraum
+  position: 7
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_5:
+  sort: example
+  page: 5
+  description: affine Unterräume der affinen Standardräume
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.5'
+  pdf_destination: bsp:affine-Unterraeume
+  position: 8
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_6:
+  sort: proposition
+  page: 6
+  description: Beliebigkeit des Aufpunkts eines affinen Unterraums
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.6'
+  pdf_destination: prop:Dimension-affiner-Unterraum
+  position: 9
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_7:
+  sort: definition
+  page: 6
+  description: Dimension eines affinen Unterraums
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.7'
+  pdf_destination: defn:Dimension-affiner-Unterraum
+  position: 10
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_8:
+  sort: proposition
+  page: 6
+  description: affine Unterräume sind affine Räume
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.8'
+  pdf_destination: prop:affine-Unterraeume-sind-affine-Raeume
+  position: 11
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_9:
+  sort: proposition
+  page: 7
+  description: Durchschnitt und Verbindungsraum affiner Räume
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.9'
+  pdf_destination: prop:Durchschnitt-und-Verbindungsraum-affin
+  position: 12
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_3:
+  sort: equation
+  page: 7
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.3'
+  pdf_destination: Durchschnitt
+  position: 13
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_4:
+  sort: equation
+  page: 7
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.4'
+  pdf_destination: Verbindungsraum-Fall-1
+  position: 14
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_5:
+  sort: equation
+  page: 8
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.5'
+  pdf_destination: Verbindungsraum-Fall-2
+  position: 15
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_10:
+  sort: theorem
+  page: 9
+  description: Verbindungsraum als Vereinigung von Verbindungsgeraden
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.10'
+  pdf_destination: satz:Verbindungsraum-als-Vereinigung-von-Verbindungsgeraden
+  position: 16
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_11:
+  sort: theorem
+  page: 9
+  description: Dimensionsformel für affine Unterräume
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.11'
+  pdf_destination: satz:Dimensionsformel-fuer-affine-Unterraeume
+  position: 17
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_12:
+  sort: definition
+  page: 10
+  description: parallel und windschief
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.12'
+  pdf_destination: defn:parallel-und-windschief
+  position: 18
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_1_13:
+  sort: remark
+  page: 10
+  description: eine Hyperebene ist zu keinem affinen Unterraum windschief
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.13'
+  pdf_destination: bem:keine-windschiefen-Hyperebenen
+  position: 19
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_1_14:
+  sort: remark
+  page: 10
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_1
+  ref_number: '1.14'
+  pdf_destination: bem:Verbindungsraum-als-Vereinigung-von-Verbindungsgeraden
+  position: 20
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_15:
+  sort: definition
+  page: 11
+  description: affine Abbildung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.15'
+  pdf_destination: defn:affine-Abbildung
+  position: 22
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_6:
+  sort: equation
+  page: 11
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.6'
+  pdf_destination: affine-Abbildung
+  position: 23
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_16:
+  sort: example
+  page: 11
+  description: affine Abbildungen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.16'
+  pdf_destination: bsp:affine-Abb
+  position: 24
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_17:
+  sort: proposition
+  page: 11
+  description: Kriterium für affine Abbildung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.17'
+  pdf_destination: prop:Kriterium-fuer-affine-Abbildung
+  position: 25
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_18:
+  sort: proposition
+  page: 11
+  description: Zusammenhang zwischen affinen und linearen Abbildungen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.18'
+  pdf_destination: prop:Zusammenhang-affine-und-lineare-Abbildungen
+  position: 26
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_7:
+  sort: equation
+  page: 12
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.7'
+  pdf_destination: affine-Abbildung-aus-linearer-Abbildung
+  position: 27
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_19:
+  sort: example
+  page: 12
+  description: affine Abbildungen in der affinen Standardebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.19'
+  pdf_destination: bsp:affine-Abbildungen-in-der-affinen-Standardebene
+  position: 28
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_8:
+  sort: equation
+  page: 13
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.8'
+  pdf_destination: W-Bahn
+  position: 29
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_20:
+  sort: proposition
+  page: 13
+  description: Parallelprojektionen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.20'
+  pdf_destination: prop:Parallelprojektion
+  position: 30
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_21:
+  sort: definition
+  page: 14
+  description: kollinear
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.21'
+  pdf_destination: defn:kollinear
+  position: 31
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_22:
+  sort: definition
+  page: 14
+  description: n-Eck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.22'
+  pdf_destination: defn:n-Eck
+  position: 32
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_23:
+  sort: definition
+  page: 15
+  description: Parallelogramm
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.23'
+  pdf_destination: defn:Parallelogramm
+  position: 33
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_24:
+  sort: proposition
+  page: 15
+  description: affine Abbildungen erhalten Parallelogramme
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.24'
+  pdf_destination: prop:affine-Abbildungen-erhalten-Parallelogramme
+  position: 34
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_9:
+  sort: equation
+  page: 15
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.9'
+  pdf_destination: affine-Abbildungen-erhalten-Parallelogramme
+  position: 35
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_10:
+  sort: equation
+  page: 15
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.10'
+  pdf_destination: Bild-ist-Parallelogramm-1
+  position: 36
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_11:
+  sort: equation
+  page: 15
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.11'
+  pdf_destination: Bild-ist-Parallelogramm-2
+  position: 37
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_12:
+  sort: equation
+  page: 15
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_2
+  ref_number: '1.12'
+  pdf_destination: gegenueberliegende-Seiten-im-Parallelogramm-schneiden-sich-nicht
+  position: 38
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_25:
+  sort: definition
+  page: 16
+  description: affine Basis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.25'
+  pdf_destination: defn:affine-Basis
+  position: 40
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_26:
+  sort: example
+  page: 16
+  description: Standardbasis des affinen Standardraums
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.26'
+  pdf_destination: bsp:Standardbasis-des-affinen-Standardraums
+  position: 41
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_1_27:
+  sort: remark
+  page: 16
+  description: affine Unabhängigkeit hängt nicht von der Reihenfolge ab
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.27'
+  pdf_destination: bem:affine-Unabhaengigkeit
+  position: 42
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_28:
+  sort: theorem
+  page: 17
+  description: Eindeutigkeit der affinen Abbildung mit gegebenen Bildern einer affinen
+    Basis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.28'
+  pdf_destination: satz:affine-Abbildung
+  position: 43
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_29:
+  sort: definition
+  page: 17
+  description: affines Koordinatensystem
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.29'
+  pdf_destination: defn:affines-Koordinatensystem
+  position: 44
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_30:
+  sort: definition
+  page: 18
+  description: Teilverhältnis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.30'
+  pdf_destination: defn:Teilverhaeltnis
+  position: 45
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_13:
+  sort: equation
+  page: 18
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.13'
+  pdf_destination: Teilverhaeltnis
+  position: 46
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_1_31:
+  sort: remark
+  page: 18
+  description: Teilverhältnis im affinen Standardraum
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.31'
+  pdf_destination: bem:Teilverhaeltnis-in-Standardraum
+  position: 47
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_32:
+  sort: proposition
+  page: 19
+  description: Teilverhältnis ist affine Invariante
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.32'
+  pdf_destination: prop:TV-affine-Invariante
+  position: 48
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_33:
+  sort: theorem
+  page: 19
+  description: Strahlensatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.33'
+  pdf_destination: satz:affiner-Strahlensatz
+  position: 49
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_35:
+  sort: definition
+  page: 21
+  description: Mittelpunkt
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.35'
+  pdf_destination: defn:Mittelpunkt
+  position: 50
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_36:
+  sort: theorem
+  page: 21
+  description: Diagonalensatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.36'
+  pdf_destination: satz:Diagonalensatz
+  position: 51
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_37:
+  sort: theorem
+  page: 22
+  description: Schwerpunktsatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.37'
+  pdf_destination: satz:Schwerpunktsatz
+  position: 52
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_38:
+  sort: definition
+  page: 23
+  description: Strecke, Strahl und Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.38'
+  pdf_destination: defn:Winkel-affin
+  position: 53
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_14:
+  sort: equation
+  page: 23
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.14'
+  pdf_destination: euklidisches-Winkelmass
+  position: 54
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_15:
+  sort: equation
+  page: 23
+  description: Winkelgröße
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.15'
+  pdf_destination: Winkelgroesse
+  position: 55
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_39:
+  sort: definition
+  page: 23
+  description: Seitenlängen und Innenwinkelgrößen eines Dreicks
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.39'
+  pdf_destination: defn:Seitenlaengen-und-Innenwinkelgroessen
+  position: 56
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_40:
+  sort: theorem
+  page: 23
+  description: Kosinussatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.40'
+  pdf_destination: satz:Kosinussatz
+  position: 57
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_16:
+  sort: equation
+  page: 24
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.16'
+  pdf_destination: Kosinussatz
+  position: 58
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_1_41:
+  sort: Corollary
+  page: 24
+  description: Satz des Pythagoras
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.41'
+  pdf_destination: coro:Pythagoras
+  position: 59
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_42:
+  sort: theorem
+  page: 24
+  description: Winkelsumme im Dreieck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.42'
+  pdf_destination: satz:Winkelsumme-im-Dreieck
+  position: 60
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_17:
+  sort: equation
+  page: 25
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.17'
+  pdf_destination: Winkelsumme-Kosinuswerte
+  position: 61
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_18:
+  sort: equation
+  page: 25
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.18'
+  pdf_destination: Sinus-des-Winkelmasses
+  position: 62
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_19:
+  sort: equation
+  page: 25
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.19'
+  pdf_destination: Rechnung-zu-Cauchy-Schwartz
+  position: 63
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_20:
+  sort: equation
+  page: 26
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.20'
+  pdf_destination: Winkelsumme-Sinuswerte
+  position: 64
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_43:
+  sort: theorem
+  page: 26
+  description: Sinussatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.43'
+  pdf_destination: satz:Sinussatz
+  position: 65
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_1_44:
+  sort: Corollary
+  page: 27
+  description: Sinus und Kosinus als Quotient der Katheten durch die Hypothenuse
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_3
+  ref_number: '1.44'
+  pdf_destination: coro:Hypothenuse-und-Katheten
+  position: 66
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_45:
+  sort: definition
+  page: 27
+  description: Konvexes Polyeder und Polytop
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.45'
+  pdf_destination: defn:Polytop
+  position: 68
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_46:
+  sort: example
+  page: 28
+  description: Durchschnitte orthogonaler Halbräume
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.46'
+  pdf_destination: bsp:Durchschnitt-von-Halbraeumen
+  position: 69
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_1_47:
+  sort: remark
+  page: 28
+  description: Rand eines Polytops
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.47'
+  pdf_destination: bem:Rand-eines-Polytops
+  position: 70
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_48:
+  sort: definition
+  page: 28
+  description: Ecken, Kanten, Flächen eines Polytops
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.48'
+  pdf_destination: defn:Ecken-Kanten-Flaechen
+  position: 71
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_49:
+  sort: example
+  page: 28
+  description: Ecken, Kanten, Flächen beim Würfel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.49'
+  pdf_destination: bsp:Wuerfel
+  position: 72
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_50:
+  sort: theorem
+  page: 29
+  description: Euler'sche Polyederformel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.50'
+  pdf_destination: satz:Polyederformel
+  position: 73
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_51:
+  sort: definition
+  page: 33
+  description: regelmäßige n-Ecke und Platonische Körper
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.51'
+  pdf_destination: defn:Platonischer-Koerper
+  position: 74
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_52:
+  sort: proposition
+  page: 33
+  description: Beschreibung regulärer Polytope durch Grad und Anzahl der Kanten pro
+    Ecke
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.52'
+  pdf_destination: prop:Polytop
+  position: 75
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_1_53:
+  sort: Corollary
+  page: 33
+  description: Platonische Körper
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.53'
+  pdf_destination: coro:Platonische-Koerper
+  position: 76
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_54:
+  sort: definition
+  page: 34
+  description: Ähnlichkeitsabbildung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.54'
+  pdf_destination: defn:Aehnlichkeitsabbildung-analytisch
+  position: 77
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_55:
+  sort: theorem
+  page: 34
+  description: Klassifikation der Platonischen Körper
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_4
+  ref_number: '1.55'
+  pdf_destination: satz:Klassifikation-der-Platonischen-Koerper
+  position: 78
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_56:
+  sort: definition
+  page: 36
+  description: projektiver Raum
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_5
+  ref_number: '1.56'
+  pdf_destination: defn:projektiver-Raum
+  position: 80
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_57:
+  sort: example
+  page: 37
+  description: projektiver Standardraum
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_5
+  ref_number: '1.57'
+  pdf_destination: bsp:projektiver-Standardraum
+  position: 81
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_58:
+  sort: example
+  page: 37
+  description: Veranschaulichung projektiver Standardräume der Dimension 1 und 2 als
+    affine Einbettungen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_5
+  ref_number: '1.58'
+  pdf_destination: bsp:Einbettungen-projektiver-Standardraeume
+  position: 82
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_59:
+  sort: definition
+  page: 38
+  description: projektiver Unterraum
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_5
+  ref_number: '1.59'
+  pdf_destination: defn:projektiver-Unterraum
+  position: 83
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_60:
+  sort: proposition
+  page: 38
+  description: Durchschnitt und Verbindungsraum projektiver Räume
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_5
+  ref_number: '1.60'
+  pdf_destination: prop:Durchschnitt-und-Verbindungsraum-projektiv
+  position: 84
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_figure_1_3:
+  sort: figure
+  page: 39
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_5
+  ref_number: '1.3'
+  pdf_destination: abb:Boyflaeche
+  position: 85
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_21:
+  sort: equation
+  page: 40
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_5
+  ref_number: '1.21'
+  pdf_destination: Beschreibung-projektiver-Verbindungsraum
+  position: 86
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_61:
+  sort: theorem
+  page: 40
+  description: Dimensionsformel für projektive Unterräume
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_5
+  ref_number: '1.61'
+  pdf_destination: satz:Dimensionsformel-fuer-projektive-Unterraeume
+  position: 87
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_62:
+  sort: definition
+  page: 40
+  description: projektive Abbildung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.62'
+  pdf_destination: defn:projektive-Abbildung
+  position: 89
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_63:
+  sort: proposition
+  page: 41
+  description: Zusammenhang zwischen den linearen Abbildungen zu einer gegebenen projektiven
+    Abbildung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.63'
+  pdf_destination: prop:Uneindeutigkeit-der-lin-Abb-zu-einer-proj-Abb
+  position: 90
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_64:
+  sort: example
+  page: 41
+  description: kanonische Einbettung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.64'
+  pdf_destination: bsp:kanonische-Einbettung
+  position: 91
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_65:
+  sort: definition
+  page: 42
+  description: Zentralprojektion
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.65'
+  pdf_destination: defn:Zentralprojektion
+  position: 92
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_22:
+  sort: equation
+  page: 43
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.22'
+  pdf_destination: Wohldefiniertheit-Zentralprojektion-1
+  position: 93
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_23:
+  sort: equation
+  page: 43
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.23'
+  pdf_destination: Wohldefiniertheit-Zentralprojektion-2
+  position: 94
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_1_66:
+  sort: remark
+  page: 43
+  description: alternative Beschreibung des Begriffs der Zentralprojektion
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.66'
+  pdf_destination: bem:Beschreibung-Zentralprojektion
+  position: 95
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_67:
+  sort: proposition
+  page: 43
+  description: Zentralprojektionen sind Projektivitäten
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.67'
+  pdf_destination: prop:Zentralprojektionen-sind-Projektivitaeten
+  position: 96
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_68:
+  sort: theorem
+  page: 44
+  description: projektiver Abschluss
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.68'
+  pdf_destination: satz:projektiver-Abschluss
+  position: 97
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_69:
+  sort: example
+  page: 45
+  description: projektiver Abschluss einer Hyperebene in K³
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.69'
+  pdf_destination: bsp:projektiver-Abschluss
+  position: 98
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_24:
+  sort: equation
+  page: 46
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.24'
+  pdf_destination: ZcapX
+  position: 99
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_25:
+  sort: equation
+  page: 47
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_6
+  ref_number: '1.25'
+  pdf_destination: dim-ZcapX
+  position: 100
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_70:
+  sort: definition
+  page: 49
+  description: projektive Basis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.70'
+  pdf_destination: defn:projektive-Basis
+  position: 102
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_1_71:
+  sort: example
+  page: 49
+  description: Standardbasis des projektiven Standardraums
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.71'
+  pdf_destination: bsp:kanonische-projektive-Basis
+  position: 103
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_figure_1_4:
+  sort: figure
+  page: 49
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.4'
+  pdf_destination: abb:projektive-Standardbasis
+  position: 104
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_lemma_1_72:
+  sort: lemma
+  page: 50
+  description: Zusammenhang zwischen projektiver Basis und Basis des zugrunde liegenden
+    Vektorraums
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.72'
+  pdf_destination: lemma:Zusammenhang-zwischen-projektiver-Basis-und-VR-Basis
+  position: 105
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_73:
+  sort: theorem
+  page: 50
+  description: projektive Räume gleicher Dimension sind kanonisch isomorph
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.73'
+  pdf_destination: satz:projektive-Raeume-gleicher-Dimension-sind-kanonisch-isomorph
+  position: 106
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_74:
+  sort: definition
+  page: 51
+  description: projektives Koordinatensystem
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.74'
+  pdf_destination: defn:projektives-Koordinatensystem
+  position: 107
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_75:
+  sort: definition
+  page: 51
+  description: Doppelverhältnis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.75'
+  pdf_destination: defn:Doppelverhaeltnis-projektiv
+  position: 108
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_76:
+  sort: proposition
+  page: 52
+  description: Doppelverhältnis ist projektive Invariante
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.76'
+  pdf_destination: prop:DV-projektive-Invariante
+  position: 109
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_26:
+  sort: equation
+  page: 52
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.26'
+  pdf_destination: DV-projektive-Invariante
+  position: 110
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_1_77:
+  sort: proposition
+  page: 52
+  description: Berechnung des Doppelverhältnisses aus den homogenen Koordinaten
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.77'
+  pdf_destination: prop:DV-Berechnung
+  position: 111
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_1_78:
+  sort: remark
+  page: 54
+  description: Zusammenhang zwischen Doppelverhältnis und bestimmten Teilverhältnissen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.78'
+  pdf_destination: bem:Zusammenhang-DV-und-TV
+  position: 112
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_1_79:
+  sort: theorem
+  page: 55
+  description: projektiver Satz von Desargues
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_7
+  ref_number: '1.79'
+  pdf_destination: satz:projektiver-Desargues
+  position: 113
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_1_27:
+  sort: equation
+  page: 59
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_8
+  ref_number: '1.27'
+  pdf_destination: Transformationen-in-R3
+  position: 115
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_80:
+  sort: definition
+  page: 60
+  description: Quader
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_8
+  ref_number: '1.80'
+  pdf_destination: defn:Quader
+  position: 116
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_1_81:
+  sort: definition
+  page: 60
+  description: Rechteckkegelstumpf
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_8
+  ref_number: '1.81'
+  pdf_destination: defn:Kegelstumpf
+  position: 117
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_1_1:
+  sort: exercise
+  page: 61
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.1'
+  pdf_destination: aufg:Verbindungsgerade-ist-Gerade
+  position: 119
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_1_2:
+  sort: exercise
+  page: 61
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.2'
+  pdf_destination: aufg:Eigenschaften-affiner-Abbildungen
+  position: 120
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_1_4:
+  sort: exercise
+  page: 61
+  description: 'Transfer: Abbildungsgeometrie'
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.4'
+  pdf_destination: aufg:Abbildungsgeometrie
+  position: 121
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_1_5:
+  sort: exercise
+  page: 62
+  description: Tangenssatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.5'
+  pdf_destination: aufg:Tangenssatz
+  position: 122
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_1_6:
+  sort: exercise
+  page: 62
+  description: Heron'sche Formel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.6'
+  pdf_destination: aufg:Heronsche-Formel
+  position: 123
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_1_8:
+  sort: exercise
+  page: 62
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.8'
+  pdf_destination: aufg:Vergleich-rechtwinkliger-Dreiecke
+  position: 124
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_1_9:
+  sort: exercise
+  page: 62
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.9'
+  pdf_destination: aufg:Durchschnitt-Gerade-mit-Einheitssphaere
+  position: 125
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_1_11:
+  sort: exercise
+  page: 63
+  description: Jede Projektivität, die den Durchschnitt von Start- und Zielraum punktweise
+    festlässt, ist eine Zentralprojektion
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.11'
+  pdf_destination: aufg:fast-jede-Projektivitaet-ist-Zentralprojektion
+  position: 126
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_1_13:
+  sort: exercise
+  page: 63
+  description: projektiver Satz von Pappos
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_1_9
+  ref_number: '1.13'
+  pdf_destination: aufg:projektiver-Pappos
+  position: 127
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_2_1:
+  sort: definition
+  page: 65
+  description: Inzidenzebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.1'
+  pdf_destination: defn:Inzidenzebene
+  position: 130
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_2_2:
+  sort: example
+  page: 65
+  description: Inzidenzebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.2'
+  pdf_destination: bsp:Inzidenzebene
+  position: 131
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_2_3:
+  sort: proposition
+  page: 65
+  description: nichtparallele Geraden besitzen eindeutigen Schnittpunkt
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.3'
+  pdf_destination: prop:Geradenschnittpunkt
+  position: 132
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_2_4:
+  sort: proposition
+  page: 66
+  description: Kriterium dafür, ob ein Punkt auf einer Geraden liegt
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.4'
+  pdf_destination: prop:Kriterium-Punkt-auf-Gerade
+  position: 133
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_2_5:
+  sort: proposition
+  page: 66
+  description: Trennung von Punkt und Gerade
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.5'
+  pdf_destination: prop:Trennung-von-Punkt-und-Gerade
+  position: 134
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_2_6:
+  sort: theorem
+  page: 66
+  description: affine Standardebene ist Inzidenzebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.6'
+  pdf_destination: satz:A2(K)-Inzidenzebene
+  position: 135
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_2_7:
+  sort: remark
+  page: 67
+  description: Parallelitätsbegriffe in der affinen Standardebene stimmen überein
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.7'
+  pdf_destination: bem:Parallelitaet-in-A2(K)
+  position: 136
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_2_8:
+  sort: definition
+  page: 67
+  description: Isomorphismus von Inzidenzebenen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.8'
+  pdf_destination: defn:Isomorphismus-von-Inzidenzebenen
+  position: 137
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_2_9:
+  sort: example
+  page: 67
+  description: affine Ebenen (analytisch definiert) sind Inzidenzebenen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_1
+  ref_number: '2.9'
+  pdf_destination: bsp:affine-Ebenen-sind-Inzidenzebenen
+  position: 138
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_2_10:
+  sort: definition
+  page: 67
+  description: Parallelenaxiom
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_2
+  ref_number: '2.10'
+  pdf_destination: defn:Parallelenaxiome
+  position: 140
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_2_11:
+  sort: definition
+  page: 68
+  description: affine Ebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_2
+  ref_number: '2.11'
+  pdf_destination: defn:affine-Ebene
+  position: 141
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_2_12:
+  sort: example
+  page: 68
+  description: Parallelenaxiom
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_2
+  ref_number: '2.12'
+  pdf_destination: bsp:Parallelenaxiome
+  position: 142
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_2_13:
+  sort: proposition
+  page: 69
+  description: Parallelität ist Äquivalenzrelation
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_2
+  ref_number: '2.13'
+  pdf_destination: prop:Parallelitaet-Aequivalenzrelation
+  position: 143
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_2_14:
+  sort: definition
+  page: 69
+  description: Parallelenbüschel und Geradenbüschel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_2
+  ref_number: '2.14'
+  pdf_destination: defn:Parallelenbueschel-und-Geradenbueschel
+  position: 144
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_2_15:
+  sort: example
+  page: 69
+  description: Parallelenbüschel und Geradenbüschel in der affinen Standardebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_2
+  ref_number: '2.15'
+  pdf_destination: bsp:Parallelenbueschel-und-Geradenbueschel
+  position: 145
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_2_16:
+  sort: definition
+  page: 70
+  description: affiner Isomorphismus
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_2
+  ref_number: '2.16'
+  pdf_destination: defn:affiner-Isomorphismus
+  position: 146
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_2_17:
+  sort: example
+  page: 70
+  description: affiner Isomorphismus
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_2
+  ref_number: '2.17'
+  pdf_destination: bsp:affiner-Isomorphismus
+  position: 147
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_2_2:
+  sort: exercise
+  page: 70
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_3
+  ref_number: '2.2'
+  pdf_destination: aufg:Isomorphismen-von-Inzidenzebenen
+  position: 149
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_2_3:
+  sort: exercise
+  page: 70
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_3
+  ref_number: '2.3'
+  pdf_destination: aufg:affine-Ebene-mit-fuenf-Punkten
+  position: 150
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_2_4:
+  sort: exercise
+  page: 70
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_2_3
+  ref_number: '2.4'
+  pdf_destination: aufg:Geraden-in-affiner-Ebene-sind-gleichmaechtig
+  position: 151
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_1:
+  sort: definition
+  page: 72
+  description: Anordnungsaxiome
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.1'
+  pdf_destination: defn:Anordnungsaxiome
+  position: 154
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_2:
+  sort: proposition
+  page: 73
+  description: Seiten einer Geraden
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.2'
+  pdf_destination: prop:Seiten-einer-Geraden
+  position: 155
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_figure_3_1:
+  sort: figure
+  page: 73
+  description: Seiten einer Geraden
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.1'
+  pdf_destination: abb:Geradenseiten
+  position: 156
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_3_3:
+  sort: example
+  page: 74
+  description: Anordnung in der affinen Standardebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.3'
+  pdf_destination: bsp:affine-Standardebene-und-Anordnung
+  position: 157
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_3_1:
+  sort: equation
+  page: 74
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.1'
+  pdf_destination: Anordnung-fuer-affine-Standardebenen
+  position: 158
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_3_2:
+  sort: equation
+  page: 75
+  description: Hesse'sche Normalform
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.2'
+  pdf_destination: Hessesche-Normalform
+  position: 159
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_4:
+  sort: definition
+  page: 75
+  description: Lage auf verschiedenen Seiten einer Geraden
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.4'
+  pdf_destination: defn:Lage-auf-verschiedenen-Geradenseiten
+  position: 160
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_5:
+  sort: proposition
+  page: 75
+  description: Seiten von Geraden und Punkten
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.5'
+  pdf_destination: prop:Seiten-von-Geraden-und-Punkten
+  position: 161
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_3_6:
+  sort: Corollary
+  page: 76
+  description: Lage auf gleicher Seite ist Äquivalenzrelation
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.6'
+  pdf_destination: coro:Seiten-eines-Punktes
+  position: 162
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_7:
+  sort: definition
+  page: 76
+  description: Erweiterung des Anordnungsbegriffs auf beliebig viele kollineare Punkte
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.7'
+  pdf_destination: defn:Anordnung-vieler-Punkte
+  position: 163
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_8:
+  sort: proposition
+  page: 76
+  description: Anordnungen von Punkten auf Geraden
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.8'
+  pdf_destination: prop:Anordnung-von-Punkten-auf-Geraden
+  position: 164
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_3_9:
+  sort: remark
+  page: 77
+  description: alternatives Anordnungsaxiom (A'2)
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.9'
+  pdf_destination: bem:alternatives-Anordnungsaxiom
+  position: 165
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_10:
+  sort: definition
+  page: 77
+  description: Strecke und Strahl
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.10'
+  pdf_destination: defn:strecke-und-strahl
+  position: 166
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_11:
+  sort: proposition
+  page: 77
+  description: Strecken und Strahlen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.11'
+  pdf_destination: prop:Strecken-und-Strahlen
+  position: 167
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_12:
+  sort: proposition
+  page: 77
+  description: Gerade als Vereinigung von Strahlen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.12'
+  pdf_destination: prop:gerade-vereinigung-von-strahlen
+  position: 168
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_13:
+  sort: theorem
+  page: 78
+  description: Satz von Pasch
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_1
+  ref_number: '3.13'
+  pdf_destination: satz:Pasch
+  position: 169
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_14:
+  sort: definition
+  page: 78
+  description: Kongruenzaxiome für Strecken
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_2
+  ref_number: '3.14'
+  pdf_destination: defn:Kongruenzaxiome-fuer-Strecken
+  position: 171
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_3_15:
+  sort: example
+  page: 79
+  description: Streckenkongruenzen in der affinen Standardebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_2
+  ref_number: '3.15'
+  pdf_destination: bsp:affine-Standardebene-und-Kongruenzen-von-Strecken
+  position: 172
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_16:
+  sort: proposition
+  page: 79
+  description: Streckensubtraktion
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_2
+  ref_number: '3.16'
+  pdf_destination: prop:Streckensubtraktion
+  position: 173
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_17:
+  sort: definition
+  page: 79
+  description: Vergleich von Strecken
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_2
+  ref_number: '3.17'
+  pdf_destination: defn:<-fuer-Strecken
+  position: 174
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_18:
+  sort: proposition
+  page: 80
+  description: Vergleich von Strecken
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_2
+  ref_number: '3.18'
+  pdf_destination: prop:<-fuer-Strecken
+  position: 175
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_19:
+  sort: definition
+  page: 80
+  description: Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.19'
+  pdf_destination: defn:Winkel
+  position: 177
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_figure_3_2:
+  sort: figure
+  page: 80
+  description: Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.2'
+  pdf_destination: abb:Winkel
+  position: 178
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_20:
+  sort: proposition
+  page: 80
+  description: Identitätskriterium für Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.20'
+  pdf_destination: prop:winkel
+  position: 179
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_21:
+  sort: definition
+  page: 81
+  description: Inneres eines Winkels
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.21'
+  pdf_destination: defn:Inneres-eines-Winkels
+  position: 180
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_lemma_3_22:
+  sort: lemma
+  page: 81
+  description: Kriterium für die Lage im Inneren eines Winkels
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.22'
+  pdf_destination: lemma:im-Inneren-eines-Winkels
+  position: 181
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_23:
+  sort: definition
+  page: 82
+  description: Kongruenzaxiome für Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.23'
+  pdf_destination: defn:Kongruenzaxiome-fuer-Winkel
+  position: 182
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_24:
+  sort: definition
+  page: 83
+  description: Vergleich von Winkeln
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.24'
+  pdf_destination: defn:<-fuer-Winkel
+  position: 183
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_25:
+  sort: proposition
+  page: 83
+  description: Vergleich von Winkeln
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.25'
+  pdf_destination: prop:<-fuer-Winkel
+  position: 184
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_26:
+  sort: definition
+  page: 83
+  description: Dreieck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.26'
+  pdf_destination: defn:Dreieck
+  position: 185
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_3_27:
+  sort: remark
+  page: 84
+  description: Kongruenz von Dreiecken
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.27'
+  pdf_destination: bem:dreieck
+  position: 186
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_28:
+  sort: definition
+  page: 84
+  description: ebene Geometrie
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.28'
+  pdf_destination: defn:ebene-Geometrie
+  position: 187
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_29:
+  sort: definition
+  page: 84
+  description: Bewegung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.29'
+  pdf_destination: defn:Bewegung
+  position: 188
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_3_30:
+  sort: example
+  page: 85
+  description: Bewegungen in der affinen Standardebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.30'
+  pdf_destination: bsp:Bewegungen-in-der-affinen-Standardebene
+  position: 189
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_31:
+  sort: definition
+  page: 85
+  description: genügend viele Bewegungen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.31'
+  pdf_destination: defn:gvB
+  position: 190
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_32:
+  sort: theorem
+  page: 86
+  description: Existenz genügend vieler Bewegungen impliziert (K'6)
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.32'
+  pdf_destination: satz:genug-Bewegung
+  position: 191
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_3_3:
+  sort: equation
+  page: 86
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.3'
+  pdf_destination: Voraussetzungen-SWS
+  position: 192
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_3_33:
+  sort: example
+  page: 86
+  description: Winkelkongruenzen in der affinen Standardebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.33'
+  pdf_destination: bsp:affine-Standardebene-und-Kongruenzen-von-Winkeln
+  position: 193
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_3_4:
+  sort: equation
+  page: 86
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_3
+  ref_number: '3.4'
+  pdf_destination: Kongruenz-von-Winkeln-in-der-affinen-Standardebene
+  position: 194
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_34:
+  sort: definition
+  page: 87
+  description: Ergänzungswinkel und Gegenwinkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_4
+  ref_number: '3.34'
+  pdf_destination: defn:Ergaenzungswinkel-Gegenwinkel
+  position: 196
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_35:
+  sort: proposition
+  page: 87
+  description: Ergänzungswinkel kongruenter Winkel sind kongruent
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_4
+  ref_number: '3.35'
+  pdf_destination: prop:Ergaenzungswinkel
+  position: 197
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_3_36:
+  sort: Corollary
+  page: 88
+  description: ein Winkel ist zu seinem Gegenwinkel kongruent
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_4
+  ref_number: '3.36'
+  pdf_destination: coro:Gegenwinkel
+  position: 198
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_37:
+  sort: definition
+  page: 88
+  description: rechter Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_4
+  ref_number: '3.37'
+  pdf_destination: defn:rechter-Winkel
+  position: 199
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_38:
+  sort: proposition
+  page: 88
+  description: Ergänzungswinkel eines rechten Winkels ist rechter Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_4
+  ref_number: '3.38'
+  pdf_destination: prop:rechter-Winkel
+  position: 200
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_39:
+  sort: theorem
+  page: 89
+  description: rechte Winkel sind zueinander kongruent
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_4
+  ref_number: '3.39'
+  pdf_destination: satz:Viertes-euklidisches-Postulat
+  position: 201
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_3_40:
+  sort: Corollary
+  page: 89
+  description: die rechten Winkel bilden eine Kongruenzklasse
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_4
+  ref_number: '3.40'
+  pdf_destination: coro:rechte-Winkel
+  position: 202
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_41:
+  sort: definition
+  page: 89
+  description: orthogonal
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.41'
+  pdf_destination: defn:orthogonal
+  position: 204
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_42:
+  sort: theorem
+  page: 89
+  description: Existenz des Lots
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.42'
+  pdf_destination: satz:Orthogonale-Gerade
+  position: 205
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_figure_3_3:
+  sort: figure
+  page: 90
+  description: Existenz des Lots
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.3'
+  pdf_destination: abb:Orthogonale
+  position: 206
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_43:
+  sort: definition
+  page: 90
+  description: Wechselwinkel und Stufenwinkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.43'
+  pdf_destination: defn:Wechselwinkel-und-Stufenwinkel
+  position: 207
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_remark_3_44:
+  sort: remark
+  page: 91
+  description: Zusammenhang zwischen Wechsel- und Stufenwinkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.44'
+  pdf_destination: bem:Wechselwinkel-und-Stufenwinkel
+  position: 208
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_45:
+  sort: theorem
+  page: 91
+  description: schwacher Wechselwinkelsatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.45'
+  pdf_destination: satz:Schwacher-Wechselwinkelsatz-und-schwacher-Stufenwinkelsatz
+  position: 209
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_3_46:
+  sort: Corollary
+  page: 92
+  description: zweifaches Lotfällen gibt Parallele
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.46'
+  pdf_destination: coro:zum-schwachen-wws
+  position: 210
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_3_47:
+  sort: Corollary
+  page: 92
+  description: Eindeutigkeit des Lots
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.47'
+  pdf_destination: coro:Lot-eindeutig
+  position: 211
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_3_48:
+  sort: Corollary
+  page: 92
+  description: Existenz von Parallelen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.48'
+  pdf_destination: coro:Existenz-von-Parallelen
+  position: 212
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_49:
+  sort: theorem
+  page: 92
+  description: starker Wechselwinkelsatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_5
+  ref_number: '3.49'
+  pdf_destination: satz:Parallelenaxiom-in-Hilbertebenen
+  position: 213
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_51:
+  sort: proposition
+  page: 94
+  description: Abtragung eines Dreiecks
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_6
+  ref_number: '3.51'
+  pdf_destination: prop:eindeutiges-Dreieck
+  position: 215
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_52:
+  sort: definition
+  page: 94
+  description: gleichschenkliges Dreieck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_6
+  ref_number: '3.52'
+  pdf_destination: defn:gleichschenkliges-Dreieck
+  position: 216
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_53:
+  sort: proposition
+  page: 94
+  description: gleichschenkliges Dreieck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_6
+  ref_number: '3.53'
+  pdf_destination: prop:gleichschenkliges-Dreieck
+  position: 217
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_54:
+  sort: proposition
+  page: 94
+  description: Winkeladdition und -subtraktion
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_6
+  ref_number: '3.54'
+  pdf_destination: prop:Winkeladdsubtraktion
+  position: 218
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_55:
+  sort: theorem
+  page: 95
+  description: Kongruenzsatz für Dreiecke
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_6
+  ref_number: '3.55'
+  pdf_destination: satz:Kongruenzsatz-fuer-Dreiecke
+  position: 219
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_3_5:
+  sort: equation
+  page: 96
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_6
+  ref_number: '3.5'
+  pdf_destination: wsw-1
+  position: 220
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_56:
+  sort: definition
+  page: 97
+  description: Streckenmittelpunkt
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.56'
+  pdf_destination: defn:Streckenmittelpunkt
+  position: 222
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_lemma_3_57:
+  sort: lemma
+  page: 97
+  description: Streckenmittelpunkt liegt zwischen den Randpunkten der Strecke
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.57'
+  pdf_destination: lemma:Mittelpunkt-liegt-zwischen-Randpunkten
+  position: 223
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_58:
+  sort: theorem
+  page: 98
+  description: Existenz und Eindeutigkeit des Streckenmittelpunkts
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.58'
+  pdf_destination: satz:Mittelpunkt
+  position: 224
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_3_6:
+  sort: equation
+  page: 98
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.6'
+  pdf_destination: Mittelpunkt-1
+  position: 225
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_3_7:
+  sort: equation
+  page: 98
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.7'
+  pdf_destination: Mittelpunkt-2
+  position: 226
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_59:
+  sort: definition
+  page: 99
+  description: Mittelsenkrechte
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.59'
+  pdf_destination: defn:Mittelsenkrechte
+  position: 227
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_60:
+  sort: proposition
+  page: 99
+  description: Charakterisierung der Mittelsenkrechten
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.60'
+  pdf_destination: prop:Charakterisierung-Mittelsenkrechte
+  position: 228
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_61:
+  sort: definition
+  page: 99
+  description: Winkelhalbierende
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.61'
+  pdf_destination: defn:Winkelhalbierende
+  position: 229
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_62:
+  sort: proposition
+  page: 100
+  description: Existenz der Winkelhalbierenden
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_7
+  ref_number: '3.62'
+  pdf_destination: prop:Existenz-der-Winkelhalbierenden
+  position: 230
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_63:
+  sort: definition
+  page: 100
+  description: Innenwinkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_8
+  ref_number: '3.63'
+  pdf_destination: defn:Innenwinkel
+  position: 232
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_64:
+  sort: proposition
+  page: 100
+  description: schwache Winkelsumme im Dreieck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_8
+  ref_number: '3.64'
+  pdf_destination: prop:schwache-Winkelsumme-im-Dreieck-1
+  position: 233
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_3_8:
+  sort: equation
+  page: 101
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_8
+  ref_number: '3.8'
+  pdf_destination: schwache-Winkelsumme-im-Dreieck
+  position: 234
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_65:
+  sort: theorem
+  page: 101
+  description: Außenwinkelsatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_8
+  ref_number: '3.65'
+  pdf_destination: satz:Aussenwinkelsatz
+  position: 235
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_66:
+  sort: theorem
+  page: 102
+  description: der größeren Dreiecksseite liegt der größere Winkel gegenüber
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_8
+  ref_number: '3.66'
+  pdf_destination: satz:grosse-Dreiecksseite-hat-grossen-Winkel
+  position: 236
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_figure_3_4:
+  sort: figure
+  page: 102
+  description: der größeren Dreiecksseite liegt der größere Winkel gegenüber
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_8
+  ref_number: '3.4'
+  pdf_destination: abb:grosse-Dreiecksseite-hat-grossen-Winkel
+  position: 237
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_67:
+  sort: theorem
+  page: 103
+  description: SSrW-Kriterium
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_8
+  ref_number: '3.67'
+  pdf_destination: satz:SSrechterWinkel
+  position: 238
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_68:
+  sort: definition
+  page: 104
+  description: Kreis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_9
+  ref_number: '3.68'
+  pdf_destination: defn:Kreis
+  position: 240
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_3_69:
+  sort: proposition
+  page: 104
+  description: Eindeutigkeit des Kreismittelpunkts
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_9
+  ref_number: '3.69'
+  pdf_destination: prop:Kreise-haben-genau-einen-Mittelpunkt
+  position: 241
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_70:
+  sort: theorem
+  page: 105
+  description: Umkreissatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_9
+  ref_number: '3.70'
+  pdf_destination: satz:Umkreissatz
+  position: 242
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_3_72:
+  sort: definition
+  page: 105
+  description: Höhe
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_9
+  ref_number: '3.72'
+  pdf_destination: defn:Hoehe
+  position: 243
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_73:
+  sort: theorem
+  page: 105
+  description: Höhensatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_9
+  ref_number: '3.73'
+  pdf_destination: satz:Hoehensatz
+  position: 244
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_3_74:
+  sort: theorem
+  page: 106
+  description: Inkreissatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_9
+  ref_number: '3.74'
+  pdf_destination: satz:Inkreissatz
+  position: 245
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_1:
+  sort: exercise
+  page: 108
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.1'
+  pdf_destination: aufg:Anordnung-von-Punkten-auf-Geraden
+  position: 247
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_2:
+  sort: exercise
+  page: 108
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.2'
+  pdf_destination: aufg:unendlich-viele-Punkte-mit-I-+-A
+  position: 248
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_4:
+  sort: exercise
+  page: 108
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.4'
+  pdf_destination: aufg:Anordnung-Modell-alternativ
+  position: 249
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_5:
+  sort: exercise
+  page: 108
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.5'
+  pdf_destination: aufg:<-fuer-Winkel
+  position: 250
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_6:
+  sort: exercise
+  page: 108
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.6'
+  pdf_destination: aufg:Inneres-bestimmt-den-Winkel
+  position: 251
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_7:
+  sort: exercise
+  page: 108
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.7'
+  pdf_destination: aufg:konvexe-Mengen
+  position: 252
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_10:
+  sort: exercise
+  page: 109
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.10'
+  pdf_destination: aufg:Parallelogramm-synthetisch
+  position: 253
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_12:
+  sort: exercise
+  page: 109
+  description: Geradenspiegelung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.12'
+  pdf_destination: aufg:Spiegelungen-in-Hilbertebenen
+  position: 254
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_13:
+  sort: exercise
+  page: 110
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.13'
+  pdf_destination: aufg:Abschaetzung-Abstand-Punkt-Gerade
+  position: 255
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_3_14:
+  sort: exercise
+  page: 110
+  description: Höhenformel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_3_10
+  ref_number: '3.14'
+  pdf_destination: aufg:Hoehenformel
+  position: 256
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_4_1:
+  sort: definition
+  page: 112
+  description: Dedekindschnitt
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_1
+  ref_number: '4.1'
+  pdf_destination: defn:Dedekindschnitt
+  position: 259
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_4_2:
+  sort: definition
+  page: 112
+  description: Vollständigkeitsaxiom
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_1
+  ref_number: '4.2'
+  pdf_destination: defn:Vollstaendigkeitsaxiom
+  position: 260
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_example_4_3:
+  sort: example
+  page: 113
+  description: Vollständigkeitsaxiom
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_1
+  ref_number: '4.3'
+  pdf_destination: bsp:Vollstaendigkeitsaxiom
+  position: 261
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_4:
+  sort: theorem
+  page: 113
+  description: Archimedisches Axiom
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_1
+  ref_number: '4.4'
+  pdf_destination: satz:Archimedisches-Axiom
+  position: 262
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_4_5:
+  sort: definition
+  page: 114
+  description: euklidische Ebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_2
+  ref_number: '4.5'
+  pdf_destination: defn:Euklidsche-Ebene
+  position: 264
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_4_6:
+  sort: definition
+  page: 114
+  description: Isomorphismus euklidischer Ebenen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_2
+  ref_number: '4.6'
+  pdf_destination: defn:Isomorphismus-euklidischer-Ebenen
+  position: 265
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_8:
+  sort: theorem
+  page: 114
+  description: Hauptsatz für euklidische Ebenen
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_2
+  ref_number: '4.8'
+  pdf_destination: satz:Hauptsatz-fuer-euklidische-Ebenen
+  position: 266
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_9:
+  sort: proposition
+  page: 115
+  description: Größe der Winkelsumme
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_2
+  ref_number: '4.9'
+  pdf_destination: prop:Groesse-der-Winkelsumme
+  position: 267
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_10:
+  sort: proposition
+  page: 117
+  description: Durchschnitt von Kreis und Gerade
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.10'
+  pdf_destination: prop:Durchschnitt-Kreis-Gerade
+  position: 269
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_4_11:
+  sort: Corollary
+  page: 118
+  description: Charakterisierung der Tangente
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.11'
+  pdf_destination: coro:Tangente
+  position: 270
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_4_12:
+  sort: definition
+  page: 118
+  description: Potenz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.12'
+  pdf_destination: defn:Potenz
+  position: 271
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_13:
+  sort: theorem
+  page: 119
+  description: Zweisehnensatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.13'
+  pdf_destination: satz:Zweisehnensatz
+  position: 272
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_14:
+  sort: theorem
+  page: 119
+  description: Sehnen-Tangenten-Satz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.14'
+  pdf_destination: satz:Sehnen-Tangenten-Satz
+  position: 273
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_15:
+  sort: proposition
+  page: 120
+  description: Potenzgerade
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.15'
+  pdf_destination: prop:potenzgerade
+  position: 274
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_17:
+  sort: theorem
+  page: 121
+  description: Kreis-Kreis-Schnitt-Eigenschaft
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.17'
+  pdf_destination: satz:Kreis-Kreis-Schnitt-Eigenschaft
+  position: 275
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_4_18:
+  sort: Corollary
+  page: 122
+  description: Kreis-Kreis-Schnitt-Eigenschaft
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.18'
+  pdf_destination: coro:Kreis-Kreis-Schnitt-Eigenschaft
+  position: 276
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_19:
+  sort: theorem
+  page: 123
+  description: Peripheriewinkelsatz
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.19'
+  pdf_destination: satz:Peripheriewinkelsatz
+  position: 277
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_20:
+  sort: theorem
+  page: 124
+  description: Satz des Thales
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.20'
+  pdf_destination: satz:Thales
+  position: 278
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_21:
+  sort: theorem
+  page: 124
+  description: Verschärfung des Sinussatzes
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.21'
+  pdf_destination: satz:Sinussatz-Verschaerfung
+  position: 279
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_22:
+  sort: theorem
+  page: 125
+  description: Eulergleichung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.22'
+  pdf_destination: satz:Eulergleichung
+  position: 280
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_corollary_4_23:
+  sort: Corollary
+  page: 125
+  description: Eulergerade
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_3
+  ref_number: '4.23'
+  pdf_destination: coro:Eulergerade
+  position: 281
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_4_24:
+  sort: definition
+  page: 126
+  description: Inversion am Kreis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.24'
+  pdf_destination: defn:Inversion-am-Kreis
+  position: 283
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_25:
+  sort: proposition
+  page: 126
+  description: Inversionen am Kreis sind bijektiv und bilden Punkte von innen nach
+    außen ab
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.25'
+  pdf_destination: prop:Inversionen-am-Kreis-sind-bijektiv
+  position: 284
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_26:
+  sort: proposition
+  page: 127
+  description: Konstruktion des Bildpunkts unter der Inversion
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.26'
+  pdf_destination: prop:Tangentenschnittpunkt-mit-Inversion
+  position: 285
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_27:
+  sort: proposition
+  page: 127
+  description: Eigenschaften der Inversion am Kreis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.27'
+  pdf_destination: prop:Eigenschaften-der-Inversion
+  position: 286
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_4_28:
+  sort: definition
+  page: 129
+  description: verallgemeinerte Gerade
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.28'
+  pdf_destination: defn:verallgemeinerte-Gerade
+  position: 287
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_29:
+  sort: proposition
+  page: 129
+  description: orthogonale verallgemeinerte Gerade
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.29'
+  pdf_destination: prop:orthogonale-verallgemeinerte-Geraden
+  position: 288
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_30:
+  sort: proposition
+  page: 130
+  description: Eigenschaften orthogonaler Kreise
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.30'
+  pdf_destination: prop:orthogonale-Kreise
+  position: 289
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_31:
+  sort: proposition
+  page: 131
+  description: Inversion eines Kreises an einem anderen Kreis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.31'
+  pdf_destination: prop:Inversion-Kreis-an-Kreis
+  position: 290
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_4_1:
+  sort: equation
+  page: 131
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.1'
+  pdf_destination: Schnittpunktanzahl-bleibt-unter-Inversion-erhalten
+  position: 291
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_4_2:
+  sort: equation
+  page: 131
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.2'
+  pdf_destination: Schnittpunktanzahl-bleibt-unter-Inversion-erhalten-2
+  position: 292
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_4_3:
+  sort: equation
+  page: 131
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.3'
+  pdf_destination: Inversion-fuer-verallgemeinerte-Geraden
+  position: 293
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_lemma_4_32:
+  sort: lemma
+  page: 132
+  description: Verhalten von Berührpunkten unter der Inversion
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.32'
+  pdf_destination: lemma:Beruehrpunkte-unter-der-Inversion
+  position: 294
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_33:
+  sort: proposition
+  page: 132
+  description: Verhalten von Tangenten unter der Inversion
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.33'
+  pdf_destination: prop:Inversion-und-Tangenten
+  position: 295
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_4_34:
+  sort: definition
+  page: 132
+  description: verallgemeinerte Winkelgröße
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.34'
+  pdf_destination: defn:verallgemeinerte-Winkelgroesse
+  position: 296
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_4_35:
+  sort: theorem
+  page: 133
+  description: Inversion ist winkeltreu
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.35'
+  pdf_destination: satz:Inversion-winkeltreu
+  position: 297
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_4_36:
+  sort: definition
+  page: 133
+  description: Doppelverhältnis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.36'
+  pdf_destination: defn:Doppelverhaeltnis
+  position: 298
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_4_37:
+  sort: proposition
+  page: 133
+  description: Inversion erhält Doppelverhältnis
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.37'
+  pdf_destination: prop:Inversion-am-Kreis-erhaelt-Doppelverhaeltnis
+  position: 299
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_4_4:
+  sort: equation
+  page: 133
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.4'
+  pdf_destination: DV-1
+  position: 300
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_4_5:
+  sort: equation
+  page: 134
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_4
+  ref_number: '4.5'
+  pdf_destination: DV-2
+  position: 301
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_4_1:
+  sort: exercise
+  page: 135
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_5
+  ref_number: '4.1'
+  pdf_destination: aufg:zwischen-Kreis-und-Tangente-passt-kein-Strahl
+  position: 303
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_4_4:
+  sort: exercise
+  page: 135
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_5
+  ref_number: '4.4'
+  pdf_destination: aufg:Peripheriewinkelsatz
+  position: 304
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_4_5:
+  sort: exercise
+  page: 135
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_5
+  ref_number: '4.5'
+  pdf_destination: aufg:Tangentenschnittpunkt-mit-Inversion
+  position: 305
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_4_6:
+  sort: exercise
+  page: 136
+  description: gleichseitiges Dreieck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_4_5
+  ref_number: '4.6'
+  pdf_destination: aufg:gleichseitige-Dreiecke-SHU
+  position: 306
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_5_1:
+  sort: definition
+  page: 137
+  description: hyperbolische Ebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.1'
+  pdf_destination: defn:Hyperbolische-Ebene
+  position: 309
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_definition_5_2:
+  sort: definition
+  page: 138
+  description: Endpunkte einer k-Geraden
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.2'
+  pdf_destination: defn:Endpunkte-von-k-Geraden
+  position: 310
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_5_3:
+  sort: proposition
+  page: 138
+  description: Poincaré'sches Kreismodell ist Inzidenzebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.3'
+  pdf_destination: prop:Kreismodell-ist-Inzidenzebene
+  position: 311
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_5_1:
+  sort: equation
+  page: 139
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.1'
+  pdf_destination: I2-hyperbolisch
+  position: 312
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_5_2:
+  sort: equation
+  page: 140
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.2'
+  pdf_destination: Anordnung-von-Punkten-auf-k-Gerader-zweiten-Typs
+  position: 313
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_5_4:
+  sort: proposition
+  page: 140
+  description: Poincaré'sches Kreismodell erfüllt Anordnungsaxiome
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.4'
+  pdf_destination: prop:Kreismodell-erfuellt-Anordnungsaxiome
+  position: 314
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_5_3:
+  sort: equation
+  page: 140
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.3'
+  pdf_destination: hyperbolischer-Abstand
+  position: 315
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_lemma_5_5:
+  sort: lemma
+  page: 141
+  description: k-Anordnung von k-Punkten
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.5'
+  pdf_destination: lemma:k-Anordnung-von-k-Punkten
+  position: 316
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_5_4:
+  sort: equation
+  page: 141
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.4'
+  pdf_destination: Kongruenz-von-k-Strecken
+  position: 317
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_5_6:
+  sort: proposition
+  page: 141
+  description: Poincaré'sches Kreismodell erfüllt Kongruenzaxiome für Strecken
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.6'
+  pdf_destination: prop:Kreismodell-erfuellt-Streckenkongruenzaxiome
+  position: 318
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_5_7:
+  sort: proposition
+  page: 142
+  description: Poincaré'sches Kreismodell erfüllt Kongruenzaxiome für Winkel
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.7'
+  pdf_destination: prop:Kreismodell-erfuellt-Winkelkongruenzaxiome
+  position: 319
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_5_8:
+  sort: proposition
+  page: 142
+  description: Existenz einer k-Bewegung, die gegebenen k-Punkt auf den Ursprung schickt
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.8'
+  pdf_destination: prop:k-Bewegung-in-den-Ursprung
+  position: 320
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_5_9:
+  sort: proposition
+  page: 143
+  description: Poincaré'sches Kreismodell erfüllt Vollständigkeitsaxiom
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.9'
+  pdf_destination: prop:Kreismodell-erfuellt-Vollstaendigkeitsaxiom
+  position: 321
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_proposition_5_10:
+  sort: proposition
+  page: 143
+  description: Poincaré'sche Kreismodell erfüllt das hyperbolische Axiom
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.10'
+  pdf_destination: prop:hyperbolisches-Axiom-im-Poincaremodell
+  position: 322
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_5_11:
+  sort: theorem
+  page: 144
+  description: Poincaré'sches Kreismodell ist hyperbolische Ebene
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_1
+  ref_number: '5.11'
+  pdf_destination: satz:Kreismodell-ist-hyperbolische-Ebene
+  position: 323
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_5_5:
+  sort: equation
+  page: 144
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.5'
+  pdf_destination: Additionstheorem-cosh
+  position: 325
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_5_6:
+  sort: equation
+  page: 144
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.6'
+  pdf_destination: hyperbolisches-Pythagorasaequivalent
+  position: 326
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_lemma_5_12:
+  sort: lemma
+  page: 144
+  description: k-Abstand zum Ursprung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.12'
+  pdf_destination: lemma:k-Abstand-zum-Ursprung
+  position: 327
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_lemma_5_13:
+  sort: lemma
+  page: 145
+  description: sinh und cosh vom k-Abstand zum Ursprung
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.13'
+  pdf_destination: lemma:sinh-und-cosh-vom-k-Abstand-zum-Ursprung
+  position: 328
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_lemma_5_14:
+  sort: lemma
+  page: 145
+  description: Projektion von k-Punkten auf die Verbindungssehne der Endpunkte der
+    zugehörigen k-Geraden
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.14'
+  pdf_destination: lemma:Norm-im-Klein-Modell
+  position: 329
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_5_15:
+  sort: theorem
+  page: 146
+  description: Trigonometrie im rechtwinkligen k-Dreieck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.15'
+  pdf_destination: satz:Trigonometrie-rechtwinkliges-k-Dreieck
+  position: 330
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_5_16:
+  sort: theorem
+  page: 148
+  description: hyperbolische Trigonometrie
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.16'
+  pdf_destination: satz:hyperbolische-Trigonometrie
+  position: 331
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_5_7:
+  sort: equation
+  page: 149
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.7'
+  pdf_destination: hyperbolische-Trigonometrie
+  position: 332
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_theorem_5_17:
+  sort: theorem
+  page: 150
+  description: Winkelsumme im k-Dreieck
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.17'
+  pdf_destination: satz:Winkelsumme-im-k-Dreieck
+  position: 333
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_equation_5_8:
+  sort: equation
+  page: 150
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_2
+  ref_number: '5.8'
+  pdf_destination: beta+gamma<pi
+  position: 334
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_5_1:
+  sort: exercise
+  page: 151
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_3
+  ref_number: '5.1'
+  pdf_destination: aufg:hyperbolische-Geradenspiegelung-ist-Bewegung
+  position: 336
+  hidden: false
+geo_lecture_ss2026_script_vorlesungsskript_exercise_5_2:
+  sort: exercise
+  page: 151
+  medium: media/geo_lecture_ss2026_script_vorlesungsskript
+  section: sections/geo_lecture_ss2026_5_3
+  ref_number: '5.2'
+  pdf_destination: aufg:Poincarehalbebene
+  position: 337
+  hidden: false
+hd_special_lessonmaterial_vorlesungszusatzvideo_self:
+  sort: self
+  medium: media/hd_special_lessonmaterial_vorlesungszusatzvideo
+la_2_quiz_tensorprodukt_self:
+  sort: self
+  medium: media/la_2_quiz_tensorprodukt
+la_2_quiz_testquiz_self:
+  sort: self
+  medium: media/la_2_quiz_testquiz
+la_2_lecture_ss2026_exercise_blatt_5_self:
+  sort: self
+  medium: media/la_2_lecture_ss2026_exercise_blatt_5
+alg_1_seminar_ws2024_miscellaneous_groups_self:
+  sort: self
+  medium: media/alg_1_seminar_ws2024_miscellaneous_groups
+alg_1_seminar_ws2024_workedexample_worked_example_free_self:
+  sort: self
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_free
+alg_1_seminar_ws2024_workedexample_worked_example_unpublished_self:
+  sort: self
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_unpublished
+alg_1_seminar_ws2024_workedexample_worked_example_registered_self:
+  sort: self
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_registered
+alg_1_seminar_ws2024_workedexample_worked_example_subscribers_self:
+  sort: self
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_subscribers
+alg_1_seminar_ws2024_workedexample_worked_example_locked_self:
+  sort: self
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_locked
+alg_1_seminar_ws2024_workedexample_worked_example_free_section:
+  start_time: '00:00:00.000'
+  sort: section
+  description: Vorüberlegungen
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_free
+  hidden: false
+alg_1_seminar_ws2024_workedexample_worked_example_free_example:
+  start_time: '00:00:14.719'
+  sort: example
+  description: Beispiel - Schritt 1
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_free
+  hidden: false
+alg_1_seminar_ws2024_workedexample_worked_example_free_example_2:
+  start_time: '00:00:36.129'
+  sort: example
+  description: Beispiel - Schritt 2
+  medium: media/alg_1_seminar_ws2024_workedexample_worked_example_free
+  hidden: false
+item_link:
+  sort: link
+  description: Irreduzibilitätskriterium nach Eisenstein
+  link: https://de.wikipedia.org/wiki/Eisensteinkriterium
+  explanation: Hier ein Wikipedia-Link zum Eisensteinkriterium.
+ezt_proseminar_ss2026_lessonmaterial_teilbarkeit_self:
+  sort: self
+  medium: media/ezt_proseminar_ss2026_lessonmaterial_teilbarkeit

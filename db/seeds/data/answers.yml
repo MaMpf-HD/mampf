@@ -1,0 +1,185 @@
+---
+- text: In einem Körper ist das Nullideal das einzige Primideal.
+  value: true
+  explanation: 'In jedem Körper ist das Nullideal ein Primideal, da ein Körper stets
+    nullteilerfrei ist. Da ein Körper außerdem nur die zwei Ideale $(0),(1)$ hat und
+    $(1)$ per Definition kein Primideal ist, stimmt die Behauptung. '
+  question: media/la_2_lecture_ss2026_question_primideale_in_koerpern
+- text: Ein Körper enthält keine Primideale.
+  value: false
+  explanation: In jedem Körper ist das Nullideal ein Primideal, da ein Körper stets
+    nullteilerfrei ist.
+  question: media/la_2_lecture_ss2026_question_primideale_in_koerpern
+- text: Ein Körper kann mehrere Primideale enthalten.
+  value: false
+  explanation: 'Da ein Körper nur die zwei Ideale $(0),(1)$ hat und $(1)$ per Definition
+    kein Primideal ist, ist die Behauptung falsch. '
+  question: media/la_2_lecture_ss2026_question_primideale_in_koerpern
+- text: In einem Körper ist der Körper selbst das einzige Primideal.
+  value: false
+  explanation: Der ganze Ring selbst ist per Definition niemals ein Primideal.
+  question: media/la_2_lecture_ss2026_question_primideale_in_koerpern
+- text: "$(1)$  ist ein Primideal in $\\mathbb Z$."
+  value: false
+  explanation: Das Ideal $(1)$ ist der Ring $\mathbb{Z}$ selbst, per Defintion ist
+    das kein Primideal.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_z
+- text: "$8\\mathbb Z$ ist ein Primideal in $\\mathbb Z$."
+  value: false
+  explanation: Es ist $8=2\cdot 4\in 8\mathbb{Z}$, aber weder $2$ noch $4$ liegen
+    in $8\mathbb{Z}$.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_z
+- text: "$\\mathbb Z$  ist ein Primideal in $\\mathbb Z$."
+  value: false
+  explanation: Per Definition ist der Ring selbst kein Primideal.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_z
+- text: "$17\\mathbb Z$  ist ein Primideal in $\\mathbb Z$."
+  value: true
+  explanation: In der Vorlesung wurde gezeigt, dass die Primideal in $\mathbb{Z}$
+    genau von der Form $p\mathbb{Z}$ für eine Primzahl $p$ bzw. $(0)$ sind.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_z
+- text: "$\\frac 1 2 \\mathbb Z$ ist ein Primideal in $\\mathbb Q$."
+  value: false
+  explanation: "$\\frac{1}{2}\\mathbb{Z}$ ist nicht einmal ein Ideal in $\\mathbb{Q}$,
+    denn $\\frac{1}{2}\\in\\frac{1}{2}\\mathbb{Z}$ und $\\frac{2}{3}\\in\\mathbb{Q}$,
+    aber $\\frac{2}{3}\\cdot\\frac{1}{2}=\\frac{1}{3}\\not\\in\\frac{1}{2}\\mathbb{Z}$."
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_q
+- text: "$\\mathbb Q$ ist ein Primideal in $\\mathbb Q$."
+  value: false
+  explanation: Der Ring selbst ist nach Definition kein Primideal.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_q
+- text: "$\\{0\\}$ ist ein Primideal in $\\mathbb Q$."
+  value: true
+  explanation: Als Körper ist $\mathbb{Q}=\mathbb{Q}/\{0\}$ nullteilerfrei, und deshalb
+    ist $\{0\}$ ein Primideal in $\mathbb{Q}$.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_q
+- text: "$17\\mathbb Q$ ist ein Primideal in $\\mathbb Q$."
+  value: false
+  explanation: Es ist $17\mathbb{Q}=\mathbb{Q}$, der Ring selbst ist nach Definition
+    kein Primideal.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_q
+- text: "$2\\mathbb Z$"
+  value: true
+  explanation: Es ist $\mathbb{Z}/2\mathbb{Z}$ ein Körper und deshalb $2\mathbb{Z}$
+    ein maximales Ideal in $\mathbb{Z}$.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_maximalideale_in_z
+- text: "$\\{0\\}$"
+  value: false
+  explanation: Das Ideal $\{0\}$ ist echt enthalten im Ideal $3\mathbb{Z}$, welches
+    selbst von $\mathbb{Z}$ verschieden ist. $\{0\}$ kann demzufolge kein maximales
+    Ideal in $\mathbb{Z}$ sein.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_maximalideale_in_z
+- text: "$\\mathbb Z$"
+  value: false
+  explanation: Der Ring selbst ist nach Definition kein maximales Ideal.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_maximalideale_in_z
+- text: "$4\\mathbb Z$"
+  value: false
+  explanation: Es ist $4\mathbb{Z}\subsetneqq 2\mathbb{Z}\subsetneqq\mathbb{Z}$, weswegen
+    $4\mathbb{Z}$ kein maximales Ideal sein kann.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_maximalideale_in_z
+- text: "$(X)\\subseteq K[X]$"
+  value: true
+  explanation: 'Es ist $K[X]/(X)\cong K$ (indem man den Homomorphiesatz auf den surjektiven
+    Ringhomomorphismus $K[X]\to K,f\mapsto f(0)$, welcher als Kern genau $(X)$ hat,
+    anwendet). Insbesondere ist $K[X]/(X)$ ein Körper und damit nullteilerfrei, so
+    dass $(X)$ ein Primideal ist.  '
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_k_x
+- text: " $(X^2)\\subseteq K[X]$"
+  value: false
+  explanation: Es ist $X^2=X\cdot X\in (X^2)$. Außerdem ist $X\not\in(X^2)$, denn
+    jedes von Null verschiedene Vielfache von $X^2$ hat mindestens Grad $2$. Damit
+    kann $(X^2)$ kein Primideal sein.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_k_x
+- text: " $(a)\\subseteq K[X]$"
+  value: false
+  explanation: Es ist $(1)=K[X]$, und der Ring selbst ist per Definition kein Primideal.
+  question: media/la_2_lecture_ss2026_question_beispiele_fuer_primideale_in_k_x
+- text: "$\\{0\\}$"
+  value: true
+  explanation: Die Idealaxiome sind trivialerweise erfüllt.
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_erkennen
+- text: "$2\\mathbb{Z} + 3\\mathbb{Z} = \\{2a+3b \\mid a,b \\in \\mathbb{Z}\\}$"
+  value: true
+  explanation: Die Summe zweier Ideale ist wieder ein Ideal.
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_erkennen
+- text: "$3+4\\mathbb{Z} = \\{3+4a \\mid a \\in \\mathbb{Z}\\} $"
+  value: false
+  explanation: 'Diese Menge ist kein Ideal, da $0$ nicht enthalten ist. '
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_erkennen
+- text: "$2$ ist ein Element von $I$ und ist das Element von kleinstem Betrag, welches
+    von  $0$ verschieden ist. "
+  value: true
+  explanation: Es gilt $2 = (-1)\cdot4+6 \in I.$ Ferner ist $ \pm 1 \notin I,$ da
+    jedes Element von $I$ gerade sein muss.
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_erzeuger_finden
+- text: 12 ist ein Erzeuger von $I$.
+  value: false
+  explanation: Wäre $12$ ein Erzeuger, so wären alle Elemente von $I$ durch $12$ teilbar.
+    Offenbar sind z.B. $4,6 \in I$ nicht durch $12$ teilbar.
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_erzeuger_finden
+- text: 12 ist das kleinste gemeinsame Vielfache von $4$ und $6.$
+  value: true
+  explanation: Das folgt aus $4 = 2^2$ und $6 = 2\cdot 3.$ Dann ist $\operatorname{kgV}(4,6)
+    = 2^2\cdot 3 = 12.$
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_erzeuger_finden
+- text: 2 ist ein Erzeuger von $I.$
+  value: true
+  explanation: "$2$ ist ein Element von $I$ und sowohl $4$ als auch $6$ liegen im
+    von $2$ erzeugten Ideal."
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_erzeuger_finden
+- text: Wenn $y \in I,$ dann gilt $\lvert y\rvert \in I.$
+  value: true
+  explanation: 'Falls $y$ positiv ist, ist die Aussage trivialerweise Wahr. Wenn $y$
+    nicht positiv ist, dann gilt $\lvert y\rvert = -y = (-1)\cdot y\in I.$ '
+  question: media/la_2_lecture_ss2026_question_ideal_in_z_minimales_element
+- text: Für $0\neq y \in \mathbb{Z}$ ist $\lvert y\rvert \in \mathbb{N}.$
+  value: true
+  explanation: In diesem Fall ist $\lvert y\rvert$ eine positive ganze Zahl, also
+    eine natürliche Zahl.
+  question: media/la_2_lecture_ss2026_question_ideal_in_z_minimales_element
+- text: Das Nullideal  $\{0\} $ wird von einem Element erzeugt.
+  value: true
+  explanation: "$0$ ist ein Erzeuger."
+  question: media/la_2_lecture_ss2026_question_ideal_in_z_minimales_element
+- text: Jedes Ideal in $\mathbb{Z}$ enthält ein Element von $\mathbb{N}.$
+  value: false
+  explanation: Das Nullideal $\{0\}$ enthält keine natürliche Zahl.
+  question: media/la_2_lecture_ss2026_question_ideal_in_z_minimales_element
+- text: "$r=0.$"
+  value: true
+  explanation: 'Wäre $r\neq 0,$ so wäre $r$ eine natürliche Zahl in $I,$ welche strikt
+    kleiner $x$ ist. Ein Widerspruch zu der Voraussetzung. '
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_division_mit_rest
+- text: "$a \\in I.$"
+  value: false
+  explanation: Ein konkretes Gegenbeispiel wäre $I = 2\mathbb{Z},$ $x =2, y= 6.$ In
+    diesem Fall gilt $a=3 \notin I.$
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_division_mit_rest
+- text: "$r \\in I.$"
+  value: true
+  explanation: 'Es gilt $r = y-ax.$ Da $y \in I$ und $x \in I$ ist auch $y-ax \in
+    I.$ '
+  question: media/la_2_lecture_ss2026_question_ideale_in_z_division_mit_rest
+- text: für alle $a\in I$ und $r\in R$ stets $ra\in I$ ist.
+  value: true
+  explanation: Das ergibt sich aus der Definition eines Ideals.
+  question: media/la_2_lecture_ss2026_question_ideale_definition
+- text: für alle $a,b\in I$ stets $ab\in I$ ist.
+  value: false
+  explanation: Dann wäre $\mathbb{Z}$ ein Ideal in $\mathbb{Q}$. Iste es aber nicht.
+  question: media/la_2_lecture_ss2026_question_ideale_definition
+- text: "$(1, t-2, \\left(t-2\\right)^{2}, \\left(t-2\\right)^{3} \\cdot \\left(t-3\\right))$"
+  value: true
+  question: media/la_2_lecture_ss2026_question_zusammenhang_invarianten-_und_determinantenteiler
+- text: "$\\left(t-2\\right)^{3} \\cdot \\left(t-3\\right)^{2}$"
+  value: true
+  explanation: Es ist $d_5(A)=c_1(A)\cdot\ldots\cdot c_5(A)$ und $d_5(A)=\chi^{\operatorname{char}}_A$.
+  question: media/la_2_lecture_ss2026_question_zusammenhang_invariantenteiler_und_charakteristisch
+- text: "$(1, 1, t-2, t-2, t-2, \\left(t-2\\right)^{2} \\cdot \\left(t-3\\right))$"
+  value: true
+  question: media/la_2_lecture_ss2026_question_zusammenhang_invarianten-_und_determinantenteiler_2
+- text: "$\\begin{pmatrix}0 & -9 & 0 & 0 \\cr 1 & 6 & 0 & 0 \\cr 0 & 0 & 0 & -9 \\cr
+    0 & 0 & 1 & 6\\end{pmatrix}$"
+  value: true
+  question: media/la_2_lecture_ss2026_question_frobenius-normalform_bestimmen

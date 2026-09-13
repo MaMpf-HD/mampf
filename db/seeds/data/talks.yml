@@ -1,0 +1,273 @@
+---
+alg_1_seminar_ws2024_1:
+  lecture: lectures/alg_1_seminar_ws2024
+  title: Gruppen
+  position: 1
+  details: "<div>Test</div>"
+  dates:
+  - 2022-08-05
+  description: "<div>Ich halte einen Vortrag über Gruppen.</div>"
+  display_description: true
+  skip_campaigns: true
+ezt_proseminar_ss2026_1:
+  lecture: lectures/ezt_proseminar_ss2026
+  title: Teilbarkeit
+  position: 1
+  details: "<div>Definition von Teilbarkeit, grundlegende Eigenschaften</div>"
+  dates:
+  - 2025-07-17
+  skip_campaigns: true
+ezt_proseminar_ss2026_2:
+  lecture: lectures/ezt_proseminar_ss2026
+  title: Primzahlen
+  position: 2
+  details: "<div>Es soll gezeigt werden, dass es unendlich viele Primzahlen gibt.</div>"
+  dates:
+  - 2025-07-23
+  skip_campaigns: true
+ezt_proseminar_ss2026_3:
+  lecture: lectures/ezt_proseminar_ss2026
+  title: Das RSA-Verfahren
+  position: 3
+  details: "<div>Verschlüsselung mit dem RSA-Verfahren</div>"
+  dates:
+  - 2025-08-07
+  skip_campaigns: true
+drs_seminar_ss2026_1:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 1
+  position: 1
+  capacity: 1
+drs_seminar_ss2026_2:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 2
+  position: 2
+  capacity: 1
+drs_seminar_ss2026_3:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 3
+  position: 3
+  capacity: 1
+drs_seminar_ss2026_4:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 4
+  position: 4
+  capacity: 1
+drs_seminar_ss2026_5:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 5
+  position: 5
+  capacity: 1
+drs_seminar_ss2026_6:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 6
+  position: 6
+  capacity: 1
+drs_seminar_ss2026_7:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 7
+  position: 7
+  capacity: 1
+drs_seminar_ss2026_8:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 8
+  position: 8
+  capacity: 1
+drs_seminar_ss2026_9:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 9
+  position: 9
+  capacity: 1
+drs_seminar_ss2026_10:
+  lecture: lectures/drs_seminar_ss2026
+  title: Demo Talk 10
+  position: 10
+  capacity: 1
+sem_ss_2026_seminar_ss2026_1:
+  lecture: lectures/sem_ss_2026_seminar_ss2026
+  title: Die Leiden des jungen Werther 3904
+  position: 1
+  dates:
+  - 2026-12-31
+  skip_campaigns: true
+sem_ss_2026_seminar_ss2026_2:
+  lecture: lectures/sem_ss_2026_seminar_ss2026
+  title: Das kalte Herz 2239
+  position: 2
+  dates:
+  - 2026-04-22
+  skip_campaigns: true
+sem_ss_2026_seminar_ss2026_3:
+  lecture: lectures/sem_ss_2026_seminar_ss2026
+  title: Unterhaltungen deutscher Ausgewanderten 8114
+  position: 3
+  dates:
+  - 2026-09-18
+  skip_campaigns: true
+sem_ss_2026_seminar_ss2026_4:
+  lecture: lectures/sem_ss_2026_seminar_ss2026
+  title: Über das Studium der griechischen Poesie 4864
+  position: 4
+  dates:
+  - 2026-04-21
+  skip_campaigns: true
+sem_ss_2026_seminar_ss2026_5:
+  lecture: lectures/sem_ss_2026_seminar_ss2026
+  title: Till Eulenspiegel 115
+  position: 5
+  dates:
+  - 2026-02-24
+  skip_campaigns: true
+sem_ss_2026_seminar_ss2026_6:
+  lecture: lectures/sem_ss_2026_seminar_ss2026
+  title: Das Marmorbild 8163
+  position: 6
+  dates:
+  - 2026-12-06
+  skip_campaigns: true
+sem_ss_2026_seminar_ss2026_7:
+  lecture: lectures/sem_ss_2026_seminar_ss2026
+  title: Der Vorleser 9804
+  position: 7
+  dates:
+  - 2026-12-02
+  skip_campaigns: true
+sem_ss_2026_seminar_ss2026_8:
+  lecture: lectures/sem_ss_2026_seminar_ss2026
+  title: Effi Briest 8041
+  position: 8
+  dates:
+  - 2026-09-12
+  skip_campaigns: true
+sem_ws_2026_seminar_ws2026_1:
+  lecture: lectures/sem_ws_2026_seminar_ws2026
+  title: Romulus der Große 2474
+  position: 1
+  dates:
+  - 2026-05-23
+sem_ws_2026_seminar_ws2026_2:
+  lecture: lectures/sem_ws_2026_seminar_ws2026
+  title: Fabian 5751
+  position: 2
+  dates:
+  - 2026-06-19
+sem_ws_2026_seminar_ws2026_3:
+  lecture: lectures/sem_ws_2026_seminar_ws2026
+  title: Die Box 36
+  position: 3
+  dates:
+  - 2026-06-26
+sem_ws_2026_seminar_ws2026_4:
+  lecture: lectures/sem_ws_2026_seminar_ws2026
+  title: Die zärtlichen Schwestern 7158
+  position: 4
+  dates:
+  - 2026-05-29
+sem_ws_2026_seminar_ws2026_5:
+  lecture: lectures/sem_ws_2026_seminar_ws2026
+  title: Iphigenie auf Tauris 1346
+  position: 5
+  dates:
+  - 2026-02-21
+sem_ws_2026_seminar_ws2026_6:
+  lecture: lectures/sem_ws_2026_seminar_ws2026
+  title: Der Brief des Lord Chandos 2789
+  position: 6
+  dates:
+  - 2026-09-27
+sem_ws_2026_seminar_ws2026_7:
+  lecture: lectures/sem_ws_2026_seminar_ws2026
+  title: Narziß und Goldmund 3947
+  position: 7
+  dates:
+  - 2026-05-15
+sem_ws_2026_seminar_ws2026_8:
+  lecture: lectures/sem_ws_2026_seminar_ws2026
+  title: Die Blechtrommel 5282
+  position: 8
+  dates:
+  - 2026-04-29
+cts_seminar_ws2026_1:
+  lecture: lectures/cts_seminar_ws2026
+  title: Der Vorleser
+  position: 1
+  dates:
+  - 2026-04-02
+  capacity: 1
+cts_seminar_ws2026_2:
+  lecture: lectures/cts_seminar_ws2026
+  title: Catharina von Georgien
+  position: 2
+  dates:
+  - 2026-08-09
+  capacity: 1
+cts_seminar_ws2026_3:
+  lecture: lectures/cts_seminar_ws2026
+  title: Helden wie wir
+  position: 3
+  dates:
+  - 2026-04-26
+  capacity: 1
+cts_seminar_ws2026_4:
+  lecture: lectures/cts_seminar_ws2026
+  title: Italienische Reise
+  position: 4
+  dates:
+  - 2026-01-21
+  capacity: 1
+cts_seminar_ws2026_5:
+  lecture: lectures/cts_seminar_ws2026
+  title: Der Spaziergang
+  position: 5
+  dates:
+  - 2026-01-20
+  capacity: 1
+cts_seminar_ws2026_6:
+  lecture: lectures/cts_seminar_ws2026
+  title: Maria Magdalene
+  position: 6
+  dates:
+  - 2026-09-23
+  capacity: 1
+cts_seminar_ws2026_7:
+  lecture: lectures/cts_seminar_ws2026
+  title: Der arme Spielmann
+  position: 7
+  dates:
+  - 2026-05-05
+  capacity: 1
+cts_seminar_ws2026_8:
+  lecture: lectures/cts_seminar_ws2026
+  title: Tödliche Versprechen/Das Imperium der Wölfe
+  position: 8
+  dates:
+  - 2026-12-08
+  capacity: 1
+cts_seminar_ws2026_9:
+  lecture: lectures/cts_seminar_ws2026
+  title: Der Untertan
+  position: 9
+  dates:
+  - 2026-10-02
+  capacity: 1
+cts_seminar_ws2026_10:
+  lecture: lectures/cts_seminar_ws2026
+  title: Faust, Part I
+  position: 10
+  dates:
+  - 2026-08-06
+  capacity: 1
+cts_seminar_ws2026_11:
+  lecture: lectures/cts_seminar_ws2026
+  title: Der Stechlin
+  position: 11
+  dates:
+  - 2026-07-08
+  capacity: 1
+cts_seminar_ws2026_12:
+  lecture: lectures/cts_seminar_ws2026
+  title: Unterm Rad
+  position: 12
+  dates:
+  - 2026-11-23
+  capacity: 1

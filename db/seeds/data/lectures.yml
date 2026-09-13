@@ -1,0 +1,644 @@
+---
+la_2_lecture_ss2026:
+  course: courses/la_2
+  term: terms/ss_2026
+  teacher: users/teacher
+  start_chapter: 0
+  absolute_numbering: true
+  start_section: 0
+  organizational_concept: '<div><strong>Termine</strong></div><div><br></div><ul><li>Vorlesung:
+    Mo, Mi 9-11 Uhr im Hörsaal im Mathematikon, INF 205 (Dozent: <a href="https://en.wikipedia.org/wiki/Mickey_Mouse">Mickey
+    Mouse</a>)</li><li>Plenarübung: Do 14-16 Uhr in SR A im Mathematikon, INF 205
+    (Dozentin: <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie Mouse</a>)</li><li>Modulprüfung:&nbsp;<ul><li>Erste
+    Klausur: Montag, den 30. Februar 2001 von 9.30-11.30 Uhr in SR A+B im Mathematikon,
+    INF 205</li><li>Zweite Klausur: Termin wird noch bekanntgegeben&nbsp;</li></ul></li></ul><div><br></div><div><strong>Übungsbetrieb</strong></div><div><br></div><div>Für
+    die Zulassung zur Modulklausur ist die erfolgreiche Teilnahme am Übungsbetrieb
+    erforderlich. Jeden Montag wird das jeweils neue Aufgabenblatt über MaMpf online
+    gestellt. <br>Die Lösungen sollen bis Montag der Folgewoche um 12 Uhr in die dafür
+    vorgesehenen Einwurfkästen im Mathematikon abgegeben werden. Zum Besprechen der
+    Lösungen und für Fragen zum aktuellen Stoff gibt es Tutorien, die im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet werden. Bitte tragen Sie sich rechtzeitig für diese ein. Die Tutorien
+    werden ab der zweiten Vorlesungswoche stattfinden. Die Abgabe der Übungsaufgaben
+    ist nachdrücklich in Zweierteams gewünscht.</div><div><br></div><div><strong>Literatur</strong></div><div><br></div><ul><li>G.
+    Fischer: <a href="https://link.springer.com/book/10.1007%2F978-3-322-88921-8">Analytische
+    Geometrie</a></li><li>H. Kasten, D. Vogel: <a href="http://www.ub.uni-heidelberg.de/cgi-bin/edok?dok=https%3A%2F%2Fdoi.org%2F10.1007%2F978-3-662-57621-2&amp;katkey=68311803">Grundlagen
+    der ebenen Geometrie</a></li></ul><div><br></div><div><strong>Prüfungs- und Benotungsregeln</strong></div><div><br></div><ul><li>Zum
+    erfolgreichen Absolvieren der Modulprüfung ist das Bestehen einer der beiden Klausuren
+    notwendig.</li><li><strong>Klausurzulassung:</strong>&nbsp;<ul><li>Für die Zulassung
+    zur <em>ersten Klausur</em> ist die regelmäßige Teilnahme an den Tutorien und
+    die erfolgreiche Bearbeitung der Übungsblätter notwendig. Hinreichend für die
+    erfolgreiche Bearbeitung ist dabei das Erreichen von 50% der erreichbaren Punkte
+    in den Übungsaufgaben.&nbsp;</li><li>Zur <em>zweiten Klausur</em> ist zugelassen,
+    wer zur ersten Klausur zugelassen war und diese nicht bestanden hat (sei es durch
+    Nicht-Erreichen der nötigen Punktzahl oder durch Nicht-Antreten).</li><li><em>Achtung:</em>
+    Wer an der ersten Klausur nicht teilnimmt, verschenkt somit einen Versuch, das
+    Modul zu bestehen.</li></ul></li><li><strong>Klausuranmeldung:</strong> Die Anmeldung
+    zur Klausur wird im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet und läuft vom 15. Januar 2001&nbsp; bis zum 31. Januar 2001.</li><li><strong>Teilnahme
+    an der Modulprüfung:</strong> Wer zur Klausur zugelassen und angemeldet ist, nimmt
+    offiziell an der Modulprüfung teil, selbst wenn er/sie an keiner Klausur teilnimmt.
+    In letzterem Falle erhält er/sie die Note 5.0.&nbsp;</li><li><strong>Nachprüfung:</strong>
+    Für diejenigen, die bei einem der Klausurtermine verhindert waren und bei dem
+    anderen nicht bestanden haben, wird die Möglichkeit einer mündlichen oder schriftlichen
+    Nachprüfung eingeräumt. "Verhindert" bedeutet dabei verhindert durch Krankheit
+    (ärztliches Attest bis eine Woche nach der betreffenden Klausur im Prüfungssekretariat
+    nachreichen) oder ähnlich triftige Gründe. <em>Achtung:</em> Wer etwa an der ersten
+    Klausur nicht teilnimmt ohne im obigem Sinne verhindert zu sein und die zweite
+    Klausur nicht besteht, bekommt keine Möglichkeit zur Nachprüfung. Der erste Versuch
+    wurde schlichtweg verschenkt (s.o.).</li><li><strong>Benotung:</strong> Die Note
+    für das Modul besteht aus der Note der bestandenen Klausur (oder evtl. gewährte
+    Nachprüfung), bzw. der Note 5.0, wenn keine Klausur (oder evtl. gewährte Nachprüfung)
+    bestanden wurde.</li></ul>'
+  organizational: true
+  muesli: true
+  released: all
+  content_mode: video
+  locale: de
+  sort: lecture
+  forum_id: 1
+  submission_max_team_size: 2
+  home_intro: "<div><strong>Lineare Algebra 2</strong></div><div>Der Ablauf ist der
+    übliche: zwei Vorlesungen und eine Übung pro Woche, dazu ein Übungsblatt, von
+    dem die Hälfte der Punkte zur Klausurzulassung reicht.</div><div>Alles, was Du
+    dafür brauchst, steht hier: das Skript unter „Manuskript“, die Aufzeichnungen
+    unter „Lektionen“ und die Blätter unter „Übungen“. Die Sprechstunde findet dienstags
+    um 14 Uhr statt.</div>"
+  vignettes: true
+  submission_deletion_date: '2026-10-15'
+  attachments:
+    home_attachment: shrine20260828-169712-qo13ee.pdf
+alg_1_lecture_ws2025:
+  course: courses/alg_1
+  term: terms/ws_2025
+  teacher: users/teacher
+  start_chapter: 1
+  absolute_numbering: false
+  organizational_concept: '<div><strong>Termine</strong></div><div><br></div><ul><li>Vorlesung:
+    Mo, Mi 9-11 Uhr im Hörsaal im Mathematikon, INF 205 (Dozent: <a href="https://en.wikipedia.org/wiki/Mickey_Mouse">Mickey
+    Mouse</a>)</li><li>Plenarübung: Do 14-16 Uhr in SR A im Mathematikon, INF 205
+    (Dozentin: <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie Mouse</a>)</li><li>Modulprüfung:&nbsp;<ul><li>Erste
+    Klausur: Montag, den 30. Februar 2001 von 9.30-11.30 Uhr in SR A+B im Mathematikon,
+    INF 205</li><li>Zweite Klausur: Termin wird noch bekanntgegeben&nbsp;</li></ul></li></ul><div><br></div><div><strong>Übungsbetrieb</strong></div><div><br></div><div>Für
+    die Zulassung zur Modulklausur ist die erfolgreiche Teilnahme am Übungsbetrieb
+    erforderlich. Jeden Montag wird das jeweils neue Aufgabenblatt über MaMpf online
+    gestellt. <br>Die Lösungen sollen bis Montag der Folgewoche um 12 Uhr in die dafür
+    vorgesehenen Einwurfkästen im Mathematikon abgegeben werden. Zum Besprechen der
+    Lösungen und für Fragen zum aktuellen Stoff gibt es Tutorien, die im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet werden. Bitte tragen Sie sich rechtzeitig für diese ein. Die Tutorien
+    werden ab der zweiten Vorlesungswoche stattfinden. Die Abgabe der Übungsaufgaben
+    ist nachdrücklich in Zweierteams gewünscht.</div><div><br></div><div><strong>Literatur</strong></div><div><br></div><ul><li>G.
+    Fischer: <a href="https://link.springer.com/book/10.1007%2F978-3-322-88921-8">Analytische
+    Geometrie</a></li><li>H. Kasten, D. Vogel: <a href="http://www.ub.uni-heidelberg.de/cgi-bin/edok?dok=https%3A%2F%2Fdoi.org%2F10.1007%2F978-3-662-57621-2&amp;katkey=68311803">Grundlagen
+    der ebenen Geometrie</a></li></ul><div><br></div><div><strong>Prüfungs- und Benotungsregeln</strong></div><div><br></div><ul><li>Zum
+    erfolgreichen Absolvieren der Modulprüfung ist das Bestehen einer der beiden Klausuren
+    notwendig.</li><li><strong>Klausurzulassung:</strong>&nbsp;<ul><li>Für die Zulassung
+    zur <em>ersten Klausur</em> ist die regelmäßige Teilnahme an den Tutorien und
+    die erfolgreiche Bearbeitung der Übungsblätter notwendig. Hinreichend für die
+    erfolgreiche Bearbeitung ist dabei das Erreichen von 50% der erreichbaren Punkte
+    in den Übungsaufgaben.&nbsp;</li><li>Zur <em>zweiten Klausur</em> ist zugelassen,
+    wer zur ersten Klausur zugelassen war und diese nicht bestanden hat (sei es durch
+    Nicht-Erreichen der nötigen Punktzahl oder durch Nicht-Antreten).</li><li><em>Achtung:</em>
+    Wer an der ersten Klausur nicht teilnimmt, verschenkt somit einen Versuch, das
+    Modul zu bestehen.</li></ul></li><li><strong>Klausuranmeldung:</strong> Die Anmeldung
+    zur Klausur wird im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet und läuft vom 15. Januar 2001&nbsp; bis zum 31. Januar 2001.</li><li><strong>Teilnahme
+    an der Modulprüfung:</strong> Wer zur Klausur zugelassen und angemeldet ist, nimmt
+    offiziell an der Modulprüfung teil, selbst wenn er/sie an keiner Klausur teilnimmt.
+    In letzterem Falle erhält er/sie die Note 5.0.&nbsp;</li><li><strong>Nachprüfung:</strong>
+    Für diejenigen, die bei einem der Klausurtermine verhindert waren und bei dem
+    anderen nicht bestanden haben, wird die Möglichkeit einer mündlichen oder schriftlichen
+    Nachprüfung eingeräumt. "Verhindert" bedeutet dabei verhindert durch Krankheit
+    (ärztliches Attest bis eine Woche nach der betreffenden Klausur im Prüfungssekretariat
+    nachreichen) oder ähnlich triftige Gründe. <em>Achtung:</em> Wer etwa an der ersten
+    Klausur nicht teilnimmt ohne im obigem Sinne verhindert zu sein und die zweite
+    Klausur nicht besteht, bekommt keine Möglichkeit zur Nachprüfung. Der erste Versuch
+    wurde schlichtweg verschenkt (s.o.).</li><li><strong>Benotung:</strong> Die Note
+    für das Modul besteht aus der Note der bestandenen Klausur (oder evtl. gewährte
+    Nachprüfung), bzw. der Note 5.0, wenn keine Klausur (oder evtl. gewährte Nachprüfung)
+    bestanden wurde.</li></ul>'
+  organizational: true
+  muesli: true
+  released: all
+  content_mode: video
+  locale: de
+  sort: lecture
+  forum_id: 2
+  submission_deletion_date: '2026-04-15'
+geo_lecture_ss2026:
+  course: courses/geo
+  term: terms/ss_2026
+  teacher: users/teacher
+  start_chapter: 1
+  absolute_numbering: false
+  organizational_concept: '<div><strong>Termine</strong></div><div><br></div><ul><li>Vorlesung:
+    Mo, Mi 9-11 Uhr im Hörsaal im Mathematikon, INF 205 (Dozent: <a href="https://en.wikipedia.org/wiki/Mickey_Mouse">Mickey
+    Mouse</a>)</li><li>Plenarübung: Do 14-16 Uhr in SR A im Mathematikon, INF 205
+    (Dozentin: <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie Mouse</a>)</li><li>Modulprüfung:&nbsp;<ul><li>Erste
+    Klausur: Montag, den 30. Februar 2001 von 9.30-11.30 Uhr in SR A+B im Mathematikon,
+    INF 205</li><li>Zweite Klausur: Termin wird noch bekanntgegeben&nbsp;</li></ul></li></ul><div><br></div><div><strong>Übungsbetrieb</strong></div><div><br></div><div>Für
+    die Zulassung zur Modulklausur ist die erfolgreiche Teilnahme am Übungsbetrieb
+    erforderlich. Jeden Montag wird das jeweils neue Aufgabenblatt über MaMpf online
+    gestellt. <br>Die Lösungen sollen bis Montag der Folgewoche um 12 Uhr in die dafür
+    vorgesehenen Einwurfkästen im Mathematikon abgegeben werden. Zum Besprechen der
+    Lösungen und für Fragen zum aktuellen Stoff gibt es Tutorien, die im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet werden. Bitte tragen Sie sich rechtzeitig für diese ein. Die Tutorien
+    werden ab der zweiten Vorlesungswoche stattfinden. Die Abgabe der Übungsaufgaben
+    ist nachdrücklich in Zweierteams gewünscht.</div><div><br></div><div><strong>Literatur</strong></div><div><br></div><ul><li>G.
+    Fischer: <a href="https://link.springer.com/book/10.1007%2F978-3-322-88921-8">Analytische
+    Geometrie</a></li><li>H. Kasten, D. Vogel: <a href="http://www.ub.uni-heidelberg.de/cgi-bin/edok?dok=https%3A%2F%2Fdoi.org%2F10.1007%2F978-3-662-57621-2&amp;katkey=68311803">Grundlagen
+    der ebenen Geometrie</a></li></ul><div><br></div><div><strong>Prüfungs- und Benotungsregeln</strong></div><div><br></div><ul><li>Zum
+    erfolgreichen Absolvieren der Modulprüfung ist das Bestehen einer der beiden Klausuren
+    notwendig.</li><li><strong>Klausurzulassung:</strong>&nbsp;<ul><li>Für die Zulassung
+    zur <em>ersten Klausur</em> ist die regelmäßige Teilnahme an den Tutorien und
+    die erfolgreiche Bearbeitung der Übungsblätter notwendig. Hinreichend für die
+    erfolgreiche Bearbeitung ist dabei das Erreichen von 50% der erreichbaren Punkte
+    in den Übungsaufgaben.&nbsp;</li><li>Zur <em>zweiten Klausur</em> ist zugelassen,
+    wer zur ersten Klausur zugelassen war und diese nicht bestanden hat (sei es durch
+    Nicht-Erreichen der nötigen Punktzahl oder durch Nicht-Antreten).</li><li><em>Achtung:</em>
+    Wer an der ersten Klausur nicht teilnimmt, verschenkt somit einen Versuch, das
+    Modul zu bestehen.</li></ul></li><li><strong>Klausuranmeldung:</strong> Die Anmeldung
+    zur Klausur wird im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet und läuft vom 15. Januar 2001&nbsp; bis zum 31. Januar 2001.</li><li><strong>Teilnahme
+    an der Modulprüfung:</strong> Wer zur Klausur zugelassen und angemeldet ist, nimmt
+    offiziell an der Modulprüfung teil, selbst wenn er/sie an keiner Klausur teilnimmt.
+    In letzterem Falle erhält er/sie die Note 5.0.&nbsp;</li><li><strong>Nachprüfung:</strong>
+    Für diejenigen, die bei einem der Klausurtermine verhindert waren und bei dem
+    anderen nicht bestanden haben, wird die Möglichkeit einer mündlichen oder schriftlichen
+    Nachprüfung eingeräumt. "Verhindert" bedeutet dabei verhindert durch Krankheit
+    (ärztliches Attest bis eine Woche nach der betreffenden Klausur im Prüfungssekretariat
+    nachreichen) oder ähnlich triftige Gründe. <em>Achtung:</em> Wer etwa an der ersten
+    Klausur nicht teilnimmt ohne im obigem Sinne verhindert zu sein und die zweite
+    Klausur nicht besteht, bekommt keine Möglichkeit zur Nachprüfung. Der erste Versuch
+    wurde schlichtweg verschenkt (s.o.).</li><li><strong>Benotung:</strong> Die Note
+    für das Modul besteht aus der Note der bestandenen Klausur (oder evtl. gewährte
+    Nachprüfung), bzw. der Note 5.0, wenn keine Klausur (oder evtl. gewährte Nachprüfung)
+    bestanden wurde.</li></ul>'
+  released: all
+  content_mode: manuscript
+  locale: de
+  sort: lecture
+  forum_id: 3
+  home_intro: "<div>Diese Seite ist die Anlaufstelle für <strong>Einführung in die
+    Geometrie</strong>.</div><div>Fragen zwischendurch stellst Du am besten im Forum
+    — dort antworten auch die Tutorinnen und Tutoren. Wichtige Hinweise erscheinen
+    als Ankündigung ganz oben; wenn Du die Veranstaltung abonniert hast, bekommst
+    Du sie außerdem als Benachrichtigung.</div><div>Das Skript wächst mit der Vorlesung
+    mit. Wo etwas unklar bleibt, hilft oft die verlinkte Wiederholung aus dem vorigen
+    Semester.</div>"
+  submission_deletion_date: '2026-10-15'
+hd_special:
+  course: courses/hd
+  teacher: users/teacher
+  start_chapter: 1
+  absolute_numbering: false
+  organizational_concept: '<div><strong>Termine</strong></div><div><br></div><ul><li>Vorlesung:
+    Mo, Mi 9-11 Uhr im Hörsaal im Mathematikon, INF 205 (Dozent: <a href="https://en.wikipedia.org/wiki/Mickey_Mouse">Mickey
+    Mouse</a>)</li><li>Plenarübung: Do 14-16 Uhr in SR A im Mathematikon, INF 205
+    (Dozentin: <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie Mouse</a>)</li><li>Modulprüfung:&nbsp;<ul><li>Erste
+    Klausur: Montag, den 30. Februar 2001 von 9.30-11.30 Uhr in SR A+B im Mathematikon,
+    INF 205</li><li>Zweite Klausur: Termin wird noch bekanntgegeben&nbsp;</li></ul></li></ul><div><br></div><div><strong>Übungsbetrieb</strong></div><div><br></div><div>Für
+    die Zulassung zur Modulklausur ist die erfolgreiche Teilnahme am Übungsbetrieb
+    erforderlich. Jeden Montag wird das jeweils neue Aufgabenblatt über MaMpf online
+    gestellt. <br>Die Lösungen sollen bis Montag der Folgewoche um 12 Uhr in die dafür
+    vorgesehenen Einwurfkästen im Mathematikon abgegeben werden. Zum Besprechen der
+    Lösungen und für Fragen zum aktuellen Stoff gibt es Tutorien, die im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet werden. Bitte tragen Sie sich rechtzeitig für diese ein. Die Tutorien
+    werden ab der zweiten Vorlesungswoche stattfinden. Die Abgabe der Übungsaufgaben
+    ist nachdrücklich in Zweierteams gewünscht.</div><div><br></div><div><strong>Literatur</strong></div><div><br></div><ul><li>G.
+    Fischer: <a href="https://link.springer.com/book/10.1007%2F978-3-322-88921-8">Analytische
+    Geometrie</a></li><li>H. Kasten, D. Vogel: <a href="http://www.ub.uni-heidelberg.de/cgi-bin/edok?dok=https%3A%2F%2Fdoi.org%2F10.1007%2F978-3-662-57621-2&amp;katkey=68311803">Grundlagen
+    der ebenen Geometrie</a></li></ul><div><br></div><div><strong>Prüfungs- und Benotungsregeln</strong></div><div><br></div><ul><li>Zum
+    erfolgreichen Absolvieren der Modulprüfung ist das Bestehen einer der beiden Klausuren
+    notwendig.</li><li><strong>Klausurzulassung:</strong>&nbsp;<ul><li>Für die Zulassung
+    zur <em>ersten Klausur</em> ist die regelmäßige Teilnahme an den Tutorien und
+    die erfolgreiche Bearbeitung der Übungsblätter notwendig. Hinreichend für die
+    erfolgreiche Bearbeitung ist dabei das Erreichen von 50% der erreichbaren Punkte
+    in den Übungsaufgaben.&nbsp;</li><li>Zur <em>zweiten Klausur</em> ist zugelassen,
+    wer zur ersten Klausur zugelassen war und diese nicht bestanden hat (sei es durch
+    Nicht-Erreichen der nötigen Punktzahl oder durch Nicht-Antreten).</li><li><em>Achtung:</em>
+    Wer an der ersten Klausur nicht teilnimmt, verschenkt somit einen Versuch, das
+    Modul zu bestehen.</li></ul></li><li><strong>Klausuranmeldung:</strong> Die Anmeldung
+    zur Klausur wird im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet und läuft vom 15. Januar 2001&nbsp; bis zum 31. Januar 2001.</li><li><strong>Teilnahme
+    an der Modulprüfung:</strong> Wer zur Klausur zugelassen und angemeldet ist, nimmt
+    offiziell an der Modulprüfung teil, selbst wenn er/sie an keiner Klausur teilnimmt.
+    In letzterem Falle erhält er/sie die Note 5.0.&nbsp;</li><li><strong>Nachprüfung:</strong>
+    Für diejenigen, die bei einem der Klausurtermine verhindert waren und bei dem
+    anderen nicht bestanden haben, wird die Möglichkeit einer mündlichen oder schriftlichen
+    Nachprüfung eingeräumt. "Verhindert" bedeutet dabei verhindert durch Krankheit
+    (ärztliches Attest bis eine Woche nach der betreffenden Klausur im Prüfungssekretariat
+    nachreichen) oder ähnlich triftige Gründe. <em>Achtung:</em> Wer etwa an der ersten
+    Klausur nicht teilnimmt ohne im obigem Sinne verhindert zu sein und die zweite
+    Klausur nicht besteht, bekommt keine Möglichkeit zur Nachprüfung. Der erste Versuch
+    wurde schlichtweg verschenkt (s.o.).</li><li><strong>Benotung:</strong> Die Note
+    für das Modul besteht aus der Note der bestandenen Klausur (oder evtl. gewährte
+    Nachprüfung), bzw. der Note 5.0, wenn keine Klausur (oder evtl. gewährte Nachprüfung)
+    bestanden wurde.</li></ul>'
+  organizational: true
+  muesli: false
+  released: all
+  content_mode: video
+  locale: de
+  sort: special
+  organizational_on_top: true
+  disable_teacher_display: true
+  submission_deletion_date: '2026-10-15'
+la_2_lecture_ws2019:
+  course: courses/la_2
+  term: terms/ws_2019
+  teacher: users/teacher
+  organizational_concept: '<div><strong>Termine</strong></div><div><br></div><ul><li>Vorlesung:
+    Mo, Mi 9-11 Uhr im Hörsaal im Mathematikon, INF 205 (Dozent: <a href="https://en.wikipedia.org/wiki/Mickey_Mouse">Mickey
+    Mouse</a>)</li><li>Plenarübung: Do 14-16 Uhr in SR A im Mathematikon, INF 205
+    (Dozentin: <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie Mouse</a>)</li><li>Modulprüfung:&nbsp;<ul><li>Erste
+    Klausur: Montag, den 30. Februar 2001 von 9.30-11.30 Uhr in SR A+B im Mathematikon,
+    INF 205</li><li>Zweite Klausur: Termin wird noch bekanntgegeben&nbsp;</li></ul></li></ul><div><br></div><div><strong>Übungsbetrieb</strong></div><div><br></div><div>Für
+    die Zulassung zur Modulklausur ist die erfolgreiche Teilnahme am Übungsbetrieb
+    erforderlich. Jeden Montag wird das jeweils neue Aufgabenblatt über MaMpf online
+    gestellt. <br>Die Lösungen sollen bis Montag der Folgewoche um 12 Uhr in die dafür
+    vorgesehenen Einwurfkästen im Mathematikon abgegeben werden. Zum Besprechen der
+    Lösungen und für Fragen zum aktuellen Stoff gibt es Tutorien, die im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet werden. Bitte tragen Sie sich rechtzeitig für diese ein. Die Tutorien
+    werden ab der zweiten Vorlesungswoche stattfinden. Die Abgabe der Übungsaufgaben
+    ist nachdrücklich in Zweierteams gewünscht.</div><div><br></div><div><strong>Literatur</strong></div><div><br></div><ul><li>G.
+    Fischer: <a href="https://link.springer.com/book/10.1007%2F978-3-322-88921-8">Analytische
+    Geometrie</a></li><li>H. Kasten, D. Vogel: <a href="http://www.ub.uni-heidelberg.de/cgi-bin/edok?dok=https%3A%2F%2Fdoi.org%2F10.1007%2F978-3-662-57621-2&amp;katkey=68311803">Grundlagen
+    der ebenen Geometrie</a></li></ul><div><br></div><div><strong>Prüfungs- und Benotungsregeln</strong></div><div><br></div><ul><li>Zum
+    erfolgreichen Absolvieren der Modulprüfung ist das Bestehen einer der beiden Klausuren
+    notwendig.</li><li><strong>Klausurzulassung:</strong>&nbsp;<ul><li>Für die Zulassung
+    zur <em>ersten Klausur</em> ist die regelmäßige Teilnahme an den Tutorien und
+    die erfolgreiche Bearbeitung der Übungsblätter notwendig. Hinreichend für die
+    erfolgreiche Bearbeitung ist dabei das Erreichen von 50% der erreichbaren Punkte
+    in den Übungsaufgaben.&nbsp;</li><li>Zur <em>zweiten Klausur</em> ist zugelassen,
+    wer zur ersten Klausur zugelassen war und diese nicht bestanden hat (sei es durch
+    Nicht-Erreichen der nötigen Punktzahl oder durch Nicht-Antreten).</li><li><em>Achtung:</em>
+    Wer an der ersten Klausur nicht teilnimmt, verschenkt somit einen Versuch, das
+    Modul zu bestehen.</li></ul></li><li><strong>Klausuranmeldung:</strong> Die Anmeldung
+    zur Klausur wird im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet und läuft vom 15. Januar 2001&nbsp; bis zum 31. Januar 2001.</li><li><strong>Teilnahme
+    an der Modulprüfung:</strong> Wer zur Klausur zugelassen und angemeldet ist, nimmt
+    offiziell an der Modulprüfung teil, selbst wenn er/sie an keiner Klausur teilnimmt.
+    In letzterem Falle erhält er/sie die Note 5.0.&nbsp;</li><li><strong>Nachprüfung:</strong>
+    Für diejenigen, die bei einem der Klausurtermine verhindert waren und bei dem
+    anderen nicht bestanden haben, wird die Möglichkeit einer mündlichen oder schriftlichen
+    Nachprüfung eingeräumt. "Verhindert" bedeutet dabei verhindert durch Krankheit
+    (ärztliches Attest bis eine Woche nach der betreffenden Klausur im Prüfungssekretariat
+    nachreichen) oder ähnlich triftige Gründe. <em>Achtung:</em> Wer etwa an der ersten
+    Klausur nicht teilnimmt ohne im obigem Sinne verhindert zu sein und die zweite
+    Klausur nicht besteht, bekommt keine Möglichkeit zur Nachprüfung. Der erste Versuch
+    wurde schlichtweg verschenkt (s.o.).</li><li><strong>Benotung:</strong> Die Note
+    für das Modul besteht aus der Note der bestandenen Klausur (oder evtl. gewährte
+    Nachprüfung), bzw. der Note 5.0, wenn keine Klausur (oder evtl. gewährte Nachprüfung)
+    bestanden wurde.</li></ul>'
+  content_mode: video
+  locale: de
+  sort: lecture
+  submission_deletion_date: '2020-04-15'
+la_2_lecture_ws2020:
+  course: courses/la_2
+  term: terms/ws_2020
+  teacher: users/teacher
+  start_chapter: 1
+  absolute_numbering: false
+  organizational_concept: '<div><strong>Termine</strong></div><div><br></div><ul><li>Vorlesung:
+    Mo, Mi 9-11 Uhr im Hörsaal im Mathematikon, INF 205 (Dozent: <a href="https://en.wikipedia.org/wiki/Mickey_Mouse">Mickey
+    Mouse</a>)</li><li>Plenarübung: Do 14-16 Uhr in SR A im Mathematikon, INF 205
+    (Dozentin: <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie Mouse</a>)</li><li>Modulprüfung:&nbsp;<ul><li>Erste
+    Klausur: Montag, den 30. Februar 2001 von 9.30-11.30 Uhr in SR A+B im Mathematikon,
+    INF 205</li><li>Zweite Klausur: Termin wird noch bekanntgegeben&nbsp;</li></ul></li></ul><div><br></div><div><strong>Übungsbetrieb</strong></div><div><br></div><div>Für
+    die Zulassung zur Modulklausur ist die erfolgreiche Teilnahme am Übungsbetrieb
+    erforderlich. Jeden Montag wird das jeweils neue Aufgabenblatt über MaMpf online
+    gestellt. <br>Die Lösungen sollen bis Montag der Folgewoche um 12 Uhr in die dafür
+    vorgesehenen Einwurfkästen im Mathematikon abgegeben werden. Zum Besprechen der
+    Lösungen und für Fragen zum aktuellen Stoff gibt es Tutorien, die im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet werden. Bitte tragen Sie sich rechtzeitig für diese ein. Die Tutorien
+    werden ab der zweiten Vorlesungswoche stattfinden. Die Abgabe der Übungsaufgaben
+    ist nachdrücklich in Zweierteams gewünscht.</div><div><br></div><div><strong>Literatur</strong></div><div><br></div><ul><li>G.
+    Fischer: <a href="https://link.springer.com/book/10.1007%2F978-3-322-88921-8">Analytische
+    Geometrie</a></li><li>H. Kasten, D. Vogel: <a href="http://www.ub.uni-heidelberg.de/cgi-bin/edok?dok=https%3A%2F%2Fdoi.org%2F10.1007%2F978-3-662-57621-2&amp;katkey=68311803">Grundlagen
+    der ebenen Geometrie</a></li></ul><div><br></div><div><strong>Prüfungs- und Benotungsregeln</strong></div><div><br></div><ul><li>Zum
+    erfolgreichen Absolvieren der Modulprüfung ist das Bestehen einer der beiden Klausuren
+    notwendig.</li><li><strong>Klausurzulassung:</strong>&nbsp;<ul><li>Für die Zulassung
+    zur <em>ersten Klausur</em> ist die regelmäßige Teilnahme an den Tutorien und
+    die erfolgreiche Bearbeitung der Übungsblätter notwendig. Hinreichend für die
+    erfolgreiche Bearbeitung ist dabei das Erreichen von 50% der erreichbaren Punkte
+    in den Übungsaufgaben.&nbsp;</li><li>Zur <em>zweiten Klausur</em> ist zugelassen,
+    wer zur ersten Klausur zugelassen war und diese nicht bestanden hat (sei es durch
+    Nicht-Erreichen der nötigen Punktzahl oder durch Nicht-Antreten).</li><li><em>Achtung:</em>
+    Wer an der ersten Klausur nicht teilnimmt, verschenkt somit einen Versuch, das
+    Modul zu bestehen.</li></ul></li><li><strong>Klausuranmeldung:</strong> Die Anmeldung
+    zur Klausur wird im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet und läuft vom 15. Januar 2001&nbsp; bis zum 31. Januar 2001.</li><li><strong>Teilnahme
+    an der Modulprüfung:</strong> Wer zur Klausur zugelassen und angemeldet ist, nimmt
+    offiziell an der Modulprüfung teil, selbst wenn er/sie an keiner Klausur teilnimmt.
+    In letzterem Falle erhält er/sie die Note 5.0.&nbsp;</li><li><strong>Nachprüfung:</strong>
+    Für diejenigen, die bei einem der Klausurtermine verhindert waren und bei dem
+    anderen nicht bestanden haben, wird die Möglichkeit einer mündlichen oder schriftlichen
+    Nachprüfung eingeräumt. "Verhindert" bedeutet dabei verhindert durch Krankheit
+    (ärztliches Attest bis eine Woche nach der betreffenden Klausur im Prüfungssekretariat
+    nachreichen) oder ähnlich triftige Gründe. <em>Achtung:</em> Wer etwa an der ersten
+    Klausur nicht teilnimmt ohne im obigem Sinne verhindert zu sein und die zweite
+    Klausur nicht besteht, bekommt keine Möglichkeit zur Nachprüfung. Der erste Versuch
+    wurde schlichtweg verschenkt (s.o.).</li><li><strong>Benotung:</strong> Die Note
+    für das Modul besteht aus der Note der bestandenen Klausur (oder evtl. gewährte
+    Nachprüfung), bzw. der Note 5.0, wenn keine Klausur (oder evtl. gewährte Nachprüfung)
+    bestanden wurde.</li></ul>'
+  released: all
+  content_mode: video
+  passphrase: test
+  locale: de
+  sort: lecture
+  submission_deletion_date: '2021-04-15'
+alg_1_lecture_ws2026:
+  course: courses/alg_1
+  term: terms/ws_2026
+  teacher: users/teacher
+  start_chapter: 1
+  absolute_numbering: false
+  organizational_concept: '<div><strong>Termine</strong></div><div><br></div><ul><li>Vorlesung:
+    Mo, Mi 9-11 Uhr im Hörsaal im Mathematikon, INF 205 (Dozent: <a href="https://en.wikipedia.org/wiki/Mickey_Mouse">Mickey
+    Mouse</a>)</li><li>Plenarübung: Do 14-16 Uhr in SR A im Mathematikon, INF 205
+    (Dozentin: <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie Mouse</a>)</li><li>Modulprüfung:&nbsp;<ul><li>Erste
+    Klausur: Montag, den 30. Februar 2001 von 9.30-11.30 Uhr in SR A+B im Mathematikon,
+    INF 205</li><li>Zweite Klausur: Termin wird noch bekanntgegeben&nbsp;</li></ul></li></ul><div><br></div><div><strong>Übungsbetrieb</strong></div><div><br></div><div>Für
+    die Zulassung zur Modulklausur ist die erfolgreiche Teilnahme am Übungsbetrieb
+    erforderlich. Jeden Montag wird das jeweils neue Aufgabenblatt über MaMpf online
+    gestellt. <br>Die Lösungen sollen bis Montag der Folgewoche um 12 Uhr in die dafür
+    vorgesehenen Einwurfkästen im Mathematikon abgegeben werden. Zum Besprechen der
+    Lösungen und für Fragen zum aktuellen Stoff gibt es Tutorien, die im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet werden. Bitte tragen Sie sich rechtzeitig für diese ein. Die Tutorien
+    werden ab der zweiten Vorlesungswoche stattfinden. Die Abgabe der Übungsaufgaben
+    ist nachdrücklich in Zweierteams gewünscht.</div><div><br></div><div><strong>Literatur</strong></div><div><br></div><ul><li>G.
+    Fischer: <a href="https://link.springer.com/book/10.1007%2F978-3-322-88921-8">Analytische
+    Geometrie</a></li><li>H. Kasten, D. Vogel: <a href="http://www.ub.uni-heidelberg.de/cgi-bin/edok?dok=https%3A%2F%2Fdoi.org%2F10.1007%2F978-3-662-57621-2&amp;katkey=68311803">Grundlagen
+    der ebenen Geometrie</a></li></ul><div><br></div><div><strong>Prüfungs- und Benotungsregeln</strong></div><div><br></div><ul><li>Zum
+    erfolgreichen Absolvieren der Modulprüfung ist das Bestehen einer der beiden Klausuren
+    notwendig.</li><li><strong>Klausurzulassung:</strong>&nbsp;<ul><li>Für die Zulassung
+    zur <em>ersten Klausur</em> ist die regelmäßige Teilnahme an den Tutorien und
+    die erfolgreiche Bearbeitung der Übungsblätter notwendig. Hinreichend für die
+    erfolgreiche Bearbeitung ist dabei das Erreichen von 50% der erreichbaren Punkte
+    in den Übungsaufgaben.&nbsp;</li><li>Zur <em>zweiten Klausur</em> ist zugelassen,
+    wer zur ersten Klausur zugelassen war und diese nicht bestanden hat (sei es durch
+    Nicht-Erreichen der nötigen Punktzahl oder durch Nicht-Antreten).</li><li><em>Achtung:</em>
+    Wer an der ersten Klausur nicht teilnimmt, verschenkt somit einen Versuch, das
+    Modul zu bestehen.</li></ul></li><li><strong>Klausuranmeldung:</strong> Die Anmeldung
+    zur Klausur wird im <a href="https://www.mathi.uni-heidelberg.de/muesli/user/login">MÜSLI</a>
+    verwaltet und läuft vom 15. Januar 2001&nbsp; bis zum 31. Januar 2001.</li><li><strong>Teilnahme
+    an der Modulprüfung:</strong> Wer zur Klausur zugelassen und angemeldet ist, nimmt
+    offiziell an der Modulprüfung teil, selbst wenn er/sie an keiner Klausur teilnimmt.
+    In letzterem Falle erhält er/sie die Note 5.0.&nbsp;</li><li><strong>Nachprüfung:</strong>
+    Für diejenigen, die bei einem der Klausurtermine verhindert waren und bei dem
+    anderen nicht bestanden haben, wird die Möglichkeit einer mündlichen oder schriftlichen
+    Nachprüfung eingeräumt. "Verhindert" bedeutet dabei verhindert durch Krankheit
+    (ärztliches Attest bis eine Woche nach der betreffenden Klausur im Prüfungssekretariat
+    nachreichen) oder ähnlich triftige Gründe. <em>Achtung:</em> Wer etwa an der ersten
+    Klausur nicht teilnimmt ohne im obigem Sinne verhindert zu sein und die zweite
+    Klausur nicht besteht, bekommt keine Möglichkeit zur Nachprüfung. Der erste Versuch
+    wurde schlichtweg verschenkt (s.o.).</li><li><strong>Benotung:</strong> Die Note
+    für das Modul besteht aus der Note der bestandenen Klausur (oder evtl. gewährte
+    Nachprüfung), bzw. der Note 5.0, wenn keine Klausur (oder evtl. gewährte Nachprüfung)
+    bestanden wurde.</li></ul>'
+  content_mode: video
+  locale: de
+  sort: lecture
+  home_intro: "<div>Willkommen bei <strong>Algebra 1</strong>!</div><div>Auf dieser
+    Seite findest Du alles zur Veranstaltung: das Skript, die Videos zu den einzelnen
+    Sitzungen und die Übungsblätter. Die Aufzeichnung steht in der Regel am Abend
+    nach der Vorlesung bereit, die Kapitelmarken kommen am Tag darauf dazu.</div><div>Die
+    Übungsblätter erscheinen mittwochs und werden bis zum Freitag der Folgewoche abgegeben
+    — in Zweiergruppen, direkt hier über MaMpf. Deine Tutorin oder Dein Tutor lädt
+    die Korrektur an derselben Stelle wieder hoch.</div>"
+  submission_deletion_date: '2027-02-15'
+alg_1_seminar_ws2024:
+  course: courses/alg_1
+  term: terms/ws_2024
+  teacher: users/teacher
+  organizational_concept: '<div><strong>Termine</strong></div><div><br></div><ul><li>Seminar:
+    Do 14-16 Uhr im SR 4 im Mathematikon, INF 205 (Dozent: <a href="https://en.wikipedia.org/wiki/Mickey_Mouse">Mickey
+    Mouse</a>)</li><li>Tutorium: n.V. bei <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie
+    Mouse</a></li><li>Vorbesprechung: Mi, 24. Juli 2019, 13.15 Uhr in SR 3&nbsp; im
+    Mathematikon, INF 205</li></ul><div><br></div><div><strong>Vorträge</strong></div><div><br>Im
+    Seminar wird jede TeilnehmerIn einen Vortrag halten. Die Vorträge werden bei der
+    <strong>Vorbesprechung</strong> vergeben. Ob nach der Vorbesprechung noch Themen
+    frei sind, können Sie bei der DozentIn in Erfahrung bringen. Beim Vortrag sollen
+    Sie&nbsp; den Ihnen zugewiesenen Stoff in der Ihnen zugewiesenen Zeit behandeln
+    - und zwar so, dass jeder dass jeder der Anwesenden davon profitiert. Um das zu
+    erreichen, ist es wichtig, dass Sie <em>frühzeitig</em> mit der Vorbereitung Ihres
+    Vortrags beginnen. Außerdem erwarten wir, dass Sie rechtzeitig vor dem Vortrag
+    Kontakt mit <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie Mouse</a>
+    aufnehmen, um Details zum Inhalt und zur Strukturierung des Vortrags zu besprechen.
+    Rechtzeitig wäre beispielsweise zwei Wochen vor Ihrem Vortrag - eine Viertelstunde
+    vor Vortragsbeginn ist nicht rechtzeitig. Sie sollten daraufhin arbeiten, sämtliche
+    Details ihres Vortragsinhaltes gründlich zu verstehen. Auf der anderen Seite ist
+    es wichtig für Ihren Vortrag, dass Sie diesen so gestalten, dass Ihre KommilitonInnen
+    - für die der Inhalt Ihres Vortrages in der Regel neu sein wird - eine Chance
+    haben, diesen auch zu verstehen. Viele nützliche Hinweise zum Halten mathematischer
+    Vorträge finden Sie <a href="http://download.uni-mainz.de/mathematik/Topologie%20und%20Geometrie/Lehre/Wie-halte-ich-einen-Seminarvortrag.pdf">hier</a>.<br><br></div><div><strong>Literatur</strong></div><div><br></div><ul><li>G.
+    Fischer: <a href="https://link.springer.com/book/10.1007%2F978-3-322-88921-8">Analytische
+    Geometrie</a></li><li>H. Kasten, D. Vogel: <a href="http://www.ub.uni-heidelberg.de/cgi-bin/edok?dok=https%3A%2F%2Fdoi.org%2F10.1007%2F978-3-662-57621-2&amp;katkey=68311803">Grundlagen
+    der ebenen Geometrie</a></li></ul><div><br></div><div><strong>Prüfungs- und Benotungsregeln</strong></div><div><br></div><ul><li>Zum
+    erfolgreichen Absolvieren der Modulprüfung ist das Bestehen des Vortrags notwendig.</li><li>Die
+    Anmeldung zum Vortrag erfolgt über MÜSLI. Die Anmeldung wird am 15. August 2019
+    geschlossen. Wer danach noch im MÜSLI für das Seminar eingetragen ist, erhält
+    bei Nichtabhalten seines/ihres Vortrags die Note 5 (nicht bestanden).</li><li><strong>Benotung:</strong>
+    Die Note für das Modul besteht aus der Note des bestandenen Vortrags, bzw. der
+    Note 5.0, wenn der Vortrag nicht bestanden oder nicht abgehalten wurde.</li></ul>'
+  released: all
+  content_mode: video
+  passphrase: key
+  locale: en
+  sort: seminar
+  submission_deletion_date: '2025-04-15'
+ezt_proseminar_ss2026:
+  course: courses/ezt
+  term: terms/ss_2026
+  teacher: users/teacher
+  organizational_concept: '<!-- BEGIN app/views/lectures/organizational/_seminar.html.erb
+    --><div><strong>Termine</strong></div><div><br></div><ul><li>Seminar: Do 14-16
+    Uhr im SR 4 im Mathematikon, INF 205 (Dozent: <a href="https://en.wikipedia.org/wiki/Mickey_Mouse">Mickey
+    Mouse</a>)</li><li>Tutorium: n.V. bei <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie
+    Mouse</a></li><li>Vorbesprechung: Mi, 24. Juli 2019, 13.15 Uhr in SR 3&nbsp; im
+    Mathematikon, INF 205</li></ul><div><br></div><div><strong>Vorträge</strong></div><div><br>Im
+    Seminar wird jede TeilnehmerIn einen Vortrag halten. Die Vorträge werden bei der
+    <strong>Vorbesprechung</strong> vergeben. Ob nach der Vorbesprechung noch Themen
+    frei sind, können Sie bei der DozentIn in Erfahrung bringen. Beim Vortrag sollen
+    Sie&nbsp; den Ihnen zugewiesenen Stoff in der Ihnen zugewiesenen Zeit behandeln
+    - und zwar so, dass jeder dass jeder der Anwesenden davon profitiert. Um das zu
+    erreichen, ist es wichtig, dass Sie <em>frühzeitig</em> mit der Vorbereitung Ihres
+    Vortrags beginnen. Außerdem erwarten wir, dass Sie rechtzeitig vor dem Vortrag
+    Kontakt mit <a href="https://en.wikipedia.org/wiki/Minnie_Mouse">Minnie Mouse</a>
+    aufnehmen, um Details zum Inhalt und zur Strukturierung des Vortrags zu besprechen.
+    Rechtzeitig wäre beispielsweise zwei Wochen vor Ihrem Vortrag - eine Viertelstunde
+    vor Vortragsbeginn ist nicht rechtzeitig. Sie sollten daraufhin arbeiten, sämtliche
+    Details ihres Vortragsinhaltes gründlich zu verstehen. Auf der anderen Seite ist
+    es wichtig für Ihren Vortrag, dass Sie diesen so gestalten, dass Ihre KommilitonInnen
+    - für die der Inhalt Ihres Vortrages in der Regel neu sein wird - eine Chance
+    haben, diesen auch zu verstehen. Viele nützliche Hinweise zum Halten mathematischer
+    Vorträge finden Sie <a href="http://download.uni-mainz.de/mathematik/Topologie%20und%20Geometrie/Lehre/Wie-halte-ich-einen-Seminarvortrag.pdf">hier</a>.<br><br></div><div><strong>Literatur</strong></div><div><br></div><ul><li>G.
+    Fischer: <a href="https://link.springer.com/book/10.1007%2F978-3-322-88921-8">Analytische
+    Geometrie</a></li><li>H. Kasten, D. Vogel: <a href="http://www.ub.uni-heidelberg.de/cgi-bin/edok?dok=https%3A%2F%2Fdoi.org%2F10.1007%2F978-3-662-57621-2&amp;katkey=68311803">Grundlagen
+    der ebenen Geometrie</a></li></ul><div><br></div><div><strong>Prüfungs- und Benotungsregeln</strong></div><div><br></div><ul><li>Zum
+    erfolgreichen Absolvieren der Modulprüfung ist das Bestehen des Vortrags notwendig.</li><li>Die
+    Anmeldung zum Vortrag erfolgt über MÜSLI. Die Anmeldung wird am 15. August 2019
+    geschlossen. Wer danach noch im MÜSLI für das Seminar eingetragen ist, erhält
+    bei Nichtabhalten seines/ihres Vortrags die Note 5 (nicht bestanden).</li><li><strong>Benotung:</strong>
+    Die Note für das Modul besteht aus der Note des bestandenen Vortrags, bzw. der
+    Note 5.0, wenn der Vortrag nicht bestanden oder nicht abgehalten wurde.</li></ul><!--
+    END app/views/lectures/organizational/_seminar.html.erb -->'
+  released: all
+  content_mode: video
+  locale: de
+  sort: proseminar
+  forum_id: 5
+  home_intro: "<div><strong>Elementare Zahlentheorie</strong></div><div>Der Ablauf
+    ist der übliche: zwei Vorlesungen und eine Übung pro Woche, dazu ein Übungsblatt,
+    von dem die Hälfte der Punkte zur Klausurzulassung reicht.</div><div>Alles, was
+    Du dafür brauchst, steht hier: das Skript unter „Manuskript“, die Aufzeichnungen
+    unter „Lektionen“ und die Blätter unter „Übungen“. Die Sprechstunde findet dienstags
+    um 14 Uhr statt.</div>"
+  submission_deletion_date: '2026-10-15'
+drs_seminar_ss2026:
+  course: courses/drs
+  term: terms/ss_2026
+  teacher: users/teacher
+  released: t
+  content_mode: video
+  locale: en
+  sort: seminar
+  forum_id: 6
+  home_intro: "<div>Welcome to <strong>Demo Roster Seminar</strong>!</div><div>This
+    page holds everything the course comes with: the notes, the recording of every
+    session and the exercise sheets. A recording is usually up the evening after the
+    lecture, its chapter marks the day after that.</div><div>Sheets appear on Wednesdays
+    and are handed in by the Friday of the week after — in pairs, here on MaMpf. Your
+    tutor uploads the correction in the same place.</div>"
+  submission_deletion_date: '2026-10-15'
+cts_seminar_ws2026:
+  course: courses/cts
+  term: terms/ws_2026
+  teacher: users/teacher
+  released: t
+  content_mode: video
+  locale: en
+  sort: seminar
+  forum_id: 7
+  home_intro: "<div><strong>Campaign Test Seminar</strong> next term</div><div>The
+    course starts in the first week of term. Registration for the exercise groups
+    is already running: you name the slots that suit you, in the order they suit you,
+    and are given a group once the deadline has passed.</div><div>Your place in the
+    course does not hang on it — subscribing here is not a binding registration.</div>"
+  submission_deletion_date: '2027-02-15'
+sansibar_oder_der_letzte_grund_1370_lecture_ws2026:
+  course: courses/sansibar_oder_der_letzte_grund_1370
+  term: terms/ws_2026
+  teacher: users/yahaira_glover
+  released: all
+  content_mode: video
+  locale: en
+  sort: lecture
+  home_intro: "<div><strong>Demo Next Term (with registration)</strong> next term</div><div>The
+    course starts in the first week of term. Registration for the exercise groups
+    is already running: you name the slots that suit you, in the order they suit you,
+    and are given a group once the deadline has passed.</div><div>Your place in the
+    course does not hang on it — subscribing here is not a binding registration.</div>"
+  submission_deletion_date: '2027-02-15'
+haus_ohne_hueter_765_lecture_ws2026:
+  course: courses/haus_ohne_hueter_765
+  term: terms/ws_2026
+  teacher: users/adena_von
+  released: all
+  content_mode: video
+  locale: en
+  sort: lecture
+  home_intro: "<div>This is where <strong>Demo Next Term (subscribe only)</strong>
+    starts.</div><div>Ask what comes up in the forum; the tutors read it too. Anything
+    that matters is announced at the top of this page, and reaches you as a notification
+    once you have subscribed to the course.</div><div>The notes grow with the lecture.
+    Where something stays unclear, the linked revision from last term often helps.</div>"
+  submission_deletion_date: '2027-02-15'
+der_besuch_der_alten_dame_8131_lecture_ws2026:
+  course: courses/der_besuch_der_alten_dame_8131
+  term: terms/ws_2026
+  teacher: users/alexis_bayer
+  content_mode: video
+  locale: en
+  sort: lecture
+  home_intro: "<div><strong>Demo Next Term (unpublished)</strong></div><div>The week
+    runs as usual: two lectures, one exercise class, and a sheet of which half the
+    points admit you to the exam.</div><div>Everything you need for that is here:
+    the notes under “Manuscript”, the recordings under “Lessons” and the sheets under
+    “Exercises”. Office hours are on Tuesdays at 2 pm.</div>"
+  submission_deletion_date: '2027-02-15'
+ana_ss_2026_lecture_ss2026:
+  course: courses/ana_ss_2026
+  term: terms/ss_2026
+  teacher: users/teacher
+  released: all
+  content_mode: video
+  locale: en
+  sort: lecture
+  forum_id: 8
+  home_intro: "<div>Welcome to <strong>Analysis SS 2026</strong>!</div><div>This page
+    holds everything the course comes with: the notes, the recording of every session
+    and the exercise sheets. A recording is usually up the evening after the lecture,
+    its chapter marks the day after that.</div><div>Sheets appear on Wednesdays and
+    are handed in by the Friday of the week after — in pairs, here on MaMpf. Your
+    tutor uploads the correction in the same place.</div>"
+  submission_deletion_date: '2026-10-15'
+sem_ss_2026_seminar_ss2026:
+  course: courses/sem_ss_2026
+  term: terms/ss_2026
+  teacher: users/teacher
+  released: all
+  content_mode: video
+  locale: en
+  sort: seminar
+  forum_id: 9
+  home_intro: "<div>This is where <strong>Seminar SS 2026</strong> starts.</div><div>Ask
+    what comes up in the forum; the tutors read it too. Anything that matters is announced
+    at the top of this page, and reaches you as a notification once you have subscribed
+    to the course.</div><div>The notes grow with the lecture. Where something stays
+    unclear, the linked revision from last term often helps.</div>"
+  submission_deletion_date: '2026-10-15'
+ana_ws_2026_lecture_ws2026:
+  course: courses/ana_ws_2026
+  term: terms/ws_2026
+  teacher: users/teacher
+  released: all
+  content_mode: video
+  locale: en
+  sort: lecture
+  home_intro: "<div><strong>Analysis WS 2026</strong> next term</div><div>The course
+    starts in the first week of term. Registration for the exercise groups is already
+    running: you name the slots that suit you, in the order they suit you, and are
+    given a group once the deadline has passed.</div><div>Your place in the course
+    does not hang on it — subscribing here is not a binding registration.</div>"
+  submission_deletion_date: '2027-02-15'
+sem_ws_2026_seminar_ws2026:
+  course: courses/sem_ws_2026
+  term: terms/ws_2026
+  teacher: users/teacher
+  released: all
+  content_mode: video
+  locale: en
+  sort: seminar
+  home_intro: "<div><strong>Seminar WS 2026</strong> next term</div><div>The course
+    starts in the first week of term. Registration for the exercise groups is already
+    running: you name the slots that suit you, in the order they suit you, and are
+    given a group once the deadline has passed.</div><div>Your place in the course
+    does not hang on it — subscribing here is not a binding registration.</div>"
+  submission_deletion_date: '2027-02-15'
+rp_lecture_ws2026:
+  course: courses/rp
+  term: terms/ws_2026
+  teacher: users/teacher
+  released: all
+  content_mode: video
+  locale: en
+  sort: lecture
+  home_intro: "<div><strong>Registration Playground</strong> next term</div><div>The
+    course starts in the first week of term. Registration for the exercise groups
+    is already running: you name the slots that suit you, in the order they suit you,
+    and are given a group once the deadline has passed.</div><div>Your place in the
+    course does not hang on it — subscribing here is not a binding registration.</div>"
+  submission_deletion_date: '2027-02-15'
