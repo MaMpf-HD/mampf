@@ -24,20 +24,20 @@ module AssessmentHelper
   end
 
   def calculate_user_movement_map_assignment(assignment, lecture)
-    tutorial_memberships = lecture.tutorials
-                                  .includes(:tutorial_memberships)
-                                  .flat_map(&:tutorial_memberships)
-    participations = assignment.assessment&.assessment_participations&.to_a
+    participations = assignment.assessment&.assessment_participations
+                               &.includes(:tutorial)&.to_a
     return {} if participations.nil?
 
-    participation_user_ids = participations.map(&:user_id)
-    member_user_ids = tutorial_memberships.map(&:user_id)
+    current_tutorials = lecture.tutorials.includes(:tutorial_memberships)
+                               .each_with_object({}) do |tutorial, map|
+      tutorial.tutorial_memberships.each { |m| map[m.user_id] = tutorial }
+    end
+    participations_by_user = participations.index_by(&:user_id)
 
-    ids = (participation_user_ids | member_user_ids)
-
-    ids.each_with_object({}) do |user_id, result|
-      current_tutorial = tutorial_memberships.find { |m| m.user_id == user_id }&.tutorial
-      participation = participations.find { |p| p.user_id == user_id }
+    user_ids = participations_by_user.keys | current_tutorials.keys
+    user_ids.each_with_object({}) do |user_id, result|
+      current_tutorial = current_tutorials[user_id]
+      participation = participations_by_user[user_id]
       participated_tutorial = participation&.tutorial
 
       result[user_id] = {

@@ -151,6 +151,22 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#graders_with_inheritance" do
+    let(:lecture) { create(:lecture) }
+    let(:lecture_editor) { create(:confirmed_user) }
+    let(:module_editor) { create(:confirmed_user) }
+
+    before do
+      lecture.editors << lecture_editor
+      lecture.course.editors << module_editor
+    end
+
+    it "lists the teacher and the editors of lecture and module" do
+      expect(lecture.graders_with_inheritance)
+        .to contain_exactly(lecture.teacher, lecture_editor, module_editor)
+    end
+  end
+
   describe "#stale?" do
     context "when there is no active term" do
       it "returns false" do

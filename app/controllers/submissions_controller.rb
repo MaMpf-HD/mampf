@@ -260,21 +260,22 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  # A refused file goes back to the form with the reason; the row keeps the
+  # correction it had, not the one that was refused.
   def add_correction
     @submission.assign_attributes(correction_params)
-    @errors = @submission.check_file_properties_any(
-      @submission.correction&.metadata,
-      :correction
-    )
-
-    if @errors.present?
-      return render partial: "submissions/correction_wrap",
-                    locals: { submission: @submission }
+    errors = @submission.check_file_properties_any(@submission.correction&.metadata,
+                                                   :correction)[:correction]
+    if errors.blank? && @submission.save
+      send_correction_upload_email(@submission.users)
+      return render partial: "submissions/correction_wrap", locals: { submission: @submission }
     end
 
-    send_correction_upload_email(@submission.users) if @submission.save
-
-    render partial: "submissions/correction_wrap", locals: { submission: @submission }
+    errors = @submission.errors.map(&:message) if errors.blank?
+    @submission.reload
+    render partial: "submissions/correction_edit_wrap",
+           locals: { submission: @submission, errors: errors },
+           status: :unprocessable_content
   end
 
   def delete_correction

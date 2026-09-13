@@ -562,9 +562,8 @@ class Lecture < ApplicationRecord
     ([teacher] + editors.to_a + course.editors).to_a
   end
 
-  def graders_with_inheritance
-    [teacher]
-  end
+  # Point entry follows edit rights, module editors included.
+  alias graders_with_inheritance editors_with_inheritance
 
   # the next methods provide user related information about the lecture
 
