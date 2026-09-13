@@ -485,8 +485,8 @@ de:
       status: "Status"
       grade: "Note"
       note: "Notiz"
-      graded_by: "Bewertet von"
-      graded_at: "Bewertet am"
+      graded: "Bewertet"
+      graded_ago: "vor %{time}"
       pending: "Ausstehend"
       grade_for: 'Note für %{name}'
       note_for: 'Notiz für %{name}'

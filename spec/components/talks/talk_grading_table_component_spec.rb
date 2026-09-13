@@ -6,12 +6,6 @@ RSpec.describe(TalkGradingTableComponent, type: :component) do
 
   let(:component) { described_class.new(seminar: seminar) }
 
-  describe "#grading_enabled?" do
-    it "always returns true" do
-      expect(component.grading_enabled?).to eq(true)
-    end
-  end
-
   describe "#gradable_talks" do
     let(:speaker) { create(:confirmed_user) }
 
@@ -93,9 +87,33 @@ RSpec.describe(TalkGradingTableComponent, type: :component) do
     end
   end
 
-  describe "#possible_statuses" do
-    it "returns pending and reviewed" do
-      expect(component.possible_statuses).to eq(["pending", "reviewed"])
+  describe "#rows" do
+    let(:first_speaker) { create(:confirmed_user) }
+    let(:second_speaker) { create(:confirmed_user) }
+    let!(:talk) { create(:talk, lecture: seminar, dates: [1.week.from_now]) }
+    let!(:later_talk) { create(:talk, lecture: seminar, dates: [2.weeks.from_now]) }
+
+    before do
+      create(:speaker_talk_join, talk: talk, speaker: first_speaker)
+      create(:speaker_talk_join, talk: talk, speaker: second_speaker)
+      create(:speaker_talk_join, talk: later_talk, speaker: first_speaker)
+      seminar.reload
+    end
+
+    it "has one row per speaker, talk by talk" do
+      expect(component.rows.map { |row| [row.assessment.assessable, row.user] })
+        .to eq([[talk, first_speaker], [talk, second_speaker], [later_talk, first_speaker]])
+    end
+
+    it "counts the rows' states for the summary" do
+      expect(component.row_statuses).to eq([:pending_grading] * 3)
+    end
+  end
+
+  describe "#status_options" do
+    it "offers the states a talk's row can show, by their labels" do
+      expect(component.status_options.map(&:first))
+        .to eq(["reviewed", "pending_grading", "absent", "exempt"])
     end
   end
 

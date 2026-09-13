@@ -46,6 +46,15 @@ RSpec.describe(Assessment::GradesController, type: :request) do
         expect(response.body).to include("participation-row-#{participation.id}")
       end
 
+      it "counts the row as graded in the summary" do
+        subject
+        summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+
+        expect(summary.text).to include(
+          I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1)
+        )
+      end
+
       it "sets a success flash notice" do
         subject
         expect(flash.now[:notice]).to eq(I18n.t("assessment.grades_updated"))

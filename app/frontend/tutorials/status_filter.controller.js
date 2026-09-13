@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 // Narrows the rows to a name, a state and a group. Rows come back one at a
 // time after a save, so every new row is measured against the filters too.
 export default class extends Controller {
-  static targets = ["row", "group", "name", "status", "tutorial", "reset", "count", "empty"];
+  static targets = ["row", "name", "status", "tutorial", "reset", "count", "empty"];
 
   rowTargetConnected(row) {
     if (!this.hasNameTarget) {
@@ -53,17 +53,7 @@ export default class extends Controller {
       && (tutorial === "all" || (row.dataset.statusFilterTutorial || "none") === tutorial);
   }
 
-  // A talk's rows sit under a heading; the heading goes with the last of them.
-  showGroups() {
-    const visible = new Set(this.rowTargets.filter(row => !row.hidden)
-      .map(row => row.dataset.statusFilterGroupId));
-    this.groupTargets.forEach((group) => {
-      group.hidden = !visible.has(group.dataset.statusFilterGroupId);
-    });
-  }
-
   report() {
-    this.showGroups();
     const total = this.rowTargets.length;
     const shown = this.rowTargets.filter(row => !row.hidden).length;
     if (this.hasResetTarget) {

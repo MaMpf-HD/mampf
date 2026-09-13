@@ -68,14 +68,23 @@ thead th.sticky-col {
   }
 }
 
+@include column(talk);
 @include column(team);
 @include column(tutorial);
 @include column(status);
 @include column(task);
 @include column(total);
+@include column(grade);
+@include column(graded);
 @include column(save);
 @include column(hand-in);
 @include column(correction);
+
+/* The note is the one column that may grow: whatever the others leave over
+   goes to it, and it never falls below its own width. */
+.note-col {
+  min-width: var(--note-width);
+}
 
 .table-wrapper::before,
 .table-wrapper::after {
@@ -124,15 +133,6 @@ thead th.sticky-col {
   color: #6c757d;
   font-weight: 500;
   padding: 10px 12px;
-}
-
-/* A talk's rows sit under its title. Bootstrap paints every cell from its
-   own variables, so the colour goes in through them. */
-.group-heading {
-  --bs-table-bg: #c7ddf0;
-  --bs-table-color: #254a68;
-  padding-top: 1px;
-  padding-bottom: 1px;
 }
 
 /* An action waits quietly until the pointer or the keyboard reaches it;

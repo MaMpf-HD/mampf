@@ -284,26 +284,48 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  describe "#graded_at_full" do
-    context "when graded_at is present" do
-      before do
-        allow(vc_test_controller).to receive(:current_user).and_return(tutor)
-        render_inline(component_tutor_talk)
-      end
-
-      it "returns the localized full date" do
-        expect(component_tutor_talk.graded_at_full).to eq(
-          I18n.l(participation_talk.graded_at, format: :short)
-        )
-      end
+  describe "#graded_display" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      render_inline(component_tutor_talk)
     end
 
-    context "when graded_at is nil" do
-      before { allow(participation).to receive(:graded_at).and_return(nil) }
+    it "names the grader and the date on one line" do
+      expect(component_tutor_talk.graded_display).to eq(
+        "#{tutor.tutorial_name} · #{I18n.l(participation_talk.graded_at, format: :file_time)}"
+      )
+    end
 
-      it "returns nil" do
-        expect(component_tutor.graded_at_full).to be_nil
-      end
+    it "says how long ago that was for the tooltip" do
+      ago = component_tutor_talk.helpers.time_ago_in_words(participation_talk.graded_at)
+
+      expect(component_tutor_talk.graded_ago)
+        .to eq(I18n.t("assessment.grade_talk_row.graded_ago", time: ago))
+    end
+
+    it "is nothing while the row is not graded" do
+      participation_talk.update!(graded_at: nil, grader: nil)
+
+      expect(component_tutor_talk.graded_display).to be_nil
+    end
+  end
+
+  describe "a talk's row" do
+    let(:row) do
+      allow(vc_test_controller).to receive(:current_user).and_return(teacher)
+      render_inline(component_teacher_talk)
+    end
+
+    it "names the talk in its own cell, linked to the talk" do
+      link = row.css("td.talk-col a").first
+
+      expect(link.text.strip).to eq(talk.title)
+      expect(link["href"]).to eq("/talks/#{talk.id}/edit")
+    end
+
+    it "lets the name filter find the row by the talk as well" do
+      expect(row.css("tr").first["data-status-filter-name"])
+        .to eq("#{talk.title} #{student.tutorial_name}")
     end
   end
 

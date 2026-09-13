@@ -484,8 +484,8 @@ en:
       status: "Status"
       grade: "Grade"
       note: "Note"
-      graded_by: "Graded by"
-      graded_at: "Graded at"
+      graded: "Graded"
+      graded_ago: "%{time} ago"
       pending: "Pending"
       grade_for: 'Grade for %{name}'
       note_for: 'Note for %{name}'

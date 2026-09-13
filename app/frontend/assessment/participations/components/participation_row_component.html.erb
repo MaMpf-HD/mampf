@@ -10,9 +10,17 @@
   data-status-filter-target="row"
   data-status-filter-status="<%= status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
-  data-status-filter-name="<%= @user.tutorial_name %>"
-  data-status-filter-group-id="<%= @group_id %>"
+  data-status-filter-name="<%= filter_name %>"
 >
+  <% if layout.show?(:talk) %>
+    <td class="<%= layout.column_class(:talk) %>">
+      <%= link_to @assessable.title, edit_talk_path(@assessable),
+                  class: "link-body-emphasis link-underline-opacity-25 link-underline-opacity-100-hover",
+                  target: "_blank",
+                  rel: "noopener" %>
+    </td>
+  <% end %>
+
   <td class="<%= layout.column_class(:team) %>">
     <div class="d-flex justify-content-between align-items-start">
       <div>
@@ -112,12 +120,9 @@
           </span>
         <% end %>
       </td>
-      <td class="text-muted small <%= layout.column_class(:graded_by) %>">
-        <%= grader_display %>
-      </td>
-      <td class="text-muted small <%= layout.column_class(:graded_at) %>">
-        <% if graded_at_relative %>
-          <span title="<%= graded_at_full %>"><%= graded_at_relative %></span>
+      <td class="text-muted small <%= layout.column_class(:graded) %>">
+        <% if graded_display %>
+          <span title="<%= graded_ago %>"><%= graded_display %></span>
         <% end %>
       </td>
     <% end %>

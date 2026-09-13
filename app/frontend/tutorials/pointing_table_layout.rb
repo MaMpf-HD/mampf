@@ -11,17 +11,18 @@ class PointingTableLayout
     status: 170,
     task: 90,
     total: 100,
+    talk: 200,
     grade: 110,
     note: 180,
-    graded_by: 120,
-    graded_at: 120,
+    graded: 220,
     save: 90,
     hand_in: 140,
     correction: 140
   }.freeze
 
-  # Two pins for every table: the person on the left, saving on the right;
-  # everything else scrolls, so the marks get the width between them.
+  # Whoever the row belongs to is pinned on the left, saving on the right;
+  # everything else scrolls, so the marks get the width between them. A
+  # talk's rows belong to the talk as much as to the speaker, so both stay.
   def self.for(assessable:, grading_scope: nil)
     case assessable
     when Assignment
@@ -31,8 +32,8 @@ class PointingTableLayout
       columns += [:hand_in, :correction]
       new(columns: columns, body: :tasks)
     when Talk
-      new(columns: [:team, :status, :grade, :note, :graded_by, :graded_at, :save],
-          body: :single_grade)
+      new(columns: [:talk, :team, :status, :grade, :note, :graded, :save],
+          body: :single_grade, left: [:talk, :team])
     else
       raise(UnsupportedAssessableError, "No pointing table layout for #{assessable.class}")
     end

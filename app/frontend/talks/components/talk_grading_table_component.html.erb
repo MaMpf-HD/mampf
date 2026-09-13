@@ -1,38 +1,11 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <% if gradable_talks.any? %>
     <div data-controller="status-filter">
-      <div class="d-flex flex-wrap align-items-end gap-2 m-3">
-        <div>
-          <label class="form-label small mb-1" for="talk-filter-name">
-            <%= t('assessment.grading_tutorial.filter_name') %>
-          </label>
+      <div class="m-3">
+        <%= render PointingSummaryComponent.new(statuses: row_statuses, hand_ins: false) %>
 
-          <input
-            type="search"
-            id="talk-filter-name"
-            class="form-control form-control-sm"
-            autocomplete="off"
-            data-status-filter-target="name"
-            data-action="input->status-filter#search"
-          >
-        </div>
-
-        <button
-          type="button"
-          class="btn btn-link btn-sm"
-          hidden
-          data-status-filter-target="reset"
-          data-action="click->status-filter#reset"
-        >
-          <%= t("assessment.grading_tutorial.filter_reset") %>
-        </button>
-
-        <span
-          class="small text-muted pb-1"
-          hidden
-          data-status-filter-target="count"
-          data-template="<%= t("assessment.grading_tutorial.filter_count", shown: "%{shown}", total: "%{total}") %>"
-        ></span>
+        <%= render PointingFilterComponent.new(id: "talks-#{@seminar.id}",
+                                               status_options: status_options) %>
       </div>
 
       <div
@@ -50,33 +23,13 @@
             </thead>
 
             <tbody>
-              <% gradable_talks.each do |talk| %>
-                <tr
-                  class="group-header"
-                  data-status-filter-target="group"
-                  data-status-filter-group-id="<%= talk.id %>"
-                >
-                  <td
-                    colspan="<%= layout.columns.size %>"
-                    class="group-heading"
-                  >
-                    <span class="fw-semibold"><%= talk.title %></span>
-                  </td>
-                </tr>
-
-                <% talk.speakers.each do |speaker| %>
-                  <% participation = participation_for(talk.assessment, speaker) %>
-
-                  <% if participation %>
-                    <%= render ParticipationRowComponent.new(
-                      participation: participation,
-                      grading_scope: @seminar,
-                      assessment: talk.assessment,
-                      table_option: :grading,
-                      group_id: talk.id
-                    ) %>
-                  <% end %>
-                <% end %>
+              <% rows.each do |participation| %>
+                <%= render ParticipationRowComponent.new(
+                  participation: participation,
+                  grading_scope: @seminar,
+                  assessment: participation.assessment,
+                  table_option: :grading
+                ) %>
               <% end %>
             </tbody>
           </table>

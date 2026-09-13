@@ -28,7 +28,8 @@ RSpec.describe(PointingTableLayout) do
       layout = described_class.for(assessable: build_stubbed(:talk))
 
       expect(layout.body).to eq(:single_grade)
-      expect(layout.columns).to eq([:team, :status, :grade, :note, :graded_by, :graded_at, :save])
+      expect(layout.columns).to eq([:talk, :team, :status, :grade, :note, :graded, :save])
+      expect(layout.left).to eq([:talk, :team])
     end
 
     it "knows no table for anything else" do

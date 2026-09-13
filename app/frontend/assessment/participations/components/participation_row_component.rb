@@ -4,17 +4,13 @@
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  # A talk's rows are grouped under the talk; the filter hides a group whose
-  # rows are all hidden.
-  def initialize(participation:, assessment:, grading_scope:, group_id: nil,
-                 table_option: :pointing)
+  def initialize(participation:, assessment:, grading_scope:, table_option: :pointing)
     super()
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
     @lecture = @assessable.lecture
     @grading_scope = grading_scope
-    @group_id = group_id
     @table_option = table_option
     @user ||= @participation&.user
     @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
@@ -86,6 +82,11 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def status
     @participation.display_status
+  end
+
+  # The name filter finds a talk's rows by the talk as well as by the person.
+  def filter_name
+    [(@assessable.title if layout.show?(:talk)), @user.tutorial_name].compact.join(" ")
   end
 
   def row_id
@@ -247,15 +248,18 @@ class ParticipationRowComponent < ViewComponent::Base
     @participation&.grader&.tutorial_name
   end
 
-  def graded_at_relative
+  # Who graded and when, on one line; the date is a record, the tooltip says
+  # how long ago that was.
+  def graded_display
     return nil unless @participation&.graded_at
 
-    helpers.time_ago_in_words(@participation.graded_at)
+    [grader_display, I18n.l(@participation.graded_at, format: :file_time)].compact.join(" · ")
   end
 
-  def graded_at_full
+  def graded_ago
     return nil unless @participation&.graded_at
 
-    I18n.l(@participation.graded_at, format: :short)
+    t("assessment.grade_talk_row.graded_ago",
+      time: helpers.time_ago_in_words(@participation.graded_at))
   end
 end

@@ -128,26 +128,39 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
     end
     let(:component) { header(talk, scope: seminar) }
 
-    it "has the grade, note, grader and date instead of tasks" do
+    it "has the talk, grade, note and grading instead of tasks" do
       classes = classes_for(component)
 
-      expect(classes).to include(a_string_matching(/grade-col/), a_string_matching(/note-col/),
-                                 a_string_matching(/graded-by-col/),
-                                 a_string_matching(/graded-at-col/))
+      expect(classes).to include(a_string_matching(/talk-col/), a_string_matching(/grade-col/),
+                                 a_string_matching(/note-col/), a_string_matching(/graded-col/))
       expect(classes)
         .not_to include(a_string_matching(/task-col|total-col|hand-in-col|correction-col/))
     end
 
-    it "labels them" do
-      grade = columns_for(component).find { |c| c.css_class.include?("grade-col") }
+    it "labels them, the person as the speaker" do
+      columns = columns_for(component)
+      labels = columns.map(&:label)
 
-      expect(grade.label).to eq(I18n.t("assessment.grade_talk_row.grade"))
+      expect(labels).to include(I18n.t("basics.talk"),
+                                I18n.t("assessment.grade_talk_row.speaker"),
+                                I18n.t("assessment.grade_talk_row.grade"),
+                                I18n.t("assessment.grade_talk_row.graded"))
     end
 
-    it "pins the team and the save column" do
+    it "starts text headings at the left and centres the rest" do
+      by_column = columns_for(component).to_h do |column|
+        [column.css_class[/(\w[\w-]*)-col/, 1], column.css_class]
+      end
+
+      expect(by_column.slice("talk", "team", "note", "graded").values)
+        .to all(satisfy { |css| css.exclude?("text-center") })
+      expect(by_column.slice("status", "grade", "save").values).to all(include("text-center"))
+    end
+
+    it "pins the talk, the speaker and the save column" do
       sticky = classes_for(component).select { |c| c.include?("sticky-col") }
 
-      expect(sticky.map { |c| c[/sticky-col (\w+)-col/, 1] }).to eq(["team", "save"])
+      expect(sticky.map { |c| c[/sticky-col (\w+)-col/, 1] }).to eq(["talk", "team", "save"])
     end
   end
 
