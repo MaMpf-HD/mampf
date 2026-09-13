@@ -105,7 +105,7 @@
       <% end %>
 
       <% component.with_tab(name: "assessments", label: t("assessment.assessments")) do %>
-        <div class="container medium-width lecture-pane">
+        <div class="container-fluid medium-width lecture-pane">
           <%= turbo_frame_tag "assessment-assessments-frame",
                               src: assessment_frame_src(@lecture), loading: "lazy" do %>
             <div class="text-center my-4">
@@ -118,7 +118,7 @@
       <% end %>
 
       <% component.with_tab(name: "exams", label: t("assessment.exams")) do %>
-        <div class="container medium-width lecture-pane">
+        <div class="container-fluid medium-width lecture-pane">
           <div id="exams_container">
             <%= render partial: 'exams/list', locals: { lecture: @lecture } %>
           </div>
