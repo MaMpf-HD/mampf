@@ -4,6 +4,19 @@ module Assessment
     class ExamGraderError < StandardError; end
 
     class << self
+      def score_tasks_by_participation!(participation, points_by_task_id, scorer)
+        raise_if_errors!(validate_participation_present(participation))
+
+        exam = participation.assessment&.assessable
+
+        raise_if_errors!(
+          validate_participation_has_exam(participation, exam),
+          validate_exam_grading_open(exam)
+        )
+
+        PointEntryService.enter_points(participation, points_by_task_id, scorer, nil)
+      end
+
       def find_participation(assessment, user)
         return if assessment.nil? || user.nil?
 
@@ -11,13 +24,6 @@ module Assessment
           assessment_id: assessment.id,
           user_id: user.id
         )
-      end
-
-      def init_participation(assessment, user)
-        return if assessment.nil? || user.nil?
-
-        Participation.find_by(assessment_id: assessment.id, user_id: user.id) ||
-          create_participation(assessment, user)
       end
 
       def create_participation(assessment, user)
@@ -47,6 +53,32 @@ module Assessment
           memo[key] = create_participation(assessment, user)
         end
       end
+
+      private
+
+        def validate_exam_grading_open(exam)
+          return if exam.nil? || exam.grading_open?
+
+          I18n.t("assessment.task_points.cannot_score_not_grading_open_exam")
+        end
+
+        def validate_participation_has_exam(participation, exam)
+          return if exam.present?
+
+          I18n.t("assessment.task_points.participation_id_has_no_exam",
+                 participation_id: participation.id)
+        end
+
+        def validate_participation_present(participation)
+          return if participation.present?
+
+          I18n.t("assessment.errors.no_participation")
+        end
+
+        def raise_if_errors!(*errors)
+          errors = errors.flatten.compact
+          raise(ExamGraderError, errors.join("; ")) if errors.any?
+        end
     end
   end
 end

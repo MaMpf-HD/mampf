@@ -99,10 +99,19 @@ module Assessment
         return
       end
 
-      ActiveRecord::Base.transaction do
-        SubmissionGraderService.score_tasks_by_participation!(
-          @participation, task_points, current_user
-        )
+      case @assessable
+      when Assignment
+        ActiveRecord::Base.transaction do
+          SubmissionGraderService.score_tasks_by_participation!(
+            @participation, task_points, current_user
+          )
+        end
+      when Exam
+        ActiveRecord::Base.transaction do
+          ExamGraderService.score_tasks_by_participation!(
+            @participation, task_points, current_user
+          )
+        end
       end
 
       @participation = @participation.reload

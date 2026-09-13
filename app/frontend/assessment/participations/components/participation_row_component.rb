@@ -193,36 +193,38 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
+  # TODO: think abt better button styling
   def mark_absent_button
     if @participation.absent?
       simple_action_button(icon: "bi-person-check",
                            label: "Remove absent",
                            url: remove_absent_url,
+                           variant: :danger,
                            disabled: !grading_enabled? || !can_mark_absent?)
-    else
+    elsif @participation.pending?
       simple_action_button(icon: "bi-person-x", label: "Mark absent",
-                           url: absent_url,
+                           url: absent_url, variant: :danger,
                            disabled: !grading_enabled? || !can_mark_absent?)
     end
   end
 
   def mark_exempt_button
     if @participation.exempt?
-      simple_action_button(icon: "bi-person-check",
-                           label: "Remove exempt",
-                           url: remove_exempt_url,
+      simple_action_button(icon: "bi-person-check", label: "Remove exempt",
+                           url: remove_exempt_url, variant: :info,
                            disabled: !grading_enabled? || !can_mark_exempt?)
-    else
+    elsif @participation.pending?
       tag.button(type: "button",
-                 class: button_class_name,
+                 class: button_class_name(:info),
                  data: {
                    action: "click->participation-row#openExemptModal",
-                   url: exempt_url
+                   url: exempt_url,
+                   note: @participation.note
                  },
                  title: "Mark exempt",
                  aria: { label: "Mark exempt" },
                  disabled: !grading_enabled? || !can_mark_exempt?) do
-        tag.i(class: "bi bi-person-x")
+        tag.i(class: "bi bi-shield-check")
       end
     end
   end
@@ -343,16 +345,16 @@ class ParticipationRowComponent < ViewComponent::Base
 
   private
 
-    def simple_action_button(icon:, label:, url:, disabled:, remove: false)
+    def simple_action_button(icon:, label:, url:, disabled:, variant: :secondary, remove: false)
       button_to(url, method: :patch, params: (remove ? { remove: true } : {}),
-                     class: button_class_name, title: label,
+                     class: button_class_name(variant), title: label,
                      disabled: disabled) do
         tag.i(class: "bi #{icon}")
       end
     end
 
-    def button_class_name
-      "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
+    def button_class_name(variant = :secondary)
+      "btn btn-sm btn-outline-#{variant} d-inline-flex align-items-center " \
         "justify-content-center text-nowrap px-2 py-1 lh-1"
     end
 end

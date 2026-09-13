@@ -24,13 +24,14 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
     absent: { text: "\u00B7", color: "muted" }
   }.freeze
 
-  attr_reader :status, :variant, :points
+  attr_reader :status, :variant, :points, :note
 
-  def initialize(status:, variant: :full, points: nil)
+  def initialize(status:, variant: :full, points: nil, note: nil)
     super()
     @status = status.to_sym
     @variant = variant.to_sym
     @points = points
+    @note = note
   end
 
   def config
@@ -39,6 +40,15 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
 
   def label
     I18n.t("student_performance.records.columns.#{@status}")
+  end
+
+  def sub_label
+    case @status
+    when :exempt
+      exempt_note_icon
+    else
+      false
+    end
   end
 
   def text_class
@@ -84,5 +94,16 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
       number_to_rounded(
         value || 0, precision: 1, strip_insignificant_zeros: true
       )
+    end
+
+    def exempt_note_icon
+      return unless @status == :exempt && @note.present?
+
+      tag.i(class: "bi bi-info-circle ms-1",
+            role: "button",
+            data: {
+              action: "click->participation-row#viewExemptNote",
+              note: @note
+            })
     end
 end

@@ -2,6 +2,10 @@
   <span class="<%= text_class %>">
     <i class="<%= icon_class %>"></i>
     <%= label %>
+
+    <% if sub_label %>
+      <%= sub_label %>
+    <% end %>
   </span>
 <% else %>
   <%= render_compact %>

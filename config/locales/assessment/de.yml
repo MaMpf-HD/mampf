@@ -239,6 +239,7 @@ de:
       assignment_missing_assessment: 'Für diese Hausaufgabe ist keine Bewertung konfiguriert.'
       assessment_not_found: 'Bewertung für diese Hausaufgabe nicht gefunden.'
       cannot_score_not_grading_open_assignment: 'Punkte können für diese Hausaufgaben nicht eingetragen werden.'
+      cannot_score_not_grading_open_exam: 'Punkte können für diese Prüfung nicht eingetragen werden.'
       participation_id_missing_tutorial: 'Teilnahme %{participation_id} ist keinem Tutorium zugeordnet. Eine Bewertung ist nur möglich, wenn der Benutzer einem Tutorium zugeordnet ist.'
       init_participation_missing_args: 'Bewertung und Benutzer müssen angegeben sein.'
       assessment_does_not_require_points: 'Bewertung %{assessment_id} erfordert keine Punkteingabe.'
@@ -250,6 +251,7 @@ de:
       submission_id_has_no_assignment: 'Abgabe %{submission_id} hat keine zugehörige Hausaufgabe'
       assignment_id_has_no_assessment: 'Hausaufgabe %{assignment_id} hat keine zugehörige Bewertung'
       participation_id_has_no_assignment: 'Teilnahme %{participation_id} hat keine zugehörige Hausaufgabe'
+      participation_id_has_no_exam: 'Teilnahme %{participation_id} hat keine zugehörige Prüfung'
       participation_has_task_points: 'Für diese Teilnahme wurden bereits Punkte eingetragen, daher kann sie nicht gelöscht werden.'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'

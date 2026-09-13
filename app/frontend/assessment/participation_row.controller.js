@@ -47,8 +47,13 @@ export default class extends Controller {
 
   openExemptModal(event) {
     const url = event.currentTarget.dataset.url;
-    console.log("Dispatching exempt:open event with url:", url);
-    window.dispatchEvent(new CustomEvent("exempt:open", { detail: { url } }));
+    const note = event.currentTarget.dataset.note;
+    window.dispatchEvent(new CustomEvent("exempt:open", { detail: { url, note } }));
+  }
+
+  viewExemptNote(event) {
+    const note = event.currentTarget.dataset.note;
+    window.dispatchEvent(new CustomEvent("exempt:view", { detail: { note } }));
   }
 
   // --- Change Handlers ---

@@ -45,7 +45,8 @@ module Assessment
 
       participation.update!(
         status: :pending,
-        submitted_at: Time.current
+        submitted_at: Time.current,
+        note: nil
       )
     end
 
