@@ -17,27 +17,30 @@
   <td class="<%= layout.column_class(:team) %>">
     <div class="d-flex justify-content-between align-items-start">
       <div>
-        <% @submission.users.each do |user| %>
+        <% @submission.users.each_with_index do |user, index| %>
           <div>
             <%= user.tutorial_name %>
             <% movement = movement_info_for_user(user) %>
 
             <% if movement %>
               <i
-                class="bi bi-info-circle me-2 ps-1"
+                class="bi bi-info-circle ms-1 text-secondary"
+                role="img"
                 title="<%= movement %>"
-                data-bs-toggle="tooltip"
+                aria-label="<%= movement %>"
+              ></i>
+            <% end %>
+
+            <%# The hand-in is late as a whole; the mark sits on the team's first line. %>
+            <% if index.zero? && @submission.too_late? %>
+              <i
+                class="bi bi-exclamation-triangle-fill ms-1 text-warning-emphasis"
+                role="img"
+                title="<%= late_submission_info(@submission, @submission.tutorial) %>"
+                aria-label="<%= late_submission_info(@submission, @submission.tutorial) %>"
               ></i>
             <% end %>
           </div>
-        <% end %>
-
-        <% if @submission.too_late? %>
-          <i
-            class="fas fa-exclamation-triangle"
-            data-bs-toggle="tooltip"
-            title="<%= late_submission_info(@submission, @submission.tutorial) %>"
-          ></i>
         <% end %>
       </div>
 
@@ -131,22 +134,23 @@
     data-id="<%= @submission.id %>"
   >
     <div class="d-inline-flex align-items-center gap-1">
+      <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
+        <%= link_to show_submission_manuscript_path(@submission),
+                  class: "d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5 text-decoration-none",
+                  target: "_blank",
+                  rel: "noopener",
+                  title: t('assessment.grading_tutorial.show_hand_in'),
+                  aria: { label: t('assessment.grading_tutorial.show_hand_in') } do %>
+          <i class="bi bi-file-earmark-text"></i>
+        <% end %>
+      <% end %>
+
       <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
-                class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                class: "d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5 text-decoration-none",
                 data: { turbo: false },
                 title: t('assessment.grading_tutorial.download_hand_in'),
                 aria: { label: t('assessment.grading_tutorial.download_hand_in') } do %>
         <i class="bi bi-download"></i>
-      <% end %>
-
-      <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
-        <%= link_to show_submission_manuscript_path(@submission),
-                  class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                  data: { turbo: false },
-                  title: t('assessment.grading_tutorial.show_hand_in'),
-                  aria: { label: t('assessment.grading_tutorial.show_hand_in') } do %>
-          <i class="bi bi-eye"></i>
-        <% end %>
       <% end %>
 
       <% if helpers.current_user.in?(@submission.tutorial.tutors) %>

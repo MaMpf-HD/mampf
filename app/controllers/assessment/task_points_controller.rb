@@ -4,7 +4,7 @@ module Assessment
                   only: [:update_team_multi, :update_team,
                          :update_participation, :refresh_submission,
                          :refresh_participation, :mark_as_participated,
-                         :mark_as_participated_multi, :remove_participated]
+                         :remove_participated]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update_team_multi,
                                                  :update_team,
@@ -15,7 +15,6 @@ module Assessment
     before_action :refuse_without_row, only: [:update_participation,
                                               :refresh_participation,
                                               :mark_as_participated,
-                                              :mark_as_participated_multi,
                                               :remove_participated]
 
     rescue_from ActiveRecord::RecordNotFound,
@@ -125,22 +124,6 @@ module Assessment
       end
 
       render turbo_stream: [record_paper_hand_in(user), summary_stream]
-    end
-
-    # One request for the pile of paper sheets; a row the tutor may not mark,
-    # or one that is nobody's, rolls the whole pile back.
-    def mark_as_participated_multi
-      ids = Array(params[:user_ids]).map(&:to_s).uniq
-      users = @lecture.members.where(id: ids).to_a
-      if users.size != ids.size
-        return respond_with_flash(:alert, t("assessment.errors.user_not_found"),
-                                  status: :not_found)
-      end
-
-      streams = ActiveRecord::Base.transaction do
-        users.map { |user| record_paper_hand_in(user) }
-      end
-      render turbo_stream: streams + [summary_stream]
     end
 
     def remove_participated

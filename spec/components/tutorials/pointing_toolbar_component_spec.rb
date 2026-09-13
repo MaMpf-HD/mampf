@@ -81,6 +81,5 @@ RSpec.describe(PointingToolbarComponent, type: :component) do
     rendered = render_inline(toolbar(scope: tutorial))
 
     expect(rendered.text).not_to include(I18n.t("assessment.grading_tutorial.save_all"))
-    expect(rendered.css("form#paper-hand-ins")).to be_empty
   end
 end

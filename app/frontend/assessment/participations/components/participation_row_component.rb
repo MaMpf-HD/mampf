@@ -174,8 +174,8 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def save_row_button(allow_grading)
-    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
-                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+    class_name = "btn btn-sm btn-link text-body-tertiary d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1 fs-5"
 
     tag.button(type: "button",
                class: class_name,
@@ -184,13 +184,13 @@ class ParticipationRowComponent < ViewComponent::Base
                title: helpers.t("assessment.grading_tutorial.save_row"),
                aria: { label: helpers.t("assessment.grading_tutorial.save_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
-      tag.i(class: "far fa-save")
+      tag.i(class: "bi bi-floppy-fill")
     end
   end
 
   def refresh_row_button(allow_grading)
-    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
-                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+    class_name = "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1 fs-5"
 
     tag.button(type: "button",
                class: class_name,
@@ -198,7 +198,7 @@ class ParticipationRowComponent < ViewComponent::Base
                title: helpers.t("assessment.grading_tutorial.reload_row"),
                aria: { label: helpers.t("assessment.grading_tutorial.reload_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
-      tag.i(class: "bi bi-arrow-clockwise")
+      tag.i(class: "bi bi-arrow-counterclockwise")
     end
   end
 

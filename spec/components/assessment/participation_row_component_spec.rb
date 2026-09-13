@@ -214,9 +214,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       render_inline(component_tutor)
     end
 
-    it "renders a button with the save icon" do
+    it "names the save button for a reader" do
       html = component_tutor.save_row_button(true)
-      expect(html).to include("fa-save")
+      expect(html).to include(I18n.t("assessment.grading_tutorial.save_row"))
     end
 
     context "when grading is not allowed" do
@@ -233,9 +233,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       render_inline(component_tutor)
     end
 
-    it "renders a button with the refresh icon" do
+    it "names the reload button for a reader" do
       html = component_tutor.refresh_row_button(true)
-      expect(html).to include("bi-arrow-clockwise")
+      expect(html).to include(I18n.t("assessment.grading_tutorial.reload_row"))
     end
 
     context "when grading is not allowed" do

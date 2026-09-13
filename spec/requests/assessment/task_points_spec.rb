@@ -634,16 +634,6 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(response).to redirect_to(root_path)
           expect(held_elsewhere.reload.submitted_at).to be_nil
         end
-
-        it "turns the tutor away from the pile as well" do
-          patch mark_users_as_participated_path,
-                params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
-                          grading_scope_type: "tutorial", user_ids: [student.id] },
-                as: :turbo_stream
-
-          expect(response).to redirect_to(root_path)
-          expect(held_elsewhere.reload.submitted_at).to be_nil
-        end
       end
 
       # This page draws rows for assignments; an exam participation has no
@@ -667,65 +657,6 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(exam_participation.reload.submitted_at).to be_nil
         end
       end
-    end
-  end
-
-  describe "PATCH /participations/mark_as_participated_multi" do
-    let(:classmate) { create(:confirmed_user) }
-
-    before do
-      create(:tutorial_membership, user: classmate, tutorial: tutorial)
-      create(:lecture_membership, user: classmate, lecture: lecture)
-      tutorial.tutors << tutor
-      sign_in tutor
-    end
-
-    it "records the pile and answers with one row per sheet" do
-      patch mark_users_as_participated_path,
-            params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
-                      grading_scope_type: "tutorial",
-                      user_ids: [student.id, classmate.id] },
-            as: :turbo_stream
-
-      stamped = assessment.assessment_participations.where(user: [student, classmate])
-      expect(stamped.map(&:submitted_at)).to all(be_present)
-      expect(response.body.scan("<turbo-stream").size).to eq(3)
-      expect(response.body).to include("target=\"participation-row-user-#{student.id}\"")
-      expect(response.body).to include("target=\"participation-row-user-#{classmate.id}\"")
-      expect(response.body).to include("target=\"pointing-summary\"")
-    end
-
-    # One sheet the tutor may not mark rolls the whole pile back.
-    it "records nothing when one of the sheets is another group's" do
-      patch mark_users_as_participated_path,
-            params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
-                      grading_scope_type: "tutorial",
-                      user_ids: [student.id, student2.id] },
-            as: :turbo_stream
-
-      expect(response).to redirect_to(root_path)
-      expect(assessment.assessment_participations.where(user: [student, student2])).to be_empty
-    end
-
-    it "records nothing when one of the ids is nobody's" do
-      patch mark_users_as_participated_path,
-            params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
-                      grading_scope_type: "tutorial",
-                      user_ids: [student.id, FactoryBot.create(:confirmed_user).id] },
-            as: :turbo_stream
-
-      expect(response).to have_http_status(:not_found)
-      expect(assessment.assessment_participations.where(user: student)).to be_empty
-    end
-
-    it "answers with no row for an empty selection" do
-      patch mark_users_as_participated_path,
-            params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
-                      grading_scope_type: "tutorial" },
-            as: :turbo_stream
-
-      expect(response).to have_http_status(:success)
-      expect(response.body).not_to include("participation-row-")
     end
   end
 

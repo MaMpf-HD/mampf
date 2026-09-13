@@ -1,48 +1,51 @@
 <span class="correction-action-area d-inline-flex align-items-center gap-1" data-id="<%= submission.id %>">
-  <% if !@assignment&.active? %>
-    <%= link_to edit_correction_path(submission),
-                class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                data: { turbo_stream: true },
-                title: t('assessment.grading_tutorial.upload_correction'),
-                aria: { label: t('assessment.grading_tutorial.upload_correction') } do %>
-      <i class="bi bi-upload"></i>
-    <% end %>
-  <% else %>
-    <button class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1"
-            disabled
-            title="<%= t('assessment.grading_tutorial.upload_correction_closed') %>"
-            aria-label="<%= t('assessment.grading_tutorial.upload_correction_closed') %>">
-      <i class="bi bi-upload"></i>
-    </button>
-  <% end %>
-
   <% if submission.correction %>
+    <% unless submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
+      <%= link_to show_correction_path(submission),
+                  class: "d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5 text-decoration-none text-success",
+                  target: "_blank",
+                  rel: "noopener",
+                  title: t('assessment.grading_tutorial.show_correction'),
+                  aria: { label: t('assessment.grading_tutorial.show_correction') } do %>
+        <i class="bi bi-file-earmark-check"></i>
+      <% end %>
+    <% end %>
+
     <%= link_to show_correction_path(submission, params: { download: 'true' }),
-                class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                class: "d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5 text-decoration-none text-success",
                 data: { turbo: false },
                 title: t('assessment.grading_tutorial.download_correction'),
                 aria: { label: t('assessment.grading_tutorial.download_correction') } do %>
       <i class="bi bi-download"></i>
     <% end %>
+  <% end %>
 
-    <% unless submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
-      <%= link_to show_correction_path(submission),
-                  class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                  data: { turbo: false },
-                  title: t('assessment.grading_tutorial.show_correction'),
-                  aria: { label: t('assessment.grading_tutorial.show_correction') } do %>
-        <i class="bi bi-eye"></i>
-      <% end %>
+  <% if !@assignment&.active? %>
+    <%= link_to edit_correction_path(submission),
+                class: "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
+                data: { turbo_stream: true },
+                title: t('assessment.grading_tutorial.upload_correction'),
+                aria: { label: t('assessment.grading_tutorial.upload_correction') } do %>
+      <i class="bi bi-file-earmark-plus-fill"></i>
     <% end %>
+  <% else %>
+    <button class="btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5"
+            disabled
+            title="<%= t('assessment.grading_tutorial.upload_correction_closed') %>"
+            aria-label="<%= t('assessment.grading_tutorial.upload_correction_closed') %>">
+      <i class="bi bi-file-earmark-plus-fill"></i>
+    </button>
+  <% end %>
 
+  <% if submission.correction %>
     <%= link_to delete_correction_path(submission),
-                class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                class: "btn btn-sm btn-link row-action text-danger d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
                 data: { turbo_method: :delete,
                         turbo_confirm: t('assessment.grading_tutorial.confirm_delete_correction'),
                         turbo_stream: true },
                 title: t('assessment.grading_tutorial.delete_correction'),
                 aria: { label: t('assessment.grading_tutorial.delete_correction') } do %>
-      <i class="bi bi-trash"></i>
+      <i class="bi bi-trash-fill"></i>
     <% end %>
   <% end %>
 </span>

@@ -91,38 +91,6 @@
   ></span>
 
   <div class="ms-auto d-flex flex-wrap align-items-end gap-2">
-    <% if can_enter_points? && grading_enabled? %>
-      <%= form_with url: mark_users_as_participated_path,
-                    method: :patch,
-                    id: "paper-hand-ins",
-                    local: true,
-                    data: { turbo: true } do %>
-        <input type="hidden" name="assignment_id" value="<%= @assignment.id %>">
-        <input type="hidden" name="tutorial_id" value="<%= @tutorial&.id %>">
-
-        <input
-          type="hidden"
-          name="grading_scope_type"
-          value="<%= grading_scope_type %>"
-        >
-
-        <button
-          type="submit"
-          class="btn btn-outline-secondary btn-sm"
-          hidden
-          data-paper-selection-target="button"
-        >
-          <i class="bi bi-file-earmark-check me-1"></i>
-          <%= t("assessment.grading_tutorial.paper_hand_in_selected") %>
-
-          <span
-            class="badge text-bg-secondary ms-1"
-            data-paper-selection-target="count"
-          ></span>
-        </button>
-      <% end %>
-    <% end %>
-
     <% if menu? %>
       <div class="dropdown">
         <button
@@ -194,7 +162,7 @@
         data-pointing-table-target="bulkSave"
         data-action="click->pointing-table#submitAll"
       >
-        <i class="far fa-save me-1"></i>
+        <i class="bi bi-floppy-fill me-1"></i>
         <%= t("assessment.grading_tutorial.save_all") %>
 
         <span
