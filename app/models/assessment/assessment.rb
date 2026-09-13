@@ -58,8 +58,11 @@ module Assessment
 
     # What a row with nothing recorded reads as. A sheet that comes in on
     # paper is with the tutor until they record it, so it is not "missing"
-    # the way an upload that never came is.
+    # the way an upload that never came is. A talk has nothing to hand in;
+    # its grade is simply still to come.
     def status_without_hand_in
+      return :pending_grading unless assessable.is_a?(Assignment)
+
       requires_submission ? :not_submitted : :awaiting_record
     end
 
