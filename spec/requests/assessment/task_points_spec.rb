@@ -513,6 +513,15 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(response.media_type).to eq(Mime[:turbo_stream])
     end
 
+    it "brings the summary along with the reloaded row" do
+      patch refresh_point_participation_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]"))
+        .to be_present
+    end
+
     context "when participation is not found" do
       it "responds with turbo_stream alert" do
         patch refresh_point_participation_path(999_999),
@@ -656,6 +665,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
           expect(response).to redirect_to(root_path)
           expect(held_elsewhere.reload.submitted_at).to be_nil
+        end
+
+        it "lets the tutor of the group that holds it record the hand-in" do
+          tutorial2.tutors << tutor
+
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: student.id,
+                          tutorial_id: tutorial2.id, grading_scope_type: "tutorial" },
+                as: :turbo_stream
+
+          expect(response).to have_http_status(:success)
+          expect(held_elsewhere.reload.submitted_at).to be_present
+          expect(held_elsewhere.tutorial).to eq(tutorial2)
         end
       end
 

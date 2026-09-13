@@ -306,11 +306,12 @@ class SubmissionsController < ApplicationController
 
   private
 
+    # A sheet from before there were states has no line above its table.
     def rerender_submission_row
       grading_scope = params[:grading_scope_type] == "tutorial" ? @tutorial : @tutorial.lecture
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
+          row = turbo_stream.replace(
             "submission-row-#{@submission.id}",
             html: render_to_string(
               SubmissionRowComponent.new(
@@ -320,8 +321,17 @@ class SubmissionsController < ApplicationController
               )
             )
           )
+          render turbo_stream: [row, summary_stream(grading_scope)].compact
         end
       end
+    end
+
+    def summary_stream(grading_scope)
+      return unless @assignment.assessable?
+
+      summary = TutorialPointingTableComponent.new(assignment: @assignment,
+                                                   grading_scope: grading_scope).summary
+      turbo_stream.replace("pointing-summary", html: render_to_string(summary))
     end
 
     # Everything a student does changes one sheet and nothing else - the history
