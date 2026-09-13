@@ -99,6 +99,22 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response.body).to include("Test Assignment")
       end
 
+      it "sends a talk's dashboard to the seminar's table" do
+        seminar = create(:lecture, :is_seminar, teacher: teacher)
+        # A fixed title: the factory's random one may carry an apostrophe,
+        # which the page escapes.
+        talk = create(:talk, lecture: seminar, title: "Riemann and the primes")
+        create(:speaker_talk_join, talk: talk)
+
+        get assessment_assessment_path(talk.reload.assessment.id),
+            params: { assessable_type: "Talk", assessable_id: talk.id },
+            headers: { "Turbo-Frame" => "assessment-assessments-frame" }
+
+        expect(response).to redirect_to(assessment_assessments_path(lecture_id: seminar.id))
+        follow_redirect!
+        expect(response.body).to include(talk.title)
+      end
+
       it "renders the points tab when a non-submitter has been marked as participated" do
         tutorial = create(:tutorial, lecture: lecture)
         student = create(:confirmed_user)

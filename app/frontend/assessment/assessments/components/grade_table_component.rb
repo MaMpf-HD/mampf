@@ -144,8 +144,7 @@ class GradeTableComponent < ViewComponent::Base
     end
   end
 
-  # A grade is either a number or a word — `set_grade!` writes one or the
-  # other, never both — so a missing number is not a missing grade.
+  # A grade_text without grade_numeric is still a grade.
   def grade_display(participation)
     text = participation.grade_text
     numeric = participation.grade_numeric

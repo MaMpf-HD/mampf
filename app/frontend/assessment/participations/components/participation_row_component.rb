@@ -1,17 +1,16 @@
-# One row of the pointing table for somebody without a hand-in file. The
-# participation may be unsaved until the backfill worker has been round;
-# recording the hand-in saves it.
+# Renders a participation's assignment task points or talk grade.
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  def initialize(participation:, assessment:, grading_scope:)
+  # Assignment participations may be unsaved until AssessmentBackfillWorker
+  # runs or a paper hand-in is recorded.
+  def initialize(participation:, assessment:, grading_scope:, table_option: :pointing)
     super()
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
-    @lecture = @assessable.lecture
     @grading_scope = grading_scope
-    check_grading_scope
+    @table_option = table_option
     @user ||= @participation&.user
     @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
 
@@ -19,24 +18,23 @@ class ParticipationRowComponent < ViewComponent::Base
 
     raise(MissingUserError,
           I18n.t("assessment.grading_tutorial.no_user_for_config",
-                 participation_id: @participation.id))
-  end
-
-  def check_grading_scope
-    case @grading_scope
-    when Tutorial
-      @mode = "tutor"
-    when Lecture
-      @mode = "teacher"
-    end
+                 participation_id: @participation&.id))
   end
 
   def grading_enabled?
-    @assessable.assessable?
+    @assessment.persisted?
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @assessable)
+    @layout ||= PointingTableLayout.for(assessable: @assessable, grading_scope: @grading_scope)
+  end
+
+  def tasks?
+    layout.body == :tasks
+  end
+
+  def single_grade?
+    layout.body == :single_grade
   end
 
   def allow_grading?
@@ -84,6 +82,16 @@ class ParticipationRowComponent < ViewComponent::Base
     @participation.display_status
   end
 
+  def talk_dates
+    return nil if @assessable.dates.blank?
+
+    @assessable.dates.sort.map { |date| I18n.l(date, format: :concise) }.join(", ")
+  end
+
+  def filter_name
+    [(@assessable.title if layout.show?(:talk)), @user.tutorial_name].compact.join(" ")
+  end
+
   def row_id
     return "participation-row-#{@participation.id}" if @participation.persisted?
 
@@ -95,11 +103,25 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def save_url
-    point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    case @table_option
+    when :pointing
+      point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    when :grading
+      grade_participation_path(@participation)
+    else
+      raise(ArgumentError, "Unsupported table option: #{@table_option}")
+    end
   end
 
   def refresh_url
-    refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    case @table_option
+    when :pointing
+      refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
+    when :grading
+      refresh_grade_participation_path(@participation)
+    else
+      raise(ArgumentError, "Unsupported table option: #{@table_option}")
+    end
   end
 
   def paper_hand_in?
@@ -132,10 +154,10 @@ class ParticipationRowComponent < ViewComponent::Base
       step: 0.5,
       min: 0,
       data: {
-        participation_row_target: "input",
+        participation_row_target: "pointInput",
         task_id: task.id,
         below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
-        action: "change->participation-row#onPointParticipationChanged input->participation-row#onPointParticipationChanged" # rubocop:disable Layout/LineLength
+        action: "change->participation-row#onParticipationChanged input->participation-row#onParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
       aria: { label: points_input_label(task) },
@@ -163,9 +185,9 @@ class ParticipationRowComponent < ViewComponent::Base
                class: class_name,
                data: { participation_row_target: "save",
                        action: "click->participation-row#saveRow" },
-               title: helpers.t("assessment.grading_tutorial.save_row"),
-               aria: { label: helpers.t("assessment.grading_tutorial.save_row") },
-               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
+               title: row_action_label("save_row"),
+               aria: { label: row_action_label("save_row") },
+               disabled: !allow_grading || !grading_enabled? || !can_enter_row?) do
       tag.i(class: "bi bi-floppy-fill")
     end
   end
@@ -177,11 +199,16 @@ class ParticipationRowComponent < ViewComponent::Base
     tag.button(type: "button",
                class: class_name,
                data: { action: "click->participation-row#refreshRow" },
-               title: helpers.t("assessment.grading_tutorial.reload_row"),
-               aria: { label: helpers.t("assessment.grading_tutorial.reload_row") },
-               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
+               title: row_action_label("reload_row"),
+               aria: { label: row_action_label("reload_row") },
+               disabled: !allow_grading || !grading_enabled? || !can_enter_row?) do
       tag.i(class: "bi bi-arrow-counterclockwise")
     end
+  end
+
+  def row_action_label(action)
+    scope = single_grade? ? "assessment.grade_talk_row" : "assessment.grading_tutorial"
+    helpers.t("#{scope}.#{action}")
   end
 
   def can_enter_points?
@@ -191,12 +218,62 @@ class ParticipationRowComponent < ViewComponent::Base
     false
   end
 
-  def users_movement_map
-    helpers.users_movement_map_cache[@assessable.id] ||=
-      helpers.calculate_user_movement_map_assignment(@assessable, @lecture)
+  def can_enter_grade?
+    user = helpers.current_user
+    user.admin? || user.can_enter_grades_in?(@grading_scope)
+  rescue User::IncompatibleTypeError
+    false
   end
 
+  def can_enter_row?
+    single_grade? ? can_enter_grade? : can_enter_points?
+  end
+
+  def users_movement_map
+    helpers.users_movement_map_cache[@assessable.id] ||=
+      helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
+  end
+
+  # Tutorial movement compares an assignment participation with the user's
+  # tutorial membership; a talk participation has no tutorial to compare.
   def movement_info_for_user(user)
+    return nil if single_grade?
+
     helpers.movement_info_for_user_assignment(user, users_movement_map)
+  end
+
+  def grade_numeric
+    @participation&.grade_numeric
+  end
+
+  def grade_display
+    return "—" if grade_numeric.blank?
+
+    I18n.t("assessment.grades.#{grade_numeric}", default: grade_numeric)
+  end
+
+  def grade_options
+    Assessment::GradeEntryService::VALID_GRADES_NUMERIC.map do |g|
+      [I18n.t("assessment.grades.#{g}", default: g), g]
+    end
+  end
+
+  def grader_display
+    @participation&.grader&.tutorial_name
+  end
+
+  # Who graded and when, on one line; the date is a record, the tooltip says
+  # how long ago that was.
+  def graded_display
+    return nil unless @participation&.graded_at
+
+    [grader_display, I18n.l(@participation.graded_at, format: :file_time)].compact.join(" · ")
+  end
+
+  def graded_ago
+    return nil unless @participation&.graded_at
+
+    t("assessment.grade_talk_row.graded_ago",
+      time: helpers.time_ago_in_words(@participation.graded_at))
   end
 end

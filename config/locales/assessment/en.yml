@@ -226,6 +226,10 @@ en:
       rejected_heading: 'Rejected registrations'
     no_assessables_yet: 'No assessments created yet.'
     submission_settings: 'Submission Settings'
+    talk_grader:
+      assessment_not_talk: 'Assessment is not for a talk.'
+      user_not_speaker: 'User is not a speaker for this talk.'
+    grades_updated: 'Changes saved.'
     task_points:
       update: 'Task points updated successfully.'
       submission_missing_assessment: 'This assignment has no assessment configured.'
@@ -256,6 +260,8 @@ en:
       user_not_found: 'User not found.'
       no_participation: 'Participation not found.'
       user_cannot_enter_points: 'You may not enter points here.'
+      not_gradable: 'This assessment is not gradable.'
+      invalid_grade: 'Invalid grade value'
       invalid_request_params: 'Invalid request parameters.'
       invalid_assessable_type: 'Invalid assessable type.'
     info:
@@ -322,6 +328,9 @@ en:
       user_moved_tutorial: 'Handed in in %{old_tutorial}, since then in %{new_tutorial}.'
       user_left_tutorials: 'Handed in in %{old_tutorial}, since then in no tutorial.'
       user_joined_tutorial: 'Handed in without a tutorial, since then in %{new_tutorial}.'
+    grading_talk:
+      note_placeholder: "Visible to teaching staff only"
+      no_talks_gradable: 'No talks that can be graded.'
     grading_overview:
       submission_progress: 'Submissions'
       submitted: 'Submitted'
@@ -466,6 +475,16 @@ en:
     statistics_analysis: 'Statistics & Analysis'
     statistics_placeholder: 'Statistics are not yet available'
     statistics_description: 'Here you can view statistics and analysis for this exam.'
+    grade_talk_row:
+      speaker: "Speaker"
+      grade: "Grade"
+      note: "Internal note"
+      graded: "Graded"
+      graded_ago: "%{time} ago"
+      save_row: "Save this row's grade"
+      reload_row: "Reload the saved grade; unsaved changes are lost"
+      grade_for: 'Grade for %{name}'
+      note_for: 'Internal note on %{name}'
 
   activerecord:
     errors:

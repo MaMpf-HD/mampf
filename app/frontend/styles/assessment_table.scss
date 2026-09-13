@@ -66,14 +66,23 @@ thead th.sticky-col {
   }
 }
 
+@include column(talk);
 @include column(team);
 @include column(tutorial);
 @include column(status);
 @include column(task);
 @include column(total);
+@include column(grade);
+@include column(graded);
 @include column(save);
 @include column(hand-in);
 @include column(correction);
+
+/* The note is the one column that may grow: whatever the others leave over
+   goes to it, and it never falls below its own width. */
+.note-col {
+  min-width: var(--note-width);
+}
 
 .table-wrapper::before,
 .table-wrapper::after {

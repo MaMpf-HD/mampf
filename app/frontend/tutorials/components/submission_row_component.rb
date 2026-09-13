@@ -10,16 +10,6 @@ class SubmissionRowComponent < ViewComponent::Base
     @grading_scope = grading_scope
     @lecture = @assignment.lecture
     @participations = (participations || @submission.participations || []).compact
-    check_grading_scope
-  end
-
-  def check_grading_scope
-    case @grading_scope
-    when Tutorial
-      @mode = "tutor"
-    when Lecture
-      @mode = "teacher"
-    end
   end
 
   def grading_enabled?
@@ -27,7 +17,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @assignment)
+    @layout ||= PointingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
   end
 
   def allow_grading?
@@ -75,7 +65,7 @@ class SubmissionRowComponent < ViewComponent::Base
       step: 0.5,
       min: 0,
       data: {
-        participation_row_target: "input",
+        participation_row_target: "pointInput",
         task_id: task.id,
         below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
         action: "change->participation-row#onPointSubmissionChanged input->participation-row#onPointSubmissionChanged" # rubocop:disable Layout/LineLength

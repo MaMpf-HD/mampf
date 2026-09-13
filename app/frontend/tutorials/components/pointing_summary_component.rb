@@ -4,15 +4,20 @@ class PointingSummaryComponent < ViewComponent::Base
   PARTS = [:reviewed, :pending_grading, :not_submitted, :awaiting_record,
            :exempt, :absent].freeze
 
-  def initialize(statuses:)
+  # A talk's rows have nothing handed in to count.
+  def initialize(statuses:, hand_ins: true)
     super()
     @statuses = statuses
+    @hand_ins = hand_ins
   end
 
   def text
     counts = @statuses.tally
-    handed_in = counts.fetch(:reviewed, 0) + counts.fetch(:pending_grading, 0)
-    parts = [I18n.t("assessment.grading_tutorial.summary.handed_in", count: handed_in)]
+    parts = []
+    if @hand_ins
+      handed_in = counts.fetch(:reviewed, 0) + counts.fetch(:pending_grading, 0)
+      parts << I18n.t("assessment.grading_tutorial.summary.handed_in", count: handed_in)
+    end
     PARTS.each do |status|
       next unless counts[status]&.positive?
 

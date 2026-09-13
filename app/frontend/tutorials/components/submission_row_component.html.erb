@@ -66,7 +66,7 @@
     </div>
   </td>
 
-  <% if @mode == "teacher" %>
+  <% if layout.show?(:tutorial) %>
     <td class="text-center <%= layout.column_class(:tutorial) %>">
       <span><%= @submission.tutorial&.title %></span>
     </td>
@@ -96,7 +96,7 @@
             <input
               type="hidden"
               name="task_points"
-              data-participation-row-target="payload"
+              data-participation-row-target="taskPointsPayload"
             >
           <% end %>
 
@@ -111,7 +111,7 @@
             <input
               type="hidden"
               name="task_points"
-              data-participation-row-target="payload"
+              data-participation-row-target="taskPointsPayload"
             >
           <% end %>
 

@@ -57,11 +57,15 @@ export default class extends Controller {
   report() {
     const total = this.rowTargets.length;
     const shown = this.rowTargets.filter(row => !row.hidden).length;
-    this.resetTarget.hidden = !this.filtering();
-    this.countTarget.hidden = !this.filtering();
-    this.countTarget.textContent = this.countTarget.dataset.template
-      .replace("%{shown}", shown)
-      .replace("%{total}", total);
+    if (this.hasResetTarget) {
+      this.resetTarget.hidden = !this.filtering();
+    }
+    if (this.hasCountTarget) {
+      this.countTarget.hidden = !this.filtering();
+      this.countTarget.textContent = this.countTarget.dataset.template
+        .replace("%{shown}", shown)
+        .replace("%{total}", total);
+    }
     if (this.hasEmptyTarget) {
       this.emptyTarget.hidden = shown > 0;
     }

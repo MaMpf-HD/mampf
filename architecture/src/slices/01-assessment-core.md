@@ -54,7 +54,7 @@ Plus three concerns that form a capability ladder:
 |---|---|
 | [`Assessment::Assessable`](../features/04-assessments-and-grading.md#assessmentassessable-concern) | `has_one :assessment`, `ensure_assessment!`, `grading_open?` |
 | [`Assessment::Pointable`](../features/04-assessments-and-grading.md#assessmentpointable-concern) | `ensure_pointbook!` — an assessment that requires points |
-| [`Assessment::Gradable`](../features/04-assessments-and-grading.md#assessmentgradable-concern) | `ensure_gradebook!`, `set_grade!` |
+| [`Assessment::Gradable`](../features/04-assessments-and-grading.md#assessmentgradable-concern) | `ensure_gradebook!` |
 
 `Pointable` and `Gradable` both include `Assessable`, so including either is
 enough. In slice 1 `Assignment` includes `Pointable` and `Talk` includes
@@ -354,7 +354,8 @@ slice 2's computation service relies on heavily.
 3. `app/models/assessment/participation.rb` — status, grade, and the grading
    lifecycle guard
 4. `app/models/assessment/task.rb` — the deletion guards
-5. `app/models/assessment/gradable.rb` — `set_grade!`, which later slices call
+5. `app/models/assessment/gradable.rb` — `ensure_gradebook!`; the grade itself
+   is written by `GradeEntryService`
 6. [Before you read the code](#before-you-read-the-code) — the ten places where
    what you just read is easy to misread
 

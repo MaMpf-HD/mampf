@@ -296,8 +296,8 @@ RSpec.describe(GradeTableComponent, type: :component) do
       expect(component.grade_display(participation)).to eq("4.0 (ausreichend)")
     end
 
-    # `set_grade!` writes a number or a word, never both, so a word on its own
-    # is a whole grade and not a missing one.
+    # A grade is a number or a word, so a word on its own is a whole grade
+    # and not a missing one.
     it "shows a grade that is a word rather than a number" do
       participation = build(:assessment_participation, assessment: assessment,
                                                        grade_numeric: nil,

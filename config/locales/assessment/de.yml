@@ -217,7 +217,7 @@ de:
       user_not_found: 'Kein:e Nutzer:in mit dieser E-Mail-Adresse gefunden.'
       already_registered: 'Diese Person ist bereits angemeldet.'
       open_review_hint: 'Hier siehst Du die aktuellen Anmeldungen. Eine bearbeitbare Prüfungsliste für manuelle Änderungen steht erst später zur Verfügung.'
-      closed_review_hint: 'Hier siehst Du die aktuellen Anmeldungen. Über „Prüfen & Abschließen“ prüfst Du im nächsten Schritt die Richtlinien und kannst offene Richtlinienfälle bei Bedarf vorläufig ablehnen. Eine bearbeitbare Prüfungsliste für weitere manuelle Änderungen steht erst danach zur Verfügung.'
+      closed_review_hint: 'Hier siehst Du die aktuellen Anmeldungen. Über „Prüfen & Abschließen" prüfst Du im nächsten Schritt die Richtlinien und kannst offene Richtlinienfälle bei Bedarf vorläufig ablehnen. Eine bearbeitbare Prüfungsliste für weitere manuelle Änderungen steht erst danach zur Verfügung.'
       post_finalization_hint: 'Dies ist die bearbeitbare Prüfungsliste. Hier kannst Du Studierende hinzufügen, entfernen und nachvollziehen, wer aktuell nicht auf der Prüfungsliste steht.'
       not_on_roster_heading: 'Nicht auf der Prüfungsliste'
       certification_not_passed_reason: 'Prüfungszulassung nicht erteilt'
@@ -226,6 +226,10 @@ de:
       rejected_heading: 'Abgelehnte Anmeldungen'
     no_assessables_yet: 'Noch keine Bewertungen erstellt.'
     submission_settings: 'Abgabe-Einstellungen'
+    talk_grader:
+      assessment_not_talk: 'Bewertung ist nicht für einen Vortrag.'
+      user_not_speaker: 'Benutzer ist nicht als Sprecher:in für diesen Vortrag eingetragen.'
+    grades_updated: 'Änderungen gespeichert.'
     task_points:
       update: 'Punkte erfolgreich aktualisiert.'
       submission_missing_assessment: 'Für diese Hausaufgabe ist keine Bewertung konfiguriert.'
@@ -256,6 +260,8 @@ de:
       user_not_found: 'Benutzer nicht gefunden.'
       no_participation: 'Teilnahme nicht gefunden.'
       user_cannot_enter_points: 'Du darfst hier keine Punkte eintragen.'
+      not_gradable: 'Diese Bewertung ist nicht bewertbar.'
+      invalid_grade: 'Ungültiger Notenwert'
       invalid_request_params: 'Ungültige Anfrageparameter.'
       invalid_assessable_type: 'Ungültiger Bewertungstyp.'
     info:
@@ -322,6 +328,9 @@ de:
       user_moved_tutorial: 'In %{old_tutorial} abgegeben, seitdem in %{new_tutorial}.'
       user_left_tutorials: 'In %{old_tutorial} abgegeben, seitdem in keiner Übungsgruppe.'
       user_joined_tutorial: 'Ohne Übungsgruppe abgegeben, seitdem in %{new_tutorial}.'
+    grading_talk:
+      note_placeholder: "Nur für DozentInnen sichtbar"
+      no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
     grading_overview:
       submission_progress: 'Abgaben'
       submitted: 'Abgegeben'
@@ -463,9 +472,19 @@ de:
     statistics_analysis: 'Statistiken & Analyse'
     no_points_yet: 'Noch keine Punkte eingetragen.'
     point_grid:
-      total: 'Gesamt'
+      total: "Gesamt"
     statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
     statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
+    grade_talk_row:
+      speaker: "Sprecher:in"
+      grade: "Note"
+      note: "Interne Notiz"
+      graded: "Bewertet"
+      graded_ago: "vor %{time}"
+      save_row: "Note dieser Zeile speichern"
+      reload_row: "Gespeicherte Note neu laden; ungespeicherte Änderungen gehen verloren"
+      grade_for: 'Note für %{name}'
+      note_for: 'Interne Notiz zu %{name}'
 
   activerecord:
     errors:

@@ -76,7 +76,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @assignment)
+    @layout ||= PointingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
   end
 
   def toolbar

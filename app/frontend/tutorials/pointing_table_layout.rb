@@ -1,7 +1,4 @@
-# Which columns of the pointing table are pinned to an edge, and how wide
-# every column is. The CSS reads both as variables, so a column set for a
-# different kind of assessment - a talk's grade, an exam's - is one entry
-# here and one mixin line in the stylesheet.
+# Defines the columns, pins, and widths shared by table headers and rows.
 class PointingTableLayout
   class UnsupportedAssessableError < StandardError; end
 
@@ -11,27 +8,44 @@ class PointingTableLayout
     status: 170,
     task: 90,
     total: 100,
+    talk: 200,
+    grade: 110,
+    note: 180,
+    graded: 220,
     save: 90,
     hand_in: 140,
     correction: 140
   }.freeze
 
-  # A sheet pins the team on the left and saving on the right; everything
-  # else scrolls, so the tasks get the width between them.
-  def self.for(assessable:)
+  # Pin :talk and :team so the talk and speaker remain visible while
+  # scrolling through the grade and note columns.
+  def self.for(assessable:, grading_scope: nil)
     case assessable
     when Assignment
-      new(left: [:team], right: [:save])
+      columns = [:team]
+      columns << :tutorial if grading_scope.is_a?(Lecture)
+      columns += [:status, :tasks, :total, :save] if assessable.assessable?
+      columns += [:hand_in, :correction]
+      new(columns: columns, body: :tasks)
+    when Talk
+      new(columns: [:talk, :team, :status, :grade, :note, :graded, :save],
+          body: :single_grade, left: [:talk, :team])
     else
       raise(UnsupportedAssessableError, "No pointing table layout for #{assessable.class}")
     end
   end
 
-  attr_reader :left, :right
+  attr_reader :columns, :body, :left, :right
 
-  def initialize(left:, right:)
+  def initialize(columns:, body:, left: [:team], right: [:save])
+    @columns = columns
+    @body = body
     @left = left
     @right = right
+  end
+
+  def show?(column)
+    columns.include?(column)
   end
 
   def pinned?(column)
