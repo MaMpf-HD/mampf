@@ -125,3 +125,14 @@ thead th.sticky-col {
   font-weight: 500;
   padding: 10px 12px;
 }
+
+/* An action waits quietly until the pointer or the keyboard reaches it;
+   the file links and the floppy with something to save keep their colour. */
+.row-action {
+  opacity: 0.55;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+}
