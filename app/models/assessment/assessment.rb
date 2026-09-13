@@ -61,7 +61,7 @@ module Assessment
     # the way an upload that never came is. A talk has nothing to hand in;
     # its grade is simply still to come.
     def status_without_hand_in
-      return :pending_grading unless assessable.is_a?(Assignment)
+      return :pending_grading unless assessable_type == "Assignment"
 
       requires_submission ? :not_submitted : :awaiting_record
     end

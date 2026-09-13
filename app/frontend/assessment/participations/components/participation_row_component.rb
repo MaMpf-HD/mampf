@@ -9,7 +9,6 @@ class ParticipationRowComponent < ViewComponent::Base
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
-    @lecture = @assessable.lecture
     @grading_scope = grading_scope
     @table_option = table_option
     @user ||= @participation&.user
@@ -23,7 +22,7 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def grading_enabled?
-    @assessable.assessable?
+    @assessment.persisted?
   end
 
   def layout
@@ -225,10 +224,13 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def users_movement_map
     helpers.users_movement_map_cache[@assessable.id] ||=
-      helpers.calculate_user_movement_map_assignment(@assessable, @lecture)
+      helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
   end
 
+  # A sheet is filed with the group that had it; a talk moves nowhere.
   def movement_info_for_user(user)
+    return nil if single_grade?
+
     helpers.movement_info_for_user_assignment(user, users_movement_map)
   end
 

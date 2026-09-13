@@ -108,6 +108,19 @@ RSpec.describe(TalkGradingTableComponent, type: :component) do
     it "counts the rows' states for the summary" do
       expect(component.row_statuses).to eq([:pending_grading] * 3)
     end
+
+    it "brings each row's person, talk and state along, so rendering asks nothing more" do
+      rows = component.rows
+      query_count = 0
+      callback = lambda { |*, payload|
+        query_count += 1 unless payload[:sql].match?(/SCHEMA|TRANSACTION/)
+      }
+      ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        rows.each { |row| [row.user, row.grader, row.assessment.assessable, row.display_status] }
+      end
+
+      expect(query_count).to eq(0)
+    end
   end
 
   describe "#status_options" do

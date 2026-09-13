@@ -83,10 +83,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
 
     context "when grading_scope is a Lecture" do
-      it "sets @lecture from the assessable's lecture" do
-        expect(component_teacher.instance_variable_get(:@lecture)).to eq(assignment.lecture)
-      end
-
       it "leaves @tutorial nil" do
         expect(component_teacher.instance_variable_get(:@tutorial)).to be_nil
       end
