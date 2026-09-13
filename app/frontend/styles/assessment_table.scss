@@ -126,10 +126,10 @@ thead th.sticky-col {
   padding: 10px 12px;
 }
 
-/* An action waits quietly until the pointer or the keyboard reaches it;
-   the file links and the floppy with something to save keep their colour. */
+/* Quieter than the file links, but no fainter than 3:1 on white, which is
+   the least an icon that is the whole control may have (WCAG 1.4.11). */
 .row-action {
-  opacity: 0.55;
+  opacity: 0.8;
 
   &:hover,
   &:focus-visible {
