@@ -331,7 +331,6 @@ en:
       user_moved_tutorial: 'Handed in in %{old_tutorial}, since then in %{new_tutorial}.'
       user_left_tutorials: 'Handed in in %{old_tutorial}, since then in no tutorial.'
       user_joined_tutorial: 'Handed in without a tutorial, since then in %{new_tutorial}.'
-      no_tutorial: 'N/A'
     grading_talk:
       note_placeholder: "Visible to teaching staff only"
       no_talks_gradable: 'No talks that can be graded.'
