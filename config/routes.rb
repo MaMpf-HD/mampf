@@ -1181,6 +1181,14 @@ Rails.application.routes.draw do
         to: "assessment/task_points#mark_as_exempt",
         as: "mark_as_exempt"
 
+  patch "participations/:participation_id/remove_absent",
+        to: "assessment/task_points#remove_absent",
+        as: "remove_absent"
+
+  patch "participations/:participation_id/remove_exempt",
+        to: "assessment/task_points#remove_exempt",
+        as: "remove_exempt"
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not

@@ -35,34 +35,6 @@ class ExamPointingTableComponent < ViewComponent::Base
                "border:1px solid #e0e0e0; background:#fff; " \
                "font-size:12px; color:#555; text-decoration:none;".freeze
 
-  def mark_as_exempt_link(participation)
-    path = mark_user_as_exempt_path(participation)
-
-    link_to(path,
-            style: LINK_STYLE,
-            data: { turbo_method: :patch,
-                    turbo_confirm: t("assessment.grading_tutorial.confirm_unsaved_changes") }) do
-      safe_join([
-                  content_tag(:span, "check", class: "material-icons", style: "font-size: 14px;"),
-                  t("assessment.grading_tutorial.mark_as_exempt")
-                ])
-    end
-  end
-
-  def mark_as_absent_link(participation)
-    path = mark_user_as_absent_path(participation)
-
-    link_to(path,
-            style: LINK_STYLE,
-            data: { turbo_method: :patch,
-                    turbo_confirm: t("assessment.grading_tutorial.confirm_unsaved_changes") }) do
-      safe_join([
-                  content_tag(:span, "check", class: "material-icons", style: "font-size: 14px;"),
-                  t("assessment.grading_tutorial.mark_as_absent")
-                ])
-    end
-  end
-
   def sticky_layout
     @sticky_layout ||= Assessment::StickyColumnLayout.new(
       left_columns: @config.left_columns,

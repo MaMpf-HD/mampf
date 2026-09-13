@@ -62,7 +62,7 @@ module Assessment
       GradingDisplayConfig.new(
         body_mode: [:tasks],
         left_columns: [:team, :status],
-        right_columns: [:total, :action]
+        right_columns: [:total, :save]
       )
     end
     private_class_method :resolve_exam_pointing

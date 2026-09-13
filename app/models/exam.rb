@@ -143,6 +143,14 @@ class Exam < ApplicationRecord
     :finalized
   end
 
+  def allow_mark_absent?
+    true
+  end
+
+  def allow_mark_exempt?
+    true
+  end
+
   private
 
     def setup_assessment

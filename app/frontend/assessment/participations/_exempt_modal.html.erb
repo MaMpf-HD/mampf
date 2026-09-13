@@ -1,0 +1,24 @@
+<div class="modal fade" data-controller="exempt-model" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Mark as Exempt</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <%= form_with url: "#", 
+          method: :patch, 
+          data: { exempt_model_target: "form" } do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :note, 
+              data: { exempt_model_target: "note" }, 
+              class: "form-control", rows: 3, 
+              placeholder: "Optional note" %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -3,6 +3,8 @@ module Assessment
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_team,
                          :update_participation, :refresh_submission,
+                         :mark_as_absent, :remove_absent,
+                         :mark_as_exempt, :remove_exempt,
                          :refresh_participation, :mark_as_participated,
                          :mark_as_participated_multi, :remove_participated]
     before_action :set_locale
@@ -11,10 +13,16 @@ module Assessment
                                                  :update_participation,
                                                  :refresh_submission,
                                                  :refresh_participation,
-                                                 :remove_participated]
+                                                 :remove_participated,
+                                                 :mark_as_absent, :remove_absent,
+                                                 :mark_as_exempt, :remove_exempt]
     before_action :refuse_without_row, only: [:update_participation,
                                               :refresh_participation,
-                                              :remove_participated]
+                                              :remove_participated,
+                                              :mark_as_absent,
+                                              :remove_absent,
+                                              :mark_as_exempt,
+                                              :remove_exempt]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
@@ -98,12 +106,43 @@ module Assessment
       end
 
       @participation = @participation.reload
-      render_task_points_update(
-        turbo_stream.replace(
-          "participation-row-#{@participation.id}",
-          html: render_to_string(participation_row)
-        )
-      )
+      render_participation_update
+    end
+
+    def mark_as_absent
+      AbsenceHandling.mark_absent(@participation)
+      @participation = @participation.reload
+      render_participation_update
+    rescue StandardError => e
+      respond_with_flash(:alert, e.message || t("assessment.errors.invalid_request_params"),
+                         status: :unprocessable_entity)
+    end
+
+    def remove_absent
+      AbsenceHandling.remove_absent(@participation)
+      @participation = @participation.reload
+      render_participation_update
+    rescue StandardError => e
+      respond_with_flash(:alert, e.message || t("assessment.errors.invalid_request_params"),
+                         status: :unprocessable_entity)
+    end
+
+    def mark_as_exempt
+      AbsenceHandling.mark_exempt(@participation, note: params[:note])
+      @participation = @participation.reload
+      render_participation_update
+    rescue StandardError => e
+      respond_with_flash(:alert, e.message || t("assessment.errors.invalid_request_params"),
+                         status: :unprocessable_entity)
+    end
+
+    def remove_exempt
+      AbsenceHandling.remove_exempt(@participation)
+      @participation = @participation.reload
+      render_participation_update
+    rescue StandardError => e
+      respond_with_flash(:alert, e.message || t("assessment.errors.invalid_request_params"),
+                         status: :unprocessable_entity)
     end
 
     def refresh_submission
@@ -112,7 +151,7 @@ module Assessment
 
     def refresh_participation
       @user = @participation.user
-      rerender_user_row
+      render_participation_update
     end
 
     def mark_as_participated
@@ -138,7 +177,7 @@ module Assessment
     def remove_participated
       SubmissionGraderService.remove_participation(@participation)
       @participation.reload
-      rerender_user_row
+      render_participation_update
     end
 
     private
@@ -176,7 +215,7 @@ module Assessment
       # The rows on this page are drawn for assignments; a participation in
       # anything else has no row to go back into.
       def refuse_without_row
-        return if @assessable.is_a?(Assignment)
+        return if @assessable.is_a?(Assignment) || @assessable.is_a?(Exam)
 
         respond_with_flash(:alert, t("assessment.task_points.unsupported_assessment_type"),
                            status: :bad_request)
@@ -199,15 +238,13 @@ module Assessment
         end
       end
 
-      def rerender_user_row
-        respond_to do |format|
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              "participation-row-#{@participation.id}",
-              html: render_to_string(participation_row)
-            )
-          end
-        end
+      def render_participation_update
+        render_task_points_update(
+          turbo_stream.replace(
+            "participation-row-#{@participation.id}",
+            html: render_to_string(participation_row)
+          )
+        )
       end
 
       def render_task_points_update(*streams)

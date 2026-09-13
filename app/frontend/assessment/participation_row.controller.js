@@ -45,6 +45,12 @@ export default class extends Controller {
     this.refreshFormTarget.requestSubmit();
   }
 
+  openExemptModal(event) {
+    const url = event.currentTarget.dataset.url;
+    console.log("Dispatching exempt:open event with url:", url);
+    window.dispatchEvent(new CustomEvent("exempt:open", { detail: { url } }));
+  }
+
   // --- Change Handlers ---
   onPointSubmissionChanged(event) {
     const valid = this.validateNewPoint(event);

@@ -17,7 +17,7 @@ class ParticipationRowComponent < ViewComponent::Base
     @group_id = group_id
     @table_option = table_option
     @config = Assessment::DisplayConfigResolver.resolve(
-      assessable: @assessable, grading_scope: @grading_scope
+      assessable: @assessable, grading_scope: @grading_scope, table_option: @table_option
     )
 
     @user ||= @participation&.user
@@ -46,8 +46,13 @@ class ParticipationRowComponent < ViewComponent::Base
   # Points go on a sheet that came in; a row nothing was handed in for waits
   # for the mark in the hand-in column first.
   def points_enterable?
-    paper_hand_in? && !elsewhere? &&
+    case @assessable
+    when Assignment
+      paper_hand_in? && !elsewhere? &&
+        !@participation.exempt? && !@participation.absent?
+    when Exam
       !@participation.exempt? && !@participation.absent?
+    end
   end
 
   def status
@@ -92,6 +97,14 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def exempt_url
     mark_as_exempt_path(@participation, grading_scope_type: grading_scope_type)
+  end
+
+  def remove_absent_url
+    remove_absent_path(@participation, grading_scope_type: grading_scope_type)
+  end
+
+  def remove_exempt_url
+    remove_exempt_path(@participation, grading_scope_type: grading_scope_type)
   end
 
   # The hand-in column of a row without a file: whether the sheet came in on
@@ -180,6 +193,40 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
+  def mark_absent_button
+    if @participation.absent?
+      simple_action_button(icon: "bi-person-check",
+                           label: "Remove absent",
+                           url: remove_absent_url,
+                           disabled: !grading_enabled? || !can_mark_absent?)
+    else
+      simple_action_button(icon: "bi-person-x", label: "Mark absent",
+                           url: absent_url,
+                           disabled: !grading_enabled? || !can_mark_absent?)
+    end
+  end
+
+  def mark_exempt_button
+    if @participation.exempt?
+      simple_action_button(icon: "bi-person-check",
+                           label: "Remove exempt",
+                           url: remove_exempt_url,
+                           disabled: !grading_enabled? || !can_mark_exempt?)
+    else
+      tag.button(type: "button",
+                 class: button_class_name,
+                 data: {
+                   action: "click->participation-row#openExemptModal",
+                   url: exempt_url
+                 },
+                 title: "Mark exempt",
+                 aria: { label: "Mark exempt" },
+                 disabled: !grading_enabled? || !can_mark_exempt?) do
+        tag.i(class: "bi bi-person-x")
+      end
+    end
+  end
+
   def can_enter_points?
     user = helpers.current_user
     user.admin? || user.can_enter_points_in?(@grading_scope)
@@ -192,6 +239,18 @@ class ParticipationRowComponent < ViewComponent::Base
     user.admin? || user.can_enter_grades_in?(@grading_scope)
   rescue User::IncompatibleTypeError
     false
+  end
+
+  def can_mark_absent?
+    user_allowed = can_enter_points?
+    assessable_allowed = @assessable.allow_mark_absent?
+    user_allowed && assessable_allowed
+  end
+
+  def can_mark_exempt?
+    user_allowed = can_enter_points?
+    assessable_allowed = @assessable.allow_mark_exempt?
+    user_allowed && assessable_allowed
   end
 
   def users_movement_map
@@ -281,4 +340,19 @@ class ParticipationRowComponent < ViewComponent::Base
 
     I18n.l(@participation.graded_at, format: :short)
   end
+
+  private
+
+    def simple_action_button(icon:, label:, url:, disabled:, remove: false)
+      button_to(url, method: :patch, params: (remove ? { remove: true } : {}),
+                     class: button_class_name, title: label,
+                     disabled: disabled) do
+        tag.i(class: "bi #{icon}")
+      end
+    end
+
+    def button_class_name
+      "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
+        "justify-content-center text-nowrap px-2 py-1 lh-1"
+    end
 end

@@ -58,7 +58,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
       team_column,
       *status_col,
       *pointing_columns,
-      *action_column
+      *save_column
     ].compact
   end
 
@@ -67,7 +67,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
       team_column,
       *status_col,
       *grading_columns,
-      *action_column
+      *save_column
     ].compact
   end
 

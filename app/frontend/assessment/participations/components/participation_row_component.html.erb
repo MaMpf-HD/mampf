@@ -114,6 +114,14 @@
     <% end %>
 
     <td class="text-center sticky-col save-col">
+      <% if can_mark_absent? %>
+        <%= mark_absent_button %>
+      <% end %>
+
+      <% if can_mark_exempt? %>
+        <%= mark_exempt_button %>
+      <% end %>
+
       <% if (can_enter_points? && points_enterable?) || can_enter_grade? %>
         <div class="d-inline-flex align-items-center gap-1">
           <%= form_with url: save_url,

@@ -204,6 +204,14 @@ class Assignment < ApplicationRecord
     ".gz"
   end
 
+  def allow_mark_absent?
+    false
+  end
+
+  def allow_mark_exempt?
+    false
+  end
+
   private
 
     def locked_fields_unchanged

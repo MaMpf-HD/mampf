@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["bulkSave", "form", "payload"];
+  static targets = ["bulkSave", "form", "payload", "exemptForm", "exemptNote"];
 
   connect() {
     this.newValues = [];
