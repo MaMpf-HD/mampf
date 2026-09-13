@@ -12,17 +12,12 @@ export default class extends Controller {
   }
 
   saveRow() {
-    // Collect all input values for this row
     const newValues = {};
     this.inputTargets.forEach((input) => {
       const taskId = input.dataset.taskId;
       newValues[taskId] = input.value;
     });
-
-    // Set hidden input value as JSON
     this.payloadTarget.value = JSON.stringify(newValues);
-
-    // Submit the hidden form
     this.formTarget.requestSubmit();
   }
 

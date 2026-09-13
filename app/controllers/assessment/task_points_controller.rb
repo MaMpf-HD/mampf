@@ -148,11 +148,8 @@ module Assessment
                                       grading_scope: table_scope)
       end
 
-      # A participation that exists belongs to the group that holds it, even
-      # if the person has since moved; a new one goes to the group they sit
-      # in, or to the lecture when they sit in none. Until there is a
-      # participation, the row goes by the user; the answer has to find it
-      # under that name.
+      # A participation belongs to the group that holds it, however the person
+      # has moved since; only a new one goes to the group they sit in now.
       def record_paper_hand_in(user)
         roster_tutorial = user.rostered_tutorial_in(@lecture)
         row_before = @assessment.assessment_participations.find_by(user: user)
