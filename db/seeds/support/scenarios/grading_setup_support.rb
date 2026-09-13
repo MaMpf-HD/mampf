@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   module GradingSetupSupport
     include Assessment::AbsenceHandling
 
@@ -18,14 +18,13 @@ module Demo
 
     def setup_grading!
       exam = nil
-      Demo::QuietLoggingSupport.with_quiet_logging do
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         exam = grading_exam!
       end
 
       summary = []
       Rails.logger.debug("=== Demo Grading Setup ===")
-      Demo::QuietLoggingSupport.with_quiet_logging do
-        reset_demo_grading!(exam)
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         create_demo_exam_tasks!(exam)
         create_demo_participations!(exam)
         record_demo_absences!(exam)
@@ -43,7 +42,7 @@ module Demo
     def grading_exam!
       lecture = exam_lecture!
       exam = Exam.find_by(lecture_id: lecture.id,
-                          title: Demo::ExamSetupSupport::DEMO_MIDTERM_TITLE)
+                          title: Scenarios::ExamSetupSupport::DEMO_MIDTERM_TITLE)
       return exam if exam&.exam_roster_entries&.exists?
 
       # rubocop:disable Rails/Exit
@@ -52,21 +51,6 @@ module Demo
     end
 
     private
-
-      # An applied scheme refuses every change, and a task with points entered
-      # refuses to be destroyed. Demo data is not worth working around either
-      # one call at a time, so it goes by the shortest route.
-      def reset_demo_grading!(exam)
-        assessment = exam.assessment
-        return unless assessment
-
-        participation_ids = assessment.assessment_participations.select(:id)
-        Assessment::TaskPoint.where(assessment_participation_id: participation_ids)
-                             .delete_all
-        Assessment::GradeScheme.where(assessment_id: assessment.id).delete_all
-        assessment.assessment_participations.delete_all
-        assessment.tasks.delete_all
-      end
 
       # Before the participations: a new task reopens everyone already reviewed,
       # so building the paper first saves undoing that.

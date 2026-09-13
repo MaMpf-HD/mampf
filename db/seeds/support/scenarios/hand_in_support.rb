@@ -1,12 +1,13 @@
-module Demo
+module Scenarios
   # Handing one sheet in: a submission with a manuscript on it, the partners
   # who join the team, and the correction if the tutor has got to it.
   #
   # Two places stage hand-ins and they want different things around this --
-  # the seed build covers the lecture's own sheets, the demo setup covers the
-  # ones with an assessment behind them, with their own teams, their own
-  # corrections and their own dates. What happens per hand-in is the same, and
-  # was written twice before it lived here.
+  # Seeds::CourseworkSupport covers the lecture's own sheets,
+  # Scenarios::HomeworkSubmissionSupport covers the ones with an assessment
+  # behind them, with their own teams, their own corrections and their own
+  # dates. What happens per hand-in is the same, and was written twice before
+  # it lived here.
   module HandInSupport
     module_function
 

@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   # Sets up everything needed to observe the next-term banner feature:
   # enables the relevant feature flags, makes sure a next term exists, and
   # creates demo lectures in it covering the states a student can encounter:
@@ -60,11 +60,9 @@ module Demo
       end
 
       def ensure_lecture!(term, config)
-        course = Course.find_by(title: config[:title]) ||
-                 FactoryBot.create(:course, title: config[:title])
-        lecture = Lecture.find_by(course: course, term: term) ||
-                  FactoryBot.create(:lecture, course: course, term: term)
-        lecture.update!(released: config[:published] ? "all" : nil)
+        course = FactoryBot.create(:course, title: config[:title])
+        lecture = FactoryBot.create(:lecture, course: course, term: term,
+                                              released: config[:published] ? "all" : nil)
         open_campaign!(lecture) if config[:campaign]
         output("lecture ##{lecture.id}: #{config[:title]} " \
                "(#{config[:published] ? "published" : "unpublished"}" \
@@ -73,9 +71,7 @@ module Demo
       end
 
       def open_campaign!(lecture)
-        campaign = Registration::Campaign.find_by(
-          campaignable: lecture, description: CAMPAIGN_DESCRIPTION
-        ) || FactoryBot.create(
+        campaign = FactoryBot.create(
           :registration_campaign,
           campaignable: lecture,
           status: :draft,
@@ -85,19 +81,13 @@ module Demo
         )
 
         TUTORIALS.each do |title, capacity|
-          tutorial = Tutorial.find_by(lecture: lecture, title: title) ||
-                     FactoryBot.create(:tutorial, lecture: lecture,
-                                                  title: title,
+          tutorial = FactoryBot.create(:tutorial, lecture: lecture, title: title,
                                                   capacity: capacity)
-          next if Registration::Item.exists?(registration_campaign: campaign,
-                                             registerable: tutorial)
-
-          FactoryBot.create(:registration_item,
-                            registration_campaign: campaign,
-                            registerable: tutorial)
+          FactoryBot.create(:registration_item, registration_campaign: campaign,
+                                                registerable: tutorial)
         end
 
-        campaign.update!(status: :open) unless campaign.open?
+        campaign.update!(status: :open)
         campaign
       end
 

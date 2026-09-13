@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   module PerformanceSetupSupport
     DEMO_ACHIEVEMENT_ATTRIBUTES = [
       { title: "Blackboard Talk", value_type: :boolean, threshold: nil },
@@ -8,13 +8,12 @@ module Demo
 
     def setup_performance!
       lecture = nil
-      Demo::QuietLoggingSupport.with_quiet_logging do
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         lecture = performance_lecture!
       end
 
       Rails.logger.debug("=== Demo Performance Setup ===")
-      Demo::QuietLoggingSupport.with_quiet_logging do
-        reset_demo_performance!(lecture)
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         create_demo_achievements!(lecture)
         seed_demo_achievement_grades!(lecture)
         compute_demo_performance_records!(lecture)
@@ -42,17 +41,11 @@ module Demo
         lecture.achievements.where(title: demo_achievement_titles).order(:title)
       end
 
-      def reset_demo_performance!(lecture)
-        lecture.student_performance_records.delete_all
-
-        demo_achievements(lecture).find_each(&:destroy!)
-
-        Rails.logger.debug("Reset demo achievements and performance records.")
-      end
-
       def create_demo_achievements!(lecture)
+        # A student seated in more than one tutorial (the roster's random
+        # allocation allows it) still gets one participation, not one per seat.
         memberships = TutorialMembership.where(tutorial_id: staffed_tutorial_ids(lecture))
-                                        .pluck(:user_id, :tutorial_id)
+                                        .pluck(:user_id, :tutorial_id).to_h
 
         DEMO_ACHIEVEMENT_ATTRIBUTES.each do |attrs|
           achievement = lecture.achievements.create!(attrs)
@@ -62,6 +55,9 @@ module Demo
           )
 
           assessment = achievement.assessment
+          # Achievement#after_create already seeded a participation per
+          # lecture member; only the staffed tutorials' students are meant
+          # to have one, each with the tutorial this loop assigns them.
           assessment.assessment_participations.delete_all
           memberships.each do |user_id, tutorial_id|
             assessment.assessment_participations.create!(

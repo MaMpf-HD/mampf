@@ -50,37 +50,3 @@ ezt:
   organizational_concept: |-
     <!-- BEGIN app/views/courses/_organizational_default.html.erb -->This should be the text.
     <!-- END app/views/courses/_organizational_default.html.erb -->
-drs:
-  title: Demo Roster Seminar
-  short_title: DRS
-cts:
-  title: Campaign Test Seminar
-  short_title: CTS
-  locale: en
-sansibar_oder_der_letzte_grund_1370:
-  title: Demo Next Term (with registration)
-  short_title: Sansibar oder der letzte Grund 1370
-  locale: en
-haus_ohne_hueter_765:
-  title: Demo Next Term (subscribe only)
-  short_title: Haus ohne Hüter 765
-  locale: en
-der_besuch_der_alten_dame_8131:
-  title: Demo Next Term (unpublished)
-  short_title: Der Besuch der alten Dame 8131
-  locale: en
-ana_ss_2026:
-  title: Analysis SS 2026
-  short_title: Ana SS 2026
-sem_ss_2026:
-  title: Seminar SS 2026
-  short_title: Sem SS 2026
-ana_ws_2026:
-  title: Analysis WS 2026
-  short_title: Ana WS 2026
-sem_ws_2026:
-  title: Seminar WS 2026
-  short_title: Sem WS 2026
-rp:
-  title: Registration Playground
-  short_title: RP

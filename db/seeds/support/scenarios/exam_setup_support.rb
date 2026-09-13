@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   module ExamSetupSupport
     # One exam per campaign state, so the registration tab can be seen in all of
     # them: finalized with an editable roster, open for registration, closed and
@@ -22,13 +22,12 @@ module Demo
 
     def setup_exams!
       lecture = nil
-      Demo::QuietLoggingSupport.with_quiet_logging do
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         lecture = exam_lecture!
       end
 
       Rails.logger.debug("=== Demo Exam Setup ===")
-      Demo::QuietLoggingSupport.with_quiet_logging do
-        reset_demo_exams!(lecture)
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         create_demo_exams!(lecture)
         attach_performance_policy!(lecture)
         open_demo_campaigns!(lecture)
@@ -53,47 +52,6 @@ module Demo
 
       def demo_exams(lecture)
         Exam.where(lecture_id: lecture.id, title: DEMO_EXAM_TITLES)
-      end
-
-      # A finalized campaign refuses to be destroyed and so does an exam with a
-      # roster, both for good reasons. Demo data is not worth working around
-      # them one call at a time, so it goes by the shortest route.
-      def reset_demo_exams!(lecture)
-        exams = demo_exams(lecture)
-        return if exams.empty?
-
-        campaign_ids = Registration::Item
-                       .where(registerable_type: "Exam", registerable_id: exams.ids)
-                       .pluck(:registration_campaign_id)
-
-        # Roster entries carry the campaign that admitted them, so they go
-        # before it does.
-        ExamRosterEntry.where(exam_id: exams.ids).delete_all
-        Registration::UserRegistration.where(registration_campaign_id: campaign_ids)
-                                      .delete_all
-        Registration::Policy.where(registration_campaign_id: campaign_ids).delete_all
-        Registration::Item.where(registration_campaign_id: campaign_ids).delete_all
-        Registration::Campaign.where(id: campaign_ids).delete_all
-        reset_exam_assessments!(exams)
-        exams.delete_all
-      end
-
-      # Everything hanging off the gradebook, innermost first: once grading has
-      # run, deleting the assessment alone hits the foreign keys — and by then
-      # the campaigns above are already gone, so an abort here is a mess.
-      def reset_exam_assessments!(exams)
-        assessment_ids = Assessment::Assessment
-                         .where(assessable_type: "Exam", assessable_id: exams.ids)
-                         .ids
-        participation_ids = Assessment::Participation
-                            .where(assessment_id: assessment_ids).select(:id)
-
-        Assessment::TaskPoint.where(assessment_participation_id: participation_ids)
-                             .delete_all
-        Assessment::Participation.where(assessment_id: assessment_ids).delete_all
-        Assessment::Task.where(assessment_id: assessment_ids).delete_all
-        Assessment::GradeScheme.where(assessment_id: assessment_ids).delete_all
-        Assessment::Assessment.where(id: assessment_ids).delete_all
       end
 
       def create_demo_exams!(lecture)

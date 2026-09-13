@@ -1,13 +1,11 @@
 require "yaml"
 
 module Seeds
-  # Writes the content core of a seeded development database out as YAML.
-  #
-  # This is the read side of the seed rewrite: it runs once against a database
-  # restored from the shipped dump, and what it produces is reviewed, committed
-  # and from then on maintained by hand -- the material a developer needs to
-  # see the app working stops living in an SQL dump and starts living in the
-  # repository.
+  # Writes the content core of a seeded development database out as YAML, for
+  # db/seeds/data. The read side of the pair Seeds::LoadSupport writes back
+  # from; run it against a database that has only the content core loaded
+  # (before db/seeds/100_scenarios.rb runs), and what it produces is reviewed
+  # and committed by hand from then on.
   #
   # Records are addressed by label rather than by primary key, so nothing that
   # comes out of here depends on the ids one particular dump handed out. A

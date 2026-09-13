@@ -1,7 +1,7 @@
 require "rails_helper"
 
-RSpec.describe(Demo::ScenarioTouchupsSupport, type: :model) do
-  let(:teacher) { create(:confirmed_user, email: Demo::LectureSupport::TEACHER_EMAIL) }
+RSpec.describe(Scenarios::ScenarioTouchupsSupport, type: :model) do
+  let(:teacher) { create(:confirmed_user, email: Scenarios::LectureSupport::TEACHER_EMAIL) }
   let(:active_term) { create(:term, :active, :summer) }
 
   describe ".add_running_campaigns!" do

@@ -49,7 +49,7 @@ module Seeds
         -> { Course.exists?(["title LIKE ?", "Demo Next Term%"]) },
       "homework has been handed in" => -> { Submission.exists? },
       "the two stale-password accounts still need a change" => lambda {
-        Demo::ScenarioTouchupsSupport::STALE_PASSWORD_ACCOUNTS.all? do |email|
+        Scenarios::ScenarioTouchupsSupport::STALE_PASSWORD_ACCOUNTS.all? do |email|
           User.find_by(email: email)&.password_change_required?
         end
       }

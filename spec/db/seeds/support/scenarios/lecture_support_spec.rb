@@ -3,7 +3,7 @@ require "rails_helper"
 # The demo data used to find its lecture at id 1, which held only because the
 # shipped dump handed out that id. What these examples are about is that the
 # lecture is found by what it is instead.
-RSpec.describe(Demo::LectureSupport, type: :model) do
+RSpec.describe(Scenarios::LectureSupport, type: :model) do
   let(:course) do
     create(:course, title: described_class::COURSE_TITLE, short_title: "LA 2")
   end

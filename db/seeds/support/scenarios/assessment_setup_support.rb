@@ -1,14 +1,13 @@
-module Demo
+module Scenarios
   module AssessmentSetupSupport
     def setup_assessment!
       lecture = nil
-      Demo::QuietLoggingSupport.with_quiet_logging do
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         lecture = assessment_lecture!
       end
 
       Rails.logger.debug("=== Demo Assessment Setup ===")
-      Demo::QuietLoggingSupport.with_quiet_logging do
-        reset_demo_assignments!(lecture)
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         create_demo_assignments!(lecture)
         create_demo_tasks!(lecture)
         seed_demo_participations!(lecture)
@@ -27,8 +26,9 @@ module Demo
       raise("Lecture 1 has no tutorial roster. Run just seed first.")
     end
 
-    # Which sheets belong to the demo, asked from outside as well: the seed
-    # build stages the lecture's own hand-ins and has to leave these alone.
+    # Which sheets belong to the demo, asked from outside as well:
+    # Seeds::CourseworkSupport stages the lecture's own hand-ins and has to
+    # leave these alone.
     def demo_assignment_titles
       demo_assignment_attributes.pluck(:title)
     end
@@ -55,33 +55,6 @@ module Demo
 
       def demo_assignments(lecture)
         lecture.assignments.where(title: demo_assignment_titles).order(:deadline)
-      end
-
-      def reset_demo_assignments!(lecture)
-        destroyed = 0
-
-        demo_assignment_titles.each do |title|
-          assignment = lecture.assignments.find_by(title: title)
-          next unless assignment
-
-          if assignment.assessment
-            participation_ids = assignment.assessment.assessment_participations.select(:id)
-            Assessment::TaskPoint.where(
-              assessment_participation_id: participation_ids
-            ).delete_all
-            assignment.assessment.assessment_participations.delete_all
-            assignment.assessment.tasks.delete_all
-          end
-
-          # A sheet with a hand-in under it refuses to go, and rightly so; the
-          # demo ones are ours to clear.
-          Submission.where(assignment: assignment).find_each(&:destroy)
-
-          assignment.destroy!
-          destroyed += 1
-        end
-
-        Rails.logger.debug { "Reset #{destroyed} demo assignments." }
       end
 
       def create_demo_assignments!(lecture)
@@ -333,7 +306,7 @@ module Demo
         Rails.logger.debug("")
 
         seminar = Lecture.find_by(
-          course: Course.find_by(title: Demo::SetupSupport::SEMINAR_COURSE_TITLE)
+          course: Course.find_by(title: Scenarios::SetupSupport::SEMINAR_COURSE_TITLE)
         )
         return unless seminar
 
@@ -353,7 +326,7 @@ module Demo
 
       def demo_seminar_talks(seminar)
         seminar.talks.where(
-          title: Demo::SetupSupport::SEMINAR_TALK_TITLES
+          title: Scenarios::SetupSupport::SEMINAR_TALK_TITLES
         ).order(:position)
       end
 

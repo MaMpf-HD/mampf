@@ -4,7 +4,7 @@ require "rails_helper"
 # would otherwise stamp the gradebook. What it stamps is the point of these
 # examples: a hand-in that nobody recorded shows up on the student's page in
 # red, and a stamp on somebody who was excused undoes an entry a tutor made.
-RSpec.describe(Demo::HandInSupport, type: :model) do
+RSpec.describe(Scenarios::HandInSupport, type: :model) do
   let(:lecture) { create(:lecture, :released_for_all) }
   let(:assignment) { create(:assignment, lecture: lecture) }
   let(:assessment) { assignment.assessment }

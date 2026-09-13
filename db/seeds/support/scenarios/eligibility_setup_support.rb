@@ -1,17 +1,16 @@
-module Demo
+module Scenarios
   module EligibilitySetupSupport
     DEMO_RULE_MIN_PERCENTAGE = 50.0
     DEMO_RULE_REQUIRED_ACHIEVEMENT = "Blackboard Talk".freeze
 
     def setup_eligibility!
       lecture = nil
-      Demo::QuietLoggingSupport.with_quiet_logging do
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         lecture = eligibility_lecture!
       end
 
       Rails.logger.debug("=== Demo Eligibility Setup ===")
-      Demo::QuietLoggingSupport.with_quiet_logging do
-        reset_demo_eligibility!(lecture)
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         # The demo term is over: all ten sheets exist, so the list is closed and
         # the proposals below are the real thing rather than "too early".
         lecture.update!(uses_exam_eligibility: true, assignments_complete: true)
@@ -31,18 +30,7 @@ module Demo
       # rubocop:enable Rails/Exit
     end
 
-    # An achievement a rule requires cannot be deleted (`restrict_with_error`),
-    # so the rules have to go before the performance step rebuilds them.
-    def reset_eligibility!
-      reset_demo_eligibility!(lecture!)
-    end
-
     private
-
-      def reset_demo_eligibility!(lecture)
-        StudentPerformance::Certification.where(lecture_id: lecture.id).destroy_all
-        StudentPerformance::Rule.where(lecture_id: lecture.id).destroy_all
-      end
 
       def create_demo_rule!(lecture)
         rule = StudentPerformance::Rule.create!(
@@ -65,9 +53,6 @@ module Demo
       # `pending`, without a certifier, and its `certified_at` then reads as
       # "last evaluated" rather than "decided".
       def certify_demo_students!(lecture, rule)
-        # No proposal is anything but inconclusive while assignments can still
-        # be added, so the demo says the lecture's are all there.
-        lecture.update!(assignments_complete: true)
         due_points = StudentPerformance::DuePoints.new(lecture: lecture)
         evaluator = StudentPerformance::Evaluator.new(
           rule,

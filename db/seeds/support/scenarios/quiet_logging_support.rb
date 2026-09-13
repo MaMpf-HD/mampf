@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   module QuietLoggingSupport
     module_function
 

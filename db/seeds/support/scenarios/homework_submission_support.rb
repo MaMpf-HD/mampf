@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   # The lecture's own sheets are handed in without an assessment behind them,
   # which is the old way. The demo homework has one -- tasks, points, a status
   # per participant -- and needed a stack of real hand-ins under it, so that
@@ -16,8 +16,7 @@ module Demo
       lecture = assessment_lecture!
 
       Rails.logger.debug("=== Demo Homework Submissions ===")
-      Demo::QuietLoggingSupport.with_quiet_logging do
-        reset_demo_submissions!(lecture)
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         hand_in_demo_homework!(lecture)
       end
       report_demo_submissions(lecture)
@@ -26,12 +25,8 @@ module Demo
 
     private
 
-      def reset_demo_submissions!(lecture)
-        Submission.where(assignment: demo_assignments(lecture)).find_each(&:destroy)
-      end
-
       def hand_in_demo_homework!(lecture)
-        return if Demo::HandInSupport.manuscript_path.nil?
+        return if Scenarios::HandInSupport.manuscript_path.nil?
 
         assignments = demo_assignments(lecture).to_a
         handed_in = 0
@@ -44,7 +39,7 @@ module Demo
             next unless hands_in?(assignment, team)
 
             late = (handed_in % LATE_EVERY).zero?
-            Demo::HandInSupport.hand_in!(
+            Scenarios::HandInSupport.hand_in!(
               assignment: assignment, tutorial: tutorial, team: team,
               correction: correction_for(sheets_left, position),
               handed_in_at: handed_in_at(assignment, late: late)

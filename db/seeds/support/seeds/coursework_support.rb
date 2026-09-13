@@ -8,8 +8,6 @@ module Seeds
 
     SECOND_TUTOR_EMAIL = "tutor2@mampf.edu".freeze
     NAMED_STUDENT_EMAILS = (1..5).map { |number| "student#{number}@mampf.edu" }.freeze
-    # What a group hands in per sheet. Also the ceiling, so that a rebuild does
-    # not pile more on top of what the last one left.
     TEAMS_PER_TUTORIAL = 2
 
     def setup!
@@ -22,7 +20,7 @@ module Seeds
     end
 
     def demo_lecture
-      Demo::LectureSupport.find
+      Scenarios::LectureSupport.find
     end
 
     def staff_tutorials!(lecture)
@@ -68,11 +66,11 @@ module Seeds
     end
 
     # The lecture's own sheets only. The demo homework has a stager of its own
-    # (Demo::HomeworkSubmissionSupport), which clears and rebuilds what it
+    # (Scenarios::HomeworkSubmissionSupport), which clears and rebuilds what it
     # covers - staging it here would be work thrown away, in a shape that
     # differs from what it produces.
     def hand_in_sheets!(lecture)
-      return if Demo::HandInSupport.manuscript_path.nil?
+      return if Scenarios::HandInSupport.manuscript_path.nil?
 
       own_sheets(lecture).each_with_index do |assignment, index|
         seated_tutorials(lecture).each do |tutorial|
@@ -86,7 +84,7 @@ module Seeds
     end
 
     def own_sheets(lecture)
-      demo_titles = Demo::SetupSupport.demo_assignment_titles
+      demo_titles = Scenarios::SetupSupport.demo_assignment_titles
       lecture.assignments.where.not(title: demo_titles).order(:deadline)
     end
 
@@ -105,12 +103,11 @@ module Seeds
       return if Submission.where(assignment: assignment,
                                  tutorial: tutorial).count >= TEAMS_PER_TUTORIAL
 
-      Demo::HandInSupport.hand_in!(assignment: assignment, tutorial: tutorial,
-                                   team: team, correction: correction)
+      Scenarios::HandInSupport.hand_in!(assignment: assignment, tutorial: tutorial,
+                                        team: team, correction: correction)
     end
 
-    # One submission per assignment and person: a team whose member has handed
-    # in already is left alone, which is also what makes this rerunnable.
+    # One submission per assignment and person.
     def handed_in?(assignment, user)
       UserSubmissionJoin.where(user: user, submission: assignment.submissions).any?
     end

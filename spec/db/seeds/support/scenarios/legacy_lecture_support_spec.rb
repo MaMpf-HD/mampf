@@ -2,14 +2,14 @@ require "rails_helper"
 
 # The lecture this stages is the one the seat rule is measured against: what
 # production carries from before the roster. So the shape is the claim.
-RSpec.describe(Demo::LegacyLectureSupport, type: :model) do
+RSpec.describe(Scenarios::LegacyLectureSupport, type: :model) do
   before do
     create(:term, active: true)
     create(:confirmed_user, email: "teacher@mampf.edu")
     create(:confirmed_user, email: "tutor@mampf.edu")
     create(:confirmed_user, email: "student1@mampf.edu")
-    allow(Demo::HandInSupport).to receive(:manuscript_path).and_return("stub")
-    allow(Demo::HandInSupport).to receive(:manuscript_copy) do
+    allow(Scenarios::HandInSupport).to receive(:manuscript_path).and_return("stub")
+    allow(Scenarios::HandInSupport).to receive(:manuscript_copy) do
       File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
     end
     allow($stdout).to receive(:puts)
@@ -47,17 +47,5 @@ RSpec.describe(Demo::LegacyLectureSupport, type: :model) do
 
     expect(open_sheet.deadline).to be_future
     expect(open_sheet.submissions).to be_empty
-  end
-
-  it "can be run again without doubling anything" do
-    described_class.setup!
-    described_class.setup!
-
-    expect(Lecture.joins(:course)
-                  .where(courses: { title: described_class::COURSE_TITLE }).count).to eq(1)
-    expect(lecture.tutorials.count).to eq(2)
-    expect(lecture.assignments.count).to eq(3)
-    expect(User.where("email LIKE 'legacy-student-%'").count)
-      .to eq(described_class::GENERATED_STUDENTS)
   end
 end

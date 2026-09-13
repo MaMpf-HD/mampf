@@ -1,12 +1,12 @@
-module Demo
+module Scenarios
   module SetupSupport
     extend self
-    extend Demo::AssessmentSetupSupport
-    extend Demo::PerformanceSetupSupport
-    extend Demo::EligibilitySetupSupport
-    extend Demo::ExamSetupSupport
-    extend Demo::GradingSetupSupport
-    extend Demo::HomeworkSubmissionSupport
+    extend Scenarios::AssessmentSetupSupport
+    extend Scenarios::PerformanceSetupSupport
+    extend Scenarios::EligibilitySetupSupport
+    extend Scenarios::ExamSetupSupport
+    extend Scenarios::GradingSetupSupport
+    extend Scenarios::HomeworkSubmissionSupport
 
     LECTURE_CAMPAIGN_DESCRIPTION = "Demo Lecture Roster Campaign".freeze
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
@@ -22,31 +22,25 @@ module Demo
 
     def setup_campaigns!
       ensure_non_production!
-      Demo::CampaignSetupSupport.setup!
+      Scenarios::CampaignSetupSupport.setup!
     end
 
     def setup_rosters!
       ensure_non_production!
 
       Rails.logger.debug("=== Demo Roster Setup ===")
-      Demo::QuietLoggingSupport.with_quiet_logging do
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         setup_lecture_rosters!
         setup_seminar_rosters!
       end
       Rails.logger.debug("=== Demo Roster Setup Complete ===")
     end
 
-    # The everyday one, on a database restored from the shipped seed: that
-    # already has the demo tutorials and talks, and people seated in them so
-    # that submissions line up with the group they were handed in to. Building
-    # the rosters again would empty those groups and allocate them anew, which
-    # is why it is not part of this.
-    # `homework` is for the seed build alone: it seats the accounts a developer
-    # signs in with a few steps later, and homework staged before that would
+    # `homework` seats the accounts a developer signs in with a few steps
+    # later (Seeds::CourseworkSupport); homework staged before that would
     # leave them without a hand-in.
     def setup!(homework: true)
       ensure_non_production!
-      reset_eligibility!
       setup_assessment!
       setup_homework_submissions! if homework
       setup_performance!
@@ -55,9 +49,6 @@ module Demo
       setup_grading!
     end
 
-    # The same on a database that has no demo groups yet - it builds them
-    # first. That is where the ones in the shipped seed come from, so this is
-    # what the seed build runs; on a seeded database it is the wrong one.
     def setup_from_scratch!(homework: true)
       ensure_non_production!
       setup_rosters!
@@ -73,9 +64,9 @@ module Demo
       # rubocop:enable Rails/Exit
 
       def lecture!
-        lecture = Demo::LectureSupport.find
+        lecture = Scenarios::LectureSupport.find
         # rubocop:disable Rails/Exit
-        abort(Demo::LectureSupport::MISSING_LECTURE_MESSAGE) unless lecture
+        abort(Scenarios::LectureSupport::MISSING_LECTURE_MESSAGE) unless lecture
         # rubocop:enable Rails/Exit
 
         teacher = teacher!
@@ -84,9 +75,9 @@ module Demo
       end
 
       def teacher!
-        teacher = Demo::LectureSupport.teacher
+        teacher = Scenarios::LectureSupport.teacher
         # rubocop:disable Rails/Exit
-        abort(Demo::LectureSupport::MISSING_TEACHER_MESSAGE) unless teacher
+        abort(Scenarios::LectureSupport::MISSING_TEACHER_MESSAGE) unless teacher
         # rubocop:enable Rails/Exit
 
         teacher
@@ -94,25 +85,18 @@ module Demo
 
       def setup_lecture_rosters!
         lecture = lecture!
-        reset_lecture_rosters!(lecture)
-
         tutorials = LECTURE_TUTORIAL_TITLES.zip(LECTURE_TUTORIAL_CAPACITIES)
                                            .map do |title, capacity|
-          tutorial = Tutorial.find_or_initialize_by(lecture: lecture, title: title)
-          tutorial.capacity = capacity
-          tutorial.skip_campaigns = false if tutorial.respond_to?(:skip_campaigns=)
-          tutorial.save!
-          tutorial.tutorial_memberships.delete_all
-          tutorial
+          Tutorial.create!(lecture: lecture, title: title, capacity: capacity)
         end
 
-        campaign = recreate_campaign!(
+        campaign = create_campaign!(
           lecture,
           description: LECTURE_CAMPAIGN_DESCRIPTION,
           allocation_mode: :preference_based
         )
 
-        tutorials.each { |tutorial| ensure_item!(campaign, tutorial) }
+        tutorials.each { |tutorial| add_item!(campaign, tutorial) }
 
         users = build_users(
           prefix: "demo_lecture_student",
@@ -139,26 +123,19 @@ module Demo
 
       def setup_seminar_rosters!
         seminar = seminar!
-        reset_seminar_rosters!(seminar)
 
         talks = SEMINAR_TALK_TITLES.each_with_index.map do |title, index|
-          talk = Talk.find_or_initialize_by(lecture: seminar, title: title)
-          talk.capacity = 1
-          talk.position ||= index + 1
-          talk.skip_campaigns = false if talk.respond_to?(:skip_campaigns=)
-          talk.save!
-          talk.speaker_talk_joins.delete_all
-          talk
+          Talk.create!(lecture: seminar, title: title, capacity: 1, position: index + 1)
         end
 
-        campaign = recreate_campaign!(
+        campaign = create_campaign!(
           seminar,
           description: SEMINAR_CAMPAIGN_DESCRIPTION,
           allocation_mode: :preference_based
         )
 
-        talks.each { |talk| ensure_item!(campaign, talk) }
-        ensure_policy!(campaign)
+        talks.each { |talk| add_item!(campaign, talk) }
+        add_policy!(campaign)
 
         valid_users = build_users(
           prefix: "demo_seminar_student",
@@ -190,31 +167,20 @@ module Demo
         Rails.logger.debug("")
       end
 
+      # Looked up rather than built once and passed around: setup_rosters! and
+      # the assessment step both call this, each in a run of its own.
       def seminar!
+        return @seminar if defined?(@seminar)
+
         teacher = teacher!
-        course = Course.find_or_create_by!(title: SEMINAR_COURSE_TITLE) do |record|
-          record.short_title = "DRS"
-        end
-
-        seminar = Lecture.find_by(course: course)
-        seminar ||= FactoryBot.create(
-          :seminar,
-          course: course,
-          teacher: teacher,
-          released: true,
-          term: Term.active || FactoryBot.create(:term)
-        )
-
-        seminar.update!(teacher: teacher) if seminar.teacher != teacher
-        teacher.lectures << seminar unless teacher.lectures.exists?(seminar.id)
-        seminar
+        course = Course.create!(title: SEMINAR_COURSE_TITLE, short_title: "DRS")
+        @seminar = FactoryBot.create(:seminar, course: course, teacher: teacher,
+                                               released: true, term: Term.active)
+        teacher.lectures << @seminar
+        @seminar
       end
 
-      def recreate_campaign!(campaignable, description:, allocation_mode:)
-        destroy_campaign!(
-          Registration::Campaign.find_by(campaignable: campaignable, description: description)
-        )
-
+      def create_campaign!(campaignable, description:, allocation_mode:)
         FactoryBot.create(
           :registration_campaign,
           campaignable: campaignable,
@@ -225,36 +191,24 @@ module Demo
         )
       end
 
-      def destroy_campaign!(campaign)
-        Demo::CampaignCleanup.discard!(campaign)
+      def add_item!(campaign, registerable)
+        Registration::Item.create!(registration_campaign: campaign, registerable: registerable)
       end
 
-      def ensure_item!(campaign, registerable)
-        Registration::Item.find_or_create_by!(
-          registration_campaign: campaign,
-          registerable: registerable
-        )
-      end
-
-      def ensure_policy!(campaign)
-        Registration::Policy.find_or_create_by!(
+      def add_policy!(campaign)
+        Registration::Policy.create!(
           registration_campaign: campaign,
           kind: :institutional_email,
-          phase: :finalization
-        ) do |policy|
-          policy.active = true
-          policy.config = { "allowed_domains" => "mampf.edu" }
-        end
+          phase: :finalization,
+          active: true,
+          config: { "allowed_domains" => "mampf.edu" }
+        )
       end
 
       def build_users(prefix:, count:, domain:, name_prefix:)
         Array.new(count) do |i|
-          email = "#{prefix}_#{i}@#{domain}"
-          User.find_by(email: email) || FactoryBot.create(
-            :confirmed_user,
-            email: email,
-            name: "#{name_prefix} #{i}"
-          )
+          FactoryBot.create(:confirmed_user, email: "#{prefix}_#{i}@#{domain}",
+                                             name: "#{name_prefix} #{i}")
         end
       end
 
@@ -268,32 +222,6 @@ module Demo
             status: :pending
           )
         end
-      end
-
-      def reset_lecture_rosters!(lecture)
-        demo_tutorials(lecture).each do |tutorial|
-          tutorial.tutorial_memberships.delete_all
-        end
-
-        destroy_campaign!(
-          Registration::Campaign.find_by(
-            campaignable: lecture,
-            description: LECTURE_CAMPAIGN_DESCRIPTION
-          )
-        )
-      end
-
-      def reset_seminar_rosters!(seminar)
-        Talk.where(lecture: seminar, title: SEMINAR_TALK_TITLES).find_each do |talk|
-          talk.speaker_talk_joins.delete_all
-        end
-
-        destroy_campaign!(
-          Registration::Campaign.find_by(
-            campaignable: seminar,
-            description: SEMINAR_CAMPAIGN_DESCRIPTION
-          )
-        )
       end
 
       def demo_tutorials(lecture)

@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   # The demo data needs two terms: the one it plays in, where everything is
   # settled, and the one after it, where anything still being registered for
   # belongs.

@@ -159,14 +159,14 @@ module Seeds
       end
 
       def current_lectures
-        @current_lectures ||= Lecture.where(term: Demo::TermSupport.active_term).to_a
+        @current_lectures ||= Lecture.where(term: Scenarios::TermSupport.active_term).to_a
       end
 
       # The pages a visitor actually opens: the term that is running and the one
       # that can already be registered for.
       def showcase_lectures
         @showcase_lectures ||=
-          current_lectures + Lecture.where(term: Demo::TermSupport.next_term).to_a
+          current_lectures + Lecture.where(term: Scenarios::TermSupport.next_term).to_a
       end
 
       # The forum name carries the term, which the year shift has moved on.
@@ -177,8 +177,7 @@ module Seeds
       end
 
       # The home page is where a lecture starts for a student, and an empty one
-      # says nothing about what the page is for. Overwritten rather than left
-      # alone, so a rerun replaces a stale intro instead of leaving it be.
+      # says nothing about what the page is for.
       def add_home_intros!
         showcase_lectures.each_with_index do |lecture, index|
           text = format(intro_template(lecture, index), title: lecture.course.title)
@@ -204,7 +203,7 @@ module Seeds
       # The home page offers a welcome text and a program; without one of them
       # the page keeps telling its teacher that it is empty.
       def attach_program!
-        lecture = Demo::LectureSupport.find
+        lecture = Scenarios::LectureSupport.find
         return if lecture.nil? || lecture.home_attachment.present?
 
         source = Medium.where.not(manuscript_data: nil).first
@@ -214,18 +213,9 @@ module Seeds
         lecture.save!
       end
 
-      # Announcements stay, but off the landing page, where they greet every
-      # visitor before anything else.
+      # Off the landing page, where an announcement would greet every visitor
+      # before anything else.
       def add_announcements!
-        # rubocop:disable Rails/SkipsModelValidations
-        Announcement.update_all(on_main_page: false)
-        # rubocop:enable Rails/SkipsModelValidations
-
-        # An edition is built from the one before it, so what this step wrote
-        # last time goes before it is written again -- with its notifications.
-        Announcement.where(details: ADMIN_ANNOUNCEMENTS + LECTURE_ANNOUNCEMENTS)
-                    .destroy_all
-
         ADMIN_ANNOUNCEMENTS.each do |text|
           announce!(Announcement.create!(announcer: admin, details: text,
                                          on_main_page: false))
@@ -330,7 +320,6 @@ module Seeds
       # Students collect what they want to see again; the teacher collects what
       # they keep pointing people at.
       def add_watchlists!
-        drop_improper_entries!
         students.each_with_index do |student, index|
           WATCHLIST_NAMES.first(2).each_with_index do |name, run|
             fill_watchlist!(student, "#{name} #{index + 1}", offset: index + run)
@@ -346,15 +335,7 @@ module Seeds
         @teacher = User.find_by(email: "teacher@mampf.edu")
       end
 
-      # An earlier edition collected a random quiz, which belongs to no lecture
-      # and takes the watchlist page down with it.
-      def drop_improper_entries!
-        WatchlistEntry.joins(:medium).where(media: { sort: "RandomQuiz" }).destroy_all
-      end
-
       def fill_watchlist!(user, name, offset:, size: 3)
-        return if Watchlist.exists?(user: user, name: name)
-
         watchlist = Watchlist.create!(user: user, name: name)
         media = annotatable_media.rotate(offset).first(size)
         media.each_with_index do |medium, position|

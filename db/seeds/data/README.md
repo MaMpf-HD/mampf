@@ -51,9 +51,16 @@ A group nothing points at -- join rows, mostly -- is a plain sequence:
 - **The `serialized` blobs** (quiz graphs, question solutions) are opaque:
   the loader writes them back to the column unchanged, bypassing its coder,
   rather than decoding and re-encoding a value nothing here reads.
-- **What is not here** belongs to the demo scenarios in
-  `db/seeds/support/scenarios/`, which
-  generate it on every run: the students they make up, tutorials, rosters,
-  submissions, campaigns, forum posts, notifications. `_meta.yml` counts the
-  rows that were dropped for pointing at one of them -- ten talks assigned to
-  seminar students the scenarios create.
+- **What is not here** belongs to the scenarios in
+  `db/seeds/support/scenarios/`, which build it themselves every run: the
+  students they make up, tutorials, rosters, submissions, campaigns, forum
+  posts, notifications. `_meta.yml` counts the rows that were dropped for
+  pointing at one of them -- ten talks assigned to seminar students the
+  scenarios create.
+- **Re-extracting** (`rails seeds:extract`) must run against a database that
+  has only the content core loaded, before `db/seeds/100_scenarios.rb` runs.
+  Run it against a database the scenarios have already built and their own
+  courses (titles like "Demo Roster Seminar", "Registration Playground")
+  come along as if they belonged here -- which is what happened once before
+  this note existed, and collided with the scenario that creates them fresh
+  on the next run.

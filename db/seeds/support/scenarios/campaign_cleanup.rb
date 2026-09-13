@@ -1,7 +1,8 @@
-module Demo
+module Scenarios
   # A campaign that is under way, or that somebody has already registered for,
   # refuses to be destroyed -- rightly, in an app where that would drop what
-  # students did. The demo data has to be able to start over all the same.
+  # students did. A scenario that wants one gone anyway has to go by this
+  # route instead.
   module CampaignCleanup
     module_function
 

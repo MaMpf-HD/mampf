@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   # A lecture the way they ran before the roster: groups with a tutor and
   # nobody seated in them, students who are merely subscribed, and sheets
   # handed in the old way - the group named in the submission and nowhere
@@ -26,9 +26,8 @@ module Demo
 
     def setup!
       ensure_non_production!
-      lecture = ensure_lecture!
-      reset!(lecture)
-      tutorials = ensure_tutorials!(lecture)
+      lecture = create_lecture!
+      tutorials = create_tutorials!(lecture)
       students = subscribe_students!(lecture)
       sheets = create_sheets!(lecture)
       hand_in!(sheets, tutorials, students)
@@ -43,37 +42,21 @@ module Demo
       end
       # rubocop:enable Rails/Exit
 
-      def ensure_lecture!
-        term = Term.active || raise("No active term found. Run just seed first.")
+      def create_lecture!
         teacher = User.find_by(email: "teacher@mampf.edu") ||
                   raise("User teacher@mampf.edu not found. Run just seed first.")
-        course = Course.find_by(title: COURSE_TITLE) ||
-                 FactoryBot.create(:course, title: COURSE_TITLE)
-        lecture = Lecture.find_by(course: course, term: term) ||
-                  FactoryBot.create(:lecture, course: course, term: term,
-                                              teacher: teacher)
-        lecture.update!(released: "all", teacher: teacher, locale: "de")
-        lecture
-      end
-
-      # The sheets and what hangs off them are ours to clear; the lecture, its
-      # groups and its subscribers stay, so an id one has bookmarked survives.
-      def reset!(lecture)
-        lecture.assignments.each do |assignment|
-          Submission.where(assignment: assignment).find_each(&:destroy)
-          assignment.assessment&.destroy
-          assignment.destroy!
-        end
+        course = FactoryBot.create(:course, title: COURSE_TITLE)
+        FactoryBot.create(:lecture, course: course, term: Term.active,
+                                    teacher: teacher, released: "all", locale: "de")
       end
 
       # Groups with a tutor and nobody in them - and nothing else that would
       # make the lecture run a roster: no campaign, no self-service.
-      def ensure_tutorials!(lecture)
+      def create_tutorials!(lecture)
         TUTORIALS.map do |title, tutor_email|
-          tutorial = Tutorial.find_by(lecture: lecture, title: title) ||
-                     FactoryBot.create(:tutorial, lecture: lecture, title: title)
+          tutorial = FactoryBot.create(:tutorial, lecture: lecture, title: title)
           tutor = User.find_by(email: tutor_email)
-          tutorial.tutors << tutor if tutor && !tutor.in?(tutorial.tutors)
+          tutorial.tutors << tutor if tutor
           tutorial
         end
       end
@@ -81,17 +64,11 @@ module Demo
       def subscribe_students!(lecture)
         students = NAMED_STUDENT_EMAILS.filter_map { |email| User.find_by(email: email) }
         students += (1..GENERATED_STUDENTS).map do |number|
-          email = "legacy-student-#{number}@mampf.edu"
-          User.find_by(email: email) ||
-            FactoryBot.create(:confirmed_user, email: email,
-                                               name: "Legacy Student #{number}",
-                                               name_in_tutorials: "Legacy Student #{number}")
+          FactoryBot.create(:confirmed_user, email: "legacy-student-#{number}@mampf.edu",
+                                             name: "Legacy Student #{number}",
+                                             name_in_tutorials: "Legacy Student #{number}")
         end
-        students.each do |student|
-          next if LectureUserJoin.exists?(lecture: lecture, user: student)
-
-          LectureUserJoin.create!(lecture: lecture, user: student)
-        end
+        students.each { |student| LectureUserJoin.create!(lecture: lecture, user: student) }
         students
       end
 
@@ -116,7 +93,7 @@ module Demo
       # student would have picked them - and nobody in the open sheet yet, so
       # that its card shows what a reader without a seat gets offered.
       def hand_in!(sheets, tutorials, students)
-        return if Demo::HandInSupport.manuscript_path.nil?
+        return if Scenarios::HandInSupport.manuscript_path.nil?
 
         teams = [students.first(2)] + students.drop(2).zip
         sheets.zip(SHEETS).each do |assignment, attrs|
@@ -124,7 +101,7 @@ module Demo
 
           teams.each_with_index do |team, position|
             correction = attrs[:corrected] && (position.even? ? :accepted : :pending)
-            Demo::HandInSupport.hand_in!(
+            Scenarios::HandInSupport.hand_in!(
               assignment: assignment, tutorial: tutorials[position % tutorials.size],
               team: team, correction: correction,
               handed_in_at: assignment.deadline - rand(2..72).hours

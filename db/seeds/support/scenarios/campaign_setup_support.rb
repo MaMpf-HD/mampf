@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   module CampaignSetupSupport
     extend self
 
@@ -12,7 +12,7 @@ module Demo
 
     def setup!
       ensure_non_production!
-      Demo::QuietLoggingSupport.with_quiet_logging do
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         setup_preference_campaign!
         seed_preference_campaign_registrations!
         setup_mixed_fcfs_campaign!
@@ -30,47 +30,23 @@ module Demo
       output("Using lecture: #{lecture.title} (ID: #{lecture.id})")
       output("Using teacher: #{teacher!.name} (ID: #{teacher!.id})")
 
-      campaign = Registration::Campaign.find_by(
+      campaign = FactoryBot.create(
+        :registration_campaign,
         campaignable: lecture,
+        status: :draft,
+        allocation_mode: :preference_based,
+        registration_deadline: 1.week.from_now,
         description: PREFERENCE_CAMPAIGN_DESCRIPTION
       )
-
-      if campaign
-        output("Campaign already exists: #{campaign.id}")
-      else
-        campaign = FactoryBot.create(
-          :registration_campaign,
-          campaignable: lecture,
-          status: :draft,
-          allocation_mode: :preference_based,
-          registration_deadline: 1.week.from_now,
-          description: PREFERENCE_CAMPAIGN_DESCRIPTION
-        )
-        output("Created campaign: #{campaign.id}")
-      end
+      output("Created campaign: #{campaign.id}")
 
       [20, 15, 10, 5].each_with_index do |capacity, index|
-        title = "Tutorial #{index + 1}"
-        tutorial = Tutorial.find_by(lecture: lecture, title: title)
-
-        if tutorial
-          output("Tutorial #{index + 1} already exists")
-          tutorial.update!(capacity: capacity)
-        else
-          tutorial = FactoryBot.create(
-            :tutorial,
-            lecture: lecture,
-            title: title,
-            capacity: capacity
-          )
-          output("Created Tutorial #{index + 1} with capacity #{capacity}")
-        end
-
-        next if Registration::Item.exists?(
-          registration_campaign: campaign,
-          registerable: tutorial
+        tutorial = FactoryBot.create(
+          :tutorial,
+          lecture: lecture,
+          title: "Tutorial #{index + 1}",
+          capacity: capacity
         )
-
         FactoryBot.create(
           :registration_item,
           registration_campaign: campaign,
@@ -79,8 +55,6 @@ module Demo
         output("Added Tutorial #{index + 1} to campaign")
       end
 
-      return unless campaign.draft?
-
       campaign.update!(status: :open)
       output("Opened campaign")
     end
@@ -88,8 +62,6 @@ module Demo
     def seed_preference_campaign_registrations!
       ensure_non_production!
 
-      # Scoped to the playground: an earlier run may have left a campaign of
-      # the same name on the lecture this used to run on.
       campaign = Registration::Campaign.find_by(
         campaignable: lecture!, description: PREFERENCE_CAMPAIGN_DESCRIPTION
       )
@@ -97,9 +69,6 @@ module Demo
         output("Campaign not found. Run just seed first.")
         return
       end
-
-      output("Cleaning up old registrations...")
-      campaign.user_registrations.destroy_all
 
       items = campaign.registration_items.includes(:registerable).to_a.sort_by do |item|
         item.registerable.capacity
@@ -119,13 +88,8 @@ module Demo
       )
 
       num_users.times do |index|
-        email = "solver_user_#{index}@example.com"
-        user = User.find_by(email: email)
-        user ||= FactoryBot.create(
-          :confirmed_user,
-          email: email,
-          name: "Solver User #{index}"
-        )
+        user = FactoryBot.create(:confirmed_user, email: "solver_user_#{index}@example.com",
+                                                  name: "Solver User #{index}")
 
         selected_items = if rand < 0.9
           [small_room, medium_room].shuffle.take(rand(1..2))
@@ -154,129 +118,45 @@ module Demo
       output("Creating Mixed FCFS campaign...")
 
       lecture = lecture!
-      campaign = Registration::Campaign.find_by(
+      campaign = FactoryBot.create(
+        :registration_campaign,
         campaignable: lecture,
+        status: :draft,
+        allocation_mode: :first_come_first_served,
+        registration_deadline: 1.week.from_now,
         description: MIXED_FCFS_CAMPAIGN_DESCRIPTION
       )
+      output("Created campaign: #{campaign.id}")
 
-      if campaign
-        output("Campaign already exists: #{campaign.id}")
-      else
-        campaign = FactoryBot.create(
-          :registration_campaign,
-          campaignable: lecture,
-          status: :draft,
-          allocation_mode: :first_come_first_served,
-          registration_deadline: 1.week.from_now,
-          description: MIXED_FCFS_CAMPAIGN_DESCRIPTION
-        )
-        output("Created campaign: #{campaign.id}")
-      end
-
-      unless campaign.registration_policies.exists?(kind: :institutional_email)
-        FactoryBot.create(
-          :registration_policy,
-          registration_campaign: campaign,
-          kind: :institutional_email,
-          config: { "allowed_domains" => "example.com" },
-          phase: :finalization
-        )
-        output("Added institutional email policy (example.com, finalization only)")
-      end
+      FactoryBot.create(
+        :registration_policy,
+        registration_campaign: campaign,
+        kind: :institutional_email,
+        config: { "allowed_domains" => "example.com" },
+        phase: :finalization
+      )
+      output("Added institutional email policy (example.com, finalization only)")
 
       [12, 10, 8].each_with_index do |capacity, index|
         title = "FCFS Tutorial #{index + 5}"
-        tutorial = Tutorial.find_by(lecture: lecture, title: title)
-
-        if tutorial
-          output("#{title} already exists")
-          tutorial.update!(capacity: capacity)
-        else
-          tutorial = FactoryBot.create(
-            :tutorial,
-            lecture: lecture,
-            title: title,
-            capacity: capacity
-          )
-          output("Created #{title} with capacity #{capacity}")
-        end
-
-        next if Registration::Item.exists?(
-          registration_campaign: campaign,
-          registerable: tutorial
-        )
-
-        FactoryBot.create(
-          :registration_item,
-          registration_campaign: campaign,
-          registerable: tutorial
-        )
+        tutorial = FactoryBot.create(:tutorial, lecture: lecture, title: title,
+                                                capacity: capacity)
+        FactoryBot.create(:registration_item, registration_campaign: campaign,
+                                              registerable: tutorial)
         output("Added #{title} to campaign")
       end
 
-      repeaters = Cohort.find_by(
-        context_type: Lecture,
-        context_id: lecture.id,
-        title: "Repeaters"
-      )
+      repeaters = FactoryBot.create(:cohort, context: lecture, title: "Repeaters",
+                                             capacity: 15, propagate_to_lecture: true)
+      FactoryBot.create(:registration_item, registration_campaign: campaign,
+                                            registerable: repeaters)
+      output("Added Repeaters to campaign (propagates to lecture)")
 
-      if repeaters
-        output("Repeaters cohort already exists")
-      else
-        repeaters = FactoryBot.create(
-          :cohort,
-          context: lecture,
-          title: "Repeaters",
-          capacity: 15,
-          propagate_to_lecture: true
-        )
-        output("Created Repeaters cohort (propagates to lecture)")
-      end
-
-      unless Registration::Item.exists?(
-        registration_campaign: campaign,
-        registerable: repeaters
-      )
-        FactoryBot.create(
-          :registration_item,
-          registration_campaign: campaign,
-          registerable: repeaters
-        )
-        output("Added Repeaters to campaign")
-      end
-
-      waitlist = Cohort.find_by(
-        context_type: Lecture,
-        context_id: lecture.id,
-        title: "Waitlist"
-      )
-
-      if waitlist
-        output("Waitlist cohort already exists")
-      else
-        waitlist = FactoryBot.create(
-          :cohort,
-          context: lecture,
-          title: "Waitlist",
-          capacity: 20,
-          propagate_to_lecture: false
-        )
-        output("Created Waitlist cohort (does NOT propagate to lecture)")
-      end
-
-      unless Registration::Item.exists?(
-        registration_campaign: campaign,
-        registerable: waitlist
-      )
-        FactoryBot.create(
-          :registration_item,
-          registration_campaign: campaign,
-          registerable: waitlist
-        )
-        output("Added Waitlist to campaign")
-      end
-
-      return unless campaign.draft?
+      waitlist = FactoryBot.create(:cohort, context: lecture, title: "Waitlist",
+                                            capacity: 20, propagate_to_lecture: false)
+      FactoryBot.create(:registration_item, registration_campaign: campaign,
+                                            registerable: waitlist)
+      output("Added Waitlist to campaign (does NOT propagate to lecture)")
 
       campaign.update!(status: :open)
       output("Opened campaign")
@@ -292,9 +172,6 @@ module Demo
         output("Campaign not found. Run just seed first.")
         return
       end
-
-      output("Cleaning up old registrations...")
-      campaign.user_registrations.destroy_all
 
       tutorials = campaign.registration_items.includes(:registerable)
                           .where(registerable_type: "Tutorial")
@@ -335,13 +212,8 @@ module Demo
 
       num_users.times do |index|
         domain = violator_indices.include?(index) ? "external.org" : "example.com"
-        email = "cohort_user_#{index}@#{domain}"
-        user = User.find_by(email: email)
-        user ||= FactoryBot.create(
-          :confirmed_user,
-          email: email,
-          name: "Cohort User #{index}"
-        )
+        user = FactoryBot.create(:confirmed_user, email: "cohort_user_#{index}@#{domain}",
+                                                  name: "Cohort User #{index}")
 
         item = tutorials.find do |tutorial|
           tutorial.confirmed_registrations_count < tutorial.registerable.capacity
@@ -393,90 +265,46 @@ module Demo
       output("Creating two-stage seminar campaign...")
 
       teacher = teacher!
-      course = Course.find_by(title: TWO_STAGE_COURSE_TITLE)
-      unless course
-        course = FactoryBot.create(
-          :course,
-          title: TWO_STAGE_COURSE_TITLE,
-          short_title: "CTS"
-        )
-        output("Created Course: #{course.title}")
-      end
+      course = FactoryBot.create(:course, title: TWO_STAGE_COURSE_TITLE, short_title: "CTS")
+      output("Created Course: #{course.title}")
 
-      seminar = Lecture.find_by(course: course, teacher: teacher)
-      if seminar
-        # The scenario is staged from scratch on every run: its campaigns
-        # cannot be rewound once students have registered, its cohorts would
-        # collide by title, and its talks would pile up twelve at a time. The
-        # term follows, in case an earlier run left the seminar in one that
-        # has since started.
-        Demo::CampaignCleanup.discard_all!(seminar)
-        Cohort.where(context: seminar).destroy_all
-        Talk.where(lecture: seminar).destroy_all
-        seminar.update!(term: Demo::TermSupport.next_term)
-      else
-        seminar = FactoryBot.create(
-          :seminar,
-          course: course,
-          teacher: teacher,
-          released: true,
-          term: Demo::TermSupport.next_term
-        )
-        output("Created Seminar Lecture")
-      end
+      seminar = FactoryBot.create(:seminar, course: course, teacher: teacher,
+                                            released: true,
+                                            term: Scenarios::TermSupport.next_term)
+      output("Created Seminar Lecture")
 
-      unless LectureUserJoin.exists?(lecture: seminar, user: teacher)
-        teacher.lectures << seminar
-        output("Subscribed teacher to seminar")
-      end
+      teacher.lectures << seminar
+      output("Subscribed teacher to seminar")
 
-      campaign1 = Registration::Campaign.find_by(
+      campaign1 = FactoryBot.create(
+        :registration_campaign,
         campaignable: seminar,
-        description: PLANNING_CAMPAIGN_DESCRIPTION
+        status: :draft,
+        allocation_mode: :first_come_first_served,
+        description: PLANNING_CAMPAIGN_DESCRIPTION,
+        registration_deadline: 1.week.from_now
       )
-      if campaign1
-        output("Campaign 1 already exists")
-      else
-        campaign1 = FactoryBot.create(
-          :registration_campaign,
-          campaignable: seminar,
-          status: :draft,
-          allocation_mode: :first_come_first_served,
-          description: PLANNING_CAMPAIGN_DESCRIPTION,
-          registration_deadline: 1.week.from_now
-        )
 
-        planning_cohort = FactoryBot.create(
-          :cohort,
-          context: seminar,
-          title: "Interest Survey",
-          propagate_to_lecture: false,
-          capacity: nil
-        )
+      planning_cohort = FactoryBot.create(
+        :cohort,
+        context: seminar,
+        title: "Interest Survey",
+        propagate_to_lecture: false,
+        capacity: nil
+      )
 
-        FactoryBot.create(
-          :registration_item,
-          registration_campaign: campaign1,
-          registerable: planning_cohort
-        )
+      FactoryBot.create(
+        :registration_item,
+        registration_campaign: campaign1,
+        registerable: planning_cohort
+      )
 
-        output("Created Campaign 1 (Planning Survey with Planning Cohort)")
-      end
+      output("Created Campaign 1 (Planning Survey with Planning Cohort)")
 
       output("Registering 12 students to Campaign 1...")
-      students = []
-      12.times do |index|
-        email = "seminar_student_#{index}@mampf.edu"
-        user = User.find_by(email: email)
-        user ||= FactoryBot.create(
-          :confirmed_user,
-          email: email,
-          name: "Seminar Student #{index}"
-        )
-        students << user
-
-        next if campaign1.user_registrations.exists?(user: user)
-
+      students = (0...12).map do |index|
+        user = FactoryBot.create(:confirmed_user, email: "seminar_student_#{index}@mampf.edu",
+                                                  name: "Seminar Student #{index}")
         FactoryBot.create(
           :registration_user_registration,
           user: user,
@@ -484,20 +312,11 @@ module Demo
           registration_item: campaign1.registration_items.first,
           status: :confirmed
         )
+        user
       end
 
       campaign1.update!(status: :closed) unless campaign1.completed?
       output("Campaign 1 is completed (planning cohort materialized, no roster propagation).")
-
-      campaign2 = Registration::Campaign.find_by(
-        campaignable: seminar,
-        description: ALLOCATION_CAMPAIGN_DESCRIPTION
-      )
-      if campaign2
-        output("Recreating Campaign 2...")
-        campaign2.update!(status: :draft)
-        campaign2.destroy!
-      end
 
       campaign2 = FactoryBot.create(
         :registration_campaign,
@@ -571,13 +390,8 @@ module Demo
 
       output("Registering 2 extra students (not in Stage 1)...")
       2.times do |index|
-        email = "external_student_#{index}@mampf.edu"
-        user = User.find_by(email: email)
-        user ||= FactoryBot.create(
-          :confirmed_user,
-          email: email,
-          name: "External Student #{index}"
-        )
+        user = FactoryBot.create(:confirmed_user, email: "external_student_#{index}@mampf.edu",
+                                                  name: "External Student #{index}")
 
         items.sample(3).each_with_index do |item, rank|
           FactoryBot.create(
@@ -593,47 +407,23 @@ module Demo
       output("Done. 2 extra students registered.")
 
       output("Creating Campaign 3 (Nachrücker)...")
-      campaign3 = Registration::Campaign.find_by(
+      campaign3 = FactoryBot.create(
+        :registration_campaign,
         campaignable: seminar,
+        status: :draft,
+        allocation_mode: :first_come_first_served,
+        registration_deadline: 1.week.from_now,
         description: NACHRUECKER_CAMPAIGN_DESCRIPTION
       )
+      output("Created Campaign 3 (Nachrücker)")
 
-      if campaign3
-        output("Campaign 3 already exists")
-      else
-        campaign3 = FactoryBot.create(
-          :registration_campaign,
-          campaignable: seminar,
-          status: :draft,
-          allocation_mode: :first_come_first_served,
-          registration_deadline: 1.week.from_now,
-          description: NACHRUECKER_CAMPAIGN_DESCRIPTION
-        )
-        output("Created Campaign 3 (Nachrücker)")
-      end
+      nachruecker = FactoryBot.create(:cohort, context: seminar, title: "Nachrücker",
+                                               capacity: 5)
+      output("Created Cohort 'Nachrücker'")
 
-      nachruecker = Cohort.find_by(context: seminar, title: "Nachrücker")
-      unless nachruecker
-        nachruecker = FactoryBot.create(
-          :cohort,
-          context: seminar,
-          title: "Nachrücker",
-          capacity: 5
-        )
-        output("Created Cohort 'Nachrücker'")
-      end
-
-      unless Registration::Item.exists?(
-        registration_campaign: campaign3,
-        registerable: nachruecker
-      )
-        FactoryBot.create(
-          :registration_item,
-          registration_campaign: campaign3,
-          registerable: nachruecker
-        )
-        output("Added Nachrücker to Campaign 3")
-      end
+      FactoryBot.create(:registration_item, registration_campaign: campaign3,
+                                            registerable: nachruecker)
+      output("Added Nachrücker to Campaign 3")
 
       campaign3.update!(status: :open)
       output("Opened Campaign 3")
@@ -641,15 +431,8 @@ module Demo
       output("Registering 5 students to Nachrücker...")
       item = campaign3.registration_items.first
       5.times do |index|
-        email = "nachruecker_#{index}@mampf.edu"
-        user = User.find_by(email: email)
-        user ||= FactoryBot.create(
-          :confirmed_user,
-          email: email,
-          name: "Nachrücker #{index}"
-        )
-
-        next if campaign3.user_registrations.exists?(user: user)
+        user = FactoryBot.create(:confirmed_user, email: "nachruecker_#{index}@mampf.edu",
+                                                  name: "Nachrücker #{index}")
 
         FactoryBot.create(
           :registration_user_registration,
@@ -680,8 +463,8 @@ module Demo
       # in the term that is still being planned -- not in the lecture the demo
       # opens on, which is meant to look like a term well under way.
       def lecture!
-        Demo::TermSupport.find_or_create_lecture!(
-          term: Demo::TermSupport.next_term, teacher: teacher!,
+        Scenarios::TermSupport.find_or_create_lecture!(
+          term: Scenarios::TermSupport.next_term, teacher: teacher!,
           course_title: PLAYGROUND_COURSE_TITLE, short_title: "RP"
         )
       end

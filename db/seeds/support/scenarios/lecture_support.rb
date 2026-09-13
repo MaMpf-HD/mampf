@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   # Where the demo data plays: the lecture the shipped seed opens on.
   #
   # It used to be looked up by its primary key, which only ever held because
@@ -23,7 +23,7 @@ module Demo
       return if course.nil?
 
       lectures = Lecture.where(course: course)
-      lectures.find_by(term: Demo::TermSupport.active_term) || latest(lectures)
+      lectures.find_by(term: Scenarios::TermSupport.active_term) || latest(lectures)
     end
 
     def find!

@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   # A spread of vignettes for one lecture, covering the states a teacher and a
   # student can run into: draft, published and withdrawn; editable and locked;
   # data collection off, on with answers, and on without any. One code answers
@@ -39,8 +39,7 @@ module Demo
       ensure_non_production!
       lecture = lecture!(lecture_id)
 
-      Demo::QuietLoggingSupport.with_quiet_logging do
-        wipe_previous!(lecture)
+      Scenarios::QuietLoggingSupport.with_quiet_logging do
         lecture.update!(vignettes: true)
         build_all!(lecture)
         report(lecture)
@@ -57,7 +56,7 @@ module Demo
 
       def lecture!(lecture_id)
         if lecture_id.blank?
-          lecture = Demo::LectureSupport.find!
+          lecture = Scenarios::LectureSupport.find!
         else
           lecture = Lecture.find_by(id: lecture_id)
           raise("No lecture with id #{lecture_id}. Run just seed first.") unless lecture
@@ -65,25 +64,6 @@ module Demo
         raise("Lecture #{lecture.id} has no teacher.") unless lecture.teacher
 
         lecture
-      end
-
-      # Rebuilt from scratch every run, so the states stay the ones described
-      # here however much was clicked around in between.
-      def wipe_previous!(lecture)
-        questionnaires = lecture.vignettes_questionnaires
-                                .where("title LIKE ?", "#{TITLE_PREFIX}%")
-        # Codenames outlive the vignettes they answered, so the previous run's
-        # would pile up. Only the ones this task handed out, though: a real
-        # student's code exists from the moment they consent, before any answer
-        # is stored, and deleting it would cost them their data.
-        codenames = Vignettes::Codename
-                    .joins(:user_answers)
-                    .where(vignettes_user_answers: { vignettes_questionnaire_id: questionnaires })
-                    .distinct
-                    .to_a
-
-        questionnaires.destroy_all
-        codenames.each { |codename| codename.destroy if codename.user_answers.reload.empty? }
       end
 
       def build_all!(lecture)

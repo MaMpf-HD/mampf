@@ -1,4 +1,4 @@
-module Demo
+module Scenarios
   # Small adjustments applied once every other scenario in db/seeds/100_scenarios.rb
   # has run: a campaign still running in the term after the one the seed plays
   # in, the current term's own campaigns settled rather than left half-open,
@@ -17,7 +17,7 @@ module Demo
     # being planned. The term the seed plays in is done registering: its
     # lecture has a finalized roster and students sitting in tutorials.
     def add_running_campaigns!
-      term = Demo::TermSupport.next_term
+      term = Scenarios::TermSupport.next_term
 
       open_campaign!(lecture_for(term), TUTORIAL_DESCRIPTION, items_count: 4,
                                                               capacity: 12)
@@ -28,9 +28,9 @@ module Demo
     # there would be a registration nobody can finish. Only a campaign that
     # ran its course stays, because that is what its lecture shows.
     def settle_current_term_campaigns!
-      Lecture.where(term: Demo::TermSupport.active_term).find_each do |lecture|
+      Lecture.where(term: Scenarios::TermSupport.active_term).find_each do |lecture|
         Registration::Campaign.where(campaignable: lecture).find_each do |campaign|
-          Demo::CampaignCleanup.discard!(campaign) unless campaign.completed?
+          Scenarios::CampaignCleanup.discard!(campaign) unless campaign.completed?
         end
       end
     end
@@ -65,18 +65,18 @@ module Demo
       end
 
       def label(term)
-        Demo::TermSupport.label(term)
+        Scenarios::TermSupport.label(term)
       end
 
       def find_or_create_lecture!(term, sort, course_title, short_title)
-        Demo::TermSupport.find_or_create_lecture!(
+        Scenarios::TermSupport.find_or_create_lecture!(
           term: term, teacher: teacher, sort: sort,
           course_title: course_title, short_title: short_title
         )
       end
 
       def teacher
-        @teacher ||= Demo::LectureSupport.teacher!
+        @teacher ||= Scenarios::LectureSupport.teacher!
       end
 
       def open_campaign!(lecture, description, items_count:, capacity: nil)

@@ -1,8 +1,8 @@
 require "rails_helper"
 
 # When the demo dates its hand-ins. The stamping that goes with them lives in
-# `Demo::HandInSupport` and is covered there.
-RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
+# `Scenarios::HandInSupport` and is covered there.
+RSpec.describe(Scenarios::HomeworkSubmissionSupport, type: :model) do
   let(:lecture) { create(:lecture, :released_for_all) }
   let(:assignment) { create(:assignment, lecture: lecture) }
   let(:assessment) { assignment.assessment }
@@ -39,7 +39,7 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
     end
 
     it "gives the partner the marked member's points and verdict" do
-      Demo::SetupSupport.send(:align_team_marks!, sheet, [marked, partner])
+      Scenarios::SetupSupport.send(:align_team_marks!, sheet, [marked, partner])
 
       partners = sheet.assessment.assessment_participations.find_by(user: partner)
       expect(partners.task_points.pluck(:task_id, :points)).to eq([[task.id, 7.5]])
@@ -53,14 +53,14 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
       sheet.assessment.assessment_participations.find_by(user: partner)
            .update!(status: :exempt, submitted_at: nil)
 
-      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
-      expect(Demo::SetupSupport.send(:sits_out?, sheet, marked)).to be(false)
+      expect(Scenarios::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
+      expect(Scenarios::SetupSupport.send(:sits_out?, sheet, marked)).to be(false)
     end
 
     it "keeps a member the gradebook dropped out of it as well" do
       sheet.assessment.assessment_participations.find_by(user: partner).destroy!
 
-      expect(Demo::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
+      expect(Scenarios::SetupSupport.send(:sits_out?, sheet, partner)).to be(true)
     end
   end
 
@@ -78,7 +78,7 @@ RSpec.describe(Demo::HomeworkSubmissionSupport, type: :model) do
           create(:assignment, :expired, lecture: lecture,
                                         expired_since: (Time.zone.now - deadline).seconds)
         end
-      Demo::SetupSupport.send(:handed_in_at, sheet, late: late)
+      Scenarios::SetupSupport.send(:handed_in_at, sheet, late: late)
     end
 
     it "hands in before now rather than around a deadline still to come" do
