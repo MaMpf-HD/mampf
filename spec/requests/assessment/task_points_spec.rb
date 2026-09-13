@@ -981,3 +981,376 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     end
   end
 end
+
+RSpec.describe("Assessment::TaskPoints - Exam", type: :request) do
+  let(:teacher) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture, teacher: teacher) }
+  let(:exam) { create(:exam, lecture: lecture) }
+  let!(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
+  let!(:task) { create(:assessment_task, assessment: exam_assessment) }
+  let(:student) { create(:confirmed_user) }
+
+  let!(:participation) do
+    create(:assessment_participation, assessment: exam_assessment, user: student)
+  end
+
+  before do
+    exam.reload
+    exam_assessment.reload
+    sign_in teacher
+  end
+
+  # PATCH point_participation (update_participation) for an Exam
+  describe "PATCH /participations/:participation_id/point_user (exam)" do
+    context "with a grading-open exam" do
+      before { allow_any_instance_of(Exam).to receive(:grading_open?).and_return(true) }
+
+      it "calls ExamGraderService.score_tasks_by_participation!" do
+        expect(Assessment::ExamGraderService).to receive(:score_tasks_by_participation!)
+        patch point_participation_path(participation),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+      end
+
+      it "persists the entered points" do
+        patch point_participation_path(participation),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(participation.reload.task_points.find_by(task: task).points).to eq(6)
+      end
+
+      it "does not call SubmissionGraderService" do
+        expect(Assessment::SubmissionGraderService).not_to receive(:score_tasks_by_participation!)
+        patch point_participation_path(participation),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+      end
+    end
+
+    context "when the exam is not open for grading" do
+      before { allow_any_instance_of(Exam).to receive(:grading_open?).and_return(false) }
+
+      it "returns turbo_stream with alert and enters nothing" do
+        patch point_participation_path(participation),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+        expect(participation.reload.task_points).to be_empty
+      end
+    end
+
+    context "when the user cannot enter points in the lecture" do
+      let(:stranger) { create(:confirmed_user) }
+
+      before do
+        allow_any_instance_of(Exam).to receive(:grading_open?).and_return(true)
+        sign_in stranger
+      end
+
+      it "redirects to root and enters nothing" do
+        patch point_participation_path(participation),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload.task_points).to be_empty
+      end
+    end
+  end
+
+  # PATCH refresh_point_participation for an Exam
+  describe "PATCH /participations/:participation_id/refresh_point_user (exam)" do
+    it "returns turbo_stream success" do
+      patch refresh_point_participation_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+    end
+
+    it "brings the exam summary along with the reloaded row" do
+      patch refresh_point_participation_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]"))
+        .to be_present
+    end
+  end
+
+  # PATCH mark_as_absent / remove_absent
+  describe "PATCH /participations/:participation_id/mark_as_absent" do
+    it "calls AbsenceHandling.mark_absent" do
+      expect(Assessment::AbsenceHandling).to receive(:mark_absent).with(participation)
+      patch mark_as_absent_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+    end
+
+    it "marks the participation absent and returns turbo_stream success" do
+      patch mark_as_absent_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      expect(participation.reload).to be_absent
+    end
+
+    it "renders the updated row" do
+      patch mark_as_absent_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(response.body).to include("target=\"pointing-participation-row-#{participation.id}\"")
+    end
+
+    context "when AbsenceHandling raises" do
+      before do
+        allow(Assessment::AbsenceHandling).to receive(:mark_absent)
+          .and_raise(StandardError, "already reviewed")
+      end
+
+      it "responds with an alert and unprocessable_entity" do
+        patch mark_as_absent_path(participation),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("already reviewed")
+      end
+
+      it "does not change the participation status" do
+        expect do
+          patch(mark_as_absent_path(participation),
+                params: { grading_scope_type: "lecture" },
+                as: :turbo_stream)
+        end.not_to(change { participation.reload.status })
+      end
+    end
+
+    context "when the user cannot enter points in the lecture" do
+      let(:stranger) { create(:confirmed_user) }
+      before { sign_in stranger }
+
+      it "redirects to root and does not mark absent" do
+        patch mark_as_absent_path(participation),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload).not_to be_absent
+      end
+    end
+
+    context "when the participation is not found" do
+      it "responds with a 404 and turbo_stream alert" do
+        patch mark_as_absent_path("00000000-0000-0000-0000-000000000000"),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to include(I18n.t("assessment.errors.no_participation"))
+      end
+    end
+  end
+
+  describe "PATCH /participations/:participation_id/remove_absent" do
+    before { participation.update!(status: :absent) }
+
+    it "calls AbsenceHandling.remove_absent" do
+      expect(Assessment::AbsenceHandling).to receive(:remove_absent).with(participation)
+      patch remove_absent_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+    end
+
+    it "removes the absent status and returns success" do
+      patch remove_absent_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      expect(participation.reload).not_to be_absent
+    end
+
+    context "when AbsenceHandling raises" do
+      before do
+        allow(Assessment::AbsenceHandling).to receive(:remove_absent)
+          .and_raise(StandardError, "cannot undo")
+      end
+
+      it "responds with an alert" do
+        patch remove_absent_path(participation),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("cannot undo")
+      end
+    end
+  end
+
+  # PATCH mark_as_exempt / remove_exempt
+  describe "PATCH /participations/:participation_id/mark_as_exempt" do
+    it "calls AbsenceHandling.mark_exempt with the note" do
+      expect(Assessment::AbsenceHandling).to receive(:mark_exempt)
+        .with(participation, note: "medical leave")
+      patch mark_as_exempt_path(participation),
+            params: { grading_scope_type: "lecture", note: "medical leave" },
+            as: :turbo_stream
+    end
+
+    it "marks the participation exempt and returns success" do
+      patch mark_as_exempt_path(participation),
+            params: { grading_scope_type: "lecture", note: "medical leave" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      expect(participation.reload).to be_exempt
+    end
+
+    it "works without a note" do
+      patch mark_as_exempt_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      expect(participation.reload).to be_exempt
+    end
+
+    context "when AbsenceHandling raises" do
+      before do
+        allow(Assessment::AbsenceHandling).to receive(:mark_exempt)
+          .and_raise(StandardError, "already reviewed")
+      end
+
+      it "responds with an alert and unprocessable_entity" do
+        patch mark_as_exempt_path(participation),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("already reviewed")
+      end
+    end
+
+    context "when the user cannot enter points in the lecture" do
+      let(:stranger) { create(:confirmed_user) }
+      before { sign_in stranger }
+
+      it "redirects to root and does not mark exempt" do
+        patch mark_as_exempt_path(participation),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload).not_to be_exempt
+      end
+    end
+  end
+
+  describe "PATCH /participations/:participation_id/remove_exempt" do
+    before { participation.update!(status: :exempt, note: "medical leave") }
+
+    it "calls AbsenceHandling.remove_exempt" do
+      expect(Assessment::AbsenceHandling).to receive(:remove_exempt).with(participation)
+      patch remove_exempt_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+    end
+
+    it "removes the exempt status and returns success" do
+      patch remove_exempt_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      expect(participation.reload).not_to be_exempt
+    end
+
+    context "when AbsenceHandling raises" do
+      before do
+        allow(Assessment::AbsenceHandling).to receive(:remove_exempt)
+          .and_raise(StandardError, "cannot undo")
+      end
+
+      it "responds with an alert" do
+        patch remove_exempt_path(participation),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("cannot undo")
+      end
+    end
+  end
+
+  # refuse_without_row / unsupported assessable guard, from the exam side:
+  # a talk participation should still be refused when hit through these exam-shaped actions.
+  describe "when the participation's assessable is unsupported (talk)" do
+    let(:seminar) { create(:seminar, teacher: teacher) }
+    let(:talk) { create(:talk, lecture: seminar) }
+    let(:talk_assessment) { create(:assessment, :with_points, assessable: talk) }
+    let!(:talk_participation) do
+      create(:assessment_participation, assessment: talk_assessment, user: student)
+    end
+
+    it "refuses mark_as_absent with a 400" do
+      expect(Assessment::AbsenceHandling).not_to receive(:mark_absent)
+
+      patch mark_as_absent_path(talk_participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:bad_request)
+      expect(response.body).to include(
+        I18n.t("assessment.task_points.unsupported_assessment_type")
+      )
+    end
+
+    it "refuses mark_as_exempt with a 400" do
+      expect(Assessment::AbsenceHandling).not_to receive(:mark_exempt)
+
+      patch mark_as_exempt_path(talk_participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:bad_request)
+    end
+  end
+
+  describe "authorization" do
+    context "when user is not signed in" do
+      before { sign_out teacher }
+
+      it "redirects mark_as_absent to sign in" do
+        patch mark_as_absent_path(participation),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    context "when user is a student" do
+      before { sign_in student }
+
+      it "redirects mark_as_exempt to root and changes nothing" do
+        patch mark_as_exempt_path(participation),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload).not_to be_exempt
+      end
+    end
+  end
+end

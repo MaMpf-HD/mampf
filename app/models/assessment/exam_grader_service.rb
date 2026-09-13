@@ -1,5 +1,4 @@
 module Assessment
-  # Handles participation lookup/creation for exam grading and pointing.
   class ExamGraderService
     class ExamGraderError < StandardError; end
 

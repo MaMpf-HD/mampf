@@ -12,9 +12,6 @@ class ExamPointingTableComponent < ViewComponent::Base
                                         table_option: :pointing)
   end
 
-  def toolbar
-  end
-
   def grading_enabled?
     @exam.assessable?
   end

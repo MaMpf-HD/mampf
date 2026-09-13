@@ -1,8 +1,6 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <% if grading_records? %>
     <div data-controller="pointing-table status-filter">
-      <div class="m-3"></div>
-
       <div
         class="table-wrapper"
         style="<%= layout.css_vars %>"
