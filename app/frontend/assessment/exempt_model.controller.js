@@ -14,4 +14,13 @@ export default class extends Controller {
     this.noteTarget.value = "";
     this.modal.show();
   }
+
+  confirm() {
+    // Let the form submit normally (Turbo handles it), just close the UI
+    this.modal.hide();
+  }
+
+  cancel() {
+    this.modal.hide();
+  }
 }

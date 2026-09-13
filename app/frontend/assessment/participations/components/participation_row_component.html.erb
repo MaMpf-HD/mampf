@@ -114,16 +114,16 @@
     <% end %>
 
     <td class="text-center sticky-col save-col">
-      <% if can_mark_absent? %>
-        <%= mark_absent_button %>
-      <% end %>
+      <div class="d-inline-flex align-items-center gap-1">
+        <% if can_mark_absent? %>
+          <%= mark_absent_button %>
+        <% end %>
 
-      <% if can_mark_exempt? %>
-        <%= mark_exempt_button %>
-      <% end %>
+        <% if can_mark_exempt? %>
+          <%= mark_exempt_button %>
+        <% end %>
 
-      <% if (can_enter_points? && points_enterable?) || can_enter_grade? %>
-        <div class="d-inline-flex align-items-center gap-1">
+        <% if (can_enter_points? && points_enterable?) || can_enter_grade? %>
           <%= form_with url: save_url,
                       method: :patch,
                       data: { turbo: true, participation_row_target: "form" },
@@ -167,8 +167,8 @@
           <% end %>
 
           <%= refresh_row_button(allow_grading?) %>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
     </td>
   <% end %>
 

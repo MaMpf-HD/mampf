@@ -1,22 +1,36 @@
-<div class="modal fade" data-controller="exempt-model" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Mark as Exempt</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<div
+  class="modal fade"
+  data-controller="exempt-model"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-semibold">Mark as Exempt</h5>
       </div>
-      <%= form_with url: "#", 
-          method: :patch, 
-          data: { exempt_model_target: "form" } do |f| %>
-        <div class="modal-body">
-          <%= f.text_area :note, 
-              data: { exempt_model_target: "note" }, 
-              class: "form-control", rows: 3, 
-              placeholder: "Optional note" %>
+
+      <%= form_with url: "#", method: :patch, data: { exempt_model_target: "form", action: "submit->exempt-model#confirm" } do |f| %>
+        <div class="modal-body pt-2">
+          <label class="form-label text-muted small mb-1">Note (optional)</label>
+
+          <%= f.text_area :note,
+              data: { exempt_model_target: "note" },
+              class: "form-control",
+              rows: 3,
+              placeholder: "Add a reason or context for this exemption..." %>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Confirm</button>
+
+        <div class="modal-footer border-0 pt-0">
+          <button
+            type="button"
+            class="btn btn-light"
+            data-action="click->exempt-model#cancel"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="btn btn-primary px-4">Save</button>
         </div>
       <% end %>
     </div>
