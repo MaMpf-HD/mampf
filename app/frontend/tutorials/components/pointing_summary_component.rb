@@ -1,8 +1,6 @@
 # One line saying where the sheet stands, counted off the rows' own display
-# statuses. Rendered with the toolbar and again after any answer that
-# changes a row, so it never says something the rows do not.
+# statuses.
 class PointingSummaryComponent < ViewComponent::Base
-  # Where a count is zero the line keeps quiet, except about the hand-ins.
   PARTS = [:reviewed, :pending_grading, :not_submitted, :awaiting_record,
            :exempt, :absent].freeze
 

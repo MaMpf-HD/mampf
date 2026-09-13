@@ -53,8 +53,19 @@ RSpec.describe(Assignment, type: :model) do
       tutorial.add_user_to_roster!(user1, nil)
       tutorial.add_user_to_roster!(user2, nil)
       # but only one has a submission for the assignment
-      FactoryBot.create(:submission, assignment: assignment, tutorial: tutorial, users: [user1])
+      FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                       tutorial: tutorial, users: [user1])
       expect(assignment.non_submitters_in_tutorial(tutorial)).to contain_exactly(user2)
+    end
+
+    it "counts a team that has not uploaded anything as not having submitted" do
+      assignment = FactoryBot.create(:valid_assignment)
+      user = FactoryBot.create(:confirmed_user)
+      tutorial = FactoryBot.create(:tutorial, lecture: assignment.lecture)
+      tutorial.add_user_to_roster!(user, nil)
+      FactoryBot.create(:submission, assignment: assignment, tutorial: tutorial, users: [user])
+
+      expect(assignment.non_submitters_in_tutorial(tutorial)).to contain_exactly(user)
     end
   end
 

@@ -85,6 +85,12 @@ class TutorialPointingTableComponent < ViewComponent::Base
                                  tutorials: @tutorials || [])
   end
 
+  # Every answer that swaps a row out sends the line above the table along,
+  # rebuilt from the rows, so the two never disagree.
+  def summary
+    PointingSummaryComponent.new(statuses: row_statuses)
+  end
+
   # A team row speaks for its first member with a participation, as the row
   # itself does; a file without any participation is still to be marked.
   def row_statuses

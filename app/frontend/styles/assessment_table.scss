@@ -1,7 +1,5 @@
-/* The pointing table. Column widths and the offsets of the pinned columns
-   come in as CSS variables from PointingTableLayout, so a different column
-   set needs no new rules here. The table scrolls inside its own box,
-   sideways and down; the header row keeps its place on top. */
+/* The pointing table. Widths and pin offsets come in as CSS variables from
+   PointingTableLayout, so header and rows can never disagree about them. */
 
 .row-dirty,
 .row-dirty td,
@@ -135,10 +133,10 @@ thead th.sticky-col {
   padding: 10px 12px;
 }
 
-/* An action waits quietly until the pointer or the keyboard reaches it;
-   the file links and the floppy with something to save keep their colour. */
+/* Quieter than the file links, but no fainter than 3:1 on white, which is
+   the least an icon that is the whole control may have (WCAG 1.4.11). */
 .row-action {
-  opacity: 0.55;
+  opacity: 0.8;
 
   &:hover,
   &:focus-visible {

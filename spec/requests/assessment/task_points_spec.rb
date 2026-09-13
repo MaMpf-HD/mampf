@@ -269,6 +269,18 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         participation = assessment.assessment_participations.find_by(user: student)
         expect(participation.task_points.find_by(task: task).points).to eq(8)
       end
+
+      # Edit rights on the lecture reach into every one of its groups.
+      it "enters points on a group's page without being its tutor" do
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        participation = assessment.assessment_participations.find_by(user: student)
+        expect(participation.task_points.find_by(task: task).points).to eq(8)
+      end
     end
   end
 
@@ -485,6 +497,25 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(response.media_type).to eq(Mime[:turbo_stream])
     end
 
+    # Somebody else may have marked the sheet since the page was drawn; the
+    # reloaded row must not stand next to a line that still counts it as open.
+    it "brings the summary along with the reloaded row" do
+      Timecop.travel(3.hours.from_now) do
+        create(:assessment_participation, assessment: assessment, user: student,
+                                          tutorial: tutorial, status: :reviewed,
+                                          submitted_at: 1.hour.ago)
+
+        patch refresh_point_submission_tutorial_path(submission),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+      end
+
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+      expect(summary.text).to include(
+        I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1)
+      )
+    end
+
     context "when submission is not found" do
       it "responds with turbo_stream alert" do
         patch refresh_point_submission_tutorial_path(999_999),
@@ -511,6 +542,15 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             as: :turbo_stream
       expect(response).to have_http_status(:success)
       expect(response.media_type).to eq(Mime[:turbo_stream])
+    end
+
+    it "brings the summary along with the reloaded row" do
+      patch refresh_point_participation_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]"))
+        .to be_present
     end
 
     context "when participation is not found" do
@@ -657,6 +697,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(response).to redirect_to(root_path)
           expect(held_elsewhere.reload.submitted_at).to be_nil
         end
+
+        it "lets the tutor of the group that holds it record the hand-in" do
+          tutorial2.tutors << tutor
+
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: student.id,
+                          tutorial_id: tutorial2.id, grading_scope_type: "tutorial" },
+                as: :turbo_stream
+
+          expect(response).to have_http_status(:success)
+          expect(held_elsewhere.reload.submitted_at).to be_present
+          expect(held_elsewhere.tutorial).to eq(tutorial2)
+        end
       end
 
       # This page draws rows for assignments; an exam participation has no
@@ -693,6 +746,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     let!(:participation) do
       FactoryBot.create(:assessment_participation,
                         assessment: assessment, user: student, tutorial: tutorial)
+    end
+
+    it "turns the tutor of another group away and keeps the stamp" do
+      participation.update!(submitted_at: 1.day.ago)
+      tutorial2.tutors << (stranger = create(:confirmed_user))
+      sign_in stranger
+
+      patch remove_participation_path(participation_id: participation.id,
+                                      grading_scope_type: "tutorial"),
+            as: :turbo_stream
+
+      expect(response).to redirect_to(root_path)
+      expect(participation.reload.submitted_at).to be_present
     end
 
     it "calls SubmissionGraderService.remove_participation" do

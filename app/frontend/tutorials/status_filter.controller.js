@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 // Narrows the rows to a name, a state and a group. Rows come back one at a
 // time after a save, so every new row is measured against the filters too.
+// A sheet from before there were states offers no state filter.
 export default class extends Controller {
   static targets = ["row", "name", "status", "tutorial", "reset", "count", "empty"];
 

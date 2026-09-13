@@ -149,11 +149,8 @@ module Assessment
                                       grading_scope: table_scope)
       end
 
-      # A participation that exists belongs to the group that holds it, even
-      # if the person has since moved; a new one goes to the group they sit
-      # in, or to the lecture when they sit in none. Until there is a
-      # participation, the row goes by the user; the answer has to find it
-      # under that name.
+      # A participation belongs to the group that holds it, however the person
+      # has moved since; only a new one goes to the group they sit in now.
       def record_paper_hand_in(user)
         roster_tutorial = user.rostered_tutorial_in(@lecture)
         row_before = @assessment.assessment_participations.find_by(user: user)
@@ -181,7 +178,7 @@ module Assessment
       def rerender_submission_row
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
+            row = turbo_stream.replace(
               "submission-row-#{@submission.id}",
               html: render_to_string(
                 SubmissionRowComponent.new(
@@ -191,6 +188,7 @@ module Assessment
                 )
               )
             )
+            render turbo_stream: [row, summary_stream]
           end
         end
       end
@@ -198,10 +196,11 @@ module Assessment
       def rerender_user_row
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
+            row = turbo_stream.replace(
               "participation-row-#{@participation.id}",
               html: render_to_string(participation_row)
             )
+            render turbo_stream: [row, summary_stream]
           end
         end
       end
@@ -211,12 +210,9 @@ module Assessment
         render turbo_stream: streams.flatten.compact + [summary_stream, stream_flash].compact
       end
 
-      # The line above the table counts the rows; an answer that changes one
-      # row brings the line along.
       def summary_stream
-        statuses = TutorialPointingTableComponent.new(assignment: @assessable,
-                                                      grading_scope: table_scope).row_statuses
-        summary = PointingSummaryComponent.new(statuses: statuses)
+        summary = TutorialPointingTableComponent.new(assignment: @assessable,
+                                                     grading_scope: table_scope).summary
         turbo_stream.replace("pointing-summary", html: render_to_string(summary))
       end
 

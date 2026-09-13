@@ -21,14 +21,11 @@ export default class extends Controller {
 
   // -- Actions ---
   saveRow() {
-    // Collect all input values for this row
     const newValues = {};
     this.pointInputTargets.forEach((input) => {
       const taskId = input.dataset.taskId;
       newValues[taskId] = input.value;
     });
-
-    // Set hidden input value as JSON
     this.taskPointsPayloadTarget.value = JSON.stringify(newValues);
     if (this.hasGradeInputTarget && this.hasGradePayloadTarget) {
       this.gradePayloadTarget.value = this.gradeInputTarget.value;
@@ -36,8 +33,6 @@ export default class extends Controller {
     if (this.hasNoteInputTarget && this.hasNotePayloadTarget) {
       this.notePayloadTarget.value = this.noteInputTarget.value;
     }
-
-    // Submit the hidden form
     this.formTarget.requestSubmit();
   }
 

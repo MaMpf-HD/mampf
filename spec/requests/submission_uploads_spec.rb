@@ -134,6 +134,22 @@ RSpec.describe("SubmissionUploads", type: :request) do
       )
       expect(corrected.reload.correction).to be_nil
     end
+
+    it "keeps the correction the row had when the new one is refused" do
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
+      corrected = create(:submission, :with_correction, assignment: assignment,
+                                                        tutorial: tutorial)
+      kept = corrected.correction.id
+      data = cached_upload.data
+      data["metadata"]["filename"] = "notes.exe"
+
+      post add_correction_path(corrected),
+           params: { submission: { correction: data.to_json } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(corrected.reload.correction.id).to eq(kept)
+      expect(response.body).to include(corrected.correction_filename)
+    end
   end
 
   it "returns a scanner unavailable message for submission uploads" do

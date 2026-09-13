@@ -55,8 +55,7 @@ class ParticipationRowComponent < ViewComponent::Base
       !@participation.exempt? && !@participation.absent?
   end
 
-  # Greyed-out fields alone do not say why; the tooltip on the icon did, and
-  # nobody hovers over a table of thirty rows.
+  # A greyed-out field needs its reason in sight, not in a tooltip.
   def locked_reason
     if elsewhere?
       t("assessment.grading_tutorial.held_by", tutorial: @participation.tutorial.title)
