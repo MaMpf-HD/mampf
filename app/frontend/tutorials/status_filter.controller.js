@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 // Narrows the rows to a name, a state and a group. Rows come back one at a
 // time after a save, so every new row is measured against the filters too.
+// A sheet from before there were states offers no state filter.
 export default class extends Controller {
   static targets = ["row", "name", "status", "tutorial", "reset", "count", "empty"];
 
@@ -31,7 +32,9 @@ export default class extends Controller {
 
   reset() {
     this.nameTarget.value = "";
-    this.statusTarget.value = "all";
+    if (this.hasStatusTarget) {
+      this.statusTarget.value = "all";
+    }
     if (this.hasTutorialTarget) {
       this.tutorialTarget.value = "all";
     }
@@ -44,7 +47,7 @@ export default class extends Controller {
 
   matches(row) {
     const query = this.nameTarget.value.trim().toLowerCase();
-    const status = this.statusTarget.value;
+    const status = this.hasStatusTarget ? this.statusTarget.value : "all";
     const tutorial = this.hasTutorialTarget ? this.tutorialTarget.value : "all";
     return (query === "" || row.dataset.statusFilterName.toLowerCase().includes(query))
       && (status === "all" || row.dataset.statusFilterStatus === status)
@@ -66,7 +69,7 @@ export default class extends Controller {
 
   filtering() {
     return this.nameTarget.value.trim() !== ""
-      || this.statusTarget.value !== "all"
+      || (this.hasStatusTarget && this.statusTarget.value !== "all")
       || (this.hasTutorialTarget && this.tutorialTarget.value !== "all");
   }
 }
