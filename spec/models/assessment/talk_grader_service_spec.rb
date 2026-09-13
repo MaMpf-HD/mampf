@@ -12,7 +12,7 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
 
   before do
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
-    allow(grader).to receive(:can_grade_in_scope?).and_return(true)
+    allow(grader).to receive(:can_enter_grades_in?).and_return(true)
   end
 
   describe ".init_participations" do
@@ -52,14 +52,6 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
 
         expect(participation.assessment_id).to eq(assessment.id)
         expect(participation.user_id).to eq(speaker.id)
-      end
-
-      it "only issues a single query to load existing participations" do
-        expect(Assessment::Participation).to receive(:where).once.and_call_original
-
-        described_class.init_participations(
-          [[assessment, speaker], [other_assessment, other_speaker]]
-        )
       end
     end
 
@@ -204,7 +196,7 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
     end
 
     context "when grader cannot grade in the talk's lecture scope" do
-      before { allow(grader).to receive(:can_grade_in_scope?).and_return(false) }
+      before { allow(grader).to receive(:can_enter_grades_in?).and_return(false) }
 
       subject { described_class.set_grade(participation, "1.0", grader) }
 

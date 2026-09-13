@@ -41,11 +41,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
                                       graded_at: Time.zone.local(2024, 1, 1, 12, 0, 0),
                                       grader: tutor)
   end
-  let(:single_grade_config) do
-    double("config", mode: "teacher", body_mode: [:single_grade], left_columns: [],
-                     right_columns: [])
-  end
-
   let(:component_tutor_talk) do
     described_class.new(participation: participation_talk, assessment: assessment_talk,
                         grading_scope: seminar)
@@ -83,19 +78,11 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       it "sets @tutorial" do
         expect(component_tutor.instance_variable_get(:@tutorial)).to eq(tutorial)
       end
-
-      it "sets @mode to tutor" do
-        expect(component_tutor.instance_variable_get(:@mode)).to eq("tutor")
-      end
     end
 
     context "when grading_scope is a Lecture" do
       it "sets @lecture from the assessable's lecture" do
         expect(component_teacher.instance_variable_get(:@lecture)).to eq(assignment.lecture)
-      end
-
-      it "sets @mode to teacher" do
-        expect(component_teacher.instance_variable_get(:@mode)).to eq("teacher")
       end
 
       it "leaves @tutorial nil" do
@@ -131,36 +118,15 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  describe "#tasks?" do
-    context "when body_mode includes :tasks" do
-      it "returns true" do
-        expect(component_tutor.tasks?).to eq(true)
-      end
+  describe "the body" do
+    it "is the sheet's tasks for an assignment" do
+      expect(component_tutor.tasks?).to be(true)
+      expect(component_tutor.single_grade?).to be(false)
     end
 
-    context "when body_mode does not include :tasks" do
-      before do
-        allow(Assessment::DisplayConfigResolver).to receive(:resolve)
-          .and_return(single_grade_config)
-      end
-
-      it "returns false" do
-        expect(component_tutor.tasks?).to eq(false)
-      end
-    end
-  end
-
-  describe "#single_grade?" do
-    context "when body_mode includes :single_grade" do
-      it "returns true" do
-        expect(component_tutor_talk.single_grade?).to eq(true)
-      end
-    end
-
-    context "when body_mode does not include :single_grade" do
-      it "returns false" do
-        expect(component_tutor.single_grade?).to eq(false)
-      end
+    it "is a single grade for a talk" do
+      expect(component_tutor_talk.single_grade?).to be(true)
+      expect(component_tutor_talk.tasks?).to be(false)
     end
   end
 
@@ -237,7 +203,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
     it "wraps the input in a td with the expected classes" do
       html = component_tutor.task_points_participation_cell(task, true)
-      expect(html).to include("sticky-col task-col")
+      expect(html).to include("task-col")
       expect(html).to include("task_points[#{task.id}]")
     end
   end
@@ -497,9 +463,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  # One row per person on the roster: a sheet taken on paper, one never handed
-  # in, and one the worker has not written a participation for yet all sit in
-  # the table, and the hand-in column says which it is.
   describe "the hand-in column" do
     before { allow(vc_test_controller).to receive(:current_user).and_return(tutor) }
 
@@ -563,6 +526,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       expect(component.elsewhere?).to be(true)
       expect(component.points_enterable?).to be(false)
       expect(rendered_content).not_to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+      expect(rendered_content).to include(
+        I18n.t("assessment.grading_tutorial.held_by", tutorial: elsewhere.title)
+      )
     end
 
     it "lets the lecturer's table mark anybody" do
@@ -573,6 +539,15 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
       expect(component.elsewhere?).to be(false)
       expect(component.points_enterable?).to be(true)
+    end
+
+    it "tells the tutor to record a paper sheet first" do
+      assessment.update_column(:requires_submission, false) # rubocop:disable Rails/SkipsModelValidations
+      participation.update!(submitted_at: nil)
+      render_inline(described_class.new(participation: participation.reload,
+                                        assessment: assessment.reload, grading_scope: tutorial))
+
+      expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.record_first"))
     end
 
     it "opens the points only once the sheet is marked as handed in" do

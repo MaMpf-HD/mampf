@@ -1,118 +1,88 @@
 import { Controller } from "@hotwired/stimulus";
 
+// Narrows the rows to a name, a state and a group. Rows come back one at a
+// time after a save, so every new row is measured against the filters too.
 export default class extends Controller {
-  static targets = ["activeFilters"];
+  static targets = ["row", "group", "name", "status", "tutorial", "reset", "count", "empty"];
 
-  connect() {
-    this.selectedStatus = "all";
-    this.selectedStatusLabel = null;
-    this.selectedTutorial = "all";
-    this.selectedTutorialLabel = null;
-    this.searchQuery = "";
-  }
-
-  filterStatus(event) {
-    this.selectedStatus = event.currentTarget.dataset.statusFilterStatusValue;
-    this.selectedStatusLabel = event.currentTarget.textContent.trim();
-    this.applySearchFilter();
-    this.renderActiveFilters();
-  }
-
-  filterTutorial(event) {
-    this.selectedTutorial = event.currentTarget.dataset.statusFilterTutorialValue;
-    this.selectedTutorialLabel = event.currentTarget.textContent.trim();
-    this.applySearchFilter();
-    this.renderActiveFilters();
-  }
-
-  clearFilter(event) {
-    const key = event.currentTarget.dataset.filterKey;
-    if (key === "status") {
-      this.selectedStatus = "all";
-      this.selectedStatusLabel = null;
-    }
-    if (key === "tutorial") {
-      this.selectedTutorial = "all";
-      this.selectedTutorialLabel = null;
-    }
-    this.applySearchFilter();
-    this.renderActiveFilters();
-  }
-
-  clearAllFilters() {
-    this.selectedStatus = "all";
-    this.selectedStatusLabel = null;
-    this.selectedTutorial = "all";
-    this.selectedTutorialLabel = null;
-    this.applySearchFilter();
-    this.renderActiveFilters();
-  }
-
-  renderActiveFilters() {
-    const chips = [];
-
-    if (this.selectedStatus !== "all") {
-      chips.push(this.chipHtml("status", this.selectedStatusLabel || this.selectedStatus));
-    }
-    if (this.selectedTutorial !== "all") {
-      chips.push(this.chipHtml("tutorial", this.selectedTutorialLabel || this.selectedTutorial));
-    }
-
-    this.activeFiltersTarget.innerHTML = "";
-
-    if (chips.length === 0) {
+  rowTargetConnected(row) {
+    if (!this.hasNameTarget) {
       return;
     }
-
-    chips.forEach(chip => this.activeFiltersTarget.append(chip));
-
-    const clearAllBtn = document.createElement("button");
-    clearAllBtn.className = "btn btn-sm btn-outline-secondary";
-    clearAllBtn.dataset.action = "click->status-filter#clearAllFilters";
-    clearAllBtn.textContent = "Clear all";
-    this.activeFiltersTarget.append(clearAllBtn);
+    this.show(row);
+    this.report();
   }
 
-  chipHtml(key, label) {
-    const span = document.createElement("span");
-    span.className = "badge bg-light text-dark border d-inline-flex align-items-center gap-1";
-    span.append(document.createTextNode(label + " "));
-
-    const icon = document.createElement("i");
-    icon.className = "bi bi-x clickable";
-    icon.dataset.action = "click->status-filter#clearFilter";
-    icon.dataset.filterKey = key;
-    span.append(icon);
-
-    return span;
+  rowTargetDisconnected() {
+    if (!this.hasNameTarget) {
+      return;
+    }
+    this.report();
   }
 
-  applySearchFilter() {
-    const matchId = new Set();
+  apply() {
+    this.rowTargets.forEach(row => this.show(row));
+    this.report();
+  }
 
-    this.element.querySelectorAll("tr[data-status-filter-status]").forEach((row) => {
-      const matchStatus = (this.selectedStatus === "all"
-        || row.dataset.statusFilterStatus === this.selectedStatus);
-      const matchName = row.dataset.statusFilterName.toLowerCase().includes(this.searchQuery);
-      const matchTutorial = (this.selectedTutorial === "all"
-        || row.dataset.statusFilterTutorial === this.selectedTutorial);
+  search() {
+    this.apply();
+  }
 
-      if (matchStatus && matchName && matchTutorial) {
-        matchId.add(row.dataset.statusFilterGroupId);
-      }
+  reset() {
+    this.nameTarget.value = "";
+    if (this.hasStatusTarget) {
+      this.statusTarget.value = "all";
+    }
+    if (this.hasTutorialTarget) {
+      this.tutorialTarget.value = "all";
+    }
+    this.apply();
+  }
 
-      row.style.display = matchStatus && matchName && matchTutorial ? "" : "none";
+  show(row) {
+    row.hidden = !this.matches(row);
+  }
+
+  matches(row) {
+    const query = this.nameTarget.value.trim().toLowerCase();
+    const status = this.hasStatusTarget ? this.statusTarget.value : "all";
+    const tutorial = this.hasTutorialTarget ? this.tutorialTarget.value : "all";
+    return (query === "" || row.dataset.statusFilterName.toLowerCase().includes(query))
+      && (status === "all" || row.dataset.statusFilterStatus === status)
+      && (tutorial === "all" || (row.dataset.statusFilterTutorial || "none") === tutorial);
+  }
+
+  // A talk's rows sit under a heading; the heading goes with the last of them.
+  showGroups() {
+    const visible = new Set(this.rowTargets.filter(row => !row.hidden)
+      .map(row => row.dataset.statusFilterGroupId));
+    this.groupTargets.forEach((group) => {
+      group.hidden = !visible.has(group.dataset.statusFilterGroupId);
     });
-
-    this.element.querySelectorAll("tr.group-header").forEach((header) => {
-      const talkId = header.dataset.statusFilterGroupId;
-      const hasVisibleRow = matchId.has(talkId);
-      header.style.display = hasVisibleRow ? "" : "none";
-    });
   }
 
-  search(event) {
-    this.searchQuery = event.currentTarget.value.toLowerCase();
-    this.applySearchFilter();
+  report() {
+    this.showGroups();
+    const total = this.rowTargets.length;
+    const shown = this.rowTargets.filter(row => !row.hidden).length;
+    if (this.hasResetTarget) {
+      this.resetTarget.hidden = !this.filtering();
+    }
+    if (this.hasCountTarget) {
+      this.countTarget.hidden = !this.filtering();
+      this.countTarget.textContent = this.countTarget.dataset.template
+        .replace("%{shown}", shown)
+        .replace("%{total}", total);
+    }
+    if (this.hasEmptyTarget) {
+      this.emptyTarget.hidden = shown > 0;
+    }
+  }
+
+  filtering() {
+    return this.nameTarget.value.trim() !== ""
+      || (this.hasStatusTarget && this.statusTarget.value !== "all")
+      || (this.hasTutorialTarget && this.tutorialTarget.value !== "all");
   }
 }

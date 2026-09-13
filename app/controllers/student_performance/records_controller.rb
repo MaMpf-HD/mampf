@@ -261,6 +261,7 @@ module StudentPerformance
         participations = Assessment::Participation
                          .where(assessment_id: @assessments.map(&:id),
                                 user_id: user_ids)
+                         .includes(:assessment)
                          .select(:id, :assessment_id, :user_id,
                                  :status, :submitted_at)
 

@@ -50,16 +50,6 @@ module AssessmentHelper
     end
   end
 
-  def sticky_css_vars_calc(sticky_layout)
-    left = sticky_layout.left_offsets.map { |k, v| "--#{k.to_s.dasherize}-left:#{v}px" }
-    right = sticky_layout.right_offsets.map { |k, v| "--#{k.to_s.dasherize}-right:#{v}px" }
-    edges = [
-      "--sticky-left-width:#{sticky_layout.total_left_width}px",
-      "--sticky-right-width:#{sticky_layout.total_right_width}px"
-    ]
-    (left + right + edges).join(";")
-  end
-
   private
 
     def overview_frame_src(lecture)
@@ -67,8 +57,8 @@ module AssessmentHelper
                                   tab: params[:assessment_tab])
     end
 
-    # Three ways a person and their sheet part company: they changed groups,
-    # they left the groups, or they joined one after handing in with none.
+    # The sheet stays with the group that has it; the wording has to say where
+    # it is and where the person is now.
     def movement_msg_assignment(movement)
       old_title = movement[:participated_tutorial_title]
       new_title = movement[:new_tutorial_title]

@@ -16,7 +16,7 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
   before do
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
-    allow_any_instance_of(User).to receive(:can_grade_in_scope?).and_return(true)
+    allow_any_instance_of(User).to receive(:can_enter_grades_in?).and_return(true)
     sign_in grader
   end
 

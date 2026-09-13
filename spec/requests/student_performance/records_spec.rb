@@ -690,8 +690,6 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         )
       end
 
-      # A sheet collected on paper is with the tutor until they record it; the
-      # lecture can still let the student off it.
       it "says a sheet collected on paper is not recorded yet and offers the exemption" do
         assignment = FactoryBot.create(:assignment, :expired, lecture: lecture,
                                                               requires_submission: false)

@@ -1,39 +1,51 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <% if gradable_talks.any? %>
     <div data-controller="status-filter">
-      <div class="d-flex gap-2 m-3 align-items-center">
-        <div class="d-flex align-items-center">
+      <div class="d-flex flex-wrap align-items-end gap-2 m-3">
+        <div>
+          <label class="form-label small mb-1" for="talk-filter-name">
+            <%= t('assessment.grading_tutorial.filter_name') %>
+          </label>
+
           <input
-            type="text"
-            class="form-control form-control-sm w-auto"
-            placeholder="<%= t('assessment.grading_tutorial.filter_name') %>"
-            aria-label="<%= t('assessment.grading_tutorial.filter_name') %>"
+            type="search"
+            id="talk-filter-name"
+            class="form-control form-control-sm"
             autocomplete="off"
+            data-status-filter-target="name"
             data-action="input->status-filter#search"
           >
         </div>
 
-        <div
-          class="d-flex gap-2 align-items-center"
-          data-status-filter-target="activeFilters"
-        ></div>
+        <button
+          type="button"
+          class="btn btn-link btn-sm"
+          hidden
+          data-status-filter-target="reset"
+          data-action="click->status-filter#reset"
+        >
+          <%= t("assessment.grading_tutorial.filter_reset") %>
+        </button>
+
+        <span
+          class="small text-muted pb-1"
+          hidden
+          data-status-filter-target="count"
+          data-template="<%= t("assessment.grading_tutorial.filter_count", shown: "%{shown}", total: "%{total}") %>"
+        ></span>
       </div>
 
       <div
         class="table-wrapper"
-        style="<%= sticky_css_vars %>"
+        style="<%= layout.css_vars %>"
         data-controller="table-fade"
       >
         <div class="table-overflow" data-table-fade-target="inner">
-          <table
-            class="table table-hover align-middle my-3 grading-table"
-            style="<%= sticky_css_vars %>"
-          >
-            <thead style="background: #fafafa;">
+          <table class="table table-hover align-middle my-3 grading-table">
+            <thead>
               <%= render(PointingTableHeaderComponent.new(
-                grading_scope: @grading_scope,
-                assessable_type: Talk.name,
-                grading_enabled: grading_enabled?
+                assessable: gradable_talks.first,
+                layout: layout
               )) %>
             </thead>
 
@@ -41,11 +53,12 @@
               <% gradable_talks.each do |talk| %>
                 <tr
                   class="group-header"
+                  data-status-filter-target="group"
                   data-status-filter-group-id="<%= talk.id %>"
                 >
                   <td
-                    colspan="7"
-                    style="background: #C7DDF0; color: #254A68; padding-top: 1px; padding-bottom: 1px;"
+                    colspan="<%= layout.columns.size %>"
+                    class="group-heading"
                   >
                     <span class="fw-semibold"><%= talk.title %></span>
                   </td>
@@ -69,6 +82,10 @@
           </table>
         </div>
       </div>
+
+      <p class="text-muted m-3" hidden data-status-filter-target="empty">
+        <%= t("assessment.grading_tutorial.filter_no_match") %>
+      </p>
     </div>
   <% else %>
     <div class="jumbotron mt-3">

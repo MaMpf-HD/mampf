@@ -34,45 +34,4 @@ module TutorialsHelper
       }
     end
   end
-
-  def overview_info(tutorial, assignment)
-    stack = assignment.submissions.where(tutorial: tutorial).proper
-                      .order(:last_modification_by_users_at).includes(:users)
-    non_submitters = assignment.non_submitters_in_tutorial(tutorial)
-
-    participations_by_user_id =
-      Assessment::Participation.where(user_id: non_submitters.map(&:id) +
-                                               stack.flat_map(&:user_ids),
-                                      assessment: assignment.assessment)
-                               .index_by(&:user_id)
-
-    num_submissions = stack.size
-    num_submissions_with_points = stack.count do |s|
-      participations_by_user_id[s.user_ids.first]&.status == "reviewed"
-    end
-    num_submissions_without_points = num_submissions - num_submissions_with_points
-
-    num_non_submitters = non_submitters.size
-    num_participated = non_submitters.count { |u| participations_by_user_id[u.id] }
-    num_not_participated = num_non_submitters - num_participated
-    num_participated_with_points = non_submitters.count do |u|
-      participations_by_user_id[u.id]&.status == "reviewed"
-    end
-    num_participated_without_points = num_participated - num_participated_with_points
-
-    {
-      submissions: {
-        total: num_submissions,
-        graded: num_submissions_with_points,
-        pending: num_submissions_without_points
-      },
-      non_submitters: {
-        total: num_non_submitters,
-        participated: num_participated,
-        graded: num_participated_with_points,
-        pending: num_participated_without_points,
-        not_marked: num_not_participated
-      }
-    }
-  end
 end

@@ -3,11 +3,6 @@ class TalkGradingTableComponent < ViewComponent::Base
     super()
     @seminar = seminar
     @talks = seminar.talks.includes(:speakers, :assessment)
-    return unless @talks.any?
-
-    @config = Assessment::DisplayConfigResolver.resolve(
-      assessable: @talks.first, grading_scope: @grading_scope
-    )
   end
 
   def grading_enabled?
@@ -32,19 +27,9 @@ class TalkGradingTableComponent < ViewComponent::Base
     participations_index[[assessment.id, user.id]]
   end
 
-  def sticky_layout
-    return unless @config
-
-    @sticky_layout ||= Assessment::StickyColumnLayout.new(
-      left_columns: @config.left_columns,
-      right_columns: @config.right_columns
-    )
-  end
-
-  def sticky_css_vars
-    return unless @config
-
-    helpers.sticky_css_vars_calc(sticky_layout)
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: gradable_talks.first,
+                                        grading_scope: @seminar)
   end
 
   private

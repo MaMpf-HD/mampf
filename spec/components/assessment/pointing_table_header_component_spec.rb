@@ -3,313 +3,157 @@ require "rails_helper"
 RSpec.describe(PointingTableHeaderComponent, type: :component) do
   let(:tutorial_scope) { build_stubbed(:tutorial) }
   let(:lecture_scope) { build_stubbed(:lecture) }
+  let(:legacy_assignment) { build_stubbed(:assignment, accepted_file_type: ".pdf") }
+  let(:assignment) do
+    create(:assignment, :with_lecture).tap do |assignment|
+      create(:assessment, requires_points: true, assessable: assignment,
+                          lecture: assignment.lecture)
+      assignment.reload
+    end
+  end
+
+  def header(assessable, scope: tutorial_scope)
+    layout = PointingTableLayout.for(assessable: assessable, grading_scope: scope)
+    described_class.new(assessable: assessable, layout: layout)
+  end
 
   def columns_for(component)
     render_inline(component)
     component.columns
   end
 
-  describe "#columns" do
-    context "when assessable_type is Assignment" do
-      context "when grading_scope is a Tutorial" do
-        let(:component) do
-          described_class.new(grading_scope: tutorial_scope, grading_enabled: false,
-                              assessable_type: "Assignment")
-        end
+  def classes_for(component)
+    columns_for(component).map(&:css_class)
+  end
 
-        it "always includes the team column" do
-          expect(columns_for(component).map(&:css_class)).to include(a_string_matching(/team-col/))
-        end
+  describe "a sheet's columns" do
+    context "in a group's table" do
+      let(:component) { header(legacy_assignment) }
 
-        it "does not include a tutorial column" do
-          expect(columns_for(component).map(&:css_class))
-            .not_to include(a_string_matching(/tutorial-col/))
-        end
-
-        it "includes the hand-in column, named after the file it holds" do
-          hand_in = columns_for(component).find { |c| c.css_class.include?("hand-in-col") }
-
-          expect(hand_in.label).to eq(I18n.t("basics.submission"))
-        end
-
-        # Two icons need no heading over them, but a screen reader still gets
-        # one.
-        it "puts the save column beside the total, with a heading only for readers" do
-          component = described_class.new(grading_scope: tutorial_scope, grading_enabled: true)
-          classes = columns_for(component).map(&:css_class)
-          save = columns_for(component).find { |c| c.css_class.include?("save-col") }
-
-          expect(classes.index { |c| c.include?("save-col") })
-            .to eq(classes.index { |c| c.include?("total-col") } + 1)
-          expect(save.label_hidden).to be(true)
-        end
-
-        it "includes the correction column" do
-          expect(columns_for(component).map(&:css_class))
-            .to include(a_string_matching(/correction-col/))
-        end
+      it "starts with the team" do
+        expect(classes_for(component).first).to include("team-col")
       end
 
-      context "when grading_scope is a Lecture" do
-        let(:component) do
-          described_class.new(grading_scope: lecture_scope, grading_enabled: false,
-                              assessable_type: "Assignment")
-        end
-
-        it "includes a tutorial column" do
-          expect(columns_for(component).map(&:css_class))
-            .to include(a_string_matching(/tutorial-col/))
-        end
-
-        it "does not include the correction column" do
-          expect(columns_for(component).map(&:css_class))
-            .not_to include(a_string_matching(/correction-col/))
-        end
-
-        context "when no tutorials are given" do
-          it "renders a plain tutorial column with no action_tag" do
-            tutorial_col = columns_for(component).find { |c| c.css_class.include?("tutorial-col") }
-            expect(tutorial_col.action_tag).to be_nil
-          end
-
-          it "does not add the z-20 class" do
-            tutorial_col = columns_for(component).find { |c| c.css_class.include?("tutorial-col") }
-            expect(tutorial_col.css_class).not_to include("z-20")
-          end
-        end
-
-        context "when tutorials are given" do
-          let(:tutorial) { build_stubbed(:tutorial) }
-          let(:component) do
-            described_class.new(grading_scope: lecture_scope, grading_enabled: false,
-                                assessable_type: "Assignment", tutorials: [tutorial])
-          end
-
-          it "adds the filter-tutorials action_tag" do
-            tutorial_col = columns_for(component).find { |c| c.css_class.include?("tutorial-col") }
-            expect(tutorial_col.action_tag).to eq("filter-tutorials")
-          end
-
-          it "adds the z-20 class for stacking above the filter dropdown" do
-            tutorial_col = columns_for(component).find { |c| c.css_class.include?("tutorial-col") }
-            expect(tutorial_col.css_class).to include("z-20")
-          end
-        end
+      it "has no tutorial column" do
+        expect(classes_for(component)).not_to include(a_string_matching(/tutorial-col/))
       end
 
-      context "when grading_enabled is false" do
-        let(:component) do
-          described_class.new(grading_scope: tutorial_scope, grading_enabled: false,
-                              assessable_type: "Assignment")
-        end
+      it "names the hand-in column after the file it holds" do
+        hand_in = columns_for(component).find { |c| c.css_class.include?("hand-in-col") }
 
-        it "does not include a status column" do
-          expect(columns_for(component).map(&:css_class))
-            .not_to include(a_string_matching(/status-col/))
-        end
-
-        it "does not include a total column" do
-          expect(columns_for(component).map(&:css_class))
-            .not_to include(a_string_matching(/total-col/))
-        end
-
-        it "does not include any task columns" do
-          expect(columns_for(component).map(&:label)).not_to include(a_string_matching(/task/i))
-        end
+        expect(hand_in.label).to eq(I18n.t("basics.submission"))
+        expect(hand_in.sublabel).to include(".pdf")
       end
 
-      context "when grading_enabled is true" do
-        let(:task) { build_stubbed(:assessment_task, position: 1, max_points: 10) }
-        let(:component) do
-          described_class.new(grading_scope: tutorial_scope, grading_enabled: true,
-                              assessable_type: "Assignment", tasks: [task], total_max_points: 10)
-        end
-
-        it "includes a status column" do
-          expect(columns_for(component).map(&:css_class))
-            .to include(a_string_matching(/status-col/))
-        end
-
-        it "includes the filter-status action_tag on the status column" do
-          status_column = columns_for(component).find { |c| c.css_class.include?("status-col") }
-          expect(status_column.action_tag).to eq("filter-status")
-        end
-
-        it "includes one column per task" do
-          expect(columns_for(component).map(&:css_class).count do |c|
-            c.include?("task-col")
-          end).to eq(1)
-        end
-
-        it "labels each task column with its position" do
-          task_column = columns_for(component).find { |c| c.css_class.include?("task-col") }
-          expect(task_column.label).to include("1")
-        end
-
-        it "shows the task's max_points in the sublabel" do
-          task_column = columns_for(component).find { |c| c.css_class.include?("task-col") }
-          expect(task_column.sublabel).to include("10")
-        end
-
-        it "includes a total column showing total_max_points in the sublabel" do
-          total_column = columns_for(component).find { |c| c.css_class.include?("total-col") }
-          expect(total_column.sublabel).to include("10")
-        end
-
-        it "includes the status column for a lecture scope too" do
-          teacher_component = described_class.new(grading_scope: lecture_scope,
-                                                  grading_enabled: true,
-                                                  assessable_type: "Assignment")
-          expect(columns_for(teacher_component).map(&:css_class))
-            .to include(a_string_matching(/status-col/))
-        end
+      it "has the correction column" do
+        expect(classes_for(component)).to include(a_string_matching(/correction-col/))
       end
 
-      context "when accepted_file_type is given" do
-        let(:component) do
-          described_class.new(grading_scope: tutorial_scope, grading_enabled: false,
-                              assessable_type: "Assignment", accepted_file_type: ".pdf")
-        end
+      it "pins the team and the save column and nothing else" do
+        sticky = classes_for(header(assignment)).select { |c| c.include?("sticky-col") }
 
-        it "shows the accepted file type in the correction column sublabel" do
-          correction_column = columns_for(component).find do |c|
-            c.css_class.include?("correction-col")
-          end
-          expect(correction_column.sublabel).to include(".pdf")
-        end
-      end
-
-      context "when tasks is empty and total_max_points is 0" do
-        let(:component) do
-          described_class.new(grading_scope: tutorial_scope, grading_enabled: true,
-                              assessable_type: "Assignment")
-        end
-
-        it "still includes a total column" do
-          expect(columns_for(component).map(&:css_class))
-            .to include(a_string_matching(/total-col/))
-        end
-
-        it "shows 0 in the total column sublabel" do
-          total_column = columns_for(component).find { |c| c.css_class.include?("total-col") }
-          expect(total_column.sublabel).to include("0")
-        end
-      end
-
-      context "when grading_scope is neither Tutorial nor Lecture" do
-        let(:component) do
-          described_class.new(grading_scope: nil, grading_enabled: false,
-                              assessable_type: "Assignment")
-        end
-
-        it "does not raise" do
-          expect { columns_for(component) }.not_to raise_error
-        end
-
-        it "does not include a tutorial column (treated as tutor-like)" do
-          expect(columns_for(component).map(&:css_class))
-            .not_to include(a_string_matching(/tutorial-col/))
-        end
-
-        it "includes the correction column (treated as tutor-like)" do
-          expect(columns_for(component).map(&:css_class))
-            .to include(a_string_matching(/correction-col/))
-        end
+        expect(sticky.map { |c| c[/sticky-col (\w+)-col/, 1] }).to eq(["team", "save"])
       end
     end
 
-    context "when assessable_type is Talk" do
-      context "when grading_enabled is false" do
-        let(:component) do
-          described_class.new(grading_scope: tutorial_scope, grading_enabled: false,
-                              assessable_type: "Talk")
-        end
+    context "in the lecture's table" do
+      let(:component) { header(legacy_assignment, scope: lecture_scope) }
 
-        it "includes the team column" do
-          expect(columns_for(component).map(&:css_class)).to include(a_string_matching(/team-col/))
-        end
-
-        it "includes the hand-in column, named after the file it holds" do
-          hand_in = columns_for(component).find { |c| c.css_class.include?("hand-in-col") }
-
-          expect(hand_in.label).to eq(I18n.t("basics.submission"))
-        end
-
-        # Two icons need no heading over them, but a screen reader still gets
-        # one.
-        it "puts the save column beside the total, with a heading only for readers" do
-          component = described_class.new(grading_scope: tutorial_scope, grading_enabled: true)
-          classes = columns_for(component).map(&:css_class)
-          save = columns_for(component).find { |c| c.css_class.include?("save-col") }
-
-          expect(classes.index { |c| c.include?("save-col") })
-            .to eq(classes.index { |c| c.include?("total-col") } + 1)
-          expect(save.label_hidden).to be(true)
-        end
-
-        it "does not include a status column" do
-          expect(columns_for(component).map(&:css_class))
-            .not_to include(a_string_matching(/status-col/))
-        end
-
-        it "does not include any grading columns" do
-          classes = columns_for(component).map(&:css_class)
-          expect(classes).not_to include(a_string_matching(/grade-col|note-col|graded-by-col|graded-at-col/)) # rubocop:disable Layout/LineLength
-        end
-
-        it "does not include a tutorial column, even for a lecture scope" do
-          teacher_component = described_class.new(grading_scope: lecture_scope,
-                                                  grading_enabled: false,
-                                                  assessable_type: "Talk")
-          expect(columns_for(teacher_component).map(&:css_class))
-            .not_to include(a_string_matching(/tutorial-col/))
-        end
-
-        it "does not include a correction column" do
-          expect(columns_for(component).map(&:css_class))
-            .not_to include(a_string_matching(/correction-col/))
-        end
+      it "has a tutorial column" do
+        expect(classes_for(component)).to include(a_string_matching(/tutorial-col/))
       end
 
-      context "when grading_enabled is true" do
-        let(:component) do
-          described_class.new(grading_scope: tutorial_scope, grading_enabled: true,
-                              assessable_type: "Talk")
-        end
+      it "has the correction column" do
+        expect(classes_for(component)).to include(a_string_matching(/correction-col/))
+      end
+    end
 
-        it "includes a status column" do
-          expect(columns_for(component).map(&:css_class))
-            .to include(a_string_matching(/status-col/))
-        end
+    context "when the assignment has no assessment" do
+      let(:component) { header(legacy_assignment) }
 
-        it "includes grade, note, graded_by, and graded_at columns" do
-          classes = columns_for(component).map(&:css_class)
-          expect(classes).to include(a_string_matching(/grade-col/))
-          expect(classes).to include(a_string_matching(/note-col/))
-          expect(classes).to include(a_string_matching(/graded-by-col/))
-          expect(classes).to include(a_string_matching(/graded-at-col/))
-        end
+      it "has neither status, tasks, total nor save" do
+        expect(classes_for(component))
+          .not_to include(a_string_matching(/status-col|task-col|total-col|save-col/))
+      end
+    end
 
-        it "does not include any task or total columns" do
-          classes = columns_for(component).map(&:css_class)
-          expect(classes).not_to include(a_string_matching(/task-col/))
-          expect(classes).not_to include(a_string_matching(/total-col/))
-        end
+    context "when the assignment has an assessment with a task" do
+      let!(:task) do
+        create(:assessment_task, assessment: assignment.assessment, position: 1, max_points: 10)
+      end
+      let(:component) { header(assignment.reload) }
+
+      it "has a status column" do
+        expect(classes_for(component)).to include(a_string_matching(/status-col/))
+      end
+
+      it "has one column per task, labelled with position and maximum" do
+        task_columns = columns_for(component).select { |c| c.css_class.include?("task-col") }
+
+        expect(task_columns.size).to eq(1)
+        expect(task_columns.first.label).to include("1")
+        expect(task_columns.first.sublabel).to include("10")
+      end
+
+      # Two icons need no heading over them, but a screen reader still gets
+      # one.
+      it "puts the save column beside the total, with a heading only for readers" do
+        classes = classes_for(component)
+        save = columns_for(component).find { |c| c.css_class.include?("save-col") }
+        total = columns_for(component).find { |c| c.css_class.include?("total-col") }
+
+        expect(classes.index { |c| c.include?("save-col") })
+          .to eq(classes.index { |c| c.include?("total-col") } + 1)
+        expect(save.label_hidden).to be(true)
+        expect(total.sublabel).to include("10")
+      end
+    end
+
+    context "when the assessment has no tasks yet" do
+      it "still has a total column, reading 0" do
+        total = columns_for(header(assignment)).find { |c| c.css_class.include?("total-col") }
+
+        expect(total.sublabel).to include("0")
       end
     end
   end
 
-  describe "rendering" do
-    it "renders without error for an Assignment" do
-      component = described_class.new(grading_scope: tutorial_scope, grading_enabled: true,
-                                      assessable_type: "Assignment")
-      expect { render_inline(component) }.not_to raise_error
+  describe "a talk's columns" do
+    let(:seminar) { create(:lecture, :is_seminar) }
+    let(:talk) do
+      create(:talk, lecture: seminar).tap do |talk|
+        create(:assessment, requires_points: false, assessable: talk, lecture: seminar)
+        talk.reload
+      end
+    end
+    let(:component) { header(talk, scope: seminar) }
+
+    it "has the grade, note, grader and date instead of tasks" do
+      classes = classes_for(component)
+
+      expect(classes).to include(a_string_matching(/grade-col/), a_string_matching(/note-col/),
+                                 a_string_matching(/graded-by-col/),
+                                 a_string_matching(/graded-at-col/))
+      expect(classes)
+        .not_to include(a_string_matching(/task-col|total-col|hand-in-col|correction-col/))
     end
 
-    it "renders without error for a Talk" do
-      component = described_class.new(grading_scope: tutorial_scope, grading_enabled: true,
-                                      assessable_type: "Talk")
-      expect { render_inline(component) }.not_to raise_error
+    it "labels them" do
+      grade = columns_for(component).find { |c| c.css_class.include?("grade-col") }
+
+      expect(grade.label).to eq(I18n.t("assessment.grade_talk_row.grade"))
+    end
+
+    it "pins the team and the save column" do
+      sticky = classes_for(component).select { |c| c.include?("sticky-col") }
+
+      expect(sticky.map { |c| c[/sticky-col (\w+)-col/, 1] }).to eq(["team", "save"])
+    end
+  end
+
+  describe "rendering" do
+    it "renders a sheet's header" do
+      expect { render_inline(header(assignment)) }.not_to raise_error
     end
   end
 end

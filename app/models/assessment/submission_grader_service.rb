@@ -4,21 +4,21 @@ module Assessment
 
     class << self
       def score_multi_teams_by_types!(records, scorer)
-        validated_tutorial_ids = []
+        validated_scopes = []
 
         ActiveRecord::Base.transaction do
           records.each do |entry|
-            score_tasks_by_types!(entry, scorer, validated_tutorial_ids)
+            score_tasks_by_types!(entry, scorer, validated_scopes)
           end
         end
       end
 
-      def score_tasks_by_types!(entry, scorer, validated_tutorial_ids)
+      def score_tasks_by_types!(entry, scorer, validated_scopes)
         case entry["target"]
         when "submission"
-          score_submission_entry!(entry, scorer, validated_tutorial_ids)
+          score_submission_entry!(entry, scorer, validated_scopes)
         when "participation"
-          score_participation_entry!(entry, scorer, validated_tutorial_ids)
+          score_participation_entry!(entry, scorer, validated_scopes)
         else
           raise(SubmissionGraderError, "Unknown target type #{entry["target"].inspect}")
         end
@@ -55,10 +55,7 @@ module Assessment
         participation
       end
 
-      # The sheet came in - as a file, or on paper. A row the backfill worker
-      # wrote carries no stamp yet and gets one; a stamp already there is the
-      # time the sheet came in and stays. Somebody in no group takes part in
-      # the lecture itself.
+      # A stamp already there is the time the sheet came in and stays.
       def init_participation(assessment, user, tutorial)
         if assessment.nil? || user.nil?
           raise(SubmissionGraderError,
@@ -101,35 +98,30 @@ module Assessment
           participation.update!(submitted_at: Time.current)
         end
 
-        def score_submission_entry!(entry, scorer, validated_tutorial_ids)
+        def score_submission_entry!(entry, scorer, validated_scopes)
           submission = Submission.find(entry["id"])
 
-          authorize_tutorial!(submission.tutorial_id, scorer, validated_tutorial_ids)
+          authorize_scope!(submission.tutorial, scorer, validated_scopes)
           score_tasks_by_submission!(submission, entry["task_points"], scorer)
         end
 
-        def score_participation_entry!(entry, scorer, validated_tutorial_ids)
+        # Somebody in no group takes part in the lecture itself, and that is
+        # the lecturer's to enter.
+        def score_participation_entry!(entry, scorer, validated_scopes)
           participation = Participation.find(entry["id"])
 
-          if participation.tutorial_id.present?
-            authorize_tutorial!(participation.tutorial_id, scorer, validated_tutorial_ids)
-          else
-            raise(SubmissionGraderError,
-                  I18n.t("assessment.task_points.participation_id_missing_tutorial",
-                         participation_id: participation.id))
-          end
-
+          authorize_scope!(participation.tutorial || participation.assessment.lecture,
+                           scorer, validated_scopes)
           score_tasks_by_participation!(participation, entry["task_points"], scorer)
         end
 
-        # Cache authorized tutorial IDs so a bulk save does not repeat
-        # Tutorial.find and permission checks for every row.
-        def authorize_tutorial!(tutorial_id, scorer, validated_tutorial_ids)
-          return if tutorial_id.blank? || validated_tutorial_ids.include?(tutorial_id)
+        # A bulk save carries thirty rows of one group; the permission check
+        # loads tutors and runs once per scope, not per row.
+        def authorize_scope!(scope, scorer, validated_scopes)
+          return if validated_scopes.include?(scope)
 
-          tutorial = Tutorial.find(tutorial_id)
-          raise_if_errors!(validate_scorer_may_enter_points(tutorial, scorer))
-          validated_tutorial_ids << tutorial_id
+          raise_if_errors!(validate_scorer_may_enter_points(scope, scorer))
+          validated_scopes << scope
         end
 
         def enter_points_for_each_team_member!(assessment, submission, points_by_task_id, scorer)

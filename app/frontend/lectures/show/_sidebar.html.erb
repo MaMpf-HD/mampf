@@ -88,11 +88,9 @@
   </li>
 
   <%#
-    Tutors get their groups' pointing table, students the hub with their
-    sheets. Lecturers and editors get no entry: sheets and points are theirs
-    to edit under the lecture's edit page, not to look at from here. Never
-    greyed out for want of groups - the hub says whether one is missing or
-    only a seat in one, and greying it out hid exactly that page.
+    Tutors get their groups' table, students the hub; lecturers and editors
+    edit sheets and points on the lecture's edit page and get no entry here.
+    Not greyed out for want of groups: the hub is where that is explained.
   %>
   <% if lecture && (current_user.in?(lecture.tutors) || !current_user.editor_or_teacher_in?(lecture)) %>
     <% if current_user.in?(lecture.tutors)

@@ -151,10 +151,9 @@ module Demo
         Rails.logger.debug("Seeded participations from lecture 1 tutorial memberships.")
       end
 
-      # Two things a term does to a roster, so the pointing table has them to
-      # show: one student changes groups after a few sheets - the early sheets
-      # stay with the group that has them - and one leaves the groups
-      # altogether. Both by name, so running this again changes nothing more.
+      # Two things a term does to a roster: one student changes groups after
+      # a few sheets, one leaves the groups. Both land in the same place every
+      # run, so a second run changes nothing.
       def vary_demo_roster!(lecture)
         move_one_student!(lecture)
         unseat_one_student!(lecture)
@@ -166,8 +165,8 @@ module Demo
         return unless membership
 
         tutorials = staffed_tutorials(lecture)
-        destination = tutorials.find { |t| t.id != membership.tutorial_id }
-        return unless destination
+        destination = tutorials.max_by(&:id)
+        return if destination.nil? || membership.tutorial_id == destination.id
 
         origin_id = membership.tutorial_id
         membership.update!(tutorial: destination) if tutorials.include?(membership.tutorial)
