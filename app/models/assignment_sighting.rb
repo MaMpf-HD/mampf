@@ -7,7 +7,10 @@ class AssignmentSighting < ApplicationRecord
 
   validates :user_id, uniqueness: { scope: :assignment_id }
 
+  # Two tabs can stamp the same sheet at once; one statement lets the unique
+  # index settle it instead of raising on the loser.
   def self.stamp!(user:, assignment:, at: Time.current)
-    find_or_initialize_by(user: user, assignment: assignment).update!(seen_at: at)
+    upsert({ user_id: user.id, assignment_id: assignment.id, seen_at: at }, # rubocop:disable Rails/SkipsModelValidations
+           unique_by: [:user_id, :assignment_id])
   end
 end
