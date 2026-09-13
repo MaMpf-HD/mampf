@@ -153,6 +153,31 @@ RSpec.describe(Assessment::GradesController, type: :request) do
         expect { subject }.not_to raise_error
       end
     end
+
+    context "when the participation belongs to a sheet, not a talk" do
+      let(:sheet_participation) do
+        assignment = FactoryBot.create(:assignment, :with_lecture)
+        FactoryBot.create(:assessment_participation, assessment: assignment.reload.assessment,
+                                                     user: speaker)
+      end
+
+      it "turns the grade away with the not-gradable alert" do
+        patch grade_participation_path(sheet_participation),
+              params: { grade: "1.0" },
+              headers: turbo_stream_headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(I18n.t("assessment.errors.not_gradable"))
+        expect(sheet_participation.reload.grade_numeric).to be_nil
+      end
+
+      it "turns the refresh away the same way" do
+        patch refresh_grade_participation_path(sheet_participation), headers: turbo_stream_headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(I18n.t("assessment.errors.not_gradable"))
+      end
+    end
   end
 
   describe "PATCH #refresh" do

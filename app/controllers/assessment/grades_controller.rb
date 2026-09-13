@@ -110,9 +110,13 @@ module Assessment
         respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
       end
 
+      # Only a talk has a single grade; a sheet's participation is pointed
+      # elsewhere and has no speakers to check.
       def empty_resource_check
         return respond_with_flash(:alert, t("assessment.errors.no_assessment")) unless @assessment
-        return respond_with_flash(:alert, t("assessment.errors.not_gradable")) unless @assessable
+        unless @assessable.is_a?(Talk)
+          return respond_with_flash(:alert, t("assessment.errors.not_gradable"))
+        end
         return respond_with_flash(:alert, t("assessment.errors.user_not_found")) unless @user
 
         return if @participation
