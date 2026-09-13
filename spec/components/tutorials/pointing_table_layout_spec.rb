@@ -22,6 +22,10 @@ RSpec.describe(PointingTableLayout) do
       expect(layout.column_class(:team)).to eq("sticky-col team-col")
       expect(layout.column_class(:hand_in)).to eq("hand-in-col")
     end
+
+    it "refuses a column it has no width for" do
+      expect { layout.column_class(:typo) }.to raise_error(ArgumentError, /typo/)
+    end
   end
 
   describe "#css_vars" do

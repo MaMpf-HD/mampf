@@ -1,7 +1,7 @@
 # Which columns of the pointing table are pinned to an edge, and how wide
 # every column is. The CSS reads both as variables, so a column set for a
 # different kind of assessment - a talk's grade, an exam's - is one entry
-# here and no new stylesheet.
+# here and one mixin line in the stylesheet.
 class PointingTableLayout
   class UnsupportedAssessableError < StandardError; end
 
@@ -39,11 +39,12 @@ class PointingTableLayout
   end
 
   def column_class(column)
+    raise(ArgumentError, "Unknown pointing table column #{column}") unless WIDTHS.key?(column)
+
     css = "#{column.to_s.dasherize}-col"
     pinned?(column) ? "sticky-col #{css}" : css
   end
 
-  # Left pins accumulate from the left edge, right pins from the right edge.
   def offsets
     left_offsets = left.each_with_index.to_h { |column, i| [column, width_of(left[0, i])] }
     right_offsets = right.reverse.each_with_index.to_h do |column, i|
