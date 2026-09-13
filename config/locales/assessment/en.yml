@@ -488,6 +488,7 @@ en:
       grade: "Grade"
       note: "Internal note"
       graded: "Graded"
+      graded_compact: ""
       graded_ago: "%{time} ago"
       save_row: "Save this row's grade"
       reload_row: "Reload the saved grade; unsaved changes are lost"

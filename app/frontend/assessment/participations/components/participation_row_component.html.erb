@@ -153,6 +153,21 @@
           <% end %>
         </td>
       <% end %>
+      <% if layout.show?(:graded_compact) %>
+        <td class="text-muted small <%= layout.column_class(:graded_compact) %>">
+          <% if graded_display %>
+            <% graded_info = "#{graded_display} (#{graded_ago})" %>
+            <% if graded_info %>
+              <i
+                class="bi bi-info-circle ms-1 text-secondary"
+                role="img"
+                title="<%= graded_info %>"
+                aria-label="<%= graded_info %>"
+              ></i>
+            <% end %>
+          <% end %>
+        </td>
+      <% end %>
     <% end %>
     <td class="text-center <%= layout.column_class(:save) %>">
       <div class="d-inline-flex align-items-center gap-1">

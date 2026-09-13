@@ -16,6 +16,7 @@ class PointingTableLayout
     grade: 110,
     note: 180,
     graded: 220,
+    graded_compact: 50,
     save: 90,
     hand_in: 140,
     correction: 140
@@ -41,7 +42,7 @@ class PointingTableLayout
         new(columns: [:team, :status, :tasks, :total, :save],
             body: :tasks, left: [:team, :status])
       when :grading
-        new(columns: [:team, :status, :grade, :note, :graded, :save],
+        new(columns: [:team, :status, :grade, :note, :graded_compact, :save],
             body: :single_grade, left: [:team, :status])
       end
     else

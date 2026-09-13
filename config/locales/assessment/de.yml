@@ -488,6 +488,7 @@ de:
       grade: "Note"
       note: "Interne Notiz"
       graded: "Bewertet"
+      graded_compact: ""
       graded_ago: "vor %{time}"
       save_row: "Note dieser Zeile speichern"
       reload_row: "Gespeicherte Note neu laden; ungespeicherte Änderungen gehen verloren"
