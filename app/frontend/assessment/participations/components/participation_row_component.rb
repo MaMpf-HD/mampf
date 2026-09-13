@@ -188,7 +188,7 @@ class ParticipationRowComponent < ViewComponent::Base
                        action: "click->participation-row#saveRow" },
                title: row_action_label("save_row"),
                aria: { label: row_action_label("save_row") },
-               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
+               disabled: !allow_grading || !grading_enabled? || !can_enter_row?) do
       tag.i(class: "bi bi-floppy-fill")
     end
   end
@@ -202,7 +202,7 @@ class ParticipationRowComponent < ViewComponent::Base
                data: { action: "click->participation-row#refreshRow" },
                title: row_action_label("reload_row"),
                aria: { label: row_action_label("reload_row") },
-               disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
+               disabled: !allow_grading || !grading_enabled? || !can_enter_row?) do
       tag.i(class: "bi bi-arrow-counterclockwise")
     end
   end
@@ -224,6 +224,12 @@ class ParticipationRowComponent < ViewComponent::Base
     user.admin? || user.can_enter_grades_in?(@grading_scope)
   rescue User::IncompatibleTypeError
     false
+  end
+
+  # The save and reload buttons write points on a sheet's row and a grade on
+  # a talk's, and ask the matching right.
+  def can_enter_row?
+    single_grade? ? can_enter_grade? : can_enter_points?
   end
 
   def users_movement_map
