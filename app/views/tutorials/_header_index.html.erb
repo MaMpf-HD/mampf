@@ -1,10 +1,13 @@
 <div class="row justify-content-between">
   <!-- Assignment Selector -->
   <div class="col-md-4 m-3">
-    <h5 class="form-label fw-semibold mb-1"><%= t('basics.assignment') %></h5>
+    <label class="form-label fw-semibold mb-2" for="assignment-select">
+      <%= t('basics.assignment') %>
+    </label>
 
     <% if assignments.size > 1 %>
-      <select class="form-select form-select-sm"
+      <select id="assignment-select"
+              class="form-select form-select-sm"
               onchange="window.location=this.value">
         <option selected><%= assignment.title %></option>
         <% (assignments - [assignment]).each do |a| %>
@@ -14,18 +17,20 @@
         <% end %>
       </select>
     <% else %>
-      <input class="form-control form-control-sm" disabled value="<%= assignment.title %>">
+      <input id="assignment-select" class="form-control form-control-sm" disabled value="<%= assignment.title %>">
     <% end %>
   </div>
 
   <!-- Tutorial Selector -->
   <div class="col-md-4 m-3">
-    <h5 class="form-label fw-semibold mb-1"><%= t('categories.tutorials') %></h5>
+    <label class="form-label fw-semibold mb-2" for="tutorial-select">
+      <%= t('basics.tutorial') %>
+    </label>
 
     <% if tutorials.size > 1 %>
       <%= render partial: 'tutorials/tutorial_dropdown' %>
     <% else %>
-      <input class="form-control form-control-sm" disabled value="<%= tutorial.title %>">
+      <input id="tutorial-select" class="form-control form-control-sm" disabled value="<%= tutorial.title %>">
     <% end %>
   </div>
 </div>
