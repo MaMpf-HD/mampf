@@ -4,13 +4,15 @@
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  def initialize(participation:, assessment:, grading_scope:, table_option: :pointing)
+  def initialize(participation:, assessment:, grading_scope:,
+                 table_option: :pointing, draft_scheme: nil)
     super()
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
     @grading_scope = grading_scope
     @table_option = table_option
+    @draft_scheme = draft_scheme
     @user ||= @participation&.user
     @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
 
@@ -96,7 +98,6 @@ class ParticipationRowComponent < ViewComponent::Base
 
   # The name filter finds a talk's rows by the talk as well as by the person.
   def filter_name
-    t = layout
     [(@assessable.title if layout.show?(:talk)), @user.tutorial_name].compact.join(" ")
   end
 
@@ -347,6 +348,37 @@ class ParticipationRowComponent < ViewComponent::Base
 
     t("assessment.grade_talk_row.graded_ago",
       time: helpers.time_ago_in_words(@participation.graded_at))
+  end
+
+  def draft_scheme?
+    @draft_scheme.present?
+  end
+
+  def proposed_grade_map
+    @proposed_grade_map ||= if draft_scheme?
+      Assessment::GradeSchemeApplier.new(@draft_scheme).proposed_grade_map
+    else
+      {}
+    end
+  end
+
+  def proposed_grade_for(participation)
+    proposed_grade_map[participation.user_id]
+  end
+
+  def format_grade(value)
+    return nil if value.nil?
+
+    value.to_s
+  end
+
+  def grade_changed?(participation)
+    return false unless draft_scheme?
+
+    proposed = proposed_grade_for(participation)
+    return false if proposed.nil?
+
+    participation.grade_numeric != proposed
   end
 
   private

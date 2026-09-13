@@ -29,7 +29,8 @@ class GradingTabComponent < ViewComponent::Base
 
   def roster_component
     ExamGradingTableComponent.new(
-      exam: assessment.assessable
+      exam: assessment.assessable,
+      draft_scheme: draft_scheme
     )
   end
 

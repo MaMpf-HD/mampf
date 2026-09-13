@@ -106,6 +106,22 @@
                   grade_options.map { |label, value| tag.option(label, value: value, selected: value == grade_numeric) }
                 ) %>
           <% end %>
+          <% if draft_scheme? %>
+            <span
+              class="d-inline-block text-center"
+              style="min-width: 2.25rem;"
+            >
+              <% if grade_changed?(@participation) %>
+                <span
+                  class="badge bg-info-subtle text-info-emphasis fw-normal"
+                  data-bs-toggle="tooltip"
+                  title="<%= t('assessment.grade_table.proposed_tooltip') %>"
+                >
+                  <%= format_grade(proposed_grade_for(@participation)) %>
+                </span>
+              <% end %>
+            </span>
+          <% end %>
         <% else %>
           <span class="fw-semibold"><%= grade_display %></span>
         <% end %>

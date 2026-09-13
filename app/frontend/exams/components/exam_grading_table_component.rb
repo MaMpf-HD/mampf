@@ -1,7 +1,8 @@
 class ExamGradingTableComponent < ViewComponent::Base
-  def initialize(exam:)
+  def initialize(exam:, draft_scheme: nil)
     super()
     @exam = exam
+    @draft_scheme = draft_scheme
     @lecture = exam.lecture
     @assessment = exam.assessment
     @participations = participations_index.values

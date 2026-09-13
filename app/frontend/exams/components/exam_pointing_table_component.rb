@@ -19,37 +19,6 @@ class ExamPointingTableComponent < ViewComponent::Base
     @exam.assessable?
   end
 
-  def draft_scheme?
-    draft_scheme.present?
-  end
-
-  def proposed_grade_map
-    @proposed_grade_map ||= if draft_scheme?
-      Assessment::GradeSchemeApplier.new(draft_scheme).proposed_grade_map
-    else
-      {}
-    end
-  end
-
-  def proposed_grade_for(participation)
-    proposed_grade_map[participation.user_id]
-  end
-
-  def grade_changed?(participation)
-    return false unless draft_scheme?
-
-    proposed = proposed_grade_for(participation)
-    return false if proposed.nil?
-
-    participation.grade_numeric != proposed
-  end
-
-  def format_grade(value)
-    return nil if value.nil?
-
-    value.to_s
-  end
-
   def tasks
     @exam&.assessment&.persisted_tasks || []
   end
