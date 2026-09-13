@@ -151,6 +151,20 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
 
         expect(participation.reload).to have_attributes(grader_id: nil, graded_at: nil)
       end
+
+      it "forgets them on an exempt row as well, whose status stays" do
+        participation.update!(status: :exempt)
+
+        described_class.set_grade(participation, grade_info, grader)
+
+        expect(participation.reload).to have_attributes(status: "exempt", grader_id: nil,
+                                                        graded_at: nil)
+      end
+
+      it "keeps the row rather than adding one" do
+        expect { described_class.set_grade(participation, grade_info, grader) }
+          .not_to change(Assessment::Participation, :count)
+      end
     end
 
     context "when participation is exempt" do

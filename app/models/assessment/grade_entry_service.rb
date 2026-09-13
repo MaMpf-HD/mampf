@@ -19,13 +19,13 @@ module Assessment
                             grade_numeric: grade_info[:grade_numeric],
                             status: status,
                             note: comment || participation.note,
-                            **stamp_for(participation, grade_info, grader, status))
+                            **stamp_for(participation, grade_info, grader))
     end
 
     # Record who changed the grade and when; note-only edits must preserve
-    # grader_id and graded_at. Clear both when the status returns to pending.
-    def self.stamp_for(participation, grade_info, grader, status)
-      return { grader_id: nil, graded_at: nil } if status == :pending
+    # grader_id and graded_at. No grade, no grader - whatever the status.
+    def self.stamp_for(participation, grade_info, grader)
+      return { grader_id: nil, graded_at: nil } if grade_info.values.none?(&:present?)
       return {} unless grade_changed?(participation, grade_info)
 
       { grader_id: grader.id, graded_at: Time.current }
