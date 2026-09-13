@@ -177,7 +177,7 @@ module Assessment
     def remove_participated
       SubmissionGraderService.remove_participation(@participation)
       @participation.reload
-      render turbo_stream: [turbo_stream.replace("participation-row-#{@participation.id}",
+      render turbo_stream: [turbo_stream.replace("pointing-participation-row-#{@participation.id}",
                                                  html: render_to_string(participation_row)),
                             summary_stream]
     end
@@ -205,9 +205,9 @@ module Assessment
         scope = row_before ? row_before.tutorial : roster_tutorial
         authorize!(:enter_points, scope || @lecture)
         row_id = if row_before
-          "participation-row-#{row_before.id}"
+          "pointing-participation-row-#{row_before.id}"
         else
-          "participation-row-user-#{user.id}"
+          "pointing-participation-row-user-#{user.id}"
         end
         participation = SubmissionGraderService.init_participation(@assessment, user,
                                                                    roster_tutorial)
@@ -244,7 +244,7 @@ module Assessment
       def render_participation_update
         render_task_points_update(
           turbo_stream.replace(
-            "participation-row-#{@participation.id}",
+            "pointing-participation-row-#{@participation.id}",
             html: render_to_string(participation_row)
           )
         )

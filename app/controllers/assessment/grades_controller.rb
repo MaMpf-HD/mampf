@@ -43,7 +43,7 @@ module Assessment
 
       def replace_participation_row
         turbo_stream.replace(
-          "participation-row-#{@participation.id}",
+          "grading-participation-row-#{@participation.id}",
           html: render_to_string(ParticipationRowComponent.new(
                                    assessment: @assessment,
                                    grading_scope: @lecture,

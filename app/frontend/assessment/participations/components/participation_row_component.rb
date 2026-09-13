@@ -101,9 +101,9 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def row_id
-    return "participation-row-#{@participation.id}" if @participation.persisted?
+    return "#{@table_option}-participation-row-#{@participation.id}" if @participation.persisted?
 
-    "participation-row-user-#{@user.id}"
+    "pointing-participation-row-user-#{@user.id}"
   end
 
   def grading_scope_type

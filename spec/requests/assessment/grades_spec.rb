@@ -43,7 +43,7 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
       it "renders the replaced participation row" do
         subject
-        expect(response.body).to include("participation-row-#{participation.id}")
+        expect(response.body).to include("grading-participation-row-#{participation.id}")
       end
 
       it "counts the row as graded in the summary" do
@@ -193,7 +193,7 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
     it "re-renders the participation row" do
       subject
-      expect(response.body).to include("participation-row-#{participation.id}")
+      expect(response.body).to include("grading-participation-row-#{participation.id}")
     end
 
     context "when participation_id does not exist" do

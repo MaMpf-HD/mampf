@@ -581,8 +581,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         participation = assessment.assessment_participations.find_by(user: student)
         expect(participation.submitted_at).to be_present
-        expect(response.body).to include("target=\"participation-row-user-#{student.id}\"")
-        expect(response.body).to include("participation-row-#{participation.id}")
+        expect(response.body).to include("target=\"pointing-participation-row-user-#{student.id}\"")
+        expect(response.body).to include("pointing-participation-row-#{participation.id}")
       end
 
       # The tutor's page lists one group; a row drawn for the lecture's page
@@ -617,7 +617,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               as: :turbo_stream
 
         expect(participation.reload.submitted_at).to be_present
-        expect(response.body).to include("target=\"participation-row-#{participation.id}\"")
+        expect(response.body).to include("target=\"pointing-participation-row-#{participation.id}\"")
         expect(response.body).not_to include("target=\"pointing-table\"")
       end
 
@@ -775,7 +775,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             as: :turbo_stream
       expect(response).to have_http_status(:success)
       expect(response.media_type).to eq(Mime[:turbo_stream])
-      expect(response.body).to include("target=\"participation-row-#{participation.id}\"")
+      expect(response.body).to include("target=\"pointing-participation-row-#{participation.id}\"")
       expect(response.body).not_to include("target=\"pointing-table\"")
     end
 

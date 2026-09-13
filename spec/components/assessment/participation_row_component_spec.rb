@@ -91,7 +91,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
   describe "#row_id" do
     it "returns the correct row id" do
-      expect(component_tutor.row_id).to eq("participation-row-#{participation.id}")
+      expect(component_tutor.row_id).to eq("pointing-participation-row-#{participation.id}")
     end
   end
 
@@ -535,7 +535,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
                                       grading_scope: tutorial)
       render_inline(component)
 
-      expect(component.row_id).to eq("participation-row-user-#{student.id}")
+      expect(component.row_id).to eq("pointing-participation-row-user-#{student.id}")
       expect(component.points_enterable?).to be(false)
       expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
       expect(rendered_content).not_to include("point_participation")
