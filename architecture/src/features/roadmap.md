@@ -91,7 +91,7 @@ graph TD
 ## Writing — teachers and tutors
 
 Nothing in the merged tree writes a point. Every point in the system comes from
-`db/seeds/support/demo`. Grade schemes, performance records and the whole eligibility chain
+`db/seeds/support/scenarios`. Grade schemes, performance records and the whole eligibility chain
 run, but only ever on seeded data. Until that is fixed, everything downstream is
 built on a floor nobody has stood on.
 

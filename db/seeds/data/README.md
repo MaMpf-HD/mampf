@@ -52,7 +52,7 @@ A group nothing points at -- join rows, mostly -- is a plain sequence:
   the loader writes them back to the column unchanged, bypassing its coder,
   rather than decoding and re-encoding a value nothing here reads.
 - **What is not here** belongs to the demo scenarios in
-  `db/seeds/support/demo/`, which
+  `db/seeds/support/scenarios/`, which
   generate it on every run: the students they make up, tutorials, rosters,
   submissions, campaigns, forum posts, notifications. `_meta.yml` counts the
   rows that were dropped for pointing at one of them -- ten talks assigned to
