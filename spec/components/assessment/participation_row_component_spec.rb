@@ -216,8 +216,8 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
 
     it "names the save button for a reader" do
-      html = component_tutor.save_row_button(true)
-      expect(html).to include(I18n.t("assessment.grading_tutorial.save_row"))
+      button = Nokogiri::HTML.fragment(component_tutor.save_row_button(true)).at_css("button")
+      expect(button["aria-label"]).to eq(I18n.t("assessment.grading_tutorial.save_row"))
     end
 
     context "when grading is not allowed" do
@@ -235,8 +235,8 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
 
     it "names the reload button for a reader" do
-      html = component_tutor.refresh_row_button(true)
-      expect(html).to include(I18n.t("assessment.grading_tutorial.reload_row"))
+      button = Nokogiri::HTML.fragment(component_tutor.refresh_row_button(true)).at_css("button")
+      expect(button["aria-label"]).to eq(I18n.t("assessment.grading_tutorial.reload_row"))
     end
 
     context "when grading is not allowed" do
