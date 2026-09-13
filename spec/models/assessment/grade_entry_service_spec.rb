@@ -68,6 +68,34 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
       end
     end
 
+    # The grader and the time say who decided the grade; a colleague adding
+    # a note afterwards did not.
+    context "when only the note changes" do
+      let(:first_grader) { FactoryBot.create(:confirmed_user) }
+      let(:grade_info) { described_class.build_grade_info(grade_numeric: "1.3") }
+
+      before do
+        described_class.set_grade(participation, grade_info, first_grader)
+        participation.reload.update!(graded_at: 2.days.ago)
+      end
+
+      it "leaves the grader and the time of the grade" do
+        described_class.set_grade(participation, grade_info, grader, "seen it too")
+
+        expect(participation.reload).to have_attributes(note: "seen it too",
+                                                        grader_id: first_grader.id)
+        expect(participation.graded_at).to be_within(1.minute).of(2.days.ago)
+      end
+
+      it "stamps the new grader once the grade changes" do
+        better = described_class.build_grade_info(grade_numeric: "1.0")
+        described_class.set_grade(participation, better, grader)
+
+        expect(participation.reload.grader_id).to eq(grader.id)
+        expect(participation.graded_at).to be_within(5.seconds).of(Time.current)
+      end
+    end
+
     context "with a valid grade_text" do
       let(:grade_info) { described_class.build_grade_info(grade_text: "pass") }
 
@@ -293,6 +321,15 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
           described_class.validate_grade_info(grade_numeric: "-1.0")
         end.to raise_error(Assessment::GradeEntryService::GradeEntryError)
       end
+    end
+  end
+
+  describe "VALID_GRADES_NUMERIC" do
+    it "is the schemes' scale plus the failing grade, ascending" do
+      expect(described_class::VALID_GRADES_NUMERIC)
+        .to eq([1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 5.0])
+      expect(described_class::VALID_GRADES_NUMERIC)
+        .to match_array(Assessment::GradeScheme::PASSING_GRADES + [5.0])
     end
   end
 end

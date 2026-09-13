@@ -3,37 +3,28 @@ module Assessment
     class TalkGraderError < StandardError; end
 
     class << self
+      # Who may grade is the controller's question; here only whether this
+      # participation is a talk's.
       def set_grade(participation, grade, grader, comment = nil)
-        raise_if_errors!(
-          validate_participation_present(participation)
-        )
-        assessment = participation.assessment
-        raise_if_errors!(
-          validate_assessment_belongs_to_talk(assessment)
-        )
-        raise_if_errors!(
-          authorize_talk!(participation.assessment&.assessable, grader)
-        )
+        raise_if_errors!(validate_participation_present(participation))
+        raise_if_errors!(validate_assessment_belongs_to_talk(participation.assessment))
 
         grade_info = GradeEntryService.build_grade_info(grade_numeric: grade)
         GradeEntryService.set_grade(participation, grade_info, grader, comment)
       end
 
-      def find_participation(assessment, user)
-        return if assessment.nil? || user.nil?
-
-        Participation.find_by(
-          assessment_id: assessment.id,
-          user_id: user.id
-        )
-      end
-
+      # Two tabs opening the seminar at once race for the same row; the unique
+      # index decides, and the loser reads what the winner wrote.
       def create_participation(assessment, user)
         Participation.create!(assessment_id: assessment.id, user_id: user.id, status: :pending)
-      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
+      rescue ActiveRecord::RecordNotUnique
         Participation.find_by!(assessment_id: assessment.id, user_id: user.id)
       end
 
+      # Drawing the table creates the rows it lacks - a deliberate exception
+      # to reads that write nothing. Speakers reach a talk through the roster
+      # in bulk, past any callback, and a row without an id could not be
+      # graded through its route; the create is idempotent on the unique index.
       def init_participations(pairs)
         pairs = pairs.reject { |assessment, user| assessment.nil? || user.nil? }
         return {} if pairs.empty?
@@ -55,12 +46,6 @@ module Assessment
       end
 
       private
-
-        def authorize_talk!(talk, user)
-          return if talk.nil? || user.can_enter_grades_in?(talk.lecture)
-
-          I18n.t("assessment.errors.user_cannot_grade")
-        end
 
         def validate_assessment_belongs_to_talk(assessment)
           return if assessment&.assessable.is_a?(Talk)

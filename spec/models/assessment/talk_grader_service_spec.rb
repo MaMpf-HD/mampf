@@ -195,25 +195,6 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
       end
     end
 
-    context "when grader cannot grade in the talk's lecture scope" do
-      before { allow(grader).to receive(:can_enter_grades_in?).and_return(false) }
-
-      subject { described_class.set_grade(participation, "1.0", grader) }
-
-      it "raises TalkGraderError" do
-        expect { subject }.to raise_error(Assessment::TalkGraderService::TalkGraderError)
-      end
-
-      it "does not call GradeEntryService" do
-        expect(Assessment::GradeEntryService).not_to receive(:set_grade)
-        begin
-          subject
-        rescue StandardError
-          nil
-        end
-      end
-    end
-
     context "when participation and talk are valid" do
       subject { described_class.set_grade(participation, "1.0", grader, "well done") }
 
