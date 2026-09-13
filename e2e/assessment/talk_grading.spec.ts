@@ -35,7 +35,7 @@ test.describe("talk grading", () => {
     await row.getByRole("combobox", { name: "Grade for Ada Lovelace" }).selectOption("1.3");
     await row.getByRole("textbox", { name: "Internal note on Ada Lovelace" })
       .fill("Clear and well paced");
-    await row.getByRole("button", { name: "Save this row's points" }).click();
+    await row.getByRole("button", { name: "Save this row's grade" }).click();
     await expect(row.getByText("Reviewed")).toBeVisible();
     await expect(row.getByText(/\d{4}-\d{2}-\d{2}, \d{2}:\d{2}/)).toBeVisible();
     await expect(teacher.page.getByText("1 marked · 1 not yet marked")).toBeVisible();

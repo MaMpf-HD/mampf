@@ -187,8 +187,8 @@ class ParticipationRowComponent < ViewComponent::Base
                class: class_name,
                data: { participation_row_target: "save",
                        action: "click->participation-row#saveRow" },
-               title: helpers.t("assessment.grading_tutorial.save_row"),
-               aria: { label: helpers.t("assessment.grading_tutorial.save_row") },
+               title: row_action_label("save_row"),
+               aria: { label: row_action_label("save_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
       tag.i(class: "bi bi-floppy-fill")
     end
@@ -201,11 +201,17 @@ class ParticipationRowComponent < ViewComponent::Base
     tag.button(type: "button",
                class: class_name,
                data: { action: "click->participation-row#refreshRow" },
-               title: helpers.t("assessment.grading_tutorial.reload_row"),
-               aria: { label: helpers.t("assessment.grading_tutorial.reload_row") },
+               title: row_action_label("reload_row"),
+               aria: { label: row_action_label("reload_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
       tag.i(class: "bi bi-arrow-counterclockwise")
     end
+  end
+
+  # The buttons save points on a sheet's row and a grade on a talk's.
+  def row_action_label(action)
+    scope = single_grade? ? "assessment.grade_talk_row" : "assessment.grading_tutorial"
+    helpers.t("#{scope}.#{action}")
   end
 
   def can_enter_points?

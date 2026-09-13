@@ -485,6 +485,8 @@ de:
       note: "Interne Notiz"
       graded: "Bewertet"
       graded_ago: "vor %{time}"
+      save_row: "Note dieser Zeile speichern"
+      reload_row: "Gespeicherte Note neu laden; ungespeicherte Änderungen gehen verloren"
       pending: "Ausstehend"
       grade_for: 'Note für %{name}'
       note_for: 'Interne Notiz zu %{name}'

@@ -485,6 +485,8 @@ en:
       note: "Internal note"
       graded: "Graded"
       graded_ago: "%{time} ago"
+      save_row: "Save this row's grade"
+      reload_row: "Reload the saved grade; unsaved changes are lost"
       pending: "Pending"
       grade_for: 'Grade for %{name}'
       note_for: 'Internal note on %{name}'
