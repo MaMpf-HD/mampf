@@ -104,18 +104,19 @@
 
   <td class="text-center <%= layout.column_class(:hand_in) %>">
     <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
+      <%# A disabled button answers no hover, so the state is a mark, not a button. %>
       <% if paper_hand_in? && !paper_hand_in_removable? %>
-        <button
+        <span
           class="
-            btn btn-sm btn-link row-action text-secondary d-inline-flex
-            align-items-center justify-content-center px-2 py-1 lh-1 fs-5
+            d-inline-flex align-items-center justify-content-center px-2
+            py-1 lh-1 fs-5 text-secondary
           "
-          disabled
+          role="img"
           title="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
           aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
         >
           <i class="bi bi-inbox-fill"></i>
-        </button>
+        </span>
       <% elsif paper_hand_in? %>
         <%= link_to paper_hand_in_removal_url,
                     class: "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
