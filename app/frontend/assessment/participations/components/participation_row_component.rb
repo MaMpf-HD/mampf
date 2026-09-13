@@ -157,7 +157,7 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def save_row_button(allow_grading)
-    class_name = "btn btn-sm btn-link text-secondary d-inline-flex align-items-center " \
+    class_name = "btn btn-sm btn-link text-body-tertiary d-inline-flex align-items-center " \
                  "justify-content-center text-nowrap px-2 py-1 lh-1 fs-5"
 
     tag.button(type: "button",
