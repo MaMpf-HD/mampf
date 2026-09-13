@@ -101,7 +101,9 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
       it "sends a talk's dashboard to the seminar's table" do
         seminar = create(:lecture, :is_seminar, teacher: teacher)
-        talk = create(:talk, lecture: seminar)
+        # A fixed title: the factory's random one may carry an apostrophe,
+        # which the page escapes.
+        talk = create(:talk, lecture: seminar, title: "Riemann and the primes")
         create(:speaker_talk_join, talk: talk)
 
         get assessment_assessment_path(talk.reload.assessment.id),

@@ -8,7 +8,7 @@ RSpec.describe(Assessment::GradesController, type: :request) do
   let(:talk) { FactoryBot.create(:talk, lecture: seminar, dates: [1.week.from_now]) }
   let(:speaker) { FactoryBot.create(:confirmed_user) }
   let(:assessment) { talk.reload.assessment }
-  let(:grader) { FactoryBot.create(:confirmed_user) }
+  let(:grader) { teacher }
   let!(:participation) do
     FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
   end
@@ -16,7 +16,6 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
   before do
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
-    allow_any_instance_of(User).to receive(:can_enter_grades_in?).and_return(true)
     sign_in grader
   end
 
@@ -144,13 +143,50 @@ RSpec.describe(Assessment::GradesController, type: :request) do
       end
     end
 
-    context "when the current user is not authorized to grade" do
-      before do
-        allow_any_instance_of(AssessmentAbility).to receive(:can?).and_return(false)
+    context "as the teacher of another seminar" do
+      let(:grader) { FactoryBot.create(:confirmed_user) }
+
+      before { FactoryBot.create(:lecture, sort: "seminar", teacher: grader) }
+
+      it "is turned away and changes nothing" do
+        subject
+
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload.grade_numeric).to be_nil
       end
 
-      it "does not raise an unhandled error" do
-        expect { subject }.not_to raise_error
+      it "may not read a row through refresh either" do
+        patch refresh_grade_participation_path(participation), headers: turbo_stream_headers
+
+        expect(response).to redirect_to(root_path)
+      end
+    end
+
+    context "as a speaker" do
+      let(:grader) { speaker }
+
+      it "is turned away" do
+        subject
+
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload.grade_numeric).to be_nil
+      end
+    end
+
+    context "when the record refuses the save" do
+      it "answers with the record's reason" do
+        allow(Assessment::GradeEntryService).to receive(:set_grade) do |record, *|
+          record.errors.add(:note, :too_long, count: 255)
+          raise(ActiveRecord::RecordInvalid, record)
+        end
+
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(
+          participation.errors.generate_message(:note, :too_long, count: 255)
+        )
+        expect(response.body).not_to include(I18n.t("assessment.errors.invalid_request_params"))
       end
     end
 
@@ -194,6 +230,20 @@ RSpec.describe(Assessment::GradesController, type: :request) do
     it "re-renders the participation row" do
       subject
       expect(response.body).to include("participation-row-#{participation.id}")
+    end
+
+    # Somebody else may have graded since the page was drawn; the reloaded row
+    # must not stand next to a line that still counts it as pending.
+    it "brings the summary along with the reloaded row" do
+      participation.update!(grade_numeric: 1.0, status: :reviewed, graded_at: 1.minute.ago,
+                            grader: teacher)
+
+      subject
+
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+      expect(summary.text).to include(
+        I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1)
+      )
     end
 
     context "when participation_id does not exist" do
