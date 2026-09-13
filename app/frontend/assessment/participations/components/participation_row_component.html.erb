@@ -107,8 +107,8 @@
       <% if paper_hand_in? && !paper_hand_in_removable? %>
         <button
           class="
-            btn btn-sm btn-light d-inline-flex
-            align-items-center justify-content-center px-2 py-1 lh-1
+            btn btn-sm btn-link text-secondary d-inline-flex
+            align-items-center justify-content-center px-2 py-1 lh-1 fs-5
           "
           disabled
           title="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
@@ -118,7 +118,7 @@
         </button>
       <% elsif paper_hand_in? %>
         <%= link_to paper_hand_in_removal_url,
-                    class: "btn btn-sm btn-light d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                    class: "btn btn-sm btn-link text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
                     data: { turbo_method: :patch },
                     title: t("assessment.grading_tutorial.paper_hand_in_remove"),
                     aria: { label: t("assessment.grading_tutorial.paper_hand_in_remove") } do %>
@@ -138,7 +138,7 @@
           >
 
           <%= link_to paper_hand_in_url,
-                      class: "btn btn-sm btn-light d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
+                      class: "btn btn-sm btn-link text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
                       data: { turbo_method: :patch },
                       title: t("assessment.grading_tutorial.paper_hand_in"),
                       aria: { label: t("assessment.grading_tutorial.paper_hand_in") } do %>
