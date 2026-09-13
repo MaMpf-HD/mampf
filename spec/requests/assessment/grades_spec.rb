@@ -192,9 +192,21 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
     context "when the participation belongs to a sheet, not a talk" do
       let(:sheet_participation) do
-        assignment = FactoryBot.create(:assignment, :with_lecture)
+        lecture = FactoryBot.create(:lecture, teacher: teacher)
+        assignment = FactoryBot.create(:assignment, lecture: lecture)
         FactoryBot.create(:assessment_participation, assessment: assignment.reload.assessment,
                                                      user: speaker)
+      end
+
+      # The answer says what the row is only to somebody who may grade there.
+      it "tells an outsider nothing about the row" do
+        sign_in FactoryBot.create(:confirmed_user)
+
+        patch grade_participation_path(sheet_participation),
+              params: { grade: "1.0" },
+              headers: turbo_stream_headers
+
+        expect(response).to redirect_to(root_path)
       end
 
       it "turns the grade away with the not-gradable alert" do

@@ -3,6 +3,7 @@ module Assessment
     before_action :set_resources, only: [:update, :refresh]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update, :refresh]
+    before_action :refuse_unless_talk, only: [:update, :refresh]
 
     rescue_from ActiveRecord::RecordNotFound do
       respond_with_flash(:alert, I18n.t("assessment.errors.invalid_request_params"))
@@ -54,15 +55,18 @@ module Assessment
         turbo_stream.replace("pointing-summary", html: render_to_string(summary))
       end
 
-      # Reject non-Talk participations before checking speakers; assignments
-      # receive task points through TaskPointsController.
       def set_resources
         @participation = Participation.find(params[:participation_id])
         @assessment = @participation.assessment
         @user = @participation.user
         @assessable = @assessment&.assessable
         @lecture = @assessable&.lecture
+      end
 
+      # After the authorization, so an outsider learns nothing about the row
+      # from the answer. Assignments receive task points through
+      # TaskPointsController.
+      def refuse_unless_talk
         return respond_with_flash(:alert, t("assessment.errors.no_assessment")) unless @assessment
         unless @assessable.is_a?(Talk)
           return respond_with_flash(:alert, t("assessment.errors.not_gradable"))
