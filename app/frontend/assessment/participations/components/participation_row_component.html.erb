@@ -5,8 +5,10 @@
   data-controller="participation-row"
   data-row-id="<%= @participation.id %>"
   data-row-target-type="participation"
-  data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
-  data-pointing-table-target="row"
+  <% if tasks? %>
+    data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
+    data-pointing-table-target="row"
+  <% end %>
   data-status-filter-target="row"
   data-status-filter-status="<%= status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"

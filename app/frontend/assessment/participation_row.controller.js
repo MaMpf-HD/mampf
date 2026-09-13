@@ -51,12 +51,10 @@ export default class extends Controller {
     }
   }
 
+  // A grade comes from a select and a note is free text; only points can
+  // be typed wrong, and the server checks the grade again.
   onParticipationChanged(event) {
-    const validPoints = this.validateNewPoint(event);
-    const validGrade = this.validateNewGrade(event);
-    const validNote = this.validateNewNote(event);
-
-    if (validPoints && validGrade && validNote) {
+    if (this.validateNewPoint(event)) {
       this.markDirty("participation");
       this.calculateTotalPoints();
     }
@@ -120,15 +118,6 @@ export default class extends Controller {
       this.saveTarget.disabled = true;
       this.saveTarget.classList.replace("text-success", "text-body-tertiary");
     }
-  }
-
-  validateNewGrade(_event) {
-    // GradeEntryService will validate the grade
-    return true;
-  }
-
-  validateNewNote(_event) {
-    return true;
   }
 
   validateNewPoint(event) {
