@@ -16,7 +16,7 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
   before do
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
-    allow_any_instance_of(User).to receive(:can_grade_in_scope?).and_return(true)
+    allow_any_instance_of(User).to receive(:can_enter_grades_in?).and_return(true)
     sign_in grader
   end
 
@@ -44,6 +44,15 @@ RSpec.describe(Assessment::GradesController, type: :request) do
       it "renders the replaced participation row" do
         subject
         expect(response.body).to include("participation-row-#{participation.id}")
+      end
+
+      it "counts the row as graded in the summary" do
+        subject
+        summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+
+        expect(summary.text).to include(
+          I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1)
+        )
       end
 
       it "sets a success flash notice" do
@@ -142,6 +151,31 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
       it "does not raise an unhandled error" do
         expect { subject }.not_to raise_error
+      end
+    end
+
+    context "when the participation belongs to a sheet, not a talk" do
+      let(:sheet_participation) do
+        assignment = FactoryBot.create(:assignment, :with_lecture)
+        FactoryBot.create(:assessment_participation, assessment: assignment.reload.assessment,
+                                                     user: speaker)
+      end
+
+      it "turns the grade away with the not-gradable alert" do
+        patch grade_participation_path(sheet_participation),
+              params: { grade: "1.0" },
+              headers: turbo_stream_headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(I18n.t("assessment.errors.not_gradable"))
+        expect(sheet_participation.reload.grade_numeric).to be_nil
+      end
+
+      it "turns the refresh away the same way" do
+        patch refresh_grade_participation_path(sheet_participation), headers: turbo_stream_headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(I18n.t("assessment.errors.not_gradable"))
       end
     end
   end

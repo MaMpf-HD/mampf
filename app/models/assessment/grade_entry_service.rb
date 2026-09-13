@@ -12,12 +12,14 @@ module Assessment
 
       grade_info = validate_grade_info(grade_info)
       status = calculate_status(participation, grade_info)
+      # A grade taken back leaves nothing that was graded, so nobody graded it.
+      graded = status != :pending
 
       participation.update!(
         grade_text: grade_info[:grade_text],
         grade_numeric: grade_info[:grade_numeric],
-        grader_id: grader.id,
-        graded_at: Time.current,
+        grader_id: (grader.id if graded),
+        graded_at: (Time.current if graded),
         status: status,
         note: comment || participation.note
       )

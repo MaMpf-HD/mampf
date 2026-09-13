@@ -260,21 +260,22 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  # With the refused file still assigned, the row would show it as saved;
+  # the reload drops it.
   def add_correction
     @submission.assign_attributes(correction_params)
-    @errors = @submission.check_file_properties_any(
-      @submission.correction&.metadata,
-      :correction
-    )
-
-    if @errors.present?
-      return render partial: "submissions/correction_wrap",
-                    locals: { submission: @submission }
+    errors = @submission.check_file_properties_any(@submission.correction&.metadata,
+                                                   :correction)[:correction]
+    if errors.blank? && @submission.save
+      send_correction_upload_email(@submission.users)
+      return render partial: "submissions/correction_wrap", locals: { submission: @submission }
     end
 
-    send_correction_upload_email(@submission.users) if @submission.save
-
-    render partial: "submissions/correction_wrap", locals: { submission: @submission }
+    errors = @submission.errors.map(&:message) if errors.blank?
+    @submission.reload
+    render partial: "submissions/correction_edit_wrap",
+           locals: { submission: @submission, errors: errors },
+           status: :unprocessable_content
   end
 
   def delete_correction
@@ -292,12 +293,8 @@ class SubmissionsController < ApplicationController
   end
 
   # A refused hand-in waits for nothing any more, and the gradebook has to know
-  # it: `submitted_at` is what counts a sheet among the points still being
-  # marked, and those are taken out of the base a student is measured against.
-  # Left standing, refusing a sheet would raise her percentage and keep telling
-  # her the sheet is with her tutor. Only the record is touched here - the state
-  # the page shows is read from `accepted`, and the tutor's own views belong to
-  # another branch.
+  # it: `submitted_at` counts a sheet among the points still being marked, and
+  # those are taken out of the base a student is measured against.
   def reject
     @submission.update(accepted: false)
     @tutorial = @submission.tutorial
@@ -309,11 +306,12 @@ class SubmissionsController < ApplicationController
 
   private
 
+    # A sheet from before there were states has no line above its table.
     def rerender_submission_row
       grading_scope = params[:grading_scope_type] == "tutorial" ? @tutorial : @tutorial.lecture
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
+          row = turbo_stream.replace(
             "submission-row-#{@submission.id}",
             html: render_to_string(
               SubmissionRowComponent.new(
@@ -323,8 +321,17 @@ class SubmissionsController < ApplicationController
               )
             )
           )
+          render turbo_stream: [row, summary_stream(grading_scope)].compact
         end
       end
+    end
+
+    def summary_stream(grading_scope)
+      return unless @assignment.assessable?
+
+      summary = TutorialPointingTableComponent.new(assignment: @assignment,
+                                                   grading_scope: grading_scope).summary
+      turbo_stream.replace("pointing-summary", html: render_to_string(summary))
     end
 
     # Everything a student does changes one sheet and nothing else - the history

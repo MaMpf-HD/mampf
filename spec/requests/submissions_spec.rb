@@ -458,6 +458,36 @@ RSpec.describe("Submissions", type: :request) do
       expect(due_points.marked_max_for(user.id)).to eq(20)
       expect(due_points.pending_count_for(user.id)).to eq(1)
     end
+
+    # The refused row turns into "not submitted"; the line above the table
+    # must stop counting it as a hand-in in the same answer.
+    it "brings the summary along with the refused row" do
+      submission = hand_in(sheet_worth(20, title: "Homework 2"))
+
+      sign_in tutor
+      patch reject_submission_path(submission), as: :turbo_stream
+
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+      expect(summary.text).to include(
+        I18n.t("assessment.grading_tutorial.summary.not_submitted", count: 1)
+      )
+      expect(summary.text).not_to include(
+        I18n.t("assessment.grading_tutorial.summary.pending_grading", count: 1)
+      )
+    end
+
+    it "answers with the row alone for a sheet from before there were points" do
+      legacy = create(:assignment, :expired, :without_assessment, lecture: lecture)
+      submission = create(:submission, :with_manuscript, assignment: legacy, tutorial: tutorial)
+      submission.users << user
+
+      sign_in tutor
+      patch reject_submission_path(submission), as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("submission-row-#{submission.id}")
+      expect(response.body).not_to include("pointing-summary")
+    end
   end
 
   describe "GET /lectures/:id/submissions" do

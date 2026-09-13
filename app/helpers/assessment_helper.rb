@@ -24,20 +24,20 @@ module AssessmentHelper
   end
 
   def calculate_user_movement_map_assignment(assignment, lecture)
-    tutorial_memberships = lecture.tutorials
-                                  .includes(:tutorial_memberships)
-                                  .flat_map(&:tutorial_memberships)
-    participations = assignment.assessment&.assessment_participations&.to_a
+    participations = assignment.assessment&.assessment_participations
+                               &.includes(:tutorial)&.to_a
     return {} if participations.nil?
 
-    participation_user_ids = participations.map(&:user_id)
-    member_user_ids = tutorial_memberships.map(&:user_id)
+    current_tutorials = lecture.tutorials.includes(:tutorial_memberships)
+                               .each_with_object({}) do |tutorial, map|
+      tutorial.tutorial_memberships.each { |m| map[m.user_id] = tutorial }
+    end
+    participations_by_user = participations.index_by(&:user_id)
 
-    ids = (participation_user_ids | member_user_ids)
-
-    ids.each_with_object({}) do |user_id, result|
-      current_tutorial = tutorial_memberships.find { |m| m.user_id == user_id }&.tutorial
-      participation = participations.find { |p| p.user_id == user_id }
+    user_ids = participations_by_user.keys | current_tutorials.keys
+    user_ids.each_with_object({}) do |user_id, result|
+      current_tutorial = current_tutorials[user_id]
+      participation = participations_by_user[user_id]
       participated_tutorial = participation&.tutorial
 
       result[user_id] = {
@@ -50,16 +50,6 @@ module AssessmentHelper
     end
   end
 
-  def sticky_css_vars_calc(sticky_layout)
-    left = sticky_layout.left_offsets.map { |k, v| "--#{k.to_s.dasherize}-left:#{v}px" }
-    right = sticky_layout.right_offsets.map { |k, v| "--#{k.to_s.dasherize}-right:#{v}px" }
-    edges = [
-      "--sticky-left-width:#{sticky_layout.total_left_width}px",
-      "--sticky-right-width:#{sticky_layout.total_right_width}px"
-    ]
-    (left + right + edges).join(";")
-  end
-
   private
 
     def overview_frame_src(lecture)
@@ -67,8 +57,8 @@ module AssessmentHelper
                                   tab: params[:assessment_tab])
     end
 
-    # Three ways a person and their sheet part company: they changed groups,
-    # they left the groups, or they joined one after handing in with none.
+    # The sheet stays with the group that has it; the wording has to say where
+    # it is and where the person is now.
     def movement_msg_assignment(movement)
       old_title = movement[:participated_tutorial_title]
       new_title = movement[:new_tutorial_title]

@@ -21,14 +21,11 @@ export default class extends Controller {
 
   // -- Actions ---
   saveRow() {
-    // Collect all input values for this row
     const newValues = {};
     this.pointInputTargets.forEach((input) => {
       const taskId = input.dataset.taskId;
       newValues[taskId] = input.value;
     });
-
-    // Set hidden input value as JSON
     this.taskPointsPayloadTarget.value = JSON.stringify(newValues);
     if (this.hasGradeInputTarget && this.hasGradePayloadTarget) {
       this.gradePayloadTarget.value = this.gradeInputTarget.value;
@@ -36,8 +33,6 @@ export default class extends Controller {
     if (this.hasNoteInputTarget && this.hasNotePayloadTarget) {
       this.notePayloadTarget.value = this.noteInputTarget.value;
     }
-
-    // Submit the hidden form
     this.formTarget.requestSubmit();
   }
 
@@ -123,7 +118,7 @@ export default class extends Controller {
     // Enable the save button
     if (this.hasSaveTarget) {
       this.saveTarget.disabled = false;
-      this.saveTarget.classList.replace("btn-outline-secondary", "btn-success");
+      this.saveTarget.classList.replace("text-body-tertiary", "text-success");
     }
   }
 
@@ -143,7 +138,7 @@ export default class extends Controller {
     // Disable the save button
     if (this.hasSaveTarget) {
       this.saveTarget.disabled = true;
-      this.saveTarget.classList.replace("btn-success", "btn-outline-secondary");
+      this.saveTarget.classList.replace("text-success", "text-body-tertiary");
     }
   }
 

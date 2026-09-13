@@ -3,15 +3,6 @@ class TalkGradingTableComponent < ViewComponent::Base
     super()
     @seminar = seminar
     @talks = seminar.talks.includes(:speakers, :assessment)
-    return unless @talks.any?
-
-    @config = Assessment::DisplayConfigResolver.resolve(
-      assessable: @talks.first, grading_scope: @grading_scope
-    )
-  end
-
-  def grading_enabled?
-    true
   end
 
   def gradable_talks
@@ -22,29 +13,27 @@ class TalkGradingTableComponent < ViewComponent::Base
     @legacy_talks ||= @talks.select { |t| t.speakers.any? && t.assessment.blank? }
   end
 
-  def possible_statuses
-    ["pending", "reviewed"]
+  # One row per speaker, talk by talk in the seminar's order.
+  def rows
+    @rows ||= gradable_talks.flat_map do |talk|
+      talk.speakers.filter_map { |speaker| participations_index[[talk.assessment.id, speaker.id]] }
+    end
   end
 
-  def participation_for(assessment, user)
-    return if assessment.nil? || user.nil?
-
-    participations_index[[assessment.id, user.id]]
+  def row_statuses
+    rows.map(&:display_status)
   end
 
-  def sticky_layout
-    return unless @config
-
-    @sticky_layout ||= Assessment::StickyColumnLayout.new(
-      left_columns: @config.left_columns,
-      right_columns: @config.right_columns
-    )
+  # A talk is graded or not; nothing marks a speaker absent or exempt.
+  def status_options
+    [:reviewed, :pending_grading].map do |status|
+      [status.to_s, I18n.t("student_performance.records.columns.#{status}")]
+    end
   end
 
-  def sticky_css_vars
-    return unless @config
-
-    helpers.sticky_css_vars_calc(sticky_layout)
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: gradable_talks.first,
+                                        grading_scope: @seminar)
   end
 
   private

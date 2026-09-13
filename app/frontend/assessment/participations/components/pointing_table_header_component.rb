@@ -1,203 +1,92 @@
 class PointingTableHeaderComponent < ViewComponent::Base
-  Column = Struct.new(:css_class, :label, :sublabel,
-                      :data_mode, :action_tag, :label_hidden, keyword_init: true)
+  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, keyword_init: true)
 
-  def initialize(grading_scope:, # rubocop:disable Metrics/ParameterLists
-                 grading_enabled:,
-                 assessable_type:,
-                 table_option: nil,
-                 tasks: [],
-                 total_max_points: 0,
-                 accepted_file_type: nil,
-                 tutorials: [],
-                 status_without_hand_in: nil)
-    @grading_scope = grading_scope
-    @grading_enabled = grading_enabled
-    @assessable_type = assessable_type
-    @table_option = table_option
-    @tasks = tasks
-    @total_max_points = total_max_points
-    @accepted_file_type = accepted_file_type
-    @tutorials = tutorials || []
-    # The filter offers the states the badge in the column can show.
-    @status = ["all", "reviewed", "pending_grading",
-               (status_without_hand_in || :not_submitted).to_s]
+  # A heading sits the way its column's content does: text starts at the
+  # left, a badge, a select or an icon stands in the middle.
+  TEXT_COLUMNS = [:team, :talk, :note, :graded].freeze
+
+  def initialize(assessable:, layout:)
+    @assessable = assessable
+    @layout = layout
+    @assessment = assessable.assessment
     super()
   end
 
-  # Columns are named after what they act on: the points, the hand-in, the
-  # correction. Two file columns read alike, and saving sits by the total it
-  # saves.
-  def assignment_columns
-    [
-      team_column,
-      *tutorial_column,
-      *status_col,
-      *pointing_columns,
-      *save_column,
-      hand_in_column,
-      *correction_column
-    ].compact
-  end
-
-  # team is mandatory for all
-  # status is only when having assessment
-  # grading_columns are only when having assessment
-  # save_column is mandatory for all
-  def talk_columns
-    [
-      team_column,
-      *status_col,
-      *grading_columns,
-      *save_column
-    ].compact
-  end
-
-  def exam_pointing_columns
-    [
-      team_column,
-      *status_col,
-      *pointing_columns,
-      *save_column
-    ].compact
-  end
-
-  def exam_grading_columns
-    [
-      team_column,
-      *status_col,
-      *grading_columns,
-      *save_column
-    ].compact
-  end
-
+  # The layout names the columns; each is built from what it acts on - the
+  # points, the grade, the hand-in, the correction.
   def columns
-    case @assessable_type
-    when "Assignment"
-      assignment_columns
-    when "Talk"
-      talk_columns
-    when "Exam"
-      case @table_option
-      when :pointing
-        exam_pointing_columns
-      when :grading
-        exam_grading_columns
-      end
-    else
-      raise(ArgumentError, "Unsupported assessable type: #{@assessable_type} ")
-    end
+    @layout.columns.flat_map { |column| build(column) }
   end
 
   private
 
-    def lecture_scope?
-      @grading_scope.is_a?(Lecture)
-    end
-
-    def tutorial_scope?
-      @grading_scope.is_a?(Tutorial)
-    end
-
-    def team_column
-      Column.new(css_class: "sticky-col team-col grade-th", label: t("basics.team"))
-    end
-
-    def tutorial_column
-      return [] unless lecture_scope?
-
-      if @tutorials&.count&.zero? || @tutorials.nil?
-        [Column.new(
-          css_class: "sticky-col tutorial-col grade-th text-center",
-          label: t("basics.tutorial")
-        )]
-      else
-        # The tutorial dropdown must appear above the sticky status header (z-10).
-        [Column.new(css_class: "sticky-col tutorial-col grade-th text-center z-20",
-                    label: t("basics.tutorial"),
-                    action_tag: "filter-tutorials")]
+    def build(column)
+      case column
+      when :tasks then tasks.map { |task| task_column(task) }
+      when :total then total_column
+      when :save then save_column
+      else plain_column(column)
       end
     end
 
-    def status_col
-      return [] unless @grading_enabled
-
-      [Column.new(css_class: "text-center sticky-col status-col grade-th z-10",
-                  action_tag: "filter-status",
-                  label: t("assessment.grading_tutorial.status"))]
+    def tasks
+      @assessment&.persisted_tasks || []
     end
 
-    def pointing_columns
-      return [] unless @grading_enabled
-
-      [
-        *@tasks.map { |task| task_column(task) },
-        Column.new(
-          css_class: "text-center total-col grade-th",
-          label: t("assessment.grading_tutorial.total_points"),
-          sublabel: "(#{@total_max_points} #{t("assessment.grading_tutorial.max_points")})"
-        )
-      ]
+    def plain_column(column)
+      classes = [("text-center" unless TEXT_COLUMNS.include?(column)),
+                 @layout.column_class(column), "grade-th"]
+      Column.new(css_class: classes.compact.join(" "),
+                 label: label_for(column),
+                 sublabel: sublabel_for(column))
     end
 
-    def grading_columns
-      return [] unless @grading_enabled
+    def label_for(column)
+      case column
+      when :team then team_label
+      when :talk then t("basics.talk")
+      when :tutorial then t("basics.tutorial")
+      when :status then t("assessment.grading_tutorial.status")
+      when :hand_in then t("basics.submission")
+      when :correction then t("basics.correction")
+      else t("assessment.grade_talk_row.#{column}")
+      end
+    end
 
-      [
-        grade_column,
-        note_column,
-        graded_by_column,
-        graded_at_column
-      ]
+    def team_label
+      return t("assessment.grade_talk_row.speaker") if @assessable.is_a?(Talk)
+
+      t("basics.team")
+    end
+
+    # Two file columns read alike; the file type tells them from the team.
+    def sublabel_for(column)
+      return unless [:hand_in, :correction].include?(column)
+
+      "(#{@assessable.accepted_file_type})"
     end
 
     def task_column(task)
       Column.new(
-        css_class: "text-center sticky-col task-col grade-th",
+        css_class: "text-center #{@layout.column_class(:task)} grade-th",
         label: "#{t("assessment.grading_tutorial.task")} #{task.position}",
         sublabel: "(#{task.max_points || 0} #{t("assessment.grading_tutorial.max_points")})"
       )
     end
 
+    def total_column
+      Column.new(
+        css_class: "text-center #{@layout.column_class(:total)} grade-th",
+        label: t("assessment.grading_tutorial.total_points"),
+        sublabel: "(#{@assessment&.effective_total_points || 0} " \
+                  "#{t("assessment.grading_tutorial.max_points")})"
+      )
+    end
+
+    # Two icons need no heading over them; a reader without eyes gets one.
     def save_column
-      [Column.new(css_class: "text-center sticky-col save-col",
-                  label: t("buttons.save"),
-                  label_hidden: true)]
-    end
-
-    def hand_in_column
-      Column.new(css_class: "text-center sticky-col hand-in-col grade-th",
-                 label: t("basics.submission"),
-                 sublabel: "(#{@accepted_file_type})")
-    end
-
-    def correction_column
-      return [] if lecture_scope?
-
-      [Column.new(
-        css_class: "text-center sticky-col correction-col grade-th",
-        label: t("basics.correction"),
-        sublabel: "(#{@accepted_file_type})"
-      )]
-    end
-
-    def grade_column
-      Column.new(css_class: "text-center sticky-col grade-col grade-th",
-                 label: t("assessment.grade_talk_row.grade"))
-    end
-
-    def note_column
-      Column.new(css_class: "text-center sticky-col note-col grade-th",
-                 label: t("assessment.grade_talk_row.note"))
-    end
-
-    def graded_by_column
-      Column.new(css_class: "text-center sticky-col graded-by-col grade-th",
-                 label: t("assessment.grade_talk_row.graded_by"))
-    end
-
-    def graded_at_column
-      Column.new(css_class: "text-center sticky-col graded-at-col grade-th",
-                 label: t("assessment.grade_talk_row.graded_at"))
+      Column.new(css_class: "text-center #{@layout.column_class(:save)} grade-th",
+                 label: t("buttons.save"),
+                 label_hidden: true)
     end
 end

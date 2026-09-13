@@ -104,7 +104,8 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
       let(:grade_info) { described_class.build_grade_info }
 
       before do
-        participation.update!(grade_numeric: 1.0, status: :reviewed)
+        participation.update!(grade_numeric: 1.0, status: :reviewed,
+                              grader: grader, graded_at: 1.day.ago)
       end
 
       it "clears grade_numeric" do
@@ -115,6 +116,12 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
       it "sets status to pending" do
         described_class.set_grade(participation, grade_info, grader)
         expect(participation.reload.status).to eq("pending")
+      end
+
+      it "forgets who graded and when" do
+        described_class.set_grade(participation, grade_info, grader)
+
+        expect(participation.reload).to have_attributes(grader_id: nil, graded_at: nil)
       end
     end
 

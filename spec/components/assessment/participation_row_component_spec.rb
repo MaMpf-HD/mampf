@@ -31,7 +31,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
   # set up for talk
   let!(:seminar) { create(:seminar, teacher: teacher) }
-  let!(:talk) { create(:talk, lecture: seminar) }
+  let!(:talk) do
+    create(:talk, lecture: seminar, dates: [Date.new(2026, 5, 20), Date.new(2026, 5, 6)])
+  end
   let!(:assessment_talk) do
     create(:assessment, requires_points: false, assessable: talk, lecture: seminar)
   end
@@ -41,11 +43,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
                                       graded_at: Time.zone.local(2024, 1, 1, 12, 0, 0),
                                       grader: tutor)
   end
-  let(:single_grade_config) do
-    double("config", mode: "teacher", body_mode: [:single_grade], left_columns: [],
-                     right_columns: [])
-  end
-
   let(:component_tutor_talk) do
     described_class.new(participation: participation_talk, assessment: assessment_talk,
                         grading_scope: seminar)
@@ -83,21 +80,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       it "sets @tutorial" do
         expect(component_tutor.instance_variable_get(:@tutorial)).to eq(tutorial)
       end
-
-      it "sets @mode to tutor" do
-        expect(component_tutor.instance_variable_get(:@mode)).to eq("tutor")
-      end
     end
 
     context "when grading_scope is a Lecture" do
-      it "sets @lecture from the assessable's lecture" do
-        expect(component_teacher.instance_variable_get(:@lecture)).to eq(assignment.lecture)
-      end
-
-      it "sets @mode to teacher" do
-        expect(component_teacher.instance_variable_get(:@mode)).to eq("teacher")
-      end
-
       it "leaves @tutorial nil" do
         expect(component_teacher.instance_variable_get(:@tutorial)).to be_nil
       end
@@ -131,36 +116,15 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  describe "#tasks?" do
-    context "when body_mode includes :tasks" do
-      it "returns true" do
-        expect(component_tutor.tasks?).to eq(true)
-      end
+  describe "the body" do
+    it "is the sheet's tasks for an assignment" do
+      expect(component_tutor.tasks?).to be(true)
+      expect(component_tutor.single_grade?).to be(false)
     end
 
-    context "when body_mode does not include :tasks" do
-      before do
-        allow(Assessment::DisplayConfigResolver).to receive(:resolve)
-          .and_return(single_grade_config)
-      end
-
-      it "returns false" do
-        expect(component_tutor.tasks?).to eq(false)
-      end
-    end
-  end
-
-  describe "#single_grade?" do
-    context "when body_mode includes :single_grade" do
-      it "returns true" do
-        expect(component_tutor_talk.single_grade?).to eq(true)
-      end
-    end
-
-    context "when body_mode does not include :single_grade" do
-      it "returns false" do
-        expect(component_tutor.single_grade?).to eq(false)
-      end
+    it "is a single grade for a talk" do
+      expect(component_tutor_talk.single_grade?).to be(true)
+      expect(component_tutor_talk.tasks?).to be(false)
     end
   end
 
@@ -237,7 +201,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
     it "wraps the input in a td with the expected classes" do
       html = component_tutor.task_points_participation_cell(task, true)
-      expect(html).to include("sticky-col task-col")
+      expect(html).to include("task-col")
       expect(html).to include("task_points[#{task.id}]")
     end
   end
@@ -248,9 +212,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       render_inline(component_tutor)
     end
 
-    it "renders a button with the save icon" do
-      html = component_tutor.save_row_button(true)
-      expect(html).to include("fa-save")
+    it "names the save button for a reader" do
+      button = Nokogiri::HTML.fragment(component_tutor.save_row_button(true)).at_css("button")
+      expect(button["aria-label"]).to eq(I18n.t("assessment.grading_tutorial.save_row"))
     end
 
     context "when grading is not allowed" do
@@ -267,9 +231,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       render_inline(component_tutor)
     end
 
-    it "renders a button with the refresh icon" do
-      html = component_tutor.refresh_row_button(true)
-      expect(html).to include("bi-arrow-clockwise")
+    it "names the reload button for a reader" do
+      button = Nokogiri::HTML.fragment(component_tutor.refresh_row_button(true)).at_css("button")
+      expect(button["aria-label"]).to eq(I18n.t("assessment.grading_tutorial.reload_row"))
     end
 
     context "when grading is not allowed" do
@@ -318,26 +282,55 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  describe "#graded_at_full" do
-    context "when graded_at is present" do
-      before do
-        allow(vc_test_controller).to receive(:current_user).and_return(tutor)
-        render_inline(component_tutor_talk)
-      end
-
-      it "returns the localized full date" do
-        expect(component_tutor_talk.graded_at_full).to eq(
-          I18n.l(participation_talk.graded_at, format: :short)
-        )
-      end
+  describe "#graded_display" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      render_inline(component_tutor_talk)
     end
 
-    context "when graded_at is nil" do
-      before { allow(participation).to receive(:graded_at).and_return(nil) }
+    it "names the grader and the date on one line" do
+      expect(component_tutor_talk.graded_display).to eq(
+        "#{tutor.tutorial_name} · #{I18n.l(participation_talk.graded_at, format: :file_time)}"
+      )
+    end
 
-      it "returns nil" do
-        expect(component_tutor.graded_at_full).to be_nil
-      end
+    it "says how long ago that was for the tooltip" do
+      ago = component_tutor_talk.helpers.time_ago_in_words(participation_talk.graded_at)
+
+      expect(component_tutor_talk.graded_ago)
+        .to eq(I18n.t("assessment.grade_talk_row.graded_ago", time: ago))
+    end
+
+    it "is nothing while the row is not graded" do
+      participation_talk.update!(graded_at: nil, grader: nil)
+
+      expect(component_tutor_talk.graded_display).to be_nil
+    end
+  end
+
+  describe "a talk's row" do
+    let(:row) do
+      allow(vc_test_controller).to receive(:current_user).and_return(teacher)
+      render_inline(component_teacher_talk)
+    end
+
+    it "names the talk in its own cell, linked to the talk" do
+      link = row.css("td.talk-col a").first
+
+      expect(link.text.strip).to eq(talk.title)
+      expect(link["href"]).to eq("/talks/#{talk.id}/edit")
+    end
+
+    it "dates the talk under its title, earliest first" do
+      expect(row.css("td.talk-col").text).to include(
+        "#{I18n.l(Date.new(2026, 5, 6), format: :concise)}, " \
+        "#{I18n.l(Date.new(2026, 5, 20), format: :concise)}"
+      )
+    end
+
+    it "lets the name filter find the row by the talk as well" do
+      expect(row.css("tr").first["data-status-filter-name"])
+        .to eq("#{talk.title} #{student.tutorial_name}")
     end
   end
 
@@ -497,9 +490,6 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
-  # One row per person on the roster: a sheet taken on paper, one never handed
-  # in, and one the worker has not written a participation for yet all sit in
-  # the table, and the hand-in column says which it is.
   describe "the hand-in column" do
     before { allow(vc_test_controller).to receive(:current_user).and_return(tutor) }
 
@@ -563,6 +553,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       expect(component.elsewhere?).to be(true)
       expect(component.points_enterable?).to be(false)
       expect(rendered_content).not_to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
+      expect(rendered_content).to include(
+        I18n.t("assessment.grading_tutorial.held_by", tutorial: elsewhere.title)
+      )
     end
 
     it "lets the lecturer's table mark anybody" do
@@ -573,6 +566,15 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
       expect(component.elsewhere?).to be(false)
       expect(component.points_enterable?).to be(true)
+    end
+
+    it "tells the tutor to record a paper sheet first" do
+      assessment.update_column(:requires_submission, false) # rubocop:disable Rails/SkipsModelValidations
+      participation.update!(submitted_at: nil)
+      render_inline(described_class.new(participation: participation.reload,
+                                        assessment: assessment.reload, grading_scope: tutorial))
+
+      expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.record_first"))
     end
 
     it "opens the points only once the sheet is marked as handed in" do

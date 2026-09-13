@@ -1,74 +1,44 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <% if gradable_talks.any? %>
     <div data-controller="status-filter">
-      <div class="d-flex gap-2 m-3 align-items-center">
-        <div class="d-flex align-items-center">
-          <input
-            type="text"
-            class="form-control form-control-sm w-auto"
-            placeholder="<%= t('assessment.grading_tutorial.filter_name') %>"
-            aria-label="<%= t('assessment.grading_tutorial.filter_name') %>"
-            autocomplete="off"
-            data-action="input->status-filter#search"
-          >
-        </div>
+      <div class="m-3">
+        <%= render PointingSummaryComponent.new(statuses: row_statuses, hand_ins: false) %>
 
-        <div
-          class="d-flex gap-2 align-items-center"
-          data-status-filter-target="activeFilters"
-        ></div>
+        <%= render PointingFilterComponent.new(id: "talks-#{@seminar.id}",
+                                               status_options: status_options) %>
       </div>
 
       <div
         class="table-wrapper"
-        style="<%= sticky_css_vars %>"
+        style="<%= layout.css_vars %>"
         data-controller="table-fade"
       >
         <div class="table-overflow" data-table-fade-target="inner">
-          <table
-            class="table table-hover align-middle my-3 grading-table"
-            style="<%= sticky_css_vars %>"
-          >
-            <thead style="background: #fafafa;">
+          <table class="table table-hover align-middle my-3 grading-table">
+            <thead>
               <%= render(PointingTableHeaderComponent.new(
-                grading_scope: @grading_scope,
-                assessable_type: Talk.name,
-                grading_enabled: grading_enabled?
+                assessable: gradable_talks.first,
+                layout: layout
               )) %>
             </thead>
 
             <tbody>
-              <% gradable_talks.each do |talk| %>
-                <tr
-                  class="group-header"
-                  data-status-filter-group-id="<%= talk.id %>"
-                >
-                  <td
-                    colspan="7"
-                    style="background: #C7DDF0; color: #254A68; padding-top: 1px; padding-bottom: 1px;"
-                  >
-                    <span class="fw-semibold"><%= talk.title %></span>
-                  </td>
-                </tr>
-
-                <% talk.speakers.each do |speaker| %>
-                  <% participation = participation_for(talk.assessment, speaker) %>
-
-                  <% if participation %>
-                    <%= render ParticipationRowComponent.new(
-                      participation: participation,
-                      grading_scope: @seminar,
-                      assessment: talk.assessment,
-                      table_option: :grading,
-                      group_id: talk.id
-                    ) %>
-                  <% end %>
-                <% end %>
+              <% rows.each do |participation| %>
+                <%= render ParticipationRowComponent.new(
+                  participation: participation,
+                  grading_scope: @seminar,
+                  assessment: participation.assessment,
+                  table_option: :grading
+                ) %>
               <% end %>
             </tbody>
           </table>
         </div>
       </div>
+
+      <p class="text-muted m-3" hidden data-status-filter-target="empty">
+        <%= t("assessment.grading_tutorial.filter_no_match") %>
+      </p>
     </div>
   <% else %>
     <div class="jumbotron mt-3">

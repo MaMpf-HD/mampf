@@ -20,7 +20,6 @@ test("can access tutorial submission page (only as tutor)",
       });
     await expect(studentTutorialsLink).toHaveCount(0);
 
-    // the lecturer edits sheets and points from the lecture's edit page, not from here
     await teacherPage.goto(`/lectures/${lecture.id}`);
     const teacherSidebar = teacherPage.locator('[data-controller="lecture-sidebar"]');
     await expect(teacherSidebar.getByRole("link", { name: "Tutorials" })).toHaveCount(0);

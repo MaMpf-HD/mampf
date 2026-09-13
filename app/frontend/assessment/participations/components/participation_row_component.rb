@@ -1,30 +1,19 @@
-# One row of the pointing table for somebody without a hand-in file: a sheet
-# taken on paper, one never handed in, an excused or an absent one. Before
-# the backfill worker has been round the participation may not exist yet;
-# the row is drawn from an unsaved one and offers what makes it real.
+# One row of a pointing table for somebody without a hand-in file: a sheet's
+# tasks, or a talk's single grade. The participation may be unsaved until the
+# backfill worker has been round; recording the hand-in saves it.
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  # rubocop:disable Metrics/ParameterLists
-  def initialize(participation:, assessment:, grading_scope:,
-                 group_id: nil, table_option: :pointing,
-                 proposed_grade: nil)
-    # rubocop:enable Metrics/ParameterLists
+  def initialize(participation:, assessment:, grading_scope:, table_option: :pointing)
     super()
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
-    @lecture = @assessable.lecture
     @grading_scope = grading_scope
-    @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
-    @group_id = group_id
     @table_option = table_option
-    @config = Assessment::DisplayConfigResolver.resolve(
-      assessable: @assessable, grading_scope: @grading_scope, table_option: @table_option
-    )
-
-    @proposed_grade = proposed_grade
     @user ||= @participation&.user
+    @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
+
     return unless @user.nil?
 
     raise(MissingUserError,
@@ -33,7 +22,19 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def grading_enabled?
-    @assessable.assessable?
+    @assessment.persisted?
+  end
+
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: @assessable, grading_scope: @grading_scope)
+  end
+
+  def tasks?
+    layout.body == :tasks
+  end
+
+  def single_grade?
+    layout.body == :single_grade
   end
 
   def allow_grading?
@@ -59,8 +60,42 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
+  # A greyed-out field needs its reason in sight, not in a tooltip.
+  def locked_reason
+    if elsewhere?
+      t("assessment.grading_tutorial.held_by", tutorial: @participation.tutorial.title)
+    elsif status == :awaiting_record && can_enter_points?
+      t("assessment.grading_tutorial.record_first")
+    end
+  end
+
+  def extract_task_points_participation(task)
+    graded_task_points.find do |sp|
+      sp.task_id == task.id
+    end&.points
+  end
+
+  def graded_task_points
+    @graded_task_points ||= @participation.graded_tasks_points
+  end
+
+  def tasks
+    @assessable.assessment.persisted_tasks || []
+  end
+
   def status
     @participation.display_status
+  end
+
+  def talk_dates
+    return nil if @assessable.dates.blank?
+
+    @assessable.dates.sort.map { |date| I18n.l(date, format: :concise) }.join(", ")
+  end
+
+  # The name filter finds a talk's rows by the talk as well as by the person.
+  def filter_name
+    [(@assessable.title if layout.show?(:talk)), @user.tutorial_name].compact.join(" ")
   end
 
   def row_id
@@ -161,39 +196,37 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def task_points_participation_cell(task, allow_grading)
-    tag.td(class: "sticky-col task-col") do
+    tag.td(class: layout.column_class(:task)) do
       task_points_participation_input(task, allow_grading)
     end
   end
 
-  # Neutral until the row has something to save; the controller turns it
-  # green with the first edit.
   def save_row_button(allow_grading)
-    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
-                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+    class_name = "btn btn-sm btn-link text-body-tertiary d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1 fs-5"
 
     tag.button(type: "button",
                class: class_name,
                data: { participation_row_target: "save",
                        action: "click->participation-row#saveRow" },
-               title: helpers.t("assessment.grading_tutorial.save_row"),
-               aria: { label: helpers.t("assessment.grading_tutorial.save_row") },
+               title: row_action_label("save_row"),
+               aria: { label: row_action_label("save_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
-      tag.i(class: "far fa-save")
+      tag.i(class: "bi bi-floppy-fill")
     end
   end
 
   def refresh_row_button(allow_grading)
-    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
-                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+    class_name = "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1 fs-5"
 
     tag.button(type: "button",
                class: class_name,
                data: { action: "click->participation-row#refreshRow" },
-               title: helpers.t("assessment.grading_tutorial.reload_row"),
-               aria: { label: helpers.t("assessment.grading_tutorial.reload_row") },
+               title: row_action_label("reload_row"),
+               aria: { label: row_action_label("reload_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
-      tag.i(class: "bi bi-arrow-clockwise")
+      tag.i(class: "bi bi-arrow-counterclockwise")
     end
   end
 
@@ -232,6 +265,12 @@ class ParticipationRowComponent < ViewComponent::Base
       end
     end
   end
+  
+  # The buttons save points on a sheet's row and a grade on a talk's.
+  def row_action_label(action)
+    scope = single_grade? ? "assessment.grade_talk_row" : "assessment.grading_tutorial"
+    helpers.t("#{scope}.#{action}")
+  end
 
   def can_enter_points?
     user = helpers.current_user
@@ -261,79 +300,17 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def users_movement_map
     helpers.users_movement_map_cache[@assessable.id] ||=
-      helpers.calculate_user_movement_map_assignment(@assessable, @lecture)
+      helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
   end
 
+  # A sheet is filed with the group that had it; a talk moves nowhere.
   def movement_info_for_user(user)
+    return nil if single_grade?
+
     helpers.movement_info_for_user_assignment(user, users_movement_map)
   end
 
-  # -- optional display helpers for the table header and body --
-
-  # if display tasks pointing and total points
-  def multi_points_display?
-    @config.body_mode.include?(:multi_points)
-  end
-
-  def total_point_display?
-    @config.right_columns.include?(:total_point) || @config.right_columns.include?(:multi_points)
-  end
-
-  # if display grade, grade_at, grade_by, note
-  def single_grade_display?
-    @config.body_mode.include?(:single_grade)
-  end
-
-  # if display tutorial column
-  def show_tutorial_col?
-    @config.left_columns.include?(:tutorial)
-  end
-
-  def show_hand_in_col?
-    @config.left_columns.include?(:hand_in)
-  end
-
-  # if display correction column
-  def show_correction_col?
-    @config.right_columns.include?(:correction)
-  end
-
-  def show_grade_col?
-    @config.right_columns.include?(:grade)
-  end
-
-  def show_note_col?
-    @config.right_columns.include?(:note)
-  end
-
-  def show_graded_by_col?
-    @config.right_columns.include?(:graded_by)
-  end
-
-  def show_graded_at_col?
-    @config.right_columns.include?(:graded_at)
-  end
-
-  # ---- task mode helpers ----
-  def extract_task_points_participation(task)
-    graded_task_points.find do |sp|
-      sp.task_id == task.id
-    end&.points
-  end
-
-  def graded_task_points
-    @graded_task_points ||= @participation.graded_tasks_points
-  end
-
-  def tasks
-    @assessable.assessment.persisted_tasks || []
-  end
-
-  # ---- single_grade mode helpers ----
-
-  def status_value
-    @participation&.status || :pending
-  end
+  # ---- single grade ----
 
   def grade_numeric
     @participation&.grade_numeric
@@ -355,16 +332,19 @@ class ParticipationRowComponent < ViewComponent::Base
     @participation&.grader&.tutorial_name
   end
 
-  def graded_at_relative
+  # Who graded and when, on one line; the date is a record, the tooltip says
+  # how long ago that was.
+  def graded_display
     return nil unless @participation&.graded_at
 
-    helpers.time_ago_in_words(@participation.graded_at)
+    [grader_display, I18n.l(@participation.graded_at, format: :file_time)].compact.join(" · ")
   end
 
-  def graded_at_full
+  def graded_ago
     return nil unless @participation&.graded_at
 
-    I18n.l(@participation.graded_at, format: :short)
+    t("assessment.grade_talk_row.graded_ago",
+      time: helpers.time_ago_in_words(@participation.graded_at))
   end
 
   private

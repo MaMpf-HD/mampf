@@ -1,0 +1,91 @@
+<div class="d-flex flex-wrap align-items-end gap-2 mb-2">
+  <div>
+    <label class="form-label small mb-1" for="pointing-filter-name-<%= @id %>">
+      <%= t("assessment.grading_tutorial.filter_name") %>
+    </label>
+
+    <input
+      type="search"
+      id="pointing-filter-name-<%= @id %>"
+      class="form-control form-control-sm"
+      autocomplete="off"
+      data-status-filter-target="name"
+      data-action="input->status-filter#search"
+    >
+  </div>
+
+  <% if status_filter? %>
+    <div>
+      <label
+        class="form-label small mb-1"
+        for="pointing-filter-status-<%= @id %>"
+      >
+        <%= t("assessment.grading_tutorial.status") %>
+      </label>
+
+      <select
+        id="pointing-filter-status-<%= @id %>"
+        class="form-select form-select-sm"
+        data-status-filter-target="status"
+        data-action="change->status-filter#apply"
+      >
+        <option value="all">
+          <%= t("assessment.grading_tutorial.filter_all") %>
+        </option>
+
+        <% @status_options.each do |value, label| %>
+          <option value="<%= value %>"><%= label %></option>
+        <% end %>
+      </select>
+    </div>
+  <% end %>
+
+  <% if tutorial_filter? %>
+    <div>
+      <label
+        class="form-label small mb-1"
+        for="pointing-filter-tutorial-<%= @id %>"
+      >
+        <%= t("basics.tutorial") %>
+      </label>
+
+      <select
+        id="pointing-filter-tutorial-<%= @id %>"
+        class="form-select form-select-sm"
+        data-status-filter-target="tutorial"
+        data-action="change->status-filter#apply"
+      >
+        <option value="all">
+          <%= t("assessment.grading_tutorial.filter_all") %>
+        </option>
+
+        <% @tutorial_options.each do |value, label| %>
+          <option value="<%= value %>"><%= label %></option>
+        <% end %>
+      </select>
+    </div>
+  <% end %>
+
+  <button
+    type="button"
+    class="btn btn-link btn-sm"
+    hidden
+    data-status-filter-target="reset"
+    data-action="click->status-filter#reset"
+  >
+    <%= t("assessment.grading_tutorial.filter_reset") %>
+  </button>
+
+  <span
+    class="small text-muted pb-1"
+    hidden
+    data-status-filter-target="count"
+    data-template="<%= t("assessment.grading_tutorial.filter_count", shown: "%{shown}", total: "%{total}") %>"
+  ></span>
+
+  <% if content? %>
+    <div class="ms-auto d-flex flex-wrap align-items-end gap-2">
+      <%= content %>
+    </div>
+  <% end %>
+</div>

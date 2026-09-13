@@ -130,11 +130,17 @@ RSpec.describe(Assessment::Assessment, type: :model) do
       expect(assessment.status_without_hand_in).to eq(:not_submitted)
     end
 
-    # A sheet collected on paper is with the tutor until they record it.
     it "calls a sheet collected on paper not yet recorded" do
       assessment = FactoryBot.build(:assessment, requires_submission: false)
 
       expect(assessment.status_without_hand_in).to eq(:awaiting_record)
+    end
+
+    it "calls a talk without a grade pending grading" do
+      assessment = FactoryBot.build(:assessment, assessable: FactoryBot.build(:talk),
+                                                 requires_submission: false)
+
+      expect(assessment.status_without_hand_in).to eq(:pending_grading)
     end
   end
 

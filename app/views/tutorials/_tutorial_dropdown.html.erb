@@ -1,4 +1,4 @@
-<select class="form-select form-select-sm" onchange="window.location=this.value">
+<select id="tutorial-select" class="form-select form-select-sm" onchange="window.location=this.value">
 
   <!-- Current tutorial -->
   <option selected><%= @tutorial&.title || t("profile.select_tutorials") %></option>

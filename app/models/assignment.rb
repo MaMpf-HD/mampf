@@ -54,8 +54,10 @@ class Assignment < ApplicationRecord
                       &.first&.submission
   end
 
+  # A team formed without a file has handed nothing in; its members still
+  # need their row in the tutor's table.
   def submitter_ids
-    UserSubmissionJoin.where(submission: submissions).pluck(:user_id).uniq
+    UserSubmissionJoin.where(submission: submissions.proper).pluck(:user_id).uniq
   end
 
   def submitters

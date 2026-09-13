@@ -6,7 +6,7 @@ module Assessment
                          :mark_as_absent, :remove_absent,
                          :mark_as_exempt, :remove_exempt,
                          :refresh_participation, :mark_as_participated,
-                         :mark_as_participated_multi, :remove_participated]
+                         :remove_participated]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update_team_multi,
                                                  :update_team,
@@ -18,11 +18,12 @@ module Assessment
                                                  :mark_as_exempt, :remove_exempt]
     before_action :refuse_without_row, only: [:update_participation,
                                               :refresh_participation,
-                                              :remove_participated,
                                               :mark_as_absent,
                                               :remove_absent,
                                               :mark_as_exempt,
-                                              :remove_exempt]
+                                              :remove_exempt,
+                                              :mark_as_participated,
+                                              :remove_participated]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
@@ -170,23 +171,15 @@ module Assessment
                                   status: :not_found)
       end
 
-      render turbo_stream: record_paper_hand_in(user)
-    end
-
-    # One request for the pile of paper sheets; a row the tutor may not mark
-    # rolls the whole pile back.
-    def mark_as_participated_multi
-      users = @lecture.members.where(id: Array(params[:user_ids]))
-      streams = ActiveRecord::Base.transaction do
-        users.map { |user| record_paper_hand_in(user) }
-      end
-      render turbo_stream: streams
+      render turbo_stream: [record_paper_hand_in(user), summary_stream]
     end
 
     def remove_participated
       SubmissionGraderService.remove_participation(@participation)
       @participation.reload
-      render_participation_update
+      render turbo_stream: [turbo_stream.replace("participation-row-#{@participation.id}",
+                                                 html: render_to_string(participation_row)),
+                            summary_stream]
     end
 
     private
@@ -204,13 +197,13 @@ module Assessment
                                       grading_scope: table_scope)
       end
 
-      # Somebody in no group takes part in the lecture itself, and that is
-      # the lecturer's to enter. Until there is a participation, the row goes
-      # by the user; the answer has to find it under that name.
+      # A participation belongs to the group that holds it, however the person
+      # has moved since; only a new one goes to the group they sit in now.
       def record_paper_hand_in(user)
         roster_tutorial = user.rostered_tutorial_in(@lecture)
-        authorize!(:enter_points, roster_tutorial || @lecture)
         row_before = @assessment.assessment_participations.find_by(user: user)
+        scope = row_before ? row_before.tutorial : roster_tutorial
+        authorize!(:enter_points, scope || @lecture)
         row_id = if row_before
           "participation-row-#{row_before.id}"
         else
@@ -233,7 +226,7 @@ module Assessment
       def rerender_submission_row
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
+            row = turbo_stream.replace(
               "submission-row-#{@submission.id}",
               html: render_to_string(
                 SubmissionRowComponent.new(
@@ -243,6 +236,7 @@ module Assessment
                 )
               )
             )
+            render turbo_stream: [row, summary_stream]
           end
         end
       end
@@ -255,10 +249,28 @@ module Assessment
           )
         )
       end
+      
+      def rerender_user_row
+        respond_to do |format|
+          format.turbo_stream do
+            row = turbo_stream.replace(
+              "participation-row-#{@participation.id}",
+              html: render_to_string(participation_row)
+            )
+            render turbo_stream: [row, summary_stream]
+          end
+        end
+      end
 
       def render_task_points_update(*streams)
         flash.now[:notice] = t("assessment.task_points.update")
-        render turbo_stream: streams.flatten.compact + [stream_flash].compact
+        render turbo_stream: streams.flatten.compact + [summary_stream, stream_flash].compact
+      end
+
+      def summary_stream
+        summary = TutorialPointingTableComponent.new(assignment: @assessable,
+                                                     grading_scope: table_scope).summary
+        turbo_stream.replace("pointing-summary", html: render_to_string(summary))
       end
 
       def rerender_submission_table
@@ -290,20 +302,22 @@ module Assessment
         end
       end
 
+      # The lecture's table saves rows of every group and of people in none,
+      # so it names no tutorial; the group's table names its own.
       def set_resources_from_bulk_params_submissions
-        @tutorial = Tutorial.find_by(id: params["tutorial_id"])
         @assessable = Assignment.find_by(id: params["assignment_id"])
-
-        unless @tutorial
-          return respond_with_flash(:alert, t("assessment.errors.no_tutorial"),
-                                    status: :not_found)
-        end
-
-        @lecture = @tutorial.lecture
-
         unless @assessable
           return respond_with_flash(:alert, t("assessment.errors.no_assignment"),
                                     status: :not_found)
+        end
+
+        @lecture = @assessable.lecture
+        if params["tutorial_id"].present?
+          @tutorial = @lecture.tutorials.find_by(id: params["tutorial_id"])
+          unless @tutorial
+            return respond_with_flash(:alert, t("assessment.errors.no_tutorial"),
+                                      status: :not_found)
+          end
         end
 
         @assessment = @assessable.assessment

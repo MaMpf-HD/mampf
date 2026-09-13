@@ -6,14 +6,26 @@
   data-row-id="<%= @participation.id %>"
   data-row-target-type="participation"
   data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
+  data-pointing-table-target="row"
+  data-status-filter-target="row"
   data-status-filter-status="<%= status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
-  data-status-filter-name="<%= @user.tutorial_name %>"
-  <% if @group_id %>
-    data-status-filter-group-id="<%= @group_id %>"
-  <% end %>
+  data-status-filter-name="<%= filter_name %>"
 >
-  <td class="sticky-col team-col">
+  <% if layout.show?(:talk) %>
+    <td class="<%= layout.column_class(:talk) %>">
+      <%= link_to @assessable.title, edit_talk_path(@assessable),
+                  class: "link-body-emphasis link-underline-opacity-25 link-underline-opacity-100-hover",
+                  target: "_blank",
+                  rel: "noopener" %>
+
+      <% if talk_dates %>
+        <div class="text-muted small"><%= talk_dates %></div>
+      <% end %>
+    </td>
+  <% end %>
+
+  <td class="<%= layout.column_class(:team) %>">
     <div class="d-flex justify-content-between align-items-start">
       <div>
         <%= @user.tutorial_name %>
@@ -22,32 +34,35 @@
 
         <% if movement %>
           <i
-            class="bi bi-info-circle me-2 ps-1"
+            class="bi bi-info-circle ms-1 text-secondary"
+            role="img"
             title="<%= movement %>"
-            data-bs-toggle="tooltip"
+            aria-label="<%= movement %>"
           ></i>
         <% end %>
       </div>
 
-      <i
+      <button
+        type="button"
         class="
-          clipboardpopup bi bi-clipboard clickable
-          text-secondary clipboard-btn ms-3 clipboard-button
+          clipboardpopup btn btn-link p-0 ms-3 text-secondary
+          clipboard-btn clipboard-button
         "
         data-clipboard-text="<%= @user.email %>"
-        data-bs-toggle="tooltip"
         title="<%= t('buttons.copy_email_to_clipboard') %>"
+        aria-label="<%= t('buttons.copy_email_to_clipboard') %>"
       >
+        <i class="bi bi-clipboard"></i>
+
         <span class="clipboardpopuptext token-clipboard-popup">
           <%= t('basics.emails_copied_to_clipboard') %>
         </span>
-      </i>
+      </button>
     </div>
   </td>
 
-  <!-- Tutorial (assignment/teacher scope only, regardless of assessment) -->
-  <% if show_tutorial_col? %>
-    <td class="text-center sticky-col tutorial-col">
+  <% if layout.show?(:tutorial) %>
+    <td class="text-center <%= layout.column_class(:tutorial) %>">
       <span>
         <%= @participation.tutorial&.title || t("assessment.grading_tutorial.no_tutorial_badge") %>
       </span>
@@ -55,89 +70,69 @@
   <% end %>
 
   <% if grading_enabled? %>
-    <td class="text-center sticky-col status-col">
-      <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full, note: @participation&.note) %>
-    </td>
+    <td class="text-center <%= layout.column_class(:status) %>">
+      <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
 
-    <% if multi_points_display? %>
+      <% if locked_reason %>
+        <div class="small text-muted"><%= locked_reason %></div>
+      <% end %>
+    </td>
+    <% if tasks? %>
       <% tasks.each do |task| %>
         <%= task_points_participation_cell(task, allow_grading?) %>
       <% end %>
-    <% end %>
-    <% if total_point_display? %>
-      <td class="text-center sticky-col total-col">
+      <td class="text-center <%= layout.column_class(:total) %>">
         <span data-participation-row-target="totalPoints">0</span>
       </td>
     <% end %>
-
-    <% if single_grade_display? %>
-      <!-- Single grade column -->
-      <% if show_grade_col? %>
-        <td class="text-center grade-col" style="min-width: 110px;">
-          <% if allow_grading? %>
-            <%= tag.select(
+    <% if single_grade? %>
+      <td class="text-center <%= layout.column_class(:grade) %>">
+        <% if allow_grading? && can_enter_grade? %>
+          <%= tag.select(
                 name: "grade",
                 class: "form-select form-select-sm mx-auto",
-                style: "min-width: 90px; width: 90px;",
-                data: { participation_row_target: "gradeInput", action: "change->participation-row#onParticipationChanged" }
+                aria: { label: t("assessment.grade_talk_row.grade_for", name: @user.tutorial_name) },
+                data: { participation_row_target: "gradeInput",
+                        action: "change->participation-row#onParticipationChanged" }
               ) do %>
-              <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
+            <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
 
-              <%= safe_join(
+            <%= safe_join(
                   grade_options.map { |label, value| tag.option(label, value: value, selected: value == grade_numeric) }
                 ) %>
-            <% end %>
-          <% else %>
-            <span class="fw-semibold"><%= grade_display %></span>
           <% end %>
-        </td>
-      <% end %>
-
-      <% if show_note_col? %>
-        <td class="note-col" style="min-width: 180px;">
-          <% if allow_grading? %>
-            <%= text_area_tag "note", @participation&.note,
+        <% else %>
+          <span class="fw-semibold"><%= grade_display %></span>
+        <% end %>
+      </td>
+      <td class="<%= layout.column_class(:note) %>">
+        <% if allow_grading? && can_enter_grade? %>
+          <%= text_area_tag "note", @participation&.note,
                     class: "form-control form-control-sm",
                     placeholder: t("assessment.grading_talk.note_placeholder"),
+                    aria: { label: t("assessment.grade_talk_row.note_for", name: @user.tutorial_name) },
                     maxlength: 255,
                     rows: 1,
-                    data: { participation_row_target: "noteInput", action: "input->participation-row#onParticipationChanged" } %>
-          <% else %>
-            <span
-              class="text-muted small text-truncate d-inline-block"
-              style="max-width: 180px;"
-              title="<%= @participation&.note %>"
-            >
-              <%= @participation&.note.presence || "—" %>
-            </span>
-          <% end %>
-        </td>
-      <% end %>
-
-      <% if show_graded_by_col? %>
-        <td class="text-muted small graded-by-col"><%= grader_display %></td>
-      <% end %>
-
-      <% if show_graded_at_col? %>
-        <td class="text-muted small graded-at-col">
-          <% if graded_at_relative %>
-            <span title="<%= graded_at_full %>"><%= graded_at_relative %></span>
-          <% end %>
-        </td>
-      <% end %>
+                    data: { participation_row_target: "noteInput",
+                            action: "input->participation-row#onParticipationChanged" } %>
+        <% else %>
+          <span
+            class="text-muted small text-truncate d-inline-block"
+            title="<%= @participation&.note %>"
+          >
+            <%= @participation&.note.presence || "—" %>
+          </span>
+        <% end %>
+      </td>
+      <td class="text-muted small <%= layout.column_class(:graded) %>">
+        <% if graded_display %>
+          <span title="<%= graded_ago %>"><%= graded_display %></span>
+        <% end %>
+      </td>
     <% end %>
-
-    <td class="text-end sticky-col save-col">
-      <div class="d-inline-flex align-items-center gap-1">
-        <% if can_mark_absent? %>
-          <%= mark_absent_button %>
-        <% end %>
-
-        <% if can_mark_exempt? %>
-          <%= mark_exempt_button %>
-        <% end %>
-
-        <% if (can_enter_points? && points_enterable?) || can_enter_grade? %>
+    <td class="text-center <%= layout.column_class(:save) %>">
+      <% if (tasks? && can_enter_points? && points_enterable?) || (single_grade? && can_enter_grade?) %>
+        <div class="d-inline-flex align-items-center gap-1">
           <%= form_with url: save_url,
                       method: :patch,
                       data: { turbo: true, participation_row_target: "form" },
@@ -181,66 +176,49 @@
           <% end %>
 
           <%= refresh_row_button(allow_grading?) %>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     </td>
   <% end %>
 
-  <%#
-    No file to open. What the column can say is whether the sheet came in on
-    paper, and the tutor says it here; the answer replaces this row alone.
-  %>
-
-  <% if show_hand_in_col? %>
-    <td class="text-center sticky-col hand-in-col">
+  <% if layout.show?(:hand_in) %>
+    <td class="text-center <%= layout.column_class(:hand_in) %>">
       <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
+        <%# A disabled button answers no hover, so the state is a mark, not a button. %>
         <% if paper_hand_in? && !paper_hand_in_removable? %>
-          <button
+          <span
             class="
-              btn btn-sm btn-outline-secondary d-inline-flex
-              align-items-center justify-content-center px-2 py-1 lh-1
+              d-inline-flex align-items-center justify-content-center px-2
+              py-1 lh-1 fs-5 text-secondary
             "
-            disabled
+            role="img"
             title="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
             aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_kept") %>"
           >
-            <i class="bi bi-file-earmark-check-fill"></i>
-          </button>
+            <i class="bi bi-inbox-fill"></i>
+          </span>
         <% elsif paper_hand_in? %>
           <%= link_to paper_hand_in_removal_url,
-                    class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                    data: { turbo_method: :patch, bs_toggle: "tooltip" },
+                    class: "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
+                    data: { turbo_method: :patch },
                     title: t("assessment.grading_tutorial.paper_hand_in_remove"),
                     aria: { label: t("assessment.grading_tutorial.paper_hand_in_remove") } do %>
-            <i class="bi bi-file-earmark-check-fill"></i>
+            <i class="bi bi-inbox-fill"></i>
           <% end %>
         <% else %>
-          <div class="d-inline-flex align-items-center gap-2">
-            <input
-              type="checkbox"
-              class="form-check-input m-0"
-              form="paper-hand-ins"
-              name="user_ids[]"
-              value="<%= @user.id %>"
-              aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_select", name: @user.tutorial_name) %>"
-              data-paper-selection-target="checkbox"
-              data-action="paper-selection#sync"
-            >
-
-            <%= link_to paper_hand_in_url,
-                      class: "btn btn-sm btn-outline-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1",
-                      data: { turbo_method: :patch, bs_toggle: "tooltip" },
-                      title: t("assessment.grading_tutorial.paper_hand_in"),
-                      aria: { label: t("assessment.grading_tutorial.paper_hand_in") } do %>
-              <i class="bi bi-file-earmark"></i>
-            <% end %>
-          </div>
+          <%= link_to paper_hand_in_url,
+                    class: "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
+                    data: { turbo_method: :patch },
+                    title: t("assessment.grading_tutorial.paper_hand_in"),
+                    aria: { label: t("assessment.grading_tutorial.paper_hand_in") } do %>
+            <i class="bi bi-inbox"></i>
+          <% end %>
         <% end %>
       <% end %>
     </td>
   <% end %>
 
-  <% if show_correction_col? %>
-    <td class="sticky-col correction-col"></td>
+  <% if layout.show?(:correction) %>
+    <td class="<%= layout.column_class(:correction) %>"></td>
   <% end %>
 </tr>

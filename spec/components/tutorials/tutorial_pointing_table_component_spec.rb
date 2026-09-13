@@ -10,31 +10,14 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     create(:assessment, requires_points: true, assessable: assignment, lecture: lecture)
   end
 
-  let(:config_double) do
-    double("config", left_columns: [:tutorial], right_columns: [:correction])
-  end
-
   before do
     assignment.reload
-    assessment.reload
-    allow(Assessment::DisplayConfigResolver).to receive(:resolve).and_return(config_double)
+    assessment&.reload
   end
 
   describe "when grading_scope is a Tutorial" do
     let(:component) do
       described_class.new(assignment: assignment, grading_scope: tutorial)
-    end
-
-    describe "#initialize" do
-      it "sets @tutorial to the grading_scope" do
-        expect(component.instance_variable_get(:@tutorial)).to eq(tutorial)
-      end
-
-      it "resolves the display config via Assessment::DisplayConfigResolver" do
-        expect(Assessment::DisplayConfigResolver).to receive(:resolve)
-          .with(assessable: assignment, grading_scope: tutorial).and_return(config_double)
-        component
-      end
     end
 
     describe "#grading_enabled?" do
@@ -53,34 +36,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       end
     end
 
-    describe "#total_max_points" do
-      context "when there are no tasks" do
-        it "returns 0" do
-          expect(component.total_max_points).to eq(0)
-        end
-      end
-
-      context "when there are tasks with max_points" do
-        before do
-          create(:assessment_task, assessment: assessment, max_points: 10)
-          create(:assessment_task, assessment: assessment, max_points: 5)
-          assignment.reload
-        end
-
-        it "returns the sum of max points" do
-          expect(component.total_max_points).to eq(15)
-        end
-      end
-    end
-
-    describe "#column_count" do
-      it "returns 7 plus the number of tasks" do
-        create(:assessment_task, assessment: assessment)
-        assignment.reload
-        expect(component.column_count).to eq(7 + component.tasks.count)
-      end
-    end
-
     describe "#rows?" do
       context "when there are submissions" do
         let!(:submission) do
@@ -94,7 +49,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         end
       end
 
-      # Everybody on the roster is a row, hand-in or not.
       context "when somebody is in the group without a hand-in" do
         before { create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user)) }
 
@@ -110,9 +64,59 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       end
     end
 
-    # The row of somebody without a hand-in is drawn from their participation
-    # where the worker has written one, and from an unsaved one where it has
-    # not - so the table never waits for the worker to show a person.
+    context "when the assignment has no assessment" do
+      let!(:assignment) { create(:assignment, :without_assessment, lecture: lecture) }
+      let!(:assessment) { nil }
+      let(:member) { create(:confirmed_user) }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        create(:tutorial_membership, tutorial: tutorial, user: member)
+      end
+
+      it "has no rows without a file" do
+        expect(component.rows?).to be(false)
+      end
+
+      it "draws the files and the downloads, and no roster row" do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [create(:confirmed_user)])
+        rendered = render_inline(component)
+
+        expect(rendered.css("tr[id^=participation-row]")).to be_empty
+        expect(rendered.text).to include(I18n.t("submission.bulk_download_submissions"))
+        expect(rendered.text).not_to include(I18n.t("assessment.grading_tutorial.save_all"))
+      end
+    end
+
+    describe "#row_statuses" do
+      let(:member) { create(:confirmed_user) }
+      let(:partner) { create(:confirmed_user) }
+
+      it "reads a team row the way the row reads itself" do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [member, partner])
+        Timecop.travel(3.hours.from_now) do
+          create(:assessment_participation, :reviewed, assessment: assessment, user: partner,
+                                                       tutorial: tutorial)
+          expect(component.row_statuses).to eq([:reviewed])
+        end
+      end
+
+      it "reads a file without any participation as still to be marked" do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [member])
+
+        expect(component.row_statuses).to eq([:pending_grading])
+      end
+
+      it "reads somebody without a hand-in off their unsaved row" do
+        create(:tutorial_membership, tutorial: tutorial, user: member)
+
+        expect(component.row_statuses).to eq([:not_submitted])
+      end
+    end
+
     describe "#participation_for" do
       let(:member) { create(:confirmed_user) }
 
@@ -130,20 +134,6 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(built).to be_new_record
         expect(built.user).to eq(member)
         expect(built.tutorial).to eq(tutorial)
-      end
-    end
-
-    describe "#sticky_layout" do
-      it "builds a StickyColumnLayout using the resolved config's columns" do
-        expect(Assessment::StickyColumnLayout).to receive(:new)
-          .with(left_columns: [:tutorial], right_columns: [:correction])
-          .and_call_original
-        component.sticky_layout
-      end
-
-      it "memoizes the layout across multiple calls" do
-        layout = component.sticky_layout
-        expect(component.sticky_layout).to equal(layout)
       end
     end
 

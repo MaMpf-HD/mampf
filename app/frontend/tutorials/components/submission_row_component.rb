@@ -10,19 +10,14 @@ class SubmissionRowComponent < ViewComponent::Base
     @grading_scope = grading_scope
     @lecture = @assignment.lecture
     @participations = (participations || @submission.participations || []).compact
-    check_grading_scope
-  end
-
-  def tutorial_scope?
-    @grading_scope.is_a?(Tutorial)
-  end
-
-  def lecture_scope?
-    @grading_scope.is_a?(Lecture)
   end
 
   def grading_enabled?
     @assessment.present?
+  end
+
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
   end
 
   def allow_grading?
@@ -88,16 +83,14 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def task_points_cell(task, allow_grading)
-    tag.td(class: "sticky-col task-col") do
+    tag.td(class: layout.column_class(:task)) do
       task_points_input(task, allow_grading)
     end
   end
 
-  # Neutral until the row has something to save; the controller turns it
-  # green with the first edit.
   def save_row_button(allow_grading)
-    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
-                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+    class_name = "btn btn-sm btn-link text-body-tertiary d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1 fs-5"
 
     tag.button(type: "button",
                class: class_name,
@@ -106,13 +99,13 @@ class SubmissionRowComponent < ViewComponent::Base
                title: helpers.t("assessment.grading_tutorial.save_row"),
                aria: { label: helpers.t("assessment.grading_tutorial.save_row") },
                disabled: !allow_grading) do
-      tag.i(class: "far fa-save")
+      tag.i(class: "bi bi-floppy-fill")
     end
   end
 
   def refresh_row_button(allow_grading)
-    class_name = "btn btn-sm btn-outline-secondary d-inline-flex align-items-center " \
-                 "justify-content-center text-nowrap px-2 py-1 lh-1"
+    class_name = "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center " \
+                 "justify-content-center text-nowrap px-2 py-1 lh-1 fs-5"
 
     tag.button(type: "button",
                class: class_name,
@@ -120,7 +113,7 @@ class SubmissionRowComponent < ViewComponent::Base
                title: helpers.t("assessment.grading_tutorial.reload_row"),
                aria: { label: helpers.t("assessment.grading_tutorial.reload_row") },
                disabled: !allow_grading) do
-      tag.i(class: "bi bi-arrow-clockwise")
+      tag.i(class: "bi bi-arrow-counterclockwise")
     end
   end
 

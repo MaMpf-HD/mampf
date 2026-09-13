@@ -32,7 +32,7 @@ module Assessment
         )
       end
       @participation = @participation.reload
-      render_grade_update(replace_participation_row)
+      render_grade_update(replace_participation_row, summary_stream)
     end
 
     def refresh
@@ -48,10 +48,17 @@ module Assessment
                                    assessment: @assessment,
                                    grading_scope: @lecture,
                                    participation: @participation,
-                                   table_option: :grading,
-                                   group_id: @assessable.id
+                                   table_option: :grading
                                  ))
         )
+      end
+
+      # The line above the table counts the rows; a row that changed state
+      # takes the line with it.
+      def summary_stream
+        statuses = TalkGradingTableComponent.new(seminar: @lecture).row_statuses
+        summary = PointingSummaryComponent.new(statuses: statuses, hand_ins: false)
+        turbo_stream.replace("pointing-summary", html: render_to_string(summary))
       end
 
       def rerender_participation_row
@@ -107,9 +114,13 @@ module Assessment
         respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
       end
 
+      # Only a talk has a single grade; a sheet's participation is pointed
+      # elsewhere and has no speakers to check.
       def empty_resource_check
         return respond_with_flash(:alert, t("assessment.errors.no_assessment")) unless @assessment
-        return respond_with_flash(:alert, t("assessment.errors.not_gradable")) unless @assessable
+        unless @assessable.is_a?(Talk)
+          return respond_with_flash(:alert, t("assessment.errors.not_gradable"))
+        end
         return respond_with_flash(:alert, t("assessment.errors.user_not_found")) unless @user
 
         return if @participation
