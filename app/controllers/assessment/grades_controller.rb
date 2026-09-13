@@ -26,6 +26,10 @@ module Assessment
         TalkGraderService.set_grade(
           @participation, params[:grade], current_user, params[:comment]
         )
+      when Exam
+        ExamGraderService.set_grade(
+          @participation, params[:grade], current_user, params[:comment]
+        )
       end
       @participation = @participation.reload
       render_grade_update(replace_participation_row)

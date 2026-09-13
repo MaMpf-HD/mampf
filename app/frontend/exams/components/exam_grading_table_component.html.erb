@@ -1,4 +1,4 @@
-<%= helpers.turbo_frame_tag "pointing-table" do %>
+<%= helpers.turbo_frame_tag "grading-table" do %>
   <% if grading_records? %>
     <div data-controller="status-filter">
       <% if grading_enabled? %>
@@ -27,40 +27,38 @@
       >
         <div class="table-overflow" data-table-fade-target="inner">
           <table
-            class="table align-middle my-3"
+            class="table table-hover align-middle my-3 grading-table"
             style="<%= sticky_css_vars %>"
           >
             <thead style="background: #fafafa;">
               <%= render(PointingTableHeaderComponent.new(
                 grading_scope: @grading_scope,
-                assessable_type: Exam.name,
-                table_option: :pointing,
-                grading_enabled: grading_enabled?,
-                tasks: tasks,
-                total_max_points: total_max_points
+                assessable_type: Talk.name,
+                table_option: :grading,
+                grading_enabled: grading_enabled?
               )) %>
             </thead>
 
             <tbody>
               <% @participations.each do |participation| %>
                 <% if participation %>
-                  <%= render(ParticipationRowComponent.new(
-                        participation: participation,
-                        assessment: @exam.assessment,
-                        table_option: :pointing,
-                        grading_scope: @lecture)) %>
+                  <%= render ParticipationRowComponent.new(
+                      participation: participation,
+                      grading_scope: @lecture,
+                      assessment: @exam.assessment,
+                      table_option: :grading,
+                      proposed_grade: (proposed_grade_for(participation) if draft_scheme?)
+                    ) %>
                 <% end %>
               <% end %>
             </tbody>
           </table>
-
-          <%= render partial: "assessment/participations/exempt_modal" %>
         </div>
       </div>
     </div>
   <% else %>
     <div class="jumbotron mt-3">
-      <%= t('assessment.grading_tutorial.no_submissions_gradable') %>
+      <%= t('assessment.grading_talk.no_talks_gradable') %>
     </div>
   <% end %>
 <% end %>

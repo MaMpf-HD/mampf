@@ -4,6 +4,20 @@ module Assessment
     class ExamGraderError < StandardError; end
 
     class << self
+      def set_grade(participation, grade, grader, comment = nil)
+        raise_if_errors!(
+          validate_participation_present(participation)
+        )
+        assessment = participation.assessment
+        raise_if_errors!(
+          validate_assessment_belongs_to_exam(assessment),
+          authorize_exam_grade!(participation.assessment&.assessable, grader)
+        )
+
+        grade_info = GradeEntryService.build_grade_info(grade_numeric: grade)
+        GradeEntryService.set_grade(participation, grade_info, grader, comment)
+      end
+
       def score_tasks_by_participation!(participation, points_by_task_id, scorer)
         raise_if_errors!(validate_participation_present(participation))
 
@@ -11,7 +25,8 @@ module Assessment
 
         raise_if_errors!(
           validate_participation_has_exam(participation, exam),
-          validate_exam_grading_open(exam)
+          validate_exam_grading_open(exam),
+          authorize_exam_point!(participation.assessment&.assessable, scorer)
         )
 
         PointEntryService.enter_points(participation, points_by_task_id, scorer, nil)
@@ -55,6 +70,18 @@ module Assessment
       end
 
       private
+
+        def authorize_exam_grade!(exam, user)
+          return if exam.nil? || user.can_enter_grades_in?(exam.lecture)
+
+          I18n.t("assessment.errors.user_cannot_grade")
+        end
+
+        def authorize_exam_point!(exam, user)
+          return if exam.nil? || user.can_enter_points_in?(exam.lecture)
+
+          I18n.t("assessment.errors.user_cannot_grade")
+        end
 
         def validate_exam_grading_open(exam)
           return if exam.nil? || exam.grading_open?

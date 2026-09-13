@@ -37,7 +37,7 @@ module Assessment
       tutor = grading_scope.is_a?(Tutorial)
 
       GradingDisplayConfig.new(
-        body_mode: [:tasks],
+        body_mode: [:multi_points],
         left_columns: tutor ? [:team, :status] : [:team, :tutorial, :status],
         right_columns: if tutor
                          [:total, :save, :hand_in,
@@ -60,7 +60,7 @@ module Assessment
 
     def self.resolve_exam_pointing(_grading_scope)
       GradingDisplayConfig.new(
-        body_mode: [:tasks],
+        body_mode: [:multi_points],
         left_columns: [:team, :status],
         right_columns: [:total, :save]
       )
@@ -69,9 +69,9 @@ module Assessment
 
     def self.resolve_exam_grading(_grading_scope)
       GradingDisplayConfig.new(
-        body_mode: [:single_grade],
+        body_mode: [:total_point, :single_grade],
         left_columns: [:team, :status],
-        right_columns: [:grade, :note, :graded_by, :graded_at, :action]
+        right_columns: [:total, :grade, :note, :save]
       )
     end
     private_class_method :resolve_exam_grading

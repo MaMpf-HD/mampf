@@ -5,8 +5,11 @@
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
-  def initialize(participation:, assessment:, grading_scope:, group_id: nil,
-                 table_option: :pointing)
+  # rubocop:disable Metrics/ParameterLists
+  def initialize(participation:, assessment:, grading_scope:,
+                 group_id: nil, table_option: :pointing,
+                 proposed_grade: nil)
+    # rubocop:enable Metrics/ParameterLists
     super()
     @participation = participation
     @assessment = assessment
@@ -20,6 +23,7 @@ class ParticipationRowComponent < ViewComponent::Base
       assessable: @assessable, grading_scope: @grading_scope, table_option: @table_option
     )
 
+    @proposed_grade = proposed_grade
     @user ||= @participation&.user
     return unless @user.nil?
 
@@ -267,12 +271,16 @@ class ParticipationRowComponent < ViewComponent::Base
   # -- optional display helpers for the table header and body --
 
   # if display tasks pointing and total points
-  def tasks?
-    @config.body_mode.include?(:tasks)
+  def multi_points_display?
+    @config.body_mode.include?(:multi_points)
+  end
+
+  def total_point_display?
+    @config.right_columns.include?(:total_point) || @config.right_columns.include?(:multi_points)
   end
 
   # if display grade, grade_at, grade_by, note
-  def single_grade?
+  def single_grade_display?
     @config.body_mode.include?(:single_grade)
   end
 
@@ -288,6 +296,22 @@ class ParticipationRowComponent < ViewComponent::Base
   # if display correction column
   def show_correction_col?
     @config.right_columns.include?(:correction)
+  end
+
+  def show_grade_col?
+    @config.right_columns.include?(:grade)
+  end
+
+  def show_note_col?
+    @config.right_columns.include?(:note)
+  end
+
+  def show_graded_by_col?
+    @config.right_columns.include?(:graded_by)
+  end
+
+  def show_graded_at_col?
+    @config.right_columns.include?(:graded_at)
   end
 
   # ---- task mode helpers ----
