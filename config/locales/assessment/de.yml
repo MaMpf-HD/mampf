@@ -329,7 +329,6 @@ de:
       user_left_tutorials: 'In %{old_tutorial} abgegeben, seitdem in keiner Übungsgruppe.'
       user_joined_tutorial: 'Ohne Übungsgruppe abgegeben, seitdem in %{new_tutorial}.'
     grading_talk:
-      note_placeholder: "Nur für DozentInnen sichtbar"
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
     grading_overview:
       submission_progress: 'Abgaben'
@@ -479,6 +478,7 @@ de:
       speaker: "Sprecher:in"
       grade: "Note"
       note: "Interne Notiz"
+      note_hint: "(nur für DozentInnen)"
       graded: "Bewertet"
       graded_ago: "vor %{time}"
       save_row: "Note dieser Zeile speichern"

@@ -111,7 +111,6 @@
         <% if allow_grading? && can_enter_grade? %>
           <%= text_area_tag "note", @participation&.note,
                     class: "form-control form-control-sm",
-                    placeholder: t("assessment.grading_talk.note_placeholder"),
                     aria: { label: t("assessment.grade_talk_row.note_for", name: @user.tutorial_name) },
                     maxlength: 255,
                     rows: 1,
