@@ -26,14 +26,14 @@
                 data: { turbo_stream: true },
                 title: t('assessment.grading_tutorial.upload_correction'),
                 aria: { label: t('assessment.grading_tutorial.upload_correction') } do %>
-      <i class="bi bi-upload"></i>
+      <i class="bi bi-cloud-upload-fill"></i>
     <% end %>
   <% else %>
     <button class="btn btn-sm btn-link text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5"
             disabled
             title="<%= t('assessment.grading_tutorial.upload_correction_closed') %>"
             aria-label="<%= t('assessment.grading_tutorial.upload_correction_closed') %>">
-      <i class="bi bi-upload"></i>
+      <i class="bi bi-cloud-upload-fill"></i>
     </button>
   <% end %>
 
@@ -45,7 +45,7 @@
                         turbo_stream: true },
                 title: t('assessment.grading_tutorial.delete_correction'),
                 aria: { label: t('assessment.grading_tutorial.delete_correction') } do %>
-      <i class="bi bi-trash"></i>
+      <i class="bi bi-trash-fill"></i>
     <% end %>
   <% end %>
 </span>

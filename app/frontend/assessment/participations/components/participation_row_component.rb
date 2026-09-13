@@ -167,7 +167,7 @@ class ParticipationRowComponent < ViewComponent::Base
                title: helpers.t("assessment.grading_tutorial.save_row"),
                aria: { label: helpers.t("assessment.grading_tutorial.save_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
-      tag.i(class: "far fa-save")
+      tag.i(class: "bi bi-floppy-fill")
     end
   end
 
@@ -181,7 +181,7 @@ class ParticipationRowComponent < ViewComponent::Base
                title: helpers.t("assessment.grading_tutorial.reload_row"),
                aria: { label: helpers.t("assessment.grading_tutorial.reload_row") },
                disabled: !allow_grading || !grading_enabled? || !can_enter_points?) do
-      tag.i(class: "bi bi-arrow-clockwise")
+      tag.i(class: "bi bi-arrow-counterclockwise")
     end
   end
 
