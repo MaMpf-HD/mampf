@@ -12,7 +12,28 @@ RSpec.describe(Assessment::TalkGraderService, type: :model) do
 
   before do
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
-    allow(grader).to receive(:can_enter_grades_in?).and_return(true)
+  end
+
+  describe ".create_participation" do
+    # Two tabs open the seminar at once: the second one's insert is refused by
+    # the model's uniqueness validation before the index ever sees it.
+    it "hands back the row another request created first" do
+      existing = FactoryBot.create(:assessment_participation, assessment: assessment,
+                                                              user: speaker)
+
+      expect(described_class.create_participation(assessment, speaker)).to eq(existing)
+    end
+
+    it "lets any other refusal through" do
+      allow(Assessment::Participation).to receive(:create!) do
+        record = Assessment::Participation.new
+        record.errors.add(:status, :invalid)
+        raise(ActiveRecord::RecordInvalid, record)
+      end
+
+      expect { described_class.create_participation(assessment, speaker) }
+        .to raise_error(ActiveRecord::RecordInvalid)
+    end
   end
 
   describe ".init_participations" do

@@ -12,11 +12,15 @@ module Assessment
         GradeEntryService.set_grade(participation, grade_info, grader, comment)
       end
 
-      # If another request inserts the participation after validation, reuse it
-      # when the unique index rejects this insert.
+      # If another request inserts the participation first, reuse it - whether
+      # the model's uniqueness validation or the unique index rejects this one.
       def create_participation(assessment, user)
         Participation.create!(assessment_id: assessment.id, user_id: user.id, status: :pending)
       rescue ActiveRecord::RecordNotUnique
+        Participation.find_by!(assessment_id: assessment.id, user_id: user.id)
+      rescue ActiveRecord::RecordInvalid => e
+        raise unless e.record.errors.of_kind?(:user_id, :taken)
+
         Participation.find_by!(assessment_id: assessment.id, user_id: user.id)
       end
 
