@@ -4,10 +4,12 @@ class ExamGradingTableComponent < ViewComponent::Base
     @exam = exam
     @lecture = exam.lecture
     @assessment = exam.assessment
-    @config = Assessment::DisplayConfigResolver.resolve(
-      assessable: @exam, grading_scope: @grading_scope, table_option: :grading
-    )
     @participations = participations_index.values
+  end
+
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: @exam, grading_scope: @grading_scope,
+                                        table_option: :grading)
   end
 
   def grading_enabled?
@@ -20,19 +22,6 @@ class ExamGradingTableComponent < ViewComponent::Base
 
   def grading_records?
     @participations.any?
-  end
-
-  def sticky_layout
-    @sticky_layout ||= Assessment::StickyColumnLayout.new(
-      left_columns: @config.left_columns,
-      right_columns: @config.right_columns
-    )
-  end
-
-  def sticky_css_vars
-    return unless @config
-
-    helpers.sticky_css_vars_calc(sticky_layout)
   end
 
   private

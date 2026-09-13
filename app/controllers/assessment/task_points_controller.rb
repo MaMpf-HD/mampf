@@ -249,18 +249,6 @@ module Assessment
           )
         )
       end
-      
-      def rerender_user_row
-        respond_to do |format|
-          format.turbo_stream do
-            row = turbo_stream.replace(
-              "participation-row-#{@participation.id}",
-              html: render_to_string(participation_row)
-            )
-            render turbo_stream: [row, summary_stream]
-          end
-        end
-      end
 
       def render_task_points_update(*streams)
         flash.now[:notice] = t("assessment.task_points.update")
@@ -268,8 +256,13 @@ module Assessment
       end
 
       def summary_stream
-        summary = TutorialPointingTableComponent.new(assignment: @assessable,
-                                                     grading_scope: table_scope).summary
+        summary = case @assessable
+                  when Assignment
+                    TutorialPointingTableComponent.new(assignment: @assessable,
+                                                       grading_scope: table_scope).summary
+                  when Exam
+                    ExamPointingTableComponent.new(exam: @assessable).summary
+        end
         turbo_stream.replace("pointing-summary", html: render_to_string(summary))
       end
 

@@ -1,14 +1,18 @@
 class ExamPointingTableComponent < ViewComponent::Base
-  def initialize(exam:, draft_scheme: nil)
+  def initialize(exam:)
     super()
     @exam = exam
     @lecture = exam.lecture
     @assessment = exam.assessment
-    @config = Assessment::DisplayConfigResolver.resolve(
-      assessable: @exam, grading_scope: @grading_scope, table_option: :pointing
-    )
     @participations = participations_index.values
-    @draft_scheme = draft_scheme
+  end
+
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: @exam, grading_scope: @grading_scope,
+                                        table_option: :pointing)
+  end
+
+  def toolbar
   end
 
   def grading_enabled?
@@ -58,17 +62,12 @@ class ExamPointingTableComponent < ViewComponent::Base
     @participations.any?
   end
 
-  def sticky_layout
-    @sticky_layout ||= Assessment::StickyColumnLayout.new(
-      left_columns: @config.left_columns,
-      right_columns: @config.right_columns
-    )
+  def summary
+    PointingSummaryComponent.new(statuses: row_statuses)
   end
 
-  def sticky_css_vars
-    return unless @config
-
-    helpers.sticky_css_vars_calc(sticky_layout)
+  def row_statuses
+    @participations.map(&:display_status)
   end
 
   private

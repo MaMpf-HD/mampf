@@ -17,8 +17,6 @@ export default class extends Controller {
 
     this.noteTarget.removeAttribute("readonly");
     this.saveButtonTarget.classList.remove("d-none");
-    this.updateSaveButtonState();
-
     this.modal.show();
   }
 
@@ -38,6 +36,5 @@ export default class extends Controller {
   }
 
   noteChanged() {
-    this.updateSaveButtonState();
   }
 }

@@ -102,6 +102,12 @@ module Assessment
           I18n.t("assessment.errors.no_participation")
         end
 
+        def validate_assessment_belongs_to_exam(assessment)
+          return if assessment&.assessable.is_a?(Exam)
+
+          I18n.t("assessment.exam_grader.assessment_not_exam")
+        end
+
         def raise_if_errors!(*errors)
           errors = errors.flatten.compact
           raise(ExamGraderError, errors.join("; ")) if errors.any?

@@ -26,7 +26,8 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @assessable, grading_scope: @grading_scope)
+    @layout ||= PointingTableLayout.for(assessable: @assessable, grading_scope: @grading_scope,
+                                        table_option: @table_option)
   end
 
   def tasks?
@@ -95,6 +96,7 @@ class ParticipationRowComponent < ViewComponent::Base
 
   # The name filter finds a talk's rows by the talk as well as by the person.
   def filter_name
+    t = layout
     [(@assessable.title if layout.show?(:talk)), @user.tutorial_name].compact.join(" ")
   end
 
@@ -265,7 +267,7 @@ class ParticipationRowComponent < ViewComponent::Base
       end
     end
   end
-  
+
   # The buttons save points on a sheet's row and a grade on a talk's.
   def row_action_label(action)
     scope = single_grade? ? "assessment.grade_talk_row" : "assessment.grading_tutorial"

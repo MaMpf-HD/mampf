@@ -101,24 +101,18 @@ module Assessment
 
       def set_resources_from_participation
         @participation = Participation.find(params[:participation_id])
-
         @assessment = @participation.assessment
         @user = @participation.user
         @assessable = @assessment&.assessable
         @lecture = @assessable&.lecture
         empty_resource_check
-        return if performed?
-
-        return if @assessable&.speakers&.exists?(id: @user.id)
-
-        respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
       end
 
       # Only a talk has a single grade; a sheet's participation is pointed
       # elsewhere and has no speakers to check.
       def empty_resource_check
         return respond_with_flash(:alert, t("assessment.errors.no_assessment")) unless @assessment
-        unless @assessable.is_a?(Talk)
+        unless @assessable.is_a?(Talk) || @assessable.is_a?(Exam)
           return respond_with_flash(:alert, t("assessment.errors.not_gradable"))
         end
         return respond_with_flash(:alert, t("assessment.errors.user_not_found")) unless @user
