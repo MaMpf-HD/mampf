@@ -13,7 +13,6 @@ class TalkGradingTableComponent < ViewComponent::Base
     @legacy_talks ||= @talks.select { |t| t.speakers.any? && t.assessment.blank? }
   end
 
-  # One row per speaker, talk by talk in the seminar's order.
   def rows
     @rows ||= gradable_talks.flat_map do |talk|
       talk.speakers.filter_map { |speaker| participations_index[[talk.assessment.id, speaker.id]] }

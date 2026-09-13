@@ -1,6 +1,7 @@
 # One row of a pointing table for somebody without a hand-in file: a sheet's
-# tasks, or a talk's single grade. The participation may be unsaved until the
-# backfill worker has been round; recording the hand-in saves it.
+# tasks, or a talk's single grade. A sheet's row may be drawn from an unsaved
+# participation before AssessmentBackfillWorker runs; recording the hand-in
+# saves it.
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
@@ -88,7 +89,6 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.dates.sort.map { |date| I18n.l(date, format: :concise) }.join(", ")
   end
 
-  # The name filter finds a talk's rows by the talk as well as by the person.
   def filter_name
     [(@assessable.title if layout.show?(:talk)), @user.tutorial_name].compact.join(" ")
   end
@@ -207,7 +207,6 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
-  # The buttons save points on a sheet's row and a grade on a talk's.
   def row_action_label(action)
     scope = single_grade? ? "assessment.grade_talk_row" : "assessment.grading_tutorial"
     helpers.t("#{scope}.#{action}")
@@ -232,14 +231,13 @@ class ParticipationRowComponent < ViewComponent::Base
       helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
   end
 
-  # A sheet is filed with the group that had it; a talk moves nowhere.
+  # Tutorial movement compares an assignment participation with the user's
+  # tutorial membership; a talk participation has no tutorial to compare.
   def movement_info_for_user(user)
     return nil if single_grade?
 
     helpers.movement_info_for_user_assignment(user, users_movement_map)
   end
-
-  # ---- single grade ----
 
   def grade_numeric
     @participation&.grade_numeric

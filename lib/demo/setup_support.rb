@@ -191,8 +191,8 @@ module Demo
         Rails.logger.debug("")
       end
 
-      # One talk a week, the first half of them already held, so the grading
-      # table has past talks to grade and future ones to wait for.
+      # Use past and future dates to demonstrate the grading table with both
+      # completed and upcoming talks.
       def demo_talk_date(index)
         Date.current.beginning_of_week + (index - 5).weeks + 2.days
       end

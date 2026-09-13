@@ -1,8 +1,5 @@
-# Which columns a pointing table has, in which order, which of them are pinned
-# to an edge, and how wide every column is. The CSS reads widths and pins as
-# variables, so a table for another kind of assessment - a talk's grade
-# instead of a sheet's tasks - is one entry here and one mixin line in the
-# stylesheet.
+# Columns, pins and widths of a pointing table in one place; the stylesheet
+# reads them as CSS variables, so header and rows cannot disagree.
 class PointingTableLayout
   class UnsupportedAssessableError < StandardError; end
 
@@ -21,9 +18,8 @@ class PointingTableLayout
     correction: 140
   }.freeze
 
-  # Whoever the row belongs to is pinned on the left, saving on the right;
-  # everything else scrolls, so the marks get the width between them. A
-  # talk's rows belong to the talk as much as to the speaker, so both stay.
+  # Pin :talk and :team so the talk and speaker remain visible while
+  # scrolling through the grade and note columns.
   def self.for(assessable:, grading_scope: nil)
     case assessable
     when Assignment

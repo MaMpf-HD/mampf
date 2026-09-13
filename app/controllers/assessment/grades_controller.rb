@@ -49,8 +49,8 @@ module Assessment
         )
       end
 
-      # The line above the table counts the rows; a row that changed state
-      # takes the line with it.
+      # Saving a grade can change the participation status, so update
+      # pointing-summary along with the row.
       def summary_stream
         statuses = TalkGradingTableComponent.new(seminar: @lecture).row_statuses
         summary = PointingSummaryComponent.new(statuses: statuses, hand_ins: false)
@@ -110,8 +110,8 @@ module Assessment
         respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
       end
 
-      # Only a talk has a single grade; a sheet's participation is pointed
-      # elsewhere and has no speakers to check.
+      # Reject non-Talk participations before checking speakers; assignments
+      # receive task points through TaskPointsController.
       def empty_resource_check
         return respond_with_flash(:alert, t("assessment.errors.no_assessment")) unless @assessment
         unless @assessable.is_a?(Talk)

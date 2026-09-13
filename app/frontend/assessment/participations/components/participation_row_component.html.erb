@@ -184,7 +184,7 @@
   <% if layout.show?(:hand_in) %>
     <td class="text-center <%= layout.column_class(:hand_in) %>">
       <% if can_enter_points? && !elsewhere? && !@participation.exempt? && !@participation.absent? %>
-        <%# A disabled button answers no hover, so the state is a mark, not a button. %>
+        <%# A disabled button shows no title on hover, so the kept mark is a span. %>
         <% if paper_hand_in? && !paper_hand_in_removable? %>
           <span
             class="

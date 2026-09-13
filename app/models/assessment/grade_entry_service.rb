@@ -12,7 +12,8 @@ module Assessment
 
       grade_info = validate_grade_info(grade_info)
       status = calculate_status(participation, grade_info)
-      # A grade taken back leaves nothing that was graded, so nobody graded it.
+      # Returning to :pending clears grader_id and graded_at because they
+      # describe the current grade, not the history of grade changes.
       graded = status != :pending
 
       participation.update!(
@@ -25,8 +26,6 @@ module Assessment
       )
     end
 
-    # Returns :reviewed if a grade is provided, :pending if no grade is provided,
-    # and retains the current status if the participation is exempt or absent.
     def self.calculate_status(participation, new_grade_info)
       if participation.exempt? || participation.absent?
         participation.status

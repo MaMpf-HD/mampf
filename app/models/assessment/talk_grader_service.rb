@@ -34,10 +34,6 @@ module Assessment
         Participation.find_by!(assessment_id: assessment.id, user_id: user.id)
       end
 
-      # Given a list of [assessment, user]
-      # pairs, loads all existing participations in one query and creates only
-      # the missing ones.
-      # Returns a hash keyed by [assessment_id, user_id].
       def init_participations(pairs)
         pairs = pairs.reject { |assessment, user| assessment.nil? || user.nil? }
         return {} if pairs.empty?

@@ -12,8 +12,6 @@ class PointingTableHeaderComponent < ViewComponent::Base
     super()
   end
 
-  # The layout names the columns; each is built from what it acts on - the
-  # points, the grade, the hand-in, the correction.
   def columns
     @layout.columns.flat_map { |column| build(column) }
   end
@@ -59,7 +57,6 @@ class PointingTableHeaderComponent < ViewComponent::Base
       t("basics.team")
     end
 
-    # Two file columns read alike; the file type tells them from the team.
     def sublabel_for(column)
       return unless [:hand_in, :correction].include?(column)
 
@@ -83,7 +80,8 @@ class PointingTableHeaderComponent < ViewComponent::Base
       )
     end
 
-    # Two icons need no heading over them; a reader without eyes gets one.
+    # Keep the save column label for screen readers; the visible buttons
+    # already identify the actions with icons.
     def save_column
       Column.new(css_class: "text-center #{@layout.column_class(:save)} grade-th",
                  label: t("buttons.save"),
