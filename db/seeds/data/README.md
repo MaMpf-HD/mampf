@@ -1,13 +1,14 @@
 # Seed data files
 
 The content core of the development seed data, written out of a seeded
-database by `rails seeds:extract` (see `lib/seeds/extract_support.rb`) and from
+database by `rails seeds:extract` (see `db/seeds/support/extract_support.rb`) and from
 here on maintained by hand. This is the first half of moving the seed from an
 SQL dump to a script: what the app is filled with lives in the repository,
 where it can be reviewed and diffed, instead of in a binary artifact that each
 build inherits from the last one.
 
-Nothing loads these files yet. The loader is the next step.
+Loaded by `db/seeds/010_content.rb` via `Seeds::LoadSupport`
+(`db/seeds/support/load_support.rb`), the write side of this pair.
 
 ## Format
 
@@ -40,16 +41,16 @@ A group nothing points at -- join rows, mostly -- is a plain sequence:
   graph, a solution). There is no readable form of those, so what the database
   held is carried over verbatim.
 
-## Open questions for the loader
+## How the loader reads this
 
 - **Dates** are the ones the dump carried, and only mean anything against the
-  term the data was in on the day of extraction; `_meta.yml` records both. A
-  seed that does not go stale wants them relative to `Date.current` instead,
-  which is a decision about how to write them, not about how to read them.
-- **The `serialized` blobs** (6 quiz graphs, the question solutions) are
-  opaque. Either the loader hands them back to the column unchanged -- reading
-  them the way the app does, with `YAML.safe_load` and permitted classes -- or
-  they get a readable representation of their own.
+  term the data was in on the day of extraction; `_meta.yml` records both.
+  The loader shifts every date/datetime column (Term included) by the same
+  number of whole semesters that separate `_meta.yml`'s `active_term` from
+  today's calendar term, so the seed never goes stale.
+- **The `serialized` blobs** (quiz graphs, question solutions) are opaque:
+  the loader writes them back to the column unchanged, bypassing its coder,
+  rather than decoding and re-encoding a value nothing here reads.
 - **What is not here** belongs to the demo scenarios in `lib/demo/`, which
   generate it on every run: the students they make up, tutorials, rosters,
   submissions, campaigns, forum posts, notifications. `_meta.yml` counts the
