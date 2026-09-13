@@ -33,9 +33,9 @@ export default class extends Controller {
     this.element.style.setProperty("--fade-right-offset", `${this.savePinWidth()}px`);
   }
 
-  // The save column sticks to the edge only while its own place lies beyond
-  // it; scrolled that far, it sits where it is laid out and pins nothing.
-  // Its place is read off the column before it, which is not pinned.
+  // The save header's bounding box already includes its sticky offset.
+  // Use the preceding, horizontally unpinned header to decide whether save
+  // would extend beyond the viewport.
   savePinWidth() {
     const save = this.innerTarget.querySelector("th.save-col");
     const before = save?.previousElementSibling;

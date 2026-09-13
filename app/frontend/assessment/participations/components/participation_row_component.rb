@@ -1,10 +1,9 @@
-# One row of a pointing table for somebody without a hand-in file: a sheet's
-# tasks, or a talk's single grade. A sheet's row may be drawn from an unsaved
-# participation before AssessmentBackfillWorker runs; recording the hand-in
-# saves it.
+# Renders a participation's assignment task points or talk grade.
 class ParticipationRowComponent < ViewComponent::Base
   class MissingUserError < StandardError; end
 
+  # Assignment participations may be unsaved until AssessmentBackfillWorker
+  # runs or a paper hand-in is recorded.
   def initialize(participation:, assessment:, grading_scope:, table_option: :pointing)
     super()
     @participation = participation
@@ -226,8 +225,6 @@ class ParticipationRowComponent < ViewComponent::Base
     false
   end
 
-  # The save and reload buttons write points on a sheet's row and a grade on
-  # a talk's, and ask the matching right.
   def can_enter_row?
     single_grade? ? can_enter_grade? : can_enter_points?
   end

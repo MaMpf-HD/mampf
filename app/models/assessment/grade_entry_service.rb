@@ -1,11 +1,8 @@
 module Assessment
-  # The one place a grade is entered by hand - a talk's today, an exam's
-  # later. A grade scheme applying itself and an absence clearing a grade
-  # keep contracts of their own.
+  # Writes manual grades and notes on assessment participations.
   class GradeEntryService
     class GradeEntryError < StandardError; end
 
-    # The scale the grade schemes band over, plus the failing grade.
     VALID_GRADES_NUMERIC = (GradeScheme::PASSING_GRADES + [5.0]).sort.freeze
 
     def self.set_grade(participation, grade_info, grader, comment = nil)
@@ -25,8 +22,8 @@ module Assessment
                             **stamp_for(participation, grade_info, grader, status))
     end
 
-    # Grader and time belong to the grade: a note alone leaves them, a grade
-    # taken back clears them.
+    # Record who changed the grade and when; note-only edits must preserve
+    # grader_id and graded_at. Clear both when the status returns to pending.
     def self.stamp_for(participation, grade_info, grader, status)
       return { grader_id: nil, graded_at: nil } if status == :pending
       return {} unless grade_changed?(participation, grade_info)

@@ -51,8 +51,8 @@ export default class extends Controller {
     }
   }
 
-  // A grade comes from a select and a note is free text; only points can
-  // be typed wrong, and the server checks the grade again.
+  // Grade options come from a select; GradeEntryService validates them.
+  // Only point inputs need the minimum-value check.
   onParticipationChanged(event) {
     if (this.validateNewPoint(event)) {
       this.markDirty("participation");

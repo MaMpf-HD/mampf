@@ -3,8 +3,7 @@ module Assessment
     class TalkGraderError < StandardError; end
 
     class << self
-      # Who may grade is the controller's question; here only whether this
-      # participation is a talk's.
+      # Callers must authorize grade entry before calling this service.
       def set_grade(participation, grade, grader, comment = nil)
         raise_if_errors!(validate_participation_present(participation))
         raise_if_errors!(validate_assessment_belongs_to_talk(participation.assessment))
@@ -13,18 +12,16 @@ module Assessment
         GradeEntryService.set_grade(participation, grade_info, grader, comment)
       end
 
-      # Two tabs opening the seminar at once race for the same row; the unique
-      # index decides, and the loser reads what the winner wrote.
+      # If another request inserts the participation after validation, reuse it
+      # when the unique index rejects this insert.
       def create_participation(assessment, user)
         Participation.create!(assessment_id: assessment.id, user_id: user.id, status: :pending)
       rescue ActiveRecord::RecordNotUnique
         Participation.find_by!(assessment_id: assessment.id, user_id: user.id)
       end
 
-      # Drawing the table creates the rows it lacks - a deliberate exception
-      # to reads that write nothing. Speakers reach a talk through the roster
-      # in bulk, past any callback, and a row without an id could not be
-      # graded through its route; the create is idempotent on the unique index.
+      # GET rendering creates missing participations because grade routes need IDs.
+      # Roster allocation uses insert_all, which skips SpeakerTalkJoin callbacks.
       def init_participations(pairs)
         pairs = pairs.reject { |assessment, user| assessment.nil? || user.nil? }
         return {} if pairs.empty?

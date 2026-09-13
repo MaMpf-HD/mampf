@@ -1,5 +1,4 @@
-# The filters above a pointing table, the same for a sheet's and a talk's;
-# whatever sits on the right - actions, saving - comes as content.
+# Renders pointing-table filters with optional actions supplied as content.
 class PointingFilterComponent < ViewComponent::Base
   def initialize(id:, status_options: nil, tutorial_options: nil)
     super()

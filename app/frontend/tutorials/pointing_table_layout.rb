@@ -1,5 +1,4 @@
-# Columns, pins and widths of a pointing table in one place; the stylesheet
-# reads them as CSS variables, so header and rows cannot disagree.
+# Defines the columns, pins, and widths shared by table headers and rows.
 class PointingTableLayout
   class UnsupportedAssessableError < StandardError; end
 

@@ -8,7 +8,6 @@ module Assessment
       respond_with_flash(:alert, I18n.t("assessment.errors.invalid_request_params"))
     end
 
-    # A save the model refuses has a reason; the reader gets that reason.
     rescue_from ActiveRecord::RecordInvalid do |e|
       respond_with_flash(:alert, e.record.errors.full_messages.to_sentence)
     end
