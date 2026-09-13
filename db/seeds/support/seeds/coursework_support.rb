@@ -27,7 +27,7 @@ module Seeds
     end
 
     def demo_lecture
-      Lecture.find_by(id: 1)
+      Demo::LectureSupport.find
     end
 
     # The playground moved to the term that is still being registered for; a

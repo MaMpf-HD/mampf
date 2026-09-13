@@ -7,7 +7,6 @@
 # just the order that has always produced a consistent whole -- what used to
 # be `rails db:seed` after restoring the shipped dump.
 require "factory_bot_rails"
-require Rails.root.join("lib/seeds/build_support")
 
 Demo::SetupSupport.setup_from_scratch!(homework: false)
 Demo::CampaignSetupSupport.setup!
@@ -15,11 +14,13 @@ Demo::NextTermBannerSupport.setup!
 Demo::VignettesSupport.setup!
 Demo::LegacyLectureSupport.setup!
 
-# Registration still open in the term after the one the seed plays in, and
-# nothing left dangling in the one it does.
-Seeds::BuildSupport.add_running_campaigns!
-Seeds::BuildSupport.settle_current_term_campaigns!
-Seeds::BuildSupport.extend_open_deadlines!
+# Registration still open in the term after the one the seed plays in,
+# nothing left dangling in the one it does, deadlines that do not go stale,
+# and two accounts kept on an outdated password policy.
+Demo::ScenarioTouchupsSupport.add_running_campaigns!
+Demo::ScenarioTouchupsSupport.settle_current_term_campaigns!
+Demo::ScenarioTouchupsSupport.extend_open_deadlines!
+Demo::ScenarioTouchupsSupport.stage_password_policy!
 
 # The accounts a developer signs in with, seated with the coursework already
 # under way -- last, so the homework below has somewhere to land.

@@ -205,7 +205,7 @@ module Seeds
       # The home page offers a welcome text and a program; without one of them
       # the page keeps telling its teacher that it is empty.
       def attach_program!
-        lecture = Lecture.find_by(id: 1)
+        lecture = Demo::LectureSupport.find
         return if lecture.nil? || lecture.home_attachment.present?
 
         source = Medium.where.not(manuscript_data: nil).first

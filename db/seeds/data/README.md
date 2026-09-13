@@ -1,14 +1,14 @@
 # Seed data files
 
 The content core of the development seed data, written out of a seeded
-database by `rails seeds:extract` (see `db/seeds/support/extract_support.rb`) and from
+database by `rails seeds:extract` (see `db/seeds/support/seeds/extract_support.rb`) and from
 here on maintained by hand. This is the first half of moving the seed from an
 SQL dump to a script: what the app is filled with lives in the repository,
 where it can be reviewed and diffed, instead of in a binary artifact that each
 build inherits from the last one.
 
 Loaded by `db/seeds/010_content.rb` via `Seeds::LoadSupport`
-(`db/seeds/support/load_support.rb`), the write side of this pair.
+(`db/seeds/support/seeds/load_support.rb`), the write side of this pair.
 
 ## Format
 
@@ -51,7 +51,8 @@ A group nothing points at -- join rows, mostly -- is a plain sequence:
 - **The `serialized` blobs** (quiz graphs, question solutions) are opaque:
   the loader writes them back to the column unchanged, bypassing its coder,
   rather than decoding and re-encoding a value nothing here reads.
-- **What is not here** belongs to the demo scenarios in `lib/demo/`, which
+- **What is not here** belongs to the demo scenarios in
+  `db/seeds/support/demo/`, which
   generate it on every run: the students they make up, tutorials, rosters,
   submissions, campaigns, forum posts, notifications. `_meta.yml` counts the
   rows that were dropped for pointing at one of them -- ten talks assigned to

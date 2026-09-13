@@ -9,7 +9,6 @@ module Demo
   module VignettesSupport
     extend self
 
-    DEFAULT_LECTURE_ID = 1
     TITLE_PREFIX = "Demo:".freeze
 
     # One entry per demo run through a vignette, so the three codes give
@@ -34,7 +33,9 @@ module Demo
       werden sie nur von der Arbeitsgruppe Mathematikdidaktik.</div>
     HTML
 
-    def setup!(lecture_id: DEFAULT_LECTURE_ID)
+    # Without a lecture id the demo lecture is used, whichever id it was
+    # given when the database was seeded.
+    def setup!(lecture_id: nil)
       ensure_non_production!
       lecture = lecture!(lecture_id)
 
@@ -55,9 +56,13 @@ module Demo
       # rubocop:enable Rails/Exit
 
       def lecture!(lecture_id)
-        lecture = Lecture.find_by(id: lecture_id)
-        raise("No lecture with id #{lecture_id}. Run just seed first.") unless lecture
-        raise("Lecture #{lecture_id} has no teacher.") unless lecture.teacher
+        if lecture_id.blank?
+          lecture = Demo::LectureSupport.find!
+        else
+          lecture = Lecture.find_by(id: lecture_id)
+          raise("No lecture with id #{lecture_id}. Run just seed first.") unless lecture
+        end
+        raise("Lecture #{lecture.id} has no teacher.") unless lecture.teacher
 
         lecture
       end

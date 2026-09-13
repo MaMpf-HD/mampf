@@ -1,8 +1,6 @@
 # The content core -- terms, courses, lectures, tags/notions/relations, items,
 # media metadata, personas -- read from db/seeds/data/*.yml. See
 # Seeds::LoadSupport and db/seeds/data/README.md.
-require_relative "support/load_support"
-
 report = Seeds::LoadSupport.load!
 
 if report == :already_loaded

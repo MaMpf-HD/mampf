@@ -1,5 +1,3 @@
-require Rails.root.join("db/seeds/support/extract_support")
-
 namespace :seeds do
   desc "Write the content core of the seeded database out to db/seeds/data"
   task extract: :environment do

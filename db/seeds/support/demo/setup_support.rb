@@ -73,9 +73,9 @@ module Demo
       # rubocop:enable Rails/Exit
 
       def lecture!
-        lecture = Lecture.find_by(id: 1)
+        lecture = Demo::LectureSupport.find
         # rubocop:disable Rails/Exit
-        abort("Lecture 1 not found. Run just seed first.") unless lecture
+        abort(Demo::LectureSupport::MISSING_LECTURE_MESSAGE) unless lecture
         # rubocop:enable Rails/Exit
 
         teacher = teacher!
@@ -84,9 +84,9 @@ module Demo
       end
 
       def teacher!
-        teacher = User.find_by(email: "teacher@mampf.edu")
+        teacher = Demo::LectureSupport.teacher
         # rubocop:disable Rails/Exit
-        abort("User teacher@mampf.edu not found. Run just seed first.") unless teacher
+        abort(Demo::LectureSupport::MISSING_TEACHER_MESSAGE) unless teacher
         # rubocop:enable Rails/Exit
 
         teacher

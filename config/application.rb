@@ -29,6 +29,8 @@ module Mampf
     # Autoload lib extensions path
     config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "tasks", "rubocop"])
 
+    config.autoload_paths << Rails.root.join("db/seeds/support") if Rails.env.local?
+
     # Turned off in RSpec (see spec/rails_helper.rb) because rating a password
     # takes about a quarter of a second.
     config.x.password_strength_checks = true

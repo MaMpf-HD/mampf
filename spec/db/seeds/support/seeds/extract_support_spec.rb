@@ -1,5 +1,4 @@
 require "rails_helper"
-require Rails.root.join("db/seeds/support/extract_support")
 
 # The extraction runs once against a seeded development database, which is not
 # something an example can stand up. What these examples are about is the shape
