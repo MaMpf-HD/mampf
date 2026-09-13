@@ -28,7 +28,7 @@ module Demo
       return lecture if demo_assignments(lecture).exists?
 
       # rubocop:disable Rails/Exit
-      abort("Lecture 1 has no demo assignments. Run demo:assessment first.")
+      abort("Lecture 1 has no demo assignments. Run just seed first.")
       # rubocop:enable Rails/Exit
     end
 

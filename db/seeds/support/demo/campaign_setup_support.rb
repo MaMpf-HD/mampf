@@ -88,13 +88,13 @@ module Demo
     def seed_preference_campaign_registrations!
       ensure_non_production!
 
-      # Scoped to the playground: an earlier build may have left a campaign of
+      # Scoped to the playground: an earlier run may have left a campaign of
       # the same name on the lecture this used to run on.
       campaign = Registration::Campaign.find_by(
         campaignable: lecture!, description: PREFERENCE_CAMPAIGN_DESCRIPTION
       )
       unless campaign
-        output("Campaign not found. Run demo:campaigns first.")
+        output("Campaign not found. Run just seed first.")
         return
       end
 
@@ -289,7 +289,7 @@ module Demo
         campaignable: lecture!, description: MIXED_FCFS_CAMPAIGN_DESCRIPTION
       )
       unless campaign
-        output("Campaign not found. Run demo:campaigns first.")
+        output("Campaign not found. Run just seed first.")
         return
       end
 
@@ -405,10 +405,10 @@ module Demo
 
       seminar = Lecture.find_by(course: course, teacher: teacher)
       if seminar
-        # The scenario is staged from scratch on every build: its campaigns
+        # The scenario is staged from scratch on every run: its campaigns
         # cannot be rewound once students have registered, its cohorts would
         # collide by title, and its talks would pile up twelve at a time. The
-        # term follows, in case an earlier build left the seminar in one that
+        # term follows, in case an earlier run left the seminar in one that
         # has since started.
         Demo::CampaignCleanup.discard_all!(seminar)
         Cohort.where(context: seminar).destroy_all

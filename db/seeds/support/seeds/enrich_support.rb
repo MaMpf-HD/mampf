@@ -177,9 +177,8 @@ module Seeds
       end
 
       # The home page is where a lecture starts for a student, and an empty one
-      # says nothing about what the page is for.
-      # The build owns these texts: a dump is rebuilt from the one before it, so
-      # an intro written by an earlier build has to be replaced, not kept.
+      # says nothing about what the page is for. Overwritten rather than left
+      # alone, so a rerun replaces a stale intro instead of leaving it be.
       def add_home_intros!
         showcase_lectures.each_with_index do |lecture, index|
           text = format(intro_template(lecture, index), title: lecture.course.title)

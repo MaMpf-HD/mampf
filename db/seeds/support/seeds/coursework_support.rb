@@ -8,10 +8,6 @@ module Seeds
 
     SECOND_TUTOR_EMAIL = "tutor2@mampf.edu".freeze
     NAMED_STUDENT_EMAILS = (1..5).map { |number| "student#{number}@mampf.edu" }.freeze
-    # Left behind on the demo lecture by earlier builds, when the campaign
-    # playground still ran on it.
-    PLAYGROUND_TUTORIAL_TITLES = /\A(FCFS )?Tutorial \d+\z/
-    PLAYGROUND_COHORT_TITLES = ["Repeaters", "Waitlist"].freeze
     # What a group hands in per sheet. Also the ceiling, so that a rebuild does
     # not pile more on top of what the last one left.
     TEAMS_PER_TUTORIAL = 2
@@ -20,7 +16,6 @@ module Seeds
       lecture = demo_lecture
       return if lecture.nil?
 
-      drop_playground_leftovers!(lecture)
       staff_tutorials!(lecture)
       seat_named_students!(lecture)
       hand_in_sheets!(lecture)
@@ -28,25 +23,6 @@ module Seeds
 
     def demo_lecture
       Demo::LectureSupport.find
-    end
-
-    # The playground moved to the term that is still being registered for; a
-    # rebuild starts from the last dump, so what it left here has to go.
-    def drop_playground_leftovers!(lecture)
-      Demo::CampaignCleanup.discard_all!(lecture, except: kept_campaign_description)
-
-      Cohort.where(context: lecture, title: PLAYGROUND_COHORT_TITLES).destroy_all
-
-      lecture.tutorials.each do |tutorial|
-        next unless tutorial.title.match?(PLAYGROUND_TUTORIAL_TITLES)
-        next if tutorial.tutorial_memberships.any? || tutorial.submissions.any?
-
-        tutorial.destroy!
-      end
-    end
-
-    def kept_campaign_description
-      Demo::SetupSupport::LECTURE_CAMPAIGN_DESCRIPTION
     end
 
     def staff_tutorials!(lecture)
@@ -91,10 +67,10 @@ module Seeds
                 .first&.tutorial
     end
 
-    # The lecture's own sheets only. The demo homework has a stager of its own,
-    # which clears and rebuilds what it covers - staging it here would be work
-    # thrown away, in a shape that differs from what a developer sees after
-    # `demo:setup`.
+    # The lecture's own sheets only. The demo homework has a stager of its own
+    # (Demo::HomeworkSubmissionSupport), which clears and rebuilds what it
+    # covers - staging it here would be work thrown away, in a shape that
+    # differs from what it produces.
     def hand_in_sheets!(lecture)
       return if Demo::HandInSupport.manuscript_path.nil?
 

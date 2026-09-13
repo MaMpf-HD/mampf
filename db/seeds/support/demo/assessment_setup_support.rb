@@ -24,7 +24,7 @@ module Demo
       lecture = lecture!
       return lecture if TutorialMembership.exists?(tutorial_id: demo_tutorial_ids(lecture))
 
-      raise("Lecture 1 has no tutorial roster. Run demo:rosters first.")
+      raise("Lecture 1 has no tutorial roster. Run just seed first.")
     end
 
     # Which sheets belong to the demo, asked from outside as well: the seed

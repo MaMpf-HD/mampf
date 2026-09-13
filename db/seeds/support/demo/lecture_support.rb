@@ -16,8 +16,8 @@ module Demo
     MISSING_TEACHER_MESSAGE =
       "User #{TEACHER_EMAIL} not found. Run just seed first.".freeze
 
-    # Falls back to the latest term the course ran in, so that a build which
-    # has just moved the data forward still finds it.
+    # Falls back to the latest term the course ran in, in case no term is
+    # marked active.
     def find
       course = Course.find_by(title: COURSE_TITLE)
       return if course.nil?

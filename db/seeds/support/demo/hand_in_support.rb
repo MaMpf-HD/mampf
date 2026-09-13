@@ -65,9 +65,9 @@ module Demo
       # rubocop:enable Rails/SkipsModelValidations
     end
 
-    # A file the seed already ships, so the dump grows by nothing that is not
-    # already in it -- and the smallest of them, because the archive beside the
-    # dump carries a copy per hand-in.
+    # A manuscript the seed already ships, reused rather than adding a new
+    # upload -- and the smallest of them, since every hand-in gets its own
+    # copy.
     def manuscript_path
       return @manuscript_path if defined?(@manuscript_path)
 

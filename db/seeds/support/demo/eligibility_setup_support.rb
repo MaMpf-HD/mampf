@@ -27,7 +27,7 @@ module Demo
       return lecture if StudentPerformance::Record.exists?(lecture_id: lecture.id)
 
       # rubocop:disable Rails/Exit
-      abort("Lecture #{lecture.id} has no performance records. Run demo:performance first.")
+      abort("Lecture #{lecture.id} has no performance records. Run just seed first.")
       # rubocop:enable Rails/Exit
     end
 

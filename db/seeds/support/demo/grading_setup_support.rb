@@ -47,7 +47,7 @@ module Demo
       return exam if exam&.exam_roster_entries&.exists?
 
       # rubocop:disable Rails/Exit
-      abort("No finalized demo exam roster. Run demo:exams first.")
+      abort("No finalized demo exam roster. Run just seed first.")
       # rubocop:enable Rails/Exit
     end
 

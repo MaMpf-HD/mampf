@@ -11,4 +11,17 @@ namespace :seeds do
   task package: :environment do
     Seeds::PackageSupport.package!
   end
+
+  desc "Check that a seeded database has everything db/seeds/ promises"
+  task verify: :environment do
+    results = Seeds::VerifySupport.verify!
+    results.each { |r| puts "#{r[:ok] ? "✓" : "✗"} #{r[:check]} (#{r[:detail]})" }
+
+    failures = results.reject { |r| r[:ok] }
+    if failures.any?
+      abort("\n#{failures.size} of #{results.size} checks failed.")
+    else
+      puts "\nAll #{results.size} checks passed."
+    end
+  end
 end

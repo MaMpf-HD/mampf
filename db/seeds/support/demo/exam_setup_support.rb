@@ -45,7 +45,7 @@ module Demo
       return lecture if StudentPerformance::Certification.exists?(lecture_id: lecture.id)
 
       # rubocop:disable Rails/Exit
-      abort("Lecture #{lecture.id} has no certifications. Run demo:eligibility first.")
+      abort("Lecture #{lecture.id} has no certifications. Run just seed first.")
       # rubocop:enable Rails/Exit
     end
 
@@ -78,9 +78,9 @@ module Demo
         exams.delete_all
       end
 
-      # Everything hanging off the gradebook, innermost first: once `demo:grading`
-      # has run, deleting the assessment alone hits the foreign keys — and by
-      # then the campaigns above are already gone, so an abort here is a mess.
+      # Everything hanging off the gradebook, innermost first: once grading has
+      # run, deleting the assessment alone hits the foreign keys — and by then
+      # the campaigns above are already gone, so an abort here is a mess.
       def reset_exam_assessments!(exams)
         assessment_ids = Assessment::Assessment
                          .where(assessable_type: "Exam", assessable_id: exams.ids)
