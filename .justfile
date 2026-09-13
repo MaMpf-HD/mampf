@@ -10,11 +10,10 @@ ensure-dev-dependencies:
     just docker ensure-db-container-running
     just docker ensure-redis-container-running
 
-# Preseeds the database
+# Sets up the database (schema + seed data) and downloads upload fixtures
 seed:
     #!/usr/bin/env bash
     just ensure-dev-dependencies
-    export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/mampf.sql"
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     ./docker/development/init.sh | tee /proc/1/fd/1
 

@@ -1,13 +1,6 @@
 require Rails.root.join("db/seeds/support/extract_support")
 
 namespace :seeds do
-  desc "Rebuild the shipped development seed data " \
-       "(term=\"WS 2026\" to move it there, the current term to rebuild in place, " \
-       "default one semester on)"
-  task build: :environment do
-    Seeds::BuildSupport.build!(target_term: ENV.fetch("term", nil))
-  end
-
   desc "Write the content core of the seeded database out to db/seeds/data"
   task extract: :environment do
     Seeds::ExtractSupport.extract!.each do |row|
@@ -16,7 +9,7 @@ namespace :seeds do
     end
   end
 
-  desc "Pack the uploads the seed data points at, for publishing beside the dump"
+  desc "Pack the uploads the seed data points at, for publishing to mampf-init-data"
   task package: :environment do
     Seeds::PackageSupport.package!
   end

@@ -2,35 +2,19 @@
 set -Eeuo pipefail
 cd /workspaces/mampf/
 
-check_for_preseeds() {
-  echo "💾  Checking for preseeds (in development env)"
-
-  # Database preseed
-  if [[ -n "${DB_SQL_PRESEED_URL:-}" ]]; then
-    if [[ -f "${DB_SQL_PRESEED_URL}" ]]; then
-      echo "💾  Found DB preseed file: $DB_SQL_PRESEED_URL"
-      latest="$DB_SQL_PRESEED_URL"
-    else
-      echo "💾  Found DB preseed at URL: $DB_SQL_PRESEED_URL"
-      mkdir -pv db/backups/development
-      wget --content-disposition --directory-prefix=db/backups/development/ --timestamping "$DB_SQL_PRESEED_URL"
-      latest=""
-      for file in db/backups/development/*.sql; do
-        [[ -z "$latest" || $file -nt $latest ]] && latest=$file
-      done
-    fi
-
-    bundle exec rails db:restore pattern="$(echo "$latest" | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)"
-    bundle exec rails db:migrate
+# The database itself comes from db/seeds/ (see db/seeds.rb), run below by
+# `rails db:prepare`. Only the uploads a seeded record points at still come
+# from mampf-init-data, since the seed's own fixture files stand in for most
+# of them but not the real thing.
+download_uploads_preseed() {
+  if [[ -z "${UPLOADS_PRESEED_URL:-}" ]]; then
+    return
   fi
 
-  # Files (uploads) preseed
-  if [[ -n "${UPLOADS_PRESEED_URL:-}" ]]; then
-    echo "💾  Found upload preseed at URL: $UPLOADS_PRESEED_URL"
-    wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega "$UPLOADS_PRESEED_URL"
-    mkdir -p public/uploads
-    bsdtar -xvf public/uploads.zip -s'|[^/]*/||' -C public/uploads
-  fi
+  echo "💾  Found upload preseed at URL: $UPLOADS_PRESEED_URL"
+  wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega "$UPLOADS_PRESEED_URL"
+  mkdir -p public/uploads
+  bsdtar -xvf public/uploads.zip -s'|[^/]*/||' -C public/uploads
 }
 
 if [ "$RAILS_ENV" = "production" ]; then
@@ -100,7 +84,7 @@ echo "➕  Creating database (db:create)"
 bundle exec rails db:create:interactions
 bundle exec rails db:create
 
-check_for_preseeds
+download_uploads_preseed
 
 echo "🛠️  Preparing development database"
 bundle exec rails db:prepare
