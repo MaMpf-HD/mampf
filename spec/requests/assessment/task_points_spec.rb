@@ -247,6 +247,29 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         end
       end
     end
+
+    context "as a module editor" do
+      let(:editor) { create(:confirmed_user) }
+
+      before do
+        lecture.course.editors << editor
+        sign_in editor
+        Timecop.travel(3.hours.from_now)
+      end
+
+      after { Timecop.return }
+
+      it "enters points like the teacher" do
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        participation = assessment.assessment_participations.find_by(user: student)
+        expect(participation.task_points.find_by(task: task).points).to eq(8)
+      end
+    end
   end
 
   # PATCH point_user_tutorial (update_participation)
