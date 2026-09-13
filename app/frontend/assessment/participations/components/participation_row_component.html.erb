@@ -125,26 +125,13 @@
           <i class="bi bi-inbox-fill"></i>
         <% end %>
       <% else %>
-        <div class="d-inline-flex align-items-center gap-2">
-          <input
-            type="checkbox"
-            class="form-check-input m-0"
-            form="paper-hand-ins"
-            name="user_ids[]"
-            value="<%= @user.id %>"
-            aria-label="<%= t("assessment.grading_tutorial.paper_hand_in_select", name: @user.tutorial_name) %>"
-            data-paper-selection-target="checkbox"
-            data-action="paper-selection#sync"
-          >
-
-          <%= link_to paper_hand_in_url,
-                      class: "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
-                      data: { turbo_method: :patch },
-                      title: t("assessment.grading_tutorial.paper_hand_in"),
-                      aria: { label: t("assessment.grading_tutorial.paper_hand_in") } do %>
-            <i class="bi bi-inbox"></i>
-          <% end %>
-        </div>
+        <%= link_to paper_hand_in_url,
+                    class: "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
+                    data: { turbo_method: :patch },
+                    title: t("assessment.grading_tutorial.paper_hand_in"),
+                    aria: { label: t("assessment.grading_tutorial.paper_hand_in") } do %>
+          <i class="bi bi-inbox"></i>
+        <% end %>
       <% end %>
     <% end %>
   </td>
