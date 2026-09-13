@@ -7,7 +7,7 @@ SQL dump to a script: what the app is filled with lives in the repository,
 where it can be reviewed and diffed, instead of in a binary artifact that each
 build inherits from the last one.
 
-Loaded by `db/seeds/010_content.rb` via `Seeds::LoadSupport`
+Loaded by `db/seeds/content.rb` via `Seeds::LoadSupport`
 (`db/seeds/support/seeds/load_support.rb`), the write side of this pair.
 
 ## Format
@@ -58,7 +58,7 @@ A group nothing points at -- join rows, mostly -- is a plain sequence:
   pointing at one of them -- ten talks assigned to seminar students the
   scenarios create.
 - **Re-extracting** (`rails seeds:extract`) must run against a database that
-  has only the content core loaded, before `db/seeds/100_scenarios.rb` runs.
+  has only the content core loaded, before `db/seeds/scenarios.rb` runs.
   Run it against a database the scenarios have already built and their own
   courses (titles like "Demo Roster Seminar", "Registration Playground")
   come along as if they belonged here -- which is what happened once before

@@ -4,7 +4,7 @@ module Seeds
   # Writes the content core of a seeded development database out as YAML, for
   # db/seeds/data. The read side of the pair Seeds::LoadSupport writes back
   # from; run it against a database that has only the content core loaded
-  # (before db/seeds/100_scenarios.rb runs), and what it produces is reviewed
+  # (before db/seeds/scenarios.rb runs), and what it produces is reviewed
   # and committed by hand from then on.
   #
   # Records are addressed by label rather than by primary key, so nothing that

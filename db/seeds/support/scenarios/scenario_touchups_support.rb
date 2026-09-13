@@ -1,5 +1,5 @@
 module Scenarios
-  # Small adjustments applied once every other scenario in db/seeds/100_scenarios.rb
+  # Small adjustments applied once every other scenario in db/seeds/scenarios.rb
   # has run: a campaign still running in the term after the one the seed plays
   # in, the current term's own campaigns settled rather than left half-open,
   # deadlines that do not go stale, and two accounts kept on an outdated

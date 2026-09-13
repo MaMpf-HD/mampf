@@ -1,4 +1,4 @@
-# The demo scenarios, run on top of the content core (010_content.rb) to give
+# The demo scenarios, run on top of the content core (content.rb) to give
 # a developer everything to click around: rosters, campaigns, coursework,
 # assessment, performance, eligibility, exams, grading, vignettes, the
 # next-term banner, a legacy pre-roster lecture, and the forum/announcement
@@ -29,4 +29,4 @@ Scenarios::SetupSupport.setup_homework_submissions!
 
 Seeds::EnrichSupport.enrich!
 
-puts "db/seeds/100_scenarios.rb: scenarios ready."
+puts "db/seeds/scenarios.rb: scenarios ready."

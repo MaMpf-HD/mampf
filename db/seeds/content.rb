@@ -4,7 +4,7 @@
 report = Seeds::LoadSupport.load!
 
 if report == :already_loaded
-  puts "db/seeds/010_content.rb: content core already present, skipping."
+  puts "db/seeds/content.rb: content core already present, skipping."
 else
   report.each { |row| puts "#{row[:group]}: #{row[:loaded]} loaded" }
   puts "Personas sign in with password \"#{Seeds::LoadSupport::PASSWORD}\", " \
