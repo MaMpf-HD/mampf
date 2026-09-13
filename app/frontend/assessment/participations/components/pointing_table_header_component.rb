@@ -58,10 +58,9 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def sublabel_for(column)
-      case column
-      when :hand_in, :correction then "(#{@assessable.accepted_file_type})"
-      when :note then t("assessment.grade_talk_row.note_hint")
-      end
+      return unless [:hand_in, :correction].include?(column)
+
+      "(#{@assessable.accepted_file_type})"
     end
 
     def task_column(task)

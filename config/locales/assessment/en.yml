@@ -477,8 +477,7 @@ en:
     grade_talk_row:
       speaker: "Speaker"
       grade: "Grade"
-      note: "Internal note"
-      note_hint: "(teaching staff only)"
+      note: "Internal note (teaching staff only)"
       graded: "Graded"
       graded_ago: "%{time} ago"
       save_row: "Save this row's grade"

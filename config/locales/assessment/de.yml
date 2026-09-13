@@ -477,8 +477,7 @@ de:
     grade_talk_row:
       speaker: "Sprecher:in"
       grade: "Note"
-      note: "Interne Notiz"
-      note_hint: "(nur für DozentInnen)"
+      note: "Interne Notiz (nur für DozentInnen)"
       graded: "Bewertet"
       graded_ago: "vor %{time}"
       save_row: "Note dieser Zeile speichern"
