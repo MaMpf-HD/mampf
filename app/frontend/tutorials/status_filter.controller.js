@@ -39,17 +39,25 @@ export default class extends Controller {
   }
 
   rowTargetConnected() {
-    if (!this.hasNameTarget) {
-      return;
-    }
-    this.render();
+    this.renderSoon();
   }
 
   rowTargetDisconnected() {
-    if (!this.hasNameTarget) {
+    this.renderSoon();
+  }
+
+  // A replaced row leaves and arrives in one mutation; rendering in between
+  // would count one row fewer and could turn a page back. One render after
+  // the batch also serves the initial connect of every row.
+  renderSoon() {
+    if (!this.hasNameTarget || this.renderQueued) {
       return;
     }
-    this.render();
+    this.renderQueued = true;
+    queueMicrotask(() => {
+      this.renderQueued = false;
+      this.render();
+    });
   }
 
   // A change of filter starts over on the first page.
