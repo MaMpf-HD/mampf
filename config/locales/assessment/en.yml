@@ -399,7 +399,7 @@ en:
         zero: 'No changes compared to current grades.'
         one: '1 grade would change compared to the current state.'
         other: '%{count} grades would change compared to the current state.'
-      edit_button: 'Edit Scheme'
+      edit_button: 'Edit draft'
       apply_button: 'Apply draft'
       discard_button: 'Discard draft'
       discard_confirm: 'The draft will be deleted. Grades and any scheme already applied stay as they are. Continue?'

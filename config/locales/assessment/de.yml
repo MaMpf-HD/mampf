@@ -399,7 +399,7 @@ de:
         zero: 'Keine Änderungen gegenüber den aktuellen Noten.'
         one: '1 Note würde sich gegenüber dem aktuellen Stand ändern.'
         other: '%{count} Noten würden sich gegenüber dem aktuellen Stand ändern.'
-      edit_button: 'Schema bearbeiten'
+      edit_button: 'Entwurf bearbeiten'
       apply_button: 'Entwurf anwenden'
       discard_button: 'Entwurf verwerfen'
       discard_confirm: 'Der Entwurf wird gelöscht. Noten und ein bereits angewendetes Schema bleiben, wie sie sind. Fortfahren?'
