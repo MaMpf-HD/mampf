@@ -342,6 +342,11 @@ de:
       remove_exempt: 'Befreiung zurücknehmen'
       user_not_candidate: 'Diese Person steht nicht auf der Klausurliste.'
       not_scorable: 'Wer als %{status} vermerkt ist, bekommt keine Punkte.'
+      not_recorded_as: 'Diese Person ist nicht als %{status} vermerkt.'
+      reviewed_stays: 'Eine bewertete Zeile kann nicht als %{status} vermerkt werden, die Bewertung ginge verloren.'
+      status_word:
+        absent: 'abwesend'
+        exempt: 'befreit'
       scheme_now_gives: 'Was das angewendete Schema für die jetzigen Punkte gibt.'
       points_changed_since: 'Punkte geändert am %{points_at}, Note vom %{graded_at}'
       summary_points_changed: '%{count} mit seit der Bewertung geänderten Punkten'

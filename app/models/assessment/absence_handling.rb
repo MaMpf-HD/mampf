@@ -26,12 +26,13 @@ module Assessment
       participation.update!(attrs)
     end
 
-    # Taking either back returns the row to pending; an exemption's note goes
-    # with it, it explained the exemption.
+    # Taking either back returns the row to pending. The 5.0 a scheme gave
+    # the no-show goes with the absence, or the row could never be reviewed;
+    # an exemption's note goes with the exemption, it explained it.
     def remove_absent(participation)
       validate_status!(participation, :absent)
 
-      participation.update!(status: :pending)
+      participation.update!(status: :pending, grade_numeric: nil, grader: nil, graded_at: nil)
     end
 
     def remove_exempt(participation)
@@ -42,19 +43,24 @@ module Assessment
 
     private
 
+      # The messages reach the flash, so they are worded for the reader.
       def validate_status!(participation, status)
         return if participation.status.to_sym == status
 
         raise(InvalidTransitionError,
-              "Cannot take back #{status} from a #{participation.status} row")
+              I18n.t("assessment.grading_exam.not_recorded_as", status: status_word(status)))
       end
 
       def validate_not_reviewed!(participation, target_status)
         return unless participation.reviewed?
 
         raise(InvalidTransitionError,
-              "Cannot transition from reviewed to #{target_status} " \
-              "(would discard grading data)")
+              I18n.t("assessment.grading_exam.reviewed_stays",
+                     status: status_word(target_status)))
+      end
+
+      def status_word(status)
+        I18n.t("assessment.grading_exam.status_word.#{status}")
       end
   end
 end

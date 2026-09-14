@@ -36,7 +36,8 @@ RSpec.describe(Assessment::AbsenceHandling) do
 
       expect { test_service.mark_absent(reviewed) }
         .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError,
-                        /would discard grading data/)
+                        I18n.t("assessment.grading_exam.reviewed_stays",
+                               status: I18n.t("assessment.grading_exam.status_word.absent")))
     end
   end
 
@@ -77,7 +78,8 @@ RSpec.describe(Assessment::AbsenceHandling) do
 
       expect { test_service.mark_exempt(reviewed) }
         .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError,
-                        /would discard grading data/)
+                        I18n.t("assessment.grading_exam.reviewed_stays",
+                               status: I18n.t("assessment.grading_exam.status_word.exempt")))
     end
 
     it "takes back the 5.0 an applied scheme gave a no-show" do
@@ -109,9 +111,28 @@ RSpec.describe(Assessment::AbsenceHandling) do
       expect(absent.reload).to be_pending
     end
 
-    it "refuses a row that is not absent" do
+    # Without this the row would keep the no-show grade and never become
+    # reviewed, because a graded row keeps its grade when points come in.
+    it "takes the 5.0 an applied scheme gave the no-show with the absence" do
+      exam = create(:exam, :with_date)
+      assessment = create(:assessment, :with_points,
+                          assessable: exam, lecture: exam.lecture)
+      absent = create(:assessment_participation,
+                      assessment: assessment, status: :absent)
+      absent.update!(grade_numeric: 5.0, grader: create(:confirmed_user),
+                     graded_at: Time.current)
+
+      test_service.remove_absent(absent)
+
+      expect(absent.reload).to have_attributes(status: "pending", grade_numeric: nil,
+                                               grader: nil, graded_at: nil)
+    end
+
+    it "refuses a row that is not absent, in the reader's words" do
       expect { test_service.remove_absent(participation) }
-        .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError)
+        .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError,
+                        I18n.t("assessment.grading_exam.not_recorded_as",
+                               status: I18n.t("assessment.grading_exam.status_word.absent")))
     end
   end
 
