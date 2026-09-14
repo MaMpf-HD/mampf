@@ -131,7 +131,10 @@ module Assessment
       rerender_user_row
     end
 
+    # An exemption is the lecturer's to give; taking it away, even for an
+    # absence, takes the same right.
     def mark_as_absent
+      authorize_lecture_edit! if @participation.exempt?
       AbsenceHandling.mark_absent(@participation)
       render_task_points_update(participation_row_stream)
     end

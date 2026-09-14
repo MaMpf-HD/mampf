@@ -1168,6 +1168,15 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response).to redirect_to(root_path)
         expect(candidate.reload).to be_pending
       end
+
+      it "may not turn an exemption into an absence" do
+        candidate.update!(status: :exempt, note: "certificate")
+
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_exempt
+      end
     end
 
     context "as a stranger" do
