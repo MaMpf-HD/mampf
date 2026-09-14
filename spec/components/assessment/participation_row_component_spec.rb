@@ -261,6 +261,36 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
     end
   end
 
+  describe "#points_total_display" do
+    let(:task) { create(:assessment_task, assessment: assessment, max_points: 10) }
+
+    # Marks are refused before the deadline, so the clock moves past it.
+    before { Timecop.travel(3.hours.from_now) }
+    after { Timecop.return }
+
+    it "shows the total once a task has a value" do
+      create(:assessment_task_point, task: task, assessment_participation: participation,
+                                     points: 7.5)
+      participation.reload
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+
+      render_inline(component_tutor)
+
+      expect(component_tutor.points_total_display)
+        .to eq(ActiveSupport::NumberHelper.number_to_rounded(7.5, precision: 2))
+    end
+
+    # A row whose points were all taken out again sums to 0, not nil.
+    it "shows a dash while no task has a value, whatever the sum says" do
+      create(:assessment_task_point, task: task, assessment_participation: participation,
+                                     points: nil)
+      participation.reload.recompute_points_total!
+
+      expect(participation.points_total).to eq(0)
+      expect(component_tutor.points_total_display).to eq("—")
+    end
+  end
+
   describe "#grade_display" do
     context "when grade_numeric is blank" do
       before { allow(participation).to receive(:grade_numeric).and_return(nil) }

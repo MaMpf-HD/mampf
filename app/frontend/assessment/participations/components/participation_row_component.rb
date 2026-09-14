@@ -161,8 +161,10 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
+  # Points taken out again leave a total of 0, not nil; the row says "—"
+  # like the student's page does until a task carries a value.
   def points_total_display
-    return "—" if @participation.points_total.nil?
+    return "—" unless @participation.results_visible?
 
     helpers.number_with_precision(@participation.points_total, precision: 2)
   end
