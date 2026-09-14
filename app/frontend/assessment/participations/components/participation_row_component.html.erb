@@ -76,7 +76,7 @@
     <% if layout.show?(:status_compact) %>
       <td class="text-center <%= layout.column_class(:status_compact) %>">
         <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :icon,
-                                                         note: @participation.note) %>
+                                                         detail: status_detail) %>
       </td>
     <% else %>
       <td class="text-center <%= layout.column_class(:status) %>">
@@ -159,18 +159,7 @@
           <% end %>
         </td>
       <% end %>
-      <% if layout.show?(:graded_compact) %>
-        <td class="text-center <%= layout.column_class(:graded_compact) %>">
-          <% if graded_display %>
-            <i
-              class="bi bi-info-circle text-secondary"
-              role="img"
-              title="<%= graded_display %> (<%= graded_ago %>)"
-              aria-label="<%= graded_display %> (<%= graded_ago %>)"
-            ></i>
-          <% end %>
-        </td>
-      <% else %>
+      <% if layout.show?(:graded) %>
         <td class="text-muted small <%= layout.column_class(:graded) %>">
           <% if graded_display %>
             <span title="<%= graded_ago %>"><%= graded_display %></span>

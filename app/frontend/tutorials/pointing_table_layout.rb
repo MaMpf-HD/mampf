@@ -13,7 +13,6 @@ class PointingTableLayout
     grade: 110,
     note: 180,
     graded: 220,
-    graded_compact: 50,
     save: 90,
     hand_in: 140,
     correction: 140
@@ -35,8 +34,7 @@ class PointingTableLayout
           body: :single_grade, left: [:talk, :team])
     when Exam
       if table_option == :grading
-        new(columns: [:team, :status_compact, :total, :grade, :graded_compact, :save],
-            body: :single_grade)
+        new(columns: [:team, :status_compact, :total, :grade, :save], body: :single_grade)
       else
         new(columns: [:team, :status, :tasks, :total, :save], body: :tasks)
       end

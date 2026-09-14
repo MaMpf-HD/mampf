@@ -365,6 +365,15 @@ class ParticipationRowComponent < ViewComponent::Base
     [grader_display, I18n.l(@participation.graded_at, format: :file_time)].compact.join(" · ")
   end
 
+  # What the compact status icon says on hover: who graded and when, or why
+  # somebody is excused.
+  def status_detail
+    return "#{graded_display} (#{graded_ago})" if graded_display
+    return @participation.note if @participation.exempt? && @participation.note.present?
+
+    nil
+  end
+
   def graded_ago
     return nil unless @participation&.graded_at
 

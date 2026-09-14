@@ -4,7 +4,7 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
   include ActiveSupport::NumberHelper
 
   # :icon is the full badge without its word, for a narrow column; the word
-  # and, for an exemption, its note travel in the tooltip.
+  # and whatever detail the row hands over travel in the tooltip.
   VARIANTS = [:full, :compact, :icon].freeze
 
   STATUS_CONFIG = {
@@ -28,18 +28,16 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
 
   attr_reader :status, :variant, :points
 
-  def initialize(status:, variant: :full, points: nil, note: nil)
+  def initialize(status:, variant: :full, points: nil, detail: nil)
     super()
     @status = status.to_sym
     @variant = variant.to_sym
     @points = points
-    @note = note
+    @detail = detail
   end
 
   def icon_title
-    return label unless @status == :exempt && @note.present?
-
-    "#{label}: #{@note}"
+    @detail.present? ? "#{label}: #{@detail}" : label
   end
 
   def config

@@ -23,7 +23,6 @@ class PointingTableHeaderComponent < ViewComponent::Base
       when :tasks then tasks.map { |task| task_column(task) }
       when :total then total_column
       when :save then save_column
-      when :graded_compact then graded_compact_column
       else plain_column(column)
       end
     end
@@ -87,13 +86,6 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
     # Keep the save column label for screen readers; the visible buttons
     # already identify the actions with icons.
-    # An icon with a tooltip needs no heading over it either.
-    def graded_compact_column
-      Column.new(css_class: "text-center #{@layout.column_class(:graded_compact)} grade-th",
-                 label: t("assessment.grade_talk_row.graded"),
-                 label_hidden: true)
-    end
-
     def save_column
       Column.new(css_class: "text-center #{@layout.column_class(:save)} grade-th",
                  label: t("buttons.save"),

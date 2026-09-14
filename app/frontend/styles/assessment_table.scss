@@ -75,7 +75,6 @@ thead th.sticky-col {
 @include column(total);
 @include column(grade);
 @include column(graded);
-@include column(graded-compact);
 @include column(save);
 @include column(hand-in);
 @include column(correction);

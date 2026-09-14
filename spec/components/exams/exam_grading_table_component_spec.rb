@@ -22,8 +22,19 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
   end
 
   it "is the exam's grading table" do
-    expect(component.layout.columns)
-      .to eq([:team, :status_compact, :total, :grade, :graded_compact, :save])
+    expect(component.layout.columns).to eq([:team, :status_compact, :total, :grade, :save])
+  end
+
+  # The status icon is where a reader learns who graded and when.
+  it "tells who graded and when on the status icon" do
+    participation = component.rows.first
+    participation.update!(status: :reviewed, grade_numeric: 2.0, grader: teacher,
+                          graded_at: 1.hour.ago, submitted_at: nil)
+
+    icon = render_inline(component).css("td.status-compact-col [role=img]").first
+
+    expect(icon["title"]).to include(I18n.t("student_performance.records.columns.reviewed"))
+    expect(icon["title"]).to include(teacher.tutorial_name)
   end
 
   # A note is written for an exemption, in its dialog; the row has no field for one.

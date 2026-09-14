@@ -7,8 +7,10 @@
       "
       role="alert"
     >
-      <i class="bi bi-exclamation-triangle-fill"></i>
-      <%= t("assessment.grading_exam.points_changed_alert", count: @count) %>
+      <span>
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        <%= t("assessment.grading_exam.points_changed_alert", count: @count) %>
+      </span>
 
       <button
         type="button"

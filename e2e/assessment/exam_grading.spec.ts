@@ -44,8 +44,7 @@ test.describe("exam grading", () => {
     await adaGrade.getByRole("combobox", { name: "Grade for Ada Lovelace" }).selectOption("2.0");
     await adaGrade.getByRole("button", { name: "Save this row's grade" }).click();
     await expect(teacher.page.getByText("Changes saved.")).toBeVisible();
-    await expect(adaGrade.getByText(/\d{4}-\d{2}-\d{2}, \d{2}:\d{2}/)).toHaveCount(0);
-    await expect(adaGrade.getByRole("img", { name: /ago\)$/ })).toBeVisible();
+    await expect(adaGrade.getByRole("img", { name: /^Reviewed: .* ago\)$/ })).toBeVisible();
 
     // points corrected after grading leave the grade, but not unnoticed
     await page.tab("Points").click();
