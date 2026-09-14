@@ -528,7 +528,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               as: :turbo_stream
 
         expect(response.body).to include(
-          I18n.t("assessment.grading_exam.not_scorable", status: "absent")
+          I18n.t("assessment.grading_exam.not_scorable",
+                 status: I18n.t("assessment.grading_exam.status_word.absent"))
         )
         expect(exam_participation.task_points).to be_empty
       end
