@@ -47,7 +47,7 @@
         type="button"
         class="
           clipboardpopup btn btn-link p-0 ms-3 text-secondary
-          clipboard-btn clipboard-button row-reveal
+          clipboard-btn clipboard-button
         "
         data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
         data-id="<%= @submission.id %>"
