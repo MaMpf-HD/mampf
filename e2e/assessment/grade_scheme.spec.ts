@@ -57,6 +57,22 @@ test.describe("grade schemes", () => {
       .toBeVisible();
   });
 
+  test("leaves the form without saving", async ({ factory, teacher }) => {
+    const { lecture } = await markedExam(factory, teacher.user.id);
+
+    const page = new ExamDashboardPage(teacher.page, lecture.id);
+    await openGrades(page);
+    await teacher.page.getByRole("link", { name: "Create Grade Scheme" })
+      .click();
+    await expect(page.pane.getByText("Configure Grade Scheme")).toBeVisible();
+
+    await page.pane.getByRole("link", { name: "Cancel" }).click();
+
+    await expect(page.pane.getByText("Configure Grade Scheme")).toHaveCount(0);
+    await expect(page.pane.getByRole("link", { name: "Create Grade Scheme" }))
+      .toBeVisible();
+  });
+
   test("applies one and records the grades", async ({ factory, teacher }) => {
     const { lecture, exam } = await markedExam(factory, teacher.user.id);
     await factory.create("assessment_grade_scheme", [], {

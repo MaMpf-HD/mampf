@@ -478,6 +478,10 @@
         </small>
 
         <div class="d-flex gap-2 ms-auto">
+          <%= link_to t("buttons.cancel"), cancel_path,
+                      class: "btn btn-outline-secondary",
+                      data: { turbo_stream: true } %>
+
           <button
             type="submit"
             class="btn btn-success"
