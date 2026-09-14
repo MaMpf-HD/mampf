@@ -373,7 +373,7 @@ without waiting for the interactive entry UI.
 ```admonish example "PR-8.3 — Read-only grade view"
 - Scope: Read-only table displaying students and their final grades, with distinct indicators for absent/exempt statuses.
 - Dependencies: Requires PR-7.2 (assessment show page with tabs)
-- ViewComponent: `GradeTableComponent` (since removed: exams read and enter grades in `ExamGradingTableComponent`, talks in the seminar's table) — main table showed gradeable participations (pending + reviewed) with name, tutorial, grade, `graded_at`; absent, exempt and not-submitted participations went to a separate "Special Cases" card.
+- ViewComponent: `GradeTableComponent` (since removed: exams read and enter grades in `ExamGradingTableComponent`, talks in the seminar's table) — one read-only table of the participations with name, tutorial, grade and `graded_at`, absent and exempt rows marked in place.
 - Rake: Seed the demo assessment data via `demo:assessment` / `Demo::SetupSupport.setup_assessment!` so participations carry realistic `grade`, `graded_at`, and `grader_id` values, including absent/exempt cases for representative test data.
 - Rationale: Provides the visual foundation for grade display; the same component is reused when interactive editing is added later (PR-8.7). Distinct absent/exempt indicators are needed for Step 9 (grading schemes) so that distribution stats exclude non-participants. Seeded data via rake tasks is sufficient for testing the read path and unblocking Steps 9–12.
 - Refs: [Grade Entry UI](12-views.md#grade-entry-interface), [Absence Tracking](04-assessments-and-grading.md#absence-tracking--no-shows)
