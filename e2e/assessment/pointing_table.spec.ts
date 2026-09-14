@@ -176,6 +176,41 @@ test.describe("pointing table", () => {
     await expect(saveAll).toBeDisabled();
   });
 
+  // The two selects above the table are the tutor's way from one sheet or
+  // group to the next; each option is a page.
+  test("moves to another sheet and another group through the selects", async ({
+    factory,
+    teacher,
+    tutor,
+  }) => {
+    const { lecture, assignment, assessmentId } = await createAssessedAssignment(
+      factory, teacher.user.id, "Problem Set 1", ["expired"],
+    );
+    await addTask(factory, assessmentId, "Warm-up", 10);
+    const second = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id,
+      title: "Problem Set 2",
+    });
+    const monday = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Monday group",
+    });
+    const friday = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Friday group",
+    });
+
+    await tutor.page.goto(
+      `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${monday.id}`,
+    );
+
+    await tutor.page.getByLabel("Assignment").selectOption({ label: "Problem Set 2" });
+    await expect(tutor.page).toHaveURL(new RegExp(`assignment=${second.id}`));
+    await expect(tutor.page.getByLabel("Assignment")).toHaveValue("Problem Set 2");
+
+    await tutor.page.getByLabel("Tutorial").selectOption({ label: "Friday group" });
+    await expect(tutor.page).toHaveURL(new RegExp(`tutorial=${friday.id}`));
+    await expect(tutor.page.getByLabel("Tutorial")).toHaveValue("Friday group");
+  });
+
   test("narrows a sheet from before there were points by name", async ({
     factory,
     teacher,

@@ -7,7 +7,8 @@
     <% if assignments.size > 1 %>
       <select id="assignment-select"
               class="form-select form-select-sm"
-              onchange="window.location=this.value">
+              data-controller="select-navigation"
+              data-action="change->select-navigation#visit">
         <option selected><%= assignment.title %></option>
         <% (assignments - [assignment]).each do |a| %>
           <option value="<%= lecture_tutorials_path(@lecture, params: { assignment: a.id, tutorial: tutorial.id }) %>">
