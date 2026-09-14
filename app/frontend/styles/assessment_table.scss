@@ -127,6 +127,17 @@ thead th.sticky-col {
   }
 }
 
+/* Marker, grade and the scheme's answer share one line. The outer slots are
+   there in every row, so the grades stand under each other whether or not
+   a row has something to say. */
+.grade-cell {
+  display: inline-grid;
+  grid-template-columns: 2.5rem auto 2.5rem;
+  align-items: center;
+  justify-items: center;
+  gap: 0.25rem;
+}
+
 .grade-th {
   font-size: 0.8rem;
   color: #6c757d;

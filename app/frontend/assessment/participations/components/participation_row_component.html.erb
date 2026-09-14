@@ -102,42 +102,48 @@
         </td>
       <% end %>
       <td class="text-center <%= layout.column_class(:grade) %>">
-        <% if points_changed_notice %>
-          <i
-            class="bi bi-exclamation-triangle-fill text-warning-emphasis me-1"
-            role="img"
-            title="<%= points_changed_notice %>"
-            aria-label="<%= points_changed_notice %>"
-          ></i>
-        <% end %>
-
-        <% if proposed_grade_differs? %>
-          <%# The scheme's answer stands beside the field until it is taken or overruled. %>
-          <span
-            class="badge bg-info-subtle text-info-emphasis fw-normal me-1"
-            title="<%= proposal_tooltip %>"
-          >
-            <%= proposed_grade %>
-          </span>
-        <% end %>
-
-        <% if allow_grading? && can_enter_grade? && grade_enterable? %>
-          <%= tag.select(
-                name: "grade",
-                class: "form-select form-select-sm mx-auto",
-                aria: { label: t("assessment.grade_talk_row.grade_for", name: @user.tutorial_name) },
-                data: { participation_row_target: "gradeInput",
-                        action: "change->participation-row#onParticipationChanged" }
-              ) do %>
-            <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
-
-            <%= safe_join(
-                  grade_options.map { |label, value| tag.option(label, value: value, selected: value == grade_numeric) }
-                ) %>
+        <div class="grade-cell">
+          <% if points_changed_notice %>
+            <i
+              class="bi bi-exclamation-triangle-fill text-warning-emphasis"
+              role="img"
+              title="<%= points_changed_notice %>"
+              aria-label="<%= points_changed_notice %>"
+            ></i>
+          <% else %>
+            <span></span>
           <% end %>
-        <% else %>
-          <span class="fw-semibold"><%= grade_display %></span>
-        <% end %>
+
+          <% if allow_grading? && can_enter_grade? && grade_enterable? %>
+            <%= tag.select(
+                  name: "grade",
+                  class: "form-select form-select-sm w-auto",
+                  aria: { label: t("assessment.grade_talk_row.grade_for", name: @user.tutorial_name) },
+                  data: { participation_row_target: "gradeInput",
+                          action: "change->participation-row#onParticipationChanged" }
+                ) do %>
+              <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
+
+              <%= safe_join(
+                    grade_options.map { |label, value| tag.option(label, value: value, selected: value == grade_numeric) }
+                  ) %>
+            <% end %>
+          <% else %>
+            <span class="fw-semibold"><%= grade_display %></span>
+          <% end %>
+
+          <% if proposed_grade_differs? %>
+            <%# The scheme's answer stands beside the field until it is taken or overruled. %>
+            <span
+              class="badge bg-info-subtle text-info-emphasis fw-normal"
+              title="<%= proposal_tooltip %>"
+            >
+              <%= proposed_grade %>
+            </span>
+          <% else %>
+            <span></span>
+          <% end %>
+        </div>
       </td>
       <% if layout.show?(:note) %>
         <td class="<%= layout.column_class(:note) %>">
