@@ -37,6 +37,19 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
     expect(icon["title"]).to include(teacher.tutorial_name)
   end
 
+  # A certificate handed in after the absence was recorded excuses directly;
+  # somebody excused or graded is not offered the exemption again.
+  it "offers the exemption to the pending and the absent" do
+    participation = component.rows.first
+
+    { pending: true, absent: true, exempt: false, reviewed: false }.each do |status, offered|
+      participation.update!(status: status, submitted_at: nil)
+      page = render_inline(component)
+      buttons = page.css("[data-action='click->participation-row#openExemptModal']")
+      expect(buttons.any?).to be(offered), "#{status}: expected #{offered}"
+    end
+  end
+
   # A note is written for an exemption, in its dialog; the row has no field for one.
   it "draws a grade select and the exemption dialog, but no note field" do
     page = render_inline(component)

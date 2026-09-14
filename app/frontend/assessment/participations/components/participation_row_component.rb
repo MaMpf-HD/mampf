@@ -201,13 +201,15 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
+  # A certificate may arrive after the absence was recorded; the service
+  # takes the no-show grade back with it, so no detour through pending.
   def exemption_button
     return unless helpers.current_user.can_edit?(@assessable.lecture)
 
     if @participation.exempt?
       row_action_link(remove_exempt_path(@participation), "bi-file-earmark-x-fill",
                       t("assessment.grading_exam.remove_exempt"))
-    elsif @participation.pending?
+    elsif @participation.pending? || @participation.absent?
       label = t("assessment.grading_exam.mark_exempt")
       tag.button(type: "button",
                  class: ROW_ACTION_CLASSES,
@@ -338,10 +340,10 @@ class ParticipationRowComponent < ViewComponent::Base
       helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
   end
 
-  # Tutorial movement compares an assignment participation with the user's
-  # tutorial membership; a talk participation has no tutorial to compare.
+  # Tutorial movement compares a sheet's participation with the user's
+  # tutorial membership; a talk or an exam has nothing handed in to compare.
   def movement_info_for_user(user)
-    return nil if single_grade?
+    return nil unless @assessable.is_a?(Assignment)
 
     helpers.movement_info_for_user_assignment(user, users_movement_map)
   end
