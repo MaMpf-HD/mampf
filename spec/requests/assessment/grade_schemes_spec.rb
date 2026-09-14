@@ -26,6 +26,16 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
+      it "sends a talk's assessment to the seminar's table, which has no scheme" do
+        seminar = create(:lecture, :is_seminar, teacher: teacher)
+        talk = create(:talk, lecture: seminar)
+
+        get new_assessment_assessment_grade_scheme_path(talk.reload.assessment),
+            as: :turbo_stream
+
+        expect(response).to redirect_to(edit_lecture_path(seminar, tab: "assessments"))
+      end
+
       it "renders turbo_stream with dashboard" do
         get new_assessment_assessment_grade_scheme_path(assessment),
             as: :turbo_stream
