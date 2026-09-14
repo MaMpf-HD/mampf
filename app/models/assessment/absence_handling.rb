@@ -4,13 +4,14 @@ module Assessment
 
     class InvalidTransitionError < StandardError; end
 
+    # Every transition reads the row under its lock, so points or a grade
+    # being written at the same moment are seen or waited for.
     def mark_absent(participation)
-      validate_not_reviewed!(participation, :absent)
+      participation.with_lock do
+        validate_not_reviewed!(participation, :absent)
 
-      participation.update!(
-        status: :absent,
-        submitted_at: nil
-      )
+        participation.update!(status: :absent, submitted_at: nil)
+      end
     end
 
     # Applying a scheme gives everyone who did not turn up a 5.0. A certificate
@@ -18,27 +19,33 @@ module Assessment
     # scheme would not: the applier skips exempt participations. Nothing earned
     # is lost, because the way in from `reviewed` is refused below.
     def mark_exempt(participation, note: nil)
-      validate_not_reviewed!(participation, :exempt)
+      participation.with_lock do
+        validate_not_reviewed!(participation, :exempt)
 
-      attrs = { status: :exempt, submitted_at: nil,
-                grade_numeric: nil, grader: nil, graded_at: nil }
-      attrs[:note] = note if note.present?
-      participation.update!(attrs)
+        attrs = { status: :exempt, submitted_at: nil,
+                  grade_numeric: nil, grader: nil, graded_at: nil }
+        attrs[:note] = note if note.present?
+        participation.update!(attrs)
+      end
     end
 
     # Taking either back returns the row to pending. The 5.0 a scheme gave
     # the no-show goes with the absence, or the row could never be reviewed;
     # an exemption's note goes with the exemption, it explained it.
     def remove_absent(participation)
-      validate_status!(participation, :absent)
+      participation.with_lock do
+        validate_status!(participation, :absent)
 
-      participation.update!(status: :pending, grade_numeric: nil, grader: nil, graded_at: nil)
+        participation.update!(status: :pending, grade_numeric: nil, grader: nil, graded_at: nil)
+      end
     end
 
     def remove_exempt(participation)
-      validate_status!(participation, :exempt)
+      participation.with_lock do
+        validate_status!(participation, :exempt)
 
-      participation.update!(status: :pending, note: nil)
+        participation.update!(status: :pending, note: nil)
+      end
     end
 
     private

@@ -270,15 +270,9 @@ module Assessment
                              html: render_to_string(participation_row))
       end
 
-      # An exam has nothing to hand in and no group: points go in unless the
-      # candidate was absent or excused.
+      # An exam has nothing to hand in and no group; the service refuses the
+      # absent and the excused.
       def score_exam_tasks!(task_points)
-        if @participation.absent? || @participation.exempt?
-          status = t("assessment.grading_exam.status_word.#{@participation.status}")
-          raise(PointEntryService::PointEntryError,
-                t("assessment.grading_exam.not_scorable", status: status))
-        end
-
         PointEntryService.enter_points(@participation, task_points, current_user)
       end
 

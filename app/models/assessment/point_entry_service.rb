@@ -19,10 +19,11 @@ module Assessment
       valid_task_ids = assessment.tasks.pluck(:id)
 
       ApplicationRecord.transaction do
-        # Whether the row keeps its grade's stamp is decided on what is in
-        # the database now, not on what this request loaded; a grade saved
+        # State and stamp are decided on what is in the database now, not on
+        # what this request loaded: an absence, an exemption or a grade saved
         # in between waits for this write or is seen by it.
         participation.lock!
+        refuse_absent_or_exempt!(participation)
 
         task_points.each do |task_id, points|
           unless valid_task_ids.include?(task_id)
@@ -55,6 +56,13 @@ module Assessment
       participation
     end
 
+    def self.refuse_absent_or_exempt!(participation)
+      return unless participation.absent? || participation.exempt?
+
+      status = I18n.t("assessment.grading_exam.status_word.#{participation.status}")
+      raise(PointEntryError, I18n.t("assessment.grading_exam.not_scorable", status: status))
+    end
+
     def self.validate_points(points, task_id)
       return if points.nil?
       return if points.is_a?(String) && points.empty?
@@ -72,6 +80,6 @@ module Assessment
       end
     end
 
-    private_class_method :validate_points
+    private_class_method :validate_points, :refuse_absent_or_exempt!
   end
 end
