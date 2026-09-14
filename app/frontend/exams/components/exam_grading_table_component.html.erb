@@ -11,7 +11,10 @@
 
         <%= render PointingFilterComponent.new(id: "exam-grades-#{@exam.id}",
                                                status_options: status_options,
-                                               tutorial_options: tutorial_options) %>
+                                               tutorial_options: tutorial_options) do %>
+          <%= render partial: "assessment/participations/pager",
+                     locals: { id: "exam-grades-#{@exam.id}", with_size: true } %>
+        <% end %>
       </div>
 
       <div
@@ -38,7 +41,10 @@
         <%= t("assessment.grading_tutorial.filter_no_match") %>
       </p>
 
-      <%= render partial: "assessment/participations/pager", locals: { id: "exam-grades-#{@exam.id}" } %>
+      <div class="d-flex justify-content-end my-3">
+        <%= render partial: "assessment/participations/pager",
+                   locals: { id: "exam-grades-#{@exam.id}", with_size: false } %>
+      </div>
 
       <%= render partial: "assessment/participations/exempt_modal" %>
     </div>

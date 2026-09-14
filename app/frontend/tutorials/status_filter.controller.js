@@ -145,16 +145,21 @@ export default class extends Controller {
 
   // Fewer rows than the smallest page need no pager at all.
   paginate(total, from, to, pages) {
-    if (!this.hasPagerTarget) {
+    if (!this.hasPageSizeTarget) {
       return;
     }
-    this.pagerTarget.hidden = total <= this.smallestPageSize();
-    this.pageInfoTarget.textContent = this.pageInfoTarget.dataset.template
-      .replace("%{from}", total === 0 ? 0 : from + 1)
-      .replace("%{to}", Math.min(to, total))
-      .replace("%{total}", total);
-    this.enable(this.previousTarget, this.page > 1);
-    this.enable(this.nextTarget, this.page < pages);
+    const hidden = total <= this.smallestPageSize();
+    this.pagerTargets.forEach((pager) => {
+      pager.hidden = hidden;
+    });
+    this.pageInfoTargets.forEach((info) => {
+      info.textContent = info.dataset.template
+        .replace("%{from}", total === 0 ? 0 : from + 1)
+        .replace("%{to}", Math.min(to, total))
+        .replace("%{total}", total);
+    });
+    this.previousTargets.forEach(button => this.enable(button, this.page > 1));
+    this.nextTargets.forEach(button => this.enable(button, this.page < pages));
   }
 
   smallestPageSize() {
