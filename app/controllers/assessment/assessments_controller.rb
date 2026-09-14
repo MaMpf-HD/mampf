@@ -85,8 +85,8 @@ module Assessment
 
       @assessable = @assessment.assessable
       @lecture = @assessable.lecture
-      # A talk has no settings tab, so nothing sends this; a request that
-      # arrives anyway ends where the talk is graded.
+      # Talks have no assessment settings. Redirect stale dashboard requests
+      # to the seminar grading table.
       return redirect_to(seminar_table_path) if @assessable.is_a?(Talk)
 
       @tasks = @assessment.tasks.order(:position)

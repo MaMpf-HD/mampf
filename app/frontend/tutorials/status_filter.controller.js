@@ -17,7 +17,7 @@ function storePageSize(size) {
     localStorage.setItem(PAGE_SIZE_KEY, size);
   }
   catch {
-    // nothing to do: the size is already in effect on the page
+    // Keep pagination usable when the browser refuses to save the preference.
   }
 }
 
@@ -37,9 +37,8 @@ export default class extends Controller {
     this.page = 1;
   }
 
-  // The page size chosen once holds for every table on this browser; the
-  // table's own value is the default for a first visit. Tables already on
-  // the page hear the choice through the event.
+  // A size stored on an earlier visit beats the table's default; a change
+  // made on the other table while both are on the page arrives as an event.
   connect() {
     if (!this.hasPageSizeTarget) {
       return;

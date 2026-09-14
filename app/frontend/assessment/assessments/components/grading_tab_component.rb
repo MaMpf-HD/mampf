@@ -27,9 +27,6 @@ class GradingTabComponent < ViewComponent::Base
     )
   end
 
-  # The lecturer enters or overrules a grade in the exam's rows; a scheme
-  # being drafted shows its proposal beside each one. Only an exam has this
-  # tab: a talk is graded in the seminar's table.
   def roster_component
     ExamGradingTableComponent.new(exam: assessment.assessable)
   end

@@ -42,8 +42,6 @@ module Assessment
 
     private
 
-      # A talk's row and the seminar's summary; an exam redraws both tables
-      # and the scheme card.
       def row_streams
         return exam_streams if @assessable.is_a?(Exam)
 

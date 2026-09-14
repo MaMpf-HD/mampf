@@ -1,8 +1,5 @@
 module Assessment
-  # The Turbo Streams every write to an exam's row answers with. The same
-  # participation stands in the points table and in the grading table, and
-  # the scheme card beside them counts the grades, so all of them are redrawn
-  # from one reading of the roster.
+  # Builds row, summary, alert, and scheme card streams for exam updates.
   module ExamStreams
     private
 
@@ -26,8 +23,8 @@ module Assessment
                                           html: render_to_string(grading.points_changed_alert))
       end
 
-      # The card is only on the page while no scheme form is open; a replace
-      # without a target is a no-op, so the form is never torn down.
+      # An open scheme form has no "grading-scheme" target, so Turbo ignores
+      # this replacement and preserves the form.
       def exam_scheme_stream
         turbo_stream.replace(
           "grading-scheme",

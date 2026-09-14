@@ -260,8 +260,6 @@ module Assessment
         end
       end
 
-      # An exam's row stands in two tables on the page; both are replaced,
-      # with the summaries and the scheme card, all from one reading.
       def participation_row_stream
         return exam_streams if @assessable.is_a?(Exam)
 
@@ -286,7 +284,7 @@ module Assessment
         render turbo_stream: (streams + [summary_stream, stream_flash]).flatten.compact
       end
 
-      # The exam's summaries travel with its row streams.
+      # ExamStreams already includes the exam summaries.
       def summary_stream
         return [] if @assessable.is_a?(Exam)
 

@@ -201,8 +201,8 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
-  # A certificate may arrive after the absence was recorded; the service
-  # takes the no-show grade back with it, so no detour through pending.
+  # Certificates can arrive after absence was recorded. mark_exempt clears
+  # the failing grade, so an absent row can be exempted directly.
   def exemption_button
     return unless helpers.current_user.can_edit?(@assessable.lecture)
 

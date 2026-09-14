@@ -34,8 +34,8 @@ module Assessment
 
           value = points.presence&.to_f
           tp.points = value
-          # Saving the same value again is no correction: whoever entered it
-          # stays on record, and the row is not flagged as changed.
+          # Preserve the original grader and updated_at when points are unchanged;
+          # a newer timestamp would falsely report points changed after grading.
           next if tp.persisted? && !tp.points_changed?
 
           tp.grader = grader
