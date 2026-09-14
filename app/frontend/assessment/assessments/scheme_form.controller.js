@@ -26,7 +26,7 @@ export default class extends Controller {
     "anchorTypeInput",
     "anchorHint",
     "deltaInput",
-    "derivedInput",
+    "derivedOutput",
     "derivedHint",
     "anchorDeltaBandsPreview",
     "anchorDeltaBandsBody",
@@ -357,26 +357,27 @@ export default class extends Controller {
     const anchor = parseFloat(this.anchorInputTarget.value);
     const delta = parseFloat(this.deltaInputTarget.value);
     if (isNaN(anchor) || isNaN(delta) || delta <= 0) {
-      this.derivedInputTarget.value = "";
-      this.derivedInputTarget.classList.remove("is-invalid", "is-valid");
+      this.derivedOutputTarget.textContent = "";
+      this.derivedOutputTarget.classList.remove("text-danger");
+      this.derivedErrorTarget.hidden = true;
       return;
     }
     const derived = this._anchorType() === "passing"
       ? anchor + (PASSING_GRADES.length - 1) * delta
       : anchor - (PASSING_GRADES.length - 1) * delta;
-    this.derivedInputTarget.value = parseFloat(derived.toFixed(4));
+    this.derivedOutputTarget.textContent
+      = `${parseFloat(derived.toFixed(4))} ${this.pointsLabelValue}`;
 
     const tooHigh = derived > this.maxPointsValue;
     const tooLow = derived < 0;
     const outOfBounds = tooHigh || tooLow;
-    this.derivedInputTarget.classList.toggle("is-invalid", outOfBounds);
-    this.derivedInputTarget.classList.toggle("is-valid", !outOfBounds);
+    this.derivedOutputTarget.classList.toggle("text-danger", outOfBounds);
+    this.derivedErrorTarget.hidden = !outOfBounds;
 
     if (outOfBounds) {
-      const msg = tooHigh
+      this.derivedErrorTarget.textContent = tooHigh
         ? this.errorExcellenceMaxValue
         : this.errorPassingNegativeValue;
-      this.derivedErrorTarget.textContent = msg;
     }
   }
 

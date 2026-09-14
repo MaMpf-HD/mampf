@@ -322,26 +322,18 @@
                 <%= t("assessment.grade_scheme.form.derived_label") %>
               </label>
 
-              <div class="input-group has-validation">
-                <input
-                  type="number"
-                  autocomplete="off"
-                  class="form-control"
-                  readonly
-                  tabindex="-1"
-                  id="grade-scheme-derived"
-                  data-assessments--scheme-form-target="derivedInput"
-                >
+              <output
+                class="form-control-plaintext fw-semibold"
+                id="grade-scheme-derived"
+                for="grade-scheme-anchor grade-scheme-delta"
+                data-assessments--scheme-form-target="derivedOutput"
+              ></output>
 
-                <span class="input-group-text">
-                  <%= t("assessment.distribution.points") %>
-                </span>
-
-                <div
-                  class="invalid-feedback"
-                  data-assessments--scheme-form-target="derivedError"
-                ></div>
-              </div>
+              <div
+                class="form-text text-danger"
+                hidden
+                data-assessments--scheme-form-target="derivedError"
+              ></div>
 
               <small
                 class="text-muted"
