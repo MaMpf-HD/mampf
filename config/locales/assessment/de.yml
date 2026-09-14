@@ -334,6 +334,8 @@ de:
       user_joined_tutorial: 'Ohne Übungsgruppe abgegeben, seitdem in %{new_tutorial}.'
     grading_talk:
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
+    grading_exam:
+      no_records: 'Keine Datensätze, die bearbeitet werden können.'
     grading_overview:
       submission_progress: 'Abgaben'
       submitted: 'Abgegeben'

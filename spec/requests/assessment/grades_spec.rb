@@ -3,6 +3,8 @@ require "rails_helper"
 RSpec.describe(Assessment::GradesController, type: :request) do
   let(:teacher) { FactoryBot.create(:confirmed_user) }
   let(:student) { FactoryBot.create(:confirmed_user) }
+  let(:turbo_stream_headers) { { "Accept" => "text/vnd.turbo-stream.html" } }
+  let(:grader) { teacher }
 
   describe "Talk" do
     let(:seminar) do
@@ -11,11 +13,9 @@ RSpec.describe(Assessment::GradesController, type: :request) do
     let(:talk) { FactoryBot.create(:talk, lecture: seminar, dates: [1.week.from_now]) }
     let(:speaker) { FactoryBot.create(:confirmed_user) }
     let(:assessment) { talk.reload.assessment }
-    let(:grader) { teacher }
     let!(:participation) do
       FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
     end
-    let(:turbo_stream_headers) { { "Accept" => "text/vnd.turbo-stream.html" } }
 
     before do
       FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
@@ -310,6 +310,9 @@ RSpec.describe(Assessment::GradesController, type: :request) do
                                                    user: exam_student)
     end
     describe "PATCH #update (exam)" do
+      before do
+        sign_in grader
+      end
       subject do
         patch grade_participation_path(exam_participation),
               params: { grade: "1.7", comment: "oral exam" },
@@ -407,6 +410,10 @@ RSpec.describe(Assessment::GradesController, type: :request) do
     end
 
     describe "PATCH #refresh (exam)" do
+      before do
+        sign_in grader
+      end
+
       subject do
         patch refresh_grade_participation_path(exam_participation),
               headers: turbo_stream_headers

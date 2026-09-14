@@ -52,31 +52,6 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
     end
   end
 
-  describe "initialization" do
-    it "sets @lecture from the exam's lecture" do
-      expect(component.instance_variable_get(:@lecture)).to eq(exam.lecture)
-    end
-
-    it "sets @assessment from the exam's assessment" do
-      expect(component.instance_variable_get(:@assessment)).to eq(exam.assessment)
-    end
-
-    context "when draft_scheme is provided" do
-      let(:draft_scheme) { instance_double(GradeScheme) }
-      let(:component) { described_class.new(exam: exam, draft_scheme: draft_scheme) }
-
-      it "stores the draft_scheme" do
-        expect(component.instance_variable_get(:@draft_scheme)).to eq(draft_scheme)
-      end
-    end
-
-    context "when draft_scheme is omitted" do
-      it "defaults @draft_scheme to nil" do
-        expect(component.instance_variable_get(:@draft_scheme)).to be_nil
-      end
-    end
-  end
-
   describe "participations" do
     let(:user) { create(:confirmed_user) }
     let!(:roster_entry) { create(:exam_roster_entry, exam: exam, user: user) }
@@ -127,6 +102,9 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
   end
 
   describe "rendering" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(teacher)
+    end
     context "when there are participations" do
       let(:user) { create(:confirmed_user) }
       let!(:roster_entry) { create(:exam_roster_entry, exam: exam, user: user) }

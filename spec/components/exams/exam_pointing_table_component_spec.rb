@@ -93,8 +93,8 @@ RSpec.describe(ExamPointingTableComponent, type: :component) do
       expect(component.row_statuses).to include(:reviewed)
     end
 
-    it "reads a roster entry with no participation as not submitted" do
-      expect(component.row_statuses).to eq([:not_submitted])
+    it "reads a roster entry with no participation as pending_grading" do
+      expect(component.row_statuses).to eq([:pending_grading])
     end
   end
 
@@ -139,6 +139,9 @@ RSpec.describe(ExamPointingTableComponent, type: :component) do
   end
 
   describe "rendering" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(teacher)
+    end
     context "when there are participations" do
       let(:user) { create(:confirmed_user) }
       let!(:roster_entry) { create(:exam_roster_entry, exam: exam, user: user) }

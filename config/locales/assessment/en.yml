@@ -334,6 +334,8 @@ en:
       user_joined_tutorial: 'Handed in without a tutorial, since then in %{new_tutorial}.'
     grading_talk:
       no_talks_gradable: 'No talks that can be graded.'
+    grading_exam:
+      no_records: 'No records that can be processed.'
     grading_overview:
       submission_progress: 'Submissions'
       submitted: 'Submitted'
