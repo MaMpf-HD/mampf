@@ -266,18 +266,8 @@ de:
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
     grade_table:
-      pending: 'ausstehend'
-      reviewed: 'überprüft'
-      absent: 'nicht angetreten'
-      exempt: 'entschuldigt'
-      not_submitted: 'nicht abgegeben'
-      excluded_heading: 'Sonderfälle'
-      reason: 'Grund'
       roster_heading: 'Notenvergabe'
-      status: 'Status'
-      all_graded_by: 'Alle Noten von %{grader}.'
       proposed_tooltip: 'Vorschlag aus dem aktuellen Notenschema (noch nicht angewendet).'
-      proposed_tooltip_with_current: 'Vorschlag aus dem aktuellen Notenschema (noch nicht angewendet). Aktuell: %{current}.'
     grading_tutorial:
       save_all: 'Alle Änderungen speichern'
       task: 'Aufgabe'

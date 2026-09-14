@@ -81,7 +81,6 @@ class AssessmentDashboardComponent < ViewComponent::Base
         t << tasks_tab if pointable?
         t << points_tab if pointable?
         t << grading_tab if gradable? && pointable?
-        t << grades_tab if gradable? && !pointable?
         t << statistics_tab unless assessable.is_a?(Talk)
       end
     end
@@ -149,14 +148,6 @@ class AssessmentDashboardComponent < ViewComponent::Base
       else
         raise(ArgumentError, "No points tab for #{assessable.class}")
       end
-    end
-
-    def grades_tab
-      TabConfig.new(
-        "grades",
-        I18n.t("assessment.grades"),
-        GradeTableComponent.new(assessment: assessment)
-      )
     end
 
     def grading_tab

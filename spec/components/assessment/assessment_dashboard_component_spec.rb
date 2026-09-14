@@ -228,70 +228,18 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
     end
   end
 
+  # A talk is graded in the seminar's table; the controller sends its
+  # dashboard URL there. Should one be built anyway, it has nothing to show.
   context "with a talk" do
     let(:seminar) { create(:seminar, teacher: teacher) }
     let(:talk) { create(:talk, lecture: seminar) }
-    let(:assessment) { talk.reload.assessment }
-    let(:assessable) { talk }
     let(:component) do
-      described_class.new(assessable: talk, assessment: assessment,
+      described_class.new(assessable: talk, assessment: talk.reload.assessment,
                           lecture: seminar)
     end
 
-    include_examples "common header"
-    include_examples "visible tab", "grades"
-    include_examples "hidden tab", "overview"
-    include_examples "hidden tab", "settings"
-    include_examples "hidden tab", "tasks"
-    include_examples "hidden tab", "roster"
-    include_examples "hidden tab", "submissions"
-    include_examples "hidden tab", "points"
-    include_examples "hidden tab", "statistics"
-
-    describe "#tabs" do
-      it "returns the correct tab keys" do
-        keys = component.tabs.map(&:key)
-        expect(keys).to eq(["grades"])
-      end
-    end
-
-    it "renders exactly one tab" do
-      render_inline(component)
-      expect(rendered_content.scan("nav-link").size).to eq(1)
-    end
-
-    it "renders GradeTableComponent in the grades pane" do
-      render_inline(component)
-      expect(rendered_content).to include("grade_table_component")
-    end
-
-    describe "#default_tab" do
-      it 'returns "grades"' do
-        expect(component.default_tab).to eq("grades")
-      end
-    end
-
-    describe "#back_path" do
-      it "points to the assessments index" do
-        render_inline(component)
-        expected = Rails.application.routes.url_helpers
-                        .assessment_assessments_path(lecture_id: seminar.id)
-        expect(component.back_path).to eq(expected)
-      end
-    end
-
-    describe "#subtitle" do
-      it "returns nil" do
-        render_inline(component)
-        expect(component.subtitle).to be_nil
-      end
-    end
-
-    it "activates the grades tab by default" do
-      render_inline(component)
-      expect(rendered_content).to match(
-        /nav-link\s+active[^>]*data-bs-target="#[^"]*-grades"/m
-      )
+    it "has no tab" do
+      expect(component.tabs).to be_empty
     end
   end
 
