@@ -2,7 +2,7 @@
   <% if gradable_talks.any? %>
     <div data-controller="status-filter">
       <div class="my-3">
-        <%= render PointingSummaryComponent.new(statuses: row_statuses, hand_ins: false) %>
+        <%= render summary %>
 
         <%= render PointingFilterComponent.new(id: "talks-#{@seminar.id}",
                                                status_options: status_options) %>
