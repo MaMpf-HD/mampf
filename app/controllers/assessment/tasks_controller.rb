@@ -98,11 +98,16 @@ module Assessment
         head :not_acceptable unless request.format.turbo_stream?
       end
 
+      # A talk's assessment has no dashboard to answer with: it is graded in
+      # the seminar's table, and that is where any request for it ends.
       def set_assessment
         @assessment = ::Assessment::Assessment.find_by(id: params[:assessment_id])
-        return if @assessment
+        unless @assessment
+          return redirect_to(root_path, alert: I18n.t("assessment.errors.no_assessment"))
+        end
+        return unless @assessment.assessable.is_a?(Talk)
 
-        redirect_to root_path, alert: I18n.t("assessment.errors.no_assessment")
+        redirect_to edit_lecture_path(@assessment.assessable.lecture, tab: "assessments")
       end
 
       def set_task

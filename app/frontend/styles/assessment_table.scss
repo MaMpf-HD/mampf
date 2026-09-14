@@ -21,6 +21,12 @@ table.table tbody tr.row-dirty td {
   max-height: 75vh;
   width: 100%;
 
+  /* A table cut into pages is short enough to stand on the page; scrolling
+     inside it as well would be one scroll too many. */
+  [data-status-filter-page-size-value] & {
+    max-height: none;
+  }
+
   > table {
     width: 100%;
     border-collapse: separate;
@@ -70,6 +76,7 @@ thead th.sticky-col {
 @include column(team);
 @include column(tutorial);
 @include column(status);
+@include column(status-compact);
 @include column(task);
 @include column(total);
 @include column(grade);
@@ -124,6 +131,17 @@ thead th.sticky-col {
   .table-wrapper::after {
     display: none;
   }
+}
+
+/* Marker, grade and the scheme's answer share one line. The outer slots are
+   there in every row, so the grades stand under each other whether or not
+   a row has something to say. */
+.grade-cell {
+  display: inline-grid;
+  grid-template-columns: 2.5rem auto 2.5rem;
+  align-items: center;
+  justify-items: center;
+  gap: 0.25rem;
 }
 
 .grade-th {

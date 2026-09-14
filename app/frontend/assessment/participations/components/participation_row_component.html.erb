@@ -11,8 +11,9 @@
   <% end %>
   data-status-filter-target="row"
   data-status-filter-status="<%= status %>"
-  data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
+  data-status-filter-tutorial="<%= filter_tutorial_id %>"
   data-status-filter-name="<%= filter_name %>"
+  data-status-filter-flags="<%= filter_flags %>"
 >
   <% if layout.show?(:talk) %>
     <td class="<%= layout.column_class(:talk) %>">
@@ -72,13 +73,20 @@
   <% end %>
 
   <% if grading_enabled? %>
-    <td class="text-center <%= layout.column_class(:status) %>">
-      <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
+    <% if layout.show?(:status_compact) %>
+      <td class="text-center <%= layout.column_class(:status_compact) %>">
+        <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :icon,
+                                                         detail: status_detail) %>
+      </td>
+    <% else %>
+      <td class="text-center <%= layout.column_class(:status) %>">
+        <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
 
-      <% if locked_reason %>
-        <div class="small text-muted"><%= locked_reason %></div>
-      <% end %>
-    </td>
+        <% if locked_reason %>
+          <div class="small text-muted"><%= locked_reason %></div>
+        <% end %>
+      </td>
+    <% end %>
     <% if tasks? %>
       <% tasks.each do |task| %>
         <%= task_points_participation_cell(task, allow_grading?) %>
@@ -88,52 +96,91 @@
       </td>
     <% end %>
     <% if single_grade? %>
+      <% if layout.show?(:total) %>
+        <td class="text-center <%= layout.column_class(:total) %>">
+          <%= points_total_display %>
+        </td>
+      <% end %>
       <td class="text-center <%= layout.column_class(:grade) %>">
-        <% if allow_grading? && can_enter_grade? %>
-          <%= tag.select(
-                name: "grade",
-                class: "form-select form-select-sm mx-auto",
-                aria: { label: t("assessment.grade_talk_row.grade_for", name: @user.tutorial_name) },
-                data: { participation_row_target: "gradeInput",
-                        action: "change->participation-row#onParticipationChanged" }
-              ) do %>
-            <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
-
-            <%= safe_join(
-                  grade_options.map { |label, value| tag.option(label, value: value, selected: value == grade_numeric) }
-                ) %>
+        <div class="grade-cell">
+          <% if points_changed_notice %>
+            <i
+              class="bi bi-exclamation-triangle-fill text-warning-emphasis"
+              role="img"
+              title="<%= points_changed_notice %>"
+              aria-label="<%= points_changed_notice %>"
+            ></i>
+          <% else %>
+            <span></span>
           <% end %>
-        <% else %>
-          <span class="fw-semibold"><%= grade_display %></span>
-        <% end %>
+
+          <% if allow_grading? && can_enter_grade? && grade_enterable? %>
+            <%= tag.select(
+                  name: "grade",
+                  class: "form-select form-select-sm w-auto",
+                  aria: { label: t("assessment.grade_talk_row.grade_for", name: @user.tutorial_name) },
+                  data: { participation_row_target: "gradeInput",
+                          action: "change->participation-row#onParticipationChanged" }
+                ) do %>
+              <%= tag.option("—", value: "", selected: grade_numeric.blank?) %>
+
+              <%= safe_join(
+                    grade_options.map { |label, value| tag.option(label, value: value, selected: value == grade_numeric) }
+                  ) %>
+            <% end %>
+          <% else %>
+            <span class="fw-semibold"><%= grade_display %></span>
+          <% end %>
+
+          <% if proposed_grade_differs? %>
+            <%# The scheme's answer stands beside the field until it is taken or overruled. %>
+            <span
+              class="badge bg-info-subtle text-info-emphasis fw-normal"
+              title="<%= proposal_tooltip %>"
+            >
+              <%= proposed_grade %>
+            </span>
+          <% else %>
+            <span></span>
+          <% end %>
+        </div>
       </td>
-      <td class="<%= layout.column_class(:note) %>">
-        <% if allow_grading? && can_enter_grade? %>
-          <%= text_area_tag "note", @participation&.note,
+      <% if layout.show?(:note) %>
+        <td class="<%= layout.column_class(:note) %>">
+          <% if allow_grading? && can_enter_grade? && grade_enterable? %>
+            <%= text_area_tag "note", @participation&.note,
                     class: "form-control form-control-sm",
                     aria: { label: t("assessment.grade_talk_row.note_for", name: @user.tutorial_name) },
                     maxlength: 255,
                     rows: 1,
                     data: { participation_row_target: "noteInput",
                             action: "input->participation-row#onParticipationChanged" } %>
-        <% else %>
-          <span
-            class="text-muted small text-truncate d-inline-block"
-            title="<%= @participation&.note %>"
-          >
-            <%= @participation&.note.presence || "—" %>
-          </span>
-        <% end %>
-      </td>
-      <td class="text-muted small <%= layout.column_class(:graded) %>">
-        <% if graded_display %>
-          <span title="<%= graded_ago %>"><%= graded_display %></span>
-        <% end %>
-      </td>
+          <% else %>
+            <span
+              class="text-muted small text-truncate d-inline-block"
+              title="<%= @participation&.note %>"
+            >
+              <%= @participation&.note.presence || "—" %>
+            </span>
+          <% end %>
+        </td>
+      <% end %>
+      <% if layout.show?(:graded) %>
+        <td class="text-muted small <%= layout.column_class(:graded) %>">
+          <% if graded_display %>
+            <span title="<%= graded_ago %>"><%= graded_display %></span>
+          <% end %>
+        </td>
+      <% end %>
     <% end %>
     <td class="text-center <%= layout.column_class(:save) %>">
-      <% if (tasks? && can_enter_points? && points_enterable?) || (single_grade? && can_enter_grade?) %>
-        <div class="d-inline-flex align-items-center gap-1">
+      <div class="d-inline-flex align-items-center gap-1">
+        <% if exam_grading? %>
+          <%= absence_button %>
+          <%= exemption_button %>
+        <% end %>
+
+        <% if (tasks? && can_enter_points? && points_enterable?) || (single_grade? && can_enter_grade? && grade_enterable?) %>
           <%= form_with url: save_url,
                       method: :patch,
                       data: { turbo: true, participation_row_target: "form" },
@@ -150,15 +197,16 @@
               data-participation-row-target="gradePayload"
             >
 
-            <input
-              type="hidden"
-              name="comment"
-              data-participation-row-target="notePayload"
-            >
+            <%# Sent only where a note can be typed: an empty comment would clear the note. %>
+            <% if layout.show?(:note) %>
+              <input
+                type="hidden"
+                name="comment"
+                data-participation-row-target="notePayload"
+              >
+            <% end %>
           <% end %>
-
           <%= save_row_button(allow_grading?) %>
-
           <%= form_with url: refresh_url,
                       method: :patch,
                       data: { turbo: true, participation_row_target: "refreshForm" },
@@ -175,10 +223,9 @@
               data-participation-row-target="gradePayload"
             >
           <% end %>
-
           <%= refresh_row_button(allow_grading?) %>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
     </td>
   <% end %>
 

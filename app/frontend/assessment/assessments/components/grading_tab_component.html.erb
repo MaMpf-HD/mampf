@@ -3,7 +3,7 @@
     <%= render scheme_component %>
   <% else %>
     <div class="row g-4">
-      <div class="col-xl-6 order-2 order-xl-1">
+      <div class="col-xl-7 order-2 order-xl-1">
         <div class="card shadow">
           <div class="card-header bg-light">
             <h6 class="mb-0">
@@ -18,7 +18,7 @@
         </div>
       </div>
 
-      <aside class="col-xl-6 order-1 order-xl-2">
+      <aside class="col-xl-5 order-1 order-xl-2">
         <div
           class="grading-aside position-sticky"
           style="top: 1rem; max-height: calc(100vh - 2rem);
@@ -28,11 +28,8 @@
           <% if show_form? %>
             <%= render scheme_component %>
           <% else %>
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <%= render scheme_component %>
-              </div>
-            </div>
+            <%= render partial: "assessment/assessments/components/scheme_card",
+                       locals: { assessment: assessment } %>
           <% end %>
         </div>
       </aside>

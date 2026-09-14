@@ -188,6 +188,17 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
     before { sign_in teacher }
 
+    it "sends a talk's assessment to the seminar's table instead of a dashboard" do
+      seminar = create(:lecture, :is_seminar, teacher: teacher)
+      talk = create(:talk, lecture: seminar)
+
+      patch assessment_assessment_path(talk.reload.assessment.id),
+            params: { assessment_assessment: { requires_submission: false } },
+            as: :turbo_stream
+
+      expect(response).to redirect_to(edit_lecture_path(seminar, tab: "assessments"))
+    end
+
     context "with valid parameters" do
       it "updates the assessment" do
         patch assessment_assessment_path(assessment.id),

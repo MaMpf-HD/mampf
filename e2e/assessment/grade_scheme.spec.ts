@@ -21,6 +21,7 @@ test.describe("grade schemes", () => {
     const student = await factory.create("confirmed_user", [], {
       name_in_tutorials: "Ada Lovelace",
     });
+    await factory.create("exam_roster_entry", [], { exam_id: exam.id, user_id: student.id });
     const participation = await factory.create("assessment_participation", [], {
       assessment_id: assessment.id,
       user_id: student.id,
@@ -53,7 +54,23 @@ test.describe("grade schemes", () => {
 
     await expect(teacher.page.getByText("Grade scheme saved.")).toBeVisible();
     await expect(page.pane.getByText("Grade scheme configured.")).toBeVisible();
-    await expect(page.pane.getByRole("button", { name: "Apply Scheme" }))
+    await expect(page.pane.getByRole("button", { name: "Apply draft" }))
+      .toBeVisible();
+  });
+
+  test("leaves the form without saving", async ({ factory, teacher }) => {
+    const { lecture } = await markedExam(factory, teacher.user.id);
+
+    const page = new ExamDashboardPage(teacher.page, lecture.id);
+    await openGrades(page);
+    await teacher.page.getByRole("link", { name: "Create Grade Scheme" })
+      .click();
+    await expect(page.pane.getByText("Configure Grade Scheme")).toBeVisible();
+
+    await page.pane.getByRole("link", { name: "Cancel" }).click();
+
+    await expect(page.pane.getByText("Configure Grade Scheme")).toHaveCount(0);
+    await expect(page.pane.getByRole("link", { name: "Create Grade Scheme" }))
       .toBeVisible();
   });
 
@@ -66,11 +83,19 @@ test.describe("grade schemes", () => {
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await openGrades(page);
     teacher.page.on("dialog", dialog => dialog.accept());
-    await page.pane.getByRole("button", { name: "Apply Scheme" }).click();
+    // 70 of 100 points: the draft proposes 1.0 beside the empty grade, and
+    // applying it writes the grade and drops the proposal
+    const ada = page.pane.getByRole("row", { name: /Ada Lovelace/ });
+    const proposal = ada.getByTitle("Proposal from the current grade scheme (not yet applied).");
+    await expect(ada.getByRole("combobox", { name: "Grade for Ada Lovelace" })).toHaveValue("");
+    await expect(proposal).toHaveText("1.0");
+    await page.pane.getByRole("button", { name: "Apply draft" }).click();
 
     await expect(teacher.page.getByText("Grade scheme applied!")).toBeVisible();
     await expect(teacher.page.getByRole("link", { name: "Revise Scheme" }))
       .toBeVisible();
+    await expect(ada.getByRole("combobox", { name: "Grade for Ada Lovelace" })).toHaveValue("1.0");
+    await expect(proposal).toHaveCount(0);
   });
 
   test("discards a draft and offers to start over", async ({
@@ -85,9 +110,9 @@ test.describe("grade schemes", () => {
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await openGrades(page);
     teacher.page.on("dialog", dialog => dialog.accept());
-    await page.pane.getByRole("button", { name: "Discard Scheme" }).click();
+    await page.pane.getByRole("button", { name: "Discard draft" }).click();
 
-    await expect(teacher.page.getByText("Grade scheme discarded.")).toBeVisible();
+    await expect(teacher.page.getByText("Draft discarded.")).toBeVisible();
     await expect(page.pane.getByRole("link", { name: "Create Grade Scheme" }))
       .toBeVisible();
   });

@@ -96,6 +96,42 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
       end
     end
 
+    # A scheme applied afterwards grades reviewed rows only; a candidate whose
+    # grade was taken back must not fall out of it while their points are in.
+    context "when the grade is taken back on a fully scored exam" do
+      let(:exam) { FactoryBot.create(:exam, :with_date) }
+      let(:assessment) do
+        FactoryBot.create(:assessment, :with_points, assessable: exam, lecture: exam.lecture)
+      end
+      let(:participation) do
+        FactoryBot.create(:assessment_participation, assessment: assessment,
+                                                     status: :reviewed, grade_numeric: 2.0,
+                                                     grader: grader, graded_at: 1.hour.ago)
+      end
+
+      before do
+        task = FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+        FactoryBot.create(:assessment_task_point, task: task,
+                                                  assessment_participation: participation,
+                                                  points: 5)
+      end
+
+      it "leaves the row reviewed by its points, without a grade" do
+        described_class.set_grade(participation, described_class.build_grade_info, grader)
+
+        expect(participation.reload).to have_attributes(status: "reviewed", grade_numeric: nil,
+                                                        grader_id: nil)
+      end
+
+      it "returns a row missing points to pending" do
+        participation.task_points.first.destroy!
+
+        described_class.set_grade(participation, described_class.build_grade_info, grader)
+
+        expect(participation.reload).to be_pending
+      end
+    end
+
     context "with a valid grade_text" do
       let(:grade_info) { described_class.build_grade_info(grade_text: "pass") }
 
@@ -185,88 +221,43 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
         expect(participation.reload).to have_attributes(grader_id: nil, graded_at: nil)
       end
 
-      it "forgets them on an exempt row as well, whose status stays" do
-        participation.update!(status: :exempt)
-
-        described_class.set_grade(participation, grade_info, grader)
-
-        expect(participation.reload).to have_attributes(status: "exempt", grader_id: nil,
-                                                        graded_at: nil)
-      end
-
       it "keeps the row rather than adding one" do
         expect { described_class.set_grade(participation, grade_info, grader) }
           .not_to change(Assessment::Participation, :count)
       end
     end
 
-    context "when participation is exempt" do
-      before { participation.update!(status: :exempt) }
+    # The service, not only the row, keeps a grade off somebody who did not
+    # take part: the check runs under the row's lock, after any transition.
+    ["exempt", "absent"].each do |state|
+      context "when the participation is #{state}" do
+        before { participation.update!(status: state) }
 
-      let(:grade_info) { described_class.build_grade_info(grade_numeric: "1.0") }
+        let(:grade_info) { described_class.build_grade_info(grade_numeric: "1.0") }
 
-      it "retains the exempt status regardless of grade" do
-        described_class.set_grade(participation, grade_info, grader)
-        expect(participation.reload.status).to eq("exempt")
-      end
-
-      it "still updates the grade value" do
-        described_class.set_grade(participation, grade_info, grader)
-        expect(participation.reload.grade_numeric).to eq(1.0)
-      end
-    end
-
-    context "when participation is absent" do
-      before { participation.update!(status: :absent) }
-
-      let(:grade_info) { described_class.build_grade_info(grade_numeric: "1.0") }
-
-      it "retains the absent status regardless of grade" do
-        described_class.set_grade(participation, grade_info, grader)
-        expect(participation.reload.status).to eq("absent")
+        it "refuses the grade and leaves the row as it is" do
+          expect { described_class.set_grade(participation, grade_info, grader) }
+            .to raise_error(Assessment::GradeEntryService::GradeEntryError,
+                            I18n.t("assessment.grading_exam.not_gradable",
+                                   status: I18n.t("assessment.grading_exam.status_word.#{state}")))
+          expect(participation.reload).to have_attributes(status: state, grade_numeric: nil)
+        end
       end
     end
   end
 
   describe ".calculate_status" do
-    context "when participation is exempt" do
-      before { participation.status = :exempt }
-
-      it "returns the current status" do
-        result = described_class.calculate_status(participation, { grade_numeric: 1.0 })
-        expect(result).to eq("exempt")
-      end
+    it "is reviewed with a numeric grade" do
+      expect(described_class.calculate_status({ grade_numeric: 1.0 })).to eq(:reviewed)
     end
 
-    context "when participation is absent" do
-      before { participation.status = :absent }
-
-      it "returns the current status" do
-        result = described_class.calculate_status(participation, { grade_numeric: nil })
-        expect(result).to eq("absent")
-      end
+    it "is reviewed with a text grade" do
+      expect(described_class.calculate_status({ grade_text: "pass" })).to eq(:reviewed)
     end
 
-    context "when grade_numeric is present" do
-      it "returns :reviewed" do
-        result = described_class.calculate_status(participation, { grade_numeric: 1.0 })
-        expect(result).to eq(:reviewed)
-      end
-    end
-
-    context "when grade_text is present" do
-      it "returns :reviewed" do
-        result = described_class.calculate_status(participation, { grade_text: "pass" })
-        expect(result).to eq(:reviewed)
-      end
-    end
-
-    context "when neither grade_numeric nor grade_text is present" do
-      it "returns :pending" do
-        result = described_class.calculate_status(participation,
-                                                  { grade_numeric: nil, grade_text: nil })
-        expect(result).to eq(:pending)
-      end
+    it "is pending without either" do
+      expect(described_class.calculate_status({ grade_numeric: nil, grade_text: nil }))
+        .to eq(:pending)
     end
   end
 

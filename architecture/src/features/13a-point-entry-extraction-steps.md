@@ -137,8 +137,9 @@ to the assignment one.
 through `mark_exempt`: it clears the grade along with the status, and setting the status
 directly would leave a failing grade that re-applying a scheme will not remove either.
 
-`PointGridComponent` needs to stop treating a missing `submitted_at` as absence from the
-table, and to stop showing a tutorial column for assessables that have no tutorials.
+`PointGridComponent` is gone: an exam's points tab is `ExamPointingTableComponent`,
+which draws every candidate on the roster and reads absence off the status, not off
+`submitted_at`.
 
 ## 8 · A grade a person can type
 

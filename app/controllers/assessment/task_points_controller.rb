@@ -1,21 +1,32 @@
 module Assessment
   class TaskPointsController < ApplicationController
+    include ExamStreams
+
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_team,
                          :update_participation, :refresh_submission,
                          :refresh_participation, :mark_as_participated,
-                         :remove_participated]
+                         :remove_participated, :mark_as_absent, :remove_absent,
+                         :mark_as_exempt, :remove_exempt]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update_team_multi,
                                                  :update_team,
                                                  :update_participation,
                                                  :refresh_submission,
                                                  :refresh_participation,
-                                                 :remove_participated]
-    before_action :refuse_without_row, only: [:update_participation,
-                                              :refresh_participation,
-                                              :mark_as_participated,
-                                              :remove_participated]
+                                                 :remove_participated,
+                                                 :mark_as_absent,
+                                                 :remove_absent]
+    # An exemption changes what counts for a candidate; that is the
+    # lecturer's call, not the grader's.
+    before_action :authorize_lecture_edit!, only: [:mark_as_exempt, :remove_exempt]
+    before_action :refuse_without_row, only: [:update_participation, :refresh_participation]
+    before_action :refuse_unless_sheet, only: [:mark_as_participated, :remove_participated]
+    before_action :refuse_unless_exam, only: [:mark_as_absent, :remove_absent,
+                                              :mark_as_exempt, :remove_exempt]
+    before_action :refuse_unless_candidate, only: [:update_participation, :mark_as_absent,
+                                                   :remove_absent, :mark_as_exempt,
+                                                   :remove_exempt]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
@@ -23,7 +34,8 @@ module Assessment
     end
 
     rescue_from SubmissionGraderService::SubmissionGraderError,
-                PointEntryService::PointEntryError do |e|
+                PointEntryService::PointEntryError,
+                AbsenceHandling::InvalidTransitionError do |e|
       respond_with_flash(:alert, e.message)
     end
 
@@ -32,6 +44,10 @@ module Assessment
     # separately by SubmissionGraderService.
     def authorize_assessment!
       authorize!(:enter_points, @tutorial || @lecture)
+    end
+
+    def authorize_lecture_edit!
+      authorize!(:update, @lecture)
     end
 
     def update_team_multi
@@ -93,18 +109,17 @@ module Assessment
       end
 
       ActiveRecord::Base.transaction do
-        SubmissionGraderService.score_tasks_by_participation!(
-          @participation, task_points, current_user
-        )
+        case @assessable
+        when Exam then score_exam_tasks!(task_points)
+        else
+          SubmissionGraderService.score_tasks_by_participation!(
+            @participation, task_points, current_user
+          )
+        end
       end
 
       @participation = @participation.reload
-      render_task_points_update(
-        turbo_stream.replace(
-          "participation-row-#{@participation.id}",
-          html: render_to_string(participation_row)
-        )
-      )
+      render_task_points_update(participation_row_stream)
     end
 
     def refresh_submission
@@ -114,6 +129,29 @@ module Assessment
     def refresh_participation
       @user = @participation.user
       rerender_user_row
+    end
+
+    # An exemption is the lecturer's to give; taking it away, even for an
+    # absence, takes the same right.
+    def mark_as_absent
+      authorize_lecture_edit! if @participation.exempt?
+      AbsenceHandling.mark_absent(@participation)
+      render_task_points_update(participation_row_stream)
+    end
+
+    def remove_absent
+      AbsenceHandling.remove_absent(@participation)
+      render_task_points_update(participation_row_stream)
+    end
+
+    def mark_as_exempt
+      AbsenceHandling.mark_exempt(@participation, note: params[:note])
+      render_task_points_update(participation_row_stream)
+    end
+
+    def remove_exempt
+      AbsenceHandling.remove_exempt(@participation)
+      render_task_points_update(participation_row_stream)
     end
 
     def mark_as_participated
@@ -129,9 +167,7 @@ module Assessment
     def remove_participated
       SubmissionGraderService.remove_participation(@participation)
       @participation.reload
-      render turbo_stream: [turbo_stream.replace("participation-row-#{@participation.id}",
-                                                 html: render_to_string(participation_row)),
-                            summary_stream]
+      render turbo_stream: [participation_row_stream, summary_stream].flatten
     end
 
     private
@@ -157,22 +193,48 @@ module Assessment
         scope = row_before ? row_before.tutorial : roster_tutorial
         authorize!(:enter_points, scope || @lecture)
         row_id = if row_before
-          "participation-row-#{row_before.id}"
+          "pointing-participation-row-#{row_before.id}"
         else
-          "participation-row-user-#{user.id}"
+          "pointing-participation-row-user-#{user.id}"
         end
         participation = SubmissionGraderService.init_participation(@assessment, user,
                                                                    roster_tutorial)
         turbo_stream.replace(row_id, html: render_to_string(participation_row(participation)))
       end
 
-      # The rows on this page are drawn for assignments; a participation in
+      # Points tables are drawn for sheets and exams; a participation in
       # anything else has no row to go back into.
       def refuse_without_row
+        return if @assessable.is_a?(Assignment) || @assessable.is_a?(Exam)
+
+        unsupported_assessable
+      end
+
+      # Only a sheet is handed in; only an exam is attended.
+      def refuse_unless_sheet
         return if @assessable.is_a?(Assignment)
 
+        unsupported_assessable
+      end
+
+      def refuse_unless_exam
+        return if @assessable.is_a?(Exam)
+
+        unsupported_assessable
+      end
+
+      def unsupported_assessable
         respond_with_flash(:alert, t("assessment.task_points.unsupported_assessment_type"),
                            status: :bad_request)
+      end
+
+      # The row of somebody taken off the roster stays in the database; nothing
+      # is recorded on it any more.
+      def refuse_unless_candidate
+        return unless @assessable.is_a?(Exam)
+        return if @assessable.users.exists?(id: @participation.user_id)
+
+        respond_with_flash(:alert, t("assessment.grading_exam.user_not_candidate"))
       end
 
       def rerender_submission_row
@@ -196,21 +258,33 @@ module Assessment
       def rerender_user_row
         respond_to do |format|
           format.turbo_stream do
-            row = turbo_stream.replace(
-              "participation-row-#{@participation.id}",
-              html: render_to_string(participation_row)
-            )
-            render turbo_stream: [row, summary_stream]
+            render turbo_stream: [participation_row_stream, summary_stream].flatten
           end
         end
       end
 
-      def render_task_points_update(*streams)
-        flash.now[:notice] = t("assessment.task_points.update")
-        render turbo_stream: streams.flatten.compact + [summary_stream, stream_flash].compact
+      def participation_row_stream
+        return exam_streams if @assessable.is_a?(Exam)
+
+        turbo_stream.replace("pointing-participation-row-#{@participation.id}",
+                             html: render_to_string(participation_row))
       end
 
+      # An exam has nothing to hand in and no group; the service refuses the
+      # absent and the excused.
+      def score_exam_tasks!(task_points)
+        PointEntryService.enter_points(@participation, task_points, current_user)
+      end
+
+      def render_task_points_update(*streams)
+        flash.now[:notice] = t("assessment.task_points.update")
+        render turbo_stream: (streams + [summary_stream, stream_flash]).flatten.compact
+      end
+
+      # ExamStreams already includes the exam summaries.
       def summary_stream
+        return [] if @assessable.is_a?(Exam)
+
         summary = TutorialPointingTableComponent.new(assignment: @assessable,
                                                      grading_scope: table_scope).summary
         turbo_stream.replace("pointing-summary", html: render_to_string(summary))
@@ -300,7 +374,9 @@ module Assessment
         @assessment = @participation.assessment
         @lecture = @assessment.lecture
         @assessable = @assessment.assessable
-        @tutorial = @participation.tutorial
+        # Only a sheet's row is scored within a group; an exam's is the
+        # lecture's business, whatever its tutorial column may hold.
+        @tutorial = @participation.tutorial if @assessable.is_a?(Assignment)
         return if @assessable
 
         respond_with_flash(:alert, t("assessment.task_points.participation_missing_assignment"),

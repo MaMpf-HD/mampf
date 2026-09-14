@@ -38,3 +38,15 @@
     border-top: 2px dashed #f1aeb5;
   }
 }
+
+.grade-scheme-form {
+  // Thresholds are numbers: the input is sized for one, the label and hint
+  // set the field's width, and the fields wrap when the card is narrow.
+  .gs-points-field {
+    max-width: 17rem;
+
+    .input-group {
+      max-width: 10rem;
+    }
+  }
+}

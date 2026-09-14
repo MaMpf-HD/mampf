@@ -86,6 +86,34 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
         expect(participation.graded_at).to be_within(5.seconds).of(Time.current)
       end
 
+      # A grade saved by somebody else between loading the row and writing
+      # the points must keep its stamp, or the correction goes unflagged.
+      it "decides on the row as it is in the database, not as it was loaded" do
+        described_class.enter_points(participation, { task1.id => "5", task2.id => "3" }, grader)
+        stale = Assessment::Participation.find(participation.id)
+        graded_at = 1.hour.ago
+        participation.reload.update!(grade_numeric: 2.0, grader: grader, graded_at: graded_at)
+
+        described_class.enter_points(stale, { task1.id => "6" }, grader)
+
+        expect(stale.reload.graded_at).to be_within(1.second).of(graded_at)
+        expect(stale.points_changed_after_grading?).to be(true)
+      end
+
+      # The row hides the inputs for them; the service refuses as well, on
+      # the state as it is once the row is locked.
+      ["absent", "exempt"].each do |state|
+        it "gives somebody #{state} no points" do
+          participation.update!(status: state)
+
+          expect { described_class.enter_points(participation, { task1.id => "5" }, grader) }
+            .to raise_error(Assessment::PointEntryService::PointEntryError,
+                            I18n.t("assessment.grading_exam.not_scorable",
+                                   status: I18n.t("assessment.grading_exam.status_word.#{state}")))
+          expect(participation.task_points).to be_empty
+        end
+      end
+
       it "moves the stamp when the marks are saved again" do
         described_class.enter_points(participation, { task1.id => "5", task2.id => "3" }, grader)
         first = participation.reload.graded_at

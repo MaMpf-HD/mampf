@@ -23,6 +23,10 @@ class TalkGradingTableComponent < ViewComponent::Base
     rows.map(&:display_status)
   end
 
+  def summary
+    PointingSummaryComponent.new(statuses: row_statuses, hand_ins: false)
+  end
+
   # A talk is graded or not; nothing marks a speaker absent or exempt.
   def status_options
     [:reviewed, :pending_grading].map do |status|
@@ -38,7 +42,7 @@ class TalkGradingTableComponent < ViewComponent::Base
   private
 
     def participations_index
-      @participations_index ||= Assessment::TalkGraderService.init_participations(
+      @participations_index ||= Assessment::ParticipationIndex.build(
         gradable_talks.flat_map do |talk|
           talk.speakers.map do |speaker|
             [talk.assessment, speaker]

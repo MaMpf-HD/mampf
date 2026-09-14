@@ -6,6 +6,7 @@ class PointingTableLayout
     team: 200,
     tutorial: 120,
     status: 170,
+    status_compact: 50,
     task: 90,
     total: 100,
     talk: 200,
@@ -18,8 +19,9 @@ class PointingTableLayout
   }.freeze
 
   # Pin :talk and :team so the talk and speaker remain visible while
-  # scrolling through the grade and note columns.
-  def self.for(assessable:, grading_scope: nil)
+  # scrolling through the grade and note columns. An exam has two tables,
+  # one for the points and one for the grade; `table_option` picks.
+  def self.for(assessable:, grading_scope: nil, table_option: :pointing)
     case assessable
     when Assignment
       columns = [:team]
@@ -30,6 +32,12 @@ class PointingTableLayout
     when Talk
       new(columns: [:talk, :team, :status, :grade, :note, :graded, :save],
           body: :single_grade, left: [:talk, :team])
+    when Exam
+      if table_option == :grading
+        new(columns: [:team, :status_compact, :total, :grade, :save], body: :single_grade)
+      else
+        new(columns: [:team, :status, :tasks, :total, :save], body: :tasks)
+      end
     else
       raise(UnsupportedAssessableError, "No pointing table layout for #{assessable.class}")
     end

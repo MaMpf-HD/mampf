@@ -44,7 +44,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
       when :team then team_label
       when :talk then t("basics.talk")
       when :tutorial then t("basics.tutorial")
-      when :status then t("assessment.grading_tutorial.status")
+      when :status, :status_compact then t("assessment.grading_tutorial.status")
       when :hand_in then t("basics.submission")
       when :correction then t("basics.correction")
       else t("assessment.grade_talk_row.#{column}")
@@ -52,9 +52,11 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def team_label
-      return t("assessment.grade_talk_row.speaker") if @assessable.is_a?(Talk)
-
-      t("basics.team")
+      case @assessable
+      when Talk then t("assessment.grade_talk_row.speaker")
+      when Exam then t("basics.name")
+      else t("basics.team")
+      end
     end
 
     # A correction may be any type the uploader takes, whatever the sheet

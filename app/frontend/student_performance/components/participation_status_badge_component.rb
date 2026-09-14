@@ -3,7 +3,9 @@
 class ParticipationStatusBadgeComponent < ViewComponent::Base
   include ActiveSupport::NumberHelper
 
-  VARIANTS = [:full, :compact].freeze
+  # :icon is the full badge without its word, for a narrow column; the word
+  # and whatever detail the row hands over travel in the tooltip.
+  VARIANTS = [:full, :compact, :icon].freeze
 
   STATUS_CONFIG = {
     reviewed: { icon: "bi-check-circle-fill", color: "success" },
@@ -26,11 +28,16 @@ class ParticipationStatusBadgeComponent < ViewComponent::Base
 
   attr_reader :status, :variant, :points
 
-  def initialize(status:, variant: :full, points: nil)
+  def initialize(status:, variant: :full, points: nil, detail: nil)
     super()
     @status = status.to_sym
     @variant = variant.to_sym
     @points = points
+    @detail = detail
+  end
+
+  def icon_title
+    @detail.present? ? "#{label}: #{@detail}" : label
   end
 
   def config

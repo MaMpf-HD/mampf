@@ -14,12 +14,32 @@ module Assessment
       end
 
       grade_info = validate_grade_info(grade_info)
-      status = calculate_status(participation, grade_info)
-      participation.update!(grade_text: grade_info[:grade_text],
-                            grade_numeric: grade_info[:grade_numeric],
-                            status: status,
-                            note: comment || participation.note,
-                            **stamp_for(participation, grade_info, grader))
+      # The state is read under the row's lock: an absence or exemption
+      # recorded meanwhile is seen here, not overwritten.
+      participation.with_lock do
+        refuse_absent_or_exempt!(participation)
+        status = calculate_status(grade_info)
+        stamp = stamp_for(participation, grade_info, grader)
+        # Without a grade the points decide again whether the row is reviewed;
+        # a scheme applied later must not skip a fully scored candidate.
+        if status == :pending && participation.all_tasks_scored?
+          status = :reviewed
+          stamp = { grader_id: nil, graded_at: Time.current }
+        end
+        participation.update!(grade_text: grade_info[:grade_text],
+                              grade_numeric: grade_info[:grade_numeric],
+                              status: status,
+                              note: comment || participation.note,
+                              **stamp)
+      end
+      participation
+    end
+
+    def self.refuse_absent_or_exempt!(participation)
+      return unless participation.absent? || participation.exempt?
+
+      status = I18n.t("assessment.grading_exam.status_word.#{participation.status}")
+      raise(GradeEntryError, I18n.t("assessment.grading_exam.not_gradable", status: status))
     end
 
     # Record who changed the grade and when; note-only edits must preserve
@@ -36,10 +56,8 @@ module Assessment
         participation.grade_text != grade_info[:grade_text]
     end
 
-    def self.calculate_status(participation, new_grade_info)
-      if participation.exempt? || participation.absent?
-        participation.status
-      elsif new_grade_info[:grade_numeric].present? || new_grade_info[:grade_text].present?
+    def self.calculate_status(new_grade_info)
+      if new_grade_info[:grade_numeric].present? || new_grade_info[:grade_text].present?
         :reviewed
       else
         :pending

@@ -904,6 +904,22 @@ Rails.application.routes.draw do
         to: "assessment/task_points#refresh_participation",
         as: "refresh_point_participation"
 
+  patch "participations/:participation_id/mark_as_absent",
+        to: "assessment/task_points#mark_as_absent",
+        as: "mark_as_absent"
+
+  patch "participations/:participation_id/remove_absent",
+        to: "assessment/task_points#remove_absent",
+        as: "remove_absent"
+
+  patch "participations/:participation_id/mark_as_exempt",
+        to: "assessment/task_points#mark_as_exempt",
+        as: "mark_as_exempt"
+
+  patch "participations/:participation_id/remove_exempt",
+        to: "assessment/task_points#remove_exempt",
+        as: "remove_exempt"
+
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",
       as: "edit_correction"

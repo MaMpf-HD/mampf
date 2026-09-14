@@ -43,6 +43,15 @@ module Assessment
                         .pick(:tutorial_id)
     end
 
+    # A grade entered or applied before the points were corrected may no
+    # longer fit them; nothing recomputes it, somebody has to look.
+    def points_changed_after_grading?
+      return false if graded_at.nil?
+
+      latest = task_points.map(&:updated_at).max
+      latest.present? && latest > graded_at
+    end
+
     def display_status
       if pending? && submitted_at.nil?
         assessment.status_without_hand_in
@@ -59,22 +68,34 @@ module Assessment
 
     # Refresh graded_at even when already reviewed: SubmissionsHub::Sheet
     # uses it to show newly entered points since the user's last seen_at.
+    # A row that carries a grade keeps it and the time it was given; points
+    # corrected afterwards are the grading table's to point out.
     def update_status_if_all_scored!(grader: nil)
-      return if absent? || exempt?
+      return if absent? || exempt? || grade_numeric.present?
+      return if assessment.tasks.none?
 
-      task_ids = assessment.tasks.pluck(:id)
-      return if task_ids.empty?
-
-      points_by_task_id = task_points.pluck(:task_id, :points).to_h
-      missing_scored_tasks = task_ids.any? { |task_id| points_by_task_id[task_id].nil? }
-
-      if missing_scored_tasks
+      unless all_tasks_scored?
         update!(status: :pending, graded_at: nil, grader: nil) if reviewed?
         return
       end
 
       update!(status: :reviewed, graded_at: Time.current,
               grader: grader || self.grader)
+    end
+
+    # False without tasks: nothing scored is not everything scored. A table
+    # asks this per row with the associations already loaded.
+    def all_tasks_scored?
+      tasks = assessment.tasks
+      task_ids = tasks.loaded? ? tasks.map(&:id) : tasks.pluck(:id)
+      return false if task_ids.empty?
+
+      points_by_task_id = if task_points.loaded?
+        task_points.to_h { |point| [point.task_id, point.points] }
+      else
+        task_points.pluck(:task_id, :points).to_h
+      end
+      task_ids.none? { |task_id| points_by_task_id[task_id].nil? }
     end
 
     def graded_tasks_points

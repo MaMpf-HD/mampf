@@ -227,7 +227,6 @@ de:
     no_assessables_yet: 'Noch keine Bewertungen erstellt.'
     submission_settings: 'Abgabe-Einstellungen'
     talk_grader:
-      assessment_not_talk: 'Bewertung ist nicht für einen Vortrag.'
       user_not_speaker: 'Benutzer ist nicht als Sprecher:in für diesen Vortrag eingetragen.'
     grades_updated: 'Änderungen gespeichert.'
     task_points:
@@ -267,18 +266,8 @@ de:
     info:
       talks_created_in_roster: 'Hier werden Vorträge mit zugewiesenen Sprecher:innen angezeigt, um deren Leistungen zu bewerten. Die Erstellung erfolgt im Teilnehmenden-Tab.'
     grade_table:
-      pending: 'ausstehend'
-      reviewed: 'überprüft'
-      absent: 'nicht angetreten'
-      exempt: 'entschuldigt'
-      not_submitted: 'nicht abgegeben'
-      excluded_heading: 'Sonderfälle'
-      reason: 'Grund'
-      roster_heading: 'Teilnahmeliste'
-      status: 'Status'
-      all_graded_by: 'Alle Noten von %{grader}.'
+      roster_heading: 'Notenvergabe'
       proposed_tooltip: 'Vorschlag aus dem aktuellen Notenschema (noch nicht angewendet).'
-      proposed_tooltip_with_current: 'Vorschlag aus dem aktuellen Notenschema (noch nicht angewendet). Aktuell: %{current}.'
     grading_tutorial:
       save_all: 'Alle Änderungen speichern'
       task: 'Aufgabe'
@@ -313,6 +302,11 @@ de:
       filter_reset: 'Filter zurücksetzen'
       filter_count: '%{shown} von %{total} Zeilen'
       filter_no_match: 'Keine passenden Einträge.'
+      page_range: 'Zeilen %{from}–%{to} von %{total}'
+      page_previous: 'Zurück'
+      page_next: 'Weiter'
+      page_size_label: 'Pro Seite'
+      pager_label: 'Seiten'
       more_actions: 'Weitere Aktionen'
       summary:
         handed_in:
@@ -330,6 +324,33 @@ de:
       user_joined_tutorial: 'Ohne Übungsgruppe abgegeben, seitdem in %{new_tutorial}.'
     grading_talk:
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
+    grading_exam:
+      no_candidates: 'Noch niemand auf der Klausurliste.'
+      mark_absent: 'Als abwesend vermerken'
+      remove_absent: 'Abwesenheit zurücknehmen'
+      mark_exempt: 'Mit Attest befreien'
+      remove_exempt: 'Befreiung zurücknehmen'
+      user_not_candidate: 'Diese Person steht nicht auf der Klausurliste.'
+      not_scorable: 'Wer als %{status} vermerkt ist, bekommt keine Punkte.'
+      not_gradable: 'Wer als %{status} vermerkt ist, bekommt keine Note.'
+      not_recorded_as: 'Diese Person ist nicht als %{status} vermerkt.'
+      reviewed_stays: 'Eine bewertete Zeile kann nicht als %{status} vermerkt werden, die Bewertung ginge verloren.'
+      status_word:
+        absent: 'abwesend'
+        exempt: 'befreit'
+      scheme_now_gives: 'Was das angewendete Schema für die jetzigen Punkte gibt.'
+      points_changed_since: 'Punkte geändert am %{points_at}, Note vom %{graded_at}'
+      points_missing: 'eine Aufgabe ohne Punkte'
+      summary_points_changed: '%{count} mit seit der Bewertung geänderten Punkten'
+      filter_points_changed: 'Punkte seit der Bewertung geändert'
+      points_changed_alert:
+        one: 'Bei einer Person wurden die Punkte nach der Bewertung geändert; die Note passt womöglich nicht mehr.'
+        other: 'Bei %{count} Personen wurden die Punkte nach der Bewertung geändert; die Noten passen womöglich nicht mehr.'
+      show_points_changed: 'Nur diese anzeigen'
+      exempt_modal:
+        title: 'Von der Klausur befreien'
+        note_label: 'Grund (optional, nur für DozentInnen)'
+        save: 'Befreien'
     grading_overview:
       submission_progress: 'Abgaben'
       submitted: 'Abgegeben'
@@ -380,20 +401,20 @@ de:
         zero: 'Keine Änderungen gegenüber den aktuellen Noten.'
         one: '1 Note würde sich gegenüber dem aktuellen Stand ändern.'
         other: '%{count} Noten würden sich gegenüber dem aktuellen Stand ändern.'
-      edit_button: 'Schema bearbeiten'
-      apply_button: 'Schema anwenden'
-      discard_button: 'Schema verwerfen'
-      discard_confirm: 'Das Notenschema wird gelöscht. Bereits vergebene Noten bleiben erhalten. Fortfahren?'
-      discarded: 'Notenschema verworfen.'
+      edit_button: 'Entwurf bearbeiten'
+      apply_button: 'Entwurf anwenden'
+      discard_button: 'Entwurf verwerfen'
+      discard_confirm: 'Der Entwurf wird gelöscht. Noten und ein bereits angewendetes Schema bleiben, wie sie sind. Fortfahren?'
+      discarded: 'Entwurf verworfen.'
       discard_blocked_applied: 'Ein bereits angewendetes Schema kann nicht verworfen werden.'
-      apply_confirm: 'Dadurch werden allen überprüften Studierenden Noten und abwesenden Studierenden 5,0 zugewiesen. Fortfahren?'
+      apply_confirm: 'Der Entwurf wird angewendet: Alle bewerteten Studierenden bekommen seine Note, Abwesende 5,0. Bisherige Noten, vom alten Schema oder von Hand eingetragen, werden überschrieben. Fortfahren?'
       applied_title: 'Notenschema angewendet!'
       applied_message: 'Noten eingetragen am %{time} für %{count} Studierende.'
       ungraded_warning:
         one: '1 Studierender hat noch keine Note.'
         other: '%{count} Studierende haben noch keine Note.'
       revise_button: 'Schema überarbeiten'
-      reapply_button: 'Neu anwenden'
+      reapply_button: 'Auf neue Bewertungen anwenden'
       reapply_confirm: >-
         Das Schema wird auf alle noch nicht benoteten Studierenden angewendet.
         Bereits vergebene Noten werden nicht verändert. Fortfahren?
@@ -469,9 +490,6 @@ de:
       percentile_nth: '%{n}. Perzentil'
       markers_caption_proposed: 'Schwellenmarker (1.0, 4.0) beziehen sich auf das neue Schema.'
     statistics_analysis: 'Statistiken & Analyse'
-    no_points_yet: 'Noch keine Punkte eingetragen.'
-    point_grid:
-      total: "Gesamt"
     statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
     statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
     grade_talk_row:

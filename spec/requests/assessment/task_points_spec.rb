@@ -423,37 +423,124 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
     end
 
-    # The rows of this page are drawn for sheets. Exams get their own table
-    # later; until then a participation in one is refused, not half-served.
     context "when the participation's assessable is an Exam" do
       let(:exam) { create(:exam, lecture: lecture) }
       let(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
       let!(:exam_participation) do
+        create(:exam_roster_entry, exam: exam, user: student)
         create(:assessment_participation, assessment: exam_assessment, user: student)
       end
 
       before { sign_in teacher }
 
-      it "refuses with a 400 and enters nothing" do
+      let!(:exam_task) { create(:assessment_task, assessment: exam_assessment, max_points: 10) }
+
+      it "enters the points without asking the sheet service" do
         expect(Assessment::SubmissionGraderService).not_to receive(:score_tasks_by_participation!)
 
         patch point_participation_path(exam_participation),
-              params: { task_points: { task.id => "6" }.to_json,
+              params: { task_points: { exam_task.id => "6" }.to_json,
                         grading_scope_type: "lecture" },
               as: :turbo_stream
 
-        expect(response).to have_http_status(:bad_request)
-        expect(response.media_type).to eq(Mime[:turbo_stream])
-        expect(response.body).to include(
-          I18n.t("assessment.task_points.unsupported_assessment_type")
-        )
+        expect(response).to have_http_status(:success)
+        expect(exam_participation.task_points.find_by(task: exam_task).points).to eq(6)
+        expect(response.body).to include("pointing-participation-row-#{exam_participation.id}")
+        expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]"))
+          .to be_present
       end
 
-      it "refuses a refresh the same way" do
+      # The card beside the grading table counts reviewed rows; it must not say
+      # "0 of 2" next to a summary that says one is reviewed.
+      it "redraws the scheme card with the row" do
+        other = create(:confirmed_user)
+        create(:exam_roster_entry, exam: exam, user: other)
+        create(:assessment_participation, assessment: exam_assessment, user: other)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        card = Nokogiri::HTML(response.body).at_css("turbo-stream[target=grading-scheme]")
+        expect(card).to be_present
+        expect(card.text).to include(I18n.t("assessment.grade_scheme.pending_message",
+                                            reviewed: 1, total: 2, pending: 1))
+      end
+
+      # The grade stays as it was; the row that comes back says the points moved.
+      it "marks a graded row whose points change, in both tables" do
+        exam_participation.update!(status: :reviewed, grade_numeric: 2.0, grader: teacher,
+                                   graded_at: 1.minute.ago)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "9" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(exam_participation.reload).to have_attributes(grade_numeric: 2.0)
+        expect(exam_participation.graded_at).to be_within(5.seconds).of(1.minute.ago)
+        expect(response.body)
+          .to include("target=\"grading-participation-row-#{exam_participation.id}\"")
+        expect(response.body)
+          .to include(I18n.t("assessment.grading_exam.summary_points_changed", count: 1))
+      end
+
+      # A colleague saving the row as it is has corrected nothing.
+      it "does not mark a graded row whose points are saved unchanged by somebody else" do
+        create(:assessment_task_point, task: exam_task,
+                                       assessment_participation: exam_participation,
+                                       points: 9, grader: teacher)
+        exam_participation.update!(status: :reviewed, grade_numeric: 2.0, grader: teacher,
+                                   graded_at: Time.current)
+        colleague = create(:confirmed_user)
+        lecture.editors << colleague
+        sign_in colleague
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "9" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(exam_participation.task_points.find_by(task: exam_task).grader).to eq(teacher)
+        expect(exam_participation.reload.points_changed_after_grading?).to be(false)
+      end
+
+      it "gives somebody no longer on the roster no points" do
+        exam.exam_roster_entries.find_by(user: student).update!(excluded_at: Time.current)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
+        expect(exam_participation.task_points).to be_empty
+      end
+
+      it "gives a candidate recorded as absent no points" do
+        exam_participation.update!(status: :absent)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response.body).to include(
+          I18n.t("assessment.grading_exam.not_scorable",
+                 status: I18n.t("assessment.grading_exam.status_word.absent"))
+        )
+        expect(exam_participation.task_points).to be_empty
+      end
+
+      it "reloads the row with the exam's summary" do
         patch refresh_point_participation_path(exam_participation),
               params: { grading_scope_type: "lecture" }, as: :turbo_stream
 
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to have_http_status(:success)
+        expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]"))
+          .to be_present
       end
     end
 
@@ -581,8 +668,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         participation = assessment.assessment_participations.find_by(user: student)
         expect(participation.submitted_at).to be_present
-        expect(response.body).to include("target=\"participation-row-user-#{student.id}\"")
-        expect(response.body).to include("participation-row-#{participation.id}")
+        expect(response.body).to include("target=\"pointing-participation-row-user-#{student.id}\"")
+        expect(response.body).to include("pointing-participation-row-#{participation.id}")
       end
 
       # The tutor's page lists one group; a row drawn for the lecture's page
@@ -617,7 +704,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               as: :turbo_stream
 
         expect(participation.reload.submitted_at).to be_present
-        expect(response.body).to include("target=\"participation-row-#{participation.id}\"")
+        expect(response.body)
+          .to include("target=\"pointing-participation-row-#{participation.id}\"")
         expect(response.body).not_to include("target=\"pointing-table\"")
       end
 
@@ -775,7 +863,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             as: :turbo_stream
       expect(response).to have_http_status(:success)
       expect(response.media_type).to eq(Mime[:turbo_stream])
-      expect(response.body).to include("target=\"participation-row-#{participation.id}\"")
+      expect(response.body).to include("target=\"pointing-participation-row-#{participation.id}\"")
       expect(response.body).not_to include("target=\"pointing-table\"")
     end
 
@@ -977,6 +1065,154 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
                         grading_scope_type: "lecture" },
               as: :turbo_stream
         expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "absence and exemption on an exam" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
+    let!(:candidate) do
+      create(:exam_roster_entry, exam: exam, user: student)
+      create(:assessment_participation, assessment: exam_assessment, user: student)
+    end
+
+    def summary_in(response)
+      Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+    end
+
+    context "as the teacher" do
+      before { sign_in teacher }
+
+      it "records an absence and takes it back, the row and the summary following" do
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(candidate.reload).to be_absent
+        expect(response.body).to include("pointing-participation-row-#{candidate.id}")
+        expect(summary_in(response).text)
+          .to include(I18n.t("assessment.grading_tutorial.summary.absent", count: 1))
+
+        patch remove_absent_path(candidate), as: :turbo_stream
+
+        expect(candidate.reload).to be_pending
+      end
+
+      it "excuses a candidate with the reason, and takes that back with it" do
+        patch mark_as_exempt_path(candidate), params: { note: "certificate" }, as: :turbo_stream
+
+        expect(candidate.reload).to have_attributes(status: "exempt", note: "certificate")
+
+        patch remove_exempt_path(candidate), as: :turbo_stream
+
+        expect(candidate.reload).to have_attributes(status: "pending", note: nil)
+      end
+
+      it "refuses to excuse somebody already graded, and says so" do
+        candidate.update!(status: :reviewed)
+
+        patch mark_as_exempt_path(candidate), params: { note: "late" }, as: :turbo_stream
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(
+          I18n.t("assessment.grading_exam.reviewed_stays",
+                 status: I18n.t("assessment.grading_exam.status_word.exempt"))
+        )
+        expect(candidate.reload).to be_reviewed
+      end
+
+      it "records nothing on somebody taken off the roster" do
+        exam.exam_roster_entries.find_by(user: student).update!(excluded_at: Time.current)
+
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
+        expect(candidate.reload).to be_pending
+      end
+
+      it "has nothing to take back on a row that is not absent" do
+        patch remove_absent_path(candidate), as: :turbo_stream
+
+        expect(response).to have_http_status(:ok)
+        expect(candidate.reload).to be_pending
+      end
+
+      it "knows no absence on a sheet" do
+        sheet_row = create(:assessment_participation, assessment: assessment, user: student,
+                                                      tutorial: tutorial)
+
+        patch mark_as_absent_path(sheet_row), as: :turbo_stream
+
+        expect(response).to have_http_status(:bad_request)
+        expect(sheet_row.reload).to be_pending
+      end
+    end
+
+    # A tutor may enter an exam's points where the lecture lets them, but an
+    # exemption changes what counts and stays with whoever edits the lecture.
+    context "as somebody who may enter points but not edit the lecture" do
+      let(:grader) { create(:confirmed_user) }
+
+      before do
+        allow_any_instance_of(User).to receive(:can_enter_points_in?).and_return(true)
+        sign_in grader
+      end
+
+      it "may record an absence" do
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(candidate.reload).to be_absent
+      end
+
+      it "may not excuse" do
+        patch mark_as_exempt_path(candidate), params: { note: "certificate" }, as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_pending
+      end
+
+      it "may not turn an exemption into an absence" do
+        candidate.update!(status: :exempt, note: "certificate")
+
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_exempt
+      end
+    end
+
+    # Point entry on a sheet follows the row's tutorial; an exam's row must
+    # not open up to a group's tutors through that column.
+    context "as a tutor of a tutorial the row happens to name" do
+      let(:tutor) { create(:confirmed_user) }
+      let!(:task) { create(:assessment_task, assessment: exam_assessment, max_points: 10) }
+
+      before do
+        tutorial.tutors << tutor
+        candidate.update!(tutorial: tutorial)
+        sign_in tutor
+      end
+
+      it "may neither score nor record an absence" do
+        patch point_participation_path(candidate),
+              params: { task_points: { task.id => "6" }.to_json, grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+        expect(candidate.task_points).to be_empty
+
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_pending
+      end
+    end
+
+    context "as a stranger" do
+      before { sign_in create(:confirmed_user) }
+
+      it "is turned away" do
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_pending
       end
     end
   end

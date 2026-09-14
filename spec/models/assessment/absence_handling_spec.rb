@@ -36,7 +36,8 @@ RSpec.describe(Assessment::AbsenceHandling) do
 
       expect { test_service.mark_absent(reviewed) }
         .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError,
-                        /would discard grading data/)
+                        I18n.t("assessment.grading_exam.reviewed_stays",
+                               status: I18n.t("assessment.grading_exam.status_word.absent")))
     end
   end
 
@@ -77,7 +78,8 @@ RSpec.describe(Assessment::AbsenceHandling) do
 
       expect { test_service.mark_exempt(reviewed) }
         .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError,
-                        /would discard grading data/)
+                        I18n.t("assessment.grading_exam.reviewed_stays",
+                               status: I18n.t("assessment.grading_exam.status_word.exempt")))
     end
 
     it "takes back the 5.0 an applied scheme gave a no-show" do
@@ -97,6 +99,55 @@ RSpec.describe(Assessment::AbsenceHandling) do
       expect(absent.grade_numeric).to be_nil
       expect(absent.grader).to be_nil
       expect(absent.graded_at).to be_nil
+    end
+  end
+
+  describe "#remove_absent" do
+    it "returns an absent row to pending" do
+      absent = create(:assessment_participation, status: :absent)
+
+      test_service.remove_absent(absent)
+
+      expect(absent.reload).to be_pending
+    end
+
+    # Without this the row would keep the no-show grade and never become
+    # reviewed, because a graded row keeps its grade when points come in.
+    it "takes the 5.0 an applied scheme gave the no-show with the absence" do
+      exam = create(:exam, :with_date)
+      assessment = create(:assessment, :with_points,
+                          assessable: exam, lecture: exam.lecture)
+      absent = create(:assessment_participation,
+                      assessment: assessment, status: :absent)
+      absent.update!(grade_numeric: 5.0, grader: create(:confirmed_user),
+                     graded_at: Time.current)
+
+      test_service.remove_absent(absent)
+
+      expect(absent.reload).to have_attributes(status: "pending", grade_numeric: nil,
+                                               grader: nil, graded_at: nil)
+    end
+
+    it "refuses a row that is not absent, in the reader's words" do
+      expect { test_service.remove_absent(participation) }
+        .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError,
+                        I18n.t("assessment.grading_exam.not_recorded_as",
+                               status: I18n.t("assessment.grading_exam.status_word.absent")))
+    end
+  end
+
+  describe "#remove_exempt" do
+    it "returns an exempt row to pending and drops the note that explained it" do
+      exempt = create(:assessment_participation, status: :exempt, note: "certificate")
+
+      test_service.remove_exempt(exempt)
+
+      expect(exempt.reload).to have_attributes(status: "pending", note: nil)
+    end
+
+    it "refuses a row that is not exempt" do
+      expect { test_service.remove_exempt(participation) }
+        .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError)
     end
   end
 end

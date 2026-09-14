@@ -589,4 +589,44 @@ RSpec.describe(Assessment::Participation, type: :model) do
         .and_return(service)
     end
   end
+
+  describe "#points_changed_after_grading?" do
+    let(:exam) { FactoryBot.create(:exam, date: 1.week.ago) }
+    let(:assessment) { FactoryBot.create(:assessment, :with_points, assessable: exam) }
+    let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }
+    let(:participation) do
+      FactoryBot.create(:assessment_participation, assessment: assessment, status: :reviewed,
+                                                   grade_numeric: 2.0, graded_at: 1.hour.ago)
+    end
+
+    it "is true once a task point is newer than the grade" do
+      FactoryBot.create(:assessment_task_point, task: task,
+                                                assessment_participation: participation, points: 3)
+
+      expect(participation.reload).to be_points_changed_after_grading
+    end
+
+    # Entering points after the grade must not move the grade's time, or the
+    # correction could never be told from the grading.
+    it "survives a point entered after the grade" do
+      FactoryBot.create(:assessment_task_point, task: task, points: 3,
+                                                assessment_participation: participation)
+      participation.reload.update_status_if_all_scored!(grader: FactoryBot.create(:confirmed_user))
+
+      expect(participation.reload).to be_points_changed_after_grading
+      expect(participation.graded_at).to be_within(1.minute).of(1.hour.ago)
+    end
+
+    it "is false while the grade is newer than every point, and without a grade" do
+      participation
+      Timecop.travel(2.hours.ago) do
+        FactoryBot.create(:assessment_task_point, task: task, points: 3,
+                                                  assessment_participation: participation)
+      end
+
+      expect(participation.reload).not_to be_points_changed_after_grading
+      participation.update!(graded_at: nil)
+      expect(participation).not_to be_points_changed_after_grading
+    end
+  end
 end
