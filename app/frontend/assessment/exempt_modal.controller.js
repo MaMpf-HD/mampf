@@ -29,8 +29,12 @@ export default class extends Controller {
     this.modal.hide();
   }
 
+  // The arrival listener belongs to this one request: a refusal answers
+  // with a flash and no row, and must not leave it waiting for a later one.
   submit() {
     this.focusRowOnArrival();
+    this.formTarget.addEventListener("turbo:submit-end", () => this.forgetArrival(),
+      { once: true });
     this.hide();
   }
 
@@ -42,12 +46,39 @@ export default class extends Controller {
     this.focusRow();
   };
 
-  // Prefer the action cell so an exemption returns focus to its undo link.
+  // A row the filter has just hidden cannot take focus; the nearest row
+  // still shown takes it, or the name filter when none is.
   focusRow() {
     const row = document.getElementById(this.rowId);
-    const control = row?.querySelector("td:last-child :is(a, button)")
-      || row?.querySelector("a, button, select, input");
+    if (!row) {
+      return;
+    }
+    const target = row.hidden ? this.neighbourOf(row) : row;
+    const control = target ? this.controlIn(target) : this.filterOf(row);
     control?.focus();
+  }
+
+  // Prefer the action cell so an exemption returns focus to its undo link.
+  controlIn(row) {
+    return row.querySelector("td:last-child :is(a, button)")
+      || row.querySelector("a, button, select, input");
+  }
+
+  neighbourOf(row) {
+    let next = row.nextElementSibling;
+    while (next?.hidden) {
+      next = next.nextElementSibling;
+    }
+    let previous = row.previousElementSibling;
+    while (previous?.hidden) {
+      previous = previous.previousElementSibling;
+    }
+    return next || previous;
+  }
+
+  filterOf(row) {
+    return row.closest("[data-controller~=status-filter]")
+      ?.querySelector("[data-status-filter-target=name]");
   }
 
   // Wait for the row replacement before focusing a control in the new row.
@@ -59,9 +90,11 @@ export default class extends Controller {
       }
       this.forgetArrival();
       const render = event.detail.render;
+      // The filter hides or shows the new row in a microtask of its own;
+      // focus goes after that has run.
       event.detail.render = (stream) => {
         render(stream);
-        this.focusRow();
+        queueMicrotask(() => this.focusRow());
       };
     };
     document.addEventListener("turbo:before-stream-render", this.onArrival);

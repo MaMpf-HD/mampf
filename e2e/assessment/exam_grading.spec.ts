@@ -87,6 +87,17 @@ test.describe("exam grading", () => {
     await expect(grace.getByRole("img", { name: "Exempt: sick note" })).toBeVisible();
     await expect(page.pane.getByText("1 reviewed · 1 exempt")).toBeVisible();
     await expect(grace.getByRole("link", { name: "Take the exemption back" })).toBeFocused();
+
+    // excused while the filter shows the pending only, the row disappears
+    // and the keyboard lands on the filter instead of nowhere
+    await grace.getByRole("link", { name: "Take the exemption back" }).click();
+    await expect(grace.getByRole("combobox", { name: "Grade for Grace Hopper" })).toBeVisible();
+    await page.pane.getByLabel("Status").selectOption("pending_grading");
+    await expect(adaGrade).toBeHidden();
+    await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
+    await dialog.getByRole("button", { name: "Excuse" }).click();
+    await expect(grace).toBeHidden();
+    await expect(page.pane.getByLabel("Name")).toBeFocused();
   });
 
   test("shows 20 candidates at a time, or one tutorial's", async ({ factory, teacher }) => {
