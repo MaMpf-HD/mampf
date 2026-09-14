@@ -342,6 +342,7 @@ de:
       remove_exempt: 'Befreiung zurücknehmen'
       user_not_candidate: 'Diese Person steht nicht auf der Klausurliste.'
       not_scorable: 'Wer als %{status} vermerkt ist, bekommt keine Punkte.'
+      not_gradable: 'Wer als %{status} vermerkt ist, bekommt keine Note.'
       not_recorded_as: 'Diese Person ist nicht als %{status} vermerkt.'
       reviewed_stays: 'Eine bewertete Zeile kann nicht als %{status} vermerkt werden, die Bewertung ginge verloren.'
       status_word:

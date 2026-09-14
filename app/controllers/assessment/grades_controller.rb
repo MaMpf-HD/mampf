@@ -22,6 +22,11 @@ module Assessment
     end
 
     def update
+      if @participation.absent? || @participation.exempt?
+        status = t("assessment.grading_exam.status_word.#{@participation.status}")
+        return respond_with_flash(:alert, t("assessment.grading_exam.not_gradable", status: status))
+      end
+
       grade_info = GradeEntryService.build_grade_info(grade_numeric: params[:grade])
       GradeEntryService.set_grade(@participation, grade_info, current_user, params[:comment])
       @participation.reload

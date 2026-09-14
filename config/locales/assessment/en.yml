@@ -342,6 +342,7 @@ en:
       remove_exempt: 'Take the exemption back'
       user_not_candidate: 'This person is not on the exam roster.'
       not_scorable: 'A candidate recorded as %{status} gets no points.'
+      not_gradable: 'A candidate recorded as %{status} gets no grade.'
       not_recorded_as: 'This person is not recorded as %{status}.'
       reviewed_stays: 'A reviewed row cannot be recorded as %{status}; its grading would be lost.'
       status_word:

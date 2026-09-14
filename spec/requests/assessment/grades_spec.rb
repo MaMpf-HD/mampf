@@ -311,5 +311,22 @@ RSpec.describe(Assessment::GradesController, type: :request) do
       expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
       expect(exam_participation.reload.grade_numeric).to be_nil
     end
+
+    # The row hides the select for them; the endpoint has to refuse as well.
+    ["absent", "exempt"].each do |state|
+      it "is refused for somebody recorded as #{state}" do
+        exam_participation.update!(status: state)
+
+        patch grade_participation_path(exam_participation),
+              params: { grade: "1.0" },
+              headers: turbo_stream_headers
+
+        expect(response.body).to include(
+          I18n.t("assessment.grading_exam.not_gradable",
+                 status: I18n.t("assessment.grading_exam.status_word.#{state}"))
+        )
+        expect(exam_participation.reload).to have_attributes(status: state, grade_numeric: nil)
+      end
+    end
   end
 end
