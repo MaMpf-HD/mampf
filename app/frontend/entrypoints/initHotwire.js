@@ -179,8 +179,8 @@ window.Stimulus.register("table-fade", TableFadeController);
 import StatusFilterController from "~/tutorials/status_filter.controller.js";
 window.Stimulus.register("status-filter", StatusFilterController);
 
-import ExemptModelController from "~/assessment/exempt_model.controller.js";
-window.Stimulus.register("exempt-model", ExemptModelController);
+import ExemptModalController from "~/assessment/exempt_modal.controller.js";
+window.Stimulus.register("exempt-modal", ExemptModalController);
 
 import ExamFormController from "~/exams/form.controller.js";
 window.Stimulus.register("exams--form", ExamFormController);

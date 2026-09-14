@@ -31,6 +31,7 @@ module Assessment
     end
 
     rescue_from SubmissionGraderService::SubmissionGraderError,
+                AbsenceHandling::InvalidTransitionError,
                 PointEntryService::PointEntryError,
                 ExamGraderService::ExamGraderError do |e|
       respond_with_flash(:alert, e.message)

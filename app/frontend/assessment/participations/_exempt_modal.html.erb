@@ -1,43 +1,45 @@
 <div
   class="modal fade"
-  data-controller="exempt-model"
+  data-controller="exempt-modal"
   tabindex="-1"
   aria-hidden="true"
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
       <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-semibold">Exempt</h5>
+        <h5 class="modal-title fw-semibold">
+          <%= t("assessment.grading_exam.exempt_modal.title") %>
+        </h5>
       </div>
 
-      <%= form_with url: "#", method: :patch, data: { exempt_model_target: "form", action: "submit->exempt-model#confirm" } do |f| %>
+      <%= form_with url: "#", method: :patch, data: { exempt_modal_target: "form", action: "submit->exempt-modal#confirm" } do |f| %>
         <div class="modal-body pt-2">
-          <label class="form-label text-muted small mb-1">Note (optional)</label>
+          <label class="form-label text-muted small mb-1">
+            <%= t("assessment.grading_exam.exempt_modal.note_label") %>
+          </label>
 
           <%= f.text_area :note,
-        data: {
-          exempt_model_target: "note",
-        },
-        class: "form-control",
-        rows: 3,
-        placeholder: "Add a reason or context for this exemption..." %>
+              data: { exempt_modal_target: "note" },
+              class: "form-control",
+              rows: 3,
+              placeholder: t("assessment.grading_exam.exempt_modal.note_placeholder") %>
         </div>
 
         <div class="modal-footer border-0 pt-0">
           <button
             type="button"
             class="btn btn-light"
-            data-action="click->exempt-model#cancel"
+            data-action="click->exempt-modal#cancel"
           >
-            Cancel
+            <%= t("assessment.grading_exam.exempt_modal.cancel") %>
           </button>
 
           <button
             type="submit"
-            data-exempt-model-target="saveButton"
+            data-exempt-modal-target="saveButton"
             class="btn btn-primary px-4"
           >
-            Save
+            <%= t("assessment.grading_exam.exempt_modal.save") %>
           </button>
         </div>
       <% end %>

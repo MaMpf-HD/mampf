@@ -336,6 +336,12 @@ en:
       no_talks_gradable: 'No talks that can be graded.'
     grading_exam:
       no_records: 'No records that can be processed.'
+      exempt_modal:
+        title: "Exempt"
+        note_label: "Note (optional)"
+        note_placeholder: "Add a reason or context for this exemption..."
+        cancel: "Cancel"
+        save: "Save"
     grading_overview:
       submission_progress: 'Submissions'
       submitted: 'Submitted'

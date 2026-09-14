@@ -336,6 +336,12 @@ de:
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
     grading_exam:
       no_records: 'Keine Datensätze, die bearbeitet werden können.'
+      exempt_modal:
+        title: "Befreiung"
+        note_label: "Notiz (optional)"
+        note_placeholder: "Grund oder Kontext für die Befreiung hinzufügen..."
+        cancel: "Abbrechen"
+        save: "Speichern"
     grading_overview:
       submission_progress: 'Abgaben'
       submitted: 'Abgegeben'
