@@ -400,19 +400,19 @@ de:
         one: '1 Note würde sich gegenüber dem aktuellen Stand ändern.'
         other: '%{count} Noten würden sich gegenüber dem aktuellen Stand ändern.'
       edit_button: 'Schema bearbeiten'
-      apply_button: 'Schema anwenden'
+      apply_button: 'Entwurf anwenden'
       discard_button: 'Entwurf verwerfen'
       discard_confirm: 'Der Entwurf wird gelöscht. Noten und ein bereits angewendetes Schema bleiben, wie sie sind. Fortfahren?'
       discarded: 'Entwurf verworfen.'
       discard_blocked_applied: 'Ein bereits angewendetes Schema kann nicht verworfen werden.'
-      apply_confirm: 'Dadurch werden allen überprüften Studierenden Noten und abwesenden Studierenden 5,0 zugewiesen. Fortfahren?'
+      apply_confirm: 'Der Entwurf wird angewendet: Alle bewerteten Studierenden bekommen seine Note, Abwesende 5,0. Bisherige Noten, vom alten Schema oder von Hand eingetragen, werden überschrieben. Fortfahren?'
       applied_title: 'Notenschema angewendet!'
       applied_message: 'Noten eingetragen am %{time} für %{count} Studierende.'
       ungraded_warning:
         one: '1 Studierender hat noch keine Note.'
         other: '%{count} Studierende haben noch keine Note.'
       revise_button: 'Schema überarbeiten'
-      reapply_button: 'Neu anwenden'
+      reapply_button: 'Auf neue Bewertungen anwenden'
       reapply_confirm: >-
         Das Schema wird auf alle noch nicht benoteten Studierenden angewendet.
         Bereits vergebene Noten werden nicht verändert. Fortfahren?

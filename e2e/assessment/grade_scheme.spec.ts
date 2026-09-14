@@ -53,7 +53,7 @@ test.describe("grade schemes", () => {
 
     await expect(teacher.page.getByText("Grade scheme saved.")).toBeVisible();
     await expect(page.pane.getByText("Grade scheme configured.")).toBeVisible();
-    await expect(page.pane.getByRole("button", { name: "Apply Scheme" }))
+    await expect(page.pane.getByRole("button", { name: "Apply draft" }))
       .toBeVisible();
   });
 
@@ -82,7 +82,7 @@ test.describe("grade schemes", () => {
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await openGrades(page);
     teacher.page.on("dialog", dialog => dialog.accept());
-    await page.pane.getByRole("button", { name: "Apply Scheme" }).click();
+    await page.pane.getByRole("button", { name: "Apply draft" }).click();
 
     await expect(teacher.page.getByText("Grade scheme applied!")).toBeVisible();
     await expect(teacher.page.getByRole("link", { name: "Revise Scheme" }))

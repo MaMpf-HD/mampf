@@ -400,19 +400,19 @@ en:
         one: '1 grade would change compared to the current state.'
         other: '%{count} grades would change compared to the current state.'
       edit_button: 'Edit Scheme'
-      apply_button: 'Apply Scheme'
+      apply_button: 'Apply draft'
       discard_button: 'Discard draft'
       discard_confirm: 'The draft will be deleted. Grades and any scheme already applied stay as they are. Continue?'
       discarded: 'Draft discarded.'
       discard_blocked_applied: 'An already-applied scheme cannot be discarded.'
-      apply_confirm: 'This will assign grades to all reviewed students and 5.0 to absent students. Continue?'
+      apply_confirm: 'The draft is applied: every reviewed student gets its grade, absent students get 5.0. Existing grades, from the old scheme or entered by hand, are overwritten. Continue?'
       applied_title: 'Grade scheme applied!'
       applied_message: 'Grades recorded on %{time} for %{count} students.'
       ungraded_warning:
         one: '1 student has no grade yet.'
         other: '%{count} students have no grade yet.'
       revise_button: 'Revise Scheme'
-      reapply_button: 'Re-apply to New'
+      reapply_button: 'Apply to new'
       reapply_confirm: >-
         This will apply the current scheme to any students not yet graded.
         Already assigned grades will not be changed. Continue?
