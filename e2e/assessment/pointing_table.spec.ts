@@ -54,11 +54,11 @@ test.describe("pointing table", () => {
     await expect(row.getByText("Not Submitted")).toBeVisible();
     await expect(row.getByRole("spinbutton")).toBeDisabled();
 
-    await row.getByRole("link", { name: "Record a hand-in on paper" }).click();
+    await row.getByRole("link", { name: "Record a hand-in on paper or by other means" }).click();
     await expect(row.getByText("Pending Grading")).toBeVisible();
     await expect(row.getByRole("spinbutton")).toBeEnabled();
 
-    await row.getByRole("link", { name: "Take the paper hand-in back" }).click();
+    await row.getByRole("link", { name: "Take the hand-in record back" }).click();
     await expect(row.getByText("Not Submitted")).toBeVisible();
     await expect(row.getByRole("spinbutton")).toBeDisabled();
 
@@ -123,7 +123,7 @@ test.describe("pointing table", () => {
 
     await tutor.page.getByLabel("Status").selectOption("Not Submitted");
     await table.getByRole("row", { name: /Grace Hopper/ })
-      .getByRole("link", { name: "Record a hand-in on paper" }).click();
+      .getByRole("link", { name: "Record a hand-in on paper or by other means" }).click();
     await expect(table.getByRole("row", { name: /Grace Hopper/ })).toBeHidden();
     await expect(tutor.page.getByText("No matching rows.")).toBeVisible();
     await expect(tutor.page.getByText("2 hand-ins · 1 reviewed · 1 pending grading")).toBeVisible();
