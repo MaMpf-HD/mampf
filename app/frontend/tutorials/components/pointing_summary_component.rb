@@ -8,11 +8,12 @@ class PointingSummaryComponent < ViewComponent::Base
   # on one page, so the second line needs an id of its own to be replaced.
   attr_reader :id
 
-  def initialize(statuses:, hand_ins: true, id: "pointing-summary")
+  def initialize(statuses:, hand_ins: true, id: "pointing-summary", extra_parts: [])
     super()
     @statuses = statuses
     @hand_ins = hand_ins
     @id = id
+    @extra_parts = extra_parts
   end
 
   def text
@@ -27,7 +28,7 @@ class PointingSummaryComponent < ViewComponent::Base
 
       parts << I18n.t("assessment.grading_tutorial.summary.#{status}", count: counts[status])
     end
-    parts.join(" · ")
+    (parts + @extra_parts).join(" · ")
   end
 
   def call

@@ -101,11 +101,20 @@
         </td>
       <% end %>
       <td class="text-center <%= layout.column_class(:grade) %>">
+        <% if points_changed_notice %>
+          <i
+            class="bi bi-exclamation-triangle-fill text-warning-emphasis me-1"
+            role="img"
+            title="<%= points_changed_notice %>"
+            aria-label="<%= points_changed_notice %>"
+          ></i>
+        <% end %>
+
         <% if proposed_grade_differs? %>
-          <%# The scheme's answer stands beside the field until it is applied or overruled. %>
+          <%# The scheme's answer stands beside the field until it is taken or overruled. %>
           <span
             class="badge bg-info-subtle text-info-emphasis fw-normal me-1"
-            title="<%= t('assessment.grade_table.proposed_tooltip') %>"
+            title="<%= proposal_tooltip %>"
           >
             <%= proposed_grade %>
           </span>

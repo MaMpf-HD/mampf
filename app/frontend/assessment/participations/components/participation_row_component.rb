@@ -7,15 +7,18 @@ class ParticipationRowComponent < ViewComponent::Base
 
   # Assignment participations may be unsaved until AssessmentBackfillWorker
   # runs or a paper hand-in is recorded.
+  # What a grade scheme would give the row, and how to explain it.
+  Proposal = Struct.new(:grade, :tooltip, keyword_init: true)
+
   def initialize(participation:, assessment:, grading_scope:, table_option: :pointing,
-                 proposed_grade: nil)
+                 proposal: nil)
     super()
     @participation = participation
     @assessment = assessment
     @assessable = assessment.assessable
     @grading_scope = grading_scope
     @table_option = table_option
-    @proposed_grade = proposed_grade
+    @proposal = proposal
     @user ||= @participation&.user
     @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
 
@@ -151,11 +154,23 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def proposed_grade
-    @proposed_grade&.to_s
+    @proposal&.grade&.to_s
+  end
+
+  def proposal_tooltip
+    @proposal&.tooltip
   end
 
   def proposed_grade_differs?
-    @proposed_grade.present? && @proposed_grade != grade_numeric
+    @proposal&.grade.present? && @proposal.grade != grade_numeric
+  end
+
+  def points_changed_notice
+    return unless @participation.points_changed_after_grading?
+
+    t("assessment.grading_exam.points_changed_since",
+      points_at: I18n.l(@participation.task_points.map(&:updated_at).max, format: :file_time),
+      graded_at: I18n.l(@participation.graded_at, format: :file_time))
   end
 
   # Absence is the grader's to record, an exemption the lecturer's - it takes

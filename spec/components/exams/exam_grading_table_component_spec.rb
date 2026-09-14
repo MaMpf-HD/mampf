@@ -58,10 +58,46 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
       expect(render_inline(component).css("td.grade-col .badge")).to be_empty
     end
 
-    it "shows nothing once the scheme is applied" do
+    # Once applied, the scheme's answer for today's points stays beside a
+    # grade it no longer matches: nothing recomputes an applied grade.
+    it "keeps showing what the applied scheme would give where the grade differs" do
       draft.update!(applied_at: Time.current, applied_by: teacher)
+      component.rows.first.update!(grade_numeric: 1.0)
 
-      expect(render_inline(component).css("td.grade-col .badge")).to be_empty
+      badge = render_inline(component).css("td.grade-col .badge").first
+      expect(badge.text.strip).to eq(proposed.to_s)
+      expect(badge["title"]).to eq(I18n.t("assessment.grading_exam.scheme_now_gives"))
+    end
+  end
+
+  describe "points changed after grading" do
+    let(:participation) { component.rows.first }
+
+    before do
+      participation.update!(status: :reviewed, grade_numeric: 2.0, grader: teacher,
+                            graded_at: 1.hour.ago, submitted_at: nil)
+    end
+
+    it "marks the row and counts it in the summary" do
+      create(:assessment_task_point, task: task, assessment_participation: participation, points: 3)
+
+      page = render_inline(component)
+
+      expect(page.css("td.grade-col i.bi-exclamation-triangle-fill")).to be_present
+      expect(page.css("p#grading-summary").text)
+        .to include(I18n.t("assessment.grading_exam.summary_points_changed", count: 1))
+    end
+
+    it "leaves a row alone whose points are older than its grade" do
+      Timecop.travel(2.hours.ago) do
+        create(:assessment_task_point, task: task, assessment_participation: participation,
+                                       points: 3)
+      end
+
+      page = render_inline(component)
+
+      expect(page.css("td.grade-col i.bi-exclamation-triangle-fill")).to be_empty
+      expect(page.css("p#grading-summary").text).not_to include("changed")
     end
   end
 end

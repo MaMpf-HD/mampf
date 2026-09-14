@@ -427,6 +427,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       let(:exam) { create(:exam, lecture: lecture) }
       let(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
       let!(:exam_participation) do
+        create(:exam_roster_entry, exam: exam, user: student)
         create(:assessment_participation, assessment: exam_assessment, user: student)
       end
 
@@ -447,6 +448,36 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response.body).to include("pointing-participation-row-#{exam_participation.id}")
         expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]"))
           .to be_present
+      end
+
+      # The grade stays as it was; the row that comes back says the points moved.
+      it "marks a graded row whose points change, in both tables" do
+        exam_participation.update!(status: :reviewed, grade_numeric: 2.0, grader: teacher,
+                                   graded_at: 1.minute.ago)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "9" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(exam_participation.reload).to have_attributes(grade_numeric: 2.0)
+        expect(exam_participation.graded_at).to be_within(5.seconds).of(1.minute.ago)
+        expect(response.body)
+          .to include("target=\"grading-participation-row-#{exam_participation.id}\"")
+        expect(response.body)
+          .to include(I18n.t("assessment.grading_exam.summary_points_changed", count: 1))
+      end
+
+      it "gives somebody no longer on the roster no points" do
+        exam.exam_roster_entries.find_by(user: student).update!(excluded_at: Time.current)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
+        expect(exam_participation.task_points).to be_empty
       end
 
       it "gives a candidate recorded as absent no points" do

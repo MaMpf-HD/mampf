@@ -264,6 +264,10 @@ module Assessment
       # An exam has nothing to hand in and no group: the candidate is on the
       # roster, and points go in unless they were absent or excused.
       def score_exam_tasks!(task_points)
+        unless @assessable.users.exists?(id: @participation.user_id)
+          raise(PointEntryService::PointEntryError, t("assessment.grading_exam.user_not_candidate"))
+        end
+
         if @participation.absent? || @participation.exempt?
           raise(PointEntryService::PointEntryError,
                 t("assessment.grading_exam.not_scorable", status: @participation.status))

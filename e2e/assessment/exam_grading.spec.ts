@@ -47,6 +47,15 @@ test.describe("exam grading", () => {
     await expect(adaGrade.getByText(/\d{4}-\d{2}-\d{2}, \d{2}:\d{2}/)).toHaveCount(0);
     await expect(adaGrade.getByRole("img", { name: /ago\)$/ })).toBeVisible();
 
+    // points corrected after grading leave the grade, but not unnoticed
+    await page.tab("Points").click();
+    await ada.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("9");
+    await ada.getByRole("button", { name: "Save this row's points" }).click();
+    await expect(page.pane.getByText("2 pending grading")).toBeHidden();
+    await page.tab("Grades").click();
+    await expect(adaGrade.getByRole("img", { name: /^Points changed on/ })).toBeVisible();
+    await expect(page.pane.getByText("1 with points changed since grading")).toBeVisible();
+
     // somebody who did not turn up gets no fields, and can be brought back
     const grace = page.pane.getByRole("row", { name: /Grace Hopper/ });
     await grace.getByRole("link", { name: "Record as absent" }).click();

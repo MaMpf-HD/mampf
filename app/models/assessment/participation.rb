@@ -43,6 +43,15 @@ module Assessment
                         .pick(:tutorial_id)
     end
 
+    # A grade entered or applied before the points were corrected may no
+    # longer fit them; nothing recomputes it, somebody has to look.
+    def points_changed_after_grading?
+      return false if graded_at.nil?
+
+      latest = task_points.map(&:updated_at).max
+      latest.present? && latest > graded_at
+    end
+
     def display_status
       if pending? && submitted_at.nil?
         assessment.status_without_hand_in
@@ -59,8 +68,10 @@ module Assessment
 
     # Refresh graded_at even when already reviewed: SubmissionsHub::Sheet
     # uses it to show newly entered points since the user's last seen_at.
+    # A row that carries a grade keeps it and the time it was given; points
+    # corrected afterwards are the grading table's to point out.
     def update_status_if_all_scored!(grader: nil)
-      return if absent? || exempt?
+      return if absent? || exempt? || grade_numeric.present?
 
       task_ids = assessment.tasks.pluck(:id)
       return if task_ids.empty?

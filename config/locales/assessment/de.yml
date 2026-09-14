@@ -337,6 +337,9 @@ de:
       remove_exempt: 'Befreiung zurücknehmen'
       user_not_candidate: 'Diese Person steht nicht auf der Klausurliste.'
       not_scorable: 'Wer als %{status} vermerkt ist, bekommt keine Punkte.'
+      scheme_now_gives: 'Was das angewendete Schema für die jetzigen Punkte gibt.'
+      points_changed_since: 'Punkte geändert am %{points_at}, Note vom %{graded_at}'
+      summary_points_changed: '%{count} mit seit der Bewertung geänderten Punkten'
       exempt_modal:
         title: 'Von der Klausur befreien'
         note_label: 'Grund (optional, nur für DozentInnen)'

@@ -12,7 +12,7 @@ module Assessment
         return {} if pairs.empty?
 
         index = Participation
-                .includes(:user, :grader, assessment: :assessable)
+                .includes(:user, :grader, :task_points, assessment: :assessable)
                 .where(assessment_id: pairs.map { |a, _| a.id }.uniq,
                        user_id: pairs.map { |_, u| u.id }.uniq)
                 .index_by { |p| [p.assessment_id, p.user_id] }
