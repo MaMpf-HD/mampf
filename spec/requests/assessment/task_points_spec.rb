@@ -468,6 +468,27 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           .to include(I18n.t("assessment.grading_exam.summary_points_changed", count: 1))
       end
 
+      # A colleague saving the row as it is has corrected nothing.
+      it "does not mark a graded row whose points are saved unchanged by somebody else" do
+        create(:assessment_task_point, task: exam_task,
+                                       assessment_participation: exam_participation,
+                                       points: 9, grader: teacher)
+        exam_participation.update!(status: :reviewed, grade_numeric: 2.0, grader: teacher,
+                                   graded_at: Time.current)
+        colleague = create(:confirmed_user)
+        lecture.editors << colleague
+        sign_in colleague
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "9" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(exam_participation.task_points.find_by(task: exam_task).grader).to eq(teacher)
+        expect(exam_participation.reload.points_changed_after_grading?).to be(false)
+      end
+
       it "gives somebody no longer on the roster no points" do
         exam.exam_roster_entries.find_by(user: student).update!(excluded_at: Time.current)
 
