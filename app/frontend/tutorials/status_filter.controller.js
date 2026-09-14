@@ -2,6 +2,25 @@ import { Controller } from "@hotwired/stimulus";
 
 const PAGE_SIZE_KEY = "pointing-table-page-size";
 
+// Storage may be off or full; the choice then holds for this page only.
+function storedPageSize() {
+  try {
+    return Number(localStorage.getItem(PAGE_SIZE_KEY));
+  }
+  catch {
+    return 0;
+  }
+}
+
+function storePageSize(size) {
+  try {
+    localStorage.setItem(PAGE_SIZE_KEY, size);
+  }
+  catch {
+    // nothing to do: the size is already in effect on the page
+  }
+}
+
 // Narrows the rows to a name, a state and a group, and cuts what is left
 // into pages when the table asks for a page size. Rows come back one at a
 // time after a save, so every new row is measured against the filters too.
@@ -19,12 +38,13 @@ export default class extends Controller {
   }
 
   // The page size chosen once holds for every table on this browser; the
-  // table's own value is the default for a first visit.
+  // table's own value is the default for a first visit. Tables already on
+  // the page hear the choice through the event.
   connect() {
     if (!this.hasPageSizeTarget) {
       return;
     }
-    const stored = Number(localStorage.getItem(PAGE_SIZE_KEY));
+    const stored = storedPageSize();
     if (stored > 0) {
       this.pageSizeValue = stored;
     }
@@ -33,8 +53,18 @@ export default class extends Controller {
   }
 
   changePageSize() {
-    this.pageSizeValue = Number(this.pageSizeTarget.value);
-    localStorage.setItem(PAGE_SIZE_KEY, this.pageSizeValue);
+    const size = Number(this.pageSizeTarget.value);
+    storePageSize(size);
+    this.dispatch("page-size", { detail: { size } });
+    this.adoptPageSize({ detail: { size } });
+  }
+
+  adoptPageSize({ detail: { size } }) {
+    if (!this.hasPageSizeTarget || size === this.pageSizeValue) {
+      return;
+    }
+    this.pageSizeValue = size;
+    this.pageSizeTarget.value = size;
     this.apply();
   }
 
