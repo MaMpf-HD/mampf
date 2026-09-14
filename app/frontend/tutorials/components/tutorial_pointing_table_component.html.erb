@@ -1,7 +1,7 @@
 <%= helpers.turbo_frame_tag "pointing-table" do %>
   <% if rows? %>
     <div data-controller="pointing-table status-filter">
-      <div class="m-3">
+      <div class="my-3">
         <%= render toolbar %>
       </div>
 
@@ -72,7 +72,7 @@
         </div>
       </div>
 
-      <p class="text-muted m-3" hidden data-status-filter-target="empty">
+      <p class="text-muted my-3" hidden data-status-filter-target="empty">
         <%= t("assessment.grading_tutorial.filter_no_match") %>
       </p>
     </div>
