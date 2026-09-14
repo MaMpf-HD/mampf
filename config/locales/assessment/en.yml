@@ -273,7 +273,7 @@ en:
       not_submitted: 'not submitted'
       excluded_heading: 'Special Cases'
       reason: 'Reason'
-      roster_heading: 'Roster'
+      roster_heading: 'Grading'
       status: 'Status'
       all_graded_by: 'All grades by %{grader}.'
       proposed_tooltip: 'Proposal from the current grade scheme (not yet applied).'

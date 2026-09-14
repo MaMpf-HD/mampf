@@ -7,7 +7,8 @@
         <%= render summary %>
 
         <%= render PointingFilterComponent.new(id: "exam-grades-#{@exam.id}",
-                                               status_options: status_options) %>
+                                               status_options: status_options,
+                                               tutorial_options: tutorial_options) %>
       </div>
 
       <div

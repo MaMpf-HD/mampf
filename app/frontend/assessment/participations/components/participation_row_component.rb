@@ -10,8 +10,9 @@ class ParticipationRowComponent < ViewComponent::Base
   # What a grade scheme would give the row, and how to explain it.
   Proposal = Struct.new(:grade, :tooltip, keyword_init: true)
 
+  # rubocop:disable Metrics/ParameterLists
   def initialize(participation:, assessment:, grading_scope:, table_option: :pointing,
-                 proposal: nil)
+                 proposal: nil, filter_tutorial_id: nil)
     super()
     @participation = participation
     @assessment = assessment
@@ -19,6 +20,7 @@ class ParticipationRowComponent < ViewComponent::Base
     @grading_scope = grading_scope
     @table_option = table_option
     @proposal = proposal
+    @filter_tutorial_id = filter_tutorial_id
     @user ||= @participation&.user
     @tutorial = (@grading_scope if @grading_scope.is_a?(Tutorial))
 
@@ -28,6 +30,7 @@ class ParticipationRowComponent < ViewComponent::Base
           I18n.t("assessment.grading_tutorial.no_user_for_config",
                  participation_id: @participation&.id))
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def grading_enabled?
     @assessment.persisted?
@@ -112,6 +115,12 @@ class ParticipationRowComponent < ViewComponent::Base
   # Beyond its state, a row can be in a spot the filter should find.
   def filter_flags
     @participation.points_changed_after_grading? ? "points_changed" : ""
+  end
+
+  # A sheet's row belongs to the tutorial that graded it; an exam's row to
+  # the tutorial the candidate attends, which the table looks up.
+  def filter_tutorial_id
+    @filter_tutorial_id || @participation.tutorial_id
   end
 
   def filter_name

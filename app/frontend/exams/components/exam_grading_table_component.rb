@@ -19,7 +19,8 @@ class ExamGradingTableComponent < ViewComponent::Base
   def row_for(participation)
     ParticipationRowComponent.new(participation: participation, assessment: @assessment,
                                   grading_scope: @lecture, table_option: :grading,
-                                  proposal: proposal_for(participation))
+                                  proposal: proposal_for(participation),
+                                  filter_tutorial_id: tutorial_ids_by_user[participation.user_id])
   end
 
   def row_statuses
@@ -52,7 +53,15 @@ class ExamGradingTableComponent < ViewComponent::Base
       [["flag:points_changed", I18n.t("assessment.grading_exam.filter_points_changed")]]
   end
 
+  def tutorial_options
+    ExamRows.tutorial_options(@exam)
+  end
+
   private
+
+    def tutorial_ids_by_user
+      @tutorial_ids_by_user ||= ExamRows.tutorial_ids_by_user(@exam)
+    end
 
     # The active scheme's answer for today's points stands beside the grade:
     # as a proposal while the scheme is unapplied, as a discrepancy once it

@@ -67,5 +67,37 @@ RSpec.describe(ExamPointingTableComponent, type: :component) do
       expect(page.css("input[type=number]").size).to eq(1)
       expect(page.css("tr[id^=pointing-participation-row-]").size).to eq(1)
     end
+
+    # A tutor correcting their own group's exams narrows the table to it.
+    describe "the tutorial filter" do
+      let(:tutorial) { create(:tutorial, lecture: lecture, title: "Group A") }
+      let(:member) { create(:confirmed_user, name: "Ada") }
+      let(:loner) { create(:confirmed_user, name: "Bob") }
+
+      before do
+        create(:tutorial_membership, tutorial: tutorial, user: member)
+        create(:exam_roster_entry, exam: exam, user: member)
+        create(:exam_roster_entry, exam: exam, user: loner)
+      end
+
+      it "offers the lecture's tutorials and marks each row with the candidate's" do
+        page = render_inline(component)
+
+        options = page.css("select[data-status-filter-target=tutorial] option")
+        expect(options.map { |o| [o["value"], o.text.strip] })
+          .to include([tutorial.id.to_s, "Group A"],
+                      ["none", I18n.t("assessment.grading_tutorial.no_tutorial_badge")])
+        rows = page.css("tr[data-status-filter-target=row]")
+        expect(rows.pluck("data-status-filter-tutorial")).to eq([tutorial.id.to_s, ""])
+      end
+    end
+
+    it "offers no tutorial filter for a lecture without tutorials" do
+      create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
+
+      page = render_inline(component)
+
+      expect(page.css("select[data-status-filter-target=tutorial]")).to be_empty
+    end
   end
 end
