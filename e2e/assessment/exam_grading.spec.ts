@@ -76,4 +76,43 @@ test.describe("exam grading", () => {
     await expect(grace.getByRole("img", { name: "Exempt: sick note" })).toBeVisible();
     await expect(page.pane.getByText("1 reviewed · 1 exempt")).toBeVisible();
   });
+
+  test("shows 25 candidates at a time, or one tutorial's", async ({ factory, teacher }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    const exam = await factory.create("exam", ["with_date"], {
+      lecture_id: lecture.id,
+      title: "Main Exam",
+    });
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Group A",
+    });
+    for (let index = 1; index <= 26; index++) {
+      const student = await factory.create("confirmed_user", [], {
+        name_in_tutorials: `Candidate ${index}`,
+      });
+      await factory.create("exam_roster_entry", [], { exam_id: exam.id, user_id: student.id });
+      if (index === 26) {
+        await factory.create("tutorial_membership", [], {
+          tutorial_id: tutorial.id,
+          user_id: student.id,
+        });
+      }
+    }
+    const page = new ExamDashboardPage(teacher.page, lecture.id);
+    await page.open("Main Exam");
+    await page.tab("Grades").click();
+
+    const candidates = page.pane.getByRole("row", { name: /Candidate/ });
+    await expect(candidates.filter({ visible: true })).toHaveCount(25);
+    await expect(page.pane.getByText("Rows 1–25 of 26")).toBeVisible();
+    await page.pane.getByRole("button", { name: "Next" }).click();
+    await expect(candidates.filter({ visible: true })).toHaveCount(1);
+    await expect(page.pane.getByText("Rows 26–26 of 26")).toBeVisible();
+
+    await page.pane.getByLabel("Tutorial").selectOption("Group A");
+    await expect(candidates.filter({ visible: true })).toHaveCount(1);
+    await expect(page.pane.getByRole("row", { name: /Candidate 26/ })).toBeVisible();
+    await expect(page.pane.getByText("Rows 1–25 of 26")).toBeHidden();
+  });
 });

@@ -1,6 +1,9 @@
 <%= helpers.turbo_frame_tag "pointing-table" do %>
   <% if rows.any? %>
-    <div data-controller="pointing-table status-filter">
+    <div
+      data-controller="pointing-table status-filter"
+      data-status-filter-page-size-value="25"
+    >
       <div class="my-3">
         <%= render summary %>
 
@@ -32,6 +35,8 @@
       <p class="text-muted my-3" hidden data-status-filter-target="empty">
         <%= t("assessment.grading_tutorial.filter_no_match") %>
       </p>
+
+      <%= render partial: "assessment/participations/pager" %>
     </div>
   <% else %>
     <p class="text-muted my-3">

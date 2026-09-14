@@ -1,6 +1,9 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <% if rows.any? %>
-    <div data-controller="status-filter">
+    <div
+      data-controller="status-filter"
+      data-status-filter-page-size-value="25"
+    >
       <%= render points_changed_alert %>
 
       <div class="my-3">
@@ -34,6 +37,8 @@
       <p class="text-muted my-3" hidden data-status-filter-target="empty">
         <%= t("assessment.grading_tutorial.filter_no_match") %>
       </p>
+
+      <%= render partial: "assessment/participations/pager" %>
 
       <%= render partial: "assessment/participations/exempt_modal" %>
     </div>

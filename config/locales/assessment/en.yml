@@ -312,6 +312,10 @@ en:
       filter_reset: 'Reset filters'
       filter_count: '%{shown} of %{total} rows'
       filter_no_match: 'No matching rows.'
+      page_range: 'Rows %{from}–%{to} of %{total}'
+      page_previous: 'Previous'
+      page_next: 'Next'
+      pager_label: 'Pages'
       more_actions: 'More actions'
       summary:
         handed_in:

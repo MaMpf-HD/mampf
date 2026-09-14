@@ -312,6 +312,10 @@ de:
       filter_reset: 'Filter zurücksetzen'
       filter_count: '%{shown} von %{total} Zeilen'
       filter_no_match: 'Keine passenden Einträge.'
+      page_range: 'Zeilen %{from}–%{to} von %{total}'
+      page_previous: 'Zurück'
+      page_next: 'Weiter'
+      pager_label: 'Seiten'
       more_actions: 'Weitere Aktionen'
       summary:
         handed_in:

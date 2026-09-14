@@ -1,0 +1,36 @@
+<nav
+  class="d-flex flex-wrap justify-content-between align-items-center gap-2 my-3"
+  aria-label="<%= t("assessment.grading_tutorial.pager_label") %>"
+  hidden
+  data-status-filter-target="pager"
+>
+  <span
+    class="small text-muted"
+    data-status-filter-target="pageInfo"
+    data-template="<%= t("assessment.grading_tutorial.page_range", from: "%{from}", to: "%{to}", total: "%{total}") %>"
+  ></span>
+
+  <ul class="pagination pagination-sm mb-0">
+    <li class="page-item">
+      <button
+        type="button"
+        class="page-link"
+        data-status-filter-target="previous"
+        data-action="click->status-filter#previousPage"
+      >
+        <%= t("assessment.grading_tutorial.page_previous") %>
+      </button>
+    </li>
+
+    <li class="page-item">
+      <button
+        type="button"
+        class="page-link"
+        data-status-filter-target="next"
+        data-action="click->status-filter#nextPage"
+      >
+        <%= t("assessment.grading_tutorial.page_next") %>
+      </button>
+    </li>
+  </ul>
+</nav>

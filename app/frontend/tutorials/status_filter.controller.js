@@ -1,29 +1,67 @@
 import { Controller } from "@hotwired/stimulus";
 
-// Narrows the rows to a name, a state and a group. Rows come back one at a
+// Narrows the rows to a name, a state and a group, and cuts what is left
+// into pages when the table asks for a page size. Rows come back one at a
 // time after a save, so every new row is measured against the filters too.
 // A sheet from before there were states offers no state filter.
 export default class extends Controller {
-  static targets = ["row", "name", "status", "tutorial", "reset", "count", "empty"];
+  static targets = [
+    "row", "name", "status", "tutorial", "reset", "count", "empty",
+    "pager", "pageInfo", "previous", "next",
+  ];
 
-  rowTargetConnected(row) {
+  static values = { pageSize: Number };
+
+  initialize() {
+    this.page = 1;
+  }
+
+  rowTargetConnected() {
     if (!this.hasNameTarget) {
       return;
     }
-    this.show(row);
-    this.report();
+    this.render();
   }
 
   rowTargetDisconnected() {
     if (!this.hasNameTarget) {
       return;
     }
-    this.report();
+    this.render();
   }
 
+  // A change of filter starts over on the first page.
   apply() {
-    this.rowTargets.forEach(row => this.show(row));
-    this.report();
+    this.page = 1;
+    this.render();
+  }
+
+  previousPage() {
+    this.page -= 1;
+    this.render();
+  }
+
+  nextPage() {
+    this.page += 1;
+    this.render();
+  }
+
+  render() {
+    const matching = this.rowTargets.filter(row => this.matches(row));
+    const pages = this.pageSizeValue > 0
+      ? Math.max(1, Math.ceil(matching.length / this.pageSizeValue))
+      : 1;
+    this.page = Math.min(Math.max(this.page, 1), pages);
+    const from = this.pageSizeValue > 0 ? (this.page - 1) * this.pageSizeValue : 0;
+    const to = this.pageSizeValue > 0 ? from + this.pageSizeValue : matching.length;
+
+    const onPage = new Set(matching.slice(from, to));
+    this.rowTargets.forEach((row) => {
+      row.hidden = !onPage.has(row);
+    });
+
+    this.report(matching.length);
+    this.paginate(matching.length, from, to, pages);
   }
 
   search() {
@@ -39,10 +77,6 @@ export default class extends Controller {
       this.tutorialTarget.value = "all";
     }
     this.apply();
-  }
-
-  show(row) {
-    row.hidden = !this.matches(row);
   }
 
   // The state select also offers spots a row can be in beyond its state,
@@ -71,9 +105,8 @@ export default class extends Controller {
     this.apply();
   }
 
-  report() {
+  report(shown) {
     const total = this.rowTargets.length;
-    const shown = this.rowTargets.filter(row => !row.hidden).length;
     if (this.hasResetTarget) {
       this.resetTarget.hidden = !this.filtering();
     }
@@ -86,6 +119,26 @@ export default class extends Controller {
     if (this.hasEmptyTarget) {
       this.emptyTarget.hidden = shown > 0;
     }
+  }
+
+  paginate(total, from, to, pages) {
+    if (!this.hasPagerTarget) {
+      return;
+    }
+    this.pagerTarget.hidden = pages <= 1;
+    this.pageInfoTarget.textContent = this.pageInfoTarget.dataset.template
+      .replace("%{from}", total === 0 ? 0 : from + 1)
+      .replace("%{to}", Math.min(to, total))
+      .replace("%{total}", total);
+    this.enable(this.previousTarget, this.page > 1);
+    this.enable(this.nextTarget, this.page < pages);
+  }
+
+  // Bootstrap greys a page link by class, not by the attribute that
+  // actually stops the click.
+  enable(button, enabled) {
+    button.disabled = !enabled;
+    button.classList.toggle("disabled", !enabled);
   }
 
   filtering() {
