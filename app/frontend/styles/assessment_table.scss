@@ -144,6 +144,26 @@ thead th.sticky-col {
   }
 }
 
+/* The copy button shows when its row is reached, by pointer or keyboard;
+   where nothing can hover it stays in view. */
+.table-overflow {
+  .row-reveal {
+    opacity: 0;
+  }
+
+  tr:hover .row-reveal,
+  tr:focus-within .row-reveal,
+  .row-reveal:focus-visible {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    .row-reveal {
+      opacity: 1;
+    }
+  }
+}
+
 /* The one destructive icon waits in grey like the others and turns red
    only when reached, instead of shouting from every row. */
 .row-action-danger {
