@@ -3,15 +3,16 @@
   class="modal fade"
   tabindex="-1"
   aria-hidden="true"
+  aria-labelledby="exempt-modal-title"
   data-controller="exempt-modal"
   data-action="participation-row:exempt-open@window->exempt-modal#open"
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <%= form_with url: "#", method: :patch,
-                    data: { exempt_modal_target: "form", action: "submit->exempt-modal#hide" } do |f| %>
+                    data: { exempt_modal_target: "form", action: "submit->exempt-modal#submit" } do |f| %>
         <div class="modal-header">
-          <h5 class="modal-title">
+          <h5 class="modal-title" id="exempt-modal-title">
             <%= t("assessment.grading_exam.exempt_modal.title") %>
           </h5>
         </div>

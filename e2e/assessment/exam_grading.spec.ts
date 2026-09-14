@@ -68,13 +68,20 @@ test.describe("exam grading", () => {
     await grace.getByRole("link", { name: "Take the absence back" }).click();
     await expect(grace.getByRole("combobox", { name: "Grade for Grace Hopper" })).toBeVisible();
 
-    // a certificate excuses, with the reason kept for teaching staff
-    await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
-    const dialog = teacher.page.getByRole("dialog");
+    // a certificate excuses, with the reason kept for teaching staff; the
+    // dialog hands the keyboard back to the row it came from
+    const excuse = grace.getByRole("button", { name: "Excuse with a certificate" });
+    await excuse.focus();
+    await teacher.page.keyboard.press("Enter");
+    const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the exam" });
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+    await expect(excuse).toBeFocused();
+    await excuse.click();
     await dialog.getByLabel("Reason (optional, teaching staff only)").fill("sick note");
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(grace.getByRole("img", { name: "Exempt: sick note" })).toBeVisible();
     await expect(page.pane.getByText("1 reviewed · 1 exempt")).toBeVisible();
+    await expect(grace.getByRole("link", { name: "Take the exemption back" })).toBeFocused();
   });
 
   test("shows 20 candidates at a time, or one tutorial's", async ({ factory, teacher }) => {
@@ -111,9 +118,14 @@ test.describe("exam grading", () => {
     await expect(candidates.filter({ visible: true })).toHaveCount(6);
     await expect(page.pane.getByText("Rows 21–26 of 26").first()).toBeVisible();
 
+    // the size chosen on one tab holds on the other
     await page.pane.getByLabel("Per page").selectOption("50");
     await expect(candidates.filter({ visible: true })).toHaveCount(26);
     await expect(page.pane.getByText("Rows 1–26 of 26").first()).toBeVisible();
+    await page.tab("Points").click();
+    await expect(page.pane.getByRole("row", { name: /Candidate/ }).filter({ visible: true }))
+      .toHaveCount(26);
+    await page.tab("Grades").click();
 
     await page.pane.getByLabel("Tutorial").selectOption("Group A");
     await expect(candidates.filter({ visible: true })).toHaveCount(1);

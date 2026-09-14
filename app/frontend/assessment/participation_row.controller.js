@@ -36,8 +36,9 @@ export default class extends Controller {
   }
 
   // The dialog belongs to the table, not the row; the row tells it where to post.
-  openExemptModal({ currentTarget: { dataset: { url, note } } }) {
-    this.dispatch("exempt-open", { detail: { url, note }, bubbles: true });
+  openExemptModal({ currentTarget }) {
+    const { url, note } = currentTarget.dataset;
+    this.dispatch("exempt-open", { detail: { url, note, trigger: currentTarget }, bubbles: true });
   }
 
   refreshRow() {
