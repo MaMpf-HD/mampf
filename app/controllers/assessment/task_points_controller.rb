@@ -22,6 +22,9 @@ module Assessment
     before_action :refuse_unless_sheet, only: [:mark_as_participated, :remove_participated]
     before_action :refuse_unless_exam, only: [:mark_as_absent, :remove_absent,
                                               :mark_as_exempt, :remove_exempt]
+    before_action :refuse_unless_candidate, only: [:update_participation, :mark_as_absent,
+                                                   :remove_absent, :mark_as_exempt,
+                                                   :remove_exempt]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
@@ -220,6 +223,15 @@ module Assessment
                            status: :bad_request)
       end
 
+      # The row of somebody taken off the roster stays in the database; nothing
+      # is recorded on it any more.
+      def refuse_unless_candidate
+        return unless @assessable.is_a?(Exam)
+        return if @assessable.users.exists?(id: @participation.user_id)
+
+        respond_with_flash(:alert, t("assessment.grading_exam.user_not_candidate"))
+      end
+
       def rerender_submission_row
         respond_to do |format|
           format.turbo_stream do
@@ -261,16 +273,13 @@ module Assessment
         end
       end
 
-      # An exam has nothing to hand in and no group: the candidate is on the
-      # roster, and points go in unless they were absent or excused.
+      # An exam has nothing to hand in and no group: points go in unless the
+      # candidate was absent or excused.
       def score_exam_tasks!(task_points)
-        unless @assessable.users.exists?(id: @participation.user_id)
-          raise(PointEntryService::PointEntryError, t("assessment.grading_exam.user_not_candidate"))
-        end
-
         if @participation.absent? || @participation.exempt?
+          status = t("assessment.grading_exam.status_word.#{@participation.status}")
           raise(PointEntryService::PointEntryError,
-                t("assessment.grading_exam.not_scorable", status: @participation.status))
+                t("assessment.grading_exam.not_scorable", status: status))
         end
 
         PointEntryService.enter_points(@participation, task_points, current_user)

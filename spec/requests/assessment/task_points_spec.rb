@@ -1073,8 +1073,20 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         patch mark_as_exempt_path(candidate), params: { note: "late" }, as: :turbo_stream
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include("reviewed")
+        expect(response.body).to include(
+          I18n.t("assessment.grading_exam.reviewed_stays",
+                 status: I18n.t("assessment.grading_exam.status_word.exempt"))
+        )
         expect(candidate.reload).to be_reviewed
+      end
+
+      it "records nothing on somebody taken off the roster" do
+        exam.exam_roster_entries.find_by(user: student).update!(excluded_at: Time.current)
+
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
+        expect(candidate.reload).to be_pending
       end
 
       it "has nothing to take back on a row that is not absent" do
