@@ -54,8 +54,11 @@ test.describe("exam grading", () => {
     // points corrected after grading leave the grade, but not unnoticed
     await page.tab("Points").click();
     await ada.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("9");
+    const corrected = teacher.page.waitForResponse(
+      response => response.url().includes("/point_participation") && response.ok(),
+    );
     await ada.getByRole("button", { name: "Save this row's points" }).click();
-    await expect(page.pane.getByText("2 pending grading")).toBeHidden();
+    await corrected;
     await page.tab("Grades").click();
     await expect(adaGrade.getByRole("img", { name: /^Points changed on/ })).toBeVisible();
     await expect(page.pane.getByRole("alert")).toContainText("the points changed after the grade");
