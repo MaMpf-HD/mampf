@@ -197,11 +197,14 @@
               data-participation-row-target="gradePayload"
             >
 
-            <input
-              type="hidden"
-              name="comment"
-              data-participation-row-target="notePayload"
-            >
+            <%# Sent only where a note can be typed: an empty comment would clear the note. %>
+            <% if layout.show?(:note) %>
+              <input
+                type="hidden"
+                name="comment"
+                data-participation-row-target="notePayload"
+              >
+            <% end %>
           <% end %>
           <%= save_row_button(allow_grading?) %>
           <%= form_with url: refresh_url,

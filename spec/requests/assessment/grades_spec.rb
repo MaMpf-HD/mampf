@@ -312,6 +312,19 @@ RSpec.describe(Assessment::GradesController, type: :request) do
       expect(exam_participation.reload.grade_numeric).to be_nil
     end
 
+    # The exam's row has no note field, so its form sends no comment; the
+    # note, once there, stays.
+    it "leaves the note alone" do
+      exam_participation.update!(note: "spoke to the candidate")
+
+      patch grade_participation_path(exam_participation),
+            params: { grade: "2.0" },
+            headers: turbo_stream_headers
+
+      expect(exam_participation.reload).to have_attributes(grade_numeric: 2.0,
+                                                           note: "spoke to the candidate")
+    end
+
     # The row hides the select for them; the endpoint has to refuse as well.
     ["absent", "exempt"].each do |state|
       it "is refused for somebody recorded as #{state}" do
