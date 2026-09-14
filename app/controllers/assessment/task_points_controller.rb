@@ -374,7 +374,9 @@ module Assessment
         @assessment = @participation.assessment
         @lecture = @assessment.lecture
         @assessable = @assessment.assessable
-        @tutorial = @participation.tutorial
+        # Only a sheet's row is scored within a group; an exam's is the
+        # lecture's business, whatever its tutorial column may hold.
+        @tutorial = @participation.tutorial if @assessable.is_a?(Assignment)
         return if @assessable
 
         respond_with_flash(:alert, t("assessment.task_points.participation_missing_assignment"),

@@ -1180,6 +1180,31 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
     end
 
+    # Point entry on a sheet follows the row's tutorial; an exam's row must
+    # not open up to a group's tutors through that column.
+    context "as a tutor of a tutorial the row happens to name" do
+      let(:tutor) { create(:confirmed_user) }
+      let!(:task) { create(:assessment_task, assessment: exam_assessment, max_points: 10) }
+
+      before do
+        tutorial.tutors << tutor
+        candidate.update!(tutorial: tutorial)
+        sign_in tutor
+      end
+
+      it "may neither score nor record an absence" do
+        patch point_participation_path(candidate),
+              params: { task_points: { task.id => "6" }.to_json, grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+        expect(candidate.task_points).to be_empty
+
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_pending
+      end
+    end
+
     context "as a stranger" do
       before { sign_in create(:confirmed_user) }
 
