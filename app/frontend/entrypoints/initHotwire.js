@@ -176,6 +176,9 @@ window.Stimulus.register("pointing-table", PointingTableController);
 import TableFadeController from "~/tutorials/table_fade.controller.js";
 window.Stimulus.register("table-fade", TableFadeController);
 
+import ExemptModalController from "~/assessment/exempt_modal.controller.js";
+window.Stimulus.register("exempt-modal", ExemptModalController);
+
 import StatusFilterController from "~/tutorials/status_filter.controller.js";
 window.Stimulus.register("status-filter", StatusFilterController);
 import ExamFormController from "~/exams/form.controller.js";

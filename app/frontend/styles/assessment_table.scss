@@ -70,10 +70,12 @@ thead th.sticky-col {
 @include column(team);
 @include column(tutorial);
 @include column(status);
+@include column(status-compact);
 @include column(task);
 @include column(total);
 @include column(grade);
 @include column(graded);
+@include column(graded-compact);
 @include column(save);
 @include column(hand-in);
 @include column(correction);

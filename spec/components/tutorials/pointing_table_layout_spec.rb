@@ -32,8 +32,19 @@ RSpec.describe(PointingTableLayout) do
       expect(layout.left).to eq([:talk, :team])
     end
 
+    it "gives an exam a points table and a grading table" do
+      points = described_class.for(assessable: build_stubbed(:exam))
+      grades = described_class.for(assessable: build_stubbed(:exam), table_option: :grading)
+
+      expect(points.columns).to eq([:team, :status, :tasks, :total, :save])
+      expect(points.body).to eq(:tasks)
+      expect(grades.columns)
+        .to eq([:team, :status_compact, :total, :grade, :note, :graded_compact, :save])
+      expect(grades.body).to eq(:single_grade)
+    end
+
     it "knows no table for anything else" do
-      expect { described_class.for(assessable: build_stubbed(:exam)) }
+      expect { described_class.for(assessable: build_stubbed(:lecture)) }
         .to raise_error(described_class::UnsupportedAssessableError)
     end
   end

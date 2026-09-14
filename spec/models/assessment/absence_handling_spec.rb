@@ -99,4 +99,34 @@ RSpec.describe(Assessment::AbsenceHandling) do
       expect(absent.graded_at).to be_nil
     end
   end
+
+  describe "#remove_absent" do
+    it "returns an absent row to pending" do
+      absent = create(:assessment_participation, status: :absent)
+
+      test_service.remove_absent(absent)
+
+      expect(absent.reload).to be_pending
+    end
+
+    it "refuses a row that is not absent" do
+      expect { test_service.remove_absent(participation) }
+        .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError)
+    end
+  end
+
+  describe "#remove_exempt" do
+    it "returns an exempt row to pending and drops the note that explained it" do
+      exempt = create(:assessment_participation, status: :exempt, note: "certificate")
+
+      test_service.remove_exempt(exempt)
+
+      expect(exempt.reload).to have_attributes(status: "pending", note: nil)
+    end
+
+    it "refuses a row that is not exempt" do
+      expect { test_service.remove_exempt(participation) }
+        .to raise_error(Assessment::AbsenceHandling::InvalidTransitionError)
+    end
+  end
 end

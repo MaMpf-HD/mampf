@@ -27,11 +27,14 @@ class GradingTabComponent < ViewComponent::Base
     )
   end
 
+  # The lecturer enters or overrules a grade in the exam's rows; a scheme
+  # being drafted shows its proposal beside each one.
   def roster_component
-    GradeTableComponent.new(
-      assessment: assessment,
-      draft_scheme: draft_scheme
-    )
+    if assessment.assessable.is_a?(Exam)
+      ExamGradingTableComponent.new(exam: assessment.assessable)
+    else
+      GradeTableComponent.new(assessment: assessment, draft_scheme: draft_scheme)
+    end
   end
 
   private

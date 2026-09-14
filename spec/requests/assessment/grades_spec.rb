@@ -32,17 +32,16 @@ RSpec.describe(Assessment::GradesController, type: :request) do
         expect(response).to have_http_status(:ok)
       end
 
-      it "persists the grade via TalkGraderService" do
-        expect(Assessment::TalkGraderService).to receive(:set_grade).with(
-          instance_of(Assessment::Participation), "1.0", grader, "well done"
-        ).and_call_original
-
+      it "persists the grade and the note" do
         subject
+
+        expect(participation.reload).to have_attributes(grade_numeric: 1.0, note: "well done",
+                                                        grader_id: grader.id)
       end
 
       it "renders the replaced participation row" do
         subject
-        expect(response.body).to include("participation-row-#{participation.id}")
+        expect(response.body).to include("grading-participation-row-#{participation.id}")
       end
 
       it "counts the row as graded in the summary" do
@@ -60,26 +59,9 @@ RSpec.describe(Assessment::GradesController, type: :request) do
       end
     end
 
-    context "when TalkGraderService raises TalkGraderError" do
-      before do
-        allow(Assessment::TalkGraderService).to receive(:set_grade)
-          .and_raise(Assessment::TalkGraderService::TalkGraderError, "bad grade")
-      end
-
-      it "rescues the error instead of raising a 500" do
-        expect { subject }.not_to raise_error
-      end
-
-      it "responds with the alert flash" do
-        subject
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to include("bad grade")
-      end
-    end
-
     context "when GradeEntryService raises GradeEntryError" do
       before do
-        allow(Assessment::TalkGraderService).to receive(:set_grade)
+        allow(Assessment::GradeEntryService).to receive(:set_grade)
           .and_raise(Assessment::GradeEntryService::GradeEntryError, "invalid entry")
       end
 
@@ -133,8 +115,8 @@ RSpec.describe(Assessment::GradesController, type: :request) do
         )
       end
 
-      it "does not call TalkGraderService" do
-        expect(Assessment::TalkGraderService).not_to receive(:set_grade)
+      it "writes no grade" do
+        expect(Assessment::GradeEntryService).not_to receive(:set_grade)
         subject
       end
 
@@ -241,7 +223,7 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
     it "re-renders the participation row" do
       subject
-      expect(response.body).to include("participation-row-#{participation.id}")
+      expect(response.body).to include("grading-participation-row-#{participation.id}")
     end
 
     # Somebody else may have graded since the page was drawn; the reloaded row
@@ -293,6 +275,41 @@ RSpec.describe(Assessment::GradesController, type: :request) do
           I18n.t("assessment.talk_grader.user_not_speaker")
         )
       end
+    end
+  end
+
+  describe "an exam's grade" do
+    let(:exam) { FactoryBot.create(:exam, lecture: seminar) }
+    let(:exam_assessment) { FactoryBot.create(:assessment, :with_points, assessable: exam) }
+    let(:candidate) { FactoryBot.create(:confirmed_user) }
+    let!(:exam_participation) do
+      FactoryBot.create(:exam_roster_entry, exam: exam, user: candidate)
+      FactoryBot.create(:assessment_participation, assessment: exam_assessment, user: candidate)
+    end
+
+    it "is entered by the teacher, the row and the summary following" do
+      patch grade_participation_path(exam_participation),
+            params: { grade: "2.3", comment: "borderline" },
+            headers: turbo_stream_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(exam_participation.reload).to have_attributes(grade_numeric: 2.3, note: "borderline",
+                                                           status: "reviewed")
+      expect(response.body).to include("grading-participation-row-#{exam_participation.id}")
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+      expect(summary.text)
+        .to include(I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1))
+    end
+
+    it "is refused for somebody no longer on the roster" do
+      exam.exam_roster_entries.find_by(user: candidate).update!(excluded_at: Time.current)
+
+      patch grade_participation_path(exam_participation),
+            params: { grade: "2.3" },
+            headers: turbo_stream_headers
+
+      expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
+      expect(exam_participation.reload.grade_numeric).to be_nil
     end
   end
 end

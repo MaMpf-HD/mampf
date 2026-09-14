@@ -227,7 +227,6 @@ de:
     no_assessables_yet: 'Noch keine Bewertungen erstellt.'
     submission_settings: 'Abgabe-Einstellungen'
     talk_grader:
-      assessment_not_talk: 'Bewertung ist nicht für einen Vortrag.'
       user_not_speaker: 'Benutzer ist nicht als Sprecher:in für diesen Vortrag eingetragen.'
     grades_updated: 'Änderungen gespeichert.'
     task_points:
@@ -330,6 +329,18 @@ de:
       user_joined_tutorial: 'Ohne Übungsgruppe abgegeben, seitdem in %{new_tutorial}.'
     grading_talk:
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
+    grading_exam:
+      no_candidates: 'Noch niemand auf der Klausurliste.'
+      mark_absent: 'Als abwesend vermerken'
+      remove_absent: 'Abwesenheit zurücknehmen'
+      mark_exempt: 'Mit Attest befreien'
+      remove_exempt: 'Befreiung zurücknehmen'
+      user_not_candidate: 'Diese Person steht nicht auf der Klausurliste.'
+      not_scorable: 'Wer als %{status} vermerkt ist, bekommt keine Punkte.'
+      exempt_modal:
+        title: 'Von der Klausur befreien'
+        note_label: 'Grund (optional, nur für DozentInnen)'
+        save: 'Befreien'
     grading_overview:
       submission_progress: 'Abgaben'
       submitted: 'Abgegeben'
@@ -469,9 +480,6 @@ de:
       percentile_nth: '%{n}. Perzentil'
       markers_caption_proposed: 'Schwellenmarker (1.0, 4.0) beziehen sich auf das neue Schema.'
     statistics_analysis: 'Statistiken & Analyse'
-    no_points_yet: 'Noch keine Punkte eingetragen.'
-    point_grid:
-      total: "Gesamt"
     statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
     statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
     grade_talk_row:

@@ -4,11 +4,15 @@ class PointingSummaryComponent < ViewComponent::Base
   PARTS = [:reviewed, :pending_grading, :not_submitted, :awaiting_record,
            :exempt, :absent].freeze
 
-  # A talk's rows have nothing handed in to count.
-  def initialize(statuses:, hand_ins: true)
+  # A talk's rows have nothing handed in to count. An exam draws two tables
+  # on one page, so the second line needs an id of its own to be replaced.
+  attr_reader :id
+
+  def initialize(statuses:, hand_ins: true, id: "pointing-summary")
     super()
     @statuses = statuses
     @hand_ins = hand_ins
+    @id = id
   end
 
   def text
@@ -27,6 +31,6 @@ class PointingSummaryComponent < ViewComponent::Base
   end
 
   def call
-    tag.p(text, id: "pointing-summary", class: "text-muted small mb-2")
+    tag.p(text, id: @id, class: "text-muted small mb-2")
   end
 end

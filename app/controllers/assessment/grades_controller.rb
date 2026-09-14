@@ -3,7 +3,7 @@ module Assessment
     before_action :set_resources, only: [:update, :refresh]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update, :refresh]
-    before_action :refuse_unless_talk, only: [:update, :refresh]
+    before_action :refuse_unless_gradable, only: [:update, :refresh]
 
     rescue_from ActiveRecord::RecordNotFound do
       respond_with_flash(:alert, I18n.t("assessment.errors.invalid_request_params"))
@@ -13,8 +13,7 @@ module Assessment
       respond_with_flash(:alert, e.record.errors.full_messages.to_sentence)
     end
 
-    rescue_from TalkGraderService::TalkGraderError,
-                GradeEntryService::GradeEntryError do |e|
+    rescue_from GradeEntryService::GradeEntryError do |e|
       respond_with_flash(:alert, e.message)
     end
 
@@ -23,21 +22,25 @@ module Assessment
     end
 
     def update
-      TalkGraderService.set_grade(@participation, params[:grade], current_user, params[:comment])
+      grade_info = GradeEntryService.build_grade_info(grade_numeric: params[:grade])
+      GradeEntryService.set_grade(@participation, grade_info, current_user, params[:comment])
       @participation.reload
       flash.now[:notice] = t("assessment.grades_updated")
-      render turbo_stream: [replace_participation_row, summary_stream, stream_flash].compact
+      render turbo_stream: [replace_participation_row, summary_stream, stream_flash].flatten.compact
     end
 
     def refresh
-      render turbo_stream: [replace_participation_row, summary_stream]
+      render turbo_stream: [replace_participation_row, summary_stream].flatten
     end
 
     private
 
+      # An exam's row stands in two tables on the page; both are replaced.
       def replace_participation_row
+        return exam_row_streams if @assessable.is_a?(Exam)
+
         turbo_stream.replace(
-          "participation-row-#{@participation.id}",
+          "grading-participation-row-#{@participation.id}",
           html: render_to_string(ParticipationRowComponent.new(
                                    assessment: @assessment,
                                    grading_scope: @lecture,
@@ -47,12 +50,27 @@ module Assessment
         )
       end
 
+      def exam_row_streams
+        [ExamPointingTableComponent, ExamGradingTableComponent].map do |table|
+          row = table.new(exam: @assessable).row_for(@participation)
+          turbo_stream.replace(row.row_id, html: render_to_string(row))
+        end
+      end
+
       # Saving a grade can change the participation status, so update
-      # pointing-summary along with the row.
+      # the summary line along with the row.
       def summary_stream
-        statuses = TalkGradingTableComponent.new(seminar: @lecture).row_statuses
-        summary = PointingSummaryComponent.new(statuses: statuses, hand_ins: false)
+        return exam_summary_streams if @assessable.is_a?(Exam)
+
+        summary = TalkGradingTableComponent.new(seminar: @lecture).summary
         turbo_stream.replace("pointing-summary", html: render_to_string(summary))
+      end
+
+      def exam_summary_streams
+        [ExamPointingTableComponent, ExamGradingTableComponent].map do |table|
+          summary = table.new(exam: @assessable).summary
+          turbo_stream.replace(summary.id, html: render_to_string(summary))
+        end
       end
 
       def set_resources
@@ -65,15 +83,23 @@ module Assessment
 
       # After the authorization, so an outsider learns nothing about the row
       # from the answer. Assignments receive task points through
-      # TaskPointsController.
-      def refuse_unless_talk
+      # TaskPointsController; a talk is graded for its speakers, an exam for
+      # its roster.
+      def refuse_unless_gradable
         return respond_with_flash(:alert, t("assessment.errors.no_assessment")) unless @assessment
-        unless @assessable.is_a?(Talk)
-          return respond_with_flash(:alert, t("assessment.errors.not_gradable"))
-        end
-        return if @assessable.speakers.exists?(id: @user.id)
 
-        respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
+        case @assessable
+        when Talk
+          return if @assessable.speakers.exists?(id: @user.id)
+
+          respond_with_flash(:alert, t("assessment.talk_grader.user_not_speaker"))
+        when Exam
+          return if @assessable.users.exists?(id: @user.id)
+
+          respond_with_flash(:alert, t("assessment.grading_exam.user_not_candidate"))
+        else
+          respond_with_flash(:alert, t("assessment.errors.not_gradable"))
+        end
       end
 
       def current_ability

@@ -1,0 +1,40 @@
+<%= helpers.turbo_frame_tag "pointing-table" do %>
+  <% if rows.any? %>
+    <div data-controller="pointing-table status-filter">
+      <div class="my-3">
+        <%= render summary %>
+
+        <%= render PointingFilterComponent.new(id: "exam-points-#{@exam.id}",
+                                               status_options: status_options) %>
+      </div>
+
+      <div
+        class="table-wrapper"
+        style="<%= layout.css_vars %>"
+        data-controller="table-fade"
+      >
+        <div class="table-overflow" data-table-fade-target="inner">
+          <table class="table align-middle my-3">
+            <thead>
+              <%= render(PointingTableHeaderComponent.new(assessable: @exam, layout: layout)) %>
+            </thead>
+
+            <tbody>
+              <% rows.each do |participation| %>
+                <%= render row_for(participation) %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="text-muted my-3" hidden data-status-filter-target="empty">
+        <%= t("assessment.grading_tutorial.filter_no_match") %>
+      </p>
+    </div>
+  <% else %>
+    <p class="text-muted my-3">
+      <%= t("assessment.grading_exam.no_candidates") %>
+    </p>
+  <% end %>
+<% end %>

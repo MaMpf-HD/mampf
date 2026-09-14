@@ -23,6 +23,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
       when :tasks then tasks.map { |task| task_column(task) }
       when :total then total_column
       when :save then save_column
+      when :graded_compact then graded_compact_column
       else plain_column(column)
       end
     end
@@ -44,7 +45,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
       when :team then team_label
       when :talk then t("basics.talk")
       when :tutorial then t("basics.tutorial")
-      when :status then t("assessment.grading_tutorial.status")
+      when :status, :status_compact then t("assessment.grading_tutorial.status")
       when :hand_in then t("basics.submission")
       when :correction then t("basics.correction")
       else t("assessment.grade_talk_row.#{column}")
@@ -52,9 +53,11 @@ class PointingTableHeaderComponent < ViewComponent::Base
     end
 
     def team_label
-      return t("assessment.grade_talk_row.speaker") if @assessable.is_a?(Talk)
-
-      t("basics.team")
+      case @assessable
+      when Talk then t("assessment.grade_talk_row.speaker")
+      when Exam then t("basics.name")
+      else t("basics.team")
+      end
     end
 
     # A correction may be any type the uploader takes, whatever the sheet
@@ -84,6 +87,13 @@ class PointingTableHeaderComponent < ViewComponent::Base
 
     # Keep the save column label for screen readers; the visible buttons
     # already identify the actions with icons.
+    # An icon with a tooltip needs no heading over it either.
+    def graded_compact_column
+      Column.new(css_class: "text-center #{@layout.column_class(:graded_compact)} grade-th",
+                 label: t("assessment.grade_talk_row.graded"),
+                 label_hidden: true)
+    end
+
     def save_column
       Column.new(css_class: "text-center #{@layout.column_class(:save)} grade-th",
                  label: t("buttons.save"),

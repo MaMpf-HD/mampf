@@ -35,6 +35,11 @@ export default class extends Controller {
     this.formTarget.requestSubmit();
   }
 
+  // The dialog belongs to the table, not the row; the row tells it where to post.
+  openExemptModal({ currentTarget: { dataset: { url, note } } }) {
+    this.dispatch("exempt-open", { detail: { url, note }, bubbles: true });
+  }
+
   refreshRow() {
     this.refreshFormTarget.requestSubmit();
   }

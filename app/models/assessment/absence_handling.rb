@@ -26,7 +26,28 @@ module Assessment
       participation.update!(attrs)
     end
 
+    # Taking either back returns the row to pending; an exemption's note goes
+    # with it, it explained the exemption.
+    def remove_absent(participation)
+      validate_status!(participation, :absent)
+
+      participation.update!(status: :pending)
+    end
+
+    def remove_exempt(participation)
+      validate_status!(participation, :exempt)
+
+      participation.update!(status: :pending, note: nil)
+    end
+
     private
+
+      def validate_status!(participation, status)
+        return if participation.status.to_sym == status
+
+        raise(InvalidTransitionError,
+              "Cannot take back #{status} from a #{participation.status} row")
+      end
 
       def validate_not_reviewed!(participation, target_status)
         return unless participation.reviewed?

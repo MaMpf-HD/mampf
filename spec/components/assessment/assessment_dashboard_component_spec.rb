@@ -183,9 +183,9 @@ RSpec.describe(AssessmentDashboardComponent, type: :component) do
       expect(rendered_content).to include("grading_tab_component")
     end
 
-    it "renders GradeTableComponent inside the grades pane" do
+    it "renders the exam's grading table inside the grades pane" do
       render_inline(component)
-      expect(rendered_content).to include("grade_table_component")
+      expect(rendered_content).to include("exam_grading_table_component")
     end
 
     it "normalizes a legacy grade_scheme tab key to grades" do

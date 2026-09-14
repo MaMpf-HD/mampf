@@ -227,7 +227,6 @@ en:
     no_assessables_yet: 'No assessments created yet.'
     submission_settings: 'Submission Settings'
     talk_grader:
-      assessment_not_talk: 'Assessment is not for a talk.'
       user_not_speaker: 'User is not a speaker for this talk.'
     grades_updated: 'Changes saved.'
     task_points:
@@ -330,6 +329,18 @@ en:
       user_joined_tutorial: 'Handed in without a tutorial, since then in %{new_tutorial}.'
     grading_talk:
       no_talks_gradable: 'No talks that can be graded.'
+    grading_exam:
+      no_candidates: 'Nobody is on the exam roster yet.'
+      mark_absent: 'Record as absent'
+      remove_absent: 'Take the absence back'
+      mark_exempt: 'Excuse with a certificate'
+      remove_exempt: 'Take the exemption back'
+      user_not_candidate: 'This person is not on the exam roster.'
+      not_scorable: 'A candidate recorded as %{status} gets no points.'
+      exempt_modal:
+        title: 'Excuse from the exam'
+        note_label: 'Reason (optional, teaching staff only)'
+        save: 'Excuse'
     grading_overview:
       submission_progress: 'Submissions'
       submitted: 'Submitted'
@@ -348,9 +359,6 @@ en:
     registrations_label: 'Registrations'
     roster: 'Roster'
     points_grid_placeholder: 'The per-task points grid will be available here in a future update.'
-    no_points_yet: 'No points have been entered yet.'
-    point_grid:
-      total: 'Total'
     grade_scheme:
       label: 'Grade Scheme'
       unsupported_pct_format: 'Percentage-based grade schemes are not yet supported in this editor.'
