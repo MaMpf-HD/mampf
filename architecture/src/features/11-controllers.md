@@ -281,7 +281,7 @@ RESTful controller for grade CRUD on Gradable assessments (exams, talks, oral ex
 | import | Import grades from CSV |
 
 ```admonish example "Responsibilities"
-- Inline grade entry on `GradeTableComponent`
+- Grade entry in the rows of `ExamGradingTableComponent` and the seminar's table
 - Bulk absent/exempt marking
 - Validate grade format/range
 - Audit tracking (`graded_by_id`, `graded_at`)

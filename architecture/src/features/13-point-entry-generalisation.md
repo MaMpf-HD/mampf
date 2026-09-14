@@ -9,6 +9,13 @@ reuse what exists?
 This page argues for reuse, and says exactly how far the existing code already reaches.
 [The extraction sequence](13a-point-entry-extraction-steps.md) turns that into steps.
 
+```admonish note title="Where this landed"
+Reuse it was. The sheet row became the shared row (#1150), the seminar table drew it
+for talks (#1196), and the exam tables draw it for candidates (#1283). The argument
+below is kept as written; where it names something as missing that has since arrived,
+the passage says so in place.
+```
+
 ## What already carries an exam
 
 `Exam` includes `Assessment::Pointable` and `Assessment::Gradable`, so it is given an
@@ -23,8 +30,9 @@ def self.enter_points(participation, task_points, grader, submission = nil)
 The submission is already optional, and `TaskPoint#submission_id` is nullable. The
 schema anticipated points without a submission from the start.
 
-On the reading side, `GradeTableComponent` is written against the assessment and is
-explicitly prepared for exams.
+On the reading side, the read-only `GradeTableComponent` was written against the
+assessment and explicitly prepared for exams. It has since gone: an exam's grades are
+read and entered in the same rows, `ExamGradingTableComponent`.
 
 ```admonish warning title="One reading component was not ready"
 Resolved: `PointGridComponent` was replaced by `ExamPointingTableComponent`, which draws
@@ -94,23 +102,25 @@ participation that has no tutorial — which is what every exam participation lo
 
 ### The dashboard hands every `Pointable` to the assignment table
 
-`build_tabs` adds the points tab for any pointable assessable, and that tab renders the
+`build_tabs` added the points tab for any pointable assessable, and that tab rendered the
 tutorial pointing table with the assessable passed as `assignment:`. For an exam that
-means assignment-specific methods called on an `Exam`. The dispatch has to happen on the
-assessable rather than being left to a component that cannot serve it.
+meant assignment-specific methods called on an `Exam`. Resolved: the dashboard dispatches
+on the assessable — `TutorialPointingTableComponent` for an assignment,
+`ExamPointingTableComponent` for an exam, and an error for anything else.
 
 ## What an exam needs that no assignment does
 
 Not everything is subtraction. The exam workflow is *seed the roster, mark the no-shows
 `absent`, treat certificates as `exempt`, then grade the rest*.
 `Assessment::AbsenceHandling` provides `mark_absent` and `mark_exempt(note:)`, both
-specced, but nothing in the application calls them yet. Without those two actions an
-exam table cannot express what a real examination day produces.
+specced; for a long time nothing in the application called them. Now the exam rows do,
+through `TaskPointsController` — and the two can be taken back again (`remove_absent`,
+`remove_exempt`).
 
-And exams have roster entries, not participations. Nothing in the application turns one
-into the other today; only the demo seeder ever has. Without that projection an exam
-point table has nothing to render at all, which is why it comes before the table rather
-than after it.
+And exams have roster entries, not participations. For a long time nothing turned one
+into the other but the demo seeder. Now `Assessment::ParticipationIndex` does, when the
+table is drawn: one participation per candidate on the roster, created if missing — a
+deliberate write on read, documented on the class.
 
 ## Both halves of marking, and what an exam needs of each
 
@@ -121,18 +131,18 @@ the same place:
 | | generic core | assessable-specific wrapper | interface |
 |---|---|---|---|
 | points | `PointEntryService` — takes a participation, submission optional | `SubmissionGraderService` — the team fan-out | tutorial pointing table |
-| grades | `GradeEntryService` — takes a participation, checks only that the assessable is `Gradable` | `TalkGraderService` — resolves and authorises through the talk | talk grading table |
+| grades | `GradeEntryService` — takes a participation, checks only that the assessable is `Gradable` | `TalkGraderService` — resolved and authorised through the talk; gone since #1283, the controller does both | talk grading table |
 
-Both cores would serve an exam today. Both wrappers are for something an exam does not
-have — a submission, a talk — and both interfaces are written against the wrapper rather
-than the core.
+Both cores would serve an exam today. Both wrappers were for something an exam does not
+have — a submission, a talk — and both interfaces were written against the wrapper rather
+than the core. The grade wrapper is gone; the submission fan-out stays.
 
 ### The grade half is not simply derived
 
 An exam grade usually comes out of a grade scheme: points, bands, grade. That path
-exists and works — the grading tab renders the scheme editor beside `GradeTableComponent`,
-and `GradeScheme` requires an assessable that is both pointable and gradable, which only
-an exam is.
+exists and works — the grading tab renders the scheme editor beside
+`ExamGradingTableComponent`, and `GradeScheme` requires an assessable that is both
+pointable and gradable, which only an exam is.
 
 ```admonish important title="A scheme cannot be the only way in"
 Entering a grade by hand has to remain possible for an exam, because a scheme is often
@@ -162,8 +172,8 @@ reasons about "no task carries points" has to leave room for it.
 
 Assignment and exam share the participation point row and `PointEntryService`. Exam and
 talk share `GradeEntryService` and, once the talk row loses its talk, a participation
-grade row. The submission fan-out stays in `SubmissionGraderService`, the talk
-resolution in `TalkGraderService`.
+grade row. The submission fan-out stays in `SubmissionGraderService`; the talk needs no
+resolution of its own, the controller checks the speaker.
 
 `mode:` scales along *who is looking*. The axis that keeps arriving is *what is being
 assessed*, and a flag carries only one axis.
