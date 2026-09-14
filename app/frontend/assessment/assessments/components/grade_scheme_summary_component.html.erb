@@ -224,12 +224,11 @@
                 <%= t("assessment.grade_scheme.form.col_range") %>
               </th>
 
-              <th style="width: 1%; white-space: nowrap;">
-                <%= t("assessment.grade_scheme.form.col_students") %>
-              </th>
+              <th><%= t("assessment.grade_scheme.form.col_students") %></th>
 
-              <%# The share takes what is left, so it stands beside the bar and not at the far edge. %>
-              <th><%= t("assessment.grade_scheme.form.col_percentage") %></th>
+              <th class="text-end" style="width: 1%; white-space: nowrap;">
+                <%= t("assessment.grade_scheme.form.col_percentage") %>
+              </th>
             </tr>
           </thead>
 
@@ -262,7 +261,7 @@
                   </div>
                 </td>
 
-                <td style="white-space: nowrap;">
+                <td class="text-end" style="white-space: nowrap;">
                   <%= pct_of(count_for(band), total_reviewed) %>%
                 </td>
               </tr>
@@ -272,21 +271,21 @@
           <% if total_reviewed.positive? %>
             <tfoot class="table-light">
               <tr>
-                <th colspan="3">
+                <th colspan="2">
                   <%= t("assessment.grade_scheme.summary.pass_rate") %>
                 </th>
 
-                <th style="white-space: nowrap;">
+                <th colspan="2" class="text-end">
                   <%= pass_rate %>% (<%= pass_count %>/<%= total_reviewed %>)
                 </th>
               </tr>
 
               <tr>
-                <th colspan="3">
+                <th colspan="2">
                   <%= t("assessment.grade_scheme.summary.fail_rate") %>
                 </th>
 
-                <th style="white-space: nowrap;">
+                <th colspan="2" class="text-end">
                   <%= fail_rate %>% (<%= fail_count %>/<%= total_reviewed %>)
                 </th>
               </tr>
@@ -294,14 +293,14 @@
               <% if any_excluded? %>
                 <% if absent_count.positive? %>
                   <tr>
-                    <td colspan="3">
+                    <td colspan="2">
                       <i class="bi bi-person-x text-danger me-1"></i>
 
                       <%= t("assessment.grade_scheme.summary.absent_note",
                             count: absent_count) %>
                     </td>
 
-                    <td>
+                    <td colspan="2" class="text-end">
                       <span class="badge bg-danger-subtle text-danger-emphasis">
                         5.0
                       </span>
@@ -310,14 +309,14 @@
                 <% end %>
                 <% if exempt_count.positive? %>
                   <tr>
-                    <td colspan="3">
+                    <td colspan="2">
                       <i class="bi bi-person-dash text-muted me-1"></i>
 
                       <%= t("assessment.grade_scheme.summary.exempt_note",
                             count: exempt_count) %>
                     </td>
 
-                    <td class="text-muted">
+                    <td colspan="2" class="text-end text-muted">
                       &mdash;
                     </td>
                   </tr>
