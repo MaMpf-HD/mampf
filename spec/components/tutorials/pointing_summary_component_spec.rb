@@ -9,7 +9,7 @@ RSpec.describe(PointingSummaryComponent, type: :component) do
 
   it "counts the hand-ins and names every state that occurs" do
     expect(summary([:reviewed, :reviewed, :pending_grading, :not_submitted, :exempt]))
-      .to eq("3 hand-ins · 2 marked · 1 not yet marked · 1 not submitted · 1 exempt")
+      .to eq("3 hand-ins · 2 reviewed · 1 pending grading · 1 not submitted · 1 exempt")
   end
 
   it "keeps quiet about states nobody is in, but always counts the hand-ins" do

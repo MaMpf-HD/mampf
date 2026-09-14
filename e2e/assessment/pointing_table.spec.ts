@@ -105,7 +105,7 @@ test.describe("pointing table", () => {
     await tutor.page.goto(
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
     );
-    await expect(tutor.page.getByText("1 hand-in · 1 marked · 1 not submitted")).toBeVisible();
+    await expect(tutor.page.getByText("1 hand-in · 1 reviewed · 1 not submitted")).toBeVisible();
 
     const table = tutor.page.getByRole("table");
     await tutor.page.getByLabel("Status").selectOption("Not Submitted");
@@ -126,7 +126,7 @@ test.describe("pointing table", () => {
       .getByRole("link", { name: "Record a hand-in on paper" }).click();
     await expect(table.getByRole("row", { name: /Grace Hopper/ })).toBeHidden();
     await expect(tutor.page.getByText("No matching rows.")).toBeVisible();
-    await expect(tutor.page.getByText("2 hand-ins · 1 marked · 1 not yet marked")).toBeVisible();
+    await expect(tutor.page.getByText("2 hand-ins · 1 reviewed · 1 pending grading")).toBeVisible();
   });
 
   test("saves one row, then the rest at once", async ({ factory, teacher, tutor }) => {
@@ -165,14 +165,14 @@ test.describe("pointing table", () => {
     await expect(saveAll).toContainText("1");
     await ada.getByRole("button", { name: "Save this row's points" }).click();
     await expect(ada.getByText("Reviewed")).toBeVisible();
-    await expect(tutor.page.getByText("2 hand-ins · 1 marked · 1 not yet marked")).toBeVisible();
+    await expect(tutor.page.getByText("2 hand-ins · 1 reviewed · 1 pending grading")).toBeVisible();
     // the saved row left the pile of unsaved changes
     await expect(saveAll).toBeDisabled();
 
     await grace.getByRole("spinbutton", { name: "Task 1 for Grace Hopper" }).fill("4");
     await saveAll.click();
     await expect(grace.getByText("Reviewed")).toBeVisible();
-    await expect(tutor.page.getByText("2 hand-ins · 2 marked")).toBeVisible();
+    await expect(tutor.page.getByText("2 hand-ins · 2 reviewed")).toBeVisible();
     await expect(saveAll).toBeDisabled();
   });
 

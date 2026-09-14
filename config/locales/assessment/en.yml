@@ -318,8 +318,8 @@ en:
         handed_in:
           one: '1 hand-in'
           other: '%{count} hand-ins'
-        reviewed: '%{count} marked'
-        pending_grading: '%{count} not yet marked'
+        reviewed: '%{count} reviewed'
+        pending_grading: '%{count} pending grading'
         not_submitted: '%{count} not submitted'
         awaiting_record: '%{count} not yet recorded'
         exempt: '%{count} exempt'
