@@ -7,14 +7,17 @@
       <%= render points_changed_alert %>
 
       <div class="my-3">
-        <%= render summary %>
+        <%# The pager shares the summary's line: both say how many rows there are. %>
+        <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2">
+          <%= render summary %>
+
+          <%= render partial: "assessment/participations/pager",
+                     locals: { id: "exam-grades-#{@exam.id}", with_size: true } %>
+        </div>
 
         <%= render PointingFilterComponent.new(id: "exam-grades-#{@exam.id}",
                                                status_options: status_options,
-                                               tutorial_options: tutorial_options) do %>
-          <%= render partial: "assessment/participations/pager",
-                     locals: { id: "exam-grades-#{@exam.id}", with_size: true } %>
-        <% end %>
+                                               tutorial_options: tutorial_options) %>
       </div>
 
       <div
