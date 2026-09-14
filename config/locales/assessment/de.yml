@@ -315,6 +315,7 @@ de:
       page_range: 'Zeilen %{from}–%{to} von %{total}'
       page_previous: 'Zurück'
       page_next: 'Weiter'
+      page_size_label: 'Pro Seite'
       pager_label: 'Seiten'
       more_actions: 'Weitere Aktionen'
       summary:

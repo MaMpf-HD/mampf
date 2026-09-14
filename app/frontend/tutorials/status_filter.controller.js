@@ -1,5 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
+const PAGE_SIZE_KEY = "pointing-table-page-size";
+
 // Narrows the rows to a name, a state and a group, and cuts what is left
 // into pages when the table asks for a page size. Rows come back one at a
 // time after a save, so every new row is measured against the filters too.
@@ -7,13 +9,33 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = [
     "row", "name", "status", "tutorial", "reset", "count", "empty",
-    "pager", "pageInfo", "previous", "next",
+    "pager", "pageSize", "pageInfo", "previous", "next",
   ];
 
   static values = { pageSize: Number };
 
   initialize() {
     this.page = 1;
+  }
+
+  // The page size chosen once holds for every table on this browser; the
+  // table's own value is the default for a first visit.
+  connect() {
+    if (!this.hasPageSizeTarget) {
+      return;
+    }
+    const stored = Number(localStorage.getItem(PAGE_SIZE_KEY));
+    if (stored > 0) {
+      this.pageSizeValue = stored;
+    }
+    this.pageSizeTarget.value = this.pageSizeValue;
+    this.render();
+  }
+
+  changePageSize() {
+    this.pageSizeValue = Number(this.pageSizeTarget.value);
+    localStorage.setItem(PAGE_SIZE_KEY, this.pageSizeValue);
+    this.apply();
   }
 
   rowTargetConnected() {
@@ -121,17 +143,23 @@ export default class extends Controller {
     }
   }
 
+  // Fewer rows than the smallest page need no pager at all.
   paginate(total, from, to, pages) {
     if (!this.hasPagerTarget) {
       return;
     }
-    this.pagerTarget.hidden = pages <= 1;
+    this.pagerTarget.hidden = total <= this.smallestPageSize();
     this.pageInfoTarget.textContent = this.pageInfoTarget.dataset.template
       .replace("%{from}", total === 0 ? 0 : from + 1)
       .replace("%{to}", Math.min(to, total))
       .replace("%{total}", total);
     this.enable(this.previousTarget, this.page > 1);
     this.enable(this.nextTarget, this.page < pages);
+  }
+
+  smallestPageSize() {
+    const sizes = [...this.pageSizeTarget.options].map(option => Number(option.value));
+    return Math.min(...sizes);
   }
 
   // Bootstrap greys a page link by class, not by the attribute that

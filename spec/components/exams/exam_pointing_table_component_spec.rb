@@ -68,14 +68,15 @@ RSpec.describe(ExamPointingTableComponent, type: :component) do
       expect(page.css("tr[id^=pointing-participation-row-]").size).to eq(1)
     end
 
-    it "cuts the rows into pages of 25" do
+    it "cuts the rows into pages of 20 unless the reader picks another size" do
       create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
 
       page = render_inline(component)
 
       filter = page.css("[data-controller~=status-filter]").first
-      expect(filter["data-status-filter-page-size-value"]).to eq("25")
-      expect(page.css("nav[data-status-filter-target=pager]")).to be_present
+      expect(filter["data-status-filter-page-size-value"]).to eq("20")
+      sizes = page.css("nav[data-status-filter-target=pager] select option")
+      expect(sizes.pluck("value")).to eq(["10", "20", "50", "100"])
     end
 
     # A tutor correcting their own group's exams narrows the table to it.

@@ -4,11 +4,27 @@
   hidden
   data-status-filter-target="pager"
 >
-  <span
-    class="small text-muted"
-    data-status-filter-target="pageInfo"
-    data-template="<%= t("assessment.grading_tutorial.page_range", from: "%{from}", to: "%{to}", total: "%{total}") %>"
-  ></span>
+  <div class="d-flex align-items-center gap-2 small text-muted">
+    <label class="mb-0" for="<%= id %>-page-size">
+      <%= t("assessment.grading_tutorial.page_size_label") %>
+    </label>
+
+    <select
+      id="<%= id %>-page-size"
+      class="form-select form-select-sm w-auto"
+      data-status-filter-target="pageSize"
+      data-action="change->status-filter#changePageSize"
+    >
+      <% [10, 20, 50, 100].each do |size| %>
+        <option value="<%= size %>"><%= size %></option>
+      <% end %>
+    </select>
+
+    <span
+      data-status-filter-target="pageInfo"
+      data-template="<%= t("assessment.grading_tutorial.page_range", from: "%{from}", to: "%{to}", total: "%{total}") %>"
+    ></span>
+  </div>
 
   <ul class="pagination pagination-sm mb-0">
     <li class="page-item">

@@ -77,7 +77,7 @@ test.describe("exam grading", () => {
     await expect(page.pane.getByText("1 reviewed · 1 exempt")).toBeVisible();
   });
 
-  test("shows 25 candidates at a time, or one tutorial's", async ({ factory, teacher }) => {
+  test("shows 20 candidates at a time, or one tutorial's", async ({ factory, teacher }) => {
     const lecture = await createLecture(factory, teacher.user.id);
     const exam = await factory.create("exam", ["with_date"], {
       lecture_id: lecture.id,
@@ -104,15 +104,19 @@ test.describe("exam grading", () => {
     await page.tab("Grades").click();
 
     const candidates = page.pane.getByRole("row", { name: /Candidate/ });
-    await expect(candidates.filter({ visible: true })).toHaveCount(25);
-    await expect(page.pane.getByText("Rows 1–25 of 26")).toBeVisible();
+    await expect(candidates.filter({ visible: true })).toHaveCount(20);
+    await expect(page.pane.getByText("Rows 1–20 of 26")).toBeVisible();
     await page.pane.getByRole("button", { name: "Next" }).click();
-    await expect(candidates.filter({ visible: true })).toHaveCount(1);
-    await expect(page.pane.getByText("Rows 26–26 of 26")).toBeVisible();
+    await expect(candidates.filter({ visible: true })).toHaveCount(6);
+    await expect(page.pane.getByText("Rows 21–26 of 26")).toBeVisible();
+
+    await page.pane.getByLabel("Per page").selectOption("50");
+    await expect(candidates.filter({ visible: true })).toHaveCount(26);
+    await expect(page.pane.getByText("Rows 1–26 of 26")).toBeVisible();
 
     await page.pane.getByLabel("Tutorial").selectOption("Group A");
     await expect(candidates.filter({ visible: true })).toHaveCount(1);
     await expect(page.pane.getByRole("row", { name: /Candidate 26/ })).toBeVisible();
-    await expect(page.pane.getByText("Rows 1–25 of 26")).toBeHidden();
+    await expect(page.pane.getByText("Rows 1–26 of 26")).toBeHidden();
   });
 });

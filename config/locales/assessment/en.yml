@@ -315,6 +315,7 @@ en:
       page_range: 'Rows %{from}–%{to} of %{total}'
       page_previous: 'Previous'
       page_next: 'Next'
+      page_size_label: 'Per page'
       pager_label: 'Pages'
       more_actions: 'More actions'
       summary:
