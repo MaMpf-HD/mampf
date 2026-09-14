@@ -96,6 +96,42 @@ RSpec.describe(Assessment::GradeEntryService, type: :model) do
       end
     end
 
+    # A scheme applied afterwards grades reviewed rows only; a candidate whose
+    # grade was taken back must not fall out of it while their points are in.
+    context "when the grade is taken back on a fully scored exam" do
+      let(:exam) { FactoryBot.create(:exam, :with_date) }
+      let(:assessment) do
+        FactoryBot.create(:assessment, :with_points, assessable: exam, lecture: exam.lecture)
+      end
+      let(:participation) do
+        FactoryBot.create(:assessment_participation, assessment: assessment,
+                                                     status: :reviewed, grade_numeric: 2.0,
+                                                     grader: grader, graded_at: 1.hour.ago)
+      end
+
+      before do
+        task = FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+        FactoryBot.create(:assessment_task_point, task: task,
+                                                  assessment_participation: participation,
+                                                  points: 5)
+      end
+
+      it "leaves the row reviewed by its points, without a grade" do
+        described_class.set_grade(participation, described_class.build_grade_info, grader)
+
+        expect(participation.reload).to have_attributes(status: "reviewed", grade_numeric: nil,
+                                                        grader_id: nil)
+      end
+
+      it "returns a row missing points to pending" do
+        participation.task_points.first.destroy!
+
+        described_class.set_grade(participation, described_class.build_grade_info, grader)
+
+        expect(participation.reload).to be_pending
+      end
+    end
+
     context "with a valid grade_text" do
       let(:grade_info) { described_class.build_grade_info(grade_text: "pass") }
 

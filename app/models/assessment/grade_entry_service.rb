@@ -20,6 +20,10 @@ module Assessment
                             status: status,
                             note: comment || participation.note,
                             **stamp_for(participation, grade_info, grader))
+      # Without a grade the points decide again whether the row is reviewed;
+      # a scheme applied later must not skip a fully scored candidate.
+      participation.update_status_if_all_scored! if status == :pending
+      participation
     end
 
     # Record who changed the grade and when; note-only edits must preserve
