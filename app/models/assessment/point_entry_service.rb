@@ -19,6 +19,11 @@ module Assessment
       valid_task_ids = assessment.tasks.pluck(:id)
 
       ApplicationRecord.transaction do
+        # Whether the row keeps its grade's stamp is decided on what is in
+        # the database now, not on what this request loaded; a grade saved
+        # in between waits for this write or is seen by it.
+        participation.lock!
+
         task_points.each do |task_id, points|
           unless valid_task_ids.include?(task_id)
             raise(PointEntryError,
