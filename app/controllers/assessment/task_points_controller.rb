@@ -1,5 +1,7 @@
 module Assessment
   class TaskPointsController < ApplicationController
+    include ExamStreams
+
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_team,
                          :update_participation, :refresh_submission,
@@ -258,19 +260,13 @@ module Assessment
         end
       end
 
-      # An exam's row stands in two tables on the page; both are replaced.
+      # An exam's row stands in two tables on the page; both are replaced,
+      # with the summaries and the scheme card, all from one reading.
       def participation_row_stream
-        return exam_row_streams if @assessable.is_a?(Exam)
+        return exam_streams if @assessable.is_a?(Exam)
 
         turbo_stream.replace("pointing-participation-row-#{@participation.id}",
                              html: render_to_string(participation_row))
-      end
-
-      def exam_row_streams
-        [ExamPointingTableComponent, ExamGradingTableComponent].map do |table|
-          row = table.new(exam: @assessable).row_for(@participation)
-          turbo_stream.replace(row.row_id, html: render_to_string(row))
-        end
       end
 
       # An exam has nothing to hand in and no group: points go in unless the
@@ -290,22 +286,13 @@ module Assessment
         render turbo_stream: (streams + [summary_stream, stream_flash]).flatten.compact
       end
 
+      # The exam's summaries travel with its row streams.
       def summary_stream
-        return exam_summary_streams if @assessable.is_a?(Exam)
+        return [] if @assessable.is_a?(Exam)
 
         summary = TutorialPointingTableComponent.new(assignment: @assessable,
                                                      grading_scope: table_scope).summary
         turbo_stream.replace("pointing-summary", html: render_to_string(summary))
-      end
-
-      def exam_summary_streams
-        points = ExamPointingTableComponent.new(exam: @assessable)
-        grading = ExamGradingTableComponent.new(exam: @assessable)
-        summaries = [points.summary, grading.summary].map do |summary|
-          turbo_stream.replace(summary.id, html: render_to_string(summary))
-        end
-        summaries << turbo_stream.replace("grading-points-changed",
-                                          html: render_to_string(grading.points_changed_alert))
       end
 
       def rerender_submission_table

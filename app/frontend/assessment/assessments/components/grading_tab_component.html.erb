@@ -28,11 +28,8 @@
           <% if show_form? %>
             <%= render scheme_component %>
           <% else %>
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <%= render scheme_component %>
-              </div>
-            </div>
+            <%= render partial: "assessment/assessments/components/scheme_card",
+                       locals: { assessment: assessment } %>
           <% end %>
         </div>
       </aside>

@@ -450,6 +450,24 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           .to be_present
       end
 
+      # The card beside the grading table counts reviewed rows; it must not say
+      # "0 of 2" next to a summary that says one is reviewed.
+      it "redraws the scheme card with the row" do
+        other = create(:confirmed_user)
+        create(:exam_roster_entry, exam: exam, user: other)
+        create(:assessment_participation, assessment: exam_assessment, user: other)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        card = Nokogiri::HTML(response.body).at_css("turbo-stream[target=grading-scheme]")
+        expect(card).to be_present
+        expect(card.text).to include(I18n.t("assessment.grade_scheme.pending_message",
+                                            reviewed: 1, total: 2, pending: 1))
+      end
+
       # The grade stays as it was; the row that comes back says the points moved.
       it "marks a graded row whose points change, in both tables" do
         exam_participation.update!(status: :reviewed, grade_numeric: 2.0, grader: teacher,

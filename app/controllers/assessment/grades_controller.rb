@@ -1,5 +1,7 @@
 module Assessment
   class GradesController < ApplicationController
+    include ExamStreams
+
     before_action :set_resources, only: [:update, :refresh]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update, :refresh]
@@ -31,54 +33,26 @@ module Assessment
       GradeEntryService.set_grade(@participation, grade_info, current_user, params[:comment])
       @participation.reload
       flash.now[:notice] = t("assessment.grades_updated")
-      render turbo_stream: [replace_participation_row, summary_stream, stream_flash].flatten.compact
+      render turbo_stream: (row_streams + [stream_flash]).compact
     end
 
     def refresh
-      render turbo_stream: [replace_participation_row, summary_stream].flatten
+      render turbo_stream: row_streams
     end
 
     private
 
-      # An exam's row stands in two tables on the page; both are replaced.
-      def replace_participation_row
-        return exam_row_streams if @assessable.is_a?(Exam)
+      # A talk's row and the seminar's summary; an exam redraws both tables
+      # and the scheme card.
+      def row_streams
+        return exam_streams if @assessable.is_a?(Exam)
 
-        turbo_stream.replace(
-          "grading-participation-row-#{@participation.id}",
-          html: render_to_string(ParticipationRowComponent.new(
-                                   assessment: @assessment,
-                                   grading_scope: @lecture,
-                                   participation: @participation,
-                                   table_option: :grading
-                                 ))
-        )
-      end
-
-      def exam_row_streams
-        [ExamPointingTableComponent, ExamGradingTableComponent].map do |table|
-          row = table.new(exam: @assessable).row_for(@participation)
-          turbo_stream.replace(row.row_id, html: render_to_string(row))
-        end
-      end
-
-      # Saving a grade can change the participation status, so update
-      # the summary line along with the row.
-      def summary_stream
-        return exam_summary_streams if @assessable.is_a?(Exam)
-
+        row = ParticipationRowComponent.new(assessment: @assessment, grading_scope: @lecture,
+                                            participation: @participation, table_option: :grading)
         summary = TalkGradingTableComponent.new(seminar: @lecture).summary
-        turbo_stream.replace("pointing-summary", html: render_to_string(summary))
-      end
-
-      def exam_summary_streams
-        points = ExamPointingTableComponent.new(exam: @assessable)
-        grading = ExamGradingTableComponent.new(exam: @assessable)
-        summaries = [points.summary, grading.summary].map do |summary|
-          turbo_stream.replace(summary.id, html: render_to_string(summary))
-        end
-        summaries << turbo_stream.replace("grading-points-changed",
-                                          html: render_to_string(grading.points_changed_alert))
+        [turbo_stream.replace("grading-participation-row-#{@participation.id}",
+                              html: render_to_string(row)),
+         turbo_stream.replace("pointing-summary", html: render_to_string(summary))]
       end
 
       def set_resources

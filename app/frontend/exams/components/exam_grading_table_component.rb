@@ -1,11 +1,13 @@
 # The exam's grading tab: the same candidates as the points tab, with the
 # grade the scheme proposes beside the one the lecturer enters.
 class ExamGradingTableComponent < ViewComponent::Base
-  def initialize(exam:)
+  # `rows:` lets an answer that redraws both tables load the roster once.
+  def initialize(exam:, rows: nil)
     super()
     @exam = exam
     @lecture = exam.lecture
     @assessment = exam.assessment
+    @rows = rows
   end
 
   def layout

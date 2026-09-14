@@ -1,11 +1,13 @@
 # The exam's points tab: one row per candidate on the roster, points per
 # task. The grade for the same rows lives in the grading tab.
 class ExamPointingTableComponent < ViewComponent::Base
-  def initialize(exam:)
+  # `rows:` lets an answer that redraws both tables load the roster once.
+  def initialize(exam:, rows: nil)
     super()
     @exam = exam
     @lecture = exam.lecture
     @assessment = exam.assessment
+    @rows = rows
   end
 
   delegate :status_options, to: :ExamRows

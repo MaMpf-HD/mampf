@@ -38,6 +38,11 @@ test.describe("exam grading", () => {
     await expect(ada.getByText("Reviewed")).toBeVisible();
     await expect(page.pane.getByText("1 reviewed · 1 pending grading")).toBeVisible();
 
+    // the scheme card on the grades tab counts along
+    await page.tab("Grades").click();
+    await expect(page.pane.getByText("1 of 2 reviewed, 1 still pending.")).toBeVisible();
+    await page.tab("Points").click();
+
     await page.tab("Grades").click();
     const adaGrade = page.pane.getByRole("row", { name: /Ada Lovelace/ });
     await expect(adaGrade.getByText("7.00")).toBeVisible();

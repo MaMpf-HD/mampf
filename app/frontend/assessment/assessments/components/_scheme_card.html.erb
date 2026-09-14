@@ -1,0 +1,10 @@
+<%#
+  Replaced whole after every write to the exam's rows, so what it says about
+  the grades is never older than the table beside it.
+%>
+
+<div id="grading-scheme" class="card shadow-sm">
+  <div class="card-body">
+    <%= render GradeSchemeTabComponent.new(assessment: assessment) %>
+  </div>
+</div>
