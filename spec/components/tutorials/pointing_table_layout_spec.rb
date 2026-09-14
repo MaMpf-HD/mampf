@@ -38,8 +38,7 @@ RSpec.describe(PointingTableLayout) do
 
       expect(points.columns).to eq([:team, :status, :tasks, :total, :save])
       expect(points.body).to eq(:tasks)
-      expect(grades.columns)
-        .to eq([:team, :status_compact, :total, :grade, :note, :graded_compact, :save])
+      expect(grades.columns).to eq([:team, :status_compact, :total, :grade, :graded_compact, :save])
       expect(grades.body).to eq(:single_grade)
     end
 

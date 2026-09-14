@@ -225,10 +225,6 @@
               </th>
 
               <th><%= t("assessment.grade_scheme.form.col_students") %></th>
-
-              <th class="text-end" style="width: 1%; white-space: nowrap;">
-                <%= t("assessment.grade_scheme.form.col_percentage") %>
-              </th>
             </tr>
           </thead>
 
@@ -255,14 +251,11 @@
                       ></div>
                     </div>
 
-                    <span class="text-muted small" style="min-width: 20px;">
-                      <%= count_for(band) %>
+                    <span class="text-muted small text-nowrap">
+                      <%= count_for(band) %> ·
+                      <%= pct_of(count_for(band), total_reviewed) %>%
                     </span>
                   </div>
-                </td>
-
-                <td class="text-end" style="white-space: nowrap;">
-                  <%= pct_of(count_for(band), total_reviewed) %>%
                 </td>
               </tr>
             <% end %>
@@ -275,7 +268,7 @@
                   <%= t("assessment.grade_scheme.summary.pass_rate") %>
                 </th>
 
-                <th colspan="2" class="text-end">
+                <th class="text-end">
                   <%= pass_rate %>% (<%= pass_count %>/<%= total_reviewed %>)
                 </th>
               </tr>
@@ -285,7 +278,7 @@
                   <%= t("assessment.grade_scheme.summary.fail_rate") %>
                 </th>
 
-                <th colspan="2" class="text-end">
+                <th class="text-end">
                   <%= fail_rate %>% (<%= fail_count %>/<%= total_reviewed %>)
                 </th>
               </tr>
@@ -300,7 +293,7 @@
                             count: absent_count) %>
                     </td>
 
-                    <td colspan="2" class="text-end">
+                    <td class="text-end">
                       <span class="badge bg-danger-subtle text-danger-emphasis">
                         5.0
                       </span>
@@ -316,7 +309,7 @@
                             count: exempt_count) %>
                     </td>
 
-                    <td colspan="2" class="text-end text-muted">
+                    <td class="text-end text-muted">
                       &mdash;
                     </td>
                   </tr>

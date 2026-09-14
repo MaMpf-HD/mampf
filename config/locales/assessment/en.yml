@@ -340,6 +340,11 @@ en:
       scheme_now_gives: 'What the applied scheme gives for the points as they are now.'
       points_changed_since: 'Points changed on %{points_at}, grade from %{graded_at}'
       summary_points_changed: '%{count} with points changed since grading'
+      filter_points_changed: 'Points changed since grading'
+      points_changed_alert:
+        one: 'For one candidate the points changed after the grade was given; the grade may no longer fit.'
+        other: 'For %{count} candidates the points changed after the grade was given; the grades may no longer fit.'
+      show_points_changed: 'Show only these'
       exempt_modal:
         title: 'Excuse from the exam'
         note_label: 'Reason (optional, teaching staff only)'

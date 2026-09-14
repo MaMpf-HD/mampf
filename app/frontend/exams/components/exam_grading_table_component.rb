@@ -1,8 +1,6 @@
 # The exam's grading tab: the same candidates as the points tab, with the
 # grade the scheme proposes beside the one the lecturer enters.
 class ExamGradingTableComponent < ViewComponent::Base
-  delegate :status_options, to: :ExamRows
-
   def initialize(exam:)
     super()
     @exam = exam
@@ -31,13 +29,27 @@ class ExamGradingTableComponent < ViewComponent::Base
   # Points corrected after grading are the summary's business too: a row
   # in that state needs a look, whatever its status says.
   def summary
-    changed = rows.count(&:points_changed_after_grading?)
     extra = []
-    if changed.positive?
-      extra << I18n.t("assessment.grading_exam.summary_points_changed", count: changed)
+    if points_changed_count.positive?
+      extra << I18n.t("assessment.grading_exam.summary_points_changed",
+                      count: points_changed_count)
     end
     PointingSummaryComponent.new(statuses: row_statuses, hand_ins: false, id: "grading-summary",
                                  extra_parts: extra)
+  end
+
+  def points_changed_count
+    @points_changed_count ||= rows.count(&:points_changed_after_grading?)
+  end
+
+  def points_changed_alert
+    PointsChangedAlertComponent.new(count: points_changed_count)
+  end
+
+  # The filter's states, plus the spot a graded row can be in.
+  def status_options
+    ExamRows.status_options +
+      [["flag:points_changed", I18n.t("assessment.grading_exam.filter_points_changed")]]
   end
 
   private

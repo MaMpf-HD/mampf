@@ -1,6 +1,8 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <% if rows.any? %>
     <div data-controller="status-filter">
+      <%= render points_changed_alert %>
+
       <div class="my-3">
         <%= render summary %>
 

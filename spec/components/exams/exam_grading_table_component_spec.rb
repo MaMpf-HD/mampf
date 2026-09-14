@@ -23,14 +23,15 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
 
   it "is the exam's grading table" do
     expect(component.layout.columns)
-      .to eq([:team, :status_compact, :total, :grade, :note, :graded_compact, :save])
+      .to eq([:team, :status_compact, :total, :grade, :graded_compact, :save])
   end
 
-  it "draws a grade select, a note and the exemption dialog" do
+  # A note is written for an exemption, in its dialog; the row has no field for one.
+  it "draws a grade select and the exemption dialog, but no note field" do
     page = render_inline(component)
 
     expect(page.css("select[name=grade]").size).to eq(1)
-    expect(page.css("td.note-col textarea").size).to eq(1)
+    expect(page.css("td.note-col")).to be_empty
     expect(page.css("[data-controller=exempt-modal] textarea")).to be_present
     expect(page.css("tr[id^=grading-participation-row-]").size).to eq(1)
   end
@@ -78,7 +79,7 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
                             graded_at: 1.hour.ago, submitted_at: nil)
     end
 
-    it "marks the row and counts it in the summary" do
+    it "marks the row, counts it in the summary and says so above the table" do
       create(:assessment_task_point, task: task, assessment_participation: participation, points: 3)
 
       page = render_inline(component)
@@ -86,6 +87,11 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
       expect(page.css("td.grade-col i.bi-exclamation-triangle-fill")).to be_present
       expect(page.css("p#grading-summary").text)
         .to include(I18n.t("assessment.grading_exam.summary_points_changed", count: 1))
+      expect(page.css(".alert-warning").text)
+        .to include(I18n.t("assessment.grading_exam.points_changed_alert", count: 1))
+      expect(page.css("tr[data-status-filter-flags~=points_changed]").size).to eq(1)
+      options = page.css("select[data-status-filter-target=status] option").pluck("value")
+      expect(options).to include("flag:points_changed")
     end
 
     it "leaves a row alone whose points are older than its grade" do
@@ -97,7 +103,7 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
       page = render_inline(component)
 
       expect(page.css("td.grade-col i.bi-exclamation-triangle-fill")).to be_empty
-      expect(page.css("p#grading-summary").text).not_to include("changed")
+      expect(page.css(".alert-warning")).to be_empty
     end
   end
 end

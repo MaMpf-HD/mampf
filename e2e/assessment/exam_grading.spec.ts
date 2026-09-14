@@ -54,7 +54,11 @@ test.describe("exam grading", () => {
     await expect(page.pane.getByText("2 pending grading")).toBeHidden();
     await page.tab("Grades").click();
     await expect(adaGrade.getByRole("img", { name: /^Points changed on/ })).toBeVisible();
-    await expect(page.pane.getByText("1 with points changed since grading")).toBeVisible();
+    await expect(page.pane.getByRole("alert")).toContainText("the points changed after the grade");
+    await page.pane.getByRole("button", { name: "Show only these" }).click();
+    await expect(page.pane.getByRole("row", { name: /Grace Hopper/ })).toBeHidden();
+    await expect(adaGrade).toBeVisible();
+    await page.pane.getByRole("button", { name: "Reset filters" }).click();
 
     // somebody who did not turn up gets no fields, and can be brought back
     const grace = page.pane.getByRole("row", { name: /Grace Hopper/ });

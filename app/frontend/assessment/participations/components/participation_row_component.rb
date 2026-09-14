@@ -109,6 +109,11 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.dates.sort.map { |date| I18n.l(date, format: :concise) }.join(", ")
   end
 
+  # Beyond its state, a row can be in a spot the filter should find.
+  def filter_flags
+    @participation.points_changed_after_grading? ? "points_changed" : ""
+  end
+
   def filter_name
     [(@assessable.title if layout.show?(:talk)), @user.tutorial_name].compact.join(" ")
   end

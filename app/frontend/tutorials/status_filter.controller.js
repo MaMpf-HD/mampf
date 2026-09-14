@@ -45,13 +45,30 @@ export default class extends Controller {
     row.hidden = !this.matches(row);
   }
 
+  // The state select also offers spots a row can be in beyond its state,
+  // as "flag:<name>" options; a row lists its flags space-separated.
   matches(row) {
     const query = this.nameTarget.value.trim().toLowerCase();
     const status = this.hasStatusTarget ? this.statusTarget.value : "all";
     const tutorial = this.hasTutorialTarget ? this.tutorialTarget.value : "all";
     return (query === "" || row.dataset.statusFilterName.toLowerCase().includes(query))
-      && (status === "all" || row.dataset.statusFilterStatus === status)
+      && this.matchesStatus(row, status)
       && (tutorial === "all" || (row.dataset.statusFilterTutorial || "none") === tutorial);
+  }
+
+  matchesStatus(row, status) {
+    if (status === "all") {
+      return true;
+    }
+    if (status.startsWith("flag:")) {
+      return (row.dataset.statusFilterFlags || "").split(" ").includes(status.slice(5));
+    }
+    return row.dataset.statusFilterStatus === status;
+  }
+
+  showStatus({ params: { status } }) {
+    this.statusTarget.value = status;
+    this.apply();
   }
 
   report() {

@@ -67,10 +67,13 @@ module Assessment
       end
 
       def exam_summary_streams
-        [ExamPointingTableComponent, ExamGradingTableComponent].map do |table|
-          summary = table.new(exam: @assessable).summary
+        points = ExamPointingTableComponent.new(exam: @assessable)
+        grading = ExamGradingTableComponent.new(exam: @assessable)
+        summaries = [points.summary, grading.summary].map do |summary|
           turbo_stream.replace(summary.id, html: render_to_string(summary))
         end
+        summaries << turbo_stream.replace("grading-points-changed",
+                                          html: render_to_string(grading.points_changed_alert))
       end
 
       def set_resources

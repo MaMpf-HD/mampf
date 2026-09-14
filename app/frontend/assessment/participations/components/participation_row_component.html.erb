@@ -13,6 +13,7 @@
   data-status-filter-status="<%= status %>"
   data-status-filter-tutorial="<%= @participation.tutorial&.id %>"
   data-status-filter-name="<%= filter_name %>"
+  data-status-filter-flags="<%= filter_flags %>"
 >
   <% if layout.show?(:talk) %>
     <td class="<%= layout.column_class(:talk) %>">
@@ -138,24 +139,26 @@
           <span class="fw-semibold"><%= grade_display %></span>
         <% end %>
       </td>
-      <td class="<%= layout.column_class(:note) %>">
-        <% if allow_grading? && can_enter_grade? && grade_enterable? %>
-          <%= text_area_tag "note", @participation&.note,
+      <% if layout.show?(:note) %>
+        <td class="<%= layout.column_class(:note) %>">
+          <% if allow_grading? && can_enter_grade? && grade_enterable? %>
+            <%= text_area_tag "note", @participation&.note,
                     class: "form-control form-control-sm",
                     aria: { label: t("assessment.grade_talk_row.note_for", name: @user.tutorial_name) },
                     maxlength: 255,
                     rows: 1,
                     data: { participation_row_target: "noteInput",
                             action: "input->participation-row#onParticipationChanged" } %>
-        <% else %>
-          <span
-            class="text-muted small text-truncate d-inline-block"
-            title="<%= @participation&.note %>"
-          >
-            <%= @participation&.note.presence || "—" %>
-          </span>
-        <% end %>
-      </td>
+          <% else %>
+            <span
+              class="text-muted small text-truncate d-inline-block"
+              title="<%= @participation&.note %>"
+            >
+              <%= @participation&.note.presence || "—" %>
+            </span>
+          <% end %>
+        </td>
+      <% end %>
       <% if layout.show?(:graded_compact) %>
         <td class="text-center <%= layout.column_class(:graded_compact) %>">
           <% if graded_display %>

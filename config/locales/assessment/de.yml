@@ -340,6 +340,11 @@ de:
       scheme_now_gives: 'Was das angewendete Schema für die jetzigen Punkte gibt.'
       points_changed_since: 'Punkte geändert am %{points_at}, Note vom %{graded_at}'
       summary_points_changed: '%{count} mit seit der Bewertung geänderten Punkten'
+      filter_points_changed: 'Punkte seit der Bewertung geändert'
+      points_changed_alert:
+        one: 'Bei einer Person wurden die Punkte nach der Bewertung geändert; die Note passt womöglich nicht mehr.'
+        other: 'Bei %{count} Personen wurden die Punkte nach der Bewertung geändert; die Noten passen womöglich nicht mehr.'
+      show_points_changed: 'Nur diese anzeigen'
       exempt_modal:
         title: 'Von der Klausur befreien'
         note_label: 'Grund (optional, nur für DozentInnen)'
