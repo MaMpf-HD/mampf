@@ -340,6 +340,7 @@ de:
         exempt: 'befreit'
       scheme_now_gives: 'Was das angewendete Schema für die jetzigen Punkte gibt.'
       points_changed_since: 'Punkte geändert am %{points_at}, Note vom %{graded_at}'
+      points_missing: 'eine Aufgabe ohne Punkte'
       summary_points_changed: '%{count} mit seit der Bewertung geänderten Punkten'
       filter_points_changed: 'Punkte seit der Bewertung geändert'
       points_changed_alert:

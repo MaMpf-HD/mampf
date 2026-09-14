@@ -80,7 +80,10 @@ class ExamGradingTableComponent < ViewComponent::Base
       I18n.t("assessment.#{key}")
     end
 
+    # A scheme has nothing to say about a sum with a task missing from it.
     def proposal_for(participation)
+      return unless participation.all_tasks_scored?
+
       grade = proposed_grades[participation.user_id]
       ParticipationRowComponent::Proposal.new(grade: grade, tooltip: proposal_tooltip) if grade
     end

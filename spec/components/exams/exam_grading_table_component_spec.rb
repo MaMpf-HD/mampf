@@ -118,6 +118,21 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
       expect(options).to include("flag:points_changed")
     end
 
+    # The grade stays and the status reads complete; the notice has to say
+    # that a task is empty, and a scheme cannot propose on the sum that is left.
+    it "names the missing point and offers no proposal while a task has none" do
+      create(:assessment_task_point, task: task, assessment_participation: participation,
+                                     points: nil)
+      draft = create(:assessment_grade_scheme, assessment: assessment)
+      draft.update!(applied_at: Time.current, applied_by: teacher)
+
+      page = render_inline(component)
+
+      marker = page.css("td.grade-col i.bi-exclamation-triangle-fill").first
+      expect(marker["title"]).to end_with(I18n.t("assessment.grading_exam.points_missing"))
+      expect(page.css("td.grade-col .badge")).to be_empty
+    end
+
     it "leaves a row alone whose points are older than its grade" do
       Timecop.travel(2.hours.ago) do
         create(:assessment_task_point, task: task, assessment_participation: participation,

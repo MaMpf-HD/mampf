@@ -83,12 +83,18 @@ module Assessment
               grader: grader || self.grader)
     end
 
-    # False without tasks: nothing scored is not everything scored.
+    # False without tasks: nothing scored is not everything scored. A table
+    # asks this per row with the associations already loaded.
     def all_tasks_scored?
-      task_ids = assessment.tasks.pluck(:id)
+      tasks = assessment.tasks
+      task_ids = tasks.loaded? ? tasks.map(&:id) : tasks.pluck(:id)
       return false if task_ids.empty?
 
-      points_by_task_id = task_points.pluck(:task_id, :points).to_h
+      points_by_task_id = if task_points.loaded?
+        task_points.to_h { |point| [point.task_id, point.points] }
+      else
+        task_points.pluck(:task_id, :points).to_h
+      end
       task_ids.none? { |task_id| points_by_task_id[task_id].nil? }
     end
 

@@ -179,12 +179,18 @@ class ParticipationRowComponent < ViewComponent::Base
     @proposal&.grade.present? && @proposal.grade != grade_numeric
   end
 
+  # A graded row keeps its grade when a point is taken out again; the
+  # notice says so, since the status alone reads as complete.
   def points_changed_notice
     return unless @participation.points_changed_after_grading?
 
-    t("assessment.grading_exam.points_changed_since",
-      points_at: I18n.l(@participation.task_points.map(&:updated_at).max, format: :file_time),
-      graded_at: I18n.l(@participation.graded_at, format: :file_time))
+    since = t("assessment.grading_exam.points_changed_since",
+              points_at: I18n.l(@participation.task_points.map(&:updated_at).max,
+                                format: :file_time),
+              graded_at: I18n.l(@participation.graded_at, format: :file_time))
+    return since if @participation.all_tasks_scored?
+
+    "#{since} · #{t("assessment.grading_exam.points_missing")}"
   end
 
   # Absence is the grader's to record, an exemption the lecturer's - it takes

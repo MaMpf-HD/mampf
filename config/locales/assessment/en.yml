@@ -340,6 +340,7 @@ en:
         exempt: 'exempt'
       scheme_now_gives: 'What the applied scheme gives for the points as they are now.'
       points_changed_since: 'Points changed on %{points_at}, grade from %{graded_at}'
+      points_missing: 'a task without points'
       summary_points_changed: '%{count} with points changed since grading'
       filter_points_changed: 'Points changed since grading'
       points_changed_alert:
