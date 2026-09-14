@@ -26,8 +26,10 @@ schema anticipated points without a submission from the start.
 On the reading side, `GradeTableComponent` is written against the assessment and is
 explicitly prepared for exams.
 
-```admonish warning title="One reading component is not ready"
-`PointGridComponent` filters its main table with `.where.not(submitted_at: nil)`. An
+```admonish warning title="One reading component was not ready"
+Resolved: `PointGridComponent` was replaced by `ExamPointingTableComponent`, which draws
+the roster and reads absence off the status. What it did wrong, for the record:
+it filtered its main table with `.where.not(submitted_at: nil)`. An
 exam participation that is `reviewed` with no `submitted_at` — which
 [Assessments & Grading](04-assessments-and-grading.md) documents as valid — disappears
 from it entirely. It also renders a tutorial column for everything that is not a talk,
