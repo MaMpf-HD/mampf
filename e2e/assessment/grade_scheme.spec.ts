@@ -101,9 +101,9 @@ test.describe("grade schemes", () => {
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await openGrades(page);
     teacher.page.on("dialog", dialog => dialog.accept());
-    await page.pane.getByRole("button", { name: "Discard Scheme" }).click();
+    await page.pane.getByRole("button", { name: "Discard draft" }).click();
 
-    await expect(teacher.page.getByText("Grade scheme discarded.")).toBeVisible();
+    await expect(teacher.page.getByText("Draft discarded.")).toBeVisible();
     await expect(page.pane.getByRole("link", { name: "Create Grade Scheme" }))
       .toBeVisible();
   });
