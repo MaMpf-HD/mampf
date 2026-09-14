@@ -6,7 +6,12 @@
     >
       <div class="my-3">
         <%# The pager shares the summary's line: both say how many rows there are. %>
-        <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2">
+        <div
+          class="
+            d-flex flex-wrap justify-content-between align-items-baseline
+            gap-2
+          "
+        >
           <%= render summary %>
 
           <%= render partial: "assessment/participations/pager",
