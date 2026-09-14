@@ -57,8 +57,10 @@ class PointingTableHeaderComponent < ViewComponent::Base
       t("basics.team")
     end
 
+    # A correction may be any type the uploader takes, whatever the sheet
+    # asked for; only the hand-in's type is known here.
     def sublabel_for(column)
-      return unless [:hand_in, :correction].include?(column)
+      return unless column == :hand_in
 
       "(#{@assessable.accepted_file_type})"
     end

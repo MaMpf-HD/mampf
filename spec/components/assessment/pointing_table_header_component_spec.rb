@@ -45,8 +45,11 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
         expect(hand_in.sublabel).to include(".pdf")
       end
 
-      it "has the correction column" do
-        expect(classes_for(component)).to include(a_string_matching(/correction-col/))
+      it "has the correction column, without promising a file type" do
+        correction = columns_for(component).find { |c| c.css_class.include?("correction-col") }
+
+        expect(correction).to be_present
+        expect(correction.sublabel).to be_nil
       end
 
       it "pins the team and the save column and nothing else" do
