@@ -15,15 +15,18 @@ module Assessment
 
       grade_info = validate_grade_info(grade_info)
       status = calculate_status(participation, grade_info)
+      stamp = stamp_for(participation, grade_info, grader)
+      # Without a grade the points decide again whether the row is reviewed;
+      # a scheme applied later must not skip a fully scored candidate.
+      if status == :pending && participation.all_tasks_scored?
+        status = :reviewed
+        stamp = { grader_id: nil, graded_at: Time.current }
+      end
       participation.update!(grade_text: grade_info[:grade_text],
                             grade_numeric: grade_info[:grade_numeric],
                             status: status,
                             note: comment || participation.note,
-                            **stamp_for(participation, grade_info, grader))
-      # Without a grade the points decide again whether the row is reviewed;
-      # a scheme applied later must not skip a fully scored candidate.
-      participation.update_status_if_all_scored! if status == :pending
-      participation
+                            **stamp)
     end
 
     # Record who changed the grade and when; note-only edits must preserve

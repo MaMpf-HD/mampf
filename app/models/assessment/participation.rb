@@ -72,20 +72,24 @@ module Assessment
     # corrected afterwards are the grading table's to point out.
     def update_status_if_all_scored!(grader: nil)
       return if absent? || exempt? || grade_numeric.present?
+      return if assessment.tasks.none?
 
-      task_ids = assessment.tasks.pluck(:id)
-      return if task_ids.empty?
-
-      points_by_task_id = task_points.pluck(:task_id, :points).to_h
-      missing_scored_tasks = task_ids.any? { |task_id| points_by_task_id[task_id].nil? }
-
-      if missing_scored_tasks
+      unless all_tasks_scored?
         update!(status: :pending, graded_at: nil, grader: nil) if reviewed?
         return
       end
 
       update!(status: :reviewed, graded_at: Time.current,
               grader: grader || self.grader)
+    end
+
+    # False without tasks: nothing scored is not everything scored.
+    def all_tasks_scored?
+      task_ids = assessment.tasks.pluck(:id)
+      return false if task_ids.empty?
+
+      points_by_task_id = task_points.pluck(:task_id, :points).to_h
+      task_ids.none? { |task_id| points_by_task_id[task_id].nil? }
     end
 
     def graded_tasks_points
