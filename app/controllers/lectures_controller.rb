@@ -397,7 +397,7 @@ class LecturesController < ApplicationController
     def lecture_params
       allowed_params = [:term_id, :start_chapter, :absolute_numbering,
                         :start_section, :organizational, :locale,
-                        :organizational_concept, :muesli, :vignettes,
+                        :organizational_concept, :vignettes,
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,

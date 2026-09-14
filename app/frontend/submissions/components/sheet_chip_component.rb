@@ -10,6 +10,7 @@ class SheetChipComponent < ViewComponent::Base
     tutor_decides: "act",
     handed_in: "wait",
     awaiting_marks: "wait",
+    awaiting_record: "wait",
     correction_uploaded: "wait",
     exempt: "wait"
   }.freeze

@@ -1,5 +1,5 @@
 <div
-  class="card"
+  class="card grade-scheme-form"
   data-controller="assessments--scheme-form"
   data-assessments--scheme-form-max-points-value="<%= max_points %>"
   data-assessments--scheme-form-student-points-value="<%= student_points_json %>"
@@ -110,7 +110,7 @@
           </p>
 
           <div class="row g-3 mb-4">
-            <div class="col-xxl-6">
+            <div class="col-auto gs-points-field">
               <label class="form-label fw-bold" for="grade-scheme-excellence">
                 <%= t("assessment.grade_scheme.form.excellence_label") %>
               </label>
@@ -138,7 +138,7 @@
               </small>
             </div>
 
-            <div class="col-xxl-6">
+            <div class="col-auto gs-points-field">
               <label class="form-label fw-bold" for="grade-scheme-passing">
                 <%= t("assessment.grade_scheme.form.passing_label") %>
               </label>
@@ -258,7 +258,7 @@
           </div>
 
           <div class="row g-3 mb-4">
-            <div class="col-xxl-4">
+            <div class="col-sm-4 gs-points-field">
               <label class="form-label fw-bold" for="grade-scheme-anchor">
                 <%= t("assessment.grade_scheme.form.anchor_label") %>
               </label>
@@ -289,7 +289,7 @@
               </small>
             </div>
 
-            <div class="col-xxl-4">
+            <div class="col-sm-4 gs-points-field">
               <label class="form-label fw-bold" for="grade-scheme-delta">
                 <%= t("assessment.grade_scheme.form.delta_label") %>
               </label>
@@ -317,31 +317,23 @@
               </small>
             </div>
 
-            <div class="col-xxl-4">
+            <div class="col-sm-4 gs-points-field">
               <label class="form-label fw-bold" for="grade-scheme-derived">
                 <%= t("assessment.grade_scheme.form.derived_label") %>
               </label>
 
-              <div class="input-group has-validation">
-                <input
-                  type="number"
-                  autocomplete="off"
-                  class="form-control"
-                  readonly
-                  tabindex="-1"
-                  id="grade-scheme-derived"
-                  data-assessments--scheme-form-target="derivedInput"
-                >
+              <output
+                class="form-control-plaintext fw-semibold"
+                id="grade-scheme-derived"
+                for="grade-scheme-anchor grade-scheme-delta"
+                data-assessments--scheme-form-target="derivedOutput"
+              ></output>
 
-                <span class="input-group-text">
-                  <%= t("assessment.distribution.points") %>
-                </span>
-
-                <div
-                  class="invalid-feedback"
-                  data-assessments--scheme-form-target="derivedError"
-                ></div>
-              </div>
+              <div
+                class="form-text text-danger"
+                hidden
+                data-assessments--scheme-form-target="derivedError"
+              ></div>
 
               <small
                 class="text-muted"
@@ -478,6 +470,10 @@
         </small>
 
         <div class="d-flex gap-2 ms-auto">
+          <%= link_to t("buttons.cancel"), cancel_path,
+                      class: "btn btn-outline-secondary",
+                      data: { turbo_stream: true } %>
+
           <button
             type="submit"
             class="btn btn-success"

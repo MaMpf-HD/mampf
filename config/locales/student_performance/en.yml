@@ -20,6 +20,7 @@ en:
     errors:
       no_record: "Performance record not found."
       no_member: "User is not a member of this lecture."
+      no_sheet: "There is no such sheet in this lecture."
     records:
       tooltip_points: "points"
       percentage_unavailable: "Percentage unavailable"
@@ -42,6 +43,7 @@ en:
         pending_grading: "Pending Grading"
         not_due: "Not due yet"
         not_submitted: "Not Submitted"
+        awaiting_record: "Not yet recorded"
         absent: "Absent"
         exempt: "Exempt"
         achievement_met: "Met"
@@ -60,7 +62,7 @@ en:
         back: "Back to records"
         recompute: "Recompute record"
         recompute_hint: "Fallback only: use this if the displayed data seems out of date or incorrect."
-        review_proposal: "Review Proposal"
+        review_proposal: "View eligibility proposal"
         total_points: "Total Points"
         out_of: "out of %{max} marked so far"
         percentage: "Percentage"
@@ -75,6 +77,13 @@ en:
         total_row: "Total"
         total_row_hint: "over every assignment of the term"
         last_computed: "Last computed %{time} ago."
+        exempt: "Record exemption"
+        exempt_column: "Exemption"
+        unexempt: "Revoke exemption"
+        note_placeholder: "Note (optional)"
+        note_label: "Note for the exemption on %{sheet}"
+        exempted: "%{sheet} is exempt for this student and no longer counts."
+        unexempted: "The exemption on %{sheet} was revoked; the sheet counts again."
 
       recompute:
         single: "Recomputation for this student completed."
@@ -156,7 +165,7 @@ en:
         result: "Result"
         achievements_check: "Achievements Check"
         no_achievements_required: "No achievements are required by the current rule."
-        info: "This proposal is a read-only preview. Certifications will be created in a future update."
+        info: "This proposal is a preview only; decisions are made under Exam Eligibility."
     certifications:
       back_to_dashboard: "Back to dashboard"
       index:

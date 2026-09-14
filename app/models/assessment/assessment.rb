@@ -56,6 +56,15 @@ module Assessment
       parts.length > 1 ? parts.last.presence || title.truncate(5) : title.truncate(5)
     end
 
+    # A paper assignment may be handed in before the tutor records it, so
+    # use :awaiting_record rather than :not_submitted. Talks have no hand-in
+    # to record and use :pending_grading.
+    def status_without_hand_in
+      return :pending_grading unless assessable_type == "Assignment"
+
+      requires_submission ? :not_submitted : :awaiting_record
+    end
+
     # A preloaded association is summed in Ruby, because `sum(:max_points)` would
     # issue a query even then. The nil guard belongs to that path only: the task
     # form builds a blank task into a loaded association before saving it, and
@@ -105,6 +114,12 @@ module Assessment
       # rubocop:enable Rails/SkipsModelValidations
 
       recompute_all_performance_records if recompute
+    end
+
+    # Off the loaded association, sorted here rather than in SQL: every row of
+    # a pointing table asks the same assessment, and the tasks are read once.
+    def persisted_tasks
+      tasks.select(&:persisted?).sort_by(&:position)
     end
 
     private

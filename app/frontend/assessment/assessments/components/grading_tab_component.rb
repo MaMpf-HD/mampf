@@ -28,19 +28,6 @@ class GradingTabComponent < ViewComponent::Base
   end
 
   def roster_component
-    GradeTableComponent.new(
-      assessment: assessment,
-      draft_scheme: draft_scheme
-    )
+    ExamGradingTableComponent.new(exam: assessment.assessable)
   end
-
-  private
-
-    def draft_scheme
-      scheme = assessment.grade_scheme
-      return nil unless scheme&.persisted?
-      return nil if scheme.applied?
-
-      scheme
-    end
 end

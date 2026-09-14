@@ -58,6 +58,10 @@ module Assessment
 
       authorize! :show, @assessment
 
+      # A talk is graded in the seminar's table, which is the whole tab; its
+      # own dashboard has nothing the table lacks.
+      return redirect_to(seminar_table_path) if @assessable.is_a?(Talk)
+
       @tasks = @assessment.tasks.order(:position)
       @dashboard = build_dashboard_component(active_tab: params[:tab])
 
@@ -81,6 +85,10 @@ module Assessment
 
       @assessable = @assessment.assessable
       @lecture = @assessable.lecture
+      # Talks have no assessment settings. Redirect stale dashboard requests
+      # to the seminar grading table.
+      return redirect_to(seminar_table_path) if @assessable.is_a?(Talk)
+
       @tasks = @assessment.tasks.order(:position)
 
       if @assessment.update(assessment_params)
@@ -149,6 +157,14 @@ module Assessment
         return if @assessment
 
         redirect_to root_path, alert: I18n.t("assessment.errors.no_assessment")
+      end
+
+      def seminar_table_path
+        if turbo_frame_request?
+          assessment_assessments_path(lecture_id: @lecture.id)
+        else
+          edit_lecture_path(@lecture, tab: "assessments")
+        end
       end
 
       def dashboard_in_lecture_path

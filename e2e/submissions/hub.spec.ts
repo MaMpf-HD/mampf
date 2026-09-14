@@ -153,13 +153,16 @@ test.describe("the student's sheet list", () => {
 
       await student.page.goto(`/lectures/${lecture.id}/submissions`);
       const list = student.page.getByRole("region", { name: "Earlier sheets" });
+      // The line above the list names a fresh sheet as well; the rows are the
+      // folds.
+      const rows = list.getByRole("group");
 
-      await expect(list.getByText("Homework 1")).toBeVisible();
-      await expect(list.getByText("3.5", { exact: true })).toBeVisible();
+      await expect(rows.getByText("Homework 1")).toBeVisible();
+      await expect(rows.getByText("3.5", { exact: true })).toBeVisible();
       // The badge stands exactly where there is no number, so there is one of
       // it on the page and it belongs to the other sheet.
-      await expect(list.getByText("Waiting to be marked")).toHaveCount(1);
-      await expect(list.getByText("Homework 2")).toBeVisible();
+      await expect(rows.getByText("Waiting to be marked")).toHaveCount(1);
+      await expect(rows.getByText("Homework 2")).toBeVisible();
     });
 
   // A screen reader gets "3.5 of 8 points", never "3.5 slash 8".
@@ -260,7 +263,7 @@ test.describe("the student's sheet list", () => {
     await expect(list.getByText("Points per problem")).toBeHidden();
     await expect(handedIn).toBeHidden();
 
-    await list.getByText("Homework 1").click();
+    await list.getByRole("group").getByText("Homework 1").click();
 
     await expect(list.getByText("Points per problem")).toBeVisible();
     await expect(list.getByText("Files", { exact: true })).toBeVisible();
@@ -284,7 +287,7 @@ test.describe("the student's sheet list", () => {
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
     const list = student.page.getByRole("region", { name: "Earlier sheets" });
-    await list.getByText("Homework 1").click();
+    await list.getByRole("group").getByText("Homework 1").click();
 
     // Both fixtures carry the same filename, which is exactly why each link
     // says in words which of the two it is.
@@ -294,6 +297,69 @@ test.describe("the student's sheet list", () => {
     await expect(
       list.getByRole("link", { name: "Correction: manuscript.pdf" }),
     ).toHaveAttribute("href", `/submissions/${submission.id}/show_correction`);
+  });
+
+  // What arrived since the last visit is said once, above the list, and
+  // opening the row is what counts as having looked: the dot goes without
+  // a reload, and the next visit starts quiet.
+  test("points at a fresh correction until the row is opened", async ({
+    factory,
+    teacher,
+    student,
+  }) => {
+    const lecture = await enrolledLecture(
+      factory, teacher.user.id, student.user.id,
+    );
+    await markedSheetWithFiles(factory, lecture.id, student.user.id, "Homework 1");
+
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    const list = student.page.getByRole("region", { name: "Earlier sheets" });
+    const news = list.getByText("New since you last looked:");
+    const marker = list.getByText("New since you last looked.");
+
+    await expect(news).toBeVisible();
+    await expect(marker).toBeAttached();
+    await expect(list.getByRole("button", { name: "mark all as seen" }))
+      .toBeVisible();
+
+    const reported = student.page.waitForResponse(
+      response => response.url().endsWith("/submissions/seen"),
+    );
+    await list.getByRole("link", { name: "Homework 1" }).click();
+    await reported;
+
+    await expect(list.getByText("Points per problem")).toBeVisible();
+    await expect(news).toHaveCount(0);
+    await expect(marker).toHaveCount(0);
+
+    await student.page.reload();
+
+    await expect(list.getByRole("group").getByText("Homework 1")).toBeVisible();
+    await expect(news).toHaveCount(0);
+  });
+
+  test("clears every marker at once", async ({ factory, teacher, student }) => {
+    const lecture = await enrolledLecture(
+      factory, teacher.user.id, student.user.id,
+    );
+    await markedSheetWithFiles(factory, lecture.id, student.user.id, "Homework 1");
+    await markedSheetWithFiles(factory, lecture.id, student.user.id, "Homework 2");
+
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    const list = student.page.getByRole("region", { name: "Earlier sheets" });
+    const markers = list.getByText("New since you last looked.");
+
+    await expect(markers).toHaveCount(2);
+
+    const cleared = student.page.waitForResponse(
+      response => response.url().endsWith("/submissions/seen_all"),
+    );
+    await list.getByRole("button", { name: "mark all as seen" }).click();
+    await cleared;
+
+    await expect(markers).toHaveCount(0);
+    await expect(list.getByRole("button", { name: "mark all as seen" }))
+      .toHaveCount(0);
   });
 
   // Nothing set up yet is a state the page draws, not one it turns you away

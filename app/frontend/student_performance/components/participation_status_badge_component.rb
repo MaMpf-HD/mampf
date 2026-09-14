@@ -3,32 +3,41 @@
 class ParticipationStatusBadgeComponent < ViewComponent::Base
   include ActiveSupport::NumberHelper
 
-  VARIANTS = [:full, :compact].freeze
+  # :icon is the full badge without its word, for a narrow column; the word
+  # and whatever detail the row hands over travel in the tooltip.
+  VARIANTS = [:full, :compact, :icon].freeze
 
   STATUS_CONFIG = {
     reviewed: { icon: "bi-check-circle-fill", color: "success" },
-    pending_grading: { icon: "bi-hourglass-split", color: "warning" },
+    pending_grading: { icon: "bi-hourglass-split", color: "warning-emphasis" },
     not_due: { icon: "bi-dash", color: "muted" },
     not_submitted: { icon: "bi-x-circle-fill", color: "danger" },
+    awaiting_record: { icon: "bi-hourglass", color: "muted" },
     absent: { icon: "bi-person-slash", color: "secondary" },
     exempt: { icon: "bi-dash-circle", color: "secondary" }
   }.freeze
 
   COMPACT_SYMBOLS = {
-    pending_grading: { text: "\u2013", color: "warning" },
+    pending_grading: { text: "\u2013", color: "warning-emphasis" },
     not_due: { text: "\u2013", color: "muted" },
     not_submitted: { text: "\u2717", color: "muted" },
+    awaiting_record: { text: "\u2026", color: "muted" },
     exempt: { text: "\u25CB", color: "muted" },
     absent: { text: "\u00B7", color: "muted" }
   }.freeze
 
   attr_reader :status, :variant, :points
 
-  def initialize(status:, variant: :full, points: nil)
+  def initialize(status:, variant: :full, points: nil, detail: nil)
     super()
     @status = status.to_sym
     @variant = variant.to_sym
     @points = points
+    @detail = detail
+  end
+
+  def icon_title
+    @detail.present? ? "#{label}: #{@detail}" : label
   end
 
   def config

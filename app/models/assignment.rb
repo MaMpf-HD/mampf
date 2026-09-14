@@ -6,6 +6,7 @@ class Assignment < ApplicationRecord
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
+  has_many :sightings, class_name: "AssignmentSighting", dependent: :destroy
 
   before_save :inherit_deletion_date_from_lecture
   after_create :setup_assessment
@@ -53,12 +54,38 @@ class Assignment < ApplicationRecord
                       &.first&.submission
   end
 
+  # A team formed without a file has handed nothing in; its members still
+  # need their row in the tutor's table.
   def submitter_ids
-    UserSubmissionJoin.where(submission: submissions).pluck(:user_id).uniq
+    UserSubmissionJoin.where(submission: submissions.proper).pluck(:user_id).uniq
   end
 
   def submitters
     User.where(id: submitter_ids)
+  end
+
+  def user_ids_in_lecture_from_memberships
+    lecture.lecture_memberships.pluck(:user_id).uniq
+  end
+
+  def applicable_users_not_in_tutorials
+    User.where(id: applicable_user_ids_not_in_tutorials_from_memberships)
+  end
+
+  def non_submitters_in_tutorials
+    if past_deadline?
+      non_submitters_in_tutorials_postdeadline
+    else
+      non_submitters_in_tutorials_predeadline
+    end
+  end
+
+  def non_submitters_in_tutorial(tutorial)
+    if past_deadline?
+      non_submitters_in_tutorial_postdeadline(tutorial)
+    else
+      non_submitters_in_tutorial_predeadline(tutorial)
+    end
   end
 
   def past_deadline?
@@ -81,6 +108,10 @@ class Assignment < ApplicationRecord
     !semiactive?
   end
   alias grading_open? totally_expired?
+
+  def assessable?
+    assessment != nil
+  end
 
   def in_grace_period?
     semiactive? && !active?
@@ -228,6 +259,74 @@ class Assignment < ApplicationRecord
 
     def setup_assessment
       ensure_pointbook!(requires_submission: requires_submission)
+    end
+
+    def non_submitters_in_tutorial_predeadline(tutorial)
+      User.where(id: non_submitter_ids_in_tutorial_from_memberships(tutorial))
+    end
+
+    def non_submitters_in_tutorial_postdeadline(tutorial)
+      ids = non_submitter_ids_in_tutorial_from_participations(tutorial) |
+            non_submitter_ids_in_tutorial_from_memberships(tutorial)
+      User.where(id: ids)
+    end
+
+    def non_submitters_in_tutorials_predeadline
+      User.where(id: non_submitter_ids_in_tutorials_from_memberships)
+    end
+
+    def non_submitters_in_tutorials_postdeadline
+      ids = non_submitter_ids_in_tutorials_from_participations |
+            non_submitter_ids_in_tutorials_from_memberships
+      User.where(id: ids)
+    end
+
+    def applicable_user_ids_not_in_tutorials_from_memberships
+      user_ids_in_lecture_from_memberships - user_ids_in_tutorials_from_memberships
+    end
+
+    def non_submitter_ids_in_tutorials_from_memberships
+      user_ids_in_tutorials_from_memberships - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorials_from_participations
+      user_ids_in_tutorials_from_participations - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorial_from_memberships(tutorial)
+      user_ids_in_tutorial_from_memberships(tutorial) - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorial_from_participations(tutorial)
+      user_ids_in_tutorial_from_participations(tutorial) - submitter_ids
+    end
+
+    def user_ids_in_tutorials_from_memberships
+      lecture.tutorials.joins(:tutorial_memberships)
+             .pluck("tutorial_memberships.user_id").uniq
+    end
+
+    def user_ids_in_tutorials_from_participations
+      return [] if assessment.blank?
+
+      tutorial_ids = lecture.tutorials.pluck(:id)
+      Assessment::Participation
+        .where(assessment_id: assessment.id, tutorial_id: tutorial_ids)
+        .distinct
+        .pluck(:user_id)
+    end
+
+    def user_ids_in_tutorial_from_memberships(tutorial)
+      tutorial.tutorial_memberships.pluck("user_id").uniq
+    end
+
+    def user_ids_in_tutorial_from_participations(tutorial)
+      return [] if assessment.blank?
+
+      Assessment::Participation
+        .where(assessment_id: assessment.id, tutorial_id: tutorial.id)
+        .distinct
+        .pluck(:user_id)
     end
 
     # Skip Lecture validations so an unrelated validation error cannot

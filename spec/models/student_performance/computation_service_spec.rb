@@ -309,9 +309,9 @@ RSpec.describe(StudentPerformance::ComputationService) do
     end
 
     # A sheet that was handed in but is not fully marked contributes nothing to
-    # the total while still sitting in the maximum. Recording how much is
-    # outstanding is what lets eligibility tell a marking backlog from a fail.
-    describe "points still awaiting marking" do
+    # the total while still sitting in the maximum; what is with the tutor is
+    # read off the clock by `DuePoints`, not stored here.
+    describe "a sheet handed in and not marked" do
       let(:marked_assignment) do
         FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
       end
@@ -349,40 +349,6 @@ RSpec.describe(StudentPerformance::ComputationService) do
         StudentPerformance::Record.find_by(lecture: lecture, user: user)
       end
 
-      it "counts a submitted but unmarked assessment" do
-        FactoryBot.create(:assessment_participation, :submitted,
-                          assessment: unmarked, user: user)
-
-        expect(record.points_max_pending_materialized).to eq(30)
-      end
-
-      it "does not count work that was never handed in" do
-        FactoryBot.create(:assessment_participation, :pending,
-                          assessment: unmarked, user: user)
-
-        expect(record.points_max_pending_materialized).to eq(0)
-      end
-
-      it "does not count an assessment without any participation" do
-        expect(record.points_max_pending_materialized).to eq(0)
-      end
-
-      it "stops counting once the assessment is marked" do
-        FactoryBot.create(:assessment_participation, :reviewed,
-                          assessment: unmarked, user: user)
-
-        expect(record.points_max_pending_materialized).to eq(0)
-      end
-
-      it "does not count an exempt assessment" do
-        FactoryBot.create(:assessment_participation, :exempt,
-                          assessment: unmarked, user: user)
-
-        expect(record.points_max_pending_materialized).to eq(0)
-      end
-
-      # The point of the figure: the total and the maximum stay untouched, so the
-      # percentage keeps meaning "share of the term".
       it "leaves the total and the maximum alone" do
         FactoryBot.create(:assessment_participation, :submitted,
                           assessment: unmarked, user: user)

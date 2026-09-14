@@ -56,8 +56,7 @@ module StudentPerformance
         Assessment::Participation
           .where(assessment_id: assessments.select(:id),
                  user_id: user_ids)
-          .select(:id, :assessment_id, :status, :submitted_at, :user_id,
-                  :points_total)
+          .select(:id, :assessment_id, :status, :user_id, :points_total)
           .group_by(&:user_id)
       end
 
@@ -76,31 +75,15 @@ module StudentPerformance
 
         {
           points_total: points_total,
-          points_max: points_max,
-          points_max_pending: pending_points(status_map, non_exempt)
+          points_max: points_max
         }
-      end
-
-      # What is handed in but not marked yet. Without it a marking backlog is
-      # indistinguishable from work never done, and eligibility reads it as a
-      # fail. A submission counts as awaiting marking until every one of its
-      # tasks is scored, which is what leaves the participation on `pending`.
-      def pending_points(status_map, non_exempt)
-        awaiting = status_map.fetch("pending", [])
-                             .select { |p| p.submitted_at.present? }
-                             .to_set(&:assessment_id)
-        return BigDecimal("0") if awaiting.empty?
-
-        non_exempt.select { |a| awaiting.include?(a.id) }
-                  .sum(&:effective_total_points)
       end
 
       def aggregate_points(user)
         participations = Assessment::Participation
                          .where(assessment_id: assessments.select(:id),
                                 user_id: user.id)
-                         .select(:id, :assessment_id, :status, :submitted_at,
-                                 :user_id, :points_total)
+                         .select(:id, :assessment_id, :status, :user_id, :points_total)
                          .to_a
 
         aggregate_points_from(participations)
@@ -178,7 +161,6 @@ module StudentPerformance
           user_id: user_id,
           points_total_materialized: stats[:points_total],
           points_max_materialized: stats[:points_max],
-          points_max_pending_materialized: stats[:points_max_pending],
           percentage_materialized: percentage,
           achievements_met_ids: achievements_met_ids,
           achievements_ungraded_ids: achievements_ungraded_ids,

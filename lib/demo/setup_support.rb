@@ -145,6 +145,7 @@ module Demo
           talk = Talk.find_or_initialize_by(lecture: seminar, title: title)
           talk.capacity = 1
           talk.position ||= index + 1
+          talk.dates = [demo_talk_date(index)]
           talk.skip_campaigns = false if talk.respond_to?(:skip_campaigns=)
           talk.save!
           talk.speaker_talk_joins.delete_all
@@ -188,6 +189,12 @@ module Demo
             "#{campaign.rejected_users.count} rejected."
         end
         Rails.logger.debug("")
+      end
+
+      # Use past and future dates to demonstrate the grading table with both
+      # completed and upcoming talks.
+      def demo_talk_date(index)
+        Date.current.beginning_of_week + (index - 5).weeks + 2.days
       end
 
       def seminar!

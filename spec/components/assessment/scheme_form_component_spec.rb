@@ -62,6 +62,14 @@ RSpec.describe(SchemeFormComponent, type: :component) do
       )
     end
 
+    it "offers a way back to the exam's grades tab without saving" do
+      html = render_inline(component)
+      link = html.css("a").find { |a| a.text.strip == I18n.t("buttons.cancel") }
+      expect(link[:href]).to eq(
+        Rails.application.routes.url_helpers.exam_path(exam, tab: "grades")
+      )
+    end
+
     it "sets the hidden config field target" do
       render_inline(component)
       expect(rendered_content).to include("configField")
@@ -107,6 +115,25 @@ RSpec.describe(SchemeFormComponent, type: :component) do
                     )
         expect(rendered_content).to include(path)
       end
+    end
+  end
+
+  describe "#cancel_path" do
+    let(:assignment) { create(:valid_assignment, lecture: lecture) }
+    let(:assessment) { assignment.reload.assessment }
+    let(:component) do
+      described_class.new(assessment: assessment,
+                          grade_scheme: assessment.build_grade_scheme(kind: :banded))
+    end
+
+    it "leads to the dashboard's grades tab for anything but an exam" do
+      render_inline(component)
+      expect(component.cancel_path).to eq(
+        Rails.application.routes.url_helpers.assessment_assessment_path(
+          assessment, assessable_type: "Assignment", assessable_id: assignment.id,
+                      tab: "grades"
+        )
+      )
     end
   end
 

@@ -281,7 +281,7 @@ RESTful controller for grade CRUD on Gradable assessments (exams, talks, oral ex
 | import | Import grades from CSV |
 
 ```admonish example "Responsibilities"
-- Inline grade entry on `GradeTableComponent`
+- Grade entry in the rows of `ExamGradingTableComponent` and the seminar's table
 - Bulk absent/exempt marking
 - Validate grade format/range
 - Audit tracking (`graded_by_id`, `graded_at`)
@@ -308,7 +308,7 @@ grid and the tutorial-scoped view — authorization determines scope.
 | update_team | Save points for one team (fan-out to individual TaskPoints via `TeamGradingService`) |
 
 ```admonish example "Responsibilities"
-- Inline point entry on `PointGridComponent`
+- Point entry on `ExamPointingTableComponent`, grades and absences on `ExamGradingTableComponent`
 - Tutorial-scoped view with team-based table, progress tracking, filters
 - Recalculate `participation.points_total` on save
 - Team grading via `Assessment::TeamGradingService`

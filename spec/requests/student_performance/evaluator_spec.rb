@@ -135,8 +135,7 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
                               user: student,
                               percentage_materialized: 30,
                               points_total_materialized: 30,
-                              points_max_materialized: 100,
-                              points_max_pending_materialized: 40)
+                              points_max_materialized: 100)
           end
 
           it "does not call the points check failed" do
@@ -183,8 +182,7 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
                               user: student,
                               percentage_materialized: 30,
                               points_total_materialized: 30,
-                              points_max_materialized: 100,
-                              points_max_pending_materialized: 40)
+                              points_max_materialized: 100)
           end
 
           before do

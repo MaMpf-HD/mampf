@@ -121,6 +121,11 @@ class GradeSchemeSummaryComponent < ViewComponent::Base
     pct_of(fail_count, total_reviewed)
   end
 
+  # "65.5% (19/29)" - as one string, so no line break can split the fraction.
+  def share_with_count(count)
+    "#{pct_of(count, total_reviewed)}% (#{count}/#{total_reviewed})"
+  end
+
   def absent_count
     @absent_count ||= assessment.assessment_participations
                                 .where(status: :absent).count

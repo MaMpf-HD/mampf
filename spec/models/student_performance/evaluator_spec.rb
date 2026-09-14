@@ -2,6 +2,18 @@ require "rails_helper"
 
 RSpec.describe(StudentPerformance::Evaluator) do
   let(:lecture) { FactoryBot.create(:lecture, :released_for_all) }
+  let(:due_points) { StudentPerformance::DuePoints.new(lecture: lecture) }
+  let(:student) { FactoryBot.create(:confirmed_user) }
+
+  # What is with the tutor is read off the sheets, not the record: a due sheet
+  # worth `points`, handed in by the student and not marked.
+  def with_tutor(user, points:)
+    assignment = FactoryBot.create(:assignment, :expired, lecture: lecture)
+    FactoryBot.create(:assessment_task, assessment: assignment.assessment,
+                                        max_points: points)
+    FactoryBot.create(:assessment_participation, :submitted,
+                      assessment: assignment.assessment.reload, user: user)
+  end
 
   describe "#evaluate" do
     context "with a percentage-based rule" do
@@ -10,7 +22,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
                           lecture: lecture, min_percentage: 50)
       end
 
-      let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: true, due_points: due_points)
+      end
 
       it "proposes :passed when percentage meets threshold" do
         record = FactoryBot.create(:student_performance_record,
@@ -59,7 +73,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
                           lecture: lecture, min_points_absolute: 60)
       end
 
-      let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: true, due_points: due_points)
+      end
 
       it "proposes :passed when points meet threshold" do
         record = FactoryBot.create(:student_performance_record,
@@ -94,7 +110,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
         end
       end
 
-      let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: true, due_points: due_points)
+      end
 
       it "proposes :passed regardless of points" do
         record = FactoryBot.create(:student_performance_record,
@@ -122,7 +140,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
         end
       end
 
-      let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: true, due_points: due_points)
+      end
 
       it "proposes :passed when all achievements are met" do
         record = FactoryBot.create(:student_performance_record,
@@ -193,7 +213,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
                           rule: rule, achievement: achievement)
       end
 
-      let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: true, due_points: due_points)
+      end
 
       it "proposes :passed only when both are met" do
         record = FactoryBot.create(:student_performance_record,
@@ -236,14 +258,16 @@ RSpec.describe(StudentPerformance::Evaluator) do
                           lecture: lecture, min_percentage: 50)
       end
 
-      let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: true, due_points: due_points)
+      end
 
       def record_with(total:, pending:)
+        with_tutor(student, points: pending) if pending.positive?
         FactoryBot.create(:student_performance_record,
-                          lecture: lecture,
+                          lecture: lecture, user: student,
                           points_total_materialized: total,
                           points_max_materialized: 120,
-                          points_max_pending_materialized: pending,
                           percentage_materialized: (total / 120.0 * 100).round(2))
       end
 
@@ -306,7 +330,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                      lecture: lecture,
                                      points_total_materialized: 0,
                                      points_max_materialized: 0,
-                                     points_max_pending_materialized: 0,
                                      percentage_materialized: nil)
 
           result = evaluator.evaluate(record)
@@ -319,7 +342,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                      lecture: lecture,
                                      points_total_materialized: 0,
                                      points_max_materialized: 120,
-                                     points_max_pending_materialized: 0,
                                      percentage_materialized: 0)
 
           result = evaluator.evaluate(record)
@@ -408,8 +430,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
         )
       end
 
-      let(:student) { FactoryBot.create(:confirmed_user) }
-
       def sheet(deadline:, points:)
         assignment = FactoryBot.create(:assignment, lecture: lecture)
         # rubocop:disable Rails/SkipsModelValidations
@@ -421,12 +441,11 @@ RSpec.describe(StudentPerformance::Evaluator) do
         assessment.reload
       end
 
-      def record_with(total:, max:, pending: 0)
+      def record_with(total:, max:)
         FactoryBot.create(:student_performance_record,
                           lecture: lecture, user: student,
                           points_total_materialized: total,
                           points_max_materialized: max,
-                          points_max_pending_materialized: pending,
                           percentage_materialized: (total / max.to_f * 100).round(2))
       end
 
@@ -468,10 +487,10 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                                      submitted_at: 1.day.ago)
         sheet(deadline: 3.days.from_now, points: 100)
 
-        result = evaluator.evaluate(record_with(total: 5, max: 120,
-                                                pending: 20))
+        result = evaluator.evaluate(record_with(total: 5, max: 120))
 
         expect(result.details[:pending_sheets]).to eq(1)
+        expect(result.details[:points_pending]).to be(true)
       end
 
       it "still fails a student the remaining sheets cannot carry" do
@@ -483,19 +502,20 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.proposed_status).to eq(:failed)
       end
 
-      # The early hand-in is in `points_max_pending_materialized` and in the
-      # sheets still to come; counted twice it would lift the best case over
+      # An early hand-in is a sheet not yet due with a file in place, not
+      # work with a tutor: counted as both it would lift the best case over
       # the threshold and defer a settled case.
-      it "counts an early hand-in once" do
+      it "counts an early hand-in once, among the sheets to come" do
         sheet(deadline: 2.days.ago, points: 100)
         early = sheet(deadline: 3.days.from_now, points: 20)
         FactoryBot.create(:assessment_participation, :submitted,
                           assessment: early, user: student)
 
-        result = evaluator.evaluate(record_with(total: 25, max: 120,
-                                                pending: 20))
+        result = evaluator.evaluate(record_with(total: 25, max: 120))
 
         expect(result.proposed_status).to eq(:failed)
+        expect(result.details[:points_pending]).to be(false)
+        expect(result.details[:not_due_sheets]).to eq(1)
       end
     end
 
@@ -508,7 +528,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
                           lecture: lecture, min_percentage: 50)
       end
 
-      let(:evaluator) { described_class.new(rule, assignments_complete: false) }
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: false, due_points: due_points)
+      end
 
       it "defers a student who clears the threshold today" do
         record = FactoryBot.create(:student_performance_record,
@@ -522,10 +544,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
       it "defers a student nothing outstanding could carry" do
         record = FactoryBot.create(:student_performance_record,
-                                   lecture: lecture,
+                                   lecture: lecture, user: student,
                                    points_total_materialized: 5,
                                    points_max_materialized: 100,
-                                   points_max_pending_materialized: 0,
                                    percentage_materialized: 5)
 
         expect(evaluator.evaluate(record).proposed_status).to eq(:inconclusive)
@@ -534,11 +555,11 @@ RSpec.describe(StudentPerformance::Evaluator) do
       # The other reasons are true as well; this is the one holding the verdict,
       # and repeating the rest in every row of the table says nothing.
       it "gives one reason, and it is not about a single sheet" do
+        with_tutor(student, points: 40)
         record = FactoryBot.create(:student_performance_record,
-                                   lecture: lecture,
+                                   lecture: lecture, user: student,
                                    points_total_materialized: 5,
                                    points_max_materialized: 100,
-                                   points_max_pending_materialized: 40,
                                    percentage_materialized: 5)
 
         result = evaluator.evaluate(record)
@@ -553,7 +574,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
         FactoryBot.create(:student_performance_rule, :active, lecture: lecture)
       end
 
-      let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: true, due_points: due_points)
+      end
 
       # Answering "failed" would refuse a student their exam on the strength of
       # a record nobody has written yet.
@@ -569,7 +592,8 @@ RSpec.describe(StudentPerformance::Evaluator) do
       record = FactoryBot.create(:student_performance_record,
                                  lecture: lecture, percentage_materialized: 60)
 
-      result = described_class.new(rule, assignments_complete: true).evaluate(record)
+      result = described_class.new(rule, assignments_complete: true,
+                                         due_points: due_points).evaluate(record)
       expected_keys = [:assignments_incomplete, :meets_points, :points_not_due,
                        :points_pending, :points_not_measurable,
                        :points_outstanding, :meets_achievements,
@@ -591,7 +615,8 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                  points_max_materialized: 0,
                                  percentage_materialized: 0)
 
-      result = described_class.new(rule, assignments_complete: true).evaluate(record)
+      result = described_class.new(rule, assignments_complete: true,
+                                         due_points: due_points).evaluate(record)
       expect(result.proposed_status).to eq(:passed)
       expect(result.points_criterion_deferral).to be_nil
     end
@@ -605,7 +630,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
                         lecture: lecture, min_percentage: 50)
     end
 
-    let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+    let(:evaluator) do
+      described_class.new(rule, assignments_complete: true, due_points: due_points)
+    end
 
     before do
       FactoryBot.create(:student_performance_rule_achievement,
@@ -629,11 +656,11 @@ RSpec.describe(StudentPerformance::Evaluator) do
     # would not be enough - and then "not reached yet" understates it. The
     # student cannot make it up, which is a different sentence.
     it "calls the threshold out of reach where something is still open" do
+      with_tutor(student, points: 10)
       record = FactoryBot.create(:student_performance_record,
-                                 lecture: lecture,
+                                 lecture: lecture, user: student,
                                  points_total_materialized: 30,
                                  points_max_materialized: 100,
-                                 points_max_pending_materialized: 10,
                                  percentage_materialized: 30,
                                  achievements_met_ids: [achievement.id])
 
@@ -681,14 +708,16 @@ RSpec.describe(StudentPerformance::Evaluator) do
                         lecture: lecture, min_percentage: 50)
     end
 
-    let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+    let(:evaluator) do
+      described_class.new(rule, assignments_complete: true, due_points: due_points)
+    end
 
     it "names the outstanding marking that could still carry the student" do
+      with_tutor(student, points: 40)
       record = FactoryBot.create(:student_performance_record,
-                                 lecture: lecture,
+                                 lecture: lecture, user: student,
                                  points_total_materialized: 30,
                                  points_max_materialized: 100,
-                                 points_max_pending_materialized: 40,
                                  percentage_materialized: 30)
 
       expect(evaluator.evaluate(record).verdict_deferral_reasons)
@@ -710,11 +739,11 @@ RSpec.describe(StudentPerformance::Evaluator) do
       achievement = FactoryBot.create(:achievement, lecture: lecture)
       FactoryBot.create(:student_performance_rule_achievement,
                         rule: rule, achievement: achievement)
+      with_tutor(student, points: 40)
       record = FactoryBot.create(:student_performance_record,
-                                 lecture: lecture,
+                                 lecture: lecture, user: student,
                                  points_total_materialized: 30,
                                  points_max_materialized: 100,
-                                 points_max_pending_materialized: 40,
                                  percentage_materialized: 30,
                                  achievements_ungraded_ids: [achievement.id])
 
@@ -736,11 +765,11 @@ RSpec.describe(StudentPerformance::Evaluator) do
       achievement = FactoryBot.create(:achievement, lecture: lecture)
       FactoryBot.create(:student_performance_rule_achievement,
                         rule: rule, achievement: achievement)
+      with_tutor(student, points: 40)
       record = FactoryBot.create(:student_performance_record,
-                                 lecture: lecture,
+                                 lecture: lecture, user: student,
                                  points_total_materialized: 30,
                                  points_max_materialized: 100,
-                                 points_max_pending_materialized: 40,
                                  percentage_materialized: 30)
 
       result = evaluator.evaluate(record)
@@ -783,7 +812,9 @@ RSpec.describe(StudentPerformance::Evaluator) do
                         lecture: lecture, min_percentage: 50)
     end
 
-    let(:evaluator) { described_class.new(rule, assignments_complete: true) }
+    let(:evaluator) do
+      described_class.new(rule, assignments_complete: true, due_points: due_points)
+    end
 
     let!(:passing_record) do
       FactoryBot.create(:student_performance_record,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_12_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -187,6 +187,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
     t.index ["assessment_id", "position"], name: "index_assessment_tasks_on_assessment_id_and_position"
     t.index ["assessment_id"], name: "index_assessment_tasks_on_assessment_id"
     t.check_constraint "max_points >= 0::numeric", name: "max_points_non_negative"
+  end
+
+  create_table "assignment_sightings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "assignment_id", null: false
+    t.datetime "seen_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignment_id"], name: "index_assignment_sightings_on_assignment_id"
+    t.index ["user_id", "assignment_id"], name: "index_assignment_sightings_on_user_id_and_assignment_id", unique: true
   end
 
   create_table "assignments", force: :cascade do |t|
@@ -503,7 +513,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
     t.integer "start_section"
     t.text "organizational_concept"
     t.boolean "organizational"
-    t.boolean "muesli"
     t.text "released"
     t.text "content_mode"
     t.text "passphrase"
@@ -857,7 +866,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
     t.bigint "user_id", null: false
     t.decimal "points_total_materialized", precision: 10, scale: 2
     t.decimal "points_max_materialized", precision: 10, scale: 2
-    t.decimal "points_max_pending_materialized", precision: 10, scale: 2
     t.decimal "percentage_materialized", precision: 5, scale: 2
     t.jsonb "achievements_met_ids", default: [], null: false
     t.jsonb "achievements_ungraded_ids", default: [], null: false
@@ -916,6 +924,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
     t.text "correction_data"
     t.datetime "last_modification_by_users_at", precision: nil
     t.boolean "accepted"
+    t.datetime "corrected_at"
     t.index ["assignment_id"], name: "index_submissions_on_assignment_id"
     t.index ["token"], name: "index_submissions_on_token", unique: true
     t.index ["tutorial_id"], name: "index_submissions_on_tutorial_id"
@@ -1480,6 +1489,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_29_000002) do
   add_foreign_key "assessment_task_points", "submissions"
   add_foreign_key "assessment_task_points", "users", column: "grader_id"
   add_foreign_key "assessment_tasks", "assessment_assessments", column: "assessment_id"
+  add_foreign_key "assignment_sightings", "assignments"
+  add_foreign_key "assignment_sightings", "users"
   add_foreign_key "assignments", "lectures"
   add_foreign_key "claims", "redemptions"
   add_foreign_key "cohort_memberships", "cohorts"

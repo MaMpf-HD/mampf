@@ -3,7 +3,8 @@ require "rails_helper"
 RSpec.describe("Tutorials", type: :request) do
   let(:lecture) { create(:lecture) }
   let(:editor) { create(:confirmed_user) }
-  let!(:tutorial) { create(:tutorial, lecture: lecture) }
+  let(:tutor) { create(:confirmed_user) }
+  let!(:tutorial) { create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: lecture) }
 
   before do
     create(:editable_user_join, user: editor, editable: lecture)
@@ -33,24 +34,60 @@ RSpec.describe("Tutorials", type: :request) do
       get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
 
       expect(response).to have_http_status(:success)
-      expect(response.body.scan("submission-row").size).to eq(5)
+      expect(Nokogiri::HTML(response.body).css("tr.submission-row").size).to eq(5)
     end
   end
 
-  # The page somebody lands on before there is anything: it used to be
-  # unreachable, because the sidebar greyed the entry out exactly then.
-  describe "GET /lectures/:id/tutorial_overview" do
-    before { sign_in editor }
+  describe "the pointing table's queries" do
+    def count_queries
+      count = 0
+      subscription = ActiveSupport::Notifications
+                     .subscribe("sql.active_record") do |*, payload|
+        count += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION|CACHE/)
+      end
+      yield
+      count
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscription)
+    end
 
-    it "offers the way to create the first group when there is none" do
-      tutorial.destroy
+    # A group of its own per measurement, every hand-in marked on every task,
+    # so that a row asking per row for its team, its marks or its tasks shows
+    # up in the count.
+    def marked_group(hand_ins)
+      built = create(:lecture, :released_for_all)
+      group = create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: built)
+      assignment = create(:assignment, :expired, lecture: built, accepted_file_type: ".pdf")
+      tasks = Array.new(3) do
+        create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+      end
+      hand_ins.times do
+        student = create(:confirmed_user)
+        create(:tutorial_membership, tutorial: group, user: student)
+        create(:submission, :with_manuscript, assignment: assignment,
+                                              tutorial: group).users << student
+        participation = create(:assessment_participation,
+                               assessment: assignment.assessment, user: student,
+                               submitted_at: 2.days.ago)
+        tasks.each do |task|
+          create(:assessment_task_point, task: task, points: 2,
+                                         assessment_participation: participation)
+        end
+      end
+      [built, group, assignment]
+    end
 
-      get lecture_tutorial_overview_path(lecture)
+    def queries_for(hand_ins)
+      built, group, assignment = marked_group(hand_ins)
+      params = { tutorial: group.id, assignment: assignment.id }
 
-      expect(response.body).to include(I18n.t("lecture.no_tutorials_yet"))
-      expect(response.body).to include(I18n.t("lecture.create_tutorials"))
-      expect(response.body)
-        .to include(CGI.escapeHTML(edit_lecture_path(lecture, tab: "groups")))
+      count_queries { get(lecture_tutorials_path(built, params: params)) }
+    end
+
+    it "does not grow with the number of hand-ins" do
+      sign_in tutor
+
+      expect(queries_for(8)).to eq(queries_for(2))
     end
   end
 

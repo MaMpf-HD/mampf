@@ -33,6 +33,8 @@ module Assessment
                 allow_nil: true
               }
     validate :assessment_must_be_gradable, if: -> { grade_numeric.present? }
+    validate :absence_only_without_hand_in,
+             if: -> { (absent? || exempt?) && status_changed? }
 
     def self.tutorial_for(user, lecture)
       TutorialMembership.joins(:tutorial)
@@ -41,14 +43,63 @@ module Assessment
                         .pick(:tutorial_id)
     end
 
+    # A grade entered or applied before the points were corrected may no
+    # longer fit them; nothing recomputes it, somebody has to look.
+    def points_changed_after_grading?
+      return false if graded_at.nil?
+
+      latest = task_points.map(&:updated_at).max
+      latest.present? && latest > graded_at
+    end
+
     def display_status
       if pending? && submitted_at.nil?
-        :not_submitted
+        assessment.status_without_hand_in
       elsif pending?
         :pending_grading
       else
         status.to_sym
       end
+    end
+
+    def recompute_points_total!
+      update!(points_total: task_points.sum(:points))
+    end
+
+    # Refresh graded_at even when already reviewed: SubmissionsHub::Sheet
+    # uses it to show newly entered points since the user's last seen_at.
+    # A row that carries a grade keeps it and the time it was given; points
+    # corrected afterwards are the grading table's to point out.
+    def update_status_if_all_scored!(grader: nil)
+      return if absent? || exempt? || grade_numeric.present?
+      return if assessment.tasks.none?
+
+      unless all_tasks_scored?
+        update!(status: :pending, graded_at: nil, grader: nil) if reviewed?
+        return
+      end
+
+      update!(status: :reviewed, graded_at: Time.current,
+              grader: grader || self.grader)
+    end
+
+    # False without tasks: nothing scored is not everything scored. A table
+    # asks this per row with the associations already loaded.
+    def all_tasks_scored?
+      tasks = assessment.tasks
+      task_ids = tasks.loaded? ? tasks.map(&:id) : tasks.pluck(:id)
+      return false if task_ids.empty?
+
+      points_by_task_id = if task_points.loaded?
+        task_points.to_h { |point| [point.task_id, point.points] }
+      else
+        task_points.pluck(:task_id, :points).to_h
+      end
+      task_ids.none? { |task_id| points_by_task_id[task_id].nil? }
+    end
+
+    def graded_tasks_points
+      task_points
     end
 
     # The one place the student side asks whether marks may be shown. Sheets
@@ -95,10 +146,26 @@ module Assessment
         errors.add(:grade_numeric, :not_gradable)
       end
 
+      # submitted_at also records paper submissions, so absence cannot depend
+      # only on a Submission. Rejected submissions may still be exempted with
+      # a certificate.
+      def absence_only_without_hand_in
+        return unless assessment&.assessable.is_a?(Assignment)
+        return unless handed_in? || results_visible?
+
+        errors.add(:status, :handed_in)
+      end
+
+      def handed_in?
+        submitted_at_was.present? ||
+          Submission.joins(:user_submission_joins)
+                    .where(assignment_id: assessment.assessable_id,
+                           user_submission_joins: { user_id: user_id })
+                    .exists?(accepted: [nil, true])
+      end
+
       def should_recompute_performance_record?
-        achievement_grade_text_changed? ||
-          saved_change_to_status? ||
-          saved_change_to_submitted_at?
+        achievement_grade_text_changed? || saved_change_to_status?
       end
 
       def achievement_grade_text_changed?

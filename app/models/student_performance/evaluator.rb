@@ -45,16 +45,10 @@ module StudentPerformance
 
     attr_reader :rule
 
-    # `rule` is a `Rule` or the duck-typed `PreviewRule`: anything answering
-    # `min_percentage`, `min_points_absolute` — at most one of them set — and
-    # `required_achievements`. The threshold mode is deliberately not part of
-    # that contract, since the preview has none.
-    #
-    # Pass due_points so unsubmitted assignments whose deadlines have not
-    # passed can still prevent a failed proposal.
-    # Require assignments_complete explicitly because assuming it is
-    # true would allow decisions before all assignments exist.
-    def initialize(rule, assignments_complete:, due_points: nil)
+    # PreviewRule provides min_percentage and min_points_absolute, no
+    # threshold_mode. Require assignments_complete and current due_points so
+    # decisions account for assignments being created and points still reachable.
+    def initialize(rule, assignments_complete:, due_points:)
       @rule = rule
       @assignments_complete = assignments_complete
       @due_points = due_points
@@ -168,24 +162,18 @@ module StudentPerformance
       end
 
       def awaiting_marking(record)
-        record.points_max_pending_materialized || 0
+        @due_points.pending_points_for(record.user_id)
       end
 
       def not_yet_due(record)
-        return 0 unless @due_points
-
         @due_points.not_yet_due_for(record.user_id)
       end
 
       def not_yet_due_count(record)
-        return 0 unless @due_points
-
         @due_points.not_yet_due_count_for(record.user_id)
       end
 
       def pending_count(record)
-        return 0 unless @due_points
-
         @due_points.pending_count_for(record.user_id)
       end
 

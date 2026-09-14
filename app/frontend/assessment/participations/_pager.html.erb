@@ -1,0 +1,53 @@
+<%# The size is chosen once, above the table; the page is turned above and below it. %>
+<nav
+  class="d-flex flex-wrap align-items-center gap-2"
+  aria-label="<%= t("assessment.grading_tutorial.pager_label") %>"
+  hidden
+  data-status-filter-target="pager"
+>
+  <% if with_size %>
+    <label class="small text-muted mb-0" for="<%= id %>-page-size">
+      <%= t("assessment.grading_tutorial.page_size_label") %>
+    </label>
+    <select
+      id="<%= id %>-page-size"
+      class="form-select form-select-sm w-auto"
+      data-status-filter-target="pageSize"
+      data-action="change->status-filter#changePageSize"
+    >
+      <% [10, 20, 50, 100].each do |size| %>
+        <option value="<%= size %>"><%= size %></option>
+      <% end %>
+    </select>
+  <% end %>
+
+  <span
+    class="small text-muted"
+    data-status-filter-target="pageInfo"
+    data-template="<%= t("assessment.grading_tutorial.page_range", from: "%{from}", to: "%{to}", total: "%{total}") %>"
+  ></span>
+
+  <ul class="pagination pagination-sm mb-0">
+    <li class="page-item">
+      <button
+        type="button"
+        class="page-link"
+        data-status-filter-target="previous"
+        data-action="click->status-filter#previousPage"
+      >
+        <%= t("assessment.grading_tutorial.page_previous") %>
+      </button>
+    </li>
+
+    <li class="page-item">
+      <button
+        type="button"
+        class="page-link"
+        data-status-filter-target="next"
+        data-action="click->status-filter#nextPage"
+      >
+        <%= t("assessment.grading_tutorial.page_next") %>
+      </button>
+    </li>
+  </ul>
+</nav>
