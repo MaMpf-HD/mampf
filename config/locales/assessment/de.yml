@@ -62,10 +62,10 @@ de:
     graded_at: 'Bewertet am'
     statistics: 'Statistiken'
     updated: 'Bewertung erfolgreich aktualisiert.'
-    requires_submission: 'Digitale Abgabe erforderlich'
-    requires_submission_hint: 'Studierende müssen eine Datei hochladen'
+    requires_submission: 'Digitale Abgabe über MaMpf'
+    requires_submission_hint: 'Studierende laden ihre Abgabe in MaMpf hoch; sonst wird sie außerhalb abgegeben und der Tutor erfasst sie.'
     locked_after_deadline: 'Gesperrt (Abgabefrist abgelaufen)'
-    no_submission_required: 'Keine digitale Abgabe'
+    no_submission_required: 'Abgabe nicht über MaMpf'
     not_destructible:
       has_submissions: 'Löschen nicht möglich: Abgaben vorhanden'
       has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
@@ -357,7 +357,7 @@ de:
       missing: 'Ausstehend'
       not_submitted: 'Nicht abgegeben'
       progress: 'Fortschritt'
-      no_submission_required: 'Für diese Bewertung ist keine digitale Abgabe erforderlich.'
+      no_submission_required: 'Die Abgabe erfolgt nicht über MaMpf.'
       no_participants_yet: 'Es wurden noch keine Teilnehmenden hinzugefügt. Teilnehmende werden aus den Vorlesungsanmeldungen übernommen.'
       deadline:
         due_in: 'Fällig in %{time} (%{date})'

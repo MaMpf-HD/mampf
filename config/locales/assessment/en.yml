@@ -62,10 +62,10 @@ en:
     graded_at: 'Graded at'
     statistics: 'Statistics'
     updated: 'Assessment updated successfully.'
-    requires_submission: 'Requires digital submission'
-    requires_submission_hint: 'Students must upload a file'
+    requires_submission: 'Digital submission via MaMpf'
+    requires_submission_hint: 'Students upload their hand-in in MaMpf; otherwise it is handed in elsewhere and the tutor records it.'
     locked_after_deadline: 'Locked (deadline has passed)'
-    no_submission_required: 'No digital submission'
+    no_submission_required: 'Not handed in via MaMpf'
     not_destructible:
       has_submissions: 'Cannot delete: Submissions exist'
       has_grading_data: 'Cannot delete: Grading data exists'
@@ -357,7 +357,7 @@ en:
       missing: 'Missing'
       not_submitted: 'Not submitted'
       progress: 'Progress'
-      no_submission_required: 'No digital submission required for this assessment.'
+      no_submission_required: 'The hand-in is not via MaMpf.'
       no_participants_yet: 'No participants have been added yet. Participants are seeded from lecture subscriptions.'
       deadline:
         due_in: 'Due in %{time} (%{date})'

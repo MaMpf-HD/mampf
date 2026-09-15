@@ -159,7 +159,7 @@ test.describe("homework sheets", () => {
     await teacher.page.locator(".tempus-dominus-widget.show")
       .getByRole("gridcell", { name: dateLabel() }).click();
     await expect(deadline).not.toHaveValue("");
-    await modal.getByRole("checkbox", { name: "Requires digital submission" })
+    await modal.getByRole("checkbox", { name: "Digital submission via MaMpf" })
       .uncheck();
     await modal.getByRole("checkbox", { name: "I hereby confirm that" }).check();
     await modal.getByRole("button", { name: "Save" }).click();
@@ -170,7 +170,7 @@ test.describe("homework sheets", () => {
     await expect(dashboard.dashboard
       .getByRole("heading", { name: "Sheet from the medium" })).toBeVisible();
     await expect(dashboard.pane.getByRole("checkbox", {
-      name: "Requires digital submission",
+      name: "Digital submission via MaMpf",
     })).not.toBeChecked();
   });
 

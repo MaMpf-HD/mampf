@@ -45,7 +45,7 @@ test.describe("assessment settings form", () => {
     const title = dashboard.pane.getByLabel("Title");
     const fileType = dashboard.pane.getByLabel("Submission format");
     const requiresSubmission = dashboard.pane.getByRole("checkbox", {
-      name: "Requires digital submission",
+      name: "Digital submission via MaMpf",
     });
 
     const originalFileType = await fileType.inputValue();
