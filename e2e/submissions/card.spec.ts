@@ -1,6 +1,5 @@
 import { expect, test } from "../_support/fixtures";
 import { FactoryBot, FactoryBotObject } from "../_support/factorybot";
-import { resetClock, travelTo } from "../_support/timecop";
 import { SubmissionsPage } from "../page-objects/submissions_page";
 
 /**
@@ -298,6 +297,7 @@ test.describe("the card for a sheet that is due", () => {
   // Past the deadline the card still stands, and it says how long is left.
   test("counts the grace period down on the card", async ({
     factory,
+    clock,
     teacher,
     student,
   }) => {
@@ -307,17 +307,12 @@ test.describe("the card for a sheet that is due", () => {
     const deadline = new Date(await assignment.__call("deadline") as string);
     const inGrace = new Date(deadline.getTime() + 5 * 60 * 1000);
 
-    try {
-      await travelTo(student.page.context().request, inGrace);
-      await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    await clock.travelTo(inGrace);
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
 
-      await expect(student.page.getByText("left", { exact: false }).first())
-        .toBeVisible();
-      await expect(student.page.getByRole("link", { name: "Hand in" }))
-        .toBeVisible();
-    }
-    finally {
-      await resetClock(student.page.context().request);
-    }
+    await expect(student.page.getByText("left", { exact: false }).first())
+      .toBeVisible();
+    await expect(student.page.getByRole("link", { name: "Hand in" }))
+      .toBeVisible();
   });
 });

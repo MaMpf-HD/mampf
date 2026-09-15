@@ -2,6 +2,7 @@ import { test as base, Page } from "@playwright/test";
 import { User, userPage } from "./auth";
 import { callBackend } from "./backend";
 import { FactoryBot } from "./factorybot";
+import { Clock } from "./timecop";
 
 class UserFixture {
   page: Page;
@@ -21,6 +22,7 @@ type MaMpfFixtures = {
   teacher: UserFixture;
   tutor: UserFixture;
   factory: FactoryBot;
+  clock: Clock;
 };
 
 export * from "@playwright/test";
@@ -71,5 +73,13 @@ export const test = base.extend<MaMpfFixtures>({
 
   factory: async ({ request }, use) => {
     await use(new FactoryBot(request));
+  },
+
+  // The server's clock, put back after the test whether it passed, failed or
+  // timed out; a test that moved it and left it would move every test after.
+  clock: async ({ request }, use) => {
+    const clock = new Clock(request);
+    await use(clock);
+    await clock.reset();
   },
 });
