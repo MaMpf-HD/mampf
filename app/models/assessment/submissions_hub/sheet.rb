@@ -133,7 +133,11 @@ module Assessment
           assessment.requires_submission ? :missed : :awaiting_record
         end
 
+        # A sheet that is not handed in through MaMpf has nothing to say about
+        # files or the grace period while it is open; what it says is the
+        # deadline.
         def open_state
+          return :hand_in_elsewhere unless assessment.requires_submission
           return :tutor_decides if submission&.too_late? && submission.accepted.nil?
           return :grace_period if assignment.in_grace_period?
 

@@ -90,6 +90,29 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
     end
   end
 
+  # The deadline is what the reader needs from this card; every action on it
+  # would fail, because the sheet is collected outside MaMpf.
+  describe "a sheet that is not handed in via MaMpf" do
+    let(:assignment) do
+      create(:assignment, lecture: lecture, title: "Homework 11",
+                          deadline: 3.days.from_now, requires_submission: false)
+    end
+
+    it "keeps the deadline and the worth, and offers nothing to do" do
+      create(:assessment_task, assessment: assignment.assessment, max_points: 6)
+
+      content = render_card
+
+      expect(content).to include("Homework 11")
+      expect(content).to include(I18n.t("submission.hub.card.hand_in_elsewhere"))
+      expect(content).to include(I18n.t("submission.hub.card.worth", count: 1, points: "6"))
+      expect(content).not_to include("PDF")
+      expect(content).not_to include(I18n.t("submission.hub.card.hand_in"))
+      expect(content).not_to include(I18n.t("submission.hub.card.join"))
+      expect(content).not_to include(I18n.t("submission.hub.chips.nothing_handed_in"))
+    end
+  end
+
   describe "a sheet nothing has been handed in for" do
     it "offers both ways to start and says how they work" do
       content = render_card

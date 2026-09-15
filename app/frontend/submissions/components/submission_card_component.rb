@@ -46,12 +46,21 @@ class SubmissionCardComponent < ViewComponent::Base
   end
 
   # File type, how long is left, and what the sheet is worth - the three things
-  # that decide whether to start on it now.
+  # that decide whether to start on it now. No file type where no file is
+  # handed in.
   def meta_parts
-    parts = [assignment.accepted_file_type.delete_prefix(".").upcase]
+    parts = []
+    parts << assignment.accepted_file_type.delete_prefix(".").upcase if digital_hand_in?
     parts << time_left if assignment.active?
     parts << worth if sheet.tasks_set_up?
     parts.compact
+  end
+
+  # The card of a sheet handed in outside MaMpf keeps the deadline and the
+  # worth and loses every action: there is nothing to upload, replace or
+  # join, and whoever records the hand-in is the tutor.
+  def digital_hand_in?
+    sheet.assessment.nil? || sheet.assessment.requires_submission
   end
 
   def handed_in?

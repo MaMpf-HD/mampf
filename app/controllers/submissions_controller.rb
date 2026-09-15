@@ -12,6 +12,7 @@ class SubmissionsController < ApplicationController
                                         :seen]
   before_action :authorize_sheet, only: [:new, :enter_code, :cancel_new,
                                          :cancel_edit, :join, :seen]
+  before_action :refuse_without_digital_hand_in, only: [:new, :create, :enter_code, :join]
   before_action :set_lecture, only: [:index, :seen_all]
   before_action :prevent_caching, only: :show_manuscript
   before_action :check_student_status, only: [:index, :seen_all]
@@ -463,6 +464,16 @@ class SubmissionsController < ApplicationController
       return if @assignment
 
       render_sheet_gone
+    end
+
+    # The card offers no way in for such a sheet; a request that arrives
+    # anyway - a stale page, a hand-written one - is answered in the frame.
+    def refuse_without_digital_hand_in
+      assignment = @assignment || Assignment.find_by(id: params.dig(:submission, :assignment_id))
+      return if assignment.nil? || assignment.requires_submission
+
+      @gone_message = I18n.t("submission.hub.card.no_digital_hand_in")
+      render :gone, status: :unprocessable_content
     end
 
     # Same answer as a submission that is gone, for the same reason: the frame

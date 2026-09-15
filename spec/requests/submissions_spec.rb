@@ -114,6 +114,24 @@ RSpec.describe("Submissions", type: :request) do
         .to include(SubmissionCardComponent.frame_id(assignment))
     end
 
+    # The card of such a sheet offers no way in; the endpoint refuses the
+    # hand-written request the same way, and so does the form's page.
+    it "refuses a sheet that is not handed in via MaMpf" do
+      user.lectures << lecture
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+      assignment.assessment.update!(requires_submission: false)
+
+      expect { post(submissions_path, params: create_params) }
+        .not_to change(Submission, :count)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("submission.hub.card.no_digital_hand_in"))
+
+      get new_submission_path(assignment_id: assignment.id)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("submission.hub.card.no_digital_hand_in"))
+    end
+
     # The hand-in goes to the group the reader sits in - that is who marks it
     # and how it reaches the gradebook - so being enrolled is not enough.
     it "refuses somebody who sits in no group" do

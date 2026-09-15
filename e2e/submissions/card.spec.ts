@@ -294,6 +294,71 @@ test.describe("the card for a sheet that is due", () => {
       .toHaveCount(0);
   });
 
+  // A sheet collected outside MaMpf keeps its card - the deadline is what
+  // the reader needs from it - and loses every action on it; and once the
+  // tutor has recorded and marked it, the points arrive in the list.
+  test("shows a sheet not handed in via MaMpf with its deadline, and later its points", async ({
+    factory,
+    clock,
+    teacher,
+    tutor,
+    student,
+  }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      teacher_id: teacher.user.id,
+      locale: "en",
+    });
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Tuesday group",
+    });
+    await factory.create("lecture_user_join", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.user.id,
+    });
+    const assignment = await factory.create("assignment", [], {
+      lecture_id: lecture.id,
+      title: "Homework 1",
+      deadline: new Date(Date.now() + 7 * 86400000).toISOString(),
+      requires_submission: false,
+    });
+    const assessment = await assignment.__call("assessment");
+    await factory.create("assessment_task", [], {
+      assessment_id: assessment.id, max_points: 10,
+    });
+
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    await expect(student.page.getByRole("heading", { name: "Homework 1" })).toBeVisible();
+    await expect(student.page.getByText("Due", { exact: false })).toBeVisible();
+    await expect(student.page.getByText("Not handed in via MaMpf")).toBeVisible();
+    await expect(student.page.getByRole("link", { name: "Hand in" })).toHaveCount(0);
+    await expect(student.page.getByRole("link", { name: "Join with a code" })).toHaveCount(0);
+
+    const deadline = new Date(await assignment.__call("deadline") as string);
+    await clock.travelTo(new Date(deadline.getTime() + 2 * 86400000));
+
+    await tutor.page.goto(`/lectures/${lecture.id}/tutorials`);
+    const row = tutor.page.getByRole("table")
+      .getByRole("row", { name: student.user.name_in_tutorials });
+    await expect(row.getByText("Not yet recorded")).toBeVisible();
+    await row.getByRole("link", { name: "Record a hand-in on paper or by other means" })
+      .click();
+    await expect(row.getByText("Pending Grading")).toBeVisible();
+    await row.getByRole("spinbutton", { name: `Task 1 for ${student.user.name_in_tutorials}` })
+      .fill("8");
+    await row.getByRole("button", { name: "Save this row's points" }).click();
+    await expect(row.getByText("Reviewed")).toBeVisible();
+
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    const list = student.page.getByRole("region", { name: "Earlier sheets" });
+    await expect(list.getByRole("group").getByText("Homework 1")).toBeVisible();
+    await expect(list.getByRole("group").getByText("8", { exact: true })).toBeVisible();
+  });
+
   // Past the deadline the card still stands, and it says how long is left.
   test("counts the grace period down on the card", async ({
     factory,

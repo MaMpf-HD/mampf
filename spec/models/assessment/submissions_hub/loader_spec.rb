@@ -365,6 +365,16 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
       expect(sheet_for(assignment).state).to eq(:nothing_handed_in)
     end
+
+    # Nothing is handed in through MaMpf, so neither the file nor the grace
+    # period has anything to say while such a sheet is open.
+    it "is :hand_in_elsewhere while a sheet collected on paper is open, grace period included" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Homework",
+                                                 expired_since: 10.minutes,
+                                                 requires_submission: false)
+
+      expect(sheet_for(assignment).state).to eq(:hand_in_elsewhere)
+    end
   end
 
   describe "who marked a sheet and when" do

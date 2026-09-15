@@ -2873,6 +2873,10 @@ en:
           one: "%{count} problem, %{points} points"
           other: "%{count} problems, %{points} points"
         hand_in: Hand in
+        hand_in_elsewhere: >-
+          Not handed in via MaMpf. Your tutor records what arrived and enters
+          the points.
+        no_digital_hand_in: This sheet is not handed in via MaMpf.
         replace: Replace file
         invite: Invite someone
         join: Join with a code
