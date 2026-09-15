@@ -63,7 +63,7 @@ de:
     statistics: 'Statistiken'
     updated: 'Bewertung erfolgreich aktualisiert.'
     requires_submission: 'Digitale Abgabe über MaMpf'
-    requires_submission_hint: 'Studierende laden ihre Abgabe in MaMpf hoch; sonst wird sie außerhalb abgegeben und der Tutor erfasst sie.'
+    requires_submission_hint: 'Studierende laden ihre Abgabe in MaMpf hoch.'
     locked_after_deadline: 'Gesperrt (Abgabefrist abgelaufen)'
     no_submission_required: 'Abgabe nicht über MaMpf'
     not_destructible:

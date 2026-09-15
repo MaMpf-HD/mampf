@@ -63,7 +63,7 @@ en:
     statistics: 'Statistics'
     updated: 'Assessment updated successfully.'
     requires_submission: 'Digital submission via MaMpf'
-    requires_submission_hint: 'Students upload their hand-in in MaMpf; otherwise it is handed in elsewhere and the tutor records it.'
+    requires_submission_hint: 'Students upload their hand-in in MaMpf.'
     locked_after_deadline: 'Locked (deadline has passed)'
     no_submission_required: 'Not handed in via MaMpf'
     not_destructible:
