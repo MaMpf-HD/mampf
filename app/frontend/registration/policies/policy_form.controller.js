@@ -13,12 +13,24 @@ export default class extends Controller {
       if (section.dataset.kind === selectedKind) {
         section.classList.remove("d-none");
         // Enable inputs inside
-        section.querySelectorAll("input, select").forEach(input => input.disabled = false);
+        section.querySelectorAll("input, select").forEach((input) => {
+          input.disabled = false;
+          if (input.tomselect) {
+            input.tomselect.enable();
+            input.setAttribute("aria-disabled", "false");
+          }
+        });
       }
       else {
         section.classList.add("d-none");
         // Disable inputs inside to prevent submission
-        section.querySelectorAll("input, select").forEach(input => input.disabled = true);
+        section.querySelectorAll("input, select").forEach((input) => {
+          input.disabled = true;
+          if (input.tomselect) {
+            input.tomselect.disable();
+            input.setAttribute("aria-disabled", "true");
+          }
+        });
       }
     });
   }

@@ -34,6 +34,7 @@ $container-max-widths: (
 @import "~/styles/chapters.scss";
 @import "~/styles/colors.scss";
 @import "~/styles/courses.scss";
+@import "~/styles/grade_scheme_summary.scss";
 @import "~/lectures/lectures.scss";
 @import "~/styles/lessons.scss";
 @import "~/styles/main.scss";
@@ -46,9 +47,26 @@ $container-max-widths: (
 @import "~/styles/thyme_feedback.scss";
 @import "~/styles/users.scss";
 @import "~/styles/submissions.scss";
+@import "~/styles/assessment_table.scss";
 @import "~/styles/vertices.scss";
 @import "~/styles/link.scss";
 @import "trix";
+
+.task-index-highlight {
+  animation: task-index-pulse 0.6s ease;
+}
+
+@keyframes task-index-pulse {
+  0% {
+    color: #212529;
+  }
+  40% {
+    color: #dc3545;
+  }
+  100% {
+    color: #212529;
+  }
+}
 
 @import "~/styles/_branding.scss";
 
@@ -185,14 +203,6 @@ $modal-xxl: 1600px !default;
   all: unset;
 }
 
-table.submission-table-bordered th {
-  border: 1px solid #c5ccd3;
-}
-
-table.submission-table-bordered td {
-  border: 1px solid #c5ccd3;
-}
-
 .exceptionBox {
   background-color: #f8d7da;
 }
@@ -288,6 +298,10 @@ a {
 
 .small-width {
   max-width: $small-width;
+}
+
+.medium-width {
+  max-width: $medium-width;
 }
 
 .subtle-background {

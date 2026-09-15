@@ -1,22 +1,40 @@
 class Assignment < ApplicationRecord
+  include Assessment::Pointable
+
+  attr_writer :requires_submission
+
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
+  has_many :sightings, class_name: "AssignmentSighting", dependent: :destroy
 
+  before_save :inherit_deletion_date_from_lecture
+  after_create :setup_assessment
   before_destroy :check_destructibility, prepend: true
+  # A new sheet opens the list, and so does a deadline moved into the future:
+  # the sheet is back in play, and a verdict that calls itself final over an
+  # open sheet is what the list is there to prevent. A deadline moved within
+  # the past is a correction and changes nothing.
+  #
+  # Rails keeps track of which action a record was committed for, so the
+  # creation hangs on that. The deadline cannot: `saved_change_to_deadline?`
+  # describes the last save alone, and a record may be saved twice inside one
+  # transaction - moved and then renamed. The reason is noted where it happens
+  # and kept until the commit.
+  after_save :note_deadline_move
+  after_create_commit :reopen_lecture_assignment_list
+  after_update_commit :reopen_after_deadline_move, if: :deadline_moved_ahead?
+  after_rollback :forget_deadline_move
+
+  def requires_submission
+    return assessment.requires_submission if assessment
+
+    @requires_submission.nil? || @requires_submission
+  end
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
-  validates :deletion_date, presence: true
-  validate :deletion_date_cannot_be_in_the_past
-
-  def deletion_date_cannot_be_in_the_past
-    return unless deletion_date.present? && deletion_date < Time.zone.now.to_date
-
-    errors.add(:deletion_date, I18n.t("activerecord.errors.models." \
-                                      "assignment.attributes.deletion_date." \
-                                      "in_past"))
-  end
+  validate :deadline_not_in_past, if: -> { deadline_changed? }
 
   scope :active, -> { where(deadline: Time.zone.now..) }
 
@@ -28,6 +46,7 @@ class Assignment < ApplicationRecord
 
   validates :accepted_file_type,
             inclusion: { in: Assignment.accepted_file_types }
+  validate :locked_fields_unchanged, if: -> { persisted? && past_deadline? }
 
   def submission(user)
     UserSubmissionJoin.where(submission: Submission.where(assignment: self),
@@ -35,12 +54,42 @@ class Assignment < ApplicationRecord
                       &.first&.submission
   end
 
+  # A team formed without a file has handed nothing in; its members still
+  # need their row in the tutor's table.
   def submitter_ids
-    UserSubmissionJoin.where(submission: submissions).pluck(:user_id).uniq
+    UserSubmissionJoin.where(submission: submissions.proper).pluck(:user_id).uniq
   end
 
   def submitters
     User.where(id: submitter_ids)
+  end
+
+  def user_ids_in_lecture_from_memberships
+    lecture.lecture_memberships.pluck(:user_id).uniq
+  end
+
+  def applicable_users_not_in_tutorials
+    User.where(id: applicable_user_ids_not_in_tutorials_from_memberships)
+  end
+
+  def non_submitters_in_tutorials
+    if past_deadline?
+      non_submitters_in_tutorials_postdeadline
+    else
+      non_submitters_in_tutorials_predeadline
+    end
+  end
+
+  def non_submitters_in_tutorial(tutorial)
+    if past_deadline?
+      non_submitters_in_tutorial_postdeadline(tutorial)
+    else
+      non_submitters_in_tutorial_predeadline(tutorial)
+    end
+  end
+
+  def past_deadline?
+    deadline.present? && deadline < Time.zone.now
   end
 
   def active?
@@ -58,6 +107,11 @@ class Assignment < ApplicationRecord
   def totally_expired?
     !semiactive?
   end
+  alias grading_open? totally_expired?
+
+  def assessable?
+    assessment != nil
+  end
 
   def in_grace_period?
     semiactive? && !active?
@@ -67,14 +121,6 @@ class Assignment < ApplicationRecord
     return deadline unless lecture.submission_grace_period
 
     deadline + lecture.submission_grace_period.minutes
-  end
-
-  def current?
-    in?(lecture.current_assignments)
-  end
-
-  def previous?
-    in?(lecture.previous_assignments)
   end
 
   def previous
@@ -97,7 +143,17 @@ class Assignment < ApplicationRecord
   end
 
   def destructible?
-    submissions.with_uploads.none?
+    destruction_blockers.empty?
+  end
+
+  # Named the way Rosterable names them, so a view can ask any deletable thing
+  # the same question. A sheet whose points are already in the pointbook goes
+  # nowhere either, even if nobody uploaded anything.
+  def destruction_blockers
+    blockers = []
+    blockers << :has_submissions if submissions.with_uploads.any?
+    blockers << :has_grading_data if grading_data?
+    blockers
   end
 
   def check_destructibility
@@ -150,7 +206,136 @@ class Assignment < ApplicationRecord
     ".gz"
   end
 
-  def localized_deletion_date
-    deletion_date.strftime(I18n.t("date.formats.concise"))
-  end
+  private
+
+    def locked_fields_unchanged
+      return unless accepted_file_type_changed?
+
+      errors.add(:accepted_file_type, :locked_after_deadline)
+    end
+
+    def deadline_not_in_past
+      return if deadline.blank?
+
+      errors.add(:deadline, :in_past) if deadline < Time.zone.now
+    end
+
+    def inherit_deletion_date_from_lecture
+      self.deletion_date = lecture.submission_deletion_date
+    end
+
+    def grading_data?
+      return false unless assessment
+
+      participations = assessment.assessment_participations
+
+      participations.exists?(status: [:reviewed, :exempt]) ||
+        participations.where.not(points_total: nil).exists? ||
+        participations.joins(:task_points).exists?
+    end
+
+    # A creation is not a move, and it has its own callback - noting it here
+    # would leave the reason lying around for the next save to pick up.
+    def note_deadline_move
+      return if saved_change_to_id?
+      return unless saved_change_to_deadline? && active?
+
+      @deadline_moved_ahead = true
+    end
+
+    # Asked once, by the callback below, and forgotten in the asking: a reason
+    # that outlived its transaction would reopen the list on the next save.
+    def deadline_moved_ahead?
+      @deadline_moved_ahead.tap { @deadline_moved_ahead = nil }
+    end
+
+    def forget_deadline_move
+      @deadline_moved_ahead = nil
+    end
+
+    def reopen_after_deadline_move
+      reopen_lecture_assignment_list
+    end
+
+    def setup_assessment
+      ensure_pointbook!(requires_submission: requires_submission)
+    end
+
+    def non_submitters_in_tutorial_predeadline(tutorial)
+      User.where(id: non_submitter_ids_in_tutorial_from_memberships(tutorial))
+    end
+
+    def non_submitters_in_tutorial_postdeadline(tutorial)
+      ids = non_submitter_ids_in_tutorial_from_participations(tutorial) |
+            non_submitter_ids_in_tutorial_from_memberships(tutorial)
+      User.where(id: ids)
+    end
+
+    def non_submitters_in_tutorials_predeadline
+      User.where(id: non_submitter_ids_in_tutorials_from_memberships)
+    end
+
+    def non_submitters_in_tutorials_postdeadline
+      ids = non_submitter_ids_in_tutorials_from_participations |
+            non_submitter_ids_in_tutorials_from_memberships
+      User.where(id: ids)
+    end
+
+    def applicable_user_ids_not_in_tutorials_from_memberships
+      user_ids_in_lecture_from_memberships - user_ids_in_tutorials_from_memberships
+    end
+
+    def non_submitter_ids_in_tutorials_from_memberships
+      user_ids_in_tutorials_from_memberships - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorials_from_participations
+      user_ids_in_tutorials_from_participations - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorial_from_memberships(tutorial)
+      user_ids_in_tutorial_from_memberships(tutorial) - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorial_from_participations(tutorial)
+      user_ids_in_tutorial_from_participations(tutorial) - submitter_ids
+    end
+
+    def user_ids_in_tutorials_from_memberships
+      lecture.tutorials.joins(:tutorial_memberships)
+             .pluck("tutorial_memberships.user_id").uniq
+    end
+
+    def user_ids_in_tutorials_from_participations
+      return [] if assessment.blank?
+
+      tutorial_ids = lecture.tutorials.pluck(:id)
+      Assessment::Participation
+        .where(assessment_id: assessment.id, tutorial_id: tutorial_ids)
+        .distinct
+        .pluck(:user_id)
+    end
+
+    def user_ids_in_tutorial_from_memberships(tutorial)
+      tutorial.tutorial_memberships.pluck("user_id").uniq
+    end
+
+    def user_ids_in_tutorial_from_participations(tutorial)
+      return [] if assessment.blank?
+
+      Assessment::Participation
+        .where(assessment_id: assessment.id, tutorial_id: tutorial.id)
+        .distinct
+        .pluck(:user_id)
+    end
+
+    # Skip Lecture validations so an unrelated validation error cannot
+    # leave assignments_complete_at set after an Assignment is added.
+    def reopen_lecture_assignment_list
+      return unless lecture&.assignments_complete?
+
+      # rubocop:disable Rails/SkipsModelValidations
+      lecture.update_column(:assignments_complete_at, nil)
+      # rubocop:enable Rails/SkipsModelValidations
+    end
 end

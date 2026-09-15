@@ -1,0 +1,62 @@
+// The performance table is wide and long: every student of the lecture against
+// every sheet of the term. It scrolls inside its own box so that the two header
+// rows stay put — a sheet column says nothing once its number has scrolled off.
+.performance-records-scroll {
+  max-height: 75vh;
+}
+
+.performance-records {
+  // The height of the group row, and with it the line the column row comes to
+  // rest on. The group headings are one line and do not wrap, so this is the
+  // height they take; anything taller in that row has to change it too.
+  $group-row-height: 2.25rem;
+
+  // Sticky on the cells, not on `thead`: a sticky row group keeps its own
+  // background, but the rows scrolling underneath paint their text over it,
+  // which reads as a smeared header.
+  thead th {
+    position: sticky;
+    z-index: 2;
+    background-color: var(--bs-table-bg);
+  }
+
+  thead tr:first-child th {
+    top: 0;
+  }
+
+  thead tr:first-child th[colspan] {
+    height: $group-row-height;
+  }
+
+  thead tr:last-child th {
+    // A pixel of overlap rather than an exact seam: at a shared edge the row
+    // scrolling underneath draws a slice of itself between the two bands.
+    top: calc(#{$group-row-height} - 1px);
+    box-shadow: inset 0 -1px 0 var(--bs-border-color);
+  }
+
+  // Figures belong under each other, and monospace makes the row read like a
+  // terminal.
+  .numeric {
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Three right-aligned figures under one heading read as one number with gaps
+  // in it. The maximum is the base of the points beside it, so a rule between
+  // the two would separate what belongs together - it is set apart by being
+  // quiet instead. The share is a different quantity and gets the rule.
+  .due-points {
+    padding-right: 0.75rem;
+  }
+
+  .due-share {
+    padding-left: 0.75rem;
+    border-left: var(--bs-border-width) solid var(--bs-border-color);
+  }
+
+  // Where "due so far" ends and the sheets begin, a heavier line.
+  .due-share,
+  .due-group-end {
+    border-right: 2px solid var(--bs-border-color);
+  }
+}

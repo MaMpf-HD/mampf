@@ -3,6 +3,7 @@ module Rosters
     # Manages manual roster operations (add, remove, move) while enforcing capacity
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
+    class GradingDataPresentError < StandardError; end
 
     # Raised to unwind the move. ActiveRecord::Rollback cannot do that job here:
     # the nested with_lock transactions swallow it and commit anyway.
@@ -21,6 +22,7 @@ module Rosters
 
     def remove_user!(user, rosterable)
       removed = rosterable.with_lock do
+        ensure_no_grading_data!(user, rosterable)
         remove_user_without_lock!(user, rosterable)
       end
       RosterNotificationMailer.removed(user, rosterable) if removed
@@ -32,6 +34,8 @@ module Rosters
 
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
         raise(MoveWithoutEffectError) unless user_in_roster?(user, from_rosterable)
+
+        ensure_no_grading_data!(user, from_rosterable)
 
         removed = remove_user_without_lock!(user, from_rosterable)
         added   = add_user_without_lock!(user, to_rosterable, force: force)
@@ -45,6 +49,19 @@ module Rosters
     end
 
     private
+
+      # Only rosterables that *are* the assessable can lose a result this way —
+      # a talk or an exam owns its assessment, so leaving it means leaving the
+      # gradebook behind. A tutorial is merely where a result is graded; the
+      # assessment belongs to the assignment and survives the move.
+      def ensure_no_grading_data!(user, rosterable)
+        assessment = rosterable.try(:assessment)
+        return unless assessment&.grading_data_for_user?(user)
+
+        raise(GradingDataPresentError,
+              "#{rosterable.class.name} #{rosterable.id} holds grading data " \
+              "for user #{user.id}")
+      end
 
       def user_in_roster?(user, rosterable)
         rosterable.roster_entries.exists?(rosterable.roster_user_id_column => user.id)

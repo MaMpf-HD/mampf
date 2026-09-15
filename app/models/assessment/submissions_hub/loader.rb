@@ -1,0 +1,319 @@
+module Assessment
+  module SubmissionsHub
+    # Everything /lectures/:id/submissions needs about one person, fetched in one
+    # go: a row and a fold per sheet and the exam-admission block all want the
+    # same handful of associations, and asked for per sheet that is an N+1 the
+    # moment a lecture runs a dozen of them.
+    class Loader
+      def initialize(lecture:, user:)
+        @lecture = lecture
+        @user = user
+      end
+
+      def call
+        Result.new(sheets: sheets, standing: standing, open_sheets: open_sheets,
+                   due: due, latest_marked: latest_marked, invitations: invitations,
+                   possible_partners: possible_partners, invited_users: invited_users,
+                   next_scheduled: next_scheduled)
+      end
+
+      private
+
+        attr_reader :lecture, :user
+
+        def sheets
+          @sheets ||= assignments.map { |assignment| build_sheet(assignment) }
+        end
+
+        def build_sheet(assignment)
+          assessment = assignment.assessment
+          participation = assessment && participations[assessment.id]
+          submission = submissions[assignment.id]
+          # `Submission#too_late?` reads its assignment's deadline, and that is the
+          # assignment in hand. Without this it would be fetched again per sheet.
+          submission&.assignment = assignment
+
+          Sheet.new(assignment: assignment, assessment: assessment,
+                    participation: participation, submission: submission,
+                    tasks: sorted_tasks(assessment),
+                    points_by_task_id: task_points_by_task_id(participation),
+                    user: user, sighting: sightings[assignment.id])
+        end
+
+        # `tasks.order(:position)` would go back to the database for a list that is
+        # already loaded, once per sheet.
+        def sorted_tasks(assessment)
+          return [] unless assessment
+
+          assessment.tasks.sort_by { |task| task.position || 0 }
+        end
+
+        def task_points_by_task_id(participation)
+          return {} unless participation
+
+          participation.task_points.index_by(&:task_id)
+        end
+
+        def assignments
+          @assignments ||= lecture.assignments
+                                  .includes(assessment: :tasks)
+                                  .order(deadline: :desc)
+                                  .to_a
+        end
+
+        def assessment_ids
+          @assessment_ids ||= assignments.filter_map { |a| a.assessment&.id }
+        end
+
+        # `task_points` rather than `task_points: :task`: the tasks already hang on
+        # the assessment, and asking for them again here costs three more queries.
+        # The graders come along because the fold names who marked the sheet.
+        def participations
+          @participations ||=
+            if assessment_ids.empty?
+              {}
+            else
+              Participation
+                .where(assessment_id: assessment_ids, user_id: user.id)
+                .includes(:grader, task_points: :grader)
+                .index_by(&:assessment_id)
+            end
+        end
+
+        def submissions
+          @submissions ||=
+            if assignments.empty?
+              {}
+            else
+              Submission.joins(:user_submission_joins)
+                        .where(user_submission_joins: { user_id: user.id },
+                               assignment_id: assignments.map(&:id))
+                        .includes(:users)
+                        .index_by(&:assignment_id)
+            end
+        end
+
+        def sightings
+          @sightings ||=
+            if assignments.empty?
+              {}
+            else
+              AssignmentSighting.where(user_id: user.id,
+                                       assignment_id: assignments.map(&:id))
+                                .index_by(&:assignment_id)
+            end
+        end
+
+        def standing
+          Standing.new(record: record, rule: rule,
+                       achievement_values: achievement_values,
+                       points_still_open: points_still_open,
+                       points_marked_so_far: points_marked_so_far,
+                       points_awaiting_marks: points_awaiting_marks,
+                       sheets_awaiting_marks: awaiting_marks_sheets.size,
+                       assignments_complete: lecture.assignments_complete?,
+                       uses_exam_eligibility: lecture.uses_exam_eligibility?)
+        end
+
+        # What the reader has been measured against: the sheets that are
+        # settled for them. The record cannot say this - its maximum counts
+        # every sheet the lecture has set up, so after two sheets full marks
+        # read as 64 %, a number about the calendar rather than about the
+        # reader.
+        #
+        # A sheet sitting with the tutor is out of it: those points are neither
+        # earned nor lost, and counting them as a zero would put the tutor's
+        # backlog on the reader's account - which is the complaint this basis
+        # answers, a flawless reader dropping below half overnight because a
+        # deadline passed on a Friday.
+        #
+        # `StudentPerformance::DuePoints#marked_max_for` draws the same line
+        # for the performance table, down to the grace period and the
+        # exemptions, and the two must not drift apart. It is not called here
+        # because it would fetch the assignments again; these are already in
+        # hand.
+        def points_marked_so_far
+          points_due - points_awaiting_marks + points_marked_not_due
+        end
+
+        def points_due
+          sheets.select { |sheet| due_for_points?(sheet) }
+                .sum { |sheet| sheet.max_points || 0 }
+        end
+
+        # Marked although the deadline is still ahead: a deadline may be moved
+        # forward at any time, and nothing forbids it once marking has begun.
+        # The points are in the total whatever the clock says, so they have to
+        # be in the base as well - otherwise 20 of 20 turns into 200 %.
+        def points_marked_not_due
+          sheets.select { |sheet| marked_not_due?(sheet) }
+                .sum { |sheet| sheet.max_points || 0 }
+        end
+
+        def marked_not_due?(sheet)
+          !due_for_points?(sheet) && sheet.participation&.reviewed?
+        end
+
+        def points_awaiting_marks
+          awaiting_marks_sheets.sum { |sheet| sheet.max_points || 0 }
+        end
+
+        # Due once nothing more can be handed in - `totally_expired?` is the
+        # deadline with the lecture's grace period on it. A sheet the reader was
+        # let off is not weighed against them, which is how the table treats it.
+        def due_for_points?(sheet)
+          sheet.assignment.totally_expired? && sheet.state != :exempt
+        end
+
+        # Reuse the loaded sheets for the same due, pending, and submitted_at
+        # conditions as StudentPerformance::DuePoints, avoiding another query.
+        def awaiting_marks_sheets
+          @awaiting_marks_sheets ||= sheets.select { |sheet| awaiting_marks?(sheet) }
+        end
+
+        def awaiting_marks?(sheet)
+          return false unless due_for_points?(sheet)
+
+          sheet.participation&.pending? &&
+            sheet.participation.submitted_at.present?
+        end
+
+        # StudentPerformance::Record does not track assignment deadlines or sheet
+        # states, so it cannot distinguish available points from missed work.
+        def points_still_open
+          sheets.reject { |sheet| decided?(sheet) }
+                .sum { |sheet| sheet.max_points || 0 }
+        end
+
+        # Marked, or counted as nothing, or taken out of the reckoning: whatever
+        # happens next, these do not move any more.
+        def decided?(sheet)
+          sheet.state.in?([:marked, :absent, :missed, :not_recorded, :rejected,
+                           :exempt, :no_points])
+        end
+
+        def record
+          lecture.student_performance_records.find_by(user_id: user.id)
+        end
+
+        # The conditions list walks the required achievements; loading them here
+        # keeps that walk from going back to the database.
+        def rule
+          lecture.active_performance_rule
+                 &.tap { |active_rule| active_rule.required_achievements.load }
+        end
+
+        # The record says which achievements were met and which are not graded yet,
+        # never what was recorded for one ("you have 67.3 %"). Keyed by achievement
+        # id, which is what the conditions list holds.
+        def achievement_values
+          Participation
+            .joins(:assessment)
+            .where(assessment_assessments: { lecture_id: lecture.id,
+                                             assessable_type: "Achievement" },
+                   user_id: user.id)
+            .where.not(grade_text: [nil, ""])
+            .pluck(Assessment.arel_table[:assessable_id], :grade_text)
+            .to_h
+        end
+
+        # Everything that can still be handed in, soonest deadline first. Each of
+        # them needs a card of its own: a sheet weeks away is still a sheet you
+        # may hand in early, and a row in the history would take that away.
+        def open_sheets
+          @open_sheets ||= sheets.select { |sheet| still_open?(sheet) }
+                                 .sort_by { |sheet| sheet.assignment.deadline }
+        end
+
+        # A rejected sheet is closed for this reader whatever the clock says:
+        # there is nothing left to replace, delete or leave, and a sheet takes
+        # one hand-in. Left among the open ones it would get a card, and the
+        # card has nothing to say about the state - no badge, no note, no
+        # number. The row has all three.
+        def still_open?(sheet)
+          return false if sheet.state == :rejected
+
+          sheet.assignment.active? || sheet.assignment.in_grace_period?
+        end
+
+        # The sheet the page leads with, and every sheet sharing its deadline - a
+        # lecture may set two for the same date. Deliberately not
+        # `Lecture#current_assignments`, which counts only deadlines still ahead:
+        # during the grace period the card has the most to say ("15 minutes left")
+        # and that method has already dropped the sheet.
+        def due
+          @due ||= begin
+            earliest = open_sheets.first&.assignment&.deadline
+            open_sheets.select { |sheet| sheet.assignment.deadline == earliest }
+          end
+        end
+
+        def latest_marked
+          sheets.select { |sheet| sheet.state == :marked }
+                .max_by { |sheet| sheet.marked_at || sheet.assignment.deadline }
+        end
+
+        # Team-ups somebody has offered the reader, by assignment. Only a sheet
+        # that can still be handed in carries one, so the open ones are the whole
+        # search. One query for the lecture, with the inviter along for the ride.
+        def invitations
+          open_ids = open_sheets.map { |sheet| sheet.assignment.id }
+          return {} if open_ids.empty?
+
+          Submission.where(assignment_id: open_ids)
+                    .where("? = ANY(invited_user_ids)", user.id)
+                    .includes(:users)
+                    .group_by(&:assignment_id)
+        end
+
+        # What the card says when nothing is due: the sheet the lecturer has
+        # scheduled but not released yet. Only asked when there is no open sheet,
+        # because that is the only time anybody reads it.
+        def next_scheduled
+          return if open_sheets.any?
+
+          lecture.next_scheduled_sheet
+        end
+
+        # The hand-ins that get a card of their own. A card names the group it
+        # hands in to and the tutors on it; a row in the list does not, so the
+        # two queries for them are spent here rather than over every sheet of
+        # the lecture - and not at all once the last sheet is closed.
+        def open_submissions
+          @open_submissions ||= open_sheets.filter_map(&:submission)
+                                           .tap { |records| preload_tutorials(records) }
+        end
+
+        def preload_tutorials(records)
+          return if records.empty?
+
+          ActiveRecord::Associations::Preloader
+            .new(records: records, associations: { tutorial: :tutors })
+            .call
+        end
+
+        # Who has been invited to one of those and has not joined yet.
+        # `Submission#invited_users` builds its query from an id column, so no
+        # `includes` reaches it - one query for the page instead of one per card.
+        def invited_users
+          ids = open_submissions.flat_map(&:invited_user_ids).uniq
+          return {} if ids.empty?
+
+          by_id = User.where(id: ids).index_by(&:id)
+          open_submissions.to_h do |submission|
+            [submission.id, submission.invited_user_ids.filter_map { |id| by_id[id] }]
+          end
+        end
+
+        # Everybody the reader has ever handed in with in this lecture. The card
+        # asks it twice per open sheet - once to decide whether inviting is still
+        # possible, once for the list to invite from - and it does not depend on
+        # the sheet, so it is fetched once. With no open sheet there is no card
+        # to ask, and then it is not fetched at all.
+        def possible_partners
+          @possible_partners ||=
+            open_sheets.any? ? user.submission_partners(lecture).to_a : []
+        end
+    end
+  end
+end

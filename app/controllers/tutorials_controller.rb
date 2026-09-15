@@ -13,10 +13,10 @@ class TutorialsController < ApplicationController
                                         :bulk_download_corrections,
                                         :bulk_upload,
                                         :export_teams]
-  before_action :set_lecture, only: [:index, :overview]
+  before_action :set_lecture, only: [:index]
   before_action :set_lecture_from_form, only: [:create]
   before_action :can_view_index, only: :index
-  authorize_resource except: [:index, :overview, :create, :validate_certificate,
+  authorize_resource except: [:index, :create, :validate_certificate,
                               :new, :cancel_new]
 
   require "rubygems"
@@ -39,16 +39,6 @@ class TutorialsController < ApplicationController
     @tutorial = Tutorial.find_by(id: params[:tutorial]) || current_user.tutorials(@lecture).first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
-
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
-  end
-
-  def overview
-    authorize! :overview, Tutorial.new, @lecture
-    @assignments = @lecture.assignments.order(deadline: :desc)
-    @assignment = Assignment.find_by(id: params[:assignment]) ||
-                  @assignments&.first
-    @tutorials = @lecture.tutorials
 
     render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
@@ -207,8 +197,6 @@ class TutorialsController < ApplicationController
   def bulk_upload
     files = JSON.parse(params[:cached_files].to_s)
     @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
-    @stack = @assignment.submissions.where(tutorial: @tutorial).proper
-                        .order(:last_modification_by_users_at)
     send_correction_upload_emails
   # in case an empty string for files is sent
   rescue JSON::ParserError

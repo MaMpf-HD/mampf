@@ -60,6 +60,20 @@ module Cypress
       end
     end
 
+    # Writes attributes onto an instance FactoryBot.create() made earlier.
+    # A test sometimes needs a record in a state no factory can hand it: a
+    # lecture whose assignment list is closed, for instance, cannot be created
+    # that way, because creating an assignment opens the list again.
+    def update_instance
+      factory_name = validate_factory_name(params["factory_name"])
+      instance = factory_class_for(factory_name).find(params["instance_id"])
+      instance.update!(params[:args].to_unsafe_hash)
+      render json: instance.as_json, status: :created
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Instance to update was not found" }.to_json,
+             status: :bad_request
+    end
+
     private
 
       def validate_factory_name(factory_name)

@@ -18,7 +18,6 @@ test.describe("the lecture edit page", () => {
       for (const [tab, form, warning] of [
         ["people", "#lecture-form", "#lecture-basics-warning"],
         ["settings", "#lecture-preferences-form", "#lecture-preferences-warning"],
-        ["assignments", "#lecture-assignments-form", "#lecture-assignments-warning"],
       ] as const) {
         await visitEdit(page, lecture.id, tab);
         await expect(page.locator(warning)).toBeHidden();
@@ -30,21 +29,22 @@ test.describe("the lecture edit page", () => {
       }
     });
 
-  test("puts the assignments tab back when the change is discarded",
+  test("puts the settings tab back when the change is discarded",
     async ({ factory, admin: { page } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
-      await visitEdit(page, lecture.id, "assignments");
-      const teamSize = page.getByLabel("maximal team size for submissions");
-      const saved = await teamSize.inputValue();
+      await visitEdit(page, lecture.id, "settings");
+      const startSection = page.getByLabel("Nummer of the first section");
+      const saved = await startSection.inputValue();
 
-      await teamSize.fill("7");
-      await teamSize.dispatchEvent("change", { bubbles: true });
-      await expect(page.locator("#lecture-assignments-warning")).toBeVisible();
+      await page.getByLabel("absolute numbering").check();
+      await startSection.fill("7");
+      await startSection.dispatchEvent("change", { bubbles: true });
+      await expect(page.locator("#lecture-preferences-warning")).toBeVisible();
 
-      await page.locator("#cancel-lecture-assignments").click();
+      await page.locator("#cancel-lecture-preferences").click();
 
-      await expect(page.locator("#lecture-assignments-warning")).toBeHidden();
-      await expect(teamSize).toHaveValue(saved);
+      await expect(page.locator("#lecture-preferences-warning")).toBeHidden();
+      await expect(startSection).toHaveValue(saved);
     });
 
   test("only lets the start section be picked with absolute numbering on",

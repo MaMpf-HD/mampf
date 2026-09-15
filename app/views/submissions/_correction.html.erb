@@ -1,29 +1,63 @@
-<div class="row">
-  <div class="col-12">
-    <% if !@assignment.active? %>
-      <%= link_to t('buttons.upload'),
-                  edit_correction_path(submission),
-                  class: 'btn btn-sm btn-outline-secondary mb-2',
-                  remote: true %>
-    <% else %>
-      <button class="btn btn-sm btn-outline-secondary mb-2" disabled>
-        <%= t('buttons.upload') %>
-      </button>
-    <% end %>
-    <span class="correction-action-area"
-        data-id="<%= submission.id %>">
-      <% if submission.correction %>
-        <%= link_to correction_display_mode(submission),
-                    show_correction_path(submission),
-                    class: 'btn btn-sm btn-outline-secondary mb-2',
-                    data: { turbo: false } %>
-        <%= link_to t('buttons.delete'),
-                    delete_correction_path(submission),
-                    class: 'btn btn-sm btn-outline-secondary mb-2',
-                    data: { confirm: t('confirmation.generic') },
-                    method: :delete,
-                    remote: true %>
+<%# Every row keeps the four slots - view, download, upload, delete - so the
+    upload icon stands under the upload icon of the rows above and below,
+    whether or not a correction is there yet. %>
+<% inline = !submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
+<% slot = "d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5" %>
+<span class="correction-action-area d-inline-flex align-items-center gap-1" data-id="<%= submission.id %>">
+  <% if submission.correction %>
+    <% if inline %>
+      <%= link_to show_correction_path(submission),
+                  class: "#{slot} text-decoration-none text-success",
+                  target: "_blank",
+                  rel: "noopener",
+                  title: t('assessment.grading_tutorial.show_correction'),
+                  aria: { label: t('assessment.grading_tutorial.show_correction') } do %>
+        <i class="bi bi-file-earmark-check"></i>
       <% end %>
-    </span>
-  </div>
-</div>
+    <% end %>
+
+    <%= link_to show_correction_path(submission, params: { download: 'true' }),
+                class: "#{slot} text-decoration-none text-success",
+                data: { turbo: false },
+                title: t('assessment.grading_tutorial.download_correction'),
+                aria: { label: t('assessment.grading_tutorial.download_correction') } do %>
+      <i class="bi bi-download"></i>
+    <% end %>
+  <% else %>
+    <% if inline %>
+      <span class="<%= slot %> invisible" aria-hidden="true"><i class="bi bi-file-earmark-check"></i></span>
+    <% end %>
+    <span class="<%= slot %> invisible" aria-hidden="true"><i class="bi bi-download"></i></span>
+  <% end %>
+
+  <% if !@assignment&.active? %>
+    <%= link_to edit_correction_path(submission),
+                class: "btn btn-sm btn-link row-action text-secondary #{slot}",
+                data: { turbo_stream: true },
+                title: t('assessment.grading_tutorial.upload_correction'),
+                aria: { label: t('assessment.grading_tutorial.upload_correction') } do %>
+      <i class="bi bi-file-earmark-plus-fill"></i>
+    <% end %>
+  <% else %>
+    <button class="btn btn-sm btn-link row-action text-secondary <%= slot %>"
+            disabled
+            title="<%= t('assessment.grading_tutorial.upload_correction_closed') %>"
+            aria-label="<%= t('assessment.grading_tutorial.upload_correction_closed') %>">
+      <i class="bi bi-file-earmark-plus-fill"></i>
+    </button>
+  <% end %>
+
+  <% if submission.correction %>
+    <%= link_to delete_correction_path(submission),
+                class: "btn btn-sm btn-link row-action row-action-danger #{slot}",
+                data: { turbo_method: :delete,
+                        turbo_confirm: t('assessment.grading_tutorial.confirm_delete_correction'),
+                        turbo_stream: true },
+                title: t('assessment.grading_tutorial.delete_correction'),
+                aria: { label: t('assessment.grading_tutorial.delete_correction') } do %>
+      <i class="bi bi-trash-fill"></i>
+    <% end %>
+  <% else %>
+    <span class="<%= slot %> invisible" aria-hidden="true"><i class="bi bi-trash-fill"></i></span>
+  <% end %>
+</span>

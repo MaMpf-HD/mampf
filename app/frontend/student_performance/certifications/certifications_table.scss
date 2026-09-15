@@ -1,0 +1,19 @@
+// Only the hint column holds a sentence; the others hold a name, a figure, a
+// status, an icon. Without `width: 100%` on that one the browser spreads the
+// free space over all of them.
+.certifications-table {
+  th,
+  td {
+    white-space: nowrap;
+  }
+
+  .hint-column {
+    white-space: normal;
+    width: 100%;
+    min-width: 14rem;
+  }
+
+  .numeric {
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -25,7 +25,7 @@ module EligibilityHelper
     when "student_performance"
       t("registration.user_registration.policy_overview.policies." \
         "student_performance_html",
-        status: policy_config_info(policy))
+        lectures: policy_config_info(policy))
     else
       t("registration.user_registration.policy_overview.policies.generic_html",
         requirement: eligibility_requirement_label(policy))
@@ -134,7 +134,7 @@ module EligibilityHelper
                                                                 context: :registration)
       [
         student_performance_translation_key(context),
-        { status: policy_config_info(policy) }
+        { lectures: policy_config_info(policy) }
       ]
     end
 
@@ -209,7 +209,7 @@ module EligibilityHelper
     def policy_config_info(policy)
       case policy[:kind].to_s
       when "student_performance"
-        policy.dig(:config, "certification_status").to_s.capitalize
+        policy.dig(:config, "lectures").presence || POLICY_CONFIG_UNAVAILABLE
       when "institutional_email"
         Array(policy.dig(:config, "allowed_domains")).join(", ")
       when "prerequisite_campaign"

@@ -122,11 +122,17 @@ window.Stimulus.register("uppy-upload", UppyUploadController);
 import SubmissionUploadController from "~/controllers/submission_upload.controller.js";
 window.Stimulus.register("submission-upload", SubmissionUploadController);
 
+import SheetNewsController from "~/submissions/components/sheet_news.controller.js";
+window.Stimulus.register("sheet-news", SheetNewsController);
+
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);
 
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
+
+import DismissWorkspaceController from "~/registration/allocations/dismiss_workspace.controller.js";
+window.Stimulus.register("dismiss-workspace", DismissWorkspaceController);
 
 import SelectizeController from "~/controllers/selectize.controller.js";
 window.Stimulus.register("selectize", SelectizeController);
@@ -137,6 +143,54 @@ window.Stimulus.register("profile", ProfileController);
 import LectureHighlightsController from "~/lectures/lecture_highlights.controller.js";
 window.Stimulus.register("lecture-highlights", LectureHighlightsController);
 
+import DirtyFormController from "~/assessment/dirty_form.controller.js";
+window.Stimulus.register("assessments--dirty-form", DirtyFormController);
+
+import PointsPrecisionController from "~/assessment/points_precision.controller.js";
+window.Stimulus.register("assessments--points-precision", PointsPrecisionController);
+
+import SchemeFormController from "~/assessment/assessments/scheme_form.controller.js";
+window.Stimulus.register("assessments--scheme-form", SchemeFormController);
+
+import AssignmentsCompleteController from "~/assessment/assessments/assignments_complete.controller.js";
+window.Stimulus.register("assessments--assignments-complete", AssignmentsCompleteController);
+
+import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
+window.Stimulus.register("achievement-form", AchievementFormController);
+
+import CertificationInlineController from "~/student_performance/certifications/certification_inline.controller.js";
+window.Stimulus.register("certification-inline", CertificationInlineController);
+
+import ThresholdModeController from "~/student_performance/rules/threshold-mode.controller.js";
+window.Stimulus.register("threshold-mode", ThresholdModeController);
+
+import SortableController from "~/assessment/sortable.controller.js";
+window.Stimulus.register("sortable", SortableController);
+
+import ParticipationRowController from "~/assessment/participation_row.controller.js";
+window.Stimulus.register("participation-row", ParticipationRowController);
+
+import PointingTableController from "~/assessment/pointing_table.controller.js";
+window.Stimulus.register("pointing-table", PointingTableController);
+
+import TableFadeController from "~/tutorials/table_fade.controller.js";
+window.Stimulus.register("table-fade", TableFadeController);
+
+import ExemptModalController from "~/assessment/exempt_modal.controller.js";
+window.Stimulus.register("exempt-modal", ExemptModalController);
+
+import StatusFilterController from "~/tutorials/status_filter.controller.js";
+window.Stimulus.register("status-filter", StatusFilterController);
+import SelectNavigationController from "~/tutorials/select_navigation.controller.js";
+window.Stimulus.register("select-navigation", SelectNavigationController);
+import ExamFormController from "~/exams/form.controller.js";
+window.Stimulus.register("exams--form", ExamFormController);
+
+import ExamRegistrationSettingsController from "~/exams/registration_settings.controller.js";
+window.Stimulus.register("exams--registration-settings", ExamRegistrationSettingsController);
+
+import ExamRegistrationListController from "~/exams/registration_list.controller.js";
+window.Stimulus.register("exams--registration-list", ExamRegistrationListController);
 import AdministrationIndexCreateButtonsController from "~/administration/index/create_buttons.controller.js";
 window.Stimulus.register("administration-index-create-buttons", AdministrationIndexCreateButtonsController);
 

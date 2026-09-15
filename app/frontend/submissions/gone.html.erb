@@ -1,0 +1,15 @@
+<%#
+  The submission or the sheet is gone - deleted in another tab, most likely.
+  There is no card left to put a message in, so the frame says so and offers
+  the way back rather than navigating itself somewhere the reader did not ask
+  for.
+%>
+
+<%= turbo_frame_tag turbo_frame_request_id || "submission_card" do %>
+  <div class="alert alert-warning mb-0">
+    <%= @gone_message %>
+
+    <%= link_to t("submission.hub.card.reload"), request.referer || root_path,
+                data: { turbo_frame: "_top" } %>
+  </div>
+<% end %>

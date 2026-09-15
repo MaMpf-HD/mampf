@@ -19,7 +19,14 @@ RSpec.describe(RegistrationPolicyHelper, type: :helper) do
           .not_to include("institutional_email")
       end
 
-      it "excludes student_performance" do
+      it "includes student_performance when none exists yet" do
+        expect(helper.available_policy_kinds(campaign, policy))
+          .to include("student_performance")
+      end
+
+      it "excludes student_performance when one already exists" do
+        create(:registration_policy, :student_performance,
+               registration_campaign: campaign)
         expect(helper.available_policy_kinds(campaign, policy))
           .not_to include("student_performance")
       end
@@ -35,6 +42,12 @@ RSpec.describe(RegistrationPolicyHelper, type: :helper) do
         expect(helper.available_policy_kinds(campaign, existing))
           .to include("institutional_email")
       end
+      it "still includes student_performance so the current value remains selectable" do
+        perf_policy = create(:registration_policy, :student_performance,
+                             registration_campaign: campaign)
+        expect(helper.available_policy_kinds(campaign, perf_policy))
+          .to include("student_performance")
+      end
     end
   end
 
@@ -45,6 +58,17 @@ RSpec.describe(RegistrationPolicyHelper, type: :helper) do
     it "excludes the current campaign" do
       other = create(:registration_campaign, campaignable: lecture)
       expect(helper.prerequisite_campaign_options(campaign)).to eq([other])
+    end
+
+    it "excludes exam campaigns" do
+      exam = create(:exam, lecture: lecture)
+      # Exam object automatically creates its own registration campaign
+      exam_campaign = exam.registration_campaign
+
+      other = create(:registration_campaign, campaignable: lecture)
+
+      expect(helper.prerequisite_campaign_options(campaign)).to eq([other])
+      expect(helper.prerequisite_campaign_options(campaign)).not_to include(exam_campaign)
     end
 
     it "returns campaigns from the same campaignable" do
