@@ -70,4 +70,11 @@
   .tests-start {
     border-left: 2px solid var(--bs-border-color);
   }
+
+  // A criterion is a column of icons; its heading wraps rather than widen it.
+  .achievement-title {
+    display: inline-block;
+    max-width: 6rem;
+    white-space: normal;
+  }
 }

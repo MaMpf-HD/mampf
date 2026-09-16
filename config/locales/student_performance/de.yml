@@ -60,7 +60,6 @@ de:
           one: "1 Abgabe ist noch nicht bewertet"
           other: "%{count} Abgaben sind noch nicht bewertet"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
-        details: "Details"
       show:
         back: "Zurück zur Übersicht"
         recompute: "Datensatz neu berechnen"

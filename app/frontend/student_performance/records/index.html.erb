@@ -161,8 +161,6 @@
                 <%= t("student_performance.records.columns.achievements") %>
               </th>
             <% end %>
-
-            <th scope="col" rowspan="2" class="small"></th>
           </tr>
 
           <tr>
@@ -256,13 +254,16 @@
               </th>
             <% end %>
 
+            <%# A title on two lines keeps a column of icons as narrow as the icons. %>
             <% @achievements.each do |achievement| %>
               <th
                 scope="col"
                 class="text-center small"
                 title="<%= achievement.title %>"
               >
-                <%= truncate(achievement.title, length: 24) %>
+                <span class="achievement-title">
+                  <%= truncate(achievement.title, length: 24) %>
+                </span>
               </th>
             <% end %>
           </tr>
@@ -272,7 +273,9 @@
           <% @records.each do |record| %>
             <tr id="<%= dom_id(record) %>">
               <td class="text-nowrap">
-                <%= record.user.tutorial_name %>
+                <%= link_to record.user.tutorial_name,
+                            lecture_student_performance_record_path(@lecture, record),
+                            data: { turbo_frame: "performance-records-frame" } %>
               </td>
 
               <td class="text-end text-nowrap numeric due-points">
@@ -374,15 +377,6 @@
                   <% end %>
                 </td>
               <% end %>
-
-              <td>
-                <%= link_to lecture_student_performance_record_path(
-                              @lecture, record),
-                            class: "btn btn-outline-secondary btn-sm",
-                            data: { turbo_frame: "performance-records-frame" } do %>
-                  <%= t("student_performance.records.index.details") %>
-                <% end %>
-              </td>
             </tr>
           <% end %>
         </tbody>

@@ -60,7 +60,6 @@ en:
           one: "1 submission is not graded yet"
           other: "%{count} submissions are not graded yet"
         empty: "No performance records have been computed yet."
-        details: "Details"
       show:
         back: "Back to records"
         recompute: "Recompute record"
