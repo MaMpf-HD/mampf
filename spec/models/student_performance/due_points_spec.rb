@@ -47,6 +47,19 @@ RSpec.describe(StudentPerformance::DuePoints) do
 
       expect(due_points.total).to be_zero
     end
+
+    # The grace period is for a late upload; a test has nothing to upload.
+    it "gives a test no grace period, whatever the lecture grants its sheets" do
+      lecture.update!(submission_grace_period: 60)
+      test = sheet(deadline: 30.minutes.ago, points: 10)
+      # rubocop:disable Rails/SkipsModelValidations
+      test.assessable.update_column(:kind, Assignment.kinds.fetch("test"))
+      # rubocop:enable Rails/SkipsModelValidations
+
+      expect(due_points.total).to eq(10)
+      expect(due_points.due?(test.id)).to be(true)
+      expect(due_points.of_kind(:test).total).to eq(10)
+    end
   end
 
   describe "#due?" do

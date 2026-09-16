@@ -114,13 +114,20 @@ module StudentPerformance
       end
 
       def due_assessments
-        @due_assessments ||= assignment_assessments
-                             .where(assignments: { deadline: ...cutoff }).to_a
+        @due_assessments ||= assignment_assessments.where(due_condition).to_a
       end
 
       def coming_assessments
-        @coming_assessments ||= assignment_assessments
-                                .where(assignments: { deadline: cutoff.. }).to_a
+        @coming_assessments ||= assignment_assessments.where.not(due_condition).to_a
+      end
+
+      # A sheet is due once its grace period has run out, a test with its
+      # Sunday: the grace period is for a late upload, and a test has none.
+      def due_condition
+        ["(assignments.kind = :homework AND assignments.deadline < :graced) OR " \
+         "(assignments.kind = :test AND assignments.deadline < :now)",
+         { homework: Assignment.kinds.fetch("homework"), test: Assignment.kinds.fetch("test"),
+           graced: cutoff, now: Time.zone.now }]
       end
 
       def coming_total
@@ -131,8 +138,8 @@ module StudentPerformance
         @due_assessment_ids ||= due_assessments.to_set(&:id)
       end
 
-      # Include submission_grace_period because an Assignment still
-      # accepts submissions during that time.
+      # Include submission_grace_period because a sheet still accepts
+      # submissions during that time.
       def cutoff
         @cutoff ||= Time.zone.now -
                     (@lecture.submission_grace_period || 0).minutes
