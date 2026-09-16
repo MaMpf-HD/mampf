@@ -16,13 +16,15 @@ class PointingToolbarComponent < ViewComponent::Base
   end
 
   # The filter offers the states the rows can show; a sheet collected on
-  # paper has no "not submitted" row, one with files no "not yet recorded".
+  # paper has no "not submitted" row, one with files no "not yet recorded",
+  # and only a test has anybody absent.
   def status_options
     missing = @assignment.assessment&.status_without_hand_in || :not_submitted
-    [["reviewed", column_label("reviewed")],
-     ["pending_grading", column_label("pending_grading")],
-     [missing.to_s, column_label(missing)],
-     ["exempt", column_label("exempt")]]
+    options = [["reviewed", column_label("reviewed")],
+               ["pending_grading", column_label("pending_grading")],
+               [missing.to_s, column_label(missing)]]
+    options << ["absent", column_label("absent")] if @assignment.kind_test?
+    options << ["exempt", column_label("exempt")]
   end
 
   def tutorial_options

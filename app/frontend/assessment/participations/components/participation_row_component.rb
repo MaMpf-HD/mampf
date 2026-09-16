@@ -201,16 +201,18 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   # Absence is the grader's to record, an exemption the lecturer's - it takes
-  # a certificate and changes what counts.
+  # a certificate and changes what counts. On a test the button comes with the
+  # week, as the points do, and only to the group that holds the row.
   def absence_button
     return unless can_enter_points?
+    return if test? && (!allow_grading? || elsewhere?)
 
     if @participation.absent?
-      row_action_link(remove_absent_path(@participation), "bi-person-check-fill",
-                      t("assessment.grading_exam.remove_absent"))
+      row_action_link(remove_absent_path(@participation, grading_scope_type: grading_scope_type),
+                      "bi-person-check-fill", t("assessment.grading_exam.remove_absent"))
     elsif @participation.pending?
-      row_action_link(mark_as_absent_path(@participation), "bi-person-x-fill",
-                      t("assessment.grading_exam.mark_absent"))
+      row_action_link(mark_as_absent_path(@participation, grading_scope_type: grading_scope_type),
+                      "bi-person-x-fill", t("assessment.grading_exam.mark_absent"))
     end
   end
 

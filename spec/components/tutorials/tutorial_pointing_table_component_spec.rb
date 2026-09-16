@@ -140,6 +140,16 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(row.reload.tutorial).to eq(old_group)
       end
 
+      it "offers to record an absence once the week has begun, not before" do
+        label = I18n.t("assessment.grading_exam.mark_absent")
+        expect(render_inline(component).css("a[aria-label='#{label}']")).to be_empty
+
+        assignment.update!(test_week: Time.zone.today.beginning_of_week.iso8601)
+        fresh = described_class.new(assignment: assignment.reload, grading_scope: tutorial)
+
+        expect(render_inline(fresh).css("a[aria-label='#{label}']")).to be_present
+      end
+
       it "leaves the test deletable, the rows it made carrying nothing yet" do
         render_inline(component)
 

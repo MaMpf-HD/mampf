@@ -22,8 +22,9 @@ module Assessment
     before_action :authorize_lecture_edit!, only: [:mark_as_exempt, :remove_exempt]
     before_action :refuse_without_row, only: [:update_participation, :refresh_participation]
     before_action :refuse_unless_sheet, only: [:mark_as_participated, :remove_participated]
-    before_action :refuse_unless_exam, only: [:mark_as_absent, :remove_absent,
-                                              :mark_as_exempt, :remove_exempt]
+    before_action :refuse_unless_attended, only: [:mark_as_absent, :remove_absent]
+    before_action :refuse_unless_exam, only: [:mark_as_exempt, :remove_exempt]
+    before_action :refuse_before_test_week, only: [:mark_as_absent, :remove_absent]
     before_action :refuse_unless_candidate, only: [:update_participation, :mark_as_absent,
                                                    :remove_absent, :mark_as_exempt,
                                                    :remove_exempt]
@@ -222,6 +223,24 @@ module Assessment
         return if @assessable.is_a?(Exam)
 
         unsupported_assessable
+      end
+
+      # Somebody can be absent from an exam or from a test; a sheet is handed
+      # in or not.
+      def refuse_unless_attended
+        return if @assessable.is_a?(Exam)
+        return if @assessable.is_a?(Assignment) && @assessable.kind_test?
+
+        unsupported_assessable
+      end
+
+      # Nobody is absent from a test that has not begun. The points' own gate
+      # sits in the model; an absence changes no points, so it is gated here.
+      def refuse_before_test_week
+        return unless @assessable.is_a?(Assignment) && !@assessable.grading_open?
+
+        respond_with_flash(:alert, t("assessment.grading_tutorial.test_not_yet_open"),
+                           status: :unprocessable_content)
       end
 
       def unsupported_assessable

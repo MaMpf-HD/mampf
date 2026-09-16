@@ -175,8 +175,11 @@
     <% end %>
     <td class="text-center <%= layout.column_class(:save) %>">
       <div class="d-inline-flex align-items-center gap-1">
-        <% if exam_grading? %>
+        <% if exam_grading? || test? %>
           <%= absence_button %>
+        <% end %>
+
+        <% if exam_grading? %>
           <%= exemption_button %>
         <% end %>
 

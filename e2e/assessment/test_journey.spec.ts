@@ -72,6 +72,16 @@ test.describe("a test written in the tutorial", () => {
     await expect(tutor.page.getByText("Test week:")).toBeVisible();
     const row = tutor.page.getByRole("table").getByRole("row", { name: studentName });
     await expect(row.getByText("Record the hand-in first")).toHaveCount(0);
+
+    // a no-show is recorded as such - and taken back when it turns out to be
+    // a mix-up
+    await row.getByRole("link", { name: "Record as absent" }).click();
+    await expect(row.getByText("Absent")).toBeVisible();
+    await expect(row.getByRole("spinbutton", { name: `Task 1 for ${studentName}` }))
+      .toBeDisabled();
+    await row.getByRole("link", { name: "Take the absence back" }).click();
+    await expect(row.getByText("Absent")).toHaveCount(0);
+
     await row.getByRole("spinbutton", { name: `Task 1 for ${studentName}` }).fill("8");
     await row.getByRole("button", { name: "Save this row's points" }).click();
     await expect(row.getByText("Reviewed")).toBeVisible();

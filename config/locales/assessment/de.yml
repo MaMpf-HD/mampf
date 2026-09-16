@@ -289,6 +289,7 @@ de:
       paper_hand_in_remove: 'Vermerk „abgegeben“ zurücknehmen'
       paper_hand_in_kept: 'Auf Papier oder anderem Weg abgegeben; mit eingetragenen Punkten bleibt der Vermerk'
       held_by: 'Abgabe bei %{tutorial}'
+      test_not_yet_open: 'Die Testwoche hat noch nicht begonnen.'
       record_first: 'Vermerke zuerst die Abgabe'
       download_hand_in: 'Abgabe herunterladen'
       show_hand_in: 'Abgabe anzeigen'
