@@ -1,8 +1,20 @@
 <tr>
   <% columns.each do |column| %>
-    <th class="<%= column.css_class %>">
+    <th
+      class="<%= column.css_class %>"
+      <% if column.sort_url %>
+        aria-sort="<%= aria_sort(column) %>"
+      <% end %>
+    >
       <% if column.label_hidden %>
         <span class="visually-hidden"><%= column.label %></span>
+      <% elsif column.sort_url %>
+        <%= link_to column.sort_url, class: "text-reset text-decoration-none",
+                                     data: { turbo_frame: "pointing-table" } do %>
+          <%= column.label %>
+
+          <i class="bi <%= sort_icon(column) %> small" aria-hidden="true"></i>
+        <% end %>
       <% else %>
         <%= column.label %>
       <% end %>

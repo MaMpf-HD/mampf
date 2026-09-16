@@ -1,11 +1,18 @@
 # The pointing table of a sheet: a row for every hand-in and one for everybody
 # else on the roster. A tutor sees their group, the lecturer every group.
 class TutorialPointingTableComponent < ViewComponent::Base
-  def initialize(assignment:, grading_scope: nil)
+  # A row is a hand-in or somebody on the roster without one.
+  Row = Struct.new(:submission, :user, :tutorial, keyword_init: true)
+
+  attr_reader :sort, :dir
+
+  def initialize(assignment:, grading_scope: nil, sort: nil, dir: nil)
     super()
     @assignment = assignment
     @lecture = assignment.lecture
     @grading_scope = grading_scope
+    @sort = sort if sort == "total"
+    @dir = dir == "asc" ? "asc" : "desc"
     if grading_scope.is_a?(Tutorial)
       @tutorial = @grading_scope
       init_tutor_case
@@ -114,6 +121,32 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @assignment.assessable?
   end
 
+  # The rows in the order the page shows them: a group's hand-ins, then its
+  # roster; on the lecture's page group after group, those in no group last.
+  # Sorted by the total, the groups run together - the tutorial column tells
+  # them apart - and rows without a total come last either way.
+  def rows
+    @rows ||= sort ? entries.sort_by { |row| sort_key(row) } : entries
+  end
+
+  def sorted?
+    sort.present?
+  end
+
+  # The heading's link: the other direction while sorted, descending first.
+  def sort_url
+    next_dir = sorted? && dir == "desc" ? "asc" : "desc"
+    if @grading_scope.is_a?(Tutorial)
+      helpers.lecture_tutorials_path(@lecture, assignment: @assignment.id, tutorial: @tutorial.id,
+                                               sort: "total", dir: next_dir)
+    else
+      helpers.assessment_assessment_path(@assignment.assessment, assessable_type: "Assignment",
+                                                                 assessable_id: @assignment.id,
+                                                                 tab: "points",
+                                                                 sort: "total", dir: next_dir)
+    end
+  end
+
   def layout
     @layout ||= PointingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
   end
@@ -157,12 +190,42 @@ class TutorialPointingTableComponent < ViewComponent::Base
   private
 
     def roster_rows
-      if @mode == "tutor"
-        @non_submitters.map { |user| [user, @tutorial] }
+      entries.reject(&:submission).map { |row| [row.user, row.tutorial] }
+    end
+
+    def entries
+      @entries ||= @mode == "tutor" ? tutor_entries : teacher_entries
+    end
+
+    def tutor_entries
+      files = @stack.map { |submission| Row.new(submission: submission) }
+      return files unless grading_enabled?
+
+      files + @non_submitters.map { |user| Row.new(user: user, tutorial: @tutorial) }
+    end
+
+    def teacher_entries
+      @tutorials.flat_map do |tutorial|
+        files = (@submissions_by_tutorial[tutorial] || []).map { |s| Row.new(submission: s) }
+        next files unless grading_enabled?
+
+        files + (@non_submitters_by_tutorial[tutorial] || []).map do |user|
+          Row.new(user: user, tutorial: tutorial)
+        end
+      end + (grading_enabled? ? @non_tutorial_participants.map { |u| Row.new(user: u) } : [])
+    end
+
+    def total_of(row)
+      if row.submission
+        team_participations(row.submission).compact.first&.points_total
       else
-        @non_submitters_by_tutorial.flat_map { |tutorial, users| users.map { |u| [u, tutorial] } } +
-          @non_tutorial_participants.map { |user| [user, nil] }
+        participation_for(row.user, row.tutorial).points_total
       end
+    end
+
+    def sort_key(row)
+      total = total_of(row)
+      [total.nil? ? 1 : 0, dir == "asc" ? total.to_f : -total.to_f]
     end
 
     def membership_tutorials

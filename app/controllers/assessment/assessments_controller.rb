@@ -182,7 +182,9 @@ module Assessment
           assessment: @assessment,
           lecture: @lecture,
           active_tab: active_tab,
-          tasks: @tasks
+          tasks: @tasks,
+          sort: params[:sort],
+          dir: params[:dir]
         )
       end
 

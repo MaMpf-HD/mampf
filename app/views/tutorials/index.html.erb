@@ -14,7 +14,9 @@
   <div id="tutorial-table" class="m-3">
     <%= render TutorialPointingTableComponent.new(
       assignment: @assignment,
-      grading_scope: @tutorial
+      grading_scope: @tutorial,
+      sort: params[:sort],
+      dir: params[:dir]
     ) %>
   </div>
 </div>

@@ -313,6 +313,57 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(rendered_content).to include("pointing-table")
       end
     end
+
+    describe "sorting by the total" do
+      let!(:assignment) do
+        create(:assignment, :expired, :with_lecture, lecture: lecture, expired_since: 2.days)
+      end
+
+      def member(name, points)
+        user = create(:confirmed_user, name_in_tutorials: name)
+        create(:tutorial_membership, tutorial: tutorial, user: user)
+        return if points.nil?
+
+        create(:assessment_participation, :reviewed, assessment: assessment, user: user,
+                                                     tutorial: tutorial, points_total: points,
+                                                     submitted_at: 3.days.ago)
+      end
+
+      def names(page)
+        page.css("tbody tr").pluck("data-status-filter-name")
+      end
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        member("Ada", 3)
+        member("Grace", 8)
+        member("Nina", nil)
+      end
+
+      it "keeps the page's order until asked" do
+        page = render_inline(component)
+
+        expect(page.css("th[aria-sort]").first["aria-sort"]).to eq("none")
+        expect(page.css("th a[href*='sort=total']")).to be_present
+      end
+
+      # Rows without a total come last either way: nothing to rank them by.
+      it "ranks the rows by their total, largest first, the unmarked last" do
+        page = render_inline(described_class.new(assignment: assignment, grading_scope: tutorial,
+                                                 sort: "total"))
+
+        expect(names(page)).to eq(["Grace", "Ada", "Nina"])
+        expect(page.css("th[aria-sort]").first["aria-sort"]).to eq("descending")
+        expect(page.css("th a[href*='dir=asc']")).to be_present
+      end
+
+      it "ranks them smallest first the other way round" do
+        page = render_inline(described_class.new(assignment: assignment, grading_scope: tutorial,
+                                                 sort: "total", dir: "asc"))
+
+        expect(names(page)).to eq(["Ada", "Grace", "Nina"])
+      end
+    end
   end
 
   describe "when grading_scope is a Lecture" do

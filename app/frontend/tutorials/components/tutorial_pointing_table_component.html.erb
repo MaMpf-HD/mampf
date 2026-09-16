@@ -18,53 +18,25 @@
             <thead>
               <%= render(PointingTableHeaderComponent.new(
                 assessable: @assignment,
-                layout: layout
+                layout: layout,
+                sort_url: sort_url,
+                sort_dir: sorted? ? dir : nil
               )) %>
             </thead>
 
             <tbody>
-              <% if @mode == "tutor" %>
-                <% @stack.each do |submission| %>
+              <% rows.each do |row| %>
+                <% if row.submission %>
                   <%= render(SubmissionRowComponent.new(
-                      submission: submission,
+                      submission: row.submission,
                       assignment: @assignment,
-                      grading_scope: @tutorial,
-                      participations: team_participations(submission))) %>
-                <% end %>
-                <% if grading_enabled? %>
-                  <% @non_submitters.each do |user| %>
-                    <%= render(ParticipationRowComponent.new(
-                        participation: participation_for(user, @tutorial),
-                        assessment: @assignment.assessment,
-                        grading_scope: @tutorial)) %>
-                  <% end %>
-                <% end %>
-              <% else %>
-                <% @tutorials.each do |tutorial| %>
-                  <% (@submissions_by_tutorial[tutorial] || []).each do |submission| %>
-                    <%= render(SubmissionRowComponent.new(
-                        submission: submission,
-                        assignment: @assignment,
-                        grading_scope: @lecture,
-                        participations: team_participations(submission))) %>
-                  <% end %>
-
-                  <% if grading_enabled? %>
-                    <% (@non_submitters_by_tutorial[tutorial] || []).each do |user| %>
-                      <%= render(ParticipationRowComponent.new(
-                          participation: participation_for(user, tutorial),
-                          assessment: @assignment.assessment,
-                          grading_scope: @lecture)) %>
-                    <% end %>
-                  <% end %>
-                <% end %>
-                <% if grading_enabled? %>
-                  <% @non_tutorial_participants.each do |user| %>
-                    <%= render(ParticipationRowComponent.new(
-                        participation: participation_for(user, nil),
-                        assessment: @assignment.assessment,
-                        grading_scope: @lecture)) %>
-                  <% end %>
+                      grading_scope: @grading_scope,
+                      participations: team_participations(row.submission))) %>
+                <% else %>
+                  <%= render(ParticipationRowComponent.new(
+                      participation: participation_for(row.user, row.tutorial),
+                      assessment: @assignment.assessment,
+                      grading_scope: @grading_scope)) %>
                 <% end %>
               <% end %>
             </tbody>
