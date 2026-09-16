@@ -12,6 +12,7 @@ en:
       new: 'Add test'
       heading: 'Tests'
       week: 'Test week'
+      sheet_or_test: 'Sheet or test'
       week_hint: 'Pick any day of the week the test is written in. The tutorials write it in their own sessions; points can be entered from the Monday on.'
       week_label: '%{from} – %{to}'
       badge: 'Test'

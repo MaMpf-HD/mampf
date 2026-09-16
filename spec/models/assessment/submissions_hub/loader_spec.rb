@@ -340,6 +340,15 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet_for(assignment).points).to be_nil
     end
 
+    it "is :awaiting_marks once a test's week is over" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Test 1",
+                                                 expired_since: 1.week, kind: :test)
+      create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+
+      expect(sheet_for(assignment).state).to eq(:awaiting_marks)
+      expect(sheet_for(assignment).points).to be_nil
+    end
+
     it "is :tutor_decides for a late hand-in nobody has ruled on" do
       assignment = create_assignment(deadline: 10.minutes.ago)
       hand_in(assignment)

@@ -12,7 +12,7 @@ class PointingToolbarComponent < ViewComponent::Base
   end
 
   def summary
-    PointingSummaryComponent.new(statuses: @statuses)
+    PointingSummaryComponent.new(statuses: @statuses, hand_ins: !@assignment.kind_test?)
   end
 
   # The filter offers the states the rows can show; a sheet collected on

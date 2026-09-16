@@ -92,6 +92,19 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(assessment.assessment_participations.find_by(user: member).tutorial)
           .to eq(tutorial)
       end
+
+      it "leaves the test deletable, the rows it made carrying nothing yet" do
+        render_inline(component)
+
+        expect(assignment.reload).to be_destructible
+      end
+
+      it "counts no hand-ins and draws no file columns" do
+        page = render_inline(component)
+
+        expect(page.css("#pointing-summary").text).not_to include("hand-in")
+        expect(page.css("th").map(&:text).join).not_to include(I18n.t("basics.submission"))
+      end
     end
 
     context "when the assignment has no assessment" do
