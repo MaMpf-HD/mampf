@@ -65,9 +65,14 @@ class AchievementMarkingTableComponent < ViewComponent::Base
       end
     end
 
+    # One group per person and lecture, so a group's members are its own.
     def groups
-      @groups ||= TutorialMembership.where(tutorial: @lecture.tutorials).includes(:tutorial)
-                                    .index_by(&:user_id).transform_values(&:tutorial)
+      @groups ||= if @tutorial
+        @tutorial.members.to_h { |user| [user.id, @tutorial] }
+      else
+        TutorialMembership.where(tutorial: @lecture.tutorials).includes(:tutorial)
+                          .index_by(&:user_id).transform_values(&:tutorial)
+      end
     end
 
     def participations
