@@ -113,7 +113,8 @@ class Achievement < ApplicationRecord
 
     # The values read by the type: "pass" says nothing on a numeric
     # achievement, 12.5 nothing on a yes/no one. The threshold may still
-    # move; the values keep their meaning under a new one.
+    # move; the values keep their meaning under a new one. Checked under the
+    # achievement's lock, which a value entry takes as well.
     def value_type_fixed_by_values
       errors.add(:value_type, :fixed_by_values) if values_entered?
     end

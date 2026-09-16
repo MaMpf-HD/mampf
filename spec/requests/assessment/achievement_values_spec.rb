@@ -61,6 +61,22 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       expect(row.reload.grade_text).to be_nil
     end
 
+    # A type change and a value entry both take the achievement's lock; the
+    # value is read against the type as it stands once the lock is held.
+    it "reads the type under the lock, not as the request found it" do
+      achievement.update!(value_type: :numeric, threshold: 10)
+      allow_any_instance_of(Assessment::Participation).to receive(:with_lock)
+        .and_wrap_original do |lock, *args, &block|
+          achievement.update!(value_type: :boolean, threshold: nil)
+          lock.call(*args, &block)
+        end
+
+      enter("12")
+
+      expect(row.reload.grade_text).to be_nil
+      expect(response.body).to include("12")
+    end
+
     it "takes a number on a numeric achievement, and refuses one above a percentage" do
       achievement.update!(value_type: :numeric, threshold: 10)
       enter("12,5")

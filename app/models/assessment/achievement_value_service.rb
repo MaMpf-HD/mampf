@@ -10,13 +10,14 @@ module Assessment
 
     # The block sees the row as the lock read it: the group that holds the
     # row may have changed since the caller looked, and with it who may
-    # enter for it.
+    # enter for it. The achievement is locked too, so its type cannot change
+    # under the value (Achievement#value_type_fixed_by_values holds the
+    # other end).
     def self.enter(participation, value, grader)
-      achievement = participation.assessment.assessable
-      value = normalize(achievement, value.to_s.strip)
-
       participation.with_lock do
         yield(participation) if block_given?
+        achievement = participation.assessment.assessable.lock!
+        value = normalize(achievement, value.to_s.strip)
         GradeEntryService.refuse_absent_or_exempt!(participation)
         stamp = if value.nil?
           { grader_id: nil, graded_at: nil }

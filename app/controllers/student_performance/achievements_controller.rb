@@ -77,7 +77,7 @@ module StudentPerformance
     def update
       original_achievement = @achievement.dup
 
-      if @achievement.update(achievement_params)
+      if @achievement.with_lock { @achievement.update(achievement_params) }
         flash.now[:success] = I18n.t("assessment.achievements.flash.updated")
         render turbo_stream: [
           turbo_stream.update(
