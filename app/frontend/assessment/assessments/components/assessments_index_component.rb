@@ -28,6 +28,11 @@ class AssessmentsIndexComponent < ViewComponent::Base
     sheets.select(&:kind_test?)
   end
 
+  # One table needs no heading; two need one each.
+  def two_tables?
+    homework.any? && tests.any?
+  end
+
   def legacy_by_type
     @legacy_by_type ||= legacy.group_by { |a| a.class.name }
   end

@@ -24,6 +24,14 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
       expect(page.css("#assessment-tests-list").text).to include("Test 1")
       expect(page.css("#assessment-assignments-list").text).not_to include("Test 1")
     end
+
+    it "names no table where the tests are the only one" do
+      create(:valid_assignment, lecture: lecture, title: "Test 1", kind: :test)
+      page = render_inline(described_class.new(lecture: lecture))
+
+      expect(page.css("h6")).to be_empty
+      expect(page.css("#assessment-tests-list").text).to include("Test 1")
+    end
   end
 
   context "with a seminar" do

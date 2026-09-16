@@ -51,9 +51,9 @@ test.describe("a test written in the tutorial", () => {
     await dashboard.pane.getByRole("button", { name: "Add Task" }).click();
     await expect(dashboard.tasks).toHaveText([/10 pts/]);
 
-    // the overview lists it under the sheets, with its week
+    // the overview lists it in the tests' table, with its week
     await dashboard.gotoOverview();
-    await expect(teacher.page.getByRole("heading", { name: "Tests" })).toBeVisible();
+    await expect(teacher.page.getByRole("columnheader", { name: "Test week" })).toBeVisible();
     await expect(teacher.page.getByRole("link", { name: "Test 1" })).toBeVisible();
 
     // the student sees the week and the tutorial, and nothing to upload
