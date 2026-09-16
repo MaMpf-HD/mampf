@@ -3098,8 +3098,8 @@ de:
         due: "Fällig %{time}"
         in_time: "in %{time}"
         worth:
-          one: "%{count} Aufgabe, %{points} Punkte"
-          other: "%{count} Aufgaben, %{points} Punkte"
+          one: "%{count} Aufgabe, %{points} Punkte erreichbar"
+          other: "%{count} Aufgaben, %{points} Punkte erreichbar"
         hand_in: Abgeben
         in_tutorial: in Deinem Tutorium
         hand_in_elsewhere: >-

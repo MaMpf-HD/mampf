@@ -2873,8 +2873,8 @@ en:
         due: "Due %{time}"
         in_time: "in %{time}"
         worth:
-          one: "%{count} problem, %{points} points"
-          other: "%{count} problems, %{points} points"
+          one: "%{count} problem, %{points} points possible"
+          other: "%{count} problems, %{points} points possible"
         hand_in: Hand in
         in_tutorial: in your tutorial
         hand_in_elsewhere: >-
