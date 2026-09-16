@@ -34,14 +34,17 @@ class SearchClient
 
   # rubocop:disable Metrics/ParameterLists
   def transcribe_lesson(media_rails_id:, course_rails_id:, video_url:,
-                        transcript_upload_url:, transcription_failed_url: nil,
-                        lecture_rails_id: nil, lesson_rails_id: nil,
-                        video_version: nil)
+                        transcript_upload_url:, video_version:,
+                        transcription_failed_url: nil, lecture_rails_id: nil,
+                        lesson_rails_id: nil)
+    raise(ArgumentError, "video_version is required") if video_version.blank?
+
     payload = {
       media_rails_id: media_rails_id,
       course_rails_id: course_rails_id,
       video_url: video_url,
-      transcript_upload_url: transcript_upload_url
+      transcript_upload_url: transcript_upload_url,
+      video_version: video_version
     }
     if transcription_failed_url.present?
       payload[:transcription_failed_url] =
@@ -50,12 +53,6 @@ class SearchClient
 
     payload[:lecture_rails_id] = lecture_rails_id if lecture_rails_id.present?
     payload[:lesson_rails_id] = lesson_rails_id if lesson_rails_id.present?
-
-    if video_version.present?
-      payload[:video_version] = video_version
-    else
-      Rails.logger.warn("MampfSearch transcribe_lesson called without video_version for media #{media_rails_id}")
-    end
 
     perform_request(scope: "/lesson/ingest") do |client|
       client.post("/lesson/ingest", json: payload)

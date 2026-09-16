@@ -33,7 +33,8 @@ RSpec.describe(SearchClient, :mampfsearch) do
                                                    lecture_rails_id: 2,
                                                    course_rails_id: 3,
                                                    video_url: "http://video.url",
-                                                   transcript_upload_url: "http://upload.url"
+                                                   transcript_upload_url: "http://upload.url",
+                                                   video_version: "video-version"
                                                  }).and_return(fake_response(200,
                                                                              '{"status":"queued"}'))
 
@@ -44,7 +45,8 @@ RSpec.describe(SearchClient, :mampfsearch) do
         lecture_rails_id: 2,
         course_rails_id: 3,
         video_url: "http://video.url",
-        transcript_upload_url: "http://upload.url"
+        transcript_upload_url: "http://upload.url",
+        video_version: "video-version"
       )
 
       expect(response).to eq("status" => "queued")
@@ -57,7 +59,8 @@ RSpec.describe(SearchClient, :mampfsearch) do
                                                  media_rails_id: 1,
                                                  course_rails_id: 3,
                                                  video_url: "http://video.url",
-                                                 transcript_upload_url: "http://upload.url"
+                                                 transcript_upload_url: "http://upload.url",
+                                                 video_version: "video-version"
                                                }).and_return(fake_response(200,
                                                                            '{"status":"queued"}'))
 
@@ -65,11 +68,12 @@ RSpec.describe(SearchClient, :mampfsearch) do
 
       client.transcribe_lesson(
         media_rails_id: 1, course_rails_id: 3,
-        video_url: "http://video.url", transcript_upload_url: "http://upload.url"
+        video_url: "http://video.url", transcript_upload_url: "http://upload.url",
+        video_version: "video-version"
       )
     end
 
-    it "includes video_version in payload when provided" do
+    it "includes the required video_version in the payload" do
       fake_http = double("http")
       allow(fake_http).to receive(:headers).and_return(fake_http)
       expect(fake_http).to receive(:post).with("/lesson/ingest", json: hash_including(
@@ -85,20 +89,16 @@ RSpec.describe(SearchClient, :mampfsearch) do
       )
     end
 
-    it "logs a warning when video_version is blank" do
-      fake_http = double("http")
-      allow(fake_http).to receive(:headers).and_return(fake_http)
-      allow(fake_http).to receive(:post).and_return(fake_response(200, '{"status":"queued"}'))
-      allow(pool).to receive(:with) { |&block| block.call(fake_http) }
+    it "rejects a blank video_version before sending a request" do
+      expect(pool).not_to receive(:with)
 
-      expect(Rails.logger).to receive(:warn).with(
-        a_string_including("called without video_version for media 1")
-      )
-
-      client.transcribe_lesson(
-        media_rails_id: 1, course_rails_id: 3,
-        video_url: "http://video.url", transcript_upload_url: "http://upload.url"
-      )
+      expect do
+        client.transcribe_lesson(
+          media_rails_id: 1, course_rails_id: 3,
+          video_url: "http://video.url", transcript_upload_url: "http://upload.url",
+          video_version: nil
+        )
+      end.to raise_error(ArgumentError, "video_version is required")
     end
 
     it "raises TimeoutError on HTTP timeout" do
@@ -110,7 +110,8 @@ RSpec.describe(SearchClient, :mampfsearch) do
       expect do
         client.transcribe_lesson(
           media_rails_id: 1, course_rails_id: 3,
-          video_url: "http://video.url", transcript_upload_url: "http://upload.url"
+          video_url: "http://video.url", transcript_upload_url: "http://upload.url",
+          video_version: "video-version"
         )
       end.to raise_error(SearchClient::TimeoutError)
     end
@@ -130,6 +131,7 @@ RSpec.describe(SearchClient, :mampfsearch) do
         course_rails_id: 3,
         video_url: "http://video.url",
         transcript_upload_url: "http://upload.url",
+        video_version: "video-version",
         transcription_failed_url: "http://failure.url"
       )
     end
@@ -143,7 +145,8 @@ RSpec.describe(SearchClient, :mampfsearch) do
       expect do
         client.transcribe_lesson(
           media_rails_id: 1, course_rails_id: 3,
-          video_url: "http://video.url", transcript_upload_url: "http://upload.url"
+          video_url: "http://video.url", transcript_upload_url: "http://upload.url",
+          video_version: "video-version"
         )
       end.to raise_error(SearchClient::ServiceUnavailableError)
     end
@@ -267,6 +270,7 @@ RSpec.describe(SearchClient, :mampfsearch) do
                                                  course_rails_id: 3,
                                                  video_url: "http://video.url",
                                                  transcript_upload_url: "http://upload.url",
+                                                 video_version: "video-version",
                                                  lecture_rails_id: 2
                                                }).and_return(fake_response(200,
                                                                            '{"status":"queued"}'))
@@ -275,7 +279,8 @@ RSpec.describe(SearchClient, :mampfsearch) do
 
       client.transcribe_lesson(
         media_rails_id: 1, lecture_rails_id: 2, course_rails_id: 3,
-        video_url: "http://video.url", transcript_upload_url: "http://upload.url"
+        video_url: "http://video.url", transcript_upload_url: "http://upload.url",
+        video_version: "video-version"
       )
     end
 
