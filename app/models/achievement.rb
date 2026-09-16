@@ -51,6 +51,19 @@ class Achievement < ApplicationRecord
     words.first.to_s[0, 2].upcase
   end
 
+  # The headings of criteria that stand side by side, by id: two that come
+  # out the same are told apart by a number, "BT1" and "BT2", rather than
+  # read as one column twice.
+  def self.short_titles(achievements)
+    achievements.group_by(&:short_title).each_with_object({}) do |(short, group), headings|
+      if group.size == 1
+        headings[group.first.id] = short
+      else
+        group.each_with_index { |achievement, i| headings[achievement.id] = "#{short}#{i + 1}" }
+      end
+    end
+  end
+
   # The one place that decides whether a recorded value clears this
   # achievement. The marking table and the performance computation both ask
   # here, so the two cannot answer differently.

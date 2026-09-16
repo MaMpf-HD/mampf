@@ -38,6 +38,7 @@ module StudentPerformance
       load_test_share(tests) if tests.any?
       @awaiting_marking = awaiting_marking_counts(scope, sheets + tests)
       @achievements = @lecture.achievements.order(:title)
+      @achievement_headings = Achievement.short_titles(@achievements)
     end
 
     def show

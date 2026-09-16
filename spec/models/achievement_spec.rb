@@ -33,6 +33,17 @@ RSpec.describe(Achievement, type: :model) do
     end
   end
 
+  describe ".short_titles" do
+    it "numbers two criteria whose letters come out the same" do
+      talk = build_stubbed(:achievement, title: "Blackboard Talk")
+      test = build_stubbed(:achievement, title: "Bonus Test")
+      rate = build_stubbed(:achievement, title: "Attendance Rate")
+
+      expect(described_class.short_titles([talk, test, rate]))
+        .to eq(talk.id => "BT1", test.id => "BT2", rate.id => "AR")
+    end
+  end
+
   describe "associations" do
     it "belongs to a lecture" do
       achievement = FactoryBot.build(:achievement, lecture: nil)
