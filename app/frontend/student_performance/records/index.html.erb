@@ -1,7 +1,7 @@
-<%= vite_stylesheet_tag "student_performance/records/records_table.scss" %>
-
+<%# a frame swap discards everything outside it: the stylesheet, and a confirmation, travel inside %>
 <%= turbo_frame_tag "performance-records-frame" do %>
-  <%# a frame swap discards the layout, so a confirmation has to travel inside it %>
+  <%= vite_stylesheet_tag "student_performance/records/records_table.scss" %>
+
   <%= render partial: "flash/message" if turbo_frame_request? %>
 
   <p class="text-muted small mb-2 mt-2">
