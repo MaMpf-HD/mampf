@@ -1132,6 +1132,16 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(row.reload).to be_absent
     end
 
+    it "takes an absence back after the test was moved to a later week" do
+      row.update!(status: :absent)
+      test.update!(test_week: 2.weeks.from_now.to_date.beginning_of_week.iso8601)
+
+      patch remove_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+
+      expect(row.reload).to be_pending
+      expect(response.body).not_to include(I18n.t("assessment.grading_exam.remove_absent"))
+    end
+
     it "refuses an absence before the week has begun" do
       test.update!(test_week: 2.weeks.from_now.to_date.beginning_of_week.iso8601)
 

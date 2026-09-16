@@ -189,6 +189,14 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(row.reload.tutorial).to eq(old_group)
       end
 
+      it "offers to take an absence back whatever the week says" do
+        create(:assessment_participation, assessment: assessment, user: member,
+                                          tutorial: tutorial, status: :absent)
+        label = I18n.t("assessment.grading_exam.remove_absent")
+
+        expect(render_inline(component).css("a[aria-label='#{label}']")).to be_present
+      end
+
       it "offers to record an absence once the week has begun, not before" do
         label = I18n.t("assessment.grading_exam.mark_absent")
         expect(render_inline(component).css("a[aria-label='#{label}']")).to be_empty

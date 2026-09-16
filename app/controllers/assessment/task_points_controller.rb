@@ -24,7 +24,7 @@ module Assessment
     before_action :refuse_unless_sheet, only: [:mark_as_participated, :remove_participated]
     before_action :refuse_unless_attended, only: [:mark_as_absent, :remove_absent]
     before_action :refuse_unless_exam, only: [:mark_as_exempt, :remove_exempt]
-    before_action :refuse_before_test_week, only: [:mark_as_absent, :remove_absent]
+    before_action :refuse_before_test_week, only: :mark_as_absent
     before_action :refuse_unless_candidate, only: [:update_participation, :mark_as_absent,
                                                    :remove_absent, :mark_as_exempt,
                                                    :remove_exempt]
@@ -231,7 +231,8 @@ module Assessment
       end
 
       # Absence does not change task points, so it bypasses the point-entry
-      # validation that checks whether grading is open.
+      # validation that checks whether grading is open. Taking an absence back
+      # is not gated: a test moved to a later week must not leave it standing.
       def refuse_before_test_week
         return unless @assessable.is_a?(Assignment) && !@assessable.grading_open?
 

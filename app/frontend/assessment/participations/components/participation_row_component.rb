@@ -200,15 +200,22 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def absence_button
     return unless can_enter_points?
-    return if test? && (!allow_grading? || elsewhere? || paper_hand_in?)
+    return if test? && elsewhere?
 
     if @participation.absent?
       row_action_link(remove_absent_path(@participation, grading_scope_type: grading_scope_type),
                       "bi-person-check-fill", t("assessment.grading_exam.remove_absent"))
-    elsif @participation.pending?
+    elsif @participation.pending? && absence_recordable?
       row_action_link(mark_as_absent_path(@participation, grading_scope_type: grading_scope_type),
                       "bi-person-x-fill", t("assessment.grading_exam.mark_absent"))
     end
+  end
+
+  # On a test, from its Monday and while no points were started; taking an
+  # absence back is offered whatever the week says, so a test moved to a
+  # later week does not leave one standing.
+  def absence_recordable?
+    !test? || (allow_grading? && !paper_hand_in?)
   end
 
   # Certificates can arrive after absence was recorded. mark_exempt clears
