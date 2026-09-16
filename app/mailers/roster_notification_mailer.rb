@@ -50,6 +50,18 @@ class RosterNotificationMailer < ApplicationMailer
       notify_tutors(user, old_rosterable, new_rosterable)
     end
 
+    def change_exam_schedule(rosterable)
+      return log_unsupported(rosterable) unless rosterable.is_a?(Exam)
+
+      rosterable.roster_entries.each do |entry|
+        with(
+          rosterable: rosterable,
+          recipient: entry.user,
+          info: exam_info(rosterable)
+        ).change_exam_schedule_email.deliver_later
+      end
+    end
+
     def log_unsupported(rosterable)
       Rails.logger.error(
         "RosterNotificationMailer: Unsupported rosterable type: #{rosterable.class.name}"
@@ -118,6 +130,10 @@ class RosterNotificationMailer < ApplicationMailer
 
   def participant_joined_group_email
     email { t("roster.mailer.roster_participant_joined_group_email_subject", **subject_vars) }
+  end
+
+  def change_exam_schedule_email
+    email { t("roster.mailer.roster_change_exam_schedule_email_subject", **subject_vars) }
   end
 
   private
