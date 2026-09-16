@@ -1,4 +1,6 @@
 <%# One dialog for the whole table; the row that opens it hands over its url. %>
+<% title = local_assigns.fetch(:title, t("assessment.grading_exam.exempt_modal.title")) %>
+
 <div
   class="modal fade"
   tabindex="-1"
@@ -12,9 +14,7 @@
       <%= form_with url: "#", method: :patch,
                     data: { exempt_modal_target: "form", action: "submit->exempt-modal#submit" } do |f| %>
         <div class="modal-header">
-          <h5 class="modal-title" id="exempt-modal-title">
-            <%= t("assessment.grading_exam.exempt_modal.title") %>
-          </h5>
+          <h5 class="modal-title" id="exempt-modal-title"><%= title %></h5>
         </div>
 
         <div class="modal-body">

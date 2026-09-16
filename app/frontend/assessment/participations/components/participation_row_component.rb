@@ -49,6 +49,10 @@ class ParticipationRowComponent < ViewComponent::Base
     layout.body == :single_grade
   end
 
+  def achievement?
+    layout.body == :achievement
+  end
+
   def allow_grading?
     @assessable.grading_open?
   end
@@ -107,8 +111,44 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.assessment.persisted_tasks || []
   end
 
+  # A criterion's row has no marking queue: it is met, not met, or waits
+  # for a value - or the person was excused.
   def status
+    return achievement_status if achievement?
+
     @participation.display_status
+  end
+
+  def achievement_status
+    @assessable.status_of(@participation)
+  end
+
+  ACHIEVEMENT_STATUS_ICONS = {
+    met: ["bi-check-circle", "text-success"],
+    not_met: ["bi-x-circle", "text-danger"],
+    unmarked: ["bi-question-circle", "text-amber"],
+    exempt: ["bi-dash-circle", "text-secondary"]
+  }.freeze
+
+  def achievement_status_icon
+    ACHIEVEMENT_STATUS_ICONS.fetch(achievement_status).join(" ")
+  end
+
+  def achievement_status_label
+    t("assessment.achievements.marking.#{achievement_status}")
+  end
+
+  # The value as the tutor recorded it, or the word for a yes/no one.
+  def achievement_value_display
+    value = @participation.grade_text
+    return "—" if value.blank?
+    return t("assessment.achievements.marking.#{value}") if @assessable.boolean?
+
+    @assessable.percentage? ? "#{value} %" : value
+  end
+
+  def value_enterable?
+    !@participation.exempt? && !elsewhere?
   end
 
   def talk_dates
@@ -150,6 +190,8 @@ class ParticipationRowComponent < ViewComponent::Base
       point_participation_path(@participation, grading_scope_type: grading_scope_type)
     when :grading
       grade_participation_path(@participation)
+    when :achievement
+      achievement_value_participation_path(@participation, grading_scope_type: grading_scope_type)
     else
       raise(ArgumentError, "Unsupported table option: #{@table_option}")
     end
@@ -161,6 +203,9 @@ class ParticipationRowComponent < ViewComponent::Base
       refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
     when :grading
       refresh_grade_participation_path(@participation)
+    when :achievement
+      refresh_achievement_value_participation_path(@participation,
+                                                   grading_scope_type: grading_scope_type)
     else
       raise(ArgumentError, "Unsupported table option: #{@table_option}")
     end
@@ -227,14 +272,15 @@ class ParticipationRowComponent < ViewComponent::Base
     return unless helpers.current_user.can_edit?(@assessable.lecture)
 
     if @participation.exempt?
-      row_action_link(remove_exempt_path(@participation), "bi-file-earmark-x-fill",
-                      t("assessment.grading_exam.remove_exempt"))
-    elsif @participation.pending? || @participation.absent?
+      row_action_link(remove_exempt_path(@participation, grading_scope_type: grading_scope_type),
+                      "bi-file-earmark-x-fill", t("assessment.grading_exam.remove_exempt"))
+    elsif @participation.pending? || @participation.absent? || achievement?
       label = t("assessment.grading_exam.mark_exempt")
       tag.button(type: "button",
                  class: ROW_ACTION_CLASSES,
                  data: { action: "click->participation-row#openExemptModal",
-                         url: mark_as_exempt_path(@participation),
+                         url: mark_as_exempt_path(@participation,
+                                                  grading_scope_type: grading_scope_type),
                          note: @participation.note },
                  title: label,
                  aria: { label: label }) do
@@ -333,7 +379,13 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def row_action_label(action)
-    scope = single_grade? ? "assessment.grade_talk_row" : "assessment.grading_tutorial"
+    scope = if single_grade?
+      "assessment.grade_talk_row"
+    elsif achievement?
+      "assessment.achievements.marking"
+    else
+      "assessment.grading_tutorial"
+    end
     helpers.t("#{scope}.#{action}")
   end
 
@@ -351,6 +403,7 @@ class ParticipationRowComponent < ViewComponent::Base
     false
   end
 
+  # A criterion's value is the tutor's to record, like points.
   def can_enter_row?
     single_grade? ? can_enter_grade? : can_enter_points?
   end

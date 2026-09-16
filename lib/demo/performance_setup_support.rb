@@ -67,7 +67,7 @@ module Demo
             assessment.assessment_participations.create!(
               user_id: user_id,
               tutorial_id: tutorial_id,
-              status: :reviewed
+              status: :pending
             )
           end
         end

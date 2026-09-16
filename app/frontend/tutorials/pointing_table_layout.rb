@@ -15,7 +15,8 @@ class PointingTableLayout
     graded: 220,
     save: 90,
     hand_in: 140,
-    correction: 140
+    correction: 140,
+    value: 150
   }.freeze
 
   # Pin :talk and :team so the talk and speaker remain visible while
@@ -38,6 +39,12 @@ class PointingTableLayout
       else
         new(columns: [:team, :status, :tasks, :total, :save], body: :tasks)
       end
+    when Achievement
+      columns = [:team]
+      columns << :tutorial if grading_scope.is_a?(Lecture)
+      # Three buttons stand in the save column here: excuse, save, reload.
+      new(columns: columns + [:status, :value, :save], body: :achievement,
+          widths: { save: 130 })
     else
       raise(UnsupportedAssessableError, "No pointing table layout for #{assessable.class}")
     end
@@ -45,11 +52,12 @@ class PointingTableLayout
 
   attr_reader :columns, :body, :left, :right
 
-  def initialize(columns:, body:, left: [:team], right: [:save])
+  def initialize(columns:, body:, left: [:team], right: [:save], widths: {})
     @columns = columns
     @body = body
     @left = left
     @right = right
+    @widths = WIDTHS.merge(widths)
   end
 
   def show?(column)
@@ -61,7 +69,7 @@ class PointingTableLayout
   end
 
   def column_class(column)
-    raise(ArgumentError, "Unknown pointing table column #{column}") unless WIDTHS.key?(column)
+    raise(ArgumentError, "Unknown pointing table column #{column}") unless @widths.key?(column)
 
     css = "#{column.to_s.dasherize}-col"
     pinned?(column) ? "sticky-col #{css}" : css
@@ -76,7 +84,7 @@ class PointingTableLayout
   end
 
   def css_vars
-    vars = WIDTHS.map { |column, width| "--#{column.to_s.dasherize}-width:#{width}px" }
+    vars = @widths.map { |column, width| "--#{column.to_s.dasherize}-width:#{width}px" }
     vars += left.map { |column| "--#{column.to_s.dasherize}-left:#{offsets[column]}px" }
     vars += right.map { |column| "--#{column.to_s.dasherize}-right:#{offsets[column]}px" }
     vars += ["--sticky-left-width:#{width_of(left)}px",
@@ -87,6 +95,6 @@ class PointingTableLayout
   private
 
     def width_of(columns)
-      columns.sum { |column| WIDTHS.fetch(column) }
+      columns.sum { |column| @widths.fetch(column) }
     end
 end

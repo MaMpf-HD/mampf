@@ -73,7 +73,61 @@
   <% end %>
 
   <% if grading_enabled? %>
-    <% if layout.show?(:status_compact) %>
+    <% if achievement? %>
+      <td class="text-center <%= layout.column_class(:status) %>">
+        <i
+          class="bi <%= achievement_status_icon %>"
+          role="img"
+          aria-label="<%= achievement_status_label %>"
+          title="<%= achievement_status_label %>"
+        ></i>
+
+        <span class="ms-1"><%= achievement_status_label %></span>
+
+        <% if locked_reason %>
+          <div class="small text-muted"><%= locked_reason %></div>
+        <% end %>
+      </td>
+      <td class="text-center <%= layout.column_class(:value) %>">
+        <% if can_enter_points? && value_enterable? %>
+          <% if @assessable.boolean? %>
+            <%= tag.select(
+                  name: "grade",
+                  class: "form-select form-select-sm w-auto mx-auto",
+                  aria: { label: t("assessment.achievements.marking.value_for", name: @user.tutorial_name) },
+                  data: { participation_row_target: "gradeInput",
+                          action: "change->participation-row#onParticipationChanged" }
+                ) do %>
+              <%= tag.option("—", value: "", selected: @participation.grade_text.blank?) %>
+
+              <%= tag.option(t("assessment.achievements.marking.pass"), value: Achievement::PASSED,
+                                                                        selected: @participation.grade_text == Achievement::PASSED) %>
+
+              <%= tag.option(t("assessment.achievements.marking.fail"), value: "fail",
+                                                                        selected: @participation.grade_text == "fail") %>
+            <% end %>
+          <% else %>
+            <div
+              class="input-group input-group-sm mx-auto"
+              style="max-width: 8rem;"
+            >
+              <%= number_field_tag "grade", @participation.grade_text,
+                                   class: "form-control text-end",
+                                   min: 0, max: (100 if @assessable.percentage?), step: "any",
+                                   aria: { label: t("assessment.achievements.marking.value_for", name: @user.tutorial_name) },
+                                   data: { participation_row_target: "gradeInput",
+                                           action: "input->participation-row#onParticipationChanged" } %>
+
+              <% if @assessable.percentage? %>
+                <span class="input-group-text">%</span>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <span class="fw-semibold"><%= achievement_value_display %></span>
+        <% end %>
+      </td>
+    <% elsif layout.show?(:status_compact) %>
       <td class="text-center <%= layout.column_class(:status_compact) %>">
         <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :icon,
                                                          detail: status_detail) %>
@@ -179,11 +233,11 @@
           <%= absence_button %>
         <% end %>
 
-        <% if exam_grading? %>
+        <% if exam_grading? || achievement? %>
           <%= exemption_button %>
         <% end %>
 
-        <% if (tasks? && can_enter_points? && points_enterable?) || (single_grade? && can_enter_grade? && grade_enterable?) %>
+        <% if (tasks? && can_enter_points? && points_enterable?) || (single_grade? && can_enter_grade? && grade_enterable?) || (achievement? && can_enter_points? && value_enterable?) %>
           <%= form_with url: save_url,
                       method: :patch,
                       data: { turbo: true, participation_row_target: "form" },

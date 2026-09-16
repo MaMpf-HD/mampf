@@ -1,76 +1,78 @@
+# A criterion's table: one row per person, with the value the tutor records
+# and whether it meets the criterion. A tutor sees their group, the lecturer
+# every member, group by group; the rows are seeded as the table is drawn,
+# the way a test's are.
 class AchievementMarkingTableComponent < ViewComponent::Base
-  def initialize(achievement:)
+  STATUSES = [:met, :not_met, :unmarked, :exempt].freeze
+
+  def initialize(achievement:, grading_scope:)
     super()
     @achievement = achievement
+    @lecture = achievement.lecture
+    @assessment = achievement.assessment
+    @grading_scope = grading_scope
+    @tutorial = grading_scope if grading_scope.is_a?(Tutorial)
   end
 
   attr_reader :achievement
 
-  delegate :boolean?, :numeric?, :percentage?, :threshold,
-           to: :achievement
-
-  def any_participations?
-    participations.any?
+  def rows
+    @rows ||= members.filter_map { |user| participations[user.id] }
   end
 
-  def value_display(participation)
-    return "\u2014" if participation.grade_text.blank?
-
-    case achievement.value_type
-    when "numeric"
-      return "#{format_numeric(participation.grade_text)} / \u2014" if threshold.blank?
-
-      "#{format_numeric(participation.grade_text)} / #{format_numeric(threshold)}"
-    when "percentage"
-      return "#{format_percentage(participation.grade_text.to_f)} / \u2014" if threshold.blank?
-
-      "#{format_percentage(participation.grade_text.to_f)} / #{format_percentage(threshold)}"
-    end
+  def row_for(participation)
+    ParticipationRowComponent.new(participation: participation, assessment: @assessment,
+                                  grading_scope: @grading_scope, table_option: :achievement,
+                                  filter_tutorial_id: participation.tutorial_id)
   end
 
-  def met?(participation)
-    achievement.met_by?(participation.grade_text)
+  def layout
+    @layout ||= PointingTableLayout.for(assessable: achievement, grading_scope: @grading_scope)
   end
 
-  def status_badge(participation)
-    return :unmarked if threshold.blank? && !boolean?
-    return :unmarked if participation.grade_text.blank?
-
-    met?(participation) ? :met : :not_met
+  def status_options
+    STATUSES.map { |status| [status.to_s, I18n.t("assessment.achievements.marking.#{status}")] }
   end
 
-  def participations
-    @participations ||= assessment
-                        .assessment_participations
-                        .joins(:user)
-                        .includes(:user)
-                        .order("users.name")
+  # The lecturer's table filters by group; a tutor's is one group already.
+  def tutorial_options
+    return [] if @tutorial || @lecture.tutorials.empty?
+
+    @lecture.tutorials.order(:title).map { |tutorial| [tutorial.id.to_s, tutorial.title] } +
+      [["none", I18n.t("assessment.grading_tutorial.no_tutorial_badge")]]
   end
 
-  def marked_count
-    @marked_count ||= participations.count { |p| p.grade_text.present? }
+  def summary
+    PointingSummaryComponent.new(statuses: rows.map { |row| achievement.status_of(row) },
+                                 hand_ins: false)
   end
 
-  def met_count
-    @met_count ||= participations.count { |p| met?(p) == true }
+  def filter_id
+    "achievement-#{achievement.id}-#{@tutorial ? "tutorial-#{@tutorial.id}" : "lecture"}"
   end
 
   private
 
-    def assessment
-      achievement.assessment
+    # A group's members by the name the table shows; the lecture's members
+    # group by group, those in no group last, as the sheet tables read.
+    def members
+      @members ||= if @tutorial
+        @tutorial.members.to_a.sort_by { |user| user.tutorial_name.to_s.downcase }
+      else
+        @lecture.members.to_a.sort_by do |user|
+          [groups[user.id] ? 0 : 1, groups[user.id]&.title.to_s, user.tutorial_name.to_s.downcase]
+        end
+      end
     end
 
-    def format_percentage(value)
-      "#{format("%.1f", value.to_f)}%"
+    def groups
+      @groups ||= TutorialMembership.where(tutorial: @lecture.tutorials).includes(:tutorial)
+                                    .index_by(&:user_id).transform_values(&:tutorial)
     end
 
-    # An unreadable value is shown as the tutor typed it; turning it into a 0
-    # would claim they entered something they did not.
-    def format_numeric(value)
-      number = Achievement.numeric_value(value)
-      return value.to_s if number.nil?
-
-      number.to_s("F").sub(/\.0+\z/, "").sub(/(\.\d*?)0+\z/, "\\1")
+    def participations
+      @participations ||= Assessment::ParticipationIndex.rows_for(
+        @assessment, members, members.to_h { |user| [user.id, groups[user.id]] }
+      )
     end
 end

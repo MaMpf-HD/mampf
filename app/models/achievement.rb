@@ -61,6 +61,15 @@ class Achievement < ApplicationRecord
     end
   end
 
+  # Where somebody stands on the criterion, as the tables show it: excused,
+  # nothing recorded yet, or the value's verdict.
+  def status_of(participation)
+    return :exempt if participation.exempt?
+    return :unmarked if participation.grade_text.blank?
+
+    met_by?(participation.grade_text) ? :met : :not_met
+  end
+
   # The one place that decides whether a recorded value clears this
   # achievement. The marking table and the performance computation both ask
   # here, so the two cannot answer differently.

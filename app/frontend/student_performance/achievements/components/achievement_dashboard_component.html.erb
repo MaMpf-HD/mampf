@@ -36,7 +36,8 @@
     <hr class="my-4">
     <h2 class="h5 mb-3"><%= t("assessment.grading") %></h2>
     <%= render AchievementMarkingTableComponent.new(
-      achievement: achievement
+      achievement: achievement,
+      grading_scope: lecture
     ) %>
   <% end %>
 </div>
