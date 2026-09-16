@@ -42,8 +42,6 @@ de:
       no_achievements_yet: 'Noch keine Zusatzkriterien angelegt.'
       confirm_delete: 'Zusatzkriterium wirklich löschen?'
       marking:
-        marked: 'bewertet'
-        met_label: 'erfüllt'
         value: 'Wert'
         status: 'Status'
         met: 'Erfüllt'

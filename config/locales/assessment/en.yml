@@ -42,8 +42,6 @@ en:
       no_achievements_yet: 'No achievements defined yet.'
       confirm_delete: 'Really delete this achievement?'
       marking:
-        marked: 'graded'
-        met_label: 'met'
         value: 'Value'
         status: 'Status'
         met: 'Met'
