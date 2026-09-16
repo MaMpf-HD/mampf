@@ -33,9 +33,10 @@ test.describe("a test written in the tutorial", () => {
     });
     const studentName = student.user.name_in_tutorials;
 
-    // the teacher sets the test up for the second week on offer, with one
+    // the teacher sets the test up for the last week on offer, with one
     // problem; the weeks are the term's, and the term is the factory's, so
-    // the week's Monday is read off the form rather than the calendar
+    // the week's Monday is read off the form rather than the calendar - the
+    // last one is always there, the second is not when the term ends this week
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.gotoOverview();
     await teacher.page.getByRole("link", { name: "Add test" }).click();
@@ -43,7 +44,7 @@ test.describe("a test written in the tutorial", () => {
     await expect(dashboard.container.getByLabel("Digital submission via MaMpf")).toHaveCount(0);
     await dashboard.container.getByLabel("Title").fill("Test 1");
     const week = dashboard.container.getByLabel("Test week");
-    await week.selectOption({ index: 1 });
+    await week.selectOption({ index: await week.locator("option").count() - 1 });
     const monday = new Date(`${await week.inputValue()}T12:00:00`);
     await dashboard.container.getByRole("button", { name: "Save" }).click();
     await expect(dashboard.dashboard.getByRole("heading", { name: "Test 1" })).toBeVisible();

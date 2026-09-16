@@ -14,7 +14,7 @@ en:
       homework_heading: 'Homework'
       week: 'Test week'
       sheet_or_test: 'Sheet or test'
-      week_hint: 'The tutorials write it in their own sessions that week; points can be entered from the Monday on.'
+      week_hint: 'Students take the test in their tutorial that week; tutors can enter points from the Monday on.'
       week_label: '%{from} – %{to}'
       badge: 'Test'
     subtitle:

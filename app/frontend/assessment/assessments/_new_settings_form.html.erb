@@ -1,4 +1,4 @@
-<%= vite_javascript_tag "js/datetimepicker" %>
+<%= vite_javascript_tag "js/datetimepicker" unless assignment.kind_test? %>
 
 <%= form_with model: assignment,
               url: assignments_path,

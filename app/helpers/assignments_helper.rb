@@ -25,15 +25,17 @@ module AssignmentsHelper
     options_for_select(choices, assignment.deadline&.to_date&.beginning_of_week&.iso8601)
   end
 
-  def week_label(week)
-    I18n.t("assessment.test.week_label",
-           from: I18n.l(week.first, format: :test_week_start),
-           to: I18n.l(week.last, format: :test_week_end))
-  end
-
   # The mark beside a test's title wherever it is listed among sheets.
   def test_badge
     tag.span(I18n.t("assessment.test.badge"),
              class: "badge bg-secondary-subtle text-secondary-emphasis fw-normal ms-1")
   end
+
+  private
+
+    def week_label(week)
+      I18n.t("assessment.test.week_label",
+             from: I18n.l(week.first, format: :test_week_start),
+             to: I18n.l(week.last, format: :test_week_end))
+    end
 end
