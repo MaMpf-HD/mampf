@@ -487,6 +487,25 @@ RSpec.describe(StudentPerformance::ComputationService) do
           expect(record.achievements_ungraded_ids)
             .not_to include(achievement.id)
         end
+
+        # A certificate stands in for the criterion: excused is met, whatever
+        # the row recorded before, and it is not waiting for a value either.
+        it "counts an exemption as met, over a value that says otherwise" do
+          participation = achievement.assessment
+                                     .assessment_participations
+                                     .find_by(user: user)
+          participation.update!(grade_text: "fail", status: :exempt)
+
+          described_class.new(lecture: lecture)
+                         .compute_and_upsert_record_for(user)
+          described_class.new(lecture: lecture).compute_and_upsert_all_records!
+
+          record = StudentPerformance::Record
+                   .find_by(lecture: lecture, user: user)
+          expect(record.achievements_met_ids).to include(achievement.id)
+          expect(record.achievements_ungraded_ids)
+            .not_to include(achievement.id)
+        end
       end
 
       context "with a numeric achievement" do
