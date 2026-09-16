@@ -694,6 +694,18 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
       expect(result.standing.points_marked_so_far).to eq(10)
     end
+
+    # Absent is lost, not excused: the test stays in the base with nothing
+    # earned on it, from the moment the absence is recorded in its week.
+    it "counts a test the reader was recorded absent from, in its week already" do
+      test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                 deadline: 3.days.from_now)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      participate(test, status: :absent)
+
+      expect(result.standing.points_marked_so_far).to eq(10)
+      expect(result.standing.points_still_open).to eq(0)
+    end
   end
 
   # Handed in, deadline behind it, nothing marked on it yet: already in the

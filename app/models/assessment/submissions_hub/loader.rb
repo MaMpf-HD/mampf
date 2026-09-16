@@ -150,8 +150,12 @@ module Assessment
                 .sum { |sheet| sheet.max_points || 0 }
         end
 
+        # Absent from a test in its week counts like marked: the points are
+        # lost, not still to be had, so the test is in the base already.
         def marked_not_due?(sheet)
-          !due_for_points?(sheet) && sheet.participation&.reviewed?
+          return false if due_for_points?(sheet)
+
+          sheet.participation&.reviewed? || sheet.participation&.absent? || false
         end
 
         def points_awaiting_marks
