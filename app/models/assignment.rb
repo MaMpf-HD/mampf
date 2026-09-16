@@ -122,16 +122,21 @@ class Assignment < ApplicationRecord
   end
 
   # The form names a test's week by its Monday; the test is due with the
-  # Sunday.
+  # Sunday. Anything that is no date leaves the deadline empty, and the
+  # presence validation says so.
   def test_week=(monday)
     self.deadline = Time.zone.parse(monday.to_s)&.end_of_week
+  rescue ArgumentError
+    self.deadline = nil
   end
 
   # The Mondays a test can be set for: this week to the end of the term - or
   # half a year where there is no term ahead - and the week it already has,
-  # so that the form can show it.
+  # so that the form can show it. The term is read off the lecture itself:
+  # `Lecture#begin_date` reaches for the active term where there is none, and
+  # a lecture may have neither.
   def test_week_choices
-    first = [lecture.begin_date, Time.zone.today].max.beginning_of_week
+    first = [lecture.term&.begin_date, Time.zone.today].compact.max.beginning_of_week
     term_end = lecture.term&.end_date
     last = (term_end && term_end >= first ? term_end : first + 6.months).beginning_of_week
     weeks = []

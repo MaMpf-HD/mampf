@@ -74,6 +74,25 @@ RSpec.describe(Assignment, type: :model) do
       expect(choices.size).to be_between(26, 28)
     end
 
+    # A lecture bound to no term, while no term is active either: the form
+    # must still open.
+    it "offers weeks to a lecture without a term, active term or not" do
+      Term.update_all(active: false) # rubocop:disable Rails/SkipsModelValidations
+      loose = FactoryBot.create(:lecture, :term_independent)
+      test = FactoryBot.build(:assignment, lecture: loose, kind: :test)
+
+      expect(test.test_week_choices.first).to eq(Time.zone.today.beginning_of_week)
+    end
+
+    it "leaves the deadline empty for a week that is no date" do
+      test.test_week = "2026-99-99"
+      expect(test).to be_invalid
+      expect(test.errors[:deadline]).to be_present
+
+      test.test_week = ""
+      expect(test).to be_invalid
+    end
+
     it "takes no hand-in through MaMpf, whatever the form sends" do
       expect(test.requires_submission).to be(false)
       expect(test.assessment.requires_submission).to be(false)
