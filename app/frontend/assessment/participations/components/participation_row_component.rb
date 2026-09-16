@@ -60,6 +60,8 @@ class ParticipationRowComponent < ViewComponent::Base
       @participation.tutorial_id != @tutorial.id
   end
 
+  # Points go on a sheet that came in; a row nothing was handed in for waits
+  # for the mark in the hand-in column first. An exam has nothing to hand in.
   # Entering test points records participation; no separate hand-in is needed.
   def points_enterable?
     return false if @participation.exempt? || @participation.absent?
@@ -211,9 +213,10 @@ class ParticipationRowComponent < ViewComponent::Base
     end
   end
 
-  # On a test, from its Monday and while no points were started; taking an
-  # absence back is offered whatever the week says, so a test moved to a
-  # later week does not leave one standing.
+  # Absence is the grader's to record, an exemption the lecturer's - it takes
+  # a certificate and changes what counts. On a test, from its Monday and
+  # while no points were started; taking an absence back is offered whatever
+  # the week says, so a test moved to a later week does not leave one standing.
   def absence_recordable?
     !test? || (allow_grading? && !paper_hand_in?)
   end
