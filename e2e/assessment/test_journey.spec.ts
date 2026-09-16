@@ -44,7 +44,7 @@ test.describe("a test written in the tutorial", () => {
     await expect(dashboard.container.getByLabel("Digital submission via MaMpf")).toHaveCount(0);
     await dashboard.container.getByLabel("Title").fill("Test 1");
     const week = dashboard.container.getByLabel("Test week");
-    await week.selectOption({ index: await week.locator("option").count() - 1 });
+    await week.selectOption({ index: await week.getByRole("option").count() - 1 });
     const monday = new Date(`${await week.inputValue()}T12:00:00`);
     await dashboard.container.getByRole("button", { name: "Save" }).click();
     await expect(dashboard.dashboard.getByRole("heading", { name: "Test 1" })).toBeVisible();
