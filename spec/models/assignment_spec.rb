@@ -30,6 +30,56 @@ RSpec.describe(Assignment, type: :model) do
     expect(assignment).to be_invalid
   end
 
+  # A test is a sheet written in the tutorial: nothing is uploaded, its week
+  # is its deadline, and its groups write it on different days of that week.
+  describe "a test" do
+    let(:lecture) { FactoryBot.create(:lecture, submission_grace_period: 60) }
+    let(:test) do
+      FactoryBot.create(:valid_assignment, lecture: lecture, kind: :test,
+                                           deadline: 1.week.from_now.beginning_of_week + 2.days)
+    end
+
+    it "is due with the end of the week it was given a day of" do
+      expect(test.deadline).to eq((1.week.from_now.beginning_of_week + 2.days).end_of_week)
+      expect(test.test_week).to eq(
+        1.week.from_now.beginning_of_week.to_date..(1.week.from_now.end_of_week.to_date)
+      )
+    end
+
+    it "takes no hand-in through MaMpf, whatever the form sends" do
+      expect(test.requires_submission).to be(false)
+      expect(test.assessment.requires_submission).to be(false)
+
+      test.assessment.requires_submission = true
+      expect(test.assessment).to be_invalid
+      expect(test.assessment.errors[:requires_submission]).to be_present
+    end
+
+    it "opens for marking with its week, not after it, and knows no grace period" do
+      expect(test.grading_open?).to be(false)
+      expect(test.friendly_deadline).to eq(test.deadline)
+
+      Timecop.travel(test.deadline.beginning_of_week + 1.hour) do
+        expect(test.grading_open?).to be(true)
+        expect(test.active?).to be(true)
+      end
+    end
+
+    it "stays a test, as homework stays homework" do
+      test.kind = :homework
+      expect(test).to be_invalid
+      expect(test.errors[:kind]).to be_present
+
+      homework = FactoryBot.create(:valid_assignment, lecture: lecture)
+      homework.kind = :test
+      expect(homework).to be_invalid
+    end
+  end
+
+  it "is homework unless said otherwise" do
+    expect(FactoryBot.create(:valid_assignment)).to be_kind_homework
+  end
+
   describe "#past_deadline?" do
     it "returns true when deadline is in the past" do
       assignment = FactoryBot.build(:valid_assignment, :inactive)

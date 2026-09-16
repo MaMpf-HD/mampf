@@ -540,3 +540,4 @@ de:
           attributes:
             requires_submission:
               locked_after_deadline: "kann nach Ablauf der Abgabefrist nicht mehr geändert werden"
+              not_for_a_test: "gibt es bei einem Test im Tutorium nicht"

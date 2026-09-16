@@ -540,3 +540,4 @@ en:
           attributes:
             requires_submission:
               locked_after_deadline: "can't be changed after the deadline has passed"
+              not_for_a_test: "is not possible for a test written in the tutorial"
