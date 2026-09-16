@@ -5,7 +5,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
   before do
     allow(SearchClient).to receive(:instance).and_return(search_client)
-    allow(search_client).to receive(:list_media_rails_ids).and_return([])
+    allow(search_client).to receive(:list_media_versions).and_return({})
   end
 
   describe "#recover_stuck_jobs" do
@@ -85,7 +85,35 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
   end
 
   describe "#reconcile_search_index" do
-    it "enqueues delete jobs for orphaned IDs and ingest jobs for missing media" do
+    it "invalidates an older version and re-ingests the completed video" do
+      medium = FactoryBot.create(:valid_medium, :with_video,
+                                 transcription_status: :completed)
+      allow(search_client).to receive(:list_media_versions)
+        .and_return(medium.id => "old-version")
+      expect(search_client).to receive(:invalidate_media)
+        .with(medium.id, expected_video_version: "old-version")
+        .and_return(true)
+      expect(MampfsearchIngestJob).to receive(:perform_later).with(medium.id)
+
+      described_class.perform_now
+
+      expect(medium.reload.transcription_status).to eq("queued")
+    end
+
+    it "does not re-ingest if the version changed before invalidation" do
+      medium = FactoryBot.create(:valid_medium, :with_video,
+                                 transcription_status: :completed)
+      allow(search_client).to receive(:list_media_versions)
+        .and_return(medium.id => "old-version")
+      expect(search_client).to receive(:invalidate_media)
+        .with(medium.id, expected_video_version: "old-version")
+        .and_return(false)
+      expect(MampfsearchIngestJob).not_to receive(:perform_later)
+
+      described_class.perform_now
+    end
+
+    it "invalidates orphaned IDs and ingests missing media" do
       existing_medium = FactoryBot.create(:valid_medium, :with_video,
                                           transcription_status: :completed)
       missing_medium = FactoryBot.create(:valid_medium, :with_video,
@@ -93,12 +121,19 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       videoless_medium = FactoryBot.create(:valid_medium, video: nil)
       non_existent_id = 99_999
 
-      allow(search_client).to receive(:list_media_rails_ids)
-        .and_return([existing_medium.id, videoless_medium.id, non_existent_id])
+      allow(search_client).to receive(:list_media_versions).and_return(
+        existing_medium.id => existing_medium.video_fingerprint,
+        videoless_medium.id => "old-version",
+        non_existent_id => "old-version"
+      )
+      allow(search_client).to receive(:invalidate_media).and_return(true)
 
-      expect(MampfsearchDeleteJob).to receive(:perform_later).with(videoless_medium.id)
-      expect(MampfsearchDeleteJob).to receive(:perform_later).with(non_existent_id)
-      expect(MampfsearchDeleteJob).not_to receive(:perform_later).with(existing_medium.id)
+      expect(search_client).to receive(:invalidate_media)
+        .with(videoless_medium.id, expected_video_version: "old-version")
+        .and_return(true)
+      expect(search_client).to receive(:invalidate_media)
+        .with(non_existent_id, expected_video_version: "old-version")
+        .and_return(true)
       expect(MampfsearchIngestJob).to receive(:perform_later).with(missing_medium.id)
 
       described_class.perform_now
@@ -107,7 +142,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
     end
 
     it "logs a warning and recovers gracefully when search client raises MampfSearchError" do
-      allow(search_client).to receive(:list_media_rails_ids).and_raise(
+      allow(search_client).to receive(:list_media_versions).and_raise(
         SearchClient::MampfSearchError, "Connection failed"
       )
       expect(Rails.logger).to receive(:warn)
@@ -122,7 +157,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
                              transcription_requested_at: 5.minutes.ago)
       missing_media = FactoryBot.create_list(:valid_medium, 5, :with_video,
                                              transcription_status: :completed)
-      allow(search_client).to receive(:list_media_rails_ids).and_return([])
+      allow(search_client).to receive(:list_media_versions).and_return({})
 
       RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
       # 15 max in-flight - 12 existing queued = 3 batch size
@@ -142,7 +177,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
                              transcription_requested_at: 5.minutes.ago)
       missing_medium = FactoryBot.create(:valid_medium, :with_video,
                                          transcription_status: :completed)
-      allow(search_client).to receive(:list_media_rails_ids).and_return([])
+      allow(search_client).to receive(:list_media_versions).and_return({})
 
       RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
       expect(MampfsearchIngestJob).not_to receive(:perform_later)

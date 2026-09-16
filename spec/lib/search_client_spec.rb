@@ -210,6 +210,41 @@ RSpec.describe(SearchClient, :mampfsearch) do
     end
   end
 
+  describe "#list_media_versions" do
+    it "converts JSON object keys to medium IDs" do
+      pool = client.instance_variable_get(:@pool)
+      fake_client = double("client")
+      allow(fake_client).to receive(:headers).and_return(fake_client)
+      response = double(
+        "response", status: double("status", code: 200),
+                    body: double("body", to_s: '{"media_versions":{"42":"abc"}}')
+      )
+      expect(fake_client).to receive(:post).with("/lesson/versions").and_return(response)
+      allow(pool).to receive(:with) { |&block| block.call(fake_client) }
+
+      expect(client.list_media_versions).to eq(42 => "abc")
+    end
+  end
+
+  describe "#invalidate_media" do
+    it "sends the observed version for conditional invalidation" do
+      pool = client.instance_variable_get(:@pool)
+      fake_client = double("client")
+      allow(fake_client).to receive(:headers).and_return(fake_client)
+      response = double(
+        "response", status: double("status", code: 200),
+                    body: double("body", to_s: '{"invalidated":true}')
+      )
+      expect(fake_client).to receive(:post).with(
+        "/lesson/media/42/invalidate",
+        json: { expected_video_version: "old-version" }
+      ).and_return(response)
+      allow(pool).to receive(:with) { |&block| block.call(fake_client) }
+
+      expect(client.invalidate_media(42, expected_video_version: "old-version")).to be(true)
+    end
+  end
+
   describe "#health" do
     let(:pool) { client.instance_variable_get(:@pool) }
 

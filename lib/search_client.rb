@@ -73,6 +73,22 @@ class SearchClient
     response.is_a?(Hash) ? response.fetch("media_rails_ids", []) : []
   end
 
+  def list_media_versions
+    response = perform_request(scope: "/lesson/versions") do |client|
+      client.post("/lesson/versions")
+    end
+    versions = response.fetch("media_versions")
+    versions.transform_keys { |id| Integer(id) }
+  end
+
+  def invalidate_media(media_rails_id, expected_video_version:)
+    path = "/lesson/media/#{media_rails_id}/invalidate"
+    response = perform_request(scope: path) do |client|
+      client.post(path, json: { expected_video_version: expected_video_version })
+    end
+    response.fetch("invalidated")
+  end
+
   def health
     perform_request do |client|
       client.get("/ready")

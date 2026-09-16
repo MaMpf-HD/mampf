@@ -39,22 +39,25 @@ class MampfsearchSyncJob < ApplicationJob
     end
 
     def reconcile_search_index
-      search_ids = SearchClient.instance.list_media_rails_ids
-      return unless search_ids.is_a?(Array)
+      search_versions = SearchClient.instance.list_media_versions
+      return unless search_versions.is_a?(Hash)
 
-      existing_video_ids = Medium.where.not(video_data: nil).pluck(:id).to_set
-      indexed_ids = search_ids.to_set
+      current_media = Medium.where.not(video_data: nil).index_by(&:id)
+      indexed_ids = search_versions.keys.to_set
 
-      # 1. Delete orphaned media from MampfSearch (deleted or video removed in MaMpf)
-      orphaned_ids = indexed_ids - existing_video_ids
-      orphaned_ids.each do |orphan_id|
-        MampfsearchDeleteJob.perform_later(orphan_id)
+      # 1. Invalidate orphaned or outdated index entries without deleting newer versions.
+      search_versions.each do |id, indexed_version|
+        medium = current_media[id]
+        next if medium && medium.video_fingerprint == indexed_version
+
+        invalidated = SearchClient.instance.invalidate_media(
+          id, expected_video_version: indexed_version
+        )
+        indexed_ids.delete(id) if invalidated
       end
 
       # 2. Re-ingest media marked completed in MaMpf but missing from index (e.g. after reset)
-      completed_ids = Medium.where.not(video_data: nil)
-                            .where(transcription_status: :completed)
-                            .pluck(:id).to_set
+      completed_ids = current_media.values.select(&:completed?).to_set(&:id)
       missing_from_search = completed_ids - indexed_ids
       return if missing_from_search.empty?
 
