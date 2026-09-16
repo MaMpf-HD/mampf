@@ -252,12 +252,15 @@
               <th
                 scope="col"
                 class="text-center test-share <%= "tests-start" if @tests.empty? %>"
+                aria-sort="<%= records_sort_state("test_share") %>"
               >
-                <span aria-hidden="true">%</span>
+                <%= records_sort_link(@lecture, "test_share") do %>
+                  <span aria-hidden="true">%</span>
 
-                <span class="visually-hidden">
-                  <%= t("student_performance.records.columns.test_share") %>
-                </span>
+                  <span class="visually-hidden">
+                    <%= t("student_performance.records.columns.test_share") %>
+                  </span>
+                <% end %>
               </th>
             <% end %>
 

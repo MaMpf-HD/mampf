@@ -23,8 +23,9 @@ module StudentPerformance
       @due_points = due_points
       scope = filter_by_tutorial(filter_by_name(records_scope))
 
-      @pagy, @records = pagy(sorted(scope))
       sheets, tests = assignment_assessments.partition { |a| !a.assessable.kind_test? }
+      load_test_share(scope, tests) if tests.any?
+      @pagy, @records = pagy(sorted(scope))
       # A sheet nobody could hand in yet counts towards none of the figures in
       # this table, so it gets no column of its own — the detail page lists it.
       # A test's column comes with its week, so the points can be watched
@@ -35,7 +36,6 @@ module StudentPerformance
       @tests_not_due = tests.size - @tests.size
       @assessments = @sheets + @tests
       load_assessment_statuses
-      load_test_share(tests) if tests.any?
       @awaiting_marking = awaiting_marking_counts(scope, sheets + tests)
       @achievements = @lecture.achievements.order(:title)
       @achievement_headings = Achievement.short_titles(@achievements)
@@ -138,6 +138,8 @@ module StudentPerformance
           ->(record) { due_points.marked_max_for(record.user_id).to_f }
         when "percentage"
           ->(record) { due_points.marked_percentage_for(record)&.to_f || -1 }
+        when "test_share"
+          ->(record) { test_share_for(record)&.to_f || -1 } if @test_points
         end
       end
 
@@ -261,13 +263,20 @@ module StudentPerformance
       end
 
       # The tests' points are in the record's total with the sheets'; their
-      # share on its own needs them summed apart, over the page's students.
-      def load_test_share(tests)
+      # share on its own needs them summed apart. Over the whole filtered set
+      # rather than the page, since the share is a column to sort by.
+      def load_test_share(scope, tests)
         @test_points = due_points.of_kind(:test)
         @test_points_by_user = Assessment::Participation
                                .where(assessment_id: tests.map(&:id),
-                                      user_id: @records.map(&:user_id), status: :reviewed)
+                                      user_id: scope.reorder(nil).select(:user_id),
+                                      status: :reviewed)
                                .group(:user_id).sum(:points_total)
+      end
+
+      def test_share_for(record)
+        @test_points.marked_percentage_of(record.user_id,
+                                          @test_points_by_user.fetch(record.user_id, 0))
       end
 
       def load_assessment_statuses

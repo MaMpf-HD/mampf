@@ -570,6 +570,30 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                                       "Grace Hopper"])
         end
 
+        # The tests' share is its own column, so it is its own order: Nina,
+        # last overall, is first here, and Grace, unmarked, sorts below anyone
+        # with a figure.
+        it "orders by the tests' share, largest first" do
+          test = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                                deadline: 1.year.from_now)
+          # rubocop:disable Rails/SkipsModelValidations
+          test.update_column(:deadline, 1.week.ago.end_of_week)
+          # rubocop:enable Rails/SkipsModelValidations
+          FactoryBot.create(:assessment_task, assessment: test.assessment, max_points: 10)
+          FactoryBot.create(:assessment_participation, :reviewed, assessment: test.assessment,
+                                                                  user: nina, points_total: 9)
+          FactoryBot.create(:assessment_participation, :reviewed, assessment: test.assessment,
+                                                                  user: ada, points_total: 4)
+
+          get lecture_student_performance_records_path(
+            lecture, sort: "test_share", dir: "desc"
+          )
+
+          expect(listed_names).to eq(["Nina Simone", "Ada Lovelace", "Grace Hopper"])
+          expect(Nokogiri::HTML(response.body).css("th.test-share").first["aria-sort"])
+            .to eq("descending")
+        end
+
         it "keeps the search when a column is sorted" do
           get lecture_student_performance_records_path(
             lecture, q: "ac", sort: "points", dir: "desc"
