@@ -658,6 +658,20 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(response.body).not_to include("bi-hourglass-split")
         end
 
+        # A test is marked during its week, so a row half entered on Tuesday
+        # is a backlog on Tuesday, not once the week is over.
+        it "marks a test's column in its week when a row was half entered" do
+          test = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                                deadline: Time.zone.now.end_of_week)
+          FactoryBot.create(:assessment_task, assessment: test.assessment, max_points: 10)
+          FactoryBot.create(:assessment_participation, assessment: test.assessment,
+                                                       user: student, submitted_at: 1.hour.ago)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).to include("bi-hourglass-split")
+        end
+
         it "does not mark the column for work that was never handed in" do
           FactoryBot.create(:assessment_participation, :pending,
                             assessment: assessment, user: student)

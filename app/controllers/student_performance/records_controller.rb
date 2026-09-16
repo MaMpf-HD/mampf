@@ -148,14 +148,18 @@ module StudentPerformance
       end
 
       # Per assignment, how many of the listed students handed in without being
-      # marked yet. Counted over the whole filtered set rather than the current
-      # page, because the number describes the sheet, not the page.
+      # marked yet - or, on a test, were half entered. Counted over the whole
+      # filtered set rather than the current page, because the number
+      # describes the sheet, not the page.
       #
-      # Only over sheets that are due: nobody may mark before the grace period
-      # is over, so an early hand-in is waiting for the deadline, not for a
-      # tutor, and counting it claims a backlog nobody could work off.
+      # Only where marking is open: nobody may mark a sheet before its grace
+      # period is over, so an early hand-in is waiting for the deadline, not
+      # for a tutor, and counting it claims a backlog nobody could work off.
+      # A test is marked during its week.
       def awaiting_marking_counts(scope, assessments)
-        ids = assessments.select { |a| due_points.due?(a.id) }.map(&:id)
+        ids = assessments.select do |a|
+          a.assessable.kind_test? ? a.grading_open? : due_points.due?(a.id)
+        end.map(&:id)
         return {} if ids.empty?
 
         Assessment::Participation
