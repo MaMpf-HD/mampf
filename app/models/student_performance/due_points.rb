@@ -2,8 +2,11 @@ module StudentPerformance
   # Compute due points on each request because deadlines can pass
   # without a record change that would trigger recomputation.
   class DuePoints
-    def initialize(lecture:)
+    # Over every sheet of the lecture, or over the sheets of one kind: the
+    # tests' own share is worked out the same way as the whole.
+    def initialize(lecture:, kind: nil)
       @lecture = lecture
+      @kind = kind
     end
 
     def total
@@ -33,10 +36,16 @@ module StudentPerformance
     end
 
     def marked_percentage_for(record)
-      max = marked_max_for(record.user_id)
+      marked_percentage_of(record.user_id, record.points_total_materialized || 0)
+    end
+
+    # The record carries the total over every sheet; a share of a part of them
+    # is handed the points for that part.
+    def marked_percentage_of(user_id, points)
+      max = marked_max_for(user_id)
       return nil unless max.positive?
 
-      ((record.points_total_materialized || 0) / max * 100).round(2)
+      (points / max * 100).round(2)
     end
 
     # Use current assignment totals; points_max_materialized may be outdated.
@@ -87,11 +96,14 @@ module StudentPerformance
       end
 
       def assignment_assessments
-        Assessment::Assessment
-          .where(lecture_id: @lecture.id, assessable_type: "Assignment")
-          .joins("JOIN assignments ON assignments.id = " \
-                 "assessment_assessments.assessable_id")
-          .includes(:tasks)
+        scope = Assessment::Assessment
+                .where(lecture_id: @lecture.id, assessable_type: "Assignment")
+                .joins("JOIN assignments ON assignments.id = " \
+                       "assessment_assessments.assessable_id")
+                .includes(:tasks)
+        return scope unless @kind
+
+        scope.where(assignments: { kind: Assignment.kinds.fetch(@kind.to_s) })
       end
 
       def due_assessments

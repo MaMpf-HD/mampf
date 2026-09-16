@@ -160,6 +160,35 @@ RSpec.describe(StudentPerformance::DuePoints) do
     end
   end
 
+  describe "over the tests only" do
+    let(:test_points) { described_class.new(lecture: lecture, kind: :test) }
+
+    def test(deadline:, points:)
+      assessment = sheet(deadline: deadline, points: points)
+      # rubocop:disable Rails/SkipsModelValidations
+      assessment.assessable.update_column(:kind, Assignment.kinds.fetch("test"))
+      # rubocop:enable Rails/SkipsModelValidations
+      assessment
+    end
+
+    it "measures the tests' points against the tests alone" do
+      sheet(deadline: 2.days.ago, points: 20)
+      test(deadline: 2.days.ago, points: 10)
+
+      expect(test_points.total).to eq(10)
+      expect(test_points.marked_percentage_of(student.id, 8)).to eq(80)
+      expect(due_points.marked_percentage_of(student.id, 28)).to be_within(0.01).of(93.33)
+    end
+
+    it "counts a test marked in its week, before its deadline" do
+      marked = test(deadline: 3.days.from_now, points: 10)
+      FactoryBot.create(:assessment_participation, :reviewed, assessment: marked,
+                                                              user: student)
+
+      expect(test_points.marked_max_for(student.id)).to eq(10)
+    end
+  end
+
   # The reasons on the certification page say how many sheets they are about,
   # and the points beside them what those are worth. Both out of the same set.
   describe "#marked_percentage_for and a deadline that moved" do

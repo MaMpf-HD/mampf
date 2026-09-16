@@ -78,6 +78,17 @@ test.describe("a test written in the tutorial", () => {
     await row.getByRole("button", { name: "Save this row's points" }).click();
     await expect(row.getByText("Reviewed")).toBeVisible();
 
+    // the teacher watches the points come in: the test has its own group in
+    // the performance table, and a share of its own
+    await dashboard.gotoOverview();
+    await dashboard.overviewTab("Performance").click();
+    await expect(teacher.page.getByRole("columnheader", { name: "Tests Info" })).toBeVisible();
+    // the one test is all that has been marked, so the total and the tests'
+    // own figures read the same
+    const performance = teacher.page.getByRole("row", { name: studentName });
+    await expect(performance.getByRole("cell", { name: "8", exact: true })).toHaveCount(2);
+    await expect(performance.getByRole("cell", { name: "80%" })).toHaveCount(2);
+
     // the test is still ahead of the later groups, so the student's card stays
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
     await expect(student.page.getByRole("heading", { name: "Test 1" })).toBeVisible();

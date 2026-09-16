@@ -114,20 +114,41 @@
                     false) %>
             </th>
 
-            <% if @assessments.any? %>
+            <% if @sheets.any? %>
               <th
                 scope="colgroup"
-                colspan="<%= @assessments.size %>"
+                colspan="<%= @sheets.size %>"
                 class="text-center text-nowrap"
               >
                 <%= t("student_performance.records.columns.assignments") %>
 
-                <% if @not_due_count.positive? %>
+                <% if @sheets_not_due.positive? %>
                   <span class="fw-normal text-muted">
                     (<%= t("student_performance.records.columns.not_due_count",
-                           count: @not_due_count) %>)
+                           count: @sheets_not_due) %>)
                   </span>
                 <% end %>
+              </th>
+            <% end %>
+
+            <% if @test_points %>
+              <th
+                scope="colgroup"
+                colspan="<%= @tests.size + 1 %>"
+                class="text-center text-nowrap tests-start"
+              >
+                <%= t("student_performance.records.columns.tests") %>
+
+                <% if @tests_not_due.positive? %>
+                  <span class="fw-normal text-muted">
+                    (<%= t("student_performance.records.columns.not_due_count",
+                           count: @tests_not_due) %>)
+                  </span>
+                <% end %>
+
+                <%= helpdesk(
+                      t("student_performance.records.columns.tests_hint"),
+                      false) %>
               </th>
             <% end %>
 
@@ -185,10 +206,10 @@
               <% end %>
             </th>
 
-            <% @assessments.each do |assessment| %>
+            <% @assessments.each_with_index do |assessment, index| %>
               <th
                 scope="col"
-                class="text-center small"
+                class="text-center small <%= "tests-start" if index == @sheets.size %>"
                 title="<%= assessment.title %>"
               >
                 <span class="text-nowrap">
@@ -218,6 +239,19 @@
                         assessment.effective_total_points,
                         precision: 1,
                         strip_insignificant_zeros: true) %>)
+                </span>
+              </th>
+            <% end %>
+
+            <% if @test_points %>
+              <th
+                scope="col"
+                class="text-end test-share <%= "tests-start" if @tests.empty? %>"
+              >
+                <span aria-hidden="true">%</span>
+
+                <span class="visually-hidden">
+                  <%= t("student_performance.records.columns.test_share") %>
                 </span>
               </th>
             <% end %>
@@ -267,7 +301,7 @@
                 </span>
               </td>
 
-              <% @assessments.each do |assessment| %>
+              <% @assessments.each_with_index do |assessment, index| %>
                 <% status = @participation_map&.dig([record.user_id, assessment.id]) ||
                             assessment.status_without_hand_in %>
 
@@ -281,10 +315,25 @@
                      status: status, variant: :compact, points: points) %>
 
                 <td
-                  class="text-center numeric small"
+                  class="text-center numeric small <%= "tests-start" if index == @sheets.size %>"
                   title="<%= badge.tooltip(assessment.title) { max } %>"
                 >
                   <%= render badge %>
+                </td>
+              <% end %>
+
+              <% if @test_points %>
+                <% test_share = @test_points.marked_percentage_of(
+                     record.user_id, @test_points_by_user.fetch(record.user_id, 0)) %>
+                <td class="text-end text-nowrap numeric test-share <%= "tests-start" if @tests.empty? %>">
+                  <% if test_share.nil? %>
+                    <span class="text-muted" aria-hidden="true">&mdash;</span>
+                    <span class="visually-hidden">
+                      <%= t("student_performance.records.percentage_unavailable") %>
+                    </span>
+                  <% else %>
+                    <%= number_to_percentage(test_share, precision: 0) %>
+                  <% end %>
                 </td>
               <% end %>
 

@@ -24,14 +24,19 @@ module StudentPerformance
       scope = filter_by_tutorial(filter_by_name(records_scope))
 
       @pagy, @records = pagy(sorted(scope))
-      assessments = assignment_assessments
+      sheets, tests = assignment_assessments.partition { |a| !a.assessable.kind_test? }
       # A sheet nobody could hand in yet counts towards none of the figures in
       # this table, so it gets no column of its own — the detail page lists it.
-      # The heading says how many were left out.
-      @assessments = assessments.select { |a| due_points.due?(a.id) }
-      @not_due_count = assessments.size - @assessments.size
+      # A test's column comes with its week, so the points can be watched
+      # arriving group by group. The headings say how many were left out.
+      @sheets = sheets.select { |a| due_points.due?(a.id) }
+      @tests = tests.select(&:grading_open?)
+      @sheets_not_due = sheets.size - @sheets.size
+      @tests_not_due = tests.size - @tests.size
+      @assessments = @sheets + @tests
       load_assessment_statuses
-      @awaiting_marking = awaiting_marking_counts(scope, assessments)
+      load_test_share(tests) if tests.any?
+      @awaiting_marking = awaiting_marking_counts(scope, sheets + tests)
       @achievements = @lecture.achievements.order(:title)
     end
 
@@ -211,7 +216,7 @@ module StudentPerformance
       def assignment_assessments
         Assessment::Assessment
           .where(lecture_id: @lecture.id, assessable_type: "Assignment")
-          .includes(:tasks)
+          .includes(:tasks, :assessable)
           .joins("JOIN assignments ON assignments.id = " \
                  "assessment_assessments.assessable_id")
           .order("assignments.deadline ASC")
@@ -252,6 +257,16 @@ module StudentPerformance
                                     .where(user_submission_joins: { user_id: @record.user_id },
                                            assignment_id: assignment_ids)
                                     .index_by(&:assignment_id)
+      end
+
+      # The tests' points are in the record's total with the sheets'; their
+      # share on its own needs them summed apart, over the page's students.
+      def load_test_share(tests)
+        @test_points = DuePoints.new(lecture: @lecture, kind: :test)
+        @test_points_by_user = Assessment::Participation
+                               .where(assessment_id: tests.map(&:id),
+                                      user_id: @records.map(&:user_id), status: :reviewed)
+                               .group(:user_id).sum(:points_total)
       end
 
       def load_assessment_statuses

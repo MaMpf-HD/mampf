@@ -34,6 +34,9 @@ de:
         due_so_far_hint: "Punkte und Prozent zählen, was für die Studierende feststeht: Blätter, deren Frist samt Nachfrist vorbei ist, und bereits korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
         maximum: "Maximum"
         assignments: "Übungsblätter"
+        tests: "Tests"
+        tests_hint: 'Testpunkte stecken auch in den Zahlen unter „Bisher korrigiert“. Der Prozentwert am Ende dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
+        test_share: "Anteil in den Tests"
         not_due_count: "%{count} noch nicht fällig"
         achievements: "Zusatzkriterien"
         assessments: "Bewertungen"

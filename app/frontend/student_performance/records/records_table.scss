@@ -59,4 +59,15 @@
   .due-group-end {
     border-right: 2px solid var(--bs-border-color);
   }
+
+  // The tests' share closes their group the way the overall share closes
+  // "marked so far"; the heavier line opens the group.
+  .test-share {
+    padding-left: 0.75rem;
+    border-left: var(--bs-border-width) solid var(--bs-border-color);
+  }
+
+  .tests-start {
+    border-left: 2px solid var(--bs-border-color);
+  }
 }
