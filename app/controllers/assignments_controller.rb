@@ -8,7 +8,7 @@ class AssignmentsController < ApplicationController
   end
 
   def new
-    @assignment = Assignment.new(kind: params[:kind].presence || :homework)
+    @assignment = Assignment.new(kind: kind_param)
     @lecture = Lecture.find_by(id: params[:lecture_id])
     @assignment.lecture = @lecture
     authorize! :new, @assignment
@@ -30,7 +30,7 @@ class AssignmentsController < ApplicationController
   end
 
   def create
-    @assignment = Assignment.new(assignment_params)
+    @assignment = Assignment.new(assignment_params.merge(kind: kind_param))
     authorize! :create, @assignment
     @lecture = @assignment.lecture
     set_assignment_locale
@@ -148,8 +148,15 @@ class AssignmentsController < ApplicationController
     end
 
     def assignment_params
-      params.expect(assignment: [:title, :medium_id, :lecture_id, :kind,
+      params.expect(assignment: [:title, :medium_id, :lecture_id,
                                  :deadline, :accepted_file_type,
                                  :requires_submission])
+    end
+
+    # A kind the enum does not know would raise; anything but a test is
+    # homework. The new form posts it, the add links pass it in the query.
+    def kind_param
+      kind = params.dig(:assignment, :kind) || params[:kind]
+      kind.to_s.presence_in(Assignment.kinds.keys) || :homework
     end
 end

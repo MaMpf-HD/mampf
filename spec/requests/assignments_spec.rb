@@ -130,6 +130,13 @@ RSpec.describe("Assignments", type: :request) do
           expect(test.assessment.requires_submission).to be(false)
           expect(response).to have_http_status(:ok)
         end
+
+        it "takes a kind it does not know for homework" do
+          get new_assignment_path(lecture_id: lecture.id, kind: "quiz"), as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("Digital submission via MaMpf")
+        end
       end
 
       context "with valid parameters" do
