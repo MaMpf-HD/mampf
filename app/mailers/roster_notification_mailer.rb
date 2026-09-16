@@ -10,11 +10,18 @@ class RosterNotificationMailer < ApplicationMailer
       # A bare lecture roster entry grants no access, so there is nothing to announce.
       return if rosterable.is_a?(Lecture)
 
-      template = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
+      template  = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
+      info      = if rosterable.is_a?(Exam)
+        { exam_date: I18n.l(rosterable.date, format: :long),
+          exam_location: rosterable.location.presence || "N/A" }
+      else
+        {}
+      end
 
       with(
         rosterable: rosterable,
-        recipient: user
+        recipient: user,
+        info: info
       ).public_send(template).deliver_later
     end
 
@@ -119,10 +126,10 @@ class RosterNotificationMailer < ApplicationMailer
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]
       @participant     = params[:participant]
-      @reason          = params[:reason]
       @username        = @recipient.tutorial_name
       @rosterable_link = url_for_rosterable(@rosterable || @new_rosterable)
       @lecture         = lecture_for_rosterable(@rosterable || @new_rosterable)
+      @info            = params[:info] || {}
     end
 
     def email
