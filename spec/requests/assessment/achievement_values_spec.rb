@@ -54,6 +54,11 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       expect(response.body).to include(
         I18n.t("assessment.achievements.marking.invalid_value", value: "maybe", kind: kind)
       )
+
+      # BigDecimal reads "Infinity" as a number above every threshold.
+      achievement.update!(value_type: :numeric, threshold: 10)
+      enter("Infinity")
+      expect(row.reload.grade_text).to be_nil
     end
 
     it "takes a number on a numeric achievement, and refuses one above a percentage" do

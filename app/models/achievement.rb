@@ -36,10 +36,12 @@ class Achievement < ApplicationRecord
                if: :should_invalidate_performance_records?
 
   # A German keyboard writes 3,5 and means three and a half. Returns nil for
-  # anything that is no number at all, so callers can say so rather than
-  # counting it as zero.
+  # anything that is no number at all - "Infinity" and "NaN" included, which
+  # BigDecimal reads and a threshold cannot judge - so callers can say so
+  # rather than counting it as zero.
   def self.numeric_value(grade_text)
-    BigDecimal(grade_text.to_s.strip.tr(",", "."))
+    number = BigDecimal(grade_text.to_s.strip.tr(",", "."))
+    number if number.finite?
   rescue ArgumentError
     nil
   end
