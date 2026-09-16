@@ -64,7 +64,6 @@
   // "marked so far", heavier line on the far side included, so that the
   // share is not read as the first of the criteria.
   .test-share {
-    padding-left: 0.75rem;
     border-left: var(--bs-border-width) solid var(--bs-border-color);
     border-right: 2px solid var(--bs-border-color);
   }
