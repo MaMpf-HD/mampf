@@ -48,8 +48,9 @@ table.table tbody tr.row-dirty td {
   }
 }
 
-/* A pinned column must not grow with a wide table, or the offsets next to
-   it would no longer meet it. */
+/* Pins and their offsets meet while the table overflows, every column then
+   at its width; with room to spare the browser widens them all and nothing
+   is pinned. */
 .sticky-col {
   position: sticky;
   max-width: var(--col-width);

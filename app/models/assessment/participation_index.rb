@@ -1,9 +1,10 @@
 module Assessment
-  # The rows of a talk's or an exam's table: one participation per person on
-  # the roster, the missing ones created on the way. Drawing the table writes
-  # - a deliberate exception - because speakers and candidates reach a roster
-  # in bulk, past any callback, and a row without an id could not be graded
-  # through its route. Idempotent on the unique index.
+  # The rows of a table: one participation per person on the roster, the
+  # missing ones created on the way. Drawing a table writes - a deliberate
+  # exception - because speakers and candidates reach a roster in bulk, past
+  # any callback, and a row without an id could not be graded through its
+  # route; a test's and an achievement's tables come here for the same
+  # reason, a sheet's for the re-homing. Idempotent on the unique index.
   class ParticipationIndex
     class << self
       # Returns a hash keyed by [assessment_id, user_id], in the pairs' order.
