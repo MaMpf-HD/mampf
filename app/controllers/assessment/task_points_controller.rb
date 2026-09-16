@@ -211,8 +211,6 @@ module Assessment
         unsupported_assessable
       end
 
-      # Only a sheet is handed in; only an exam is attended.
-      # A test has no hand-in to record: its points are the record.
       def refuse_unless_sheet
         return if @assessable.is_a?(Assignment) && !@assessable.kind_test?
 
@@ -225,8 +223,6 @@ module Assessment
         unsupported_assessable
       end
 
-      # Somebody can be absent from an exam or from a test; a sheet is handed
-      # in or not.
       def refuse_unless_attended
         return if @assessable.is_a?(Exam)
         return if @assessable.is_a?(Assignment) && @assessable.kind_test?
@@ -234,8 +230,8 @@ module Assessment
         unsupported_assessable
       end
 
-      # Nobody is absent from a test that has not begun. The points' own gate
-      # sits in the model; an absence changes no points, so it is gated here.
+      # Absence does not change task points, so it bypasses the point-entry
+      # validation that checks whether grading is open.
       def refuse_before_test_week
         return unless @assessable.is_a?(Assignment) && !@assessable.grading_open?
 

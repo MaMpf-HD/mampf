@@ -2,8 +2,6 @@ module StudentPerformance
   # Compute due points on each request because deadlines can pass
   # without a record change that would trigger recomputation.
   class DuePoints
-    # Over every sheet of the lecture, or over the sheets of one kind: the
-    # tests' own share is worked out the same way as the whole.
     def initialize(lecture:, kind: nil)
       @lecture = lecture
       @kind = kind
@@ -13,8 +11,6 @@ module StudentPerformance
       @total ||= sum_points(due_assessments)
     end
 
-    # The same reckoning over one kind of sheet, for a figure about that kind
-    # alone. Memoized, as this one is, for the page's sake.
     def of_kind(kind)
       @of_kind ||= {}
       @of_kind[kind] ||= self.class.new(lecture: @lecture, kind: kind)
@@ -46,8 +42,7 @@ module StudentPerformance
       marked_percentage_of(record.user_id, record.points_total_materialized || 0)
     end
 
-    # The record carries the total over every sheet; a share of a part of them
-    # is handed the points for that part.
+    # A kind-specific percentage needs that kind's points, not the record's total.
     def marked_percentage_of(user_id, points)
       max = marked_max_for(user_id)
       return nil unless max.positive?
@@ -121,8 +116,7 @@ module StudentPerformance
         @coming_assessments ||= assignment_assessments.where.not(due_condition).to_a
       end
 
-      # A sheet is due once its grace period has run out, a test with its
-      # Sunday: the grace period is for a late upload, and a test has none.
+      # Tests have no uploads, so their cutoff excludes the submission grace period.
       def due_condition
         ["(assignments.kind = :homework AND assignments.deadline < :graced) OR " \
          "(assignments.kind = :test AND assignments.deadline < :now)",

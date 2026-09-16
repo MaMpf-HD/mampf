@@ -13,7 +13,6 @@
                        required: true %>
     </div>
 
-    <%# A test is set for a week, picked from the term's; a sheet for a moment. %>
     <% if assignment.kind_test? %>
       <div class="col-md-6">
         <%= f.label :test_week, t("assessment.test.week"), class: "form-label" %>
@@ -62,7 +61,6 @@
       </div>
     <% end %>
 
-    <%# A test has no sheet to read, no file to upload and no hand-in to require. %>
     <% unless assignment.kind_test? %>
       <div class="col-md-6">
         <%= f.label :medium_id, t("medium.singular"), class: "form-label" %>

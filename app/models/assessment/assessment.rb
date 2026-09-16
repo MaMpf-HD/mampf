@@ -139,8 +139,7 @@ module Assessment
         errors.add(:requires_submission, :locked_after_deadline)
       end
 
-      # A test is written on paper in the tutorial; the form hides the box,
-      # the model refuses what a request might still send.
+      # Requests can enable requires_submission even when the form hides it.
       def no_hand_in_for_a_test
         return unless assessable.is_a?(Assignment) && assessable.kind_test?
 

@@ -13,8 +13,6 @@ class SheetListComponent < ViewComponent::Base
     @due = due
   end
 
-  # "12 sheets, 1 test": each kind counted in its own word, and neither
-  # counted to zero beside the other.
   def count_label
     tests, homework = sheets.partition { |sheet| sheet.assignment.kind_test? }
     parts = []
@@ -23,7 +21,6 @@ class SheetListComponent < ViewComponent::Base
     parts.join(", ")
   end
 
-  # "Earlier sheets" until a test sits among them.
   def heading
     with_tests = (sheets + due).any? { |sheet| sheet.assignment.kind_test? }
     t("submission.hub.#{with_tests ? "heading_with_tests" : "heading"}")

@@ -23,10 +23,8 @@ module Assessment
         end
       end
 
-      # If another request inserts the participation first, reuse it - whether
-      # the model's uniqueness validation or the unique index rejects this one.
-      # A sheet's row belongs to the group that marks it; a talk's or an exam's
-      # names none.
+      # Concurrent requests may hit either the uniqueness validation or the index;
+      # both must reuse the existing participation.
       def create_participation(assessment, user, tutorial: nil)
         Participation.create!(assessment_id: assessment.id, user_id: user.id,
                               tutorial_id: tutorial&.id, status: :pending)

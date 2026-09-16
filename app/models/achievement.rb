@@ -42,8 +42,7 @@ class Achievement < ApplicationRecord
     nil
   end
 
-  # "AR" for "Attendance Rate", "ÜP" for "Übungsblatt-Punkte": what a column
-  # of icons can carry as its heading, the title itself being the tooltip.
+  # Short headings leave room for the achievement status icons.
   def short_title
     words = title.to_s.scan(/[[:alnum:]]+/)
     return words[0, 2].pluck(0).join.upcase if words.size >= 2
@@ -51,9 +50,6 @@ class Achievement < ApplicationRecord
     words.first.to_s[0, 2].upcase
   end
 
-  # The headings of criteria that stand side by side, by id: two that come
-  # out the same are told apart by a number, "BT1" and "BT2", rather than
-  # read as one column twice.
   def self.short_titles(achievements)
     achievements.group_by(&:short_title).each_with_object({}) do |(short, group), headings|
       if group.size == 1

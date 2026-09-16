@@ -27,7 +27,6 @@ class PointingTableLayout
       columns = [:team]
       columns << :tutorial if grading_scope.is_a?(Lecture)
       columns += [:status, :tasks, :total, :save] if assessable.assessable?
-      # A test is written on paper and handed back on paper: no file either way.
       columns += [:hand_in, :correction] unless assessable.kind_test?
       new(columns: columns, body: :tasks)
     when Talk

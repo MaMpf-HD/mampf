@@ -48,8 +48,6 @@ module StudentPerformance
         t("student_performance.evaluator.deferral.#{reason}", count: sheets.to_i)
       end
 
-      # "2 sheets and 1 test not due yet": a test counted among the sheets
-      # would leave the reader looking for a sheet that is not there.
       def not_due_text(sheets, tests)
         parts = []
         if sheets.to_i.positive?

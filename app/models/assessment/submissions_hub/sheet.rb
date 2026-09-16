@@ -120,12 +120,8 @@ module Assessment
           task_points.select(&:updated_at).max_by(&:updated_at)
         end
 
-        # A file without a `submitted_at` costs points without anybody having done
-        # anything wrong, which is why it has a state of its own. A sheet that
-        # comes in on paper is with the tutor until they record it, so nothing
-        # is missing yet - and so is a test's result: until the tutor enters
-        # it, or records the reader as absent, nobody can say whether they sat
-        # it. A test row with something on it is with the tutor to be finished.
+        # Missing test points do not prove absence; tutors must record it explicitly.
+        # Keep unrecorded tests open, as for unrecorded paper submissions.
         def closed_state
           return :awaiting_record if assignment.kind_test? && participation&.submitted_at.nil?
 

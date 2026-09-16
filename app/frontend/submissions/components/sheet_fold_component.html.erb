@@ -36,15 +36,8 @@
       <% end %>
     </div>
 
-    <%#
-      One line per file, each with its own word in front and its time behind
-      it. Both files are often called the same thing, so the word is what tells
-      them apart - and it goes into the link's own name, because somebody
-      walking the links hears nothing else. A test has no file either way.
-
-      `turbo: false` on both: a PDF is the browser's business, and Turbo Drive
-      would take the response for a page visit.
-    %>
+    <%# Labels distinguish submission and correction links with identical filenames. %>
+    <%# Disable Turbo for PDF links so the browser handles the response. %>
 
     <% unless test? %>
       <div>

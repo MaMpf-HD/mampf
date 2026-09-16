@@ -26,10 +26,7 @@ module StudentPerformance
       sheets, tests = assignment_assessments.partition { |a| !a.assessable.kind_test? }
       load_test_share(scope, tests) if tests.any?
       @pagy, @records = pagy(sorted(scope))
-      # A sheet nobody could hand in yet counts towards none of the figures in
-      # this table, so it gets no column of its own — the detail page lists it.
-      # A test's column comes with its week, so the points can be watched
-      # arriving group by group. The headings say how many were left out.
+      # Test results become visible during the week, as each tutorial is graded.
       @sheets = sheets.select { |a| due_points.due?(a.id) }
       @tests = tests.select(&:grading_open?)
       @sheets_not_due = sheets.size - @sheets.size
@@ -147,15 +144,8 @@ module StudentPerformance
         TutorialMembership.where(tutorial: @lecture.tutorials).select(:user_id)
       end
 
-      # Per assignment, how many of the listed students handed in without being
-      # marked yet - or, on a test, were half entered. Counted over the whole
-      # filtered set rather than the current page, because the number
-      # describes the sheet, not the page.
-      #
-      # Only where marking is open: nobody may mark a sheet before its grace
-      # period is over, so an early hand-in is waiting for the deadline, not
-      # for a tutor, and counting it claims a backlog nobody could work off.
-      # A test is marked during its week.
+      # Count across the filtered roster so pagination does not change the backlog.
+      # Exclude assignments whose grading has not opened yet.
       def awaiting_marking_counts(scope, assessments)
         ids = assessments.select do |a|
           a.assessable.kind_test? ? a.grading_open? : due_points.due?(a.id)
@@ -266,9 +256,7 @@ module StudentPerformance
                                     .index_by(&:assignment_id)
       end
 
-      # The tests' points are in the record's total with the sheets'; their
-      # share on its own needs them summed apart. Over the whole filtered set
-      # rather than the page, since the share is a column to sort by.
+      # Sorting by test percentage needs totals for the entire filtered roster.
       def load_test_share(scope, tests)
         @test_points = due_points.of_kind(:test)
         @test_points_by_user = Assessment::Participation

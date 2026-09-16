@@ -153,8 +153,7 @@ class AssignmentsController < ApplicationController
                                  :requires_submission])
     end
 
-    # A kind the enum does not know would raise; anything but a test is
-    # homework. The new form posts it, the add links pass it in the query.
+    # Unknown enum values raise ArgumentError instead of a validation error.
     def kind_param
       kind = params.dig(:assignment, :kind) || params[:kind]
       kind.to_s.presence_in(Assignment.kinds.keys) || :homework

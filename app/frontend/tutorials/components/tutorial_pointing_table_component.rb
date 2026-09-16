@@ -50,11 +50,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
     end
   end
 
-  # Read once for the whole page; the rows take theirs from here instead of
-  # asking per row. A test's rows are made here, for everybody on the roster
-  # who has none yet, in one statement: made one by one, each would have
-  # the performance record recomputed on commit, three hundred times over
-  # for one first look at the table.
+  # Batch creation avoids per-student inserts and validation queries.
   def preload_participations(non_submitters, submissions, groups)
     return {} unless @assignment.assessment
 
@@ -68,10 +64,8 @@ class TutorialPointingTableComponent < ViewComponent::Base
     rows
   end
 
-  # A row nothing has been written on belongs to whichever group the student
-  # is in now; one still naming the group they left would lock the new
-  # group's tutor out, and there is nothing in it the old group could claim.
-  # A row with a hand-in or points on it stays where those were given.
+  # Blank participations must follow tutorial membership so the current tutor
+  # can enter points; recorded work must stay with its original tutorial.
   def rehome_blank_rows(rows, groups)
     rows.each_value do |row|
       next unless row.pending? && row.submitted_at.nil? && row.task_points.none?

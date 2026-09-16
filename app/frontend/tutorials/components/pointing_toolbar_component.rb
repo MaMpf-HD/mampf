@@ -15,9 +15,6 @@ class PointingToolbarComponent < ViewComponent::Base
     PointingSummaryComponent.new(statuses: @statuses, hand_ins: !@assignment.kind_test?)
   end
 
-  # The filter offers the states the rows can show; a sheet collected on
-  # paper has no "not submitted" row, one with files no "not yet recorded",
-  # and only a test has anybody absent.
   def status_options
     missing = @assignment.assessment&.status_without_hand_in || :not_submitted
     options = [["reviewed", column_label("reviewed")],

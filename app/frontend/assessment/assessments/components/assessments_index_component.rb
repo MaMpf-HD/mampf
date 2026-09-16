@@ -18,8 +18,6 @@ class AssessmentsIndexComponent < ViewComponent::Base
     @legacy ||= all_assessables.reject(&:assessment)
   end
 
-  # Homework and tests are managed apart - one comes from a sheet, the other
-  # from a week - and counted together, under the one tick below both.
   def homework
     sheets.reject(&:kind_test?)
   end
@@ -28,7 +26,6 @@ class AssessmentsIndexComponent < ViewComponent::Base
     sheets.select(&:kind_test?)
   end
 
-  # One table needs no heading; two need one each.
   def two_tables?
     homework.any? && tests.any?
   end

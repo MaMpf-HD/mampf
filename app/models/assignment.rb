@@ -1,9 +1,7 @@
 class Assignment < ApplicationRecord
   include Assessment::Pointable
 
-  # A test is written in the tutorial and handed in on paper there: nothing is
-  # uploaded, and its week is its deadline. Prefixed because `test` is a
-  # Kernel method.
+  # Prefix the enum methods to avoid colliding with Kernel#test.
   enum :kind, { homework: 0, test: 1 }, prefix: true
 
   attr_writer :requires_submission
@@ -42,8 +40,7 @@ class Assignment < ApplicationRecord
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
   validate :deadline_not_in_past, if: -> { deadline_changed? }
-  # Homework stays homework and a test stays a test: everything the two do
-  # differently - hand-in, deadline, marking - would have to be undone.
+  # Changing kind would reinterpret existing submissions and grading data.
   validate :kind_immutable, if: -> { persisted? && kind_changed? }
 
   scope :active, -> { where(deadline: Time.zone.now..) }
@@ -121,20 +118,14 @@ class Assignment < ApplicationRecord
     deadline.beginning_of_week.to_date..deadline.to_date
   end
 
-  # The form names a test's week by its Monday; the test is due with the
-  # Sunday. Anything that is no date leaves the deadline empty, and the
-  # presence validation says so.
+  # Invalid dates must reach the deadline presence validation, not raise.
   def test_week=(monday)
     self.deadline = Time.zone.parse(monday.to_s)&.end_of_week
   rescue ArgumentError
     self.deadline = nil
   end
 
-  # The Mondays a test can be set for: this week to the end of the term - or
-  # half a year where there is no term ahead - and the week it already has,
-  # so that the form can show it. The term is read off the lecture itself:
-  # `Lecture#begin_date` reaches for the active term where there is none, and
-  # a lecture may have neither.
+  # Lecture#begin_date falls back to Term.active, which may also be absent.
   def test_week_choices
     first = [lecture.term&.begin_date, Time.zone.today].compact.max.beginning_of_week
     term_end = lecture.term&.end_date
@@ -277,7 +268,6 @@ class Assignment < ApplicationRecord
       errors.add(:kind, :immutable)
     end
 
-    # Whichever day of the week the form names, the test is due with the week.
     def end_test_week
       self.deadline = deadline.end_of_week if deadline
     end

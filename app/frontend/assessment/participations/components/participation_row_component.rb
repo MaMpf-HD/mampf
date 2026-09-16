@@ -60,9 +60,7 @@ class ParticipationRowComponent < ViewComponent::Base
       @participation.tutorial_id != @tutorial.id
   end
 
-  # Points go on a sheet that came in; a row nothing was handed in for waits
-  # for the mark in the hand-in column first. An exam has nothing to hand in,
-  # and a test's points are the record that somebody sat it.
+  # Entering test points records participation; no separate hand-in is needed.
   def points_enterable?
     return false if @participation.exempt? || @participation.absent?
     return true if @assessable.is_a?(Exam)
@@ -200,9 +198,6 @@ class ParticipationRowComponent < ViewComponent::Base
     "#{since} · #{t("assessment.grading_exam.points_missing")}"
   end
 
-  # Absence is the grader's to record, an exemption the lecturer's - it takes
-  # a certificate and changes what counts. On a test the button comes with the
-  # week, as the points do, and only to the group that holds the row.
   def absence_button
     return unless can_enter_points?
     return if test? && (!allow_grading? || elsewhere?)

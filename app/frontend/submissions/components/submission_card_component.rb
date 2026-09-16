@@ -40,7 +40,6 @@ class SubmissionCardComponent < ViewComponent::Base
     "#{frame_id}_heading"
   end
 
-  # A test names its week, a sheet the moment it is due.
   def due_line
     return "#{t("assessment.test.week")}: #{helpers.test_week_label(assignment)}" if test?
 
@@ -48,9 +47,6 @@ class SubmissionCardComponent < ViewComponent::Base
                                          format: :submission_deadline))
   end
 
-  # File type, how long is left, and what the sheet is worth - the three things
-  # that decide whether to start on it now. No file type where no file is
-  # handed in; a test is written in the tutorial, and its week says when.
   def meta_parts
     parts = []
     parts << t("submission.hub.card.in_tutorial") if test?

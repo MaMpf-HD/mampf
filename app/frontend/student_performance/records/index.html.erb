@@ -1,4 +1,4 @@
-<%# a frame swap discards everything outside it: the stylesheet, and a confirmation, travel inside %>
+<%# Turbo frame responses must include the stylesheet and flash inside the frame. %>
 <%= turbo_frame_tag "performance-records-frame" do %>
   <%= vite_stylesheet_tag "student_performance/records/records_table.scss" %>
 

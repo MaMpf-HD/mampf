@@ -112,8 +112,6 @@ class SheetRowComponent < ViewComponent::Base
 
   private
 
-    # A test not recorded yet was not handed in anywhere; the note says what
-    # the tutor is going to enter instead of what arrived.
     def note_key
       return :awaiting_record_test if state == :awaiting_record && sheet.assignment.kind_test?
 

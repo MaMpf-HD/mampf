@@ -12,8 +12,6 @@ module AssignmentsHelper
     I18n.t("basics.files")
   end
 
-  # "20.–26.10.2026": the week a test is written in, wherever a sheet would
-  # show its deadline.
   def test_week_label(assignment)
     week_label(assignment.test_week)
   end
@@ -25,7 +23,6 @@ module AssignmentsHelper
     options_for_select(choices, assignment.deadline&.to_date&.beginning_of_week&.iso8601)
   end
 
-  # The mark beside a test's title wherever it is listed among sheets.
   def test_badge
     tag.span(I18n.t("assessment.test.badge"),
              class: "badge bg-secondary-subtle text-secondary-emphasis fw-normal ms-1")

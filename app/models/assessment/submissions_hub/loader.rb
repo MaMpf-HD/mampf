@@ -225,13 +225,8 @@ module Assessment
                                  .sort_by { |sheet| sheet.assignment.deadline }
         end
 
-        # A rejected sheet is closed for this reader whatever the clock says:
-        # there is nothing left to replace, delete or leave, and a sheet takes
-        # one hand-in. Left among the open ones it would get a card, and the
-        # card has nothing to say about the state - no badge, no note, no
-        # number. The row has all three. A test is closed the same way once
-        # its points are in: the week may still run for the other groups, but
-        # this reader has written it and has a result to look at.
+        # Rejected submissions need the status shown by a row, not an open card.
+        # Show test results immediately, even while other tutorials have yet to finish.
         def still_open?(sheet)
           return false if sheet.state == :rejected
           return false if sheet.assignment.kind_test? && sheet.results_visible?

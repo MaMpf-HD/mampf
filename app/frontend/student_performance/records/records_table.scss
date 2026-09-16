@@ -60,9 +60,7 @@
     border-right: 2px solid var(--bs-border-color);
   }
 
-  // The tests' share closes their group the way the overall share closes
-  // "marked so far", heavier line on the far side included, so that the
-  // share is not read as the first of the criteria.
+  // Separate the test percentage from the achievement columns.
   .test-share {
     border-left: var(--bs-border-width) solid var(--bs-border-color);
     border-right: 2px solid var(--bs-border-color);
