@@ -18,6 +18,7 @@ RSpec.describe(SheetRowComponent, type: :component) do
     # `dom_id` names the row after the assignment, which takes a key.
     assignment = instance_double(Assignment, title: "Homework 8",
                                              friendly_deadline: friendly_deadline,
+                                             kind_test?: false,
                                              id: 8, to_key: [8],
                                              model_name: Assignment.model_name)
     scale = max_points.to_f.positive?

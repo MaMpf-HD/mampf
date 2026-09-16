@@ -14,7 +14,8 @@
     </div>
 
     <div class="col-md-6">
-      <%= f.label :deadline, t("basics.deadline"), class: "form-label" %>
+      <%= f.label :deadline, assignment.kind_test? ? t("assessment.test.week") : t("basics.deadline"),
+                  class: "form-label" %>
 
       <div
         class="input-group flex-nowrap align-items-start td-picker"
@@ -46,42 +47,49 @@
         id="assignment-deadline-error"
         data-td-invalid-date="<%= t("datetimepicker.invalid_date") %>"
       ></div>
+
+      <% if assignment.kind_test? %>
+        <div class="form-text text-muted">
+          <%= t("assessment.test.week_hint") %>
+        </div>
+      <% end %>
     </div>
 
-    <div class="col-md-6">
-      <%= f.label :medium_id, t("medium.singular"), class: "form-label" %>
+    <%# A test has no sheet to read, no file to upload and no hand-in to require. %>
+    <% unless assignment.kind_test? %>
+      <div class="col-md-6">
+        <%= f.label :medium_id, t("medium.singular"), class: "form-label" %>
 
-      <%= f.select :medium_id,
+        <%= f.select :medium_id,
                    options_for_select(Medium.where(teachable: lecture, sort: "Exercise")
                                     .map { |m| [m.local_title_for_viewers, m.id] },
                                     assignment.medium_id),
                    { include_blank: t("basics.select") },
                    { class: "form-select selectize" } %>
-    </div>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :accepted_file_type, t("submission.file_format"), class: "form-label" %>
 
-    <div class="col-md-6">
-      <%= f.label :accepted_file_type, t("submission.file_format"), class: "form-label" %>
-
-      <%= f.select :accepted_file_type,
+        <%= f.select :accepted_file_type,
                    options_for_select(Assignment.accepted_file_types.map { |t| [t, t] },
                                       assignment.accepted_file_type),
                    {},
                    { class: "form-select" } %>
-    </div>
-
-    <div class="col-12">
-      <div class="form-check">
-        <%= f.check_box :requires_submission,
+      </div>
+      <div class="col-12">
+        <div class="form-check">
+          <%= f.check_box :requires_submission,
                         class: "form-check-input",
                         checked: assignment.requires_submission.nil? ? true : assignment.requires_submission %>
 
-        <%= f.label :requires_submission, t("assessment.requires_submission"), class: "form-check-label" %>
+          <%= f.label :requires_submission, t("assessment.requires_submission"), class: "form-check-label" %>
 
-        <div class="form-text text-muted">
-          <%= t("assessment.requires_submission_hint") %>
+          <div class="form-text text-muted">
+            <%= t("assessment.requires_submission_hint") %>
+          </div>
         </div>
       </div>
-    </div>
+    <% end %>
 
     <div class="col-12 mt-4 d-flex justify-content-between">
       <div>
@@ -96,4 +104,5 @@
   </div>
 
   <%= f.hidden_field :lecture_id, value: lecture.id %>
+  <%= f.hidden_field :kind %>
 <% end %>

@@ -8,7 +8,7 @@ class AssignmentsController < ApplicationController
   end
 
   def new
-    @assignment = Assignment.new
+    @assignment = Assignment.new(kind: params[:kind].presence || :homework)
     @lecture = Lecture.find_by(id: params[:lecture_id])
     @assignment.lecture = @lecture
     authorize! :new, @assignment
@@ -148,7 +148,7 @@ class AssignmentsController < ApplicationController
     end
 
     def assignment_params
-      params.expect(assignment: [:title, :medium_id, :lecture_id,
+      params.expect(assignment: [:title, :medium_id, :lecture_id, :kind,
                                  :deadline, :accepted_file_type,
                                  :requires_submission])
     end

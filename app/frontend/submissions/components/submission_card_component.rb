@@ -40,20 +40,28 @@ class SubmissionCardComponent < ViewComponent::Base
     "#{frame_id}_heading"
   end
 
+  # A test names its week, a sheet the moment it is due.
   def due_line
+    return "#{t("assessment.test.week")}: #{helpers.test_week_label(assignment)}" if test?
+
     t("submission.hub.card.due", time: l(assignment.deadline,
                                          format: :submission_deadline))
   end
 
   # File type, how long is left, and what the sheet is worth - the three things
   # that decide whether to start on it now. No file type where no file is
-  # handed in.
+  # handed in; a test is written in the tutorial, and its week says when.
   def meta_parts
     parts = []
+    parts << t("submission.hub.card.in_tutorial") if test?
     parts << assignment.accepted_file_type.delete_prefix(".").upcase if digital_hand_in?
-    parts << time_left if assignment.active?
+    parts << time_left if assignment.active? && !test?
     parts << worth if sheet.tasks_set_up?
     parts.compact
+  end
+
+  def test?
+    assignment.kind_test?
   end
 
   # The card of a sheet handed in outside MaMpf keeps the deadline and the

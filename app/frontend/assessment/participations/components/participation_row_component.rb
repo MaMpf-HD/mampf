@@ -61,12 +61,17 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   # Points go on a sheet that came in; a row nothing was handed in for waits
-  # for the mark in the hand-in column first. An exam has nothing to hand in.
+  # for the mark in the hand-in column first. An exam has nothing to hand in,
+  # and a test's points are the record that somebody sat it.
   def points_enterable?
     return false if @participation.exempt? || @participation.absent?
     return true if @assessable.is_a?(Exam)
 
-    paper_hand_in? && !elsewhere?
+    (paper_hand_in? || test?) && !elsewhere?
+  end
+
+  def test?
+    @assessable.is_a?(Assignment) && @assessable.kind_test?
   end
 
   # Somebody absent or excused has no grade to enter; what a scheme gave
@@ -83,7 +88,7 @@ class ParticipationRowComponent < ViewComponent::Base
   def locked_reason
     if elsewhere?
       t("assessment.grading_tutorial.held_by", tutorial: @participation.tutorial.title)
-    elsif status == :awaiting_record && can_enter_points?
+    elsif status == :awaiting_record && can_enter_points? && !test?
       t("assessment.grading_tutorial.record_first")
     end
   end

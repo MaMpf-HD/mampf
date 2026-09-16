@@ -2,14 +2,21 @@ de:
   assessment:
     tabs:
       assessments: "Testate"
-      assignments: "Hausaufgaben"
+      assignments: "Hausaufgaben & Tests"
       talks: "Vorträge"
       performance: "Leistungen"
       achievements: "Zusatzkriterien"
       certifications: "Prüfungszulassungen"
     assessments: 'Testate'
+    test:
+      new: 'Test anlegen'
+      heading: 'Tests'
+      week: 'Testwoche'
+      week_hint: 'Wähle irgendeinen Tag der Woche, in der der Test geschrieben wird. Die Tutorien schreiben ihn in ihren eigenen Sitzungen; Punkte lassen sich ab Montag eintragen.'
+      week_label: '%{from}–%{to}'
+      badge: 'Test'
     subtitle:
-      assignments: 'Hausaufgabenblätter, Bewertungen und Punktevergabe verwalten.'
+      assignments: 'Übungsblätter und Tests im Tutorium, Bewertungen und Punktevergabe verwalten.'
     achievements:
       placeholder: 'Zusatzkriterien werden in einem späteren Schritt hier angezeigt.'
       flash:
@@ -139,8 +146,8 @@ de:
       registration_not_open: 'Anmeldung noch nicht geöffnet.'
       go_to_registration: 'Zur Anmeldung →'
     assignments_complete:
-      label: 'Die Blätterliste ist vollständig'
-      hint: 'Setze das Häkchen, wenn alle Übungsblätter des Semesters angelegt sind. Solange es fehlt, stellt die Prüfungszulassung jedes Urteil zurück — jedes weitere Blatt kann es umwerfen. Ein neues Blatt entfernt das Häkchen wieder.'
+      label: 'Die Liste der Blätter und Tests ist vollständig'
+      hint: 'Setze das Häkchen, wenn alle Übungsblätter und Tests des Semesters angelegt sind. Solange es fehlt, stellt die Prüfungszulassung jedes Urteil zurück — jedes weitere Blatt und jeder weitere Test kann es umwerfen. Ein neues Blatt oder ein neuer Test entfernt das Häkchen wieder.'
       cancel: 'Abbrechen'
       close_dialog:
         title: 'Häkchen setzen'

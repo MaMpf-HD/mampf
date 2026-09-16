@@ -50,7 +50,9 @@
       </div>
 
       <div class="col-md-6">
-        <%= af.label :deadline, t('basics.deadline'), class: "form-label" %>
+        <%= af.label :deadline,
+                     assessable.kind_test? ? t('assessment.test.week') : t('basics.deadline'),
+                     class: "form-label" %>
 
         <div
           class="input-group flex-nowrap align-items-start td-picker"
@@ -82,10 +84,12 @@
         </div>
       </div>
 
-      <div class="col-md-6">
-        <%= af.label :medium_id, t('medium.singular'), class: "form-label" %>
+      <%# A test has no sheet to read, no file to upload and no hand-in to require. %>
+      <% unless assessable.kind_test? %>
+        <div class="col-md-6">
+          <%= af.label :medium_id, t('medium.singular'), class: "form-label" %>
 
-        <%= af.select :medium_id,
+          <%= af.select :medium_id,
                      options_for_select(Medium.where(teachable: lecture, sort: 'Exercise')
                                               .map { |m| [m.local_title_for_viewers, m.id] },
                                         assessable.medium_id),
@@ -95,12 +99,11 @@
                          assessments__dirty_form_target: 'field',
                          action: 'change->assessments--dirty-form#checkForChanges'
                        } } %>
-      </div>
+        </div>
+        <div class="col-md-6">
+          <%= af.label :accepted_file_type, t('submission.file_format'), class: "form-label" %>
 
-      <div class="col-md-6">
-        <%= af.label :accepted_file_type, t('submission.file_format'), class: "form-label" %>
-
-        <%= af.select :accepted_file_type,
+          <%= af.select :accepted_file_type,
                      options_for_select(Assignment.accepted_file_types.map { |t| [t, t] },
                                         assessable.accepted_file_type),
                      {},
@@ -111,20 +114,22 @@
                          action: 'change->assessments--dirty-form#checkForChanges'
                        } } %>
 
-        <% if assessable.past_deadline? %>
-          <div class="form-text text-muted">
-            <i class="bi bi-lock-fill me-1"></i>
-            <%= t('assessment.locked_after_deadline') %>
-          </div>
-        <% end %>
-      </div>
+          <% if assessable.past_deadline? %>
+            <div class="form-text text-muted">
+              <i class="bi bi-lock-fill me-1"></i>
+              <%= t('assessment.locked_after_deadline') %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   <% end %>
 
   <div class="row g-3 mt-1">
-    <div class="col-12">
-      <div class="form-check">
-        <%= f.check_box :requires_submission,
+    <% unless assessable.kind_test? %>
+      <div class="col-12">
+        <div class="form-check">
+          <%= f.check_box :requires_submission,
                         class: "form-check-input",
                         checked: assessment.requires_submission,
                         disabled: assessable.past_deadline?,
@@ -133,18 +138,19 @@
                           action: 'change->assessments--dirty-form#checkForChanges'
                         } %>
 
-        <%= f.label :requires_submission, t('assessment.requires_submission'), class: "form-check-label" %>
+          <%= f.label :requires_submission, t('assessment.requires_submission'), class: "form-check-label" %>
 
-        <div class="form-text text-muted">
-          <% if assessable.past_deadline? %>
-            <i class="bi bi-lock-fill me-1"></i>
-            <%= t('assessment.locked_after_deadline') %>
-          <% else %>
-            <%= t('assessment.requires_submission_hint') %>
-          <% end %>
+          <div class="form-text text-muted">
+            <% if assessable.past_deadline? %>
+              <i class="bi bi-lock-fill me-1"></i>
+              <%= t('assessment.locked_after_deadline') %>
+            <% else %>
+              <%= t('assessment.requires_submission_hint') %>
+            <% end %>
+          </div>
         </div>
       </div>
-    </div>
+    <% end %>
 
     <div
       class="col-12 mt-3 text-center d-none"

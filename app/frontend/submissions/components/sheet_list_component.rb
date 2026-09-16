@@ -17,6 +17,12 @@ class SheetListComponent < ViewComponent::Base
     t("submission.hub.sheet_count", count: sheets.size)
   end
 
+  # "Earlier sheets" until a test sits among them.
+  def heading
+    with_tests = (sheets + due).any? { |sheet| sheet.assignment.kind_test? }
+    t("submission.hub.#{with_tests ? "heading_with_tests" : "heading"}")
+  end
+
   # Before the first sheet has come back there is nothing to list, and saying
   # which sheet will land here first is more use than saying "none".
   def empty_message

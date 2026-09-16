@@ -35,8 +35,16 @@
 </div>
 
 
+<%# A test is marked during its week; there is no deadline to wait out. %>
+<% if assignment.kind_test? %>
+  <p class="text-muted m-3 mb-0">
+    <i class="bi bi-calendar-week me-1"></i>
+    <%= t('assessment.test.week') %>: <%= test_week_label(assignment) %>
+  </p>
+<% end %>
+
 <!-- DEADLINE / GRACE PERIOD WARNING -->
-<% if current_user.in?(tutorial.tutors) && (assignment.active? || assignment.in_grace_period?) %>
+<% if !assignment.kind_test? && current_user.in?(tutorial.tutors) && (assignment.active? || assignment.in_grace_period?) %>
   <div class="alert alert-danger m-3">
     <strong><%= t('basics.attention') %>:</strong>
     <% if assignment.active? %>

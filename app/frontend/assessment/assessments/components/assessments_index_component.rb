@@ -18,6 +18,18 @@ class AssessmentsIndexComponent < ViewComponent::Base
     @legacy ||= all_assessables.reject(&:assessment)
   end
 
+  # Homework and tests are managed apart - one comes from a sheet, the other
+  # from a week - and counted together, under the one tick below both.
+  def homework
+    @homework ||= assessables_by_type.fetch("Assignment", []).select(&:assessment)
+                                     .reject(&:kind_test?)
+  end
+
+  def tests
+    @tests ||= assessables_by_type.fetch("Assignment", []).select(&:assessment)
+                                  .select(&:kind_test?)
+  end
+
   def legacy_by_type
     @legacy_by_type ||= legacy.group_by { |a| a.class.name }
   end

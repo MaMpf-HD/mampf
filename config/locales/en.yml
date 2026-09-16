@@ -2676,6 +2676,8 @@ en:
   date:
     formats:
       concise: '%Y-%m-%d'
+      test_week_start: '%b %-d'
+      test_week_end: '%b %-d, %Y'
   datetimepicker:
     invalid_date: 'Invalid date time format.'
   time:
@@ -2817,6 +2819,7 @@ en:
     hub:
       page_title: "Submissions - %{lecture}"
       heading: Earlier sheets
+      heading_with_tests: Earlier sheets and tests
       standing:
         mark_percentage: "%{percentage} %"
         heading: Exam admission
@@ -2873,6 +2876,7 @@ en:
           one: "%{count} problem, %{points} points"
           other: "%{count} problems, %{points} points"
         hand_in: Hand in
+        in_tutorial: in your tutorial
         hand_in_elsewhere: >-
           Not handed in via MaMpf. Your tutor records what arrived and enters
           the points.

@@ -103,6 +103,35 @@ RSpec.describe("Assignments", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
+      # The kind is the form's to set once; what comes with it - the week,
+      # no hand-in - is the model's, and the response leads to the problems.
+      context "with a test" do
+        let(:test_attributes) do
+          valid_attributes.merge(title: "Test 1", kind: "test",
+                                 deadline: 2.weeks.from_now.iso8601)
+        end
+
+        it "offers the form for one, without a hand-in setting" do
+          get new_assignment_path(lecture_id: lecture.id, kind: "test"), as: :turbo_stream
+
+          expect(response.body).to include("Add test")
+          expect(response.body).to include("Test week")
+          expect(response.body).not_to include("Digital submission via MaMpf")
+        end
+
+        it "creates it due with its week, taking no hand-in" do
+          expect do
+            post(assignments_path, params: { assignment: test_attributes }, as: :turbo_stream)
+          end.to change(Assignment, :count).by(1)
+
+          test = Assignment.order(:created_at).last
+          expect(test).to be_kind_test
+          expect(test.deadline).to be_within(1.second).of(2.weeks.from_now.end_of_week)
+          expect(test.assessment.requires_submission).to be(false)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
       context "with valid parameters" do
         it "creates a new assignment" do
           expect do

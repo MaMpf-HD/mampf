@@ -64,6 +64,36 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       end
     end
 
+    # Everybody in the group is expected at a test; the row has its id before
+    # the table is drawn, and takes points without a hand-in recorded first.
+    context "when the assignment is a test" do
+      let!(:assignment) do
+        create(:assignment, :with_lecture, lecture: lecture, kind: :test,
+                                           deadline: 1.week.from_now)
+      end
+      let(:member) { create(:confirmed_user, name: "Ada") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        create(:tutorial_membership, tutorial: tutorial, user: member)
+        create(:assessment_task, assessment: assessment, max_points: 10)
+      end
+
+      it "creates the member's row as it draws it, and offers the points" do
+        expect { render_inline(component) }
+          .to change { assessment.assessment_participations.where(user: member).count }
+          .from(0).to(1)
+
+        page = render_inline(component)
+        row = page.css("tr[id^=pointing-participation-row-]").first
+        expect(row["id"]).not_to include("user-")
+        expect(row.css("input[type=number]")).to be_present
+        expect(row.text).not_to include(I18n.t("assessment.grading_tutorial.record_first"))
+        expect(assessment.assessment_participations.find_by(user: member).tutorial)
+          .to eq(tutorial)
+      end
+    end
+
     context "when the assignment has no assessment" do
       let!(:assignment) { create(:assignment, :without_assessment, lecture: lecture) }
       let!(:assessment) { nil }

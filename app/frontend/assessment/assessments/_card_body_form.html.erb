@@ -8,7 +8,9 @@
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h3><%= t("admin.assignment.new") %></h3>
+  <h3>
+    <%= assignment.kind_test? ? t("assessment.test.new") : t("admin.assignment.new") %>
+  </h3>
 </div>
 
 <ul class="nav nav-tabs mb-3" id="assessmentTabs" role="tablist">

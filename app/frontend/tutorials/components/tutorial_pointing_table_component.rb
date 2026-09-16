@@ -65,10 +65,17 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   # Before the backfill worker has been round there is no participation yet;
   # the row is drawn from an unsaved one, and recording the hand-in saves it.
+  # A test's row takes points without that step, so it needs its id first: it
+  # is created as the table is drawn, the exception an exam's rows make too.
   def participation_for(user, tutorial)
-    @participations_by_user_id[user.id] ||
-      Assessment::Participation.new(assessment: @assignment.assessment, user: user,
-                                    tutorial: tutorial)
+    @participations_by_user_id[user.id] ||=
+      if @assignment.kind_test?
+        Assessment::ParticipationIndex.create_participation(@assignment.assessment, user,
+                                                            tutorial: tutorial)
+      else
+        Assessment::Participation.new(assessment: @assignment.assessment, user: user,
+                                      tutorial: tutorial)
+      end
   end
 
   def grading_enabled?
