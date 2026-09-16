@@ -60,10 +60,25 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
     seed_test_rows(non_submitters, groups) if @assignment.kind_test?
     user_ids = non_submitters.map(&:id) + submissions.flat_map(&:user_ids)
-    Assessment::Participation
-      .where(user_id: user_ids, assessment: @assignment.assessment)
-      .includes(:user, :task_points, :tutorial, :assessment)
-      .index_by(&:user_id)
+    rows = Assessment::Participation
+           .where(user_id: user_ids, assessment: @assignment.assessment)
+           .includes(:user, :task_points, :tutorial, :assessment)
+           .index_by(&:user_id)
+    rehome_blank_rows(rows, groups)
+    rows
+  end
+
+  # A row nothing has been written on belongs to whichever group the student
+  # is in now; one still naming the group they left would lock the new
+  # group's tutor out, and there is nothing in it the old group could claim.
+  # A row with a hand-in or points on it stays where those were given.
+  def rehome_blank_rows(rows, groups)
+    rows.each_value do |row|
+      next unless row.pending? && row.submitted_at.nil? && row.task_points.none?
+      next unless groups.key?(row.user_id) && row.tutorial_id != groups[row.user_id]&.id
+
+      row.update!(tutorial: groups[row.user_id])
+    end
   end
 
   def seed_test_rows(users, groups)

@@ -113,6 +113,33 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(assessment.assessment_participations.count).to eq(2)
       end
 
+      # The row was made when the old group's tutor looked at the table; the
+      # student moved before writing anything. Kept with the old group, the
+      # new tutor would find the row locked as "held by" a group that has
+      # nothing of theirs.
+      it "hands a blank row to the group the student is in now" do
+        old_group = create(:tutorial, lecture: lecture, title: "Old group")
+        row = create(:assessment_participation, assessment: assessment, user: member,
+                                                tutorial: old_group)
+
+        page = render_inline(component)
+
+        expect(row.reload.tutorial).to eq(tutorial)
+        expect(page.text).not_to include(I18n.t("assessment.grading_tutorial.held_by",
+                                                tutorial: "Old group"))
+        expect(page.css("input[type=number]")).to be_present
+      end
+
+      it "keeps a row something was written on where that was" do
+        old_group = create(:tutorial, lecture: lecture, title: "Old group")
+        row = create(:assessment_participation, assessment: assessment, user: member,
+                                                tutorial: old_group, submitted_at: 1.hour.ago)
+
+        render_inline(component)
+
+        expect(row.reload.tutorial).to eq(old_group)
+      end
+
       it "leaves the test deletable, the rows it made carrying nothing yet" do
         render_inline(component)
 
