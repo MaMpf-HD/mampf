@@ -359,11 +359,16 @@ en:
           You have been added to exam <strong>%{rosterable_title}</strong>
           in the lecture <strong>%{lecture_title}</strong>.
         </p>
+        <p>
+          The exam will take place on %{exam_date} at %{exam_location}.
+        </p>
       roster_added_to_exam_email_body: |
         Hello %{name},
 
         You have been added to exam "%{rosterable_title}" in the lecture
         "%{lecture_title}".
+
+        The exam will take place on %{exam_date} at %{exam_location}.
       roster_added_to_exam_email_subject: 'Added to exam %{rosterable_title} in %{lecture_title}'
       roster_removed_from_group_email_body_html: |
         <p>Hello %{name},</p>

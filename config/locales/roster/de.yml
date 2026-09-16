@@ -364,11 +364,16 @@ de:
           Du wurdest zur Prüfung <strong>%{rosterable_title}</strong>
           in der Vorlesung <strong>%{lecture_title}</strong> hinzugefügt.
         </p>
+        <p>
+          Die Prüfung findet am %{exam_date} um %{exam_location} statt.
+        </p>
       roster_added_to_exam_email_body: |
         Hallo %{name},
 
         Du wurdest zur Prüfung „%{rosterable_title}“ in der Vorlesung
         „%{lecture_title}“ hinzugefügt.
+
+        Die Prüfung findet am %{exam_date} um %{exam_location} statt.
       roster_added_to_exam_email_subject: 'Zur Prüfung %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
