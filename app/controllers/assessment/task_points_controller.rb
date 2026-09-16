@@ -211,8 +211,9 @@ module Assessment
       end
 
       # Only a sheet is handed in; only an exam is attended.
+      # A test has no hand-in to record: its points are the record.
       def refuse_unless_sheet
-        return if @assessable.is_a?(Assignment)
+        return if @assessable.is_a?(Assignment) && !@assessable.kind_test?
 
         unsupported_assessable
       end

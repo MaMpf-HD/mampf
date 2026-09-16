@@ -672,6 +672,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response.body).to include("pointing-participation-row-#{participation.id}")
       end
 
+      it "records no hand-in on a test, whose points are the record" do
+        test = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                              deadline: Time.zone.now.end_of_week)
+
+        patch mark_user_as_participated_path,
+              params: { assignment_id: test.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:bad_request)
+        expect(test.assessment.assessment_participations.where.not(submitted_at: nil)).to be_empty
+      end
+
       # The tutor's page lists one group; a row drawn for the lecture's page
       # would bring the group column with it.
       it "draws the row in the shape of the page's group" do
