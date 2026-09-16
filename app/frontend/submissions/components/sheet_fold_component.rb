@@ -34,6 +34,10 @@ class SheetFoldComponent < ViewComponent::Base
     @state ||= sheet.state
   end
 
+  def test?
+    sheet.assignment.kind_test?
+  end
+
   def points_entered?
     state.in?(ENTERED_STATES)
   end
