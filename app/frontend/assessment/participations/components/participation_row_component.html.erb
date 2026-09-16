@@ -116,6 +116,7 @@
                                    min: 0, max: (100 if @assessable.percentage?), step: "any",
                                    aria: { label: t("assessment.achievements.marking.value_for", name: @user.tutorial_name) },
                                    data: { participation_row_target: "gradeInput",
+                                           below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
                                            action: "input->participation-row#onParticipationChanged" } %>
 
               <% if @assessable.percentage? %>

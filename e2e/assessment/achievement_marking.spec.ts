@@ -50,9 +50,16 @@ test.describe("entering an achievement", () => {
     await tutor.page.getByLabel("Sheet, test or achievement").selectOption("Lab attendance");
     await expect(tutor.page.getByText("Numeric · threshold 12")).toBeVisible();
     const grace = tutor.page.getByRole("table").getByRole("row", { name: /Grace Hopper/ });
-    await grace.getByRole("spinbutton", { name: "Value for Grace Hopper" }).fill("9");
+    const graceValue = grace.getByRole("spinbutton", { name: "Value for Grace Hopper" });
+    await graceValue.fill("9");
     await grace.getByRole("button", { name: "Save this row's value" }).click();
     await expect(grace.getByRole("img", { name: "Not met" })).toBeVisible();
+
+    // half a number is no number: the row does not offer to save it, so the
+    // 9 cannot be cleared by accident
+    await graceValue.fill("");
+    await graceValue.pressSequentially("1e");
+    await expect(grace.getByRole("button", { name: "Save this row's value" })).toBeDisabled();
 
     // the lecturer sees the group's work in the achievement's dashboard, and
     // excuses Grace with a certificate
