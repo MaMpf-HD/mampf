@@ -125,10 +125,11 @@ module StudentPerformance
         # `restrict_with_error` phrases a refusal in table names; the flash
         # names the blockers in words - and the errors go, or the settings
         # form on the dashboard would repeat the table names under a button
-        # nobody pressed.
+        # nobody pressed. A blocker gone between the refusal and this line
+        # leaves the plain refusal.
         flash.now[:alert] = @achievement.destruction_blockers.map do |blocker|
           I18n.t("assessment.achievement_not_destructible.#{blocker}")
-        end.to_sentence
+        end.presence&.to_sentence || I18n.t("assessment.achievements.errors.destroy_failed")
         @achievement.errors.clear
         render turbo_stream: [
           turbo_stream.update(
