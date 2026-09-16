@@ -230,12 +230,17 @@ module Assessment
         end
 
         # Rejected submissions need the status shown by a row, not an open card.
-        # Show test results immediately, even while other tutorials have yet to finish.
+        # Show test results - points or a recorded absence - immediately, even
+        # while other tutorials have yet to finish.
         def still_open?(sheet)
           return false if sheet.state == :rejected
-          return false if sheet.assignment.kind_test? && sheet.results_visible?
+          return false if sheet.assignment.kind_test? && test_settled?(sheet)
 
           sheet.assignment.active? || sheet.assignment.in_grace_period?
+        end
+
+        def test_settled?(sheet)
+          sheet.results_visible? || sheet.state == :absent
         end
 
         # The sheet the page leads with, and every sheet sharing its deadline - a

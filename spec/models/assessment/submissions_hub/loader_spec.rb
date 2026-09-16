@@ -578,6 +578,16 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(fresh.open_sheets).to be_empty
       expect(fresh.sheets.find { |sheet| sheet.assignment == test }.state).to eq(:marked)
     end
+
+    it "moves a test to the list the moment the reader is recorded absent" do
+      test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                 deadline: 3.days.from_now)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      participate(test, status: :absent)
+
+      expect(result.open_sheets).to be_empty
+      expect(sheet_for(test).state).to eq(:absent)
+    end
   end
 
   describe "#due" do
